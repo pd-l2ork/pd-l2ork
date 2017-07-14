@@ -94,7 +94,7 @@ export TAR_EM_UP_PREFIX=$inst_dir
 # to fetch the nwjs binaries below
 
 os=`uname | tr '[:upper:]' '[:lower:]'`
-if [[ $os == *"mingw32"* || $os == *"mingw64" ]]; then
+if [[ $os == *"mingw32"* || $os == *"mingw64"* ]]; then
 	os=win
 fi
 if [[ $os == "darwin" ]]; then
