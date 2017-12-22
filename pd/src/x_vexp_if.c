@@ -13,7 +13,8 @@
  * --sdy
  *
  *
- *  version 0.50 - March 2015
+ *  version 0.50 - March 2016
+ *  version 0.55 - July 2017
  */
 
 #include <stdio.h>
@@ -22,7 +23,7 @@
 
 #include "x_vexp.h"
 
-static char *exp_version = "0.50";
+static char *exp_version = "0.55";
 
 extern struct ex_ex *ex_eval(struct expr *expr, struct ex_ex *eptr,
                                                 struct ex_ex *optr, int n);
@@ -863,6 +864,8 @@ ex_getsym(char *p, fts_symbol_t *s)
 const char *
 ex_symname(fts_symbol_t s)
 {
+        if (!s)
+            return (0);
         return (fts_symbol_name(s));
 }
 
@@ -892,7 +895,7 @@ max_ex_tab(struct expr *expr, fts_symbol_t s, struct ex_ex *arg,
         {
                 optr->ex_type = ET_FLT;
                 optr->ex_flt = 0;
-                pd_error(expr, "no such table '%s'", s->s_name);
+                pd_error(expr, "no such table '%s'", ex_symname(s));
                 return (1);
         }
         optr->ex_type = ET_FLT;
@@ -981,16 +984,19 @@ max_ex_tab_store(struct expr *expr, t_symbol *s, struct ex_ex *arg,
         switch (rval->ex_type) {
         case ET_INT:
                 wvec[indx].w_float = rval->ex_int;
-                return(0);
+                                break;
         case ET_FLT:
                 wvec[indx].w_float = rval->ex_flt;
-                return(0);
+                                break;
         default:
                 pd_error(expr, "expr:bad right value type '%ld'", rval->ex_type);
                 optr->ex_type = ET_FLT;
                 optr->ex_flt = 0;
                 return (1);
         }
+                garray_redraw(garray);
+                return(0);
+
 #else /* MSP */
         /*
          * table lookup not done for MSP yet
@@ -1093,7 +1099,7 @@ ex_sum(t_expr *e, long int argc, struct ex_ex *argv, struct ex_ex *optr)
 
 
 /*
- * ex_Sum -- calculate the sum of table with the given boundries
+ * ex_Sum -- calculate the sum of table with the given boundaries
  */
 
 void
@@ -1126,7 +1132,7 @@ ex_Sum(t_expr *e, long int argc, struct ex_ex *argv, struct ex_ex *optr)
                 n1 = argv->ex_flt;
                         break;
                 default:
-                        post("expr: Sum: boundries have to be fix values\n");
+                        post("expr: Sum: boundaries have to be fix values\n");
                         optr->ex_type = ET_INT;
                         optr->ex_int = 0;
                         return;
@@ -1142,7 +1148,7 @@ ex_Sum(t_expr *e, long int argc, struct ex_ex *argv, struct ex_ex *optr)
                 n2 = argv->ex_flt;
                         break;
                 default:
-                        post("expr: Sum: boundries have to be fix values\n");
+                        post("expr: Sum: boundaries have to be fix values\n");
                         optr->ex_type = ET_INT;
                         optr->ex_int = 0;
                         return;
@@ -1195,7 +1201,7 @@ ex_avg(t_expr *e, long int argc, struct ex_ex *argv, struct ex_ex *optr)
 
 
 /*
- * ex_Avg -- calculate the avarage of table with the given boundries
+ * ex_Avg -- calculate the avarage of table with the given boundaries
  */
 
 void
@@ -1227,7 +1233,7 @@ ex_Avg(t_expr *e, long int argc, struct ex_ex *argv, struct ex_ex *optr)
 
         if (argv->ex_type != ET_INT || argv[1].ex_type != ET_INT)
         {
-                post("expr: Avg: boundries have to be fix values\n");
+                post("expr: Avg: boundaries have to be fix values\n");
                 optr->ex_type = ET_INT;
                 optr->ex_int = 0;
                 return;

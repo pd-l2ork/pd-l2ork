@@ -742,6 +742,18 @@ void canvas_scalar_event(t_canvas *x, t_symbol *s, int argc, t_atom *argv)
         draw_notify(x, s, argc, argv);
 }
 
+void canvas_show_scrollbars(t_canvas *x, t_floatarg f)
+{
+    x->gl_noscroll = (int)f;
+    if (x->gl_mapped)
+        gui_vmess("gui_canvas_set_scrollbars", "xi", x, (int)f);
+}
+
+void canvas_show_menu(t_canvas *x, t_floatarg f)
+{
+    x->gl_nomenu = (int)f;
+}
+
 extern void canvas_check_nlet_highlights(t_canvas *x);
 
 /*********** dpsaha@vt.edu resize move hooks ****************/
@@ -814,28 +826,29 @@ void canvas_map(t_canvas *x, t_floatarg f)
     t_gobj *y;
     if (flag)
     {
-        t_selection *sel;
-        if (!x->gl_havewindow)
-        {
-            bug("canvas_map");
-            canvas_vis(x, 1);
+        if (!glist_isvisible(x)) {
+            t_selection *sel;
+            if (!x->gl_havewindow)
+            {
+                bug("canvas_map");
+                canvas_vis(x, 1);
+            }
+            if (!x->gl_list) {
+                //if there are no objects on the canvas
+                canvas_create_editor(x);
+            }
+            else for (y = x->gl_list; y; y = y->g_next) {
+                gobj_vis(y, x, 1);
+            }
+            if (x->gl_editor && x->gl_editor->e_selection)
+                for (sel = x->gl_editor->e_selection; sel; sel = sel->sel_next)
+                    gobj_select(sel->sel_what, x, 1);
+            x->gl_mapped = 1;
+            canvas_drawlines(x);
+            if (x->gl_isgraph && x->gl_goprect)
+                canvas_drawredrect(x, 1);
+            scrollbar_update(x);
         }
-
-        if (!x->gl_list) {
-            //if there are no objects on the canvas
-            canvas_create_editor(x);
-        }
-        else for (y = x->gl_list; y; y = y->g_next) {
-            gobj_vis(y, x, 1);
-        }
-        if (x->gl_editor && x->gl_editor->e_selection)
-            for (sel = x->gl_editor->e_selection; sel; sel = sel->sel_next)
-                gobj_select(sel->sel_what, x, 1);
-        x->gl_mapped = 1;
-        canvas_drawlines(x);
-        if (x->gl_isgraph && x->gl_goprect)
-            canvas_drawredrect(x, 1);
-        scrollbar_update(x);
     }
     else
     {
@@ -1101,9 +1114,9 @@ static void canvas_pop(t_canvas *x, t_floatarg fvis)
 extern void *svg_new(t_pd *x, t_symbol *s, int argc, t_atom *argv);
 extern t_pd *svg_header(t_pd *x);
 
-static void group_svginit(t_glist *gl)
+static void group_svginit(t_glist *gl, t_symbol *type, int argc, t_atom *argv)
 {
-    gl->gl_svg = (t_pd *)(svg_new((t_pd *)gl, gensym("g"), 0, 0));
+    gl->gl_svg = (t_pd *)(svg_new((t_pd *)gl, type, argc, argv));
     t_pd *proxy = svg_header(gl->gl_svg);
     inlet_new(&gl->gl_obj, proxy, 0, 0);
     outlet_new(&gl->gl_obj, &s_anything);
@@ -1116,10 +1129,14 @@ void canvas_restore(t_canvas *x, t_symbol *s, int argc, t_atom *argv)
     t_pd *z;
     int is_draw_command = 0;
     //fprintf(stderr,"canvas_restore %lx\n", x);
-    /* for [draw group] we add an inlet to the svg attr proxy */
-    if (argc > 2 && argv[2].a_w.w_symbol == gensym("draw"))
+    /* for [draw g] and [draw svg] we add an inlet to the svg attr proxy */
+    if (atom_getsymbolarg(2, argc, argv) == gensym("draw"))
     {
-        group_svginit(x);
+        t_symbol *type = (atom_getsymbolarg(3, argc, argv) == gensym("svg")) ?
+            gensym("svg") : gensym("g");
+        group_svginit(x, type,
+            (type == gensym("svg") && argc > 4) ? argc-4 : 0,
+            (type == gensym("svg") && argc > 4) ? argv+4 : 0);
         is_draw_command = 1;
     }
     if (argc > 3 || (is_draw_command && argc > 4))
@@ -1352,12 +1369,18 @@ static void *subcanvas_new(t_symbol *s)
     return (x);
 }
 
-void *group_new(t_symbol *s)
+void *group_new(t_symbol *type, int argc, t_atom *argv)
 {
-    t_canvas *x = subcanvas_new(s);
-    group_svginit(x);
+    t_symbol *groupname;
+    if (type == gensym("g"))
+        groupname = atom_getsymbolarg(0, argc, argv);
+    else /* no name for inner svg */
+        groupname = &s_;
+    t_canvas *x = subcanvas_new(groupname);
+    group_svginit(x, type, argc, argv);
     return (x);
 }
+
 static void canvas_click(t_canvas *x,
     t_floatarg xpos, t_floatarg ypos,
         t_floatarg shift, t_floatarg ctrl, t_floatarg alt)
@@ -1376,6 +1399,14 @@ void canvas_fattensub(t_canvas *x,
 
 static void canvas_rename_method(t_canvas *x, t_symbol *s, int ac, t_atom *av)
 {
+    /* special case for [draw g] where the 3rd arg is the receiver name */
+    if (x->gl_svg)
+    {
+        if (atom_getsymbolarg(0, ac, av) == gensym("g") && ac > 1)
+            ac--, av++;
+        else
+            ac = 0;
+    }
     if (ac && av->a_type == A_SYMBOL)
         canvas_rename(x, av->a_w.w_symbol, 0);
     else if (ac && av->a_type == A_DOLLSYM)
@@ -1922,6 +1953,7 @@ static void canvas_stdlib(t_canvasenvironment *e, char *stdlib)
     }
 }
 
+extern t_symbol *class_loadsym;     /* name under which an extern is invoked */
 
 void canvas_declare(t_canvas *x, t_symbol *s, int argc, t_atom *argv)
 {
@@ -1948,7 +1980,13 @@ void canvas_declare(t_canvas *x, t_symbol *s, int argc, t_atom *argv)
         }
         else if ((argc > i+1) && !strcmp(flag, "-lib"))
         {
-            sys_load_lib(x, atom_getsymbolarg(i+1, argc, argv)->s_name);
+            /* set class_loadsym in case we're loading a library by
+               absolute or namespace-prefixed path. Not sure yet
+               exactly how stdlib works so I haven't touched that
+               one... */
+            class_loadsym = atom_getsymbolarg(i+1, argc, argv);
+            sys_load_lib(x, class_loadsym->s_name);
+            class_loadsym = NULL;
             i++;
         }
         else if ((argc > i+1) && !strcmp(flag, "-stdlib"))
@@ -2554,6 +2592,10 @@ void g_canvas_setup(void)
 
     class_addmethod(canvas_class, (t_method)canvas_scalar_event,
         gensym("scalar_event"), A_GIMME, 0);
+    class_addmethod(canvas_class, (t_method)canvas_show_scrollbars,
+        gensym("scroll"), A_FLOAT, 0);
+    class_addmethod(canvas_class, (t_method)canvas_show_menu,
+        gensym("menu"), A_FLOAT, 0);
 
 /* ---------------------- list handling ------------------------ */
     class_addmethod(canvas_class, (t_method)glist_clear, gensym("clear"),

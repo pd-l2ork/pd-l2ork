@@ -81,7 +81,7 @@ Pd-L2ork has the following goals:
 You can download a precompiled installer for Gnu/Linux, Windows, or OSX
 from the following site:
 
-[https://github.com/agraef/purr-data/releases](https://github.com/agraef/purr-data/releases)
+[https://github.com/jonwwilkes/purr-data/releases](https://github.com/jonwwilkes/purr-data/releases)
 
 ### Build Guide
 
@@ -219,6 +219,7 @@ that case, but I haven't tested doing it like that. Sorry. Get a better OS...)
           mingw-w64-i686-ladspa-sdk mingw-w64-i686-lame \
           mingw-w64-i686-libsndfile mingw-w64-i686-libvorbis \
           mingw-w64-i686-lua mingw-w64-i686-toolchain \
+          mingw-w64-i686-libjpeg-turbo \
           rsync unzip wget
 
 5. Download the source code *(3-6 minutes)*  

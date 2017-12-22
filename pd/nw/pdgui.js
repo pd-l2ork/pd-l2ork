@@ -127,6 +127,9 @@ exports.set_font_engine_sanity = function(win) {
         font_engine_sanity = false;
     }
     canvas.parentNode.removeChild(canvas);
+}
+
+exports.get_font_engine_sanity = function() {
     return font_engine_sanity;
 }
 
@@ -435,7 +438,7 @@ var font_fixed_metrics = [
 */
 
 // Let's try to get some metrics specific to Node-webkit...
-    // Hard-coded Pd-l2ork font metrics
+// Hard-coded Pd-l2ork font metrics
 var font_fixed_metrics = [
     8, 5, 11,
     9, 6, 12,
@@ -491,6 +494,20 @@ function set_audioapi(val) {
     pd_whichapi = val;
 }
 
+var throttle_console_scroll = (function() {
+    var scroll_delay;
+    return function() {
+        if (!scroll_delay) {
+            scroll_delay = setTimeout(function() {
+                var printout = pd_window.document
+                    .getElementById("console_bottom");
+                printout.scrollTop = printout.scrollHeight;
+                scroll_delay = undefined;
+            }, 30);
+        }
+    }
+}());
+
 // Hmm, probably need a closure here...
 var current_string = "";
 var last_string = "";
@@ -518,13 +535,14 @@ function do_post(string, type) {
             text = pd_window.document.createTextNode(current_string);
             span.appendChild(text);
             myp.appendChild(span);
-            printout = pd_window.document.getElementById("console_bottom");
-            printout.scrollTop = printout.scrollHeight;
             last_string = current_string;
             current_string = "";
             last_child = span;
             last_object_id = "";
             duplicate = 0;
+            // update the scrollbars to the bottom, but throttle it
+            // since it is expensive
+            throttle_console_scroll();
         }
     }
 }
@@ -976,6 +994,17 @@ function gui_canvas_set_cordinspector(cid, state) {
     patchwin[cid].window.set_cord_inspector_checkbox(state !== 0 ? true : false);
 }
 
+function canvas_set_scrollbars(cid, scroll) {
+    patchwin[cid].window.document.body.style.
+        overflow = scroll ? "visible" : "hidden";
+}
+
+exports.canvas_set_scrollbars = canvas_set_scrollbars;
+
+function gui_canvas_set_scrollbars(cid, no_scrollbars) {
+    canvas_set_scrollbars(cid, no_scrollbars === 0);
+}
+
 exports.menu_send = menu_send;
 
 function gui_set_toplevel_window_list(dummy, attr_array) {
@@ -1183,7 +1212,8 @@ function gui_startup(version, fontname_from_pd, fontweight_from_pd,
     //    } else {
     //        set oldtclversion 0
     //    }
-    pdsend("pd init", enquote(pwd), "0", font_fixed_metrics);
+    pdsend("pd init", enquote(defunkify_windows_path(pwd)), "0",
+        font_fixed_metrics);
 
     //    # add the audio and help menus to the Pd window.  We delayed this
     //    # so that we'd know the value of "apilist".
@@ -1254,6 +1284,9 @@ exports.last_loaded = function () {
 // close a canvas window
 
 function gui_canvas_cursor(cid, pd_event_type) {
+    if (!patchwin[cid]) {
+        return;
+    }
     var patch = get_item(cid, "patchsvg"),
         c;
     // A quick mapping of events to pointers-- these can
@@ -1363,7 +1396,7 @@ function create_window(cid, type, width, height, xpos, ypos, attr_array) {
 }
 
 // create a new canvas
-function gui_canvas_new(cid, width, height, geometry, zoom, editmode, name, dir, dirty_flag, cargs) {
+function gui_canvas_new(cid, width, height, geometry, zoom, editmode, name, dir, dirty_flag, hide_scroll, hide_menu, cargs) {
     // hack for buggy tcl popups... should go away for node-webkit
     //reset_ctrl_on_popup_window
 
@@ -1414,7 +1447,8 @@ function gui_canvas_new(cid, width, height, geometry, zoom, editmode, name, dir,
             dirty: dirty_flag,
             args: cargs,
             zoom: zoom,
-            editmode: editmode
+            editmode: editmode,
+            hide_scroll: hide_scroll
     });
 }
 
@@ -2123,12 +2157,20 @@ function gui_canvas_update_line(cid, tag, x1, y1, x2, y2, yoff) {
     var halfx = parseInt((x2 - x1)/2),
         halfy = parseInt((y2 - y1)/2),
         cord = get_item(cid, tag),
-    // see comment in gui_canvas_line about xoff
-        xoff= cord.classList.contains("signal") ? 0: 0.5,
+        xoff, // see comment in gui_canvas_line about xoff
+        d_array;
+    // We have to check for existence here for the special case of
+    // preset_node which hides a wire that feeds back from the downstream
+    // object to its inlet. Pd refrains from drawing this hidden wire at all.
+    // It should also suppress a call here to update that line, but it
+    // currently doesn't. So we check for existence.
+    if (cord) {
+        xoff = cord.classList.contains("signal") ? 0: 0.5;
         d_array = ["M",x1+xoff,y1+xoff,
                    "Q",x1+xoff,y1+yoff+xoff,x1+halfx+xoff,y1+halfy+xoff,
                    "Q",x2+xoff,y2-yoff+xoff,x2+xoff,y2+xoff];
-    configure_item(cord, { d: d_array.join(" ") });
+        configure_item(cord, { d: d_array.join(" ") });
+    }
 }
 
 function text_line_height_kludge(fontsize, fontsize_type) {
@@ -2200,7 +2242,7 @@ function suboptimal_font_map() {
 
 function gobj_fontsize_kludge(fontsize, return_type) {
     // These were tested on an X60 running Trisquel (based
-    // on Ubuntu)
+    // on Ubuntu 14.04)
     var ret, prop,
         fmap = font_stack_is_maintained_by_troglodytes() ?
             suboptimal_font_map() : font_map();
@@ -2296,16 +2338,19 @@ function gui_text_new(canvasname, myname, type, isselected, left_margin, font_he
 // Because of the overly complex code path inside
 // canvas_setgraph, multiple erasures can be triggered in a row.
 function gui_gobj_erase(cid, tag) {
-    var g = get_gobj(cid, tag);
-    if (g !== null) {
-        g.parentNode.removeChild(g);
-    } else {
-        // Unfortunately Pd can send messages
-        // to erase objects before they got created,
-        // or extra messages to delete objects. So
-        // we can't report an error here...
-        //post("gui_gobj_erase: gobj " + tag +
-        //    " didn't exist in the first place!");
+    var g;
+    if (patchwin[cid]) {
+        g = get_gobj(cid, tag);
+        if (g !== null) {
+            g.parentNode.removeChild(g);
+        } else {
+            // Unfortunately Pd can send messages
+            // to erase objects before they got created,
+            // or extra messages to delete objects. So
+            // we can't report an error here...
+            //post("gui_gobj_erase: gobj " + tag +
+            //    " didn't exist in the first place!");
+        }
     }
 }
 
@@ -2331,9 +2376,12 @@ function gui_text_set (cid, tag, text) {
 }
 
 function gui_text_redraw_border(cid, tag, x1, y1, x2, y2) {
-    var g = get_gobj(cid, tag),
-        b = g.querySelectorAll(".border"),
-        i;
+    var g, b, i;
+    if (!patchwin[cid]) {
+        return;
+    }
+    g = get_gobj(cid, tag);
+    b = g.querySelectorAll(".border");
     for (i = 0; i < b.length; b++) {
         configure_item(b[i], {
             width: x2 - x1,
@@ -2914,14 +2962,19 @@ function gui_vumeter_update_rms(cid, tag, p1, p2, p3, p4, basex, basey) {
 }
 
 function gui_vumeter_update_peak(cid,tag,color,p1,p2,p3,p4,basex,basey) {
-    var line = get_item(cid, tag + "peak");
-    configure_item(line, {
-        x1: p1 - basex,
-        y1: p2 - basey,
-        x2: p3 - basex,
-        y2: p4 - basey,
-        stroke: color
-    });
+    var line;
+    if (patchwin[cid]) {
+        line = get_item(cid, tag + "peak");
+        if (line) {
+            configure_item(line, {
+                x1: p1 - basex,
+                y1: p2 - basey,
+                x2: p3 - basex,
+                y2: p4 - basey,
+                stroke: color
+            });
+        }
+    }
 }
 
 function gui_iemgui_base_color(cid, tag, color) {
@@ -3250,9 +3303,9 @@ function gui_scalar_draw_select_rect(cid, tag, state, x1, y1, x2, y2, basex, bas
     }
 }
 
-function gui_scalar_draw_group(cid, tag, parent_tag, attr_array) {
+function gui_scalar_draw_group(cid, tag, parent_tag, type, attr_array) {
     var parent_elem,
-        g;
+        group;
     if (!patchwin[cid]) {
         return;
     }
@@ -3261,9 +3314,9 @@ function gui_scalar_draw_group(cid, tag, parent_tag, attr_array) {
         attr_array = [];
     }
     attr_array.push("id", tag);
-    g = create_item(cid, "g", attr_array);
-    parent_elem.appendChild(g);
-    return g;
+    group = create_item(cid, type, attr_array);
+    parent_elem.appendChild(group);
+    return group;
 }
 
 function gui_scalar_configure_gobj(cid, tag, isselected, t1, t2, t3, t4, t5, t6) {
@@ -3331,25 +3384,25 @@ function gui_draw_coords(cid, tag, shape, points) {
 // of the bbox of the shape will still register as part of the event.
 // (Attempting to set the event more than once is ignored.)
 function gui_draw_drag_event(cid, tag, scalar_sym, drawcommand_sym,
-    event_name, state) {
+    event_name, array_sym, index, state) {
     var win = patchwin[cid].window;
     if (state === 0) {
         win.canvas_events.remove_scalar_draggable(tag);
     } else {
         win.canvas_events.add_scalar_draggable(cid, tag, scalar_sym,
-            drawcommand_sym, event_name);
+            drawcommand_sym, event_name, array_sym, index);
     }
 }
 
 // Events for scalars-- mouseover, mouseout, etc.
 function gui_draw_event(cid, tag, scalar_sym, drawcommand_sym, event_name,
-    state) {
+    array_sym, index, state) {
     var item = get_item(cid, tag),
         event_type = "on" + event_name;
     if (state === 1) {
         item[event_type] = function(e) {
-            pdsend(cid, "scalar_event", scalar_sym, drawcommand_sym, event_name,
-                e.pageX, e.pageY);
+            pdsend(cid, "scalar_event", scalar_sym, drawcommand_sym,
+                array_sym, index, event_name, e.pageX, e.pageY);
         };
     } else {
         item[event_type] = null;
@@ -3367,6 +3420,19 @@ function gui_draw_configure(cid, tag, attr, val) {
         obj[attr] = val;
     }
     configure_item(item, obj);
+}
+
+// Special case for viewBox which, in addition to its inexplicably inconsistent
+// camelcasing also has no "none" value in the spec. This requires us to create
+// a special case to remove the attribute if the user wants to get back to
+// the default behavior.
+function gui_draw_viewbox(cid, tag, attr, val) {
+    // Value will be an empty array if the user provided no values
+    if (val.length) {
+        gui_draw_configure(cid, tag, attr, val)
+    } else {
+        get_item(cid, tag).removeAttribute("viewBox");
+    }
 }
 
 // Configure multiple attr/val pairs (this should be merged with gui_draw_configure at some point
@@ -3459,6 +3525,7 @@ function gui_drawnumber_vis(cid, parent_tag, tag, x, y, scale_x, scale_y,
 // to cache image data for image-handling classes:
 // ggee/image
 // moonlib/image (for backwards compatibility only: its API is inherently leaky)
+// tof/imagebang
 // draw sprite
 // draw image
 var pd_cache = (function() {
@@ -3492,55 +3559,63 @@ function gui_drawimage_new(obj_tag, file_path, canvasdir, flags) {
     var drawsprite = 1,
         drawimage_data = [], // array for base64 image data
         image_seq,
-        i,
+        count = 0,
         matchchar = "*",
         files,
         ext,
+        img_types = [".gif", ".jpeg", ".jpg", ".png", ".svg"],
         img; // dummy image to measure width and height
     image_seq = flags & drawsprite;
-    if (!path.isAbsolute(file_path)) {
-        file_path = path.join(canvasdir, file_path);
+    if (file_path !== "") {
+        if(!path.isAbsolute(file_path)) {
+            file_path = path.join(canvasdir, file_path);
+        }
+        file_path = path.normalize(file_path);
     }
-    file_path = path.normalize(file_path);
-    if (fs.existsSync(file_path) && fs.lstatSync(file_path).isDirectory()) {
-        files = fs.readdirSync(file_path)
+    if (file_path !== "" && fs.existsSync(file_path)) {
+        if (image_seq && fs.lstatSync(file_path).isDirectory()) {
+            // [draw sprite]
+            files = fs.readdirSync(file_path)
                     .sort(); // Note that js's "sort" method doesn't do the
                              // "right thing" for numbers. For that we'd need
                              // to provide our own sorting function
+        } else {
+            // [draw image]
+            files = [path.basename(file_path)];
+            file_path = path.dirname(file_path);
+        }
         // todo: warn about image sequence with > 999
-        for (i = 0; i < files.length && i < 1000; i++) {
-            ext = path.extname(files[i]);
-
-        // todo: tolower()
-
-            if (ext === ".gif" ||
-                ext === ".jpg" ||
-                ext === ".png" ||
-                ext === ".jpeg" ||
-                ext === ".svg") {
-
+        files.forEach(function(file) {
+            ext = path.extname(file).toLowerCase();
+            if (img_types.indexOf(ext) != -1) {
                 // Now add an element to that array with the image data
                 drawimage_data.push({
                     type: ext === ".jpeg" ? "jpg" : ext.slice(1),
-                    data: fs.readFileSync(path.join(file_path, files[i]),"base64")
+                    data: fs.readFileSync(path.join(file_path, file),"base64")
                 });
+                count++;
             }
-        }
-    } else {
-        i = 0;
+        });
     }
-    //post("no of files: " + i);
+    post("no of files: " + count);
 
-    if (i > 0) {
-        img = new pd_window.Image(); // create an image in the pd_window context
-        img.onload = function() {
-            pdsend(obj_tag, "size", this.width, this.height);
-        };
-        img.src = "data:image/" + drawimage_data[0].type +
-            ";base64," + drawimage_data[0].data;
-    } else {
-        post("drawimage: warning: no images loaded");
+    if (count === 0) {
+        // set a default image
+        drawimage_data.push({
+            type: "png",
+            data: get_default_png_data()
+        });
+        if (file_path !== "") {
+            post("draw image: error: couldn't load image");
+        }
+        post("draw image: warning: no image loaded. Using default png");
     }
+    img = new pd_window.Image(); // create an image in the pd_window context
+    img.onload = function() {
+        pdsend(obj_tag, "size", this.width, this.height);
+    };
+    img.src = "data:image/" + drawimage_data[0].type +
+        ";base64," + drawimage_data[0].data;
     pd_cache.set(obj_tag, drawimage_data); // add the data to container
 }
 
@@ -3633,18 +3708,23 @@ function gui_drawimage_index(cid, obj, data, index) {
     configure_item(image, { visibility: "visible" });
 }
 
+// Default png image data
+function get_default_png_data() {
+    return ["iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAMAAADzN3VRAAAAb1BMVEWBgYHX19",
+            "f///8vLy/8/Pzx8PH3+Pf19fXz8/Pu7u7l5eXj4+Pn5+fs7Oza2tr6+vnq6urh",
+            "4eHe3t7c3Nza2dr6+fro6Og1NTXr6+xYWFi1tbWjo6OWl5aLjItDQ0PPz8+/v7",
+            "+wsLCenZ5zc3NOTk4Rpd0DAAAAqElEQVQoz62L2Q6CMBBFhcFdCsomq+v/f6Mn",
+            "bdOSBn3ypNO5Nyez+kG0zN9NWZZK8RRbB/2XmMLSvSZp2mehTMVcLGIYbcWcLW",
+            "1/U4PIZCvmOCMSaWzEHGaMIq2NmJNn4ORuMybP6xxYD0SnE4NJDdc0fYv0LCJg",
+            "9g4RqV3BrJfB7Bzc+ILZOjC+YDYOjC+YKqsyHlOZAX5Msgwm1iRxgDYBSWjCm+",
+            "98AAfDEgD0K69gAAAAAElFTkSuQmCC"
+           ].join("");
+}
+
 function gui_load_default_image(dummy_cid, key) {
     pd_cache.set(key, {
         type: "png",
-        data: ["iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAMAAADzN3VRAAAAb1BMVEWBgYHX19",
-               "f///8vLy/8/Pzx8PH3+Pf19fXz8/Pu7u7l5eXj4+Pn5+fs7Oza2tr6+vnq6urh",
-               "4eHe3t7c3Nza2dr6+fro6Og1NTXr6+xYWFi1tbWjo6OWl5aLjItDQ0PPz8+/v7",
-               "+wsLCenZ5zc3NOTk4Rpd0DAAAAqElEQVQoz62L2Q6CMBBFhcFdCsomq+v/f6Mn",
-               "bdOSBn3ypNO5Nyez+kG0zN9NWZZK8RRbB/2XmMLSvSZp2mehTMVcLGIYbcWcLW",
-               "1/U4PIZCvmOCMSaWzEHGaMIq2NmJNn4ORuMybP6xxYD0SnE4NJDdc0fYv0LCJg",
-               "9g4RqV3BrJfB7Bzc+ILZOjC+YDYOjC+YKqsyHlOZAX5Msgwm1iRxgDYBSWjCm+",
-               "98AAfDEgD0K69gAAAAAElFTkSuQmCC"
-              ].join("")
+        data: get_default_png_data()
     });
 }
 
@@ -3658,20 +3738,25 @@ function gui_load_image(cid, key, filepath) {
     });
 }
 
-// Draw an image in an object-- used for ggee/image and
-// moonlib/image. For the meaning of tk_anchor see img_size_setter.
+// Draw an image in an object-- used for ggee/image, moonlib/image and
+// tof/imagebang. For the meaning of tk_anchor see img_size_setter. This
+// interface assumes there is only one image per gobject. If you try to
+// set more you'll get duplicate ids.
 function gui_gobj_draw_image(cid, tag, image_key, tk_anchor) {
-    var g = get_gobj(cid, tag),
+    var g, i;
+    if (patchwin[cid]) {
+        g = get_gobj(cid, tag);
         i = create_item(cid, "image", {
             id: tag,
             preserveAspectRatio: "xMinYMin meet"
         });
-    i.setAttributeNS("http://www.w3.org/1999/xlink", "href",
-        "data:image/" + pd_cache.get(image_key).type + ";base64," +
-         pd_cache.get(image_key).data);
-    img_size_setter(cid, tag, pd_cache.get(image_key).type,
-        pd_cache.get(image_key).data, tk_anchor);
-    g.appendChild(i);
+        i.setAttributeNS("http://www.w3.org/1999/xlink", "href",
+            "data:image/" + pd_cache.get(image_key).type + ";base64," +
+             pd_cache.get(image_key).data);
+        img_size_setter(cid, tag, pd_cache.get(image_key).type,
+            pd_cache.get(image_key).data, tk_anchor);
+        g.appendChild(i);
+    }
 }
 
 function gui_image_size_callback(cid, key, callback) {
@@ -3684,19 +3769,22 @@ function gui_image_size_callback(cid, key, callback) {
 }
 
 function gui_image_draw_border(cid, tag, x, y, w, h) {
-    var g = get_gobj(cid, tag),
-        b = create_item(cid, "path", {
-        "stroke-width": "1",
-        fill: "none",
-        d: ["m", x, y, w, 0,
-            "m", 0, 0, 0, h,
-            "m", 0, 0, -w, 0,
-            "m", 0, 0, 0, -h
-           ].join(" "),
-        visibility: "hidden",
-        class: "border"
-    });
-    g.appendChild(b);
+    var g, b;
+    if (patchwin[cid]) {
+        g = get_gobj(cid, tag);
+            b = create_item(cid, "path", {
+            "stroke-width": "1",
+            fill: "none",
+            d: ["m", x, y, w, 0,
+                "m", 0, 0, 0, h,
+                "m", 0, 0, -w, 0,
+                "m", 0, 0, 0, -h
+               ].join(" "),
+            visibility: "hidden",
+            class: "border"
+        });
+        g.appendChild(b);
+    }
 }
 
 function gui_image_toggle_border(cid, tag, state) {
@@ -3954,23 +4042,31 @@ function gui_grid_point(cid, tag, x, y) {
 
 // mknob from moonlib
 function gui_mknob_new(cid, tag, x, y, is_toplevel, show_in, show_out) {
-    var g = gui_gobj_new(cid, tag, "obj", x, y, is_toplevel),
+    var g, border, circle, line;
+    if (!patchwin[cid]) {
+        return;
+    }
+    g = gui_gobj_new(cid, tag, "obj", x, y, is_toplevel),
         border = create_item(cid, "path", {
             class: "border" // now we can inherit the css border styles
-        }),
-        circle = create_item(cid, "circle", {
-            class: "circle"
-        }),
-        line = create_item(cid, "line", {
-            class: "dial"
-        });
+    });
+    circle = create_item(cid, "circle", {
+       class: "circle"
+    });
+    line = create_item(cid, "line", {
+        class: "dial"
+    });
     g.appendChild(border);
     g.appendChild(circle);
     g.appendChild(line);
 }
 
 function gui_configure_mknob(cid, tag, size, bg_color, fg_color) {
-    var g = get_gobj(cid, tag);
+    var g;
+    if (!patchwin[cid]) {
+        return;
+    }
+    g = get_gobj(cid, tag);
     configure_item(g.querySelector(".border"), {
         d: ["M", 0, 0, size, 0,
             "M", 0, size, size, size,
@@ -4287,14 +4383,36 @@ function gui_graph_htick(cid, tag, y, r_x, l_x, tick_pix, basex, basey) {
     g.appendChild(right_tick);
 }
 
-function gui_graph_tick_label(cid, tag, x, y, text, font, font_size, font_weight, basex, basey) {
+function gui_graph_tick_label(cid, tag, x, y, text, font, font_size, font_weight, basex, basey, tk_label_anchor) {
     var g = get_gobj(cid, tag),
-        svg_text, text_node;
+        svg_text, text_node, text_anchor, alignment_baseline;
+    // We use anchor identifiers from the tk toolkit:
+    //
+    // "n" for north, or aligned at the top of the text
+    // "s" for south, or default baseline alignment
+    // "e" for east, or text-anchor at the end of the text
+    // "w" for west, or default text-anchor for left-to-right languages
+    //
+    // For x labels the tk_label_anchor will either be "n" for labels at the
+    // bottom of the graph, or "s" for labels at the top of the graph
+    //
+    // For y labels the tk_label_anchor will either be "e" for labels at the
+    // right of the graph, or "w" for labels at the right.
+    //
+    // In each case we want the label to be centered around the tick mark.
+    // So we default to value "middle" if we didn't get a value for that
+    // axis.
+    text_anchor = tk_label_anchor === "e" ? "end" :
+        tk_label_anchor === "w" ? "start" : "middle";
+    alignment_baseline = tk_label_anchor === "n" ? "hanging" :
+        tk_label_anchor === "s" ? "auto" : "middle";
     svg_text = create_item(cid, "text", {
         // need a label "y" relative to baseline
         x: x - basex,
         y: y - basey,
-        "font-size": font_size,
+        "text-anchor": text_anchor,
+        "alignment-baseline": alignment_baseline,
+        "font-size": pd_fontsize_to_gui_fontsize(font_size) + "px",
     });
     text_node = patchwin[cid].window.document.createTextNode(text);
     svg_text.appendChild(text_node);
@@ -5228,8 +5346,12 @@ var getscroll_var = {};
 //    graphics from displaying until the user releases the mouse,
 //    which would be a buggy UI
 function gui_canvas_get_scroll(cid) {
-    clearTimeout(getscroll_var[cid]);
-    getscroll_var[cid] = setTimeout(do_getscroll, 250, cid);
+    if (!getscroll_var[cid]) {
+        getscroll_var[cid] = setTimeout(function() {
+            do_getscroll(cid);
+            getscroll_var[cid] = null;
+        }, 250);
+    }
 }
 
 exports.gui_canvas_get_scroll = gui_canvas_get_scroll;

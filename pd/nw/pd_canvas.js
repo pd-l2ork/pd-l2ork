@@ -117,7 +117,7 @@ function nw_window_focus_callback(name) {
 
 function nw_window_blur_callback(name) {
     // Fake a mouseup event to keep from getting a dangling selection box
-    if (canvas_events.get_state === "normal") {
+    if (canvas_events.get_state() === "normal") {
         pdgui.pdsend(name, "mouseup_fake");
     }
 }
@@ -450,7 +450,8 @@ var canvas_events = (function() {
                     ty = minv.b * dx + minv.d * dy;
                 var obj = scalar_draggables[draggable_elem.id];
                 pdgui.pdsend(obj.cid, "scalar_event", obj.scalar_sym,
-                    obj.drawcommand_sym, obj.event_name, dx, dy, tx, ty);
+                    obj.drawcommand_sym, obj.array_sym, obj.index,
+                    obj.event_name, dx, dy, tx, ty);
                 last_draggable_x = new_x;
                 last_draggable_y = new_y;
             },
@@ -751,13 +752,24 @@ var canvas_events = (function() {
 
     // MouseWheel event for zooming
     document.addEventListener("wheel", function(evt) {
-        if (pdgui.cmd_or_ctrl_key(evt)) {
-            if (evt.deltaY < 0) {
-                nw_window_zoom(name, +1);
-            } else if (evt.deltaY > 0) {
-                nw_window_zoom(name, -1);
+        var d = { deltaX: 0, deltaY: 0, deltaZ: 0 };
+        Object.keys(d).forEach(function(key) {
+            if (evt[key] < 0) {
+                d[key] = -1;
+            } else if (evt[key] > 0) {
+                d[key] = 1;
+            } else {
+                d[key] = 0;
             }
+        });
+        if (pdgui.cmd_or_ctrl_key(evt)) {
+            // scroll up for zoom-in, down for zoom-out
+            nw_window_zoom(name, -d.deltaY);
         }
+        // Send a message on to Pd for the [mousewheel] legacy object
+        // (in the future we can refcount if we want to prevent forwarding
+        // these messages when there's no extant receiver)
+        pdgui.pdsend(name, "legacy_mousewheel", d.deltaX, d.deltaY, d.deltaZ);
     });
 
     // The following is commented out because we have to set the
@@ -952,12 +964,14 @@ var canvas_events = (function() {
             last_search_term = "";
         },
         add_scalar_draggable: function(cid, tag, scalar_sym, drawcommand_sym,
-            event_name) {
+            event_name, array_sym, index) {
             scalar_draggables[tag] = {
                 cid: cid,
                 scalar_sym: scalar_sym,
                 drawcommand_sym: drawcommand_sym,
-                event_name: event_name
+                event_name: event_name,
+                array_sym: array_sym,
+                index: index
             };
         },
         remove_scalar_draggable: function(id) {
@@ -1019,9 +1033,11 @@ function register_window_id(cid, attr_array) {
     // For now, there is no way for the cord inspector to be turned on by
     // default. But if this changes we need to set its menu item checkbox
     // accordingly here
-    //set_cord_inspector_checkbox();
+    // set_cord_inspector_checkbox();
 
-    // One final kludge-- because window creation is asyncronous, we may
+    // Set scroll bars
+    pdgui.canvas_set_scrollbars(cid, !attr_array.hide_scroll);
+    // One final kludge-- because window creation is asynchronous, we may
     // have gotten a dirty flag before the window was created. In that case
     // we check the title_queue to see if our title now contains an asterisk
     // (which is the visual cue for "dirty")

@@ -311,11 +311,11 @@ void glist_grab(t_glist *x, t_gobj *y, t_glistmotionfn motionfn,
 t_canvas *glist_getcanvas(t_glist *x)
 {
     //fprintf(stderr,"glist_getcanvas\n");
-    while (x->gl_owner && !x->gl_havewindow && x->gl_isgraph &&
-        gobj_shouldvis(&x->gl_gobj, x->gl_owner))
+    while (x->gl_owner && !x->gl_havewindow && x->gl_isgraph)
     {
-            //fprintf(stderr,"x=%lx x->gl_owner=%d x->gl_havewindow=%d x->gl_isgraph=%d gobj_shouldvis=%d\n", 
-            //    x, (x->gl_owner ? 1:0), x->gl_havewindow, x->gl_isgraph, 
+            //fprintf(stderr,"x=%lx x->gl_owner=%d x->gl_havewindow=%d "
+            //               "x->gl_isgraph=%d gobj_shouldvis=%d\n", 
+            //    x, (x->gl_owner ? 1:0), x->gl_havewindow, x->gl_isgraph,
             //    gobj_shouldvis(&x->gl_gobj, x->gl_owner));
             x = x->gl_owner;
             //fprintf(stderr,"+\n");
@@ -960,7 +960,10 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
         t_gobj *g;
         t_symbol *arrayname;
             /* draw a rectangle around the graph */
-
+        char *ylabelanchor =
+            (x->gl_ylabelx > 0.5*(x->gl_x1 + x->gl_x2) ? "w" : "e");
+        char *xlabelanchor =
+            (x->gl_xlabely > 0.5*(x->gl_y1 + x->gl_y2) ? "s" : "n");
         char tagbuf[MAXPDSTRING];
         sprintf(tagbuf, "%sR", tag);
 
@@ -1071,7 +1074,7 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
             /* draw x labels */
         for (i = 0; i < x->gl_nxlabels; i++)
         {
-            gui_vmess("gui_graph_tick_label", "xsiissisii",
+            gui_vmess("gui_graph_tick_label", "xsiissisiis",
                 glist_getcanvas(x),
                 tag,
                 (int)glist_xtopixels(x, atof(x->gl_xlabel[i]->s_name)),
@@ -1081,13 +1084,14 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
                 sys_hostfontsize(glist_getfont(x)),
                 sys_fontweight,
                 x1,
-                y1);
+                y1,
+                xlabelanchor);
         }
 
             /* draw y labels */
         for (i = 0; i < x->gl_nylabels; i++)
         {
-            gui_vmess("gui_graph_tick_label", "xsiissisii",
+            gui_vmess("gui_graph_tick_label", "xsiissisiis",
                 glist_getcanvas(x),
                 tag,
                 (int)glist_xtopixels(x, x->gl_ylabelx),
@@ -1097,7 +1101,8 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
                 sys_hostfontsize(glist_getfont(x)),
                 sys_fontweight,
                 x1,
-                y1);
+                y1,
+                ylabelanchor);
         }
 
             /* draw contents of graph as glist */
@@ -1239,7 +1244,6 @@ static void graph_getrect(t_gobj *z, t_glist *glist,
         int hadwindow;
         t_gobj *g;
         int x21, y21, x22, y22;
-
         graph_graphrect(z, glist, &x1, &y1, &x2, &y2);
         //fprintf(stderr,"%d %d %d %d\n", x1, y1, x2, y2);
 
@@ -1261,7 +1265,6 @@ static void graph_getrect(t_gobj *z, t_glist *glist,
             hadwindow = x->gl_havewindow;
             x->gl_havewindow = 0;
             for (g = x->gl_list; g; g = g->g_next)
-                if (gobj_shouldvis(g, x))
             {
                     /* don't do this for arrays, just let them hang outside the
                     box. */
@@ -1430,7 +1433,7 @@ static void graph_select(t_gobj *z, t_glist *glist, int state)
         }
         if (glist_isvisible(glist) &&
                 (glist_istoplevel(glist) ||
-                 gobj_shouldvis(x, glist)))
+                 gobj_shouldvis(z, glist)))
         {
             if (state)
                 gui_vmess("gui_gobj_select", "xs",

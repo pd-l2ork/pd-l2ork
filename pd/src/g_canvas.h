@@ -217,6 +217,8 @@ struct _glist
     unsigned int gl_private:1;      /* private flag used in x_scalar.c */
     unsigned int gl_isclone:1;      /* exists as part of a clone object */
     unsigned int gl_gop_initialized:1;     /* used for tagged moving of gop-ed objects to avoid redundant reinit */
+    unsigned int gl_noscroll:1;     /* don't show window scrollbars */
+    unsigned int gl_nomenu:1;       /* don't show the window menu */
     //global preset array pointer
     t_preset_hub *gl_phub;
     //infinite undo goodies (have to stay here rather than the editor to prevent its obliteration when editor is deleted)
@@ -344,7 +346,7 @@ struct _widgetbehavior
     t_deletefn w_deletefn;
     t_visfn w_visfn;
     t_clickfn w_clickfn;
-	t_displacefnwtag w_displacefnwtag;
+    t_displacefnwtag w_displacefnwtag;
 };
 
 /* -------- behaviors for scalars defined by objects in template --------- */
@@ -376,7 +378,7 @@ typedef void (*t_parentactivatefn)(t_gobj *x, struct _glist *glist,
 typedef void (*t_parentvisfn)(t_gobj *x, struct _glist *glist,
     struct _glist *parentglist, t_scalar *sc, 
     t_word *data, t_template *tmpl, t_float basex, t_float basey,
-    int flag);
+    struct _array *parentarray, int flag);
         /*  field a mouse click */
 typedef int (*t_parentclickfn)(t_gobj *x, struct _glist *glist,
     t_word *data, t_template *tmpl, t_scalar *sc, t_array *ap,

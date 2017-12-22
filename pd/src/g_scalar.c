@@ -409,6 +409,11 @@ extern int array_joc;
 extern void template_notifyforscalar(t_template *template, t_glist *owner,
     t_scalar *sc, t_symbol *s, int argc, t_atom *argv);
 
+extern void scalar_getinnersvgrect(t_gobj *z, t_glist *owner, t_word *data,
+    t_template *template, t_float basex, t_float basey,
+    int *xp1, int *yp1, int *xp2, int *yp2);
+
+extern t_symbol *group_gettype(t_glist *glist);
 static void scalar_getgrouprect(t_glist *owner, t_glist *groupcanvas,
     t_word *data, t_template *template, int basex, int basey,
     int *x1, int *x2, int *y1, int *y2)
@@ -420,8 +425,12 @@ static void scalar_getgrouprect(t_glist *owner, t_glist *groupcanvas,
             ((t_canvas *)y)->gl_svg)
         {
             /* todo: accumulate basex and basey for correct offset */
-            scalar_getgrouprect(owner, (t_glist *)y, data, template,
-                basex, basey, x1, x2, y1, y2);
+            if (group_gettype((t_canvas *)y) == gensym("g"))
+                scalar_getgrouprect(owner, (t_glist *)y, data, template,
+                    basex, basey, x1, x2, y1, y2);
+            else /* inner svg */
+                scalar_getinnersvgrect(y, owner, data, template, basex, basey,
+                    x1, y1, x2, y2);
         }
         else
         {
@@ -768,35 +777,39 @@ extern void svg_parentwidgettogui(t_gobj *z, t_scalar *sc, t_glist *owner,
     t_word *data, t_template *template);
 
 extern void svg_register_events(t_gobj *z, t_canvas *c, t_scalar *sc,
-    t_template *template, t_word *data);
+    t_template *template, t_word *data, t_array *parentarray);
 
 static void scalar_group_configure(t_scalar *x, t_glist *owner,
-    t_template *template, t_glist *gl, t_glist *parent)
+    t_template *template, t_word *data, t_glist *gl, t_glist *parent,
+    t_array *parentarray)
 {
     t_gobj *y;
     char tagbuf[MAXPDSTRING];
     sprintf(tagbuf, "dgroup%lx.%lx", (long unsigned int)gl,
-        (long unsigned int)x->sc_vec);
+        (long unsigned int)data);
     char parentbuf[MAXPDSTRING];
-    sprintf(parentbuf, "dgroup%lx.%lx", (long unsigned int)parent,
-        (long unsigned int)x->sc_vec);
+    sprintf(parentbuf, "dgroup%lx.%lx",
+        (long unsigned int)parent,
+        (long unsigned int)data);
     gui_start_vmess("gui_draw_configure_all", "xs",
         glist_getcanvas(owner), tagbuf);
-    svg_grouptogui(gl, template, x->sc_vec);
+    svg_grouptogui(gl, template, data);
     gui_end_vmess();
-    svg_register_events((t_gobj *)gl, owner, x, template, x->sc_vec);
+    svg_register_events((t_gobj *)gl, owner, x, template, data, parentarray);
     for (y = gl->gl_list; y; y = y->g_next)
     {
         if (pd_class(&y->g_pd) == canvas_class &&
             ((t_glist *)y)->gl_svg)
         {
-            scalar_group_configure(x, owner, template, (t_glist *)y, gl);
+            scalar_group_configure(x, owner, template, data, (t_glist *)y, gl,
+                0);
         }
         t_parentwidgetbehavior *wb = pd_getparentwidget(&y->g_pd);
         if (!wb) continue;
-        //(*wb->w_parentvisfn)(y, owner, gl, x, x->sc_vec, template,
-        //   0, 0, vis);
-        svg_parentwidgettogui(y, x, owner, x->sc_vec, template);
+        //(*wb->w_parentvisfn)(y, owner, gl, x, data, template,
+        //   0, 0, 0, vis);
+        svg_parentwidgettogui(y, x, owner, data, template);
+        svg_register_events(y, owner, x, template, data, parentarray);
     }
 }
 
@@ -839,14 +852,15 @@ void scalar_doconfigure(t_gobj *xgobj, t_glist *owner)
                 if (pd_class(&y->g_pd) == canvas_class &&
                     ((t_glist *)y)->gl_svg)
                 {
-                    scalar_group_configure(x, owner, template,
-                        (t_glist *)y, templatecanvas);
+                    scalar_group_configure(x, owner, template, x->sc_vec,
+                        (t_glist *)y, templatecanvas, 0);
                 }
                 continue;
             }
             //(*wb->w_parentvisfn)(y, owner, 0, x, x->sc_vec, template,
-            //    basex, basey, vis);
+            //    basex, basey, 0, vis);
             svg_parentwidgettogui(y, x, owner, x->sc_vec, template);
+            svg_register_events(y, owner, x, template, x->sc_vec, 0);
         }
         if (glist_isselected(owner, &x->sc_gobj))
         {
@@ -864,6 +878,47 @@ void scalar_configure(t_scalar *x, t_glist *owner)
     sys_queuegui(x, owner, scalar_doconfigure);
 }
 
+extern int is_plot_class(t_gobj *y);
+void array_configure(t_scalar *x, t_glist *owner, t_array *a, t_word *data)
+{
+    t_template *template = template_findbyname(x->sc_template);
+    t_template *elemtemplate = template_findbyname(a->a_templatesym);
+    t_canvas *templatecanvas = template_findcanvas(template);
+    t_canvas *elemtemplatecanvas = template_findcanvas(elemtemplate);
+    t_gobj *y;
+
+    for (y = templatecanvas->gl_list; y; y = y->g_next)
+    {
+        t_parentwidgetbehavior *wb = pd_getparentwidget(&y->g_pd);
+        if (wb && is_plot_class(y))
+        {
+            scalar_redraw(x, owner);
+            return;
+        }
+    }
+        /* If no plot widgets, it is now safe to just configure the individual
+           array elements. */
+    for (y = elemtemplatecanvas->gl_list; y; y = y->g_next)
+    {
+        t_parentwidgetbehavior *wb = pd_getparentwidget(&y->g_pd);
+        if (!wb)
+        {
+            /* check subpatches for more drawing commands.
+               (Optimized to only search [group] subpatches) */
+            if (pd_class(&y->g_pd) == canvas_class &&
+                ((t_glist *)y)->gl_svg)
+            {
+                scalar_group_configure(x, owner, template, data,
+                    (t_glist *)y, elemtemplatecanvas, a);
+            }
+            continue;
+        }
+        svg_parentwidgettogui(y, x, owner, data, elemtemplate);
+        svg_register_events(y, owner, x, elemtemplate, data, a);
+    }
+
+}
+
 static void scalar_groupvis(t_scalar *x, t_glist *owner, t_template *template,
     t_glist *gl, t_glist *parent, int vis)
 {
@@ -876,13 +931,14 @@ static void scalar_groupvis(t_scalar *x, t_glist *owner, t_template *template,
         char parentbuf[MAXPDSTRING];
         sprintf(parentbuf, "dgroup%lx.%lx", (long unsigned int)parent,
             (long unsigned int)x->sc_vec);
-        gui_start_vmess("gui_scalar_draw_group", "xss",
-            glist_getcanvas(owner), tagbuf, parentbuf);
+        gui_start_vmess("gui_scalar_draw_group", "xsss",
+            glist_getcanvas(owner), tagbuf, parentbuf,
+            group_gettype(gl)->s_name);
         svg_grouptogui(gl, template, x->sc_vec);
         gui_end_vmess();
 
         /* register events */
-        svg_register_events((t_gobj *)gl, owner, x, template, x->sc_vec);
+        svg_register_events((t_gobj *)gl, owner, x, template, x->sc_vec, 0);
     }
     for (y = gl->gl_list; y; y = y->g_next)
     {
@@ -894,32 +950,32 @@ static void scalar_groupvis(t_scalar *x, t_glist *owner, t_template *template,
         t_parentwidgetbehavior *wb = pd_getparentwidget(&y->g_pd);
         if (!wb) continue;
         (*wb->w_parentvisfn)(y, owner, gl, x, x->sc_vec, template,
-            0, 0, vis);
+            0, 0, 0, vis);
     }
 }
 
-/* At present, scalars have a three-level hierarchy in tkpath,
+/* At present, scalars have a three-level hierarchy in the gui,
    with two levels accessible by the user from within Pd:
    scalar - ".scalar%lx", x->sc_vec
-     |      tkpath group with matrix derived from x/y fields,
+     |      <g> with matrix derived from x/y fields,
      |      gop basexy, and gop scaling values. This group is
      |      not configurable by the user. This means that the
-     |      [draw group] below can ignore basexy and gop junk
+     |      a [draw g] below can ignore basexy and gop junk
      |      when computing the transform matrix.
      v
-   group  - ".dgroup%lx.%lx", templatecanvas, x->sc_vec
+   dgroup - ".dgroup%lx.%lx", templatecanvas, x->sc_vec
      |      group used as parent for all the toplevel drawing
      |      commands of the scalar (i.e., the ones located on
      |      the same canvas as the [struct]).  Its matrix and
-     |      options aren't yet accessible by the user.
+     |      options aren't accessible by the user.
      v
    (draw  - ".draw%lx.%lx", (t_draw *ptr), x->sc_vec
-     |      the actual drawing command: rectangle, path, etc.
+     |      the actual drawing command: rectangle, path, g, etc. 
      or     Each has its own matrix and options which can set
-   scelem   with messages to the corresponding [draw] object.
-     or   - ds arrays can nest arbitrarily deep. Scelem is for
-   group)   data structure arrays.  group is for more groups.
-     |
+   dgroup   with messages to the corresponding [draw] object.
+     |      Also, ds arrays have an additional group for the sake of
+     |      convenience.
+     |      Anything with "dgroup" is either [draw g] or [draw svg]
      v
     etc.
 
@@ -998,8 +1054,8 @@ static void scalar_vis(t_gobj *z, t_glist *owner, int vis)
         sprintf(tagbuf, "scalar%lxgobj", (long unsigned int)x->sc_vec);
         sprintf(groupbuf, "dgroup%lx.%lx", (long unsigned int)templatecanvas,
             (long unsigned int)x->sc_vec);
-        gui_vmess("gui_scalar_draw_group", "xss",
-            glist_getcanvas(owner), groupbuf, tagbuf);
+        gui_vmess("gui_scalar_draw_group", "xsss",
+            glist_getcanvas(owner), groupbuf, tagbuf, "g");
         pd_bind(&x->sc_gobj.g_pd, gensym(buf));
     }
 
@@ -1020,7 +1076,7 @@ static void scalar_vis(t_gobj *z, t_glist *owner, int vis)
             continue;
         }
         (*wb->w_parentvisfn)(y, owner, 0, x, x->sc_vec, template,
-            basex, basey, vis);
+            basex, basey, 0, vis);
     }
     if (!vis)
     {
@@ -1045,17 +1101,20 @@ static void scalar_vis(t_gobj *z, t_glist *owner, int vis)
 
 static void scalar_doredraw(t_gobj *client, t_glist *glist)
 {
-    scalar_vis(client, glist, 0);
-    scalar_vis(client, glist, 1);
-    if (glist_isselected(glist_getcanvas(glist), (t_gobj *)glist))
+    if (glist_isvisible(glist))
     {
-        //fprintf(stderr,"yes\n");
-        /* I still don't understand what this does... should probably
-           do some scalar gop tests to see if it is actually needed... */
-        //sys_vgui("pdtk_select_all_gop_widgets .x%lx %lx %d\n",
-        //    glist_getcanvas(glist), glist, 1);
+        scalar_vis(client, glist, 0);
+        scalar_vis(client, glist, 1);
+        if (glist_isselected(glist_getcanvas(glist), (t_gobj *)glist))
+        {
+            //fprintf(stderr,"yes\n");
+            /* I still don't understand what this does... should probably
+               do some scalar gop tests to see if it is actually needed... */
+            //sys_vgui("pdtk_select_all_gop_widgets .x%lx %lx %d\n",
+            //    glist_getcanvas(glist), glist, 1);
+        }
+        canvas_getscroll(glist_getcanvas(glist));
     }
-    canvas_getscroll(glist_getcanvas(glist));
 }
 
 void scalar_redraw(t_scalar *x, t_glist *glist)

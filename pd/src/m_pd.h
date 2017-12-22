@@ -11,10 +11,10 @@ extern "C" {
 #include <stdarg.h>
 
 #define PD_MAJOR_VERSION 0
-#define PD_MINOR_VERSION 47
+#define PD_MINOR_VERSION 48
 #define PD_BUGFIX_VERSION 0
 #define PD_TEST_VERSION ""
-#define PD_L2ORK_VERSION "2.2.3"
+#define PD_L2ORK_VERSION "2.4.6"
 #define PDL2ORK
 extern int pd_compatibilitylevel;   /* e.g., 43 for pd 0.43 compatibility */
 

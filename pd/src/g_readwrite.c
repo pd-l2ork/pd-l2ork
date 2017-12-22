@@ -402,6 +402,8 @@ void canvas_doaddtemplate(t_symbol *templatesym,
 
 static void glist_writelist(t_gobj *y, t_binbuf *b);
 
+void binbuf_savetext(t_binbuf *bfrom, t_binbuf *bto);
+
 void canvas_writescalar(t_symbol *templatesym, t_word *w, t_binbuf *b,
     int amarrayelement)
 {
@@ -779,6 +781,13 @@ static void canvas_saveto(t_canvas *x, t_binbuf *b)
                 (t_float)x->gl_pixwidth, (t_float)x->gl_pixheight,
                 (t_float)x->gl_isgraph);
     }
+        /* save a message if scrollbars are disabled-- otherwise do nothing
+           for the sake of backwards compatibility. */
+    if (x->gl_noscroll)
+        binbuf_addv(b, "ssi;", gensym("#X"), gensym("scroll"), x->gl_noscroll);
+        /* same for menu */
+    if (x->gl_nomenu)
+        binbuf_addv(b, "ssi;", gensym("#X"), gensym("menu"), x->gl_nomenu);
 }
 
 /* yuck, wish I didn't have to do this... */
@@ -885,7 +894,12 @@ static void canvas_savetofile(t_canvas *x, t_symbol *filename, t_symbol *dir,
 static void canvas_menusaveas(t_canvas *x, t_floatarg fdestroy)
 {
     t_canvas *x2 = canvas_getrootfor(x);
-    gui_vmess("gui_canvas_saveas", "xssi", x2, x2->gl_name->s_name, canvas_getdir(x2)->s_name, fdestroy != 0);
+    gui_vmess("gui_canvas_saveas", "xssi",
+        x2,
+        (strncmp(x2->gl_name->s_name, "Untitled", 8) ?
+            x2->gl_name->s_name : "title"),
+        canvas_getdir(x2)->s_name,
+        fdestroy != 0);
 }
 
 static void canvas_menusave(t_canvas *x, t_floatarg fdestroy)
