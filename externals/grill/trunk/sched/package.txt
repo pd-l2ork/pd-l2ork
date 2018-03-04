@@ -1,5 +1,0 @@
-NAME=sched
-
-SRCDIR=.
-
-SRCS= main.cpp

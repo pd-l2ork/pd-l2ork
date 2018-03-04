@@ -1,4 +1,0 @@
-NAME=audiocube
-BUILDTYPE=multi
-BUILDDIR=build
-SRCS=main.cpp

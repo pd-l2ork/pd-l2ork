@@ -1,4 +1,0 @@
-INCPATH=/I$(BONJOURSDK)\include /I$(BOOSTPATH)
-LIBPATH=/LIBPATH:$(BONJOURSDK)\lib
-
-LIBS=Ws2_32.lib dnssd.lib

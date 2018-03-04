@@ -133,8 +133,6 @@ LIB_TARGETS = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc
 
 # DISABLED: flatgui
 
-# NEW (IN-PROGRESS): flext
-
 # this is for libraries that don't compile (yet) on all platforms
 ifeq ($(OS_NAME),windows)
   LIB_TARGETS += gem
@@ -531,53 +529,6 @@ flatgui_install:
 
 flatgui_clean:
 	make -C $(externals_src)/flatgui clean
-
-#------------------------------------------------------------------------------#
-# FLEXT and FLEXT externals
-flext:
-	cd $(externals_src)/grill/trunk/flext && \
-	./bootstrap.sh || ./bootstrap.sh && \
-	./build.sh pd gcc build && \
-	./build.sh pd gcc build && \
-	./build.sh pd gcc build && \
-	./build.sh pd gcc install
-
-	#fluid~
-#	cd footils/fluid && \
-#	../../grill/trunk/flext/build.sh pd gcc build && \
-#	../../grill/trunk/flext/build.sh pd gcc build
-
-	#disis_munger~
-	cd ../l2ork_addons/disis_munger && \
-	../../externals/grill/trunk/flext/build.sh pd gcc build && \
-	../../externals/grill/trunk/flext/build.sh pd gcc build
-
-flext_install:
-	# we don't install flext but rather link it statically,
-	# so we only install statically linked externals
-
-	#fluid~
-#	cd footils/fluid && \
-#	install -D pd-linux/release-multi/fluid~.pd_linux $(DESTDIR)$(objectsdir)/flext/fluid~.pd_linux && \
-#	install -D pd/* $(DESTDIR)$(objectsdir)/flext/
-
-	#disis_munger~
-	cd ../l2ork_addons/disis_munger && \
-	install -D pd-linux/release-multi/disis_munger~.pd_linux $(DESTDIR)$(objectsdir)/flext/disis_munger~.pd_linux && \
-	install -D *help.pd $(DESTDIR)$(objectsdir)/flext/
-
-flext_clean:
-	#flext
-	cd grill/trunk/flext/ && \
-	./build.sh pd gcc clean
-
-	#fluid~
-#	cd footils/fluid && \
-#	../../grill/trunk/flext/build.sh pd gcc clean
-
-	#fluid~
-	cd ../l2ork_addons/disis_munger && \
-	../../externals/grill/trunk/flext/build.sh pd gcc clean
 
 #------------------------------------------------------------------------------#
 # FLIB

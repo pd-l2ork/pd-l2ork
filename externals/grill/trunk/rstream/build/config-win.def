@@ -1,8 +1,0 @@
-# where is the vorbis installation?
-VORBISPATH=c:\data\prog\audio\xiph\vorbis
-OGGPATH=c:\data\prog\audio\xiph\ogg
-
-# only for now.....
-PTHREADPATH=c:\data\prog\packs\pthreads
-
-

@@ -1,2 +1,0 @@
-#!/bin/sh
-ranlib /usr/local/pd/flext/*.a

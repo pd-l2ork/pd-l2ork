@@ -16,3 +16,9 @@
 [submodule "l2ork_addons/raspberry_pi/disis_gpio/wiringPi"]
 	path = l2ork_addons/raspberry_pi/disis_gpio/wiringPi
 	url = https://git.purrdata.net/jwilkes/wiringPi.git
+[submodule "externals/disis/flext"]
+	path = externals/disis/flext
+	url = https://git.purrdata.net/jwilkes/flext.git
+[submodule "externals/disis/stk"]
+	path = externals/disis/stk
+	url = https://github.com/thestk/stk.git

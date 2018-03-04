@@ -1,3 +1,0 @@
-BUILDDIR=build
-NAME=termination
-SRCS=main.cpp

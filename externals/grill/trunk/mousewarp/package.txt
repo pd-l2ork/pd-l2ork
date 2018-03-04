@@ -1,3 +1,0 @@
-NAME=mousewarp
-SRCS=main.cpp
-BUILDDIR=build

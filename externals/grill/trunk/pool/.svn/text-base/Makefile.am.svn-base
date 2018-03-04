@@ -1,5 +1,0 @@
-#
-# automake template
-#
-
-SUBDIRS = source

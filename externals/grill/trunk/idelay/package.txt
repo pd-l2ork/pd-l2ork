@@ -1,3 +1,0 @@
-NAME=idelay~
-HDRS=delay.h
-SRCS=delay.cpp

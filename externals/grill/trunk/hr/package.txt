@@ -1,3 +1,0 @@
-NAME=hr
-SRCS=hr_main.cpp
-HDRS=hr.h hr_ops.h hr_msg.h hr_sig.h

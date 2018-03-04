@@ -1,5 +1,0 @@
-<!ELEMENT pool (dir|value)*)>
-<!ELEMENT dir (key+,dir*,value*)>
-<!ELEMENT value (key+,data?)>
-<!ELEMENT key (#CDATA)>
-<!ELEMENT data (#CDATA)>

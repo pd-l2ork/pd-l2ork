@@ -1,5 +1,0 @@
-BUILDDIR=build
-BUILDTYPE=multi
-NAME=zconf
-SRCS=zconf.cpp zconf_service.cpp zconf_browse.cpp zconf_resolve.cpp zconf_domains.cpp zconf_meta.cpp
-HDRS=zconf.h
