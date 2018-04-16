@@ -80,8 +80,15 @@ endif
 #
 #==============================================================================#
 
-#bin_src = /usr/local/bin
-bin_src = /mingw32/bin
+TARGET_PLATFORM := $(shell uname -p)
+ifeq ($(TARGET_PLATFORM),i386)
+  bin_src = /mingw32/bin
+  lib_gcc = libgcc_s_dw2-1.dll
+else
+  bin_src = /mingw64/bin
+  lib_gcc = libgcc_s_seh-1.dll
+endif
+
 system32 = /c/WINDOWS/system32
 lib_install:
 # ultimately, the DLLs should be installed in %SystemRoot%\system32 by
@@ -143,7 +150,7 @@ endif
 	-install -p $(system32)/msvcr71.dll   $(DESTDIR)$(bindir)
 	#-install -p $(system32)/pthreadVC.dll $(DESTDIR)$(bindir)
 	install -p $(bin_src)/libwinpthread-1.dll $(DESTDIR)$(bindir)
-	install -p $(bin_src)/libgcc_s_dw2-1.dll $(DESTDIR)$(bindir)
+	install -p $(bin_src)/$(lib_gcc) $(DESTDIR)$(bindir)
 	install -p $(bin_src)/libstdc++-6.dll $(DESTDIR)$(bindir)
 ifneq ($(LIGHT),yes)
 # lyonpotpourri compiles its own shared lib. On Windows it needs to be
