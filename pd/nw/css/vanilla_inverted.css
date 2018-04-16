@@ -278,6 +278,15 @@ text {
     stroke: white;
 }
 
+.comment .border {
+    fill: none;
+}
+
+#patchsvg.editmode .comment .border {
+    stroke: white;
+    stroke-dasharray: 8 4;
+}
+
 /* A little hack for special canvas of [cnv].
    All other iemguis have a black border, but
    [cnv] sets its selection rectangle to the
@@ -377,6 +386,13 @@ text {
     position: fixed;
     bottom: 0;
     left: 0;
+}
+
+/* Dialog to ask to save the patch before quitting */
+#save_before_quit {
+    color: white;
+    background-color: black;
+    border:1px solid white;
 }
 
 /* Search dialog */

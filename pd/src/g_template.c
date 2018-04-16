@@ -1210,7 +1210,7 @@ typedef struct _draw
 typedef struct _drawimage
 {
     t_object x_obj;
-    t_fielddesc x_value; /* todo: rename to index */
+    t_fielddesc x_index;
     t_fielddesc x_vis;
     t_symbol *x_img;
     t_float x_w;
@@ -1963,6 +1963,18 @@ void svg_sendupdate(t_svg *x, t_canvas *c, t_symbol *s,
     {
         gui_vmess("gui_drawimage_index", "xxxi",
             glist_getcanvas(c), parent, data, drawimage_getindex(parent, template, data));
+    }
+    else if (s == gensym("image_xy"))
+    {
+        /* Hack to deal with x/y for sprite/image. They have an extra
+           container so that we don't have to deal with changing each
+           image in the sequence here. */
+        gui_vmess("gui_drawimage_xy", "xxxff",
+            glist_getcanvas(c), parent, data,
+            x->x_x.a_flag ?
+                fielddesc_getcoord(&x->x_x.a_attr, template, data, 0) : 0,
+            x->x_y.a_flag ?
+                fielddesc_getcoord(&x->x_y.a_attr, template, data, 0) : 0);
     }
     else if (s == gensym("viewbox"))
     {
@@ -3627,8 +3639,7 @@ static void svg_getrectrect(t_svg *x, t_glist *glist,
 
     t_float mtx1[3][3] = { {1, 0, 0}, {0, 1, 0}, {0, 0, 1} };
     t_float mtx2[3][3] = { {1, 0, 0}, {0, 1, 0}, {1, 0, 1} };
-    t_float m1, m2, m3, m4, m5, m6,
-            tx1, ty1, tx2, ty2, t5, t6;
+    t_float tx1, ty1, tx2, ty2, t5, t6;
     if (!fielddesc_getfloat(&x->x_bbox, template, data, 0) ||
         (x->x_vis.a_flag && !fielddesc_getfloat(&x->x_vis.a_attr,
             template, data, 0)))
@@ -3992,10 +4003,10 @@ static void svg_togui(t_svg *x, t_template *template, t_word *data)
         gui_f(fielddesc_getcoord(&x->x_rx.a_attr, template, data, 0));
     }
     if (x->x_ry.a_flag)
-        {
+    {
             gui_s(x->x_type == gensym("ellipse") ? "ry" : "y2");
             gui_f(fielddesc_getcoord(&x->x_ry.a_attr, template, data, 0));
-        }
+    }
     if (x->x_x.a_flag)
     {
         gui_s(x->x_type == gensym("rect") || x->x_type == gensym("svg") ? "x" :
@@ -4258,12 +4269,12 @@ static void draw_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
     }
 }
 
-static int draw_motion_field;
+//static int draw_motion_field;
 static t_float draw_motion_xcumulative;
-static t_float draw_motion_xbase;
+//static t_float draw_motion_xbase;
 static t_float draw_motion_xper;
 static t_float draw_motion_ycumulative;
-static t_float draw_motion_ybase;
+//static t_float draw_motion_ybase;
 static t_float draw_motion_yper;
 static t_glist *draw_motion_glist;
 static t_scalar *draw_motion_scalar;
@@ -4426,7 +4437,7 @@ static int draw_click(t_gobj *z, t_glist *glist,
             SETFLOAT(at+2, ypix - glist_ytopixels(glist, basey));
             t_float mtx1[3][3];
             t_float mtx2[3][3];
-            t_float m1, m2, m3, m4, m5, m6, tdx, tdy;
+            t_float m1, m2, m3, m4, m5, m6;
 
             t_svg *sa = (t_svg *)x->x_attr;
             /* might use this to output the ctm */
@@ -4518,8 +4529,7 @@ static void scalar_spelunkforword(void* word_candidate, t_template* template,
             if (t)
             {
                 int i, elemsize = wp->w_array->a_elemsize;
-                char *vec;
-                for(i = 0, vec = wp->w_array->a_vec; i < wp->w_array->a_n; i++)
+                for(i = 0; i < wp->w_array->a_n; i++)
                     scalar_spelunkforword(word_candidate, t,
                         (t_word *)(wp->w_array->a_vec + i * elemsize),
                             word_index, arrayp, datap);
@@ -6146,7 +6156,7 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
                         }
                     }
                     int mex1 = fielddesc_cvttocoord(xfielddesc, usexloc);
-                    t_float mey1 = fielddesc_cvttocoord(yfielddesc, minyval) - 1;
+                    //t_float mey1 = fielddesc_cvttocoord(yfielddesc, minyval) - 1;
                     int mex2 = fielddesc_cvttocoord(xfielddesc, xsum + x_inverse);
 
                     t_float mey2 = style == PLOTSTYLE_POINTS ?
@@ -6609,8 +6619,8 @@ static void *drawarray_new(t_symbol *s, int argc, t_atom *argv)
     t_svg *sa = (t_svg *)x->x_attr;
 
     x->x_canvas = canvas_getcurrent();
-    t_template *t = template_findbyname(
-        canvas_makebindsym(x->x_canvas->gl_name));
+    //t_template *t = template_findbyname(
+    //    canvas_makebindsym(x->x_canvas->gl_name));
 
     if (argc) fielddesc_setarrayarg(&x->x_data, argc--, argv++);
     else fielddesc_setfloat_const(&x->x_data, 1);
@@ -6679,51 +6689,6 @@ static int drawarray_readownertemplate(t_drawarray *x,
 
     return (0);
 }
-
-static void drawarray_getgrouprect(t_glist *glist, t_template *elemtemplate,
-    t_canvas *groupcanvas, int elemsize,
-    t_array *array, int i, t_float usexloc, t_float useyloc,
-    int *x1, int *y1, int *x2, int *y2)
-{
-    t_gobj *y;
-    for (y = groupcanvas->gl_list; y; y = y->g_next)
-    {
-        if (pd_class(&y->g_pd) == canvas_class &&
-            ((t_canvas *)y)->gl_svg)
-        {
-            drawarray_getgrouprect(glist, elemtemplate, (t_canvas *)y,
-                elemsize, array, i, usexloc, useyloc, x1, y1, x2, y2);
-        }
-        //fprintf(stderr,".-.-. usexloc %f useyloc %f "
-        //               "(alt %f %f)\n",
-        //  usexloc, useyloc,
-        //  basex + xloc +
-        //  fielddesc_cvttocoord(xfielddesc,
-        //      *(t_float *)(((char *)(array->a_vec) + elemsize * i)
-        //      + xonset)),
-        //  *(t_float *)(((char *)(array->a_vec) + elemsize * i) +
-        //  yonset));
-        int xx1, xx2, yy1, yy2;
-        t_parentwidgetbehavior *wb = pd_getparentwidget(&y->g_pd);
-        if (!wb) continue;
-        (*wb->w_parentgetrectfn)(y, glist,
-            (t_word *)((char *)(array->a_vec) + elemsize * i),
-                elemtemplate, usexloc, useyloc, 
-                    &xx1, &yy1, &xx2, &yy2);
-        //fprintf(stderr,"  .....drawarray_getrect %d %d %d %d\n",
-        //    xx1, yy1, xx2, yy2); 
-        if (xx1 < *x1)
-            *x1 = xx1;
-        if (yy1 < *y1)
-            *y1 = yy1;
-        if (xx2 > *x2)
-            *x2 = xx2;
-        if (yy2 > *y2)
-            *y2 = yy2;
-        //fprintf(stderr,"  ....drawarray_getrect %d %d %d %d\n",
-        //    x1, y1, x2, y2); 
-    }
-} 
 
 static void drawarray_getrect(t_gobj *z, t_glist *glist,
     t_word *data, t_template *template, t_float basex, t_float basey,
@@ -6821,10 +6786,10 @@ static void drawarray_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
     t_canvas *elemtemplatecanvas;
     t_template *elemtemplate;
     t_symbol *elemtemplatesym;
-    t_fielddesc *xfielddesc, *yfielddesc, *wfielddesc;
     /* Let's just set constant increment values and see how they
        play out before adding xinc and yinc to the public interface... */
-    t_float xinc = 40, yinc = 40, xsum, yval;
+    t_float xinc = 40, xsum, yval;
+    //t_float yinc = 40;
     t_array *array;
     int nelem;
     char *elem;
@@ -8060,6 +8025,7 @@ static void *drawimage_new(t_symbol *classsym, int argc, t_atom *argv)
     x->x_flags = flags;
     x->x_attr = (t_pd *)sa;
     fielddesc_setfloat_const(&x->x_vis, 1);
+    fielddesc_setfloat_const(&x->x_index, 1);
     x->x_canvas = canvas_getcurrent();
     t_symbol *dir = canvas_getdir(x->x_canvas);
     if (argc && argv->a_type == A_SYMBOL)
@@ -8073,11 +8039,12 @@ static void *drawimage_new(t_symbol *classsym, int argc, t_atom *argv)
     /* outlet for event notifications */
     outlet_new(&x->x_obj, &s_anything);
 
-    /* [drawimage] allocates memory for an image or image sequence
-       while the object is creating. The corresponding scalar gets
-       drawn as a canvas image item using the "parent" tk image as
-       the source. ".x%lx" is the name for the parent tk image and
-       ".x%lx.i" is the tag given to a scalar's canvas image item.
+    /* [drawimage] allocates memory for an image or image sequence in
+       the GUI. When we "vis" the scalar we fetch the data from the
+       loaded images in the sequence. Then we can change the image shown
+       by just sending an index to the GUI where it displays that particular
+       image in the sequence without having to touch I/O or even parse
+       image data and render a new image.
     */
     gui_vmess("gui_drawimage_new", "xssi",
         x,
@@ -8091,13 +8058,12 @@ void drawimage_size(t_drawimage *x, t_float w, t_float h)
 {
     x->x_w = w;
     x->x_h = h;
-    //post("w is %g and h is %g", w, h);
 }
 
 static int drawimage_getindex(void *z, t_template *template, t_word *data)
 {
     t_drawimage *x = (t_drawimage *)z;
-    int index = (int)fielddesc_getcoord(&x->x_value, template, data, 1);
+    int index = (int)fielddesc_getcoord(&x->x_index, template, data, 1);
     return (index);
 }
 
@@ -8110,7 +8076,7 @@ static void drawimage_index(t_drawimage *x, t_symbol *s, int argc,
         if (!(x->x_flags & DRAW_SPRITE))
             post("drawimage warning: sequence variable is only "
                  "used with drawsprite");
-        fielddesc_setfloatarg(&x->x_value, argc, argv);
+        fielddesc_setfloatarg(&x->x_index, argc, argv);
         svg_update((t_svg *)x->x_attr, gensym("index"));
     }
 }
@@ -8136,19 +8102,30 @@ void drawimage_symbol(t_drawimage *x, t_symbol *s)
    attributes to the parent <g> for convenience, but <g> has no x/y atty.
 
    We could just forward everything to the child <image> element, but that
-   could get clunky when dealing with large image sequences. So for now we
-   just disallow setting the x/y with the knowledge that the user can get
-   the same functionality using a transform. */
-static void drawimage_x(t_drawimage *x, t_symbol *s, int argc,
-    t_atom *argv)
-{
-    pd_error(x, "draw: x attribute for image type not supported");
-}
+   could get clunky when dealing with large image sequences.
 
-static void drawimage_y(t_drawimage *x, t_symbol *s, int argc,
+   So for now we hack around this by adding a <g> above our parent <g>, then
+   converting the x/y in the GUI to a transform for that <g>. This is ugly
+   and gets in the way of the interface built here, but it should work.
+*/
+static void drawimage_xy(t_drawimage *x, t_symbol *s, int argc,
     t_atom *argv)
 {
-    pd_error(x, "draw: y attribute for image type not supported");
+    t_svg *sa = (t_svg *)x->x_attr;
+    t_svg_attr *attr = svg_getattr(sa, s);
+    if (!attr)
+    {
+        pd_error(x, "draw: can't find attribute %s", s->s_name);
+        return;
+    }
+    if (argc < 1)
+        attr->a_flag = 0;
+    else if (argv[0].a_type == A_FLOAT || argv[0].a_type == A_SYMBOL)
+    {
+        fielddesc_setfloatarg(&attr->a_attr, argc, argv);
+        attr->a_flag = 1;
+        svg_update(sa, gensym("image_xy"));
+    }
 }
 
 static void drawimage_anything(t_drawimage *x, t_symbol *s, int argc,
@@ -8309,7 +8286,7 @@ static void drawimage_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
             yloc,
             x,
             data,
-            (int)fielddesc_getfloat(&x->x_value, template, data, 0),
+            (int)fielddesc_getfloat(&x->x_index, template, data, 0),
             parent_tagbuf);
 
         gui_start_vmess("gui_draw_configure_all", "xs",
@@ -8343,7 +8320,7 @@ static void drawimage_motion(void *z, t_floatarg dx, t_floatarg dy)
 {
     t_drawimage *x = (t_drawimage *)z;
     t_svg *sa = (t_svg *)x->x_attr;
-    t_fielddesc *f = &x->x_value;
+    t_fielddesc *f = &x->x_index;
     t_atom at;
     if (!gpointer_check(&drawimage_motion_gpointer, 0))
     {
@@ -8455,7 +8432,7 @@ static int drawimage_click(t_gobj *z, t_glist *glist,
         data, template, basex, basey,
         &x1, &y1, &x2, &y2);
     if (xpix >= x1 && xpix <= x2 && ypix >= y1 && ypix <= y2
-        && x->x_value.fd_var &&
+        && x->x_index.fd_var &&
             fielddesc_getfloat(&x->x_vis, template, data, 0))
     {
         if (doit)
@@ -8467,7 +8444,7 @@ static int drawimage_click(t_gobj *z, t_glist *glist,
             drawimage_motion_array = ap;
             drawimage_motion_firstkey = 1;
             drawimage_motion_ycumulative =
-                fielddesc_getfloat(&x->x_value, template, data, 0);
+                fielddesc_getfloat(&x->x_index, template, data, 0);
             drawimage_motion_sprite = ((x->x_flags & DRAW_SPRITE) != 0);
             if (drawimage_motion_scalar)
                 gpointer_setglist(&drawimage_motion_gpointer, 
@@ -8499,20 +8476,17 @@ static void drawimage_free(t_drawimage *x)
     //sprintf(buf, ".x%lx", (t_int)x);
     sprintf(buf, "x%lx", (long unsigned int)x);
     pd_unbind(&x->x_obj.ob_pd, gensym(buf));
-    gui_vmess("gui_drawimage_free", "x", x);
+    gui_vmess("gui_image_free", "x", x);
 }
 
 static void drawimage_setup(void)
 {
-    /* we need drawimage_class in order to get
-       a different set of widget behavior than
-       draw_class. But we also want to use the
-       [draw shape] syntax for consistency. So
-       for class_new we set the constructor to
-       zero and call drawimage_new from inside
-       draw_new. This way the user has to type
-       "draw image" or "draw sprite" to create
-       the objects. */
+    /* we need drawimage_class in order to get a different set of
+       widget behavior than draw_class. But we also want to use the
+       [draw shape] syntax for consistency. So for class_new we set
+       the constructor to zero and call drawimage_new from inside
+       draw_new. This way the user has to type "draw image" or "draw sprite"
+       to create the objects. */
     drawimage_class = class_new(gensym("drawimage"),
         0, (t_method)drawimage_free,
         sizeof(t_drawimage), 0, A_GIMME, 0);
@@ -8523,9 +8497,9 @@ static void drawimage_setup(void)
         gensym("size"), A_FLOAT, A_FLOAT, 0);
     class_addmethod(drawimage_class, (t_method)drawimage_index,
         gensym("index"), A_GIMME, 0);
-    class_addmethod(drawimage_class, (t_method)drawimage_x,
+    class_addmethod(drawimage_class, (t_method)drawimage_xy,
         gensym("x"), A_GIMME, 0);
-    class_addmethod(drawimage_class, (t_method)drawimage_y,
+    class_addmethod(drawimage_class, (t_method)drawimage_xy,
         gensym("y"), A_GIMME, 0);
     class_addanything(drawimage_class, drawimage_anything);
     class_setparentwidget(drawimage_class, &drawimage_widgetbehavior);
@@ -8536,7 +8510,6 @@ static void drawimage_setup(void)
 t_template *canvas_findtemplate(t_canvas *c)
 {
     t_gobj *g;
-    t_symbol *s1 = gensym("struct");
     for (g = c->gl_list; g; g = g->g_next)
     {
         if (pd_class(&g->g_pd) == gtemplate_class)
@@ -8637,6 +8610,12 @@ void svg_parentwidgettogui(t_gobj *z, t_scalar *sc, t_glist *owner,
         gui_vmess("gui_drawimage_index", "xxxi",
             glist_getcanvas(owner), x, data,
             drawimage_getindex(x, template, data));
+        gui_vmess("gui_drawimage_xy", "xxxff",
+            glist_getcanvas(owner), x, data,
+            fielddesc_getcoord(&((t_svg *)x->x_attr)->x_x.a_attr,
+                template, data, 0),
+            fielddesc_getcoord(&((t_svg *)x->x_attr)->x_y.a_attr,
+                template, data, 0));
     }
     else if (pd_class(&z->g_pd) == curve_class)
     {

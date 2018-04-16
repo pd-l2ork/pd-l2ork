@@ -1,18 +1,19 @@
 ## Pd-L2Ork
 
-maintainer: Ivica Ico Bukvic <ico@vt.edu>
+maintainers:
 
-maintainer: Albert Graef <aggraef@gmail.com>
-
-maintainer: Jonathan Wilkes <jancsika@yahoo.com>
+* Ivica Ico Bukvic <ico@vt.edu>
+* Albert Graef <aggraef@gmail.com>
+* Jonathan Wilkes <jancsika@yahoo.com>
 
 [Mailing List](http://disis.music.vt.edu/cgi-bin/mailman/listinfo/l2ork-dev)
 
+* [Downloads](#downloads)
 * [One Paragraph Overview](#one-paragraph-overview)
-* [Flavors of Pure Data](#flavors-of-pure-data)
 * [Three Paragraph Overview](#three-paragraph-overview)
 * [Goals](#goals)
-* [Downloads](#downloads)
+* [User Guide](#user-guide)
+* [Relationship of Purr Data to Pure Data](#relationship-of-purr-data-to-pure-data)
 * [Build Guide](#build-guide)
   * [Gnu/Linux](#linux)
   * [OSX](#osx-64-bit-using-homebrew)
@@ -29,20 +30,6 @@ Pure Data (aka Pd) is a visual programming language.  That means you can use it 
 create software graphically by drawing diagrams instead of writing lines of
 code.  These diagrams show how data flows through the software, displaying on
 the screen what text-based languages require you to piece together in your mind.
-
-### Flavors of Pure Data
-
-There are three maintained distributions of Pure Data:
-
-1. Purr Data. This is the 2.0 version of Pd-l2ork. It ships with lots of
-   external libraries and uses a modern GUI written using HTML5.
-2. Pd-L2Ork 1.0, the version used by Ivica Bukvic for his laptop orchestra.
-   Pd-l2ork 1.0 uses tcl/tk (and tkpath) for the GUI. You can find it
-   [here](http://l2ork.music.vt.edu/main/make-your-own-l2ork/software/)
-3. Pure Data "Vanilla".  Miller Puckette's personal version which he hosts on
-   his website and maintains.  It doesn't come with external libraries
-   pre-installed, but it does include an interface you can use to search
-   and install external libraries maintained and packaged by other developers.
 
 ### Three Paragraph Overview
 
@@ -76,14 +63,50 @@ Pd-L2ork has the following goals:
    documentation.  We like documentation, so it follows that we like consistent
    interfaces.
 
+### User Guide
+
+For a more in-depth look at Purr Data for new users and developers, see:
+
+[https://agraef.github.io/purr-data-intro/Purr-Data-Intro.html](https://agraef.github.io/purr-data-intro/Purr-Data-Intro.html)
+
+For more resources see:
+
+[https://agraef.github.io/purr-data/](https://agraef.github.io/purr-data/)
+
+### Relationship of Purr Data to Pure Data
+
+There are three maintained distributions of Pure Data:
+
+1. Purr Data. This is the 2.0 version of Pd-l2ork. It ships with lots of
+   external libraries and uses a modern GUI written using HTML5.
+2. Pd-L2Ork 1.0, the version used by Ivica Bukvic for his laptop orchestra.
+   Pd-l2ork 1.0 uses tcl/tk (and tkpath) for the GUI. You can find it
+   [here](http://l2ork.music.vt.edu/main/make-your-own-l2ork/software/)
+3. Pure Data "Vanilla".  Miller Puckette's personal version which he hosts on
+   his website and maintains.  It doesn't come with external libraries
+   pre-installed, but it does include an interface you can use to search
+   and install external libraries maintained and packaged by other developers.
+
 ### Downloads
 
-You can download a precompiled installer for Gnu/Linux, Windows, or OSX
-from the following site:
+For Ubuntu PPAs and Arch AUR:
+
+[https://agraef.github.io/purr-data/#jgu-packages](https://agraef.github.io/purr-data/#jgu-packages)
+
+Packages for Gnu/Linux, Windows, and OSX:
 
 [https://github.com/jonwwilkes/purr-data/releases](https://github.com/jonwwilkes/purr-data/releases)
-
+ 
 ### Build Guide
+
+**NOTE:** The instructions below talk about running the `tar_em_up.sh` build
+script, which is still the recommended way to build Purr Data right now.
+However, Purr Data also has a new (and experimental) toplevel Makefile so that
+just typing `make` will build the package. You may find this easier. The
+Makefile also offers the customary targets to clean (`make clean`, or
+`make realclean` to put the sources in pristine state again) and to roll a
+self-contained distribution tarball (`make dist`). Please check the comments
+at the beginning of the Makefile for more information.
 
 #### Linux
 
@@ -92,22 +115,19 @@ Hard drive space required: *roughly 2.5 GB*
 
 1. Install the dependencies
 
-        sudo apt-get install bison flex automake qjackctl \
-             tcl8.5-dev tk8.5-dev tcl-dev tk-dev libasound2-dev \
+        sudo apt-get install bison flex automake libasound2-dev \
              libjack-jackd2-dev libtool libbluetooth-dev libgl1-mesa-dev \
              libglu1-mesa-dev libglew-dev libmagick++-dev libftgl-dev \
              libgmerlin-dev libgmerlin-avdec-dev libavifile-0.7-dev \
              libmpeg3-dev libquicktime-dev libv4l-dev libraw1394-dev \
              libdc1394-22-dev libfftw3-dev libvorbis-dev ladspa-sdk \
-             dssi-dev tap-plugins ladspa-foo-plugins \
-             invada-studio-plugins-ladspa blepvco swh-plugins mcp-plugins \
-             cmt blop slv2-jack omins ubuntustudio-audio-plugins rev-plugins \
+             dssi-dev tap-plugins invada-studio-plugins-ladspa blepvco \
+             swh-plugins mcp-plugins cmt blop slv2-jack omins rev-plugins \
              libslv2-dev dssi-utils vco-plugins wah-plugins fil-plugins \
              mda-lv2 libmp3lame-dev libspeex-dev libgsl0-dev \
-             portaudio19-dev python-dev libsmpeg0 libjpeg62 tkpng flite1-dev \
-             libgsm1-dev libfftw3-dev libgtk2.0-dev subversion git libstk0-dev \
-             libsndobj-dev libfluidsynth-dev tclxapian fluid-soundfont-gm \
-             python-tk byacc
+             portaudio19-dev liblua5.3-dev python-dev libsmpeg0 libjpeg62-turbo \
+             flite1-dev libgsm1-dev libgtk2.0-dev git libstk0-dev \
+             libsndobj-dev libfluidsynth-dev fluid-soundfont-gm byacc
 
 2. Clone the Purr-Data repository *(10 minutes)*
 
@@ -156,6 +176,7 @@ Hard drive space required: *roughly 2 GB*
         brew install libtool
         brew install fftw
         brew install python
+        brew install lua
         brew install fluidsynth
         brew install lame
         brew install libvorbis
@@ -260,22 +281,35 @@ Contributing is easy:
 
 1. Join the development list:
    http://disis.music.vt.edu/cgi-bin/mailman/listinfo/l2ork-dev
-2. Tell us what you'd like to work on. There are lots of possibilities. For 
-   example, there are _lots_ of externals and even core features that are
-   poorly documented.
-3. _No prototypes, please_. Purr Data's biggest strength is that users can
-   turn an idea into working code very quickly. But a prototyping language that 
-   is itself a prototype isn't very useful. That means Purr Data's core code
-   and libraries must be stable, consistent, well-documented, and easy to use.
-4. Develop incrementally. Small, solid improvements to the software are
-   preferable to large, disruptive ones.
-5. Make sure you aren't duplicating existing functionality, especially core
-   functionality. For backwards compatibility Purr Data ships many legacy
-   libraries which unfortunately duplicate the same functionality. This makes
-   it harder to learn how to use Pd, and makes it burdensome to read patches
-   and keep track of all the disparate implementations.
-6. Send us a merge request and we'll test it. If it's well-documented and
-   there aren't any bugs we'll add it to the software.
+2. Fork Purr Data using the gitlab UI and then try to build it from source
+   for your own platform using the [Build Guide](#build-guide) above. 
+   If you run into problems ask on the development list for help.
+3. Once you have successfully built Purr Data, install it and make sure it
+   runs correctly.
+4. Start making changes to the code with brief, clear commit messages. If you
+   want some practice you can try fixing one of the bugs on the issue tracker
+   labeled
+   ["good-first-bug"](https://git.purrdata.net/jwilkes/purr-data/issues?label_name%5B%5D=good-first-bug)
+5. One you are done fixing the bug or adding your feature, make a merge request
+   in the Gitlab UI so we can merge the fix for the next release.
+
+A few guidelines:
+* _No prototypes, please_. Purr Data's biggest strength is that users can
+  turn an idea into working code very quickly. But a prototyping language that 
+  is itself a prototype isn't very useful. That means Purr Data's core code
+  and libraries must be stable, consistent, well-documented, and easy to use.
+* Develop incrementally. Small, solid improvements to the software are
+  preferable to large, disruptive ones.
+* Try not to duplicate existing functionality.
+  For backwards compatibility Purr Data ships many legacy
+  libraries which unfortunately duplicate the same functionality. This makes
+  it harder to learn how to use Pd, and makes it burdensome to read patches
+  and keep track of all the disparate implementations.
+* Keep dependencies to a minimum. Cross-platform dependency handling is
+  unfortunately still an open research problem. In the even that you need
+  an external library dependency, please mirror it at git.purrdata.net
+  so that the build system doesn't depend on the availability of external
+  infrastructure.
 
 Here are some of the current tasks:
 
@@ -297,6 +331,8 @@ Here are some of the current tasks:
   * status: some externals have their own testing environments, but they are
     limited as they require manual intervention to run and read the
     results inside a graphical window.
+    We currently have a crude test system that at least ensures that each
+    external library instantiates without crashing.
     Here's an email thread with Katja Vetter's design, which looks to
     be automatable:
     http://markmail.org/message/t7yitfc55anus76i#query:+page:1+mid:chb56ve7kea2qumn+state:results
@@ -354,7 +390,7 @@ The following is adapted from Pd Vanilla's original source notes.  (Found
 in pd/src/CHANGELOG.txt for some reason...)
 
 Sections 2-3 below are quite old.  Someone needs to check whether they even
-hold true for Pd Vanilla any more.
+hold true for Pd Vanilla anymore.
 
 #### Structure definition roadmap.
 
@@ -364,19 +400,19 @@ and t_graph and t_canvas, should be unified...)
 
 BEFORE 0.35:
 
-    m_pd.h	    t_pd    	    	    anything with a class
-                    t_gobj	    	    "graphic object"
-                        t_text  	    text object
-    g_canvas.h  
-                        t_glist 	    list of graphic objects
-    g_canvas.c  	    	t_canvas    Pd "document"
+    m_pd.h      t_pd                        anything with a class
+                    t_gobj                  "graphic object"
+                        t_text              text object
+    g_canvas.h
+                        t_glist             list of graphic objects
+    g_canvas.c              t_canvas        Pd "document"
 
 AFTER 0.35:
 
-    m_pd.h	    t_pd    	    	    anything with a class
-                    t_gobj	    	    "graphic object"
-                        t_text  	    patchable object, AKA t_object
-    g_canvas.h     	    	t_glist     list of graphic objects, AKA t_canvas
+    m_pd.h      t_pd                        anything with a class
+                    t_gobj                  "graphic object"
+                        t_text              patchable object, AKA t_object
+    g_canvas.h              t_glist         list of graphic objects, AKA t_canvas
 
 Other structures:
 
@@ -390,7 +426,7 @@ Other structures:
 #### 1. Coding Style
 
 1.0  C coding style.  The source should pass most "warnings" of C compilers
-(-Wall on linux, for instance; see the makefile.)  Some informalities
+(-Wall on Linux, for instance-- see the makefile.)  Some informalities
 are intentional, for instance the loose use of function prototypes (see
 below) and uncast conversions from longer to shorter numerical formats.
 The code doesn't respect "const" yet.
@@ -483,7 +519,7 @@ which are all frequently called and which don't fit into simple categories.
 Important packages are:
 
     (pd-gui:)   pdgui -- everything
-    (pd:)	    pd -- functions common to all "pd" objects
+    (pd:)       pd -- functions common to all "pd" objects
                 obj -- fuctions common to all "patchable" objects ala Max
                 sys -- "system" level functions
                 binbuf -- functions manipulating binbufs

@@ -16,6 +16,7 @@ DefaultDirName={pf}\Purr Data
 DefaultGroupName=Purr Data
 LicenseFile=..\gpl-3.0.txt
 DisableWelcomePage=no
+UninstallDisplayIcon={app}\lib\pdPatch_catGraphics.ico
 
 Compression=lzma/ultra
 ChangesAssociations=true
@@ -183,8 +184,11 @@ Root: HKCU; SubKey: SOFTWARE\Purr-Data; ValueType: string; ValueName: loadlib33;
 Root: HKLM; SubKey: SOFTWARE\Purr-Data; ValueType: string; ValueName: loadlib34; ValueData: lyonpotpourri; Tasks: libs; Flags: uninsdeletekey
 Root: HKCU; SubKey: SOFTWARE\Purr-Data; ValueType: string; ValueName: loadlib34; ValueData: lyonpotpourri; Tasks: libs; Flags: uninsdeletekey
 
-Root: HKLM; SubKey: SOFTWARE\Purr-Data; ValueType: string; ValueName: nloadlib; ValueData: 34; Tasks: libs; Flags: uninsdeletekey
-Root: HKCU; SubKey: SOFTWARE\Purr-Data; ValueType: string; ValueName: nloadlib; ValueData: 34; Tasks: libs; Flags: uninsdeletekey
+Root: HKLM; SubKey: SOFTWARE\Purr-Data; ValueType: string; ValueName: loadlib35; ValueData: pdlua; Tasks: libs; Flags: uninsdeletekey
+Root: HKCU; SubKey: SOFTWARE\Purr-Data; ValueType: string; ValueName: loadlib35; ValueData: pdlua; Tasks: libs; Flags: uninsdeletekey
+
+Root: HKLM; SubKey: SOFTWARE\Purr-Data; ValueType: string; ValueName: nloadlib; ValueData: 35; Tasks: libs; Flags: uninsdeletekey
+Root: HKCU; SubKey: SOFTWARE\Purr-Data; ValueType: string; ValueName: nloadlib; ValueData: 35; Tasks: libs; Flags: uninsdeletekey
 
 Root: HKLM; SubKey: SOFTWARE\Purr-Data; ValueType: none; ValueName: loadlib36; Tasks: libs; Flags: uninsdeletekey
 Root: HKCU; SubKey: SOFTWARE\Purr-Data; ValueType: none; ValueName: loadlib36; Tasks: libs; Flags: uninsdeletekey
@@ -695,6 +699,7 @@ OutputExeFilename=Output\PACKAGE_NAME.exe
 ;-----------------------------------------------------------------------------
 ; packages\win32_inno
 Source: pdpatch.ico; DestDir: {app}\lib
+Source: pdPatch_catGraphics.ico; DestDir: {app}\lib
 Source: pd.ico; DestDir: {app}\lib
 ;
 ;

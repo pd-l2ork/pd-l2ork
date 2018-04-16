@@ -14,7 +14,7 @@ extern "C" {
 #define PD_MINOR_VERSION 48
 #define PD_BUGFIX_VERSION 0
 #define PD_TEST_VERSION ""
-#define PD_L2ORK_VERSION "2.4.6"
+#define PD_L2ORK_VERSION "2.5.1"
 #define PDL2ORK
 extern int pd_compatibilitylevel;   /* e.g., 43 for pd 0.43 compatibility */
 
@@ -360,6 +360,7 @@ EXTERN void binbuf_restore(t_binbuf *x, int argc, t_atom *argv);
 EXTERN void binbuf_print(t_binbuf *x);
 EXTERN int binbuf_getnatom(t_binbuf *x);
 EXTERN t_atom *binbuf_getvec(t_binbuf *x);
+EXTERN int binbuf_resize(t_binbuf *x, int newsize);
 EXTERN void binbuf_eval(t_binbuf *x, t_pd *target, int argc, t_atom *argv);
 EXTERN int binbuf_read(t_binbuf *b, char *filename, char *dirname,
     int crflag);

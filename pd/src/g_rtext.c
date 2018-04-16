@@ -205,6 +205,7 @@ static int lastone(char *s, int c, int n)
 flag is set from the GUI if this happens.  LATER take this out: early 2006? */
 
 extern int sys_oldtclversion;           
+extern int is_dropdown(t_text *x);
 
 static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
     int *indexp)
@@ -212,7 +213,6 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
     //fprintf(stderr,"rtext_senditup <%s>\n", x->x_buf);
     if (x)
     {
-        t_float dispx, dispy;
         char smallbuf[200] = { '\0' }, *tempbuf;
         int outchars_b = 0, nlines = 0, ncolumns = 0,
             pixwide, pixhigh, font, fontwidth, fontheight, findx, findy;
@@ -323,8 +323,6 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
         }
         if (!reportedindex)
             *indexp = outchars_b;
-        dispx = text_xpix(x->x_text, x->x_glist);
-        dispy = text_ypix(x->x_text, x->x_glist);
         if (nlines < 1) nlines = 1;
         if (!widthspec_c)
         {
@@ -383,11 +381,16 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
             // pd_canvas.html.  I could remove the conditional, but
             // this part of Pd is convoluted enough that I'm not sure
             // if there'd be any side effects.
-            if (glist_isvisible(x->x_glist) && (pixwide != x->x_drawnwidth ||
+            // Additionally we avoid redrawing the border here for the
+            // dropdown_class as that has its own special width handling.
+            if (glist_isvisible(x->x_glist) && !is_dropdown(x->x_text) &&
+                (pixwide != x->x_drawnwidth ||
                 pixhigh != x->x_drawnheight ||
                 x->x_text->te_type == T_MESSAGE)) 
+            {
                 text_drawborder(x->x_text, x->x_glist, x->x_tag,
                     pixwide, pixhigh, 0);
+            }
             if (x->x_active)
             {
                 if (selend_b > selstart_b)
