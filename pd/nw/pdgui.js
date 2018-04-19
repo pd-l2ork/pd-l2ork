@@ -5605,3 +5605,159 @@ function gui_pddplink_open(filename, dir) {
         post("pddplink: error: file not found: " + filename);
     }
 }
+
+// Stuff from m_binbuf.c ported to js
+
+function binbuf_text(str) {
+    var binbuf = [];
+    var token = "";
+    var whitespace = function(c) {
+        return (c == " " || c == "\n" || c == "\r" || c == "\t");
+    };
+    var floatstate = 0, slash = false, lastslash = false, dollar = false;
+    var digit, dot, plusminus, minus, expon;
+
+    str.split("").forEach(function(c, i, a) {
+        // Skip leading/trailing whitespace. String.trim also trims
+        // non-breaking spaces which Pd doesn't do, so we avoid that for now
+        if (!slash && whitespace(c)) {
+            return;
+        }
+
+        if (!slash && c === ";") {
+            token = { type: "semi" };
+            a.push(token);
+        } else if (!slash && c === ",") {
+            token = { type: "semi" };
+            a.push(token);
+        } else {
+            lastslash = slash;
+            slash = (c === "\\");
+            if (floatstate >= 0)
+            {
+                digit = (c >= "0" && c <= "9");
+                dot = (c == ".");
+                minus = (c == "-");
+                plusminus = (minus || (c == "+"));
+                expon = (c == "e" || c == "E");
+                if (floatstate == 0)    /* beginning */
+                {
+                    if (minus) floatstate = 1;
+                    else if (digit) floatstate = 2;
+                    else if (dot) floatstate = 3;
+                    else floatstate = -1;
+                }
+                else if (floatstate == 1)   /* got minus */
+                {
+                    if (digit) floatstate = 2;
+                    else if (dot) floatstate = 3;
+                    else floatstate = -1;
+                }
+                else if (floatstate == 2)   /* got digits */
+                {
+                    if (dot) floatstate = 4;
+                    else if (expon) floatstate = 6;
+                    else if (!digit) floatstate = -1;
+                }
+                else if (floatstate == 3)   /* got '.' without digits */
+                {
+                    if (digit) floatstate = 5;
+                    else floatstate = -1;
+                }
+                else if (floatstate == 4)   /* got '.' after digits */
+                {
+                    if (digit) floatstate = 5;
+                    else if (expon) floatstate = 6;
+                    else floatstate = -1;
+                }
+                else if (floatstate == 5)   /* got digits after . */
+                {
+                    if (expon) floatstate = 6;
+                    else if (!digit) floatstate = -1;
+                }
+                else if (floatstate == 6)   /* got 'e' */
+                {
+                    if (plusminus) floatstate = 7;
+                    else if (digit) floatstate = 8;
+                    else floatstate = -1;
+                }
+                else if (floatstate == 7)   /* got plus or minus */
+                {
+                    if (digit) floatstate = 8;
+                    else floatstate = -1;
+                }
+                else if (floatstate == 8)   /* got digits */
+                {
+                    if (!digit) floatstate = -1;
+                }
+            }
+            if (!lastslash && c == "$" && (i < (a.length - 1) &&
+                (a[i+1].charCodeAt(0) >= 48 && a[i+1].charCodeAt(0) <= 57) ||
+                a[i+1] == "@")) {
+                    dollar = true;
+            }
+            if (!slash) {
+                token += c;
+            }
+            else if (lastslash) {
+                token += c;
+                slash = false;
+            }
+        }
+        // If we got a full token let's push it
+        if (!slash && (i == a.length - 1 || whitespace(a[i+1]))) {
+            if (floatstate == 2 || floatstate == 4 || floatstate == 5 ||
+                floatstate == 8) {
+                binbuf.push({
+                    type: "float",
+                    value: token
+                });
+            } else if (dollar) {
+                if (token.charAt(1) == "@")
+                {
+                    if (token == "$@") {
+                        binbuf.push({
+                            type: "dollar",
+                            value: "@"
+                        });
+                    } else {
+                        binbuf.push({
+                            type: "symbol",
+                            value: token
+                        });
+                    }
+                }
+                else
+                {
+                    if (token.charAt(0) != '$')
+                        dollar = false;
+                    token.slice(1).split("").forEach(function(c){
+                        if (c.charCodeAt(0) < 48 || c.charCodeAt(0) > 57) {
+                            dollar = false;
+                        }
+                    });
+                    if (dollar) {
+                        binbuf.push({
+                            type: "dollar",
+                            value: token.slice(1)
+                        });
+                    } else {
+                        binbuf.push({
+                            type: "dollsym",
+                            value: token
+                        });
+                    }
+                }
+            } else {
+                binbuf.push({
+                    type: "symbol",
+                    value: token
+                });
+            }
+            floatstate = 0, dollar = false, token = "";
+        }
+    });
+    return binbuf;
+}
+
+exports.binbuf_text = binbuf_text;
