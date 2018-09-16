@@ -192,7 +192,7 @@ raspbian_stretch_armv7l_deb:
      - echo "" | sudo -S DEBIAN_FRONTEND=noninteractive apt-get -qq -y upgrade > /dev/null
      - echo `pwd`
      - cd l2ork_addons
-     - CFLAGS="-DPD_FLOATSIZE=64 "./tar_em_up.sh -r
+     - CFLAGS="-DPD_FLOATSIZE=64" ./tar_em_up.sh -r
      - cd ..
      - echo "" | sudo -S DEBIAN_FRONTEND=noninteractive dpkg --force-all -i pd-l2ork*.deb > /dev/null
      - valgrind pd-l2ork -noprefs -nostdpath -nogui -nrt -noaudio -send "init dollarzero \$0" scripts/regression_tests.pd
