@@ -1,0 +1,37 @@
+#N canvas 615 60 534 596 12;
+#X obj 46 21 inlet;
+#X obj 46 383 r \$0-test;
+#X obj 46 410 list split 3;
+#X obj 46 435 unpack 0 0 0;
+#X obj 46 498 ==;
+#X obj 46 527 list append;
+#X obj 46 552 outlet;
+#X obj 46 46 t b b;
+#X obj 78 152 send pd;
+#X obj 46 467 pow;
+#X msg 46 180 \; \$0-test 2 2 4 standard positive base and positive
+exponent \; \$0-test 0 2 0 bash to zero with zero base and positive
+exponent \; \$0-test 0 -2 0 bash to zero with zero base and negative
+exponent \; \$0-test 2 -2 0.25 standard positive base and negative
+exponent \; \$0-test -2 -2 0.25 standard negative base and negative
+exponent \; \$0-test -2 2 4 standard with negative base and positive
+exponent;
+#X msg 78 127 compatibility 0.49;
+#X text 99 21 Code coverage test for compatibility with the 0.49 Vanilla
+pow behavior. We use the "compatibility" message to set compatibility
+to 0.49. Our testing framework makes sure to set compatibility back
+to the recent version. We might want to generalize this test for more
+tilde unit tests later...;
+#X connect 0 0 7 0;
+#X connect 1 0 2 0;
+#X connect 2 0 3 0;
+#X connect 2 1 5 1;
+#X connect 3 0 9 0;
+#X connect 3 1 9 1;
+#X connect 3 2 4 1;
+#X connect 4 0 5 0;
+#X connect 5 0 6 0;
+#X connect 7 0 10 0;
+#X connect 7 1 11 0;
+#X connect 9 0 4 0;
+#X connect 11 0 8 0;
