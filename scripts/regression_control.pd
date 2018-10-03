@@ -1,9 +1,9 @@
-#N canvas 3 60 749 617 12;
+#N canvas 591 76 749 617 12;
 #X obj 345 301 r \$0-result;
 #X obj 345 326 route 0;
 #X obj 453 470 print failure;
 #X obj 430 336 tgl 28 0 empty empty Print_All_Results 31 11 0 12 -262144
--1 -1 1 1;
+-1 -1 0 1;
 #X obj 159 149 bng 31 250 50 0 empty empty Run_all 39 13 0 12 -262144
 -1 -1;
 #X obj 56 25 r init;

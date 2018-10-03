@@ -654,7 +654,7 @@ static void *pow_tilde_new(t_symbol *s, int argc, t_atom *argv)
     }
 }
 
-t_int *pow_tilde_perform(t_int *w)
+t_int *pow_tilde_perform_old(t_int *w)
 {
     t_sample *in1 = (t_sample *)(w[1]);
     t_sample *in2 = (t_sample *)(w[2]);
@@ -672,7 +672,23 @@ t_int *pow_tilde_perform(t_int *w)
     return (w+5);
 }
 
-t_int *scalarpow_tilde_perform(t_int *w)
+t_int *pow_tilde_perform(t_int *w)
+{
+    t_sample *in1 = (t_sample *)(w[1]);
+    t_sample *in2 = (t_sample *)(w[2]);
+    t_sample *out = (t_sample *)(w[3]);
+    int n = (int)(w[4]);
+    while (n--)
+    {
+        t_float f1 = *in1++, f2 = *in2++;
+        *out++ = (f1 == 0 && f2 < 0) ||
+            (f1 < 0 && (f2 - (int)f2) != 0) ?
+                0 : pow(f1, f2);
+    }
+    return (w+5);
+}
+
+t_int *scalarpow_tilde_perform_old(t_int *w)
 {
     t_sample *in = (t_sample *)(w[1]);
     t_float g = *(t_float *)(w[2]);
@@ -689,15 +705,33 @@ t_int *scalarpow_tilde_perform(t_int *w)
     return(w+5);
 }
 
+t_int *scalarpow_tilde_perform(t_int *w)
+{
+    t_sample *in = (t_sample *)(w[1]);
+    t_float g = *(t_float *)(w[2]);
+    t_sample *out = (t_sample *)(w[3]);
+    int n = (int)(w[4]);
+    while (n--)
+    {
+        t_float f = *in++;
+        *out++ = (f == 0 && g < 0) ||
+            (f < 0 && (g - (int)g) != 0) ?
+                0 : pow(f, g);
+    }
+    return(w+5);
+}
+
 static void pow_tilde_dsp(t_pow_tilde *x, t_signal **sp)
 {
-    dsp_add(pow_tilde_perform, 4,
+    dsp_add((pd_compatibilitylevel > 48 ?
+        pow_tilde_perform : pow_tilde_perform_old), 4,
         sp[0]->s_vec, sp[1]->s_vec, sp[2]->s_vec, sp[0]->s_n);
 }
 
 static void scalarpow_tilde_dsp(t_scalarpow_tilde *x, t_signal **sp)
 {
-    dsp_add(scalarpow_tilde_perform, 4,
+    dsp_add((pd_compatibilitylevel > 48 ?
+        scalarpow_tilde_perform : scalarpow_tilde_perform_old), 4,
         sp[0]->s_vec, &x->x_g, sp[1]->s_vec, sp[0]->s_n);
 }
 

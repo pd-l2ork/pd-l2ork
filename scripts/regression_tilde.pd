@@ -1,0 +1,61 @@
+#N canvas 379 60 749 617 12;
+#X obj 425 81 r \$0-result;
+#X obj 425 106 route 0;
+#X obj 533 250 print failure;
+#X obj 510 116 tgl 28 0 empty empty Print_All_Results 31 11 0 12 -262144
+-1 -1 1 1;
+#X obj 145 299 bng 31 250 50 0 empty empty Run_all 39 13 0 12 -262144
+-1 -1;
+#X obj 425 191 t b a;
+#X obj 425 321 s pd;
+#X msg 56 85 gui;
+#X obj 56 110 pdinfo;
+#X obj 56 135 sel 0;
+#X obj 56 185 s pd;
+#X msg 425 296 quit 1;
+#X msg 56 160 quit;
+#X msg 425 220 gui;
+#X obj 425 245 pdinfo;
+#X obj 425 270 sel 0;
+#X obj 471 154 spigot;
+#X obj 487 220 route 1;
+#X obj 487 275 print success;
+#X obj 56 60 trigger bang bang bang;
+#X obj 207 112 send pd;
+#X msg 207 87 dsp 1;
+#X text 210 141 Unfortunately \, we need DSP turned on for the tests.
+Otherwise we cannot selectively bang the [wtich~] object to get the
+results for each test. This means we will trigger lots of DSP graph
+rebuilds in the process., f 27;
+#X obj 131 343 rtest pow~_0.48_compatibility;
+#X obj 56 25 loadbang;
+#X obj 131 444 rtest pow~_0.49_compatibility;
+#X text 153 26 Regression tests for tilde objects.;
+#X obj 131 394 rtest pow~_scalar_0.48_compatibility;
+#X obj 131 495 rtest pow~_scalar_0.49_compatibility;
+#X connect 0 0 1 0;
+#X connect 1 0 5 0;
+#X connect 1 1 16 0;
+#X connect 3 0 16 1;
+#X connect 4 0 23 0;
+#X connect 5 0 13 0;
+#X connect 5 1 17 0;
+#X connect 7 0 8 0;
+#X connect 8 0 9 0;
+#X connect 9 0 12 0;
+#X connect 11 0 6 0;
+#X connect 12 0 10 0;
+#X connect 13 0 14 0;
+#X connect 14 0 15 0;
+#X connect 15 0 11 0;
+#X connect 16 0 5 0;
+#X connect 17 0 18 0;
+#X connect 17 1 2 0;
+#X connect 19 0 7 0;
+#X connect 19 1 23 0;
+#X connect 19 2 21 0;
+#X connect 21 0 20 0;
+#X connect 23 0 27 0;
+#X connect 24 0 19 0;
+#X connect 25 0 28 0;
+#X connect 27 0 25 0;
