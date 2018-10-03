@@ -93,14 +93,18 @@ static void print_pointer(t_print *x, t_gpointer *gp)
 
 static void print_float(t_print *x, t_floatarg f)
 {
+    char buf[MAXPDSTRING];
     if (sys_nogui)
         post("%s%s" FLOAT_SPECIFIER, x->x_sym->s_name,
             (*x->x_sym->s_name ? ": " : ""), f);
     else
     {
+        t_atom a;
+        SETFLOAT(&a, f);
+        atom_string(&a, buf, MAXPDSTRING);
         gui_start_vmess("gui_print", "xs", x, x->x_sym->s_name);
         gui_start_array();
-        gui_f(f);
+        gui_s(buf);
         gui_end_array();
         gui_end_vmess();
     }
