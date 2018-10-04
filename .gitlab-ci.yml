@@ -79,7 +79,7 @@ ubuntu_14.04_i386_deb:
      - echo "" | sudo -S DEBIAN_FRONTEND=noninteractive dpkg --force-all -i pd-l2ork*.deb > /dev/null
      - cd scripts
      - valgrind pd-l2ork -noprefs -nostdpath -nogui -nrt -noaudio -send "init dollarzero \$0" regression_control.pd
-     - valgrind pd-l2ork -noprefs -nostdpath -nogui -nrt -noaudio scripts/regression_tilde.pd
+     - valgrind pd-l2ork -noprefs -nostdpath -nogui -nrt -noaudio regression_tilde.pd
      - valgrind pd-l2ork -noprefs -nostdpath -nogui -nrt -noaudio external-tests.pd
    artifacts:
      name: "$CI_RUNNER_DESCRIPTION"
@@ -102,7 +102,7 @@ ubuntu_14.04_x86_64_deb:
      - echo "" | sudo -S DEBIAN_FRONTEND=noninteractive dpkg --force-all -i pd-l2ork*.deb > /dev/null
      - cd scripts
      - valgrind pd-l2ork -noprefs -nostdpath -nogui -nrt -noaudio -send "init dollarzero \$0" regression_control.pd
-     - valgrind pd-l2ork -noprefs -nostdpath -nogui -nrt -noaudio scripts/regression_tilde.pd
+     - valgrind pd-l2ork -noprefs -nostdpath -nogui -nrt -noaudio regression_tilde.pd
      - valgrind pd-l2ork -noprefs -nostdpath -nogui -nrt -noaudio external-tests.pd
    artifacts:
      name: "$CI_RUNNER_DESCRIPTION"
@@ -125,7 +125,7 @@ ubuntu_16.04_x86_64_deb:
      - echo "" | sudo -S DEBIAN_FRONTEND=noninteractive dpkg --force-all -i pd-l2ork*.deb > /dev/null
      - cd scripts
      - valgrind pd-l2ork -noprefs -nostdpath -nogui -nrt -noaudio -send "init dollarzero \$0" regression_control.pd
-     - valgrind pd-l2ork -noprefs -nostdpath -nogui -nrt -noaudio scripts/regression_tilde.pd
+     - valgrind pd-l2ork -noprefs -nostdpath -nogui -nrt -noaudio regression_tilde.pd
      - valgrind pd-l2ork -noprefs -nostdpath -nogui -nrt -noaudio external-tests.pd
    artifacts:
      name: "$CI_RUNNER_DESCRIPTION"
