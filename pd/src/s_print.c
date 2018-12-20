@@ -3,6 +3,9 @@
 * WARRANTIES, see the file, "LICENSE.txt," in this distribution.  */
 
 #include "m_pd.h"
+// hm... we really don't want this...
+#include "m_imp.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -65,10 +68,22 @@ static void doerror(const void *object, const char *s)
         //sys_vgui("pdtk_posterror {%s} 1 {%s}\n",
         //    strnpointerid(obuf, object, MAXPDSTRING),
         //    strnescape(upbuf, s, MAXPDSTRING));
-        gui_vmess("gui_post_error", "sis",
+        gui_start_vmess("gui_post_error", "sis",
             strnpointerid(obuf, object, MAXPDSTRING),
             1,
             strnescape(upbuf, s, MAXPDSTRING));
+        int i;
+        gui_start_array();
+        for (i = pd_stackn - 1; i >= 0; i--)
+        {
+            gui_start_array();
+            gui_x((long unsigned int)pd_stack[i].self);
+            gui_s(class_getname(pd_class(pd_stack[i].self)));
+            gui_s(pd_stack[i].s->s_name);
+            gui_end_array();
+        }
+        gui_end_array();
+        gui_end_vmess();
     }
 }
 

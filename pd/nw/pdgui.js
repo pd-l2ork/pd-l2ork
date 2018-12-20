@@ -731,8 +731,12 @@ function pd_error_select_by_id(objectid) {
 
 exports.pd_error_select_by_id = pd_error_select_by_id;
 
-function gui_post_error(objectid, loglevel, error_msg) {
+function gui_post_error(objectid, loglevel, error_msg, trace_array) {
+    var i;
     do_post(objectid, "error", error_msg, "error", loglevel);
+    for (i = 0; i < trace_array.length; i++) {
+        post(trace_array[i][1] + ": " + trace_array[i][2]);
+    }
 }
 
 // This is used specifically by [print] so that we can receive the full
