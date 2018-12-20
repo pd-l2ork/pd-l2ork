@@ -105,5 +105,18 @@ EXTERN int obj_sigoutletindex(t_object *x, int m);
 EXTERN void glob_evalfile(t_pd *ignore, t_symbol *name, t_symbol *dir);
 EXTERN void glob_initfromgui(void *dummy, t_symbol *s, int argc, t_atom *argv);
 EXTERN void glob_quit(void *dummy, t_floatarg status);
+
+/* stack */
+#define STACKSIZE 1024 /* maximum iterations allowed */
+
+typedef struct _call {
+    t_pd *self;
+    t_symbol *s;
+//    t_binbuf *argv;
+} t_call;
+
+EXTERN t_call pd_stack[STACKSIZE];
+EXTERN int pd_stackn; /* iteration counter */
+
 #define __m_imp_h_
 #endif /* __m_imp_h_ */

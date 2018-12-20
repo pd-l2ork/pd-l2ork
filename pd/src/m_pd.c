@@ -408,35 +408,74 @@ void pd_doloadbang(void)
     lastpopped = 0;
 }
 
+t_call pd_stack[STACKSIZE];
+int pd_stackn; /* iteration counter for the call stack */
+
+#define ENTER(SELECTOR) if (pd_stackn >= STACKSIZE) { \
+                            pd_stackerror(x); \
+                            return; \
+                        } \
+                        pd_stack[pd_stackn].self = x; \
+                        pd_stack[pd_stackn].s = SELECTOR; \
+                        pd_stackn++;
+
+#define LEAVE pd_stackn--;
+
+
+static void pd_stackerror(t_pd *x)
+{
+    pd_error(x, "stack overflow");
+}
+
 void pd_bang(t_pd *x)
 {
+    ENTER(&s_bang);
     (*(*x)->c_bangmethod)(x);
+    LEAVE;
 }
 
 void pd_float(t_pd *x, t_float f)
 {
+    ENTER(&s_float);
     (*(*x)->c_floatmethod)(x, f);
+    LEAVE;
 }
 
 void pd_pointer(t_pd *x, t_gpointer *gp)
 {
+    ENTER(&s_pointer);
     (*(*x)->c_pointermethod)(x, gp);
+    LEAVE;
 }
 
 void pd_symbol(t_pd *x, t_symbol *s)
 {
+    ENTER(&s_symbol);
     (*(*x)->c_symbolmethod)(x, s);
+    LEAVE;
 }
 
 void pd_blob(t_pd *x, t_blob *st) /* MP20061226 blob type */
 {
+    ENTER(&s_blob);
     /*post("pd_blob: st %p length %lu (*x)->c_blobmethod %p", st, st->s_length, (*x)->c_blobmethod);*/
     (*(*x)->c_blobmethod)(x, st);
+    LEAVE;
 }
 
 void pd_list(t_pd *x, t_symbol *s, int argc, t_atom *argv)
 {
+    ENTER(&s_blob);
     (*(*x)->c_listmethod)(x, &s_list, argc, argv);
+    LEAVE;
+}
+
+extern void pd_typedmess2(t_pd *x, t_symbol *s, int argc, t_atom *argv);
+void pd_typedmess(t_pd *x, t_symbol *s, int argc, t_atom *argv)
+{
+    ENTER(s);
+    pd_typedmess2(x, s, argc, argv);
+    LEAVE;
 }
 
 void mess_init(void);

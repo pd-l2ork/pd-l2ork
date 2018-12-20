@@ -164,6 +164,41 @@ static void print_setup(void)
     class_addanything(print_class, print_anything);
 }
 
+/* ----------------------------- tracecall ------------------------------- */
+
+t_class *tracecall_class;
+
+typedef struct _tracecall
+{
+    t_object x_obj;
+} t_tracecall;
+
+static void *tracecall_new(void)
+{
+    t_tracecall *x = (t_tracecall *)pd_new(tracecall_class);
+    outlet_new(&x->x_obj, &s_list);
+    return x;
+}
+
+static void tracecall_anything(t_print *x, t_symbol *s, int argc, t_atom *argv)
+{
+    t_atom at[2];
+    int i;
+    for (i = pd_stackn - 1; i >= 0; i--)
+    {
+        SETSYMBOL(&at[0], pd_class(pd_stack[i].self)->c_name);
+        SETSYMBOL(&at[1], pd_stack[i].s);
+        outlet_list(x->x_obj.ob_outlet, &s_list, 2, at);
+    }
+}
+
+static void tracecall_setup(void)
+{
+    tracecall_class = class_new(gensym("tracecall"),
+        (t_newmethod)tracecall_new, 0, sizeof(t_tracecall), 0, A_GIMME, 0);
+    class_addanything(tracecall_class, tracecall_anything);
+}
+
 /* --------------pdinfo, canvasinfo, classinfo, objectinfo --------------- */
 static t_class *canvasinfo_class;
 
@@ -1497,6 +1532,7 @@ void objectinfo_setup(void)
 void x_interface_setup(void)
 {
     print_setup();
+    tracecall_setup();
     canvasinfo_setup();
     pdinfo_setup();
     classinfo_setup();

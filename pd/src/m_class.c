@@ -703,7 +703,7 @@ extern t_pd *pd_mess_from_responder(t_pd *x);
 // their last created object, as opposed themselves
 t_symbol *last_typedmess;
 
-void pd_typedmess(t_pd *x, t_symbol *s, int argc, t_atom *argv)
+void pd_typedmess2(t_pd *x, t_symbol *s, int argc, t_atom *argv)
 {
     t_class *c = *x;
     t_methodentry *m;

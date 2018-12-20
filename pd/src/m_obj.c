@@ -334,9 +334,6 @@ void obj_init(void)
 
 /* --------------------------- outlets ------------------------------ */
 
-static int stackcount = 0; /* iteration counter */
-#define STACKITER 10000 /* maximum iterations allowed */
-
 static int outlet_eventno;
 
     /* set a stack limit (on each incoming event that can set off messages)
@@ -395,91 +392,56 @@ t_outlet *outlet_new(t_object *owner, t_symbol *s)
     return (x);
 }
 
-static void outlet_stackerror(t_outlet *x)
-{
-    pd_error(x->o_owner, "stack overflow");
-}
-
 void outlet_bang(t_outlet *x)
 {
     t_outconnect *oc;
-    if(++stackcount >= STACKITER)
-        outlet_stackerror(x);
-    else 
     for (oc = x->o_connections; oc; oc = oc->oc_next)
         pd_bang(oc->oc_to);
-    --stackcount;
 }
 
 void outlet_pointer(t_outlet *x, t_gpointer *gp)
 {
     t_outconnect *oc;
     t_gpointer gpointer;
-    if(++stackcount >= STACKITER)
-        outlet_stackerror(x);
-    else
-    {
-        gpointer = *gp;
-        for (oc = x->o_connections; oc; oc = oc->oc_next)
-            pd_pointer(oc->oc_to, &gpointer);
-    }
-    --stackcount;
+    gpointer = *gp;
+    for (oc = x->o_connections; oc; oc = oc->oc_next)
+        pd_pointer(oc->oc_to, &gpointer);
 }
 
 void outlet_float(t_outlet *x, t_float f)
 {
     t_outconnect *oc;
-    if(++stackcount >= STACKITER)
-        outlet_stackerror(x);
-    else
     for (oc = x->o_connections; oc; oc = oc->oc_next)
         pd_float(oc->oc_to, f);
-    --stackcount;
 }
 
 void outlet_symbol(t_outlet *x, t_symbol *s)
 {
     t_outconnect *oc;
-    if(++stackcount >= STACKITER)
-        outlet_stackerror(x);
-    else
     for (oc = x->o_connections; oc; oc = oc->oc_next)
         pd_symbol(oc->oc_to, s);
-    --stackcount;
 }
 
 void outlet_blob(t_outlet *x, t_blob *st) /* MP 20061226 blob type */
 {
     /*post("outlet_blob %p %lu", st, st->s_length);*/
     t_outconnect *oc;
-    if(++stackcount >= STACKITER)
-        outlet_stackerror(x);
-    else
-        for (oc = x->o_connections; oc; oc = oc->oc_next)
-            pd_blob(oc->oc_to, st);
-    --stackcount;
+    for (oc = x->o_connections; oc; oc = oc->oc_next)
+        pd_blob(oc->oc_to, st);
 }
 
 void outlet_list(t_outlet *x, t_symbol *s, int argc, t_atom *argv)
 {
     t_outconnect *oc;
-    if(++stackcount >= STACKITER)
-        outlet_stackerror(x);
-    else
     for (oc = x->o_connections; oc; oc = oc->oc_next)
         pd_list(oc->oc_to, s, argc, argv);
-    --stackcount;
 }
 
 void outlet_anything(t_outlet *x, t_symbol *s, int argc, t_atom *argv)
 {
     t_outconnect *oc;
-    if(++stackcount >= STACKITER)
-        outlet_stackerror(x);
-    else
     for (oc = x->o_connections; oc; oc = oc->oc_next)
         typedmess(oc->oc_to, s, argc, argv);
-    --stackcount;
 }
 
     /* get the outlet's declared symbol */
