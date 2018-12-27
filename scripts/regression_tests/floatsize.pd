@@ -1,0 +1,26 @@
+#N canvas 430 95 589 446 12;
+#X obj 41 28 inlet;
+#X obj 41 349 outlet;
+#X text 117 28 incoming value should be "floatsize" \, or the number
+of bits in t_float: either 32 or 64 It comes in as an argument to the
+test \, presumably from a CI script in which we are attempting to build
+Purr Data at particular floatsize. So if the incoming value matches
+what our [pdinfo] introspection object tells us is the actual floatsize
+in the running instance \, we pass the test.;
+#X msg 248 182 floatsize;
+#X obj 248 207 pdinfo;
+#X obj 41 244 ==;
+#X obj 41 153 trigger anything anything bang;
+#X obj 41 269 pack 0 0 0;
+#X msg 41 307 \$1 Number of bits in t_float. Expected size: \$2. Actual
+size: \$3;
+#X connect 0 0 6 0;
+#X connect 3 0 4 0;
+#X connect 4 0 5 1;
+#X connect 4 0 7 2;
+#X connect 5 0 7 0;
+#X connect 6 0 5 0;
+#X connect 6 1 7 1;
+#X connect 6 2 3 0;
+#X connect 7 0 8 0;
+#X connect 8 0 1 0;
