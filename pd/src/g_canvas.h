@@ -125,8 +125,8 @@ typedef struct _editor
     unsigned int e_textdirty: 1;    /* one if e_textedfor has changed */
     unsigned int e_selectedline: 1; /* one if a line is selected */
     t_magicGlass *gl_magic_glass;   /* magic glass object */
-	char canvas_cnct_inlet_tag[4096]; /* tags for currently highlighted nlets */
-	char canvas_cnct_outlet_tag[4096];
+    char canvas_cnct_inlet_tag[4096]; /* tags for currently highlighted nlets */
+    char canvas_cnct_outlet_tag[4096];
     t_clock *e_clock;               /* clock to filter GUI move messages */
     int e_xnew;                     /* xpos for next move event */
     int e_ynew;                     /* ypos, similarly */
@@ -137,7 +137,8 @@ typedef struct _editor
 #define MA_CONNECT 2    /* make a connection */
 #define MA_REGION  3    /* selection region */
 #define MA_PASSOUT 4    /* send on to e_grab */
-#define MA_DRAGTEXT 5   /* drag in text editor to alter selection */
+/* Text edition handled completely in the GUI now */
+//#define MA_DRAGTEXT 5   /* drag in text editor to alter selection */
 #define MA_RESIZE  6    /* drag to resize */
 #define MA_SCROLL  7    /* scroll with middle click onto empty canvas */
 
@@ -151,8 +152,8 @@ typedef struct _arrayvis
     t_garray *av_garray;            /* owning structure */    
 } t_arrayvis;
 
-t_garray* array_garray;				/* used for sending bangs when
-									   array is changed  via gui */
+t_garray* array_garray;    /* used for sending bangs when
+                              array is changed  via gui */
 
 /* the t_tick structure describes where to draw x and y "ticks" for a glist */
 
@@ -171,7 +172,7 @@ area of a window.
 //#include "g_undo.h"
 
 struct _glist
-{  
+{
     t_object gl_obj;            /* header in case we're a glist */
     t_gobj *gl_list;            /* the actual data */
     struct _gstub *gl_stub;     /* safe pointer handler */
@@ -403,9 +404,11 @@ struct _parentwidgetbehavior
 #define CURSOR_EDITMODE_NOTHING 4
 #define CURSOR_EDITMODE_CONNECT 5
 #define CURSOR_EDITMODE_DISCONNECT 6
-#define CURSOR_EDITMODE_RESIZE 7
-#define CURSOR_EDITMODE_RESIZE_BOTTOM_RIGHT 8
+#define CURSOR_EDITMODE_RESIZE_X 7
+#define CURSOR_EDITMODE_RESIZE 8
 #define CURSOR_SCROLL 9
+#define CURSOR_EDITMODE_RESIZE_Y 10
+#define CURSOR_EDITMODE_MOVE 11
 EXTERN void canvas_setcursor(t_glist *x, unsigned int cursornum);
 
 extern t_canvas *canvas_editing;    /* last canvas to start text edting */ 
@@ -496,10 +499,6 @@ EXTERN int text_xpix(t_text *x, t_glist *glist);
 EXTERN int text_ypix(t_text *x, t_glist *glist);
 
 /* -------------------- functions on rtexts ------------------------- */
-#define RTEXT_DOWN 1
-#define RTEXT_DRAG 2
-#define RTEXT_DBL 3
-#define RTEXT_SHIFT 4
 
 // number in comment is the number in grep -w|wc
 EXTERN t_rtext *rtext_new(t_glist *glist, t_text *who); //5
@@ -736,7 +735,7 @@ EXTERN t_symbol *iemgui_dollar2raute(t_symbol *s);
 
 EXTERN t_undo_action *canvas_undo_init(t_canvas *x);
 EXTERN t_undo_action *canvas_undo_add(t_canvas *x,
-	int type, const char *name, void *data);
+    int type, const char *name, void *data);
 EXTERN void canvas_undo_undo(t_canvas *x);
 EXTERN void canvas_undo_redo(t_canvas *x);
 EXTERN void canvas_undo_rebranch(t_canvas *x);
