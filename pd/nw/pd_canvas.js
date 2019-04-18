@@ -96,6 +96,10 @@ var canvas_events = (function() {
             if (text.search(/^draw\s+path\s+d\s*=\s*"/) !== -1) {
                 text = text_to_normalized_svg_path(text);
             }
+
+            // escape the backslashes
+            text = text.replace(/\\/g, "\\\\");
+
             // escape dollar signs
             text = text.replace(/(\$[0-9]+)/g, "\\$1");
 
@@ -103,7 +107,13 @@ var canvas_events = (function() {
             text = text.replace(/(\$@)/g, "\\$@");
 
             // escape "," and ";"
-            text = text.replace(/(?!\\)(,|;)/g, " \\$1 ");
+            text = text.replace(/,|;/, function(match, offset, string) {
+                if (string.charAt(offset - 1) === "\\") {
+                    return ("\\" + match);
+                } else {
+                    return (" \\" + match + " ");
+                }
+            });
 
             // filter consecutive ascii32
             text = text.replace(/\u0020+/g, " ");
