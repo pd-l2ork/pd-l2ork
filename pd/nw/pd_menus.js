@@ -362,24 +362,24 @@ function create_menu(gui, type) {
         tooltip: l("menu.zoomreset_tt")
     }));
     if (canvas_menu) {
-	view_menu.append(m.view.optimalzoom = new gui.MenuItem({
+    view_menu.append(m.view.optimalzoom = new gui.MenuItem({
             label: l("menu.zoomoptimal"),
             key: shortcuts.menu.zoomoptimal.key,
             modifiers: shortcuts.menu.zoomoptimal.modifiers,
             tooltip: l("menu.zoomoptimal_tt")
-	}));
-	view_menu.append(m.view.horizzoom = new gui.MenuItem({
+    }));
+    view_menu.append(m.view.horizzoom = new gui.MenuItem({
             label: l("menu.zoomhoriz"),
             key: shortcuts.menu.zoomhoriz.key,
             modifiers: shortcuts.menu.zoomhoriz.modifiers,
             tooltip: l("menu.zoomhoriz_tt")
-	}));
-	view_menu.append(m.view.vertzoom = new gui.MenuItem({
+    }));
+    view_menu.append(m.view.vertzoom = new gui.MenuItem({
             label: l("menu.zoomvert"),
             key: shortcuts.menu.zoomvert.key,
             modifiers: shortcuts.menu.zoomvert.modifiers,
             tooltip: l("menu.zoomvert_tt")
-	}));
+    }));
     }
     view_menu.append(new gui.MenuItem({ type: "separator" }));
     view_menu.append(m.view.fullscreen = new gui.MenuItem({
@@ -430,6 +430,12 @@ function create_menu(gui, type) {
             key: shortcuts.menu.dropdown.key,
             modifiers: shortcuts.menu.dropdown.modifiers,
             tooltip: l("menu.dropdown_tt")
+        }));
+        put_menu.append(m.put.ascii_art = new gui.MenuItem({
+            label: l("menu.ascii_art"),
+            key: shortcuts.menu.ascii_art.key,
+            modifiers: shortcuts.menu.ascii_art.modifiers,
+            tooltip: l("menu.ascii_art_tt")
         }));
         put_menu.append(new gui.MenuItem({ type: "separator" }));
         put_menu.append(m.put.bang = new gui.MenuItem({

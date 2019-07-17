@@ -73,7 +73,8 @@
       "mknob_steps":  "# of steps",
       "mknob_steps_tt": "number of dial positions for the knob",
       "mknob_size":   "size",
-      "mknob_size_tt": "size of the knob"
+      "mknob_size_tt": "size of the knob",
+      "submit_tt": "submit ascii_art to parser"
     }
   },
   "gatom": {
@@ -200,6 +201,8 @@
     "comment_tt": "Füge dem Patch einen Kommentar hinzu",
     "dropdown": "Dropdown",
     "dropdown_tt": "Dropdown menu",
+    "ascii_art": "Ascii_Art",
+    "ascii_art_tt": "ASCII_ART menu",
     "bang": "Bang",
     "bang_tt": "Füge dem Patch einen Taster zum Senden von Bang-Nachrichten hinzu",
     "toggle": "Toggle",

@@ -72,7 +72,8 @@
       "mknob_steps":  "# of steps",
       "mknob_steps_tt": "number of dial positions for the knob",
       "mknob_size":   "size",
-      "mknob_size_tt": "size of the knob"
+      "mknob_size_tt": "size of the knob",
+      "submit_tt": "submit ascii_art to parser"
     }
   },
   "gatom": {
@@ -199,6 +200,8 @@
     "comment_tt": "Write a comment on the canvas",
     "dropdown": "Dropdown",
     "dropdown_tt": "Dropdown menu",
+    "ascii_art": "Ascii_art",
+    "ascii_art_tt": "ASCII_ART menu",
     "bang": "Bang",
     "bang_tt": "Add a graphical button to the canvas for sending bang messages",
     "toggle": "Toggle",

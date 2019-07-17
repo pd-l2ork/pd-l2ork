@@ -3,6 +3,7 @@
 var gui = require("nw.gui");
 var pdgui = require("./pdgui.js");
 var pd_menus = require("./pd_menus.js");
+var pd_ascii_art = require("./pd_ascii_art.js");
 
 // Apply gui preset to this canvas
 pdgui.skin.apply(window);
@@ -425,6 +426,13 @@ var canvas_events = (function() {
                 if (evt.keyCode === 13) {
                     events.find_click(evt);
                 }
+            },
+            submit_ascii_art : function(evt) {
+                var art = document.getElementById("ascii_art_text_area").value;
+                var parsed_art = pd_ascii_art.parse_ascii_art(art);
+                // to check the create pd_message
+                document.getElementById("ascii_art_text_area").innerHTML = parsed_art.pd_message; 
+                canvas_events[canvas_events.get_previous_state()]();     
             },
             scalar_draggable_mousemove: function(evt) {
                 var new_x = evt.pageX,
@@ -1020,6 +1028,10 @@ var canvas_events = (function() {
             document.querySelector("#canvas_find_button")
                 .addEventListener("click", events.find_click
             );
+            //submit ascii art to parser
+            document.querySelector("#canvas_ascii_art_button")
+                .addEventListener("click", events.submit_ascii_art
+            );
             // We need to separate these into nw_window events and html5 DOM
             // events closing the Window this isn't actually closing the window
             // yet
@@ -1358,11 +1370,11 @@ function nw_create_patch_window_menus(gui, w, name) {
     minit(m.edit.paste_clipboard, {
         enabled: true,
         click: function () {
-	    var clipboard = nw.Clipboard.get();
-	    var text = clipboard.get('text');
-	    //pdgui.post("** paste from clipboard: "+text);
-	    canvas_events.paste_from_pd_file(name, text);
-	}
+        var clipboard = nw.Clipboard.get();
+        var text = clipboard.get('text');
+        //pdgui.post("** paste from clipboard: "+text);
+        canvas_events.paste_from_pd_file(name, text);
+    }
     });
     minit(m.edit.duplicate, {
         enabled: true,
@@ -1564,6 +1576,23 @@ function nw_create_patch_window_menus(gui, w, name) {
             update_live_box();
             pdgui.pdsend(name, "dirty 1");
             pdgui.pdsend(name, "dropdown 0");
+        }
+    });
+    minit(m.put.ascii_art, {
+        enabled: true,
+        click: function() {
+            var ascii_art = w.document.getElementById("ascii_art"),
+                ascii_art_text_area = w.document.getElementById("ascii_art_text_area"),
+                state = ascii_art.style.getPropertyValue("display");
+            // if there's a box being edited, try to instantiate it in Pd
+            instantiate_live_box();
+            if (state === "none") {
+                ascii_art.style.setProperty("display", "block");
+                ascii_art_text_area.focus();
+                canvas_events.none();
+            } else {
+                ascii_art.style.setProperty("display", "none");
+            }
         }
     });
     minit(m.put.bang, {
