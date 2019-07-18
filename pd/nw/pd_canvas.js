@@ -431,8 +431,8 @@ var canvas_events = (function() {
                 var art = document.getElementById("ascii_art_text_area").value;
                 var parsed_art = pd_ascii_art.parse_ascii_art(art);
                 // to check the create pd_message
-                document.getElementById("ascii_art_text_area").innerHTML = parsed_art.pd_message; 
-                canvas_events[canvas_events.get_previous_state()]();     
+                document.getElementById("ascii_art_text_area").innerHTML = parsed_art.pd_message;
+                canvas_events[canvas_events.get_previous_state()]();
             },
             scalar_draggable_mousemove: function(evt) {
                 var new_x = evt.pageX,

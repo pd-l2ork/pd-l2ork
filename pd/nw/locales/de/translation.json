@@ -73,8 +73,7 @@
       "mknob_steps":  "# of steps",
       "mknob_steps_tt": "number of dial positions for the knob",
       "mknob_size":   "size",
-      "mknob_size_tt": "size of the knob",
-      "submit_tt": "submit ascii_art to parser"
+      "mknob_size_tt": "size of the knob"
     }
   },
   "gatom": {
@@ -279,6 +278,10 @@
   },
   "canvas": {
     "paste_clipboard_prompt": "Warnung: Sie sind dabei, Pd-Code einzufügen, der außerhalb von Pd erstellt wurde. Möchten Sie fortfahren?",
+    "ascii_art": {
+      "submit": "Submit Button",
+      "submit_tt": "submit ascii_art to parser"
+    },
     "save_dialog": {
       "prompt": "Speichern der Änderungen in",
       "yes": "Ja",
