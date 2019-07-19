@@ -501,6 +501,15 @@ text {
     left: 0;
 }
 
+/*text area to get ascii_art input */
+#ascii_art {
+    width: 100%;
+    height: 70%;
+    position: fixed;
+    top : 0;
+    right: 0;
+}
+
 /* Dialog to ask to save the patch before quitting */
 #save_before_quit {
     background-color: #f3f3f3;

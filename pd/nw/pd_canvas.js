@@ -431,8 +431,8 @@ var canvas_events = (function() {
                 var art = document.getElementById("ascii_art_text_area").value;
                 var parsed_art = pd_ascii_art.parse_ascii_art(art);
                 // to check the create pd_message
-                document.getElementById("ascii_art_text_area").innerHTML = parsed_art.pd_message;
-                canvas_events[canvas_events.get_previous_state()]();
+                //document.getElementById("ascii_art_text_area").innerHTML = parsed_art.pd_message;
+                canvas_events.paste_from_pd_file(name, parsed_art.pd_message);
             },
             scalar_draggable_mousemove: function(evt) {
                 var new_x = evt.pageX,
@@ -1581,17 +1581,18 @@ function nw_create_patch_window_menus(gui, w, name) {
     minit(m.put.ascii_art, {
         enabled: true,
         click: function() {
+            //alert("ascii_art");
             var ascii_art = w.document.getElementById("ascii_art"),
-                ascii_art_text_area = w.document.getElementById("ascii_art_text_area"),
-                state = ascii_art.style.getPropertyValue("display");
+                display_state = ascii_art.style.getPropertyValue("display");
             // if there's a box being edited, try to instantiate it in Pd
             instantiate_live_box();
-            if (state === "none") {
+            if (display_state === "none") {
+                canvas_events.none();
                 ascii_art.style.setProperty("display", "block");
                 ascii_art_text_area.focus();
-                canvas_events.none();
             } else {
                 ascii_art.style.setProperty("display", "none");
+                canvas_events[canvas_events.get_previous_state()]();
             }
         }
     });

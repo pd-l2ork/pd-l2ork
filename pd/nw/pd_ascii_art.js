@@ -306,7 +306,6 @@ function parse_ascii_art(ascii_art) {
                             + objects_connections_map[i].end_point +  ";\n";
         pd_message = pd_message + str;
     }
-
     var parser_data = {pd_message:pd_message,
                       state:state};
     return parser_data;
