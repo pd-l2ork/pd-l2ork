@@ -503,11 +503,9 @@ text {
 
 /*text area to get ascii_art input */
 #ascii_art {
-    width: 100%;
-    height: 70%;
-    position: fixed;
+    position: absolute;
     top : 0;
-    right: 0;
+    right : 0;
 }
 
 /* Dialog to ask to save the patch before quitting */
