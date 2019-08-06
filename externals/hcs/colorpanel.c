@@ -9,14 +9,19 @@ static t_class *colorpanel_class;
 typedef struct _colorpanel
 {
     t_object x_obj;
+    t_glist *x_glist;
     t_symbol *x_s;
     char current_color[MAXPDSTRING];
 } t_colorpanel;
 
 static void colorpanel_bang(t_colorpanel *x)
 {
-    sys_vgui("after idle [list after 100 ::hcs::colorpanel::open %s %s]\n",
-             x->x_s->s_name, x->current_color);
+    gui_vmess("gui_show_color_dialog", "xss",
+        x->x_glist,
+        x->x_s->s_name,
+        x->current_color);
+    //sys_vgui("after idle [list after 100 ::hcs::colorpanel::open %s %s]\n",
+    //         x->x_s->s_name, x->current_color);
 }
 
 static void colorpanel_symbol(t_colorpanel *x, t_symbol *s)
@@ -82,6 +87,7 @@ static void *colorpanel_new( void)
     t_colorpanel *x = (t_colorpanel *)pd_new(colorpanel_class);
     sprintf(buf, "#%lx", (t_int)x);
     x->x_s = gensym(buf);
+    x->x_glist = canvas_getcurrent();
     pd_bind(&x->x_obj.ob_pd, x->x_s);
     outlet_new(&x->x_obj, &s_list);
     strcpy(x->current_color,"#ffffff");

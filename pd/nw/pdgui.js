@@ -5892,3 +5892,42 @@ function gui_pddplink_open(filename, dir) {
         post("pddplink: error: file not found: " + filename);
     }
 }
+
+// hcs/colorpanel
+function gui_show_color_dialog(cid, callback_tag, color) {
+    var id = "hcs_colorpanel_elem";
+
+    // create one if it doesn't exist
+    // These are per window. Unfortunately, the HTML5 spec doesn't
+    // give us an event when the color dialog is closed so we can't
+    // garbage collect it-- instead it will remain in a position outside
+    // the viewport until the window is closed.
+    gui(cid).get_elem("patchsvg", function(svg_elem, w) {
+        var e = svg_elem.querySelector(id);
+        if (!e) {
+            e = w.document.createElement("input");
+            e.setAttribute("id", id);
+            e.setAttribute("type", "color");
+            e.style.setProperty("position", "absolute");
+            e.style.setProperty("left", "-10000px");
+            e.style.setProperty("right", "0px");
+            e.style.setProperty("width", "1px");
+            e.style.setProperty("height", "1px");
+            e.style.setProperty("overflow", "hidden");
+            w.document.body.appendChild(e);
+        }
+    });
+
+    // Now fetch the element and set a callback for the one that was
+    // just clicked. I guess we should check for multiple calls coming
+    // from the backend here...
+    gui(cid).get_elem(id, function(e) {
+        e.setAttribute("value", color);
+        e.oninput = function() {
+            //post("did it! value is " + e.value + ". Sending...");
+            pdsend(callback_tag, "callback", e.value);
+        };
+        e.focus();
+        e.click();
+    });
+}
