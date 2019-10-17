@@ -139,7 +139,7 @@ ifeq ($(LIGHT),yes)
 lib_targets = loaders-libdir pddp
 INCREMENTAL = yes
 else
-lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui fluid freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemgui iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moocow moonlib motex mrpeach oscx pan pdcontainer pddp pdlua pdogg plugin pmpd rjlib sigpack smlib tof unauthorized vbap windowing zexy
+lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui fluid freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemgui iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moocow moonlib motex mrpeach oscx pan pdcontainer pddp pdlua pdogg plugin pmpd rjlib sigpack smlib tof unauthorized vbap vm windowing zexy
 endif
 
 # NEW (IN-PROGRESS): flext
@@ -1828,6 +1828,17 @@ vbap_install:
 
 vbap_clean:
 	make -C $(externals_src)/vbap clean
+
+#------------------------------------------------------------------------------#
+# VM
+vm:
+	make -C $(externals_src)/vm PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+
+vm_install:
+	make -C $(externals_src)/vm DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+
+vm_clean:
+	make -C $(externals_src)/vm clean
 
 
 #------------------------------------------------------------------------------#
