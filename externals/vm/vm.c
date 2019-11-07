@@ -158,6 +158,20 @@ typedef struct _param
     t_word p_w;
 } t_param;
 
+typedef struct _token
+{
+    t_symbol *t_oprefsym; /* reference variable if token is an operator */
+    t_atom t_at;
+} t_token;
+
+typedef struct _pratt
+{
+    int p_token_nr;
+    int p_varno;
+    t_binbuf *p_irbuf;
+    t_token p_t;
+} t_pratt;
+
 typedef struct _jumpcode
 {
     t_optype t;
@@ -170,6 +184,7 @@ typedef struct _jumpcode
 typedef struct _vm
 {
     t_object x_obj;
+    t_pratt x_parser;
     t_float x_in;
     t_param x_params[4];
     t_jumpcode x_jumpstack[JUMPSTACKSIZE];
@@ -181,6 +196,296 @@ typedef struct _vm
     t_float x_ret;
     t_outlet *x_out;
 } t_vm;
+
+static int vm_getconstvalue(t_symbol *s, t_float *f)
+{
+    int ret = 1;
+    if (s == gensym("pi"))
+        *f = 3.141592653589793;
+    else if (s == gensym("tau"))
+        *f = 6.28318530717958647692;
+    else if (s == gensym("e"))
+        *f = 2.71828182845904523536;
+    else
+        ret = 0;
+}
+
+static int token_lbp(t_vm *x, t_token t)
+{
+    if (t.a_type == A_FLOAT)
+        return 0;
+    else if (t.a_type == A_SYMBOL)
+    {
+        t_symbol *s = t.t_at.a_w.w_symbol;
+        if (s == &s_) return 0;
+        else if (s == gensym(";")) return 0;
+        else if (s == gensym("?")) return 20;
+        else if (s == gensym("||")) return 30;
+        else if (s == gensym("&&")) return 30;
+        else if (s == gensym("<")) return 40;
+        else if (s == gensym("<=")) return 40;
+        else if (s == gensym(">")) return 40;
+        else if (s == gensym(">=")) return 40;
+        else if (s == gensym("==")) return 40;
+        else if (s == gensym("!=")) return 40;
+        else if (s == gensym("+")) return 50;
+        else if (s == gensym("-")) return 50;
+        else if (s == gensym("*")) return 60;
+        else if (s == gensym("/")) return 60;
+        else if (s == gensym("!")) return 70;
+        else
+        {
+            pd_error(x, "vm: bad operator %s",
+                s->s_name);
+            return 0;
+        }
+    }
+    else
+    {
+        bug("vm: bad atom type to token_lbp");
+    }
+}
+
+static int get_rbp(t_vm *x, t_token op)
+{
+    return token_lbp(x, op);
+}
+
+static void vm_ir_set_operand(t_vm *x, t_token t, t_atom *at)
+{
+    if (t.t_at.a_type == SYMBOL)
+        SETSYMBOL(at, t.t_oprefsym);
+    else if (t.t_at.a_type == FLOAT)
+        *at = t.t_at;
+    else
+        pd_error(x, "vm: bad argument type. Only float and symbol allowed.");
+}
+
+static void vm_irbuf_add(t_vm *x, t_token operator, t_token op1, t_token op2)
+{
+    t_atom at[4];
+    int count = x->x_parser.p_varno++;
+        /* Now set our operator reference number. Each opcode below just
+           assigns to a temporary memory location. When one of our
+           operands is the output from a previous operation, we use the
+           oprefno to fetch it from the correct memory location. In this
+           way we can convert the AST of our Pratt parser into the opcode
+           pipeline below */
+    t_symbol *target;
+    char buf[MAXPDSTRING];
+    sprintf(buf, "_var%d", count);
+    target = gensym(buf);
+    operator.t_oprefsym = target;
+
+    SETSYMBOL(at, operator);
+    SETSYMBOL(at+1, target);
+    vm_ir_set_operand(x, op1, at+2);
+    vm_ir_set_operand(x, op1, at+3);
+
+    binbuf_add(x->x_parser.p_irbuf, 4, at);
+}
+
+static void infix(t_vm *x, t_token left, t_token op, int argc, t_atom *argv)
+{
+    int rbp = get_rbp(op);
+    vm_irbuf_add(
+        x,
+        op,
+        left,
+        expression(x, rbp, argc, argv) 
+    );
+}
+
+static void ternary(t_vm *x, t_atom left, t_token op, int argc, t_atom *argv)
+{
+    int rbp = get_rbp(op);
+    /* first let's set the condition based on "left" */
+    vm_irbuf_add(
+        x,
+        op,
+        left,
+        expression(x, rbp, argc, argv) 
+    );
+}
+
+static t_atom token_led(t_vm *x, t_token left, t_token t,
+    int argc, t_atom *argv)
+{
+    if (t)
+    {
+        if (t.t_at.a_type == A_FLOAT)
+            return t;
+        else if (t.t_at.a_type == A_SYMBOL)
+        {
+            t_symbol *s = t.t_at.a_w.w_symbol;
+            if (s == gensym("+") ||
+                s == gensym("-") ||
+                s == gensym("*") ||
+                s == gensym("/") ||
+                s == gensym("==") ||
+                s == gensym("!=") ||
+                s == gensym("<") ||
+                s == gensym("<=") ||
+                s == gensym(">") ||
+                s == gensym(">="))
+            {
+                infix(x, left, t, argc, argv);
+                return t;
+            }
+            else if (s == gensym("?"))
+                ternary(x, left, t, argc, argv);
+                return t;
+            }
+        }
+        else
+        {
+            pd_error(x, "vm: only symbols and floats allowed");
+            return t;
+        }
+    }
+    else
+    {
+        pd_error(x, "vm parser token_nud");
+        return token;
+    }
+}
+
+static t_atom token_nud(t_vm *x, t_token token, int argc, t_atom *argv)
+{
+    t_token ret;
+    if (token)
+    {
+        if (token.t_at.a_type == A_FLOAT)
+            return token;
+        else if (token.t_at.a_type == A_SYMBOL)
+        {
+            t_float f;
+            t_symbol *s = token.t_at.a_w.w_symbol;
+            /* if it's a parameter return the name */
+            if (vm_get_param_index(t_vm *x, s) != -1);
+                return token;
+            else if (vm_getconstvalue(s, &f))
+            {
+                SETFLOAT(&ret.t_at, f);
+                return ret;
+            }
+            else if (s == gensym("("))
+            {
+                ret = expression(x, 0, argc, argv);
+                /* need to check for closing parens below */
+                advance(x, argc, argv);
+                return ret;
+            }
+            else
+            {
+                pd_error(x, "vm: symbol %s must be a parameter or a constant",
+                    token.t_at.a_w.w_symbol);
+                return token;
+            }
+        }
+        else
+        {
+            pd_error(x, "vm: only symbols and floats allowed");
+            return token;
+        }
+    }
+    else
+    {
+        pd_error(x, "vm parser token_nud");
+        return token;
+    }
+}
+
+static t_atom expression(t_vm *x, int rbp, int argc, t_atom *argv)
+{
+    t_token left;
+    left.t_oprefno = -1; /* for error checking */
+    t_token t = x->x_parser.p_t;
+    advance(x, argc, argv);
+    left = token_nud(x, t, argc, argv);
+    while (rbp < token_lbp(x, x->x_parser.p_t))
+    {
+        t = x->x_parser.p_t;
+        advance(x, argc, argv);
+        left = token_led(x, left, t, argc, argv);
+    }
+    return left;
+}
+
+static void doadvance(t_vm *x, t_symbol *s, int argc, t_atom *argv)
+{
+    int i = x->x_parser.x_token_nr;
+    if (i >= argc)
+    {
+        SETSYMBOL(&x->x_parser.x_token, &s_);
+        return;
+    }
+    x->x_parser.x_token = argv[i];
+    x->x_parser.x_token_nr += 1;
+}
+
+static void advance(t_vm *x, int argc, t_atom *argv)
+{
+    doadvance(x, 0, argc, argv);
+}
+
+static void advance_and_expect(t_vm *x, t_symbol *s, int argc, t_atom *argv)
+{
+    doadvance(x, s, argc, argv);
+}
+
+static int vm_parse_expression(t_vm *x, int argc, t_atom *argv)
+{
+    if (argc)
+    {
+        /* our parameter symbol */
+        t_symbol *s = atom_getsymbolarg(0, argc, argv);
+        int got_param_index = vm_get_param_index(s) != -1;
+        if (got_param_index)
+        {
+            if (argc > 1)
+            {
+                argc--, argv++;
+                /* eat an initial arg into the parser */
+                advance(x, argc, argv);
+                /* now feed an expression into our FUDI intermediate
+                   representation buffer */
+                expression(x, 0, argc, argv);
+                /* done! */
+            }
+        }
+        else
+        {
+            pd_error(x, "vm: need a parameter for the 1st argument");
+            return 0;
+        }
+    }
+}
+
+static int vm_parse_messages(t_vm *x, int argc, t_atom *argv)
+{
+    int i, notail, last_i = argc - 1, stackdepth = 0;
+    notail = argc && atom_getsymbolarg(last_i, argc, argv) != gensym(";");
+
+    for (i = 0; i < argc; i++)
+    {
+        if (atom_getsymbolarg(i, argc, argv) == gensym(";") ||
+            i == last_i)
+        {
+            x->x_varno = 0;
+            int count = (last_i && notail) ? i - offset + 1 : i - offset;
+            vm_parse_expression(x, count, argv + offset);
+
+                /* see if we got a bigger stacksize than we currently
+                   have */
+            if (x->x_pratt.p_varno > stackdepth)
+            {
+                stackdepth = x->x_pratt.p_varno;
+            }
+            offset = i;
+        }
+    }
+}
 
 static t_optype vm_getop(t_symbol *sym)
 {
@@ -238,17 +543,17 @@ static int vm_set_params(t_vm *x, int argc, t_atom *argv)
 {
     t_symbol *name;
 
-fprintf(stderr, "did this\n");
     if (argc)
     {
         name = atom_getsymbol(argv);
         if (vm_getop(name) != OP_NULL) goto badparam;
+        if (vm_isconst(name)) goto badparam;
         x->x_params[0].p_name = name;
     }
     else x->x_params[0].p_name = &s_;
     x->x_params[0].p_w.w_float = 0;
 
-    if (argc >= 1)
+    if (argc > 1)
     {
         name = atom_getsymbol(++argv);
         if (vm_getop(name) != OP_NULL) goto badparam;
@@ -257,7 +562,7 @@ fprintf(stderr, "did this\n");
     else x->x_params[1].p_name = &s_;
     x->x_params[1].p_w.w_float = 0.;
 
-    if (argc >= 2)
+    if (argc > 2)
     {
         name = atom_getsymbol(++argv);
         if (vm_getop(name) != OP_NULL) goto badparam;
@@ -266,7 +571,7 @@ fprintf(stderr, "did this\n");
     else x->x_params[2].p_name = &s_;
     x->x_params[2].p_w.w_float = 0.;
 
-    if (argc >= 3)
+    if (argc > 3)
     {
         name = atom_getsymbol(++argv);
         if (vm_getop(name) != OP_NULL) goto badparam;
@@ -277,8 +582,11 @@ fprintf(stderr, "did this\n");
 
     return 1;
 
-badparam:
+badparamop:
     pd_error(x, "vm: parameter name %s cannot be an operator", name->s_name);
+    return 0;
+badparamconst:
+    pd_error(x, "vm: parameter name %s is a reserved constant", name->s_name);
     return 0;
 }
 
@@ -299,7 +607,7 @@ static t_jumpcode *vm_jumpstack_pop(t_vm *x)
 {
     if (x->x_jumpstack_nitems < 1)
     {
-        pd_error(x, "vm: can't pop a jump opcode off the stack");
+//        pd_error(x, "vm: can't pop a jump opcode off the stack");
         return NULL;
     }
     x->x_jumpstack_nitems -= 1;
@@ -356,12 +664,15 @@ static int vm_add_opcode(t_vm *x, int argc, t_atom *argv)
     int got_a_jumper = vm_check_for_jumper(x, argc, argv);
     t_jumpcode *jmp = NULL;
 
-
         /* Get the op. We'll adjust it with a type-checking flag after
            fetching the args. */
     t_symbol *op = atom_getsymbolarg(0, argc, argv);
     t_optype t = vm_getop(op);
-    if (t == OP_NULL) return 0;
+    if (t == OP_NULL)
+    {
+        pd_error(x, "vm: unknown operator");
+        return 0;
+    }
     else w[offset].w_index = t;
 
         /* Now we fetch argv[1] through argv[3] to figure out what our arg
@@ -383,8 +694,8 @@ static int vm_add_opcode(t_vm *x, int argc, t_atom *argv)
     }
     else if (got_a_jumper || t == OP_RETURN)
     {
-        if (argc && argv->a_type == A_FLOAT)
-            w[offset+1].w_float = argv->a_w.w_float;
+        if (argc > 1 && argv[1].a_type == A_FLOAT)
+            w[offset+1].w_float = argv[1].a_w.w_float;
     }
     else
     {
@@ -407,7 +718,16 @@ static int vm_add_opcode(t_vm *x, int argc, t_atom *argv)
             /* If we have a jumper backref go ahead and pop it off the stack.
                We'll need it possibly for two args below */
             jmp = vm_jumpstack_pop(x);
-            if (!jmp) return 0;
+            if (!jmp)
+            {
+                if (t == OP_ELSE)
+                    pd_error(x, "vm: else clause detected with no if clause");
+                else if (t == OP_ENDLOOP)
+                    pd_error(x, "vm: endloop detected with no startloop");
+                else
+                    pd_error(x, "vm: reference to non-existent instruction");
+                return 0;
+            }
                 /* This is currently just for OP_ENDLOOP and OP_ELSE. So let's
                    also check that our backref is to the correct op */
             if (t == OP_ENDLOOP && jmp->t != OP_STARTLOOP)
@@ -424,14 +744,16 @@ static int vm_add_opcode(t_vm *x, int argc, t_atom *argv)
             if (t == OP_ENDLOOP)
             {
                 /* Get OP_STARTLOOP and OP_ENDLOOP to point at each other */
-                w[offset+2].w_index = jmp->index; 
-                x->x_pipeline[offset + 2].w_index = offset;
+                w[offset+2].w_index = jmp->index;
+                x->x_pipeline[jmp->index + 2].w_index = offset;
             }
             else if (t == OP_ELSE)
             {
-                /* set a value so the OP_IF can quickly check if it has an
-                   else clause */
-                x->x_pipeline[offset + 3].w_float = 1.;
+                /* set a value for the corresponding OP_IF so it can quickly
+                   check if it has an else clause */
+                x->x_pipeline[jmp->index + 3].w_float = 1.;
+                /* set a warpzone to one past ourselves for the OP_IF */
+                x->x_pipeline[jmp->index + 2].w_index = offset + OPLEN;
             }
         }
 
@@ -486,8 +808,10 @@ static int vm_add_opcode(t_vm *x, int argc, t_atom *argv)
            We then just hard code all these as cases rather than checking
            what the type is.
         */
-    t += flag;
 
+if (t == OP_ADD) fprintf(stderr, "+ flag is %d\n", flag);
+    t += flag;
+    w[offset].w_index = t;
     return 1;
 }
 
@@ -532,8 +856,8 @@ static int vm_allocate_opcode(t_vm *x, int argc, t_atom *argv)
         {
             goto badop;
         }
-        return 1;
     }
+    return 1;
 badop: 
     t_freebytes(x->x_pipeline, sizeof(t_word) * OPLEN * x->x_nops);
     return 0;
@@ -545,19 +869,19 @@ static int vm_allocate_pipeline(t_vm *x, int argc, t_atom *argv)
     x->x_nops = 0;
     int offset = 0;
     int got_params = 0;
-    t_symbol *defaultparamsym;
+    t_symbol *defaultparamsym, *s;
 
         /* Go ahead and initialize the params to zero... */
     vm_set_params(x, 0, NULL);
 
     for (i = 0; i < argc; i++)
     {
-        if (atom_getsymbol(argv+i) == gensym(";") ||
-            i == argc - 1)
+        s = atom_getsymbol(argv + i);
+        if (s == gensym(";") || i == argc - 1)
         {
             /* if we got a final message with no trailing semi, parse it
                anyway */
-            if (i == argc - 1) i += 1;
+            if (i == argc - 1 && s != gensym(";")) i += 1;
             /* got a new op */
             int new_argc = i - offset;
             /* let's skip double semis */
@@ -591,14 +915,27 @@ static int vm_allocate_pipeline(t_vm *x, int argc, t_atom *argv)
         return 0;
     }
 
-fprintf(stderr, "done allocating. nops is %d\n", x->x_nops);
     return 1;
+}
+
+static void vm_free(t_vm *x)
+{
+    binbuf_free(x->x_parser.p_ir);
 }
 
 static void *vm_new(t_symbol *s, int argc, t_atom *argv)
 {
     t_vm *x = (t_vm *)pd_new(vm_class);
     x->x_jumpstack_nitems = 0;
+    x->x_parser.p_irbuf = binbuf_new();
+
+    x->x_parser.x_token_nr = 0;
+//    if (!vm_compile_expressions(x, argc, argv))
+//    {
+//        pd_error(x, "vm: bad arguments");
+//        return (0);
+//    }
+
     if (!vm_allocate_pipeline(x, argc, argv))
     {
         pd_error(x, "vm: bad arguments");
@@ -661,7 +998,7 @@ static int vm_compute(t_vm *x)
         switch(t)
         {
         case OP_ADD:    PARAM(1) = CONST(2) + CONST(3); break;
-        case OP_ADD_V:  PARAM(1) = PARAM(2) + CONST(3); break;
+        case OP_ADD_V: PARAM(1) = PARAM(2) + CONST(3); break;
         case OP_ADD_VV: PARAM(1) = PARAM(2) + PARAM(3); break;
 
         case OP_EQ:     PARAM(1) = CONST(2) == CONST(3); break;
@@ -778,7 +1115,10 @@ static int vm_compute(t_vm *x)
         case OP_STARTLOOP:
             if (CONST(1) > 0)
             {
-                x->x_pipeline[p[2].w_index + 3].w_float = CONST(1);
+                /* copy our looping value to the count parameter of OP_ENDLOOP
+                   below. Since we're eating an iteration here we subtract 
+                   one... */
+                x->x_pipeline[p[2].w_index + 3].w_float = CONST(1) - 1;
                 break;
             }
             else
@@ -791,7 +1131,7 @@ static int vm_compute(t_vm *x)
         case OP_STARTLOOP_V:
             if (PARAM(1) > 0)
             {
-                x->x_pipeline[p[2].w_index + 3].w_float = PARAM(1);
+                x->x_pipeline[p[2].w_index + 3].w_float = PARAM(1) - 1;
                 break;
             }
             else
@@ -805,10 +1145,13 @@ static int vm_compute(t_vm *x)
         case OP_ENDLOOP:
         case OP_ENDLOOP_V:
             if (CONST(3) > 0)
-                x->x_last_op = x->x_pipeline + p[2].w_index;
+            {
+                /* jump to the first opcode past the original startloop */
+                x->x_last_op = x->x_pipeline + p[2].w_index + OPLEN;
                 CONST(3) -= 1.;
                 continue;
-
+            }
+            else break;
         case OP_IF:
         case OP_ELSE:
             if (CONST(1))
@@ -838,7 +1181,7 @@ static int vm_compute(t_vm *x)
                 if (((int)(p[3].w_float)) != 0)
                 {
                     /* if so store the negation of our condition down there */
-                    x->x_pipeline[p[2].w_index + 2].w_float = !PARAM(1);
+                    x->x_pipeline[p[2].w_index + 1].w_float = !PARAM(1);
                 }
                 break;
             }
