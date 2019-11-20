@@ -47,93 +47,123 @@ typedef enum
     OP_NULL,
     OP_ADD,
     OP_ADD_V,
+    OP_ADD_CV,
     OP_ADD_VV,
     OP_ATAN,
     OP_ATAN_V,
+    OP_ATAN_CV,
     OP_ATAN_VV,
     OP_ATAN2,
     OP_ATAN2_V,
+    OP_ATAN2_CV,
     OP_ATAN2_VV,
     OP_BA,
     OP_BA_V,
+    OP_BA_CV,
     OP_BA_VV,
     OP_BO,
     OP_BO_V,
+    OP_BO_CV,
     OP_BO_VV,
     OP_COS,
     OP_COS_V,
+    OP_COS_CV,
     OP_COS_VV,
     OP_DIV,
     OP_DIV_V,
+    OP_DIV_CV,
     OP_DIV_VV,
     OP_EQ,
     OP_EQ_V,
+    OP_EQ_CV,
     OP_EQ_VV,
     OP_EXP,
     OP_EXP_V,
+    OP_EXP_CV,
     OP_EXP_VV,
     OP_FABS,
     OP_FABS_V,
+    OP_FABS_CV,
     OP_FABS_VV,
     OP_GE,
     OP_GE_V,
+    OP_GE_CV,
     OP_GE_VV,
     OP_GT,
     OP_GT_V,
+    OP_GT_CV,
     OP_GT_VV,
     OP_LA,
     OP_LA_V,
+    OP_LA_CV,
     OP_LA_VV,
     OP_LE,
     OP_LE_V,
+    OP_LE_CV,
     OP_LE_VV,
     OP_LO,
     OP_LO_V,
+    OP_LO_CV,
     OP_LO_VV,
     OP_LOG,
     OP_LOG_V,
+    OP_LOG_CV,
     OP_LOG_VV,
     OP_LS,
     OP_LS_V,
+    OP_LS_CV,
     OP_LS_VV,
     OP_LT,
     OP_LT_V,
+    OP_LT_CV,
     OP_LT_VV,
     OP_MAX,
     OP_MAX_V,
+    OP_MAX_CV,
     OP_MAX_VV,
     OP_MIN,
     OP_MIN_V,
+    OP_MIN_CV,
     OP_MIN_VV,
     OP_MOD,
     OP_MOD_V,
+    OP_MOD_CV,
     OP_MOD_VV,
     OP_MUL,
     OP_MUL_V,
+    OP_MUL_CV,
     OP_MUL_VV,
     OP_NE,
     OP_NE_V,
+    OP_NE_CV,
     OP_NE_VV,
     OP_OVR,
     OP_OVR_V,
+    OP_OVR_CV,
     OP_OVR_VV,
     OP_PC,
     OP_PC_V,
+    OP_PC_CV,
     OP_PC_VV,
     OP_POW,
     OP_POW_V,
+    OP_POW_CV,
     OP_POW_VV,
     OP_RS,
     OP_RS_V,
+    OP_RS_CV,
     OP_RS_VV,
     OP_SIN,
     OP_SIN_V,
+    OP_SIN_CV,
     OP_SIN_VV,
     OP_SQRT,
     OP_SQRT_V,
+    OP_SQRT_CV,
     OP_SQRT_VV,
     OP_SUB,
     OP_SUB_V,
+    OP_SUB_CV,
     OP_SUB_VV,
     OP_IF,
     OP_IF_V,
@@ -261,11 +291,11 @@ static void vm_ir_set_operand(t_vm *x, t_token t, t_atom *at)
         pd_error(x, "vm: bad argument type. Only float and symbol allowed.");
 }
 
-static void vm_irbuf_add(t_vm *x, t_token operator, t_token op1, t_token op2)
+static void vm_irbuf_add(t_vm *x, t_token *operator, t_token op1, t_token op2)
 {
     t_atom at[4];
     int count = x->x_parser.p_varno++;
-        /* Now set our operator reference number. Each opcode below just
+        /* Now set our operator reference symbol. Each opcode below just
            assigns to a temporary memory location. When one of our
            operands is the output from a previous operation, we use the
            oprefno to fetch it from the correct memory location. In this
@@ -284,6 +314,31 @@ static void vm_irbuf_add(t_vm *x, t_token operator, t_token op1, t_token op2)
 
     binbuf_add(x->x_parser.p_irbuf, 4, at);
 }
+
+static void doadvance(t_vm *x, t_symbol *s, int argc, t_atom *argv)
+{
+    int i = x->x_parser.x_token_nr;
+    if (i >= argc)
+    {
+        SETSYMBOL(&x->x_parser.x_token, &s_);
+        return;
+    }
+    x->x_parser.x_token = argv[i];
+    x->x_parser.x_token_nr += 1;
+}
+
+static void advance(t_vm *x, int argc, t_atom *argv)
+{
+    doadvance(x, 0, argc, argv);
+}
+
+static void advance_and_expect(t_vm *x, t_symbol *s, int argc, t_atom *argv)
+{
+    doadvance(x, s, argc, argv);
+}
+
+
+static t_token expression(t_vm *x, int rbp, int argc, t_atom *argv);
 
 static void infix(t_vm *x, t_token left, t_token op, int argc, t_atom *argv)
 {
@@ -396,10 +451,9 @@ static t_atom token_nud(t_vm *x, t_token token, int argc, t_atom *argv)
     }
 }
 
-static t_atom expression(t_vm *x, int rbp, int argc, t_atom *argv)
+static t_token expression(t_vm *x, int rbp, int argc, t_atom *argv)
 {
     t_token left;
-    left.t_oprefno = -1; /* for error checking */
     t_token t = x->x_parser.p_t;
     advance(x, argc, argv);
     left = token_nud(x, t, argc, argv);
@@ -412,46 +466,74 @@ static t_atom expression(t_vm *x, int rbp, int argc, t_atom *argv)
     return left;
 }
 
-static void doadvance(t_vm *x, t_symbol *s, int argc, t_atom *argv)
+static int vm_keyword_that_accepts_expression(t_symbol s)
 {
-    int i = x->x_parser.x_token_nr;
-    if (i >= argc)
+    if (s == gensym("loop") ||
+        s == gensym("if") ||
+        s == gensym("return))
     {
-        SETSYMBOL(&x->x_parser.x_token, &s_);
-        return;
+        return 1;
     }
-    x->x_parser.x_token = argv[i];
-    x->x_parser.x_token_nr += 1;
+    else return 0;
 }
 
-static void advance(t_vm *x, int argc, t_atom *argv)
+static int vm_keyword_that_rejects_an_expression(t_symbol s)
 {
-    doadvance(x, 0, argc, argv);
-}
-
-static void advance_and_expect(t_vm *x, t_symbol *s, int argc, t_atom *argv)
-{
-    doadvance(x, s, argc, argv);
+    if (s == gensym("endloop") ||
+        s == gensym("endif") ||
+        s == gensym("else))
+    {
+        return 1;
+    }
+    else return 0;
 }
 
 static int vm_parse_expression(t_vm *x, int argc, t_atom *argv)
 {
     if (argc)
     {
-        /* our parameter symbol */
+        /* our parameter symbol or keyword */
         t_symbol *s = atom_getsymbolarg(0, argc, argv);
         int got_param_index = vm_get_param_index(s) != -1;
-        if (got_param_index)
+        int got_keyword = vm_keyword_which_takes_an_expression(s) ||
+            vm_keyword_which_rejects_an_expression(s);
+        if (got_param_index || got_keyword)
         {
             if (argc > 1)
             {
+                t_token t;
+                    /* Let's go ahead and error out for keywords that don't
+                       accept an argument */
+                if (vm_keyword_that_rejects_an_expression(s)
+                {
+                    pd_error(x, "vm: extra arguments detected after '%s'",
+                        s->s_name);
+                    return 0;
+                }
                 argc--, argv++;
-                /* eat an initial arg into the parser */
+                    /* eat an initial arg into the parser */
                 advance(x, argc, argv);
-                /* now feed an expression into our FUDI intermediate
-                   representation buffer */
-                expression(x, 0, argc, argv);
-                /* done! */
+                    /* now feed an expression into our FUDI intermediate
+                       representation buffer */
+                t = expression(x, 0, argc, argv);
+                    /* done with the expression. Now assign the result of
+                       the expression to the parameter or keyword */
+                binbuf_addv(x->x_parser.p_irbuf, "sssf;"
+                    s,
+                    gensym("+"),
+                    t.t_oprefsym,
+                    0.
+                );
+            }
+            else if (got_keyword)
+            {
+                binbuf_addv(x->x_parser.p_irbuf, "s;", s);
+            }
+            else
+            {
+                pd_error(x, "vm: parameter must be followed by an "
+                    "expression");
+                return 0;
             }
         }
         else
@@ -460,11 +542,12 @@ static int vm_parse_expression(t_vm *x, int argc, t_atom *argv)
             return 0;
         }
     }
+    else return 1;
 }
 
 static int vm_parse_messages(t_vm *x, int argc, t_atom *argv)
 {
-    int i, notail, last_i = argc - 1, stackdepth = 0;
+    int i, notail, last_i = argc - 1, stackdepth = 0, firsttime = 1;
     notail = argc && atom_getsymbolarg(last_i, argc, argv) != gensym(";");
 
     for (i = 0; i < argc; i++)
@@ -472,12 +555,28 @@ static int vm_parse_messages(t_vm *x, int argc, t_atom *argv)
         if (atom_getsymbolarg(i, argc, argv) == gensym(";") ||
             i == last_i)
         {
-            x->x_varno = 0;
+            x->x_pratt.p_varno = 0;
             int count = (last_i && notail) ? i - offset + 1 : i - offset;
-            vm_parse_expression(x, count, argv + offset);
+                /*
+                   each semicolon separated message is a statement.
+                   It starts with a selector that is either a parameter
+                   to which we assign the output of the expression that
+                   follows it, or else a keyword. The current keywords
+                   are "if", "else", "endif", "loop", "endloop" and "return".
 
-                /* see if we got a bigger stacksize than we currently
-                   have */
+                   The first time through we fetch any parameters we may
+                   have.
+                */
+            if (firsttime)
+            {
+                if (vm_set_params(x, count, argv + offset))
+                    firsttime = 0;
+                else
+                    return 0;
+            }
+            else if (!vm_parse_expression(x, count, argv + offset))
+                return 0;
+                /* see if we got a bigger stacksize than the previous pass */
             if (x->x_pratt.p_varno > stackdepth)
             {
                 stackdepth = x->x_pratt.p_varno;
@@ -775,7 +874,7 @@ static int vm_add_opcode(t_vm *x, int argc, t_atom *argv)
                 pd_error(x, "vm: unknown variable name %s", s->s_name);
                 return 0;
             }
-            flag++;
+            flag ++;
         }
         else
             w[offset+2].w_float = atom_getfloatarg(2, argc, argv);
@@ -794,7 +893,7 @@ static int vm_add_opcode(t_vm *x, int argc, t_atom *argv)
                 pd_error(x, "vm: unknown variable name %s", s->s_name);
                 return 0;
             }
-            flag++;
+            flag += 2;
         }
         else
             w[offset+3].w_float = atom_getfloatarg(3, argc, argv);
@@ -999,43 +1098,54 @@ static int vm_compute(t_vm *x)
         {
         case OP_ADD:    PARAM(1) = CONST(2) + CONST(3); break;
         case OP_ADD_V: PARAM(1) = PARAM(2) + CONST(3); break;
+        case OP_ADD_CV: PARAM(1) = CONST(2) + PARAM(3); break;
         case OP_ADD_VV: PARAM(1) = PARAM(2) + PARAM(3); break;
 
         case OP_EQ:     PARAM(1) = CONST(2) == CONST(3); break;
         case OP_EQ_V:   PARAM(1) = PARAM(2) == CONST(3); break;
+        case OP_EQ_CV:  PARAM(1) = CONST(2) == PARAM(3); break;
         case OP_EQ_VV:  PARAM(1) = PARAM(2) == PARAM(3); break;
 
         case OP_NE:     PARAM(1) = CONST(2) != CONST(3); break;
         case OP_NE_V:   PARAM(1) = PARAM(2) != CONST(3); break;
+        case OP_NE_CV:  PARAM(1) = CONST(2) != PARAM(3); break;
         case OP_NE_VV:  PARAM(1) = PARAM(2) != PARAM(3); break;
 
         case OP_GT:     PARAM(1) = CONST(2) > CONST(3); break;
         case OP_GT_V:   PARAM(1) = PARAM(2) > CONST(3); break;
+        case OP_GT_CV:  PARAM(1) = CONST(2) > PARAM(3); break;
         case OP_GT_VV:  PARAM(1) = PARAM(2) > PARAM(3); break;
 
         case OP_LT:     PARAM(1) = CONST(2) < CONST(3); break;
         case OP_LT_V:   PARAM(1) = PARAM(2) < CONST(3); break;
+        case OP_LT_CV:  PARAM(1) = CONST(2) < PARAM(3); break;
         case OP_LT_VV:  PARAM(1) = PARAM(2) < PARAM(3); break;
 
         case OP_GE:     PARAM(1) = CONST(2) >= CONST(3); break;
         case OP_GE_V:   PARAM(1) = PARAM(2) >= CONST(3); break;
+        case OP_GE_CV:  PARAM(1) = CONST(2) >= PARAM(3); break;
         case OP_GE_VV:  PARAM(1) = PARAM(2) >= PARAM(3); break;
 
         case OP_LE:     PARAM(1) = CONST(2) <= CONST(3); break;
         case OP_LE_V:   PARAM(1) = PARAM(2) <= CONST(3); break;
+        case OP_LE_CV:  PARAM(1) = CONST(2) <= PARAM(3); break;
         case OP_LE_VV:  PARAM(1) = PARAM(2) <= PARAM(3); break;
 
         case OP_BA:     PARAM(1) = ((int)(CONST(2))) & ((int)(CONST(3))); break;
         case OP_BA_V:   PARAM(1) = ((int)(PARAM(2))) & ((int)(CONST(3))); break;
+        case OP_BA_CV:  PARAM(1) = ((int)(CONST(2))) & ((int)(PARAM(3))); break;
         case OP_BA_VV:  PARAM(1) = ((int)(PARAM(2))) & ((int)(PARAM(3))); break;
 
         case OP_BO:     PARAM(1) = ((int)(CONST(2))) | ((int)(CONST(3))); break;
         case OP_BO_V:   PARAM(1) = ((int)(PARAM(2))) | ((int)(CONST(3))); break;
+        case OP_BO_CV:  PARAM(1) = ((int)(CONST(2))) | ((int)(PARAM(3))); break;
         case OP_BO_VV:  PARAM(1) = ((int)(PARAM(2))) | ((int)(PARAM(3))); break;
 
         case OP_LA:     PARAM(1) = ((int)(CONST(2))) && ((int)(CONST(3)));
             break;
         case OP_LA_V:   PARAM(1) = ((int)(PARAM(2))) && ((int)(CONST(3)));
+            break;
+        case OP_LA_CV:  PARAM(1) = ((int)(CONST(2))) && ((int)(PARAM(3)));
             break;
         case OP_LA_VV:  PARAM(1) = ((int)(PARAM(2))) && ((int)(PARAM(3)));
             break;
@@ -1044,12 +1154,16 @@ static int vm_compute(t_vm *x)
             break;
         case OP_LO_V:   PARAM(1) = ((int)(PARAM(2))) || ((int)(CONST(3)));
             break;
+        case OP_LO_CV:  PARAM(1) = ((int)(CONST(2))) || ((int)(PARAM(3)));
+            break;
         case OP_LO_VV:  PARAM(1) = ((int)(PARAM(2))) || ((int)(PARAM(3)));
             break;
 
         case OP_LS:     PARAM(1) = ((int)(CONST(2))) << ((int)(CONST(3)));
             break;
         case OP_LS_V:   PARAM(1) = ((int)(PARAM(2))) << ((int)(CONST(3)));
+            break;
+        case OP_LS_CV:  PARAM(1) = ((int)(CONST(2))) << ((int)(PARAM(3)));
             break;
         case OP_LS_VV:  PARAM(1) = ((int)(PARAM(2))) << ((int)(PARAM(3)));
             break;
@@ -1058,49 +1172,63 @@ static int vm_compute(t_vm *x)
             break;
         case OP_RS_V:   PARAM(1) = ((int)(PARAM(2))) >> ((int)(CONST(3)));
             break;
+        case OP_RS_CV:  PARAM(1) = ((int)(CONST(2))) >> ((int)(PARAM(3)));
+            break;
         case OP_RS_VV:  PARAM(1) = ((int)(PARAM(2))) >> ((int)(PARAM(3)));
             break;
 
         case OP_SUB:    PARAM(1) = CONST(2) - CONST(3); break;
         case OP_SUB_V:  PARAM(1) = PARAM(2) - CONST(3); break;
+        case OP_SUB_CV: PARAM(1) = CONST(2) - PARAM(3); break;
         case OP_SUB_VV: PARAM(1) = PARAM(2) - PARAM(3); break;
 
         case OP_MUL:    PARAM(1) = CONST(2) * CONST(3); break;
         case OP_MUL_V:  PARAM(1) = PARAM(2) * CONST(3); break;
+        case OP_MUL_CV: PARAM(1) = CONST(2) * PARAM(3); break;
         case OP_MUL_VV: PARAM(1) = PARAM(2) * PARAM(3); break;
 
         case OP_OVR:    PARAM(1) = CONST(3) != 0 ? CONST(2) / CONST(3) : 0;
             break;
         case OP_OVR_V:  PARAM(1) = PARAM(2) != 0 ? PARAM(2) / CONST(3) : 0;
             break;
+        case OP_OVR_CV: PARAM(1) = CONST(2) != 0 ? CONST(2) / PARAM(3) : 0;
+            break;
         case OP_OVR_VV: PARAM(1) = PARAM(2) != 0 ? PARAM(2) / PARAM(3) : 0;
             break;
 
         case OP_DIV:    PARAM(1) = vm_div_op(CONST(2), CONST(3)); break;
         case OP_DIV_V:  PARAM(1) = vm_div_op(PARAM(2), CONST(3)); break;
+        case OP_DIV_CV: PARAM(1) = vm_div_op(CONST(2), PARAM(3)); break;
         case OP_DIV_VV: PARAM(1) = vm_div_op(PARAM(2), PARAM(3)); break;
 
         case OP_MOD:    PARAM(1) = vm_mod_op(CONST(2), CONST(3)); break;
         case OP_MOD_V:  PARAM(1) = vm_mod_op(PARAM(2), CONST(3)); break;
+        case OP_MOD_CV: PARAM(1) = vm_mod_op(CONST(2), PARAM(3)); break;
         case OP_MOD_VV: PARAM(1) = vm_mod_op(PARAM(2), PARAM(3)); break;
 
         case OP_POW:    PARAM(1) = vm_pow_op(x, CONST(2), CONST(3)); break;
         case OP_POW_V:  PARAM(1) = vm_pow_op(x, PARAM(2), CONST(3)); break;
+        case OP_POW_CV: PARAM(1) = vm_pow_op(x, CONST(2), PARAM(3)); break;
         case OP_POW_VV: PARAM(1) = vm_pow_op(x, PARAM(2), PARAM(3)); break;
 
         case OP_PC:    PARAM(1) = ((int)(CONST(2))) %
             (((int)CONST(3)) ? ((int)CONST(3)) : 1);
             break;
-        case OP_PC_V:  PARAM(1) = ((int)(CONST(2))) %
+        case OP_PC_V:  PARAM(1) = ((int)(PARAM(2))) %
             (((int)CONST(3)) ? ((int)CONST(3)) : 1);
             break;
-        case OP_PC_VV: PARAM(1) = ((int)(CONST(2))) %
-            (((int)CONST(3)) ? ((int)CONST(3)) : 1);
+        case OP_PC_CV: PARAM(1) = ((int)(CONST(2))) %
+            (((int)PARAM(3)) ? ((int)PARAM(3)) : 1);
+            break;
+        case OP_PC_VV: PARAM(1) = ((int)(PARAM(2))) %
+            (((int)PARAM(3)) ? ((int)PARAM(3)) : 1);
             break;
 
         case OP_MAX:    PARAM(1) = CONST(2) > CONST(3) ? CONST(2) : CONST(3);
             break;
         case OP_MAX_V:  PARAM(1) = PARAM(2) > CONST(3) ? PARAM(2) : CONST(3);
+            break;
+        case OP_MAX_CV: PARAM(1) = CONST(2) > PARAM(3) ? CONST(2) : PARAM(3);
             break;
         case OP_MAX_VV: PARAM(1) = PARAM(2) > PARAM(3) ? PARAM(2) : PARAM(3);
             break;
@@ -1108,6 +1236,8 @@ static int vm_compute(t_vm *x)
         case OP_MIN:    PARAM(1) = CONST(2) < CONST(3) ? CONST(2) : CONST(3);
             break;
         case OP_MIN_V:  PARAM(1) = PARAM(2) < CONST(3) ? PARAM(2) : CONST(3);
+            break;
+        case OP_MIN_CV:  PARAM(1) = CONST(2) < PARAM(3) ? CONST(2) : PARAM(3);
             break;
         case OP_MIN_VV: PARAM(1) = PARAM(2) < PARAM(3) ? PARAM(2) : PARAM(3);
             break;
