@@ -23,6 +23,7 @@ inputs to int and their outputs back to float. */
 #define EXP expf
 #define FABS fabsf
 #define MAXLOG 87.3365
+#define FMOD fmodf
 #elif PD_FLOATSIZE == 64
 #define POW pow
 #define SIN sin
@@ -34,6 +35,7 @@ inputs to int and their outputs back to float. */
 #define EXP exp
 #define FABS fabs
 #define MAXLOG 87.3365
+#define FMOD fmod
 #endif
 
 /* ------------------------ vm ------------------------ */
@@ -85,6 +87,10 @@ typedef enum
     OP_FABS_V,
     OP_FABS_CV,
     OP_FABS_VV,
+    OP_FMOD,
+    OP_FMOD_V,
+    OP_FMOD_CV,
+    OP_FMOD_VV,
     OP_GE,
     OP_GE_V,
     OP_GE_CV,
@@ -579,6 +585,7 @@ static int vm_parse_messages(t_vm *x, int argc, t_atom *argv)
             offset = i;
         }
     }
+    return 1;
 }
 
 static t_optype vm_getop(t_symbol *sym)
@@ -607,6 +614,7 @@ static t_optype vm_getop(t_symbol *sym)
     else if (!strcmp(s, "div")) return OP_DIV;
     else if (!strcmp(s, "exp")) return OP_EXP;
     else if (!strcmp(s, "fabs")) return OP_FABS;
+    else if (!strcmp(s, "fmod")) return OP_FMOD;
     else if (!strcmp(s, "log")) return OP_LOG;
     else if (!strcmp(s, "max")) return OP_MAX;
     else if (!strcmp(s, "min")) return OP_MIN;
@@ -1095,7 +1103,7 @@ static inline t_float vm_pow_op(t_vm *x, t_float f1, t_float f2)
 #define PARAM(i) x->x_params[p[i].w_index].p_w.w_float
 #define CONST(i) p[i].w_float
 
-static int vm_compute(t_vm *x)
+static int vm_eval(t_vm *x)
 {
     int coins = x->x_coins, spin = 1;
 //    for (; coins && spin; x->x_last_op += 4, coins--)
@@ -1215,6 +1223,11 @@ static int vm_compute(t_vm *x)
         case OP_MOD_V:  PARAM(1) = vm_mod_op(PARAM(2), CONST(3)); break;
         case OP_MOD_CV: PARAM(1) = vm_mod_op(CONST(2), PARAM(3)); break;
         case OP_MOD_VV: PARAM(1) = vm_mod_op(PARAM(2), PARAM(3)); break;
+
+        case OP_FMOD:    PARAM(1) = FMOD(CONST(2), CONST(3)); break;
+        case OP_FMOD_V:  PARAM(1) = FMOD(PARAM(2), CONST(3)); break;
+        case OP_FMOD_CV: PARAM(1) = FMOD(CONST(2), PARAM(3)); break;
+        case OP_FMOD_VV: PARAM(1) = FMOD(PARAM(2), PARAM(3)); break;
 
         case OP_POW:    PARAM(1) = vm_pow_op(x, CONST(2), CONST(3)); break;
         case OP_POW_V:  PARAM(1) = vm_pow_op(x, PARAM(2), CONST(3)); break;
@@ -1360,7 +1373,7 @@ static void vm_float(t_vm *x, t_float f)
         x->x_params[0].p_w.w_float = x->x_in;
         x->x_last_op = x->x_pipeline;
     }
-    if (vm_compute(x))
+    if (vm_eval(x))
         outlet_float(x->x_out, x->x_ret);
     outlet_float(x->x_obj.ob_outlet, (t_float)x->x_coins);
 }
