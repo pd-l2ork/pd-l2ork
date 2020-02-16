@@ -38,150 +38,115 @@ inputs to int and their outputs back to float. */
 #define FMOD fmod
 #endif
 
+/* ----------------- vm operators ------------- */
+
+/*
+*  This is our main macro where our mappings are found. Additional macros
+*  can provide another macro "FN" in order to control what gets
+*  substituted in each line.
+*/
+#define GENERATE(FN) \
+    FN(OP_NULL, "") \
+    FN(OP_ADD, "+") \
+    FN(OP_ATAN, "atan") \
+    FN(OP_ATAN2, "atan2") \
+    FN(OP_BA, "&") \
+    FN(OP_BO, "|") \
+    FN(OP_COS, "cos") \
+    FN(OP_DIV, "div") \
+    FN(OP_EQ, "==") \
+    FN(OP_EXP, "exp") \
+    FN(OP_FABS, "fabs") \
+    FN(OP_FMOD, "fmod") \
+    FN(OP_GE, ">=") \
+    FN(OP_GT, ">") \
+    FN(OP_LA, "&&") \
+    FN(OP_LE, "<=") \
+    FN(OP_LO, "||") \
+    FN(OP_LOG, "log") \
+    FN(OP_LS, "<<") \
+    FN(OP_LT, "<") \
+    FN(OP_MAX, "max") \
+    FN(OP_MIN, "min") \
+    FN(OP_MOD, "mod") \
+    FN(OP_MUL, "*") \
+    FN(OP_NE, "!=") \
+    FN(OP_OVR, "/") \
+    FN(OP_PC, "%") \
+    FN(OP_POW, "pow") \
+    FN(OP_RS, ">>") \
+    FN(OP_SIN, "sin") \
+    FN(OP_SQRT, "sqrt") \
+    FN(OP_SUB, "sub") \
+    FN(OP_IF, "if") \
+    FN(OP_ELSE, "else") \
+    FN(OP_ENDIF, "endif") \
+    FN(OP_STARTLOOP, "loop") \
+    FN(OP_ENDLOOP, "endloop") \
+    FN(OP_RETURN, "return")
+
+/*
+*  Here is our first "FN" macro. Given a pair of strings it outputs the first
+*  one followed by string concatenations that will handle our combinations
+*  of constant and variable argument types. We just put them right in the enum
+*  field so that we can do the type-checking in the parser. Then our evaluator
+*  can simply jump to the relevant case given the args so we don't have to
+*  type-check there.
+*/
+
+#define OP_NAMES(op, str) op, \
+                          op ## _V, \
+                          op ## _CV, \
+                          op ## _VV,
+
+/*
+*  Now armed with our macros, let's first create our enum for
+*  our supported ops.
+*/
+typedef enum
+{
+    GENERATE(OP_NAMES)
+    OP_C89_SUPPORT /* to remove a trailing comma */
+} t_optype;
+
+/*
+*  Now we just need some macros for the getters. In my current design parsing
+*  is only done at load time, and serialization is just for debugging. So we
+*  can just use a dead simple implementation-- an if for each op returning
+*  the op if there's a match. I *think* we could generate an array of strings
+*  and use the enum fields to index into it, but I can't remember if
+*  enums must start from zero.
+*/
+#define OP_FROM_STRING(op, str) if (!strcmp(symarg, str)) return op;
+#define STRING_FROM_OP(op, str) if (oparg == op) return str;
+
+/* Now throw our macros into some functions. */
+
+static t_optype op_from_string(char *symarg)
+{
+    GENERATE(OP_FROM_STRING);
+    /* if we didn't hit a match... */
+    return OP_NULL;
+}
+
+static char *string_from_op(t_optype oparg)
+{
+    GENERATE(STRING_FROM_OP);
+    /* default... */
+    return "";
+}
+
+#undef GENERATE
+#undef OP_FROM_STRING
+#undef STRING_FROM_OP
+#undef OP_NAMES
+
+
 /* ------------------------ vm ------------------------ */
 
 static t_class *vm_class;
 
 /* the ops */
-
-typedef enum
-{
-    OP_NULL,
-    OP_ADD,
-    OP_ADD_V,
-    OP_ADD_CV,
-    OP_ADD_VV,
-    OP_ATAN,
-    OP_ATAN_V,
-    OP_ATAN_CV,
-    OP_ATAN_VV,
-    OP_ATAN2,
-    OP_ATAN2_V,
-    OP_ATAN2_CV,
-    OP_ATAN2_VV,
-    OP_BA,
-    OP_BA_V,
-    OP_BA_CV,
-    OP_BA_VV,
-    OP_BO,
-    OP_BO_V,
-    OP_BO_CV,
-    OP_BO_VV,
-    OP_COS,
-    OP_COS_V,
-    OP_COS_CV,
-    OP_COS_VV,
-    OP_DIV,
-    OP_DIV_V,
-    OP_DIV_CV,
-    OP_DIV_VV,
-    OP_EQ,
-    OP_EQ_V,
-    OP_EQ_CV,
-    OP_EQ_VV,
-    OP_EXP,
-    OP_EXP_V,
-    OP_EXP_CV,
-    OP_EXP_VV,
-    OP_FABS,
-    OP_FABS_V,
-    OP_FABS_CV,
-    OP_FABS_VV,
-    OP_FMOD,
-    OP_FMOD_V,
-    OP_FMOD_CV,
-    OP_FMOD_VV,
-    OP_GE,
-    OP_GE_V,
-    OP_GE_CV,
-    OP_GE_VV,
-    OP_GT,
-    OP_GT_V,
-    OP_GT_CV,
-    OP_GT_VV,
-    OP_LA,
-    OP_LA_V,
-    OP_LA_CV,
-    OP_LA_VV,
-    OP_LE,
-    OP_LE_V,
-    OP_LE_CV,
-    OP_LE_VV,
-    OP_LO,
-    OP_LO_V,
-    OP_LO_CV,
-    OP_LO_VV,
-    OP_LOG,
-    OP_LOG_V,
-    OP_LOG_CV,
-    OP_LOG_VV,
-    OP_LS,
-    OP_LS_V,
-    OP_LS_CV,
-    OP_LS_VV,
-    OP_LT,
-    OP_LT_V,
-    OP_LT_CV,
-    OP_LT_VV,
-    OP_MAX,
-    OP_MAX_V,
-    OP_MAX_CV,
-    OP_MAX_VV,
-    OP_MIN,
-    OP_MIN_V,
-    OP_MIN_CV,
-    OP_MIN_VV,
-    OP_MOD,
-    OP_MOD_V,
-    OP_MOD_CV,
-    OP_MOD_VV,
-    OP_MUL,
-    OP_MUL_V,
-    OP_MUL_CV,
-    OP_MUL_VV,
-    OP_NE,
-    OP_NE_V,
-    OP_NE_CV,
-    OP_NE_VV,
-    OP_OVR,
-    OP_OVR_V,
-    OP_OVR_CV,
-    OP_OVR_VV,
-    OP_PC,
-    OP_PC_V,
-    OP_PC_CV,
-    OP_PC_VV,
-    OP_POW,
-    OP_POW_V,
-    OP_POW_CV,
-    OP_POW_VV,
-    OP_RS,
-    OP_RS_V,
-    OP_RS_CV,
-    OP_RS_VV,
-    OP_SIN,
-    OP_SIN_V,
-    OP_SIN_CV,
-    OP_SIN_VV,
-    OP_SQRT,
-    OP_SQRT_V,
-    OP_SQRT_CV,
-    OP_SQRT_VV,
-    OP_SUB,
-    OP_SUB_V,
-    OP_SUB_CV,
-    OP_SUB_VV,
-    OP_IF,
-    OP_IF_V,
-    OP_ELSE,
-    OP_ELSE_V,
-    OP_ENDIF,
-    OP_STARTLOOP,
-    OP_STARTLOOP_V,
-    OP_ENDLOOP,
-    OP_ENDLOOP_V,
-    OP_RETURN
-} t_optype;
 
 /* let's see if we can get away with all ops being the same size */
 #define OPLEN 4
@@ -216,13 +181,15 @@ typedef struct _jumpcode
 } t_jumpcode;
 
 #define JUMPSTACKSIZE 4
+#define PARAMSIZE 20
 
 typedef struct _vm
 {
     t_object x_obj;
     t_pratt x_parser;
     t_float x_in;
-    t_param x_params[4];
+    t_param x_params[PARAMSIZE];
+    int x_nparams;
     t_jumpcode x_jumpstack[JUMPSTACKSIZE];
     int x_jumpstack_nitems;
     int x_coins;
@@ -588,100 +555,27 @@ static int vm_parse_messages(t_vm *x, int argc, t_atom *argv)
     return 1;
 }
 
-static t_optype vm_getop(t_symbol *sym)
-{
-    char *s = sym->s_name;
-    if (!strcmp(s, "*")) return OP_MUL;
-    else if (!strcmp(s, "/")) return OP_OVR;
-    else if (!strcmp(s, "+")) return OP_ADD;
-    else if (!strcmp(s, "-")) return OP_SUB;
-    else if (!strcmp(s, ">")) return OP_GT;
-    else if (!strcmp(s, "<")) return OP_LT;
-    else if (!strcmp(s, "%")) return OP_PC;
-    else if (!strcmp(s, "&")) return OP_BA;
-    else if (!strcmp(s, "|")) return OP_BO;
-    else if (!strcmp(s, "&&")) return OP_LA;
-    else if (!strcmp(s, "||")) return OP_LO;
-    else if (!strcmp(s, "==")) return OP_EQ;
-    else if (!strcmp(s, "!=")) return OP_NE;
-    else if (!strcmp(s, ">=")) return OP_GE;
-    else if (!strcmp(s, ">>")) return OP_RS;
-    else if (!strcmp(s, "<=")) return OP_LE;
-    else if (!strcmp(s, "<<")) return OP_LS;
-    else if (!strcmp(s, "atan")) return OP_ATAN;
-    else if (!strcmp(s, "atan2")) return OP_ATAN2;
-    else if (!strcmp(s, "cos")) return OP_COS;
-    else if (!strcmp(s, "div")) return OP_DIV;
-    else if (!strcmp(s, "exp")) return OP_EXP;
-    else if (!strcmp(s, "fabs")) return OP_FABS;
-    else if (!strcmp(s, "fmod")) return OP_FMOD;
-    else if (!strcmp(s, "log")) return OP_LOG;
-    else if (!strcmp(s, "max")) return OP_MAX;
-    else if (!strcmp(s, "min")) return OP_MIN;
-    else if (!strcmp(s, "mod")) return OP_MOD;
-    else if (!strcmp(s, "pow")) return OP_POW;
-    else if (!strcmp(s, "sin")) return OP_SIN;
-    else if (!strcmp(s, "sqrt")) return OP_SQRT;
-    else if (!strcmp(s, "startloop")) return OP_STARTLOOP;
-    else if (!strcmp(s, "endloop")) return OP_ENDLOOP;
-    else if (!strcmp(s, "if")) return OP_IF;
-    else if (!strcmp(s, "else")) return OP_ELSE;
-    else if (!strcmp(s, "endif")) return OP_ENDIF;
-    else if (!strcmp(s, "return")) return OP_RETURN;
-    else return OP_NULL;
-}
-
 static int vm_get_param_index(t_vm *x, t_symbol *s)
 {
     int i;
-    for (i = 0; i < OPLEN; i++)
+    for (i = 0; i < PARAMSIZE; i++)
     {
         if (x->x_params[i].p_name == s) return i;
     }
     return -1;
 }
 
-static int vm_set_params(t_vm *x, int argc, t_atom *argv)
+static int vm_set_param(t_vm *x, t_atom *at)
 {
     t_symbol *name;
 
-    if (argc)
-    {
-        name = atom_getsymbol(argv);
-        t_float f;
-        if (vm_getop(name) != OP_NULL) goto badparamop;
-        if (vm_getconstvalue(name, &f)) goto badparamconst;
-        x->x_params[0].p_name = name;
-    }
-    else x->x_params[0].p_name = &s_;
-    x->x_params[0].p_w.w_float = 0;
+    t_float f;
+    name = atom_getsymbol(at);
+    if (op_from_string(name) != OP_NULL) goto badparamop;
+    if (vm_getconstvalue(name, &f)) goto badparamconst;
+    x->x_params[x->x_nparams].p_name = name;
 
-    if (argc > 1)
-    {
-        name = atom_getsymbol(++argv);
-        if (vm_getop(name) != OP_NULL) goto badparamop;
-        x->x_params[1].p_name = name;
-    }
-    else x->x_params[1].p_name = &s_;
-    x->x_params[1].p_w.w_float = 0.;
-
-    if (argc > 2)
-    {
-        name = atom_getsymbol(++argv);
-        if (vm_getop(name) != OP_NULL) goto badparamop;
-        x->x_params[2].p_name = name;
-    }
-    else x->x_params[2].p_name = &s_;
-    x->x_params[2].p_w.w_float = 0.;
-
-    if (argc > 3)
-    {
-        name = atom_getsymbol(++argv);
-        if (vm_getop(name) != OP_NULL) goto badparamop;
-        x->x_params[3].p_name = name;
-    }
-    else x->x_params[3].p_name = &s_;
-    x->x_params[3].p_w.w_float = 0.;
+    x->x_nparams += 1;
 
     return 1;
 
@@ -691,6 +585,20 @@ badparamop:
 badparamconst:
     pd_error(x, "vm: parameter name %s is a reserved constant", name->s_name);
     return 0;
+}
+
+static int vm_set_params(t_vm *x, int argc, t_atom *argv)
+{
+    if (argc)
+        if (!vm_set_param(x, argv)) return 0;
+    if (argc > 1)
+        if (!vm_set_param(x, argv + 1)) return 0;
+    if (argc > 2)
+        if (!vm_set_param(x, argv + 2)) return 0;
+    if (argc > 3)
+        if (!vm_set_param(x, argv + 3)) return 0;
+
+    return 1;
 }
 
 static int vm_jumpstack_push(t_vm *x, t_optype t, int index)
@@ -770,7 +678,7 @@ static int vm_add_opcode(t_vm *x, int argc, t_atom *argv)
         /* Get the op. We'll adjust it with a type-checking flag after
            fetching the args. */
     t_symbol *op = atom_getsymbolarg(0, argc, argv);
-    t_optype t = vm_getop(op);
+    t_optype t = op_from_string(op);
     if (t == OP_NULL)
     {
         pd_error(x, "vm: unknown operator");
@@ -1031,6 +939,7 @@ static void *vm_new(t_symbol *s, int argc, t_atom *argv)
     t_vm *x = (t_vm *)pd_new(vm_class);
     int irmode = (s == gensym("vmir"));
     x->x_jumpstack_nitems = 0;
+    x->x_nparams = 0;
     x->x_parser.p_irbuf = binbuf_new();
 
     x->x_parser.p_token_nr = 0;
