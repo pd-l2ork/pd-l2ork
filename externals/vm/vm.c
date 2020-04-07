@@ -41,49 +41,56 @@ inputs to int and their outputs back to float. */
 /* ----------------- vm operators ------------- */
 
 /*
-*  This is our main macro where our mappings are found. Additional macros
-*  can provide another macro "FN" in order to control what gets
-*  substituted in each line.
+*  This is our main macro where our mappings are found.
+*
+*  The FN argument is assumed to be another macro. The C preprocessor will
+*  first do substitution for the GENERATE macro; when finished it will make
+*  another pass through and do substitution for the macro we define with FN.
 */
+
 #define GENERATE(FN) \
-    FN(OP_NULL, "") \
-    FN(OP_ADD, "+") \
-    FN(OP_ATAN, "atan") \
-    FN(OP_ATAN2, "atan2") \
-    FN(OP_BA, "&") \
-    FN(OP_BO, "|") \
-    FN(OP_COS, "cos") \
-    FN(OP_DIV, "div") \
-    FN(OP_EQ, "==") \
-    FN(OP_EXP, "exp") \
-    FN(OP_FABS, "fabs") \
-    FN(OP_FMOD, "fmod") \
-    FN(OP_GE, ">=") \
-    FN(OP_GT, ">") \
-    FN(OP_LA, "&&") \
-    FN(OP_LE, "<=") \
-    FN(OP_LO, "||") \
-    FN(OP_LOG, "log") \
-    FN(OP_LS, "<<") \
-    FN(OP_LT, "<") \
-    FN(OP_MAX, "max") \
-    FN(OP_MIN, "min") \
-    FN(OP_MOD, "mod") \
-    FN(OP_MUL, "*") \
-    FN(OP_NE, "!=") \
-    FN(OP_OVR, "/") \
-    FN(OP_PC, "%") \
-    FN(OP_POW, "pow") \
-    FN(OP_RS, ">>") \
-    FN(OP_SIN, "sin") \
-    FN(OP_SQRT, "sqrt") \
-    FN(OP_SUB, "sub") \
-    FN(OP_IF, "if") \
-    FN(OP_ELSE, "else") \
-    FN(OP_ENDIF, "endif") \
-    FN(OP_STARTLOOP, "loop") \
-    FN(OP_ENDLOOP, "endloop") \
-    FN(OP_RETURN, "return")
+    FN(OP_NULL, "",    0) \
+    FN(OP_N,    "!",  70) \
+    FN(OP_OVR,  "/",  60) \
+    FN(OP_PC,   "%",  60) \
+    FN(OP_MUL,  "*",  60) \
+    FN(OP_SUB,  "-",  50) \
+    FN(OP_ADD,  "+",  50) \
+    FN(OP_LS,   "<<", 40) \
+    FN(OP_RS,   ">>", 40) \
+    FN(OP_NE,   "!=", 40) \
+    FN(OP_EQ,   "==", 40) \
+    FN(OP_GE,   ">=", 40) \
+    FN(OP_GT,   ">",  40) \
+    FN(OP_LE,   "<=", 40) \
+    FN(OP_LT,   "<",  40) \
+    FN(OP_LA,   "&&", 30) \
+    FN(OP_LO,   "||", 30) \
+    FN(OP_BA,   "&",  30) \
+    FN(OP_BO,   "|",  30) \
+    FN(OP_Q,    "?",  20) \
+    FN(OP_B,    ":",  20) \
+    FN(OP_SEMI, ";",   0) \
+    FN(OP_ATAN, "atan", 0) \
+    FN(OP_ATAN2, "atan2", 0) \
+    FN(OP_COS,  "cos", 0) \
+    FN(OP_DIV,  "div", 0) \
+    FN(OP_EXP,  "exp", 0) \
+    FN(OP_FABS, "fabs", 0) \
+    FN(OP_FMOD, "fmod", 0) \
+    FN(OP_LOG,  "log", 0) \
+    FN(OP_MAX,  "max", 0) \
+    FN(OP_MIN,  "min", 0) \
+    FN(OP_MOD,  "mod", 0) \
+    FN(OP_POW,  "pow", 0) \
+    FN(OP_SIN,  "sin", 0) \
+    FN(OP_SQRT, "sqrt", 0) \
+    FN(OP_IF,   "if", 0) \
+    FN(OP_ELSE, "else", 0) \
+    FN(OP_ENDIF, "endif", 0) \
+    FN(OP_STARTLOOP, "loop", 0) \
+    FN(OP_ENDLOOP, "endloop", 0) \
+    FN(OP_RETURN, "return", 0)
 
 /*
 *  Here is our first "FN" macro. Given a pair of strings it outputs the first
@@ -94,7 +101,7 @@ inputs to int and their outputs back to float. */
 *  type-check there.
 */
 
-#define OP_NAMES(op, str) op, \
+#define OP_NAMES(op, str, bp) op, \
                           op ## _V, \
                           op ## _CV, \
                           op ## _VV,
@@ -117,13 +124,14 @@ typedef enum
 *  and use the enum fields to index into it, but I can't remember if
 *  enums must start from zero.
 */
-#define OP_FROM_STRING(op, str) if (!strcmp(symarg, str)) return op;
-#define STRING_FROM_OP(op, str) if (oparg == op) return str;
+#define OP_FROM_STRING(op, str, bp) if (!strcmp(str, name)) return op;
+#define STRING_FROM_OP(op, str, bp) if (oparg == op) return str;
 
 /* Now throw our macros into some functions. */
 
-static t_optype op_from_string(char *symarg)
+static t_optype op_from_symbol(t_symbol *s)
 {
+    char *name = s->s_name;
     GENERATE(OP_FROM_STRING);
     /* if we didn't hit a match... */
     return OP_NULL;
@@ -181,7 +189,7 @@ typedef struct _jumpcode
 } t_jumpcode;
 
 #define JUMPSTACKSIZE 4
-#define PARAMSIZE 20
+#define PARAMSIZE 4
 
 typedef struct _vm
 {
@@ -190,6 +198,7 @@ typedef struct _vm
     t_float x_in;
     t_param x_params[PARAMSIZE];
     int x_nparams;
+    int x_gotparams;
     t_jumpcode x_jumpstack[JUMPSTACKSIZE];
     int x_jumpstack_nitems;
     int x_coins;
@@ -199,6 +208,9 @@ typedef struct _vm
     t_float x_ret;
     t_outlet *x_out;
 } t_vm;
+
+/* little kludge to eventually change the name to fn */
+#define t_fn t_vm
 
 static int vm_getconstvalue(t_symbol *s, t_float *f)
 {
@@ -247,6 +259,7 @@ static int token_lbp(t_vm *x, t_token *t)
     else
     {
         bug("vm: bad atom type to token_lbp");
+        return 0;
     }
 }
 
@@ -287,6 +300,7 @@ static void vm_irbuf_add(t_vm *x, t_token *operator, t_token op1, t_token op2)
     vm_ir_set_operand(x, &op2, at+3);
 
     binbuf_add(x->x_parser.p_irbuf, 4, at);
+    binbuf_addv(x->x_parser.p_irbuf, "s", gensym(";"));
 }
 
 static void doadvance(t_vm *x, t_symbol *s, int argc, t_atom *argv)
@@ -306,11 +320,13 @@ static void advance(t_vm *x, int argc, t_atom *argv)
     doadvance(x, 0, argc, argv);
 }
 
+/* Make sure to plug this in for better error checking... */
+/*
 static void advance_and_expect(t_vm *x, t_symbol *s, int argc, t_atom *argv)
 {
     doadvance(x, s, argc, argv);
 }
-
+*/
 
 static t_token expression(t_vm *x, int rbp, int argc, t_atom *argv);
 
@@ -362,6 +378,11 @@ static t_token token_led(t_vm *x, t_token left, t_token t,
         else if (s == gensym("?"))
         {
             ternary(x, left, &t, argc, argv);
+            return t;
+        }
+        else
+        {
+            pd_error(x, "vm: only infix and ternary supported");
             return t;
         }
     }
@@ -482,11 +503,12 @@ static int vm_parse_expression(t_vm *x, int argc, t_atom *argv)
                 t = expression(x, 0, argc, argv);
                     /* done with the expression. Now assign the result of
                        the expression to the parameter or keyword */
-                binbuf_addv(x->x_parser.p_irbuf, "sssf;",
+                binbuf_addv(x->x_parser.p_irbuf, "sssfs",
                     s,
                     gensym("+"),
                     t.t_oprefsym,
-                    0.
+                    0.,
+                    gensym(";")
                 );
             }
             else if (got_keyword)
@@ -505,6 +527,7 @@ static int vm_parse_expression(t_vm *x, int argc, t_atom *argv)
             pd_error(x, "vm: need a parameter for the 1st argument");
             return 0;
         }
+        return 1;
     }
     else return 1;
 }
@@ -512,46 +535,87 @@ static int vm_parse_expression(t_vm *x, int argc, t_atom *argv)
 
 static int vm_set_params(t_vm *x, int argc, t_atom *argv);
 
-static int vm_parse_messages(t_vm *x, int argc, t_atom *argv)
+static void vm_init_parser(t_vm *x)
 {
-    int i, notail, last_i = argc - 1, stackdepth = 0, firsttime = 1,
-        offset = 0;
-    notail = argc && atom_getsymbolarg(last_i, argc, argv) != gensym(";");
+    x->x_parser.p_irbuf = binbuf_new();
+    x->x_parser.p_token_nr = 0;
+}
 
+static void vm_free_parser(t_fn *x)
+{
+    binbuf_free(x->x_parser.p_irbuf);
+}
+
+/* given a separator "s", return the number of tokens before "s"
+   if "s" isn't found, return the number of tokens searched and set the
+   terminator flag to 0 */
+static int vm_get_submessage(t_symbol *s, int argc, t_atom *argv, int *term)
+{
+
+post("my submessage args are:");
+postatom(argc, argv);
+post("argc is %d", argc);
+
+    int i;
+    *term = 0;
     for (i = 0; i < argc; i++)
     {
-        if (atom_getsymbolarg(i, argc, argv) == gensym(";") ||
-            i == last_i)
+        if (atom_getsymbolarg(i, argc, argv) == s)
         {
-            x->x_parser.p_varno = 0;
-            int count = (last_i && notail) ? i - offset + 1 : i - offset;
-                /*
-                   each semicolon separated message is a statement.
-                   It starts with a selector that is either a parameter
-                   to which we assign the output of the expression that
-                   follows it, or else a keyword. The current keywords
-                   are "if", "else", "endif", "loop", "endloop" and "return".
-
-                   The first time through we fetch any parameters we may
-                   have.
-                */
-            if (firsttime)
-            {
-                if (vm_set_params(x, count, argv + offset))
-                    firsttime = 0;
-                else
-                    return 0;
-            }
-            else if (!vm_parse_expression(x, count, argv + offset))
-                return 0;
-                /* see if we got a bigger stacksize than the previous pass */
-            if (x->x_parser.p_varno > stackdepth)
-            {
-                stackdepth = x->x_parser.p_varno;
-            }
-            offset = i;
+            *term = 1;
+            return i;
         }
     }
+    return i;
+}
+
+static int vm_parse_messages(t_vm *x, int argc, t_atom *argv)
+{
+    int i;
+    int head = 0, terminator = 0, stackdepth = 0;
+
+    for (i = 0; argc > 0; i++)
+    {
+post("in parse_messages head is %d", head);
+        /* set the number of variables used per line back to zero */
+        x->x_parser.p_varno = 0;
+
+        int c = vm_get_submessage(gensym(";"), argc, argv + head, &terminator);
+
+        /*
+           each semicolon separated message is a statement.
+           It starts with a selector that is either a parameter
+           to which we assign the output of the expression that
+           follows it, or else a keyword. The current keywords
+           are "if", "else", "endif", "loop", "endloop" and "return".
+
+           The first time through we fetch any parameters we may
+           have.
+        */
+
+        if (head == 0)
+        {
+            if (!vm_set_params(x, c, argv + head))
+                return 0;
+post("got here!!!");
+            x->x_gotparams = 1;
+        }
+        else if (!vm_parse_expression(x, c, argv + head))
+            return 0;
+            /* now see if we got a bigger stacksize than the previous pass */
+        if (x->x_parser.p_varno > stackdepth)
+        {
+            stackdepth = x->x_parser.p_varno;
+        }
+
+        /* Success! */
+        head = c + terminator;
+        argc -= head;
+    }
+    
+    /* now that we're through, set the max stackdepth */
+    x->x_parser.p_varno = stackdepth;
+
     return 1;
 }
 
@@ -565,20 +629,29 @@ static int vm_get_param_index(t_vm *x, t_symbol *s)
     return -1;
 }
 
-static int vm_set_param(t_vm *x, t_atom *at)
+static int vm_set_param(t_vm *x, int argc, t_atom *at)
 {
-    t_symbol *name;
-
     t_float f;
-    name = atom_getsymbol(at);
-    if (op_from_string(name) != OP_NULL) goto badparamop;
+    t_symbol *name = atom_getsymbolarg(0, argc, at);
+
+post("in vm_set_param argc is %d", argc);
+
+    /* We don't mind trailing commas. But we want to error out
+       if we get multiple commas in a row or leading commas.
+       If we get called with no arguments we're either a leading or
+       multiple comma. */
+    if (!argc) goto badnoop;
+
+    if (op_from_symbol(name) != OP_NULL) goto badparamop;
     if (vm_getconstvalue(name, &f)) goto badparamconst;
     x->x_params[x->x_nparams].p_name = name;
 
     x->x_nparams += 1;
 
     return 1;
-
+badnoop:
+    pd_error(x, "vm: leading and double commas not allowed");
+    return 0;
 badparamop:
     pd_error(x, "vm: parameter name %s cannot be an operator", name->s_name);
     return 0;
@@ -589,14 +662,38 @@ badparamconst:
 
 static int vm_set_params(t_vm *x, int argc, t_atom *argv)
 {
-    if (argc)
-        if (!vm_set_param(x, argv)) return 0;
-    if (argc > 1)
-        if (!vm_set_param(x, argv + 1)) return 0;
-    if (argc > 2)
-        if (!vm_set_param(x, argv + 2)) return 0;
-    if (argc > 3)
-        if (!vm_set_param(x, argv + 3)) return 0;
+    int i;
+    int head = 0, terminator = 0;
+post("inside vm_set_params");
+post("argc is %d", argc);
+    for (i = 0; argc > 0; i++)
+    {
+post("head is %d", head);
+        /* Let's just start with 4 params and see how it goes */
+        if (i > PARAMSIZE)
+        {
+            pd_error(x, "vm: only 4 parameters allowed");
+            return 0;
+        }
+
+        int c = vm_get_submessage(gensym(","), argc, argv + head, &terminator);
+
+        if (!vm_set_param(x, c, argv + head))
+        {
+            return 0;
+        }
+        /* Success! */
+        head = c + terminator;
+        argc -= head;
+    }
+//    if (argc)
+//        if (!vm_set_param(x, argv)) return 0;
+//    if (argc > 1)
+//        if (!vm_set_param(x, argv + 1)) return 0;
+//    if (argc > 2)
+//        if (!vm_set_param(x, argv + 2)) return 0;
+//    if (argc > 3)
+//        if (!vm_set_param(x, argv + 3)) return 0;
 
     return 1;
 }
@@ -678,7 +775,7 @@ static int vm_add_opcode(t_vm *x, int argc, t_atom *argv)
         /* Get the op. We'll adjust it with a type-checking flag after
            fetching the args. */
     t_symbol *op = atom_getsymbolarg(0, argc, argv);
-    t_optype t = op_from_string(op);
+    t_optype t = op_from_symbol(op);
     if (t == OP_NULL)
     {
         pd_error(x, "vm: unknown operator");
@@ -826,7 +923,6 @@ if (t == OP_ADD) fprintf(stderr, "+ flag is %d\n", flag);
     return 1;
 }
 
-
 static int vm_allocate_opcode(t_vm *x, int argc, t_atom *argv)
 {
         /* First check for the "endif" "psueudo opcode" that doesn't need to
@@ -876,43 +972,30 @@ badop:
 
 static int vm_allocate_pipeline(t_vm *x, int argc, t_atom *argv)
 {
-    int i;
+    int head = 0, terminator = 0;
+    t_symbol *defaultparamsym;
     x->x_nops = 0;
-    int offset = 0;
-    int got_params = 0;
-    t_symbol *defaultparamsym, *s;
 
-        /* Go ahead and initialize the params to zero... */
-    vm_set_params(x, 0, NULL);
+post("in allocate_pipeline args is:");
+postatom(argc, argv);
+post("argc is %d", argc);
 
-    for (i = 0; i < argc; i++)
+    while (argc > 0)
     {
-        s = atom_getsymbol(argv + i);
-        if (s == gensym(";") || i == argc - 1)
+        int c = vm_get_submessage(gensym(";"), argc, argv + head, &terminator);
+        if (head == 0 && !x->x_gotparams)
         {
-            /* if we got a final message with no trailing semi, parse it
-               anyway */
-            if (i == argc - 1 && s != gensym(";")) i += 1;
-            /* got a new op */
-            int new_argc = i - offset;
-            /* let's skip double semis */
-            if (!new_argc) continue;
-
-            /* on the first time through we grab the header which contains
-               our parameters */
-            if (got_params == 0)
-            {
-                if (!vm_set_params(x, new_argc, argv + offset))
-                    return 0;
-                got_params = 1;
-            }
-            else if (!vm_allocate_opcode(x, new_argc, argv + offset))
-            {
+post("here we are in vm_allocate_pipeline!");
+            if (!vm_set_params(x, c, argv + head))
                 return 0;
-            }
-            /* Success! */
-            offset = i + 1;
         }
+        else if (!vm_allocate_opcode(x, c, argv + head))
+        {
+            return 0;
+        }
+        /* Success! */
+        head = c + terminator;
+        argc -= head;
     }
 
         /* Add a final OP to return the value of the first param by the end
@@ -931,27 +1014,48 @@ static int vm_allocate_pipeline(t_vm *x, int argc, t_atom *argv)
 
 static void vm_free(t_vm *x)
 {
-    binbuf_free(x->x_parser.p_irbuf);
+    vm_free_parser(x);
 }
 
-static void *vm_new(t_symbol *s, int argc, t_atom *argv)
+static void vm_create_inlets(t_fn *x)
 {
-    t_vm *x = (t_vm *)pd_new(vm_class);
-    int irmode = (s == gensym("vmir"));
+    int i, n = x->x_nparams;
+    /* Create an inlet for all except the first parameter which gets
+       handled by the main class inlet. */
+    for (i = 0; i < n; i++)
+    {
+        if (i) floatinlet_new(&x->x_obj, &(x->x_params[i].p_w.w_float));
+    }
+}
+
+static void *fn_new(t_symbol *s, int argc, t_atom *argv)
+{
+post("in new, argc is %d", argc);
+    t_fn *x = (t_fn *)pd_new(vm_class);
+    int irmode;
+
+    /* check first arg to see if we're in ir mode */
+    if (atom_getsymbolarg(0, argc, argv) == gensym("-ir"))
+    {
+        irmode = 1;
+        argc--, argv++;
+    }
+    else
+        irmode = 0;
+
     x->x_jumpstack_nitems = 0;
     x->x_nparams = 0;
-    x->x_parser.p_irbuf = binbuf_new();
-
-    x->x_parser.p_token_nr = 0;
+    x->x_gotparams = 0;
 
     /* If we're not in irmode, go ahead and run the args through
        the pratt parser to get the ir. */
     if (!irmode)
     {
+        vm_init_parser(x);
         if (!vm_parse_messages(x, argc, argv))
         {
             pd_error(x, "vm: bad arguments");
-            binbuf_free(x->x_parser.p_irbuf);
+            vm_free_parser(x);
             return (0);
         }
         else
@@ -967,7 +1071,10 @@ static void *vm_new(t_symbol *s, int argc, t_atom *argv)
         pd_error(x, "vm: bad arguments");
         return (0);
     }
-    floatinlet_new(&x->x_obj, &x->x_in);
+    
+    /* Create our inlets. We use an array so no need to allocate */
+    vm_create_inlets(x);
+//    floatinlet_new(&x->x_obj, &x->x_in);
     outlet_new(&x->x_obj, &s_float);
     x->x_out = outlet_new(&x->x_obj, &s_float);
     x->x_in = 0;
@@ -1287,10 +1394,21 @@ static void vm_float(t_vm *x, t_float f)
     outlet_float(x->x_obj.ob_outlet, (t_float)x->x_coins);
 }
 
+static void vm_debug(t_vm *x)
+{
+    int i;
+    post("vm debug");
+    for (i = 0; i < x->x_nops; i++)
+    {
+        int z = x->x_pipeline[i*4].w_index;
+        post("%s", string_from_op(z));
+    }
+}
+
 void vm_setup(void)
 {
-    vm_class = class_new(gensym("vm"), (t_newmethod)vm_new, 0,
-        sizeof(t_vm), 0, A_GIMME, 0);
-    class_addcreator((t_newmethod)vm_new, gensym("vmir"), A_GIMME, 0);
+    vm_class = class_new(gensym("vm"), (t_newmethod)fn_new,
+        (t_method)vm_free, sizeof(t_vm), 0, A_GIMME, 0);
     class_addfloat(vm_class, vm_float);
+    class_addmethod(vm_class, (t_method)vm_debug, gensym("debug"), 0);
 }
