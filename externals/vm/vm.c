@@ -199,6 +199,7 @@ typedef struct _vm
     t_param x_params[PARAMSIZE];
     int x_nparams;
     int x_gotparams;
+    int x_gotreturns;
     t_jumpcode x_jumpstack[JUMPSTACKSIZE];
     int x_jumpstack_nitems;
     int x_coins;
@@ -546,41 +547,61 @@ static void vm_free_parser(t_fn *x)
     binbuf_free(x->x_parser.p_irbuf);
 }
 
-/* given a separator "s", return the number of tokens before "s"
-   if "s" isn't found, return the number of tokens searched and set the
-   terminator flag to 0 */
-static int vm_get_submessage(t_symbol *s, int argc, t_atom *argv, int *term)
+/* This is kind of yucky-- we can do two different tasks selected by the final
+   arg "count_the_submesssages". But it seemed better to have all this logic
+   in one place to make sure we don't accidentally get off by one or
+   something. */
+static int vm_submessage_op(t_symbol *s, int argc, t_atom *argv, int *term,
+    int count_the_submessages)
 {
-
-post("my submessage args are:");
-postatom(argc, argv);
-post("argc is %d", argc);
-
     int i;
     *term = 0;
     for (i = 0; i < argc; i++)
     {
         if (atom_getsymbolarg(i, argc, argv) == s)
         {
-            *term = 1;
-            return i;
+            *term += 1;
+            if (!count_the_submessages)
+                return i;
         }
     }
+    if (count_the_submessages)
+    {
+        *term += (atom_getsymbolarg(argc - 1, argc, argv) != s);
+    }
     return i;
+}
+
+/* return the number of tokens in the message. Set "count" to the number
+   of submessages given separator "s" */
+static int vm_get_submessage_count(t_symbol *s, int argc, t_atom *argv, int *count)
+{
+    return vm_submessage_op(s, argc, argv, count, 1);
+}
+
+/* given a separator "s", return the number of tokens before "s".
+   If "s" isn't found, return the number of tokens searched and set the
+   terminator flag to 0 */
+static int vm_get_submessage(t_symbol *s, int argc, t_atom *argv, int *term)
+{
+    return vm_submessage_op(s, argc, argv, term, 0);
 }
 
 static int vm_parse_messages(t_vm *x, int argc, t_atom *argv)
 {
     int i;
-    int head = 0, terminator = 0, stackdepth = 0;
+    int head = 0, next_token_is_a_separator= 0, stackdepth = 0, ntokens,
+        nsubmessages;
 
-    for (i = 0; argc > 0; i++)
+    ntokens = vm_get_submessage_count(gensym(";"), argc, argv, &nsubmessages);
+
+    for (i = 0; ntokens > 0; i++)
     {
-post("in parse_messages head is %d", head);
         /* set the number of variables used per line back to zero */
         x->x_parser.p_varno = 0;
 
-        int c = vm_get_submessage(gensym(";"), argc, argv + head, &terminator);
+        int nsubtokens = vm_get_submessage(gensym(";"), ntokens, argv + head,
+            &next_token_is_a_separator);
 
         /*
            each semicolon separated message is a statement.
@@ -593,14 +614,19 @@ post("in parse_messages head is %d", head);
            have.
         */
 
-        if (head == 0)
+        if (head == 0) /* First time through we fetch the params */
         {
-            if (!vm_set_params(x, c, argv + head))
+            if (!vm_set_params(x, nsubtokens, argv + head))
                 return 0;
-post("got here!!!");
             x->x_gotparams = 1;
         }
-        else if (!vm_parse_expression(x, c, argv + head))
+        else if (i >= nsubmessages - 1) /* Final output statement */
+        {
+            if (!vm_set_outputs(x, nsubtokens, argv + head))
+                return 0;
+            x->x_gotreturns = 1;
+        }
+        else if (!vm_parse_expression(x, nsubtokens, argv + head))
             return 0;
             /* now see if we got a bigger stacksize than the previous pass */
         if (x->x_parser.p_varno > stackdepth)
@@ -609,8 +635,8 @@ post("got here!!!");
         }
 
         /* Success! */
-        head = c + terminator;
-        argc -= head;
+        head = nsubtokens + next_token_is_a_separator;
+        ntokens -= head;
     }
     
     /* now that we're through, set the max stackdepth */
@@ -633,8 +659,6 @@ static int vm_set_param(t_vm *x, int argc, t_atom *at)
 {
     t_float f;
     t_symbol *name = atom_getsymbolarg(0, argc, at);
-
-post("in vm_set_param argc is %d", argc);
 
     /* We don't mind trailing commas. But we want to error out
        if we get multiple commas in a row or leading commas.
@@ -663,12 +687,9 @@ badparamconst:
 static int vm_set_params(t_vm *x, int argc, t_atom *argv)
 {
     int i;
-    int head = 0, terminator = 0;
-post("inside vm_set_params");
-post("argc is %d", argc);
+    int head = 0, next_token_is_a_separator = 0;
     for (i = 0; argc > 0; i++)
     {
-post("head is %d", head);
         /* Let's just start with 4 params and see how it goes */
         if (i > PARAMSIZE)
         {
@@ -676,25 +697,44 @@ post("head is %d", head);
             return 0;
         }
 
-        int c = vm_get_submessage(gensym(","), argc, argv + head, &terminator);
+        int c = vm_get_submessage(gensym(","), argc, argv + head,
+            &next_token_is_a_separator);
 
         if (!vm_set_param(x, c, argv + head))
         {
             return 0;
         }
         /* Success! */
-        head = c + terminator;
+        head = c + next_token_is_a_separator;
         argc -= head;
     }
-//    if (argc)
-//        if (!vm_set_param(x, argv)) return 0;
-//    if (argc > 1)
-//        if (!vm_set_param(x, argv + 1)) return 0;
-//    if (argc > 2)
-//        if (!vm_set_param(x, argv + 2)) return 0;
-//    if (argc > 3)
-//        if (!vm_set_param(x, argv + 3)) return 0;
+    return 1;
+}
 
+static int vm_set_returns(t_vm *x, int argc, t_atom *argv)
+{
+    int i;
+    int head = 0, next_token_is_a_separator = 0;
+    for (i = 0; argc > 0; i++)
+    {
+        /* Let's just start with 2 returns and see how it goes */
+        if (i > PARAMSIZE)
+        {
+            pd_error(x, "vm: only 2 returns allowed");
+            return 0;
+        }
+
+        int c = vm_get_submessage(gensym(","), argc, argv + head,
+            &next_token_is_a_separator);
+
+        if (!vm_set_param(x, c, argv + head))
+        {
+            return 0;
+        }
+        /* Success! */
+        head = c + next_token_is_a_separator;
+        argc -= head;
+    }
     return 1;
 }
 
@@ -972,20 +1012,16 @@ badop:
 
 static int vm_allocate_pipeline(t_vm *x, int argc, t_atom *argv)
 {
-    int head = 0, terminator = 0;
+    int head = 0, next_token_is_a_separator = 0;
     t_symbol *defaultparamsym;
     x->x_nops = 0;
 
-post("in allocate_pipeline args is:");
-postatom(argc, argv);
-post("argc is %d", argc);
-
     while (argc > 0)
     {
-        int c = vm_get_submessage(gensym(";"), argc, argv + head, &terminator);
+        int c = vm_get_submessage(gensym(";"), argc, argv + head,
+            &next_token_is_a_separator);
         if (head == 0 && !x->x_gotparams)
         {
-post("here we are in vm_allocate_pipeline!");
             if (!vm_set_params(x, c, argv + head))
                 return 0;
         }
@@ -994,7 +1030,7 @@ post("here we are in vm_allocate_pipeline!");
             return 0;
         }
         /* Success! */
-        head = c + terminator;
+        head = c + next_token_is_a_separator;
         argc -= head;
     }
 
@@ -1075,8 +1111,9 @@ post("in new, argc is %d", argc);
     /* Create our inlets. We use an array so no need to allocate */
     vm_create_inlets(x);
 //    floatinlet_new(&x->x_obj, &x->x_in);
-    outlet_new(&x->x_obj, &s_float);
-    x->x_out = outlet_new(&x->x_obj, &s_float);
+//    outlet_new(&x->x_obj, &s_float);
+    vm_create_outlets(x);
+//    x->x_out = outlet_new(&x->x_obj, &s_float);
     x->x_in = 0;
     x->x_last_op = NULL;
     return (x);
