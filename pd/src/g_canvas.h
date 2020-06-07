@@ -311,7 +311,7 @@ typedef struct _linetraverser
 } t_linetraverser;
 
 EXTERN int outconnect_visible(t_outconnect *oc);
-EXTERN int outconnect_setvisible(t_outconnect *oc, int vis);
+EXTERN void outconnect_setvisible(t_outconnect *oc, int vis);
 
 /* function types used to define graphical behavior for gobjs, a bit like X
 widgets.  We don't use Pd methods because Pd's typechecking can't specify the
