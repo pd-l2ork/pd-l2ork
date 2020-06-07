@@ -571,6 +571,11 @@ static void route_anything(t_route *x, t_symbol *sel, int argc, t_atom *argv)
     outlet_anything(x->x_rejectout, sel, argc, argv);
 }
 
+static void route_bang(t_route *x)
+{
+    route_anything(x, gensym("bang"), 0, NULL);
+}
+
 static void route_list(t_route *x, t_symbol *sel, int argc, t_atom *argv)
 {
     //fprintf(stderr,"route_list\n");
@@ -712,6 +717,7 @@ void route_setup(void)
         (t_method)route_free, sizeof(t_route), 0, A_GIMME, 0);
     class_addlist(route_class, route_list);
     class_addanything(route_class, route_anything);
+    class_addbang(route_class, route_bang);
 }
 
 /* -------------------------- pack ------------------------------ */

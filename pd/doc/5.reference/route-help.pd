@@ -485,7 +485,6 @@ multiple creation arguments \, you'll notice that this second inlet
 is absent.;
 #X obj 23 256 route 42;
 #X obj 217 276 route word;
-#X floatatom 23 278 5 0 0 0 - - -, f 5;
 #X msg 23 210 42;
 #X obj 217 255 list trim;
 #X text 20 128 Also notice in the right example how symbols need to
@@ -493,20 +492,22 @@ be truncated of its symbol prefix using [list trim] or using a message.
 Otherwise \, route will not recognize the value correctly.;
 #X msg 164 206 word;
 #X msg 125 182 symbol word;
+#X obj 23 281 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
 #X connect 1 0 12 0;
 #X connect 2 0 12 1;
-#X connect 4 0 16 0;
-#X connect 5 0 16 0;
+#X connect 4 0 15 0;
+#X connect 5 0 15 0;
 #X connect 6 0 13 1;
 #X connect 8 0 13 1;
-#X connect 12 0 14 0;
+#X connect 12 0 19 0;
 #X connect 12 1 0 0;
 #X connect 13 0 3 0;
 #X connect 13 1 7 0;
-#X connect 15 0 12 0;
-#X connect 16 0 13 0;
+#X connect 14 0 12 0;
+#X connect 15 0 13 0;
+#X connect 17 0 13 0;
 #X connect 18 0 13 0;
-#X connect 19 0 13 0;
 #X restore 171 416 pd second_inlet;
 #X text 98 400 symbol;
 #X text 167 386 - the right inlet is available if there is only one
