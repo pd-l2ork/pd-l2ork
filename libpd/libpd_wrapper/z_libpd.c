@@ -570,9 +570,11 @@ int libpd_get_verbose(void) {
 }
 
 // dummy routines needed because we don't use s_file.c
-void glob_loadpreferences(t_pd *dummy, t_symbol *s) {}
-void glob_savepreferences(t_pd *dummy, t_symbol *s) {}
-void glob_forgetpreferences(t_pd *dummy) {}
-void sys_loadpreferences(const char *filename, int startingup) {}
-int sys_oktoloadfiles(int done) {return 1;}
-void sys_savepreferences(const char *filename) {} // used in s_path.c
+void glob_savepreferences(t_pd *dummy) {}
+void glob_recent_files(t_pd *dummy) {}
+void glob_add_recent_file(t_pd *dummy, t_symbol *s) {}
+void glob_clear_recent_files(t_pd *dummy) {}
+int sys_defeatrt, sys_autopatch_yoffset, sys_zoom, sys_browser_doc = 1,
+    sys_browser_path, sys_browser_init;
+t_symbol *sys_flags = &s_;
+void sys_get_midi_devs(char *indevlist, int *nindevs, char *outdevlist, int *noutdevs, int maxndev, int devdescsize) {} // used in x_interface.c
