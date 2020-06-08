@@ -57,98 +57,105 @@ foreach (_BUILD_TYPE RELEASE DEBUG)
 endforeach()
 
 set(PD_SOURCES
-    pure-data/src/d_arithmetic.c
-    pure-data/src/d_array.c
-    pure-data/src/d_ctl.c
-    pure-data/src/d_dac.c
-    pure-data/src/d_delay.c
-    pure-data/src/d_fft.c
-    pure-data/src/d_fft_fftsg.c
-    pure-data/src/d_filter.c
-    pure-data/src/d_global.c
-    pure-data/src/d_math.c
-    pure-data/src/d_misc.c
-    pure-data/src/d_osc.c
-    pure-data/src/d_resample.c
-    pure-data/src/d_soundfile.c
-    pure-data/src/d_ugen.c
-    pure-data/src/g_all_guis.c
-    pure-data/src/g_all_guis.h
-    pure-data/src/g_array.c
-    pure-data/src/g_bang.c
-    pure-data/src/g_canvas.c
-    pure-data/src/g_canvas.h
-    pure-data/src/g_clone.c
-    pure-data/src/g_editor.c
-    pure-data/src/g_editor_extras.c
-    pure-data/src/g_graph.c
-    pure-data/src/g_guiconnect.c
-    pure-data/src/g_hdial.c
-    pure-data/src/g_hslider.c
-    pure-data/src/g_io.c
-    pure-data/src/g_mycanvas.c
-    pure-data/src/g_numbox.c
-    pure-data/src/g_readwrite.c
-    pure-data/src/g_rtext.c
-    pure-data/src/g_scalar.c
-    pure-data/src/g_template.c
-    pure-data/src/g_text.c
-    pure-data/src/g_toggle.c
-    pure-data/src/g_traversal.c
-    pure-data/src/g_undo.c
-    pure-data/src/g_vdial.c
-    pure-data/src/g_vslider.c
-    pure-data/src/g_vumeter.c
-    pure-data/src/m_atom.c
-    pure-data/src/m_binbuf.c
-    pure-data/src/m_class.c
-    pure-data/src/m_conf.c
-    pure-data/src/m_glob.c
-    pure-data/src/m_imp.h
-    pure-data/src/m_memory.c
-    pure-data/src/m_obj.c
-    pure-data/src/m_pd.c
-    pure-data/src/m_pd.h
-    pure-data/src/m_sched.c
-    pure-data/src/s_audio.c
-    pure-data/src/s_audio_dummy.c
-    pure-data/src/s_inter.c
-    pure-data/src/s_loader.c
-    pure-data/src/s_main.c
-    pure-data/src/s_path.c
-    pure-data/src/s_print.c
-    pure-data/src/s_stuff.h
-    pure-data/src/s_utf8.c
-    pure-data/src/s_utf8.h
-    pure-data/src/x_acoustics.c
-    pure-data/src/x_arithmetic.c
-    pure-data/src/x_array.c
-    pure-data/src/x_connective.c
-    pure-data/src/x_gui.c
-    pure-data/src/x_interface.c
-    pure-data/src/x_list.c
-    pure-data/src/x_midi.c
-    pure-data/src/x_misc.c
-    pure-data/src/x_net.c
-    pure-data/src/x_scalar.c
-    pure-data/src/x_text.c
-    pure-data/src/x_time.c
-    pure-data/src/x_vexp.c
-    pure-data/src/x_vexp.h
-    pure-data/src/x_vexp_fun.c
-    pure-data/src/x_vexp_if.c
+    ../pd/src/config.h
+    ../pd/src/d_arithmetic.c
+    ../pd/src/d_array.c
+    ../pd/src/d_ctl.c
+    ../pd/src/d_dac.c
+    ../pd/src/d_delay.c
+    ../pd/src/d_fft.c
+    ../pd/src/d_fft_fftsg.c
+    ../pd/src/d_fftroutine.c
+    ../pd/src/d_fftsg_h.c
+    ../pd/src/d_filter.c
+    ../pd/src/d_global.c
+    ../pd/src/d_math.c
+    ../pd/src/d_misc.c
+    ../pd/src/d_osc.c
+    ../pd/src/d_resample.c
+    ../pd/src/d_soundfile.c
+    ../pd/src/d_ugen.c
+    ../pd/src/g_all_guis.c
+    ../pd/src/g_all_guis.h
+    ../pd/src/g_array.c
+    ../pd/src/g_bang.c
+    ../pd/src/g_canvas.c
+    ../pd/src/g_canvas.h
+    ../pd/src/g_clone.c
+    ../pd/src/g_editor.c
+    ../pd/src/g_graph.c
+    ../pd/src/g_guiconnect.c
+    ../pd/src/g_io.c
+    ../pd/src/g_magicglass.c
+    ../pd/src/g_magicglass.h
+    ../pd/src/g_mycanvas.c
+    ../pd/src/g_numbox.c
+    ../pd/src/g_radio.c
+    ../pd/src/g_readwrite.c
+    ../pd/src/g_rtext.c
+    ../pd/src/g_scalar.c
+    ../pd/src/g_slider.c
+    ../pd/src/g_template.c
+    ../pd/src/g_text.c
+    ../pd/src/g_toggle.c
+    ../pd/src/g_traversal.c
+    ../pd/src/g_undo.c
+    ../pd/src/g_undo.h
+    ../pd/src/g_vumeter.c
+    ../pd/src/import.c
+    ../pd/src/m_atom.c
+    ../pd/src/m_binbuf.c
+    ../pd/src/m_class.c
+    ../pd/src/m_conf.c
+    ../pd/src/m_glob.c
+    ../pd/src/m_imp.h
+    ../pd/src/m_memory.c
+    ../pd/src/m_obj.c
+    ../pd/src/m_pd.c
+    ../pd/src/m_pd.h
+    ../pd/src/m_sched.c
+    ../pd/src/s_audio.c
+    ../pd/src/s_audio_dummy.c
+    ../pd/src/s_inter.c
+    ../pd/src/s_loader.c
+    ../pd/src/s_main.c
+    ../pd/src/s_path.c
+    ../pd/src/s_print.c
+    ../pd/src/s_stuff.h
+    ../pd/src/s_utf8.c
+    ../pd/src/s_utf8.h
+    ../pd/src/s_version.h
+    ../pd/src/x_acoustics.c
+    ../pd/src/x_arithmetic.c
+    ../pd/src/x_array.c
+    ../pd/src/x_connective.c
+    ../pd/src/x_gui.c
+    ../pd/src/x_interface.c
+    ../pd/src/x_list.c
+    ../pd/src/x_midi.c
+    ../pd/src/x_misc.c
+    ../pd/src/x_net.c
+    ../pd/src/x_preset.c
+    ../pd/src/x_preset.h
+    ../pd/src/x_scalar.c
+    ../pd/src/x_text.c
+    ../pd/src/x_time.c
+    ../pd/src/x_vexp.c
+    ../pd/src/x_vexp.h
+    ../pd/src/x_vexp_fun.c
+    ../pd/src/x_vexp_if.c
 )
 
 set(PD_EXTRA_SOURCES
-    pure-data/extra/bob~/bob~.c
-    pure-data/extra/bonk~/bonk~.c
-    pure-data/extra/choice/choice.c
-    pure-data/extra/fiddle~/fiddle~.c
-    pure-data/extra/loop~/loop~.c
-    pure-data/extra/lrshift~/lrshift~.c
-    pure-data/extra/pique/pique.c
-    pure-data/extra/sigmund~/sigmund~.c
-    pure-data/extra/stdout/stdout.c
+    ../pd/extra/bob~/bob~.c
+    ../pd/extra/bonk~/bonk~.c
+    ../pd/extra/choice/choice.c
+    ../pd/extra/fiddle~/fiddle~.c
+    ../pd/extra/loop~/loop~.c
+    ../pd/extra/lrshift~/lrshift~.c
+    ../pd/extra/pique/pique.c
+    ../pd/extra/sigmund~/sigmund~.c
+    ../pd/extra/stdout/stdout.c
 )
 
 set(LIBPD_SOURCES
@@ -174,7 +181,7 @@ source_group(libpd      FILES ${LIBPD_SOURCES})
 source_group(libpdutils FILES ${LIBPD_UTILS_SOURCES})
 
 include_directories(libpd_wrapper)
-include_directories(pure-data/src)
+include_directories(../pd/src)
 
 find_package(Threads REQUIRED)
 
@@ -243,8 +250,8 @@ endif()
 target_link_libraries(libpd PUBLIC ${CMAKE_THREAD_LIBS_INIT})
 
 if(NOT MSVC AND NOT APPLE AND NOT EMSCRIPTEN)
-    find_library(M m)
-    target_link_libraries(libpd PUBLIC ${M_LIBRARIES})
+    find_library(MATH_LIB m)
+    target_link_libraries(libpd PUBLIC ${MATH_LIB})
 endif()
 
 if(PD_BUILD_C_EXAMPLES)
