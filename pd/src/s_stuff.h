@@ -222,7 +222,17 @@ void sys_setvirtualalarm( void);
 #define API_MMIO 3
 #define API_PORTAUDIO 4
 #define API_JACK 5
-#define API_SGI 6
+#define API_SGI 6           /* gone */
+#define API_AUDIOUNIT 7
+#define API_ESD 8           /* Defunct Enlightenment Sounds Daemon lib, from the
+                               wonderful Enlightenment gnu/linux window manager
+                               (enlightenment.org)
+
+                               Apparently an early version of Pulse Audio was
+                               compatible with this old API. Just for kicks I
+                               tried using the old esd backend code to connect
+                               with pulse but it didn't work. */
+#define API_DUMMY 9
 
 #ifdef __linux__
 #define API_DEFAULT API_ALSA
@@ -240,6 +250,13 @@ void sys_setvirtualalarm( void);
 #define API_DEFAULT API_SGI
 #define API_DEFSTRING "SGI Digital Media"
 #endif
+#ifndef API_DEFAULT
+#ifndef USEAPI_DUMMY   /* we need at least one so bring in the dummy */
+#define USEAPI_DUMMY
+#endif /* USEAPI_DUMMY */
+#define API_DEFAULT API_DUMMY
+#define API_DEFSTRING "dummy audio"
+#endif
 #define DEFAULTAUDIODEV 0
 
 #define MAXAUDIOINDEV 4
@@ -256,6 +273,9 @@ void sys_setvirtualalarm( void);
 #endif
 #ifdef __APPLE__
 #define DEFAULTADVANCE 20
+#endif
+#ifndef DEFAULTADVANCE
+#define DEFAULTADVANCE 25
 #endif
 
 typedef void (*t_audiocallback)(void);
@@ -309,6 +329,33 @@ int mmio_send_dacs(void);
 void mmio_getdevs(char *indevlist, int *nindevs,
     char *outdevlist, int *noutdevs, int *canmulti, 
         int maxndev, int devdescsize);
+
+int audiounit_open_audio(int naudioindev, int *audioindev, int nchindev,
+    int *chindev, int naudiooutdev, int *audiooutdev, int nchoutdev,
+    int *choutdev, int rate);
+void audiounit_close_audio(void);
+int audiounit_send_dacs(void);
+void audiounit_listdevs(void);
+void audiounit_getdevs(char *indevlist, int *nindevs,
+    char *outdevlist, int *noutdevs, int *canmulti,
+        int maxndev, int devdescsize);
+
+int esd_open_audio(int naudioindev, int *audioindev, int nchindev,
+    int *chindev, int naudiooutdev, int *audiooutdev, int nchoutdev,
+    int *choutdev, int rate);
+void esd_close_audio(void);
+int esd_send_dacs(void);
+void esd_listdevs(void);
+void esd_getdevs(char *indevlist, int *nindevs,
+    char *outdevlist, int *noutdevs, int *canmulti,
+        int maxndev, int devdescsize);
+
+int dummy_open_audio(int nin, int nout, int sr);
+int dummy_close_audio(void);
+int dummy_send_dacs(void);
+void dummy_getdevs(char *indevlist, int *nindevs, char *outdevlist,
+    int *noutdevs, int *canmulti, int maxndev, int devdescsize);
+void dummy_listdevs(void);
 
 void sys_listmididevs(void);
 void sys_set_midi_api(int whichapi);
