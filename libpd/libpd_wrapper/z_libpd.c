@@ -123,12 +123,10 @@ void libpd_add_to_search_path(const char *path) {
   sys_unlock();
 }
   
-void *libpd_openfile(const char *name, const char *dir) {
-  void *retval;
+void libpd_openfile(const char *name, const char *dir) {
   sys_lock();
-  retval = (void *)glob_evalfile(NULL, gensym(name), gensym(dir));
+  glob_evalfile(NULL, gensym(name), gensym(dir));
   sys_unlock();
-  return retval;
 }
 
 void libpd_closefile(void *p) {
