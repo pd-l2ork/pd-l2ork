@@ -87,7 +87,6 @@ int libpd_init(void) {
   sys_soundin = NULL;
   sys_soundout = NULL;
   sys_schedblocksize = DEFDACBLKSIZE;
-  sys_init_fdpoll();
   libpdreceive_setup();
   sys_set_audio_api(API_DUMMY);
   sys_searchpath = NULL;
@@ -127,9 +126,7 @@ void libpd_add_to_search_path(const char *path) {
 void *libpd_openfile(const char *name, const char *dir) {
   void *retval;
   sys_lock();
-  pd_globallock();
   retval = (void *)glob_evalfile(NULL, gensym(name), gensym(dir));
-  pd_globalunlock();
   sys_unlock();
   return retval;
 }
