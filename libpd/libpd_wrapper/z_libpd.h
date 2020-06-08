@@ -45,10 +45,6 @@ EXTERN void *libpd_openfile(const char *name, const char *dir);
 /// close a patch by patch handle pointer
 EXTERN void libpd_closefile(void *p);
 
-/// get the $0 id of the patch handle pointer
-/// returns $0 value or 0 if the patch is non-existent
-EXTERN int libpd_getdollarzero(void *p);
-
 /* audio processing */
 
 /// return pd's fixed block size: the number of sample frames per 1 pd tick
@@ -357,21 +353,6 @@ EXTERN int libpd_aftertouch(int channel, int value);
 /// returns 0 on success or -1 if an argument is out of range
 EXTERN int libpd_polyaftertouch(int channel, int pitch, int value);
 
-/// send a raw MIDI byte to [midiin] objects
-/// port is 0-indexed and byte is 0-256
-/// returns 0 on success or -1 if an argument is out of range
-EXTERN int libpd_midibyte(int port, int byte);
-
-/// send a raw MIDI byte to [sysexin] objects
-/// port is 0-indexed and byte is 0-256
-/// returns 0 on success or -1 if an argument is out of range
-EXTERN int libpd_sysex(int port, int byte);
-
-/// send a raw MIDI byte to [realtimein] objects
-/// port is 0-indexed and byte is 0-256
-/// returns 0 on success or -1 if an argument is out of range
-EXTERN int libpd_sysrealtime(int port, int byte);
-
 /* receiving MIDI messages from pd */
 
 /// MIDI note on receive hook signature
@@ -468,33 +449,6 @@ EXTERN void libpd_stop_gui(void);
 /// note: this also facilitates network message processing, etc so it can be
 ///       useful to call repeatedly when idle for more throughput
 EXTERN void libpd_poll_gui(void);
-
-/* multiple instances */
-
-/// create a new pd instance
-/// returns new instance or NULL when libpd is not compiled with PDINSTANCE
-EXTERN t_pdinstance *libpd_new_instance(void);
-
-/// set the current pd instance
-/// subsequent libpd calls will affect this instance only
-/// does nothing when libpd is not compiled with PDINSTANCE
-EXTERN void libpd_set_instance(t_pdinstance *p);
-
-/// free a pd instance
-/// does nothing when libpd is not compiled with PDINSTANCE
-EXTERN void libpd_free_instance(t_pdinstance *p);
-
-/// get the current pd instance
-EXTERN t_pdinstance *libpd_this_instance(void);
-
-/// get a pd instance by index
-/// returns NULL if index is out of bounds or "this" instance when libpd is not
-/// compiled with PDINSTANCE
-EXTERN t_pdinstance *libpd_get_instance(int index);
-
-/// get the number of pd instances
-/// returns number or 1 when libpd is not compiled with PDINSTANCE
-EXTERN int libpd_num_instances(void);
 
 /* log level */
 

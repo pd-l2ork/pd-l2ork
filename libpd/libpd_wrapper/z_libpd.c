@@ -137,15 +137,6 @@ void libpd_closefile(void *p) {
   sys_unlock();
 }
 
-int libpd_getdollarzero(void *p) {
-  sys_lock();
-  pd_pushsym((t_pd *)p);
-  int dzero = canvas_getdollarzero();
-  pd_popsym((t_pd *)p);
-  sys_unlock();
-  return dzero;
-}
-
 int libpd_blocksize(void) {
   return DEFDACBLKSIZE;
 }
@@ -523,33 +514,6 @@ int libpd_polyaftertouch(int channel, int pitch, int value) {
   return 0;
 }
 
-int libpd_midibyte(int port, int byte) {
-  CHECK_PORT
-  CHECK_RANGE_8BIT(byte)
-  sys_lock();
-  inmidi_byte(port, byte);
-  sys_unlock();
-  return 0;
-}
-
-int libpd_sysex(int port, int byte) {
-  CHECK_PORT
-  CHECK_RANGE_8BIT(byte)
-  sys_lock();
-  inmidi_sysex(port, byte);
-  sys_unlock();
-  return 0;
-}
-
-int libpd_sysrealtime(int port, int byte) {
-  CHECK_PORT
-  CHECK_RANGE_8BIT(byte)
-  sys_lock();
-  inmidi_realtimein(port, byte);
-  sys_unlock();
-  return 0;
-}
-
 void libpd_set_noteonhook(const t_libpd_noteonhook hook) {
   libpd_noteonhook = hook;
 }
@@ -596,47 +560,6 @@ void libpd_poll_gui(void) {
   sys_lock();
   sys_pollgui();
   sys_unlock();
-}
-
-t_pdinstance *libpd_new_instance(void) {
-#ifdef PDINSTANCE
-  return pdinstance_new();
-#else
-  return 0;
-#endif
-}
-
-void libpd_set_instance(t_pdinstance *p) {
-#ifdef PDINSTANCE
-  pd_setinstance(p);
-#endif
-}
-
-void libpd_free_instance(t_pdinstance *p) {
-#ifdef PDINSTANCE
-  pdinstance_free(p);
-#endif
-}
-
-t_pdinstance *libpd_this_instance(void) {
-  return pd_this;
-}
-
-t_pdinstance *libpd_get_instance(int index) {
-#ifdef PDINSTANCE
-  if(index < 0 || index >= pd_ninstances) {return 0;}
-  return pd_instances[index];
-#else
-  return pd_this;
-#endif
-}
-
-int libpd_num_instances(void) {
-#ifdef PDINSTANCE
-  return pd_ninstances;
-#else
-  return 1;
-#endif
 }
 
 void libpd_set_verbose(int verbose) {
