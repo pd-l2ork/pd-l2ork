@@ -224,7 +224,14 @@ void sys_setvirtualalarm( void);
 #define API_JACK 5
 #define API_SGI 6           /* gone */
 #define API_AUDIOUNIT 7
-#define API_ESD 8           /* no idea what this was, probably gone now */
+#define API_ESD 8           /* Defunct Enlightenment Sounds Daemon lib, from the
+                               wonderful Enlightenment gnu/linux window manager
+                               (enlightenment.org)
+
+                               Apparently an early version of Pulse Audio was
+                               compatible with this old API. Just for kicks I
+                               tried using the old esd backend code to connect
+                               with pulse but it didn't work. */
 #define API_DUMMY 9
 
 #ifdef __linux__
