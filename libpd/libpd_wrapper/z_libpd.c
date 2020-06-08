@@ -84,13 +84,13 @@ int libpd_init(void) {
   sys_time = 0;
 #endif
   pd_init();
-  STUFF->st_soundin = NULL;
-  STUFF->st_soundout = NULL;
-  STUFF->st_schedblocksize = DEFDACBLKSIZE;
+  sys_soundin = NULL;
+  sys_soundout = NULL;
+  sys_schedblocksize = DEFDACBLKSIZE;
   sys_init_fdpoll();
   libpdreceive_setup();
   sys_set_audio_api(API_DUMMY);
-  STUFF->st_searchpath = NULL;
+  sys_searchpath = NULL;
   sys_libdir = gensym("");
   post("pd %d.%d.%d%s", PD_MAJOR_VERSION, PD_MINOR_VERSION,
     PD_BUGFIX_VERSION, PD_TEST_VERSION);
@@ -113,14 +113,14 @@ int libpd_init(void) {
 
 void libpd_clear_search_path(void) {
   sys_lock();
-  namelist_free(STUFF->st_searchpath);
-  STUFF->st_searchpath = NULL;
+  namelist_free(sys_searchpath);
+  sys_searchpath = NULL;
   sys_unlock();
 }
 
 void libpd_add_to_search_path(const char *path) {
   sys_lock();
-  STUFF->st_searchpath = namelist_append(STUFF->st_searchpath, path, 0);
+  sys_searchpath = namelist_append(sys_searchpath, path, 0);
   sys_unlock();
 }
   
@@ -177,17 +177,17 @@ static const t_sample sample_to_short = SHRT_MAX,
   sys_lock(); \
   sys_pollgui(); \
   for (i = 0; i < ticks; i++) { \
-    for (j = 0, p0 = STUFF->st_soundin; j < DEFDACBLKSIZE; j++, p0++) { \
-      for (k = 0, p1 = p0; k < STUFF->st_inchannels; k++, p1 += DEFDACBLKSIZE) \
+    for (j = 0, p0 = sys_soundin; j < DEFDACBLKSIZE; j++, p0++) { \
+      for (k = 0, p1 = p0; k < sys_inchannels; k++, p1 += DEFDACBLKSIZE) \
         { \
         *p1 = *inBuffer++ _x; \
       } \
     } \
-    memset(STUFF->st_soundout, 0, \
-        STUFF->st_outchannels*DEFDACBLKSIZE*sizeof(t_sample)); \
-    SCHED_TICK(pd_this->pd_systime + STUFF->st_time_per_dsp_tick); \
-    for (j = 0, p0 = STUFF->st_soundout; j < DEFDACBLKSIZE; j++, p0++) { \
-      for (k = 0, p1 = p0; k < STUFF->st_outchannels; k++, p1 += DEFDACBLKSIZE) \
+    memset(sys_soundout, 0, \
+        sys_outchannels*DEFDACBLKSIZE*sizeof(t_sample)); \
+    SCHED_TICK(pd_this->pd_systime + sys_time_per_dsp_tick); \
+    for (j = 0, p0 = sys_soundout; j < DEFDACBLKSIZE; j++, p0++) { \
+      for (k = 0, p1 = p0; k < sys_outchannels; k++, p1 += DEFDACBLKSIZE) \
         { \
         *outBuffer++ = *p1 _y; \
       } \
@@ -209,18 +209,18 @@ int libpd_process_double(const int ticks, const double *inBuffer, double *outBuf
 }
 
 #define PROCESS_RAW(_x, _y) \
-  size_t n_in = STUFF->st_inchannels * DEFDACBLKSIZE; \
-  size_t n_out = STUFF->st_outchannels * DEFDACBLKSIZE; \
+  size_t n_in = sys_inchannels * DEFDACBLKSIZE; \
+  size_t n_out = sys_outchannels * DEFDACBLKSIZE; \
   t_sample *p; \
   size_t i; \
   sys_lock(); \
   sys_pollgui(); \
-  for (p = STUFF->st_soundin, i = 0; i < n_in; i++) { \
+  for (p = sys_soundin, i = 0; i < n_in; i++) { \
     *p++ = *inBuffer++ _x; \
   } \
-  memset(STUFF->st_soundout, 0, n_out * sizeof(t_sample)); \
-  SCHED_TICK(pd_this->pd_systime + STUFF->st_time_per_dsp_tick); \
-  for (p = STUFF->st_soundout, i = 0; i < n_out; i++) { \
+  memset(sys_soundout, 0, n_out * sizeof(t_sample)); \
+  SCHED_TICK(pd_this->pd_systime + sys_time_per_dsp_tick); \
+  for (p = sys_soundout, i = 0; i < n_out; i++) { \
     *outBuffer++ = *p++ _y; \
   } \
   sys_unlock(); \
