@@ -83,6 +83,7 @@ int libpd_init(void) {
 #ifdef HAVE_SCHED_TICK_ARG
   sys_time = 0;
 #endif
+  sys_nogui = 1;
   pd_init();
   sys_soundin = NULL;
   sys_soundout = NULL;
