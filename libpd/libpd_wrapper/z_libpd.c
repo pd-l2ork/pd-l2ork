@@ -22,6 +22,7 @@
 #include "z_hooks.h"
 #include "s_stuff.h"
 #include "m_imp.h"
+#include "g_canvas.h"
 #include "g_all_guis.h"
 
 #if PD_MINOR_VERSION < 46
