@@ -60,7 +60,7 @@ typedef struct _pdfloat
     they're created by short-circuited messages to the "new"
     object which are handled specially in pd_typedmess(). */
 
-static void *pdfloat_new(t_pd *dummy, t_float f)
+void *pdfloat_new(t_pd *dummy, t_float f)
 {
     t_pdfloat *x = (t_pdfloat *)pd_new(pdfloat_class);
     x->x_f = f;
@@ -103,7 +103,7 @@ typedef struct _pdsymbol
     t_symbol *x_s;
 } t_pdsymbol;
 
-static void *pdsymbol_new(t_pd *dummy, t_symbol *s)
+void *pdsymbol_new(t_pd *dummy, t_symbol *s)
 {
     t_pdsymbol *x = (t_pdsymbol *)pd_new(pdsymbol_class);
     x->x_s = s;
@@ -164,7 +164,7 @@ typedef struct _bang
     t_object x_obj;
 } t_bang;
 
-static void *bang_new(t_pd *dummy)
+void *bang_new(t_pd *dummy)
 {
     t_bang *x = (t_bang *)pd_new(bang_class);
     outlet_new(&x->x_obj, &s_bang);
