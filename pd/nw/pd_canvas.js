@@ -1766,7 +1766,7 @@ function nw_create_patch_window_menus(gui, w, name) {
    linked from the pd_canvas.html inside the <body> tag using onscroll.
 */
 function update_scrollbars(nw_win) {
-    console.log("update_scrollbars");
+    //console.log("update_scrollbars");
     var hscroll = nw_win.document.getElementById("hscroll");
     var vscroll = nw_win.document.getElementById("vscroll");
     var svg_elem = nw_win.document.getElementById("patchsvg");

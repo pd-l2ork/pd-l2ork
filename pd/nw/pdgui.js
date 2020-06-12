@@ -1418,7 +1418,6 @@ var scroll = {},
     var dialogwin = {}; // object filled with did: [Window object] pairs
 
 exports.get_patchwin = function(name) {
-    post("getpatchwin " + name + " " + patchwin[name]);
     return patchwin[name];
 }
 
@@ -5875,7 +5874,7 @@ var getscroll_var = {};
 //    graphics from displaying until the user releases the mouse,
 //    which would be a buggy UI
 function gui_canvas_get_scroll(cid) {
-    post("win=" + cid);
+    //post("win=" + cid);
     //win_width = win.style.width;
     //win_height = win.style.height;
     if (!getscroll_var[cid]) {
