@@ -233,6 +233,12 @@ var canvas_events = (function() {
                 return false;
             },
             mousedown: function(evt) {
+                // ico@vt.edu capture middle click for a different type of scroll
+                if (evt.which == 2)
+                {
+                    evt.stopPropagation();
+                    evt.preventDefault();                
+                }
                 var target_id, resize_type;
                 if (target_is_scrollbar(evt)) {
                     return;
@@ -1754,6 +1760,10 @@ function nw_create_patch_window_menus(gui, w, name) {
     });
 }
 
+/* ico@vtued: this function is run when we scroll with a mouse wheel,
+   a touchpad (e.g. two-finger scroll), or some other HID. It is
+   linked from the pd_canvas.html inside the <body> tag using onscroll.
+*/
 function update_scrollbars(nw_win) {
     var hscroll = nw_win.document.getElementById("hscroll");
     var vscroll = nw_win.document.getElementById("vscroll");
@@ -1761,9 +1771,7 @@ function update_scrollbars(nw_win) {
     
     if (vscroll.style.visibility == "visible")
     {
-        console.log("vertical visible...");
-        var height, min_height;
-        
+        var height, min_height;  
         min_height = nw_win.innerHeight + 3;
         height = svg_elem.getAttribute('height');
         
@@ -1771,13 +1779,13 @@ function update_scrollbars(nw_win) {
         yScrollSize = (min_height - 4) / height;
         yScrollTopOffset = Math.floor((nw_win.scrollY / height) * min_height);
         
-        //console.log("win_height=" + min_height + " bbox=" + height + " yScrollSize=" + (yScrollSize * min_height) + " topOffset=" + yScrollTopOffset);
-
         if (yScrollSize < 1) {
             var yHeight = Math.floor(yScrollSize * min_height);
             vscroll.style.setProperty("height", (yHeight - 6) + "px");
             vscroll.style.setProperty("top", (yScrollTopOffset + 2) + "px");
-            vscroll.style.setProperty("-webkit-clip-path", "polygon(0px 0px, 5px 0px, 5px " + (yHeight - 6) + "px, 0px " + (yHeight - 11) + "px, 0px 5px)");
+            vscroll.style.setProperty("-webkit-clip-path",
+                "polygon(0px 0px, 5px 0px, 5px " + (yHeight - 6) +
+                "px, 0px " + (yHeight - 11) + "px, 0px 5px)");
             vscroll.style.setProperty("visibility", "visible");
         } else {
             vscroll.style.setProperty("visibility", "hidden");    
@@ -1801,19 +1809,26 @@ function update_scrollbars(nw_win) {
             var xWidth = Math.floor(xScrollSize * min_width);
             hscroll.style.setProperty("width", (xWidth - 6) + "px");
             hscroll.style.setProperty("left", (xScrollTopOffset + 2) + "px");
-            hscroll.style.setProperty("-webkit-clip-path", "polygon(0px 0px, " + (xWidth - 11) + "px 0px, " + (xWidth - 6) + "px 5px, 0px 5px)");
+            hscroll.style.setProperty("-webkit-clip-path",
+                "polygon(0px 0px, " + (xWidth - 11) + "px 0px, " +
+                (xWidth - 6) + "px 5px, 0px 5px)");
             hscroll.style.setProperty("visibility", "visible");
         } else {
             hscroll.style.setProperty("visibility", "hidden");    
         }
     }
     // for future reference
-    //nw_win.document.getElementById("hscroll").style.setProperty("visibility", "visible");
+    //nw_win.document.getElementById("hscroll").
+    //    style.setProperty("visibility", "visible");
     //console.log("width="+width);
 }
 
-var hscroll_mouse_state = 0; // 0 off/up, 1 on/down
-var vscroll_mouse_state = 0;
+/* ico@vt.edu: this and the vslider one is different enough
+   not to be refactored and combined with the scroll stuff
+   inside pdgui.js. It also needs to stay here until we figure
+   out how to pass the window id together with the mouse event.
+*/
+var hscroll_mouse_state = 0; // mouse click 0 off/up, 1 on/down
 
 function hscroll_with_mouse(e) {
     if (e.type == "mousedown") {
@@ -1822,8 +1837,8 @@ function hscroll_with_mouse(e) {
     if (e.type == "mouseup") {
         hscroll_mouse_state = 0;
     }
-    console.log(hscroll_mouse_state);
-    if (e.type == "mousemove" && hscroll_mouse_state == 1) {
+    //console.log(hscroll_mouse_state);
+    if (e.type == "mousemove" && hscroll_mouse_state == 1 && e.movementX != 0) {
         //console.log("move: " + e.movementX);
         
         var hscroll = document.getElementById("hscroll");
@@ -1831,22 +1846,97 @@ function hscroll_with_mouse(e) {
         
         var min_width = document.body.clientWidth + 3;
         var width = svg_elem.getAttribute('width');
-        var xScrollSize, xScrollTopOffset;
+        var xScrollSize;
         
         xScrollSize = hscroll.offsetWidth;
-        //xScrollTopOffset = ((window.scrollX / width) * min_width);
-        
-        //console.log("win_width=" + min_width + " width=" + width + " xScrollSize=" + (xScrollSize * min_width) + " leftOffset=" + xScrollTopOffset);
-        //console.log("missing pixels=" + (width - min_width - 4) + " scrollbar pixels=" + (min_width - 4 - xScrollSize) + " result=" + (width - min_width - 4)/(min_width - 4 - xScrollSize));
-        window.scrollBy(e.movementX * (width - min_width - 4)/(min_width - 4 - xScrollSize), 0);
-            
+      
+        var xTranslate = e.movementX *
+            ((width - min_width)/(min_width - xScrollSize)) *
+            (e.movementX > 0 ? 1 : 0.75);
+        if (xTranslate > 0 && xTranslate < 1) {
+            xTranslate = 1;
+        }
+        if (xTranslate < 0 && xTranslate > -1) {
+            xTranslate = -1;
+        }
+        //console.log(xTranslate);
+        window.scrollBy(xTranslate, 0);
     }
-    //console.log("mouse: " + e.type + " " + hscroll_mouse_state);
+    //console.log("hscroll_with_mouse: " + e.type);
 }
 
-// LATER: add and remove listeners based on whether the scrollbar is visible
-document.getElementById("hscroll").addEventListener("mousedown", hscroll_with_mouse);
+var vscroll_mouse_state = 0; // mouse click 0 off/up, 1 on/down
+
+function vscroll_with_mouse(e) {
+    if (e.type == "mousedown") {
+        vscroll_mouse_state = 1;
+    }
+    if (e.type == "mouseup") {
+        vscroll_mouse_state = 0;
+    }
+    if (e.type == "mousemove" && vscroll_mouse_state == 1 && e.movementY != 0) {
+        //console.log("move: " + e.movementY);
+        
+        var vscroll = document.getElementById("vscroll");
+        var svg_elem = document.getElementById("patchsvg");
+        
+        var min_height = document.body.clientHeight + 3;
+        var height = svg_elem.getAttribute('height');
+        var yScrollSize;
+        
+        yScrollSize = hscroll.offsetHeight;
+      
+        var yTranslate = e.movementY *
+            ((height - min_height)/(min_height - yScrollSize)) *
+            (e.movementY > 0 ? 2 : 1.5);
+        if (yTranslate > 0 && yTranslate < 1) {
+            yTranslate = 1;
+        }
+        if (yTranslate < 0 && yTranslate > -1) {
+            yTranslate = -1;
+        }
+        //console.log(yTranslate);
+        window.scrollBy(0, yTranslate);
+    }
+    //console.log("vscroll_with_mouse: " + e.type);
+}
+
+// LATER: consider adding and removing listeners based on
+// whether the scrollbar is visible. However, how to do this when
+// pdgui.js does not see pd_canvas.js and for some reason
+// addEventListener appears not to work inside pdgui.js?
+document.getElementById("hscroll").
+    addEventListener("mousedown", hscroll_with_mouse);
 document.addEventListener("mouseup", hscroll_with_mouse);
 document.addEventListener("mousemove", hscroll_with_mouse);
 
-// TODO: also account for toggle maximize to re-query scrollbars, as well sa for deselect
+document.getElementById("vscroll").
+    addEventListener("mousedown", vscroll_with_mouse);
+document.addEventListener("mouseup", vscroll_with_mouse);
+document.addEventListener("mousemove", vscroll_with_mouse);
+
+// finally let's do scroll with a middle (wheel) click
+var scroll_mouse_state = 0; // mouse click 0 off/up, 1 on/down
+var was_cursor; // the cursor we should return to after being done
+
+function scroll_with_mouse(e) {
+    if (e.type == "mousedown" && e.which == 2) {
+        scroll_mouse_state = 1;
+        was_cursor = document.getElementById("patchsvg").style.cursor;
+        console.log(was_cursor);
+        document.getElementById("patchsvg").style.cursor = "-webkit-grabbing";
+    }
+    if (e.type == "mouseup") {
+        scroll_mouse_state = 0;
+        document.getElementById("patchsvg").style.cursor = was_cursor;
+    }
+    if (e.type == "mousemove" && scroll_mouse_state == 1) {
+        //console.log("grab");
+        window.scrollBy(-e.movementX, -e.movementY);
+    }
+    //console.log("scroll_with_mouse: " + e.type);
+}
+
+document.addEventListener("mousedown", scroll_with_mouse);
+document.addEventListener("mouseup", scroll_with_mouse);
+document.addEventListener("mousemove", scroll_with_mouse);

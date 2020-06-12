@@ -5787,34 +5787,38 @@ function canvas_params(nw_win)
     var yScrollSize, yScrollTopOffset;
     var vscroll = nw_win.window.document.getElementById("vscroll");
     yScrollSize = (min_height - 1) / height;
-    yScrollTopOffset = Math.floor((nw_win.scrollY / height) * (min_height + 3));
+    yScrollTopOffset = Math.floor((nw_win.window.scrollY / height) * (min_height + 3));
     
     if (yScrollSize < 1) {
         var yHeight = Math.floor(yScrollSize * (min_height + 3));
         vscroll.style.setProperty("height", (yHeight - 6) + "px");
         vscroll.style.setProperty("top", (yScrollTopOffset + 2) + "px");
-        vscroll.style.setProperty("-webkit-clip-path", "polygon(0px 0px, 5px 0px, 5px " + (yHeight - 6) + "px, 0px " + (yHeight - 11) + "px, 0px 5px)");
+        vscroll.style.setProperty("-webkit-clip-path",
+            "polygon(0px 0px, 5px 0px, 5px " + (yHeight - 6) +
+            "px, 0px " + (yHeight - 11) + "px, 0px 5px)");
         vscroll.style.setProperty("visibility", "visible");
     } else {
-        vscroll.style.setProperty("visibility", "hidden");    
+        vscroll.style.setProperty("visibility", "hidden");
     }
     
     var xScrollSize, xScrollTopOffset;
     var hscroll = nw_win.window.document.getElementById("hscroll");
     xScrollSize = (min_width - 1) / width;
-    xScrollTopOffset = Math.floor((nw_win.scrollX / width) * (min_width + 3));
+    xScrollTopOffset = Math.floor((nw_win.window.scrollX / width) * (min_width + 3));
 
     if (xScrollSize < 1) {
         var xWidth = Math.floor(xScrollSize * (min_width + 3));
         hscroll.style.setProperty("width", (xWidth - 6) + "px");
         hscroll.style.setProperty("left", (xScrollTopOffset + 2) + "px");
-        hscroll.style.setProperty("-webkit-clip-path", "polygon(0px 0px, " + (xWidth - 11) + "px 0px, " + (xWidth - 6) + "px 5px, 0px 5px)");
+        hscroll.style.setProperty("-webkit-clip-path",
+            "polygon(0px 0px, " + (xWidth - 11) + "px 0px, " +
+            (xWidth - 6) + "px 5px, 0px 5px)");
         hscroll.style.setProperty("visibility", "visible");
     } else {
         hscroll.style.setProperty("visibility", "hidden");    
     }
     
-    //post("x=" + xScrollSize + " y=" + yScrollSize);
+    //post("x=" + xScrollTopOffset + " y=" + yScrollTopOffset);
     
     return { x: x, y: y, w: width, h: height,
              mw: min_width, mh: min_height };
