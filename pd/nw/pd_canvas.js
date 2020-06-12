@@ -234,11 +234,12 @@ var canvas_events = (function() {
             },
             mousedown: function(evt) {
                 // ico@vt.edu capture middle click for a different type of scroll
-                if (evt.which == 2)
+                // currently disabled due to problem with scrollBy and zoom
+                /*if (evt.which == 2)
                 {
                     evt.stopPropagation();
                     evt.preventDefault();                
-                }
+                }*/
                 var target_id, resize_type;
                 if (target_is_scrollbar(evt)) {
                     return;
@@ -1916,6 +1917,9 @@ document.addEventListener("mouseup", vscroll_with_mouse);
 document.addEventListener("mousemove", vscroll_with_mouse);
 
 // finally let's do scroll with a middle (wheel) click
+// this is currently disabled since zoom messes with the offset,
+// so we will stick with the browser-like middle click scrolling
+/*
 var scroll_mouse_state = 0; // mouse click 0 off/up, 1 on/down
 var was_cursor; // the cursor we should return to after being done
 
@@ -1940,3 +1944,4 @@ function scroll_with_mouse(e) {
 document.addEventListener("mousedown", scroll_with_mouse);
 document.addEventListener("mouseup", scroll_with_mouse);
 document.addEventListener("mousemove", scroll_with_mouse);
+*/
