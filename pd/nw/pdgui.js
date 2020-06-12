@@ -3430,6 +3430,7 @@ function gui_mycanvas_coords(cid, tag, vis_width, vis_height, select_width, sele
     });
 }
 
+/* this creates a group immediately below the patchsvg object */
 function gui_scalar_new(cid, tag, isselected, t1, t2, t3, t4, t5, t6,
     is_toplevel) {
     var g;
@@ -5760,22 +5761,16 @@ function canvas_params(nw_win)
     x = bbox.x > 0 ? 0 : bbox.x,
     y = bbox.y > 0 ? 0 : bbox.y;
 
-    // The svg "overflow" attribute on an <svg> seems to be buggy-- for example,
-    // you can't trigger a mouseover event for a <rect> that is outside of the
-    // explicit bounds of the svg.
-    // To deal with this, we want to set the svg width/height to always be
-    // at least as large as the browser's viewport. There are a few ways to
-    // do this this, like documentElement.clientWidth, but window.innerWidth
-    // seems to give the best results.
-    // However, there is either a bug or some strange behavior regarding
-    // the viewport size: setting both the height and width of an <svg> to
-    // the viewport height/width will display the scrollbars. The height or
-    // width must be set to 4 less than the viewport size in order to keep
-    // the scrollbars from appearing. Here, we just subtract 4 from both
-    // of them. This could lead to some problems with event handlers but I
-    // haven't had a problem with it yet.
-    min_width = nw_win.window.innerWidth - 4;
-    min_height = nw_win.window.innerHeight - 4;
+    // ico@vt.edu: adjust body width and height to match patchsvg to ensure
+    // scrollbars only come up when we are indeed inside svg and not before
+    // with extra margins around. This is accurate to a pixel on nw 0.47.0
+    min_width = nw_win.window.innerWidth;
+    min_height = nw_win.window.innerHeight;
+    
+    var body_elem = nw_win.window.document.body;
+    body_elem.style.width = min_width + "px";
+    body_elem.style.height = min_height + "px";
+
     // Since we don't do any transformations on the patchsvg,
     // let's try just using ints for the height/width/viewBox
     // to keep things simple.
@@ -5785,6 +5780,42 @@ function canvas_params(nw_win)
     min_height |= 0;
     x |= 0;
     y |= 0;
+
+    /* ico@vt.edu: now let's draw/update our own scrollbars, so that we
+       don't have to deal with window size nonsense caused by the
+       built-in ones... */
+    var yScrollSize, yScrollTopOffset;
+    var vscroll = nw_win.window.document.getElementById("vscroll");
+    yScrollSize = (min_height - 1) / height;
+    yScrollTopOffset = Math.floor((nw_win.scrollY / height) * (min_height + 3));
+    
+    if (yScrollSize < 1) {
+        var yHeight = Math.floor(yScrollSize * (min_height + 3));
+        vscroll.style.setProperty("height", (yHeight - 6) + "px");
+        vscroll.style.setProperty("top", (yScrollTopOffset + 2) + "px");
+        vscroll.style.setProperty("-webkit-clip-path", "polygon(0px 0px, 5px 0px, 5px " + (yHeight - 6) + "px, 0px " + (yHeight - 11) + "px, 0px 5px)");
+        vscroll.style.setProperty("visibility", "visible");
+    } else {
+        vscroll.style.setProperty("visibility", "hidden");    
+    }
+    
+    var xScrollSize, xScrollTopOffset;
+    var hscroll = nw_win.window.document.getElementById("hscroll");
+    xScrollSize = (min_width - 1) / width;
+    xScrollTopOffset = Math.floor((nw_win.scrollX / width) * (min_width + 3));
+
+    if (xScrollSize < 1) {
+        var xWidth = Math.floor(xScrollSize * (min_width + 3));
+        hscroll.style.setProperty("width", (xWidth - 6) + "px");
+        hscroll.style.setProperty("left", (xScrollTopOffset + 2) + "px");
+        hscroll.style.setProperty("-webkit-clip-path", "polygon(0px 0px, " + (xWidth - 11) + "px 0px, " + (xWidth - 6) + "px 5px, 0px 5px)");
+        hscroll.style.setProperty("visibility", "visible");
+    } else {
+        hscroll.style.setProperty("visibility", "hidden");    
+    }
+    
+    //post("x=" + xScrollSize + " y=" + yScrollSize);
+    
     return { x: x, y: y, w: width, h: height,
              mw: min_width, mh: min_height };
 }
@@ -5835,11 +5866,14 @@ var getscroll_var = {};
 //    graphics from displaying until the user releases the mouse,
 //    which would be a buggy UI
 function gui_canvas_get_scroll(cid) {
+    //post("win=" + win);
+    //win_width = win.style.width;
+    //win_height = win.style.height;
     if (!getscroll_var[cid]) {
         getscroll_var[cid] = setTimeout(function() {
             do_getscroll(cid);
             getscroll_var[cid] = null;
-        }, 250);
+        }, 50);
     }
 }
 

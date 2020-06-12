@@ -1753,3 +1753,100 @@ function nw_create_patch_window_menus(gui, w, name) {
         }
     });
 }
+
+function update_scrollbars(nw_win) {
+    var hscroll = nw_win.document.getElementById("hscroll");
+    var vscroll = nw_win.document.getElementById("vscroll");
+    var svg_elem = nw_win.document.getElementById("patchsvg");
+    
+    if (vscroll.style.visibility == "visible")
+    {
+        console.log("vertical visible...");
+        var height, min_height;
+        
+        min_height = nw_win.innerHeight + 3;
+        height = svg_elem.getAttribute('height');
+        
+        var yScrollSize, yScrollTopOffset;
+        yScrollSize = (min_height - 4) / height;
+        yScrollTopOffset = Math.floor((nw_win.scrollY / height) * min_height);
+        
+        //console.log("win_height=" + min_height + " bbox=" + height + " yScrollSize=" + (yScrollSize * min_height) + " topOffset=" + yScrollTopOffset);
+
+        if (yScrollSize < 1) {
+            var yHeight = Math.floor(yScrollSize * min_height);
+            vscroll.style.setProperty("height", (yHeight - 6) + "px");
+            vscroll.style.setProperty("top", (yScrollTopOffset + 2) + "px");
+            vscroll.style.setProperty("-webkit-clip-path", "polygon(0px 0px, 5px 0px, 5px " + (yHeight - 6) + "px, 0px " + (yHeight - 11) + "px, 0px 5px)");
+            vscroll.style.setProperty("visibility", "visible");
+        } else {
+            vscroll.style.setProperty("visibility", "hidden");    
+        }
+    }
+
+    if (hscroll.style.visibility == "visible")
+    {
+        var min_width = nw_win.innerWidth + 3;
+        var width = svg_elem.getAttribute('width');
+        var xScrollSize, xScrollTopOffset;
+        
+        xScrollSize = (min_width - 4) / width;
+        xScrollTopOffset = Math.floor((nw_win.scrollX / width) * min_width);
+        
+        /* console.log("win_width=" + min_width + " bbox=" +
+            width + " xScrollSize=" + (xScrollSize * min_width) +
+            " topOffset=" + xScrollTopOffset); */
+
+        if (xScrollSize < 1) {
+            var xWidth = Math.floor(xScrollSize * min_width);
+            hscroll.style.setProperty("width", (xWidth - 6) + "px");
+            hscroll.style.setProperty("left", (xScrollTopOffset + 2) + "px");
+            hscroll.style.setProperty("-webkit-clip-path", "polygon(0px 0px, " + (xWidth - 11) + "px 0px, " + (xWidth - 6) + "px 5px, 0px 5px)");
+            hscroll.style.setProperty("visibility", "visible");
+        } else {
+            hscroll.style.setProperty("visibility", "hidden");    
+        }
+    }
+    // for future reference
+    //nw_win.document.getElementById("hscroll").style.setProperty("visibility", "visible");
+    //console.log("width="+width);
+}
+
+var hscroll_mouse_state = 0; // 0 off/up, 1 on/down
+var vscroll_mouse_state = 0;
+
+function hscroll_with_mouse(e) {
+    if (e.type == "mousedown") {
+        hscroll_mouse_state = 1;
+    }
+    if (e.type == "mouseup") {
+        hscroll_mouse_state = 0;
+    }
+    console.log(hscroll_mouse_state);
+    if (e.type == "mousemove" && hscroll_mouse_state == 1) {
+        //console.log("move: " + e.movementX);
+        
+        var hscroll = document.getElementById("hscroll");
+        var svg_elem = document.getElementById("patchsvg");
+        
+        var min_width = document.body.clientWidth + 3;
+        var width = svg_elem.getAttribute('width');
+        var xScrollSize, xScrollTopOffset;
+        
+        xScrollSize = hscroll.offsetWidth;
+        //xScrollTopOffset = ((window.scrollX / width) * min_width);
+        
+        //console.log("win_width=" + min_width + " width=" + width + " xScrollSize=" + (xScrollSize * min_width) + " leftOffset=" + xScrollTopOffset);
+        //console.log("missing pixels=" + (width - min_width - 4) + " scrollbar pixels=" + (min_width - 4 - xScrollSize) + " result=" + (width - min_width - 4)/(min_width - 4 - xScrollSize));
+        window.scrollBy(e.movementX * (width - min_width - 4)/(min_width - 4 - xScrollSize), 0);
+            
+    }
+    //console.log("mouse: " + e.type + " " + hscroll_mouse_state);
+}
+
+// LATER: add and remove listeners based on whether the scrollbar is visible
+document.getElementById("hscroll").addEventListener("mousedown", hscroll_with_mouse);
+document.addEventListener("mouseup", hscroll_with_mouse);
+document.addEventListener("mousemove", hscroll_with_mouse);
+
+// TODO: also account for toggle maximize to re-query scrollbars, as well sa for deselect
