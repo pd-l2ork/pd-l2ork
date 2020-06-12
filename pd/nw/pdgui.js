@@ -1418,6 +1418,7 @@ var scroll = {},
     var dialogwin = {}; // object filled with did: [Window object] pairs
 
 exports.get_patchwin = function(name) {
+    post("getpatchwin " + name + " " + patchwin[name]);
     return patchwin[name];
 }
 
@@ -2604,6 +2605,10 @@ function gui_gobj_select(cid, tag) {
 function gui_gobj_deselect(cid, tag) {
     gui(cid).get_gobj(tag, function(e) {
         e.classList.remove("selected");
+        // ico@vt.edu: check for scroll in case the handle disappears
+        // during deselect. LATER: make handles always fit inside the
+        // object, so this won't be necessary
+        gui_canvas_get_scroll(cid);
     });
 }
 
@@ -5870,7 +5875,7 @@ var getscroll_var = {};
 //    graphics from displaying until the user releases the mouse,
 //    which would be a buggy UI
 function gui_canvas_get_scroll(cid) {
-    //post("win=" + win);
+    post("win=" + cid);
     //win_width = win.style.width;
     //win_height = win.style.height;
     if (!getscroll_var[cid]) {
