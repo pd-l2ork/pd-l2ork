@@ -84,7 +84,6 @@ int libpd_init(void) {
 #ifdef HAVE_SCHED_TICK_ARG
   sys_time = 0;
 #endif
-  sys_nogui = 1;
   pd_init();
   sys_soundin = NULL;
   sys_soundout = NULL;
@@ -579,4 +578,7 @@ void glob_clear_recent_files(t_pd *dummy) {}
 int sys_defeatrt, sys_autopatch_yoffset, sys_zoom, sys_browser_doc = 1,
     sys_browser_path, sys_browser_init;
 t_symbol *sys_flags = &s_;
-void sys_get_midi_devs(char *indevlist, int *nindevs, char *outdevlist, int *noutdevs, int maxndev, int devdescsize) {} // used in x_interface.c
+
+// dummy routines needed because we don't use s_midi.c
+void sys_get_midi_apis2(t_binbuf *buf) {}
+void sys_get_midi_devs(char *indevlist, int *nindevs, char *outdevlist, int *noutdevs, int maxndev, int devdescsize) {}
