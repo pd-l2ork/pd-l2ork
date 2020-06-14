@@ -1,67 +1,166 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-    <title>empd / pdtest</title>
-    <meta name="description" content="test of Pure-data compiled for web with Emscripten" />
-    <meta name="keywords" content="pure-data emscripten empd" />
-    <meta name="generator" content="emsripten" />
-    <style>
-      #play
-      {
-        font-size: 400%;
-        width: 1em;
-        height: 1em;
-        position: absolute;
-        top:0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        border: 0;
-        padding: 0;
-        margin: auto;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="play">&#x25b6;</div>
-    <script>
-      // audio autoplay
-      const audioContextList = [];
-      (function() {
-        self.AudioContext = new Proxy(self.AudioContext, {
-          construct(target, args) {
-            const result = new target(...args);
-            audioContextList.push(result);
-            return result;
-          }
-        });
-      })();
-      function resumeAudio() {
-        audioContextList.forEach(ctx => {
-          if (ctx.state !== "running") { ctx.resume(); }
-        });
-      }
-      [ "click", "contextmenu", "auxclick", "dblclick"
+
+<head>
+  <meta charset="utf-8">
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+  <title>empd / pdtest</title>
+  <meta name="description" content="test of Pure-data compiled for web with Emscripten" />
+  <meta name="keywords" content="pure-data emscripten empd" />
+  <meta name="generator" content="emsripten" />
+  <style>
+    #play {
+      font-size: 400%;
+      width: 1em;
+      height: 1em;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      border: 0;
+      padding: 0;
+      margin: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="play">&#x25b6;</div>
+  <script>
+    // audio autoplay
+    const audioContextList = [];
+    (function () {
+      self.AudioContext = new Proxy(self.AudioContext, {
+        construct(target, args) {
+          const result = new target(...args);
+          audioContextList.push(result);
+          return result;
+        }
+      });
+    })();
+    function resumeAudio() {
+      audioContextList.forEach(ctx => {
+        if (ctx.state !== "running") { ctx.resume(); }
+      });
+    }
+    ["click", "contextmenu", "auxclick", "dblclick"
       , "mousedown", "mouseup", "pointerup", "touchend"
       , "keydown", "keyup"
-      ].forEach(name => document.addEventListener(name, resumeAudio));
-      // emscripten
-      var Module
-            = { preRun: []
-              , postRun: []
-              , print: function(e) {
-                  1<arguments.length&&(e=Array.prototype.slice.call(arguments).join(" "));
-                  console.log(e);
-                }
-              , printErr: function(e) {
-                  1<arguments.length&&(e=Array.prototype.slice.call(arguments).join(" "));
-                  console.error(e)
-                }
-              }
-            ;
-    </script>
-    <script async src="pdtest.js"></script>
-  </body>
+    ].forEach(name => document.addEventListener(name, resumeAudio));
+    // emscripten
+    var Module
+      = {
+      preRun: []
+      , postRun: []
+      , print: function (e) {
+        1 < arguments.length && (e = Array.prototype.slice.call(arguments).join(" "));
+        console.log(e);
+      }
+      , printErr: function (e) {
+        1 < arguments.length && (e = Array.prototype.slice.call(arguments).join(" "));
+        console.error(e)
+      }
+    };
+
+
+    //--------------------- pdgui.js ----------------------------
+
+    function pdsend() {
+      var string = Array.prototype.join.call(arguments, " ");
+      var array = string.split(" ");
+      Module.startMessage(array.length - 2);
+      for (let i = 2; i < array.length; i++) {
+        if (isNaN(array[i])) {
+          Module.addSymbol(array[i]);
+        }
+        else {
+          Module.addFloat(parseFloat(array[i]));
+        }
+      }
+      Module.finishMessage(array[0], array[1]);
+    }
+
+    function gui_undo_menu(cid, undo_text, redo_text) {
+      console.log("gui_undo_menu", cid, undo_text, redo_text);
+    }
+
+    function gui_startup(version, fontname_from_pd, fontweight_from_pd, apilist, midiapilist) {
+      console.log("gui_startup", version, fontname_from_pd, fontweight_from_pd, apilist, midiapilist);
+      pdsend("test foo", 1, 2, 3, "four", 5);
+    }
+
+    function gui_set_cwd(dummy, cwd) {
+      console.log("gui_set_cwd", dummy, cwd);
+    }
+
+    function set_audioapi(val) {
+      console.log("set_audioapi", val);
+    }
+
+    function gui_pd_dsp(state) {
+      console.log("gui_pd_dsp", state);
+    }
+
+    function gui_canvas_new(cid, width, height, geometry, zoom, editmode, name, dir, dirty_flag, hide_scroll, hide_menu, cargs) {
+      console.log("gui_canvas_new", cid, width, height, geometry, zoom, editmode, name, dir, dirty_flag, hide_scroll, hide_menu, cargs);
+    }
+
+    function gui_set_toplevel_window_list(dummy, attr_array) {
+      console.log("gui_pd_dsp", dummy, attr_array);
+    }
+
+    function emscripten_receive_data(data) {
+      var command_buffer = {
+        next_command: ""
+      };
+      perfect_parser(data, command_buffer);
+    }
+
+    function perfect_parser(data, cbuf, sel_array) {
+      var i, len, selector, args;
+      len = data.length;
+      for (i = 0; i < len; i++) {
+        // check for end of command:
+        if (data[i] === 31) { // unit separator
+          // decode next_command
+          try {
+            // This should work for all utf-8 content
+            cbuf.next_command =
+              decodeURIComponent(cbuf.next_command);
+          }
+          catch (err) {
+            // This should work for ISO-8859-1
+            cbuf.next_command = unescape(cbuf.next_command);
+          }
+          // Turn newlines into backslash + "n" so
+          // eval will do the right thing with them
+          cbuf.next_command = cbuf.next_command.replace(/\n/g, "\\n");
+          cbuf.next_command = cbuf.next_command.replace(/\r/g, "\\r");
+          selector = cbuf.next_command.slice(0, cbuf.next_command.indexOf(" "));
+          args = cbuf.next_command.slice(selector.length + 1);
+          cbuf.next_command = "";
+          // Now evaluate it
+          //post("Evaling: " + selector + "(" + args + ");");
+          // For communicating with a secondary instance, we filter
+          // incoming messages. A better approach would be to make
+          // sure that the Pd engine only sends the gui_set_cwd message
+          // before "gui_startup".  Then we could just check the
+          // Pd engine id in "gui_startup" and branch there, instead of
+          // fudging with the parser here.
+          if (!sel_array || sel_array.indexOf(selector) !== -1) {
+            eval(selector + "(" + args + ");");
+          }
+        } else {
+          cbuf.next_command += "%" +
+            ("0" // leading zero (for rare case of single digit)
+              + data[i].toString(16)) // to hex
+              .slice(-2); // remove extra leading zero
+        }
+      }
+    }
+  </script>
+  <script async src="pdtest.js"></script>
+</body>
+
 </html>
