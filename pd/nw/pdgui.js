@@ -814,16 +814,23 @@ function canvas_check_geometry(cid) {
     var win_w = patchwin[cid].width,
         // "23" is a kludge to account for the menubar size.  See comment
         // in nw_create_window of index.js
-        win_h = patchwin[cid].height - 23,
+        // ico@vt.edu in 0.46.2 this is now 25 pixels, so I guess
+        // it is now officially kludge^2
+        win_h = patchwin[cid].height - 25,
         win_x = patchwin[cid].x,
         win_y = patchwin[cid].y,
         cnv_width = patchwin[cid].window.innerWidth,
-        cnv_height = patchwin[cid].window.innerHeight - 23;
+        cnv_height = patchwin[cid].window.innerHeight - 25;
     // We're reusing win_x and win_y below, as it
     // shouldn't make a difference to the bounds
-    // algorithm in Pd
+    // algorithm in Pd (ico@vt.edu: this is not true anymore)
+    //post("relocate " + pd_geo_string(cnv_width, cnv_height, win_x, win_y) + " " +
+    //       pd_geo_string(cnv_width, cnv_height, win_x, win_y));
+    // ico@vt.edu: replaced first pd_geo_string's first two args (originally
+    // win_x and win_y with cnv_width and cnv_height + 25 to ensure the window
+    // reopens exactly how it was saved)
     pdsend(cid, "relocate",
-           pd_geo_string(win_w, win_h, win_x, win_y),
+           pd_geo_string(cnv_width, cnv_height + 25, win_x, win_y),
            pd_geo_string(cnv_width, cnv_height, win_x, win_y)
     );
 }
@@ -5747,6 +5754,58 @@ function gui_undo_menu(cid, undo_text, redo_text) {
     });
 }
 
+function zoom_level_to_chrome_percent(nw_win) {
+    var zoom = nw_win.zoomLevel;
+    switch (zoom) {
+        case -7:
+            zoom = 4;
+            break;
+        case -6:
+            zoom = 100/33;
+            break;
+        case -5:
+            zoom = 2;
+            break;
+        case -4:
+            zoom = 100/67;
+            break;
+        case -3:
+            zoom = 100/75;
+            break;
+        case -2:
+            zoom = 100/80;
+            break;
+        case -1:
+            zoom = 100/90;
+            break;
+        case 0:
+            zoom = 1;
+            break;
+        case 1:
+            zoom = 100/110;
+            break;
+        case 2:
+            zoom = 100/125;
+            break;
+        case 3:
+            zoom = 100/150;
+            break;
+        case 4:
+            zoom = 100/175;
+            break;
+        case 5:
+            zoom = 100/200;
+            break;
+        case 6:
+            zoom = 100/250;
+            break;
+        case 7:
+            zoom = 100/300;
+            break;  
+    }
+    return zoom;
+}
+
 // leverages the get_nw_window method in the callers...
 function canvas_params(nw_win)
 {
@@ -5786,13 +5845,18 @@ function canvas_params(nw_win)
     y |= 0;
 
     /* ico@vt.edu: now let's draw/update our own scrollbars, so that we
-       don't have to deal with window size nonsense caused by the
-       built-in ones... */
+       don't have to deal with the window size nonsense caused by the
+       built-in ones... */  
+    // zoom var is used to compensate for the zoom level and keep
+    // the scrollbars the same height
+    var zoom = zoom_level_to_chrome_percent(nw_win);
     var yScrollSize, yScrollTopOffset;
     var vscroll = nw_win.window.document.getElementById("vscroll");
     yScrollSize = (min_height - 1) / height;
     yScrollTopOffset = Math.floor((nw_win.window.scrollY / height) * (min_height + 3));
     
+    // yScrollSize reflects the amount of the patch we currently see,
+    // so if it drops below 1, that means we need our scrollbars 
     if (yScrollSize < 1) {
         var yHeight = Math.floor(yScrollSize * (min_height + 3));
         vscroll.style.setProperty("height", (yHeight - 6) + "px");
@@ -5800,29 +5864,34 @@ function canvas_params(nw_win)
         vscroll.style.setProperty("-webkit-clip-path",
             "polygon(0px 0px, 5px 0px, 5px " + (yHeight - 6) +
             "px, 0px " + (yHeight - 11) + "px, 0px 5px)");
+        vscroll.style.setProperty("width", (5 * zoom) + "px");
+        vscroll.style.setProperty("right", (2 * zoom) + "px");
         vscroll.style.setProperty("visibility", "visible");
     } else {
         vscroll.style.setProperty("visibility", "hidden");
     }
     
-    var xScrollSize, xScrollTopOffset;
+    var xScrollSize, xScrollLeftOffset;
     var hscroll = nw_win.window.document.getElementById("hscroll");
     xScrollSize = (min_width - 1) / width;
-    xScrollTopOffset = Math.floor((nw_win.window.scrollX / width) * (min_width + 3));
+    xScrollLeftOffset = Math.floor((nw_win.window.scrollX / width) * (min_width + 3));
 
     if (xScrollSize < 1) {
         var xWidth = Math.floor(xScrollSize * (min_width + 3));
         hscroll.style.setProperty("width", (xWidth - 6) + "px");
-        hscroll.style.setProperty("left", (xScrollTopOffset + 2) + "px");
+        hscroll.style.setProperty("left", (xScrollLeftOffset + 2) + "px");
         hscroll.style.setProperty("-webkit-clip-path",
             "polygon(0px 0px, " + (xWidth - 11) + "px 0px, " +
             (xWidth - 6) + "px 5px, 0px 5px)");
+        hscroll.style.setProperty("height", (5 * zoom) + "px");
+        hscroll.style.setProperty("bottom", (2 * zoom) + "px");
         hscroll.style.setProperty("visibility", "visible");
+
     } else {
         hscroll.style.setProperty("visibility", "hidden");    
     }
     
-    //post("x=" + xScrollTopOffset + " y=" + yScrollTopOffset);
+    //post("x=" + xScrollLeftOffset + " y=" + yScrollTopOffset);
     
     return { x: x, y: y, w: width, h: height,
              mw: min_width, mh: min_height };
