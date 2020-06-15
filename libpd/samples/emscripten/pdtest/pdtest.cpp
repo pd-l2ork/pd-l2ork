@@ -167,7 +167,7 @@ int main(int argc, char **argv) {
     if (deviceOut) {
         SDL_PauseAudioDevice(deviceOut, 0);
     }
-    emscripten_set_main_loop(mainLoop, 1, 1);
+    emscripten_set_main_loop(mainLoop, 0, 1);
     
     // stop audio processing & close audio device
     if (deviceIn) {
