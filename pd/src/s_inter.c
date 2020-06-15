@@ -657,7 +657,7 @@ static int sys_guibufsize;
 static int sys_waitingforping;
 static int sys_bytessincelastping;
 
-static int do_send(int sockfd, char *buf, int len, int flags) 
+static int do_send(int sockfd, char *buf, int len, int flags)
 {
 #ifdef __EMSCRIPTEN__
     EM_ASM({
