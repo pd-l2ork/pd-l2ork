@@ -8,7 +8,6 @@
 #include "m_pd.h"
 #include "m_imp.h"
 #include "s_stuff.h"
-#include "g_canvas.h"
 #include <stdlib.h>
 
 #ifdef HAVE_UNISTD_H
@@ -851,6 +850,8 @@ void *bang_new(t_pd *dummy);
 void *pdfloat_new(t_pd *dummy, t_float f);
 void *pdsymbol_new(t_pd *dummy, t_symbol *s);
 void *list_new(t_pd *dummy, t_symbol *s, int argc, t_atom *argv);
+
+t_canvas *canvas_new(void *dummy, t_symbol *sel, int argc, t_atom *argv);
 
 /* needed for proper error reporting */
 extern t_pd *pd_mess_from_responder(t_pd *x);
