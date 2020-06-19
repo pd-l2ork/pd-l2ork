@@ -43,9 +43,34 @@ t_classtable *ct;
 
 static t_symbol *class_extern_dir = &s_;
 
+int symbol_to_float(t_symbol *s, t_float *f)
+{
+    char *str_end = NULL;
+    *f = strtod(s->s_name, &str_end);
+    /* Add error checking here like in cxc/hex2dec */
+    if (*f == 0 && s->s_name == str_end)
+        return 0;
+    else
+        return 1;
+}
+
 static void pd_defaultanything(t_pd *x, t_symbol *s, int argc, t_atom *argv)
 {
-    pd_error(x, "%s: no method for '%s'", (*x)->c_name->s_name, s->s_name);
+    int got_sym_msg = s && s == &s_symbol;
+    char hint[MAXPDSTRING];
+    hint[0] = '\0';
+    t_float payload;
+    if (got_sym_msg)
+    {
+        if (*(*x)->c_floatmethod != pd_defaultfloat && argc
+            && argv->a_type == A_SYMBOL)
+        {
+            if (symbol_to_float(argv->a_w.w_symbol, &payload))
+                sprintf(hint, " (Did you mean 'float %g'?)", payload);
+        }
+    }
+    pd_error(x, "%s: no method for '%s'%s",
+        (*x)->c_name->s_name, s->s_name, hint);
 }
 
 static void pd_defaultbang(t_pd *x)
