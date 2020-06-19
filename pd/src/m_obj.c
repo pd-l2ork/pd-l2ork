@@ -72,10 +72,21 @@ t_inlet *signalinlet_new(t_object *owner, t_float f)
     return (x);
 }
 
-static void inlet_wrong(t_inlet *x, t_symbol *s)
+/* Abstract this so we just make a call to get the hint, if any */
+int symbol_to_float(t_symbol *s, t_float *f);
+
+static void inlet_wrong(t_inlet *x, t_symbol *s, int argc, t_atom *argv)
 {
-    pd_error(x->i_owner, "inlet: expected '%s' but got '%s'",
-        x->i_symfrom->s_name, s->s_name);
+    char hint[MAXPDSTRING];
+    hint[0] = '\0';
+    if (x->i_symfrom == &s_float && s == &s_symbol && argc)
+    {
+        t_float f;
+        if (symbol_to_float(argv->a_w.w_symbol, &f))
+            sprintf(hint, " (Did you mean 'float %g'?)", f);
+    }
+    pd_error(x->i_owner, "inlet: expected '%s' but got '%s'%s",
+        x->i_symfrom->s_name, s->s_name, hint);
 }
 
 static void inlet_list(t_inlet *x, t_symbol *s, int argc, t_atom *argv);
@@ -88,7 +99,7 @@ static void inlet_bang(t_inlet *x)
     else if (!x->i_symfrom) pd_bang(x->i_dest);
     else if (x->i_symfrom == &s_list)
         inlet_list(x, &s_bang, 0, 0);
-    else inlet_wrong(x, &s_bang);
+    else inlet_wrong(x, &s_bang, 0, 0);
 }
 
 static void inlet_pointer(t_inlet *x, t_gpointer *gp)
@@ -102,7 +113,7 @@ static void inlet_pointer(t_inlet *x, t_gpointer *gp)
         SETPOINTER(&a, gp);
         inlet_list(x, &s_pointer, 1, &a);
     }
-    else inlet_wrong(x, &s_pointer);
+    else inlet_wrong(x, &s_pointer, 0, 0);
 }
 
 static void inlet_float(t_inlet *x, t_float f)
@@ -119,7 +130,7 @@ static void inlet_float(t_inlet *x, t_float f)
         SETFLOAT(&a, f);
         inlet_list(x, &s_float, 1, &a);
     }
-    else inlet_wrong(x, &s_float);
+    else inlet_wrong(x, &s_float, 0, 0);
 }
 
 static void inlet_symbol(t_inlet *x, t_symbol *s)
@@ -127,13 +138,15 @@ static void inlet_symbol(t_inlet *x, t_symbol *s)
     if (x->i_symfrom == &s_symbol) 
         pd_vmess(x->i_dest, x->i_symto, "s", s);
     else if (!x->i_symfrom) pd_symbol(x->i_dest, s);
-    else if (x->i_symfrom == &s_list)
+    else
     {
         t_atom a;
         SETSYMBOL(&a, s);
-        inlet_list(x, &s_symbol, 1, &a);
+        if (x->i_symfrom == &s_list)
+            inlet_list(x, &s_symbol, 1, &a);
+        else
+            inlet_wrong(x, &s_symbol, 1, &a);
     }
-    else inlet_wrong(x, &s_symbol);
 }
 
 static void inlet_blob(t_inlet *x, t_blob *st) /* MP20061226 blob type */
@@ -152,7 +165,7 @@ static void inlet_blob(t_inlet *x, t_blob *st) /* MP20061226 blob type */
     else
     {
         /*post("inlet_blob calling inlet_wrong");*/
-        inlet_wrong(x, &s_blob);
+        inlet_wrong(x, &s_blob, 0, 0);
     }
 }
 
@@ -168,7 +181,7 @@ static void inlet_list(t_inlet *x, t_symbol *s, int argc, t_atom *argv)
       inlet_float(x, atom_getfloat(argv));
     else if (argc==1 && argv->a_type == A_SYMBOL)
       inlet_symbol(x, atom_getsymbol(argv));
-    else inlet_wrong(x, &s_list);
+    else inlet_wrong(x, &s_list, 0, 0);
 }
 
 static void inlet_anything(t_inlet *x, t_symbol *s, int argc, t_atom *argv)
@@ -177,7 +190,7 @@ static void inlet_anything(t_inlet *x, t_symbol *s, int argc, t_atom *argv)
         typedmess(x->i_dest, x->i_symto, argc, argv);
     else if (!x->i_symfrom)
         typedmess(x->i_dest, s, argc, argv);
-    else inlet_wrong(x, s);
+    else inlet_wrong(x, s, 0, 0);
 }
 
 void inlet_free(t_inlet *x)
