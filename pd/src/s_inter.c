@@ -662,12 +662,12 @@ static int do_send(int sockfd, char *buf, int len, int flags)
 #ifdef __EMSCRIPTEN__
     EM_ASM({
         if (typeof emscripten_receive_data === "function") {
-            emscripten_receive_data(intArrayFromString(UTF8ToString($0, $1), false, $1));
+            emscripten_receive_data(intArrayFromString(UTF8ToString($0), true));
         }
         else {
             console.error("error: cannot find the javascript function 'emscripten_receive_data'");
         }
-    }, buf, len);
+    }, buf);
   return len;
 #endif
     return send(sockfd, buf, len, flags);
