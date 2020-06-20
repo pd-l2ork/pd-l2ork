@@ -9,6 +9,10 @@
   <meta name="keywords" content="pure-data emscripten empd" />
   <meta name="generator" content="emsripten" />
   <style>
+    button {
+      display: block;
+      margin-top: 10px;
+    }
   </style>
 </head>
 
@@ -19,28 +23,40 @@
   <button id="closePatch">close</button>
   <button id="printPatch">print</button>
   <button id="downloadPatch">download</button>
+  <button id="dspOn">dsp on</button>
+  <button id="dspOff">dsp off</button>
 
   <script>
-    // audio autoplay
+    // create an AudioContext
     const audioContextList = [];
     (function () {
-      self.AudioContext = new Proxy(self.AudioContext, {
-        construct(target, args) {
-          const result = new target(...args);
-          audioContextList.push(result);
-          return result;
-        }
-      });
+      var AudioContext = self.AudioContext || self.webkitAudioContext || false;
+      if (AudioContext) {
+        self.AudioContext = new Proxy(AudioContext, {
+          construct(target, args) {
+            const result = new target(...args);
+            audioContextList.push(result);
+            return result;
+          }
+        });
+      }
+      else {
+        alert("The Web Audio API is not supported in this browser.");
+      }
     })();
+
     function resumeAudio() {
       audioContextList.forEach(ctx => {
         if (ctx.state !== "running") { ctx.resume(); }
       });
     }
-    ["click", "contextmenu", "auxclick", "dblclick"
-      , "mousedown", "mouseup", "pointerup", "touchend"
-      , "keydown", "keyup"
-    ].forEach(name => document.addEventListener(name, resumeAudio));
+
+    function suspendAudio() {
+      audioContextList.forEach(ctx => {
+        if (ctx.state !== "suspended") { ctx.suspend(); }
+      });
+    }
+
     // emscripten
     var Module
       = {
@@ -92,6 +108,12 @@
 
     function gui_pd_dsp(state) {
       console.log("gui_pd_dsp", state);
+      if (state) {
+        resumeAudio();
+      }
+      else {
+        suspendAudio();
+      }
     }
 
     function gui_canvas_new(cid, width, height, geometry, zoom, editmode, name, dir, dirty_flag, hide_scroll, hide_menu, cargs) {
@@ -220,6 +242,14 @@
       }, 2000);
     }
 
+    function dspOn() {
+      pdsend("pd dsp 1");
+    }
+
+    function dspOff() {
+      pdsend("pd dsp 0");
+    }
+
     window.onload = async () => {
 
       document.getElementById("uploadPatch").addEventListener("change", uploadPatch, false);
@@ -230,6 +260,9 @@
 
       document.getElementById("printPatch").addEventListener("click", printPatch, false);
       document.getElementById("downloadPatch").addEventListener("click", downloadPatch, false);
+
+      document.getElementById("dspOn").addEventListener("click", dspOn, false);
+      document.getElementById("dspOff").addEventListener("click", dspOff, false);
     };
   </script>
   <script async src="pdtest.js"></script>
