@@ -2045,7 +2045,7 @@ var gui = (function() {
                 }
             }
             return c[cid];
-        }
+        };
         return {
             append: !w ? null_fn: function(cb) {
                 var frag = w.window.document.createDocumentFragment();
@@ -5774,8 +5774,8 @@ function canvas_params(nw_win)
     // the scrollbars from appearing. Here, we just subtract 4 from both
     // of them. This could lead to some problems with event handlers but I
     // haven't had a problem with it yet.
-    min_width = nw_win.window.innerWidth - 4;
-    min_height = nw_win.window.innerHeight - 4;
+    min_width = nw_win.window.innerWidth;
+    min_height = nw_win.window.innerHeight;
     // Since we don't do any transformations on the patchsvg,
     // let's try just using ints for the height/width/viewBox
     // to keep things simple.
@@ -5799,19 +5799,76 @@ function do_getscroll(cid) {
     // errors wrt the rendering context disappearing.
     gui(cid).get_nw_window(function(nw_win) {
         var svg_elem = nw_win.window.document.getElementById("patchsvg");
+        var overflow_x,
+            overflow_y,
+            scrollbar_x_would_overlap_content,
+            scrollbar_y_would_overlap_content,
+            x_offset = 0,
+            y_offset = 0;
         var { x: x, y: y, w: width, h: height,
             mw: min_width, mh: min_height } = canvas_params(nw_win);
+
+        // Let's get to it. First we want to know if our SVG has any child
+        // elements overflowing our viewport
+
+        overflow_x = width > min_width;
+        overflow_y = height > min_height;
+
+        // Now let's see if drawing a scrollbar would hide objects at the
+        // extremities of the viewport
+
+        scrollbar_x_would_overlap_content = height > min_height - 15;
+        scrollbar_y_would_overlap_content = width > min_width - 15;
+
+        if (overflow_x) {
+            // We have a horizontal scrollbar.
+            if (scrollbar_x_would_overlap_content) {
+                // If there are objects underneath the horizontal scrollbar,
+                // we want to make sure that the height of our SVG covers
+                // the entire viewport. That way the browser will give us
+                // a vertical scrollbar in order to view those objects
+                y_offset = 0;
+            } else {
+                // We don't need a vertical scrollbar after all. So make the
+                // canvas 15 pixels shorter so the vertical scrollbar doesn't
+                // show up
+                y_offset = -15;
+            }
+        }
+
+        if (overflow_y) {
+            // vert scrollbar
+            if (scrollbar_y_would_overlap_content) {
+                // same as above
+                x_offset = 0;
+            } else {
+                x_offset = -15;
+            }
+        }
+
+        // Finally, if we overflow the viewport, let's add some padding so
+        // that objects at the edge aren't flush against the scrollbar. At
+        // least I find that a real pain at the bottom of the window when
+        // trying to add more objects
+
+        if (overflow_x) {
+            x_offset = 5;
+        }
+
+        if (overflow_y) {
+            y_offset = 5;
+        }
+
         if (width < min_width) {
             width = min_width;
         }
-        // If the svg extends beyond the viewport, it might be nice to pad
-        // both the height/width and the x/y coords so that there is extra
-        // room for making connections and manipulating the objects.  As it
-        // stands objects will be flush with the scrollbars and window
-        // edges.
+        width += x_offset;
+
         if (height < min_height) {
-            height = min_height;
+            height = min_height
         }
+        height += y_offset;
+
         configure_item(svg_elem, {
             viewBox: [x, y, width, height].join(" "),
             width: width,
