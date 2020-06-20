@@ -172,11 +172,6 @@ int main(int argc, char **argv) {
     libpd_start_gui(const_cast<char *>("/"));
     libpd_init_audio(numInChannels, numOutChannels, sampleRate);
 
-    // compute audio    [; pd dsp 1(
-    libpd_start_message(1); // one entry in list
-    libpd_add_float(1.0f);
-    libpd_finish_message("pd", "dsp");
-
     // start audio processing
     if (deviceIn) {
         SDL_PauseAudioDevice(deviceIn, 0);
