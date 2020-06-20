@@ -41,6 +41,7 @@ void audioOut(void *userdata, Uint8 *stream, int len) {
     }
 }
 
+// bind these directly in z_libpd.c?
 int sendBang(const std::string &recv) {
     return libpd_bang(recv.c_str());
 }
@@ -73,6 +74,23 @@ int finishMessage(const std::string &recv, const std::string &msg) {
     return libpd_finish_message(recv.c_str(), msg.c_str());
 }
 
+void addToSearchPath(const std::string &path) {
+    libpd_add_to_search_path(path.c_str());
+}
+
+void openPatch(const std::string &name, const std::string &dir) {
+    // [; pd open file folder(
+    libpd_openfile(name.c_str(), dir.c_str());
+}
+
+void closePatch(const std::string &name) {
+    // [; pd-name menuclose 1(
+    const std::string &recv = static_cast<std::string>("pd-") + name;
+    libpd_start_message(1);
+    libpd_add_float(1);
+    libpd_finish_message(recv.c_str(), "menuclose");
+}
+
 EMSCRIPTEN_BINDINGS(my_module) {
     function("sendBang", &sendBang);
     function("sendFloat", &sendFloat);
@@ -82,6 +100,9 @@ EMSCRIPTEN_BINDINGS(my_module) {
     function("addSymbol", &addSymbol);
     function("finishList", &finishList);
     function("finishMessage", &finishMessage);
+    function("addToSearchPath", &addToSearchPath);
+    function("openPatch", &openPatch);
+    function("closePatch", &closePatch);
 }
 
 void pdprint(const char *s) {
@@ -148,17 +169,13 @@ int main(int argc, char **argv) {
     // initialize libpd
     libpd_set_printhook(pdprint);
     libpd_init();
-    libpd_start_gui(const_cast<char *>("./"));
+    libpd_start_gui(const_cast<char *>("/"));
     libpd_init_audio(numInChannels, numOutChannels, sampleRate);
 
     // compute audio    [; pd dsp 1(
     libpd_start_message(1); // one entry in list
     libpd_add_float(1.0f);
     libpd_finish_message("pd", "dsp");
-
-    // open patch       [; pd open file folder(
-    libpd_add_to_search_path("./");
-    libpd_openfile("test.pd", ".");
 
     // start audio processing
     if (deviceIn) {
