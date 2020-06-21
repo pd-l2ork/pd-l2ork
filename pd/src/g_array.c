@@ -809,12 +809,14 @@ static void garray_free(t_garray *x)
 
 /* ------------- code used by both array and plot widget functions ---- */
 
+void scalar_configure(t_scalar *x, t_glist *owner);
+
 void array_redraw(t_array *a, t_glist *glist)
 {
     while (a->a_gp.gp_stub->gs_which == GP_ARRAY)
         a = a->a_gp.gp_stub->gs_un.gs_array;
     t_scalar *sc = (t_scalar *)(a->a_gp.gp_un.gp_gobj);
-    scalar_redraw(sc, glist);
+    scalar_configure(sc, glist);
 }
 
     /* routine to get screen coordinates of a point in an array */
@@ -1006,7 +1008,9 @@ static void array_motion(void *z, t_floatarg dx, t_floatarg dy)
     //fprintf(stderr, "%f %f\n", graph->gl_y1, graph->gl_y2);
 
     if (array_motion_scalar)
-        scalar_redraw(array_motion_scalar, array_motion_glist);
+    {
+        scalar_configure(array_motion_scalar, array_motion_glist);
+    }
     if (array_motion_array)
         array_redraw(array_motion_array, array_motion_glist);
 

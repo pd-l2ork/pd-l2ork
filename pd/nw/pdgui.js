@@ -3632,7 +3632,7 @@ function gui_draw_configure_all(cid, tag, attr_array) {
 }
 
 // Plots for arrays and data structures
-function gui_plot_vis(cid, basex, basey, data_array, attr_array, tag_array) {
+function gui_plot_vis(cid, data_array, attr_array, tag_array) {
     gui(cid).get_elem(tag_array[0])
     .append(function(frag) {
         var p = create_item(cid, "path", {
@@ -3645,6 +3645,12 @@ function gui_plot_vis(cid, basex, basey, data_array, attr_array, tag_array) {
         configure_item(p, attr_array);
         frag.appendChild(p);
         return frag;
+    });
+}
+
+function gui_plot_configure(cid, data_array, attr_array, tag_array) {
+    gui(cid).get_elem(tag_array[1], {
+        d: data_array.join(" ")
     });
 }
 

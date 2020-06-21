@@ -6058,7 +6058,7 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
     nelem = array->a_n;
     elem = (char *)array->a_vec;
 
-    if (tovis)
+    if (tovis != 0)
     {
         int in_array = (sc->sc_vec == data) ? 0 : 1;
         int draw_scalars = plot_has_drawcommand(elemtemplatecanvas);
@@ -6078,6 +6078,27 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
         t_float x_inverse = 1 / xscale;
         t_float y_inverse = 1 / yscale; /* for the stroke-width */
 
+            /* First let's start the call to the GUI:
+               gui_plot_vis: called the first time we need to draw. This
+                   will create new DOM elements.
+               gui_plot_configure: this will just update the path data
+            */
+        if (tovis == 1)
+        {
+            /* draw for the first time */
+            gui_start_vmess("gui_plot_vis", "x", glist_getcanvas(glist));
+        }
+        else
+        {
+            /* just update the plot */
+            gui_start_vmess("gui_plot_configure", "x",
+            glist_getcanvas(glist));
+        }
+
+            /* the following branches will add some array arguments to the
+               GUI message-- one for the point data and another for the
+               tags */
+
         if (style == PLOTSTYLE_POINTS || style == PLOTSTYLE_BARS)
         {
 
@@ -6085,11 +6106,6 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
             t_float minyval = 1e20, maxyval = -1e20;
             int ndrawn = 0;
 
-            gui_start_vmess("gui_plot_vis", "xii",
-                glist_getcanvas(glist),
-                basex,
-                basey);
-                
             gui_start_array();
 
             for (xsum = xloc, i = 0; i < nelem; i++)
@@ -6211,7 +6227,7 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
                 (long unsigned int)glist,
                 (long unsigned int)data);
             gui_s(pbuf);
-            gui_s(pbuf);
+            gui_s(tbuf);
             gui_end_array();
 
             gui_end_vmess();
@@ -6231,11 +6247,6 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
             {
                 /* found "w" field which controls linewidth.  The trace is
                    a filled polygon with 2n points. */
-
-                gui_start_vmess("gui_plot_vis", "xii",
-                    glist_getcanvas(glist),
-                    basex,
-                    basey);
 
                 gui_start_array();
                 gui_s("M");
@@ -6330,7 +6341,7 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
                     (long unsigned int)glist,
                     (long unsigned int)data);
                 gui_s(pbuf);
-                gui_s(pbuf);
+                gui_s(tbuf);
                 gui_end_array();
                 gui_end_vmess();
             }
@@ -6339,10 +6350,6 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
                     /* no "w" field.  If the linewidth is positive, draw a
                     segmented line with the requested width; otherwise don't
                     draw the trace at all. */
-                gui_start_vmess("gui_plot_vis", "xii",
-                    glist_getcanvas(glist),
-                    basex,
-                    basey);
 
                 gui_start_array();
                 gui_s("M");
@@ -6410,7 +6417,7 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
                     (long unsigned int)glist,
                     (long unsigned int)data);
                 gui_s(pbuf);
-                gui_s(pbuf);
+                gui_s(tbuf);
                 gui_end_array();
                 gui_end_vmess();
             }
@@ -6534,6 +6541,10 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
             /* and then the trace */
         //sys_vgui(".x%lx.c delete .x%lx.x%lx.template%lx\n",
         //    glist_getcanvas(glist), glist_getcanvas(glist), glist, data);      
+        /* It appears there isn't currently a case where we need to explicitly
+           destroy the trace we drew here. On the other hand, we should
+           probably change this vis fn to destroy it explicitly anyway to
+           prevent future regressions and confusion */
     }
 }
 
@@ -8108,7 +8119,13 @@ void svg_parentwidgettogui(t_gobj *z, t_scalar *sc, t_glist *owner,
         curve_vis(z, owner, 0, sc, data, template, 0, 0, 0, -1);
     }
     else if (pd_class(&z->g_pd) == drawsymbol_class)
+    {
         drawsymbol_vis(z, owner, 0, sc, data, template, 0, 0, 0, -1);
+    }
+    else if (pd_class(&z->g_pd) == plot_class)
+    {
+        plot_vis(z, owner, 0, sc, data, template, 0, 0, 0, -1);
+    }
 }
 
 /* ---------------------- setup function ---------------------------- */
