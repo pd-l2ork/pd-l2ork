@@ -149,7 +149,7 @@ static void zexy_register(char*object)
  * which will chime in, when pd is lacking one
  * this should make zexy binary compatible with older pd versions again
  */
-# ifndef __WIN32__
+#if !defined(__WIN32__) && !defined(__EMSCRIPTEN__)
 void verbose(int level, const char *fmt, ...);
 # endif
 #else
