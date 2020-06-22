@@ -4174,6 +4174,9 @@ static void draw_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
 {
     t_draw *x = (t_draw *)z;
     t_svg *sa = (t_svg *)x->x_attr;
+fprintf(stderr, "parentglist is %lx\n", (long unsigned int)parentglist);
+fprintf(stderr, "x->x_canvas is %lx\n", (long unsigned int)x->x_canvas);
+
 
     int n = sa->x_nargs;
     //t_float mtx1[3][3] =  { { 0, 0, 0}, {0, 0, 0}, {0, 0, 1} };
@@ -5970,11 +5973,15 @@ static void plot_activate(t_gobj *z, t_glist *glist,
         /* not yet */
 }
 
+void svg_parentwidgettogui(t_gobj *z, t_scalar *sc, t_glist *owner,
+    t_word *data, t_template *template);
+
 static void plot_groupvis(t_scalar *x, t_glist *owner, t_word *data,
     t_template *template,
     t_glist *groupcanvas, t_glist *parent, t_float basex, t_float basey,
-    t_array *parentarray)
+    t_array *parentarray, int firsttime)
 {
+fprintf(stderr, "hit it...\n");
     t_gobj *y;
     char tagbuf[MAXPDSTRING], parent_tagbuf[MAXPDSTRING];
     sprintf(tagbuf, "dgroup%lx.%lx", (long unsigned int)groupcanvas,
@@ -5994,12 +6001,15 @@ static void plot_groupvis(t_scalar *x, t_glist *owner, t_word *data,
             ((t_glist *)y)->gl_svg)
         {
             plot_groupvis(x, owner, data, template, (t_glist *)y, groupcanvas,
-                basex, basey, parentarray);
+                basex, basey, parentarray, firsttime);
         }
         t_parentwidgetbehavior *wb = pd_getparentwidget(&y->g_pd);
         if (!wb) continue;
-        (*wb->w_parentvisfn)(y, owner, groupcanvas, x, data, template,
-            basex, basey, parentarray, 1);
+        if (firsttime)
+            (*wb->w_parentvisfn)(y, owner, groupcanvas, x, data, template,
+                basex, basey, parentarray, firsttime);
+        else
+            svg_parentwidgettogui(y, x, owner, data, template);
     }
 }
 
@@ -6021,6 +6031,7 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
     t_scalar *sc, t_word *data, t_template *template,
     t_float basex, t_float basey, t_array *parentarray, int tovis)
 {
+fprintf(stderr, "hit plot_vis\n");
     t_plot *x = (t_plot *)z;
     int elemsize, yonset, wonset, xonset, i;
     t_canvas *elemtemplatecanvas;
@@ -6078,21 +6089,21 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
         t_float x_inverse = 1 / xscale;
         t_float y_inverse = 1 / yscale; /* for the stroke-width */
 
-            /* First let's start the call to the GUI:
+            /* First let's set the call to the GUI:
                gui_plot_vis: called the first time we need to draw. This
                    will create new DOM elements.
                gui_plot_configure: this will just update the path data
             */
+        char gui_call[MAXPDSTRING];
         if (tovis == 1)
         {
             /* draw for the first time */
-            gui_start_vmess("gui_plot_vis", "x", glist_getcanvas(glist));
+            sprintf(gui_call, "gui_plot_vis");
         }
         else
         {
             /* just update the plot */
-            gui_start_vmess("gui_plot_configure", "x",
-            glist_getcanvas(glist));
+            sprintf(gui_call, "gui_plot_configure");
         }
 
             /* the following branches will add some array arguments to the
@@ -6105,6 +6116,8 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
             symfill = (style == PLOTSTYLE_POINTS ? symoutline : symfill);
             t_float minyval = 1e20, maxyval = -1e20;
             int ndrawn = 0;
+
+            gui_start_vmess(gui_call, "x", glist_getcanvas(glist));
 
             gui_start_array();
 
@@ -6248,6 +6261,8 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
                 /* found "w" field which controls linewidth.  The trace is
                    a filled polygon with 2n points. */
 
+                gui_start_vmess(gui_call, "x", glist_getcanvas(glist));
+
                 gui_start_array();
                 gui_s("M");
 
@@ -6350,6 +6365,8 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
                     /* no "w" field.  If the linewidth is positive, draw a
                     segmented line with the requested width; otherwise don't
                     draw the trace at all. */
+
+                gui_start_vmess(gui_call, "x", glist_getcanvas(glist));
 
                 gui_start_array();
                 gui_s("M");
@@ -6487,7 +6504,8 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
                         plot_groupvis(sc, glist,
                             (t_word *)(elem + elemsize * i),
                         template, (t_glist *)y, 
-                            elemtemplatecanvas, usexloc, useyloc, array);
+                            elemtemplatecanvas, usexloc, useyloc, array,
+                            tovis == 1);
                     }
                     t_parentwidgetbehavior *wb = pd_getparentwidget(&y->g_pd);
                     if (!wb) continue;
@@ -8078,9 +8096,11 @@ t_template *template_findbydrawcommand(t_gobj *g)
 void svg_parentwidgettogui(t_gobj *z, t_scalar *sc, t_glist *owner,
     t_word *data, t_template *template)
 {
+fprintf(stderr, "hit parentwidgetttogui\n");
     char tagbuf[MAXPDSTRING];
     if (pd_class(&z->g_pd) == draw_class)
     {
+fprintf(stderr, "hit the draw_class branch...\n");
         t_draw *x = (t_draw *)z;
         sprintf(tagbuf, "draw%lx.%lx",
             (long unsigned int)x,
@@ -8125,6 +8145,7 @@ void svg_parentwidgettogui(t_gobj *z, t_scalar *sc, t_glist *owner,
     else if (pd_class(&z->g_pd) == plot_class)
     {
         plot_vis(z, owner, 0, sc, data, template, 0, 0, 0, -1);
+fprintf(stderr, "about to call plot_vis\n");
     }
 }
 

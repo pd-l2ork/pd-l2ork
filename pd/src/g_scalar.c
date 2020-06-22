@@ -887,6 +887,7 @@ void array_configure(t_scalar *x, t_glist *owner, t_array *a, t_word *data)
     t_canvas *elemtemplatecanvas = template_findcanvas(elemtemplate);
     t_gobj *y;
 
+/*
     for (y = templatecanvas->gl_list; y; y = y->g_next)
     {
         t_parentwidgetbehavior *wb = pd_getparentwidget(&y->g_pd);
@@ -896,8 +897,8 @@ void array_configure(t_scalar *x, t_glist *owner, t_array *a, t_word *data)
             return;
         }
     }
-        /* If no plot widgets, it is now safe to just configure the individual
-           array elements. */
+*/
+fprintf(stderr, "hitting it...\n");
     for (y = elemtemplatecanvas->gl_list; y; y = y->g_next)
     {
         t_parentwidgetbehavior *wb = pd_getparentwidget(&y->g_pd);
