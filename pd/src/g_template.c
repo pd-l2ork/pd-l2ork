@@ -6530,7 +6530,7 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
                 }
             }
         }
-        if (!glist_istoplevel(glist))
+        if (!glist_istoplevel(glist) && tovis == 1)
         {
             t_canvas *gl = glist_getcanvas(glist);
             char objtag[64];

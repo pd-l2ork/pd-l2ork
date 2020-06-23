@@ -1497,6 +1497,8 @@ static void garray_doredraw(t_gobj *client, t_glist *glist)
     t_garray *x = (t_garray *)client;
     if (glist_isvisible(x->x_glist))
     {
+        scalar_configure(x->x_scalar, x->x_glist);
+        return;
         garray_vis(&x->x_gobj, x->x_glist, 0);
         garray_vis(&x->x_gobj, x->x_glist, 1);
 
