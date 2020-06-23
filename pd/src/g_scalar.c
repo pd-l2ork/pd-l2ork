@@ -887,18 +887,15 @@ void array_configure(t_scalar *x, t_glist *owner, t_array *a, t_word *data)
     t_canvas *elemtemplatecanvas = template_findcanvas(elemtemplate);
     t_gobj *y;
 
-/*
     for (y = templatecanvas->gl_list; y; y = y->g_next)
     {
         t_parentwidgetbehavior *wb = pd_getparentwidget(&y->g_pd);
         if (wb && is_plot_class(y))
         {
-            scalar_redraw(x, owner);
-            return;
+            svg_parentwidgettogui(y, x, owner, x->sc_vec, template);
         }
     }
-*/
-fprintf(stderr, "hitting it...\n");
+
     for (y = elemtemplatecanvas->gl_list; y; y = y->g_next)
     {
         t_parentwidgetbehavior *wb = pd_getparentwidget(&y->g_pd);
@@ -917,7 +914,6 @@ fprintf(stderr, "hitting it...\n");
         svg_parentwidgettogui(y, x, owner, data, elemtemplate);
         svg_register_events(y, owner, x, elemtemplate, data, a);
     }
-
 }
 
 static void scalar_groupvis(t_scalar *x, t_glist *owner, t_template *template,

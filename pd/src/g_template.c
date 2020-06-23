@@ -4174,9 +4174,6 @@ static void draw_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
 {
     t_draw *x = (t_draw *)z;
     t_svg *sa = (t_svg *)x->x_attr;
-fprintf(stderr, "parentglist is %lx\n", (long unsigned int)parentglist);
-fprintf(stderr, "x->x_canvas is %lx\n", (long unsigned int)x->x_canvas);
-
 
     int n = sa->x_nargs;
     //t_float mtx1[3][3] =  { { 0, 0, 0}, {0, 0, 0}, {0, 0, 1} };
@@ -5981,7 +5978,6 @@ static void plot_groupvis(t_scalar *x, t_glist *owner, t_word *data,
     t_glist *groupcanvas, t_glist *parent, t_float basex, t_float basey,
     t_array *parentarray, int firsttime)
 {
-fprintf(stderr, "hit it...\n");
     t_gobj *y;
     char tagbuf[MAXPDSTRING], parent_tagbuf[MAXPDSTRING];
     sprintf(tagbuf, "dgroup%lx.%lx", (long unsigned int)groupcanvas,
@@ -6031,7 +6027,6 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
     t_scalar *sc, t_word *data, t_template *template,
     t_float basex, t_float basey, t_array *parentarray, int tovis)
 {
-fprintf(stderr, "hit plot_vis\n");
     t_plot *x = (t_plot *)z;
     int elemsize, yonset, wonset, xonset, i;
     t_canvas *elemtemplatecanvas;
@@ -6484,17 +6479,29 @@ fprintf(stderr, "hit plot_vis\n");
                 char transform_buf[MAXPDSTRING];
                 sprintf(transform_buf, "translate(%g,%g)", usexloc, useyloc);
 
-                gui_start_vmess("gui_draw_vis", "xs",
-                    glist_getcanvas(glist), "g");
-                gui_start_array();
-                gui_s("transform");
-                gui_s(transform_buf);
-                gui_end_array();
-                gui_start_array();
-                gui_s(parent_tagbuf);
-                gui_s(tagbuf);
-                gui_end_array();
-                gui_end_vmess();
+                if (tovis == 1)
+                {
+                    gui_start_vmess("gui_draw_vis", "xs",
+                        glist_getcanvas(glist), "g");
+                    gui_start_array();
+                    gui_s("transform");
+                    gui_s(transform_buf);
+                    gui_end_array();
+                    gui_start_array();
+                    gui_s(parent_tagbuf);
+                    gui_s(tagbuf);
+                    gui_end_array();
+                    gui_end_vmess();
+                }
+                else
+                {
+                    gui_vmess("gui_draw_configure", "xsss",
+                        glist_getcanvas(glist),
+                        tagbuf,
+                        "transform",
+                        transform_buf
+                    );
+                }
 
                 for (y = elemtemplatecanvas->gl_list; y; y = y->g_next)
                 {
@@ -6509,9 +6516,17 @@ fprintf(stderr, "hit plot_vis\n");
                     }
                     t_parentwidgetbehavior *wb = pd_getparentwidget(&y->g_pd);
                     if (!wb) continue;
-                    (*wb->w_parentvisfn)(y, glist, elemtemplatecanvas, sc,
-                        (t_word *)(elem + elemsize * i),
-                            elemtemplate, usexloc, useyloc, array, tovis);
+                    if (tovis == 1)
+                        (*wb->w_parentvisfn)(y, glist, elemtemplatecanvas, sc,
+                            (t_word *)(elem + elemsize * i),
+                                elemtemplate, usexloc, useyloc, array, tovis);
+                    else
+                    {
+                        svg_parentwidgettogui(y, sc, glist,
+                            (t_word *)(elem + elemsize * i), elemtemplate);
+                        svg_register_events(y,  glist, sc, elemtemplate,
+                            (t_word *)(elem + elemsize * i), array);
+                    }
                 }
             }
         }
@@ -8096,11 +8111,9 @@ t_template *template_findbydrawcommand(t_gobj *g)
 void svg_parentwidgettogui(t_gobj *z, t_scalar *sc, t_glist *owner,
     t_word *data, t_template *template)
 {
-fprintf(stderr, "hit parentwidgetttogui\n");
     char tagbuf[MAXPDSTRING];
     if (pd_class(&z->g_pd) == draw_class)
     {
-fprintf(stderr, "hit the draw_class branch...\n");
         t_draw *x = (t_draw *)z;
         sprintf(tagbuf, "draw%lx.%lx",
             (long unsigned int)x,
@@ -8145,7 +8158,6 @@ fprintf(stderr, "hit the draw_class branch...\n");
     else if (pd_class(&z->g_pd) == plot_class)
     {
         plot_vis(z, owner, 0, sc, data, template, 0, 0, 0, -1);
-fprintf(stderr, "about to call plot_vis\n");
     }
 }
 

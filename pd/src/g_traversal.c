@@ -702,13 +702,9 @@ static void set_bang(t_set *x)
     else for (i = 0, vp = x->x_variables; i < nitems; i++, vp++)
         template_setfloat(template, vp->gv_sym, vec, vp->gv_w.w_float, 1);
     if (gs->gs_which == GP_GLIST)
-    {
-fprintf(stderr, "scalar_configuring...\n");
         scalar_configure((t_scalar *)(gp->gp_un.gp_gobj), gs->gs_un.gs_glist);
-    }
     else
     {
-fprintf(stderr, "array_configuring...\n");
         t_array *owner_array = gs->gs_un.gs_array;
         t_array *top_array = owner_array;
         while (top_array->a_gp.gp_stub->gs_which == GP_ARRAY)
