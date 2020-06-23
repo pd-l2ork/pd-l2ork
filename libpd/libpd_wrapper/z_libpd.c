@@ -52,6 +52,9 @@ int sys_pollgui(void);
   void pique_setup(void);
   void sigmund_tilde_setup(void);
   void stdout_setup(void);
+  void freeverb_tilde_setup(void);
+  void sigpack_setup(void);
+  void zexy_setup(void);
 #endif
 
 static t_atom *s_argv = NULL;
@@ -104,6 +107,9 @@ int libpd_init(void) {
   pique_setup();
   sigmund_tilde_setup();
   stdout_setup();
+  freeverb_tilde_setup();
+  sigpack_setup();
+  zexy_setup();
 #endif
 #ifndef LIBPD_NO_NUMERIC
   setlocale(LC_NUMERIC, "C");

@@ -174,7 +174,7 @@ void zexy_setup(void)
   z_zexy_setup();
 }
 
-#ifndef __WIN32__
+#if !defined(__WIN32__) && !defined(__EMSCRIPTEN__)
 void verbose(int level, const char *fmt, ...)
 {
   char buf[MAXPDSTRING];
