@@ -6149,7 +6149,12 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
             numbertocolor(dscolor, outline);
             symoutline = gensym(outline);
         }
+
+            /* we handled our weirdo ds color above and assigned it to
+               symoutline. I think even for garrays the color defaults to
+               "0" so symoutline should never be &s_, but just to be sure... */
         if (symoutline == &s_) symoutline = gensym("#000000");
+            /* handle the newfangled fill color for garray bar graphs */
         if (symfill == &s_) symfill = gensym("#000000");
 
         t_float xscale = glist_xtopixels(glist, 1) - glist_xtopixels(glist, 0);
