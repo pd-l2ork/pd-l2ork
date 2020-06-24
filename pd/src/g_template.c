@@ -6023,34 +6023,89 @@ int plot_has_drawcommand(t_canvas *elemtemplatecanvas)
     return 0;
 }
 
+#define VIS_FIRSTTIME 1
+
+/* Alright, time to actually document some of this spaghetti interface...
+ *
+ * plot_vis: draw a plot trace, either as part of a garray or a scalar array.
+ *     In both cases the [plot] drawing comment is the parent widget.
+ *
+ * t_gobj *z: pointer to the t_gobj header of the [plot] object that controls
+ *     how the trace and any child elements get drawn.
+ * t_glist *glist: pointer to the canvas to which the scalar containing this
+ *     plot belongs. Note that due to GOP this may be different than the
+ *     canvas on which the scalar/plot is drawn. To get a pointer to the canvas
+ *     where the plot will be drawn we use glist_getcanvas below.
+ * t_glist *parentglist: glist to which our [plot] object belongs. This seems
+ *     to be saved inside t_plot member x_canvas so I don't know why we need
+ *     it at all.
+ * t_scalar *sc: scalar to which we belong. Note that plots may be nested so
+ *     parentarray may point to our immediate parent
+ * t_word *data: the "pure" data :). The structure for the data may be defined
+ *     by the template for scalar sc, or-- if this is a nested array, by
+ *     a template for the array which contains us. Tricky stuff.
+ * t_template *template: the template that defines the structure of the data
+ *     for our scalar
+ * t_float basex: x coordinate of the containing scalar. In Purr Data we draw
+ *     the plot as a child of the scalar's group, so we don't need this
+ * t_float basey: same for y coordinate
+ * t_array *parentarray: if we are plotting array data from within another
+ *     array (e.g., this is a nested array) this is set. Not sure how it's
+ *     currently used or whether nested arrays are even displayed properly.
+ * int tovis: 1 for drawing the first time
+ *           -1 if we just want to send new data without recreating the gobj
+ *            0 to erase the drawing. However, it appears we don't actually
+ *            erase anything here and depend on the parent element to do that
+ *            for us. Probably want to change that to explicitly erase to
+ *            avoid future bugs.
+ */
 static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
     t_scalar *sc, t_word *data, t_template *template,
     t_float basex, t_float basey, t_array *parentarray, int tovis)
 {
     t_plot *x = (t_plot *)z;
     int elemsize, yonset, wonset, xonset, i;
+        /* canvas containing the [struct] that defines structure of the data
+           for the elements we're plotting. */
     t_canvas *elemtemplatecanvas;
-    t_template *elemtemplate;
-    t_symbol *elemtemplatesym;
+    t_template *elemtemplate; /* the actual template for the element data */
+    t_symbol *elemtemplatesym; /* symbolic name, i.e., 2nd arg to [struct] */
+
+        /* most of these are member fields of t_plot, but drawing commands like
+           plot have a clunky fielddesc type which requires sending the
+           data and template in order to fetch the actual values. So these
+           are retrieved below in a single function call. */
     t_float linewidth, xloc, xinc, yloc, style, usexloc, xsum, yval, vis,
         scalarvis;
+        /* two fields hacked in after the fact for Purr Data to display
+           garrays in different colors */
     t_symbol *symfill;
     t_symbol *symoutline;
+        /* for the old drawing commands there's a three digit, buggy color
+           field for setting colors... */
     char outline[20];
     numbertocolor(fielddesc_getfloat(&x->x_outlinecolor, template,
         data, 1), outline);
+        /* the actual array whose data we want to plot. This is one of the
+           t_word's from the data pointer-- we just have to use the template
+           to figure out which one it is. This is one of the many tasks done
+           in plot_readownertemplate below... */
     t_array *array;
-    int nelem;
-    char *elem;
+    int nelem; /* total number of elements in the array */
+    char *elem; /* a pointer to our array data */
     t_fielddesc *xfielddesc, *yfielddesc, *wfielddesc;
+
+        /* not sure how much of the following comment from Vanilla applies
+           here. Basically we're getting our variables filled, and if there are
+           any errors we bail before drawing. */
+
         /* even if the array is "invisible", if its visibility is
         set by an instance variable you have to explicitly erase it,
         because the flag could earlier have been on when we were getting
         drawn.  Rather than look to try to find out whether we're
-        visible we just do the erasure.  At the TK level this should
-        cause no action because the tag matches nobody.  LATER we
-        might want to optimize this somehow.  Ditto the "vis()" routines
-        for other drawing instructions. */
+        visible we just do the erasure. In Purr Data we try to emulate the
+        Tk behavior in Pd Vanilla where a command that doesn't match the
+        tag just gets ignored. */
         
     if (plot_readownertemplate(x, data, template, 
         &elemtemplatesym, &array, &linewidth, &xloc, &xinc, &yloc, &style,
@@ -6062,13 +6117,31 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
                 &xonset, &yonset, &wonset))
                     return;
     nelem = array->a_n;
-    elem = (char *)array->a_vec;
+    elem = (char *)array->a_vec; /* our array data, cast to char* so we can
+                                    jump around inside it and recast in a
+                                    well-defined manner */
 
-    if (tovis != 0)
+    if (tovis != 0) /* either draw it for the first time or update the data */
     {
+            /* compare data argument to the data field of our scalar. If it's
+               the same then we're plotting on behalf of an array field inside
+               a scalar. If not then we are nested inside another data structure
+               array.
+               
+               Now let's make it even more complicated: Garrays from the
+               "Put" menu contain a scalar that draws the plot. So here are
+               our choices:
+
+               * plotting an array field that's part of a scalar: !in_array
+               * plotting a nested array field: in_array
+               * plotting an array for a garray: !in_array
+            */ 
         int in_array = (sc->sc_vec == data) ? 0 : 1;
+            /* For the newer [draw] commands we forgo the complicated vis
+               flag. So if [plot] points to a template that has [draw] commands
+               we will draw them further down... */
         int draw_scalars = plot_has_drawcommand(elemtemplatecanvas);
-        /* check if old 3-digit color field is being used... */
+            /* check if old 3-digit color field is being used... */
         int dscolor = fielddesc_getfloat(&x->x_outlinecolor, template, data, 1);
         if (dscolor != 0)
         {
