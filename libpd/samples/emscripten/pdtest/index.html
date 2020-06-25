@@ -99,6 +99,14 @@
       pdsend("pd ping");
     }
 
+    function gui_post(string, type) {
+      console.log("gui_post", string, type);
+    }
+
+    function gui_print(object_id, selector, array_of_strings) {
+      console.log("gui_print", object_id, selector, array_of_strings);
+    }
+
     function gui_undo_menu(cid, undo_text, redo_text) {
       console.log("gui_undo_menu", cid, undo_text, redo_text);
     }

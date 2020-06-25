@@ -115,14 +115,6 @@ EMSCRIPTEN_BINDINGS(my_module) {
     function("closePatch", &closePatch);
 }
 
-void pdprint(const char *s) {
-  printf("%s", s);
-}
-
-void pdnoteon(int ch, int pitch, int vel) {
-  printf("noteon: %d %d %d\n", ch, pitch, vel);
-}
-
 void mainLoop(void) {
 }
 
@@ -193,7 +185,6 @@ int main(int argc, char **argv) {
     inBuffer = new float[numInChannels * bufferSize];
     
     // initialize libpd
-    libpd_set_printhook(pdprint);
     libpd_init();
     libpd_start_gui(const_cast<char *>("/"));
     libpd_init_audio(numInChannels, numOutChannels, sampleRate);
