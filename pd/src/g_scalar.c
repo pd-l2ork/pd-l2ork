@@ -838,7 +838,7 @@ void scalar_doconfigure(t_gobj *xgobj, t_glist *owner)
             glist_getcanvas(owner), 
             tagbuf,
             glist_isselected(owner, &x->sc_gobj),
-            xscale, 0.0, 0.0, yscale,
+            1.0, 0.0, 0.0, 1.0,
             (int)glist_xtopixels(owner, basex),
             (int)glist_ytopixels(owner, basey));
 
@@ -954,11 +954,14 @@ static void scalar_groupvis(t_scalar *x, t_glist *owner, t_template *template,
 /* At present, scalars have a three-level hierarchy in the gui,
    with two levels accessible by the user from within Pd:
    scalar - ".scalar%lx", x->sc_vec
-     |      <g> with matrix derived from x/y fields,
-     |      gop basexy, and gop scaling values. This group is
-     |      not configurable by the user. This means that the
-     |      a [draw g] below can ignore basexy and gop junk
-     |      when computing the transform matrix.
+     |      <g> with matrix derived from x/y fields and GOP
+     |      basex/y. This group is not configurable by the
+     |      user. This means that the a [draw g] child
+     |      object below it can ignore basexy and gop junk
+     |      when computing the transform matrix. For backward-
+     |      compatibility the old drawing instructions still
+     |      have to do a transform to get the pixel values, but
+     |      they were already using glist_xtopixel/etc. anyway.
      v
    dgroup - ".dgroup%lx.%lx", templatecanvas, x->sc_vec
      |      group used as parent for all the toplevel drawing
@@ -979,6 +982,10 @@ static void scalar_groupvis(t_scalar *x, t_glist *owner, t_template *template,
    The tag "blankscalar" is for scalars that don't have a visual
    representation, but maybe this can just be merged with "scalar"
 */
+
+t_float glist_xtopixels2(t_glist *x, t_float xval);
+t_float glist_ytopixels2(t_glist *x, t_float yval);
+
 static void scalar_vis(t_gobj *z, t_glist *owner, int vis)
 {
     //fprintf(stderr,"scalar_vis %d %lx\n", vis, (t_int)z);
@@ -1023,25 +1030,13 @@ static void scalar_vis(t_gobj *z, t_glist *owner, int vis)
 
     if (vis)
     {
-        t_float xscale = glist_xtopixels(owner, 1) - glist_xtopixels(owner, 0);
-        t_float yscale = glist_ytopixels(owner, 1) - glist_ytopixels(owner, 0);
-        /* we translate the .scalar%lx group to displace it on the tk side.
-           This is the outermost group for the scalar, something like a
-           poor man's viewport.
-           Also:
-             * the default stroke is supposed to be "none"
-             * default fill is supposed to be black.
-             * stroke-linejoin should be "miter", not "round"  
-           To fix these, we set the correct fill/stroke/strokelinjoin options
-           here on the .scalar%lx group. (Notice also that tkpath doesn't
-           understand "None"-- instead we must send an empty symbol.) */
         char tagbuf[MAXPDSTRING];
         sprintf(tagbuf, "scalar%lx", (long unsigned int)x->sc_vec);
         gui_vmess("gui_scalar_new", "xsiffffiii",
             glist_getcanvas(owner), 
             tagbuf,
             glist_isselected(owner, &x->sc_gobj),
-            xscale, 0.0, 0.0, yscale,
+            1.0, 0.0, 0.0, 1.0,
             (int)glist_xtopixels(owner, basex),
             (int)glist_ytopixels(owner, basey),
             glist_istoplevel(owner));

@@ -5740,7 +5740,7 @@ int array_getfields(t_symbol *elemtemplatesym,
         varname = wfielddesc->fd_un.fd_varsym;
     else varname = gensym("w");
     if (!template_find_field(elemtemplate, varname, &wonset, &type, &dummy)
-        || type != DT_FLOAT) 
+        || type != DT_FLOAT)
             wonset = -1;
 
         /* fill in slots for return values */
@@ -6023,7 +6023,15 @@ int plot_has_drawcommand(t_canvas *elemtemplatecanvas)
     return 0;
 }
 
+t_float glist_xtopixels2(t_glist *x, t_float xval);
+t_float glist_ytopixels2(t_glist *x, t_float yval);
+
 #define VIS_FIRSTTIME 1
+#define VIS_UPDATE -1
+#define TRACE_NMAX 2000
+
+#define CLIP(x) ((x) < 1e20 && (x) > -1e20 ? x : 0)
+
 
 /* Alright, time to actually document some of this spaghetti interface...
  *
@@ -6046,13 +6054,15 @@ int plot_has_drawcommand(t_canvas *elemtemplatecanvas)
  *     a template for the array which contains us. Tricky stuff.
  * t_template *template: the template that defines the structure of the data
  *     for our scalar
- * t_float basex: x coordinate of the containing scalar. In Purr Data we draw
- *     the plot as a child of the scalar's group, so we don't need this
- * t_float basey: same for y coordinate
+ * t_float basex: if the template has the magic field "x", its value is
+ *     reported here. If there is no "x" field this is set to 0.
+ *     For simplicity, in Purr Data we set this value in the matrix for the
+ *     scalar's group in scalar_new, so we don't use this here.
+ * t_float basey: same for magic "y" field from the template
  * t_array *parentarray: if we are plotting array data from within another
  *     array (e.g., this is a nested array) this is set. Not sure how it's
  *     currently used or whether nested arrays are even displayed properly.
- * int tovis: 1 for drawing the first time
+ * int tovis: VIS_FIRSTTIME for drawing the first time
  *           -1 if we just want to send new data without recreating the gobj
  *            0 to erase the drawing. However, it appears we don't actually
  *            erase anything here and depend on the parent element to do that
@@ -6063,37 +6073,125 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
     t_scalar *sc, t_word *data, t_template *template,
     t_float basex, t_float basey, t_array *parentarray, int tovis)
 {
-    t_plot *x = (t_plot *)z;
-    int elemsize, yonset, wonset, xonset, i;
+    t_plot *x = (t_plot *)z; /* our parent [plot] object */
+
+    int elemsize, /* size of an array element, measured in bytes */
+
+        yonset, /* how far into a given array element to index in order to point
+                   to the magic "y" value. If there's no magic "y" defined
+                   in the element's template this is set to -1 */
+
+        wonset, /* same as above but for the magic "w" value */
+
+        xonset, /* same as yonset but for the magic "x" value */
+
+        i;      /* used to iterate through the array we're plotting or drawing
+                   scalar elements for. */
+
         /* canvas containing the [struct] that defines structure of the data
            for the elements we're plotting. */
-    t_canvas *elemtemplatecanvas;
+    t_canvas *elemtemplatecanvas; 
     t_template *elemtemplate; /* the actual template for the element data */
     t_symbol *elemtemplatesym; /* symbolic name, i.e., 2nd arg to [struct] */
 
-        /* most of these are member fields of t_plot, but drawing commands like
+        /* most of the following are fields of t_plot, but drawing commands like
            plot have a clunky fielddesc type which requires sending the
            data and template in order to fetch the actual values. So these
-           are retrieved below in a single function call. */
-    t_float linewidth, xloc, xinc, yloc, style, usexloc, xsum, yval, vis,
-        scalarvis;
+           are retrieved below in a single function call.
+
+           They map to the plot object args like so:
+
+           [plot array outline linewidth xloc yloc xinc]
+        */
+    t_float linewidth, /* width of the trace */
+            xloc,      /* x position relative to the containing scalar
+                          scalar. If the template has no "x" field then xloc is 
+                          relative to the top left corner of the canvas. */
+
+            xinc,      /* for templates with no magic "x" field and for which
+                          there is no "-x" flag set in the [plot] we're about
+                          to display, the number of pixels to increment each
+                          element's x position.
+                          Also used to increment x for the trace. */
+
+            yloc,      /* same as xloc, for relative y position */
+
+            style,     /* one of the PLOTSTYLE_* values as defined in
+                          g_canvas.h. */
+
+            xsum,      /* rolling sum used to calculate x coordinate for
+                          templates that don't have the magic "x" field */
+
+            yval,      /* the y value of the trace/child elements, as set
+                          below */
+
+            vis,       /* value from the x_vis fielddesc of t_plot-- this
+                          controls visibility of the plot and any associated
+                          scalars for the particular plot about to be drawn.
+                          It can be associate with a template field using
+                          the "-v" flag, like [plot -v visfield etc.].
+                          Since this is a fielddesc this value can be set
+                          independently for different scalars/arrays that
+                          use plot_vis-- for example, you could show
+                          two scalars from the same template on a canvas,
+                          and have only one of them with visfield=1 to make
+                          the plot visible. */
+
+            scalarvis, /* value from the x_scalarvis fielddesc of t_plot--
+                          this independently controls whether the scalar
+                          elements get displayed for this plot, independent
+                          of the plot's trace. This may be set with
+                          the "-vs" flag, as in
+                          [plot -vs svis etc.]
+                          So you could have two scalars from the same
+                          template on a canvas, and have only one of them
+                          with svis=1 to make the plot's scalar elements
+                          visible. */
+
+            usexloc;   /* temp variable used below */
+
         /* two fields hacked in after the fact for Purr Data to display
-           garrays in different colors */
+           garrays in different colors. These aren't used for data structures */
     t_symbol *symfill;
     t_symbol *symoutline;
-        /* for the old drawing commands there's a three digit, buggy color
-           field for setting colors... */
-    char outline[20];
-    numbertocolor(fielddesc_getfloat(&x->x_outlinecolor, template,
-        data, 1), outline);
+
         /* the actual array whose data we want to plot. This is one of the
-           t_word's from the data pointer-- we just have to use the template
-           to figure out which one it is. This is one of the many tasks done
-           in plot_readownertemplate below... */
+           t_word's from the data pointer. We just have to use the template
+           to figure out which one it is. (This is one of the many tasks done
+           in plot_readownertemplate below...) */
     t_array *array;
     int nelem; /* total number of elements in the array */
     char *elem; /* a pointer to our array data */
-    t_fielddesc *xfielddesc, *yfielddesc, *wfielddesc;
+
+        /* data structures have these so-called "fielddesc" types. They
+           can be used to map data to a particular argument used by a
+           drawing instruction, either constants or variables. For example,
+           [plot a 5] will have an outline width of 5, and
+           [plot a outline] will have an outline width defined by the
+           value of the "outline" for the associated parent scalar or array. */
+
+    t_fielddesc *xfielddesc, /* associated with x_xpoints field of t_plot. This
+                                defaults to the magic "x" field of the
+                                element's template, and may be changed using
+                                the "-x" flag to plot.
+                                If there's no "-x" flag and no magic "x" in
+                                the element's template then we take a special
+                                branch below based off the confusingly-named
+                                "xonset" variable.
+                                Keep in mind this refers to a field from
+                                the _element's_ template. */
+
+                *yfielddesc, /* same as above but for the magic "y" variable
+                                for the element's template to control the y-
+                                coordinate for the plot and scalar elements */
+
+                *wfielddesc; /* same as above, but for the magic "w" field
+                                for the element's template to control the
+                                width of the trace at each element. As far
+                                as I can tell this magic "w" variable doesn't
+                                have any effect on the child scalars. This is
+                                unlike the magic "x" and "y" which control the
+                                relative positions for the child scalars. */
 
         /* not sure how much of the following comment from Vanilla applies
            here. Basically we're getting our variables filled, and if there are
@@ -6107,28 +6205,41 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
         Tk behavior in Pd Vanilla where a command that doesn't match the
         tag just gets ignored. */
         
-    if (plot_readownertemplate(x, data, template, 
-        &elemtemplatesym, &array, &linewidth, &xloc, &xinc, &yloc, &style,
-        &vis, &scalarvis, &xfielddesc, &yfielddesc, &wfielddesc, &symfill,
-        &symoutline) ||
-            ((vis == 0) && tovis) /* see above for 'tovis' */
-            || array_getfields(elemtemplatesym, &elemtemplatecanvas,
-                &elemtemplate, &elemsize, xfielddesc, yfielddesc, wfielddesc,
-                &xonset, &yonset, &wonset))
-                    return;
-    nelem = array->a_n;
-    elem = (char *)array->a_vec; /* our array data, cast to char* so we can
-                                    jump around inside it and recast in a
+        /* let's scoop up all the ridiculous amount of data we need to
+           plot the damn array. plot_readownertemplate and array_getfields
+           will return 1 if something went wrong. In that case we just
+           return before we've drawn anything */
+    if (plot_readownertemplate(x, data, template, &elemtemplatesym, &array,
+           &linewidth, &xloc, &xinc, &yloc, &style, &vis, &scalarvis,
+           &xfielddesc, &yfielddesc, &wfielddesc, &symfill, &symoutline)
+       ||
+       ((vis == 0) && tovis) /* if we didn't short-circuit in the above call to
+                                plot_readownertemplate, then we must have
+                                set a value for vis from our data. If it's zero
+                                AND our tovis parameter is supposed to undraw
+                                the plot, just return without doing anything. */
+       ||
+       array_getfields(elemtemplatesym, &elemtemplatecanvas,
+           &elemtemplate, &elemsize, xfielddesc, yfielddesc, wfielddesc,
+           &xonset, &yonset, &wonset))
+    {
+        return;
+    }
+
+    nelem = array->a_n; /* number of element in our array */
+    elem = (char *)array->a_vec; /* our array data, which is type char* so we
+                                    can jump around inside it and recast in a
                                     well-defined manner */
 
-    if (tovis != 0) /* either draw it for the first time or update the data */
+    /* now it's time to draw or go home. */
+    if (tovis == VIS_FIRSTTIME || tovis == VIS_UPDATE)
     {
             /* compare data argument to the data field of our scalar. If it's
                the same then we're plotting on behalf of an array field inside
                a scalar. If not then we are nested inside another data structure
                array.
                
-               Now let's make it even more complicated: Garrays from the
+               now let's make it even more complicated: Garrays from the
                "Put" menu contain a scalar that draws the plot. So here are
                our choices:
 
@@ -6137,15 +6248,19 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
                * plotting an array for a garray: !in_array
             */ 
         int in_array = (sc->sc_vec == data) ? 0 : 1;
-            /* For the newer [draw] commands we forgo the complicated vis
+
+            /* for the newer [draw] commands we forgo the complicated vis
                flag. So if [plot] points to a template that has [draw] commands
                we will draw them further down... */
         int draw_scalars = plot_has_drawcommand(elemtemplatecanvas);
-            /* check if old 3-digit color field is being used... */
+
+            /* check if old, imprecise 3-digit color field is being used... */
         int dscolor = fielddesc_getfloat(&x->x_outlinecolor, template, data, 1);
         if (dscolor != 0)
         {
             char outline[20];
+                /* convert the screwy 3-digit format to the long-standard
+                   "#123456" format */
             numbertocolor(dscolor, outline);
             symoutline = gensym(outline);
         }
@@ -6157,91 +6272,162 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
             /* handle the newfangled fill color for garray bar graphs */
         if (symfill == &s_) symfill = gensym("#000000");
 
-        t_float xscale = glist_xtopixels(glist, 1) - glist_xtopixels(glist, 0);
-        t_float yscale = glist_ytopixels(glist, 1) - glist_ytopixels(glist, 0);
-        t_float x_inverse = 1 / xscale;
-        t_float y_inverse = 1 / yscale; /* for the stroke-width */
+//        t_float xscale = glist_xtopixels(glist, 1) - glist_xtopixels(glist, 0);
+//        t_float yscale = glist_ytopixels(glist, 1) - glist_ytopixels(glist, 0);
+//        t_float x_inverse = 1 / xscale;
+//        t_float y_inverse = 1 / yscale; /* for the stroke-width */
 
-            /* First let's set the call to the GUI:
+//        t_float transformed_linewidth_x = glist_dpixtodx(glist, 1.);
+//        t_float transformed_linewidth_y = glist_dpixtody(glist, linewidth);
+
+
+            /* first let's set up the string for the call to the GUI:
                gui_plot_vis: called the first time we need to draw. This
                    will create new DOM elements.
                gui_plot_configure: this will just update the path data
             */
         char gui_call[MAXPDSTRING];
-        if (tovis == 1)
-        {
-            /* draw for the first time */
-            sprintf(gui_call, "gui_plot_vis");
-        }
-        else
-        {
-            /* just update the plot */
-            sprintf(gui_call, "gui_plot_configure");
-        }
+        sprintf(gui_call, VIS_FIRSTTIME ? "gui_plot_vis" :
+            "gui_plot_configure");
 
-            /* the following branches will add some array arguments to the
-               GUI message-- one for the point data and another for the
-               tags */
+            /* the following branches will now start incrementally building
+               some messages to send to the GUI.
 
+               BE CAREFUL HERE! If you interleave these incremental messages
+               with debugging messages to the GUI it won't work properly. Use
+               stderr if you need to debug beyond this point... */
+
+            /* bar graph and point styles */
         if (style == PLOTSTYLE_POINTS || style == PLOTSTYLE_BARS)
         {
-
+                /* point style doesn't have a stroke, so we set its
+                   fill to the outline color */
             symfill = (style == PLOTSTYLE_POINTS ? symoutline : symfill);
-            t_float minyval = 1e20, maxyval = -1e20;
-            int ndrawn = 0;
 
+                /* no idea what these are doing here. They're outside of the
+                   for loop scope below, yet they get reset to these values
+                   at the end of each loop. */
+            t_float minyval = 1e20, maxyval = -1e20;
+                /* since we're handling garrays-- which even in the common
+                   case can hold thousands or millions of elements-- we
+                   put a hard limit of PLOT_NMAX on the number of subsections
+                   we'll draw for the trace. */
+            int ndrawn = 0; /* number of trace segments we've drawn so far */
+
+                /* okay, let's start the call to the GUI... */
             gui_start_vmess(gui_call, "x", glist_getcanvas(glist));
 
+                /* first we'll build an array that contains path drawing
+                   commands and data. This will be the trace for the plot. */
             gui_start_array();
 
+                /* loop through the elements. For the case with no magic "x"
+                   (including garrays) we keep a running sum of our x position
+                   with xsum, starting at xloc which was specified in our
+                   parent [plot]. Later we could abstract xloc out and put
+                   it in the matrix... */
             for (xsum = xloc, i = 0; i < nelem; i++)
             {
-                t_float yval;
-                int ixpix, inextx, render;
+                t_float yval; /* our y coordinate for a point in the plot,
+                                 still in user coordinates */
+                int xpix1, /* x1 pixel coordinate for the plotted point */
+                    xpix2, /* the x2 pixel coord for the next element */
+                    ypix1, /* same, for y coord */
+                    ypix2, /* same, for y2 coord */
+                    
+                    render; /* to selectively draw a point, see below */
 
-                if (xonset >= 0)
+                if (xonset >= 0) /* if our template has the magic "x" field */
                 {
+                        /* the next statemend does the following:
+
+                           index into our array to find our element, then
+                           add xonset to find the value of our magic "x" field.
+                           Finally, cast to a float pointer and then
+                           get the value out.
+
+                           I'm fairly certain this isn't the correct way to
+                           cast the element to t_float. The original
+                           container is t_word, and sizeof(t_word*) is not
+                           guaranteed to be sizeof(t_float*)
+                        */
                     usexloc = xloc +
                         *(t_float *)((elem + elemsize * i) + xonset);
-                    ixpix = fielddesc_cvttocoord(xfielddesc, usexloc);
-                    inextx = ixpix + 2;
-                    /* we use 'render' as a stopgap to choose whether
-                       or not to draw this point in the trace. For
-                       templates that have an x field we always render */
+
+                        /* now let's convert the raw x value to a pixel
+                           value, where point (0,0) is either the top-
+                           left corner of the GOP or the top-left corner
+                           of a canvas window. */
+                    xpix1 = glist_xtopixels2(glist,
+                        fielddesc_cvttocoord(xfielddesc, usexloc));
+
+                        /* just make a "point" 2 pixels wide */
+                    xpix2 = xpix1 + 2;
+
+                        /* we use 'render' as a stopgap to choose whether
+                           or not to draw this point in the trace. For
+                           templates that have an x field we always render */
                     render = 1;
+
                 }
                 else
                 {
+                    /* for cases where there is not a magic "x" field, we
+                       keep a running tally of our xinc steps in the variable
+                       xsum. Then we set the position of our "point" to reach
+                       all the way to the beginning of the next point. This
+                       ends up stretching the points into steps and probably
+                       confusing the heck out of people who listen to sines
+                       while staring at a plot of steps. But that's the way
+                       Vanilla does it so we're kinda stuck with this. */
                     usexloc = xsum;
                     xsum += xinc;
-                    ixpix = (int)(glist_xtopixels(glist,
+                    xpix1 = (int)(glist_xtopixels2(glist,
                             fielddesc_cvttocoord(xfielddesc, usexloc)));
-                    inextx = (int)(glist_xtopixels(glist,
+                    xpix2 = (int)(glist_xtopixels2(glist,
                             fielddesc_cvttocoord(xfielddesc, xsum)));
 
-                    /* For y-only templates, we only render the point
-                       if its at a different x-coordinate than the
-                       previous one. (For example, if you try to fit
-                       a 44,100 point array into a 100 pixel wide
-                       graph.) We're doing the scaling on the GUI side,
-                       but we must still use glist_xtopixels in order
-                       to test for a new x-pixel value. */
-                    render = ixpix != inextx;
+                    /* for y-only templates, we only render the point if it's
+                       at a different x-coordinate than the previous one.
+                       (For example, if you try to fit a 44,100-point array
+                       into a 100 pixel wide graph.) */
+                    render = xpix1 != xpix2;
                 }
 
-                if (yonset >= 0)
-                    yval = yloc + *(t_float *)((elem + elemsize * i) + yonset);
-                else yval = 0;
-                if (yval > maxyval)
-                    maxyval = yval;
-                if (yval < minyval)
-                    minyval = yval;
-                if (i == nelem-1 || render)
+                    /* now let's draw the point. I don't understand why we
+                       need the special case for the final element-- that should
+                       be covered by the value of the render variable */
+                if (i == nelem - 1 || render)
                 {
-                    int py2 = 0;
+                        /* fetch the y value if we have one, or set it to zero
+                           if we don't. Add in the yloc-- as with xloc we could
+                           squirrel this away in the matrix but it's probably
+                           not necessary */
+                    if (yonset >= 0)
+                        yval = yloc +
+                            *(t_float *)((elem + elemsize * i) + yonset);
+                    else yval = 0;
+
+                        /* keep it in reasonable numeric bounds. Because we're
+                           scaling an already small range-- often -1 to 1-- to
+                           a larger pixel range, sending a wild value can end up
+                           growing it by several orders of magnitude */
+                    yval = CLIP(yval);
+
+                        /* we're clipping again manually? Why? It appears that
+                           either maxyval == minyval, or we overflowed above
+                           and the value for both is 0 */
+                    if (yval > maxyval)
+                        maxyval = yval;
+                    if (yval < minyval)
+                        minyval = yval;
+
+                    t_float py2 = 0;
                     if (style == PLOTSTYLE_POINTS)
-                        py2 = (int)fielddesc_cvttocoord(yfielddesc, maxyval)
-                                + linewidth - 1;
+                    {
+                        py2 = fielddesc_cvttocoord(yfielddesc, maxyval)
+                            + linewidth;
+                    }
                     else
                     {
                         if (glist->gl_isgraph && !glist->gl_havewindow)
@@ -6256,25 +6442,40 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
                             py2 = glist->gl_y2;
                         }
                     }
-                    int mex1 = fielddesc_cvttocoord(xfielddesc, usexloc);
+//fprintf(stderr, "usexloc is %g\n", usexloc);
+//fprintf(stderr, "usexloc after glist_xtopixelsx is %g\n", glist_xtopixels(glist, usexloc));
+//fprintf(stderr, "usexloc after glist_xtopixelsx2 is %g\n", glist_xtopixels2(glist, usexloc));
+//fprintf(stderr, "basey is %g\n", basey);
+                    t_float mex1 = fielddesc_cvttocoord(xfielddesc, usexloc);
+
+//                    int is_garray = 1;
+//                    if (is_garray && i == 0) mex1 += transformed_linewidth_x;
+
                     //t_float mey1 = fielddesc_cvttocoord(yfielddesc, minyval) - 1;
-                    int mex2 = fielddesc_cvttocoord(xfielddesc, xsum + x_inverse);
+//                    int mex2 = fielddesc_cvttocoord(xfielddesc, xsum + x_inverse);
+                    int mex2 = fielddesc_cvttocoord(xfielddesc, xsum);
+//                    t_float mey2 = style == PLOTSTYLE_POINTS ?
+//                        yval + y_inverse * linewidth : py2;
 
                     t_float mey2 = style == PLOTSTYLE_POINTS ?
-                        yval + y_inverse * linewidth : py2;
+                        yval + linewidth : py2;
 
+//fprintf(stderr, "ixpix is %d\n", ixpix);
+//fprintf(stderr, "inextx %d\n", inextx);
                     gui_s("M");
-                    gui_i(mex1);
-                    gui_f(yval);
+                    gui_i(xpix1);
+                    gui_i((int)glist_ytopixels2(glist, yval));
 
                     gui_s("H");
-                    gui_i(mex2);
-
+                    gui_i(xpix2);
+//fprintf(stderr, "mey2 is %g\n", mey2);
+//fprintf(stderr, "0 is %g\n", glist_ytopixels2(glist, 0.));
                     gui_s("V");
-                    gui_f(mey2);
+                    gui_i((int)glist_ytopixels2(glist, mey2));
+//                    gui_f(mey2);
 
                     gui_s("H");
-                    gui_i(mex1);
+                    gui_i(xpix1);
 
                     gui_s("z");
 
@@ -6282,12 +6483,12 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
                     minyval = 1e20;
                     maxyval = -1e20;
                 }
-                if (ndrawn > 2000 || ixpix >= 3000) break;
+                if (ndrawn > TRACE_NMAX || xpix1 >= 3000) break;
             }
 
             gui_end_array();
 
-            /* stroke and fill */
+                /* stroke and fill */
             gui_start_array();
             gui_s("fill");
             gui_s(symfill->s_name);
@@ -6301,7 +6502,7 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
             gui_s("non-scaling-stroke");
             gui_end_array();
 
-            /* tags */
+                /* tags */
             gui_start_array();
             char pbuf[MAXPDSTRING];
             char tbuf[MAXPDSTRING];

@@ -740,6 +740,26 @@ t_float glist_xtopixels(t_glist *x, t_float xval)
     }
 }
 
+    /* convert an x coordinate value to an x pixel location in window */
+    /* we don't need the translation step for GOPS so we remove it here. Once
+       this is working with everything we can get rid of the one above. */
+t_float glist_xtopixels2(t_glist *x, t_float xval)
+{
+    if (!x->gl_isgraph)
+        return ((xval - x->gl_x1) / (x->gl_x2 - x->gl_x1));
+    else if (x->gl_isgraph && x->gl_havewindow)
+        return (x->gl_screenx2 - x->gl_screenx1) *
+            (xval - x->gl_x1) / (x->gl_x2 - x->gl_x1);
+    else
+    {
+        int x1, y1, x2, y2;
+        if (!x->gl_owner)
+            bug("glist_pixelstox");
+        graph_graphrect(&x->gl_gobj, x->gl_owner, &x1, &y1, &x2, &y2);
+        return ((x2 - x1) * (xval - x->gl_x1) / (x->gl_x2 - x->gl_x1));
+    }
+}
+
 t_float glist_ytopixels(t_glist *x, t_float yval)
 {
     if (!x->gl_isgraph)
@@ -754,6 +774,27 @@ t_float glist_ytopixels(t_glist *x, t_float yval)
             bug("glist_pixelstoy");
         graph_graphrect(&x->gl_gobj, x->gl_owner, &x1, &y1, &x2, &y2);
         return (y1 + (y2 - y1) * (yval - x->gl_y1) / (x->gl_y2 - x->gl_y1));
+    }
+}
+
+t_float glist_ytopixels2(t_glist *x, t_float yval)
+{
+    if (!x->gl_isgraph)
+        return ((yval - x->gl_y1) / (x->gl_y2 - x->gl_y1));
+    else if (x->gl_isgraph && x->gl_havewindow)
+        return (x->gl_screeny2 - x->gl_screeny1) *
+                (yval - x->gl_y1) / (x->gl_y2 - x->gl_y1);
+    else 
+    {
+        int x1, y1, x2, y2;
+        if (!x->gl_owner)
+            bug("glist_pixelstoy");
+        graph_graphrect(&x->gl_gobj, x->gl_owner, &x1, &y1, &x2, &y2);
+fprintf(stderr, "ytopixels: gl_y1 is %g\n", x->gl_y1);
+fprintf(stderr, "ytopixels: gl_y2 is %g\n", x->gl_y2);
+fprintf(stderr, "ytopixels: graph y1 is %d\n", y1);
+fprintf(stderr, "ytopixels: graph y2 is %d\n", y2);
+        return ((y2 - y1) * yval / (x->gl_y2 - x->gl_y1));
     }
 }
 
@@ -785,7 +826,7 @@ int text_xpix(t_text *x, t_glist *glist)
         xpix = glist_xtopixels(glist, glist->gl_x1) +
             x->te_xpix - glist->gl_xmargin;
     else xpix = (glist_xtopixels(glist, 
-            glist->gl_x1 + (glist->gl_x2 - glist->gl_x1) * 
+            glist->gl_x1 + (glist->gl_x2 - glist->gl_x1) *
                 x->te_xpix / (glist->gl_screenx2 - glist->gl_screenx1)));
     if (x->te_iemgui == 1)
         xpix += ((t_iemgui *)x)->legacy_x*sys_legacy;
