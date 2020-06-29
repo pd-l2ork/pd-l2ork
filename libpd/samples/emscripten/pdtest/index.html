@@ -4,9 +4,9 @@
 <head>
   <meta charset="utf-8">
   <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-  <title>empd / pdtest</title>
-  <meta name="description" content="test of Pure-data compiled for web with Emscripten" />
-  <meta name="keywords" content="pure-data emscripten empd" />
+  <title>pdtest</title>
+  <meta name="description" content="test of purr-data compiled for web with Emscripten" />
+  <meta name="keywords" content="purr-data emscripten" />
   <meta name="generator" content="emsripten" />
   <style>
     button {
@@ -57,6 +57,11 @@
       });
     }
 
+    ["click", "contextmenu", "auxclick", "dblclick"
+      , "mousedown", "mouseup", "pointerup", "touchend"
+      , "keydown", "keyup"
+    ].forEach(name => document.addEventListener(name, resumeAudio));
+
     // emscripten
     var Module
       = {
@@ -90,6 +95,18 @@
       Module.finishMessage(array[0], array[1]);
     }
 
+    function gui_ping() {
+      pdsend("pd ping");
+    }
+
+    function gui_post(string, type) {
+      console.log("gui_post", string, type);
+    }
+
+    function gui_print(object_id, selector, array_of_strings) {
+      console.log("gui_print", object_id, selector, array_of_strings);
+    }
+
     function gui_undo_menu(cid, undo_text, redo_text) {
       console.log("gui_undo_menu", cid, undo_text, redo_text);
     }
@@ -108,12 +125,6 @@
 
     function gui_pd_dsp(state) {
       console.log("gui_pd_dsp", state);
-      if (state) {
-        resumeAudio();
-      }
-      else {
-        suspendAudio();
-      }
     }
 
     function gui_canvas_new(cid, width, height, geometry, zoom, editmode, name, dir, dirty_flag, hide_scroll, hide_menu, cargs) {

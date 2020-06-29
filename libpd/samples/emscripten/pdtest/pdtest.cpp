@@ -12,6 +12,8 @@
 #endif
 
 using namespace emscripten;
+static SDL_AudioDeviceID deviceIn = 0;
+static SDL_AudioDeviceID deviceOut = 0;
 static int numInChannels = 0;
 static int numOutChannels = 2;
 static int sampleRate = 44100;
@@ -19,6 +21,7 @@ static int ticksPerBuffer = 32;
 static int blockSize = libpd_blocksize();
 static int bufferSize = ticksPerBuffer * blockSize;
 static float *inBuffer = nullptr;
+static bool isBufferCleared = true;
 
 void audioIn(void *userdata, Uint8 *stream, int len) {
     try {
@@ -28,20 +31,29 @@ void audioIn(void *userdata, Uint8 *stream, int len) {
         }
     }
     catch (...) {
-        SDL_Log("Pd: could not copy input buffer");
+        SDL_Log("pd: could not copy input buffer");
     }
 }
 
 void audioOut(void *userdata, Uint8 *stream, int len) {
     if (inBuffer != nullptr) {
         float *output = reinterpret_cast<float *>(stream);
+        if (canvas_dspstate == 0 && !isBufferCleared) {
+            sys_lock();
+            memset(inBuffer, 0, numInChannels * bufferSize * sizeof(float));
+            memset(output, 0, numOutChannels * bufferSize * sizeof(float));
+            sys_unlock();
+            isBufferCleared = true;
+        }
+        if (canvas_dspstate == 1 && isBufferCleared) {
+            isBufferCleared = false;
+        }
         if (libpd_process_float(ticksPerBuffer, inBuffer, output)) {
-            SDL_Log("Pd: could not process output buffer");
+            SDL_Log("pd: could not process output buffer");
         }
     }
 }
 
-// bind these directly in z_libpd.c?
 int sendBang(const std::string &recv) {
     return libpd_bang(recv.c_str());
 }
@@ -79,12 +91,10 @@ void addToSearchPath(const std::string &path) {
 }
 
 void openPatch(const std::string &name, const std::string &dir) {
-    // [; pd open file folder(
     libpd_openfile(name.c_str(), dir.c_str());
 }
 
 void closePatch(const std::string &name) {
-    // [; pd-name menuclose 1(
     const std::string &recv = static_cast<std::string>("pd-") + name;
     libpd_start_message(1);
     libpd_add_float(1);
@@ -105,16 +115,7 @@ EMSCRIPTEN_BINDINGS(my_module) {
     function("closePatch", &closePatch);
 }
 
-void pdprint(const char *s) {
-  printf("%s", s);
-}
-
-void pdnoteon(int ch, int pitch, int vel) {
-  printf("noteon: %d %d %d\n", ch, pitch, vel);
-}
-
 void mainLoop(void) {
-    libpd_poll_gui();
 }
 
 SDL_AudioDeviceID openAudioDevice(bool isAudioIn, SDL_AudioSpec &desired, SDL_AudioSpec &obtained) {
@@ -124,31 +125,48 @@ SDL_AudioDeviceID openAudioDevice(bool isAudioIn, SDL_AudioSpec &desired, SDL_Au
     desired.samples = bufferSize;
     desired.callback = isAudioIn ? audioIn : audioOut;
     SDL_AudioDeviceID deviceID = SDL_OpenAudioDevice(nullptr, isAudioIn, &desired, &obtained, SDL_AUDIO_ALLOW_ANY_CHANGE);
-    const char *audioTypeStr = isAudioIn ? "Audio In" : "Audio Out";
+    const char *audioTypeStr = isAudioIn ? "audio in" : "audio out";
     if (!deviceID) {
-        SDL_Log("%s: Failed to open device: %s", audioTypeStr, SDL_GetError());
+        SDL_Log("%s: failed to open device: %s", audioTypeStr, SDL_GetError());
     }
     else {
         if (desired.freq != obtained.freq) {
-            SDL_Log("%s: Desired sample rate was %d, but obtained %d", audioTypeStr, desired.freq, obtained.freq);
+            SDL_Log("%s: desired sample rate was %d, but obtained %d", audioTypeStr, desired.freq, obtained.freq);
         }
         if (desired.format != obtained.format) {
-            SDL_Log("%s: Desired format was %d, but obtained %d", audioTypeStr, desired.format, obtained.format);
+            SDL_Log("%s: desired format was %d, but obtained %d", audioTypeStr, desired.format, obtained.format);
         }
         if (desired.channels != obtained.channels) {
-            SDL_Log("%s: Desired number of channels was %d, but obtained %d", audioTypeStr, desired.channels, obtained.channels);
+            SDL_Log("%s: desired number of channels was %d, but obtained %d", audioTypeStr, desired.channels, obtained.channels);
         }
         if (desired.samples != obtained.samples) {
-            SDL_Log("%s: Desired buffer size was %d, but obtained %d", audioTypeStr, desired.samples, obtained.samples);
+            SDL_Log("%s: desired buffer size was %d, but obtained %d", audioTypeStr, desired.samples, obtained.samples);
         }
     }
     return deviceID;
 }
 
+void pauseAudioDevice(bool pauseOn) {
+    if (deviceIn) {
+        SDL_PauseAudioDevice(deviceIn, pauseOn);
+    }
+    if (deviceOut) {
+        SDL_PauseAudioDevice(deviceOut, pauseOn);
+    }
+}
+
+void closeAudioDevice() {
+    if (deviceIn) {
+        SDL_CloseAudioDevice(deviceIn);
+    }
+    if (deviceOut) {
+        SDL_CloseAudioDevice(deviceOut);
+    }
+}
+
 int main(int argc, char **argv) {
     // initialize audio
     SDL_Init(SDL_INIT_AUDIO);
-    SDL_AudioDeviceID deviceIn = 0, deviceOut = 0;
     SDL_AudioSpec desired, obtained;
     if (numInChannels) {
         deviceIn = openAudioDevice(true, desired, obtained);
@@ -167,30 +185,18 @@ int main(int argc, char **argv) {
     inBuffer = new float[numInChannels * bufferSize];
     
     // initialize libpd
-    libpd_set_printhook(pdprint);
     libpd_init();
     libpd_start_gui(const_cast<char *>("/"));
     libpd_init_audio(numInChannels, numOutChannels, sampleRate);
 
     // start audio processing
-    if (deviceIn) {
-        SDL_PauseAudioDevice(deviceIn, 0);
-    }
-    if (deviceOut) {
-        SDL_PauseAudioDevice(deviceOut, 0);
-    }
-    emscripten_set_main_loop(mainLoop, 0, 1);
+    pauseAudioDevice(false);
+    emscripten_set_main_loop(mainLoop, 0, true);
     
     // stop audio processing & close audio device
-    if (deviceIn) {
-        SDL_PauseAudioDevice(deviceIn, 1);
-        SDL_CloseAudioDevice(deviceIn);
-    }
-    if (deviceOut) {
-        SDL_PauseAudioDevice(deviceOut, 1);
-        SDL_CloseAudioDevice(deviceOut);
-    }
-    if(inBuffer != nullptr) {
+    pauseAudioDevice(true);
+    closeAudioDevice();
+    if (inBuffer != nullptr) {
         delete[] inBuffer;
         inBuffer = nullptr;
     }
