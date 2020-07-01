@@ -2,6 +2,8 @@
 // attempt at an SSE version of the convolution loop.
 // Results sound weird, and CPU usage is about the same. :(
 
+#ifndef __EMSCRIPTEN__
+
 		cursumbuf_fd	= (v4sf *) x->sumbufs[(x->sumbuf->index + p) % x->nsumbufs].fd;
 		input_fd	= (v4sf *) x->input_fd;
 		irpart_fd	= (v4sf *) x->irpart_fd[p];
@@ -75,3 +77,5 @@
 					: "%xmm0", "%xmm1", "%xmm2", "%xmm3", "%xmm4", "%xmm5", "%xmm6", "%xmm7"
 			    );
 		}
+
+#endif

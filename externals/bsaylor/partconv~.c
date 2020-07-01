@@ -29,6 +29,8 @@
 // divide work more evenly? (0, 15, 7, 23, 3, 11, 19, 27, ...)
 // someday, an SSE3 version (supposed to make complex math fast)
 
+#ifndef __EMSCRIPTEN__
+
 #include <math.h>
 #include <string.h>
 #include <fftw3.h>
@@ -416,3 +418,5 @@ void partconv_tilde_setup(void)
 	class_addmethod(partconv_class, (t_method) partconv_dsp, gensym("dsp"), A_CANT, 0);
 	class_addmethod(partconv_class, (t_method) partconv_set, gensym("set"), A_DEFSYMBOL, 0);
 }
+
+#endif
