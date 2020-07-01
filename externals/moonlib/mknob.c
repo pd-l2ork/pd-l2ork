@@ -29,6 +29,9 @@
 #define MKNOB_DEFAULTSIZE 25
 #define MKNOB_MINSIZE 12
 #define MKNOB_THICK 3
+
+extern int gfxstub_haveproperties(void *key);
+
 /* ------------ mknob  ----------------------- */
 typedef struct _mknob
 {
