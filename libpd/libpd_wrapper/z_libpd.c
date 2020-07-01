@@ -221,7 +221,6 @@ int sys_pollgui(void);
   void iem_roomsim_setup(void);
   void iem_spec2_setup(void);
   void iem_tab_setup(void);
-  void autoabstraction_setup(void);
   void canvasargs_setup(void);
   void canvasconnections_setup(void);
   void canvasdelete_setup(void);
@@ -626,7 +625,6 @@ int libpd_init(void) {
   call_external_setup("iem", iem_roomsim_setup);
   call_external_setup("iem", iem_spec2_setup);
   call_external_setup("iem", iem_tab_setup);
-  call_external_setup("iem", autoabstraction_setup);
   call_external_setup("iem", canvasargs_setup);
   call_external_setup("iem", canvasconnections_setup);
   call_external_setup("iem", canvasdelete_setup);

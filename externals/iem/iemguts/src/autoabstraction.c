@@ -22,6 +22,7 @@
  * - FIX(ALT): check whether the template-file has changed and reload it
  */
 
+#ifndef __EMSCRIPTEN__
 
 #ifdef __WIN32__
 # define MSW
@@ -174,3 +175,5 @@ void autoabstraction_setup(void)
   autoabstraction_class = class_new(gensym("autoabstraction"), (t_newmethod)autoabstraction_new, 0, sizeof(t_autoabstraction), 0, A_GIMME, 0);
   class_addfloat(autoabstraction_class, (t_method)autoabstraction_state);
 }
+
+#endif /* __EMSCRIPTEN__ */
