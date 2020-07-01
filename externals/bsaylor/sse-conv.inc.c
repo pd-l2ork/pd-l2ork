@@ -78,4 +78,4 @@
 			    );
 		}
 
-#endif
+#endif /* __EMSCRIPTEN__ */

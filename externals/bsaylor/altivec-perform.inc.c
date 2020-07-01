@@ -284,4 +284,4 @@ static t_int *partconv_perform(t_int *w)
     return (w+5);
 }
 
-#endif
+#endif /* __EMSCRIPTEN__ */

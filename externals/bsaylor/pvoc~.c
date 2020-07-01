@@ -406,4 +406,4 @@ void pvoc_tilde_setup(void)
 	class_addmethod(pvoc_class, (t_method) notransients, gensym("notransients"), 0);
 }
 
-#endif
+#endif /* __EMSCRIPTEN__ */

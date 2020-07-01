@@ -419,4 +419,4 @@ void partconv_tilde_setup(void)
 	class_addmethod(partconv_class, (t_method) partconv_set, gensym("set"), A_DEFSYMBOL, 0);
 }
 
-#endif
+#endif /* __EMSCRIPTEN__ */
