@@ -47,7 +47,9 @@ void *adaptive_new(void)
 // declaration of the setup functions:
 void lms_tilde_setup();
 void lms2_tilde_setup();
+#ifndef __EMSCRIPTEN__
 void nlms_tilde_setup();
+#endif /* __EMSCRIPTEN__ */
 void nlms2_tilde_setup();
 void nlms3_tilde_setup();
 //-end-of-declaration----------------------------------
@@ -58,7 +60,9 @@ void adaptive_setup(void)
   // call all the setup functions:
   lms_tilde_setup();
   lms2_tilde_setup();
+#ifndef __EMSCRIPTEN__
   nlms_tilde_setup();
+#endif /* __EMSCRIPTEN__ */
   nlms2_tilde_setup();
   nlms3_tilde_setup();
   //-end-----------------------------------------------
