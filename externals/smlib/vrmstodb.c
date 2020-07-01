@@ -9,6 +9,7 @@ typedef struct _vrmstodb
     t_object x_obj;
 } t_vrmstodb;
 
+#ifndef __EMSCRIPTEN__
 float rmstodb(float f)
 {
     if (f <= 0) return (0);
@@ -18,6 +19,7 @@ float rmstodb(float f)
     	return (val < 0 ? 0 : val);
     }
 }
+#endif /* __EMSCRIPTEN__ */
 
 static void vrmstodb_perform(t_vrmstodb *x, t_symbol *s, int argc, t_atom *argv)
 {
