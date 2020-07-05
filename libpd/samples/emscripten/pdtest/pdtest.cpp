@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_audio.h>
+#include <dirent.h>
 #include <iostream>
 #include <cstdio>
 #include <cstring>
@@ -95,7 +96,7 @@ void openPatch(const std::string &name, const std::string &dir) {
 }
 
 void closePatch(const std::string &name) {
-    const std::string &recv = static_cast<std::string>("pd-") + name;
+    const std::string &recv = std::string("pd-") + name;
     libpd_start_message(1);
     libpd_add_float(1);
     libpd_finish_message(recv.c_str(), "menuclose");
@@ -165,6 +166,7 @@ void closeAudioDevice() {
 }
 
 int main(int argc, char **argv) {
+    
     // initialize audio
     SDL_Init(SDL_INIT_AUDIO);
     SDL_AudioSpec desired, obtained;
@@ -188,6 +190,23 @@ int main(int argc, char **argv) {
     libpd_init();
     libpd_start_gui(const_cast<char *>("/"));
     libpd_init_audio(numInChannels, numOutChannels, sampleRate);
+    
+    // add externals to search/help path
+    libpd_add_to_search_path(EXT_DIR);
+    libpd_add_to_help_path(EXT_DIR);
+    DIR *ext_dir = opendir(EXT_DIR);
+    if (ext_dir) {
+        struct dirent *dir;
+        const std::string &prefix = std::string(EXT_DIR) + std::string("/");
+        while ((dir = readdir(ext_dir)) != nullptr) {
+            if (dir->d_name[0] != '.') {
+                const std::string &path = prefix + std::string(dir->d_name);
+                libpd_add_to_search_path(path.c_str());
+                libpd_add_to_help_path(path.c_str());
+            }
+        }
+        closedir(ext_dir);
+    }
 
     // start audio processing
     pauseAudioDevice(false);

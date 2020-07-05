@@ -36,6 +36,15 @@ EXTERN void libpd_clear_search_path(void);
 /// unlike desktop pd, *no* search paths are set by default (ie. extra)
 EXTERN void libpd_add_to_search_path(const char *path);
 
+/// clear the libpd help path for abstractions and externals
+/// note: this is called by libpd_init()
+EXTERN void libpd_clear_help_path(void);
+
+/// add a path to the libpd help paths
+/// relative paths are relative to the current working directory
+/// unlike desktop pd, *no* help paths are set by default (ie. extra)
+EXTERN void libpd_add_to_help_path(const char *path);
+
 /* opening patches */
 
 /// open a patch by filename and parent dir path

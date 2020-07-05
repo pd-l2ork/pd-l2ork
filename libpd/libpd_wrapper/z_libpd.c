@@ -443,6 +443,7 @@ int libpd_init(void) {
   libpdreceive_setup();
   sys_set_audio_api(API_DUMMY);
   sys_searchpath = NULL;
+  sys_helppath = NULL;
   sys_libdir = gensym("");
   post("pd %d.%d.%d%s", PD_MAJOR_VERSION, PD_MINOR_VERSION,
     PD_BUGFIX_VERSION, PD_TEST_VERSION);
@@ -809,6 +810,19 @@ void libpd_clear_search_path(void) {
 void libpd_add_to_search_path(const char *path) {
   sys_lock();
   sys_searchpath = namelist_append(sys_searchpath, path, 0);
+  sys_unlock();
+}
+
+void libpd_clear_help_path(void) {
+  sys_lock();
+  namelist_free(sys_helppath);
+  sys_helppath = NULL;
+  sys_unlock();
+}
+
+void libpd_add_to_help_path(const char *path) {
+  sys_lock();
+  sys_helppath = namelist_append(sys_helppath, path, 0);
   sys_unlock();
 }
   
