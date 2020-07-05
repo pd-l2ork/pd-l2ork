@@ -29,6 +29,13 @@ typedef void (*t_blobmethod)(t_pd *x, t_blob *st); /* MP20061226 blob type */
 typedef void (*t_listmethod)(t_pd *x, t_symbol *s, int argc, t_atom *argv);
 typedef void (*t_anymethod)(t_pd *x, t_symbol *s, int argc, t_atom *argv);
 
+typedef void* (*t_bangmethodr)(t_pd *x);
+typedef void* (*t_pointermethodr)(t_pd *x, t_gpointer *gp);
+typedef void* (*t_floatmethodr)(t_pd *x, t_float f);
+typedef void* (*t_symbolmethodr)(t_pd *x, t_symbol *s);
+typedef void* (*t_listmethodr)(t_pd *x, t_symbol *s, int argc, t_atom *argv);
+typedef void* (*t_anymethodr)(t_pd *x, t_symbol *s, int argc, t_atom *argv);
+
 struct _class
 {
     t_symbol *c_name;                   /* name (mostly for error reporting) */
@@ -102,7 +109,7 @@ EXTERN int obj_siginletindex(t_object *x, int m);
 EXTERN int obj_sigoutletindex(t_object *x, int m);
 
 /* misc */
-EXTERN void glob_evalfile(t_pd *ignore, t_symbol *name, t_symbol *dir);
+EXTERN t_pd *glob_evalfile(t_pd *ignore, t_symbol *name, t_symbol *dir);
 EXTERN void glob_initfromgui(void *dummy, t_symbol *s, int argc, t_atom *argv);
 EXTERN void glob_quit(void *dummy, t_floatarg status);
 #define __m_imp_h_
