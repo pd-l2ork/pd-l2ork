@@ -49,7 +49,7 @@ EXTERN void libpd_add_to_help_path(const char *path);
 
 /// open a patch by filename and parent dir path
 /// returns an opaque patch handle pointer or NULL on failure
-EXTERN void libpd_openfile(const char *name, const char *dir);
+EXTERN void *libpd_openfile(const char *name, const char *dir);
 
 /// close a patch by patch handle pointer
 EXTERN void libpd_closefile(void *p);

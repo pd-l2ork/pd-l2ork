@@ -826,10 +826,12 @@ void libpd_add_to_help_path(const char *path) {
   sys_unlock();
 }
   
-void libpd_openfile(const char *name, const char *dir) {
+void *libpd_openfile(const char *name, const char *dir) {
+  void *retval;
   sys_lock();
-  glob_evalfile(NULL, gensym(name), gensym(dir));
+  retval = (void *)glob_evalfile(NULL, gensym(name), gensym(dir));
   sys_unlock();
+  return retval;
 }
 
 void libpd_closefile(void *p) {
