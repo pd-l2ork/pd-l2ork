@@ -110,6 +110,8 @@
 //  http://disis.music.vt.edu
 //	* Added explicit connection reporting even if it fails to connect (for use in GUI displays to reflect the connection pending)
 
+#ifndef __EMSCRIPTEN__
+
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/select.h>
@@ -1356,3 +1358,5 @@ void disis_wiimote_setup(void)
 	class_addmethod(pd_cwiid_class, (t_method) pd_cwiid_status, gensym("status"), 0);
 	class_addbang(pd_cwiid_class, pd_cwiid_doBang);
 }
+
+#endif /* __EMSCRIPTEN__ */

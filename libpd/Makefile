@@ -87,8 +87,176 @@ PD_FILES = \
     libpd_wrapper/s_libpdmidi.c libpd_wrapper/x_libpdreceive.c \
     libpd_wrapper/z_hooks.c libpd_wrapper/z_libpd.c
 
+ADAPTIVE_PATH = ../externals/grh/adaptive/src
+PD_EXTRA_FILES_ADAPTIVE = $(wildcard $(ADAPTIVE_PATH)/*.c)
+
+BSAYLOR_PATH = ../externals/bsaylor
+PD_EXTRA_FILES_BSAYLOR = $(wildcard $(BSAYLOR_PATH)/*.c)
+
+CREB_PATH = ../externals/creb/modules
+PD_EXTRA_FILES_CREB = $(wildcard $(CREB_PATH)/*.c)
+
+CXC_PATH = ../externals/cxc
+PD_EXTRA_FILES_CXC = $(wildcard $(CXC_PATH)/*.c)
+
+DISIS_PATH = ../externals/disis
+PD_EXTRA_FILES_DISIS = $(wildcard $(DISIS_PATH)/*.c)
+
+EKEXT_PATH = ../externals/ekext
+PD_EXTRA_FILES_EKEXT = $(wildcard $(EKEXT_PATH)/*.c)
+
+EXT13_PATH = ../externals/ext13
+PD_EXTRA_FILES_EXT13 = $(wildcard $(EXT13_PATH)/*.c)
+
+FFTEASE_PATH = ../externals/fftease
+PD_EXTRA_FILES_FFTEASE = $(wildcard $(FFTEASE_PATH)/*.c)
+
+GGEE1_PATH = ../externals/ggee/control
+PD_EXTRA_FILES_GGEE1 = $(wildcard $(GGEE1_PATH)/*.c)
+
+GGEE2_PATH = ../externals/ggee/experimental
+PD_EXTRA_FILES_GGEE2 = $(wildcard $(GGEE2_PATH)/*.c)
+
+GGEE3_PATH = ../externals/ggee/filters
+PD_EXTRA_FILES_GGEE3 = $(wildcard $(GGEE3_PATH)/*.c)
+
+GGEE4_PATH = ../externals/ggee/signal
+PD_EXTRA_FILES_GGEE4 = $(wildcard $(GGEE4_PATH)/*.c)
+
+HCS_PATH = ../externals/hcs
+PD_EXTRA_FILES_HCS = $(wildcard $(HCS_PATH)/*.c)
+
+IEM1_PATH = ../externals/iem/iem_adaptfilt/src
+PD_EXTRA_FILES_IEM1 = $(wildcard $(IEM1_PATH)/*.c)
+
+IEM2_PATH = ../externals/iem/iem_ambi/src
+PD_EXTRA_FILES_IEM2 = $(wildcard $(IEM2_PATH)/*.c)
+
+IEM3_PATH = ../externals/iem/iem_bin_ambi/src
+PD_EXTRA_FILES_IEM3 = $(wildcard $(IEM3_PATH)/*.c)
+
+IEM4_PATH = ../externals/iem/iem_delay/src
+PD_EXTRA_FILES_IEM4 = $(wildcard $(IEM4_PATH)/*.c)
+
+IEM5_PATH = ../externals/iem/iem_roomsim/src
+PD_EXTRA_FILES_IEM5 = $(wildcard $(IEM5_PATH)/*.c)
+
+IEM6_PATH = ../externals/iem/iem_spec2/src
+PD_EXTRA_FILES_IEM6 = $(wildcard $(IEM6_PATH)/*.c)
+
+IEM7_PATH = ../externals/iem/iem_tab/src
+PD_EXTRA_FILES_IEM7 = $(wildcard $(IEM7_PATH)/*.c)
+
+IEM8_PATH = ../externals/iem/iemguts/src
+PD_EXTRA_FILES_IEM8 = $(wildcard $(IEM8_PATH)/*.c)
+
+IEM16_PATH = ../externals/iem16/src
+PD_EXTRA_FILES_IEM16 = $(wildcard $(IEM16_PATH)/*.c)
+
+IEMLIB1_PATH = ../externals/iemlib/iemlib1/src
+PD_EXTRA_FILES_IEMLIB1 = $(wildcard $(IEMLIB1_PATH)/*.c)
+
+IEMLIB2_PATH = ../externals/iemlib/iemlib2/src
+PD_EXTRA_FILES_IEMLIB2 = $(wildcard $(IEMLIB2_PATH)/*.c)
+
+MARKEX_PATH = ../externals/markex
+PD_EXTRA_FILES_MARKEX = $(wildcard $(MARKEX_PATH)/*.c)
+
+MAXLIB_PATH = ../externals/maxlib
+PD_EXTRA_FILES_MAXLIB = $(wildcard $(MAXLIB_PATH)/*.c)
+
+MJLIB_PATH = ../externals/mjlib
+PD_EXTRA_FILES_MJLIB = $(wildcard $(MJLIB_PATH)/*.c)
+
+MOONLIB_PATH = ../externals/moonlib
+PD_EXTRA_FILES_MOONLIB = $(wildcard $(MOONLIB_PATH)/*.c)
+
+MOTEX_PATH = ../externals/motex
+PD_EXTRA_FILES_MOTEX = $(wildcard $(MOTEX_PATH)/*.c)
+
+MRPEACH_PATH1 = ../externals/mrpeach/binfile
+PD_EXTRA_FILES_MRPEACH1 = $(wildcard $(MRPEACH_PATH1)/*.c)
+
+MRPEACH_PATH2 = ../externals/mrpeach/cmos
+PD_EXTRA_FILES_MRPEACH2 = $(wildcard $(MRPEACH_PATH2)/*.c)
+
+MRPEACH_PATH3 = ../externals/mrpeach/flist2tab
+PD_EXTRA_FILES_MRPEACH3 = $(wildcard $(MRPEACH_PATH3)/*.c)
+
+MRPEACH_PATH4 = ../externals/mrpeach/life2x
+PD_EXTRA_FILES_MRPEACH4 = $(wildcard $(MRPEACH_PATH4)/*.c)
+
+MRPEACH_PATH5 = ../externals/mrpeach/midifile
+PD_EXTRA_FILES_MRPEACH5 = $(wildcard $(MRPEACH_PATH5)/*.c)
+
+MRPEACH_PATH6 = ../externals/mrpeach/net
+PD_EXTRA_FILES_MRPEACH6 = $(wildcard $(MRPEACH_PATH6)/*.c)
+
+MRPEACH_PATH7 = ../externals/mrpeach/op~
+PD_EXTRA_FILES_MRPEACH7 = $(wildcard $(MRPEACH_PATH7)/*.c)
+
+MRPEACH_PATH8 = ../externals/mrpeach/osc
+PD_EXTRA_FILES_MRPEACH8 = $(wildcard $(MRPEACH_PATH8)/*.c)
+
+MRPEACH_PATH9 = ../externals/mrpeach/rc~
+PD_EXTRA_FILES_MRPEACH9 = $(wildcard $(MRPEACH_PATH9)/*.c)
+
+MRPEACH_PATH10 = ../externals/mrpeach/rcosc~
+PD_EXTRA_FILES_MRPEACH10 = $(wildcard $(MRPEACH_PATH10)/*.c)
+
+MRPEACH_PATH11 = ../externals/mrpeach/rojo~
+PD_EXTRA_FILES_MRPEACH11 = $(wildcard $(MRPEACH_PATH11)/*.c)
+
+MRPEACH_PATH12 = ../externals/mrpeach/runningmean
+PD_EXTRA_FILES_MRPEACH12 = $(wildcard $(MRPEACH_PATH12)/*.c)
+
+MRPEACH_PATH13 = ../externals/mrpeach/serializer
+PD_EXTRA_FILES_MRPEACH13 = $(wildcard $(MRPEACH_PATH13)/*.c)
+
+MRPEACH_PATH14 = ../externals/mrpeach/slipdec
+PD_EXTRA_FILES_MRPEACH14 = $(wildcard $(MRPEACH_PATH14)/*.c)
+
+MRPEACH_PATH15 = ../externals/mrpeach/slipenc
+PD_EXTRA_FILES_MRPEACH15 = $(wildcard $(MRPEACH_PATH15)/*.c)
+
+MRPEACH_PATH16 = ../externals/mrpeach/sqosc~
+PD_EXTRA_FILES_MRPEACH16 = $(wildcard $(MRPEACH_PATH16)/*.c)
+
+MRPEACH_PATH17 = ../externals/mrpeach/str
+PD_EXTRA_FILES_MRPEACH17 = $(wildcard $(MRPEACH_PATH17)/*.c)
+
+MRPEACH_PATH18 = ../externals/mrpeach/tab2flist
+PD_EXTRA_FILES_MRPEACH18 = $(wildcard $(MRPEACH_PATH18)/*.c)
+
+MRPEACH_PATH19 = ../externals/mrpeach/tabfind
+PD_EXTRA_FILES_MRPEACH19 = $(wildcard $(MRPEACH_PATH19)/*.c)
+
+MRPEACH_PATH20 = ../externals/mrpeach/which
+PD_EXTRA_FILES_MRPEACH20 = $(wildcard $(MRPEACH_PATH20)/*.c)
+
+MRPEACH_PATH21 = ../externals/mrpeach/xbee
+PD_EXTRA_FILES_MRPEACH21 = $(wildcard $(MRPEACH_PATH21)/*.c)
+
+PDDP_PATH = ../externals/pddp
+PD_EXTRA_FILES_PDDP = $(wildcard $(PDDP_PATH)/*.c)
+
+PLUGIN_PATH = ../externals/plugin~
+PD_EXTRA_FILES_PLUGIN = $(wildcard $(PLUGIN_PATH)/*.c)
+
 SIGPACK_PATH = ../externals/sigpack
 PD_EXTRA_FILES_SIGPACK = $(wildcard $(SIGPACK_PATH)/*.c)
+
+SMLIB_PATH = ../externals/smlib
+PD_EXTRA_FILES_SMLIB = $(wildcard $(SMLIB_PATH)/*.c)
+
+TOF_PATH = ../externals/tof/src
+PD_EXTRA_FILES_TOF = $(wildcard $(TOF_PATH)/*.c)
+
+VBAP_PATH = ../externals/vbap
+PD_EXTRA_FILES_VBAP = $(wildcard $(VBAP_PATH)/*.c)
+
+WINDOWING_PATH = ../externals/windowing
+PD_EXTRA_FILES_WINDOWING = $(wildcard $(WINDOWING_PATH)/*.c)
 	
 ZEXY_PATH = ../externals/zexy/src
 PD_EXTRA_FILES_ZEXY = $(wildcard $(ZEXY_PATH)/*.c)
@@ -99,8 +267,78 @@ PD_EXTRA_FILES = \
     ../pd/extra/fiddle~/fiddle~.c ../pd/extra/loop~/loop~.c \
     ../pd/extra/lrshift~/lrshift~.c ../pd/extra/pique/pique.c \
     ../pd/extra/sigmund~/sigmund~.c ../pd/extra/stdout/stdout.c \
+    ../externals/arraysize/arraysize.c \
+    ../externals/autotune/autotune~.c \
+    ../externals/bassemu~/bassemu~.c \
+    $(PD_EXTRA_FILES_ADAPTIVE) \
+    $(PD_EXTRA_FILES_BSAYLOR) \
+    ../externals/iem/comport/comport/comport.c \
+    $(PD_EXTRA_FILES_CREB) \
+    $(PD_EXTRA_FILES_CXC) \
+    $(PD_EXTRA_FILES_DISIS) \
+    ../externals/earplug~/earplug~.c \
+    $(PD_EXTRA_FILES_EKEXT) \
+    $(PD_EXTRA_FILES_EXT13) \
+    $(PD_EXTRA_FILES_FFTEASE) \
+    ../externals/footils/knob/knob.c \
     ../externals/freeverb~/freeverb~.c \
+    $(PD_EXTRA_FILES_GGEE1) \
+    $(PD_EXTRA_FILES_GGEE2) \
+    $(PD_EXTRA_FILES_GGEE3) \
+    $(PD_EXTRA_FILES_GGEE4) \
+    $(PD_EXTRA_FILES_HCS) \
+    $(PD_EXTRA_FILES_IEM1) \
+    $(PD_EXTRA_FILES_IEM2) \
+    $(PD_EXTRA_FILES_IEM3) \
+    $(PD_EXTRA_FILES_IEM4) \
+    $(PD_EXTRA_FILES_IEM5) \
+    $(PD_EXTRA_FILES_IEM6) \
+    $(PD_EXTRA_FILES_IEM7) \
+    $(PD_EXTRA_FILES_IEM8) \
+    $(PD_EXTRA_FILES_IEM16) \
+    ${PD_EXTRA_FILES_IEMLIB1} \
+    ${PD_EXTRA_FILES_IEMLIB2} \
+    ../externals/jasch_lib/detox/detox.c \
+    ../externals/jasch_lib/memchr/memchr.c \
+    ../externals/jasch_lib/strchr/strchr.c \
+    ../externals/jasch_lib/strcut/strcut.c \
+    ../externals/jasch_lib/strlen/strlen.c \
+    ../externals/jasch_lib/strtok/strtok.c \
+    ../externals/jasch_lib/underscore/_.c \
+    ../externals/loaders/libdir/libdir.c \
+    $(PD_EXTRA_FILES_MARKEX) \
+    $(PD_EXTRA_FILES_MAXLIB) \
+    $(PD_EXTRA_FILES_MJLIB) \
+    $(PD_EXTRA_FILES_MOONLIB) \
+    $(PD_EXTRA_FILES_MOTEX) \
+    $(PD_EXTRA_FILES_MRPEACH1) \
+    $(PD_EXTRA_FILES_MRPEACH2) \
+    $(PD_EXTRA_FILES_MRPEACH3) \
+    $(PD_EXTRA_FILES_MRPEACH4) \
+    $(PD_EXTRA_FILES_MRPEACH5) \
+    $(PD_EXTRA_FILES_MRPEACH6) \
+    $(PD_EXTRA_FILES_MRPEACH7) \
+    $(PD_EXTRA_FILES_MRPEACH8) \
+    $(PD_EXTRA_FILES_MRPEACH9) \
+    $(PD_EXTRA_FILES_MRPEACH10) \
+    $(PD_EXTRA_FILES_MRPEACH11) \
+    $(PD_EXTRA_FILES_MRPEACH12) \
+    $(PD_EXTRA_FILES_MRPEACH13) \
+    $(PD_EXTRA_FILES_MRPEACH14) \
+    $(PD_EXTRA_FILES_MRPEACH15) \
+    $(PD_EXTRA_FILES_MRPEACH16) \
+    $(PD_EXTRA_FILES_MRPEACH17) \
+    $(PD_EXTRA_FILES_MRPEACH18) \
+    $(PD_EXTRA_FILES_MRPEACH19) \
+    $(PD_EXTRA_FILES_MRPEACH20) \
+    $(PD_EXTRA_FILES_MRPEACH21) \
+    $(PD_EXTRA_FILES_PDDP) \
+    $(PD_EXTRA_FILES_PLUGIN) \
     $(PD_EXTRA_FILES_SIGPACK) \
+    $(PD_EXTRA_FILES_SMLIB) \
+    $(PD_EXTRA_FILES_TOF) \
+    $(PD_EXTRA_FILES_VBAP) \
+    $(PD_EXTRA_FILES_WINDOWING) \
     $(PD_EXTRA_FILES_ZEXY)
 
 LIBPD_UTILS = \

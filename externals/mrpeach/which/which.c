@@ -1,6 +1,9 @@
 /* which: an external for pure data */
 /* Will output the path to the object named as its first argument */
 /* Martin Peach 20090225 */
+
+#ifndef __EMSCRIPTEN__
+
 #include "m_pd.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -163,5 +166,7 @@ void which_setup(void)
     class_addanything(which_class, (t_method)which_any);
     class_addmethod(which_class, (t_method)which_set, gensym("set"), A_DEFSYM, 0);
 }
+
+#endif /* __EMSCRIPTEN__ */
 
 /* end which.c */

@@ -39,7 +39,7 @@
 #define __LITTLE_ENDIAN LITTLE_ENDIAN
 #endif                                                                          
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__EMSCRIPTEN__)
 #include <endian.h>
 #endif
 

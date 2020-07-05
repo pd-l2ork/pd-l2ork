@@ -60,7 +60,7 @@ iemlib written by Thomas Musil, Copyright (c) IEM KUG Graz Austria 2000 - 2012 *
 #include <machine/endian.h>
 #endif
 
-#if defined(__linux__) || defined(__CYGWIN__) || defined(__GNU__) || defined(ANDROID)
+#if defined(__linux__) || defined(__CYGWIN__) || defined(__GNU__) || defined(ANDROID) || defined(__EMSCRIPTEN__)
 #include <endian.h>
 #endif
 

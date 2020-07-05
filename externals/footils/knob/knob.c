@@ -41,6 +41,8 @@
 
 #define IEM_KNOB_DEFAULTSIZE 32
 
+extern int gfxstub_haveproperties(void *key);
+
 /* ------------ knob gui-vertical  slider ----------------------- */
 
 t_widgetbehavior knob_widgetbehavior;

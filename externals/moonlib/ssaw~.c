@@ -52,7 +52,7 @@ should have been by CPU type and not by operating system! */
 #include <sys/types.h>
 #define int32 int32_t
 #endif
-#ifdef __linux__
+#if defined(__linux__) || defined(__EMSCRIPTEN__)
 
 #include <endian.h>
 

@@ -9,6 +9,7 @@ typedef struct _vdbtorms
     t_object x_obj;
 } t_vdbtorms;
 
+#ifndef __EMSCRIPTEN__
 float dbtorms(float f)
 {
     if (f <= 0)
@@ -20,6 +21,7 @@ float dbtorms(float f)
     }
     return (float)(exp((LOGTEN * 0.05) * (f-100.)));
 }
+#endif /* __EMSCRIPTEN__ */
 
 static void vdbtorms_perform(t_vdbtorms *x, t_symbol *s, int argc, t_atom *argv)
 {

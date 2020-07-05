@@ -57,7 +57,7 @@ iemlib written by Thomas Musil, Copyright (c) IEM KUG Graz Austria 2000 - 2009 *
 #include <machine/endian.h>
 #endif
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__EMSCRIPTEN__)
 #include <endian.h>
 #endif
 

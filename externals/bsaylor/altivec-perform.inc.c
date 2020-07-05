@@ -1,5 +1,7 @@
 //altivec version by Chris Clepper
 //
+#ifndef __EMSCRIPTEN__
+
 static t_int *partconv_perform(t_int *w)
 {
     t_partconv *x = (t_partconv *)(w[1]);
@@ -281,3 +283,5 @@ static t_int *partconv_perform(t_int *w)
 
     return (w+5);
 }
+
+#endif /* __EMSCRIPTEN__ */

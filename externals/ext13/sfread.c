@@ -1,4 +1,5 @@
 #include "m_pd.h"
+#include "g_canvas.h"
 #ifdef _MSC_VER
 #pragma warning( disable : 4244 )
 #pragma warning( disable : 4305 )

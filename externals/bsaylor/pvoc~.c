@@ -15,6 +15,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#ifndef __EMSCRIPTEN__
+
 #include <math.h>
 #include <fftw3.h>
 #include "m_pd.h"
@@ -403,3 +405,5 @@ void pvoc_tilde_setup(void)
 	class_addmethod(pvoc_class, (t_method) transients, gensym("transients"), A_GIMME, 0);
 	class_addmethod(pvoc_class, (t_method) notransients, gensym("notransients"), 0);
 }
+
+#endif /* __EMSCRIPTEN__ */

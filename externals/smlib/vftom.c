@@ -9,10 +9,12 @@ typedef struct _vftom
     t_object x_obj;
 } t_vftom;
 
+#ifndef __EMSCRIPTEN__
 float ftom(float f)
 {
     return (float)(f > 0 ? 17.3123405046 * log(.12231220585 * f) : -1500);
 }
+#endif /* __EMSCRIPTEN__ */
 
 static void vftom_perform(t_vftom *x, t_symbol *s, int argc, t_atom *argv)
 {

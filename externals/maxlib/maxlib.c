@@ -40,6 +40,7 @@ typedef struct _maxlib
 static t_class* maxlib_class;
 
 	/* objects */
+#ifndef __EMSCRIPTEN__
 void maxlib_allow_setup();
 void maxlib_arbran_setup();
 void maxlib_arraycopy_setup();
@@ -102,6 +103,70 @@ void maxlib_urn_setup();
 void maxlib_velocity_setup();
 void maxlib_weibull_setup();
 void maxlib_wrap_setup();
+#else
+void allow_setup();
+void arbran_setup();
+void arraycopy_setup();
+void average_setup();
+void beat_setup();
+void beta_setup();
+void bilex_setup();
+void borax_setup();
+void cauchy_setup();
+void chord_setup();
+void delta_setup();
+void deny_setup();
+void dist_setup();
+void divide_setup();
+void divmod_setup();
+void edge_setup();
+void expo_setup();
+void fifo_setup();
+void gauss_setup();
+void gestalt_setup();
+void history_setup();
+void ignore_setup();
+void iso_setup();
+void lifo_setup();
+void limit_setup();
+void linear_setup();
+void listfifo_setup();
+void listfunnel_setup();
+void match_setup();
+void minus_setup();
+void mlife_setup();
+void multi_setup();
+void nchange_setup();
+void netclient_setup();
+void netdist_setup();
+void netrec_setup();
+void netserver_setup();
+void nroute_setup();
+void pitch_setup();
+void plus_setup();
+void poisson_setup();
+void pong_setup();
+void pulse_setup();
+void remote_setup();
+void rewrap_setup();
+void rhythm_setup();
+void scale_setup();
+void score_setup();
+void speedlim_setup();
+void split_setup();
+void step_setup();
+void subst_setup();
+void sync_setup();
+void temperature_setup();
+void tilt_setup();
+void timebang_setup();
+void triang_setup();
+void unroute_setup();
+void urn_setup();
+void velocity_setup();
+void weibull_setup();
+void wrap_setup();
+#endif /* __EMSCRIPTEN__ */
 
 static void* maxlib_new(t_symbol* s)
 {
@@ -113,7 +178,8 @@ void maxlib_setup(void)
 {
 	maxlib_class = class_new(gensym("maxlib"), (t_newmethod)maxlib_new, 0,
     	sizeof(t_maxlib), 0,0);
-
+    
+#ifndef __EMSCRIPTEN__
 	maxlib_allow_setup();
 	maxlib_arbran_setup();
 	maxlib_arraycopy_setup();
@@ -176,6 +242,70 @@ void maxlib_setup(void)
 	maxlib_velocity_setup();
 	maxlib_weibull_setup();
 	maxlib_wrap_setup();
+#else
+    allow_setup();
+    arbran_setup();
+    arraycopy_setup();
+    average_setup();
+    beat_setup();
+    beta_setup();
+    bilex_setup();
+    borax_setup();
+    cauchy_setup();
+    chord_setup();
+    delta_setup();
+    deny_setup();
+    dist_setup();
+    divide_setup();
+    divmod_setup();
+    edge_setup();
+    expo_setup();
+    fifo_setup();
+    gauss_setup();
+    gestalt_setup();
+    history_setup();
+    ignore_setup();
+    iso_setup();
+    lifo_setup();
+    limit_setup();
+    linear_setup();
+    listfifo_setup();
+    listfunnel_setup();
+    match_setup();
+    minus_setup();
+    mlife_setup();
+    multi_setup();
+    nchange_setup();
+    netclient_setup();
+    netdist_setup();
+    netrec_setup();
+    netserver_setup();
+    nroute_setup();
+    pitch_setup();
+    plus_setup();
+    poisson_setup();
+    pong_setup();
+    pulse_setup();
+    remote_setup();
+    rewrap_setup();
+    rhythm_setup();
+    scale_setup();
+    score_setup();
+    speedlim_setup();
+    split_setup();
+    step_setup();
+    subst_setup();
+    sync_setup();
+    temperature_setup();
+    tilt_setup();
+    timebang_setup();
+    triang_setup();
+    unroute_setup();
+    urn_setup();
+    velocity_setup();
+    weibull_setup();
+    wrap_setup();
+#endif /* __EMSCRIPTEN__ */
 
 	post("\n       maxlib :: Music Analysis eXtensions LIBrary");
 	post("       written by Olaf Matthes <olaf.matthes@gmx.de>");

@@ -39,7 +39,11 @@
 static char *version = "$Revision: 1.12 $";
 
 #define DEBUG(x)
-//#define DEBUG(x) x 
+//#define DEBUG(x) x
+
+#ifndef GLOB_TILDE
+#define GLOB_TILDE (1 << 12)
+#endif
 
 /*------------------------------------------------------------------------------
  *  CLASS DEF

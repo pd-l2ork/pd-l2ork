@@ -107,6 +107,14 @@
       console.log("gui_print", object_id, selector, array_of_strings);
     }
 
+    function gui_legacy_tcl_command(file, line_number, text) {
+      console.log("gui_legacy_tcl_command", file, line_number, text);
+    }
+
+    function gui_load_default_image(dummy_cid, key) {
+      console.log("gui_load_default_image", dummy_cid, key);
+    }
+
     function gui_undo_menu(cid, undo_text, redo_text) {
       console.log("gui_undo_menu", cid, undo_text, redo_text);
     }

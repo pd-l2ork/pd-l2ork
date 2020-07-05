@@ -64,7 +64,7 @@ typedef short t_iem16_16bit;
 # endif /* BYTE_ORDER */
 # include <sys/types.h>
 # define int32 int32_t
-#elif defined __linux__
+#elif defined(__linux__) || defined(__EMSCRIPTEN__)
 # include <endian.h>
 # if !defined(__BYTE_ORDER) || !defined(__LITTLE_ENDIAN)                         
 #  error No byte order defined                                                    
