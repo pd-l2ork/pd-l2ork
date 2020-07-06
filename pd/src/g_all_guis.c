@@ -579,7 +579,7 @@ void iemgui_pos(t_iemgui *x, t_symbol *s, int ac, t_atom *av)
         iemgui_shouldvis(x, IEM_GUI_DRAW_MODE_MOVE);
 }
 
-void iemgui_old_color_args(int argc, t_atom *argv)
+int iemgui_old_color_args(int argc, t_atom *argv)
 {
     int gotsym = 0, gotfloat = 0;
     gotsym += atom_getsymbolarg(0, argc, argv) != &s_;
@@ -594,6 +594,7 @@ void iemgui_old_color_args(int argc, t_atom *argv)
     {
         post("warning: unexpected mixing of symbol args with deprecated "
              "float color syntax.");
+        return 1;
     }
     else if (gotfloat) return 1;
     else return 0;
@@ -604,16 +605,16 @@ void iemgui_color(t_iemgui *x, t_symbol *s, int ac, t_atom *av)
     if (ac)
     {
         if (ac >= 1)
-            iemgui->x_bcol = iemgui_compatible_colorarg(0, ac, av);
+            x->x_bcol = iemgui_compatible_colorarg(0, ac, av);
         if (ac >= 2)
         {
             if (iemgui_old_color_args(ac, av))
-                iemgui->x_lcol = iemgui_compatible_colorarg(1, ac, av);
+                x->x_lcol = iemgui_compatible_colorarg(1, ac, av);
             else
-                iemgui->x_fcol = iemgui_compatible_colorarg(1, ac, av);
+                x->x_fcol = iemgui_compatible_colorarg(1, ac, av);
         }
         if (ac >= 3)
-            iemgui->x_lcol = iemgui_compatible_colorarg(2, ac, av);
+            x->x_lcol = iemgui_compatible_colorarg(2, ac, av);
         if (glist_isvisible(x->x_glist))
         {
             x->x_draw(x, x->x_glist, IEM_GUI_DRAW_MODE_CONFIG);

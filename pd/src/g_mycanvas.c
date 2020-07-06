@@ -324,8 +324,8 @@ static void *my_canvas_new(t_symbol *s, int argc, t_atom *argv)
         ldy = atom_getintarg(i+5, argc, argv);
         iem_inttofstyle(&x->x_gui, atom_getintarg(i+6, argc, argv));
         fs = atom_getintarg(i+7, argc, argv);
-        bflcol[0] = atom_getintarg(i+8, argc, argv);
-        bflcol[2] = atom_getintarg(i+9, argc, argv);
+//        bflcol[0] = atom_getintarg(i+8, argc, argv);
+//        bflcol[2] = atom_getintarg(i+9, argc, argv);
         iemgui_all_loadcolors(&x->x_gui, argv+i+8, 0, argv+i+9);
     }
     if((argc == 13)&&IS_A_FLOAT(argv,i+10))

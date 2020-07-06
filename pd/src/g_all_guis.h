@@ -225,7 +225,7 @@ EXTERN void iemgui_displace_withtag(t_gobj *z, t_glist *glist, int dx, int dy);
 EXTERN void iemgui_select(t_gobj *z, t_glist *glist, int selected);
 EXTERN void iemgui_delete(t_gobj *z, t_glist *glist);
 EXTERN void iemgui_vis(t_gobj *z, t_glist *glist, int vis);
-EXTERN void iemgui_save(t_iemgui *x, t_symbol **srl, int *bflcol);
+EXTERN void iemgui_save(t_iemgui *x, t_symbol **srl, t_symbol **bflcol);
 EXTERN void iemgui_properties(t_iemgui *x, t_symbol **srl);
 EXTERN int iemgui_dialog(t_iemgui *x, int argc, t_atom *argv);
 
