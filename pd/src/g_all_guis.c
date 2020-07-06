@@ -133,6 +133,33 @@ static void iemgui_init_sym2dollararg(t_iemgui *x, t_symbol **symp,
     }
 }
 
+static t_symbol *color2symbol(int col)
+{
+//revisit this-- should be saving as symbol, but maybe that happens somewhere
+// else...
+    const int compat = (pd_compatibilitylevel < 48) ? 1 :
+    /* FIXXME: for Pd>=0.48, the default compatibility mode should be OFF */
+                    1;
+    char colname[MAXPDSTRING];
+    colname[0] = colname[MAXPDSTRING-1] = 0;
+
+    if (compat)
+    {       
+        /* compatibility with Pd<=0.47: saves colors as numbers with limited
+           resolution */
+        int col2 = -1 - (((0xfc0000 & col) >> 6)
+                      | ((0xfc00 & col) >> 4)
+                      | ((0xfc & col) >> 2));
+        snprintf(colname, MAXPDSTRING-1, "%d", col2);
+    }
+    else
+    {
+        snprintf(colname, MAXPDSTRING-1, "#%06x", col);
+    }
+    return gensym(colname);
+}
+
+
 /* get the unexpanded versions of the symbols; initialize them if necessary. */
 void iemgui_all_sym2dollararg(t_iemgui *x, t_symbol **srlsym)
 {
@@ -147,12 +174,66 @@ void iemgui_all_sym2dollararg(t_iemgui *x, t_symbol **srlsym)
 static int col2save(int col) {
     return -1-(((0xfc0000 & col) >> 6)|((0xfc00 & col) >> 4)|((0xfc & col) >> 2));
 }
-void iemgui_all_col2save(t_iemgui *x, int *bflcol)
+void iemgui_all_col2save(t_iemgui *x, t_symbol **bflcol)
 {
-    bflcol[0] = col2save(x->x_bcol);
-    bflcol[1] = col2save(x->x_fcol);
-    bflcol[2] = col2save(x->x_lcol);
+    bflcol[0] = color2symbol(x->x_bcol);
+    bflcol[1] = color2symbol(x->x_fcol);
+    bflcol[2] = color2symbol(x->x_lcol);
 }
+
+static int iemgui_getcolorarg(int index, int argc, t_atom *argv)
+{
+    if (index < 0 || index >= argc || !argc)
+        return 0;
+    if (IS_A_FLOAT(argv, index))
+        return atom_getfloatarg(index, argc, argv);
+    if (IS_A_SYMBOL(argv, index))
+    {
+        t_symbol *s = atom_getsymbolarg(index, argc, argv);
+/* hm, let's see if we can crash this... */
+        if ('#' == s->s_name[0])
+            return (int)strtol(s->s_name+1, 0, 16);
+    }
+    return 0;
+}
+
+static int colfromatomload(t_atom *colatom)
+{
+    int color;
+    /* old-fashioned color argument, either a number or symbol
+       evaluating to an integer */
+    if (colatom->a_type == A_FLOAT)
+        color = atom_getfloat(colatom);
+    else if (colatom->a_type == A_SYMBOL &&
+        (isdigit(colatom->a_w.w_symbol->s_name[0]) ||
+         colatom->a_w.w_symbol->s_name[0] == '-'))
+            color = atoi(colatom->a_w.w_symbol->s_name);
+
+    /* symbolic color */
+    else return (iemgui_getcolorarg(0, 1, colatom));
+
+    if (color < 0)
+    {
+        color = -1 - color;
+        color = ((color & 0x3f000) << 6)|((color & 0xfc0) << 4)|
+        ((color & 0x3f) << 2);
+    }
+    else
+    {
+        color = iemgui_modulo_color(color);
+        color = iemgui_color_hex[color];
+    }
+    return (color);
+}
+
+void iemgui_all_loadcolors(t_iemgui *x, t_atom *bcol, t_atom *fcol,
+    t_atom *lcol)
+{
+    if (bcol) x->x_bcol = colfromatomload(bcol);
+    if (fcol) x->x_fcol = colfromatomload(fcol);
+    if (lcol) x->x_lcol = colfromatomload(lcol);
+}
+
 
 static int colfromload(int col) {
     if(col)
@@ -176,6 +257,26 @@ static int iemgui_compatible_col(int i)
         return(iemgui_color_hex[(iemgui_modulo_color(i))]);
     return((-1-i)&0xffffff);
 }
+
+int iemgui_compatible_colorarg(int index, int argc, t_atom* argv)
+{
+    if (index < 0 || index >= argc)
+        return 0;
+        /* old style, lossy int values */
+    if (IS_A_FLOAT(argv, index))
+    {
+        int col = atom_getfloatarg(index, argc, argv);
+        if (col >= 0)
+        {
+            int idx = iemgui_modulo_color(col);
+            return(iemgui_color_hex[(idx)]);
+        }
+        else
+            return((-1 - col) & 0xffffff);
+    }
+    return iemgui_getcolorarg(index, argc, argv);
+}
+
 
 void iemgui_all_raute2dollar(t_symbol **srlsym)
 {
@@ -478,20 +579,46 @@ void iemgui_pos(t_iemgui *x, t_symbol *s, int ac, t_atom *av)
         iemgui_shouldvis(x, IEM_GUI_DRAW_MODE_MOVE);
 }
 
+void iemgui_old_color_args(int argc, t_atom *argv)
+{
+    int gotsym = 0, gotfloat = 0;
+    gotsym += atom_getsymbolarg(0, argc, argv) != &s_;
+    gotsym += atom_getsymbolarg(1, argc, argv) != &s_;
+    gotsym += atom_getsymbolarg(2, argc, argv) != &s_;
+    
+    gotfloat += argc >=1 && argv[0].a_type == A_FLOAT;
+    gotfloat += argc >=2 && argv[1].a_type == A_FLOAT;
+    gotfloat += argc >=2 && argv[2].a_type == A_FLOAT;
+
+    if (gotfloat && gotsym)
+    {
+        post("warning: unexpected mixing of symbol args with deprecated "
+             "float color syntax.");
+    }
+    else if (gotfloat) return 1;
+    else return 0;
+}
+
 void iemgui_color(t_iemgui *x, t_symbol *s, int ac, t_atom *av)
 {
-    x->x_bcol = iemgui_compatible_col(atom_getintarg(0, ac, av));
-    if(ac > 2)
+    if (ac)
     {
-        x->x_fcol = iemgui_compatible_col(atom_getintarg(1, ac, av));
-        x->x_lcol = iemgui_compatible_col(atom_getintarg(2, ac, av));
-    }
-    else
-        x->x_lcol = iemgui_compatible_col(atom_getintarg(1, ac, av));
-    if (glist_isvisible(x->x_glist))
-    {
-        x->x_draw(x, x->x_glist, IEM_GUI_DRAW_MODE_CONFIG);
-        iemgui_label_draw_config(x);
+        if (ac >= 1)
+            iemgui->x_bcol = iemgui_compatible_colorarg(0, ac, av);
+        if (ac >= 2)
+        {
+            if (iemgui_old_color_args(ac, av))
+                iemgui->x_lcol = iemgui_compatible_colorarg(1, ac, av);
+            else
+                iemgui->x_fcol = iemgui_compatible_colorarg(1, ac, av);
+        }
+        if (ac >= 3)
+            iemgui->x_lcol = iemgui_compatible_colorarg(2, ac, av);
+        if (glist_isvisible(x->x_glist))
+        {
+            x->x_draw(x, x->x_glist, IEM_GUI_DRAW_MODE_CONFIG);
+            iemgui_label_draw_config(x);
+        }
     }
 }
 
@@ -561,7 +688,7 @@ void iemgui_vis(t_gobj *z, t_glist *glist, int vis)
     }
 }
 
-void iemgui_save(t_iemgui *x, t_symbol **srl, int *bflcol)
+void iemgui_save(t_iemgui *x, t_symbol **srl, t_symbol **bflcol)
 {
     if (srl) {
        srl[0] = x->x_snd;
