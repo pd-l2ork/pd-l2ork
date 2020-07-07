@@ -430,7 +430,6 @@ static void bng_tick_lck(t_bng *x)
 static void *bng_new(t_symbol *s, int argc, t_atom *argv)
 {
     t_bng *x = (t_bng *)pd_new(bng_class);
-//    int bflcol[]={-262144, -1, -1};
     int a=IEM_GUI_DEFAULTSIZE;
     int ldx=17, ldy=7;
     int fs=10;
@@ -462,9 +461,6 @@ static void *bng_new(t_symbol *s, int argc, t_atom *argv)
         ldy = atom_getintarg(8, argc, argv);
         iem_inttofstyle(&x->x_gui, atom_getintarg(9, argc, argv));
         fs = maxi(atom_getintarg(10, argc, argv),4);
-//        bflcol[0] = atom_getintarg(11, argc, argv);
-//        bflcol[1] = atom_getintarg(12, argc, argv);
-//        bflcol[2] = atom_getintarg(13, argc, argv);
         iemgui_all_loadcolors(&x->x_gui, argv+11, argv+12, argv+13);
     }
     else iemgui_new_getnames(&x->x_gui, 4, 0);
@@ -482,7 +478,6 @@ static void *bng_new(t_symbol *s, int argc, t_atom *argv)
     x->x_gui.x_w = iemgui_clip_size(a);
     x->x_gui.x_h = x->x_gui.x_w;
     bng_check_minmax(x, ftbreak, fthold);
-//    iemgui_all_colfromload(&x->x_gui, bflcol);
     x->x_gui.x_locked = 0;
     iemgui_verify_snd_ne_rcv(&x->x_gui);
     x->x_clock_hld = clock_new(x, (t_method)bng_tick_hld);

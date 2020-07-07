@@ -648,7 +648,6 @@ static void vu_bang(t_vu *x)
 static void *vu_new(t_symbol *s, int argc, t_atom *argv)
 {
     t_vu *x = (t_vu *)pd_new(vu_class);
-//    int bflcol[] = {-66577, -1, -1};
     int w = IEM_GUI_DEFAULTSIZE, h = IEM_VU_STEPS*IEM_VU_DEFAULTSIZE;
     int ldx = -1, ldy = -8, fs = 10, scale = 1;
 
@@ -673,8 +672,6 @@ static void *vu_new(t_symbol *s, int argc, t_atom *argv)
         ldy = atom_getintarg(5, argc, argv);
         iem_inttofstyle(&x->x_gui, atom_getintarg(6, argc, argv));
         fs = maxi(atom_getintarg(7, argc, argv),4);
-//        bflcol[0] = atom_getintarg(8, argc, argv);
-//        bflcol[2] = atom_getintarg(9, argc, argv);
         iemgui_all_loadcolors(&x->x_gui, argv+8, NULL, argv+9);
         scale = !!atom_getintarg(10, argc, argv);
     }
@@ -693,7 +690,6 @@ static void *vu_new(t_symbol *s, int argc, t_atom *argv)
     x->x_gui.x_fontsize = fs;
     x->x_gui.x_w = iemgui_clip_size(w);
     vu_check_height(x, h);
-//    iemgui_all_colfromload(&x->x_gui, bflcol);
     x->x_scale = scale;
     x->x_peak = 0;
     x->x_rms = 0;

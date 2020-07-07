@@ -458,7 +458,6 @@ static void *radio_new(t_symbol *s, int argc, t_atom *argv)
         s==gensym("vdl") ? vradio_old_class :
         s==gensym("vradio") ? vradio_class : hradio_class);
     x->x_orient = s==gensym("vdl") || s==gensym("vradio");
-//    int bflcol[]={-262144, -1, -1};
     int a=IEM_GUI_DEFAULTSIZE, on=0, ldx=0, ldy=-8, chg=1, num=8, fs=10;
     iem_inttosymargs(&x->x_gui, 0);
     iem_inttofstyle(&x->x_gui, 0);
@@ -484,9 +483,6 @@ static void *radio_new(t_symbol *s, int argc, t_atom *argv)
         ldy = atom_getintarg(8, argc, argv);
         iem_inttofstyle(&x->x_gui, atom_getintarg(9, argc, argv));
         fs = maxi(atom_getintarg(10, argc, argv),4);
-//        bflcol[0] = atom_getintarg(11, argc, argv);
-//        bflcol[1] = atom_getintarg(12, argc, argv);
-//        bflcol[2] = atom_getintarg(13, argc, argv);
         iemgui_all_loadcolors(&x->x_gui, argv+11, argv+12, argv+13);
         on = mini(maxi(atom_getintarg(14, argc, argv),0),num-1);
     }
@@ -506,7 +502,6 @@ static void *radio_new(t_symbol *s, int argc, t_atom *argv)
     x->x_gui.x_w = iemgui_clip_size(a);
     x->x_gui.x_h = x->x_gui.x_w;
     iemgui_verify_snd_ne_rcv(&x->x_gui);
-//    iemgui_all_colfromload(&x->x_gui, bflcol);
     outlet_new(&x->x_gui.x_obj, &s_list);
 
     x->x_gui.x_handle = scalehandle_new((t_object *)x,x->x_gui.x_glist,1,radio__clickhook,radio__motionhook);

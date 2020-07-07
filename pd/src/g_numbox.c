@@ -759,7 +759,6 @@ static void my_numbox_list(t_my_numbox *x, t_symbol *s, int ac, t_atom *av)
 static void *my_numbox_new(t_symbol *s, int argc, t_atom *argv)
 {
     t_my_numbox *x = (t_my_numbox *)pd_new(my_numbox_class);
-//    int bflcol[]={-262144, -1, -1};
     int w=5, h=14;
     int lilo=0, ldx=0, ldy=-8;
     int fs=10;
@@ -791,9 +790,6 @@ static void *my_numbox_new(t_symbol *s, int argc, t_atom *argv)
         iem_inttofstyle(&x->x_gui, atom_getintarg(11, argc, argv));
         fs = maxi(atom_getintarg(12, argc, argv),4);
         iemgui_all_loadcolors(&x->x_gui, argv+13, argv+14, argv+15);
-//        bflcol[0] = atom_getintarg(13, argc, argv);
-//        bflcol[1] = atom_getintarg(14, argc, argv);
-//        bflcol[2] = atom_getintarg(15, argc, argv);
         v = atom_getfloatarg(16, argc, argv);
     }
     else iemgui_new_getnames(&x->x_gui, 6, 0);
@@ -818,7 +814,6 @@ static void *my_numbox_new(t_symbol *s, int argc, t_atom *argv)
     x->x_buf[0] = 0;
     x->x_numwidth = my_numbox_calc_fontwidth(x);
     my_numbox_check_minmax(x, min, max);
-//    iemgui_all_colfromload(&x->x_gui, bflcol);
     iemgui_verify_snd_ne_rcv(&x->x_gui);
     x->x_clock_reset = clock_new(x, (t_method)my_numbox_tick_reset);
     x->x_clock_wait = clock_new(x, (t_method)my_numbox_tick_wait);

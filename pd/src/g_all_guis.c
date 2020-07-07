@@ -135,11 +135,7 @@ static void iemgui_init_sym2dollararg(t_iemgui *x, t_symbol **symp,
 
 static t_symbol *color2symbol(int col)
 {
-//revisit this-- should be saving as symbol, but maybe that happens somewhere
-// else...
-    const int compat = (pd_compatibilitylevel < 48) ? 1 :
-    /* FIXXME: for Pd>=0.48, the default compatibility mode should be OFF */
-                    1;
+    const int compat = (pd_compatibilitylevel < 48) ? 1 : 0;
     char colname[MAXPDSTRING];
     colname[0] = colname[MAXPDSTRING-1] = 0;
 
@@ -171,9 +167,6 @@ void iemgui_all_sym2dollararg(t_iemgui *x, t_symbol **srlsym)
     srlsym[2] = x->x_lab_unexpanded;
 }
 
-static int col2save(int col) {
-    return -1-(((0xfc0000 & col) >> 6)|((0xfc00 & col) >> 4)|((0xfc & col) >> 2));
-}
 void iemgui_all_col2save(t_iemgui *x, t_symbol **bflcol)
 {
     bflcol[0] = color2symbol(x->x_bcol);
@@ -192,10 +185,14 @@ static void expand_shorthex(char *source, char *doubled)
 
 static int iemgui_getcolorarg(t_iemgui *x, int index, int argc, t_atom *argv)
 {
+    char *classname;
     if (index < 0 || index >= argc || !argc)
         return 0;
+
     if (IS_A_FLOAT(argv, index))
         return atom_getfloatarg(index, argc, argv);
+
+    classname = class_getname(pd_class(&x->x_obj.te_pd));
     if (IS_A_SYMBOL(argv, index))
     {
         t_symbol *s = atom_getsymbolarg(index, argc, argv);
@@ -220,12 +217,16 @@ static int iemgui_getcolorarg(t_iemgui *x, int index, int argc, t_atom *argv)
         if (s == &s_)
             pd_error(x, "%s: empty symbol detected in hex color argument. "
                 "Falling back to black. (Hit the sack.:)",
-                class_getname(pd_class(&x->x_obj.te_pd)));
+                classname);
         else
-            pd_error(x, "%s: expected 3 or 6-digit hex color format but got "
-                "'%s'. Falling back to black.",
-            class_getname(pd_class(&x->x_obj.te_pd)), s->s_name);
+            pd_error(x, "%s: expected '#fff' or '#ffffff' hex color format "
+                "but got '%s'. Falling back to black.",
+                classname, s->s_name);
+        return 0;
     }
+    pd_error(x, "%s: color method only accepts symbol or float arguments. "
+        "Falling back to black.",
+        classname);
     return 0;
 }
 
@@ -281,13 +282,6 @@ void iemgui_all_colfromload(t_iemgui *x, int *bflcol)
     x->x_bcol = colfromload(bflcol[0]);
     x->x_fcol = colfromload(bflcol[1]);
     x->x_lcol = colfromload(bflcol[2]);
-}
-
-static int iemgui_compatible_col(int i)
-{
-    if(i >= 0)
-        return(iemgui_color_hex[(iemgui_modulo_color(i))]);
-    return((-1-i)&0xffffff);
 }
 
 int iemgui_compatible_colorarg(t_iemgui *x, int index, int argc, t_atom* argv)

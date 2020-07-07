@@ -349,7 +349,6 @@ static void toggle_nonzero(t_toggle *x, t_floatarg f)
 static void *toggle_new(t_symbol *s, int argc, t_atom *argv)
 {
     t_toggle *x = (t_toggle *)pd_new(toggle_class);
-//    int bflcol[]={-262144, -1, -1};
     int a=IEM_GUI_DEFAULTSIZE;
     int ldx=17, ldy=7;
     int fs=10;
@@ -378,9 +377,6 @@ static void *toggle_new(t_symbol *s, int argc, t_atom *argv)
         iem_inttofstyle(&x->x_gui, atom_getintarg(7, argc, argv));
         fs = maxi(atom_getintarg(8, argc, argv),4);
         iemgui_all_loadcolors(&x->x_gui, argv+9, argv+10, argv+11);
-//        bflcol[0] = atom_getintarg(9, argc, argv);
-//        bflcol[1] = atom_getintarg(10, argc, argv);
-//        bflcol[2] = atom_getintarg(11, argc, argv);
         on = atom_getfloatarg(12, argc, argv);
     }
     else iemgui_new_getnames(&x->x_gui, 2, 0);
@@ -403,7 +399,6 @@ static void *toggle_new(t_symbol *s, int argc, t_atom *argv)
     x->x_gui.x_fontsize = fs;
     x->x_gui.x_w = iemgui_clip_size(a);
     x->x_gui.x_h = x->x_gui.x_w;
-//    iemgui_all_colfromload(&x->x_gui, bflcol);
     iemgui_verify_snd_ne_rcv(&x->x_gui);
     outlet_new(&x->x_gui.x_obj, &s_float);
 
