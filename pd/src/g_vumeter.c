@@ -664,7 +664,7 @@ static void *vu_new(t_symbol *s, int argc, t_atom *argv)
        &&(IS_A_SYMBOL(argv,3)||IS_A_FLOAT(argv,3))
        &&IS_A_FLOAT(argv,4)&&IS_A_FLOAT(argv,5)
        &&IS_A_FLOAT(argv,6)&&IS_A_FLOAT(argv,7)
-       &&IS_A_FLOAT(argv,8)&&IS_A_FLOAT(argv,9)&&IS_A_FLOAT(argv,10))
+       &&IS_A_FLOAT(argv,10))
     {
         w = atom_getintarg(0, argc, argv);
         h = atom_getintarg(1, argc, argv);

@@ -312,8 +312,7 @@ static void *my_canvas_new(t_symbol *s, int argc, t_atom *argv)
     if(((argc >= 10)&&(argc <= 13))
        &&(IS_A_SYMBOL(argv,i+3)||IS_A_FLOAT(argv,i+3))&&IS_A_FLOAT(argv,i+4)
        &&IS_A_FLOAT(argv,i+5)&&IS_A_FLOAT(argv,i+6)
-       &&IS_A_FLOAT(argv,i+7)&&IS_A_FLOAT(argv,i+8)
-       &&IS_A_FLOAT(argv,i+9))
+       &&IS_A_FLOAT(argv,i+7))
     {
             /* disastrously, the "label" sits in a different part of the
             message.  So we have to track its location separately (in
