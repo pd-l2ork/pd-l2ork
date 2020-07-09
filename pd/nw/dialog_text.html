@@ -64,6 +64,7 @@ function apply() {
         line = line.replace("$", " \\$ ");
         pdgui.pdsend(pd_object_callback, "addline", line);
     });
+    pdgui.pdsend(pd_object_callback, "notify");
     dirty = 0;
 }
 
