@@ -634,7 +634,11 @@ void iemgui_color(t_iemgui *x, t_symbol *s, int ac, t_atom *av)
             x->x_bcol = iemgui_compatible_colorarg(x, 0, ac, av);
         if (ac >= 2)
         {
-            if (iemgui_old_color_args(ac, av))
+                /* if there are only two args, the old style was to make
+                   the 2nd argument the label color. So here we check for the
+                   old-style float args and use that format if they are
+                   present. */
+            if (ac == 2 && iemgui_old_color_args(ac, av))
                 x->x_lcol = iemgui_compatible_colorarg(x, 1, ac, av);
             else
                 x->x_fcol = iemgui_compatible_colorarg(x, 1, ac, av);
