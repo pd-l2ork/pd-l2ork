@@ -1,7 +1,7 @@
-t_class *sigsend13_class;
-t_class *sigthrow13_class;
-t_class *sigreceive13_class;
-t_class *sigcatch13_class;
+static t_class *sigsend13_class;
+static t_class *sigthrow13_class;
+static t_class *sigreceive13_class;
+static t_class *sigcatch13_class;
 
 typedef struct _sigsend13
 {
