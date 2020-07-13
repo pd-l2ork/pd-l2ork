@@ -351,7 +351,7 @@ ext-clean: $(EXT_DIR)
 build: $(SRC_FILE)
 	emcc $(CFLAGS) --bind -o $(TARGET) $(SRC_FILE) --closure 1 \
 	-s USE_SDL=2 -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s FORCE_FILESYSTEM=1 \
-	-s EXTRA_EXPORTED_RUNTIME_METHODS=FS --preload-file $(EXT_DIR) $(LDFLAGS)
+	-s "EXTRA_EXPORTED_RUNTIME_METHODS=['FS']" --preload-file $(EXT_DIR) $(LDFLAGS)
 
 clean:
 	rm -rf $(OUTPUT_FILES)
