@@ -20,7 +20,7 @@ extern int ugen_getsortno(void);
 #endif
 
 
-t_class *sigdel16write_class;
+static t_class *sigdel16write_class;
 
 typedef struct del16writectl{
   int c_n;

@@ -58,7 +58,7 @@ typedef struct _breakpoints
 } t_breakpoints;
 
 
-t_widgetbehavior breakpoints_widgetbehavior;
+static t_widgetbehavior breakpoints_widgetbehavior;
 static void breakpoints_drawme(t_breakpoints *x, t_glist *glist, int firsttime);
 static int breakpoints_set_values(t_breakpoints * x);
 static void breakpoints_resize(t_breakpoints* x,int ns);

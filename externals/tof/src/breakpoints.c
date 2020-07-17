@@ -24,7 +24,7 @@ static t_class *breakpoints_class;
      if (x->s_sym != &s_ && x->s_sym->s_thing) pd_list(x->s_sym->s_thing, &s_list, nr, (t_atom*)&a);
 
 
-char dumpy[2000];
+static char dumpy[2000];
 
 /* initialize envelope with argument vector */
 
@@ -377,7 +377,7 @@ static void breakpoints_click(t_breakpoints *x,
     t_floatarg alt);
 static void breakpoints_key(t_breakpoints *x, t_floatarg f);
 
-t_widgetbehavior breakpoints_widgetbehavior;
+static t_widgetbehavior breakpoints_widgetbehavior;
 
 
 static void breakpoints_free(t_breakpoints *x) {
