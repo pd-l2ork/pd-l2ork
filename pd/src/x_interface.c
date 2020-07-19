@@ -180,15 +180,44 @@ static void *tracecall_new(void)
     return x;
 }
 
+#define MAXLEN 8
 static void tracecall_anything(t_print *x, t_symbol *s, int argc, t_atom *argv)
 {
-    t_atom at[2];
-    int i;
+    t_atom at[MAXLEN];
+    int i, j;
     for (i = pd_stackn - 1; i >= 0; i--)
     {
+        t_symbol *isel = pd_stack[i].s;
         SETSYMBOL(&at[0], pd_class(pd_stack[i].self)->c_name);
-        SETSYMBOL(&at[1], pd_stack[i].s);
-        outlet_list(x->x_obj.ob_outlet, &s_list, 2, at);
+        SETSYMBOL(&at[1], isel);
+            /* handle symbol and float built-ins separately */
+        if (isel == &s_float)
+        {
+            SETFLOAT(&at[2], pd_stack[i].f);
+            j = 3;
+        }
+        else if (isel == &s_symbol)
+        {
+            SETSYMBOL(&at[2], pd_stack[i].sym);
+            j = 3;
+        }
+        else
+        {
+            for (j = 2; j < MAXLEN && j - 2 < pd_stack[i].argc; j++)
+            {
+                t_atom a = pd_stack[i].argv[j - 2];
+                switch (a.a_type) {
+                case A_FLOAT: SETFLOAT(&at[j], a.a_w.w_float); break;
+                case A_SYMBOL: SETSYMBOL(&at[j], a.a_w.w_symbol); break;
+                case A_POINTER: SETSYMBOL(&at[j], gensym("(gpointer)")); break;
+                case A_BLOB: SETSYMBOL(&at[j], gensym("(blob)")); break;
+                default: SETSYMBOL(&at[j], gensym("(unknown atom type)"));
+                         break;
+                }
+            }
+            if (j - 2 < pd_stack[i].argc) SETSYMBOL(&at[j - 1], gensym("..."));
+        }
+        outlet_list(x->x_obj.ob_outlet, &s_list, j, at);
     }
 }
 

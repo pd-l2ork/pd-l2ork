@@ -112,7 +112,10 @@ EXTERN void glob_quit(void *dummy, t_floatarg status);
 typedef struct _call {
     t_pd *self;
     t_symbol *s;
-//    t_binbuf *argv;
+    int argc;
+    t_atom *argv;
+    t_float f;     /* for float message */
+    t_symbol *sym; /* for symbol message */
 } t_call;
 
 EXTERN t_call pd_stack[STACKSIZE];

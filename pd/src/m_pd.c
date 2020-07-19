@@ -411,12 +411,27 @@ void pd_doloadbang(void)
 t_call pd_stack[STACKSIZE];
 int pd_stackn; /* iteration counter for the call stack */
 
-#define ENTER(SELECTOR) if (pd_stackn >= STACKSIZE) { \
+#define ENTERHEAD(SELECTOR) if (pd_stackn >= STACKSIZE) { \
                             pd_stackerror(x); \
                             return; \
                         } \
                         pd_stack[pd_stackn].self = x; \
-                        pd_stack[pd_stackn].s = SELECTOR; \
+                        pd_stack[pd_stackn].s = SELECTOR;
+
+#define ENTER(S) ENTERHEAD(S) \
+                        pd_stackn++;
+
+#define ENTERFLOAT(FLOAT) ENTERHEAD(&s_float) \
+                        pd_stack[pd_stackn].f = FLOAT; \
+                        pd_stackn++;
+
+#define ENTERSYM(SYM) ENTERHEAD(&s_symbol) \
+                        pd_stack[pd_stackn].sym = SYM; \
+                        pd_stackn++;
+
+#define ENTERVEC(SEL, ARGC, ARGV) ENTERHEAD(SEL) \
+                        pd_stack[pd_stackn].argc = ARGC; \
+                        pd_stack[pd_stackn].argv = ARGV; \
                         pd_stackn++;
 
 #define LEAVE pd_stackn--;
@@ -436,28 +451,28 @@ void pd_bang(t_pd *x)
 
 void pd_float(t_pd *x, t_float f)
 {
-    ENTER(&s_float);
+    ENTERFLOAT(f);
     (*(*x)->c_floatmethod)(x, f);
     LEAVE;
 }
 
 void pd_pointer(t_pd *x, t_gpointer *gp)
 {
-    ENTER(&s_pointer);
+    ENTER(&s_pointer); /* meh. */
     (*(*x)->c_pointermethod)(x, gp);
     LEAVE;
 }
 
 void pd_symbol(t_pd *x, t_symbol *s)
 {
-    ENTER(&s_symbol);
+    ENTERSYM(s);
     (*(*x)->c_symbolmethod)(x, s);
     LEAVE;
 }
 
 void pd_blob(t_pd *x, t_blob *st) /* MP20061226 blob type */
 {
-    ENTER(&s_blob);
+    ENTER(&s_blob); /* meh. */
     /*post("pd_blob: st %p length %lu (*x)->c_blobmethod %p", st, st->s_length, (*x)->c_blobmethod);*/
     (*(*x)->c_blobmethod)(x, st);
     LEAVE;
@@ -465,7 +480,7 @@ void pd_blob(t_pd *x, t_blob *st) /* MP20061226 blob type */
 
 void pd_list(t_pd *x, t_symbol *s, int argc, t_atom *argv)
 {
-    ENTER(&s_blob);
+    ENTERVEC(&s_list, argc, argv);
     (*(*x)->c_listmethod)(x, &s_list, argc, argv);
     LEAVE;
 }
@@ -473,7 +488,7 @@ void pd_list(t_pd *x, t_symbol *s, int argc, t_atom *argv)
 extern void pd_typedmess2(t_pd *x, t_symbol *s, int argc, t_atom *argv);
 void pd_typedmess(t_pd *x, t_symbol *s, int argc, t_atom *argv)
 {
-    ENTER(s);
+    ENTERVEC(s, argc, argv);
     pd_typedmess2(x, s, argc, argv);
     LEAVE;
 }
