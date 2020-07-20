@@ -18,7 +18,7 @@ static SDL_AudioDeviceID deviceOut = 0;
 static int numInChannels = 0;
 static int numOutChannels = 2;
 static int sampleRate = 44100;
-static int ticksPerBuffer = 32;
+static int ticksPerBuffer = 16;
 static int blockSize = libpd_blocksize();
 static int bufferSize = ticksPerBuffer * blockSize;
 static float *inBuffer = nullptr;
@@ -191,18 +191,22 @@ int main(int argc, char **argv) {
     libpd_start_gui(const_cast<char *>("/"));
     libpd_init_audio(numInChannels, numOutChannels, sampleRate);
     
-    // add externals to search/help path
-    libpd_add_to_search_path(EXT_DIR);
-    libpd_add_to_help_path(EXT_DIR);
-    DIR *ext_dir = opendir(EXT_DIR);
+    // add internals help path
+    const std::string &internals_help_path = std::string(DST_DOC_DIR) + std::string("/5.reference");
+    libpd_add_to_help_path(internals_help_path.c_str());
+    
+    // add externals search/help path
+    libpd_add_to_search_path(DST_EXT_DIR);
+    libpd_add_to_help_path(DST_EXT_DIR);
+    DIR *ext_dir = opendir(DST_EXT_DIR);
     if (ext_dir) {
         struct dirent *dir;
-        const std::string &prefix = std::string(EXT_DIR) + std::string("/");
+        const std::string &externals_prefix = std::string(DST_EXT_DIR) + std::string("/");
         while ((dir = readdir(ext_dir)) != nullptr) {
             if (dir->d_name[0] != '.') {
-                const std::string &path = prefix + std::string(dir->d_name);
-                libpd_add_to_search_path(path.c_str());
-                libpd_add_to_help_path(path.c_str());
+                const std::string &externals_path = externals_prefix + std::string(dir->d_name);
+                libpd_add_to_search_path(externals_path.c_str());
+                libpd_add_to_help_path(externals_path.c_str());
             }
         }
         closedir(ext_dir);
