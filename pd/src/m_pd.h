@@ -223,6 +223,7 @@ typedef struct _gobj        /* a graphical object */
 {
     t_pd g_pd;              /* pure datum header (class) */
     struct _gobj *g_next;   /* next in list */
+    int g_selected;         /* cache status to avoid linked-list walk */
 } t_gobj;
 
 typedef struct _scalar      /* a graphical object holding data */
