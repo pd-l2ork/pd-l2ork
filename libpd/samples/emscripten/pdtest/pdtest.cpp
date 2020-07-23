@@ -15,7 +15,7 @@
 using namespace emscripten;
 static SDL_AudioDeviceID deviceIn = 0;
 static SDL_AudioDeviceID deviceOut = 0;
-static int numInChannels = 0;
+static int numInChannels = 1;
 static int numOutChannels = 2;
 static int sampleRate = 44100;
 static int ticksPerBuffer = 16;
