@@ -19,7 +19,7 @@ LDFLAGS = -L$(LIBPD_DIR)/libs -lpd -lm
 
 all: clean pd build
 
-pd: pd-mkdir doc-cp adaptive arraysize autotune~ bassemu~ bob~ bonk~ bsaylor choice comport controctopus creb cxc disis earplug~ ekext ext13 fftease fiddle~ flatgui freeverb~ ggee hcs iem_adaptfilt iem_ambi iem_bin_ambi iem_delay iem_roomsim iem_spec2 iem_tab iemguts iem16 iemlib jasch_lib jmmmp la-kitchen libdir list-abs loop~ lrshift~ mapping markex maxlib memento memento-p mjlib moonlib motex mrpeach nsend pan pd-wavelet pddp pique pixeltango plugin~ purepd rjlib rradical rtc sfruit sigmund~ sigpack smlib stdout timestretch tof vbap windowing zexy pd-clean
+pd: pd-mkdir doc-cp adaptive arraysize autotune~ bassemu~ extra parazit bob~ bonk~ bsaylor choice comport controctopus creb cxc disis earplug~ ekext ext13 fftease fiddle~ flatgui freeverb~ ggee hcs iem_adaptfilt iem_ambi iem_bin_ambi iem_delay iem_roomsim iem_spec2 iem_tab iemguts iem16 iemlib jasch_lib jmmmp la-kitchen libdir list-abs loop~ lrshift~ mapping markex maxlib memento memento-p mjlib moonlib motex mrpeach nsend pan pd-wavelet pddp pique pixeltango plugin~ purepd rjlib rradical rtc sfruit sigmund~ sigpack smlib stdout timestretch tof vbap windowing zexy pd-clean
 
 pd-mkdir: $(ABSTR_DIR) $(EXTER_DIR) $(EXTRA_DIR) $(DOC_DIR)
 	rm -rf $(DST_PD_DIR)
@@ -42,6 +42,12 @@ autotune~: $(EXTER_DIR)/autotune $(DST_EXT_DIR)
 	rm -f $(DST_EXT_DIR)/autotune~/autotune_scale_warp.png
 
 bassemu~: $(EXTER_DIR)/bassemu~ $(DST_EXT_DIR)
+	cp -rf $^
+
+extra: $(EXTRA_DIR)/*.pd $(DST_EXT_DIR)
+	cp -rf $^
+
+parazit: $(ABSTR_DIR)/parazit/*.pd $(DST_EXT_DIR)
 	cp -rf $^
 
 bob~: $(EXTRA_DIR)/bob~ $(DST_EXT_DIR)
