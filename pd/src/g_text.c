@@ -2016,8 +2016,8 @@ static void text_displace_withtag(t_gobj *z, t_glist *glist,
     t_text *x = (t_text *)z;
     x->te_xpix += dx;
     x->te_ypix += dy;
-    if (glist_isvisible(glist))
-        canvas_fixlinesfor(glist_getcanvas(glist), x);
+//    if (glist_isvisible(glist))
+//        canvas_fixlinesfor(glist_getcanvas(glist), x);
 }
 
 static void text_select(t_gobj *z, t_glist *glist, int state)

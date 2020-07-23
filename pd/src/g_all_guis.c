@@ -510,7 +510,7 @@ void iemgui_displace_withtag(t_gobj *z, t_glist *glist, int dx, int dy)
     x->x_obj.te_xpix += dx;
     x->x_obj.te_ypix += dy;
     //iemgui_draw_move(x);
-    canvas_fixlinesfor(glist_getcanvas(glist), (t_text *)z);
+//    canvas_fixlinesfor(glist_getcanvas(glist), (t_text *)z);
 }
 
 void iemgui_select(t_gobj *z, t_glist *glist, int selected)

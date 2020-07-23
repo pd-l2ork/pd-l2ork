@@ -63,6 +63,11 @@ extern t_canvas *canvas_templatecanvas_forgroup(t_canvas *c);
 void glist_add(t_glist *x, t_gobj *y)
 {
     //fprintf(stderr,"glist_add %lx %d\n", (t_int)x, (x->gl_editor ? 1 : 0));    
+        /* not sure if this is the correct entry point-- we want to set
+           the selected state as soon as possible after the gobj is created.
+           I don't see how it could be selected *before* it gets added to
+           the glist, so here we go... */
+    y->g_selected = 0;
     t_object *ob;
     y->g_next = 0;
     int index = 0;

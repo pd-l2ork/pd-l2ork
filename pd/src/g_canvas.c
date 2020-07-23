@@ -1069,6 +1069,27 @@ void canvas_fixlinesfor(t_canvas *x, t_text *text)
     }
 }
 
+    /* accelerated line-moving algorithm. Instead of searching through the
+       glist for each selected object, we do a single pass and
+       update any line where tr_ob or tr_ob2 happen to be part of the selection.
+       So instead of selection_size * glist_size/2, we scale with glist_size. */
+void canvas_fixlinesforselection(t_canvas *x)
+{
+    t_linetraverser t;
+    t_outconnect *oc;
+
+    linetraverser_start(&t, x);
+    while (oc = linetraverser_next(&t))
+    {
+        if (glist_isselected(x, (t_gobj *)t.tr_ob) ||
+            glist_isselected(x, (t_gobj *)t.tr_ob2))
+        {
+            canvas_updateconnection(x, t.tr_lx1, t.tr_ly1, t.tr_lx2, t.tr_ly2,
+                (t_int)oc);
+        }
+    }
+}
+
     /* kill all lines for the object */
 void canvas_deletelinesfor(t_canvas *x, t_text *text)
 {

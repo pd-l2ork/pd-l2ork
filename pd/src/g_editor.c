@@ -199,6 +199,8 @@ void gobj_displace_withtag(t_gobj *x, t_glist *glist, int dx, int dy)
 
 void gobj_select(t_gobj *x, t_glist *glist, int state)
 {
+        /* cache the selection state */
+    x->g_selected = state;
     if (x->g_pd->c_wb && x->g_pd->c_wb->w_selectfn)
         (*x->g_pd->c_wb->w_selectfn)(x, glist, state);
 }
@@ -463,9 +465,10 @@ int glist_isselected(t_glist *x, t_gobj *y)
 {
     if (x->gl_editor)
     {
-        t_selection *sel;
-        for (sel = x->gl_editor->e_selection; sel; sel = sel->sel_next)
-            if (sel->sel_what == y) return (1);
+        return y->g_selected;
+//        t_selection *sel;
+//        for (sel = x->gl_editor->e_selection; sel; sel = sel->sel_next)
+//            if (sel->sel_what == y) return (1);
     }
     return (0);
 }
@@ -4985,6 +4988,9 @@ void canvas_mousedown_middle(t_canvas *x, t_floatarg xpos, t_floatarg ypos,
     }
 }
 
+
+void canvas_fixlinesforselection(t_canvas *x);
+
     /* displace the selection by (dx, dy) pixels */
 void canvas_displaceselection(t_canvas *x, int dx, int dy)
 {
@@ -5040,6 +5046,12 @@ void canvas_displaceselection(t_canvas *x, int dx, int dy)
         //scrollbar_update(x);
         if (x->gl_editor->e_selection)
             canvas_dirty(x, 1);
+    }
+        /* Now let's make a pass through the glist to find the cords we
+           need to redraw. */
+    if (dx || dy)
+    {
+        canvas_fixlinesforselection(x);
     }
     // if we have old_displace, legacy displaced objects won't conform
     // to proper ordering of objects as they have been redrawn on top
