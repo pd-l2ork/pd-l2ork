@@ -7612,7 +7612,7 @@ static void canvas_addtobuf(t_canvas *x, t_symbol *s, int argc, t_atom *argv)
     binbuf_add(newobjbuf, argc, argv);
 }
 
-static void canvas_buftotext(t_canvas *x, t_symbol *s, int argc, t_atom *argv)
+static void canvas_buftotext(t_canvas *x)
 {
     t_gobj *y;
     t_rtext *rtext;
