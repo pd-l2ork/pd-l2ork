@@ -66,7 +66,6 @@ set(PD_SOURCES
     ../pd/src/d_fft.c
     ../pd/src/d_fft_fftsg.c
     ../pd/src/d_fftroutine.c
-    ../pd/src/d_fftsg_h.c
     ../pd/src/d_filter.c
     ../pd/src/d_global.c
     ../pd/src/d_math.c

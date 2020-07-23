@@ -60,7 +60,7 @@ PDNATIVE_SOLIB_EXT ?= $(SOLIB_EXT)
 PD_FILES = \
     ../pd/src/d_arithmetic.c ../pd/src/d_array.c ../pd/src/d_ctl.c \
     ../pd/src/d_dac.c ../pd/src/d_delay.c ../pd/src/d_fft.c \
-    ../pd/src/d_fft_fftsg.c ../pd/src/d_fftroutine.c ../pd/src/d_fftsg_h.c \
+    ../pd/src/d_fft_fftsg.c ../pd/src/d_fftroutine.c \
     ../pd/src/d_filter.c ../pd/src/d_global.c ../pd/src/d_math.c \
     ../pd/src/d_misc.c ../pd/src/d_osc.c ../pd/src/d_resample.c \
     ../pd/src/d_soundfile.c ../pd/src/d_ugen.c \
