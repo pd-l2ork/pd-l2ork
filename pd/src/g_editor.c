@@ -465,10 +465,10 @@ int glist_isselected(t_glist *x, t_gobj *y)
 {
     if (x->gl_editor)
     {
-        return y->g_selected;
-//        t_selection *sel;
-//        for (sel = x->gl_editor->e_selection; sel; sel = sel->sel_next)
-//            if (sel->sel_what == y) return (1);
+        return y->g_selected != 0; /* protect against nonzero sentinel values */
+        //t_selection *sel;
+        //for (sel = x->gl_editor->e_selection; sel; sel = sel->sel_next)
+        //    if (sel->sel_what == y) return (1);
     }
     return (0);
 }
