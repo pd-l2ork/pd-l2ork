@@ -723,7 +723,7 @@ typedef struct _exp_tilde
     t_float x_f;
 } t_exp_tilde;
 
-static void *exp_tilde_new(t_symbol *s, int argc, t_atom *argv)
+static void *exp_tilde_new(void)
 {
     t_exp_tilde *x = (t_exp_tilde *)pd_new(exp_tilde_class);
     outlet_new(&x->x_obj, &s_signal);
@@ -870,7 +870,7 @@ typedef struct _abs_tilde
     t_float x_f;
 } t_abs_tilde;
 
-static void *abs_tilde_new(t_symbol *s, int argc, t_atom *argv)
+static void *abs_tilde_new(void)
 {
     t_abs_tilde *x = (t_abs_tilde *)pd_new(abs_tilde_class);
     outlet_new(&x->x_obj, &s_signal);
