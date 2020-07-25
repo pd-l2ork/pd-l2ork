@@ -151,6 +151,10 @@
       console.log("gui_window_close", cid);
     }
 
+    function gui_canvas_get_scroll(cid) {
+      console.log("gui_canvas_get_scroll", cid);
+    }
+
     function emscripten_receive_data(data) {
       var command_buffer = {
         next_command: ""

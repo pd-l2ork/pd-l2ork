@@ -852,6 +852,7 @@ void *pdsymbol_new(t_pd *dummy, t_symbol *s);
 void *list_new(t_pd *dummy, t_symbol *s, int argc, t_atom *argv);
 
 t_canvas *canvas_new(void *dummy, t_symbol *sel, int argc, t_atom *argv);
+void *template_usetemplate(void *dummy, t_symbol *s, int argc, t_atom *argv);
 
 /* needed for proper error reporting */
 extern t_pd *pd_mess_from_responder(t_pd *x);
@@ -951,6 +952,8 @@ void pd_typedmess(t_pd *x, t_symbol *s, int argc, t_atom *argv)
                 newest =
                     (*((t_newgimme)(m->me_fun)))(s, argc, argv);
             else if (((t_messgimmer)(m->me_fun)) == ((t_messgimmer)(canvas_new)))
+                (*((t_messgimmer)(m->me_fun)))(x, s, argc, argv);
+            else if (((t_messgimmer)(m->me_fun)) == ((t_messgimmer)(template_usetemplate)))
                 (*((t_messgimmer)(m->me_fun)))(x, s, argc, argv);
             else
                 (*((t_messgimme)(m->me_fun)))(x, s, argc, argv);
