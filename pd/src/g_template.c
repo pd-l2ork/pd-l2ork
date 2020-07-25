@@ -550,7 +550,7 @@ void template_notifyforscalar(t_template *template, t_glist *owner,
     If there are still struct objects belonging to the other template, we're
     in trouble.  LATER we'll figure out how to conform the new patch's objects
     to the pre-existing struct. */
-static void *template_usetemplate(void *dummy, t_symbol *s,
+void *template_usetemplate(void *dummy, t_symbol *s,
     int argc, t_atom *argv)
 {
     t_template *x;
