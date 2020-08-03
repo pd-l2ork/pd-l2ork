@@ -564,7 +564,7 @@ typedef struct _messresponder
 typedef struct _message
 {
     t_text m_text;
-    t_messresponder m_messresponder;
+    t_messresponder m_messresponder; /* see pd_mess_from_responder below */
     t_glist *m_glist;
     t_clock *m_clock;
 } t_message;

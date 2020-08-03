@@ -5822,3 +5822,18 @@ function gui_pddplink_open(filename, dir) {
         post("pddplink: error: file not found: " + filename);
     }
 }
+
+function gui_tracecall(cid, tag, array_of_atom_arrays) {
+    var i;
+    do_post("." + tag, "tracecall", "\n", null, null);
+    array_of_atom_arrays.forEach(function(e) {
+        var object_id;
+        // special case for guiconnect-- no object on the canvas for it. We
+        // leave it undefined so the console won't print a link
+        if (e[1] != "guiconnect") {
+            object_id = "." + e[0];
+        }
+        do_post(object_id, e[1], e.slice(2).join(" ") + "\n",
+            null, null);
+    });
+}

@@ -171,34 +171,89 @@ t_class *tracecall_class;
 typedef struct _tracecall
 {
     t_object x_obj;
+    t_glist *x_glist;
+    int x_print;
 } t_tracecall;
 
-static void *tracecall_new(void)
+static void *tracecall_new(t_float out)
 {
     t_tracecall *x = (t_tracecall *)pd_new(tracecall_class);
-    outlet_new(&x->x_obj, &s_list);
+    x->x_glist = canvas_getcurrent();
+    if (out)
+        outlet_new(&x->x_obj, &s_list);
+    x->x_print = !out;
     return x;
 }
 
+static void trace_s(t_tracecall *x, t_atom *at, t_symbol *s)
+{
+    if (x->x_print)
+        gui_s(s->s_name);
+    else
+        SETSYMBOL(at, s);
+}
+
+static void trace_f(t_tracecall *x, t_atom *at, t_float f)
+{
+    if (x->x_print)
+        gui_f(f);
+    else
+        SETFLOAT(at, f);
+}
+
+extern t_pd *pd_mess_from_responder(t_pd *x);
+extern t_class *messresponder_class;
+
+static t_pd *tracecall_getpd(t_pd *x)
+{
+    if (pd_class(x) == messresponder_class)
+        return pd_mess_from_responder(x);
+    else
+        return x;
+}
+
+static t_symbol *tracecall_getclassname(t_symbol *s)
+{
+    if (s == gensym("messresponder"))
+        return (gensym("message"));
+    else return s;
+}
+
 #define MAXLEN 8
-static void tracecall_anything(t_print *x, t_symbol *s, int argc, t_atom *argv)
+static void tracecall_anything(t_tracecall *x, t_symbol *s, int argc,
+    t_atom *argv)
 {
     t_atom at[MAXLEN];
-    int i, j;
-    for (i = pd_stackn - 1; i >= 0; i--)
+    int i, j, print = x->x_print;
+        /* if we're printing to the console, start a message before the loop */
+    if (print)
     {
+        gui_start_vmess("gui_tracecall", "xx", x->x_glist, x);
+        gui_start_array();
+    }
+    for (i = 0; i < pd_stackn; i++)
+    {
+        t_pd *my_pd = tracecall_getpd(pd_stack[i].self);
+        t_symbol *classname =
+            tracecall_getclassname(pd_class(pd_stack[i].self)->c_name);
         t_symbol *isel = pd_stack[i].s;
-        SETSYMBOL(&at[0], pd_class(pd_stack[i].self)->c_name);
-        SETSYMBOL(&at[1], isel);
+        if (print) gui_start_array();
+            /* for printing to the console, we want the addy of the object so
+               the user can track back using a link. For now we're just
+               excluding this from the outlet, but I guess in the future we
+               could use a gpointer... */
+        if (print) gui_x((long unsigned int)my_pd);
+        trace_s(x, &at[0], classname);
+        trace_s(x, &at[1], isel);
             /* handle symbol and float built-ins separately */
         if (isel == &s_float)
         {
-            SETFLOAT(&at[2], pd_stack[i].f);
+            trace_f(x, &at[2], pd_stack[i].f);
             j = 3;
         }
         else if (isel == &s_symbol)
         {
-            SETSYMBOL(&at[2], pd_stack[i].sym);
+            trace_s(x, &at[2], pd_stack[i].sym);
             j = 3;
         }
         else
@@ -207,24 +262,31 @@ static void tracecall_anything(t_print *x, t_symbol *s, int argc, t_atom *argv)
             {
                 t_atom a = pd_stack[i].argv[j - 2];
                 switch (a.a_type) {
-                case A_FLOAT: SETFLOAT(&at[j], a.a_w.w_float); break;
-                case A_SYMBOL: SETSYMBOL(&at[j], a.a_w.w_symbol); break;
-                case A_POINTER: SETSYMBOL(&at[j], gensym("(gpointer)")); break;
-                case A_BLOB: SETSYMBOL(&at[j], gensym("(blob)")); break;
-                default: SETSYMBOL(&at[j], gensym("(unknown atom type)"));
+                case A_FLOAT: trace_f(x, &at[j], a.a_w.w_float); break;
+                case A_SYMBOL: trace_s(x, &at[j], a.a_w.w_symbol); break;
+                case A_POINTER: trace_s(x, &at[j], gensym("(gpointer)")); break;
+                case A_BLOB: trace_s(x, &at[j], gensym("(blob)")); break;
+                default: trace_s(x, &at[j], gensym("(unknown atom type)"));
                          break;
                 }
             }
-            if (j - 2 < pd_stack[i].argc) SETSYMBOL(&at[j - 1], gensym("..."));
+            if (j - 2 < pd_stack[i].argc) trace_s(x, &at[j - 1], gensym("..."));
         }
-        outlet_list(x->x_obj.ob_outlet, &s_list, j, at);
+        if (print) gui_end_array();
+        else outlet_list(x->x_obj.ob_outlet, &s_list, j, at);
+    }
+        /* if printing to the console, end our message */
+    if (print)
+    {
+        gui_end_array();
+        gui_end_vmess();
     }
 }
 
 static void tracecall_setup(void)
 {
     tracecall_class = class_new(gensym("tracecall"),
-        (t_newmethod)tracecall_new, 0, sizeof(t_tracecall), 0, A_GIMME, 0);
+        (t_newmethod)tracecall_new, 0, sizeof(t_tracecall), 0, A_DEFFLOAT, 0);
     class_addanything(tracecall_class, tracecall_anything);
 }
 
