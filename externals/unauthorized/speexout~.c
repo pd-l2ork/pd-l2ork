@@ -29,7 +29,7 @@
 /* Pop Group --                                                                 */
 /* ---------------------------------------------------------------------------- */
 
-
+#ifndef __EMSCRIPTEN__
 
 #ifdef _MSC_VER
 #pragma warning( disable : 4244 )
@@ -454,3 +454,4 @@ void speexout_tilde_setup(void)
     class_addmethod(speexout_class, (t_method)speexout_quality, gensym("quality"), A_FLOAT, 0);
 }
 
+#endif /* __EMSCRIPTEN__ */

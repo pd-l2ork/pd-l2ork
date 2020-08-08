@@ -31,6 +31,8 @@
 #define MIN_GRID_WIDTH 20
 #define MIN_GRID_HEIGHT 20
 
+extern int gfxstub_haveproperties(void *key);
+
 t_widgetbehavior grid_widgetbehavior;
 static t_class *grid_class;
 static int gridcount=0;

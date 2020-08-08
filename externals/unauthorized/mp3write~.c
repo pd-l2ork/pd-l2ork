@@ -29,6 +29,8 @@
 /* Gang Of Four - "Guns Before Butter"                                          */
 /* ---------------------------------------------------------------------------- */
 
+#ifndef __EMSCRIPTEN__
+
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
@@ -642,3 +644,5 @@ void mp3write_tilde_setup(void)
     class_addmethod(mp3write_class, (t_method)mp3write_append, gensym("append"), 0);
     class_addmethod(mp3write_class, (t_method)mp3write_truncate, gensym("truncate"), 0);
 }
+
+#endif /* __EMSCRIPTEN__ */

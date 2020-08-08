@@ -83,16 +83,16 @@
     function pdsend() {
       var string = Array.prototype.join.call(arguments, " ");
       var array = string.split(" ");
-      Module.startMessage(array.length - 2);
+      Module.start_message(array.length - 2);
       for (let i = 2; i < array.length; i++) {
         if (isNaN(array[i])) {
-          Module.addSymbol(array[i]);
+          Module.add_symbol(array[i]);
         }
         else {
-          Module.addFloat(parseFloat(array[i]));
+          Module.add_float(parseFloat(array[i]));
         }
       }
-      Module.finishMessage(array[0], array[1]);
+      Module.finish_message(array[0], array[1]);
     }
 
     function gui_ping() {
@@ -155,7 +155,7 @@
       console.log("gui_canvas_get_scroll", cid);
     }
 
-    function emscripten_receive_data(data) {
+    function pd_receive_command_buffer(data) {
       var command_buffer = {
         next_command: ""
       };
@@ -233,12 +233,12 @@
 
     function openPatch() {
       if (currentFile === "") return;
-      Module.openPatch(currentFile, "/");
+      Module.open_patch(currentFile, "/");
     }
 
     function closePatch() {
       if (currentFile === "") return;
-      Module.closePatch(currentFile);
+      Module.close_patch(currentFile);
     }
 
     function printPatch() {
