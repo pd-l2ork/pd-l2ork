@@ -171,6 +171,7 @@ all: $(SOURCES:.c=.$(EXTENSION))
 	$(CC) $(LDFLAGS) -o "$*.$(EXTENSION)" "$*.o"  $(LIBS)
 	chmod a-x "$*.$(EXTENSION)"
 
+ifneq ($(CC),emcc)
 partconv~.$(EXTENSION): partconv~.o
 	$(CC) $(LDFLAGS) -o "partconv~.$(EXTENSION)" "partconv~.o"  $(LIBS) -lfftw3f
 	chmod a-x "partconv~.$(EXTENSION)"
@@ -178,6 +179,7 @@ partconv~.$(EXTENSION): partconv~.o
 pvoc~.$(EXTENSION): pvoc~.o
 	$(CC) $(LDFLAGS) -o "pvoc~.$(EXTENSION)" "pvoc~.o"  $(LIBS) -lfftw3
 	chmod a-x "pvoc~.$(EXTENSION)"
+endif
 
 # this links everything into a single binary file
 $(LIBRARY_NAME): $(SOURCES:.c=.o) $(LIBRARY_NAME).o

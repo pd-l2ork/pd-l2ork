@@ -26,7 +26,7 @@
 /*                                                                              */
 /* ---------------------------------------------------------------------------- */
 
-
+#ifndef __EMSCRIPTEN__
 
 #ifdef _MSC_VER
 #pragma warning( disable : 4244 )
@@ -995,3 +995,4 @@ void mp3cast_tilde_setup(void)
     class_addmethod(mp3cast_class, (t_method)mp3cast_description, gensym("description"), A_SYMBOL, 0);
 }
 
+#endif /* __EMSCRIPTEN__ */
