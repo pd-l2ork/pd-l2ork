@@ -51,22 +51,6 @@ static void *get_object(const char *s) {
   return x;
 }
 
-static void call_external_setup(const char *prefix, void(*fun)(void)) {
-  t_class *c = pd_objectmaker;
-  int pre_nmethod = c->c_nmethod;
-  (*fun)();
-  int new_nmethod = c->c_nmethod;
-  for (int i = pre_nmethod; i < new_nmethod; i++) {
-    char buf[MAXPDSTRING];
-    snprintf(buf, MAXPDSTRING, "%s/%s", prefix,
-             c->c_methods[i].me_name->s_name);
-    class_addcreator((t_newmethod)c->c_methods[i].me_fun, gensym(buf),
-                     c->c_methods[i].me_arg[0], c->c_methods[i].me_arg[1],
-                     c->c_methods[i].me_arg[2], c->c_methods[i].me_arg[3],
-                     c->c_methods[i].me_arg[4], c->c_methods[i].me_arg[5]);
-  }
-}
-
 // this is called instead of sys_main() to start things
 int libpd_init(void) {
   static int initialized = 0;
