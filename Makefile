@@ -75,7 +75,7 @@
 # list should normally do the trick. Or you can add an option like `-lib foo`
 # when running Purr Data from the command line.
 
-.PHONY: all incremental checkout clean realclean dist
+.PHONY: all incremental emscripten checkout clean realclean dist
 
 # Target platform (OSX/macOS only): On Mojave (10.14 with Xcode 10) this needs
 # to be at least 10.9, which is the default now. With older Xcode versions you
@@ -114,6 +114,10 @@ incremental:
 light:
 	cd l2ork_addons && $(env) ./tar_em_up.sh -tkl
 
+emscripten:
+	cd l2ork_addons && $(env) ./tar_em_up.sh -ckln
+	make -C emscripten
+
 # Convenience targets to build the double precision version.
 
 # Blacklist of externals which don't work with double precision yet.
@@ -149,6 +153,7 @@ clean:
 	cd Gem/ && test -f Makefile && make distclean || true
 	cd Gem/ && rm -f gemglutwindow.pd_linux Gem.pd_linux || true
 	rm -rf packages/*/build/
+	make -C emscripten clean
 
 realclean:
 # This requires a working copy of the git repo.

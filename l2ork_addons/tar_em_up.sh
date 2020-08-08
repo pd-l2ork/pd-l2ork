@@ -224,7 +224,7 @@ if [ ! -d "../pd/nw/nw" ]; then
         mv $nwjs_dirname ../pd/nw/nw
 	# make sure the nw binary is executable on GNU/Linux
 	if [[ $os != "win" && $dmg == 0 ]]; then
-		chmod 755 ../pd/nw/nw/nw
+		test -f ../pd/nw/nw/nw && chmod 755 ../pd/nw/nw/nw
 	fi
 	rm $nwjs_filename
 fi
