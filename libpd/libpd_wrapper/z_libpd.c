@@ -20,8 +20,8 @@
 #include "z_libpd.h"
 #include "x_libpdreceive.h"
 #include "z_hooks.h"
-#include "s_stuff.h"
 #include "m_imp.h"
+#include "s_stuff.h"
 #include "g_canvas.h"
 #include "g_all_guis.h"
 
@@ -126,6 +126,15 @@ void libpd_closefile(void *p) {
   sys_lock();
   pd_free((t_pd *)p);
   sys_unlock();
+}
+
+int libpd_getdollarzero(void *p) {
+  sys_lock();
+  pd_pushsym((t_pd *)p);
+  int dzero = canvas_getdollarzero((t_pd *)p);
+  pd_popsym((t_pd *)p);
+  sys_unlock();
+  return dzero;
 }
 
 int libpd_blocksize(void) {
@@ -570,7 +579,3 @@ void glob_clear_recent_files(t_pd *dummy) {}
 int sys_defeatrt, sys_autopatch_yoffset, sys_zoom, sys_browser_doc = 1,
     sys_browser_path, sys_browser_init;
 t_symbol *sys_flags = &s_;
-
-// dummy routines needed because we don't use s_midi.c
-void sys_get_midi_apis2(t_binbuf *buf) {}
-void sys_get_midi_devs(char *indevlist, int *nindevs, char *outdevlist, int *noutdevs, int maxndev, int devdescsize) {}

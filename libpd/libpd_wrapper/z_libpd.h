@@ -54,6 +54,10 @@ EXTERN void *libpd_openfile(const char *name, const char *dir);
 /// close a patch by patch handle pointer
 EXTERN void libpd_closefile(void *p);
 
+/// get the $0 id of the patch handle pointer
+/// returns $0 value or 0 if the patch is non-existent
+EXTERN int libpd_getdollarzero(void *p);
+
 /* audio processing */
 
 /// return pd's fixed block size: the number of sample frames per 1 pd tick
