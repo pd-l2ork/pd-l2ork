@@ -1,16 +1,22 @@
 
 #==============================================================================#
 #
-# Centralized build system for "emscripten".  
+# Centralized build system for "emscripten".
+#
+# Copyright (c) 2020 Zack Lee (cuinjune@gmail.com)
+# Copyright (c) 2020 Purr Data team
+#
+# See https://git.purrdata.net/jwilkes/purr-data for documentation
 #
 #==============================================================================#
 
 CWD := $(shell pwd)
 PURR_DIR = $(CWD)/..
-PROJECT_PATH = $(PURR_DIR)/emscripten/pdtest
-DESTDIR = $(PURR_DIR)/emscripten/purr-data/
+EM_PATH = $(PURR_DIR)/emscripten
 LIBPD_PATH = $(PURR_DIR)/libpd
 PD_PATH = $(PURR_DIR)/pd
+BUILD_PATH = $(EM_PATH)/build
+DESTDIR = $(BUILD_PATH)/purr-data/
 WARN_FLAGS = -Wall -W -Wno-unused-parameter
 EM_FLAGS = -s SIDE_MODULE=1 -O3
 CFLAGS = -DPD -I$(PD_PATH)/src $(WARN_FLAGS) $(EM_FLAGS)
@@ -21,9 +27,9 @@ CXX = $(CC)
 CXXFLAGS = $(CFLAGS)
 EXTENSION = wasm
 
-.PHONY: all libpd externals extra abstractions doc project clean
+.PHONY: all libpd externals extra $(extras) abstractions doc build clean
 
-all: libpd externals extra abstractions doc project
+all: libpd externals extra abstractions doc build
 
 libpd: $(LIBPD_PATH)
 	cd $< && mkdir -p build && cd build && emcmake cmake .. -DPD_UTILS:BOOL=OFF -DCMAKE_BUILD_TYPE=Release && emmake make
@@ -47,14 +53,14 @@ abstractions: $(PURR_DIR)/abstractions
 doc: $(PD_PATH)/doc
 	cp -rf $</* $(DESTDIR)/doc
 
-project: $(PROJECT_PATH)
+build: $(BUILD_PATH)
 	make -C $<
 	
 clean:
 	find $(PURR_DIR)/externals -name "*.wasm" -type f -delete
 	find $(PURR_DIR)/pd/extra -name "*.wasm" -type f -delete
-	make -C $(PROJECT_PATH) clean
 	make -C $(LIBPD_PATH) clean
+	make -C $(BUILD_PATH) clean
 	rm -rf $(DESTDIR)
 	
 
