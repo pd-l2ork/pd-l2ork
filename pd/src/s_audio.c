@@ -882,6 +882,10 @@ void glob_audio_properties(t_pd *dummy, t_floatarg flongform)
 //    gfxstub_new(&glob_pdobject, (void *)glob_audio_properties, buf);
 }
 
+#ifdef __EMSCRIPTEN__
+void __Pd_reinit(int newinchan, int newoutchan, int newrate);
+#endif
+
 extern int pa_foo;
     /* new values from dialog window */
 void glob_audio_dialog(t_pd *dummy, t_symbol *s, int argc, t_atom *argv)
@@ -902,6 +906,11 @@ void glob_audio_dialog(t_pd *dummy, t_symbol *s, int argc, t_atom *argv)
         newaudiooutdev[i] = atom_getintarg(i+8, argc, argv);
         newaudiooutchan[i] = atom_getintarg(i+12, argc, argv);
     }
+
+#ifdef __EMSCRIPTEN__
+    __Pd_reinit(newaudioinchan[0], newaudiooutchan[0], newrate);
+    return;
+#endif
 
     for (i = 0, nindev = 0; i < 4; i++)
     {

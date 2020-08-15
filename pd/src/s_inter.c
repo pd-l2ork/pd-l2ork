@@ -658,20 +658,13 @@ static int sys_waitingforping;
 static int sys_bytessincelastping;
 
 #ifdef __EMSCRIPTEN__
-EM_JS(void, pd_send_command_buffer, (char *buf), {
-    if (typeof pd_receive_command_buffer === "function") {
-        pd_receive_command_buffer(intArrayFromString(UTF8ToString(buf), true));
-    }
-    else {
-        console.error("couldn't find the javascript function 'pd_receive_command_buffer'");
-    }
-});
+void __Pd_receiveCommandBuffer(char *buf);
 #endif
 
 static int do_send(int sockfd, char *buf, int len, int flags)
 {
 #ifdef __EMSCRIPTEN__
-    pd_send_command_buffer(buf);
+    __Pd_receiveCommandBuffer(buf);
     return len;
 #endif
     return send(sockfd, buf, len, flags);
