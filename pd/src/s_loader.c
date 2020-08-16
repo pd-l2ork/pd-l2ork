@@ -42,25 +42,7 @@ a fat binary or an indication of the instruction set. */
 
 #if defined(__EMSCRIPTEN__)
 static char sys_dllextent[] = ".wasm", sys_dllextent2[] = ".so";
-EM_JS(int, pd_load_external, (const char *filename, const char *symname), {
-    return Asyncify.handleAsync(async () => {
-        try {
-            await loadDynamicLibrary(UTF8ToString(filename), {loadAsync: true, global: true, nodelete: true, fs: FS});
-            var makeout = Module['_' + UTF8ToString(symname)];
-            if (typeof makeout === "function") {
-                makeout();
-                return 1; /* success */
-            }
-            else {
-                return -1; /* couldn't find the function */
-            }
-        }
-        catch(error) {
-            console.error(error);
-            return 0; /* couldn't load the external */
-        }
-    });
-});
+int __Pd_loadLib(const char *filename, const char *symname);
 #elif defined(__linux__) || defined(__FreeBSD_kernel__) || defined(__GNU__) || defined(__FreeBSD__)
 static char sys_dllextent2[] = ".pd_linux";
 # ifdef __x86_64__
@@ -254,7 +236,7 @@ gotone:
     filename[MAXPDSTRING-1] = 0;
 
 #ifdef __EMSCRIPTEN__
-    int ret = pd_load_external(filename, symname);
+    int ret = __Pd_loadLib(filename, symname);
     if (ret == 1) {
         class_set_extern_dir(&s_);
         return (1);

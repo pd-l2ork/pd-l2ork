@@ -77,6 +77,7 @@ PD_FILES = \
     ../pd/src/m_memory.c ../pd/src/m_obj.c ../pd/src/m_pd.c \
     ../pd/src/m_sched.c ../pd/src/s_audio.c ../pd/src/s_audio_dummy.c \
     ../pd/src/s_inter.c ../pd/src/s_loader.c ../pd/src/s_main.c \
+    ../pd/src/s_midi.c ../pd/src/s_midi_dummy.c \
     ../pd/src/s_path.c ../pd/src/s_print.c ../pd/src/s_utf8.c \
     ../pd/src/x_acoustics.c ../pd/src/x_arithmetic.c ../pd/src/x_array.c \
     ../pd/src/x_connective.c ../pd/src/x_gui.c ../pd/src/x_interface.c \

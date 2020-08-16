@@ -117,6 +117,8 @@ set(PD_SOURCES
     ../pd/src/s_inter.c
     ../pd/src/s_loader.c
     ../pd/src/s_main.c
+    ../pd/src/s_midi.c
+    ../pd/src/s_midi_dummy.c
     ../pd/src/s_path.c
     ../pd/src/s_print.c
     ../pd/src/s_stuff.h

@@ -187,6 +187,7 @@ static void sys_queuemidimess(int portno, int onebyte, int a, int b, int c)
 #define MIDI_AFTERTOUCH 208
 #define MIDI_PITCHBEND 224
 
+#ifndef __EMSCRIPTEN__
 void outmidi_noteon(int portno, int channel, int pitch, int velo)
 {
     if (pitch < 0) pitch = 0;
@@ -252,6 +253,7 @@ void outmidi_byte(int portno, int value)
       sys_putmidibyte(portno, value);
     }
 }
+#endif /* __EMSCRIPTEN__ */
 
 /* ------------------------- MIDI input queue handling ------------------ */
 typedef struct midiparser
