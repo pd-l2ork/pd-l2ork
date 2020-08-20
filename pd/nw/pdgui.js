@@ -5,6 +5,24 @@ var lib_dir;
 var help_path, browser_doc, browser_path, browser_init;
 var pd_engine_id;
 
+	
+// Emscripten Module Var
+var Module = undefined;
+
+function init_module(module){
+    Module = module
+}
+exports.init_module = init_module;
+
+function is_webapp(){
+    if(Module === undefined){
+        return false;
+    }
+    return true;
+}
+exports.is_webapp = is_webapp;
+
+
 exports.set_pwd = function(pwd_string) {
     pwd = pwd_string;
 }
@@ -1879,6 +1897,7 @@ function perfect_parser(data, cbuf, sel_array) {
             }
         }
     };
+exports.perfect_parser = perfect_parser;
 
 function init_socket_events () {
     // A not-quite-FUDI command: selector arg1,arg2,etc. These are
