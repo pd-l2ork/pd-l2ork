@@ -1,3 +1,2851 @@
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.pdbundle = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+var pdgui = require("../../../pd/nw/pdgui.js")
+var shortcuts = require("../../../pd/nw/pd_shortcuts.js")
+// var pd_canvas = require("../../../pd/nw/pd_canvas.js")
+// var pd_menus = require("../../../pd/nw/pd_menus.js")
+
+module.exports = {
+    pdgui: pdgui,
+    shortcuts: shortcuts,
+    // pd_canvas: pd_canvas,
+    // pd_menus: pd_menus
+  }
+},{"../../../pd/nw/pd_shortcuts.js":6,"../../../pd/nw/pdgui.js":7}],2:[function(require,module,exports){
+(function (process){
+var fs = require('fs');
+var path = require('path');
+
+// default options
+var defaultOpt = {
+  all: false,
+  recursive: true,
+  files: true,
+  directories: false,
+  ignore: false
+};
+
+function defaults(defaults, obj) {
+  for (var prop in defaults)
+    if (defaults.hasOwnProperty(prop))
+      if (!obj.hasOwnProperty(prop))
+        obj[prop] = defaults[prop];
+  return obj;
+}
+
+// general function
+module.exports = function(dir, opt, action, complete) {
+
+  // check args
+  if (typeof opt === 'function') {
+    if (typeof action === 'undefined')
+      complete = function () {};
+    else
+      complete = action;
+
+    action = opt;
+    opt = { };
+  } else if (typeof complete === 'undefined')
+    complete = function () {};
+
+  // Assert that dir is a string
+  if (typeof dir !== 'string')
+    dir = process.cwd();
+
+  opt = defaults(defaultOpt, opt);
+
+  // Check if user wants to ignore dir/file
+  // If they do, create function that can test if file matches
+  var ignore = null;
+  if (opt.ignore instanceof RegExp) {
+    ignore = function(file) { return file.match(opt.ignore); }
+  } else if (typeof opt.ignore === 'string' && opt.ignore.trim()) {
+    ignore = function(file) { return file.indexOf(opt.ignore) !== -1; }
+  }
+
+  function dive(dir) {
+    // Read the directory
+    todo++;
+    fs.readdir(dir, function(err, list) {
+      todo--;
+      // Return the error if something went wrong
+      if (err) {
+        action(err, dir);
+      } else {
+        // For every file in the list
+        list.forEach(function(file) {
+          if (ignore && ignore(file))
+            return;
+
+          if (opt.all || file[0] !== '.') {
+            // Full path of that file
+            var fullPath = path.resolve(dir, file);
+            // Get the file's stats
+            todo++;
+            fs.lstat(fullPath, function(err, stat) {
+              todo--;
+              if (err) {
+                action(err, fullPath);
+              } else {
+                if (stat) {
+                  // If the file is a directory
+                  if (stat.isDirectory()) {
+                    // Call action if enabled for directories
+                    if (opt.directories)
+                      action(null, fullPath, stat);
+
+                    // Dive into the directory
+                    if (opt.recursive)
+                      dive(fullPath);
+
+                  } else {
+                    // Call action if enabled for files
+                    if (opt.files)
+                      action(null, fullPath, stat);
+                  }
+                }
+              }
+              if (!todo)
+                complete();
+            });
+          }
+
+        });
+
+      }
+      //empty directories, or with just hidden files
+      if (!todo)
+        complete();
+    });
+  }
+
+  var todo = 0;
+  dive(path.resolve(dir));
+};
+
+
+}).call(this,require('_process'))
+},{"_process":11,"fs":9,"path":10}],3:[function(require,module,exports){
+/**
+ * elasticlunr - http://weixsong.github.io
+ * Lightweight full-text search engine in Javascript for browser search and offline search. - 0.8.5
+ *
+ * Copyright (C) 2016 Oliver Nightingale
+ * Copyright (C) 2016 Wei Song
+ * MIT Licensed
+ * @license
+ */
+
+(function(){
+
+/*!
+ * elasticlunr.js
+ * Copyright (C) 2016 Oliver Nightingale
+ * Copyright (C) 2016 Wei Song
+ */
+
+/**
+ * Convenience function for instantiating a new elasticlunr index and configuring it
+ * with the default pipeline functions and the passed config function.
+ *
+ * When using this convenience function a new index will be created with the
+ * following functions already in the pipeline:
+ * 
+ * 1. elasticlunr.trimmer - trim non-word character
+ * 2. elasticlunr.StopWordFilter - filters out any stop words before they enter the
+ * index
+ * 3. elasticlunr.stemmer - stems the tokens before entering the index.
+ *
+ *
+ * Example:
+ *
+ *     var idx = elasticlunr(function () {
+ *       this.addField('id');
+ *       this.addField('title');
+ *       this.addField('body');
+ *       
+ *       //this.setRef('id'); // default ref is 'id'
+ *
+ *       this.pipeline.add(function () {
+ *         // some custom pipeline function
+ *       });
+ *     });
+ * 
+ *    idx.addDoc({
+ *      id: 1, 
+ *      title: 'Oracle released database 12g',
+ *      body: 'Yestaday, Oracle has released their latest database, named 12g, more robust. this product will increase Oracle profit.'
+ *    });
+ * 
+ *    idx.addDoc({
+ *      id: 2, 
+ *      title: 'Oracle released annual profit report',
+ *      body: 'Yestaday, Oracle has released their annual profit report of 2015, total profit is 12.5 Billion.'
+ *    });
+ * 
+ *    # simple search
+ *    idx.search('oracle database');
+ * 
+ *    # search with query-time boosting
+ *    idx.search('oracle database', {fields: {title: {boost: 2}, body: {boost: 1}}});
+ *
+ * @param {Function} config A function that will be called with the new instance
+ * of the elasticlunr.Index as both its context and first parameter. It can be used to
+ * customize the instance of new elasticlunr.Index.
+ * @namespace
+ * @module
+ * @return {elasticlunr.Index}
+ *
+ */
+var elasticlunr = function (config) {
+  var idx = new elasticlunr.Index;
+
+  idx.pipeline.add(
+    elasticlunr.trimmer,
+    elasticlunr.stopWordFilter,
+    elasticlunr.stemmer
+  );
+
+  if (config) config.call(idx, idx);
+
+  return idx;
+};
+
+elasticlunr.version = "0.8.5";
+/*!
+ * elasticlunr.utils
+ * Copyright (C) 2016 Oliver Nightingale
+ * Copyright (C) 2016 Wei Song
+ */
+
+/**
+ * A namespace containing utils for the rest of the elasticlunr library
+ */
+elasticlunr.utils = {};
+
+/**
+ * Print a warning message to the console.
+ *
+ * @param {String} message The message to be printed.
+ * @memberOf Utils
+ */
+elasticlunr.utils.warn = (function (global) {
+  return function (message) {
+    if (global.console && console.warn) {
+      console.warn(message);
+    }
+  };
+})(this);
+
+/**
+ * Convert an object to string.
+ *
+ * In the case of `null` and `undefined` the function returns
+ * an empty string, in all other cases the result of calling
+ * `toString` on the passed object is returned.
+ *
+ * @param {object} obj The object to convert to a string.
+ * @return {String} string representation of the passed object.
+ * @memberOf Utils
+ */
+elasticlunr.utils.toString = function (obj) {
+  if (obj === void 0 || obj === null) {
+    return "";
+  }
+
+  return obj.toString();
+}
+/*!
+ * elasticlunr.EventEmitter
+ * Copyright (C) 2016 Oliver Nightingale
+ * Copyright (C) 2016 Wei Song
+ */
+
+/**
+ * elasticlunr.EventEmitter is an event emitter for elasticlunr. It manages adding and removing event handlers and triggering events and their handlers.
+ *
+ * Each event could has multiple corresponding functions, these functions will be called as the sequence that they are added into the event.
+ * 
+ * @constructor
+ */
+elasticlunr.EventEmitter = function () {
+  this.events = {};
+};
+
+/**
+ * Binds a handler function to a specific event(s).
+ *
+ * Can bind a single function to many different events in one call.
+ *
+ * @param {String} [eventName] The name(s) of events to bind this function to.
+ * @param {Function} fn The function to call when an event is fired.
+ * @memberOf EventEmitter
+ */
+elasticlunr.EventEmitter.prototype.addListener = function () {
+  var args = Array.prototype.slice.call(arguments),
+      fn = args.pop(),
+      names = args;
+
+  if (typeof fn !== "function") throw new TypeError ("last argument must be a function");
+
+  names.forEach(function (name) {
+    if (!this.hasHandler(name)) this.events[name] = [];
+    this.events[name].push(fn);
+  }, this);
+};
+
+/**
+ * Removes a handler function from a specific event.
+ *
+ * @param {String} eventName The name of the event to remove this function from.
+ * @param {Function} fn The function to remove from an event.
+ * @memberOf EventEmitter
+ */
+elasticlunr.EventEmitter.prototype.removeListener = function (name, fn) {
+  if (!this.hasHandler(name)) return;
+
+  var fnIndex = this.events[name].indexOf(fn);
+  if (fnIndex == -1) return;
+
+  this.events[name].splice(fnIndex, 1);
+
+  if (this.events[name].length == 0) delete this.events[name];
+};
+
+/**
+ * Calls all functions bound to the given event.
+ *
+ * Additional data can be passed to the event handler as arguments to `emit`
+ * after the event name.
+ *
+ * @param {String} eventName The name of the event to emit.
+ * @memberOf EventEmitter
+ */
+elasticlunr.EventEmitter.prototype.emit = function (name) {
+  if (!this.hasHandler(name)) return;
+
+  var args = Array.prototype.slice.call(arguments, 1);
+
+  this.events[name].forEach(function (fn) {
+    fn.apply(undefined, args);
+  });
+};
+
+/**
+ * Checks whether a handler has ever been stored against an event.
+ *
+ * @param {String} eventName The name of the event to check.
+ * @private
+ * @memberOf EventEmitter
+ */
+elasticlunr.EventEmitter.prototype.hasHandler = function (name) {
+  return name in this.events;
+};
+/*!
+ * elasticlunr.tokenizer
+ * Copyright (C) 2016 Oliver Nightingale
+ * Copyright (C) 2016 Wei Song
+ */
+
+/**
+ * A function for splitting a string into tokens.
+ * Currently English is support as default.
+ * Uses `elasticlunr.tokenizer.seperator` to split strings, you could change
+ * the value of this property to set how you want strings are split into tokens.
+ * IMPORTANT: use elasticlunr.tokenizer.seperator carefully, if you are not familiar with
+ * text process, then you'd better not change it.
+ *
+ * @module
+ * @param {String} str The string that you want to tokenize.
+ * @see elasticlunr.tokenizer.seperator
+ * @return {Array}
+ */
+elasticlunr.tokenizer = function (obj) {
+  if (!arguments.length || obj == null || obj == undefined) return [];
+  if (Array.isArray(obj)) {
+    return obj.map(function (t) {
+      return elasticlunr.utils.toString(t).toLowerCase();
+    });
+  }
+
+  return obj.toString().trim().toLowerCase().split(elasticlunr.tokenizer.seperator);
+};
+
+/**
+ * The sperator used to split a string into tokens. Override this property to change the behaviour of
+ * `elasticlunr.tokenizer` behaviour when tokenizing strings. By default this splits on whitespace and hyphens.
+ *
+ * @static
+ * @see elasticlunr.tokenizer
+ */
+elasticlunr.tokenizer.seperator = /[\s\-]+/
+/*!
+ * elasticlunr.Pipeline
+ * Copyright (C) 2016 Oliver Nightingale
+ * Copyright (C) 2016 Wei Song
+ */
+
+/**
+ * elasticlunr.Pipelines maintain an ordered list of functions to be applied to 
+ * both documents tokens and query tokens.
+ *
+ * An instance of elasticlunr.Index created with the elasticlunr shortcut will contain a
+ * pipeline with a trimmer, a stop word filter, an English language stemmer. Extra
+ * functions can be added before or after either of these functions or these
+ * default functions can be removed.
+ *
+ * When run the pipeline will call each function in turn, passing a token, the
+ * index of that token in the original list of all tokens and finally a list of
+ * all the original tokens.
+ *
+ * The output of functions in the pipeline will be passed to the next function
+ * in the pipeline. To exclude a token from entering the index the function
+ * should return undefined, the rest of the pipeline will not be called with
+ * this token.
+ *
+ * For serialisation of pipelines to work, all functions used in an instance of
+ * a pipeline should be registered with elasticlunr.Pipeline. Registered functions can
+ * then be loaded. If trying to load a serialised pipeline that uses functions
+ * that are not registered an error will be thrown.
+ *
+ * If not planning on serialising the pipeline then registering pipeline functions
+ * is not necessary.
+ *
+ * @constructor
+ */
+elasticlunr.Pipeline = function () {
+  this._queue = [];
+};
+
+elasticlunr.Pipeline.registeredFunctions = {};
+
+/**
+ * Register a function with the pipeline.
+ *
+ * Functions that are used in the pipeline should be registered if the pipeline
+ * needs to be serialised, or a serialised pipeline needs to be loaded.
+ *
+ * Registering a function does not add it to a pipeline, functions must still be
+ * added to instances of the pipeline for them to be used when running a pipeline.
+ *
+ * @param {Function} fn The function to check for.
+ * @param {String} label The label to register this function with
+ * @memberOf Pipeline
+ */
+elasticlunr.Pipeline.registerFunction = function (fn, label) {
+  if (label in this.registeredFunctions) {
+    elasticlunr.utils.warn('Overwriting existing registered function: ' + label);
+  }
+
+  fn.label = label;
+  elasticlunr.Pipeline.registeredFunctions[label] = fn;
+};
+
+/**
+ * Warns if the function is not registered as a Pipeline function.
+ *
+ * @param {Function} fn The function to check for.
+ * @private
+ * @memberOf Pipeline
+ */
+elasticlunr.Pipeline.warnIfFunctionNotRegistered = function (fn) {
+  var isRegistered = fn.label && (fn.label in this.registeredFunctions);
+
+  if (!isRegistered) {
+    elasticlunr.utils.warn('Function is not registered with pipeline. This may cause problems when serialising the index.\n', fn);
+  }
+};
+
+/**
+ * Loads a previously serialised pipeline.
+ *
+ * All functions to be loaded must already be registered with elasticlunr.Pipeline.
+ * If any function from the serialised data has not been registered then an
+ * error will be thrown.
+ *
+ * @param {Object} serialised The serialised pipeline to load.
+ * @return {elasticlunr.Pipeline}
+ * @memberOf Pipeline
+ */
+elasticlunr.Pipeline.load = function (serialised) {
+  var pipeline = new elasticlunr.Pipeline;
+
+  serialised.forEach(function (fnName) {
+    var fn = elasticlunr.Pipeline.registeredFunctions[fnName];
+
+    if (fn) {
+      pipeline.add(fn);
+    } else {
+      throw new Error('Cannot load un-registered function: ' + fnName);
+    }
+  });
+
+  return pipeline;
+};
+
+/**
+ * Adds new functions to the end of the pipeline.
+ *
+ * Logs a warning if the function has not been registered.
+ *
+ * @param {Function} functions Any number of functions to add to the pipeline.
+ * @memberOf Pipeline
+ */
+elasticlunr.Pipeline.prototype.add = function () {
+  var fns = Array.prototype.slice.call(arguments);
+
+  fns.forEach(function (fn) {
+    elasticlunr.Pipeline.warnIfFunctionNotRegistered(fn);
+    this._queue.push(fn);
+  }, this);
+};
+
+/**
+ * Adds a single function after a function that already exists in the
+ * pipeline.
+ *
+ * Logs a warning if the function has not been registered.
+ * If existingFn is not found, throw an Exception.
+ *
+ * @param {Function} existingFn A function that already exists in the pipeline.
+ * @param {Function} newFn The new function to add to the pipeline.
+ * @memberOf Pipeline
+ */
+elasticlunr.Pipeline.prototype.after = function (existingFn, newFn) {
+  elasticlunr.Pipeline.warnIfFunctionNotRegistered(newFn);
+
+  var pos = this._queue.indexOf(existingFn);
+  if (pos == -1) {
+    throw new Error('Cannot find existingFn');
+  }
+
+  pos = pos + 1;
+  this._queue.splice(pos, 0, newFn);
+};
+
+/**
+ * Adds a single function before a function that already exists in the
+ * pipeline.
+ *
+ * Logs a warning if the function has not been registered.
+ * If existingFn is not found, throw an Exception.
+ *
+ * @param {Function} existingFn A function that already exists in the pipeline.
+ * @param {Function} newFn The new function to add to the pipeline.
+ * @memberOf Pipeline
+ */
+elasticlunr.Pipeline.prototype.before = function (existingFn, newFn) {
+  elasticlunr.Pipeline.warnIfFunctionNotRegistered(newFn);
+
+  var pos = this._queue.indexOf(existingFn);
+  if (pos == -1) {
+    throw new Error('Cannot find existingFn');
+  }
+
+  this._queue.splice(pos, 0, newFn);
+};
+
+/**
+ * Removes a function from the pipeline.
+ *
+ * @param {Function} fn The function to remove from the pipeline.
+ * @memberOf Pipeline
+ */
+elasticlunr.Pipeline.prototype.remove = function (fn) {
+  var pos = this._queue.indexOf(fn);
+  if (pos == -1) {
+    return;
+  }
+
+  this._queue.splice(pos, 1);
+};
+
+/**
+ * Runs the current list of functions that make up the pipeline against the
+ * input tokens.
+ *
+ * @param {Array} tokens The tokens to run through the pipeline.
+ * @return {Array}
+ * @memberOf Pipeline
+ */
+elasticlunr.Pipeline.prototype.run = function (tokens) {
+  var out = [],
+      tokenLength = tokens.length,
+      pipelineLength = this._queue.length;
+
+  for (var i = 0; i < tokenLength; i++) {
+    var token = tokens[i];
+
+    for (var j = 0; j < pipelineLength; j++) {
+      token = this._queue[j](token, i, tokens);
+      if (token === void 0) break;
+    };
+
+    if (token !== void 0) out.push(token);
+  };
+
+  return out;
+};
+
+/**
+ * Resets the pipeline by removing any existing processors.
+ *
+ * @memberOf Pipeline
+ */
+elasticlunr.Pipeline.prototype.reset = function () {
+  this._queue = [];
+};
+
+/**
+ * Returns a representation of the pipeline ready for serialisation.
+ *
+ * Logs a warning if the function has not been registered.
+ *
+ * @return {Array}
+ * @memberOf Pipeline
+ */
+elasticlunr.Pipeline.prototype.toJSON = function () {
+  return this._queue.map(function (fn) {
+    elasticlunr.Pipeline.warnIfFunctionNotRegistered(fn);
+    return fn.label;
+  });
+};
+/*!
+ * elasticlunr.Index
+ * Copyright (C) 2016 Oliver Nightingale
+ * Copyright (C) 2016 Wei Song
+ */
+
+/**
+ * elasticlunr.Index is object that manages a search index.  It contains the indexes
+ * and stores all the tokens and document lookups.  It also provides the main
+ * user facing API for the library.
+ *
+ * @constructor
+ */
+elasticlunr.Index = function () {
+  this._fields = [];
+  this._ref = 'id';
+  this.pipeline = new elasticlunr.Pipeline;
+  this.documentStore = new elasticlunr.DocumentStore;
+  this.index = {};
+  this.eventEmitter = new elasticlunr.EventEmitter;
+  this._idfCache = {};
+
+  this.on('add', 'remove', 'update', (function () {
+    this._idfCache = {};
+  }).bind(this));
+};
+
+/**
+ * Bind a handler to events being emitted by the index.
+ *
+ * The handler can be bound to many events at the same time.
+ *
+ * @param {String} [eventName] The name(s) of events to bind the function to.
+ * @param {Function} fn The serialised set to load.
+ * @memberOf Index
+ */
+elasticlunr.Index.prototype.on = function () {
+  var args = Array.prototype.slice.call(arguments);
+  return this.eventEmitter.addListener.apply(this.eventEmitter, args);
+};
+
+/**
+ * Removes a handler from an event being emitted by the index.
+ *
+ * @param {String} eventName The name of events to remove the function from.
+ * @param {Function} fn The serialised set to load.
+ * @memberOf Index
+ */
+elasticlunr.Index.prototype.off = function (name, fn) {
+  return this.eventEmitter.removeListener(name, fn);
+};
+
+/**
+ * Loads a previously serialised index.
+ *
+ * Issues a warning if the index being imported was serialised
+ * by a different version of elasticlunr.
+ *
+ * @param {Object} serialisedData The serialised set to load.
+ * @return {elasticlunr.Index}
+ * @memberOf Index
+ */
+elasticlunr.Index.load = function (serialisedData) {
+  if (serialisedData.version !== elasticlunr.version) {
+    elasticlunr.utils.warn('version mismatch: current ' 
+                    + elasticlunr.version + ' importing ' + serialisedData.version);
+  }
+
+  var idx = new this;
+
+  idx._fields = serialisedData.fields;
+  idx._ref = serialisedData.ref;
+  idx.documentStore = elasticlunr.DocumentStore.load(serialisedData.documentStore);
+  idx.pipeline = elasticlunr.Pipeline.load(serialisedData.pipeline);
+  idx.index = {};
+  for (var field in serialisedData.index) {
+    idx.index[field] = elasticlunr.InvertedIndex.load(serialisedData.index[field]);
+  }
+
+  return idx;
+};
+
+/**
+ * Adds a field to the list of fields that will be searchable within documents in the index.
+ * 
+ * Remember that inner index is build based on field, which means each field has one inverted index.
+ *
+ * Fields should be added before any documents are added to the index, fields
+ * that are added after documents are added to the index will only apply to new
+ * documents added to the index.
+ *
+ * @param {String} fieldName The name of the field within the document that should be indexed
+ * @return {elasticlunr.Index}
+ * @memberOf Index
+ */
+elasticlunr.Index.prototype.addField = function (fieldName) {
+  this._fields.push(fieldName);
+  this.index[fieldName] = new elasticlunr.InvertedIndex;
+  return this;
+};
+
+/**
+ * Sets the property used to uniquely identify documents added to the index,
+ * by default this property is 'id'.
+ *
+ * This should only be changed before adding documents to the index, changing
+ * the ref property without resetting the index can lead to unexpected results.
+ *
+ * @param {String} refName The property to use to uniquely identify the
+ * documents in the index.
+ * @param {Boolean} emitEvent Whether to emit add events, defaults to true
+ * @return {elasticlunr.Index}
+ * @memberOf Index
+ */
+elasticlunr.Index.prototype.setRef = function (refName) {
+  this._ref = refName;
+  return this;
+};
+
+/**
+ * 
+ * Set if the JSON format original documents are save into elasticlunr.DocumentStore
+ * 
+ * Defaultly save all the original JSON documents.
+ *
+ * @param {Boolean} save Whether to save the original JSON documents.
+ * @return {elasticlunr.Index}
+ * @memberOf Index
+ */
+elasticlunr.Index.prototype.saveDocument = function (save) {
+  this.documentStore = new elasticlunr.DocumentStore(save);
+  return this;
+};
+
+/**
+ * Add a JSON format document to the index.
+ *
+ * This is the way new documents enter the index, this function will run the
+ * fields from the document through the index's pipeline and then add it to
+ * the index, it will then show up in search results.
+ *
+ * An 'add' event is emitted with the document that has been added and the index
+ * the document has been added to. This event can be silenced by passing false
+ * as the second argument to add.
+ *
+ * @param {Object} doc The JSON format document to add to the index.
+ * @param {Boolean} emitEvent Whether or not to emit events, default true.
+ * @memberOf Index
+ */
+elasticlunr.Index.prototype.addDoc = function (doc, emitEvent) {
+  if (!doc) return;
+  var emitEvent = emitEvent === undefined ? true : emitEvent;
+
+  var docRef = doc[this._ref];
+
+  this.documentStore.addDoc(docRef, doc);
+  this._fields.forEach(function (field) {
+    var fieldTokens = this.pipeline.run(elasticlunr.tokenizer(doc[field]));
+    this.documentStore.addFieldLength(docRef, field, fieldTokens.length);
+
+    var tokenCount = {};
+    fieldTokens.forEach(function (token) {
+      if (token in tokenCount) tokenCount[token] += 1;
+      else tokenCount[token] = 1;
+    }, this);
+
+    for (var token in tokenCount) {
+      var termFrequency = tokenCount[token];
+      termFrequency = Math.sqrt(termFrequency);
+      this.index[field].addToken(token, { ref: docRef, tf: termFrequency });
+    }
+  }, this);
+
+  if (emitEvent) this.eventEmitter.emit('add', doc, this);
+};
+
+/**
+ * Removes a document from the index by doc ref.
+ *
+ * To make sure documents no longer show up in search results they can be
+ * removed from the index using this method.
+ *
+ * A 'remove' event is emitted with the document that has been removed and the index
+ * the document has been removed from. This event can be silenced by passing false
+ * as the second argument to remove.
+ * 
+ * If user setting DocumentStore not storing the documents, then remove doc by docRef is not allowed.
+ *
+ * @param {String|Integer} docRef The document ref to remove from the index.
+ * @param {Boolean} emitEvent Whether to emit remove events, defaults to true
+ * @memberOf Index
+ */
+elasticlunr.Index.prototype.removeDocByRef = function (docRef, emitEvent) {
+  if (!docRef) return;
+  if (this.documentStore.isDocStored() == false) {
+    elasticlunr.utils.warn('remove doc by ref is not allowed, because currectly not storing documents in DocumentStore');
+    return;
+  }
+  
+  if (!this.documentStore.hasDoc(docRef)) return;
+  var doc = this.documentStore.getDoc(docRef);
+  this.removeDoc(doc);
+};
+
+/**
+ * Removes a document from the index.
+ * This remove operation could work even the original doc is not store in the DocumentStore.
+ *
+ * To make sure documents no longer show up in search results they can be
+ * removed from the index using this method.
+ *
+ * A 'remove' event is emitted with the document that has been removed and the index
+ * the document has been removed from. This event can be silenced by passing false
+ * as the second argument to remove.
+ * 
+ *
+ * @param {Object} doc The document ref to remove from the index.
+ * @param {Boolean} emitEvent Whether to emit remove events, defaults to true
+ * @memberOf Index
+ */
+elasticlunr.Index.prototype.removeDoc = function (doc, emitEvent) {
+  if (!doc) return;
+
+  var emitEvent = emitEvent === undefined ? true : emitEvent;
+
+  var docRef = doc[this._ref];
+  if (!this.documentStore.hasDoc(docRef)) return;
+
+  this.documentStore.removeDoc(docRef);
+
+  this._fields.forEach(function (field) {
+    var fieldTokens = this.pipeline.run(elasticlunr.tokenizer(doc[field]));
+    fieldTokens.forEach(function (token) {
+      this.index[field].removeToken(token, docRef);
+    }, this);
+  }, this);
+
+  if (emitEvent) this.eventEmitter.emit('remove', doc, this);
+};
+
+/**
+ * Updates a document in the index.
+ *
+ * When a document contained within the index gets updated, fields changed,
+ * added or removed, to make sure it correctly matched against search queries,
+ * it should be updated in the index.
+ *
+ * This method is just a wrapper around `remove` and `add`
+ *
+ * An 'update' event is emitted with the document that has been updated and the index.
+ * This event can be silenced by passing false as the second argument to update. Only
+ * an update event will be fired, the 'add' and 'remove' events of the underlying calls
+ * are silenced.
+ *
+ * @param {Object} doc The document to update in the index.
+ * @param {Boolean} emitEvent Whether to emit update events, defaults to true
+ * @see Index.prototype.remove
+ * @see Index.prototype.add
+ * @memberOf Index
+ */
+elasticlunr.Index.prototype.update = function (doc, emitEvent) {
+  var emitEvent = emitEvent === undefined ? true : emitEvent;
+
+  this.removeDoc(doc, false);
+  this.addDoc(doc, false);
+
+  if (emitEvent) this.eventEmitter.emit('update', doc, this);
+};
+
+/**
+ * Calculates the inverse document frequency for a token within the index of a field.
+ *
+ * @param {String} token The token to calculate the idf of.
+ * @param {String} field The field to compute idf.
+ * @see Index.prototype.idf
+ * @private
+ * @memberOf Index
+ */
+elasticlunr.Index.prototype.idf = function (term, field) {
+  var cacheKey = "@" + field + '/' + term;
+  if (Object.prototype.hasOwnProperty.call(this._idfCache, cacheKey)) return this._idfCache[cacheKey];
+
+  var df = this.index[field].getDocFreq(term);
+  var idf = 1 + Math.log(this.documentStore.length / (df + 1));
+  this._idfCache[cacheKey] = idf;
+
+  return idf;
+};
+
+/**
+ * get fields of current index instance 
+ * 
+ * @return {Array}
+ */
+elasticlunr.Index.prototype.getFields = function () {
+  return this._fields.slice();
+}
+
+/**
+ * Searches the index using the passed query.
+ * Queries should be a string, multiple words are allowed.
+ * 
+ * If config is null, will search all fields defaultly, and lead to OR based query.
+ * If config is specified, will search specified with query time boosting.
+ *
+ * All query tokens are passed through the same pipeline that document tokens
+ * are passed through, so any language processing involved will be run on every
+ * query term.
+ *
+ * Each query term is expanded, so that the term 'he' might be expanded to
+ * 'hello' and 'help' if those terms were already included in the index.
+ *
+ * Matching documents are returned as an array of objects, each object contains
+ * the matching document ref, as set for this index, and the similarity score
+ * for this document against the query.
+ *
+ * @param {String} query The query to search the index with.
+ * @param {JSON} userConfig The user query config, JSON format.
+ * @return {Object}
+ * @see Index.prototype.idf
+ * @see Index.prototype.documentVector
+ * @memberOf Index
+ */
+elasticlunr.Index.prototype.search = function (query, userConfig) {
+  if (!query) return [];
+
+  var configStr = null;
+  if (userConfig != null) {
+    configStr = JSON.stringify(userConfig);
+  }
+
+  var config = new elasticlunr.Configuration(configStr, this.getFields()).get();
+
+  var queryTokens = this.pipeline.run(elasticlunr.tokenizer(query));
+
+  var queryResults = {};
+  var squaredWeight = this.computeSquaredWeight(queryTokens, config);
+
+  for (var field in config) {
+    var fieldSearchResults = this.fieldSearch(queryTokens, field, config);
+    var fieldBoost = config[field].boost;
+    var queryNorm = 1 / Math.sqrt(1 / (fieldBoost * fieldBoost) * squaredWeight);
+
+    for (var docRef in fieldSearchResults) {
+      fieldSearchResults[docRef] = fieldSearchResults[docRef] * queryNorm;
+    }
+
+    for (var docRef in fieldSearchResults) {
+      if (docRef in queryResults) {
+        queryResults[docRef] += fieldSearchResults[docRef];
+      } else {
+        queryResults[docRef] = fieldSearchResults[docRef];
+      }
+    }
+  }
+
+  var results = [];
+  for (var docRef in queryResults) {
+    results.push({ref: docRef, score: queryResults[docRef]});
+  }
+
+  results.sort(function (a, b) { return b.score - a.score; });
+  return results;
+};
+
+/**
+ * search queryTokens in specified field.
+ *
+ * @param {Array} queryTokens The query tokens to query in this field.
+ * @param {String} field Field to query in.
+ * @param {elasticlunr.Configuration} config The user query config, JSON format.
+ * @return {Object}
+ */
+elasticlunr.Index.prototype.fieldSearch = function (queryTokens, fieldName, config) {
+  var booleanType = config[fieldName].bool;
+  var expand = config[fieldName].expand;
+  var scores = {};
+  var docTokens = {};
+
+  queryTokens.forEach(function (token) {
+    var tokens = [token];
+    if (expand == true) {
+      tokens = this.index[fieldName].expandToken(token);
+    }
+ 
+    tokens.forEach(function (key) {
+      var docs = this.index[fieldName].getDocs(key);
+      var idf = this.idf(key, fieldName);
+      for (var docRef in docs) {
+        var tf = this.index[fieldName].getTermFrequency(key, docRef);
+        var fieldLength = this.documentStore.getFieldLength(docRef, fieldName);
+        var norm = 1;
+        if (fieldLength != 0) {
+          norm = 1 / Math.sqrt(fieldLength);
+        }
+
+        var penality = 1;
+        if (key != token) {
+          // currently I'm not sure if this penality is enough,
+          // need to do verification
+          penality = (1 - (key.length - token.length) / key.length) * 0.15;
+        } else {
+          // only record appeared token for retrieved documents for the 
+          // original token, not for expaned token.
+          // beause for doing coordNorm for a retrieved document, coordNorm only care how many
+          // query token appear in that document.
+          // so expanded token should not be added into docTokens, if added, this will pollute the 
+          // coordNorm
+          this.fieldSearchStats(docTokens, key, docs);
+        }
+
+        var score = tf * idf * norm * penality;
+
+        if (docRef in scores) {
+          scores[docRef] += score;
+        } else {
+          scores[docRef] = score;
+        }
+      }
+    }, this);
+  }, this);
+
+  if (booleanType == 'AND') {
+    scores = this.intersect(scores, docTokens, queryTokens.length);
+  }
+
+  scores = this.coordNorm(scores, docTokens, queryTokens.length);
+
+  return scores;
+};
+
+/**
+ * Record the occuring query token of retrieved doc specified by doc field.
+ * Only for inner user.
+ * 
+ * @param {Object} docTokens a data structure stores which token appears in the retrieved doc.
+ * @param {String} token query token
+ * @param {Object} docs the retrieved documents of the query token
+ * 
+ */
+elasticlunr.Index.prototype.fieldSearchStats = function (docTokens, token, docs) {
+  for (var doc in docs) {
+    if (doc in docTokens) {
+      docTokens[doc].push(token);
+    } else {
+      docTokens[doc] = [token];
+    }
+  }
+};
+
+/**
+ * compute squared weight of query tokens.
+ *
+ * @param {Array} queryTokens query tokens.
+ * @param {elasticlunr.Configuration} config The user query config, JSON format.
+ * @return {Float}
+ */
+elasticlunr.Index.prototype.computeSquaredWeight = function (queryTokens, config) {
+  var weight = 0.0;
+  queryTokens.forEach(function (token) {
+    var fieldWeight = 0.0;
+    for (var field in config) {
+      var fieldBoost = config[field].boost;
+      var idf = this.idf(token, field);
+      fieldWeight += idf * idf * fieldBoost * fieldBoost;
+    }
+    weight += fieldWeight;
+  }, this);
+
+  return weight;
+};
+
+/**
+ * find documents contain all the query tokens.
+ * only for inner use.
+ * 
+ * @param {Object} results first results
+ * @param {Object} docs field search results of a token
+ * @param {Integer} n query token number
+ * @return {Object}
+ */
+elasticlunr.Index.prototype.intersect = function (scores, docTokens, n) {
+  var res = {};
+
+  for (var doc in scores) {
+    if (!(doc in docTokens)) continue;
+    if (docTokens[doc].length == n) {
+      res[doc] = scores[doc];
+    }
+  }
+
+  return res;
+};
+
+/**
+ * coord norm the score of a doc.
+ * if a doc contain more query tokens, then the score will larger than the doc
+ * contains less query tokens.
+ * 
+ * only for inner use.
+ * 
+ * @param {Object} results first results
+ * @param {Object} docs field search results of a token
+ * @param {Integer} n query token number
+ * @return {Object}
+ */
+elasticlunr.Index.prototype.coordNorm = function (scores, docTokens, n) {
+  for (var doc in scores) {
+    if (!(doc in docTokens)) continue;
+    var tokens = docTokens[doc].length;
+    scores[doc] = scores[doc] * tokens / n;
+  }
+
+  return scores;
+};
+
+/**
+ * Returns a representation of the index ready for serialisation.
+ *
+ * @return {Object}
+ * @memberOf Index
+ */
+elasticlunr.Index.prototype.toJSON = function () {
+  var indexJson = {};
+  this._fields.forEach(function (field) {
+    indexJson[field] = this.index[field].toJSON();
+  }, this);
+
+  return {
+    version: elasticlunr.version,
+    fields: this._fields,
+    ref: this._ref,
+    documentStore: this.documentStore.toJSON(),
+    index: indexJson,
+    pipeline: this.pipeline.toJSON()
+  };
+};
+
+/**
+ * Applies a plugin to the current index.
+ *
+ * A plugin is a function that is called with the index as its context.
+ * Plugins can be used to customise or extend the behaviour the index
+ * in some way. A plugin is just a function, that encapsulated the custom
+ * behaviour that should be applied to the index.
+ *
+ * The plugin function will be called with the index as its argument, additional
+ * arguments can also be passed when calling use. The function will be called
+ * with the index as its context.
+ *
+ * Example:
+ *
+ *     var myPlugin = function (idx, arg1, arg2) {
+ *       // `this` is the index to be extended
+ *       // apply any extensions etc here.
+ *     }
+ *
+ *     var idx = elasticlunr(function () {
+ *       this.use(myPlugin, 'arg1', 'arg2')
+ *     })
+ *
+ * @param {Function} plugin The plugin to apply.
+ * @memberOf Index
+ */
+elasticlunr.Index.prototype.use = function (plugin) {
+  var args = Array.prototype.slice.call(arguments, 1);
+  args.unshift(this);
+  plugin.apply(this, args);
+};
+/*!
+ * elasticlunr.DocumentStore
+ * Copyright (C) 2016 Wei Song
+ */
+
+/**
+ * elasticlunr.DocumentStore is a simple key-value document store used for storing sets of tokens for
+ * documents stored in index.
+ *
+ * elasticlunr.DocumentStore store original JSON format documents that you could build search snippet by this original JSON document.
+ *
+ * user could choose whether original JSON format document should be store, if no configuration then document will be stored defaultly.
+ * If user care more about the index size, user could select not store JSON documents, then this will has some defects, such as user
+ * could not use JSON document to generate snippets of search results.
+ * 
+ * @param {Boolean} save If the original JSON document should be stored.
+ * @constructor
+ * @module
+ */
+elasticlunr.DocumentStore = function (save) {
+  if (save === null || save === undefined) {
+    this._save = true;
+  } else {
+    this._save = save;
+  }
+
+  this.docs = {};
+  this.docInfo = {};
+  this.length = 0;
+};
+
+/**
+ * Loads a previously serialised document store
+ *
+ * @param {Object} serialisedData The serialised document store to load.
+ * @return {elasticlunr.DocumentStore}
+ */
+elasticlunr.DocumentStore.load = function (serialisedData) {
+  var store = new this;
+
+  store.length = serialisedData.length;
+  store.docs = serialisedData.docs;
+  store.docInfo = serialisedData.docInfo;
+  store._save = serialisedData.save;
+
+  return store;
+};
+
+/**
+ * check if current instance store the original doc
+ *
+ * @return {Boolean}
+ */
+elasticlunr.DocumentStore.prototype.isDocStored = function () {
+  return this._save;
+};
+
+/**
+ * Stores the given doc in the document store against the given id.
+ * If docRef already exist, then update doc.
+ * 
+ * Document is store by original JSON format, then you could use original document to generate search snippets.
+ *
+ * @param {Integer|String} docRef The key used to store the JSON format doc.
+ * @param {Object} doc The JSON format doc.
+ */
+elasticlunr.DocumentStore.prototype.addDoc = function (docRef, doc) {
+  if (!this.hasDoc(docRef)) this.length++;
+
+  if (this._save === true) {
+    this.docs[docRef] = doc;
+  } else {
+    this.docs[docRef] = null;
+  }
+};
+
+/**
+ * Retrieves the JSON doc from the document store for a given key.
+ * 
+ * If docRef not found, return null.
+ * If user set not storing the documents, return null.
+ *
+ * @param {Integer|String} docRef The key to lookup and retrieve from the document store.
+ * @return {Object}
+ * @memberOf DocumentStore
+ */
+elasticlunr.DocumentStore.prototype.getDoc = function (docRef) {
+  if (this.hasDoc(docRef) === false) return null;
+  return this.docs[docRef];
+};
+
+/**
+ * Checks whether the document store contains a key (docRef).
+ *
+ * @param {Integer|String} docRef The id to look up in the document store.
+ * @return {Boolean}
+ * @memberOf DocumentStore
+ */
+elasticlunr.DocumentStore.prototype.hasDoc = function (docRef) {
+  return docRef in this.docs;
+};
+
+/**
+ * Removes the value for a key in the document store.
+ *
+ * @param {Integer|String} docRef The id to remove from the document store.
+ * @memberOf DocumentStore
+ */
+elasticlunr.DocumentStore.prototype.removeDoc = function (docRef) {
+  if (!this.hasDoc(docRef)) return;
+
+  delete this.docs[docRef];
+  delete this.docInfo[docRef];
+  this.length--;
+};
+
+/**
+ * Add field length of a document's field tokens from pipeline results.
+ * The field length of a document is used to do field length normalization even without the original JSON document stored.
+ * 
+ * @param {Integer|String} docRef document's id or reference
+ * @param {String} fieldName field name
+ * @param {Integer} length field length
+ */
+elasticlunr.DocumentStore.prototype.addFieldLength = function (docRef, fieldName, length) {
+  if (docRef === null || docRef === undefined) return;
+  if (this.hasDoc(docRef) == false) return;
+  
+  if (!this.docInfo[docRef]) this.docInfo[docRef] = {};
+  this.docInfo[docRef][fieldName] = length;
+};
+
+/**
+ * Update field length of a document's field tokens from pipeline results.
+ * The field length of a document is used to do field length normalization even without the original JSON document stored.
+ * 
+ * @param {Integer|String} docRef document's id or reference
+ * @param {String} fieldName field name
+ * @param {Integer} length field length
+ */
+elasticlunr.DocumentStore.prototype.updateFieldLength = function (docRef, fieldName, length) {
+  if (docRef === null || docRef === undefined) return;
+  if (this.hasDoc(docRef) == false) return;
+  
+  this.addFieldLength(docRef, fieldName, length);
+};
+
+/**
+ * get field length of a document by docRef
+ * 
+ * @param {Integer|String} docRef document id or reference
+ * @param {String} fieldName field name
+ * @return {Integer} field length
+ */
+elasticlunr.DocumentStore.prototype.getFieldLength = function (docRef, fieldName) {
+  if (docRef === null || docRef === undefined) return 0;
+
+  if (!(docRef in this.docs)) return 0;
+  if (!(fieldName in this.docInfo[docRef])) return 0;
+  return this.docInfo[docRef][fieldName];
+};
+
+/**
+ * Returns a JSON representation of the document store used for serialisation.
+ *
+ * @return {Object} JSON format
+ * @memberOf DocumentStore
+ */
+elasticlunr.DocumentStore.prototype.toJSON = function () {
+  return {
+    docs: this.docs,
+    docInfo: this.docInfo,
+    length: this.length,
+    save: this._save
+  };
+};
+/*!
+ * elasticlunr.stemmer
+ * Copyright (C) 2016 Oliver Nightingale
+ * Copyright (C) 2016 Wei Song
+ * Includes code from - http://tartarus.org/~martin/PorterStemmer/js.txt
+ */
+
+/**
+ * elasticlunr.stemmer is an english language stemmer, this is a JavaScript
+ * implementation of the PorterStemmer taken from http://tartarus.org/~martin
+ *
+ * @module
+ * @param {String} str The string to stem
+ * @return {String}
+ * @see elasticlunr.Pipeline
+ */
+elasticlunr.stemmer = (function(){
+  var step2list = {
+      "ational" : "ate",
+      "tional" : "tion",
+      "enci" : "ence",
+      "anci" : "ance",
+      "izer" : "ize",
+      "bli" : "ble",
+      "alli" : "al",
+      "entli" : "ent",
+      "eli" : "e",
+      "ousli" : "ous",
+      "ization" : "ize",
+      "ation" : "ate",
+      "ator" : "ate",
+      "alism" : "al",
+      "iveness" : "ive",
+      "fulness" : "ful",
+      "ousness" : "ous",
+      "aliti" : "al",
+      "iviti" : "ive",
+      "biliti" : "ble",
+      "logi" : "log"
+    },
+
+    step3list = {
+      "icate" : "ic",
+      "ative" : "",
+      "alize" : "al",
+      "iciti" : "ic",
+      "ical" : "ic",
+      "ful" : "",
+      "ness" : ""
+    },
+
+    c = "[^aeiou]",          // consonant
+    v = "[aeiouy]",          // vowel
+    C = c + "[^aeiouy]*",    // consonant sequence
+    V = v + "[aeiou]*",      // vowel sequence
+
+    mgr0 = "^(" + C + ")?" + V + C,               // [C]VC... is m>0
+    meq1 = "^(" + C + ")?" + V + C + "(" + V + ")?$",  // [C]VC[V] is m=1
+    mgr1 = "^(" + C + ")?" + V + C + V + C,       // [C]VCVC... is m>1
+    s_v = "^(" + C + ")?" + v;                   // vowel in stem
+
+  var re_mgr0 = new RegExp(mgr0);
+  var re_mgr1 = new RegExp(mgr1);
+  var re_meq1 = new RegExp(meq1);
+  var re_s_v = new RegExp(s_v);
+
+  var re_1a = /^(.+?)(ss|i)es$/;
+  var re2_1a = /^(.+?)([^s])s$/;
+  var re_1b = /^(.+?)eed$/;
+  var re2_1b = /^(.+?)(ed|ing)$/;
+  var re_1b_2 = /.$/;
+  var re2_1b_2 = /(at|bl|iz)$/;
+  var re3_1b_2 = new RegExp("([^aeiouylsz])\\1$");
+  var re4_1b_2 = new RegExp("^" + C + v + "[^aeiouwxy]$");
+
+  var re_1c = /^(.+?[^aeiou])y$/;
+  var re_2 = /^(.+?)(ational|tional|enci|anci|izer|bli|alli|entli|eli|ousli|ization|ation|ator|alism|iveness|fulness|ousness|aliti|iviti|biliti|logi)$/;
+
+  var re_3 = /^(.+?)(icate|ative|alize|iciti|ical|ful|ness)$/;
+
+  var re_4 = /^(.+?)(al|ance|ence|er|ic|able|ible|ant|ement|ment|ent|ou|ism|ate|iti|ous|ive|ize)$/;
+  var re2_4 = /^(.+?)(s|t)(ion)$/;
+
+  var re_5 = /^(.+?)e$/;
+  var re_5_1 = /ll$/;
+  var re3_5 = new RegExp("^" + C + v + "[^aeiouwxy]$");
+
+  var porterStemmer = function porterStemmer(w) {
+    var   stem,
+      suffix,
+      firstch,
+      re,
+      re2,
+      re3,
+      re4;
+
+    if (w.length < 3) { return w; }
+
+    firstch = w.substr(0,1);
+    if (firstch == "y") {
+      w = firstch.toUpperCase() + w.substr(1);
+    }
+
+    // Step 1a
+    re = re_1a
+    re2 = re2_1a;
+
+    if (re.test(w)) { w = w.replace(re,"$1$2"); }
+    else if (re2.test(w)) { w = w.replace(re2,"$1$2"); }
+
+    // Step 1b
+    re = re_1b;
+    re2 = re2_1b;
+    if (re.test(w)) {
+      var fp = re.exec(w);
+      re = re_mgr0;
+      if (re.test(fp[1])) {
+        re = re_1b_2;
+        w = w.replace(re,"");
+      }
+    } else if (re2.test(w)) {
+      var fp = re2.exec(w);
+      stem = fp[1];
+      re2 = re_s_v;
+      if (re2.test(stem)) {
+        w = stem;
+        re2 = re2_1b_2;
+        re3 = re3_1b_2;
+        re4 = re4_1b_2;
+        if (re2.test(w)) {  w = w + "e"; }
+        else if (re3.test(w)) { re = re_1b_2; w = w.replace(re,""); }
+        else if (re4.test(w)) { w = w + "e"; }
+      }
+    }
+
+    // Step 1c - replace suffix y or Y by i if preceded by a non-vowel which is not the first letter of the word (so cry -> cri, by -> by, say -> say)
+    re = re_1c;
+    if (re.test(w)) {
+      var fp = re.exec(w);
+      stem = fp[1];
+      w = stem + "i";
+    }
+
+    // Step 2
+    re = re_2;
+    if (re.test(w)) {
+      var fp = re.exec(w);
+      stem = fp[1];
+      suffix = fp[2];
+      re = re_mgr0;
+      if (re.test(stem)) {
+        w = stem + step2list[suffix];
+      }
+    }
+
+    // Step 3
+    re = re_3;
+    if (re.test(w)) {
+      var fp = re.exec(w);
+      stem = fp[1];
+      suffix = fp[2];
+      re = re_mgr0;
+      if (re.test(stem)) {
+        w = stem + step3list[suffix];
+      }
+    }
+
+    // Step 4
+    re = re_4;
+    re2 = re2_4;
+    if (re.test(w)) {
+      var fp = re.exec(w);
+      stem = fp[1];
+      re = re_mgr1;
+      if (re.test(stem)) {
+        w = stem;
+      }
+    } else if (re2.test(w)) {
+      var fp = re2.exec(w);
+      stem = fp[1] + fp[2];
+      re2 = re_mgr1;
+      if (re2.test(stem)) {
+        w = stem;
+      }
+    }
+
+    // Step 5
+    re = re_5;
+    if (re.test(w)) {
+      var fp = re.exec(w);
+      stem = fp[1];
+      re = re_mgr1;
+      re2 = re_meq1;
+      re3 = re3_5;
+      if (re.test(stem) || (re2.test(stem) && !(re3.test(stem)))) {
+        w = stem;
+      }
+    }
+
+    re = re_5_1;
+    re2 = re_mgr1;
+    if (re.test(w) && re2.test(w)) {
+      re = re_1b_2;
+      w = w.replace(re,"");
+    }
+
+    // and turn initial Y back to y
+
+    if (firstch == "y") {
+      w = firstch.toLowerCase() + w.substr(1);
+    }
+
+    return w;
+  };
+
+  return porterStemmer;
+})();
+
+elasticlunr.Pipeline.registerFunction(elasticlunr.stemmer, 'stemmer');
+/*!
+ * elasticlunr.stopWordFilter
+ * Copyright (C) 2016 Oliver Nightingale
+ * Copyright (C) 2016 Wei Song
+ */
+
+/**
+ * elasticlunr.stopWordFilter is an English language stop word list filter, any words
+ * contained in the list will not be passed through the filter.
+ *
+ * This is intended to be used in the Pipeline. If the token does not pass the
+ * filter then undefined will be returned.
+ * Currently this StopwordFilter using dictionary to do O(1) stop word filter.
+ *
+ * @module
+ * @param {String} token The token to pass through the filter
+ * @return {String}
+ * @see elasticlunr.Pipeline
+ */
+elasticlunr.stopWordFilter = function (token) {
+  if (token && elasticlunr.stopWordFilter.stopWords[token] !== true) {
+    return token;
+  }
+};
+
+/**
+ * remove predefined stop words
+ * if user want to use customized stop words, user could use this function to delete
+ * all predefined stopwords.
+ *
+ * @return {null}
+ */
+elasticlunr.clearStopWords = function () {
+  elasticlunr.stopWordFilter.stopWords = {};
+};
+
+/**
+ * add customized stop words
+ * user could use this function to add customized stop words
+ * 
+ * @params {Array} words customized stop words
+ * @return {null}
+ */
+elasticlunr.addStopWords = function (words) {
+  if (words == null || Array.isArray(words) === false) return;
+
+  words.forEach(function (word) {
+    elasticlunr.stopWordFilter.stopWords[word] = true;
+  }, this);
+};
+
+elasticlunr.defaultStopWords = {
+  "": true,
+  "a": true,
+  "able": true,
+  "about": true,
+  "across": true,
+  "after": true,
+  "all": true,
+  "almost": true,
+  "also": true,
+  "am": true,
+  "among": true,
+  "an": true,
+  "and": true,
+  "any": true,
+  "are": true,
+  "as": true,
+  "at": true,
+  "be": true,
+  "because": true,
+  "been": true,
+  "but": true,
+  "by": true,
+  "can": true,
+  "cannot": true,
+  "could": true,
+  "dear": true,
+  "did": true,
+  "do": true,
+  "does": true,
+  "either": true,
+  "else": true,
+  "ever": true,
+  "every": true,
+  "for": true,
+  "from": true,
+  "get": true,
+  "got": true,
+  "had": true,
+  "has": true,
+  "have": true,
+  "he": true,
+  "her": true,
+  "hers": true,
+  "him": true,
+  "his": true,
+  "how": true,
+  "however": true,
+  "i": true,
+  "if": true,
+  "in": true,
+  "into": true,
+  "is": true,
+  "it": true,
+  "its": true,
+  "just": true,
+  "least": true,
+  "let": true,
+  "like": true,
+  "likely": true,
+  "may": true,
+  "me": true,
+  "might": true,
+  "most": true,
+  "must": true,
+  "my": true,
+  "neither": true,
+  "no": true,
+  "nor": true,
+  "not": true,
+  "of": true,
+  "off": true,
+  "often": true,
+  "on": true,
+  "only": true,
+  "or": true,
+  "other": true,
+  "our": true,
+  "own": true,
+  "rather": true,
+  "said": true,
+  "say": true,
+  "says": true,
+  "she": true,
+  "should": true,
+  "since": true,
+  "so": true,
+  "some": true,
+  "than": true,
+  "that": true,
+  "the": true,
+  "their": true,
+  "them": true,
+  "then": true,
+  "there": true,
+  "these": true,
+  "they": true,
+  "this": true,
+  "tis": true,
+  "to": true,
+  "too": true,
+  "twas": true,
+  "us": true,
+  "wants": true,
+  "was": true,
+  "we": true,
+  "were": true,
+  "what": true,
+  "when": true,
+  "where": true,
+  "which": true,
+  "while": true,
+  "who": true,
+  "whom": true,
+  "why": true,
+  "will": true,
+  "with": true,
+  "would": true,
+  "yet": true,
+  "you": true,
+  "your": true
+};
+
+elasticlunr.stopWordFilter.stopWords = elasticlunr.defaultStopWords;
+
+elasticlunr.Pipeline.registerFunction(elasticlunr.stopWordFilter, 'stopWordFilter');
+/*!
+ * elasticlunr.trimmer
+ * Copyright (C) 2016 Oliver Nightingale
+ * Copyright (C) 2016 Oliver Nightingale
+ */
+
+/**
+ * elasticlunr.trimmer is a pipeline function for trimming non word
+ * characters from the begining and end of tokens before they
+ * enter the index.
+ *
+ * This implementation may not work correctly for non latin
+ * characters and should either be removed or adapted for use
+ * with languages with non-latin characters.
+ *
+ * @module
+ * @param {String} token The token to pass through the filter
+ * @return {String}
+ * @see elasticlunr.Pipeline
+ */
+elasticlunr.trimmer = function (token) {
+  if (token === null || token === undefined) {
+    throw new Error('token should not be undefined');
+  }
+
+  return token
+    .replace(/^\W+/, '')
+    .replace(/\W+$/, '');
+};
+
+elasticlunr.Pipeline.registerFunction(elasticlunr.trimmer, 'trimmer');
+/*!
+ * elasticlunr.InvertedIndex
+ * Copyright (C) 2016 Wei Song
+ * Includes code from - http://tartarus.org/~martin/PorterStemmer/js.txt
+ */
+
+/**
+ * elasticlunr.InvertedIndex is used for efficient storing and lookup of the inverted index of token to document ref.
+ *
+ * @constructor
+ */
+elasticlunr.InvertedIndex = function () {
+  this.root = { docs: {}, df: 0 };
+  this.length = 0;
+};
+
+/**
+ * Loads a previously serialised inverted index.
+ *
+ * @param {Object} serialisedData The serialised inverted index to load.
+ * @return {elasticlunr.InvertedIndex}
+ */
+elasticlunr.InvertedIndex.load = function (serialisedData) {
+  var idx = new this;
+
+  idx.root = serialisedData.root;
+  idx.length = serialisedData.length;
+
+  return idx;
+};
+
+/**
+ * Adds a {token: tokenInfo} pair to the inverted index.
+ * If the token already exist, then update the tokenInfo.
+ *
+ * By default this function starts at the root of the current inverted index, however
+ * it can start at any node of the inverted index if required.
+ *
+ * @param {String} token 
+ * @param {Object} tokenInfo format: { ref: 1, tf: 2}
+ * @param {Object} root An optional node at which to start looking for the
+ * correct place to enter the doc, by default the root of this elasticlunr.InvertedIndex
+ * is used.
+ * @memberOf InvertedIndex
+ */
+elasticlunr.InvertedIndex.prototype.addToken = function (token, tokenInfo, root) {
+  var root = root || this.root,
+      idx = 0;
+
+  while (idx <= token.length - 1) {
+    var key = token[idx];
+
+    if (!(key in root)) root[key] = {docs: {}, df: 0};
+    idx += 1;
+    root = root[key];
+  }
+
+  var docRef = tokenInfo.ref;
+  if (!root.docs[docRef]) {
+    // if this doc not exist, then add this doc
+    root.docs[docRef] = {tf: tokenInfo.tf};
+    root.df += 1;
+    this.length += 1;
+  } else {
+    // if this doc already exist, then update tokenInfo
+    root.docs[docRef] = {tf: tokenInfo.tf};
+  }
+};
+
+/**
+ * Checks whether this key is in this elasticlunr.InvertedIndex.
+ * 
+ *
+ * @param {String} token The token to check
+ * @return {Boolean}
+ * @memberOf InvertedIndex
+ */
+elasticlunr.InvertedIndex.prototype.hasToken = function (token) {
+  if (!token) return false;
+
+  var node = this.root;
+
+  for (var i = 0; i < token.length; i++) {
+    if (!node[token[i]]) return false;
+    node = node[token[i]];
+  }
+
+  return true;
+};
+
+/**
+ * Retrieve a node from the inverted index for a given token.
+ * If token not found in this InvertedIndex, return null.
+ * 
+ *
+ * @param {String} token The token to get the node for.
+ * @return {Object}
+ * @see InvertedIndex.prototype.get
+ * @memberOf InvertedIndex
+ */
+elasticlunr.InvertedIndex.prototype.getNode = function (token) {
+  if (!token) return null;
+
+  var node = this.root;
+
+  for (var i = 0; i < token.length; i++) {
+    if (!node[token[i]]) return null;
+    node = node[token[i]];
+  }
+
+  return node;
+};
+
+/**
+ * Retrieve the documents for a given token.
+ * If token not found, return {}.
+ *
+ *
+ * @param {String} token The token to get the documents for.
+ * @return {Object}
+ * @memberOf InvertedIndex
+ */
+elasticlunr.InvertedIndex.prototype.getDocs = function (token) {
+  var node = this.getNode(token);
+  if (node == null) {
+    return {};
+  }
+
+  return node.docs;
+};
+
+/**
+ * Retrieve term frequency of given token in given docRef.
+ * If token or docRef not found, return 0.
+ *
+ *
+ * @param {String} token The token to get the documents for.
+ * @param {String|Integer} docRef
+ * @return {Integer}
+ * @memberOf InvertedIndex
+ */
+elasticlunr.InvertedIndex.prototype.getTermFrequency = function (token, docRef) {
+  var node = this.getNode(token);
+
+  if (node == null) {
+    return 0;
+  }
+
+  if (!(docRef in node.docs)) {
+    return 0;
+  }
+
+  return node.docs[docRef].tf;
+};
+
+/**
+ * Retrieve the document frequency of given token.
+ * If token not found, return 0.
+ *
+ *
+ * @param {String} token The token to get the documents for.
+ * @return {Object}
+ * @memberOf InvertedIndex
+ */
+elasticlunr.InvertedIndex.prototype.getDocFreq = function (token) {
+  var node = this.getNode(token);
+
+  if (node == null) {
+    return 0;
+  }
+
+  return node.df;
+};
+
+/**
+ * Remove the document identified by ref from the token in the inverted index.
+ *
+ *
+ * @param {String} token The token to get the documents for.
+ * @param {String} ref The ref of the document to remove from this token.
+ * @memberOf InvertedIndex
+ */
+elasticlunr.InvertedIndex.prototype.removeToken = function (token, ref) {
+  if (!token) return;
+  var node = this.getNode(token);
+
+  if (node == null) return;
+
+  if (ref in node.docs) {
+    delete node.docs[ref];
+    node.df -= 1;
+  }
+};
+
+/**
+ * Find all the possible suffixes of the passed token using tokens currently in the inverted index.
+ * If token not found, return empty Array.
+ *
+ * @param {String} token The token to expand.
+ * @return {Array}
+ * @memberOf InvertedIndex
+ */
+elasticlunr.InvertedIndex.prototype.expandToken = function (token, memo, root) {
+  if (token == null || token == '') return [];
+  var memo = memo || [];
+
+  if (root == void 0) {
+    root = this.getNode(token);
+    if (root == null) return memo;
+  }
+
+  if (root.df > 0) memo.push(token);
+
+  for (var key in root) {
+    if (key === 'docs') continue;
+    if (key === 'df') continue;
+    this.expandToken(token + key, memo, root[key]);
+  }
+
+  return memo;
+};
+
+/**
+ * Returns a representation of the inverted index ready for serialisation.
+ *
+ * @return {Object}
+ * @memberOf InvertedIndex
+ */
+elasticlunr.InvertedIndex.prototype.toJSON = function () {
+  return {
+    root: this.root,
+    length: this.length
+  };
+};
+
+/*!
+ * elasticlunr.Configuration
+ * Copyright (C) 2016 Wei Song
+ */
+ 
+ /** 
+  * elasticlunr.Configuration is used to analyze the user search configuration.
+  * 
+  * By elasticlunr.Configuration user could set query-time boosting, boolean model in each field.
+  * 
+  * Currently configuration supports:
+  * 1. query-time boosting, user could set how to boost each field.
+  * 2. boolean model chosing, user could choose which boolean model to use for each field.
+  * 3. token expandation, user could set token expand to True to improve Recall. Default is False.
+  * 
+  * Query time boosting must be configured by field category, "boolean" model could be configured 
+  * by both field category or globally as the following example. Field configuration for "boolean"
+  * will overwrite global configuration.
+  * Token expand could be configured both by field category or golbally. Local field configuration will
+  * overwrite global configuration.
+  * 
+  * configuration example:
+  * {
+  *   fields:{ 
+  *     title: {boost: 2},
+  *     body: {boost: 1}
+  *   },
+  *   bool: "OR"
+  * }
+  * 
+  * "bool" field configuation overwrite global configuation example:
+  * {
+  *   fields:{ 
+  *     title: {boost: 2, bool: "AND"},
+  *     body: {boost: 1}
+  *   },
+  *   bool: "OR"
+  * }
+  * 
+  * "expand" example:
+  * {
+  *   fields:{ 
+  *     title: {boost: 2, bool: "AND"},
+  *     body: {boost: 1}
+  *   },
+  *   bool: "OR",
+  *   expand: true
+  * }
+  * 
+  * "expand" example for field category:
+  * {
+  *   fields:{ 
+  *     title: {boost: 2, bool: "AND", expand: true},
+  *     body: {boost: 1}
+  *   },
+  *   bool: "OR"
+  * }
+  * 
+  * then, user could search with configuration to do query-time boosting.
+  * idx.search('oracle database', {fields: {title: {boost: 2}, body: {boost: 1}}});
+  * 
+  * 
+  * @constructor
+  * 
+  * @param {String} config user configuration
+  * @param {Array} fields fields of index instance
+  * @module
+  */
+elasticlunr.Configuration = function (config, fields) {
+  var config = config || '';
+
+  if (fields == undefined || fields == null) {
+    throw new Error('fields should not be null');
+  }
+
+  this.config = {};
+
+  var userConfig;
+  try {
+    userConfig = JSON.parse(config);
+    this.buildUserConfig(userConfig, fields);
+  } catch (error) {
+    elasticlunr.utils.warn('user configuration parse failed, will use default configuration');
+    this.buildDefaultConfig(fields);
+  }
+};
+
+/**
+ * Build default search configuration.
+ * 
+ * @param {Array} fields fields of index instance
+ */
+elasticlunr.Configuration.prototype.buildDefaultConfig = function (fields) {
+  this.reset();
+  fields.forEach(function (field) {
+    this.config[field] = {
+      boost: 1,
+      bool: "OR",
+      expand: false
+    };
+  }, this);
+};
+
+/**
+ * Build user configuration.
+ * 
+ * @param {JSON} config User JSON configuratoin
+ * @param {Array} fields fields of index instance
+ */
+elasticlunr.Configuration.prototype.buildUserConfig = function (config, fields) {
+  var global_bool = "OR";
+  var global_expand = false;
+
+  this.reset();
+  if ('bool' in config) {
+    global_bool = config['bool'] || global_bool;
+  }
+
+  if ('expand' in config) {
+    global_expand = config['expand'] || global_expand;
+  }
+
+  if ('fields' in config) {
+    for (var field in config['fields']) {
+      if (fields.indexOf(field) > -1) {
+        var field_config = config['fields'][field];
+        var field_expand = global_expand;
+        if (field_config.expand != undefined) {
+          field_expand = field_config.expand;
+        }
+
+        this.config[field] = {
+          boost: field_config.boost || 1,
+          bool: field_config.bool || global_bool,
+          expand: field_expand
+        };
+      } else {
+        elasticlunr.utils.warn('field name in user configuration not found in index instance fields');
+      }
+    }
+  } else {
+    this.addAllFields2UserConfig(global_bool, global_expand, fields);
+  }
+};
+
+/**
+ * Add all fields to user search configuration.
+ * 
+ * @param {String} bool Boolean model
+ * @param {String} expand Expand model
+ * @param {Array} fields fields of index instance
+ */
+elasticlunr.Configuration.prototype.addAllFields2UserConfig = function (bool, expand, fields) {
+  fields.forEach(function (field) {
+    this.config[field] = {
+      boost: 1,
+      bool: bool,
+      expand: expand
+    };
+  }, this);
+};
+
+/**
+ * get current user configuration
+ */
+elasticlunr.Configuration.prototype.get = function () {
+  return this.config;
+};
+
+/**
+ * reset user search configuration.
+ */
+elasticlunr.Configuration.prototype.reset = function () {
+  this.config = {};
+};
+
+  /**
+   * export the module via AMD, CommonJS or as a browser global
+   * Export code from https://github.com/umdjs/umd/blob/master/returnExports.js
+   */
+  ;(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+      // AMD. Register as an anonymous module.
+      define(factory)
+    } else if (typeof exports === 'object') {
+      /**
+       * Node. Does not work with strict CommonJS, but
+       * only CommonJS-like enviroments that support module.exports,
+       * like Node.
+       */
+      module.exports = factory()
+    } else {
+      // Browser globals (root is window)
+      root.elasticlunr = factory()
+    }
+  }(this, function () {
+    /**
+     * Just return a value to define the module export.
+     * This example returns an object, but the module
+     * can return a function as the exported value.
+     */
+    return elasticlunr
+  }))
+})();
+
+},{}],4:[function(require,module,exports){
+module.exports={
+  "iem": {
+    "prop": {
+      "heading": {
+          "size":    "size and behavior",
+          "messages": "messages",
+          "label":   "label",
+          "colors":  "colors"
+      },
+      "size_tt": "size of the iemgui",
+      "size": "size",
+      "select_size": "selection size",
+      "select_size_tt": "size of the selection rectangle used to select and drag the object",
+      "visible_width": "width",
+      "visible_width_tt": "width of the rectangle",
+      "visible_height": "height",
+      "visible_height_tt": "height of the rectangle",
+      "nonzero_value": "nonzero value",
+      "nonzero_value_tt": "value to output when the toggle shows an 'x'",
+      "flash_interrupt": "interrupt",
+      "flash_interrupt_tt": "the amount of time (in milliseconds) that Pd will wait before interrupting the flashing of the button",
+      "flash_hold":  "hold",
+      "flash_hold_tt": "the amount of time (in milliseconds) that Pd will display the flash animation",
+      "vu_scale":    "scale",
+      "vu_scale_tt": "display scale (numbers) next to the meter",
+      "width":       "width",
+      "width_tt":     "width of the iemgui in pixels",
+      "height":       "height",
+      "height_tt":    "height of the iemgui in pixels",
+      "minimum":      "minimum",
+      "minimum_tt":   "smallest number to output. Anything lower will be replaced by this number",
+      "maximum":      "maximum",
+      "maximum_tt":   "largest number to output. Anything bigger will be replaced by this number",
+      "number":       "number",
+      "number_tt":    "total number of buttons",
+      "init":         "init",
+      "init_tt":      "save the state of the iemgui with the patch, and output a saved value when loaded (as if you had a [loadbang] connected to the input)",
+      "log_scale":          "logarithmic scaling",
+      "log_scale_tt":       "use logarithmic scale for values along the slider",
+      "log_height":   "log height",
+      "log_height_tt":   "the framus intersects with the ramistan approximately at the podernoster",
+      "steady":       "steady on click",
+      "steady_tt":    "don't move the slider when clicked. Only move it when dragging the mouse",
+      "send":         "send symbol",
+      "send_tt":      "symbol to send wireless messages to other iemguis or objects",
+      "receive":      "receive symbol",
+      "receive_tt":   "symbol to receive wireless messages from other iemguis or objects",
+      "label":        "text",
+      "label_tt":     "text to display next to this iemgui",
+      "xoffset":      "x",
+      "xoffset_tt":  "horizontal offset of the text relative to the top-left corner of the iemgui",
+      "yoffset":      "y",
+      "yoffset_tt":   "vertical offset for the text relative to the top-left corner of the iemgui",
+      "font":         "font",
+      "font_tt":      "which font to use when displaying the label text",
+      "fontsize":     "size",
+      "fontsize_tt":  "size of the font for the label",
+      "bgcolor":      "background",
+      "bgcolor_tt":   "background fill color for the iemgui",
+      "fgcolor":      "foreground",
+      "fgcolor_tt":   "foreground color for the iemgui",
+      "label_color":        "label",
+      "label_color_tt":     "color for the text label",
+      "ok":           "Ok",
+      "ok_tt":        "Apply the settings and close this dialog window",
+      "apply":        "Apply",
+      "apply_tt":     "Apply the settings without closing the dialog",
+      "cancel":       "Cancel",
+      "cancel_tt":    "Close the dialog window",
+      "close":        "Close",
+      "close_tt":     "Close the dialog window",
+      "mknob_steps":  "# of steps",
+      "mknob_steps_tt": "number of dial positions for the knob",
+      "mknob_size":   "size",
+      "mknob_size_tt": "size of the knob"
+    }
+  },
+  "gatom": {
+    "prop": {
+      "gatom": "atom box",
+      "dropdown": "dropdown menu",
+      "label": "label",
+      "label_left": "left",
+      "label_right": "right",
+      "label_tt": "text label to display next to this object",
+      "labelpos": "label position",
+      "labelpos_tt": "position the text label relative to the widget",
+      "label_top": "top",
+      "label_bottom": "bottom",
+      "label_left": "left",
+      "label_right": "right",
+      "dropdown_outtype": "output",
+      "dropdown_outtype_tt": "whether to output the index or the value",
+      "width": "width",
+      "width_tt": "width (in characters)"
+    }
+  },
+  "menu": {
+    "file": "File",
+    "new": "New",
+    "new_tt": "Create an empty Pd patch",
+    "open": "Open",
+    "open_tt": "Open one or more Pd files",
+    "recent_files": "Recent Files",
+    "recent_files_tt": "Open a recently opened Pd file",
+    "clear_recent_files": "Clear List",
+    "clear_recent_files_tt": "Clear the recent files list",
+    "k12_demos": "K12 Demos",
+    "k12_demos_tt": "Demo patches for use with K12 Mode",
+    "save": "Save",
+    "save_tt": "Save a Pd patch to disk",
+    "saveas": "Save as...",
+    "saveas_tt": "Save a Pd patch by manually choosing a filename",
+    "print": "Print...",
+    "print_tt": "Print a Pd patch, saving the result to a PDF file",
+    "message": "Message...",
+    "message_tt": "Send a message directly to the running Pd instance",
+
+    "close": "Close",
+    "close_tt": "Close patch",
+
+    "quit": "Quit",
+    "quit_tt": "Close all patches and quit the program",
+
+    "edit": "Edit",
+
+    "undo": "Undo",
+    "undo_tt": "Undo the last action performed on this patch",
+    "redo": "Redo",
+    "redo_tt": "if you clicked undo, this will restore the action that you performed",
+    "cut": "Cut",
+    "cut_tt": "Remove the currently selected object or objects on the canvas",
+    "copy": "Copy",
+    "copy_tt": "Copy selected objects to the clipboard",
+    "paste": "Paste",
+    "paste_tt": "Add any objects to the canvas which were previously cut or copied",
+    "paste_clipboard": "Paste from Clipboard",
+    "paste_clipboard_tt": "Paste Pd code from the clipboard to the canvas (use with caution!)",
+    "duplicate": "Duplicate",
+    "duplicate_tt": "Paste a copy of the current selection on the canvas (doesn't use clipboard)",
+    "selectall": "Select All",
+    "selectall_tt": "Select all objects in a patch",
+    "reselect": "Reselect",
+    "reselect_tt": "Restore the previous selection",
+    "find": "Find",
+    "find_tt": "Find text in the console output",
+    "tidyup": "Tidy Up",
+    "tidyup_tt": "Line up the selected objects in straight rows and columns",
+    "clear_console": "Clear Console",
+    "clear_console_tt": "Clear the Pd Window Console",
+    "tofront": "Bring to Front",
+    "tofront_tt": "Bring the selected object visually in front of all other objects",
+    "toback": "Send to Back",
+    "toback_tt": "Send the selected object visually behind all other objects",
+    "font": "Font",
+    "font_tt": "Font settings for this patch",
+    "cordinspector": "Cord Inspector",
+    "cordinspector_tt": "Move the mouse over cords to inspect the data moving between objects",
+    "find": "Find",
+    "find_tt": "Search for an object in this patch",
+    "findagain": "Find Again",
+    "findagain_tt": "Search for the next object matching the string you typed",
+    "finderror": "Find Last Error",
+    "finderror_tt": "If possible, find the last object which caused an error",
+    "autotips": "Autotips",
+    "autotips_tt": "Turn on tooltips in the patch",
+    "editmode": "Editmode",
+    "editmode_tt": "Toggle Editmode",
+    "preferences": "Preferences",
+    "preferences_tt": "Open a dialog window to configure the running instance of Pd",
+
+    "view": "View",
+
+    "zoomin": "Zoom In",
+    "zoomin_tt": "Make the patch visually larger",
+    "zoomout": "Zoom Out",
+    "zoomout_tt": "Make the patch visually smaller",
+    "zoomreset": "Reset Zoom",
+    "zoomreset_tt": "Reset the zoom to the original level",
+    "zoomoptimal": "Optimal Zoom",
+    "zoomoptimal_tt": "Change the zoom to the optimal level which makes the entire patch visible (as far as possible)",
+    "zoomhoriz": "Fit to Width",
+    "zoomhoriz_tt": "Change the zoom level to make the patch fit horizontally",
+    "zoomvert": "Fit to Height",
+    "zoomvert_tt": "Change the zoom level to make the patch fit vertically",
+    "fullscreen": "Fullscreen",
+
+    "put": "Put",
+
+    "object": "Object",
+    "object_tt": "Add an empty object box to the canvas",
+    "msgbox": "Message",
+    "msg_tt": "Add a message box to the canvas",
+    "number": "Number",
+    "number_tt": "Add a box to type, scroll, and display a number on the canvas",
+    "symbol": "Symbol",
+    "symbol_tt": "Add a box to type and display a symbol on the canvas",
+    "comment": "Comment",
+    "comment_tt": "Write a comment on the canvas",
+    "dropdown": "Dropdown",
+    "dropdown_tt": "Dropdown menu",
+    "bang": "Bang",
+    "bang_tt": "Add a graphical button to the canvas for sending bang messages",
+    "toggle": "Toggle",
+    "bang_tt": "Add a graphical checkbox to the canvas for toggling between two values",
+    "number2": "Number2",
+    "number2_tt": "Add a fancy graphical box to the canvas for displaying and scrolling numbers",
+    "vslider": "Vslider",
+    "vslider_tt": "Add a vertical slider to the canvas for scrolling numbers",
+    "hslider": "Hslider",
+    "hslider_tt": "Add a horizontal slider to the canvas for scrolling numbers",
+    "vradio": "Vradio",
+    "vradio_tt": "Add a vertical group of radio buttons to the canvas for selecting a value",
+    "hradio": "Hradio",
+    "hradio_tt": "Add horizontal group of radio buttons to the canvas for selecting a value",
+    "vu": "VU",
+    "vu_tt": "Add a VU Meter to the canvas",
+    "cnv": "Canvas Rectangle",
+    "cnv_tt": "Add a boring rectangle to the canvas for displaying a rectangle",
+
+    "graph": "Graph",
+    "graph_tt": "Add an empty graph to the canvas",
+    "array": "Array",
+    "array_tt": "Add a visual array object to the canvas (with dialog for settings)",
+
+    "windows": "Windows",
+
+    "nextwin": "Next Window",
+    "nextwin_tt": "Give focus to the next open window in the stacking order",
+    "prevwin": "Previous Window",
+    "prevwin_tt": "Give focus to the previous window in the stacking order",
+    "parentwin": "Parent Window",
+    "parentwin_tt": "give focus to the parent window of the current window",
+    "visible_ancestor": "Closest Visible Ancestor",
+    "visible_ancestor_tt": "give focus to the closest ancestor of this window that is currently visible",
+    "pdwin": "Pd Window",
+    "pdwin_tt": "Give focus to the main Pd window",
+
+    "media": "Media",
+
+    "audio_on": "Audio On",
+    "audio_on_tt": "Turn audio on",
+    "audio_off": "Audio Off",
+    "audio_off_tt": "Turn audio off",
+    "test": "Test Audio and Midi",
+    "test_tt": "Open a patch to test your audio and midi are configured and functioning correctly",
+    "loadmeter": "Load Meter",
+    "loadmeter_tt": "Open a patch to monitor the CPU load of Pd (note: doesn't include the GUI)",
+
+    "help": "Help",
+
+    "about": "About Pd-L2ork",
+    "about_tt": "Get information about this version of Pd",
+    "manual": "Manual",
+    "manual_tt": "Open the HTML manual for Pd",
+    "browser": "Help Browser",
+    "browser_tt": "Open a help browser to search for documentation and objects",
+    "intro": "Quick Reference",
+    "intro_tt": "Open a help patch listing Pd's most essential objects",
+    "l2ork_list": "Pd-L2ork Mailing List",
+    "l2ork_list_tt": "Open a link in a browser for Pd-L2ork Mailing List",
+    "pd_list": "Pure Data Mailing Lists",
+    "pd_list_tt": "Open a link in a browser for Pure Data Mailing Lists",
+    "forums": "Forums",
+    "forums_tt": "Open a link in a browser for the Pd Forum",
+    "irc": "IRC Chat",
+    "irc_tt": "Open a link in a browser for IRC Chat",
+    "devtools": "Show DevTools",
+    "devtools_tt": "Show the DevTools window (for debugging)"
+  },
+  "pd_window": {
+    "find": {
+      "placeholder": "Search in Console"
+    }
+  },
+  "canvas": {
+    "paste_clipboard_prompt": "Warning: you are about to paste Pd code that came from somewhere outside of Pd. Do you want to continue?",
+    "save_dialog": {
+      "prompt": "Do you want to save the changes you made in",
+      "yes": "Yes",
+      "yes_tt": "Write the changes to file before closing the patch",
+      "no": "No",
+      "no_tt": "Don't save any changes, just close the patch",
+      "cancel": "Cancel",
+      "cancel_tt": "Don't save any changes, and don't close the patch"
+    },
+    "find": {
+      "placeholder": "Search in Canvas",
+      "search": "Search",
+      "search_tt": "Find next occurrence",
+      "whole_word": "Match Whole Word"
+    },
+    "menu": {
+      "props": "Properties",
+      "open": "Open",
+      "help": "Help",
+      "front": "Bring to Front",
+      "back": "Send to Back"
+    },
+    "prop": {
+      "heading": {
+        "gop": "appearance",
+        "data_scaling": "data scaling",
+        "size": "size",
+        "viewbox_offsets": "viewbox offsets",
+        "arrays": "array options"
+      },
+      "no_scroll": "hide scrollbars (experimental)",
+      "no_scroll_tt": "hide window scrollbars",
+      "no_menu": "hide menu (experimental)",
+      "no_menu_tt": "hide window menu",
+      "gop": "graph on parent",
+      "gop_tt": "show the inner contents of this canvas in a rectangle on the containing canvas",
+      "hide_name": "hide name and arguments",
+      "hide_name_tt": "hide the text that appears in the object box",
+      "gop_0": "Object",
+      "gop_1": "Window",
+      "gop_2": "Window (no text)",
+      "x_pix": "width",
+      "x_pix_tt": "width of the object",
+      "y_pix": "height",
+      "y_pix_tt": "height of the object",
+      "x_scale": "x scale",
+      "x_scale_tt": "horizontal scaling factor",
+      "y_scale": "y scale",
+      "y_scale_tt": "vertical scaling factor",
+      "x_margin": "x offset",
+      "x_margin_tt": "horizontal offset into the subpatch for the view area",
+      "y_margin": "y offset",
+      "y_margin_tt": "vertical offset into the subpatch for the view area",
+      "x1": "left",
+      "x1_tt": "x value at left edge of graph. (Set automatically for arrays)",
+      "x2": "right",
+      "x2_tt": "x value at right edge of graph. (Set automatically for arrays)",
+      "y1": "top",
+      "y1_tt": "y value at the top of the graph",
+      "y2": "bottom",
+      "y2_tt": "y value at the bottom of the graph",
+
+      "array_name": "name",
+      "array_name_tt": "receiver name for the array",
+      "array_size": "size",
+      "array_size_tt": "number of elements in the array",
+      "array_polygon": "polygon",
+      "array_polygon_tt": "the array trace is drawn as a polygon",
+      "array_points": "points",
+      "array_points_tt": "the array trace is drawn as horizontal line segments",
+      "array_bezier": "Bezier curve",
+      "array_bezier_tt": "the array trace is drawn as a Bezier curve",
+      "array_bars": "bar graph",
+      "array_bars_tt": "each element of the array is drawn as a bar in a bar graph",
+      "array_save": "save contents",
+      "array_save_tt": "save array contents with this patch",
+      "array_jump": "jump on click",
+      "array_jump_tt": "update the element to the position of the click",
+      "array_style": "draw as:",
+      "array_outline": "outline color",
+      "array_outline_tt": "color for outline around the bars",
+      "array_fill": "fill color",
+      "array_fill_tt": "inner color of the bars",
+      "array_in_existing_graph": "put in last graph",
+      "array_in_existing_graph_tt": "draw the array inside the last graph that was created. This is a way to have multiple arrays drawn in the same graph.",
+      "array_delete": "delete this array",
+      "array_delete_tt": "delete this array (i.e., remove it from the graph) when you click Ok"
+    }
+  },
+  "prefs": {
+    "heading": {
+      "startup": "Startup",
+      "startup_tt": "startup settings",
+      "gui": "GUI",
+      "gui_tt": "settings for the user interface",
+      "audio": "Audio",
+      "audio_tt": "configure the audio devices",
+      "midi": "MIDI",
+      "midi_tt": "configure MIDI devices"
+    },
+    "startup": {
+      "flags": "startup flags",
+      "flags_tt": "Startup flags the program is invoked with; changes require a restart of the application to take effect",
+      "libs": "Libraries",
+      "libs_tt": "External libraries to be loaded on startup; changes require a restart of the application to take effect",
+      "paths": "Search Paths",
+      "paths_tt": "Search path for abstractions and externals",
+      "new": "New",
+      "new_tt": "Add an item after the selected one",
+      "edit": "Edit",
+      "edit_tt": "Edit the selected item",
+      "del": "Delete",
+      "del_tt": "Delete the selected item"
+    },
+    "gui": {
+      "autopatch_yoffset_tt": "specify a distance in pixels from the bottom of the object to which the new object will be connected",
+      "autopatch_yoffset": "custom autopatching y-offset",
+      "autopatch_yoffset_checkbox_tt": "check to enable a custom autopatching y-offset",
+      "presets": {
+        "gui_preset": "GUI preset",
+        "gui_preset_tt": "Collection of patch colors and styles",
+        "default": "Default",
+        "vanilla": "Vanilla",
+        "vanilla_inverted": "Vanilla (Inverted)",
+        "extended": "Pd-Extended",
+        "inverted": "Inverted",
+        "subdued": "Subdued",
+        "strongbad": "Strongbad",
+        "solarized": "Solarized",
+        "solarized_inverted": "Solarized (Inverted)",
+        "extended": "Extended",
+        "c64": "C64",
+        "footgun": "Footgun"
+      },
+      "zoom": {
+        "save_zoom": "save/load zoom level with patch",
+        "save_zoom_tt": "Save the current zoom level with the patch and restore it when reloading the patch"
+      },
+      "browser": {
+        "browser_title": "Help browser settings (WARNING: changing these may affect startup times!)",
+        "browser_doc": "help browser only searches the doc folder",
+        "browser_doc_tt": "Only scan help patches in the doc folder for searchable keywords (faster)",
+        "browser_path": "help browser also searches the help path",
+        "browser_path_tt": "Also scan help patches in the user-defined help path for searchable keywords (slower)",
+        "browser_init": "prepare the help index at application start",
+        "browser_init_tt": "If checked, prepare the index for the help browser already when the application starts"
+      }
+    },
+    "audio": {
+      "api": "audio api",
+      "api_tt": "audio backend or server to use to process audio",
+      "sr": "sample rate",
+      "sr_tt": "number of samples per second",
+      "advance": "delay",
+      "advance_tt": "delay",
+      "blocksize": "blocksize",
+      "blocksize_tt": "number of samples in a block to be delivered to or received from the audio api",
+      "callback": "use callbacks",
+      "callback_tt": "use Pd's callback interface for this API",
+      "channels": "channels",
+      "channels_tt": "number of channels for this device",
+      "input_title": "Input Devices",
+      "input_title_tt": "hardware devices used to get audio into Pd",
+      "output_title": "Output Devices",
+      "output_title_tt": "hardware devices to send audio from Pd"
+    },
+    "midi": {
+      "api": "midi api",
+      "api_tt": "midi backend or server used to communicate with midi devices",
+      "alsa_in_ports": "input ports",
+      "alsa_in_ports_tt": "maximum number of incoming midi port connections",
+      "alsa_out_ports": "output ports",
+      "alsa_out_ports_tt": "maximum number of outgoing midi ports from Pd",
+      "input_title": "Input Devices",
+      "input_title_tt": "hardware devices used to get midi data into Pd",
+      "output_title": "Output Devices",
+      "output_title_tt": "hardware devices to send midi data from Pd"
+    },
+    "ok": "Ok",
+    "ok_tt": "Update the preferences and close the dialog",
+    "apply": "Apply",
+    "apply_tt": "Update preferences without closing this dialog",
+    "cancel": "Cancel",
+    "cancel_tt": "Cancel updating the preferences",
+    "close": "Close",
+    "close_tt": "Close the preferences dialog"
+  },
+  "font": {
+    "prop": {
+      "size": "font size",
+      "8": "8",
+      "10": "10",
+      "12": "12",
+      "16": "16",
+      "24": "24",
+      "36": "36",
+      "close": "Close",
+      "close_tt": "Close the font dialog"
+    }
+  },
+  "search": {
+    "browse": "browse the documentation",
+    "search": "search",
+    "building_index": "Building index...",
+    "no_results": "No results found.",
+    "search_placeholder": "Search Pd Docs"
+  }
+}
+
+},{}],5:[function(require,module,exports){
+// Grabbed hastily from https://github.com/jkroso/parse-svg-path
+// MIT licensed so it's a good fit for Pd :)
+
+module.exports = parse
+
+/**
+ * expected argument lengths
+ * @type {Object}
+ */
+
+var length = {a: 7, c: 6, h: 1, l: 2, m: 2, q: 4, s: 4, t: 2, v: 1, z: 0}
+
+/**
+ * segment pattern
+ * @type {RegExp}
+ */
+
+var segment = /([astvzqmhlc])([^astvzqmhlc]*)/ig
+
+/**
+ * parse an svg path data string. Generates an Array
+ * of commands where each command is an Array of the
+ * form `[command, arg1, arg2, ...]`
+ *
+ * @param {String} path
+ * @return {Array}
+ */
+
+function parse(path) {
+	var data = []
+	path.replace(segment, function(_, command, args){
+		var type = command.toLowerCase()
+		args = parseValues(args)
+
+		// overloaded moveTo
+		if (type == 'm' && args.length > 2) {
+			data.push([command].concat(args.splice(0, 2)))
+			type = 'l'
+			command = command == 'm' ? 'l' : 'L'
+		}
+
+		while (true) {
+			if (args.length == length[type]) {
+				args.unshift(command)
+				return data.push(args)
+			}
+			if (args.length < length[type]) throw new Error('malformed path data')
+			data.push([command].concat(args.splice(0, length[type])))
+		}
+	})
+	return data
+}
+
+var number = /-?[0-9]*\.?[0-9]+(?:e[-+]?\d+)?/ig
+
+function parseValues(args) {
+	var numbers = args.match(number)
+	return numbers ? numbers.map(Number) : []
+}
+
+},{}],6:[function(require,module,exports){
+(function (process){
+"use strict";
+
+var cmd_or_ctrl = (process.platform === "darwin") ? "cmd" : "ctrl";
+
+exports.menu = {
+  "new":   { key: "n", modifiers: cmd_or_ctrl },
+  "open":   { key: "o", modifiers: cmd_or_ctrl },
+  "save":   { key: "s", modifiers: cmd_or_ctrl },
+  "saveas": { key: "s", modifiers: cmd_or_ctrl + "+shift" },
+  "print":  { key: "p", modifiers: cmd_or_ctrl + "+shift" },
+  "message" : { key: "m", modifiers: cmd_or_ctrl },
+  "close":  { key: "w", modifiers: cmd_or_ctrl },
+  "quit":   { key: "q", modifiers: cmd_or_ctrl },
+
+  "undo":   { key: "z", modifiers: cmd_or_ctrl },
+  "redo":   { key: "z", modifiers: cmd_or_ctrl + "+shift" },
+  "selectall":{ key: "a", modifiers: cmd_or_ctrl },
+  "cut":    { key: "x", modifiers: cmd_or_ctrl },
+  "copy":   { key: "c", modifiers: cmd_or_ctrl },
+  "paste":  { key: "v", modifiers: cmd_or_ctrl },
+  "paste_clipboard": { key: "v", modifiers: cmd_or_ctrl + "+alt" },
+  "duplicate": { key: "d", modifiers: cmd_or_ctrl },
+  "undo":   { key: "z", modifiers: cmd_or_ctrl },
+
+  "reselect": { key: String.fromCharCode(10), modifiers: cmd_or_ctrl },
+  "clear_console": { key: "l", modifiers: cmd_or_ctrl + "+shift" },
+  "tidyup": { key: "y", modifiers: cmd_or_ctrl },
+  "cordinspector":   { key: "r", modifiers: cmd_or_ctrl + "+shift" },
+  "find":   { key: "f", modifiers: cmd_or_ctrl },
+  "findagain":{ key: "g", modifiers: cmd_or_ctrl },
+  "editmode": { key: "e", modifiers: cmd_or_ctrl },
+  "preferences": { key: (process.platform === "darwin") ? "," : "p",
+    modifiers: cmd_or_ctrl },
+
+  "zoomin": { key: "=", modifiers: cmd_or_ctrl },
+  "zoomout": { key: "-", modifiers: cmd_or_ctrl },
+  "zoomreset": { key: "0", modifiers: cmd_or_ctrl },
+  "zoomoptimal": { key: "9", modifiers: cmd_or_ctrl },
+  "zoomhoriz": { key: "9", modifiers: cmd_or_ctrl + "+alt" },
+  "zoomvert": { key: "9", modifiers: cmd_or_ctrl + "+shift" },
+  "fullscreen": { key: (process.platform === "darwin") ? "f" : "F11",
+    modifiers: (process.platform === "darwin") ? "cmd+ctrl" : null },
+
+  "object": { key: "1", modifiers: cmd_or_ctrl },
+  "msgbox": { key: "2", modifiers: cmd_or_ctrl },
+  "number": { key: "3", modifiers: cmd_or_ctrl },
+  "symbol": { key: "4", modifiers: cmd_or_ctrl },
+  "comment": { key: "5", modifiers: cmd_or_ctrl },
+  "dropdown": { key: "6", modifiers: cmd_or_ctrl },
+  "bang": { key: "b", modifiers: cmd_or_ctrl + "+shift" },
+  "toggle": { key: "t", modifiers: cmd_or_ctrl + "+shift" },
+  "number2": { key: "n", modifiers: cmd_or_ctrl + "+shift" },
+  "vslider": { key: "v", modifiers: cmd_or_ctrl + "+shift" },
+  "hslider": { key: "h", modifiers: cmd_or_ctrl + "+shift" },
+  "vradio": { key: "d", modifiers: cmd_or_ctrl + "+shift" },
+  "hradio": { key: "i", modifiers: cmd_or_ctrl + "+shift" },
+  "vu":     { key: "u", modifiers: cmd_or_ctrl + "+shift" },
+  "cnv": { key: "c", modifiers: cmd_or_ctrl + "+shift" },
+
+  "nextwin": { key: "PageDown", modifiers: cmd_or_ctrl },
+  "prevwin": { key: "PageUp", modifiers: cmd_or_ctrl },
+  "pdwin": { key: "r", modifiers: cmd_or_ctrl },
+
+  "audio_on": { key: "/", modifiers: cmd_or_ctrl },
+  "audio_off": { key: ".", modifiers: cmd_or_ctrl },
+
+  "browser": { key: "b", modifiers: cmd_or_ctrl },
+  "audio_off": { key: ".", modifiers: cmd_or_ctrl },
+  "audio_off": { key: ".", modifiers: cmd_or_ctrl },
+  "audio_off": { key: ".", modifiers: cmd_or_ctrl },
+}
+
+}).call(this,require('_process'))
+},{"_process":11}],7:[function(require,module,exports){
+(function (process){
 "use strict";
 
 var pwd;
@@ -6325,3 +9173,529 @@ function gui_pddplink_open(filename, dir) {
         post("pddplink: error: file not found: " + filename);
     }
 }
+
+}).call(this,require('_process'))
+},{"./dive.js":2,"./elasticlunr.js":3,"./parse-svg-path.js":5,"./pdlang.js":8,"_process":11,"child_process":9,"fs":9,"net":9,"path":10}],8:[function(require,module,exports){
+"use strict";
+
+var lang;
+
+try {
+    // try the locale given by navigator.language
+    lang = require("./locales/" + navigator.language + "/translation.json");
+} catch (e) {
+    // if that fails then fall back to the default locale "en"
+    lang = require("./locales/en/translation.json");
+}
+
+exports.lang = lang;
+
+function recursive_key_splitter(key, object) {
+    var subkeys = key.split(".");
+    if (subkeys.length > 1) {
+        return recursive_key_splitter(subkeys.slice(1).join("."), object[subkeys[0]]);
+    } else {
+        return object[subkeys[0]];
+    }
+}
+
+exports.get_local_string = function (key) {
+    return recursive_key_splitter(key, lang);
+};
+
+},{"./locales/en/translation.json":4}],9:[function(require,module,exports){
+
+},{}],10:[function(require,module,exports){
+(function (process){
+// .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
+// backported and transplited with Babel, with backwards-compat fixes
+
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// resolves . and .. elements in a path array with directory names there
+// must be no slashes, empty elements, or device names (c:\) in the array
+// (so also no leading and trailing slashes - it does not distinguish
+// relative and absolute paths)
+function normalizeArray(parts, allowAboveRoot) {
+  // if the path tries to go above the root, `up` ends up > 0
+  var up = 0;
+  for (var i = parts.length - 1; i >= 0; i--) {
+    var last = parts[i];
+    if (last === '.') {
+      parts.splice(i, 1);
+    } else if (last === '..') {
+      parts.splice(i, 1);
+      up++;
+    } else if (up) {
+      parts.splice(i, 1);
+      up--;
+    }
+  }
+
+  // if the path is allowed to go above the root, restore leading ..s
+  if (allowAboveRoot) {
+    for (; up--; up) {
+      parts.unshift('..');
+    }
+  }
+
+  return parts;
+}
+
+// path.resolve([from ...], to)
+// posix version
+exports.resolve = function() {
+  var resolvedPath = '',
+      resolvedAbsolute = false;
+
+  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+    var path = (i >= 0) ? arguments[i] : process.cwd();
+
+    // Skip empty and invalid entries
+    if (typeof path !== 'string') {
+      throw new TypeError('Arguments to path.resolve must be strings');
+    } else if (!path) {
+      continue;
+    }
+
+    resolvedPath = path + '/' + resolvedPath;
+    resolvedAbsolute = path.charAt(0) === '/';
+  }
+
+  // At this point the path should be resolved to a full absolute path, but
+  // handle relative paths to be safe (might happen when process.cwd() fails)
+
+  // Normalize the path
+  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
+    return !!p;
+  }), !resolvedAbsolute).join('/');
+
+  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
+};
+
+// path.normalize(path)
+// posix version
+exports.normalize = function(path) {
+  var isAbsolute = exports.isAbsolute(path),
+      trailingSlash = substr(path, -1) === '/';
+
+  // Normalize the path
+  path = normalizeArray(filter(path.split('/'), function(p) {
+    return !!p;
+  }), !isAbsolute).join('/');
+
+  if (!path && !isAbsolute) {
+    path = '.';
+  }
+  if (path && trailingSlash) {
+    path += '/';
+  }
+
+  return (isAbsolute ? '/' : '') + path;
+};
+
+// posix version
+exports.isAbsolute = function(path) {
+  return path.charAt(0) === '/';
+};
+
+// posix version
+exports.join = function() {
+  var paths = Array.prototype.slice.call(arguments, 0);
+  return exports.normalize(filter(paths, function(p, index) {
+    if (typeof p !== 'string') {
+      throw new TypeError('Arguments to path.join must be strings');
+    }
+    return p;
+  }).join('/'));
+};
+
+
+// path.relative(from, to)
+// posix version
+exports.relative = function(from, to) {
+  from = exports.resolve(from).substr(1);
+  to = exports.resolve(to).substr(1);
+
+  function trim(arr) {
+    var start = 0;
+    for (; start < arr.length; start++) {
+      if (arr[start] !== '') break;
+    }
+
+    var end = arr.length - 1;
+    for (; end >= 0; end--) {
+      if (arr[end] !== '') break;
+    }
+
+    if (start > end) return [];
+    return arr.slice(start, end - start + 1);
+  }
+
+  var fromParts = trim(from.split('/'));
+  var toParts = trim(to.split('/'));
+
+  var length = Math.min(fromParts.length, toParts.length);
+  var samePartsLength = length;
+  for (var i = 0; i < length; i++) {
+    if (fromParts[i] !== toParts[i]) {
+      samePartsLength = i;
+      break;
+    }
+  }
+
+  var outputParts = [];
+  for (var i = samePartsLength; i < fromParts.length; i++) {
+    outputParts.push('..');
+  }
+
+  outputParts = outputParts.concat(toParts.slice(samePartsLength));
+
+  return outputParts.join('/');
+};
+
+exports.sep = '/';
+exports.delimiter = ':';
+
+exports.dirname = function (path) {
+  if (typeof path !== 'string') path = path + '';
+  if (path.length === 0) return '.';
+  var code = path.charCodeAt(0);
+  var hasRoot = code === 47 /*/*/;
+  var end = -1;
+  var matchedSlash = true;
+  for (var i = path.length - 1; i >= 1; --i) {
+    code = path.charCodeAt(i);
+    if (code === 47 /*/*/) {
+        if (!matchedSlash) {
+          end = i;
+          break;
+        }
+      } else {
+      // We saw the first non-path separator
+      matchedSlash = false;
+    }
+  }
+
+  if (end === -1) return hasRoot ? '/' : '.';
+  if (hasRoot && end === 1) {
+    // return '//';
+    // Backwards-compat fix:
+    return '/';
+  }
+  return path.slice(0, end);
+};
+
+function basename(path) {
+  if (typeof path !== 'string') path = path + '';
+
+  var start = 0;
+  var end = -1;
+  var matchedSlash = true;
+  var i;
+
+  for (i = path.length - 1; i >= 0; --i) {
+    if (path.charCodeAt(i) === 47 /*/*/) {
+        // If we reached a path separator that was not part of a set of path
+        // separators at the end of the string, stop now
+        if (!matchedSlash) {
+          start = i + 1;
+          break;
+        }
+      } else if (end === -1) {
+      // We saw the first non-path separator, mark this as the end of our
+      // path component
+      matchedSlash = false;
+      end = i + 1;
+    }
+  }
+
+  if (end === -1) return '';
+  return path.slice(start, end);
+}
+
+// Uses a mixed approach for backwards-compatibility, as ext behavior changed
+// in new Node.js versions, so only basename() above is backported here
+exports.basename = function (path, ext) {
+  var f = basename(path);
+  if (ext && f.substr(-1 * ext.length) === ext) {
+    f = f.substr(0, f.length - ext.length);
+  }
+  return f;
+};
+
+exports.extname = function (path) {
+  if (typeof path !== 'string') path = path + '';
+  var startDot = -1;
+  var startPart = 0;
+  var end = -1;
+  var matchedSlash = true;
+  // Track the state of characters (if any) we see before our first dot and
+  // after any path separator we find
+  var preDotState = 0;
+  for (var i = path.length - 1; i >= 0; --i) {
+    var code = path.charCodeAt(i);
+    if (code === 47 /*/*/) {
+        // If we reached a path separator that was not part of a set of path
+        // separators at the end of the string, stop now
+        if (!matchedSlash) {
+          startPart = i + 1;
+          break;
+        }
+        continue;
+      }
+    if (end === -1) {
+      // We saw the first non-path separator, mark this as the end of our
+      // extension
+      matchedSlash = false;
+      end = i + 1;
+    }
+    if (code === 46 /*.*/) {
+        // If this is our first dot, mark it as the start of our extension
+        if (startDot === -1)
+          startDot = i;
+        else if (preDotState !== 1)
+          preDotState = 1;
+    } else if (startDot !== -1) {
+      // We saw a non-dot and non-path separator before our dot, so we should
+      // have a good chance at having a non-empty extension
+      preDotState = -1;
+    }
+  }
+
+  if (startDot === -1 || end === -1 ||
+      // We saw a non-dot character immediately before the dot
+      preDotState === 0 ||
+      // The (right-most) trimmed path component is exactly '..'
+      preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
+    return '';
+  }
+  return path.slice(startDot, end);
+};
+
+function filter (xs, f) {
+    if (xs.filter) return xs.filter(f);
+    var res = [];
+    for (var i = 0; i < xs.length; i++) {
+        if (f(xs[i], i, xs)) res.push(xs[i]);
+    }
+    return res;
+}
+
+// String.prototype.substr - negative index don't work in IE8
+var substr = 'ab'.substr(-1) === 'b'
+    ? function (str, start, len) { return str.substr(start, len) }
+    : function (str, start, len) {
+        if (start < 0) start = str.length + start;
+        return str.substr(start, len);
+    }
+;
+
+}).call(this,require('_process'))
+},{"_process":11}],11:[function(require,module,exports){
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+},{}]},{},[1])(1)
+});
