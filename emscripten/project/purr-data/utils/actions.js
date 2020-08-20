@@ -1,0 +1,190 @@
+function minit(id, options) {
+    var menu_item = document.getElementById(id);
+    var key;
+    for (key in options) {
+        if (options.hasOwnProperty(key)) {
+            menu_item[key] = "";
+            menu_item[key] = options[key];
+        }
+    }
+}
+
+function load_menu_actions(){
+    // File sub-entries
+    minit("file-new-btn", { onclick: pdbundle.pdgui.menu_new });
+
+    minit("file-new-btn", { onclick: pdbundle.pdgui.menu_new });
+
+    minit("file-message",{onclick: function(){pdbundle.pdgui.menu_send()}});
+
+    // Edit entries
+    minit("edit-copy", {
+        onclick: function() {
+            window.document.execCommand("copy");
+        }
+    });
+
+    minit("edit-selectall", {
+        onclick: function () {
+            var container_id = "p1", range;
+            // This should work across browsers
+            if (window.document.selection) {
+                range = window.document.body.createTextRange();
+                range.moveToElementText(window.document.getElementById(container_id));
+                range.select();
+            } else if (window.getSelection) {
+                range = window.document.createRange();
+                range.selectNode(window.document.getElementById(container_id));
+                // we need to empty the current selection to avoid a strange
+                // error when trying to select all right after Pd starts:
+                // "The given range and the current selection belong to two
+                //  different document fragments."
+                // (I guess nw.js somehow starts up with the selection being
+                // somewhere outside the window...)
+                window.getSelection().empty();
+                window.getSelection().addRange(range);
+            }
+        }
+    });
+
+    minit("edit-find", {
+        onclick: function() {
+            var find_bar = window.document.getElementById("console_find"),
+            find_bar_text = window.document.getElementById("console_find_text"),
+            text_container = window.document.getElementById("console_bottom"),
+            state = find_bar.style.getPropertyValue("display");
+            if (state === "none") {
+                text_container.style.setProperty("bottom", "1.6em");
+                find_bar.style.setProperty("display", "block");
+                find_bar.style.setProperty("height", "2em");
+                // Don't do the following in logical time so that the
+                // console_find keypress event won't receive this shortcut key
+                window.setTimeout(function() {
+                    find_bar_text.focus();
+                    find_bar_text.select();
+                }, 0);
+            } else {
+                // Blur focus so that the console_find keypress doesn't
+                // receive our shortcut key
+                find_bar.blur();
+                text_container.style.setProperty("bottom", "0px");
+                find_bar.style.setProperty("display", "none");
+            }
+        }
+    });
+
+    minit("console_find_text", {
+        onkeydown: function(e) {
+            console_find_keydown(e);
+        },
+
+        onkeypress: function(e) {
+            console_find_keypress(e);
+        }
+    });
+
+
+    // Media entries
+    minit("media-test",{onclick: function(){pdbundle.pdgui.web_pd_doc_open("doc/7.stuff/tools", "testtone.pd")}});
+    minit("media-loadmeter",{onclick: function(){pdbundle.pdgui.web_pd_doc_open("doc/7.stuff/tools", "load-meter.pd")}});
+
+    // Help entries
+    minit("help-about", {onclick:
+        function(){
+            pdbundle.pdgui.web_pd_doc_open("doc/about", "about.pd")
+        }
+    });
+
+    minit("help-manual", {onclick:
+        function(){
+            pdbundle.pdgui.web_pd_doc_open("doc/1.manual", "index.htm")
+        }
+    });
+
+    minit("help-intro", {onclick:
+        function(){
+            pdbundle.pdgui.web_pd_doc_open("doc/5.reference", "help-intro.pd")
+        }
+    });
+
+    minit("help-l2ork-list", {onclick:
+        function(){
+            pdbundle.pdgui.web_external_doc_open("http://disis.music.vt.edu/listinfo/l2ork-dev")
+        }
+    });
+
+    minit("help-pd-list", {onclick:
+        function(){
+            pdbundle.pdgui.web_external_doc_open("http://puredata.info/community/lists")
+        }
+    });
+
+    minit("help-forums", {onclick: 
+        function(){
+            pdbundle.pdgui.web_external_doc_open("http://forum.pdpatchrepo.info/")
+        } 
+    });
+
+    minit("help-irc", {onclick: 
+        function(){
+            pdbundle.pdgui.web_external_doc_open("http://puredata.info/community/IRC")
+        } 
+    });
+}
+
+
+function add_shortcuts(cid){
+    if (cid === undefined) cid = "";
+
+    document.onkeydown = function (e){
+        // Check modifiers
+        var shortcut = e.ctrlKey ? "ctrl+": "";
+        shortcut += e.shiftKey ? "shift+": "";
+        shortcut += e.altKey ? "alt+": "";
+        // Add key
+        shortcut += e.key.toLowerCase();
+        if(window.shortkeys[cid].hasOwnProperty(shortcut)){            
+            window.shortkeys[cid][shortcut].click();
+        }
+
+
+        // Delete key
+        if(e.key === "Delete"){
+            pdbundle.pdgui.canvas_sendkey(cid, "1", e, 127, e.repeat);
+        }
+
+        // Control key
+        if(e.key === "Control"){
+            pdbundle.pdgui.canvas_sendkey(cid, "1", e, e.key, e.repeat);
+        }
+
+    }
+
+    document.onkeyup = function (e){
+        // Delete key
+        if(e.key === "Delete"){
+            pdbundle.pdgui.canvas_sendkey(cid, "0", e, 127, e.repeat);
+        }        
+
+        // Control key
+        if(e.key === "Control"){
+            pdbundle.pdgui.canvas_sendkey(cid, "0", e, e.key, e.repeat);
+        }        
+    }
+}
+
+// Prevent right mouse click
+window.oncontextmenu = function (){
+    return false;     // cancel default menu
+} 
+
+
+// Dialog common functions
+function remove_dialog(name){
+    if(name.indexOf('.') === 0){
+        name = name.substring(1,name.length-1);
+    }
+
+    var dialog = document.getElementById("dialog-div-"+name);
+    dialog.parentNode.removeChild(dialog);
+}
