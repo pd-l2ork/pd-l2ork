@@ -279,6 +279,12 @@ var canvas_events = (function() {
                 return false;
             },
             mousedown: function(evt) {
+                if(pdgui.is_webapp()){
+                    var popup = document.getElementById("popup");
+                    if(popup){
+                        popup.parentNode.removeChild(popup);
+                    }
+                }
                 var target_id, resize_type;
                 var x_coord, y_coord;
                 if (target_is_scrollbar(evt)) {
