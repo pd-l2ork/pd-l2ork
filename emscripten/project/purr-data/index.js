@@ -276,5 +276,3 @@ window.onload = function() {
     gui_init(window);
     load_menu_actions();
 };
-
-

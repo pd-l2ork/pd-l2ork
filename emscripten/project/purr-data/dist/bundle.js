@@ -1,16 +1,14 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.pdbundle = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 var pdgui = require("../../../pd/nw/pdgui.js")
 var shortcuts = require("../../../pd/nw/pd_shortcuts.js")
-// var pd_canvas = require("../../../pd/nw/pd_canvas.js")
-// var pd_menus = require("../../../pd/nw/pd_menus.js")
+var pd_canvas = require("../../../pd/nw/pd_canvas.js")
 
 module.exports = {
     pdgui: pdgui,
     shortcuts: shortcuts,
-    // pd_canvas: pd_canvas,
-    // pd_menus: pd_menus
+    pd_canvas: pd_canvas,
   }
-},{"../../../pd/nw/pd_shortcuts.js":6,"../../../pd/nw/pdgui.js":7}],2:[function(require,module,exports){
+},{"../../../pd/nw/pd_canvas.js":6,"../../../pd/nw/pd_shortcuts.js":8,"../../../pd/nw/pdgui.js":9}],2:[function(require,module,exports){
 (function (process){
 var fs = require('fs');
 var path = require('path');
@@ -124,7 +122,7 @@ module.exports = function(dir, opt, action, complete) {
 
 
 }).call(this,require('_process'))
-},{"_process":11,"fs":9,"path":10}],3:[function(require,module,exports){
+},{"_process":13,"fs":11,"path":12}],3:[function(require,module,exports){
 /**
  * elasticlunr - http://weixsong.github.io
  * Lightweight full-text search engine in Javascript for browser search and offline search. - 0.8.5
@@ -2773,6 +2771,3003 @@ function parseValues(args) {
 (function (process){
 "use strict";
 
+var pdgui = require("./pdgui.js");
+var pd_menus = require("./pd_menus.js");
+var gui;
+
+if(!pdgui.is_webapp()){
+    var gui = require("nw.gui");
+}
+
+
+// Apply gui preset to this canvas
+pdgui.skin.apply(window);
+
+//var name = pdgui.last_loaded();
+
+var l = pdgui.get_local_string;
+
+function nw_window_focus_callback(name) {
+    pdgui.set_focused_patchwin(name);
+    // on OSX, update the menu on focus
+    if (process.platform === "darwin") {
+        nw_create_patch_window_menus(gui, window, canvas_events.get_id());
+    }
+}
+
+function nw_window_blur_callback(name) {
+    // Fake a mouseup event to keep from getting a dangling selection box
+    if (canvas_events.get_state() === "normal") {
+        pdgui.pdsend(name, "mouseup_fake");
+    }
+}
+
+function nw_window_zoom(name, delta) {
+    var z = gui.Window.get().zoomLevel;
+    z += delta;
+    if (z < 8 && z > -8) {
+        gui.Window.get().zoomLevel = z;
+        pdgui.pdsend(name, "zoom", z);
+        pdgui.gui_canvas_get_scroll(name);
+    }
+}
+
+var canvas_events = (function() {
+    var name,
+        filename,
+        state,
+        scalar_draggables = {}, // scalar child with the "drag" event enabled
+        draggable_elem,         // last scalar we dragged
+        draggable_label,        // kluge for handling [cnv] label/size anchors
+        last_draggable_x,       // last x coord for the element we're dragging
+        last_draggable_y,       // last y
+        previous_state = "none", /* last state, excluding explicit 'none' */
+        match_words_state = false,
+        last_dropdown_menu_x,
+        last_dropdown_menu_y,
+        last_search_term = "",
+        svg_view = "",		
+        canvas_divs = {},	
+        canvas_div = "",	
+        canvas_div_x = 0,	
+        canvas_div_y = 0,	
+        canvas_div_scroll_left = 0,	
+        canvas_div_scroll_top = 0,
+        textbox = function () {
+            return document.getElementById("new_object_textentry");
+        },
+        find_scalar_draggable = function (elem) {
+            var ret = elem;
+            while (ret) {
+                if (scalar_draggables[ret.id]) {
+                    return ret;
+                }
+                ret = (ret.parentNode && ret.parentNode.tagName === "g") ?
+                    ret.parentNode : null;
+            }
+            return ret; // returning null if no parent group has a listener
+        },
+        target_is_scrollbar = function(evt) {
+            // Don't send the event to Pd if we click on the scrollbars.
+            // This is a bit fragile because we're suppressing on
+            // HTMLHtmlElement which is too broad...
+            if (evt.target.constructor.name === "HTMLHtmlElement") {
+                return 1;
+            } else {
+                return 0;
+            }
+        },
+        text_to_normalized_svg_path = function(text) {
+            text = text.slice(4).trim()  // draw
+                       .slice(4).trim()  // path
+                       .slice(1).trim()  // d
+                       .slice(1).trim(); // =
+            if (text.slice(0, 1) === '"') {
+                text = text.slice(1);
+            }
+            if (text.slice(-1) === '"') {
+                text = text.slice(0, -1);
+            }
+            text = pdgui.parse_svg_path(text);
+            return "draw path " + text.reduce(function (prev, curr) {
+                return prev.concat(curr)
+            }).join(" ");
+        },
+        text_to_fudi = function(text) {
+            text = text.trim();
+            // special case for draw path d="arbitrary path string" ...
+            if (text.search(/^draw\s+path\s+d\s*=\s*"/) !== -1) {
+                text = text_to_normalized_svg_path(text);
+            }
+            // escape dollar signs
+            text = text.replace(/(\$[0-9]+)/g, "\\$1");
+
+            // escape special $@ sign
+            text = text.replace(/(\$@)/g, "\\$@");
+
+            // escape "," and ";"
+            text = text.replace(/(?!\\)(,|;)/g, " \\$1 ");
+
+            // filter consecutive ascii32
+            text = text.replace(/\u0020+/g, " ");
+            return text;
+        },
+        string_to_array_of_chunks = function(msg) {
+        // Convert a string (FUDI message) to an array of strings small enough
+        // to fit in Pd's socketreceiver buffer of 4096 bytes
+            var chunk_max = 1024,
+                max_pd_string = 1000,
+                left,
+                in_array = [],
+                out_array = [];
+            if (msg.length <= chunk_max) {
+                out_array.push([msg]);
+            } else {
+                in_array = msg.split(/[\s\n]/); // split on newlines or spaces
+                while (in_array.length) {
+                    left = in_array.slice(); // make a copy of in_array
+                    if (left.toString().length > chunk_max) {
+                        while (1) {
+                            if (left.length < 2) {
+                                pdgui.post("Warning: string truncated:");
+                                pdgui.post(left.toString().
+                                    match(/............................../g).join("\n")
+                                );
+                                break;
+                            }
+                            left = left.splice(0, left.length >> 1);
+                            if (left.toString().length <= chunk_max) {
+                                break;
+                            }
+                        }
+                    }
+                    // might need a check here for max_pd_string to warn
+                    // user if a string is going to get truncated. (That's
+                    // what max_pd_string is for above.)
+                    out_array.push(left);
+                    in_array = in_array.splice(left.length);
+                }
+            }
+            return out_array;
+        },
+        might_be_a_pd_file = function(stuff_from_clipboard) {
+            // Super-simplistic guess at whether the string from the clipboard
+            // starts with Pd code. This is just meant as a convenience so that
+            // stuff in the copy buffer that obviously isn't Pd code doesn't get
+            // in the way when editing.
+            var text = stuff_from_clipboard.trim(),
+                one = text.charAt(0),
+                two = text.charAt(1);
+            return (one === "#" && (two === "N" || two === "X"));
+        },
+        grow_svg_for_element = function(elem) {
+            // See if an element overflows the svg bbox, and
+            // enlarge the svg to accommodate it.
+            // Note: window.scrollX and window.scrollY might not work
+            // with Android Chrome 43 and IE.
+            var svg = document.getElementById("patchsvg"),
+                elem_bbox = elem.getBoundingClientRect(),
+                svg_viewbox = svg.getAttribute("viewBox").split(" "),
+                w = Math.max(elem_bbox.left + elem_bbox.width + window.scrollX,
+                    svg_viewbox[2]),
+                h = Math.max(elem_bbox.top + elem_bbox.height + window.scrollY,
+                    svg_viewbox[3]);
+            svg.setAttribute("viewBox",
+                [Math.min(elem_bbox.left, svg_viewbox[0]),
+                 Math.min(elem_bbox.top, svg_viewbox[1]),
+                 w,
+                 h
+                ].join(" "));
+            svg.setAttribute("width", w);
+            svg.setAttribute("height", h);
+        },
+        dropdown_index_to_pd = function(elem) {
+            var highlighted = elem.querySelector(".highlighted");
+            if (highlighted) {
+                pdgui.pdsend(elem.getAttribute("data-callback"),
+                    highlighted.getAttribute("data-index"));
+            }
+        },
+        dropdown_clear_highlight = function() {
+            var container = document.querySelector("#dropdown_list"),
+                li_array = container.querySelectorAll("li");
+            Array.prototype.forEach.call(li_array, function(e) {
+                e.classList.remove("highlighted");
+            });
+        },
+        dropdown_highlight_elem = function(elem, scroll) {
+            var container = document.querySelector("#dropdown_list");
+            if (!elem.classList.contains("highlighted")) {
+                dropdown_clear_highlight();
+                elem.classList.add("highlighted");
+                // Make sure the highlighted element is in view
+                if (scroll) {
+                    if (elem.offsetTop < container.scrollTop
+                        || elem.offsetTop + elem.offsetHeight >
+                            container.scrollTop + container.offsetHeight) {
+                            if (scroll === "up") {
+                                // we can't usse elem.scrollIntoView() here
+                                // because it may also change the scrollbar on
+                                // the document, which in turn could change the
+                                // pageX/pageY, for the mousemove event, which
+                                // in turn would make it impossible for us to
+                                // filter out unnecessary mousemove calls
+                                //    elem.scrollIntoView();
+                            container.scrollTop = elem.offsetTop;
+                        } else if (scroll === "down") {
+                            container.scrollTop = elem.offsetTop + elem.offsetHeight
+                                - container.clientHeight;
+                        }
+                    }
+                }
+            }
+        },
+        events = {
+            onscroll: function(evt) {    
+                if(pdgui.is_webapp()){
+                    canvas_div_scroll_left = canvas_divs[name].canvas_div.scrollLeft;	
+                    canvas_div_scroll_top = canvas_divs[name].canvas_div.scrollTop;	
+                }            	
+            },	
+            mouseenter: function(evt) {	
+                if(pdgui.is_webapp()){
+                    var id = evt.srcElement.id	
+                    var n = id.split('_');	
+                    name = n[n.length -1]	
+                    canvas_div_x = canvas_divs[name].canvas_div_x;	
+                    canvas_div_y = canvas_divs[name].canvas_div_y;	
+                    filename = canvas_divs[name].filename;	
+                    svg_view = canvas_divs[name].svg_view;	
+                    add_shortcuts(name);	
+        
+                    evt.stopPropagation();	
+                    evt.preventDefault();	
+        
+                    load_canvas_menu_actions(name, filename);	
+        
+                    return false;
+                }	
+            },
+            mousemove: function(evt) {
+                //pdgui.post("x: " + evt.pageX + " y: " + evt.pageY +
+                //    " modifier: " + (evt.shiftKey + (pdgui.cmd_or_ctrl_key(evt) << 1)));
+
+                var x_coord, y_coord;
+                if(pdgui.is_webapp()){
+                    x_coord = (evt.pageX + svg_view.x + canvas_div_scroll_left - canvas_div_x);
+                    y_coord = evt.pageY + svg_view.y + canvas_div_scroll_top - canvas_div_y;
+                }else{
+                    x_coord = evt.pageX + svg_view.x,
+                    y_coord = evt.pageY + svg_view.y
+                }
+                pdgui.pdsend(name, "motion",
+                    x_coord,
+                    y_coord,
+                    (evt.shiftKey + (pdgui.cmd_or_ctrl_key(evt) << 1))
+                );
+                evt.stopPropagation();
+                evt.preventDefault();
+                return false;
+            },
+            mousedown: function(evt) {
+                var target_id, resize_type;
+                var x_coord, y_coord;
+                if (target_is_scrollbar(evt)) {
+                    return;
+                } else if (evt.target.parentNode &&
+                    evt.target.parentNode.classList
+                        .contains("clickable_resize_handle")) {
+                    draggable_label =
+                        evt.target.parentNode.classList.contains("move_handle");
+
+                    // get id ("x123456etcgobj" without the "x" or "gobj")
+                    target_id = (draggable_label ? "_l" : "_s") +
+                        evt.target.parentNode.parentNode.id.slice(0,-4).slice(1);
+                    last_draggable_x = evt.pageX + svg_view.x;
+
+                    last_draggable_y = pdgui.is_webapp() ? evt.layerY : evt.pageY;
+                    last_draggable_y += svg_view.y;
+
+                    // Nasty-- we have to forward magic values from g_canvas.h
+                    // defines in order to get the correct constrain behavior.
+                    if (evt.target.classList.contains("constrain_top_right")) {
+                        resize_type = 7; // CURSOR_EDITMODE_RESIZE_X
+                    } else if (evt.target.classList
+                        .contains("constrain_bottom_right")) {
+                        resize_type = 10; // CURSOR_EDITMODE_RESIZE_Y
+                    } else if (draggable_label) {
+                        resize_type = 11; // CURSOR_EDITMODE_MOVE
+                    } else {
+                        resize_type = 8; // CURSOR_EDITMODE_RESIZE
+                    }
+
+                    // Even nastier-- we now must turn off the cursor styles
+                    // so that moving the pointer outside the hotspot doesn't
+                    // cause the cursor to change. This happens for the
+                    // drag handle to move the gop red rectangle. Unlike
+                    // the label handles, it doesn't get immediately
+                    // destroyed upon receiving its callback below.
+                    pdgui.toggle_drag_handle_cursors(evt.target.parentNode,
+                        !!draggable_label, false);
+
+                    if(pdgui.is_webapp()){
+                        x_coord = (evt.pageX + svg_view.x + canvas_div_scroll_left - canvas_div_x)
+                        y_coord = (evt.pageY + svg_view.y + canvas_div_scroll_top - canvas_div_y)
+                    }else{
+                        x_coord = (evt.pageX + svg_view.x),
+                        y_coord = (evt.pageY + svg_view.y)
+                    }
+
+                    pdgui.pdsend(target_id, "_click", resize_type,
+                        x_coord,
+                        y_coord);
+                    canvas_events.iemgui_label_drag();
+                    return;
+                }
+                // tk events (and, therefore, Pd events) are one greater
+                // than html5...
+                var b = evt.button + 1;
+                var mod, match_elem;
+                // See if there are any draggable scalar shapes...
+                if (Object.keys(scalar_draggables).length) {
+                    // if so, see if our target is one of them...
+                    match_elem = find_scalar_draggable(evt.target);
+                    if (match_elem) {
+                        // then set some state and turn on the drag events
+                        draggable_elem = match_elem;
+                        last_draggable_x = evt.pageX;
+                        last_draggable_y = pdgui.is_webapp() ? evt.layerY : evt.pageY;
+                        canvas_events.scalar_drag();
+                    }
+                }
+                // For some reason right-click sends a modifier value of "8",
+                // and canvas_doclick in g_editor.c depends on that value to
+                // do the right thing.  So let's hack...
+                if (b === 3 || (process.platform === "darwin" && evt.ctrlKey)) {
+                    // right-click
+                    mod = 8;
+                } else {
+                    mod = (evt.shiftKey + (pdgui.cmd_or_ctrl_key(evt) << 1));
+                }
+
+                if(pdgui.is_webapp()){
+                    x_coord = (evt.pageX + svg_view.x + canvas_div_scroll_left - canvas_div_x)
+                    y_coord = (evt.pageY + svg_view.y + canvas_div_scroll_top - canvas_div_y)
+                }else{
+                    x_coord = (evt.pageX + svg_view.x),
+                    y_coord = (evt.pageY + svg_view.y)
+                }
+                pdgui.pdsend(name, "mouse",
+                    x_coord,
+                    y_coord,
+                    b, mod
+                );
+                //evt.stopPropagation();
+                //evt.preventDefault();
+            },
+            mouseup: function(evt) {
+                //pdgui.post("mouseup: x: " +
+                //    evt.pageX + " y: " + evt.pageY +
+                //    " button: " + (evt.button + 1));
+                var x_coord, y_coord
+                
+                if(pdgui.is_webapp()){
+                    x_coord = (evt.pageX + svg_view.x + canvas_div_scroll_left - canvas_div_x)
+                    y_coord = (evt.pageY + svg_view.y + canvas_div_scroll_top - canvas_div_y)
+                }else{
+                    x_coord = (evt.pageX + svg_view.x),
+                    y_coord = (evt.pageY + svg_view.y)
+                }
+
+                pdgui.pdsend(name, "mouseup",
+                    x_coord,
+                    y_coord,
+                    (evt.button + 1)
+                );
+                evt.stopPropagation();
+                evt.preventDefault();
+            },
+            keydown: function(evt) {
+                pdgui.keydown(name, evt);
+                // prevent the default behavior of scrolling
+                // on arrow keys in editmode
+                if (document.querySelector("#patchsvg")
+                    .classList.contains("editmode")) {
+                    if ([32, 37, 38, 39, 40].indexOf(evt.keyCode) > -1) {
+                        evt.preventDefault();
+                    }
+                }
+            },
+            keypress: function(evt) {
+                pdgui.keypress(name, evt);
+                // Don't do things like scrolling on space, arrow keys, etc.
+                evt.preventDefault();
+            },
+            keyup: function(evt) {
+                pdgui.keyup(name, evt);
+                evt.stopPropagation();
+                evt.preventDefault();
+            },
+            text_mousemove: function(evt) {
+                evt.stopPropagation();
+                //evt.preventDefault();
+                return false;
+            },
+            text_mousedown: function(evt) {
+                if (textbox() !== evt.target && !target_is_scrollbar(evt)) {
+                    utils.create_obj();
+                    // send a mousedown and mouseup event to Pd to instantiate
+                    // the object
+                    events.mousedown(evt);
+                    //events.mouseup(evt);
+                    canvas_events.normal();
+                }
+                evt.stopPropagation();
+                //evt.preventDefault();
+                return false;
+            },
+            text_mouseup: function(evt) {
+                //pdgui.post("mouseup target is " +
+                //    evt.target + " and textbox is " + textbox());
+                //evt.stopPropagation();
+                //evt.preventDefault();
+                return false;
+            },
+            text_keydown: function(evt) {
+                evt.stopPropagation();
+                //evt.preventDefault();
+                return false;
+            },
+            text_keyup: function(evt) {
+                evt.stopPropagation();
+                if (evt.keyCode === 13) {
+                    grow_svg_for_element(textbox());
+                }
+                //evt.preventDefault();
+                return false;
+            },
+            text_keypress: function(evt) {
+                evt.stopPropagation();
+                //evt.preventDefault();
+                return false;
+            },
+            text_paste: function(evt) {
+                evt.preventDefault();
+                document.execCommand("insertText", false,
+                    evt.clipboardData.getData("text"));
+                grow_svg_for_element(textbox());
+            },
+            floating_text_click: function(evt) {
+                if (target_is_scrollbar(evt)) {
+                    return;
+                }
+                //pdgui.post("leaving floating mode");
+                canvas_events.text();
+                evt.stopPropagation();
+                evt.preventDefault();
+                return false;
+            },
+            floating_text_keypress: function(evt) {
+                //pdgui.post("leaving floating mode");
+                canvas_events.text();
+                //evt.stopPropagation();
+                //evt.preventDefault();
+                //return false;
+            },
+            find_click: function(evt) {
+                var id_find = pdgui.is_webapp() ? "canvas_find_text"+name : "canvas_find_text";
+                var t = document.getElementById(id_find).value;
+                if (t !== "") {
+                    if (t === last_search_term) {
+                        pdgui.pdsend(name, "findagain");
+                    } else {
+                        pdgui.pdsend(name, "find",
+                        pdgui.encode_for_dialog(t),
+                        match_words_state ? "1" : "0");
+                    }
+                }
+                last_search_term = t;
+            },
+            find_keydown: function(evt) {
+                if (evt.keyCode === 13) {
+                    events.find_click(evt);
+                }
+            },
+            scalar_draggable_mousemove: function(evt) {
+                var new_x = evt.pageX,
+                    new_y = pdgui.is_webapp() ? evt.layerY : evt.pageY,
+                    dx = new_x - last_draggable_x,
+                    dy = new_y - last_draggable_y,
+                    // For the sake of convenience we're sending transformed
+                    // dx and dy back to the user. If it turns out this is
+                    // expensive we can either optimize this or just leave it
+                    // up to the user to handle on their own. (But I should
+                    // mention that it was non-trivial for me to do the math
+                    // of inverting and multiplying the matrices from within
+                    // a Pd patch. And I'm the author of this API. Make
+                    // of that what you will...)
+                    minv = draggable_elem.getCTM().inverse(),
+                    tx = minv.a * dx + minv.c * dy,
+                    ty = minv.b * dx + minv.d * dy;
+                var obj = scalar_draggables[draggable_elem.id];
+                pdgui.pdsend(obj.cid, "scalar_event", obj.scalar_sym,
+                    obj.drawcommand_sym, obj.array_sym, obj.index,
+                    obj.event_name, dx, dy, tx, ty);
+                last_draggable_x = new_x;
+                last_draggable_y = new_y;
+            },
+            scalar_draggable_mouseup: function(evt) {
+                canvas_events.normal();
+            },
+            iemgui_label_mousemove: function(evt) {
+                // This is very convoluted.
+                // 1. In the generic mousedown handler we detect a click for a
+                //    label handle, red gop rect handle, or [cnv] resize anchor.
+                //    That sets this callback for dragging the handle.
+                // 2. The mousedown also sends a message to Pd to tell it that
+                //    a handle has been clicked. The message is forwarded
+                //    to the relevant handle (a t_scalehandle in Pd).
+                // 3. Pd erases *all* handles, then redraws the one for this
+                //    object. That *eventually* leaves just the handle(s)
+                //    for the current object. This is either a single handle
+                //    (for most iemguis and the canvas red rect), or possibly
+                //    two handles for [cnv]-- one for resizing and one for its
+                //    label.
+                // 4. This function responds to mouse motion. It looks up
+                //    the current handle by tag (using the draggable_lable
+                //    kludge to choose between the cnv_resize_handle and
+                //    everything else), sends a message to Pd to alter the
+                //    object/label accordingly, then displaces the little
+                //    handle itself. We unfortunately can't merely keep a
+                //    reference to the handle element because in #3 Pd will
+                //    have erased it.
+                // Pro: I don't have to dig into the C code to get this to
+                //      work.
+                // Con: It's inherently racy. #3 and #4 happen at the same
+                //      time, so it's possible to apply dx/dy to the wrong
+                //      handle (which will eventually get erased by Pd anyway).
+                //      Anyhow, this is all very bad, but it works so it's
+                //      at least not the worst of all possible worlds.
+                var evt_y = pdgui.is_webapp() ? evt.layerY : evt.pageY;
+                var dx = (evt.pageX + svg_view.x) - last_draggable_x,
+                    dy = (evt_y + svg_view.y) - last_draggable_y,
+                    handle_elem = document.querySelector(
+                        draggable_label ?
+                            ".move_handle" :
+                            ".cnv_resize_handle"
+                        ),
+                    target_id = (draggable_label ? "_l" : "_s") +
+                        handle_elem.parentNode.id.slice(0,-4).slice(1),
+                    is_canvas_gop_rect = document.
+                        getElementsByClassName("gop_drag_handle").length ?
+                        true : false;
+
+                last_draggable_x = evt.pageX + svg_view.x;
+                last_draggable_y = evt_y + svg_view.y;
+
+                pdgui.pdsend(target_id, "_motion",
+                    (evt.pageX + svg_view.x),
+                    (evt_y + svg_view.y));
+            },
+            iemgui_label_mouseup: function(evt) {
+                //pdgui.post("lifting the mousebutton on an iemgui label");
+                // Set last state (none doesn't count as a state)
+                //pdgui.post("previous state is "
+                //    + canvas_events.get_previous_state());
+                var label_handle = document.querySelector(".move_handle");
+                var cnv_resize_handle =
+                    document.querySelector(".cnv_resize_handle");
+                // Restore our cursor bindings for any drag handles that
+                // happen to exist
+                if (label_handle) {
+                    pdgui.toggle_drag_handle_cursors(label_handle,
+                        true, true);
+                }
+                if (cnv_resize_handle) {
+                    pdgui.toggle_drag_handle_cursors(cnv_resize_handle,
+                        false, true);
+                }
+                canvas_events[canvas_events.get_previous_state()]();
+            },
+            dropdown_menu_keydown: function(evt) {
+                var select_elem = document.querySelector("#dropdown_list"),
+                    li;
+                switch(evt.keyCode) {
+                    case 13:
+                    case 32:
+                        dropdown_index_to_pd(select_elem);
+                        select_elem.style.setProperty("display", "none");
+                        canvas_events.normal();
+                        break;
+                    case 27: // escape
+                        select_elem.style.setProperty("display", "none");
+                        canvas_events.normal();
+                        break;
+                    case 38: // up
+                        li = select_elem.querySelector(".highlighted");
+                        li = li.previousElementSibling ||
+                             li.parentElement.lastElementChild;
+                        dropdown_highlight_elem(li, "up");
+                        evt.preventDefault();
+                        break;
+                    case 40: // down
+                        li = select_elem.querySelector(".highlighted");
+                        li = li.nextElementSibling ||
+                             li.parentElement.firstElementChild;
+                        dropdown_highlight_elem(li, "down");
+                        evt.preventDefault();
+                        break;
+                    default:
+                }
+            },
+            dropdown_menu_keypress: function(evt) {
+                var li_nodes = document.querySelectorAll("#dropdown_list li"),
+                    string_array = [],
+                    highlighted,
+                    highlighted_index,
+                    match,
+                    offset;
+                highlighted = document
+                    .querySelector("#dropdown_list .highlighted");
+                if (highlighted) {
+                    highlighted_index =
+                        +document.querySelector("#dropdown_list .highlighted")
+                            .getAttribute("data-index");
+                    offset = highlighted_index + 1;
+                } else {
+                    highlighted_index = 1;
+                    offset = 2;
+                }
+                Array.prototype.forEach.call(li_nodes, function(e, i, a) {
+                    var s = a[(i + offset) % a.length];
+                    string_array.push(s.textContent.trim());
+                });
+                match = string_array.indexOf(
+                    string_array.find(function(e) {
+                        return e.charAt(0).toLowerCase() ===
+                            String.fromCharCode(evt.charCode).toLowerCase();
+                }));
+                if (match !== undefined) {
+                    match = (match + offset) % li_nodes.length;
+                    if (match !== highlighted_index) {
+                        dropdown_highlight_elem(li_nodes[match],
+                            match < highlighted_index ? "up" : "down");
+                    }
+                }
+            },
+            dropdown_menu_mousedown: function(evt) {
+                var select_elem = document.querySelector("#dropdown_list"),
+                    in_dropdown = evt.target;
+                while (in_dropdown) {
+                    if (in_dropdown.id === "dropdown_list") {
+                        break;
+                    }
+                    in_dropdown = in_dropdown.parentNode;
+                }
+                // Allow scrollbar click and drag without closing the menu
+                if (in_dropdown &&
+                        evt.pageX - select_elem.offsetLeft >
+                        select_elem.clientWidth) {
+                    return;
+                }
+                // Special case for OSX, where the scrollbar doesn't take
+                // up any extra space
+                if (nw.process.platform === "darwin"
+                    && (evt.target.id === "dropdown_list")) {
+                    return;
+                }
+                if (evt.target.parentNode
+                    && evt.target.parentNode.parentNode
+                    && evt.target.parentNode.parentNode.id === "dropdown_list") {
+                    dropdown_highlight_elem(evt.target);
+                }
+                // This selects whatever item is highlighted even
+                // if we click outside the menu. Might be better to
+                // cancel in that case.
+                dropdown_index_to_pd(select_elem);
+                select_elem.style.setProperty("display", "none");
+                canvas_events.normal();
+            },
+            dropdown_menu_mouseup: function(evt) {
+                var i, select_elem;
+                // This can be triggered if the user keeps the mouse down
+                // to highlight an element and releases the mouse button to
+                // choose that element
+                if (evt.target.parentNode
+                    && evt.target.parentNode.parentNode
+                    && evt.target.parentNode.parentNode.id === "dropdown_list") {
+                    select_elem = document.querySelector("#dropdown_list");
+                    dropdown_index_to_pd(select_elem);
+                    select_elem.style.setProperty("display", "none");
+                    canvas_events.normal();
+                }
+            },
+            dropdown_menu_wheel: function(evt) {
+                // Here we generate bogus mouse coords so that
+                // we can break through the filter below if we're
+                // using the mouse wheel to scroll in the list.
+                last_dropdown_menu_x = Number.MIN_VALUE;
+                last_dropdown_menu_y = Number.MIN_VALUE;
+            },
+            dropdown_menu_mousemove: function(evt) {
+                // For whatever reason, Chromium decides to trigger the
+                // mousemove/mouseenter/mouseover events if the element
+                // underneath it changes (or for mousemove, if the element
+                // moves at all). Unfortunately that means we have to track
+                // the mouse position the entire time to filter out the
+                // true mousemove events from the ones Chromium generates
+                // when a scroll event changes the element under the mouse.
+                if (evt.pageX !== last_dropdown_menu_x
+                    || evt.pageY !== last_dropdown_menu_y) {
+                    if (evt.target.parentNode
+                        && evt.target.parentNode.parentNode
+                        && evt.target.parentNode.parentNode.id === "dropdown_list") {
+                        dropdown_highlight_elem(evt.target);
+                    } else {
+                        dropdown_clear_highlight();
+                    }
+                }
+                last_dropdown_menu_x = evt.pageX;
+                last_dropdown_menu_y = evt.pageY;
+            }
+        },
+        utils = {
+            create_obj: function() {
+                // Yes: I _really_ want .innerText and NOT .textContent
+                // here.  I want those newlines: although that isn't
+                // standard in Pd-Vanilla, Pd-l2ork uses and preserves
+                // them inside comments
+                var fudi_msg = text_to_fudi(textbox().innerText),
+                    fudi_array = string_to_array_of_chunks(fudi_msg),
+                    i;
+                for (i = 0; i < fudi_array.length; i++) {
+                    pdgui.pdsend(name, "obj_addtobuf", fudi_array[i].join(" "));
+                }
+                pdgui.pdsend(name, "obj_buftotext");
+            }
+        }
+    ;
+
+    return {
+        none: function(div_name) {
+            if (div_name === undefined) div_name = name;	
+            var div = canvas_divs[div_name];
+                
+            var evt_name, prop;
+            if (state !== "none") {
+                previous_state = state;
+            }
+            state = "none";
+            for (prop in events) {
+                if (events.hasOwnProperty(prop)) {
+                    evt_name = prop.split("_");
+                    evt_name = evt_name[evt_name.length - 1];
+
+                    if(pdgui.is_webapp()){
+                        div.canvas_div.removeEventListener(evt_name, events[prop], false);
+                    }else{
+                        document.removeEventListener(evt_name, events[prop], false);
+                    }
+                }
+            }
+        },
+        normal: function() {
+            canvas_events.none();
+
+            if(pdgui.is_webapp()){
+                for (var div_name in canvas_divs) {	
+	                if (canvas_divs.hasOwnProperty(div_name)) { 	
+	                    var div = canvas_divs[div_name];	
+	                    canvas_events.none(div_name);	
+	                    div.canvas_div.addEventListener("scroll", events.onscroll, false);	
+	                    div.canvas_div.addEventListener("mouseenter", events.mouseenter, false);	
+	                    div.canvas_div.addEventListener("mousemove", events.mousemove, false);	
+	                    div.canvas_div.addEventListener("keydown", events.keydown, false);	
+	                    div.canvas_div.addEventListener("keypress", events.keypress, false);	
+	                    div.canvas_div.addEventListener("keyup", events.keyup, false);	
+	                    div.canvas_div.addEventListener("mousedown", events.mousedown, false);	
+	                    div.canvas_div.addEventListener("mouseup", events.mouseup, false);    	
+	                }	
+	            }                
+            }else{
+                document.addEventListener("mousemove", events.mousemove, false);
+                document.addEventListener("keydown", events.keydown, false);
+                document.addEventListener("keypress", events.keypress, false);
+                document.addEventListener("keyup", events.keyup, false);
+                document.addEventListener("mousedown", events.mousedown, false);
+                document.addEventListener("mouseup", events.mouseup, false);
+
+                set_edit_menu_modals(true);
+            }
+            state = "normal";
+
+        },
+        scalar_drag: function() {
+            // This scalar_drag is a prototype for moving more of the editing
+            // environment directly to the GUI.  At the moment we're leaving
+            // the other "normal" events live, since behavior like editmode
+            // selection still happens from the Pd engine.
+            //this.none();
+            if(pdgui.is_webapp()){
+                svg.addEventListener("mousemove", events.scalar_draggable_mousemove, false);	
+	            svg.addEventListener("mouseup", events.scalar_draggable_mouseup, false);
+            }else{
+                document.addEventListener("mousemove", events.scalar_draggable_mousemove, false);
+                document.addEventListener("mouseup", events.scalar_draggable_mouseup, false);
+            }
+        },
+        iemgui_label_drag: function() {
+            // This is a workaround for dragging iemgui labels. Resizing iemguis
+            // currently happens in Pd (canvas_doclick and canvas_motion). (Look
+            // for MA_RESIZE.)
+            // The exception is my_canvas, which is weird because the visible
+            // rectangle extends past the bbox that it reports to Pd.
+            // Unfortunately that means a lot of work to treat it separately.
+            canvas_events.none();
+
+            if(pdgui.is_webapp()){
+                svg.addEventListener("mousemove",	
+                    events.iemgui_label_mousemove, false);
+                svg.addEventListener("mouseup",	
+	                events.iemgui_label_mouseup, false);
+            }else{
+                document.addEventListener("mousemove",
+                    events.iemgui_label_mousemove, false);
+                document.addEventListener("mouseup",
+                    events.iemgui_label_mouseup, false);
+            }
+        },
+        text: function() {
+            canvas_events.none();
+
+            if(pdgui.is_webapp()){
+                var div = canvas_divs[name];	
+		
+	            div.canvas_div.addEventListener("mousemove", events.text_mousemove, false);	
+	            div.canvas_div.addEventListener("keydown", events.text_keydown, false);	
+	            div.canvas_div.addEventListener("keypress", events.text_keypress, false);	
+	            div.canvas_div.addEventListener("keyup", events.text_keyup, false);	
+	            div.canvas_div.addEventListener("paste", events.text_paste, false);	
+	            div.canvas_div.addEventListener("mousedown", events.text_mousedown, false);	
+	            div.canvas_div.addEventListener("mouseup", events.text_mouseup, false);
+            }else{
+                document.addEventListener("mousemove", events.text_mousemove, false);
+                document.addEventListener("keydown", events.text_keydown, false);
+                document.addEventListener("keypress", events.text_keypress, false);
+                document.addEventListener("keyup", events.text_keyup, false);
+                document.addEventListener("paste", events.text_paste, false);
+                document.addEventListener("mousedown", events.text_mousedown, false);
+                document.addEventListener("mouseup", events.text_mouseup, false);    
+            }
+
+            state = "text";
+            set_edit_menu_modals(false);
+        },
+        floating_text: function() {
+            canvas_events.none();
+            canvas_events.text();
+
+            if(pdgui.is_webapp()){
+                var div = canvas_divs[name];	
+		
+	            div.canvas_div.removeEventListener("mousedown", events.text_mousedown, false);	
+	            div.canvas_div.removeEventListener("mouseup", events.text_mouseup, false);	
+	            div.canvas_div.removeEventListener("keypress", events.text_keypress, false);	
+	            div.canvas_div.removeEventListener("mousemove", events.text_mousemove, false);	
+	            	
+	            div.canvas_div.addEventListener("click", events.floating_text_click, false);	
+	            div.canvas_div.addEventListener("keypress", events.floating_text_keypress, false);	
+	            div.canvas_div.addEventListener("mousemove", events.mousemove, false);
+            }else{
+                document.removeEventListener("mousedown", events.text_mousedown, false);
+                document.removeEventListener("mouseup", events.text_mouseup, false);
+                document.removeEventListener("keypress", events.text_keypress, false);
+                document.removeEventListener("mousemove", events.text_mousemove, false);
+                document.addEventListener("click", events.floating_text_click, false);
+                document.addEventListener("keypress", events.floating_text_keypress, false);
+                document.addEventListener("mousemove", events.mousemove, false);
+            }
+
+            state = "floating_text";
+            set_edit_menu_modals(false);
+        },
+        dropdown_menu: function() {
+            canvas_events.none();
+
+            if(pdgui.is_webapp()){
+                svg.addEventListener("mousedown", events.dropdown_menu_mousedown, false);	
+	            svg.addEventListener("mouseup", events.dropdown_menu_mouseup, false);	
+	            svg.addEventListener("mousemove", events.dropdown_menu_mousemove, false);	
+	            svg.addEventListener("keydown", events.dropdown_menu_keydown, false);	
+	            svg.addEventListener("keypress", events.dropdown_menu_keypress, false);
+            }else{
+                document.addEventListener("mousedown", events.dropdown_menu_mousedown, false);
+                document.addEventListener("mouseup", events.dropdown_menu_mouseup, false);
+                document.addEventListener("mousemove", events.dropdown_menu_mousemove, false);
+                document.addEventListener("keydown", events.dropdown_menu_keydown, false);
+                document.addEventListener("keypress", events.dropdown_menu_keypress, false);    
+            }
+            document.querySelector("#dropdown_list")
+                .addEventListener("wheel", events.dropdown_menu_wheel, false);
+        },
+        search: function() {
+            if(pdgui.is_webapp()){
+                var input_find = document.getElementById("canvas_find_text"+name);	
+	            input_find.addEventListener("keydown", events.find_keydown, false);	
+		
+	            var button_find = document.getElementById("canvas_find_button"+name);	
+	            button_find.addEventListener("click", events.find_click);
+            }else{
+                canvas_events.none();
+                document.addEventListener("keydown", events.find_keydown, false);
+            }
+            state = "search";
+        },
+        register: function(n, attrs) {
+            name = n;
+
+            if(pdgui.is_webapp()){
+                filename = attrs.name,	
+	            canvas_div = document.getElementById("patch_div_"+n)	
+	            var canvas_div_scroll_left = canvas_div.scrollLeft;	
+	            var canvas_div_scroll_top = canvas_div.scrollTop;	
+	            canvas_div_x = Math.floor(document.getElementById("patch_div_"+n).getBoundingClientRect().left); 	
+	            canvas_div_y = document.getElementById("patch_div_"+n).getBoundingClientRect().top	
+	            svg_view = document.getElementById("patchsvg_"+n).viewBox.baseVal,	
+	            	
+	            canvas_divs[n] = {	
+	                svg_view,	
+	                canvas_div,	
+	                canvas_div_x,	
+	                canvas_div_y,	
+	                canvas_div_scroll_left,	
+	                canvas_div_scroll_top,	
+	                filename	
+	            }
+            }else{
+                svg_view = document.getElementById("patchsvg").viewBox.baseVal;
+            }
+        },
+        get_id: function() {
+            return name;
+        },
+        get_state: function() {
+            return state;
+        },
+        get_previous_state: function() {
+            return previous_state;
+        },
+        create_obj: function() {
+            utils.create_obj();
+        },
+        match_words: function(state) {
+            match_words_state = state;
+        },
+        find_reset: function() {
+            last_search_term = "";
+        },
+        add_scalar_draggable: function(cid, tag, scalar_sym, drawcommand_sym,
+            event_name, array_sym, index) {
+            scalar_draggables[tag] = {
+                cid: cid,
+                scalar_sym: scalar_sym,
+                drawcommand_sym: drawcommand_sym,
+                event_name: event_name,
+                array_sym: array_sym,
+                index: index
+            };
+        },
+        remove_scalar_draggable: function(id) {
+            if (scalar_draggables[id]) {
+                scalar_draggables[id] = null;
+            }
+        },
+        save_and_close: function() {
+            pdgui.pdsend(name, "menusave", 1);
+        },
+        close_without_saving: function(cid, force) {
+            pdgui.pdsend(name, "dirty 0");
+            pdgui.pdsend(cid, "menuclose", force);
+        },
+        close_save_dialog: function() {
+            document.getElementById("save_before_quit").close();
+        },
+        paste_from_pd_file: function(name, clipboard_data) {
+            var line, lines, i, pd_message;
+            // This lets the user copy some Pd source file from another
+            // application and paste the code directly into a canvas window
+            // (empty or otherwise). It does a quick check to make sure the OS
+            // clipboard is holding text that could conceivably be Pd source
+            // code. But that's not 100% foolproof and the engine might crash
+            // and burn, so be careful! :)
+
+            // We only want to check the external buffer and/or send a "paste"
+            // event to Pd if the canvas is in a "normal" state.
+            if (canvas_events.get_state() !== "normal") {
+                return;
+            }
+            if (!might_be_a_pd_file(clipboard_data)) {
+                pdgui.post("paste error: clipboard doesn't appear to contain valid Pd code");
+                return;
+            }
+
+            // clear the buffer
+            pdgui.pdsend(name, "copyfromexternalbuffer");
+            pd_message = "";
+            lines = clipboard_data.split("\n");
+            for (i = 0; i < lines.length; i++) {
+                line = lines[i];
+                // process pd_message if it ends with a semicolon that
+                // isn't preceded by a backslash
+                if (line.slice(-1) === ";" &&
+                    (line.length < 2 || line.slice(-2, -1) !== "\\")) {
+                    if (pd_message === "") {
+                        pd_message = line;
+                    } else {
+                        pd_message = pd_message + " " + line;
+                    }
+                    pdgui.pdsend(name, "copyfromexternalbuffer", pd_message);
+                    pd_message = "";
+                } else {
+                    pd_message = pd_message + " " + line;
+                    pd_message = pd_message.replace(/\n/g, "");
+                }
+            }
+            // This signals to the engine that we're done filling the external
+            // buffer, that it can do necessary checks and call some internal
+            // cleanup code.
+
+            pdgui.pdsend(name, "copyfromexternalbuffer");
+            // Send a canvas "paste" message to Pd
+            pdgui.pdsend(name, "paste");
+            // Finally, make sure to reset the buffer so that next time around
+            // we start from a clean slate. (Otherwise, the engine will just
+            // add stuff to the existing buffer contents.)
+            pdgui.pdsend(name, "reset_copyfromexternalbuffer");
+        },
+        init: function() {
+            document.getElementById("saveDialog")
+                .setAttribute("nwworkingdir", pdgui.get_pwd());
+            document.getElementById("fileDialog")
+                .setAttribute("nwworkingdir", pdgui.get_pwd());
+            document.getElementById("fileDialog").setAttribute("accept",
+                Object.keys(pdgui.pd_filetypes).toString());
+            // Dialog events -- these are set elsewhere now because of a bug
+            // with nwworkingdir
+            document.querySelector("#saveDialog").addEventListener("change",
+                function(evt) {
+                    pdgui.saveas_callback(name, evt.target.value, 0);
+                    // reset value so that we can open the same file twice
+                    evt.target.value = null;
+                    console.log("tried to save something");
+                }, false
+            );
+            // Whoa-- huge workaround! Right now we're getting
+            // the popup menu the way Pd Vanilla does it:
+            // 1) send a mouse(down) message to Pd
+            // 2) Pd checks whether it wants to send us a popup
+            // 3) Pd checks what popup menu items are available for obj/canvas
+            // 4) Pd sends GUI back a message with this info
+            // 5) GUI finally displays the popup
+            // 6) GUI keeps a _global_ _variable_ to remember the popup coords
+            // 7) User clicks an option in the popup
+            // 8) GUI sends a message back to Pd with the popup index and coords
+            // 9) Pd walks the linked list of objects to look up the object
+            // 10) Pd asks the object if it reacts to popups, and if it reacts
+            //     to the selected item in the popup
+            // 11) Pd sends a message to the relevant object for the item in
+            //     question
+            // nw.js has a nice little "contextmenu" event handler, but it's too
+            // difficult to use when passing between GUI and Pd (twice). In the
+            // future we should do all popup menu event handling in the GUI,
+            // and only pass a message to Pd when the user has clicked an item.
+            // For now, however, we just turn off its default behavior and
+            // control it with a bunch of complicated callbacks.
+            var elemt = pdgui.is_webapp() ? svg : document;
+            elemt.addEventListener("contextmenu", function(evt) {
+                console.log("got a context menu evt...");
+                evt.preventDefault();
+            });
+
+            // Cut event
+            elemt.addEventListener("cut", function(evt) {
+                // This event doesn't currently get called because the
+                // nw menubar receives the event and doesn't propagate
+                // to the DOM. But if we add the ability to toggle menubar
+                // display, we might need to rely on this listener.
+                pdgui.pdsend(name, "cut");
+            });
+
+            // Copy event
+            elemt.addEventListener("copy", function(evt) {
+                // On OSX, this event gets triggered when we're editing
+                // inside an object/message box. So we only forward the
+                // copy message to Pd if we're in a "normal" canvas state
+                if (canvas_events.get_state() === "normal") {
+                    pdgui.pdsend(name, "copy");
+                }
+            });
+
+            // Listen to paste event
+            // XXXTODO: Not sure whether this is even needed any more, as the
+            // paste-from-clipboard functionality has been moved to its own menu
+            // option. So this code may possibly be removed in the future. -ag
+            elemt.addEventListener("paste", function(evt) {
+                if (canvas_events.get_state() !== "normal") {
+                    return;
+                }
+                // Send a canvas "paste" message to Pd
+                pdgui.pdsend(name, "paste");
+            });
+
+            // MouseWheel event for zooming
+            elemt.addEventListener("wheel", function(evt) {
+                var d = { deltaX: 0, deltaY: 0, deltaZ: 0 };
+                Object.keys(d).forEach(function(key) {
+                    if (evt[key] < 0) {
+                        d[key] = -1;
+                    } else if (evt[key] > 0) {
+                        d[key] = 1;
+                    } else {
+                        d[key] = 0;
+                    }
+                });
+                if (pdgui.cmd_or_ctrl_key(evt)) {
+                    // scroll up for zoom-in, down for zoom-out
+                    nw_window_zoom(name, -d.deltaY);
+                }
+                // Send a message on to Pd for the [mousewheel] legacy object
+                // (in the future we can refcount to prevent forwarding
+                // these messages when there's no extant receiver)
+                pdgui.pdsend(name, "legacy_mousewheel",
+                    d.deltaX, d.deltaY, d.deltaZ);
+            });
+
+            // The following is commented out because we have to set the
+            // event listener inside nw_create_pd_window_menus due to a
+            // bug with nwworkingdir
+
+            //document.querySelector("#fileDialog").addEventListener("change",
+            //    function(evt) {
+            //        var file_array = this.value;
+            //        // reset value so that we can open the same file twice
+            //        this.value = null;
+            //        pdgui.menu_open(file_array);
+            //        console.log("tried to open something\n\n\n\n\n\n\n\n");
+            //    }, false
+            //);
+            document.querySelector("#openpanel_dialog")
+                .addEventListener("change", function(evt) {
+                    var file_string = evt.target.value;
+                    // reset value so that we can open the same file twice
+                    evt.target.value = null;
+                    pdgui.file_dialog_callback(file_string);
+                    console.log("tried to openpanel something");
+                }, false
+            );
+            document.querySelector("#savepanel_dialog")
+                .addEventListener("change", function(evt) {
+                    var file_string = evt.target.value;
+                    // reset value so that we can open the same file twice
+                    evt.target.value = null;
+                    pdgui.file_dialog_callback(file_string);
+                    console.log("tried to savepanel something");
+                }, false
+            );
+            document.querySelector("#canvas_find_text")
+                .addEventListener("focusin", canvas_events.search, false
+            );
+
+            // disable drag and drop for the time being
+            window.addEventListener("dragover", function (evt) {
+                evt.preventDefault();
+            }, false);
+            window.addEventListener("drop", function (evt) {
+                evt.preventDefault();
+            }, false);
+
+            // Add placeholder text... this all needs to be collected into an 
+            // add_events function similiar to the one in index.js
+            document.querySelector("#canvas_find_text").placeholder =
+                l("canvas.find.placeholder");
+            document.querySelector("#canvas_find_text").addEventListener("blur",
+                canvas_events.normal, false
+            );
+            document.querySelector("#canvas_find_button")
+                .addEventListener("onclick", events.find_click
+            );
+            // We need to separate these into nw_window events and html5 DOM
+            // events closing the Window this isn't actually closing the window
+            // yet
+            gui.Window.get().on("close", function() {
+                pdgui.pdsend(name, "menuclose 0");
+            });
+            // update viewport size when window size changes
+            gui.Window.get().on("maximize", function() {
+                pdgui.gui_canvas_get_scroll(name);
+            });
+            gui.Window.get().on("unmaximize", function() {
+                pdgui.gui_canvas_get_scroll(name);
+            });
+            gui.Window.get().on("resize", function() {
+                pdgui.gui_canvas_get_scroll(name);
+            });
+            gui.Window.get().on("focus", function() {
+                nw_window_focus_callback(name);
+            });
+            gui.Window.get().on("blur", function() {
+                nw_window_blur_callback(name);
+            });
+            gui.Window.get().on("move", function(x, y) {
+                var w = gui.Window.get();
+                pdgui.pdsend(name, "setbounds", x, y,
+                    x + w.width, y + w.height);
+            });
+            // set minimum window size
+            gui.Window.get().setMinimumSize(150, 100);
+        },
+        update_filename: function(cid, name){	
+            if (pdgui.is_webapp()) {
+                if(canvas_divs[cid]){	
+                    canvas_divs[cid].filename = name;	
+                    load_canvas_menu_actions(cid, filename)	
+                }                    
+            }
+        }
+    };
+}());
+		
+window.canvas_events = canvas_events;
+
+// Stop-gap translator. We copy/pasted this in each dialog, too. It
+// should be moved to pdgui.js
+function translate_form() {
+    var i
+    var elements = document.querySelectorAll("[data-i18n]");
+    for (i = 0; i < elements.length; i++) {
+        var data = elements[i].dataset.i18n;
+        if (data.slice(0,7) === "[title]") {
+            elements[i].title = l(data.slice(7));
+        } else {
+            elements[i].textContent = l(data);
+        }
+    }
+}
+
+// This gets called from the nw_create_window function in index.html
+// It provides us with our canvas id from the C side.  Once we have it
+// we can create the menu and register event callbacks
+window.register_window_id = function register_window_id(cid, attr_array) {
+    if(pdgui.is_webapp()){
+            // Add menu text	
+            menu_options("web-canvas", window, cid);
+            add_shortcuts(cid);	
+            pdgui.update_focused_windows(cid);
+    }
+
+
+    var kludge_title;
+    // We create the window menus and popup menu before doing anything else
+    // to ensure that we don't try to set the svg size before these are done.
+    // Otherwise we might set the svg size to the window viewport, only to have
+    // the menu push down the svg viewport and create scrollbars. Those same
+    // scrollbars will get erased once canvas_map triggers, causing a quick
+    // (and annoying) scrollbar flash.
+    // For OSX, we have a single menu and just track which window has the
+    // focus.
+    if (process.platform !== "darwin") {
+        nw_create_patch_window_menus(gui, window, cid);
+    }
+    create_popup_menu(cid);
+    canvas_events.register(cid, attr_array);
+    translate_form();
+    canvas_events.normal();
+
+    if(!pdgui.is_webapp()){
+        // Initialize global DOM state/events
+        canvas_events.init(document);
+        // Trigger a "focus" event so that OSX updates the menu for this window
+        nw_window_focus_callback(cid);
+        // Initialize the zoom level to the value retrieved from the patch, if any.
+        nw.Window.get().zoomLevel = attr_array.zoom;
+    }
+    
+    pdgui.canvas_map(cid); // side-effect: triggers gui_canvas_get_scroll
+    pdgui.canvas_set_editmode(cid, attr_array.editmode);
+    // For now, there is no way for the cord inspector to be turned on by
+    // default. But if this changes we need to set its menu item checkbox
+    // accordingly here
+    // set_cord_inspector_checkbox();
+
+    // Set scroll bars
+    pdgui.canvas_set_scrollbars(cid, !attr_array.hide_scroll);
+    // One final kludge-- because window creation is asynchronous, we may
+    // have gotten a dirty flag before the window was created. In that case
+    // we check the title_queue to see if our title now contains an asterisk
+    // (which is the visual cue for "dirty")
+
+    // Two possibilities for handling this better:
+    // have a representation of canvas attys in pdgui.js (editmode, dirty, etc.)
+    // or
+    // send those attys from Pd after mapping the canvas
+    kludge_title = pdgui.query_title_queue(cid);
+    if (kludge_title && !pdgui.is_webapp()) {
+        nw.Window.get().title = kludge_title;
+    }
+    pdgui.free_title_queue(cid);
+}
+
+class Popup {
+    constructor(){
+        this.popup_elem = document.createElement("ul");        
+        this.popup_elem.id = "popup"
+
+        // Close after click
+        this.popup_elem.onclick = function(e){
+            var ul_node = e.target.parentNode;
+            ul_node.parentNode.removeChild(ul_node);
+        }
+    }
+
+    append(params){
+        var item = document.createElement("li");
+        item.append(params['label'])
+        item.onclick = params['click'];
+        this.popup_elem.appendChild(item);
+    }
+
+    popup(xpos, ypos) {
+        this.popup_elem.style.left = xpos+"px";
+        this.popup_elem.style.top = ypos+"px";
+        document.getElementById("container").prepend(this.popup_elem);
+    };
+
+}
+
+
+function create_popup_menu(name) {
+    // The right-click popup menu
+    var popup_menu;
+    var popup_menu_options = {
+        props: {
+            label: l("canvas.menu.props"),
+            click: function() {
+                pdgui.popup_action(name, 0);
+            }
+        },
+        open: {
+            label: l("canvas.menu.open"),
+            click: function() {
+                pdgui.popup_action(name, 1);
+            }
+        },
+        help: {
+            label: l("canvas.menu.help"),
+            click: function() {
+                pdgui.popup_action(name, 2);
+            }
+        },
+        front: {
+            label: l("canvas.menu.front"),
+            click: function() {
+                pdgui.popup_action(name, 3);
+            }
+        },
+        back: {
+            label: l("canvas.menu.back"),
+            click: function() {
+                pdgui.popup_action(name, 4);
+            }
+        }
+    }
+
+    if(pdgui.is_webapp()){
+        popup_menu = new Popup();
+        pdgui.add_popup(name, popup_menu);
+    
+        popup_menu.append(popup_menu_options['props']);
+        popup_menu.append(popup_menu_options['open']);
+        popup_menu.append(popup_menu_options['help']);
+        popup_menu.append(popup_menu_options['front']);
+        popup_menu.append(popup_menu_options['back']);
+    }else{
+        popup_menu = new gui.Menu();
+        pdgui.add_popup(name, popup_menu);
+
+        popup_menu.append(new gui.MenuItem(popup_menu_options['props']));
+        popup_menu.append(new gui.MenuItem(popup_menu_options['open']));
+        popup_menu.append(new gui.MenuItem(popup_menu_options['help']));
+        popup_menu.append(new gui.MenuItem({
+            type: "separator",
+        }));
+        popup_menu.append(new gui.MenuItem(popup_menu_options['front']));
+        popup_menu.append(new gui.MenuItem(popup_menu_options['back']));
+    }
+}
+
+function nw_undo_menu(undo_text, redo_text) {
+    // Disabling undo/redo menu buttons on OSX will
+    // turn off any DOM events associated with that
+    // key command. So we can't disable them here--
+    // otherwise it would turn off text-editing
+    // undo/redo.
+    if (process.platform !== "darwin" && undo_text === "no") {
+        canvas_menu.edit.undo.enabled = false;
+    } else {
+        canvas_menu.edit.undo.enabled = true;
+        canvas_menu.edit.undo.label = l("menu.undo") + " " + undo_text;
+    }
+    if (process.platform !== "darwin" && redo_text === "no") {
+        canvas_menu.edit.redo.enabled = false;
+    } else {
+        canvas_menu.edit.redo.enabled = true;
+        canvas_menu.edit.redo.label = l("menu.redo") + " " + redo_text;
+    }
+}
+
+function have_live_box() {
+    var state = canvas_events.get_state();
+    if (state === "text" || state === "floating_text") {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+// If there's a box being edited, send the box's text to Pd
+function update_live_box() {
+    if (have_live_box()) {
+        canvas_events.create_obj();
+    }
+}
+
+// If there's a box being edited, try to instantiate it in Pd
+function instantiate_live_box() {
+    if (have_live_box()) {
+        canvas_events.create_obj();
+    }
+}
+
+// Menus for the Patch window
+
+var canvas_menu = {};
+
+function set_edit_menu_modals(state) {
+    // OSX needs to keep these enabled, otherwise the events won't trigger
+    if (process.platform === "darwin") {
+        state = true;
+    }
+    if(!pdgui.is_webapp()){
+        canvas_menu.edit.undo.enabled = state;
+        canvas_menu.edit.redo.enabled = state;
+        canvas_menu.edit.cut.enabled = state;
+        canvas_menu.edit.copy.enabled = state;
+        canvas_menu.edit.paste.enabled = state;
+        canvas_menu.edit.selectall.enabled = state;
+    }
+}
+
+function set_editmode_checkbox(state) {
+    canvas_menu.edit.editmode.checked = state;
+}
+
+function set_cord_inspector_checkbox(state) {
+    if(pdgui.is_webapp()){
+        var cordinspector = document.getElementById("cordinspector"+name);
+        cordinspector.checked = state;
+    }else{
+        canvas_menu.edit.cordinspector.checked = state;
+    }
+}
+
+// stop-gap
+function menu_generic () {
+    alert("Please implement this");
+}
+
+function minit(menu_item, options) {
+    if(pdgui.is_webapp()){
+        menu_item = document.getElementById(menu_item);
+    }
+
+    var key;
+    for (key in options) {
+        if (options.hasOwnProperty(key)) {
+            // For click callbacks, we want to check if canvas state is
+            // "none", in which case we don't call them. This is just a
+            // hack, though-- it'd be a better UX to disable all menu items
+            // when we're in the "none" state.
+            menu_item[key] = (key !== "click") ?
+                options[key] :
+                function() {
+                    if (canvas_events.get_state() !== "none") {
+                        options[key]();
+                    }
+            };
+        }
+    }
+}
+
+function nw_create_patch_window_menus(gui, w, name) {
+    // if we're on GNU/Linux or Windows, create the menus:
+    if(!pdgui.is_webapp()){
+        var m = canvas_menu = pd_menus.create_menu(gui);
+
+        // File sub-entries
+        // We explicitly enable these menu items because on OSX
+        // the console menu disables them. (Same for Edit and Put menu)
+        minit(m.file.new_file, { click: pdgui.menu_new });
+        minit(m.file.open, {
+            click: function() {
+                var input, chooser,
+                    span = w.document.querySelector("#fileDialogSpan");
+                // Complicated workaround-- see comment in build_file_dialog_string
+                input = pdgui.build_file_dialog_string({
+                    style: "display: none;",
+                    type: "file",
+                    id: "fileDialog",
+                    nwworkingdir: pdgui.get_pd_opendir(),
+                    multiple: null,
+                    // These are copied from pd_filetypes in pdgui.js
+                    accept: ".pd,.pat,.mxt,.mxb,.help"
+                });
+                span.innerHTML = input;
+                chooser = w.document.querySelector("#fileDialog");
+                // Hack-- we have to set the event listener here because we
+                // changed out the innerHTML above
+                chooser.onchange = function() {
+                    var file_array = this.value;
+                    // reset value so that we can open the same file twice
+                    this.value = null;
+                    pdgui.menu_open(file_array);
+                    console.log("tried to open something");
+                };
+                chooser.click();
+            }
+        });
+        if (pdgui.k12_mode == 1) {
+            minit(m.file.k12, { click: pdgui.menu_k12_open_demos });
+        }
+        minit(m.file.save, {
+            enabled: true,
+            click: function () {
+                pdgui.canvas_check_geometry(name); // should this go in menu_save?
+                pdgui.menu_save(name);
+            }
+        });
+        minit(m.file.saveas, {
+            enabled: true,
+            click: function (){
+                pdgui.canvas_check_geometry(name);
+                pdgui.menu_saveas(name);
+            }
+        });
+        minit(m.file.print, {
+            enabled: true,
+            click: function (){
+                pdgui.canvas_check_geometry(name);
+                pdgui.menu_print(name);
+            }
+        });
+        minit(m.file.message, {
+            click: function() { pdgui.menu_send(name); }
+        });
+        minit(m.file.close, {
+            enabled: true,
+            click: function() { pdgui.menu_close(name); }
+        });
+        minit(m.file.quit, {
+            click: pdgui.menu_quit
+        });
+
+        // Edit menu
+        minit(m.edit.undo, {
+            enabled: true,
+            click: function () {
+                if (canvas_events.get_state() === "text") {
+                    document.execCommand("undo", false, null);
+                } else {
+                    pdgui.pdsend(name, "undo");
+                }
+            }
+        });
+        minit(m.edit.redo, {
+            enabled: true,
+            click: function () {
+                if (canvas_events.get_state() === "text") {
+                    document.execCommand("redo", false, null);
+                } else {
+                    pdgui.pdsend(name, "redo");
+                }
+            }
+        });
+        minit(m.edit.cut, {
+            enabled: true,
+            click: function () { pdgui.pdsend(name, "cut"); }
+        });
+        minit(m.edit.copy, {
+            enabled: true,
+            click: function () { pdgui.pdsend(name, "copy"); }
+        });
+        minit(m.edit.paste, {
+            enabled: true,
+            click: function () { pdgui.pdsend(name, "paste"); }
+        });
+        minit(m.edit.paste_clipboard, {
+            enabled: true,
+            click: function () {
+            var clipboard = nw.Clipboard.get();
+            var text = clipboard.get('text');
+            //pdgui.post("** paste from clipboard: "+text);
+            canvas_events.paste_from_pd_file(name, text);
+        }
+        });
+        minit(m.edit.duplicate, {
+            enabled: true,
+            click: function () { pdgui.pdsend(name, "duplicate"); }
+        });
+        minit(m.edit.selectall, {
+            enabled: true,
+            click: function (evt) {
+                if (canvas_events.get_state() === "normal") {
+                    pdgui.pdsend(name, "selectall");
+                } else if (process.platform === "darwin") {
+                    // big kluge for OSX to select all inside a
+                    // contenteditable element (needed because
+                    // the stupid MacBuiltin is buggy-- see pd_menus.js)
+                    document.execCommand("selectAll", false, null);
+                }
+            }
+        });
+        minit(m.edit.clear_console, {
+            enabled: true,
+            click: pdgui.clear_console
+        });
+        minit(m.edit.reselect, {
+            enabled: true,
+            click: function() {
+                // This is a bit complicated... menu item shortcuts receive
+                // key events before the DOM, so we have to make sure to
+                // filter out <ctrl-or-cmd-Enter> in the DOM eventhandler
+                // in the "normal" keypress callback.
+                // We also have to make sure to send the text ahead to Pd
+                // to make sure it has it in the before before attempting
+                // to "reselect".
+                // As we move the editing functionality from the c code to
+                // the GUI, this will get less complex.
+                if (canvas_events.get_state() === "floating_text" ||
+                    canvas_events.get_state() === "text") {
+                    canvas_events.text(); // anchor the object
+                    canvas_events.create_obj();
+                }
+                pdgui.pdsend(name, "reselect");
+            }
+        });
+        minit(m.edit.tidyup, {
+            enabled: true,
+            click: function() { pdgui.pdsend(name, "tidy"); }
+        });
+        minit(m.edit.font, {
+            enabled: true,
+            click: function () { pdgui.pdsend(name, "menufont"); }
+        });
+        minit(m.edit.cordinspector, {
+            enabled: true,
+            click: function() { pdgui.pdsend(name, "magicglass 0"); }
+        });
+        minit(m.edit.find, {
+            click: function () {
+                var find_bar = w.document.getElementById("canvas_find"),
+                    find_bar_text = w.document.getElementById("canvas_find_text"),
+                    state = find_bar.style.getPropertyValue("display");
+                // if there's a box being edited, try to instantiate it in Pd
+                instantiate_live_box();
+                if (state === "none") {
+                    find_bar.style.setProperty("display", "inline");
+                    find_bar_text.focus();
+                    find_bar_text.select();
+                    canvas_events.search();
+                } else {
+                    find_bar.style.setProperty("display", "none");
+                    // "normal" seems to be the only viable state for the
+                    // canvas atm.  But if there are other states added later,
+                    // we might need to fetch the previous state here.
+                    canvas_events.normal();
+                    // this resets the last search term so that the next search
+                    // starts from the beginning again
+                    canvas_events.find_reset();
+                }
+            }
+        });
+        minit(m.edit.findagain, {
+            enabled: true,
+            click: function() {
+                pdgui.pdsend(name, "findagain");
+            }
+        });
+        minit(m.edit.finderror, {
+            enabled: true,
+            click: function() {
+                pdgui.pdsend("pd finderror");
+            }
+        });
+        minit(m.edit.autotips, {
+            enabled: true,
+            click: menu_generic
+        });
+        minit(m.edit.editmode, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "editmode 0");
+            }
+        });
+        minit(m.edit.preferences, {
+            click: pdgui.open_prefs
+        });
+
+        // View menu
+        minit(m.view.zoomin, {
+            enabled: true,
+            click: function () {
+                nw_window_zoom(name, +1);
+            }
+        });
+        minit(m.view.zoomout, {
+            enabled: true,
+            click: function () {
+                nw_window_zoom(name, -1);
+            }
+        });
+        minit(m.view.optimalzoom, {
+            enabled: true,
+            click: function () {
+                pdgui.gui_canvas_optimal_zoom(name, 1, 1);
+                pdgui.gui_canvas_get_scroll(name);
+            }
+        });
+        minit(m.view.horizzoom, {
+            enabled: true,
+            click: function () {
+                pdgui.gui_canvas_optimal_zoom(name, 1, 0);
+                pdgui.gui_canvas_get_scroll(name);
+            }
+        });
+        minit(m.view.vertzoom, {
+            enabled: true,
+            click: function () {
+                pdgui.gui_canvas_optimal_zoom(name, 0, 1);
+                pdgui.gui_canvas_get_scroll(name);
+            }
+        });
+        minit(m.view.zoomreset, {
+            enabled: true,
+            click: function () {
+                gui.Window.get().zoomLevel = 0;
+                pdgui.pdsend(name, "zoom", 0);
+                pdgui.gui_canvas_get_scroll(name);
+            }
+        });
+        minit(m.view.fullscreen, {
+            click: function() {
+                var win = gui.Window.get();
+                win.toggleFullscreen();
+            }
+        });
+
+        // Put menu
+        minit(m.put.object, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "obj 0");
+            }
+        });
+        minit(m.put.message, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "msg 0");
+            }
+        });
+        minit(m.put.number, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "floatatom 0");
+            }
+        });
+        minit(m.put.symbol, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "symbolatom 0");
+            }
+        });
+        minit(m.put.comment, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "text 0");
+            }
+        });
+        minit(m.put.dropdown, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "dropdown 0");
+            }
+        });
+        minit(m.put.bang, {
+            enabled: true,
+            click: function(e) {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "bng 0");
+            }
+        });
+        minit(m.put.toggle, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "toggle 0");
+            }
+        });
+        minit(m.put.number2, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "numbox 0");
+            }
+        });
+        minit(m.put.vslider, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "vslider 0");
+            }
+        });
+        minit(m.put.hslider, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "hslider 0");
+            }
+        });
+        minit(m.put.vradio, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "vradio 0");
+            }
+        });
+        minit(m.put.hradio, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "hradio 0");
+            }
+        });
+        minit(m.put.vu, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "vumeter 0");
+            }
+        });
+        minit(m.put.cnv, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "mycnv 0");
+            }
+        });
+        //minit(m.put.graph, {
+        //    enabled: true,
+        //    click: function() {
+        //        update_live_box();
+        //        pdgui.pdsend(name, "dirty 1");
+        //        // leaving out some placement logic... see pd.tk menu_graph
+        //        pdgui.pdsend(name, "graph NULL 0 0 0 0 30 30 0 30");
+        //    },
+        //});
+        minit(m.put.array, {
+            enabled: true,
+            click: function() {
+                    update_live_box();
+                    pdgui.pdsend(name, "dirty 1");
+                    pdgui.pdsend(name, "menuarray");
+                }
+        });
+
+        // Window
+        minit(m.win.nextwin, {
+            click: function() {
+                pdgui.raise_next(name);
+            }
+        });
+        minit(m.win.prevwin, {
+            click: function() {
+                pdgui.raise_prev(name);
+            }
+        });
+        minit(m.win.parentwin, {
+            enabled: true,
+            click: function() {
+                pdgui.pdsend(name, "findparent", 0);
+            }
+        });
+        minit(m.win.visible_ancestor, {
+            enabled: true,
+            click: function() {
+                pdgui.pdsend(name, "findparent", 1);
+            }
+        });
+        minit(m.win.pdwin, {
+            enabled: true,
+            click: function() {
+                pdgui.raise_pd_window();
+            }
+        });
+
+        // Media menu
+        minit(m.media.audio_on, {
+            click: function() {
+                pdgui.pdsend("pd dsp 1");
+            }
+        });
+        minit(m.media.audio_off, {
+            click: function() {
+                pdgui.pdsend("pd dsp 0");
+            }
+        });
+        minit(m.media.test, {
+            click: function() {
+                pdgui.pd_doc_open("doc/7.stuff/tools", "testtone.pd");
+            }
+        });
+        minit(m.media.loadmeter, {
+            click: function() {
+                pdgui.pd_doc_open("doc/7.stuff/tools", "load-meter.pd");
+            }
+        });
+
+        // Help menu
+        minit(m.help.about, {
+            click: function() {
+                pdgui.pd_doc_open("doc/about", "about.pd");
+            }
+        });
+        minit(m.help.manual, {
+            click: function() {
+                pdgui.pd_doc_open("doc/1.manual", "index.htm");
+            }
+        });
+        minit(m.help.browser, {
+            click: pdgui.open_search
+        });
+        minit(m.help.intro, {
+            click: function() {
+                pdgui.pd_doc_open("doc/5.reference", "help-intro.pd");
+            }
+        });
+        minit(m.help.l2ork_list, {
+            click: function() {
+                pdgui.external_doc_open("http://disis.music.vt.edu/listinfo/l2ork-dev");
+            }
+        });
+        minit(m.help.pd_list, {
+            click: function() {
+                pdgui.external_doc_open("http://puredata.info/community/lists");
+            }
+        });
+        minit(m.help.forums, {
+            click: function() {
+                pdgui.external_doc_open("http://forum.pdpatchrepo.info/");
+            }
+        });
+        minit(m.help.irc, {
+            click: function() {
+                pdgui.external_doc_open("http://puredata.info/community/IRC");
+            }
+        });
+        minit(m.help.devtools, {
+            click: function () {
+                gui.Window.get().showDevTools();
+            }
+        });
+    }
+}
+
+
+function load_canvas_menu_actions(name, filename){
+    // File menu
+    minit("file-message"+name,{onclick: function(){pdgui.menu_send(name)}});
+
+    minit("file-save"+name, {
+        onclick: function () {
+            pdgui.canvas_check_geometry(name); // should this go in menu_save?
+            pdgui.menu_save(name);
+        }
+    });
+
+    minit("file-saveas"+name, {
+        onclick: function (){
+            pdgui.canvas_check_geometry(name);
+            pdgui.menu_saveas(name);
+        }
+    });
+    minit("file-download"+name, {
+        onclick: function (){
+            pdgui.canvas_check_geometry(name);
+            pdgui.download_patch(filename);
+        }
+    });
+    minit("file-print"+name, {
+        onclick: function (){
+            pdgui.canvas_check_geometry(name);
+            pdgui.menu_print(name);
+        }
+    });
+    minit("file-close"+name, {
+        onclick: function() { pdgui.menu_close(name); }
+    });
+    
+
+    // Edit entries
+    minit("edit-undo"+name, {
+        onclick: function () {
+            if (canvas_events.get_state() === "text") {
+                document.execCommand("undo", false, null);
+            } else {
+                pdgui.pdsend(name, "undo");
+            }
+        }
+    });
+    minit("edit-redo"+name, {
+        onclick: function () {
+            if (canvas_events.get_state() === "text") {
+                document.execCommand("redo", false, null);
+            } else {
+                pdgui.pdsend(name, "redo");
+            }
+        }
+    });
+    minit("edit-cut"+name, {
+        onclick: function () { pdgui.pdsend(name, "cut"); }
+    });
+    minit("edit-copy"+name, {
+        onclick: function () { pdgui.pdsend(name, "copy"); }
+    });
+    minit("edit-paste"+name, {
+        onclick: function () { pdgui.pdsend(name, "paste"); }
+    });
+    minit("edit-paste-clipboard"+name, {
+        onclick: function () {
+            navigator.clipboard.readText().then(text =>
+                canvas_events.paste_from_pd_file(name, text));           
+            //pdgui.post("** paste from clipboard: "+text);
+
+    	}
+    });
+    minit("edit-duplicate"+name, {
+        onclick: function () { pdgui.pdsend(name, "duplicate"); }
+    });
+    minit("edit-selectall"+name, {
+        onclick: function (evt) {
+            if (canvas_events.get_state() === "normal") {
+                pdgui.pdsend(name, "selectall");
+            } else if (process.platform === "darwin") {
+                // big kluge for OSX to select all inside a
+                // contenteditable element (needed because
+                // the stupid MacBuiltin is buggy-- see pd_menus.js)
+                document.execCommand("selectAll", false, null);
+            }
+        }
+    });
+
+    minit("edit-reselect"+name, {
+        onclick: function() {
+            // This is a bit complicated... menu item shortcuts receive
+            // key events before the DOM, so we have to make sure to
+            // filter out <ctrl-or-cmd-Enter> in the DOM eventhandler
+            // in the "normal" keypress callback.
+            // We also have to make sure to send the text ahead to Pd
+            // to make sure it has it in the before before attempting
+            // to "reselect".
+            // As we move the editing functionality from the c code to
+            // the GUI, this will get less complex.
+            if (canvas_events.get_state() === "floating_text" ||
+                canvas_events.get_state() === "text") {
+                canvas_events.text(); // anchor the object
+                canvas_events.create_obj();
+            }
+            pdgui.pdsend(name, "reselect");
+        }
+    });
+    minit("edit-tidyup"+name, {
+        onclick: function() { pdgui.pdsend(name, "tidy"); }
+    });
+    minit("edit-font"+name, {
+        onclick: function () { pdgui.pdsend(name, "menufont"); }
+    });
+    minit("edit-cordinspector"+name, {
+        onclick: function() { pdgui.pdsend(name, "magicglass 0"); }
+    });
+    minit("edit-find"+name, {
+        onclick: function () {
+            var find_bar = window.document.getElementById("canvas_find"+name),
+                find_bar_text = window.document.getElementById("canvas_find_text"+name),
+                state = find_bar.style.getPropertyValue("display");
+            // if there's a box being edited, try to instantiate it in Pd
+            instantiate_live_box();
+            if (state === "none") {
+                find_bar.style.setProperty("display", "block");
+                find_bar_text.focus();
+                find_bar_text.select();
+                canvas_events.search();
+            } else {
+                find_bar.style.setProperty("display", "none");
+                // "normal" seems to be the only viable state for the
+                // canvas atm.  But if there are other states added later,
+                // we might need to fetch the previous state here.
+                canvas_events.normal();
+                // this resets the last search term so that the next search
+                // starts from the beginning again
+                canvas_events.find_reset();
+            }
+        }
+    });
+    minit("edit-findagain"+name, {
+        onclick: function() {
+            pdgui.pdsend(name, "findagain");
+        }
+    });  
+    minit("edit-editmode"+name, {
+        onclick: function() {
+            pdgui.pdsend(name, "editmode 0");            
+            update_live_box();
+        }
+    });
+
+    // Put menu
+    minit("put-object"+name, {
+        onclick: function() {
+            update_live_box();
+            pdgui.pdsend(name, "dirty 1");
+            pdgui.pdsend(name, "obj 0");
+        }
+    });
+    minit("put-msgbox"+name, {
+        onclick: function() {
+            update_live_box();
+            pdgui.pdsend(name, "dirty 1");
+            pdgui.pdsend(name, "msg 0");
+        }
+    });
+    minit("put-number"+name, {
+        onclick: function() {
+            update_live_box();
+            pdgui.pdsend(name, "dirty 1");
+            pdgui.pdsend(name, "floatatom 0");
+        }
+    });
+    minit("put-symbol"+name, {
+        onclick: function() {
+            update_live_box();
+            pdgui.pdsend(name, "dirty 1");
+            pdgui.pdsend(name, "symbolatom 0");
+        }
+    });
+    minit("put-comment"+name, {
+        onclick: function() {
+            update_live_box();
+            pdgui.pdsend(name, "dirty 1");
+            pdgui.pdsend(name, "text 0");
+        }
+    });
+    minit("put-dropdown"+name, {
+        onclick: function() {
+            update_live_box();
+            pdgui.pdsend(name, "dirty 1");
+            pdgui.pdsend(name, "dropdown 0");
+        }
+    });
+    minit("put-bang"+name, {
+        onclick: function(e) {
+            update_live_box();
+            pdgui.pdsend(name, "dirty 1");
+            pdgui.pdsend(name, "bng 0");
+        }
+    });
+    minit("put-toggle"+name, {
+        onclick: function() {
+            update_live_box();
+            pdgui.pdsend(name, "dirty 1");
+            pdgui.pdsend(name, "toggle 0");
+        }
+    });
+    minit("put-number2"+name, {
+        onclick: function() {
+            update_live_box();
+            pdgui.pdsend(name, "dirty 1");
+            pdgui.pdsend(name, "numbox 0");
+        }
+    });
+    minit("put-vslider"+name, {
+        onclick: function() {
+            update_live_box();
+            pdgui.pdsend(name, "dirty 1");
+            pdgui.pdsend(name, "vslider 0");
+        }
+    });
+    minit("put-hslider"+name, {
+        onclick: function() {
+            update_live_box();
+            pdgui.pdsend(name, "dirty 1");
+            pdgui.pdsend(name, "hslider 0");
+        }
+    });
+    minit("put-vradio"+name, {
+        onclick: function() {
+            update_live_box();
+            pdgui.pdsend(name, "dirty 1");
+            pdgui.pdsend(name, "vradio 0");
+        }
+    });
+    minit("put-hradio"+name, {
+        onclick: function() {
+            update_live_box();
+            pdgui.pdsend(name, "dirty 1");
+            pdgui.pdsend(name, "hradio 0");
+        }
+    });
+    minit("put-vu"+name, {
+        onclick: function() {
+            update_live_box();
+            pdgui.pdsend(name, "dirty 1");
+            pdgui.pdsend(name, "vumeter 0");
+        }
+    });
+    minit("put-cnv"+name, {
+        onclick: function() {
+            update_live_box();
+            pdgui.pdsend(name, "dirty 1");
+            pdgui.pdsend(name, "mycnv 0");
+        }
+    });
+    minit("put-array"+name, {
+        onclick: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "menuarray");
+            }
+    });
+
+    // Window menu
+    minit("window-nextwin"+name, {
+        onclick: function() {
+            pdgui.raise_next(name);
+        }
+    });
+
+    minit("window-prevwin"+name, {
+        onclick: function() {
+            pdgui.raise_prev(name);
+        }
+    });1
+
+    minit("window-parentwin"+name, {
+        onclick: function() {
+            pdgui.pdsend(name, "findparent", 0);
+        }
+    });
+    minit("window-visible-ancestor"+name, {
+        onclick: function() {
+            pdgui.pdsend(name, "findparent", 1);
+        }
+    });
+}
+
+}).call(this,require('_process'))
+},{"./pd_menus.js":7,"./pdgui.js":9,"_process":13,"nw.gui":11}],7:[function(require,module,exports){
+(function (process){
+"use strict";
+
+var pdgui = require("./pdgui.js");
+var l = pdgui.get_local_string; // For menu names
+var osx_menu = null; // OSX App menu -- a single one per running instance
+var recent_files_submenu = null;
+var shortcuts = require("./pd_shortcuts.js");
+
+function create_menu(gui, type) {
+    // On OSX we create a menu only once, and then enable/disable menuitems
+    // and switch out functions as needed.
+
+    // We specify the label here because nw.js won't create a menu item
+    // without one. We also specify the keyboard shortcuts here because
+    // nw.js won't create an event listener unless you make the
+    // shortcut immediately when creating the menu item. (It also
+    // won't let you update the keyboard shortcut binding later.)
+    var m = {},
+        osx = process.platform === "darwin",
+        canvas_menu, // menu for canvas = true,  menu for Pd console = false
+        window_menu, // window menu bar, or-- for OSX-- app menu bar
+        file_menu, // submenus for window menubar...
+        edit_menu,
+        view_menu,
+        put_menu,
+        winman_menu,
+        media_menu,
+        help_menu;
+
+    // We only maintain a single instance of the recent files submenu which
+    // gets updated in pdgui.js via a callback from the engine.
+    if (!recent_files_submenu) {
+        recent_files_submenu = new gui.Menu();
+        // NOTE: Since we can't be sure whether the GUI or the engine runs
+        // first, make sure that we populate the submenu on the first run in
+        // either case.
+        pdgui.populate_recent_files(recent_files_submenu);
+    }
+
+    // OSX just spawns a single canvas menu and then enables/disables
+    // the various menu items as needed.
+    canvas_menu = osx || (type !== "console");
+
+    if (osx_menu) {
+        return osx_menu; // don't spawn multiple menus on OSX
+    }
+    // Window menu
+    window_menu = new gui.Menu({ type: "menubar" });
+
+    // On OSX, we need to start with the built-in mac menu in order to
+    // get the application menu to show up correctly. Unfortunately, this
+    // will also spawn a built-in "Edit" and "Window" menu. Even more
+    // unfortunately, we must use the built-in "Edit" menu-- without it
+    // there is no way to get <command-v> shortcut to trigger the
+    // DOM "paste" event.
+    if (osx) {
+        window_menu.createMacBuiltin("purr-data");
+    }
+
+    // File menu
+    file_menu = new gui.Menu();
+
+    // File sub-entries
+    m.file = {};
+    file_menu.append(m.file.new_file = new gui.MenuItem({
+        label: l("menu.new"),
+        key: shortcuts.menu.new.key,
+        modifiers: shortcuts.menu.new.modifiers,
+        tooltip: l("menu.new_tt")
+    }));
+    file_menu.append(m.file.open = new gui.MenuItem({
+        label: l("menu.open"),
+        key: shortcuts.menu.open.key,
+        modifiers: shortcuts.menu.open.modifiers,
+        tooltip: l("menu.open_tt")
+    }));
+    file_menu.append(m.file.recent_files = new gui.MenuItem({
+        label: l("menu.recent_files"),
+        submenu: recent_files_submenu,
+        tooltip: l("menu.recent_files_tt")
+    }));
+    if (pdgui.k12_mode == 1) {
+        file_menu.append(m.file.k12 = new gui.MenuItem({
+            label: l("menu.k12_demos"),
+            tooltip: l("menu.k12_demos_tt")
+        }));
+    }
+    file_menu.append(new gui.MenuItem({ type: "separator" }));
+    if (canvas_menu) {
+        file_menu.append(m.file.save = new gui.MenuItem({
+            label: l("menu.save"),
+            key: shortcuts.menu.save.key,
+            modifiers: shortcuts.menu.save.modifiers,
+            tooltip: l("menu.save_tt")
+        }));
+        file_menu.append(m.file.saveas = new gui.MenuItem({
+            label: l("menu.saveas"),
+            key: shortcuts.menu.saveas.key,
+            modifiers: shortcuts.menu.saveas.modifiers,
+            tooltip: l("menu.saveas_tt")
+        }));
+        file_menu.append(m.file.print = new gui.MenuItem({
+            label: l("menu.print"),
+            key: shortcuts.menu.print.key,
+            modifiers: shortcuts.menu.print.modifiers,
+            tooltip: l("menu.print_tt")
+        }));
+    }
+    if (pdgui.k12_mode == 0) {
+        file_menu.append(new gui.MenuItem({ type: "separator" }));
+    }
+    file_menu.append(m.file.message = new gui.MenuItem({
+        label: l("menu.message"),
+        key: shortcuts.menu.message.key,
+        modifiers: shortcuts.menu.message.modifiers,
+        tooltip: l("menu.message_tt")
+    }));
+    if (pdgui.k12_mode == 0) {
+        file_menu.append(new gui.MenuItem({ type: "separator" }));
+    }
+    if (canvas_menu) {
+        file_menu.append(m.file.close = new gui.MenuItem({
+            label: l("menu.close"),
+            key: shortcuts.menu.close.key,
+            modifiers: shortcuts.menu.close.modifiers,
+            tooltip: l("menu.close_tt")
+        }));
+    }
+    file_menu.append(m.file.quit = new gui.MenuItem({
+        label: l("menu.quit"),
+        key: shortcuts.menu.quit.key,
+        modifiers: shortcuts.menu.quit.modifiers 
+    }));
+
+    // Edit menu
+    m.edit = {};
+    // For OSX, we have to use the built-in "Edit" menu-- I haven't
+    // found any other way to get "paste" event to trickle down to
+    // the DOM. As a consequence, we must fetch the relevant menu
+    // items that were created above with createMacBuiltin and assign
+    // them to the relevant variables below
+    if (osx) {
+        edit_menu = window_menu.items[1].submenu;
+        m.edit.undo = window_menu.items[1].submenu.items[0];
+        // Remove the default Undo, since we can't seem to bind
+        // a click function to it
+        window_menu.items[1].submenu.remove(m.edit.undo);
+
+        // Now create a new one and insert it at the top
+        edit_menu.insert(m.edit.undo = new gui.MenuItem({
+            label: l("menu.undo"),
+            tooltip: l("menu.undo_tt"),
+            key: shortcuts.menu.undo.key,
+            modifiers: shortcuts.menu.undo.modifiers
+        }), 0);
+
+        m.edit.redo = window_menu.items[1].submenu.items[1];
+        // Remove the default Undo, since we can't seem to bind
+        // a click function to it
+        window_menu.items[1].submenu.remove(m.edit.redo);
+
+        // Now create a new one and insert it at the top
+        edit_menu.insert(m.edit.redo = new gui.MenuItem({
+            label: l("menu.redo"),
+            tooltip: l("menu.redo_tt"),
+            key: shortcuts.menu.redo.key,
+            modifiers: shortcuts.menu.redo.modifiers
+        }), 1);
+
+        // Note: window_menu.items[1].submenu.items[2] is the separator
+        m.edit.cut = window_menu.items[1].submenu.items[3];
+        m.edit.copy = window_menu.items[1].submenu.items[4];
+        m.edit.paste = window_menu.items[1].submenu.items[5];
+        // There's no "Delete" item for GNU/Linux or Windows--
+        // not sure yet what to do with it.
+        m.edit.delete = window_menu.items[1].submenu.items[6];
+        // The MacBuiltin "Select All" doesn't propagate down to the DOM
+        //on OSX, so we have to remove it
+        m.edit.selectall= window_menu.items[1].submenu.items[7];
+        window_menu.items[1].submenu.remove(m.edit.selectall);
+        // Now we replace it with a custom "Select All" which will
+        // propagate to the DOM...
+        edit_menu.append(m.edit.selectall = new gui.MenuItem({
+            label: l("menu.selectall"),
+            tooltip: l("menu.selectall_tt"),
+            key: shortcuts.menu.selectall.key,
+            modifiers: shortcuts.menu.selectall.modifiers
+        }));
+        // Finally, let's remove the "Delete" item since it's not hooked
+        // in to anything yet...
+        window_menu.items[1].submenu.remove(m.edit.delete);
+    } else {
+        edit_menu = new gui.Menu();
+        // Edit sub-entries
+        if (canvas_menu) {
+            edit_menu.append(m.edit.undo = new gui.MenuItem({
+                label: l("menu.undo"),
+                tooltip: l("menu.undo_tt"),
+                key: shortcuts.menu.undo.key,
+                modifiers: shortcuts.menu.undo.modifiers
+            }));
+            edit_menu.append(m.edit.redo = new gui.MenuItem({
+                label: l("menu.redo"),
+                tooltip: l("menu.redo_tt"),
+                key: shortcuts.menu.redo.key,
+                modifiers: shortcuts.menu.redo.modifiers
+            }));
+            edit_menu.append(new gui.MenuItem({ type: "separator" }));
+            edit_menu.append(m.edit.cut = new gui.MenuItem({
+                label: l("menu.cut"),
+                key: shortcuts.menu.cut.key,
+                modifiers: shortcuts.menu.cut.modifiers,
+                tooltip: l("menu.cut_tt")
+            }));
+        }
+        edit_menu.append(m.edit.copy = new gui.MenuItem({
+            label: l("menu.copy"),
+            key: shortcuts.menu.copy.key,
+            modifiers: shortcuts.menu.copy.modifiers,
+            tooltip: l("menu.copy_tt")
+        }));
+        if (canvas_menu) {
+            edit_menu.append(m.edit.paste = new gui.MenuItem({
+                label: l("menu.paste"),
+                key: shortcuts.menu.paste.key,
+                modifiers: shortcuts.menu.paste.modifiers,
+                tooltip: l("menu.paste_tt")
+            }));
+        }
+    }
+
+    // We need "duplicate" for canvas_menu and for OSX, where it's not
+    // part of the builtin Edit menu...
+
+    if (canvas_menu) {
+        edit_menu.append(m.edit.paste_clipboard = new gui.MenuItem({
+            label: l("menu.paste_clipboard"),
+            key: shortcuts.menu.paste_clipboard.key,
+            modifiers: shortcuts.menu.paste_clipboard.modifiers,
+            tooltip: l("menu.paste_clipboard_tt")
+        }));
+        edit_menu.append(m.edit.duplicate = new gui.MenuItem({
+            label: l("menu.duplicate"),
+            key: shortcuts.menu.duplicate.key,
+            modifiers: shortcuts.menu.duplicate.modifiers,
+            tooltip: l("menu.duplicate_tt")
+        }));
+    }
+
+    // OSX already has "Select All" in the builtin Edit menu...
+    if (!osx) {
+        edit_menu.append(m.edit.selectall = new gui.MenuItem({
+            label: l("menu.selectall"),
+            key: shortcuts.menu.selectall.key,
+            modifiers: shortcuts.menu.selectall.modifiers,
+            tooltip: l("menu.selectall_tt")
+        }));
+    }
+
+    if (canvas_menu) {
+        // Unfortunately nw.js doesn't allow
+        // key: "Return" or key: "Enter", so we
+        // can't bind to ctrl-Enter here. (Even
+        // tried fromCharCode...)
+        edit_menu.append(m.edit.reselect = new gui.MenuItem({
+            label: l("menu.reselect"),
+            key: shortcuts.menu.reselect.key,
+            modifiers: shortcuts.menu.reselect.modifiers,
+            tooltip: l("menu.reselect_tt")
+        }));
+    }
+    edit_menu.append(new gui.MenuItem({ type: "separator" }));
+    edit_menu.append(m.edit.clear_console = new gui.MenuItem({
+        label: l("menu.clear_console"),
+        tooltip: l("menu.clear_console"),
+        key: shortcuts.menu.clear_console.key,
+        modifiers: shortcuts.menu.clear_console.modifiers
+    }));
+        edit_menu.append(new gui.MenuItem({ type: "separator" }));
+    if (canvas_menu) {
+        edit_menu.append(m.edit.tidyup = new gui.MenuItem({
+            label: l("menu.tidyup"),
+            key: shortcuts.menu.tidyup.key,
+            modifiers: shortcuts.menu.tidyup.modifiers,
+            tooltip: l("menu.tidyup_tt")
+        }));
+        edit_menu.append(m.edit.font = new gui.MenuItem({
+            label: l("menu.font"),
+            tooltip: l("menu.font_tt")
+        }));
+        edit_menu.append(m.edit.cordinspector = new gui.MenuItem({
+            type: "checkbox",
+            label: l("menu.cordinspector"),
+            key: shortcuts.menu.cordinspector.key,
+            modifiers: shortcuts.menu.cordinspector.modifiers,
+            tooltip: l("menu.cordinspector_tt")
+        }));
+        edit_menu.append(new gui.MenuItem({ type: "separator" }));
+    }
+    edit_menu.append(m.edit.find = new gui.MenuItem({
+        label: l("menu.find"),
+        key: shortcuts.menu.find.key,
+        modifiers: shortcuts.menu.find.modifiers,
+        tooltip: l("menu.find_tt")
+    }));
+    if (canvas_menu) {
+        edit_menu.append(m.edit.findagain = new gui.MenuItem({
+            label: l("menu.findagain"),
+            key: shortcuts.menu.findagain.key,
+            modifiers: shortcuts.menu.findagain.modifiers,
+            tooltip: l("menu.findagain")
+        }));
+        edit_menu.append(m.edit.finderror = new gui.MenuItem({
+            label: l("menu.finderror"),
+            tooltip: l("menu.finderror_tt")
+        }));
+        edit_menu.append(new gui.MenuItem({ type: "separator" }));
+        m.edit.autotips = new gui.MenuItem({
+            label: l("menu.autotips"),
+            tooltip: l("menu.autotips_tt")
+        });
+        // commented out because it doesn't work yet -ag
+        //edit_menu.append(m.edit.autotips);
+        edit_menu.append(m.edit.editmode = new gui.MenuItem({
+            type: "checkbox",
+            label: l("menu.editmode"),
+            key: shortcuts.menu.editmode.key,
+            modifiers: shortcuts.menu.editmode.modifiers,
+            tooltip: l("menu.editmode_tt")
+        }));
+        edit_menu.append(new gui.MenuItem({ type: "separator" }));
+    }
+    edit_menu.append(m.edit.preferences = new gui.MenuItem({
+        label: l("menu.preferences"),
+        key: shortcuts.menu.preferences.key,
+        modifiers: shortcuts.menu.preferences.modifiers,
+        tooltip: l("menu.preferences_tt")
+    }));
+
+    // View menu
+    view_menu = new gui.Menu();
+
+    // View sub-entries
+    m.view = {};
+    view_menu.append(m.view.zoomin = new gui.MenuItem({
+        label: l("menu.zoomin"),
+        key: shortcuts.menu.zoomin.key,
+        modifiers: shortcuts.menu.zoomin.modifiers,
+        tooltip: l("menu.zoomin_tt")
+    }));
+    view_menu.append(m.view.zoomout = new gui.MenuItem({
+        label: l("menu.zoomout"),
+        key: shortcuts.menu.zoomout.key,
+        modifiers: shortcuts.menu.zoomout.modifiers,
+        tooltip: l("menu.zoomout_tt")
+    }));
+    view_menu.append(new gui.MenuItem({ type: "separator" }));
+    view_menu.append(m.view.zoomreset = new gui.MenuItem({
+        label: l("menu.zoomreset"),
+        key: shortcuts.menu.zoomreset.key,
+        modifiers: shortcuts.menu.zoomreset.modifiers,
+        tooltip: l("menu.zoomreset_tt")
+    }));
+    if (canvas_menu) {
+	view_menu.append(m.view.optimalzoom = new gui.MenuItem({
+            label: l("menu.zoomoptimal"),
+            key: shortcuts.menu.zoomoptimal.key,
+            modifiers: shortcuts.menu.zoomoptimal.modifiers,
+            tooltip: l("menu.zoomoptimal_tt")
+	}));
+	view_menu.append(m.view.horizzoom = new gui.MenuItem({
+            label: l("menu.zoomhoriz"),
+            key: shortcuts.menu.zoomhoriz.key,
+            modifiers: shortcuts.menu.zoomhoriz.modifiers,
+            tooltip: l("menu.zoomhoriz_tt")
+	}));
+	view_menu.append(m.view.vertzoom = new gui.MenuItem({
+            label: l("menu.zoomvert"),
+            key: shortcuts.menu.zoomvert.key,
+            modifiers: shortcuts.menu.zoomvert.modifiers,
+            tooltip: l("menu.zoomvert_tt")
+	}));
+    }
+    view_menu.append(new gui.MenuItem({ type: "separator" }));
+    view_menu.append(m.view.fullscreen = new gui.MenuItem({
+        label: l("menu.fullscreen"),
+        key: shortcuts.menu.fullscreen.key,
+        modifiers: shortcuts.menu.fullscreen.modifiers,
+        tooltip: l("menu.fullscreen_tt")
+    }));
+
+    if (canvas_menu) {
+        // Put menu
+        put_menu = new gui.Menu();
+
+        // Put menu sub-entries
+        m.put = {};
+        put_menu.append(m.put.object = new gui.MenuItem({
+            label: l("menu.object"),
+            key: shortcuts.menu.object.key,
+            modifiers: shortcuts.menu.object.modifiers,
+            tooltip: l("menu.object_tt")
+        }));
+        put_menu.append(m.put.message = new gui.MenuItem({
+            label: l("menu.msgbox"),
+            key: shortcuts.menu.msgbox.key,
+            modifiers: shortcuts.menu.msgbox.modifiers,
+            tooltip: l("menu.msgbox_tt")
+        }));
+        put_menu.append(m.put.number = new gui.MenuItem({
+            label: l("menu.number"),
+            key: shortcuts.menu.number.key,
+            modifiers: shortcuts.menu.number.modifiers,
+            tooltip: l("menu.number_tt")
+        }));
+        put_menu.append(m.put.symbol = new gui.MenuItem({
+            label: l("menu.symbol"),
+            key: shortcuts.menu.symbol.key,
+            modifiers: shortcuts.menu.symbol.modifiers,
+            tooltip: l("menu.symbol_tt")
+        }));
+        put_menu.append(m.put.comment = new gui.MenuItem({
+            label: l("menu.comment"),
+            key: shortcuts.menu.comment.key,
+            modifiers: shortcuts.menu.comment.modifiers,
+            tooltip: l("menu.comment_tt")
+        }));
+        put_menu.append(m.put.dropdown = new gui.MenuItem({
+            label: l("menu.dropdown"),
+            key: shortcuts.menu.dropdown.key,
+            modifiers: shortcuts.menu.dropdown.modifiers,
+            tooltip: l("menu.dropdown_tt")
+        }));
+        put_menu.append(new gui.MenuItem({ type: "separator" }));
+        put_menu.append(m.put.bang = new gui.MenuItem({
+            label: l("menu.bang"),
+            key: shortcuts.menu.bang.key,
+            modifiers: shortcuts.menu.bang.modifiers,
+            tooltip: l("menu.bang_tt")
+        }));
+        put_menu.append(m.put.toggle = new gui.MenuItem({
+            label: l("menu.toggle"),
+            key: shortcuts.menu.toggle.key,
+            modifiers: shortcuts.menu.toggle.modifiers,
+            tooltip: l("menu.toggle_tt")
+        }));
+        put_menu.append(m.put.number2 = new gui.MenuItem({
+            label: l("menu.number2"),
+            key: shortcuts.menu.number2.key,
+            modifiers: shortcuts.menu.number2.modifiers,
+            tooltip: l("menu.number2")
+        }));
+        put_menu.append(m.put.vslider = new gui.MenuItem({
+            label: l("menu.vslider"),
+            key: shortcuts.menu.vslider.key,
+            modifiers: shortcuts.menu.vslider.modifiers,
+            tooltip: l("menu.vslider_tt")
+        }));
+        put_menu.append(m.put.hslider = new gui.MenuItem({
+            label: l("menu.hslider"),
+            key: shortcuts.menu.hslider.key,
+            modifiers: shortcuts.menu.hslider.modifiers,
+            tooltip: l("menu.hslider_tt")
+        }));
+        put_menu.append(m.put.vradio = new gui.MenuItem({
+            label: l("menu.vradio"),
+            key: shortcuts.menu.vradio.key,
+            modifiers: shortcuts.menu.vradio.modifiers,
+            tooltip: l("menu.vradio_tt")
+        }));
+        put_menu.append(m.put.hradio = new gui.MenuItem({
+            label: l("menu.hradio"),
+            key: shortcuts.menu.hradio.key,
+            modifiers: shortcuts.menu.hradio.modifiers,
+            tooltip: l("menu.hradio_tt")
+        }));
+        put_menu.append(m.put.vu = new gui.MenuItem({
+            label: l("menu.vu"),
+            key: shortcuts.menu.vu.key,
+            modifiers: shortcuts.menu.vu.modifiers,
+            tooltip: l("menu.vu_tt")
+        }));
+        put_menu.append(m.put.cnv = new gui.MenuItem({
+            label: l("menu.cnv"),
+            key: shortcuts.menu.cnv.key,
+            modifiers: shortcuts.menu.cnv.modifiers,
+            tooltip: l("menu.cnv_tt")
+        }));
+        put_menu.append(new gui.MenuItem({ type: "separator" }));
+        //putMenu.append(m.put.graph = new gui.MenuItem());
+        put_menu.append(m.put.array = new gui.MenuItem({
+            label: l("menu.array"),
+            tooltip: l("menu.array_tt")
+        }));
+    }
+
+    // Windows menu... call it "winman" (i.e., window management)
+    // to avoid confusion
+    if (osx) {
+        // on OSX, createMacBuiltin creates a window menu
+        winman_menu = window_menu.items[2].submenu;
+    } else {
+        winman_menu = new gui.Menu();
+    }
+    // Win sub-entries
+    m.win = {};
+    winman_menu.append(m.win.nextwin = new gui.MenuItem({
+        label: l("menu.nextwin"),
+        key: shortcuts.menu.nextwin.key,
+        modifiers: shortcuts.menu.nextwin.modifiers,
+        tooltip: l("menu.nextwin_tt")
+    }));
+    winman_menu.append(m.win.prevwin = new gui.MenuItem({
+        label: l("menu.prevwin"),
+        key: shortcuts.menu.prevwin.key,
+        modifiers: shortcuts.menu.prevwin.modifiers,
+        tooltip: l("menu.prevwin_tt")
+    }));
+    if (canvas_menu) {
+        winman_menu.append(new gui.MenuItem({ type: "separator" }));
+        winman_menu.append(m.win.parentwin = new gui.MenuItem({
+            label: l("menu.parentwin"),
+            tooltip: l("menu.parentwin_tt")
+        }));
+        winman_menu.append(m.win.visible_ancestor = new gui.MenuItem({
+            label: l("menu.visible_ancestor"),
+            tooltip: l("menu.visible_ancestor_tt")
+        }));
+        winman_menu.append(m.win.pdwin = new gui.MenuItem({
+            label: l("menu.pdwin"),
+            tooltip: l("menu.pdwin_tt"),
+            key: shortcuts.menu.pdwin.key,
+            modifiers: shortcuts.menu.pdwin.modifiers
+        }));
+    }
+
+    // Media menu
+    media_menu = new gui.Menu();
+
+    // Media sub-entries
+    m.media = {};
+    media_menu.append(m.media.audio_on = new gui.MenuItem({
+        label: l("menu.audio_on"),
+        key: shortcuts.menu.audio_on.key,
+        modifiers: shortcuts.menu.audio_on.modifiers,
+        tooltip: l("menu.audio_on_tt")
+    }));
+    media_menu.append(m.media.audio_off = new gui.MenuItem({
+        label: l("menu.audio_off"),
+        key: shortcuts.menu.audio_off.key,
+        modifiers: shortcuts.menu.audio_off.modifiers,
+        tooltip: l("menu.audio_off_tt")
+    }));
+    media_menu.append(new gui.MenuItem({ type: "separator" }));
+    media_menu.append(m.media.test = new gui.MenuItem({
+        label: l("menu.test"),
+        tooltip: l("menu.test_tt")
+    }));
+    media_menu.append(m.media.loadmeter = new gui.MenuItem({
+        label: l("menu.loadmeter"),
+        tooltip: l("menu.loadmeter_tt")
+    }));
+
+    // Help menu
+    help_menu = new gui.Menu();
+
+    // Help sub-entries
+    m.help = {};
+    help_menu.append(m.help.about = new gui.MenuItem({
+        label: l("menu.about"),
+        tooltip: l("menu.about_tt")
+    }));
+    help_menu.append(m.help.manual = new gui.MenuItem({
+        label: l("menu.manual"),
+        tooltip: l("menu.manual_tt")
+    }));
+    help_menu.append(m.help.browser = new gui.MenuItem({
+        label: l("menu.browser"),
+        key: shortcuts.menu.browser.key,
+        modifiers: shortcuts.menu.browser.modifiers,
+        tooltip: l("menu.browser_tt")
+    }));
+    help_menu.append(m.help.intro = new gui.MenuItem({
+        label: l("menu.intro"),
+        tooltip: l("menu.intro_tt")
+    }));
+    help_menu.append(new gui.MenuItem({ type: "separator" }));
+    help_menu.append(m.help.l2ork_list = new gui.MenuItem({
+        label: l("menu.l2ork_list"),
+        tooltip: l("menu.l2ork_list_tt")
+    }));
+    help_menu.append(m.help.pd_list = new gui.MenuItem({
+        label: l("menu.pd_list"),
+        tooltip: l("menu.pd_list_tt")
+    }));
+    help_menu.append(m.help.forums = new gui.MenuItem({
+        label: l("menu.forums"),
+        tooltip: l("menu.forums_tt")
+    }));
+    help_menu.append(m.help.irc = new gui.MenuItem({
+        label: l("menu.irc"),
+        tooltip: l("menu.irc_tt")
+    }));
+    help_menu.append(m.help.devtools = new gui.MenuItem({
+        label: l("menu.devtools"),
+        tooltip: l("menu.devtools_tt")
+    }));
+
+    // Add submenus to window menu
+    if (osx) {
+        window_menu.insert(new gui.MenuItem({
+            label: l("menu.file"),
+            submenu: file_menu
+        }), 1);
+        // Edit menu created from mac builtin above
+        window_menu.insert(new gui.MenuItem({
+            label: l("menu.view"),
+            submenu: view_menu
+        }), 3);
+        window_menu.insert(new gui.MenuItem({
+            label: l("menu.put"),
+            submenu: put_menu
+        }), 4);
+        window_menu.insert(new gui.MenuItem({
+            label: l("menu.media"),
+            submenu: media_menu
+        }), 5);
+        // "Window" menu created from mac builtin above
+        window_menu.append(new gui.MenuItem({
+            label: l("menu.help"),
+            submenu: help_menu
+        }));
+    } else {
+        window_menu.append(new gui.MenuItem({
+            label: l("menu.file"),
+            submenu: file_menu
+        }));
+        window_menu.append(new gui.MenuItem({
+            label: l("menu.edit"),
+            submenu: edit_menu
+        }));
+        window_menu.append(new gui.MenuItem({
+            label: l("menu.view"),
+            submenu: view_menu
+        }));
+        if (canvas_menu) {
+            window_menu.append(new gui.MenuItem({
+                label: l("menu.put"),
+                submenu: put_menu
+            }));
+        }
+        window_menu.append(new gui.MenuItem({
+            label: l("menu.media"),
+            submenu: media_menu
+        }));
+        window_menu.append(new gui.MenuItem({
+            label: l("menu.windows"),
+            submenu: winman_menu
+        }));
+        window_menu.append(new gui.MenuItem({
+            label: l("menu.help"),
+            submenu: help_menu
+        }));
+    }
+
+    // Assign to window
+    gui.Window.get().menu = window_menu;
+
+    // If we're on OSX, store the object
+    if (process.platform === "darwin") {
+        osx_menu = m;
+    }
+    return m;
+}
+
+exports.create_menu = create_menu;
+
+}).call(this,require('_process'))
+},{"./pd_shortcuts.js":8,"./pdgui.js":9,"_process":13}],8:[function(require,module,exports){
+(function (process){
+"use strict";
+
 var cmd_or_ctrl = (process.platform === "darwin") ? "cmd" : "ctrl";
 
 exports.menu = {
@@ -2844,7 +5839,7 @@ exports.menu = {
 }
 
 }).call(this,require('_process'))
-},{"_process":11}],7:[function(require,module,exports){
+},{"_process":13}],9:[function(require,module,exports){
 (function (process){
 "use strict";
 
@@ -8859,7 +11854,16 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         text = text.trim();
         p.textContent = text;
         // append to doc body
-        patchwin[cid].window.document.body.appendChild(p);
+        if(is_webapp()){
+	        var svg = patchwin[cid].window.document.getElementById("patch_div_"+cid);	
+	        var div_p = patchwin[cid].window.document.createElement("div");
+	        div_p.id = "div-svg-p";	
+	        div_p.append(p)	
+	        svg.prepend(div_p);
+        }else{
+            patchwin[cid].window.document.body.appendChild(p);
+        }
+
         p.focus();
         select_text(cid, p);
         if (state === 1) {
@@ -9175,7 +12179,7 @@ function gui_pddplink_open(filename, dir) {
 }
 
 }).call(this,require('_process'))
-},{"./dive.js":2,"./elasticlunr.js":3,"./parse-svg-path.js":5,"./pdlang.js":8,"_process":11,"child_process":9,"fs":9,"net":9,"path":10}],8:[function(require,module,exports){
+},{"./dive.js":2,"./elasticlunr.js":3,"./parse-svg-path.js":5,"./pdlang.js":10,"_process":13,"child_process":11,"fs":11,"net":11,"path":12}],10:[function(require,module,exports){
 "use strict";
 
 var lang;
@@ -9203,9 +12207,9 @@ exports.get_local_string = function (key) {
     return recursive_key_splitter(key, lang);
 };
 
-},{"./locales/en/translation.json":4}],9:[function(require,module,exports){
+},{"./locales/en/translation.json":4}],11:[function(require,module,exports){
 
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 (function (process){
 // .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
 // backported and transplited with Babel, with backwards-compat fixes
@@ -9511,7 +12515,7 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require('_process'))
-},{"_process":11}],11:[function(require,module,exports){
+},{"_process":13}],13:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 

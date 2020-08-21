@@ -6011,7 +6011,16 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         text = text.trim();
         p.textContent = text;
         // append to doc body
-        patchwin[cid].window.document.body.appendChild(p);
+        if(is_webapp()){
+	        var svg = patchwin[cid].window.document.getElementById("patch_div_"+cid);	
+	        var div_p = patchwin[cid].window.document.createElement("div");
+	        div_p.id = "div-svg-p";	
+	        div_p.append(p)	
+	        svg.prepend(div_p);
+        }else{
+            patchwin[cid].window.document.body.appendChild(p);
+        }
+
         p.focus();
         select_text(cid, p);
         if (state === 1) {
