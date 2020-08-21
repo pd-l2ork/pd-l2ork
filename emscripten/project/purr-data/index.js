@@ -197,7 +197,7 @@ function create_window(cid, type, width, height, xpos, ypos, attr_array) {
             pdbundle.pdgui.set_window_finished_loading(cid);
         }else if(new_win === pdbundle.pdgui.get_dialogwin(cid)){
             // Add menu html file
-			$.get("./"+f, function(data){
+			$.get("./components/dialogs/"+f, function(data){
                 var dialog_div = new_win.window.document.createElement('div')
                 var n_cid = cid;
 
@@ -211,7 +211,7 @@ function create_window(cid, type, width, height, xpos, ypos, attr_array) {
                 $("#dialog-div-"+n_cid).prepend(data)
 
                 // initialize the dialog window                
-                window.register_dialog_id(cid,attr_array);
+                register_dialog(cid,attr_array);
             });
         }else {
             // If the window is no longer loading, we need to go ahead
