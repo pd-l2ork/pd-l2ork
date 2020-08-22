@@ -54,7 +54,7 @@ LIBS = -lm
 
 # emscripten
 ifeq ($(EMSCRIPTEN),yes)
-  set_em_flags = CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" CC="$(CC)" CXX="$(CXX)" CXXFLAGS="$(CXXFLAGS)" ALL_CFLAGS="$(CFLAGS)" ALL_LDFLAGS="$(LDFLAGS)" ALL_LIBS="$(LIBS)" SHARED_LIB="" EXTENSION="$(EXTENSION)"
+  set_em_flags = CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" CC="$(CC)" CXX="$(CXX)" CXXFLAGS="$(CXXFLAGS)" ALL_CFLAGS="$(CFLAGS)" ALL_LDFLAGS="$(LDFLAGS)" ALL_LIBS="$(LIBS)" SHARED_LIB="" EXTENSION="$(EXTENSION)" STRIP="$(STRIP)"
   define if_emscripten
     $(if $(filter $(EMSCRIPTEN),yes),$1)
   endef
