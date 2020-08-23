@@ -20,13 +20,6 @@ body {
     font-family: "DejaVu Sans Mono";
 }
 
-/* delete the default scrollbars, and let's make our own */
-.patch_body::-webkit-scrollbar {
-    width: 0px;
-    height: 0px;
-    background: transparent;
-}
-
 .noselect {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -45,7 +38,7 @@ body {
 
 #console_controls {
     background-color: LightGray;
-    /* height: 40px; */
+    height: 40px;
 } 
 
 #control_frame {
@@ -160,20 +153,11 @@ body {
 
 /* This needs to be renamed, since the "Find" bar is actually at the bottom */
 #console_bottom {
-    position: relative;
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
-    overflow-y: scroll;    
-}
-
-.console-webapp {
-    /* position: relative;
+    position: absolute;
     top: 40px;
     left: 0px;
     right: 0px;
-    bottom: 0px; */
+    bottom: 0px;
     overflow-y: scroll;    
 }
 
@@ -214,11 +198,6 @@ mark.console_find_highlighted {
     position: fixed;
     bottom: 0;
     left: 0;
-}
-
-
-.console-find-webapp {
-    position: relative !important;
 }
 
 /* Pure Data Patch Window (aka canvas) */
@@ -293,8 +272,7 @@ mark.console_find_highlighted {
     min-width: 3ch;
     position: absolute;
     display: table-cell;
-    padding: 3px 1.5px 3px 1.5px;
-    margin-left: 1px;
+    padding: 3px 2px 3px 2px;
     /* box-shadow: inset 1px 0px 0px 1px #000; */
     color: black; /* text color */
     background-color: transparent;
@@ -304,7 +282,7 @@ mark.console_find_highlighted {
 }
 
 #new_object_textentry.obj {
-    outline: 2px solid #e87216;
+    outline: 1px solid #e87216;
 }
 
 /* We're dynamically creating the svg background data in javascript
@@ -334,10 +312,9 @@ text {
     //cursor: default;
 }
 
-/* not sure if this is still needed...
-   updated the coloring just in case */
+/* not sure if this is still needed */
 .selected_border {
-    stroke: #e87216;
+    stroke: blue;
     stroke-dasharray: none;
     stroke-width: 1;
 }
@@ -372,16 +349,6 @@ text {
 /* gatom "activated" text (i.e., when it has the keyboard focus) */
 .atom.activated text {
     fill: red;
-}
-
-/* Increases dropdown scrollbar and scrollbar track area for better touch UX */
-#dropdown_list::-webkit-scrollbar {
-    width: 32px;
-}
-
-#dropdown_list::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    background-color: #555;
 }
 
 #dropdown_list {
@@ -424,12 +391,6 @@ text {
     stroke-dasharray: 3 2;
 }
 
-/* ico@vt.edu: added selected border coloring
-   in edit mode only */
-#patchsvg.editmode .comment.selected .border {
-    stroke: #e87216;
-}
-
 /* A little hack for special case of [cnv].
    All other iemguis have a black border, but
    [cnv] sets its selection rectangle to the
@@ -457,17 +418,14 @@ text {
    in plain English:
       This lets us highlight an object's border, unless it is inside a gop
       canvas.
-   
-   ico@vt.edu added selection highlight only if we are in editmode
 */
-#patchsvg.editmode :not(.gop).selected .border {
+:not(.gop).selected .border {
     stroke: #e87216;
     display: inline;
 }
 
-/* text inside selected objects
-   ico@vt.edu added selection highlight only if we are in editmode */
-#patchsvg.editmode :not(.gop).selected text {
+/* text inside selected objects */
+:not(.gop).selected text {
     fill: #e87216;
 }
 
@@ -513,12 +471,22 @@ text {
    for every pixel we move inside an xlet. */
 @-webkit-keyframes fizzle {
     0% {
+        stroke-width: 1;
+        stroke-opacity: 1;
+        rx: 1;
+        ry: 1;
+    }
+    33% {
         stroke-width: 12;
         stroke-opacity: 1;
+        rx: 1;
+        ry: 1;
     }
-    100% {
+    66% {
         stroke-width: 5;
         stroke-opacity: 1;
+        rx: 1;
+        ry: 1;
     }
 }
 
@@ -527,19 +495,14 @@ text {
     stroke: #e87216;
     fill: #e87216;
     stroke-width: 5;
-    -webkit-animation: fizzle 0.2s ease-in 1;
-}
-
-.xlet_disabled {
-    stroke: gray !important;
-    fill: gray !important;
+    -webkit-animation: fizzle 0.4s ease-in 1;
 }
 
 #canvas_find {
     width: 100%;
     height: 1em;
-    padding-top: 2px;
-    padding-left: 2px;
+    padding-top: 4px;
+    padding-left: 8px;
     padding-bottom: 8px;
     background: silver;
     position: fixed;
@@ -550,18 +513,10 @@ text {
 /* Dialog to ask to save the patch before quitting */
 #save_before_quit {
     background-color: #f3f3f3;
-    border:1px solid #f3f3f3;
+    border:1px solid #bbb;
     padding: 12px;
     margin: 12px;
-    /*box-shadow: 7px 7px 5px grey;*/
-    left: 50%;
-    top: 50%;
-    width: 40%;
-    transform: translate(-50%, -50%);
-}
-
-dialog::backdrop {
-    background: rgba(0, 0, 0, 0.5);
+    box-shadow: 7px 7px 5px grey;
 }
 
 /* Search dialog */
@@ -811,216 +766,4 @@ input[name="rate"] {
     margin-top: -10px;
     margin-bottom: -10px;
     padding: 30px;
-}
-
-#canvas_container{
-    display: flex !important;
-    background-color: red !important;
-}
-
-.patch_window_svg{
-    height: 250px;
-    width: 300px;
-    border: 2px solid black;
-    margin: 10px;
-    overflow: hidden;
-}
-#content {
-    position: absolute;
-    top: 24px;
-}
-
-.content-webapp {
-    position: relative !important;
-    margin-top: 40px;
-}
-
-#content-canvas {
-    position: relative;
-}
-
-/* Webapp Menu */
-nav {
-    position: fixed;
-    top: 0px;
-    z-index: 999999;
-    width: 100%;
-}
-
-.clearfix:after {
-    content: '.';
-    display: block;
-    clear: both;
-    height: 0;
-    line-height: 0;
-    font-size: 0;
-    visibility: hidden;
-    overflow: hidden;
-}
-
-#patch-menu {
-    width: 100%;
-}
-
-.menu, .menu li ul, .patch-menu, .patch-menu li ul{
-    background-color: #EFF0F1;
-    margin: 0px;
-    padding: 0px;
-    list-style:none; 
-    float:left;
-    font-size: 12px;
-    width: 100%;
-    border: 1px solid #C0C2C4;
-    z-index: 999999;
-}
-
-.menu li{
-    display: none;
-    position: relative;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-
-.patch-menu li{
-    position: relative;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-
-.menu > li, .patch-menu > li {
-    float: left;
-}
-
-.menu > li:hover, .patch-menu > li:hover {
-    float: left;
-    background-color: #6bd4e6;
-}
-
-
-.menu li:hover > ul, .patch-menu li:hover > ul {
-    display: block;
-}
-
-.menu li ul, .patch-menu li ul{
-    display: none;
-    position: absolute;
-    min-width: 250px;
-}
-
-.menu li ul li:hover, .patch-menu li ul li:hover{
-    background-color: #6bd4e6;
-}
-
-
-.menu li ul li ul{
-    top: 0;
-    left: 100%;
-}
-
-.menu > li > ul > li span, .menu > li > ul > label > li span, .patch-menu > li > ul > li span {
-    float: right;
-    font-size: small;
-    color: #777;
-}
-
-
-/* Input file */
-.menu label input[type="file"] {
-    display: none;
-}
-.menu label {
-    margin: 0px;
-    width: 100%;
-    text-align: left;
-}
-
-li .hr{
-    display: block !important;
-    margin: 0px;
-    padding: 0px;
-    width: 100%;
-}
-
-.hr > hr{
-    margin: 0px;
-    padding: 0px;
-}
-
-
-/* Popup */
-#popup{
-    background-color: #EFF0F1;
-    margin: 0px;
-    padding: 0px;
-    font-size: 12px;
-    border: 1px solid #C0C2C4;
-    z-index: 999999;
-    position: absolute;
-    list-style:none; 
-}
-
-#popup li{
-    position: relative;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-
-#popup > li:hover{
-    background-color: #6bd4e6;
-}
-
-
-
-/* Webapp Index layout */
-#sidebar{
-    background-color: transparent;
-    max-width: 300px;
-    min-width: 300px;
-}
-
-#canvas-container{
-    display: flex;
-}
-
-
-#console-window{
-    background-color: transparent;
-    flex-basis: 30%;
-    max-height: 30%;
-}
-
-.patch{
-    border: 2px solid black;
-}
-
-.patch_window_svg{
-    height: 250px;
-    width: 350px;
-    border: 2px solid black;
-    margin: 10px;
-    overflow: scroll;
-}
-
-.patch_window_svg > svg{
-    position: relative;
-    margin-top: -1px;
-    margin-left: -1px;
-    overflow: hidden;
-}
-
-#div-svg-p{
-    position: relative;
-    z-index: 999999;
-}
-
-/* Bootstrap */
-.container-fluid{
-    background-color: transparent;
-    height: 100vh;
-    padding: 0px !important;
-    overflow: scroll;
-}
-
-#canvas-content > .card-body{
-    display: flex !important;
 }

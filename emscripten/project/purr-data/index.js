@@ -1,7 +1,6 @@
 // Define perfect parser
 function perfect_parser (){}
 
-
 // Defining create window
 function create_window(cid, type, width, height, xpos, ypos, attr_array) {
     // todo: make a separate way to format the title for OSX
@@ -36,27 +35,9 @@ function create_window(cid, type, width, height, xpos, ypos, attr_array) {
     }
 
     function init_pd_window(f, new_win) {
-            
-        // Off to the races... :(
-        // We need to check here if we're still the window pointed to
-        // by the GUI's array of toplevel windows. It can easily happen
-        // that we're not-- for example the user could send a stream
-        // of [vis 1, vis 0, vis 1, etc.( to a single subpatch. In that
-        // case the asynchronous Pd <-> GUI communication might
-        // momentarily create multiple windows of that same subpatch.
-        // Here we just let them load, then close any that don't match
-        // the cid we added above.
-        // Additionally, we check to make sure that the cid is registered
-        // as a loaded canvas. If not, we assume it got closed before
-        // we were able to finish loading the browser window (e.g.,
-        // with a [vis 1, vis 0( message). In that case we kill the window.
 
-        // Still, this is pretty fortuitous-- we have two levels of
-        // asynchronicity-- creating the nw window and loading it. There
-        // may still be an edge case where a race between those two causes
-        // unpredictable behavior.
         if (new_win === pdbundle.pdgui.get_patchwin(cid)) {
-                        // Add menu html file
+            // Add canvas html file
 			$.get("./components/canvas/"+f, function(data){
                  $("#canvas-container").prepend(data)
                  register_canvas(cid, eval_string);
@@ -65,7 +46,6 @@ function create_window(cid, type, width, height, xpos, ypos, attr_array) {
                 new_win.window.eval(eval_string);
             });
             
-
             // flag the window as loaded. We may want to wait until the
             // DOM window has finished loading for this.
             pdbundle.pdgui.set_window_finished_loading(cid);
