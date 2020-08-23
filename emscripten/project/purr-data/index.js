@@ -56,141 +56,15 @@ function create_window(cid, type, width, height, xpos, ypos, attr_array) {
         // may still be an edge case where a race between those two causes
         // unpredictable behavior.
         if (new_win === pdbundle.pdgui.get_patchwin(cid)) {
+                        // Add menu html file
+			$.get("./components/canvas/"+f, function(data){
+                 $("#canvas-container").prepend(data)
+                 register_canvas(cid, eval_string);
+
+                 // initialize the window
+                new_win.window.eval(eval_string);
+            });
             
-            // Create patch holder
-            var patch = new_win.window.document.createElement('div'); 
-            patch.classList.add("patch");
-            patch.id = "patch"+cid;
-
-            // Create canvas menu
-            var patch_menu_html = ''+
-                    '<ul class="patch-menu" id="patch-menu">'+
-                        // File section
-                        '<li id="menu-file'+cid+'">'+
-                            '<ul>'+
-                                '<li id="file-save'+cid+'"></li>'+
-                                '<li id="file-saveas'+cid+'"></li>'+
-                                '<li id="file-download'+cid+'"></li>'+
-                                '<li id="file-print'+cid+'"></li>'+                                
-                                '<li id="file-message'+cid+'"></li>'+
-                                '<li id="file-close'+cid+'"></li>'+
-                            '</ul>'+
-                        '</li>'+
-                        // Edit section
-                        '<li id="menu-edit'+cid+'">'+
-                            '<ul>'+
-                                '<li id="edit-undo'+cid+'"></li>'+
-                                '<li id="edit-redo'+cid+'"></li>'+
-                                '<li id="edit-cut'+cid+'"></li>'+
-                                '<li id="edit-copy'+cid+'"></li>'+
-                                '<li id="edit-paste'+cid+'"></li>'+
-                                '<li id="edit-paste-clipboard'+cid+'"></li>'+
-                                '<li id="edit-duplicate'+cid+'"></li>'+
-                                '<li id="edit-selectall'+cid+'"></li>'+
-                                '<li id="edit-reselect'+cid+'"></li>'+
-                                '<li id="edit-tidyup'+cid+'"></li>'+
-                                '<li id="edit-font'+cid+'"></li>'+
-                                '<li id="edit-cordinspector'+cid+'"><input type="checkbox" id="cordinspector'+cid+'"></li>'+                                
-                                '<li id="edit-find'+cid+'"></li>'+
-                                '<li id="edit-findagain'+cid+'"></li>'+
-                                '<li id="edit-finderror'+cid+'"></li>'+
-                                '<li id="edit-editmode'+cid+'"><input type="checkbox" id="editmode'+cid+'"></li>'+
-                            '</ul>'+
-                        '</li>'+
-
-                        //  View Section
-                        '<li id="menu-view'+cid+'">'+
-                            '<ul>'+
-                                '<li id="view-zoomin'+cid+'"></li>'+
-                                '<li id="view-zoomout'+cid+'"></li>'+
-                                '<li id="view-zoomreset'+cid+'"></li>'+
-                                '<li id="view-optimalzoom'+cid+'"></li>'+
-                                '<li id="view-horizzoom'+cid+'"></li>'+
-                                '<li id="view-vertzoom'+cid+'"></li>'+            
-                                '<li id="view-fullscreen'+cid+'"></li>'+
-                            '</ul>'+
-                        '</li>'+
-            
-                        // Put Section
-                        '<li id="menu-put'+cid+'">'+
-                            '<ul>'+
-                                '<li id="put-object'+cid+'"/li>'+
-                                '<li id="put-msgbox'+cid+'"/li>'+
-                                '<li id="put-number'+cid+'"/li>'+
-                                '<li id="put-symbol'+cid+'"/li>'+
-                                '<li id="put-comment'+cid+'"/li>'+
-                                '<li id="put-dropdown'+cid+'"/li>'+
-                                '<li id="put-bang'+cid+'"/li>'+
-                                '<li id="put-toggle'+cid+'"/li>'+
-                                '<li id="put-number2'+cid+'"/li>'+
-                                '<li id="put-vslider'+cid+'"/li>'+
-                                '<li id="put-hslider'+cid+'"/li>'+
-                                '<li id="put-vradio'+cid+'"/li>'+
-                                '<li id="put-hradio'+cid+'"/li>'+
-                                '<li id="put-vu'+cid+'"/li>'+
-                                '<li id="put-cnv'+cid+'"/li>'+
-                                '<li id="put-array'+cid+'"/li>'+
-                            '</ul>'+
-                        '</li>'+
-
-                        // Window section
-                        '<li id="menu-window'+cid+'">'+
-                            '<ul>'+
-                                '<li id="window-nextwin'+cid+'"></li>'+
-                                '<li id="window-prevwin'+cid+'"></li>'+
-                                '<li id="window-parentwin'+cid+'"></li>'+
-                                '<li id="window-visible-ancestor'+cid+'"></li>'+
-                                '<li id="window-pdwin'+cid+'"></li>'+
-                            '</ul>'+
-                        '</li>'+
-                    '</ul>';
-            
-               
-            var patch_menu = new_win.window.document.createElement('div')
-            patch_menu.innerHTML = patch_menu_html;
-            patch.appendChild(patch_menu);  
-
-            // Create canvas draw area
-            var patchsvg_html = '<div class="patch_window_svg" id="patch_div_'+ cid + '"> ' +
-                                '<svg xmlns="http://www.w3.org/2000/svg"' +
-                                    'version="1.1"'+
-                                    'id="patchsvg_'+ cid +'"' +
-                                    'class="noselect"'+
-                                    'viewBox="0 0 0 0">'+
-                                '</svg>'+
-                                '</div>';
-
-            var patchsvg = new_win.window.document.createElement('div');
-            patchsvg.id = "patchsvg_holder_"+cid;
-            patchsvg.innerHTML = patchsvg_html;
-            patch.appendChild(patchsvg);
-
-            
-            // Canvas find
-            var canvas_find_html = '<div id="canvas_find'+cid+'"style="display:none;">'+
-                                '<label><input type="text"'+
-                                    'id="canvas_find_text'+cid+'"'+
-                                    'name="canvas_find_text"'+
-                                    'defaultValue="Search in Canvas"'+
-                                    'style="width:10em"/>'+
-                            '</label>'+
-                            '<button type="button"'+
-                                'id="canvas_find_button'+cid+'"'+
-                                'data-i18n="[title]canvas.find.search_tt">'+
-                                '<span data-i18n="canvas.find.search"></span>'+
-                            '</button>'+
-                            '</div>'
-
-            var canvas_find = new_win.window.document.createElement('div')
-            canvas_find.innerHTML = canvas_find_html;
-            patch.appendChild(canvas_find);             
-        
-            // Add to canvas holder
-            var canvas_container = new_win.window.document.getElementById("canvas-container");
-            canvas_container.appendChild(patch);
-
-            // initialize the window
-            new_win.window.eval(eval_string);
 
             // flag the window as loaded. We may want to wait until the
             // DOM window has finished loading for this.
