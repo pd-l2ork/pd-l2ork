@@ -39,7 +39,7 @@ function create_window(cid, type, width, height, xpos, ypos, attr_array) {
         if (new_win === pdbundle.pdgui.get_patchwin(cid)) {
             // Add canvas html file
 			$.get("./components/canvas/"+f, function(data){
-                 $("#canvas-container").prepend(data)
+                 $("#canvas-container").append(data)
                  register_canvas(cid, eval_string);
 
                  // initialize the window
