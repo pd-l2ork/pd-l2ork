@@ -9,8 +9,8 @@ function menu_options(type, w, cid){
 
         "file-message": {
             label: l("menu.message"),
-            key: pdbundle.shortcuts.menu.message.key,
-            modifiers: pdbundle.shortcuts.menu.message.modifiers,
+            key: pdbundle.shortcuts.menu.message_web.key,
+            modifiers: pdbundle.shortcuts.menu.message_web.modifiers,
             tooltip: l("menu.message_tt"),
             bottom_hr: {}
         },
@@ -24,20 +24,20 @@ function menu_options(type, w, cid){
         // Edit entries
         "edit-copy": {
             label: l("menu.copy"),
-            key: pdbundle.shortcuts.menu.copy.key,
-            modifiers: pdbundle.shortcuts.menu.copy.modifiers,
+            key: pdbundle.shortcuts.menu.copy_web.key,
+            modifiers: pdbundle.shortcuts.menu.copy_web.modifiers,
             tooltip: l("menu.copy_tt")
         },
         "edit-selectall": {
             label: l("menu.selectall"),
-            key: pdbundle.shortcuts.menu.selectall.key,
-            modifiers: pdbundle.shortcuts.menu.selectall.modifiers,
+            key: pdbundle.shortcuts.menu.selectall_web.key,
+            modifiers: pdbundle.shortcuts.menu.selectall_web.modifiers,
             tooltip: l("menu.selectall_tt")
         },
         "edit-find": {
             label: l("menu.find"),
-            key: pdbundle.shortcuts.menu.find.key,
-            modifiers: pdbundle.shortcuts.menu.find.modifiers,
+            key: pdbundle.shortcuts.menu.find_web.key,
+            modifiers: pdbundle.shortcuts.menu.find_web.modifiers,
             tooltip: l("menu.find_tt")
         },
 
@@ -50,27 +50,27 @@ function menu_options(type, w, cid){
         // View entries
         "view-zoomin": {
             label: l("menu.zoomin"),
-            key: pdbundle.shortcuts.menu.zoomin.key,
-            modifiers: pdbundle.shortcuts.menu.zoomin.modifiers,
+            key: pdbundle.shortcuts.menu.zoomin_web.key,
+            modifiers: pdbundle.shortcuts.menu.zoomin_web.modifiers,
             tooltip: l("menu.zoomin_tt")
         },
         "view-zoomout": {
             label: l("menu.zoomout"),
-            key: pdbundle.shortcuts.menu.zoomout.key,
-            modifiers: pdbundle.shortcuts.menu.zoomout.modifiers,
+            key: pdbundle.shortcuts.menu.zoomout_web.key,
+            modifiers: pdbundle.shortcuts.menu.zoomout_web.modifiers,
             tooltip: l("menu.zoomout_tt")
         },
         "view-zoomreset": {
             label: l("menu.zoomreset"),
-            key: pdbundle.shortcuts.menu.zoomreset.key,
-            modifiers: pdbundle.shortcuts.menu.zoomreset.modifiers,
+            key: pdbundle.shortcuts.menu.zoomreset_web.key,
+            modifiers: pdbundle.shortcuts.menu.zoomreset_web.modifiers,
             tooltip: l("menu.zoomreset_tt"),
             top_hr: {}
         },
         "view-fullscreen": {
             label: l("menu.fullscreen"),
-            key: pdbundle.shortcuts.menu.fullscreen.key,
-            modifiers: pdbundle.shortcuts.menu.fullscreen.modifiers,
+            key: pdbundle.shortcuts.menu.fullscreen_web.key,
+            modifiers: pdbundle.shortcuts.menu.fullscreen_web.modifiers,
             tooltip: l("menu.fullscreen_tt"),
             top_hr: {}
         }
@@ -84,15 +84,15 @@ function menu_options(type, w, cid){
         "window-nextwin" : {
             action: {onclick: function(){pdbundle.pdgui.raise_next("pd_window")}},
             label: l("menu.nextwin"),
-            key: pdbundle.shortcuts.menu.nextwin.key,
-            modifiers: pdbundle.shortcuts.menu.nextwin.modifiers,
+            key: pdbundle.shortcuts.menu.nextwin_web.key,
+            modifiers: pdbundle.shortcuts.menu.nextwin_web.modifiers,
             tooltip: l("menu.nextwin_tt")
         },
         "window-prevwin" : {
             action: {onclick: function(){pdbundle.pdgui.raise_prev("pd_window")}},
             label: l("menu.prevwin"),
-            key: pdbundle.shortcuts.menu.prevwin.key,
-            modifiers: pdbundle.shortcuts.menu.prevwin.modifiers,
+            key: pdbundle.shortcuts.menu.prevwin_web.key,
+            modifiers: pdbundle.shortcuts.menu.prevwin_web.modifiers,
             tooltip: l("menu.prevwin_tt")
         }
     }
@@ -105,15 +105,15 @@ function menu_options(type, w, cid){
         "file-new" : {
             action: {onclick: pdbundle.pdgui.menu_new},
             label: l("menu.new"),
-            key: pdbundle.shortcuts.menu.new.key,
-            modifiers: pdbundle.shortcuts.menu.new.modifiers,
+            key: pdbundle.shortcuts.menu.new_web.key,
+            modifiers: pdbundle.shortcuts.menu.new_web.modifiers,
             tooltip: l("menu.new_tt")
         },
 
         "file-open": {
             label: l("menu.open"),
-            key: pdbundle.shortcuts.menu.open.key,
-            modifiers: pdbundle.shortcuts.menu.open.modifiers,
+            key: pdbundle.shortcuts.menu.open_web.key,
+            modifiers: pdbundle.shortcuts.menu.open_web.modifiers,
             tooltip: l("menu.open_tt")
         },
 
@@ -124,16 +124,16 @@ function menu_options(type, w, cid){
             action: {onclick: pdbundle.pdgui.clear_console},
             label: l("menu.clear_console"),
             tooltip: l("menu.clear_console"),
-            key: pdbundle.shortcuts.menu.clear_console.key,
-            modifiers: pdbundle.shortcuts.menu.clear_console.modifiers,
+            key: pdbundle.shortcuts.menu.clear_console_web.key,
+            modifiers: pdbundle.shortcuts.menu.clear_console_web.modifiers,
             top_hr: {},
             bottom_hr: {}
         },
         "edit-preferences": {
             action: {onclick: pdbundle.pdgui.open_prefs},
             label: l("menu.preferences"),
-            key: pdbundle.shortcuts.menu.preferences.key,
-            modifiers: pdbundle.shortcuts.menu.preferences.modifiers,
+            key: pdbundle.shortcuts.menu.preferences_web.key,
+            modifiers: pdbundle.shortcuts.menu.preferences_web.modifiers,
             tooltip: l("menu.preferences_tt")
         },
 
@@ -147,15 +147,15 @@ function menu_options(type, w, cid){
         "media-audio-on" : {
             action: {onclick: function(){pdbundle.pdgui.pdsend("pd dsp 1")}},
             label: l("menu.audio_on"),
-            key: pdbundle.shortcuts.menu.audio_on.key,
-            modifiers: pdbundle.shortcuts.menu.audio_on.modifiers,
+            key: pdbundle.shortcuts.menu.audio_on_web.key,
+            modifiers: pdbundle.shortcuts.menu.audio_on_web.modifiers,
             tooltip: l("menu.audio_on_tt")
         },
         "media-audio-off" : {
             action: {onclick: function(){pdbundle.pdgui.pdsend("pd dsp 0")}},
             label: l("menu.audio_off"),
-            key: pdbundle.shortcuts.menu.audio_off.key,
-            modifiers: pdbundle.shortcuts.menu.audio_off.modifiers,
+            key: pdbundle.shortcuts.menu.audio_off_web.key,
+            modifiers: pdbundle.shortcuts.menu.audio_off_web.modifiers,
             tooltip: l("menu.audio_off_tt"),
             bottom_hr: {}
         },
@@ -190,8 +190,8 @@ function menu_options(type, w, cid){
         "help-browser" : {
             action: {onclick: pdbundle.pdgui.open_search},
             label: l("menu.browser"),
-            key: pdbundle.shortcuts.menu.browser.key,
-            modifiers: pdbundle.shortcuts.menu.browser.modifiers,
+            key: pdbundle.shortcuts.menu.browser_web.key,
+            modifiers: pdbundle.shortcuts.menu.browser_web.modifiers,
             tooltip: l("menu.browser_tt")
         },
         "help-intro" : {
@@ -232,13 +232,6 @@ function menu_options(type, w, cid){
             bottom_hr: {}
         },
 
-        "file-quit": {
-            action: {onclick: pdbundle.pdgui.menu_quit},
-            label: l("menu.quit"),
-            key: pdbundle.shortcuts.menu.quit.key,
-            modifiers: pdbundle.shortcuts.menu.quit.modifiers 
-        },
-
         // Help entries
         "help-devtools" : {
             label: l("menu.devtools"),
@@ -253,27 +246,27 @@ function menu_options(type, w, cid){
         // File entries
         "file-save": {
             label: l("menu.save"),
-            key: pdbundle.shortcuts.menu.save.key,
-            modifiers: pdbundle.shortcuts.menu.save.modifiers,
+            key: pdbundle.shortcuts.menu.save_web.key,
+            modifiers: pdbundle.shortcuts.menu.save_web.modifiers,
             tooltip: l("menu.save_tt")
         },
         "file-saveas": {
             label: l("menu.saveas"),
-            key: pdbundle.shortcuts.menu.saveas.key,
-            modifiers: pdbundle.shortcuts.menu.saveas.modifiers,
+            key: pdbundle.shortcuts.menu.saveas_web.key,
+            modifiers: pdbundle.shortcuts.menu.saveas_web.modifiers,
             tooltip: l("menu.saveas_tt")
         },
         "file-print": {
             label: l("menu.print"),
-            key: pdbundle.shortcuts.menu.print.key,
-            modifiers: pdbundle.shortcuts.menu.print.modifiers,
+            key: pdbundle.shortcuts.menu.print_web.key,
+            modifiers: pdbundle.shortcuts.menu.print_web.modifiers,
             tooltip: l("menu.print_tt"),
             bottom_hr: {}
         },
         "file-close": {
             label: l("menu.close"),
-            key: pdbundle.shortcuts.menu.close.key,
-            modifiers: pdbundle.shortcuts.menu.close.modifiers,
+            key: pdbundle.shortcuts.menu.close_web.key,
+            modifiers: pdbundle.shortcuts.menu.close_web.modifiers,
             tooltip: l("menu.close_tt")
         },
 
@@ -284,50 +277,50 @@ function menu_options(type, w, cid){
         "edit-undo": {
             label: l("menu.undo"),
             tooltip: l("menu.undo_tt"),
-            key: pdbundle.shortcuts.menu.undo.key,
-            modifiers: pdbundle.shortcuts.menu.undo.modifiers
+            key: pdbundle.shortcuts.menu.undo_web.key,
+            modifiers: pdbundle.shortcuts.menu.undo_web.modifiers
         },
         "edit-redo": {
             label: l("menu.redo"),
             tooltip: l("menu.redo_tt"),
-            key: pdbundle.shortcuts.menu.redo.key,
-            modifiers: pdbundle.shortcuts.menu.redo.modifiers,
+            key: pdbundle.shortcuts.menu.redo_web.key,
+            modifiers: pdbundle.shortcuts.menu.redo_web.modifiers,
             bottom_hr: {}
         },
         "edit-cut": {
             label: l("menu.cut"),
-            key: pdbundle.shortcuts.menu.cut.key,
-            modifiers: pdbundle.shortcuts.menu.cut.modifiers,
+            key: pdbundle.shortcuts.menu.cut_web.key,
+            modifiers: pdbundle.shortcuts.menu.cut_web.modifiers,
             tooltip: l("menu.cut_tt")
         },
         "edit-paste": {
             label: l("menu.paste"),
-            key: pdbundle.shortcuts.menu.paste.key,
-            modifiers: pdbundle.shortcuts.menu.paste.modifiers,
+            key: pdbundle.shortcuts.menu.paste_web.key,
+            modifiers: pdbundle.shortcuts.menu.paste_web.modifiers,
             tooltip: l("menu.paste_tt")
         },
         "edit-paste-clipboard": {
             label: l("menu.paste_clipboard"),
-            key: pdbundle.shortcuts.menu.paste_clipboard.key,
-            modifiers: pdbundle.shortcuts.menu.paste_clipboard.modifiers,
+            key: pdbundle.shortcuts.menu.paste_clipboard_web.key,
+            modifiers: pdbundle.shortcuts.menu.paste_clipboard_web.modifiers,
             tooltip: l("menu.paste_clipboard_tt")
         },
         "edit-duplicate": {
             label: l("menu.duplicate"),
-            key: pdbundle.shortcuts.menu.duplicate.key,
-            modifiers: pdbundle.shortcuts.menu.duplicate.modifiers,
+            key: pdbundle.shortcuts.menu.duplicate_web.key,
+            modifiers: pdbundle.shortcuts.menu.duplicate_web.modifiers,
             tooltip: l("menu.duplicate_tt")
         },
         "edit-reselect": {
             label: l("menu.reselect"),
-            key: pdbundle.shortcuts.menu.reselect.key,
-            modifiers: pdbundle.shortcuts.menu.reselect.modifiers,
+            key: pdbundle.shortcuts.menu.reselect_web.key,
+            modifiers: pdbundle.shortcuts.menu.reselect_web.modifiers,
             tooltip: l("menu.reselect_tt")
         },
         "edit-tidyup": {
             label: l("menu.tidyup"),
-            key: pdbundle.shortcuts.menu.tidyup.key,
-            modifiers: pdbundle.shortcuts.menu.tidyup.modifiers,
+            key: pdbundle.shortcuts.menu.tidyup_web.key,
+            modifiers: pdbundle.shortcuts.menu.tidyup_web.modifiers,
             tooltip: l("menu.tidyup_tt")
         },
         "edit-font": {
@@ -336,15 +329,15 @@ function menu_options(type, w, cid){
         },
         "edit-cordinspector": {
             label: l("menu.cordinspector"),
-            key: pdbundle.shortcuts.menu.cordinspector.key,
-            modifiers: pdbundle.shortcuts.menu.cordinspector.modifiers,
+            key: pdbundle.shortcuts.menu.cordinspector_web.key,
+            modifiers: pdbundle.shortcuts.menu.cordinspector_web.modifiers,
             tooltip: l("menu.cordinspector_tt"),
             bottom_hr: {}            
         },
         "edit-findagain": {
             label: l("menu.findagain"),
-            key: pdbundle.shortcuts.menu.findagain.key,
-            modifiers: pdbundle.shortcuts.menu.findagain.modifiers,
+            key: pdbundle.shortcuts.menu.findagain_web.key,
+            modifiers: pdbundle.shortcuts.menu.findagain_web.modifiers,
             tooltip: l("menu.findagain")
         },
         "edit-finderror": {
@@ -356,8 +349,8 @@ function menu_options(type, w, cid){
 
         "edit-editmode": {
             label: l("menu.editmode"),
-            key: pdbundle.shortcuts.menu.editmode.key,
-            modifiers: pdbundle.shortcuts.menu.editmode.modifiers,
+            key: pdbundle.shortcuts.menu.editmode_web.key,
+            modifiers: pdbundle.shortcuts.menu.editmode_web.modifiers,
             tooltip: l("menu.editmode_tt"),
             bottom_hr: {}
         },
@@ -368,20 +361,20 @@ function menu_options(type, w, cid){
         // View entries
         "view-optimalzoom": {
             label: l("menu.zoomoptimal"),
-            key: pdbundle.shortcuts.menu.zoomoptimal.key,
-            modifiers: pdbundle.shortcuts.menu.zoomoptimal.modifiers,
+            key: pdbundle.shortcuts.menu.zoomoptimal_web.key,
+            modifiers: pdbundle.shortcuts.menu.zoomoptimal_web.modifiers,
             tooltip: l("menu.zoomoptimal_tt")
         },
         "view-horizzoom": {
             label: l("menu.zoomhoriz"),
-            key: pdbundle.shortcuts.menu.zoomhoriz.key,
-            modifiers: pdbundle.shortcuts.menu.zoomhoriz.modifiers,
+            key: pdbundle.shortcuts.menu.zoomhoriz_web.key,
+            modifiers: pdbundle.shortcuts.menu.zoomhoriz_web.modifiers,
             tooltip: l("menu.zoomhoriz_tt")
         },
         "view-vertzoom": {
             label: l("menu.zoomvert"),
-            key: pdbundle.shortcuts.menu.zoomvert.key,
-            modifiers: pdbundle.shortcuts.menu.zoomvert.modifiers,
+            key: pdbundle.shortcuts.menu.zoomvert_web.key,
+            modifiers: pdbundle.shortcuts.menu.zoomvert_web.modifiers,
             tooltip: l("menu.zoomvert_tt")
         },
 
@@ -391,93 +384,93 @@ function menu_options(type, w, cid){
         // Put entries
         "put-object": {
             label: l("menu.object"),
-            key: pdbundle.shortcuts.menu.object.key,
-            modifiers: pdbundle.shortcuts.menu.object.modifiers,
+            key: pdbundle.shortcuts.menu.object_web.key,
+            modifiers: pdbundle.shortcuts.menu.object_web.modifiers,
             tooltip: l("menu.object_tt")
         },
         "put-msgbox": {
             label: l("menu.msgbox"),
-            key: pdbundle.shortcuts.menu.msgbox.key,
-            modifiers: pdbundle.shortcuts.menu.msgbox.modifiers,
+            key: pdbundle.shortcuts.menu.msgbox_web.key,
+            modifiers: pdbundle.shortcuts.menu.msgbox_web.modifiers,
             tooltip: l("menu.msgbox_tt")
         },
         "put-number": {
             label: l("menu.number"),
-            key: pdbundle.shortcuts.menu.number.key,
-            modifiers: pdbundle.shortcuts.menu.number.modifiers,
+            key: pdbundle.shortcuts.menu.number_web.key,
+            modifiers: pdbundle.shortcuts.menu.number_web.modifiers,
             tooltip: l("menu.number_tt")
         },
         "put-symbol": {
             label: l("menu.symbol"),
-            key: pdbundle.shortcuts.menu.symbol.key,
-            modifiers: pdbundle.shortcuts.menu.symbol.modifiers,
+            key: pdbundle.shortcuts.menu.symbol_web.key,
+            modifiers: pdbundle.shortcuts.menu.symbol_web.modifiers,
             tooltip: l("menu.symbol_tt")
         },
         "put-comment": {
             label: l("menu.comment"),
-            key: pdbundle.shortcuts.menu.comment.key,
-            modifiers: pdbundle.shortcuts.menu.comment.modifiers,
+            key: pdbundle.shortcuts.menu.comment_web.key,
+            modifiers: pdbundle.shortcuts.menu.comment_web.modifiers,
             tooltip: l("menu.comment_tt")
         },
         "put-dropdown": {
             label: l("menu.dropdown"),
-            key: pdbundle.shortcuts.menu.dropdown.key,
-            modifiers: pdbundle.shortcuts.menu.dropdown.modifiers,
+            key: pdbundle.shortcuts.menu.dropdown_web.key,
+            modifiers: pdbundle.shortcuts.menu.dropdown_web.modifiers,
             tooltip: l("menu.dropdown_tt"),
             bottom_hr: {}            
         },
         "put-bang": {
             label: l("menu.bang"),
-            key: pdbundle.shortcuts.menu.bang.key,
-            modifiers: pdbundle.shortcuts.menu.bang.modifiers,
+            key: pdbundle.shortcuts.menu.bang_web.key,
+            modifiers: pdbundle.shortcuts.menu.bang_web.modifiers,
             tooltip: l("menu.bang_tt")
         },
         "put-toggle": {
             label: l("menu.toggle"),
-            key: pdbundle.shortcuts.menu.toggle.key,
-            modifiers: pdbundle.shortcuts.menu.toggle.modifiers,
+            key: pdbundle.shortcuts.menu.toggle_web.key,
+            modifiers: pdbundle.shortcuts.menu.toggle_web.modifiers,
             tooltip: l("menu.toggle_tt")
         },
         "put-number2": {
             label: l("menu.number2"),
-            key: pdbundle.shortcuts.menu.number2.key,
-            modifiers: pdbundle.shortcuts.menu.number2.modifiers,
+            key: pdbundle.shortcuts.menu.number2_web.key,
+            modifiers: pdbundle.shortcuts.menu.number2_web.modifiers,
             tooltip: l("menu.number2")
         },
         "put-vslider": {
             label: l("menu.vslider"),
-            key: pdbundle.shortcuts.menu.vslider.key,
-            modifiers: pdbundle.shortcuts.menu.vslider.modifiers,
+            key: pdbundle.shortcuts.menu.vslider_web.key,
+            modifiers: pdbundle.shortcuts.menu.vslider_web.modifiers,
             tooltip: l("menu.vslider_tt")
         },
         "put-hslider": {
             label: l("menu.hslider"),
-            key: pdbundle.shortcuts.menu.hslider.key,
-            modifiers: pdbundle.shortcuts.menu.hslider.modifiers,
+            key: pdbundle.shortcuts.menu.hslider_web.key,
+            modifiers: pdbundle.shortcuts.menu.hslider_web.modifiers,
             tooltip: l("menu.hslider_tt")
         },
         "put-vradio": {
             label: l("menu.vradio"),
-            key: pdbundle.shortcuts.menu.vradio.key,
-            modifiers: pdbundle.shortcuts.menu.vradio.modifiers,
+            key: pdbundle.shortcuts.menu.vradio_web.key,
+            modifiers: pdbundle.shortcuts.menu.vradio_web.modifiers,
             tooltip: l("menu.vradio_tt")
         },
         "put-hradio": {
             label: l("menu.hradio"),
-            key: pdbundle.shortcuts.menu.hradio.key,
-            modifiers: pdbundle.shortcuts.menu.hradio.modifiers,
+            key: pdbundle.shortcuts.menu.hradio_web.key,
+            modifiers: pdbundle.shortcuts.menu.hradio_web.modifiers,
             tooltip: l("menu.hradio_tt")
         },
         "put-vu": {
             label: l("menu.vu"),
-            key: pdbundle.shortcuts.menu.vu.key,
-            modifiers: pdbundle.shortcuts.menu.vu.modifiers,
+            key: pdbundle.shortcuts.menu.vu_web.key,
+            modifiers: pdbundle.shortcuts.menu.vu_web.modifiers,
             tooltip: l("menu.vu_tt")
         },
         "put-cnv": {
             label: l("menu.cnv"),
-            key: pdbundle.shortcuts.menu.cnv.key,
-            modifiers: pdbundle.shortcuts.menu.cnv.modifiers,
+            key: pdbundle.shortcuts.menu.cnv_web.key,
+            modifiers: pdbundle.shortcuts.menu.cnv_web.modifiers,
             tooltip: l("menu.cnv_tt"),
             bottom_hr: {}
         },
@@ -503,8 +496,8 @@ function menu_options(type, w, cid){
             action: {onclick: function(){pdbundle.pdgui.raise_pd_window()}},
             label: l("menu.pdwin"),
             tooltip: l("menu.pdwin_tt"),
-            key: pdbundle.shortcuts.menu.pdwin.key,
-            modifiers: pdbundle.shortcuts.menu.pdwin.modifiers
+            key: pdbundle.shortcuts.menu.pdwin_web.key,
+            modifiers: pdbundle.shortcuts.menu.pdwin_web.modifiers
         }
     };
 
