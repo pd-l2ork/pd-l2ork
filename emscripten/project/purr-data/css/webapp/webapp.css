@@ -22,7 +22,13 @@
     border: 2px solid black;	
     margin: 10px;	
     overflow: hidden;	
-}	
+}
+
+.patch_window_svg > svg{
+    min-width: 100%;
+    min-height: 100%;
+}
+
 #content {	
     position: absolute;	
     top: 24px;	
