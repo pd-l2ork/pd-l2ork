@@ -2829,6 +2829,7 @@ module.exports={
     "saveas_tt": "Save a Pd patch by manually choosing a filename",
     "print": "Print...",
     "print_tt": "Print a Pd patch, saving the result to a PDF file",
+    "download": "Download",
     "message": "Message...",
     "message_tt": "Send a message directly to the running Pd instance",
 
