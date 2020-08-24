@@ -146,30 +146,6 @@ function add_shortcuts(cid){
         if(window.shortkeys[cid].hasOwnProperty(shortcut)){            
             window.shortkeys[cid][shortcut].click();
         }
-
-
-        // Delete key
-        if(e.key === "Delete"){
-            pdbundle.pdgui.canvas_sendkey(cid, "1", e, 127, e.repeat);
-        }
-
-        // Control key
-        if(e.key === "Control"){
-            pdbundle.pdgui.canvas_sendkey(cid, "1", e, e.key, e.repeat);
-        }
-
-    }
-
-    document.onkeyup = function (e){
-        // Delete key
-        if(e.key === "Delete"){
-            pdbundle.pdgui.canvas_sendkey(cid, "0", e, 127, e.repeat);
-        }        
-
-        // Control key
-        if(e.key === "Control"){
-            pdbundle.pdgui.canvas_sendkey(cid, "0", e, e.key, e.repeat);
-        }        
     }
 }
 
