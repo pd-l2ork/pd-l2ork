@@ -3691,7 +3691,9 @@ var canvas_events = (function() {
                 pdgui.keydown(name, evt);
                 // prevent the default behavior of scrolling
                 // on arrow keys in editmode
-                if (document.querySelector("#patchsvg")
+                var patchid = pdgui.is_webapp() ? "#patchsvg_"+name : "#patchsvg"
+                
+                if (document.querySelector(patchid)
                     .classList.contains("editmode")) {
                     if ([32, 37, 38, 39, 40].indexOf(evt.keyCode) > -1) {
                         evt.preventDefault();
@@ -4092,6 +4094,11 @@ var canvas_events = (function() {
                 // Handle offset based on page
                 var container = document.getElementById("container-app");
                 container.addEventListener("scroll", events.window_recalculate, false);
+
+                // 
+                document.addEventListener("keydown", events.keydown, false);
+                document.addEventListener("keypress", events.keypress, false);
+                document.addEventListener("keyup", events.keyup, false);
             }else{
                 document.addEventListener("mousemove", events.mousemove, false);
                 document.addEventListener("keydown", events.keydown, false);
