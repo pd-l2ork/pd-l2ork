@@ -3497,6 +3497,25 @@ var canvas_events = (function() {
             }
         },
         events = {
+            window_recalculate: function(evt){
+                // Update current patch div
+                canvas_div_x = Math.floor(document.getElementById("patch_div_"+name).getBoundingClientRect().left)
+                canvas_divs[name].canvas_div_x = canvas_div_x;
+
+                canvas_div_y = Math.floor(document.getElementById("patch_div_"+name).getBoundingClientRect().top)
+                canvas_divs[name].canvas_div_y = canvas_div_y;
+
+                // Update all canvas
+                for (var div_name in canvas_divs) {	
+	                if (canvas_divs.hasOwnProperty(div_name)) {
+                        var new_x = Math.floor(document.getElementById("patch_div_"+div_name).getBoundingClientRect().left)
+                        var new_y = Math.floor(document.getElementById("patch_div_"+div_name).getBoundingClientRect().top)
+                        
+                        canvas_divs[div_name].canvas_div_x = new_x;
+	                    canvas_divs[div_name].canvas_div_y = new_y;                       
+	                }	
+                }
+            },    
             onscroll: function(evt) {    
                 if(pdgui.is_webapp()){
                     canvas_div_scroll_left = canvas_divs[name].canvas_div.scrollLeft;	
@@ -4068,7 +4087,10 @@ var canvas_events = (function() {
 	                    div.canvas_div.addEventListener("mousedown", events.mousedown, false);	
 	                    div.canvas_div.addEventListener("mouseup", events.mouseup, false);    	
 	                }	
-	            }                
+                }   
+                // Handle offset based on page
+                var container = document.getElementById("container-app");
+                container.addEventListener("scroll", events.window_recalculate, false);
             }else{
                 document.addEventListener("mousemove", events.mousemove, false);
                 document.addEventListener("keydown", events.keydown, false);
@@ -4223,7 +4245,7 @@ var canvas_events = (function() {
 	                canvas_div_scroll_left,	
 	                canvas_div_scroll_top,	
 	                filename	
-	            }
+                }
             }else{
                 svg_view = document.getElementById("patchsvg").viewBox.baseVal;
             }
