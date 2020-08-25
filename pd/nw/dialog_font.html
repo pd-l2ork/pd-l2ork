@@ -88,8 +88,14 @@
 
   <script>
 "use strict";
-var gui = require("nw.gui");
-var pdgui = require("./pdgui.js");
+
+if (typeof(pdbundle) !== "undefined"){
+  var pdgui = pdbundle.pdgui
+}else{
+  var gui = require("nw.gui");
+  var pdgui = require("./pdgui.js");
+}
+
 
 // For translations
 var l = pdgui.get_local_string;
@@ -111,6 +117,10 @@ function apply() {
 
 function cancel() {
     //window.close(true);
+    if(pdgui.is_webapp()){
+      remove_dialog(pd_object_callback)
+    }
+
     pdgui.pdsend(pd_object_callback, "cancel");
 }
 
@@ -141,6 +151,7 @@ function register_window_id(gfxstub, attrs) {
     document.getElementsByClassName("container")[0]
         .style.setProperty("display", "inline");
 }
+window.register_dialog = register_window_id;
 
 // Stop-gap translator
 function translate_form() {
@@ -172,11 +183,13 @@ function populate_form(attrs) {
 }
 
 function add_events(name) {
-    // closing the Window
-    gui.Window.get().on("close", function () {
-        // this needs to do whatever the "cancel" button does
-        cancel();
-    });
+    if(!pdgui.is_webapp()){
+        // closing the Window
+        gui.Window.get().on("close", function () {
+            // this needs to do whatever the "cancel" button does
+            cancel();
+        });
+    }
     pdgui.dialog_bindings(name);
 }
   </script>

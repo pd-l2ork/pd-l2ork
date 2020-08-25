@@ -480,8 +480,13 @@
     </div>
   <script>
 "use strict";
-var gui = require("nw.gui");
-var pdgui = require("./pdgui.js");
+
+if (typeof(pdbundle) !== "undefined"){
+    var pdgui = pdbundle.pdgui
+  }else{
+    var gui = require("nw.gui");
+    var pdgui = require("./pdgui.js");
+}
 
 // For translations
 var l = pdgui.get_local_string;
@@ -767,7 +772,11 @@ function cancel() {
     // that. To see if the bug is gone, try removing the next line and see
     // if you can open the Prefs dialog after clicking "Ok".
     pdgui.remove_dialogwin(pd_object_callback);
-    window.close(true);
+    if(pdgui.is_webapp()){
+        remove_dialog(pd_object_callback)
+    }else{
+        window.close(true);
+    }
     //pdgui.pdsend(pd_object_callback, "cancel");
 }
 
@@ -916,7 +925,8 @@ function audio_prefs_callback(attrs) {
     disable_unused_devs("out", get_attr("canmulti", attrs));
 
     pdgui.resize_window(pd_object_callback);
-}
+}	
+window.audio_prefs_callback = audio_prefs_callback;
 
 function set_devs(type, devs) {
     var i;
@@ -985,6 +995,7 @@ function midi_prefs_callback(attrs) {
     }
     pdgui.resize_window(pd_object_callback);
 }
+window.midi_prefs_callback = midi_prefs_callback;
 
 function autopatch_yoffset_toggle(checked) {
     document.getElementById("autopatch_yoffset_value").disabled = !checked;
@@ -1256,6 +1267,7 @@ function register_window_id(gfxstub, attr_arrays) {
     pdgui.pdsend("pd start-startup-dialog"); // request default loaded libs
     document.getElementsByClassName("container")[0].style.setProperty("display", "inline");
 }
+window.register_dialog = register_window_id;
 
 function tr_text(id) {
     var elem = document.getElementById("iem.prop." + id);
@@ -1307,11 +1319,13 @@ function add_events(name) {
     // let's handle some events for this window...
 
     // closing the Window
-    gui.Window.get().on("close", function() {
-        pdgui.remove_dialogwin(pd_object_callback);
-        gui.Window.get().close(true);
-        //cancel();
-    });
+    if(!pdgui.is_webapp()){
+        gui.Window.get().on("close", function() {
+            pdgui.remove_dialogwin(pd_object_callback);
+            gui.Window.get().close(true);
+            //cancel();
+        });
+    }
     pdgui.dialog_bindings(name);
 }
 
