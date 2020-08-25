@@ -4632,7 +4632,8 @@ window.register_window_id = function register_window_id(cid, attr_array) {
 class Popup {
     constructor(){
         this.popup_elem = document.createElement("ul");        
-        this.popup_elem.id = "popup"
+        this.popup_elem.id = "popup";
+        this.items = [];
 
         // Close after click
         this.popup_elem.onclick = function(e){
@@ -4645,15 +4646,23 @@ class Popup {
         var item = document.createElement("li");
         item.append(params['label'])
         item.onclick = params['click'];
-        this.popup_elem.appendChild(item);
+        this.items.push({item: item, enabled: 1});
     }
 
     popup(xpos, ypos) {
+        for(var item of this.items){
+            console.log("utem", item);
+            if(item.enabled == 0){
+                item.item.classList.add("popup-disabled");
+                item.item.onclick = function(){};
+            }
+            this.popup_elem.appendChild(item.item);
+        }
+
         this.popup_elem.style.left = xpos+"px";
         this.popup_elem.style.top = ypos+"px";
         document.getElementById("container").prepend(this.popup_elem);
     };
-
 }
 
 
@@ -11343,6 +11352,9 @@ function gui_canvas_popup(cid, xpos, ypos, canprop, canopen, isobject) {
         popup_coords[0] = xpos;
         popup_coords[1] = ypos;
 
+        popup_menu[cid].items[0].enabled = canprop;
+        popup_menu[cid].items[1].enabled = canopen;
+
         if(is_webapp()){
             var x_offset = Math.floor(document.getElementById(patchsvg_id).getBoundingClientRect().x);
             var y_offset = Math.floor(document.getElementById(patchsvg_id).getBoundingClientRect().y);
@@ -11355,8 +11367,6 @@ function gui_canvas_popup(cid, xpos, ypos, canprop, canopen, isobject) {
             
             //popup_coords[0] = xpos;
             //popup_coords[1] = ypos;
-            popup_menu[cid].items[0].enabled = canprop;
-            popup_menu[cid].items[1].enabled = canopen;
 
             // We'll use "isobject" to enable/disable "To Front" and "To Back"
             //isobject;

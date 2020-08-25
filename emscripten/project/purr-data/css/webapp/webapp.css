@@ -171,8 +171,14 @@ li .hr{
     
 #popup > li:hover{	
     background-color: #6bd4e6;	
-}	
-    
+}
+
+.popup-disabled{
+    color: #858688;
+}
+.popup-disabled:hover{
+    background-color: transparent !important;
+}
     
     
 /* Webapp Index layout */	

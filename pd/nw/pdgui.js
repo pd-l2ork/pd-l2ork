@@ -4904,6 +4904,9 @@ function gui_canvas_popup(cid, xpos, ypos, canprop, canopen, isobject) {
         popup_coords[0] = xpos;
         popup_coords[1] = ypos;
 
+        popup_menu[cid].items[0].enabled = canprop;
+        popup_menu[cid].items[1].enabled = canopen;
+
         if(is_webapp()){
             var x_offset = Math.floor(document.getElementById(patchsvg_id).getBoundingClientRect().x);
             var y_offset = Math.floor(document.getElementById(patchsvg_id).getBoundingClientRect().y);
@@ -4916,8 +4919,6 @@ function gui_canvas_popup(cid, xpos, ypos, canprop, canopen, isobject) {
             
             //popup_coords[0] = xpos;
             //popup_coords[1] = ypos;
-            popup_menu[cid].items[0].enabled = canprop;
-            popup_menu[cid].items[1].enabled = canopen;
 
             // We'll use "isobject" to enable/disable "To Front" and "To Back"
             //isobject;
