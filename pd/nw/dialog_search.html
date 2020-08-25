@@ -7,9 +7,15 @@
     <script type="text/javascript" src="./console_search.js"></script>
     <script>
 "use strict";
-var pdgui = require("./pdgui.js");
-var fs = require("fs");
-var path = require("path");
+
+if (typeof(pdbundle) !== "undefined"){
+    var pdgui = pdbundle.pdgui
+  }else{
+    var pdgui = require("./pdgui.js");
+    var fs = require("fs");
+    var path = require("path");
+}
+
 var l = pdgui.get_local_string;
 
 var index;
@@ -169,7 +175,9 @@ function display_toc() {
         div = document.createElement("div");
 	if (doc.id) {
 	    try {
-		fs.accessSync(path.join(pdgui.get_lib_dir(), doc.id), fs.F_OK);
+        if(!pdgui.is_webapp()){
+            fs.accessSync(path.join(pdgui.get_lib_dir(), doc.id), fs.F_OK);
+        }
 		a = document.createElement("a");
 		a.href = "javascript: click_toc('" + doc.id + "');";
 		a.textContent = doc.title;
@@ -231,7 +239,9 @@ function display_directory_callback(err, files) {
 function display_directory(dir) {
     current_dir = dir;
     clear_results();
-    fs.readdir(dir, display_directory_callback);
+    if(!pdgui.is_webapp()){
+        fs.readdir(dir, display_directory_callback);
+    }
 }
 
 function file_browser_click() {
@@ -406,10 +416,12 @@ function toggle_find_bar() {
 
 function add_events() {
     // closing the Window
-    nw.Window.get().on("close", function() {
-        pdgui.remove_dialogwin("search");
-        nw.Window.get().close(true);
-    });
+    if(!pdgui.is_webapp()){
+        nw.Window.get().on("close", function() {
+            pdgui.remove_dialogwin("search");
+            nw.Window.get().close(true);
+        });
+    }
 
     // Find bar
     var find_bar = document.getElementById("console_find_text");
@@ -460,7 +472,11 @@ function add_events() {
 }
 
 function register_window_id(id, attrs) {
-    var doc_path = path.join(pdgui.get_lib_dir(), "doc");
+    if(!pdgui.is_webapp()){
+        var doc_path = path.join(pdgui.get_lib_dir(), "doc");
+        document.getElementById("file_browser").setAttribute("nwworkingdir",
+        doc_path); // Probably need a doc getter in pdgui
+    }
     translate_form();
     // Translate the placeholder for the search input:
     document.getElementById("search_text").placeholder =
@@ -470,10 +486,10 @@ function register_window_id(id, attrs) {
     document.getElementById("file_browser").accept = filetypes.join(",");
     document.getElementById("results").textContent = l("search.building_index");
     document.getElementById("search_text").disabled = true;
-    document.getElementById("file_browser").setAttribute("nwworkingdir",
-        doc_path); // Probably need a doc getter in pdgui
+
     pdgui.build_index(finish_build);
 }
+window.register_dialog = register_window_id
 
 function display_no_results() {
     document.getElementById("results").textContent = l("search.no_results");

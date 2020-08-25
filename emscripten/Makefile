@@ -16,6 +16,7 @@ EM_PATH = $(PURR_DIR)/emscripten
 LIBPD_PATH = $(PURR_DIR)/libpd
 PD_PATH = $(PURR_DIR)/pd
 BUILD_PATH = $(EM_PATH)/build
+INSTALL_PATH = $(EM_PATH)/project/purr-data
 DESTDIR = $(BUILD_PATH)/purr-data/
 objectsdir = extra/
 WARN_FLAGS = -Wall -W -Wno-unused-parameter
@@ -29,9 +30,9 @@ CXXFLAGS = $(CFLAGS)
 EXTENSION = wasm
 STRIP = echo
 
-.PHONY: all libpd externals extra $(extras) abstractions doc build clean
+.PHONY: all libpd externals extra $(extras) abstractions doc build project clean
 
-all: libpd externals extra abstractions doc build
+all: libpd externals extra abstractions doc build project
 
 libpd: $(LIBPD_PATH)
 	cd $< && mkdir -p build && cd build && emcmake cmake .. -DPD_UTILS:BOOL=OFF -DCMAKE_BUILD_TYPE=Release && emmake make
@@ -62,6 +63,11 @@ doc: $(PD_PATH)/doc
 build: $(BUILD_PATH)
 	rm -rf $(DESTDIR)/lib/
 	make -C $<
+
+project: $(INSTALL_PATH)
+	cp -rf $(PD_PATH)/nw/dialog_*.html $</components/dialogs/
+	cp -rf $(PD_PATH)/nw/css/*.css $</css/
+	cd $< && npm install && npm run-script build && npm start
 	
 clean:
 	find $(PURR_DIR)/externals -name "*.wasm" -type f -delete
