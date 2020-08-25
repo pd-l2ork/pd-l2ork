@@ -829,9 +829,8 @@ var canvas_events = (function() {
                 var container = document.getElementById("container-app");
                 container.addEventListener("scroll", events.window_recalculate, false);
 
-                // 
+                // Add listeners to keyevents
                 document.addEventListener("keydown", events.keydown, false);
-                document.addEventListener("keypress", events.keypress, false);
                 document.addEventListener("keyup", events.keyup, false);
             }else{
                 document.addEventListener("mousemove", events.mousemove, false);
