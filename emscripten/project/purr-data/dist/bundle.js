@@ -8447,7 +8447,7 @@ function pdsend() {
         var array = string.split(" ");
         Module.pd.startMessage(array.length - 2);
         for (let i = 2; i < array.length; i++) {
-          if (isNaN(array[i])) {
+          if ((isNaN(array[i])) || array[i] === "" ) {
             Module.pd.addSymbol(array[i]);
           }
           else {
