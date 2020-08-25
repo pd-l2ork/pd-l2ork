@@ -1307,6 +1307,9 @@ window.register_window_id = function register_window_id(cid, attr_array) {
             menu_options("web-canvas", window, cid);
             add_shortcuts(cid);	
             pdgui.update_focused_windows(cid);
+
+            // Force font size 10
+            pdgui.pdsend(cid, "font", 10, 8, 100,0);
     }
 
 
