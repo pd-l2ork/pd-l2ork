@@ -307,8 +307,13 @@
 
   <script>
 "use strict";
-var gui = require("nw.gui");
-var pdgui = require("./pdgui.js");
+
+if (typeof(pdbundle) !== "undefined"){
+    var pdgui = pdbundle.pdgui
+  }else{
+    var gui = require("nw.gui");
+    var pdgui = require("./pdgui.js");
+}
 
 // For translations
 var l = pdgui.get_local_string;
@@ -607,6 +612,10 @@ function apply() {
 function cancel() {
     var i, attrs, gfxstub;
     //window.close(true);
+    if(pdgui.is_webapp()){
+      remove_dialog(pd_object_callback)
+    }
+
     pdgui.pdsend(pd_object_callback, "cancel");
     for (i = 0; i < pd_garray_attrs.length; i++) {
         attrs = pd_garray_attrs[i];
@@ -703,6 +712,7 @@ function register_window_id(gfxstub, attr_objects) {
     document.getElementsByClassName("container")[0].style.setProperty("display", "inline");
     pdgui.resize_window(pd_object_callback);
 }
+window.register_dialog = register_window_id;
 
 function tr_text(id) {
     var elem = document.getElementById("iem.prop." + id);
@@ -786,10 +796,12 @@ function populate_form(attr_object) {
 
 function add_events(name) {
     // closing the Window
-    gui.Window.get().on("close", function() {
+    if(!pdgui.is_webapp()){
+      gui.Window.get().on("close", function() {
         // this needs to do whatever the "cancel" button does
         cancel();
-    });
+      });
+    }
     pdgui.dialog_bindings(name);
 }
 

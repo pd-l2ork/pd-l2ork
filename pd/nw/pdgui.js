@@ -5,6 +5,24 @@ var lib_dir;
 var help_path, browser_doc, browser_path, browser_init;
 var pd_engine_id;
 
+	
+// Emscripten Module Var
+var Module = undefined;
+
+function init_module(module){
+    Module = module
+}
+exports.init_module = init_module;
+
+function is_webapp(){
+    if(Module === undefined){
+        return false;
+    }
+    return true;
+}
+exports.is_webapp = is_webapp;
+
+
 exports.set_pwd = function(pwd_string) {
     pwd = pwd_string;
 }
@@ -863,51 +881,61 @@ function build_file_dialog_string(obj) {
 exports.build_file_dialog_string = build_file_dialog_string;
 
 function gui_canvas_saveas(name, initfile, initdir, close_flag) {
-    var input, chooser,
-        span = patchwin[name].window.document.querySelector("#saveDialogSpan");
-    if (!fs.existsSync(initdir)) {
-        initdir = pwd;
-    }
     // If we don't have a ".pd" file extension (e.g., "Untitled-1", add one)
     if (initfile.slice(-3) !== ".pd") {
         initfile += ".pd";
     }
-    // This is complicated because of a bug... see build_file_dialog_string
 
-    // NOTE ag: The original code had nwworkingdir set to path.join(initdir,
-    // initfile) which doesn't seem right and in fact does *not* work with the
-    // latest nw.js on Linux at all (dialog comes up without a path under
-    // which to save, "Save" doesn't work until you explicitly select one).
+    if(is_webapp()){
+        var filename = prompt("Please enter file name", initfile);
+        if (filename != null) {
+            saveas_callback(name, filename, close_flag);
+        }
+    }else{
+        var input, chooser,
+        span = patchwin[name].window.document.querySelector("#saveDialogSpan");
+        if (!fs.existsSync(initdir)) {
+            initdir = pwd;
+        }
 
-    // Setting nwsaveas to initfile and nwworkingdir to initdir (as you'd
-    // expect) works for me on Linux, but it seems that specifying an absolute
-    // pathname for nwsaveas is necessary on Windows, and this also works on
-    // Linux. Cf. https://github.com/nwjs/nw.js/issues/3372 (which is still
-    // open at the time of this writing). -ag
-    input = build_file_dialog_string({
-        style: "display: none;",
-        type: "file",
-        id: "saveDialog",
-        // using an absolute path here, see comment above
-        nwsaveas: path.join(initdir, initfile),
-        nwworkingdir: initdir,
-        accept: ".pd"
-    });
-    span.innerHTML = input;
-    chooser = patchwin[name].window.document.querySelector("#saveDialog");
-    chooser.onchange = function() {
-        saveas_callback(name, this.value, close_flag);
-        // reset value so that we can open the same file twice
-        this.value = null;
-        console.log("tried to save something");
+        // This is complicated because of a bug... see build_file_dialog_string
+
+        // NOTE ag: The original code had nwworkingdir set to path.join(initdir,
+        // initfile) which doesn't seem right and in fact does *not* work with the
+        // latest nw.js on Linux at all (dialog comes up without a path under
+        // which to save, "Save" doesn't work until you explicitly select one).
+
+        // Setting nwsaveas to initfile and nwworkingdir to initdir (as you'd
+        // expect) works for me on Linux, but it seems that specifying an absolute
+        // pathname for nwsaveas is necessary on Windows, and this also works on
+        // Linux. Cf. https://github.com/nwjs/nw.js/issues/3372 (which is still
+        // open at the time of this writing). -ag
+        input = build_file_dialog_string({
+            style: "display: none;",
+            type: "file",
+            id: "saveDialog",
+            // using an absolute path here, see comment above
+            nwsaveas: path.join(initdir, initfile),
+            nwworkingdir: initdir,
+            accept: ".pd"
+        });
+        span.innerHTML = input;
+        chooser = patchwin[name].window.document.querySelector("#saveDialog");
+        chooser.onchange = function() {
+            saveas_callback(name, this.value, close_flag);
+            // reset value so that we can open the same file twice
+            this.value = null;
+            console.log("tried to save something");
+        }
+        chooser.click();
     }
-    chooser.click();
 }
 
 function saveas_callback(cid, file, close_flag) {
-    var filename = defunkify_windows_path(file),
-        directory = path.dirname(filename),
-        basename = path.basename(filename);
+    var filename = is_webapp() ? file : defunkify_windows_path(file),
+        directory = is_webapp() ? workspace : path.dirname(filename),
+        basename = is_webapp() ? file : path.basename(filename);
+
     // It probably isn't possible to arrive at the callback with an
     // empty string.  But I've only tested on Debian so far...
     if (filename === null) {
@@ -915,11 +943,17 @@ function saveas_callback(cid, file, close_flag) {
     }
     pdsend(cid, "savetofile", enquote(basename), enquote(directory),
         close_flag);
-    // XXXREVIEW: It seems sensible that we also switch the opendir here. -ag
-    set_pd_opendir(directory);
-    // update the recent files list
-    var norm_path = path.normalize(directory);
-    pdsend("pd add-recent-file", enquote(defunkify_windows_path(path.join(norm_path, basename))));
+
+    if(is_webapp()){
+        update_file_ls();
+    }else{
+        // XXXREVIEW: It seems sensible that we also switch the opendir here. -ag
+        set_pd_opendir(directory);
+        // update the recent files list
+        var norm_path = path.normalize(directory);
+        pdsend("pd add-recent-file", enquote(defunkify_windows_path(path.join(norm_path, basename))));
+    }
+
 }
 
 exports.saveas_callback = saveas_callback;
@@ -931,47 +965,68 @@ function menu_saveas(name) {
 exports.menu_saveas = menu_saveas;
 
 function gui_canvas_print(name, initfile, initdir) {
-    // AG: This works mostly like gui_canvas_saveas above, except that we
-    // create a pdf file and use a different input element and callback.
-    var input, chooser,
-        span = patchwin[name].window.document.querySelector("#printDialogSpan");
-    if (!fs.existsSync(initdir)) {
-        initdir = pwd;
-    }
     // If we don't have a ".pd" file extension (e.g., "Untitled-1", add one)
     if (initfile.slice(-3) !== ".pd") {
         initfile += ".pd";
     }
-    // Adding an "f" now gives .pdf which is what we want.
-    initfile += "f";
-    input = build_file_dialog_string({
-        style: "display: none;",
-        type: "file",
-        id: "printDialog",
-        nwsaveas: path.join(initdir, initfile),
-        nwworkingdir: initdir,
-        accept: ".pdf"
-    });
-    span.innerHTML = input;
-    chooser = patchwin[name].window.document.querySelector("#printDialog");
-    chooser.onchange = function() {
-        print_callback(name, this.value);
-        // reset value so that we can open the same file twice
-        this.value = null;
-        console.log("tried to print something");
+
+    if(is_webapp()){
+        print_callback(name, initfile);
+    }else{
+        // AG: This works mostly like gui_canvas_saveas above, except that we
+        // create a pdf file and use a different input element and callback.
+        var input, chooser,
+            span = patchwin[name].window.document.querySelector("#printDialogSpan");
+        if (!fs.existsSync(initdir)) {
+            initdir = pwd;
+        }
+
+        // Adding an "f" now gives .pdf which is what we want.
+        initfile += "f";
+        input = build_file_dialog_string({
+            style: "display: none;",
+            type: "file",
+            id: "printDialog",
+            nwsaveas: path.join(initdir, initfile),
+            nwworkingdir: initdir,
+            accept: ".pdf"
+        });
+        span.innerHTML = input;
+        chooser = patchwin[name].window.document.querySelector("#printDialog");
+        chooser.onchange = function() {
+            print_callback(name, this.value);
+            // reset value so that we can open the same file twice
+            this.value = null;
+            console.log("tried to print something");
+        }
+        chooser.click();
     }
-    chooser.click();
 }
 
 function print_callback(cid, file) {
-    var filename = defunkify_windows_path(file);
+    var filename = is_webapp() ? file :defunkify_windows_path(file);
     // It probably isn't possible to arrive at the callback with an
     // empty string.  But I've only tested on Debian so far...
     if (filename === null) {
         return;
     }
-    // Let nw.js do the rest (requires nw.js 0.14.6+)
-    patchwin[cid].print({ pdf_path: filename, headerFooterEnabled: false });
+
+    if(is_webapp()){
+        // Prepare window for print
+        var print_win = window.open(); 
+        var print_content = patchwin[cid].window.document.getElementById("patch_div_"+cid).innerHTML;
+        var css = patchwin[cid].window.document.getElementsByTagName('head')[0].innerHTML;    
+        print_win.document.write(css);    
+        print_win.document.write(print_content);
+        print_win.document.title = filename;
+        print_win.document.close();
+        print_win.print();
+        print_win.close();
+    }else{
+        // Let nw.js do the rest (requires nw.js 0.14.6+)
+        patchwin[cid].print({ pdf_path: filename, headerFooterEnabled: false });
+    }
+
     post("printed to: " + filename);
 }
 
@@ -1010,7 +1065,9 @@ function gui_window_close(cid) {
     // may not have finished creating the window yet. So we check to
     // make sure the canvas cid exists...
     gui(cid).get_nw_window(function(nw_win) {
-        nw_close_window(nw_win);
+        if(!is_webapp()){
+            nw_close_window(nw_win);
+        }
     });
     // remove reference to the window from patchwin object
     set_patchwin(cid, null);
@@ -1040,6 +1097,13 @@ function menu_close(name) {
     // not handling the "Window" menu yet
     //pdtk_canvas_checkgeometry $name
     pdsend(name + " menuclose 0");
+
+    if(is_webapp()){
+        window.document.getElementById("patch"+name).remove();
+        delete window.shortkeys[name];
+        add_shortcuts();
+        remove_focused_window(name);
+    }
 }
 
 exports.menu_close = menu_close;
@@ -1136,8 +1200,14 @@ function menu_send(name) {
 
 // requires nw.js API (Menuitem)
 function canvas_set_editmode(cid, state) {
-    gui(cid).get_elem("patchsvg", function(patchsvg, w) {
-        w.set_editmode_checkbox(state !== 0 ? true : false);
+    var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg"
+    gui(cid).get_elem(patchsvg_id, function(patchsvg, w) {
+        if(is_webapp()){
+            patchwin[cid].window.document.getElementById("editmode"+cid).checked = !!state;
+        }else{
+            w.set_editmode_checkbox(state !== 0 ? true : false);
+        }
+        
         if (state !== 0) {
             patchsvg.classList.add("editmode");
         } else {
@@ -1154,7 +1224,11 @@ function gui_canvas_set_editmode(cid, state) {
 
 // requires nw.js API (Menuitem)
 function gui_canvas_set_cordinspector(cid, state) {
-    patchwin[cid].window.set_cord_inspector_checkbox(state !== 0 ? true : false);
+    if(is_webapp()){
+        patchwin[cid].window.document.getElementById("cordinspector"+cid).checked = !!state;
+    }else{
+        patchwin[cid].window.set_cord_inspector_checkbox(state !== 0 ? true : false);
+    }
 }
 
 function canvas_set_scrollbars(cid, scroll) {
@@ -1296,11 +1370,22 @@ function pd_doc_open(dir, basename) {
 
 exports.pd_doc_open = pd_doc_open;
 
+function web_pd_doc_open(dir, basename) {
+    dir = "purr-data/"+ dir;
+    open_patch(basename, dir);    
+}
+exports.web_pd_doc_open = web_pd_doc_open;
+
+
 function external_doc_open(url) {
     nw_open_external_doc(url);
 }
-
 exports.external_doc_open = external_doc_open;
+
+function web_external_doc_open(url) {
+    window.open(url);
+}
+exports.web_external_doc_open = web_external_doc_open;
 
 function gui_set_cwd(dummy, cwd) {
     if (cwd !== ".") {
@@ -1375,7 +1460,9 @@ function gui_startup(version, fontname_from_pd, fontweight_from_pd,
     //    } else {
     //        set oldtclversion 0
     //    }
-    pdsend("pd init", enquote(defunkify_windows_path(pwd)), "0",
+
+    var l_pwd = is_webapp() ? "/" : enquote(defunkify_windows_path(pwd))
+    pdsend("pd init", l_pwd, "0",
         font_fixed_metrics);
 
     //    # add the audio and help menus to the Pd window.  We delayed this
@@ -1454,7 +1541,8 @@ exports.last_loaded = function () {
 // close a canvas window
 
 function gui_canvas_cursor(cid, pd_event_type) {
-    gui(cid).get_elem("patchsvg", function(patch) {
+    var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg";
+    gui(cid).get_elem(patchsvg_id, function(patch) {
         // A quick mapping of events to pointers-- these can
         // be revised later
         var c;
@@ -1533,11 +1621,17 @@ exports.format_window_title = format_window_title;
 // This should be used when a file is saved with the name changed
 // (and maybe in other situations)
 function gui_canvas_set_title(cid, name, args, dir, dirty_flag) {
-    var title = format_window_title(name, dirty_flag, args, dir);
-    if (patchwin[cid]) {
-        patchwin[cid].title = title;
-    } else {
-        title_queue[cid] = title;
+    if(is_webapp()){
+        if (patchwin[cid]) {
+            window.canvas_events.update_filename(cid, name);
+        }        
+    }else{
+        var title = format_window_title(name, dirty_flag, args, dir);
+        if (patchwin[cid]) {
+            patchwin[cid].title = title;
+        } else {
+            title_queue[cid] = title;
+        }
     }
 }
 
@@ -1639,7 +1733,8 @@ function canvas_map(name) {
 }
 
 function gui_canvas_erase_all_gobjs(cid) {
-    gui(cid).get_elem("patchsvg", function(svg_elem) {
+    var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg"
+    gui(cid).get_elem(patchsvg_id, function(svg_elem) {
         var elem;
         while (elem = svg_elem.firstChild) {
             svg_elem.removeChild(elem);
@@ -1879,6 +1974,7 @@ function perfect_parser(data, cbuf, sel_array) {
             }
         }
     };
+exports.perfect_parser = perfect_parser;
 
 function init_socket_events () {
     // A not-quite-FUDI command: selector arg1,arg2,etc. These are
@@ -1906,16 +2002,122 @@ exports.init_socket_events = init_socket_events;
 
 // Send commands to Pd
 function pdsend() {
-    // Using arguments in this way disables V8 optimization for
-    // some reason.  But it doesn't look like it makes that much
-    // of a difference
-    var string = Array.prototype.join.call(arguments, " ");
-    connection.write(string + ";");
-    // reprint the outgoing string to the pdwindow
-    //post(string + ";", "red");
+    if(is_webapp()){
+        var string = Array.prototype.join.call(arguments, " ");
+        var array = string.split(" ");
+        Module.pd.startMessage(array.length - 2);
+        for (let i = 2; i < array.length; i++) {
+          if ((isNaN(array[i])) || array[i] === "" ) {
+            Module.pd.addSymbol(array[i]);
+          }
+          else {
+            Module.pd.addFloat(parseFloat(array[i]));
+          }
+        }
+        Module.pd.finishMessage(array[0], array[1]);
+    }else{
+        // Using arguments in this way disables V8 optimization for
+        // some reason.  But it doesn't look like it makes that much
+        // of a difference
+        var string = Array.prototype.join.call(arguments, " ");
+        connection.write(string + ";");
+        // reprint the outgoing string to the pdwindow
+        //post(string + ";", "red");
+    }
+}
+exports.pdsend = pdsend;
+
+//--------------------- Webapp file sys handler ----------------------------
+var workspace = "/home/web_user/"
+
+function upload_patch(files) {      
+    if (files.length === 0) {
+        console.log("No file is selected");
+        return;
+    }
+
+    for (const file of files){
+        var reader = new FileReader();
+        reader.onload = function () {
+        var data = new Uint8Array(reader.result);
+        Module.FS.createDataFile(workspace, file.name, data, true, true, true);
+        };
+        reader.readAsArrayBuffer(file);
+    }
 }
 
-exports.pdsend = pdsend;
+exports.upload_patch = upload_patch;
+
+function open_patch(file_name, dir) {
+    if (dir === undefined) dir = workspace;
+    Module.pd.openPatch(file_name, dir);
+}
+
+exports.open_patch = open_patch;
+
+function close_patch(file_name) {
+    if (file_name === "") return;
+    Module.pd.closePatch(file_name);
+}
+
+exports.close_patch = close_patch;
+
+function download_patch(file_name) {
+    if (file_name === "") return;
+    var found = false;
+
+    for (const file of Module.FS.readdir(workspace)){
+        if (file_name == file) {
+            found = true;
+        }        
+    }
+    
+    if(found){
+        var content = Module.FS.readFile(workspace+file_name);        
+        var a = document.createElement('a');
+        a.download = file_name;
+        var blob = new Blob(
+            [content],
+            {
+                type: "text/plain;charset=utf-8"
+            }
+        );
+        a.href = URL.createObjectURL(blob);
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(a.href);
+        }, 2000);
+     } else{
+        alert("Please save before download!")
+        return;
+    }
+}
+
+exports.download_patch = download_patch;
+
+function update_file_ls(){
+    var file_ls = window.document.getElementById("file_ls");
+    file_ls.innerHTML = "";
+
+    for (const file of Module.FS.readdir(workspace)){
+        var li = window.document.createElement("li");
+        // Add name of file
+        li.append(file);
+
+        // Add open button
+        var open_btn = window.document.createElement("button");
+        open_btn.className = "fa fa-external-link";
+        open_btn.onclick = function(){open_patch(file)};
+        li.append(open_btn);
+       
+        file_ls.append(li);
+    }
+}
+exports.update_file_ls = update_file_ls;
+
 
 // Send a ping message back to Pd
 function gui_ping() {
@@ -2123,8 +2325,9 @@ exports.gui = gui;
 function gui_gobj_new(cid, tag, type, xpos, ypos, is_toplevel) {
     var g;
     xpos += 0.5,
-    ypos += 0.5,
-    gui(cid).get_elem("patchsvg", function(svg_elem) {
+    ypos += 0.5;
+    var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg";
+    gui(cid).get_elem(patchsvg_id, function(svg_elem) {
         var transform_string = "matrix(1,0,0,1," + xpos + "," + ypos + ")";
         g = create_item(cid, "g", {
             id: tag + "gobj",
@@ -2344,7 +2547,8 @@ function gui_atom_redraw_border(cid, tag, type, width, height) {
 
 // draw a patch cord
 function gui_canvas_line(cid,tag,type,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10) {
-    gui(cid).get_elem("patchsvg")
+    var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg"
+    gui(cid).get_elem(patchsvg_id)
     .append(function(frag) {
         var svg = get_item(cid, "patchsvg"),
         // xoff is for making sure straight lines are crisp.  An SVG stroke
@@ -2651,8 +2855,9 @@ function textentry_displace(t, dx, dy) {
 }
 
 function gui_canvas_displace_withtag(cid, dx, dy) {
+    var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg";
     gui(cid)
-    .get_elem("patchsvg", function(svg_elem, w) {
+    .get_elem(patchsvg_id, function(svg_elem, w) {
         var i, ol;
         ol = w.document.getElementsByClassName("selected");
         for (i = 0; i < ol.length; i++) {
@@ -2665,7 +2870,8 @@ function gui_canvas_displace_withtag(cid, dx, dy) {
 }
 
 function gui_canvas_draw_selection(cid, x1, y1, x2, y2) {
-    gui(cid).get_elem("patchsvg", function(svg_elem) {
+    var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg";
+    gui(cid).get_elem(patchsvg_id, function(svg_elem) {
         var points_array = [x1 + 0.5, y1 + 0.5,
                             x2 + 0.5, y1 + 0.5,
                             x2 + 0.5, y2 + 0.5,
@@ -2812,7 +3018,8 @@ function numbox_data_string(w, h) {
 function gui_numbox_new(cid, tag, color, x, y, w, h, is_toplevel) {
     // numbox doesn't have a standard iemgui border,
     // so we must create its gobj manually
-    gui(cid).get_elem("patchsvg", function() {
+    var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg";
+    gui(cid).get_elem(patchsvg_id, function() {
         var g = gui_gobj_new(cid, tag, "iemgui", x, y, is_toplevel);
         var data = numbox_data_string(w, h);
         var border = create_item(cid, "path", {
@@ -3435,7 +3642,8 @@ function gui_scalar_new(cid, tag, isselected, t1, t2, t3, t4, t5, t6,
     var g;
     // we should probably use gui_gobj_new here, but we"re doing some initial
     // scaling that normal gobjs don't need...
-    gui(cid).get_elem("patchsvg", function(svg_elem) {
+    var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg";
+    gui(cid).get_elem(patchsvg_id, function(svg_elem) {
         var matrix, transform_string, selection_rect;
         matrix = [t1,t2,t3,t4,t5,t6];
         transform_string = "matrix(" + matrix.join() + ")";
@@ -3571,7 +3779,8 @@ function gui_draw_coords(cid, tag, shape, points) {
 // (Attempting to set the event more than once is ignored.)
 function gui_draw_drag_event(cid, tag, scalar_sym, drawcommand_sym,
     event_name, array_sym, index, state) {
-    gui(cid).get_elem("patchsvg", function(svg_elem, w) {
+    var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg";
+    gui(cid).get_elem(patchsvg_id, function(svg_elem, w) {
         if (state === 0) {
             w.canvas_events.remove_scalar_draggable(tag);
         } else {
@@ -3617,7 +3826,8 @@ function gui_draw_configure(cid, tag, attr, val) {
 // the default behavior.
 function gui_draw_viewbox(cid, tag, attr, val) {
     // Value will be an empty array if the user provided no values
-    gui(cid).get_elem("patchsvg", function(svg_elem) {
+    var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg";
+    gui(cid).get_elem(patchsvg_id, function(svg_elem) {
         if (val.length) {
             gui_draw_configure(cid, tag, attr, val)
         } else {
@@ -4198,7 +4408,8 @@ function gui_configure_grid(cid, tag, w, h, bg_color, has_grid, x_l, y_l) {
 }
 
 function gui_grid_new(cid, tag, x, y, is_toplevel) {
-    gui(cid).get_elem("patchsvg", function(svg_elem) {
+    var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg";
+    gui(cid).get_elem(patchsvg_id, function(svg_elem) {
         gui_gobj_new(cid, tag, "obj", x, y, is_toplevel);
     });
     gui(cid).get_gobj(tag)
@@ -4286,7 +4497,8 @@ function gui_pianoroll_erase_innards(cid, tag) {
 // mknob from moonlib
 function gui_mknob_new(cid, tag, x, y, is_toplevel, show_in, show_out,
     is_footils_knob) {
-    gui(cid).get_elem("patchsvg", function(svg_elem) {
+    var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg";
+    gui(cid).get_elem(patchsvg_id, function(svg_elem) {
         gui_gobj_new(cid, tag, "obj", x, y, is_toplevel);
     });
     gui(cid).get_gobj(tag)
@@ -4382,7 +4594,8 @@ function gui_turn_mknob(cid, tag, x1, y1, x2, y2, is_footils_knob, val) {
 
 // room_sim_2d and room_sim_3d objects from iemlib
 function gui_room_sim_new(cid, tag, x, y, w, h, is_toplevel) {
-    gui(cid).get_elem("patchsvg", function(svg_elem) {
+    var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg";
+    gui(cid).get_elem(patchsvg_id, function(svg_elem) {
         gui_gobj_new(cid, tag, "obj", x, y, is_toplevel);
     });
     gui(cid).get_gobj(tag)
@@ -4676,47 +4889,59 @@ function zoom_kludge(zoom_level) {
 function gui_canvas_popup(cid, xpos, ypos, canprop, canopen, isobject) {
     // Get page coords for top of window, in case we're scrolled
     gui(cid).get_nw_window(function(nw_win) {
+        var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg";
         var win_left = nw_win.window.document.body.scrollLeft,
             win_top = nw_win.window.document.body.scrollTop,
             zoom_level = nw_win.zoomLevel, // these were used to work
             zfactor,                       // around an old nw.js popup pos
                                            // bug. Now it's only necessary
                                            // on Windows, which uses v.0.14
-            svg_view_box = nw_win.window.document.getElementById("patchsvg")
+            svg_view_box = nw_win.window.document.getElementById(patchsvg_id)
                 .getAttribute("viewBox").split(" "); // need top-left svg origin
 
-        // Check nw.js version-- if its lts then we need the zoom_kludge...
-        zfactor = process.versions.nw === "0.14.7" ? zoom_kludge(zoom_level) : 1;
         // Set the global popup x/y so they can be retrieved by the relevant
         // document's event handler
         popup_coords[0] = xpos;
         popup_coords[1] = ypos;
-        //popup_coords[0] = xpos;
-        //popup_coords[1] = ypos;
+
         popup_menu[cid].items[0].enabled = canprop;
         popup_menu[cid].items[1].enabled = canopen;
 
-        // We'll use "isobject" to enable/disable "To Front" and "To Back"
-        //isobject;
+        if(is_webapp()){
+            var x_offset = Math.floor(document.getElementById(patchsvg_id).getBoundingClientRect().x);
+            var y_offset = Math.floor(document.getElementById(patchsvg_id).getBoundingClientRect().y);
 
-        // We need to round win_left and win_top because the popup menu
-        // interface expects an int. Otherwise the popup position gets wonky
-        // when you zoom and scroll...
-        xpos = Math.floor(xpos * zfactor) - Math.floor(win_left * zfactor);
-        ypos = Math.floor(ypos * zfactor) - Math.floor(win_top * zfactor);
+            popup_menu[cid].popup(xpos+x_offset, ypos+y_offset);
+        }
+        else{
+            // Check nw.js version-- if its lts then we need the zoom_kludge...
+            zfactor = process.versions.nw === "0.14.7" ? zoom_kludge(zoom_level) : 1;
+            
+            //popup_coords[0] = xpos;
+            //popup_coords[1] = ypos;
 
-        // Now subtract the x and y offset for the top left corner of the svg.
-        // We need to do this because a Pd canvas can have objects with negative
-        // coordinates. Thus the SVG viewbox will have negative values for the
-        // top left corner, and those must be subtracted from xpos/ypos to get
-        // the proper window coordinates.
-        xpos -= Math.floor(svg_view_box[0] * zfactor);
-        ypos -= Math.floor(svg_view_box[1] * zfactor);
+            // We'll use "isobject" to enable/disable "To Front" and "To Back"
+            //isobject;
 
-        popup_coords[2] = xpos + nw_win.x;
-        popup_coords[3] = ypos + nw_win.y;
+            // We need to round win_left and win_top because the popup menu
+            // interface expects an int. Otherwise the popup position gets wonky
+            // when you zoom and scroll...
+            xpos = Math.floor(xpos * zfactor) - Math.floor(win_left * zfactor);
+            ypos = Math.floor(ypos * zfactor) - Math.floor(win_top * zfactor);
 
-        popup_menu[cid].popup(xpos, ypos);
+            // Now subtract the x and y offset for the top left corner of the svg.
+            // We need to do this because a Pd canvas can have objects with negative
+            // coordinates. Thus the SVG viewbox will have negative values for the
+            // top left corner, and those must be subtracted from xpos/ypos to get
+            // the proper window coordinates.
+            xpos -= Math.floor(svg_view_box[0] * zfactor);
+            ypos -= Math.floor(svg_view_box[1] * zfactor);
+
+            popup_coords[2] = xpos + nw_win.x;
+            popup_coords[3] = ypos + nw_win.y;
+
+            popup_menu[cid].popup(xpos, ypos);
+        }
     });
 }
 
@@ -4782,7 +5007,8 @@ function gui_graph_label(cid, tag, font_size, font_height, is_selected,
             narrays = array_of_attr_arrays.length;
         // a.label for the label
         // a.color for the color
-        gui(cid).get_elem("patchsvg", function(elem) {
+        var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg";
+        gui(cid).get_elem(patchsvg_id, function(elem) {
             var x, y;
             if (!!legacy_mode) { // Pd Vanilla labels go above the box
                 y = -font_height * (narrays - (i + 1)) - 1;
@@ -4911,7 +5137,8 @@ function gui_graph_tick_label(cid, tag, x, y, text, font, font_size, font_weight
 }
 
 function gui_canvas_drawredrect(cid, x1, y1, x2, y2) {
-    gui(cid).get_elem("patchsvg", function(svg_elem) {
+    var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg";
+    gui(cid).get_elem(patchsvg_id, function(svg_elem) {
         var g = gui_gobj_new(cid, cid, "gop_rect", x1, y1, 1);
         var r = create_item(cid, "rect", {
             width: x2 - x1,
@@ -5014,43 +5241,79 @@ function gui_cord_inspector_flash(cid, state) {
 
 // Window functions
 
+// Webapp window functions
+var focused_windows = [];
+
+function update_focused_windows(cid){
+    focused_windows.push(cid);
+}
+exports.update_focused_windows = update_focused_windows;
+
+function remove_focused_window(cid){
+    var index = focused_windows.indexOf(cid);
+    if(index !== -1){
+        focused_windows.splice(index, 1);
+    }    
+}
+
 function gui_raise_window(cid) {
     // Check if the window exists, for edge cases like
     // [vis 1, vis1(---[send this_canvas]
-    gui(cid).get_nw_window(function(nw_win) {
-        nw_win.focus();
-    });
+
+    if(is_webapp()){
+        $("#patch"+cid).effect("shake");
+    }else{
+        gui(cid).get_nw_window(function(nw_win) {
+            nw_win.focus();
+        });
+    }
+
 }
 
 // Unfortunately DOM window.focus doesn't actually focus the window, so we
 // have to use the chrome API
 function gui_raise_pd_window() {
-    chrome.windows.getAll(function (w_array) {
-        chrome.windows.update(w_array[0].id, { focused: true });
-    });
+    if(is_webapp()){
+        $("#console-window").effect("shake");
+    }else{
+        chrome.windows.getAll(function (w_array) {
+            chrome.windows.update(w_array[0].id, { focused: true });
+        });
+    }
+
 }
 
 // Using the chrome app API, because nw.js doesn't seem
 // to let me get a list of the Windows
 function walk_window_list(cid, offset) {
-    chrome.windows.getAll(function (w_array) {
-        chrome.windows.getLastFocused(function (w) {
-            var i, next, match = -1;
-            for (i = 0; i < w_array.length; i++) {
-                if (w_array[i].id === w.id) {
-                    match = i;
-                    break;
+    if(is_webapp()){
+        var current_index = focused_windows.indexOf(cid)
+        var last_focused = focused_windows[current_index+offset];
+    
+        if(last_focused !== undefined){
+            $("#patch"+last_focused).effect("shake");
+        }
+
+    }else{
+        chrome.windows.getAll(function (w_array) {
+            chrome.windows.getLastFocused(function (w) {
+                var i, next, match = -1;
+                for (i = 0; i < w_array.length; i++) {
+                    if (w_array[i].id === w.id) {
+                        match = i;
+                        break;
+                    }
                 }
-            }
-            if (match !== -1) {
-                next = (((match + offset) % w_array.length) // modulo...
-                        + w_array.length) % w_array.length; // handle negatives
-                chrome.windows.update(w_array[next].id, { focused: true });
-            } else {
-                post("error: cannot find last focused window.");
-            }
-        });
-    })
+                if (match !== -1) {
+                    next = (((match + offset) % w_array.length) // modulo...
+                            + w_array.length) % w_array.length; // handle negatives
+                    chrome.windows.update(w_array[next].id, { focused: true });
+                } else {
+                    post("error: cannot find last focused window.");
+                }
+            });
+        })
+    }
 }
 
 function raise_next(cid) {
@@ -5154,9 +5417,14 @@ function attr_array_to_object(attr_array) {
 }
 
 function gui_gatom_dialog(did, attr_array) {
-    dialogwin[did] = create_window(did, "gatom", 265, 300,
+    var d_tmp = create_window(did, "gatom", 265, 300,
         popup_coords[2], popup_coords[3],
         attr_array_to_object(attr_array));
+
+    if(!is_webapp()){
+        dialogwin[did] = d_tmp;
+    }
+
 }
 
 function gui_gatom_activate(cid, tag, state) {
@@ -5171,9 +5439,13 @@ function gui_gatom_activate(cid, tag, state) {
 
 function gui_dropdown_dialog(did, attr_array) {
     // Just reuse the "gatom" dialog
-    dialogwin[did] = create_window(did, "gatom", 265, 300,
+    var d_tmp = create_window(did, "gatom", 265, 300,
         popup_coords[2], popup_coords[3],
         attr_array_to_object(attr_array));
+
+    if(!is_webapp()){
+        dialogwin[did] = d_tmp;
+    }
 }
 
 function dropdown_populate(w, label_array, current_index) {
@@ -5201,7 +5473,8 @@ function gui_dropdown_activate(cid, obj_tag, tag, current_index, font_size, stat
         offset_anchor; // top or bottom
     // Annoying: obj_tag is just the "x"-prepended hex value for the object,
     // and tag is the one from rtext_gettag that is used as our gobj id
-    gui(cid).get_elem("patchsvg", function(svg_elem, w) {
+    var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg";
+    gui(cid).get_elem(patchsvg_id, function(svg_elem, w) {
         g = get_gobj(cid, tag);
         if (state !== 0) {
             svg_view = svg_elem.viewBox.baseVal;
@@ -5298,8 +5571,12 @@ function gui_array_new(did, count) {
         array_outline: "black",
         array_in_existing_graph: 0
     }];
-    dialogwin[did] = create_window(did, "canvas", 265, 340, 20, 20,
+    var d_tmp = create_window(did, "canvas", 265, 340, 20, 20,
         attr_array);
+    
+    if(!is_webapp()){
+        dialogwin[did] = d_tmp;
+    }
 }
 
 function gui_canvas_dialog(did, attr_arrays) {
@@ -5313,15 +5590,23 @@ function gui_canvas_dialog(did, attr_arrays) {
             }
         }
     }
-    dialogwin[did] = create_window(did, "canvas", 300, 100,
+    var d_tmp = create_window(did, "canvas", 300, 100,
         popup_coords[2], popup_coords[3],
         attr_arrays);
+
+    if(!is_webapp()){
+        dialogwin[did] = d_tmp;
+    }
 }
 
 function gui_data_dialog(did, data_string) {
-    dialogwin[did] = create_window(did, "data", 250, 300,
+    var d_tmp = create_window(did, "data", 250, 300,
         popup_coords[2], popup_coords[3],
         data_string);
+
+    if(!is_webapp()){
+        dialogwin[did] = d_tmp;
+    }
 }
 
 function gui_text_dialog_clear(did) {
@@ -5343,13 +5628,19 @@ function gui_text_dialog_set_dirty(did, state) {
 }
 
 function gui_text_dialog(did, width, height, font_size) {
-    dialogwin[did] = create_window(did, "text", width, height,
+    var d_tmp = create_window(did, "text", width, height,
         popup_coords[2], popup_coords[3],
         font_size);
+    
+    if(!is_webapp()){
+        dialogwin[did] = d_tmp;
+    }
 }
 
 function dialog_raise(did) {
-    dialogwin[did].focus();
+    if(!is_webapp()){
+        dialogwin[did].focus();
+    }
 }
 
 function gui_text_dialog_raise(did) {
@@ -5366,15 +5657,21 @@ function gui_text_dialog_close_from_pd(did, signoff) {
 
 function gui_remove_gfxstub(did) {
     if (dialogwin[did] !== undefined && dialogwin[did] !== null) {
-        dialogwin[did].close(true);
+        if(!is_webapp()){
+            dialogwin[did].close(true);
+        }
         dialogwin[did] = null;
     }
 }
 
 function gui_font_dialog(cid, gfxstub, font_size) {
     var attrs = { canvas: cid, font_size: font_size };
-    dialogwin[gfxstub] = create_window(gfxstub, "font", 265, 200, 0, 0,
+    var d_tmp = create_window(gfxstub, "font", 265, 200, 0, 0,
         attrs);
+
+    if(!is_webapp()){
+        dialogwin[did] = d_tmp;
+    }
 }
 
 function gui_external_dialog(did, external_name, attr_array) {
@@ -5481,10 +5778,14 @@ function gui_audio_properties(gfxstub, sys_indevs, sys_outdevs,
     //    post("arg " + i + " is " + arguments[i]);
     //}
     if (dialogwin["prefs"] !== null) {
-        dialogwin["prefs"].eval(null,
-            "audio_prefs_callback("  +
-            JSON.stringify(attrs) + ");"
-        );
+        if(is_webapp()){
+            dialogwin["prefs"].window.audio_prefs_callback(attrs);
+        }else{
+            dialogwin["prefs"].eval(null,
+                "audio_prefs_callback("  +
+                JSON.stringify(attrs) + ");"
+            );
+        }
     }
 }
 
@@ -5502,10 +5803,14 @@ function gui_midi_properties(gfxstub, sys_indevs, sys_outdevs,
     //    post("arg " + i + " is " + arguments[i]);
     //}
     if (dialogwin["prefs"] !== null) {
-        dialogwin["prefs"].eval(null,
-            "midi_prefs_callback("  +
-            JSON.stringify(attrs) + ");"
-        );
+        if(is_webapp()){
+            dialogwin["prefs"].window.midi_prefs_callback(attrs);
+        }else{
+            dialogwin["prefs"].eval(null,
+                "midi_prefs_callback("  +
+                JSON.stringify(attrs) + ");"
+            );
+        }
     }
 }
 
@@ -5678,7 +5983,8 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         configure_item(p, {
             id: "new_object_textentry"
         });
-        svg_view = patchwin[cid].window.document.getElementById("patchsvg")
+        var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg";
+        svg_view = patchwin[cid].window.document.getElementById(patchsvg_id)
             .viewBox.baseVal;
         p.classList.add(type);
         p.contentEditable = "true";
@@ -5706,7 +6012,16 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         text = text.trim();
         p.textContent = text;
         // append to doc body
-        patchwin[cid].window.document.body.appendChild(p);
+        if(is_webapp()){
+	        var svg = patchwin[cid].window.document.getElementById("patch_div_"+cid);	
+	        var div_p = patchwin[cid].window.document.createElement("div");
+	        div_p.id = "div-svg-p";	
+	        div_p.append(p)	
+	        svg.prepend(div_p);
+        }else{
+            patchwin[cid].window.document.body.appendChild(p);
+        }
+
         p.focus();
         select_text(cid, p);
         if (state === 1) {
@@ -5726,6 +6041,11 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         } else {
             patchwin[cid].window.canvas_events.normal();
         }
+
+        if(is_webapp()){
+            var div_p = patchwin[cid].window.document.getElementById("div-svg-p");
+            div_p.parentNode.removeChild(div_p);
+        }
     }
 }
 
@@ -5737,18 +6057,21 @@ function gui_undo_menu(cid, undo_text, redo_text) {
     // been destroyed.
     gui(cid).get_nw_window(function(nw_win) {
         if (cid !== "nobody") {
-            nw_win.window.nw_undo_menu(undo_text, redo_text);
+            if(!is_webapp()){
+                nw_win.window.nw_undo_menu(undo_text, redo_text);
+            }
         }
     });
 }
 
 // leverages the get_nw_window method in the callers...
-function canvas_params(nw_win)
+function canvas_params(nw_win, cid)
 {
     // calculate the canvas parameters (svg bounding box and window geometry)
     // for do_getscroll and do_optimalzoom
     var bbox, width, height, min_width, min_height, x, y, svg_elem;
-    svg_elem = nw_win.window.document.getElementById("patchsvg");
+    var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg";
+    svg_elem = nw_win.window.document.getElementById(patchsvg_id);
     bbox = svg_elem.getBBox();
     // We try to do Pd-extended style canvas origins. That is, coord (0, 0)
     // should be in the top-left corner unless there are objects with a
@@ -5774,8 +6097,13 @@ function canvas_params(nw_win)
     // the scrollbars from appearing. Here, we just subtract 4 from both
     // of them. This could lead to some problems with event handlers but I
     // haven't had a problem with it yet.
-    min_width = nw_win.window.innerWidth - 4;
-    min_height = nw_win.window.innerHeight - 4;
+    if(is_webapp()){
+        min_width = document.getElementById(patchsvg_id).getBoundingClientRect().width;	
+	    min_height = document.getElementById(patchsvg_id).getBoundingClientRect().height;
+    }else{
+        min_width = nw_win.window.innerWidth - 4;
+        min_height = nw_win.window.innerHeight - 4;    
+    }
     // Since we don't do any transformations on the patchsvg,
     // let's try just using ints for the height/width/viewBox
     // to keep things simple.
@@ -5798,9 +6126,10 @@ function do_getscroll(cid) {
     // needs to be rethought, but in the meantime this should prevent any
     // errors wrt the rendering context disappearing.
     gui(cid).get_nw_window(function(nw_win) {
-        var svg_elem = nw_win.window.document.getElementById("patchsvg");
+        var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg";
+        var svg_elem = nw_win.window.document.getElementById(patchsvg_id);
         var { x: x, y: y, w: width, h: height,
-            mw: min_width, mh: min_height } = canvas_params(nw_win);
+            mw: min_width, mh: min_height } = canvas_params(nw_win, cid);
         if (width < min_width) {
             width = min_width;
         }
@@ -5850,7 +6179,7 @@ function do_optimalzoom(cid, hflag, vflag) {
     // the window
     gui(cid).get_nw_window(function(nw_win) {
         var { x: x, y: y, w: width, h: height, mw: min_width, mh: min_height } =
-            canvas_params(nw_win);
+            canvas_params(nw_win, cid);
         // Calculate the optimal horizontal and vertical zoom values,
         // using floor to always round down to the nearest integer. Note
         // that these may well be negative, if the viewport is too small
@@ -5896,7 +6225,8 @@ exports.gui_canvas_optimal_zoom = gui_canvas_optimal_zoom;
 
 // handling the selection
 function gui_lower(cid, tag) {
-    gui(cid).get_elem("patchsvg", function(svg_elem) {
+    var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg";
+    gui(cid).get_elem(patchsvg_id, function(svg_elem) {
         var first_child = svg_elem.firstElementChild,
         selection = null,
         gobj,
@@ -5924,7 +6254,8 @@ function gui_lower(cid, tag) {
 // all three of these should be combined into a single function (plus
 // all the silly logic on the C side moved here
 function gui_raise(cid, tag) {
-    gui(cid).get_elem("patchsvg", function(svg_elem) {
+    var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg";
+    gui(cid).get_elem(patchsvg_id, function(svg_elem) {
         var first_child = svg_elem.querySelector(".cord"),
         selection = null,
         gobj,
@@ -5949,7 +6280,8 @@ function gui_raise(cid, tag) {
 
 function gui_find_lowest_and_arrange(cid, reference_element_tag, objtag) {
     gui(cid).get_gobj(reference_element_tag, function(ref_elem, w) {
-        var svg_elem = w.document.getElementById("patchsvg"),
+        var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg";
+        var svg_elem = w.document.getElementById(patchsvg_id),
         selection = null,
         gobj,
         len,

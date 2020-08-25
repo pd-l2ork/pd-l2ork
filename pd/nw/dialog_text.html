@@ -42,8 +42,13 @@
     </dialog>
   <script>
 "use strict";
-var gui = require("nw.gui");
-var pdgui = require("./pdgui.js");
+
+if (typeof(pdbundle) !== "undefined"){
+    var pdgui = pdbundle.pdgui
+  }else{
+    var gui = require("nw.gui");
+    var pdgui = require("./pdgui.js");
+}
 
 // For translations
 var l = pdgui.get_local_string;
@@ -68,6 +73,9 @@ function apply() {
 
 function cancel() {
     //window.close(true);
+    if(pdgui.is_webapp()){
+        remove_dialog(pd_object_callback)
+    }
     close_window();
 }
 
@@ -83,13 +91,17 @@ function close_modal_dialog() {
 }
 
 function textarea_clear() {
+  if(document.getElementById("text") !== null){
     document.getElementById("text").value = "";
     dirty = true;
+  }
 }
 
 function textarea_append(line) {
+  if(document.getElementById("text")){
     document.getElementById("text").value += line;
     dirty = true;
+  }
 }
 
 function set_dirty(state) {
@@ -120,6 +132,7 @@ function register_window_id(gfxstub, text_string) {
     document.getElementsByClassName("container")[0]
         .style.setProperty("display", "inline");
 }
+window.register_dialog = register_window_id;
 
 // Stop-gap translator
 function translate_form() {
@@ -147,23 +160,27 @@ function close_from_pd(signoff) {
         pdgui.pdsend(pd_object_callback, "signoff");
     }
     pdgui.remove_dialogwin(pd_object_callback);
-    gui.Window.get().close(true);
+    if(!pdgui.is_webapp()){
+        gui.Window.get().close(true);
+    }
 }
 
 function add_events(name) {
     // closing the Window
-    gui.Window.get().on("close", function () {
-        // this needs to do whatever the "cancel" button does
-        //pdgui.pdsend(name, "menuclose 0");
-        //cancel();
-        // blur the textarea to trigger an onchange if it was modified
-        document.getElementById("text").blur();
-        if (dirty) {
-            document.getElementById("save_before_quit").showModal();
-        } else {
-            close_window();
-        }
-    });
+    if(!pdgui.is_webapp()){
+        gui.Window.get().on("close", function () {
+            // this needs to do whatever the "cancel" button does
+            //pdgui.pdsend(name, "menuclose 0");
+            //cancel();
+            // blur the textarea to trigger an onchange if it was modified
+            document.getElementById("text").blur();
+            if (dirty) {
+                document.getElementById("save_before_quit").showModal();
+            } else {
+                close_window();
+            }
+        });
+    }
     document.getElementById("text").onchange = function() {
         dirty = true;
     }

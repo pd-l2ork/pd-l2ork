@@ -68,4 +68,68 @@ exports.menu = {
   "audio_off": { key: ".", modifiers: cmd_or_ctrl },
   "audio_off": { key: ".", modifiers: cmd_or_ctrl },
   "audio_off": { key: ".", modifiers: cmd_or_ctrl },
+
+
+  // Webapp shortcuts
+  "new_web":   { key: "n", modifiers: cmd_or_ctrl + "+alt"},
+  "open_web":   { key: "o", modifiers: cmd_or_ctrl + "+alt"},
+  "save_web":   { key: "s", modifiers: cmd_or_ctrl + "+alt" },
+  "saveas_web": { key: "s", modifiers: cmd_or_ctrl + "+shift" },
+  "print_web":  { key: "p", modifiers: cmd_or_ctrl + "+alt" },
+  "message_web" : { key: "m", modifiers: cmd_or_ctrl + "+alt"},
+  "close_web":  { key: "w", modifiers: cmd_or_ctrl + "+alt" },
+
+  "undo_web":   { key: "z", modifiers: cmd_or_ctrl + "+alt" },
+  "redo_web":   { key: "z", modifiers: cmd_or_ctrl + "+shift+alt" },
+  "selectall_web":{ key: "q", modifiers: cmd_or_ctrl + "+shift"},
+  "cut_web":    { key: "x", modifiers: cmd_or_ctrl + "+shift" },
+  "copy_web":   { key: "c", modifiers: cmd_or_ctrl + "+alt"},
+  "paste_web":  { key: "v", modifiers: cmd_or_ctrl + "+alt" },
+  "paste_clipboard_web": { key: "g", modifiers: cmd_or_ctrl + "+shift+alt" },
+  "duplicate_web": { key: "d", modifiers: cmd_or_ctrl + "+alt" },
+
+  "reselect_web": { key: "q", modifiers: cmd_or_ctrl + "+shift+alt" },
+  "clear_console_web": { key: "l", modifiers: cmd_or_ctrl + "+shift+alt" },
+  "tidyup_web": { key: "y", modifiers: cmd_or_ctrl + "+alt" },
+  "cordinspector_web":   { key: "r", modifiers: cmd_or_ctrl + "+shift+alt" },
+  "find_web":   { key: "f", modifiers: cmd_or_ctrl + "+alt"},
+  "findagain_web":{ key: "f", modifiers: cmd_or_ctrl + "+shift+alt"},
+  "editmode_web": { key: "e", modifiers: cmd_or_ctrl + "+shift+alt" },
+  "preferences_web": { key: (process.platform === "darwin") ? "," : "p",
+    modifiers: cmd_or_ctrl },
+
+  "zoomin_web": { key: "=", modifiers: cmd_or_ctrl },
+  "zoomout_web": { key: "-", modifiers: cmd_or_ctrl },
+  "zoomreset_web": { key: "0", modifiers: cmd_or_ctrl },
+  "zoomoptimal_web": { key: "9", modifiers: cmd_or_ctrl },
+  "zoomhoriz_web": { key: "9", modifiers: cmd_or_ctrl + "+alt" },
+  "zoomvert_web": { key: "9", modifiers: cmd_or_ctrl + "+shift" },
+  "fullscreen_web": { key: (process.platform === "darwin") ? "f" : "F11",
+    modifiers: (process.platform === "darwin") ? "cmd+ctrl" : null },
+
+  "object_web": { key: "1", modifiers: cmd_or_ctrl + "+alt" },
+  "msgbox_web": { key: "2", modifiers: cmd_or_ctrl + "+alt" },
+  "number_web": { key: "3", modifiers: cmd_or_ctrl + "+alt" },
+  "symbol_web": { key: "4", modifiers: cmd_or_ctrl + "+alt" },
+  "comment_web": { key: "5", modifiers: cmd_or_ctrl + "+alt" },
+  "dropdown_web": { key: "m", modifiers: cmd_or_ctrl + "+shift+alt" },
+  "bang_web": { key: "b", modifiers: cmd_or_ctrl + "+shift+alt" },
+  "toggle_web": { key: "t", modifiers: cmd_or_ctrl + "+shift+alt" },
+  "number2_web": { key: "n", modifiers: cmd_or_ctrl + "+shift+alt" },
+  "vslider_web": { key: "v", modifiers: cmd_or_ctrl + "+shift+alt" },
+  "hslider_web": { key: "h", modifiers: cmd_or_ctrl + "+shift+alt" },
+  "vradio_web": { key: "d", modifiers: cmd_or_ctrl + "+shift+alt" },
+  "hradio_web": { key: "i", modifiers: cmd_or_ctrl + "+shift+alt" },
+  "vu_web":     { key: "u", modifiers: cmd_or_ctrl + "+shift+alt" },
+  "cnv_web": { key: "c", modifiers: cmd_or_ctrl + "+shift+alt" },
+
+  "nextwin_web": { key: "PageDown", modifiers: cmd_or_ctrl + "+alt"},
+  "prevwin_web": { key: "PageUp", modifiers: cmd_or_ctrl + "+alt"},
+  "pdwin_web": { key: "r", modifiers: cmd_or_ctrl },
+
+  "audio_on_web": { key: "/", modifiers: cmd_or_ctrl + "+alt"},
+  "audio_off_web": { key: ".", modifiers: cmd_or_ctrl + "+alt"},
+
+  "browser_web": { key: "b", modifiers: cmd_or_ctrl + "+alt" },
+
 }
