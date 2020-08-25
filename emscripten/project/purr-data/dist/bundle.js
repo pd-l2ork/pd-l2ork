@@ -12480,6 +12480,11 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         } else {
             patchwin[cid].window.canvas_events.normal();
         }
+
+        if(is_webapp()){
+            var div_p = patchwin[cid].window.document.getElementById("div-svg-p");
+            div_p.parentNode.removeChild(div_p);
+        }
     }
 }
 
