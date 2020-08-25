@@ -114,6 +114,9 @@
 				}
 				var pd = Module.pd;
 				pd.setNoGui(false); // set to true if you don't use the pd's gui
+				// initializing webapp
+				initialize_webapp()
+
 
 				// create an AudioContext
 				var isWebAudioSupported = false;
@@ -519,13 +522,6 @@
 
 	<script src="libs/bootstrap/bootstrap.4.5.0.min.js"></script>
 
-	<script>
-		// Add menu html file
-		$.get("./components/menu/menu.html", function (data) {
-			$("#menu").prepend(data)
-		});
-
-	</script>
 </body>
 
 </html>

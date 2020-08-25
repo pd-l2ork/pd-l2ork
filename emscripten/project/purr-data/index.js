@@ -107,10 +107,19 @@ function create_window(cid, type, width, height, xpos, ypos, attr_array) {
     });
 }
 
+function add_menu(){
+    // Add menu html file
+    $.get("./components/menu/menu.html", function (data) {
+        $("#menu").prepend(data)
+        create_pd_window_menus(null, window)
+    });
+}
+
 function create_pd_window_menus(gui, w) {
     var type = "web";
     var m = menu_options(type, w);
-
+    add_shortcuts();
+    load_menu_actions();
 }
 
 // Init Function
@@ -122,11 +131,11 @@ function gui_init(win){
     pdbundle.pdgui.set_pd_window(win);
     pdbundle.pdgui.init_module(Module);
     pdbundle.pdgui.set_new_window_fn(create_window);
-    create_pd_window_menus(null, window)
-    add_shortcuts();
+    add_menu()
 }
 
-window.onload = function() {
+
+
+function initialize_webapp() {
     gui_init(window);
-    load_menu_actions();
 };
