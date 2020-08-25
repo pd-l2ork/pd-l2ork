@@ -1385,7 +1385,6 @@ class Popup {
 
     popup(xpos, ypos) {
         for(var item of this.items){
-            console.log("utem", item);
             if(item.enabled == 0){
                 item.item.classList.add("popup-disabled");
                 item.item.onclick = function(){};
