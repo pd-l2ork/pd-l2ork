@@ -1,6 +1,3 @@
-// Define perfect parser
-function perfect_parser (){}
-
 // Defining create window
 function create_window(cid, type, width, height, xpos, ypos, attr_array) {
     // todo: make a separate way to format the title for OSX
@@ -124,17 +121,12 @@ function create_pd_window_menus(gui, w) {
 
 // Init Function
 function gui_init(win){
-    // Redefine perfect_parser
-    perfect_parser = pdbundle.pdgui.perfect_parser;
-
     // Init vars
     pdbundle.pdgui.set_pd_window(win);
     pdbundle.pdgui.init_module(Module);
     pdbundle.pdgui.set_new_window_fn(create_window);
     add_menu()
 }
-
-
 
 function initialize_webapp() {
     gui_init(window);
