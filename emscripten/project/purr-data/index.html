@@ -108,6 +108,7 @@
 			, mainInit: function () { // called after Module is ready
 				Module.pd = new Module.Pd(); // instantiate Pd object
 				if (typeof Module.pd != "object") {
+					alert("Pd: failed to instantiate pd object");
 					console.error("Pd: failed to instantiate pd object");
 					Module.mainExit();
 					return;
@@ -144,7 +145,8 @@
 				// check if the web midi library exists and is supported
 				var isWebMidiSupported = false;
 				if (typeof WebMidi != "object") {
-					console.error("failed to find the 'WebMidi' object");
+					alert("Midi: failed to find the 'WebMidi' object");
+					console.error("Midi: failed to find the 'WebMidi' object");
 					Module.mainExit();
 					return;
 				}
@@ -161,6 +163,7 @@
 				WebMidi.enable(function (err) {
 					if (err) {
 						// if the browser doesn't support web midi, one can still use pd without it
+						alert("The Web MIDI API is not supported in this browser.\nPlease check: https://github.com/djipco/webmidi#browser-support");
 						console.error("Midi: failed to enable midi", err);
 					}
 					else {
@@ -216,6 +219,7 @@
 					}
 					else {
 						// failed to reinit pd
+						alert("Pd: failed to reinitialize pd");
 						console.error("Pd: failed to reinitialize pd");
 						Module.mainExit();
 					}
@@ -451,6 +455,7 @@
 					}
 				}
 				else { // failed to init pd
+					alert("Pd: failed to initialize pd");
 					console.error("Pd: failed to initialize pd");
 					Module.mainExit();
 				}
