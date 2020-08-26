@@ -62,6 +62,7 @@ var canvas_events = (function() {
         canvas_div_y = 0,	
         canvas_div_scroll_left = 0,	
         canvas_div_scroll_top = 0,
+        clicking = false,
         textbox = function () {
             return document.getElementById("new_object_textentry");
         },
@@ -259,9 +260,16 @@ var canvas_events = (function() {
             },	
             mouseenter: function(evt) {	
                 if(pdgui.is_webapp()){
+ 
                     var id = evt.srcElement.id	
                     var n = id.split('_');	
-                    name = n[n.length -1]	
+
+                    // Check if mousedown it's entering another canvas
+                    if((clicking) && (name != n[n.length -1])){
+                        events.mouseup(evt);
+                    }
+
+                    name = n[n.length -1];	
                     canvas_div_x = canvas_divs[name].canvas_div_x;	
                     canvas_div_y = canvas_divs[name].canvas_div_y;	
                     filename = canvas_divs[name].filename;	
@@ -275,6 +283,13 @@ var canvas_events = (function() {
         
                     return false;
                 }	
+            },
+            mouseleave: function(evt){
+                if(pdgui.is_webapp()){
+                    if(clicking){
+                        document.addEventListener("mouseup", events.mouseup, false);
+                    }
+                }
             },
             mousemove: function(evt) {
                 //pdgui.post("x: " + evt.pageX + " y: " + evt.pageY +
@@ -300,6 +315,7 @@ var canvas_events = (function() {
             },
             mousedown: function(evt) {
                 if(pdgui.is_webapp()){
+                    clicking = true;
                     var popup = document.getElementById("popup");
                     if(popup){
                         popup.parentNode.removeChild(popup);
@@ -821,7 +837,8 @@ var canvas_events = (function() {
 	                    canvas_events.none(div_name);	
 	                    div.canvas_div.addEventListener("scroll", events.onscroll, false);	
 	                    div.canvas_div.addEventListener("mouseenter", events.mouseenter, false);	
-	                    div.canvas_div.addEventListener("mousemove", events.mousemove, false);	
+	                    div.canvas_div.addEventListener("mouseleave", events.mouseleave, false);
+                        div.canvas_div.addEventListener("mousemove", events.mousemove, false);	
 	                    div.canvas_div.addEventListener("keydown", events.keydown, false);	
 	                    div.canvas_div.addEventListener("keypress", events.keypress, false);	
 	                    div.canvas_div.addEventListener("keyup", events.keyup, false);	
@@ -1305,7 +1322,7 @@ function translate_form() {
 // This gets called from the nw_create_window function in index.html
 // It provides us with our canvas id from the C side.  Once we have it
 // we can create the menu and register event callbacks
-window.register_canvas = function register_window_id(cid, attr_array) {
+function register_window_id(cid, attr_array) {
     if(pdgui.is_webapp()){
             // Add menu text	
             menu_options("web-canvas", window, cid);
@@ -1367,6 +1384,7 @@ window.register_canvas = function register_window_id(cid, attr_array) {
     }
     pdgui.free_title_queue(cid);
 }
+window.register_canvas = register_window_id;
 
 class Popup {
     constructor(){

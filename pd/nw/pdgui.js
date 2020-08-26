@@ -5670,7 +5670,7 @@ function gui_font_dialog(cid, gfxstub, font_size) {
         attrs);
 
     if(!is_webapp()){
-        dialogwin[did] = d_tmp;
+        dialogwin[gfxstub] = d_tmp;
     }
 }
 
