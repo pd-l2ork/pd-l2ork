@@ -1304,7 +1304,7 @@ function translate_form() {
 // This gets called from the nw_create_window function in index.html
 // It provides us with our canvas id from the C side.  Once we have it
 // we can create the menu and register event callbacks
-window.register_window_id = function register_window_id(cid, attr_array) {
+window.register_canvas = function register_window_id(cid, attr_array) {
     if(pdgui.is_webapp()){
             // Add menu text	
             menu_options("web-canvas", window, cid);

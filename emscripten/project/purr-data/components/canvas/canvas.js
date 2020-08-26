@@ -1,6 +1,6 @@
 "use strict";
 
-window.register_canvas = function(cid){
+window.update_canvas_id = function(cid){
     // Update patch id
     var patch = document.getElementById("patch")
     patch.id = patch.id + cid;

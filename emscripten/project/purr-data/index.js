@@ -37,10 +37,8 @@ function create_window(cid, type, width, height, xpos, ypos, attr_array) {
             // Add canvas html file
 			$.get("./components/canvas/"+f, function(data){
                  $("#canvas-container").append(data)
-                 register_canvas(cid, eval_string);
-
-                 // initialize the window
-                new_win.window.eval(eval_string);
+                 update_canvas_id(cid);
+                 register_canvas(cid, attr_array);
             });
             
             // flag the window as loaded. We may want to wait until the
