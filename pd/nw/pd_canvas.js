@@ -436,8 +436,11 @@ var canvas_events = (function() {
             },
             keypress: function(evt) {
                 pdgui.keypress(name, evt);
-                // Don't do things like scrolling on space, arrow keys, etc.
-                evt.preventDefault();
+                // Avoid prevent default on textareas
+                if(evt.target.type !== "textarea"){
+                    // Don't do things like scrolling on space, arrow keys, etc.
+                    evt.preventDefault();
+                }
             },
             keyup: function(evt) {
                 pdgui.keyup(name, evt);
@@ -832,6 +835,7 @@ var canvas_events = (function() {
                 // Add listeners to keyevents
                 document.addEventListener("keydown", events.keydown, false);
                 document.addEventListener("keyup", events.keyup, false);
+                document.addEventListener("keypress", events.keypress, false);
             }else{
                 document.addEventListener("mousemove", events.mousemove, false);
                 document.addEventListener("keydown", events.keydown, false);
