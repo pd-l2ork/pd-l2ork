@@ -282,12 +282,13 @@ var canvas_events = (function() {
 
                 var x_coord, y_coord;
                 if(pdgui.is_webapp()){
-                    x_coord = (evt.pageX + svg_view.x + canvas_div_scroll_left - canvas_div_x);
-                    y_coord = evt.pageY + svg_view.y + canvas_div_scroll_top - canvas_div_y;
+                    x_coord = Math.floor(evt.pageX + svg_view.x + canvas_div_scroll_left - canvas_div_x);
+                    y_coord = Math.floor(evt.pageY + svg_view.y + canvas_div_scroll_top - canvas_div_y);
                 }else{
                     x_coord = evt.pageX + svg_view.x,
                     y_coord = evt.pageY + svg_view.y
                 }
+
                 pdgui.pdsend(name, "motion",
                     x_coord,
                     y_coord,
@@ -345,8 +346,8 @@ var canvas_events = (function() {
                         !!draggable_label, false);
 
                     if(pdgui.is_webapp()){
-                        x_coord = (evt.pageX + svg_view.x + canvas_div_scroll_left - canvas_div_x)
-                        y_coord = (evt.pageY + svg_view.y + canvas_div_scroll_top - canvas_div_y)
+                        x_coord = Math.floor(evt.pageX + svg_view.x + canvas_div_scroll_left - canvas_div_x)
+                        y_coord = Math.floor(evt.pageY + svg_view.y + canvas_div_scroll_top - canvas_div_y)
                     }else{
                         x_coord = (evt.pageX + svg_view.x),
                         y_coord = (evt.pageY + svg_view.y)
@@ -385,8 +386,8 @@ var canvas_events = (function() {
                 }
 
                 if(pdgui.is_webapp()){
-                    x_coord = (evt.pageX + svg_view.x + canvas_div_scroll_left - canvas_div_x)
-                    y_coord = (evt.pageY + svg_view.y + canvas_div_scroll_top - canvas_div_y)
+                    x_coord = Math.floor(evt.pageX + svg_view.x + canvas_div_scroll_left - canvas_div_x)
+                    y_coord = Math.floor(evt.pageY + svg_view.y + canvas_div_scroll_top - canvas_div_y)
                 }else{
                     x_coord = (evt.pageX + svg_view.x),
                     y_coord = (evt.pageY + svg_view.y)
@@ -406,8 +407,8 @@ var canvas_events = (function() {
                 var x_coord, y_coord
                 
                 if(pdgui.is_webapp()){
-                    x_coord = (evt.pageX + svg_view.x + canvas_div_scroll_left - canvas_div_x)
-                    y_coord = (evt.pageY + svg_view.y + canvas_div_scroll_top - canvas_div_y)
+                    x_coord = Math.floor(evt.pageX + svg_view.x + canvas_div_scroll_left - canvas_div_x)
+                    y_coord = Math.floor(evt.pageY + svg_view.y + canvas_div_scroll_top - canvas_div_y)
                 }else{
                     x_coord = (evt.pageX + svg_view.x),
                     y_coord = (evt.pageY + svg_view.y)
