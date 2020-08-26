@@ -5,14 +5,6 @@ var lib_dir;
 var help_path, browser_doc, browser_path, browser_init;
 var pd_engine_id;
 
-	
-// Emscripten Module Var
-var Module = undefined;
-
-function init_module(module){
-    Module = module
-}
-exports.init_module = init_module;
 
 function is_webapp(){
     if(Module === undefined){

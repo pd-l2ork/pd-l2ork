@@ -121,7 +121,6 @@ function create_pd_window_menus(gui, w) {
 function gui_init(win){
     // Init vars
     pdbundle.pdgui.set_pd_window(win);
-    pdbundle.pdgui.init_module(Module);
     pdbundle.pdgui.set_new_window_fn(create_window);
     add_menu()
 }
