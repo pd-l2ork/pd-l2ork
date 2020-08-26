@@ -1,11 +1,40 @@
 "use strict";
 
 var l = pdbundle.pdgui.get_local_string; // For menu names
+var prev_menu_clicked;
+
+function menu_section_click(id){
+    // Hide previous menu clicked
+    if(prev_menu_clicked !== undefined){
+        var prev = document.getElementById(prev_menu_clicked);
+        prev.querySelectorAll("ul")[0].style.display = "none";
+    }
+
+    // Show the current menu options
+    var m_option = document.getElementById(id);
+    m_option.querySelectorAll("ul")[0].style.display = "block";
+
+    // Listen to clicks on the page so can close the menu
+    document.onclick = function(e){
+        if(e.target.id !== id){
+            m_option.querySelectorAll("ul")[0].style.display = "none";
+        }
+    }
+
+    // Update the previous menu clicked
+    prev_menu_clicked = id;
+}
 
 function menu_options(type, w, cid){
+    if (cid === undefined) cid = "";
+    var tmp_cid = cid;
+
     var file_base = {
         // File section
-        "menu-file" : {label: l("menu.file")},
+        "menu-file" : {
+            label: l("menu.file"),
+            action: {onclick: function(){menu_section_click("menu-file"+cid)}}
+        },
 
         "file-message": {
             label: l("menu.message"),
@@ -19,7 +48,10 @@ function menu_options(type, w, cid){
     var edit_base = {
 
         // Edit section
-        "menu-edit": {label: l("menu.edit")},
+        "menu-edit": {
+            label: l("menu.edit"),
+            action: {onclick: function(){menu_section_click("menu-edit"+cid)}}
+        },
 
         // Edit entries
         "edit-copy": {
@@ -45,7 +77,10 @@ function menu_options(type, w, cid){
 
     var view_base = {
         // View section
-        "menu-view": {label: l("menu.view")},
+        "menu-view": {
+            label: l("menu.view"),
+            action: {onclick: function(){menu_section_click("menu-view"+cid)}}
+        },
 
         // View entries
         "view-zoomin": {
@@ -78,7 +113,10 @@ function menu_options(type, w, cid){
 
     var window_base = {
         // Window section 
-        "menu-window" : {label: l("menu.windows"),},
+        "menu-window" : {
+            label: l("menu.windows"),
+            action: {onclick: function(){menu_section_click("menu-window"+cid)}}
+        },
 
         // Window entries
         "window-nextwin" : {
@@ -141,7 +179,10 @@ function menu_options(type, w, cid){
         ...view_base,
 
         // Media section
-        "menu-media" : {label: l("menu.media")},
+        "menu-media" : {
+            label: l("menu.media"),
+            action: {onclick: function(){menu_section_click("menu-media"+cid)}}
+        },
 
         // Media entries
         "media-audio-on" : {
@@ -174,7 +215,10 @@ function menu_options(type, w, cid){
         ...window_base,
 
         // Help section
-        "menu-help" : {label: l("menu.help")},
+        "menu-help" : {
+            label: l("menu.help"),
+            action: {onclick: function(){menu_section_click("menu-help"+cid)}}
+        },
 
         // Help entries
         "help-about" : {
@@ -379,7 +423,10 @@ function menu_options(type, w, cid){
         },
 
         // Put section
-        "menu-put": {label: l("menu.put")},
+        "menu-put": {
+            label: l("menu.put"),
+            action: {onclick: function(){menu_section_click("menu-put"+cid)}}
+        },
 
         // Put entries
         "put-object": {
@@ -527,8 +574,6 @@ function menu_options(type, w, cid){
 
     // Iteracting over the menu options to set it's args and make it visible
     var menu = entries[type];
-    if (cid === undefined) cid = "";
-    tmp_cid = cid;
 
     if(cid != ""){
         window.shortkeys[cid] = {...window.shortkeys[""]}

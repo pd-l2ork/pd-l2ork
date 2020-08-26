@@ -100,11 +100,6 @@ nav {
     background-color: #6bd4e6;	
 }	
     
-    
-.menu li:hover > ul, .patch-menu li:hover > ul {	
-    display: block;	
-}	
-    
 .menu li ul, .patch-menu li ul{	
     display: none;	
     position: absolute;	
