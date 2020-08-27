@@ -1057,7 +1057,9 @@ function gui_window_close(cid) {
     // may not have finished creating the window yet. So we check to
     // make sure the canvas cid exists...
     gui(cid).get_nw_window(function(nw_win) {
-        if(!is_webapp()){
+        if(is_webapp()){
+            menuclose_webapp(cid);
+        }else{
             nw_close_window(nw_win);
         }
     });
@@ -1089,13 +1091,6 @@ function menu_close(name) {
     // not handling the "Window" menu yet
     //pdtk_canvas_checkgeometry $name
     pdsend(name + " menuclose 0");
-
-    if(is_webapp()){
-        window.document.getElementById("patch"+name).remove();
-        delete window.shortkeys[name];
-        add_shortcuts();
-        remove_focused_window(name);
-    }
 }
 
 exports.menu_close = menu_close;
@@ -1163,12 +1158,24 @@ function canvas_menuclose_callback(cid_for_dialog, cid, force) {
     }, 150);
 }
 
+function menuclose_webapp(cid){
+    window.document.getElementById("patch"+cid).remove();
+    window.canvas_events.remove_canvas_div(cid);
+    delete window.shortkeys[cid];
+    remove_focused_window(cid);
+    add_shortcuts();
+}
+
 function gui_canvas_menuclose(cid_for_dialog, cid, force) {
     // Hack to get around a renderer bug-- not guaranteed to work
     // for long patches
-    setTimeout(function() {
+    if(is_webapp()){
+        menuclose_webapp(cid);
+    }else{
+        setTimeout(function() {
             canvas_menuclose_callback(cid_for_dialog, cid, force);
         }, 450);
+    }
 }
 
 function gui_quit_dialog() {

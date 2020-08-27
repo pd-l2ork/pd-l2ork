@@ -442,6 +442,7 @@ var canvas_events = (function() {
                 pdgui.keydown(name, evt);
                 // prevent the default behavior of scrolling
                 // on arrow keys in editmode
+                console.log("CCC", canvas_divs);
                 var patchid = pdgui.is_webapp() ? "#patchsvg_"+name : "#patchsvg"
                 
                 if (document.querySelector(patchid)
@@ -819,7 +820,7 @@ var canvas_events = (function() {
                     evt_name = prop.split("_");
                     evt_name = evt_name[evt_name.length - 1];
 
-                    if(pdgui.is_webapp()){
+                    if(pdgui.is_webapp() && div !== undefined){
                         div.canvas_div.removeEventListener(evt_name, events[prop], false);
                     }else{
                         document.removeEventListener(evt_name, events[prop], false);
@@ -1298,6 +1299,10 @@ var canvas_events = (function() {
                     load_canvas_menu_actions(cid, filename)	
                 }                    
             }
+        },
+        remove_canvas_div: function(cid){
+            delete canvas_divs[cid];
+            canvas_events.none();
         }
     };
 }());

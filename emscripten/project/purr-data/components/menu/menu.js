@@ -7,7 +7,9 @@ function menu_section_click(id){
     // Hide previous menu clicked
     if(prev_menu_clicked !== undefined){
         var prev = document.getElementById(prev_menu_clicked);
-        prev.querySelectorAll("ul")[0].style.display = "none";
+        if(prev){
+            prev.querySelectorAll("ul")[0].style.display = "none";
+        }
     }
 
     // Show the current menu options
