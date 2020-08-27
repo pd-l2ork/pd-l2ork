@@ -65,8 +65,6 @@
 				<div class="flex-fill card" id="canvas-content">
 					<div class="card-title">Canvas</div>
 					<div class="card-body" id="patches">
-						<i class="fa fa-file-o" aria-hidden="true" id="file-new-btn"></i>
-
 						<div id="canvas-container">
 						</div>
 					</div>
@@ -544,7 +542,7 @@
 	<!-- Show modal on load -->
 	<script>
 		$(document).ready(function(){
-			$("#loading-modal").modal('show');
+			$("#loading-modal").modal('show', {backdrop: 'static', keyboard: false},);
 		});
 	</script>
 </body>

@@ -13,8 +13,6 @@ function load_menu_actions(){
     // File sub-entries
     minit("file-new-btn", { onclick: pdbundle.pdgui.menu_new });
 
-    minit("file-new-btn", { onclick: pdbundle.pdgui.menu_new });
-
     minit("file-message",{onclick: function(){pdbundle.pdgui.menu_send()}});
 
     // Edit entries
