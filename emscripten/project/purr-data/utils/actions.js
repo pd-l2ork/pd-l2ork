@@ -157,10 +157,6 @@ window.oncontextmenu = function (){
 
 // Dialog common functions
 function remove_dialog(name){
-    if(name.indexOf('.') === 0){
-        name = name.substring(1,name.length-1);
-    }
-
-    var dialog = document.getElementById("dialog-div-"+name);
+    var dialog = document.getElementById("dialog-div");
     dialog.parentNode.removeChild(dialog);
 }

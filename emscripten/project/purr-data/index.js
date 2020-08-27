@@ -47,17 +47,18 @@ function create_window(cid, type, width, height, xpos, ypos, attr_array) {
         }else if(new_win === pdbundle.pdgui.get_dialogwin(cid)){
             // Add menu html file
 			$.get("./components/dialogs/"+f, function(data){
-                var dialog_div = new_win.window.document.createElement('div')
-                var n_cid = cid;
+                var dialog_div = new_win.window.document.getElementById("dialog-div");
 
-                if(cid.indexOf('.') === 0){
-                    n_cid = cid.substring(1,cid.length-1);
-                    dialog_div.id = "dialog-div-"+n_cid;
+                if(dialog_div === null){
+                    dialog_div = new_win.window.document.createElement('div')
+                    dialog_div.id = "dialog-div";
                 }
 
-                dialog_div.id = "dialog-div-"+n_cid;
+                // cleaning dialog div
+                dialog_div.innerHTML = "";
+
                 $("#sidebar-body").prepend(dialog_div.outerHTML)
-                $("#dialog-div-"+n_cid).prepend(data)
+                $("#dialog-div").prepend(data)
 
                 // initialize the dialog window                
                 register_dialog(cid,attr_array);
