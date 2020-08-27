@@ -6012,6 +6012,12 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         p.textContent = text;
         // append to doc body
         if(is_webapp()){
+            // Fix min-width on webapp
+            p.style.setProperty("min-width",
+            width_spec <= 0 ? "5ch" :
+                (is_gop == 1 ? width_spec + "px" :
+                    width_spec + 2 + "ch"));
+
 	        var svg = patchwin[cid].window.document.getElementById("patch_div_"+cid);	
 	        var div_p = patchwin[cid].window.document.createElement("div");
 	        div_p.id = "div-svg-p";	
