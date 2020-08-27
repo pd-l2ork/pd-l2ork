@@ -13,7 +13,21 @@
 		<link rel="stylesheet" type="text/css" href="./css/webapp/webapp.css">
 	</head>
 
-	<body id="container">  
+	<body id="container">
+		<!-- Modal -->
+		<div class="modal fade" id="loading-modal" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-body text-center">
+						<div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+							<span class="sr-only">Loading...</span>
+						  </div>
+						  <h3>Loading PurrData...</h3>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<div id="container-app" class="container-fluid">
 			<!-- Menu -->
 			<nav class="navbar navbar-expand-lg" id="menu"></nav>
@@ -106,6 +120,11 @@
 			, pd: {} // make pd object accessible from outside of the scope
 			, mainInit: function () { // called after Module is ready
 				Module.pd = new Module.Pd(); // instantiate Pd object
+				// Remove modal after everything loaded
+				$(document).ready(function(){
+					$("#loading-modal").modal('hide');
+				});
+
 				if (typeof Module.pd != "object") {
 					alert("Pd: failed to instantiate pd object");
 					console.error("Pd: failed to instantiate pd object");
@@ -522,6 +541,12 @@
 
 	<script src="libs/bootstrap/bootstrap.4.5.0.min.js"></script>
 
+	<!-- Show modal on load -->
+	<script>
+		$(document).ready(function(){
+			$("#loading-modal").modal('show');
+		});
+	</script>
 </body>
 
 </html>
