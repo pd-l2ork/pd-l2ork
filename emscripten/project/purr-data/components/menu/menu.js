@@ -29,7 +29,7 @@ function menu_section_click(id){
 
 function menu_options(type, w, cid){
     if (cid === undefined) cid = "";
-    var tmp_cid = cid;
+    tmp_cid = cid;
 
     var file_base = {
         // File section
