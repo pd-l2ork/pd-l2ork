@@ -1114,7 +1114,7 @@ void pdinfo_print(t_pdinfo *x)
     info_print((t_text *)x);
 }
 
-void *pdinfo_new(t_symbol *s, t_int argc, t_atom *argv)
+void *pdinfo_new(void)
 {
     t_pdinfo *x = (t_pdinfo *)pd_new(pdinfo_class);
     outlet_new(&x->x_obj, &s_list);    
