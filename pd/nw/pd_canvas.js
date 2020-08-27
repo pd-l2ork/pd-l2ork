@@ -109,9 +109,10 @@ var canvas_events = (function() {
             if (text.search(/^draw\s+path\s+d\s*=\s*"/) !== -1) {
                 text = text_to_normalized_svg_path(text);
             }
-            // escape dollar signs
-            text = text.replace(/(\$[0-9]+)/g, "\\$1");
-
+            if(!pdgui.is_webapp()){
+                // escape dollar signs
+                text = text.replace(/(\$[0-9]+)/g, "\\$1");
+            }
             // escape special $@ sign
             text = text.replace(/(\$@)/g, "\\$@");
 
