@@ -438,9 +438,14 @@ void pd_blob(t_pd *x, t_blob *st) /* MP20061226 blob type */
     (*(*x)->c_blobmethod)(x, st);
 }
 
+void *list_new(t_pd *dummy, t_symbol *s, int argc, t_atom *argv);
+
 void pd_list(t_pd *x, t_symbol *s, int argc, t_atom *argv)
 {
-    (*(*x)->c_listmethod)(x, &s_list, argc, argv);
+    if (x == &pd_objectmaker)
+        list_new(x, &s_list, argc, argv);
+    else
+        (*(*x)->c_listmethod)(x, &s_list, argc, argv);
 }
 
 void pd_anything(t_pd *x, t_symbol *s, int argc, t_atom *argv)
