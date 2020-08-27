@@ -425,6 +425,7 @@ var canvas_events = (function() {
                 if(pdgui.is_webapp()){
                     x_coord = Math.floor(evt.pageX + svg_view.x + canvas_div_scroll_left - canvas_div_x)
                     y_coord = Math.floor(evt.pageY + svg_view.y + canvas_div_scroll_top - canvas_div_y)
+                    clicking = false;
                 }else{
                     x_coord = (evt.pageX + svg_view.x),
                     y_coord = (evt.pageY + svg_view.y)
@@ -442,7 +443,6 @@ var canvas_events = (function() {
                 pdgui.keydown(name, evt);
                 // prevent the default behavior of scrolling
                 // on arrow keys in editmode
-                console.log("CCC", canvas_divs);
                 var patchid = pdgui.is_webapp() ? "#patchsvg_"+name : "#patchsvg"
                 
                 if (document.querySelector(patchid)
@@ -476,7 +476,7 @@ var canvas_events = (function() {
                     // send a mousedown and mouseup event to Pd to instantiate
                     // the object
                     events.mousedown(evt);
-                    //events.mouseup(evt);
+                    events.mouseup(evt);
                     canvas_events.normal();
                 }
                 evt.stopPropagation();
