@@ -280,7 +280,8 @@ var canvas_events = (function() {
                     evt.stopPropagation();	
                     evt.preventDefault();	
         
-                    load_canvas_menu_actions(name, filename);	
+                    load_canvas_menu_actions(name, filename);
+                    events.window_recalculate(evt)
         
                     return false;
                 }	
@@ -852,6 +853,9 @@ var canvas_events = (function() {
                 var container = document.getElementById("container-app");
                 container.addEventListener("scroll", events.window_recalculate, false);
 
+                var canvas_content = document.getElementById("canvas-content");
+                canvas_content.addEventListener("scroll", events.window_recalculate, false);
+
                 // Add listeners to keyevents
                 document.addEventListener("keydown", events.keydown, false);
                 document.addEventListener("keyup", events.keyup, false);
@@ -1336,7 +1340,7 @@ function register_window_id(cid, attr_array) {
             pdgui.update_focused_windows(cid);
 
             // Force font size 10
-            pdgui.pdsend(cid, "font", 10, 8, 100,0);
+            pdgui.pdsend(cid, "font", 16, 8, 100,0);
     }
 
 

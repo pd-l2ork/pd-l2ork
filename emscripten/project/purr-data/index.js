@@ -38,6 +38,7 @@ function create_window(cid, type, width, height, xpos, ypos, attr_array) {
 			$.get("./components/canvas/"+f, function(data){
                  $("#canvas-container").append(data)
                  update_canvas_id(cid);
+                 add_canvas_name(cid, attr_array.name)
                  register_canvas(cid, attr_array);
             });
             

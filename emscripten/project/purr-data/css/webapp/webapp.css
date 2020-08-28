@@ -41,19 +41,6 @@
     color: #007BFF;
 }
 
-.patch_window_svg{	
-    height: 250px;	
-    width: 300px;	
-    border: 2px solid black;	
-    margin: 10px;	
-    overflow: hidden;	
-}
-
-.patch_window_svg > svg{
-    min-width: 100%;
-    min-height: 100%;
-}
-
 #content {	
     position: absolute;	
     top: 24px;	
@@ -213,15 +200,31 @@ li .hr{
 /* Webapp Index layout */	
 #sidebar{	
     background-color: transparent;	
-    max-width: 200px;	
-    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
     margin: 0px;
     margin-top: 10px;
     border-top-width: 0ch;
 }
 
-#canvas-container{	
-    display: flex;	
+#windows{
+    max-height: 100vh !important;
+    max-width: 90vw !important;
+}
+
+#canvas-content{	
+    height: 70%;	
+    overflow: scroll;
+    border-top-width: 0ch;
+}
+
+#canvas-content > .card-body{	
+    display: flex !important;	
+}
+
+#canvas-container{
+    min-height: 100%;
+    flex-direction: row;
 }	
 
 #console_controls{
@@ -233,33 +236,36 @@ li .hr{
     max-height: 30%;
 }
 
-#canvas-content{	
-    border-top-width: 0ch;
-}
-
-#canvas-content > .card-body{	
-    display: flex !important;	
-}
-
-.patch{	
-    border: 2px solid black;	
+.patch{
+    flex-basis: 100%;
+    background-color: #f6f6f6;
+    border-right: 2px solid #858688;
 }	
 
-.patch_window_svg{	
-    height: 250px;	
-    width: 350px;	
-    border: 2px solid black;	
-    margin: 10px;	
-    overflow: scroll;	
+.patch_window_svg{
+    background-color: #f6f6f6;
+    min-height: 100%;
+    overflow: visible;
+    margin-top: 35px;
 }	
     
-.patch_window_svg > svg{	
+.patch_window_svg > svg{
+    min-height: 100%;
     position: relative;	
     margin-top: -1px;	
     margin-left: -1px;	
-    overflow: hidden;	
+    overflow: visible;	
 }	
-    
+
+.patch-holder{
+    height: 100%;
+}
+
+.patch-filename{
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
 #div-svg-p{	
     position: relative;	
     z-index: 999999;	

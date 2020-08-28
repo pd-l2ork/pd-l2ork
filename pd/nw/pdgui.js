@@ -882,6 +882,7 @@ function gui_canvas_saveas(name, initfile, initdir, close_flag) {
         var filename = prompt("Please enter file name", initfile);
         if (filename != null) {
             saveas_callback(name, filename, close_flag);
+            add_canvas_name(name, filename);
         }
     }else{
         var input, chooser,

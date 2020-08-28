@@ -11,3 +11,12 @@ window.update_canvas_id = function(cid){
         elem.id = elem.id + cid
     }
 }
+
+window.add_canvas_name = function(cid, name){
+    // Update patch id
+    var patch_filename = document.getElementById("patch-filename"+cid)
+    
+    // Remain elements
+    patch_filename.innerHTML="";
+    patch_filename.append(name);
+}
