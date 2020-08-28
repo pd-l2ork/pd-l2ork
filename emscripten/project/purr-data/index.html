@@ -19,7 +19,7 @@
 			<div class="modal-dialog modal-dialog-centered" role="document">
 				<div class="modal-content">
 					<div class="modal-body text-center">
-						<div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+						<div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
 							<span class="sr-only">Loading...</span>
 						  </div>
 						  <h3>Loading PurrData...</h3>
@@ -30,29 +30,41 @@
 
 		<div id="container-app" class="container-fluid">
 			<!-- Menu -->
-			<nav class="navbar navbar-expand-lg" id="menu"></nav>
+			<nav id="menu"></nav>
 
 			<!-- Content -->
-			<div class="d-flex h-100 content-webapp" id="content">
+			<div class="d-flex content-webapp" id="content">
 
 			<!-- Sidebar -->
+			
 			<div class="card" id="sidebar">
-				<div class="card-title">Sidebar</div>
-				<div class="card-body" id="sidebar-body">
-					<div id="console_controls" class="noselect">
-						<div id="control_frame">
-							<label class="dsp_toggle">DSP
-								<input type="checkbox" id="dsp_control" name="dsp_control" value="on" />
-								<span></span>
-							</label>
-						</div>
-					</div>
+				<div class="card-body text-center" id="sidebar-body">
+					<hr>
+					<div class="d-flex">
+						<i class="fa fa fa-volume-up text-primary" aria-hidden="true"></i>
+						<h5>DSP</h5>
+						<label class="dsp_toggle">
+							<input type="checkbox" id="dsp_control" name="dsp_control" value="on" />
+							<span></span>
+						</label>
 
-					<div class="card">
-						<div class="card-body">
-							<h5 class="card-title">Files <i class="fa fa-refresh" aria-hidden="true"
-									onclick="pdbundle.pdgui.update_file_ls()"></i></h5>
+					</div>
+					<hr>
+					<div>
+						<div class="d-flex">
+							<i class="fa fa-folder-open-o text-primary" aria-hidden="true"></i>
+							<h5>Files</h5>
+							<i class="fa fa-refresh ml-auto text-primary" id="reload-i" aria-hidden="true"
+							onclick="pdbundle.pdgui.update_file_ls()"></i>
+
+						</div>
+
+						<div class="text-left" id="sidebar-files">
 							<ul id="file_ls"></ul>
+							<div class="text-secondary text-center" id="file_ls_empty">
+								<p>No files found yet</p>
+							</div>
+
 						</div>
 					</div>
 				</div>
@@ -63,7 +75,6 @@
 
 				<!-- Canvas Container -->
 				<div class="flex-fill card" id="canvas-content">
-					<div class="card-title">Canvas</div>
 					<div class="card-body" id="patches">
 						<div id="canvas-container">
 						</div>
@@ -72,29 +83,34 @@
 
 				<!-- Console window -->
 				<div class="card" id="console-window">
-					<div class="card-title">
-						Console
+					<div class="card-header d-flex justify-content-between">
+						<h5>
+							<a data-toggle="collapse" data-parent="#windows" href="#console_bottom">Console</a>
+						</h5>
 
 						<div class="console-find-webapp" id="console_find" style="display:none;">
-							<div>
+							<div class="d-flex justify-content-end">
 								<label><input type="text" id="console_find_text" name="console_find_text"
-										defaultValue="Search in Console" style="width:10em;" />
+									defaultValue="Search in Console" style="width:10em;" />
 								</label>
-								<label>Highlight All
+								<label class="highlight-find">Highlight All
 									<input type="checkbox" id="console_find_highlight" name="console_find_highlight"
 										onchange="console_find_highlight_all(this);" />
 								</label>
 							</div>
 						</div>
+
 					</div>
 
-					<div class="card-body console-webapp" id="console_bottom">
+			  
+					<div class="collapse show" id="console_bottom">
+					  <div class="card-block">
 						<div id="printout">
 							<pre id="p1" style="white-space: pre-wrap;"></pre>
 						</div>
+					  </div>
 					</div>
 				</div>
-
 			</div>
 		</div>
 	</div>

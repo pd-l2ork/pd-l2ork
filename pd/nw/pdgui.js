@@ -2043,6 +2043,12 @@ function upload_patch(files) {
         };
         reader.readAsArrayBuffer(file);
     }
+
+    // Refresh file list after upload file
+    setTimeout(function(){ 
+        update_file_ls(); 
+    }, 2000);
+    
 }
 
 exports.upload_patch = upload_patch;
@@ -2100,19 +2106,29 @@ exports.download_patch = download_patch;
 function update_file_ls(){
     var file_ls = window.document.getElementById("file_ls");
     file_ls.innerHTML = "";
+    var files_added = 0;
 
     for (const file of Module.FS.readdir(workspace)){
-        var li = window.document.createElement("li");
-        // Add name of file
-        li.append(file);
+        var mode = Module.FS.stat(workspace+file).mode;
+        if(Module.FS.isFile(mode)){
+            var li = window.document.createElement("li");
+            var a = window.document.createElement("a");
+            // Add name of file
+            a.append("./"+file);
+    
+            // Add open button
+            a.onclick = function(){open_patch(file)};
+            li.append(a);
+           
+            file_ls.append(li);
+            files_added = files_added + 1;
+        }
+    }
 
-        // Add open button
-        var open_btn = window.document.createElement("button");
-        open_btn.className = "fa fa-external-link";
-        open_btn.onclick = function(){open_patch(file)};
-        li.append(open_btn);
-       
-        file_ls.append(li);
+    if(files_added > 0){
+        window.document.getElementById("file_ls_empty").style.display = "none";
+    }else{
+        window.document.getElementById("file_ls_empty").style.display = "block";
     }
 }
 exports.update_file_ls = update_file_ls;
