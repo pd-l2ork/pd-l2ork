@@ -171,7 +171,14 @@ li .hr{
     margin: 0px;	
     padding: 0px;	
 }	
-    
+  
+#pd-info{
+    display: block;
+}
+
+#pd-info img{
+    height: 50px;
+}
     
 /* Popup */	
 #popup{	

@@ -57,7 +57,7 @@ function create_window(cid, type, width, height, xpos, ypos, attr_array) {
                 // cleaning dialog div
                 dialog_div.innerHTML = "";
 
-                $("#sidebar-body").prepend(dialog_div.outerHTML)
+                $("#sidebar-body-dialog").prepend(dialog_div.outerHTML)
                 $("#dialog-div").prepend(data)
 
                 // initialize the dialog window                
