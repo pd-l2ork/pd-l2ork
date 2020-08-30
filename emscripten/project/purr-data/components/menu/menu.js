@@ -3,11 +3,11 @@
 var l = pdbundle.pdgui.get_local_string; // For menu names
 var prev_menu_clicked;
 
-function menu_section_click(id){
+function menu_section_click(id) {
     // Hide previous menu clicked
-    if(prev_menu_clicked !== undefined){
+    if (prev_menu_clicked !== undefined) {
         var prev = document.getElementById(prev_menu_clicked);
-        if(prev){
+        if (prev) {
             prev.querySelectorAll("ul")[0].style.display = "none";
         }
     }
@@ -17,9 +17,10 @@ function menu_section_click(id){
     m_option.querySelectorAll("ul")[0].style.display = "block";
 
     // Listen to clicks on the page so can close the menu
-    document.onclick = function(e){
-        if(e.target.id !== id){
+    document.onclick = function (e) {
+        if (e.target.id !== id) {
             m_option.querySelectorAll("ul")[0].style.display = "none";
+            prev_menu_clicked = undefined;
         }
     }
 
@@ -27,15 +28,26 @@ function menu_section_click(id){
     prev_menu_clicked = id;
 }
 
-function menu_options(type, w, cid){
+function menu_section_move(id) {
+    if (prev_menu_clicked !== undefined) {
+        if (prev_menu_clicked !== id) {
+            menu_section_click(id);
+        }
+    }
+}
+
+function menu_options(type, w, cid) {
     if (cid === undefined) cid = "";
     tmp_cid = cid;
 
     var file_base = {
         // File section
-        "menu-file" : {
+        "menu-file": {
             label: l("menu.file"),
-            action: {onclick: function(){menu_section_click("menu-file"+cid)}}
+            action: {
+                onclick: function () { menu_section_click("menu-file" + cid) },
+                onmousemove: function () { menu_section_move("menu-file" + cid) }
+            }
         },
 
         "file-message": {
@@ -46,13 +58,16 @@ function menu_options(type, w, cid){
             bottom_hr: {}
         },
     }
-    
+
     var edit_base = {
 
         // Edit section
         "menu-edit": {
             label: l("menu.edit"),
-            action: {onclick: function(){menu_section_click("menu-edit"+cid)}}
+            action: {
+                onclick: function () { menu_section_click("menu-edit" + cid) },
+                onmousemove: function () { menu_section_move("menu-edit" + cid) }
+            },
         },
 
         // Edit entries
@@ -81,7 +96,10 @@ function menu_options(type, w, cid){
         // View section
         "menu-view": {
             label: l("menu.view"),
-            action: {onclick: function(){menu_section_click("menu-view"+cid)}}
+            action: {
+                onclick: function () { menu_section_click("menu-view" + cid) },
+                onmousemove: function () { menu_section_move("menu-view" + cid) }
+            }
         },
 
         // View entries
@@ -115,21 +133,24 @@ function menu_options(type, w, cid){
 
     var window_base = {
         // Window section 
-        "menu-window" : {
+        "menu-window": {
             label: l("menu.windows"),
-            action: {onclick: function(){menu_section_click("menu-window"+cid)}}
+            action: {
+                onclick: function () { menu_section_click("menu-window" + cid) },
+                onmousemove: function () { menu_section_move("menu-window" + cid) }
+            }
         },
 
         // Window entries
-        "window-nextwin" : {
-            action: {onclick: function(){pdbundle.pdgui.raise_next("pd_window")}},
+        "window-nextwin": {
+            action: { onclick: function () { pdbundle.pdgui.raise_next("pd_window") } },
             label: l("menu.nextwin"),
             key: pdbundle.shortcuts.menu.nextwin_web.key,
             modifiers: pdbundle.shortcuts.menu.nextwin_web.modifiers,
             tooltip: l("menu.nextwin_tt")
         },
-        "window-prevwin" : {
-            action: {onclick: function(){pdbundle.pdgui.raise_prev("pd_window")}},
+        "window-prevwin": {
+            action: { onclick: function () { pdbundle.pdgui.raise_prev("pd_window") } },
             label: l("menu.prevwin"),
             key: pdbundle.shortcuts.menu.prevwin_web.key,
             modifiers: pdbundle.shortcuts.menu.prevwin_web.modifiers,
@@ -142,8 +163,8 @@ function menu_options(type, w, cid){
         ...file_base,
 
         // File entries
-        "file-new" : {
-            action: {onclick: pdbundle.pdgui.menu_new},
+        "file-new": {
+            action: { onclick: pdbundle.pdgui.menu_new },
             label: l("menu.new"),
             key: pdbundle.shortcuts.menu.new_web.key,
             modifiers: pdbundle.shortcuts.menu.new_web.modifiers,
@@ -161,7 +182,7 @@ function menu_options(type, w, cid){
         ...edit_base,
         // Edit entries
         "edit-clear-console": {
-            action: {onclick: pdbundle.pdgui.clear_console},
+            action: { onclick: pdbundle.pdgui.clear_console },
             label: l("menu.clear_console"),
             tooltip: l("menu.clear_console"),
             key: pdbundle.shortcuts.menu.clear_console_web.key,
@@ -170,7 +191,7 @@ function menu_options(type, w, cid){
             bottom_hr: {}
         },
         "edit-preferences": {
-            action: {onclick: pdbundle.pdgui.open_prefs},
+            action: { onclick: pdbundle.pdgui.open_prefs },
             label: l("menu.preferences"),
             key: pdbundle.shortcuts.menu.preferences_web.key,
             modifiers: pdbundle.shortcuts.menu.preferences_web.modifiers,
@@ -181,34 +202,37 @@ function menu_options(type, w, cid){
         ...view_base,
 
         // Media section
-        "menu-media" : {
+        "menu-media": {
             label: l("menu.media"),
-            action: {onclick: function(){menu_section_click("menu-media"+cid)}}
+            action: {
+                onclick: function () { menu_section_click("menu-media" + cid) },
+                onmousemove: function () { menu_section_move("menu-media" + cid) }
+            }
         },
 
         // Media entries
-        "media-audio-on" : {
-            action: {onclick: function(){pdbundle.pdgui.pdsend("pd dsp 1")}},
+        "media-audio-on": {
+            action: { onclick: function () { pdbundle.pdgui.pdsend("pd dsp 1") } },
             label: l("menu.audio_on"),
             key: pdbundle.shortcuts.menu.audio_on_web.key,
             modifiers: pdbundle.shortcuts.menu.audio_on_web.modifiers,
             tooltip: l("menu.audio_on_tt")
         },
-        "media-audio-off" : {
-            action: {onclick: function(){pdbundle.pdgui.pdsend("pd dsp 0")}},
+        "media-audio-off": {
+            action: { onclick: function () { pdbundle.pdgui.pdsend("pd dsp 0") } },
             label: l("menu.audio_off"),
             key: pdbundle.shortcuts.menu.audio_off_web.key,
             modifiers: pdbundle.shortcuts.menu.audio_off_web.modifiers,
             tooltip: l("menu.audio_off_tt"),
             bottom_hr: {}
         },
-        "media-test" : {
-            action: {onclick: function(){pdbundle.pdgui.pd_doc_open("doc/7.stuff/tools", "testtone.pd")}},
+        "media-test": {
+            action: { onclick: function () { pdbundle.pdgui.pd_doc_open("doc/7.stuff/tools", "testtone.pd") } },
             label: l("menu.test"),
             tooltip: l("menu.test_tt")
         },
-        "media-loadmeter" : {
-            action: {onclick: function(){pdbundle.pdgui.pd_doc_open("doc/7.stuff/tools", "load-meter.pd")}},
+        "media-loadmeter": {
+            action: { onclick: function () { pdbundle.pdgui.pd_doc_open("doc/7.stuff/tools", "load-meter.pd") } },
             label: l("menu.loadmeter"),
             tooltip: l("menu.loadmeter_tt")
         },
@@ -217,52 +241,55 @@ function menu_options(type, w, cid){
         ...window_base,
 
         // Help section
-        "menu-help" : {
+        "menu-help": {
             label: l("menu.help"),
-            action: {onclick: function(){menu_section_click("menu-help"+cid)}}
+            action: {
+                onclick: function () { menu_section_click("menu-help" + cid) },
+                onmousemove: function () { menu_section_move("menu-help" + cid) }
+            }
         },
 
         // Help entries
-        "help-about" : {
-            action: {onclick: function(){pdbundle.pdgui.web_pd_doc_open("doc/about", "about.pd")}},
+        "help-about": {
+            action: { onclick: function () { pdbundle.pdgui.web_pd_doc_open("doc/about", "about.pd") } },
             label: l("menu.about"),
             tooltip: l("menu.about_tt")
         },
         "help-manual": {
-            action: {onclick: function(){pdbundle.pdgui.pd_doc_open("doc/1.manual", "index.htm")}},
+            action: { onclick: function () { pdbundle.pdgui.pd_doc_open("doc/1.manual", "index.htm") } },
             label: l("menu.manual"),
             tooltip: l("menu.manual_tt")
         },
-        "help-browser" : {
-            action: {onclick: pdbundle.pdgui.open_search},
+        "help-browser": {
+            action: { onclick: pdbundle.pdgui.open_search },
             label: l("menu.browser"),
             key: pdbundle.shortcuts.menu.browser_web.key,
             modifiers: pdbundle.shortcuts.menu.browser_web.modifiers,
             tooltip: l("menu.browser_tt")
         },
-        "help-intro" : {
-            action: {onclick: function(){pdbundle.pdgui.pd_doc_open("doc/5.reference", "help-intro.pd")}},
+        "help-intro": {
+            action: { onclick: function () { pdbundle.pdgui.pd_doc_open("doc/5.reference", "help-intro.pd") } },
             label: l("menu.intro"),
             tooltip: l("menu.intro_tt"),
             bottom_hr: {}
         },
-        "help-l2ork-list" : {
-            action: {onclick: function(){pdbundle.pdgui.external_doc_open("http://disis.music.vt.edu/listinfo/l2ork-dev")}},
+        "help-l2ork-list": {
+            action: { onclick: function () { pdbundle.pdgui.external_doc_open("http://disis.music.vt.edu/listinfo/l2ork-dev") } },
             label: l("menu.l2ork_list"),
             tooltip: l("menu.l2ork_list_tt")
         },
-        "help-pd-list" : {
-            action: {onclick: function(){pdbundle.pdgui.external_doc_open("http://puredata.info/community/lists")}},
+        "help-pd-list": {
+            action: { onclick: function () { pdbundle.pdgui.external_doc_open("http://puredata.info/community/lists") } },
             label: l("menu.pd_list"),
             tooltip: l("menu.pd_list_tt")
         },
-        "help-forums" : {
-            action: {onclick: function(){pdbundle.pdgui.external_doc_open("http://forum.pdpatchrepo.info/")}},
+        "help-forums": {
+            action: { onclick: function () { pdbundle.pdgui.external_doc_open("http://forum.pdpatchrepo.info/") } },
             label: l("menu.forums"),
             tooltip: l("menu.forums_tt")
         },
-        "help-irc" : {
-            action: {onclick: function(){pdbundle.pdgui.external_doc_open("http://puredata.info/community/IRC")}},
+        "help-irc": {
+            action: { onclick: function () { pdbundle.pdgui.external_doc_open("http://puredata.info/community/IRC") } },
             label: l("menu.irc"),
             tooltip: l("menu.irc_tt")
         },
@@ -279,7 +306,7 @@ function menu_options(type, w, cid){
         },
 
         // Help entries
-        "help-devtools" : {
+        "help-devtools": {
             label: l("menu.devtools"),
             tooltip: l("menu.devtools_tt")
         }
@@ -378,7 +405,7 @@ function menu_options(type, w, cid){
             key: pdbundle.shortcuts.menu.cordinspector_web.key,
             modifiers: pdbundle.shortcuts.menu.cordinspector_web.modifiers,
             tooltip: l("menu.cordinspector_tt"),
-            bottom_hr: {}            
+            bottom_hr: {}
         },
         "edit-findagain": {
             label: l("menu.findagain"),
@@ -387,10 +414,10 @@ function menu_options(type, w, cid){
             tooltip: l("menu.findagain")
         },
         "edit-finderror": {
-            action: {onclick: function(){pdbundle.pdgui.pdsend("pd finderror")}},
+            action: { onclick: function () { pdbundle.pdgui.pdsend("pd finderror") } },
             label: l("menu.finderror"),
             tooltip: l("menu.finderror_tt"),
-            bottom_hr: {}            
+            bottom_hr: {}
         },
 
         "edit-editmode": {
@@ -427,7 +454,10 @@ function menu_options(type, w, cid){
         // Put section
         "menu-put": {
             label: l("menu.put"),
-            action: {onclick: function(){menu_section_click("menu-put"+cid)}}
+            action: {
+                onclick: function () { menu_section_click("menu-put" + cid) },
+                onmousemove: function () { menu_section_move("menu-put" + cid) }
+            }
         },
 
         // Put entries
@@ -466,7 +496,7 @@ function menu_options(type, w, cid){
             key: pdbundle.shortcuts.menu.dropdown_web.key,
             modifiers: pdbundle.shortcuts.menu.dropdown_web.modifiers,
             tooltip: l("menu.dropdown_tt"),
-            bottom_hr: {}            
+            bottom_hr: {}
         },
         "put-bang": {
             label: l("menu.bang"),
@@ -532,17 +562,17 @@ function menu_options(type, w, cid){
         ...window_base,
 
         // Window entries
-        "window-parentwin" : {
+        "window-parentwin": {
             label: l("menu.parentwin"),
             tooltip: l("menu.parentwin_tt"),
             top_hr: {}
         },
-        "window-visible-ancestor" : {
+        "window-visible-ancestor": {
             label: l("menu.visible_ancestor"),
             tooltip: l("menu.visible_ancestor_tt")
         },
-        "window-pdwin" : {
-            action: {onclick: function(){pdbundle.pdgui.raise_pd_window()}},
+        "window-pdwin": {
+            action: { onclick: function () { pdbundle.pdgui.raise_pd_window() } },
             label: l("menu.pdwin"),
             tooltip: l("menu.pdwin_tt"),
             key: pdbundle.shortcuts.menu.pdwin_web.key,
@@ -569,7 +599,7 @@ function menu_options(type, w, cid){
 
     var entries = {
         "console": console_menu,
-        "canvas" : canvas_menu,
+        "canvas": canvas_menu,
         "web": web_menu,
         "web-canvas": web_canvas
     }
@@ -577,14 +607,14 @@ function menu_options(type, w, cid){
     // Iteracting over the menu options to set it's args and make it visible
     var menu = entries[type];
 
-    if(cid != ""){
-        window.shortkeys[cid] = {...window.shortkeys[""]}
-    }else{
+    if (cid != "") {
+        window.shortkeys[cid] = { ...window.shortkeys[""] }
+    } else {
         window.shortkeys[cid] = {}
     }
-    
+
     for (const id in menu) {
-        var menu_item =  w.document.getElementById(id+cid);
+        var menu_item = w.document.getElementById(id + cid);
         visible(menu_item);
         remove_select_text(menu_item);
         for (const option in menu[id]) {
@@ -597,17 +627,17 @@ function menu_options(type, w, cid){
 
 
 // Functions set on args
-function visible(menu_item){
+function visible(menu_item) {
     menu_item.style.display = "block";
 }
 
-function remove_select_text(menu_item){
-    menu_item.onselectstart = function(e){
+function remove_select_text(menu_item) {
+    menu_item.onselectstart = function (e) {
         e.preventDefault();
     }
 }
 
-window.action = function(menu_item, actions){
+window.action = function (menu_item, actions) {
     for (var key in actions) {
         if (actions.hasOwnProperty(key)) {
             menu_item[key] = actions[key];
@@ -615,7 +645,7 @@ window.action = function(menu_item, actions){
     }
 }
 
-window.label = function(menu_item, label){
+window.label = function (menu_item, label) {
     menu_item.prepend(label);
 }
 
@@ -624,11 +654,11 @@ window.shortkeys = {}
 var tmp_key;
 var tmp_cid;
 
-window.key = function(menu_item, shortkey){ 
+window.key = function (menu_item, shortkey) {
     tmp_key = shortkey;
 }
 
-window.modifiers = function(menu_item, modifiers){    
+window.modifiers = function (menu_item, modifiers) {
     var shortkey = modifiers + "+" + tmp_key;
     window.shortkeys[[tmp_cid]][[shortkey]] = menu_item;
 
@@ -637,39 +667,39 @@ window.modifiers = function(menu_item, modifiers){
     menu_item.append(span);
 }
 
-window.tooltip = function(menu_item, tooltip){
+window.tooltip = function (menu_item, tooltip) {
     // console.log("NEED TO IMPLEMENT TOOLTIP", tooltip);
 }
 
-window.recent_files = function(elem){
+window.recent_files = function (elem) {
     var holder = document.createElement("ul");
     pdbundle.pdgui.populate_recent_files(holder)
     elem.append(holder)
 }
 
-function elem_hr(){
+function elem_hr() {
     var li = document.createElement("li");
-    li.setAttribute("class", "hr"); 
+    li.setAttribute("class", "hr");
     var hr = document.createElement("hr");
     li.append(hr)
-    
+
     return li
 }
 
-window.top_hr = function(menu_item, hr){
+window.top_hr = function (menu_item, hr) {
     var hr = elem_hr();
     visible(hr);
     menu_item.before(hr)
 }
 
-window.bottom_hr = function(menu_item, hr){
+window.bottom_hr = function (menu_item, hr) {
     var hr = elem_hr();
     visible(hr);
     menu_item.after(hr)
 }
 
 // Common functions for both menus
-function open_file(w){
+function open_file(w) {
     var input, chooser,
         span = w.document.querySelector("#fileDialogSpan");
     // Complicated workaround-- see comment in build_file_dialog_string
@@ -686,7 +716,7 @@ function open_file(w){
     chooser = w.document.querySelector("#fileDialog");
     // Hack-- we have to set the event listener here because we
     // changed out the innerHTML above
-    chooser.onchange = function() {
+    chooser.onchange = function () {
         var file_array = this.value;
         // reset value so that we can open the same file twice
         this.value = null;
