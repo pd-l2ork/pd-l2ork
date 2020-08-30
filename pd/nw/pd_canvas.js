@@ -859,7 +859,6 @@ var canvas_events = (function() {
                 // Add listeners to keyevents
                 document.addEventListener("keydown", events.keydown, false);
                 document.addEventListener("keyup", events.keyup, false);
-                document.addEventListener("keypress", events.keypress, false);
             }else{
                 document.addEventListener("mousemove", events.mousemove, false);
                 document.addEventListener("keydown", events.keydown, false);
