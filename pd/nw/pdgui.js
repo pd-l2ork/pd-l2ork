@@ -2048,7 +2048,7 @@ function upload_patch(files) {
     // Refresh file list after upload file
     setTimeout(function(){ 
         update_file_ls(); 
-    }, 2000);
+    }, 200);
     
 }
 
@@ -2095,7 +2095,7 @@ function download_patch(file_name) {
         setTimeout(() => {
             document.body.removeChild(a);
             URL.revokeObjectURL(a.href);
-        }, 200);
+        }, 2000);
      } else{
         alert("Please save before download!")
         return;
