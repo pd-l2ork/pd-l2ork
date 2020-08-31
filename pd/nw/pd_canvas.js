@@ -176,21 +176,23 @@ var canvas_events = (function() {
             // enlarge the svg to accommodate it.
             // Note: window.scrollX and window.scrollY might not work
             // with Android Chrome 43 and IE.
-            var svg = document.getElementById("patchsvg"),
+            var svg = document.getElementById("patchsvg");
+            if (svg) {
                 elem_bbox = elem.getBoundingClientRect(),
                 svg_viewbox = svg.getAttribute("viewBox").split(" "),
                 w = Math.max(elem_bbox.left + elem_bbox.width + window.scrollX,
                     svg_viewbox[2]),
                 h = Math.max(elem_bbox.top + elem_bbox.height + window.scrollY,
                     svg_viewbox[3]);
-            svg.setAttribute("viewBox",
-                [Math.min(elem_bbox.left, svg_viewbox[0]),
-                 Math.min(elem_bbox.top, svg_viewbox[1]),
-                 w,
-                 h
-                ].join(" "));
-            svg.setAttribute("width", w);
-            svg.setAttribute("height", h);
+                svg.setAttribute("viewBox",
+                    [Math.min(elem_bbox.left, svg_viewbox[0]),
+                    Math.min(elem_bbox.top, svg_viewbox[1]),
+                    w,
+                    h
+                    ].join(" "));
+                svg.setAttribute("width", w);
+                svg.setAttribute("height", h);
+            }
         },
         dropdown_index_to_pd = function(elem) {
             var highlighted = elem.querySelector(".highlighted");
@@ -446,9 +448,8 @@ var canvas_events = (function() {
                 // prevent the default behavior of scrolling
                 // on arrow keys in editmode
                 var patchid = pdgui.is_webapp() ? "#patchsvg_"+name : "#patchsvg"
-                
-                if (document.querySelector(patchid)
-                    .classList.contains("editmode")) {
+                const elem = document.querySelector(patchid);
+                if (elem && elem.classList.contains("editmode")) {
                     if ([32, 37, 38, 39, 40].indexOf(evt.keyCode) > -1) {
                         evt.preventDefault();
                     }
@@ -493,6 +494,11 @@ var canvas_events = (function() {
                 return false;
             },
             text_keydown: function(evt) {
+                if (pdgui.is_webapp()) { // temporary fix
+                    if (pdgui.cmd_or_ctrl_key(evt) && evt.altKey) {
+                        return false;
+                    }
+                }
                 evt.stopPropagation();
                 //evt.preventDefault();
                 return false;
@@ -1339,7 +1345,7 @@ function register_window_id(cid, attr_array) {
             pdgui.update_focused_windows(cid);
 
             // Force font size 10
-            pdgui.pdsend(cid, "font", 16, 8, 100,0);
+            pdgui.pdsend(cid, "font", 10, 8, 100,0);
     }
 
 
@@ -1404,7 +1410,9 @@ class Popup {
         // Close after click
         this.popup_elem.onclick = function(e){
             var ul_node = e.target.parentNode;
-            ul_node.parentNode.removeChild(ul_node);
+            if (ul_node !== document.body) {
+                ul_node.parentNode.removeChild(ul_node);
+            }
         }
     }
 

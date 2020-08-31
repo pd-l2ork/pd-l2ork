@@ -1091,7 +1091,7 @@ function menu_close(name) {
     // not handling the "text editor" yet
     // not handling the "Window" menu yet
     //pdtk_canvas_checkgeometry $name
-    pdsend(name + " menuclose 0");
+    pdsend(name + " menuclose 1"); // currently, we just force quit(1) on web without canvas_menuclose_callback
 }
 
 exports.menu_close = menu_close;
@@ -2194,7 +2194,9 @@ function configure_item(item, attributes) {
     } else {
         for (attr in attributes) {
             if (attributes.hasOwnProperty(attr)) {
-                item.setAttributeNS(null, attr, attributes[attr]);
+                if (item) {
+                    item.setAttributeNS(null, attr, attributes[attr]);
+                }
             }
         }
     }
@@ -2268,7 +2270,9 @@ var gui = (function() {
             append: !w ? null_fn: function(cb) {
                 var frag = w.window.document.createDocumentFragment();
                 frag = cb(frag, w.window, c[cid]);
-                last_thing.appendChild(frag);
+                if (last_thing) {
+                    last_thing.appendChild(frag);
+                }
                 return c[cid];
             },
             get_gobj: !w ? null_fn : function(sel, arg) {
@@ -2864,6 +2868,16 @@ function textentry_displace(t, dx, dy) {
         .split(",");      // split into x and y
     var x = +transform[0].trim().replace("px", ""),
         y = +transform[1].trim().replace("px", "");
+    if (is_webapp()) { // temporary fix for firefox
+        if (y + dy == 0) {
+            if (dy < 0) {
+                y--;
+            }
+            else {
+                y++;
+            }
+        }
+    }
     t.style.setProperty("transform",
         "translate(" +
         (x + dx) + "px, " +
@@ -6010,7 +6024,12 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
             pd_fontsize_to_gui_fontsize(font_size) + "px");
         p.style.setProperty("line-height",
             text_line_height_kludge(font_size, "pd") + "px");
-        p.style.setProperty("transform", "translate(0px, 0px)");
+        if (is_webapp()) { // temporary fix for Firefox
+            p.style.setProperty("transform", "translate(0px, 1px)");
+        }
+        else {
+            p.style.setProperty("transform", "translate(0px, 0px)");
+        }
         p.style.setProperty("max-width",
             width_spec !== 0 ? width_spec + "ch" : "60ch");
         p.style.setProperty("min-width",
@@ -6066,7 +6085,9 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
 
         if(is_webapp()){
             var div_p = patchwin[cid].window.document.getElementById("div-svg-p");
-            div_p.parentNode.removeChild(div_p);
+            if (div_p) {
+                div_p.parentNode.removeChild(div_p);
+            }
         }
     }
 }
@@ -6094,7 +6115,12 @@ function canvas_params(nw_win, cid)
     var bbox, width, height, min_width, min_height, x, y, svg_elem;
     var patchsvg_id = is_webapp() ? "patchsvg_"+cid : "patchsvg";
     svg_elem = nw_win.window.document.getElementById(patchsvg_id);
-    bbox = svg_elem.getBBox();
+    if (svg_elem) {
+        bbox = svg_elem.getBBox();
+    }
+    else {
+        bbox = {x: 0, y: 0, width: 0, height: 0};
+    }
     // We try to do Pd-extended style canvas origins. That is, coord (0, 0)
     // should be in the top-left corner unless there are objects with a
     // negative x or y.
@@ -6120,8 +6146,11 @@ function canvas_params(nw_win, cid)
     // of them. This could lead to some problems with event handlers but I
     // haven't had a problem with it yet.
     if(is_webapp()){
-        min_width = document.getElementById(patchsvg_id).getBoundingClientRect().width;	
-	    min_height = document.getElementById(patchsvg_id).getBoundingClientRect().height;
+        const elem = document.getElementById(patchsvg_id);
+        if (elem) {
+            min_width = elem.getBoundingClientRect().width;	
+	        min_height = elem.getBoundingClientRect().height;
+        }
     }else{
         min_width = nw_win.window.innerWidth - 4;
         min_height = nw_win.window.innerHeight - 4;    
