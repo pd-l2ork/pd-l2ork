@@ -443,6 +443,9 @@ t_canvas *canvas_new(void *dummy, t_symbol *sel, int argc, t_atom *argv)
         if (sys_zoom && zoom_hack > 0)
             zoom = calculate_zoom(zoom_hack);
     }
+#ifdef __EMSCRIPTEN__
+    font = 10; /* temporary fix to prevent garray being opened: force font size to 10 */
+#endif
         /* (otherwise assume we're being created from the menu.) */
 
     if (canvas_newdirectory->s_name[0])

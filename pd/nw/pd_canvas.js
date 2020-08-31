@@ -446,9 +446,8 @@ var canvas_events = (function() {
                 // prevent the default behavior of scrolling
                 // on arrow keys in editmode
                 var patchid = pdgui.is_webapp() ? "#patchsvg_"+name : "#patchsvg"
-                
-                if (document.querySelector(patchid)
-                    .classList.contains("editmode")) {
+                const elem = document.querySelector(patchid);
+                if (elem && elem.classList.contains("editmode")) {
                     if ([32, 37, 38, 39, 40].indexOf(evt.keyCode) > -1) {
                         evt.preventDefault();
                     }
@@ -493,6 +492,11 @@ var canvas_events = (function() {
                 return false;
             },
             text_keydown: function(evt) {
+                if (pdgui.is_webapp()) { // temporary fix
+                    if (pdgui.cmd_or_ctrl_key(evt) && evt.altKey) {
+                        return false;
+                    }
+                }
                 evt.stopPropagation();
                 //evt.preventDefault();
                 return false;
@@ -1339,7 +1343,7 @@ function register_window_id(cid, attr_array) {
             pdgui.update_focused_windows(cid);
 
             // Force font size 10
-            pdgui.pdsend(cid, "font", 16, 8, 100,0);
+            pdgui.pdsend(cid, "font", 10, 8, 100,0);
     }
 
 
@@ -1404,7 +1408,9 @@ class Popup {
         // Close after click
         this.popup_elem.onclick = function(e){
             var ul_node = e.target.parentNode;
-            ul_node.parentNode.removeChild(ul_node);
+            if (ul_node !== document.body) {
+                ul_node.parentNode.removeChild(ul_node);
+            }
         }
     }
 
