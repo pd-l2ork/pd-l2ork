@@ -5,17 +5,9 @@ var lib_dir;
 var help_path, browser_doc, browser_path, browser_init;
 var pd_engine_id;
 
-	
-// Emscripten Module Var
-var Module = undefined;
-
-function init_module(module){
-    Module = module
-}
-exports.init_module = init_module;
 
 function is_webapp(){
-    if(Module === undefined){
+    if(typeof(Module) === "undefined"){
         return false;
     }
     return true;
@@ -890,6 +882,7 @@ function gui_canvas_saveas(name, initfile, initdir, close_flag) {
         var filename = prompt("Please enter file name", initfile);
         if (filename != null) {
             saveas_callback(name, filename, close_flag);
+            add_canvas_name(name, filename);
         }
     }else{
         var input, chooser,
@@ -1065,7 +1058,9 @@ function gui_window_close(cid) {
     // may not have finished creating the window yet. So we check to
     // make sure the canvas cid exists...
     gui(cid).get_nw_window(function(nw_win) {
-        if(!is_webapp()){
+        if(is_webapp()){
+            menuclose_webapp(cid);
+        }else{
             nw_close_window(nw_win);
         }
     });
@@ -1097,13 +1092,6 @@ function menu_close(name) {
     // not handling the "Window" menu yet
     //pdtk_canvas_checkgeometry $name
     pdsend(name + " menuclose 0");
-
-    if(is_webapp()){
-        window.document.getElementById("patch"+name).remove();
-        delete window.shortkeys[name];
-        add_shortcuts();
-        remove_focused_window(name);
-    }
 }
 
 exports.menu_close = menu_close;
@@ -1171,12 +1159,24 @@ function canvas_menuclose_callback(cid_for_dialog, cid, force) {
     }, 150);
 }
 
+function menuclose_webapp(cid){
+    window.document.getElementById("patch"+cid).remove();
+    window.canvas_events.remove_canvas_div(cid);
+    delete window.shortkeys[cid];
+    remove_focused_window(cid);
+    add_shortcuts();
+}
+
 function gui_canvas_menuclose(cid_for_dialog, cid, force) {
     // Hack to get around a renderer bug-- not guaranteed to work
     // for long patches
-    setTimeout(function() {
+    if(is_webapp()){
+        menuclose_webapp(cid);
+    }else{
+        setTimeout(function() {
             canvas_menuclose_callback(cid_for_dialog, cid, force);
         }, 450);
+    }
 }
 
 function gui_quit_dialog() {
@@ -2044,6 +2044,12 @@ function upload_patch(files) {
         };
         reader.readAsArrayBuffer(file);
     }
+
+    // Refresh file list after upload file
+    setTimeout(function(){ 
+        update_file_ls(); 
+    }, 2000);
+    
 }
 
 exports.upload_patch = upload_patch;
@@ -2101,19 +2107,29 @@ exports.download_patch = download_patch;
 function update_file_ls(){
     var file_ls = window.document.getElementById("file_ls");
     file_ls.innerHTML = "";
+    var files_added = 0;
 
     for (const file of Module.FS.readdir(workspace)){
-        var li = window.document.createElement("li");
-        // Add name of file
-        li.append(file);
+        var mode = Module.FS.stat(workspace+file).mode;
+        if(Module.FS.isFile(mode)){
+            var li = window.document.createElement("li");
+            var a = window.document.createElement("a");
+            // Add name of file
+            a.append("./"+file);
+    
+            // Add open button
+            a.onclick = function(){open_patch(file)};
+            li.append(a);
+           
+            file_ls.append(li);
+            files_added = files_added + 1;
+        }
+    }
 
-        // Add open button
-        var open_btn = window.document.createElement("button");
-        open_btn.className = "fa fa-external-link";
-        open_btn.onclick = function(){open_patch(file)};
-        li.append(open_btn);
-       
-        file_ls.append(li);
+    if(files_added > 0){
+        window.document.getElementById("file_ls_empty").style.display = "none";
+    }else{
+        window.document.getElementById("file_ls_empty").style.display = "block";
     }
 }
 exports.update_file_ls = update_file_ls;
@@ -5670,7 +5686,7 @@ function gui_font_dialog(cid, gfxstub, font_size) {
         attrs);
 
     if(!is_webapp()){
-        dialogwin[did] = d_tmp;
+        dialogwin[gfxstub] = d_tmp;
     }
 }
 
@@ -6013,6 +6029,12 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         p.textContent = text;
         // append to doc body
         if(is_webapp()){
+            // Fix min-width on webapp
+            p.style.setProperty("min-width",
+            width_spec <= 0 ? "5ch" :
+                (is_gop == 1 ? width_spec + "px" :
+                    width_spec + 2 + "ch"));
+
 	        var svg = patchwin[cid].window.document.getElementById("patch_div_"+cid);	
 	        var div_p = patchwin[cid].window.document.createElement("div");
 	        div_p.id = "div-svg-p";	

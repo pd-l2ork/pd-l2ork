@@ -62,6 +62,7 @@ var canvas_events = (function() {
         canvas_div_y = 0,	
         canvas_div_scroll_left = 0,	
         canvas_div_scroll_top = 0,
+        clicking = false,
         textbox = function () {
             return document.getElementById("new_object_textentry");
         },
@@ -108,9 +109,10 @@ var canvas_events = (function() {
             if (text.search(/^draw\s+path\s+d\s*=\s*"/) !== -1) {
                 text = text_to_normalized_svg_path(text);
             }
-            // escape dollar signs
-            text = text.replace(/(\$[0-9]+)/g, "\\$1");
-
+            if(!pdgui.is_webapp()){
+                // escape dollar signs
+                text = text.replace(/(\$[0-9]+)/g, "\\$1");
+            }
             // escape special $@ sign
             text = text.replace(/(\$@)/g, "\\$@");
 
@@ -259,9 +261,16 @@ var canvas_events = (function() {
             },	
             mouseenter: function(evt) {	
                 if(pdgui.is_webapp()){
+ 
                     var id = evt.srcElement.id	
                     var n = id.split('_');	
-                    name = n[n.length -1]	
+
+                    // Check if mousedown it's entering another canvas
+                    if((clicking) && (name != n[n.length -1])){
+                        events.mouseup(evt);
+                    }
+
+                    name = n[n.length -1];	
                     canvas_div_x = canvas_divs[name].canvas_div_x;	
                     canvas_div_y = canvas_divs[name].canvas_div_y;	
                     filename = canvas_divs[name].filename;	
@@ -271,10 +280,18 @@ var canvas_events = (function() {
                     evt.stopPropagation();	
                     evt.preventDefault();	
         
-                    load_canvas_menu_actions(name, filename);	
+                    load_canvas_menu_actions(name, filename);
+                    events.window_recalculate(evt)
         
                     return false;
                 }	
+            },
+            mouseleave: function(evt){
+                if(pdgui.is_webapp()){
+                    if(clicking){
+                        document.addEventListener("mouseup", events.mouseup, false);
+                    }
+                }
             },
             mousemove: function(evt) {
                 //pdgui.post("x: " + evt.pageX + " y: " + evt.pageY +
@@ -282,12 +299,13 @@ var canvas_events = (function() {
 
                 var x_coord, y_coord;
                 if(pdgui.is_webapp()){
-                    x_coord = (evt.pageX + svg_view.x + canvas_div_scroll_left - canvas_div_x);
-                    y_coord = evt.pageY + svg_view.y + canvas_div_scroll_top - canvas_div_y;
+                    x_coord = Math.floor(evt.pageX + svg_view.x + canvas_div_scroll_left - canvas_div_x);
+                    y_coord = Math.floor(evt.pageY + svg_view.y + canvas_div_scroll_top - canvas_div_y);
                 }else{
                     x_coord = evt.pageX + svg_view.x,
                     y_coord = evt.pageY + svg_view.y
                 }
+
                 pdgui.pdsend(name, "motion",
                     x_coord,
                     y_coord,
@@ -299,6 +317,7 @@ var canvas_events = (function() {
             },
             mousedown: function(evt) {
                 if(pdgui.is_webapp()){
+                    clicking = true;
                     var popup = document.getElementById("popup");
                     if(popup){
                         popup.parentNode.removeChild(popup);
@@ -345,8 +364,8 @@ var canvas_events = (function() {
                         !!draggable_label, false);
 
                     if(pdgui.is_webapp()){
-                        x_coord = (evt.pageX + svg_view.x + canvas_div_scroll_left - canvas_div_x)
-                        y_coord = (evt.pageY + svg_view.y + canvas_div_scroll_top - canvas_div_y)
+                        x_coord = Math.floor(evt.pageX + svg_view.x + canvas_div_scroll_left - canvas_div_x)
+                        y_coord = Math.floor(evt.pageY + svg_view.y + canvas_div_scroll_top - canvas_div_y)
                     }else{
                         x_coord = (evt.pageX + svg_view.x),
                         y_coord = (evt.pageY + svg_view.y)
@@ -385,8 +404,8 @@ var canvas_events = (function() {
                 }
 
                 if(pdgui.is_webapp()){
-                    x_coord = (evt.pageX + svg_view.x + canvas_div_scroll_left - canvas_div_x)
-                    y_coord = (evt.pageY + svg_view.y + canvas_div_scroll_top - canvas_div_y)
+                    x_coord = Math.floor(evt.pageX + svg_view.x + canvas_div_scroll_left - canvas_div_x)
+                    y_coord = Math.floor(evt.pageY + svg_view.y + canvas_div_scroll_top - canvas_div_y)
                 }else{
                     x_coord = (evt.pageX + svg_view.x),
                     y_coord = (evt.pageY + svg_view.y)
@@ -406,8 +425,9 @@ var canvas_events = (function() {
                 var x_coord, y_coord
                 
                 if(pdgui.is_webapp()){
-                    x_coord = (evt.pageX + svg_view.x + canvas_div_scroll_left - canvas_div_x)
-                    y_coord = (evt.pageY + svg_view.y + canvas_div_scroll_top - canvas_div_y)
+                    x_coord = Math.floor(evt.pageX + svg_view.x + canvas_div_scroll_left - canvas_div_x)
+                    y_coord = Math.floor(evt.pageY + svg_view.y + canvas_div_scroll_top - canvas_div_y)
+                    clicking = false;
                 }else{
                     x_coord = (evt.pageX + svg_view.x),
                     y_coord = (evt.pageY + svg_view.y)
@@ -436,8 +456,11 @@ var canvas_events = (function() {
             },
             keypress: function(evt) {
                 pdgui.keypress(name, evt);
-                // Don't do things like scrolling on space, arrow keys, etc.
-                evt.preventDefault();
+                // Avoid prevent default on textareas
+                if(evt.target.type !== "textarea"){
+                    // Don't do things like scrolling on space, arrow keys, etc.
+                    evt.preventDefault();
+                }
             },
             keyup: function(evt) {
                 pdgui.keyup(name, evt);
@@ -455,7 +478,7 @@ var canvas_events = (function() {
                     // send a mousedown and mouseup event to Pd to instantiate
                     // the object
                     events.mousedown(evt);
-                    //events.mouseup(evt);
+                    events.mouseup(evt);
                     canvas_events.normal();
                 }
                 evt.stopPropagation();
@@ -799,7 +822,7 @@ var canvas_events = (function() {
                     evt_name = prop.split("_");
                     evt_name = evt_name[evt_name.length - 1];
 
-                    if(pdgui.is_webapp()){
+                    if(pdgui.is_webapp() && div !== undefined){
                         div.canvas_div.removeEventListener(evt_name, events[prop], false);
                     }else{
                         document.removeEventListener(evt_name, events[prop], false);
@@ -817,7 +840,8 @@ var canvas_events = (function() {
 	                    canvas_events.none(div_name);	
 	                    div.canvas_div.addEventListener("scroll", events.onscroll, false);	
 	                    div.canvas_div.addEventListener("mouseenter", events.mouseenter, false);	
-	                    div.canvas_div.addEventListener("mousemove", events.mousemove, false);	
+	                    div.canvas_div.addEventListener("mouseleave", events.mouseleave, false);
+                        div.canvas_div.addEventListener("mousemove", events.mousemove, false);	
 	                    div.canvas_div.addEventListener("keydown", events.keydown, false);	
 	                    div.canvas_div.addEventListener("keypress", events.keypress, false);	
 	                    div.canvas_div.addEventListener("keyup", events.keyup, false);	
@@ -829,9 +853,13 @@ var canvas_events = (function() {
                 var container = document.getElementById("container-app");
                 container.addEventListener("scroll", events.window_recalculate, false);
 
+                var canvas_content = document.getElementById("canvas-content");
+                canvas_content.addEventListener("scroll", events.window_recalculate, false);
+
                 // Add listeners to keyevents
                 document.addEventListener("keydown", events.keydown, false);
                 document.addEventListener("keyup", events.keyup, false);
+                document.addEventListener("keypress", events.keypress, false);
             }else{
                 document.addEventListener("mousemove", events.mousemove, false);
                 document.addEventListener("keydown", events.keydown, false);
@@ -1276,6 +1304,10 @@ var canvas_events = (function() {
                     load_canvas_menu_actions(cid, filename)	
                 }                    
             }
+        },
+        remove_canvas_div: function(cid){
+            delete canvas_divs[cid];
+            canvas_events.none();
         }
     };
 }());
@@ -1300,7 +1332,7 @@ function translate_form() {
 // This gets called from the nw_create_window function in index.html
 // It provides us with our canvas id from the C side.  Once we have it
 // we can create the menu and register event callbacks
-window.register_window_id = function register_window_id(cid, attr_array) {
+function register_window_id(cid, attr_array) {
     if(pdgui.is_webapp()){
             // Add menu text	
             menu_options("web-canvas", window, cid);
@@ -1308,7 +1340,7 @@ window.register_window_id = function register_window_id(cid, attr_array) {
             pdgui.update_focused_windows(cid);
 
             // Force font size 10
-            pdgui.pdsend(cid, "font", 10, 8, 100,0);
+            pdgui.pdsend(cid, "font", 16, 8, 100,0);
     }
 
 
@@ -1362,6 +1394,7 @@ window.register_window_id = function register_window_id(cid, attr_array) {
     }
     pdgui.free_title_queue(cid);
 }
+window.register_canvas = register_window_id;
 
 class Popup {
     constructor(){

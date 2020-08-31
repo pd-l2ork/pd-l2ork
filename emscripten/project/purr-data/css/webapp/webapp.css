@@ -7,26 +7,38 @@
     overflow-y: scroll;    	
 }
 
+#console_bottom{
+    position: relative !important;
+    top: 0px !important;
+}
+
 .console-find-webapp {	
     position: relative !important;	
+    background-color: transparent !important;
+    right: 0px;
+}
+.highlight-find{
+    margin-left: 10px;
 }
 
 #canvas_container{	
     display: flex !important;	
     background-color: red !important;	
-}	
-    
-.patch_window_svg{	
-    height: 250px;	
-    width: 300px;	
-    border: 2px solid black;	
-    margin: 10px;	
-    overflow: hidden;	
 }
 
-.patch_window_svg > svg{
-    min-width: 100%;
-    min-height: 100%;
+#sidebar-files ul{
+    list-style-type: none;
+    padding-left: 30px;
+    cursor: pointer;
+}
+
+#sidebar-files ul li{
+    padding-bottom: 15px;
+
+}
+
+#sidebar-files ul li a:hover {
+    color: #007BFF;
 }
 
 #content {	
@@ -35,8 +47,9 @@
 }	
     
 .content-webapp {	
-    position: relative !important;	
-    margin-top: 40px;	
+    height: 96%;
+    width: 100%;
+    margin-top: 10px;
 }	
     
 #content-canvas {	
@@ -72,16 +85,17 @@ nav {
     padding: 0px;	
     list-style:none; 	
     float:left;	
-    font-size: 12px;	
+    font-size: 14px;	
     width: 100%;	
-    border: 1px solid #C0C2C4;	
+    border: 1px solid #C0C2C4;
+    border-radius: 3px;	
     z-index: 999999;	
 }	
     
 .menu li{	
     display: none;	
     position: relative;	
-    padding: 5px 10px;	
+    padding: 7px 10px;	
     cursor: pointer;	
 }	
     
@@ -98,11 +112,6 @@ nav {
 .menu > li:hover, .patch-menu > li:hover {	
     float: left;	
     background-color: #6bd4e6;	
-}	
-    
-    
-.menu li:hover > ul, .patch-menu li:hover > ul {	
-    display: block;	
 }	
     
 .menu li ul, .patch-menu li ul{	
@@ -149,7 +158,14 @@ li .hr{
     margin: 0px;	
     padding: 0px;	
 }	
-    
+  
+#pd-info{
+    display: block;
+}
+
+#pd-info img{
+    height: 50px;
+}
     
 /* Popup */	
 #popup{	
@@ -184,53 +200,105 @@ li .hr{
 /* Webapp Index layout */	
 #sidebar{	
     background-color: transparent;	
-    max-width: 300px;	
-    min-width: 300px;	
+    min-width: 200px;
+    max-width: 200px;
+    margin: 0px;
+    margin-top: 10px;
+    border-top-width: 0ch;
+}
+
+#windows{
+    max-height: 100vh !important;
+    max-width: 90vw !important;
+}
+
+#canvas-content{	
+    height: 70%;	
+    overflow: scroll;
+    border-top-width: 0ch;
+}
+
+#canvas-content > .card-body{	
+    display: flex !important;	
+}
+
+#canvas-container{
+    min-height: 100%;
+    flex-direction: row;
 }	
-    
-#canvas-container{	
-    display: flex;	
-}	
-    
-    
+
+#console_controls{
+    background-color: transparent;
+}
+
 #console-window{	
-    background-color: transparent;	
-    flex-basis: 30%;	
-    max-height: 30%;	
+    background-color: transparent;
+    max-height: 30%;
+}
+
+.patch{
+    flex-basis: 100%;
+    background-color: #f6f6f6;
+    border-right: 2px solid #858688;
+}	
+
+.patch_window_svg{
+    background-color: #f6f6f6;
+    min-height: 100%;
+    overflow: visible;
+    margin-top: 35px;
 }	
     
-.patch{	
-    border: 2px solid black;	
-}	
-    
-.patch_window_svg{	
-    height: 250px;	
-    width: 350px;	
-    border: 2px solid black;	
-    margin: 10px;	
-    overflow: scroll;	
-}	
-    
-.patch_window_svg > svg{	
+.patch_window_svg > svg{
+    min-height: 100%;
     position: relative;	
     margin-top: -1px;	
     margin-left: -1px;	
-    overflow: hidden;	
+    overflow: visible;	
 }	
-    
+
+.patch-holder{
+    height: 100%;
+}
+
+.patch-filename{
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
 #div-svg-p{	
     position: relative;	
     z-index: 999999;	
 }	
-    
+
+
+.dsp_toggle{
+    margin-left: 20px;
+}
+
 /* Bootstrap */	
 .container-fluid{	
-    background-color: transparent;	
-    height: 100vh;	
+    background-color: transparent;
     padding: 0px !important;	
-    overflow: scroll;	
-}	
-    
-#canvas-content > .card-body{	
-    display: flex !important;	
+    overflow: scroll;
+    overflow: hidden;
+}
+
+.card-body{
+    padding: 0px 5px !important;
+}
+
+.card-body > .side-card{
+    padding-top: 100px;
+}
+
+/* Fontawesome icons */
+.fa{
+    font-size: 1.5em !important;
+    margin-right: 20px;
+}
+
+#reload-i{
+    font-size: 1em !important;
+    cursor: pointer;
 }

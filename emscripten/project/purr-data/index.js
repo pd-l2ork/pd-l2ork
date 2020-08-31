@@ -37,10 +37,9 @@ function create_window(cid, type, width, height, xpos, ypos, attr_array) {
             // Add canvas html file
 			$.get("./components/canvas/"+f, function(data){
                  $("#canvas-container").append(data)
-                 register_canvas(cid, eval_string);
-
-                 // initialize the window
-                new_win.window.eval(eval_string);
+                 update_canvas_id(cid);
+                 add_canvas_name(cid, attr_array.name)
+                 register_canvas(cid, attr_array);
             });
             
             // flag the window as loaded. We may want to wait until the
@@ -49,17 +48,18 @@ function create_window(cid, type, width, height, xpos, ypos, attr_array) {
         }else if(new_win === pdbundle.pdgui.get_dialogwin(cid)){
             // Add menu html file
 			$.get("./components/dialogs/"+f, function(data){
-                var dialog_div = new_win.window.document.createElement('div')
-                var n_cid = cid;
+                var dialog_div = new_win.window.document.getElementById("dialog-div");
 
-                if(cid.indexOf('.') === 0){
-                    n_cid = cid.substring(1,cid.length-1);
-                    dialog_div.id = "dialog-div-"+n_cid;
+                if(dialog_div === null){
+                    dialog_div = new_win.window.document.createElement('div')
+                    dialog_div.id = "dialog-div";
                 }
 
-                dialog_div.id = "dialog-div-"+n_cid;
-                $("#sidebar-body").prepend(dialog_div.outerHTML)
-                $("#dialog-div-"+n_cid).prepend(data)
+                // cleaning dialog div
+                dialog_div.innerHTML = "";
+
+                $("#sidebar-body-dialog").prepend(dialog_div.outerHTML)
+                $("#dialog-div").prepend(data)
 
                 // initialize the dialog window                
                 register_dialog(cid,attr_array);
@@ -112,6 +112,16 @@ function add_menu(){
     });
 }
 
+function dsp_toggle(){
+    // DSP toggle
+    document.getElementById("dsp_control").addEventListener("click",
+        function(evt) {
+            var dsp_state = evt.target.checked ? 1 : 0;
+            pdbundle.pdgui.pdsend("pd dsp", dsp_state);
+        }
+    );    
+}
+
 function create_pd_window_menus(gui, w) {
     var type = "web";
     var m = menu_options(type, w);
@@ -123,9 +133,9 @@ function create_pd_window_menus(gui, w) {
 function gui_init(win){
     // Init vars
     pdbundle.pdgui.set_pd_window(win);
-    pdbundle.pdgui.init_module(Module);
     pdbundle.pdgui.set_new_window_fn(create_window);
-    add_menu()
+    add_menu();
+    dsp_toggle();
 }
 
 function initialize_webapp() {
