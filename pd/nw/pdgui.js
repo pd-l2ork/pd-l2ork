@@ -6014,7 +6014,12 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
             pd_fontsize_to_gui_fontsize(font_size) + "px");
         p.style.setProperty("line-height",
             text_line_height_kludge(font_size, "pd") + "px");
-        p.style.setProperty("transform", "translate(0px, 0px)");
+        if (is_webapp()) { // temporary fix for Firefox
+            p.style.setProperty("transform", "translate(0px, 1px)");
+        }
+        else {
+            p.style.setProperty("transform", "translate(0px, 0px)");
+        }
         p.style.setProperty("max-width",
             width_spec !== 0 ? width_spec + "ch" : "60ch");
         p.style.setProperty("min-width",
