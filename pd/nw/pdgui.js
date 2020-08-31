@@ -2868,6 +2868,16 @@ function textentry_displace(t, dx, dy) {
         .split(",");      // split into x and y
     var x = +transform[0].trim().replace("px", ""),
         y = +transform[1].trim().replace("px", "");
+    if (is_webapp()) { // temporary fix for firefox
+        if (y + dy == 0) {
+            if (dy < 0) {
+                y--;
+            }
+            else {
+                y++;
+            }
+        }
+    }
     t.style.setProperty("transform",
         "translate(" +
         (x + dx) + "px, " +

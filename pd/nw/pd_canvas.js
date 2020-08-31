@@ -176,21 +176,23 @@ var canvas_events = (function() {
             // enlarge the svg to accommodate it.
             // Note: window.scrollX and window.scrollY might not work
             // with Android Chrome 43 and IE.
-            var svg = document.getElementById("patchsvg"),
+            var svg = document.getElementById("patchsvg");
+            if (svg) {
                 elem_bbox = elem.getBoundingClientRect(),
                 svg_viewbox = svg.getAttribute("viewBox").split(" "),
                 w = Math.max(elem_bbox.left + elem_bbox.width + window.scrollX,
                     svg_viewbox[2]),
                 h = Math.max(elem_bbox.top + elem_bbox.height + window.scrollY,
                     svg_viewbox[3]);
-            svg.setAttribute("viewBox",
-                [Math.min(elem_bbox.left, svg_viewbox[0]),
-                 Math.min(elem_bbox.top, svg_viewbox[1]),
-                 w,
-                 h
-                ].join(" "));
-            svg.setAttribute("width", w);
-            svg.setAttribute("height", h);
+                svg.setAttribute("viewBox",
+                    [Math.min(elem_bbox.left, svg_viewbox[0]),
+                    Math.min(elem_bbox.top, svg_viewbox[1]),
+                    w,
+                    h
+                    ].join(" "));
+                svg.setAttribute("width", w);
+                svg.setAttribute("height", h);
+            }
         },
         dropdown_index_to_pd = function(elem) {
             var highlighted = elem.querySelector(".highlighted");
