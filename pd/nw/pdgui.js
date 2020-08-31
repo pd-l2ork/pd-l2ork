@@ -2040,7 +2040,7 @@ function upload_patch(files) {
         var reader = new FileReader();
         reader.onload = function () {
         var data = new Uint8Array(reader.result);
-        Module.FS.createDataFile(workspace, file.name, data, true, true, true);
+        FS.createDataFile(workspace, file.name, data, true, true, true);
         };
         reader.readAsArrayBuffer(file);
     }
@@ -2048,7 +2048,7 @@ function upload_patch(files) {
     // Refresh file list after upload file
     setTimeout(function(){ 
         update_file_ls(); 
-    }, 2000);
+    }, 200);
     
 }
 
@@ -2072,14 +2072,14 @@ function download_patch(file_name) {
     if (file_name === "") return;
     var found = false;
 
-    for (const file of Module.FS.readdir(workspace)){
+    for (const file of FS.readdir(workspace)){
         if (file_name == file) {
             found = true;
         }        
     }
     
     if(found){
-        var content = Module.FS.readFile(workspace+file_name);        
+        var content = FS.readFile(workspace+file_name);        
         var a = document.createElement('a');
         a.download = file_name;
         var blob = new Blob(
@@ -2109,9 +2109,9 @@ function update_file_ls(){
     file_ls.innerHTML = "";
     var files_added = 0;
 
-    for (const file of Module.FS.readdir(workspace)){
-        var mode = Module.FS.stat(workspace+file).mode;
-        if(Module.FS.isFile(mode)){
+    for (const file of FS.readdir(workspace)){
+        var mode = FS.stat(workspace+file).mode;
+        if(FS.isFile(mode)){
             var li = window.document.createElement("li");
             var a = window.document.createElement("a");
             // Add name of file
