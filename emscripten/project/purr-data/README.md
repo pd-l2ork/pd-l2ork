@@ -86,7 +86,7 @@ make emscripten
 - Fix the patch not responding to mouse event after the help file is opened and not being clicked.
 - Fix wrong mouse coordinate issue that happens in some circumstances.
 - Fix or disable some of the global menu items not working.
-- Fix an graphical array being opened if the patch font size changes. 
+- Fix graphical arrays being opened if the patch font size changes. 
 - Ask for saving the patch when the user closes an edited patch.
 - Make the GUI(e.g. bang, toggle) property dialog window work.
 - Make the dialog windows(e.g. property, text) appear in the right side of the patch instead of the left side bar.
