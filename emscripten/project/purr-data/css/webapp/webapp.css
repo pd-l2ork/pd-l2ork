@@ -259,6 +259,7 @@ li .hr{
 
 .patch-holder{
     height: 100%;
+    font-family: Dejavu Sans Mono !important;
 }
 
 .patch-filename{
