@@ -357,8 +357,8 @@ text.activated {
 
 /* atom box */
 .atom .border {
-    stroke: #ccc;
-    fill: #eee;
+    stroke: #ccc !important;
+    fill: #eee !important;
 }
 
 /* for dropdown box we want to visually distinguish boxes that output
