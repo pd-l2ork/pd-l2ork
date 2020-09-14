@@ -1051,15 +1051,15 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
     //    tgt = parent_glist;
     //    exception = 1;
     //}
-    //fprintf(stderr,"tgt=.x%zx %d\n", (t_uint)tgt, exception);
+    //fprintf(stderr,"tgt=.x%lx %d\n", (t_int)tgt, exception);
 
     if (vis & gobj_shouldvis(gr, parent_glist))
     {
         int xpix, ypix;
         xpix = text_xpix(&x->gl_obj, parent_glist);
         ypix = text_ypix(&x->gl_obj, parent_glist);
-        gui_vmess("gui_gobj_new", "xssiii",
-            glist_getcanvas(x->gl_owner),
+        gui_vmess("gui_gobj_new", "xxssiii",
+            glist_getcanvas(x->gl_owner), x,
             tag, "graph", xpix, ypix,
             parent_glist == glist_getcanvas(x->gl_owner) ? 1 : 0);
         if (canvas_showtext(x))
@@ -1639,7 +1639,7 @@ static void graph_select(t_gobj *z, t_glist *glist, int state)
                     (g->g_pd->c_wb->w_displacefnwtag != NULL) ||
                     (g && pd_class((t_pd *)g) == garray_class)))
                 {
-                    gobj_select(g, x, state);
+                    //gobj_select(g, x, state);
                 }
             }
         }

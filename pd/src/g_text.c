@@ -2228,10 +2228,15 @@ static void text_vis(t_gobj *z, t_glist *glist, int vis)
             {
                 //fprintf(stderr,"    draw it\n");
                 t_rtext *y = glist_findrtext(glist, x);
+                char parenttag[50];
+                sprintf(parenttag, ".x%lx.t%lx", (t_int)glist_getcanvas(glist),
+                    (t_int)glist_findrtext(glist_getcanvas(glist), &glist->gl_obj));
+                post("text_vis parenttag=%s", parenttag);
                 // make a group
                 text_getrect(&x->te_g, glist, &x1, &y1, &x2, &y2);
-                gui_vmess("gui_gobj_new", "xssiii",
+                gui_vmess("gui_gobj_new", "xxssiii",
                     glist_getcanvas(glist),
+                    glist,
                     rtext_gettag(y),
                     type,
                     x1,

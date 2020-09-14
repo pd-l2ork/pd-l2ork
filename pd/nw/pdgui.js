@@ -2314,23 +2314,42 @@ exports.gui = gui;
 // In the future, it might make sense to combine the scalar and object
 // creation, in which case a flag to toggle the offset would be appropriate.
 
-function gui_gobj_new(cid, tag, type, xpos, ypos, is_toplevel) {
+function gui_gobj_new(cid, parenttag, tag, type, xpos, ypos, is_toplevel) {
+    post("gui_gobj_new tag=" + tag + " parenttag=" + parenttag + " is_toplevel=" + is_toplevel);
     var g;
     xpos += 0.5,
-    ypos += 0.5,
-    gui(cid).get_elem("patchsvg", function(svg_elem) {
-        var transform_string = "matrix(1,0,0,1," + xpos + "," + ypos + ")";
-        g = create_item(cid, "g", {
-            id: tag + "gobj",
-            transform: transform_string,
-            class: type + (is_toplevel !== 0 ? "" : " gop")
+    ypos += 0.5;
+    if (is_toplevel) { // top level means it is a non-GOP object
+        gui(cid).get_elem("patchsvg", function(svg_elem) {
+            var transform_string = "matrix(1,0,0,1," + xpos + "," + ypos + ")";
+            g = create_item(cid, "g", {
+                id: tag + "gobj",
+                transform: transform_string,
+                class: type + (is_toplevel !== 0 ? "" : " gop") + 
+                    (type == "graph" ? " " + parenttag : "")
+            });
+            add_gobj_to_svg(svg_elem, g);
         });
-        add_gobj_to_svg(svg_elem, g);
-    });
+    } else { // an object drawn inside a GOP
+        post("blah... " + parenttag + "gobj");
+        gui(cid).get_elem("patchsvg", function(svg_elem, w) {
+            var tgt = w.document.getElementsByClassName(parenttag);
+            post("svg=" + svg_elem + " tgt_length=" + tgt.length + " tgt[0]=" + tgt[0] + " tgtCTM=" + tgt[0].getCTM());
+            var transform_string = "matrix(1,0,0,1," + (xpos - tgt[0].getCTM().e) + "," + (ypos - tgt[0].getCTM().f) + ")";
+            g = create_item(cid, "g", {
+                id: tag + "gobj",
+                transform: transform_string,
+                class: type + (is_toplevel !== 0 ? "" : " gop")
+            });
+            tgt[0].appendChild(g);
+            //add_gobj_to_svg(svg_elem, g);
+        });
+    }
     return g;
 }
 
 function gui_text_draw_border(cid, tag, bgcolor, isbroken, width, height) {
+    post("gui_text_draw_border tag=" + tag);
     gui(cid).get_gobj(tag)
     .append(function(frag) {
         // isbroken means either
@@ -2352,6 +2371,7 @@ function gui_text_draw_border(cid, tag, bgcolor, isbroken, width, height) {
 
 function gui_gobj_draw_io(cid, parenttag, tag, x1, y1, x2, y2, basex, basey,
     type, i, is_signal, is_iemgui) {
+    post("gui_gobj_draw_io tag=" + tag + " parenttag=" + parenttag);
     gui(cid).get_gobj(parenttag)
     .append(function(frag) {
         var xlet_class, xlet_id, rect;
@@ -2743,6 +2763,7 @@ function gui_text_new(cid, tag, type, isselected, left_margin, font_height, text
     gui(cid).get_gobj(tag, function(e) {
         xoff = e.classList.contains("graph") ? -0.5 : 0.5;
     });
+    post("git_text_new tag=" + tag);
     gui(cid).get_gobj(tag)
     .append(function(frag) {
         var svg_text = create_item(cid, "text", {
@@ -5296,7 +5317,7 @@ function gui_graph_tick_label(cid, tag, x, y, text, font, font_size, font_weight
 
 function gui_canvas_drawredrect(cid, x1, y1, x2, y2) {
     gui(cid).get_elem("patchsvg", function(svg_elem) {
-        var g = gui_gobj_new(cid, cid, "gop_rect", x1, y1, 1);
+        var g = gui_gobj_new(cid, cid, cid, "gop_rect", x1, y1, 1);
         var r = create_item(cid, "rect", {
             width: x2 - x1,
             height: y2 - y1,
