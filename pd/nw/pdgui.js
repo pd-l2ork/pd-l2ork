@@ -2377,7 +2377,7 @@ function gui_text_draw_border(cid, tag, bgcolor, isbroken, width, height) {
             e.setAttribute("height", height + 1);
         });
     }
-    if (isgop) {
+    /*if (isgop) {
         // ico@vt.edu 20200914:
         // we insert border below GOP objects to maintain
         // compatibility with 1.x LATER: rethink this.
@@ -2397,7 +2397,7 @@ function gui_text_draw_border(cid, tag, bgcolor, isbroken, width, height) {
                 frag.insertBefore(rect, frag.childNodes[0]);
                 return frag;
             });
-    } else {
+    } else {*/
         gui(cid).get_gobj(tag)
         .append(function(frag) {
             // isbroken means either
@@ -2415,7 +2415,7 @@ function gui_text_draw_border(cid, tag, bgcolor, isbroken, width, height) {
             frag.appendChild(rect);
             return frag;
         });
-    }
+    //}
 }
 
 function gui_gobj_draw_io(cid, parent, parenttag, tag, x1, y1, x2, y2, basex, basey,
@@ -6452,9 +6452,27 @@ function canvas_params(nw_win)
     // calculate the canvas parameters (svg bounding box and window geometry)
     // for do_getscroll and do_optimalzoom
     //post("nw_win=" + nw_win + " " + nw_win.window + " " + nw_win.window.document);
-    var bbox, width, height, min_width, min_height, x, y, svg_elem;
+    var bbox, width, height, min_width, min_height, x, y, svg_elem, gop_svgs, i;
     svg_elem = nw_win.window.document.getElementById("patchsvg");
+
+    // ico@vt.edu 20200915: hide all GOP objects in case they spill over to get us
+    // accurate bbox values...
+    gop_svgs = nw_win.window.document.getElementsByClassName("graphsvg");
+    if (gop_svgs.length > 0) {
+        for (i = 0; i < gop_svgs.length; i++)
+        {
+            gop_svgs[i].style.display = "none";
+        }
+    }
+    // ...now get bbox...
     bbox = svg_elem.getBBox();
+    // ...and now make all the bbox objects visible again
+    if (gop_svgs.length > 0) {
+        for (i = 0; i < gop_svgs.length; i++)
+        {
+            gop_svgs[i].style.display = "block";
+        }
+    }   
     //post("canvas_params calculated bbox: " + bbox.width + " " + bbox.height);
     // We try to do Pd-extended style canvas origins. That is, coord (0, 0)
     // should be in the top-left corner unless there are objects with a
@@ -6627,6 +6645,12 @@ function do_getscroll(cid, checkgeom) {
             width: width,
             height: height
         });
+
+        // TODO: reposition activated item (if any), in case it has caused
+        // the viewBox value to change. To trigger this, take any text object,
+        // drag it beyond the left edge, which should trigger a getscroll
+        // adjustment to the viewBox, and when it does, it should also
+        // update the activated object
     });
 }
 

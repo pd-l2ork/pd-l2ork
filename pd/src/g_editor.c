@@ -5191,6 +5191,8 @@ static void canvas_doregion(t_canvas *x, int xpos, int ypos, int doit)
     }
 }
 
+//void gobj_activate_after_scroll() TODO
+
 void canvas_mouseup(t_canvas *x,
     t_floatarg fxpos, t_floatarg fypos, t_floatarg fwhich)
 {
