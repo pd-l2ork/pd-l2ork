@@ -2915,7 +2915,6 @@ function gui_text_redraw_border(cid, tag, width, height) {
 }
 
 function gui_gobj_select(cid, tag) {
-    post("gui_gobj_select tag=" + tag);
     gui(cid).get_gobj(tag, function(e, w) {
         //var i, all_elems; // all GOP elements retrievable by the shared class name
         /*if (e.classList.contains("graph") && e.classList.length > 1) {
