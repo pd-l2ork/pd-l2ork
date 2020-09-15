@@ -20,6 +20,17 @@ body {
     font-family: "DejaVu Sans Mono";
 }
 
+.graph .border {
+    stroke: black;
+    fill: none;
+}
+
+/* Graph (or subpatch) that has been opened to inspect its contents */
+.graph.has_window .border {
+    stroke: black;
+    fill: gray;
+}
+
 /* delete the default scrollbars, and let's make our own */
 .patch_body::-webkit-scrollbar {
     width: 0px;
@@ -357,8 +368,13 @@ text.activated {
 
 /* atom box */
 .atom .border {
-    stroke: #ccc !important;
-    fill: #eee !important;
+    stroke: #ccc;
+    fill: #eee;
+}
+
+.graphsvg.atom.border {
+    stroke: #ccc;
+    fill: #eee;
 }
 
 /* for dropdown box we want to visually distinguish boxes that output
@@ -448,17 +464,6 @@ text.activated {
    isn't selected */
 .iemgui .border:not(.mycanvas_border) {
     stroke: black;
-}
-
-.graph .border {
-    stroke: black;
-    fill: none;
-}
-
-/* Graph (or subpatch) that has been opened to inspect its contents */
-.graph.has_window .border {
-    stroke: black;
-    fill: gray;
 }
 
 /* border color for selected objects

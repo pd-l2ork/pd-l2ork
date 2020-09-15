@@ -2228,10 +2228,6 @@ static void text_vis(t_gobj *z, t_glist *glist, int vis)
             {
                 //fprintf(stderr,"    draw it\n");
                 t_rtext *y = glist_findrtext(glist, x);
-                char parenttag[50];
-                sprintf(parenttag, ".x%lx.t%lx", (t_int)glist_getcanvas(glist),
-                    (t_int)glist_findrtext(glist_getcanvas(glist), &glist->gl_obj));
-                post("text_vis parenttag=%s", parenttag);
                 // make a group
                 text_getrect(&x->te_g, glist, &x1, &y1, &x2, &y2);
                 gui_vmess("gui_gobj_new", "xxssiii",
@@ -2502,8 +2498,9 @@ void glist_drawiofor(t_glist *glist, t_object *ob, int firsttime,
             issignal = obj_issignaloutlet(ob,i);
 
             /* need to send issignal and is_iemgui here... */
-            gui_vmess("gui_gobj_draw_io", "xssiiiiiisiii",
+            gui_vmess("gui_gobj_draw_io", "xxssiiiiiisiii",
                 glist_getcanvas(glist),
+                ob,
                 rtext_gettag(y),
                 tag,
                 onset,
@@ -2519,8 +2516,9 @@ void glist_drawiofor(t_glist *glist, t_object *ob, int firsttime,
         }
         else
         {
-            gui_vmess("gui_gobj_redraw_io", "xssiisiii",
+            gui_vmess("gui_gobj_redraw_io", "xxssiisiii",
                 glist_getcanvas(glist),
+                ob,
                 rtext_gettag(y),
                 tag,
                 onset,
@@ -2540,8 +2538,9 @@ void glist_drawiofor(t_glist *glist, t_object *ob, int firsttime,
         {
             //fprintf(stderr,"glist_drawiofor i firsttime\n");
             issignal = obj_issignalinlet(ob,i);
-            gui_vmess("gui_gobj_draw_io", "xssiiiiiisiii",
+            gui_vmess("gui_gobj_draw_io", "xxssiiiiiisiii",
                 glist_getcanvas(glist),
+                ob,
                 rtext_gettag(y),
                 tag,
                 onset,
@@ -2558,8 +2557,9 @@ void glist_drawiofor(t_glist *glist, t_object *ob, int firsttime,
         else
         {
             //fprintf(stderr,"glist_drawiofor i firsttime\n");
-            gui_vmess("gui_gobj_redraw_io", "xssiisiii",
+            gui_vmess("gui_gobj_redraw_io", "xxssiisiii",
                 glist_getcanvas(glist),
+                ob,
                 rtext_gettag(y),
                 tag,
                 onset,

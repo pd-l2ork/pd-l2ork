@@ -1628,7 +1628,9 @@ static void graph_select(t_gobj *z, t_glist *glist, int state)
                     canvas, rtext_gettag(y));
         }
 
-        t_gobj *g;
+        // ico@vt.edu 20200914: Not needed anymore for the new
+        // implementation of GOP gobjects being drawn inside the GOP group
+        /*t_gobj *g;
         //fprintf(stderr,"graph_select\n");
         if (x->gl_list && !glist_istoplevel(x))
         {
@@ -1639,10 +1641,11 @@ static void graph_select(t_gobj *z, t_glist *glist, int state)
                     (g->g_pd->c_wb->w_displacefnwtag != NULL) ||
                     (g && pd_class((t_pd *)g) == garray_class)))
                 {
-                    //gobj_select(g, x, state);
+                    gobj_select(g, x, state);
                 }
             }
         }
+        */
         // Don't yet understand the purpose of this call, so not deleting
         // it just yet...
         //sys_vgui("pdtk_select_all_gop_widgets .x%zx %s %d\n",

@@ -2315,26 +2315,42 @@ exports.gui = gui;
 // creation, in which case a flag to toggle the offset would be appropriate.
 
 function gui_gobj_new(cid, parenttag, tag, type, xpos, ypos, is_toplevel) {
-    post("gui_gobj_new tag=" + tag + " parenttag=" + parenttag + " is_toplevel=" + is_toplevel);
-    var g;
+    //post("gui_gobj_new tag=" + tag + " parent=" + parenttag + " drawon=" + 
+    //    cid + " is_toplevel=" + is_toplevel + " xpos=" + xpos + " ypos=" + ypos);
+    var g, s;
     xpos += 0.5,
     ypos += 0.5;
     if (is_toplevel) { // top level means it is a non-GOP object
-        gui(cid).get_elem("patchsvg", function(svg_elem) {
+        gui(cid).get_elem("patchsvg", function(svg_elem, w) {
             var transform_string = "matrix(1,0,0,1," + xpos + "," + ypos + ")";
-            g = create_item(cid, "g", {
-                id: tag + "gobj",
-                transform: transform_string,
-                class: type + (is_toplevel !== 0 ? "" : " gop") + 
-                    (type == "graph" ? " " + parenttag : "")
-            });
-            add_gobj_to_svg(svg_elem, g);
+            if (type === "graph") { // we make graph into another svg elem to allow for clipping
+                g = create_item(cid, "g", {
+                    id: tag + "gobj",
+                    transform: transform_string,
+                    class: type + (is_toplevel !== 0 ? "" : " gop") + 
+                        (type == "graph" ? " " + parenttag : "")
+                });
+                s = create_item(cid, "svg", {
+                    id: tag + "svg",
+                    class: (type == "graph" ? "graphsvg " + parenttag + "svg" : ""),
+                    x: - 1,
+                    y: - 1,
+                });
+                add_gobj_to_svg(svg_elem, g);
+                g.appendChild(s);
+            } else {
+                g = create_item(cid, "g", {
+                    id: tag + "gobj",
+                    transform: transform_string,
+                    class: type + (is_toplevel !== 0 ? "" : " gop") + 
+                        (type == "graph" ? " " + parenttag : "")
+                });
+                add_gobj_to_svg(svg_elem, g);
+            }
         });
     } else { // an object drawn inside a GOP
-        post("blah... " + parenttag + "gobj");
         gui(cid).get_elem("patchsvg", function(svg_elem, w) {
-            var tgt = w.document.getElementsByClassName(parenttag);
-            post("svg=" + svg_elem + " tgt_length=" + tgt.length + " tgt[0]=" + tgt[0] + " tgtCTM=" + tgt[0].getCTM());
+            var tgt = w.document.getElementsByClassName(parenttag + "svg");
             var transform_string = "matrix(1,0,0,1," + (xpos - tgt[0].getCTM().e) + "," + (ypos - tgt[0].getCTM().f) + ")";
             g = create_item(cid, "g", {
                 id: tag + "gobj",
@@ -2349,30 +2365,62 @@ function gui_gobj_new(cid, parenttag, tag, type, xpos, ypos, is_toplevel) {
 }
 
 function gui_text_draw_border(cid, tag, bgcolor, isbroken, width, height) {
-    post("gui_text_draw_border tag=" + tag);
-    gui(cid).get_gobj(tag)
-    .append(function(frag) {
-        // isbroken means either
-        //     a) the object couldn't create or
-        //     b) the box is empty
-        var rect = create_item(cid, "rect", {
-            width: width,
-            height: height,
-            //"shape-rendering": "crispEdges",
-            class: "border"
-        });
-        if (isbroken === 1) {
-            rect.classList.add("broken_border");
+    var isgop = 0;
+    gui(cid).get_gobj(tag, function(e) {
+        if(e.classList.contains("graph")) {
+            isgop = 1;
         }
-        frag.appendChild(rect);
-        return frag;
     });
+    if (isgop) {
+        gui(cid).get_elem(tag + "svg", function(e) {
+            e.setAttribute("width", width + 1);
+            e.setAttribute("height", height + 1);
+        });
+    }
+    if (isgop) {
+        // ico@vt.edu 20200914:
+        // we insert border below GOP objects to maintain
+        // compatibility with 1.x LATER: rethink this.
+        // perhaps GOP could have an option of using image
+        // instead of the frame which would solve the K12 need.
+        // Or, better yet, GOP could have a flag for frame
+        // in front or behind the GOP objects? I like that better,
+        // as it increases the overall flexibility and the usefulness
+        // of the ggee/image.
+        gui(cid).get_gobj(tag, function(frag) {
+                var rect = create_item(cid, "rect", {
+                    width: width,
+                    height: height,
+                    //"shape-rendering": "crispEdges",
+                    class: "border",
+                });
+                frag.insertBefore(rect, frag.childNodes[0]);
+                return frag;
+            });
+    } else {
+        gui(cid).get_gobj(tag)
+        .append(function(frag) {
+            // isbroken means either
+            //     a) the object couldn't create or
+            //     b) the box is empty
+            var rect = create_item(cid, "rect", {
+                width: width,
+                height: height,
+                //"shape-rendering": "crispEdges",
+                class: "border",
+            });
+            if (isbroken === 1) {
+                rect.classList.add("broken_border");
+            }
+            frag.appendChild(rect);
+            return frag;
+        });
+    }
 }
 
-function gui_gobj_draw_io(cid, parenttag, tag, x1, y1, x2, y2, basex, basey,
+function gui_gobj_draw_io(cid, parent, parenttag, tag, x1, y1, x2, y2, basex, basey,
     type, i, is_signal, is_iemgui) {
-    post("gui_gobj_draw_io tag=" + tag + " parenttag=" + parenttag);
-    gui(cid).get_gobj(parenttag)
+    gui(cid).get_gobj(tag)
     .append(function(frag) {
         var xlet_class, xlet_id, rect;
         if (is_iemgui) {
@@ -2412,9 +2460,17 @@ function gui_gobj_redraw_io(cid, parenttag, tag, x, y, type, i, basex, basey) {
     //       text_drawborder (firsttime=0) -> glist_drawiofor (firsttime=0)
     // This means that a new gatom tries to redraw its inlets before
     // it has created them.
+    var xoff = 0, yoff = 0, not_graph = 1;
+    gui(cid).get_gobj(tag, function(e) {
+        if(e.classList.contains("graph")) {
+            xoff = 0.5;
+            yoff = 0.5;
+            not_graph = 0;
+        }
+    });
     gui(cid).get_elem(tag + type + i, {
-        x: x - basex,
-        y: y - basey
+        x: x - (basex * not_graph) + xoff,
+        y: y - (basey * not_graph) + yoff
     });
 }
 
@@ -2748,6 +2804,7 @@ function gui_text_new(cid, tag, type, isselected, left_margin, font_height, text
     //ico@vt.edu: different text spacing for GOPs
     //post("gui_text_new type=" + type + " tag=" + tag);
     var xoff = 0.5; // Default value for normal objects, GOP uses -0.5
+    var yoff = 0;
     /* ico@vt.edu 20200907: the following id_suffix is used for gatom objects.
     When activated, they tend to highlight both the label and the gatom contents
     since prior to this there was no differentiation between the two in terms of
@@ -2761,9 +2818,11 @@ function gui_text_new(cid, tag, type, isselected, left_margin, font_height, text
         classname = "box_text data";
     }
     gui(cid).get_gobj(tag, function(e) {
-        xoff = e.classList.contains("graph") ? -0.5 : 0.5;
+        if(e.classList.contains("graph")) {
+            //xoff = -1;
+            //yoff = 1;
+        }
     });
-    post("git_text_new tag=" + tag);
     gui(cid).get_gobj(tag)
     .append(function(frag) {
         var svg_text = create_item(cid, "text", {
@@ -2782,7 +2841,7 @@ function gui_text_new(cid, tag, type, isselected, left_margin, font_height, text
             // shapes, and I haven't yet found any documentation for it. All I
             // know is an integer offset results in blurry text, and the 0.5
             // offset doesn't.
-            transform: "translate(" + (left_margin - xoff) + ")",
+            transform: "translate(" + (left_margin - xoff) + "," + yoff + ")",
             y: font_height - 0.5 + gobj_font_y_kludge(font),
             // Turns out we can't do 'hanging' baseline
             // because it's borked when scaled. Bummer, because that's how Pd's
@@ -2856,14 +2915,31 @@ function gui_text_redraw_border(cid, tag, width, height) {
 }
 
 function gui_gobj_select(cid, tag) {
-    gui(cid).get_gobj(tag, function(e) {
-        e.classList.add("selected");
+    post("gui_gobj_select tag=" + tag);
+    gui(cid).get_gobj(tag, function(e, w) {
+        //var i, all_elems; // all GOP elements retrievable by the shared class name
+        /*if (e.classList.contains("graph") && e.classList.length > 1) {
+           all_elems = w.document.getElementsByClassName(e.classList[1]);
+            for (i = 0; i < all_elems.length; i++) {
+                all_elems[i].classList.add("selected");
+            }
+        } else {*/
+            e.classList.add("selected");
+        //}
     });
 }
 
 function gui_gobj_deselect(cid, tag) {
-    gui(cid).get_gobj(tag, function(e) {
-        e.classList.remove("selected");
+    gui(cid).get_gobj(tag, function(e, w) {
+        var i, all_elems; // all GOP elements retrievable by the shared class name
+        if (e.classList.contains("graph") && e.classList.length > 1) {
+           all_elems = w.document.getElementsByClassName(e.classList[1]);
+            for (i = 0; i < all_elems.length; i++) {
+                all_elems[i].classList.remove("selected");
+            }
+        } else {
+            e.classList.remove("selected");
+        }
         // ico@vt.edu: check for scroll in case the handle disappears
         // during deselect. LATER: make handles always fit inside the
         // object, so this won't be necessary
@@ -2966,7 +3042,12 @@ function gui_canvas_displace_withtag(cid, dx, dy) {
         var i, ol;
         ol = w.document.getElementsByClassName("selected");
         for (i = 0; i < ol.length; i++) {
-            elem_displace(ol[i], dx, dy);
+            /*if (ol[i].classList.contains("graph")) {
+                ol[i].setAttribute('x', parseFloat(ol[i].getAttribute('x')) + dx);
+                ol[i].setAttribute('y', parseFloat(ol[i].getAttribute('y')) + dy);
+            } else {*/
+                elem_displace(ol[i], dx, dy);
+            //}
         }
     })
     .get_elem("new_object_textentry", function(textentry) {
@@ -4798,7 +4879,7 @@ function gui_room_sim_new(cid, tag, x, y, w, h, is_toplevel) {
 function gui_room_sim_map(cid, tag, w, h, rad, head, xpix, ypix, fontsize,
     fcol, bcol, src_array, r3d) {
     gui(cid).get_gobj(tag, function(e) {
-        gui_text_draw_border(cid, tag, 0, 0, w, h);
+        gui_text_draw_border(cid, tag, 0, 0, w, h, 0);
         // Set the style for the background directly... otherwise the
         // default theme bgcolor will be used
         e.querySelector(".border").style.fill = bcol;
