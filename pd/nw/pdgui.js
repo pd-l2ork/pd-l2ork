@@ -2418,7 +2418,9 @@ function gui_text_draw_border(cid, tag, bgcolor, isbroken, width, height) {
     //}
 }
 
-function gui_gobj_draw_io(cid, parent, parenttag, tag, x1, y1, x2, y2, basex, basey,
+/* ico@vt.edu 20200916: parenttag is currently unused. Leaving it in for the
+   time being until we know for sure it is not needed anymore. */
+function gui_gobj_draw_io(cid, parenttag, tag, x1, y1, x2, y2, basex, basey,
     type, i, is_signal, is_iemgui) {
     gui(cid).get_gobj(tag)
     .append(function(frag) {
@@ -2452,6 +2454,8 @@ function gui_gobj_draw_io(cid, parent, parenttag, tag, x1, y1, x2, y2, basex, ba
     });
 }
 
+/* ico@vt.edu 20200916: parenttag here was apparently never used. Leaving it in 
+   the time being until we know for sure it is indeed not needed. */
 function gui_gobj_redraw_io(cid, parenttag, tag, x, y, type, i, basex, basey) {
     // We have to check for null. Here's why...
     // if you create a gatom:
@@ -2460,17 +2464,9 @@ function gui_gobj_redraw_io(cid, parenttag, tag, x, y, type, i, basex, basey) {
     //       text_drawborder (firsttime=0) -> glist_drawiofor (firsttime=0)
     // This means that a new gatom tries to redraw its inlets before
     // it has created them.
-    var xoff = 0, yoff = 0, not_graph = 1;
-    gui(cid).get_gobj(tag, function(e) {
-        if(e.classList.contains("graph")) {
-            xoff = 0.5;
-            yoff = 0.5;
-            not_graph = 0;
-        }
-    });
     gui(cid).get_elem(tag + type + i, {
-        x: x - (basex * not_graph) + xoff,
-        y: y - (basey * not_graph) + yoff
+        x: x - basex,
+        y: y - basey
     });
 }
 

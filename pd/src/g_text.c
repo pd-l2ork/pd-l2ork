@@ -2498,9 +2498,8 @@ void glist_drawiofor(t_glist *glist, t_object *ob, int firsttime,
             issignal = obj_issignaloutlet(ob,i);
 
             /* need to send issignal and is_iemgui here... */
-            gui_vmess("gui_gobj_draw_io", "xxssiiiiiisiii",
+            gui_vmess("gui_gobj_draw_io", "xssiiiiiisiii",
                 glist_getcanvas(glist),
-                ob,
                 rtext_gettag(y),
                 tag,
                 onset,
@@ -2516,9 +2515,8 @@ void glist_drawiofor(t_glist *glist, t_object *ob, int firsttime,
         }
         else
         {
-            gui_vmess("gui_gobj_redraw_io", "xxssiisiii",
+            gui_vmess("gui_gobj_redraw_io", "xssiisiii",
                 glist_getcanvas(glist),
-                ob,
                 rtext_gettag(y),
                 tag,
                 onset,
@@ -2538,9 +2536,8 @@ void glist_drawiofor(t_glist *glist, t_object *ob, int firsttime,
         {
             //fprintf(stderr,"glist_drawiofor i firsttime\n");
             issignal = obj_issignalinlet(ob,i);
-            gui_vmess("gui_gobj_draw_io", "xxssiiiiiisiii",
+            gui_vmess("gui_gobj_draw_io", "xssiiiiiisiii",
                 glist_getcanvas(glist),
-                ob,
                 rtext_gettag(y),
                 tag,
                 onset,
@@ -2557,9 +2554,8 @@ void glist_drawiofor(t_glist *glist, t_object *ob, int firsttime,
         else
         {
             //fprintf(stderr,"glist_drawiofor i firsttime\n");
-            gui_vmess("gui_gobj_redraw_io", "xxssiisiii",
+            gui_vmess("gui_gobj_redraw_io", "xssiisiii",
                 glist_getcanvas(glist),
-                ob,
                 rtext_gettag(y),
                 tag,
                 onset,
