@@ -449,6 +449,7 @@ EXTERN void glist_init(t_glist *x);
 EXTERN void glist_add(t_glist *x, t_gobj *g);
 EXTERN void glist_clear(t_glist *x);
 EXTERN t_canvas *glist_getcanvas(t_glist *x);
+EXTERN t_canvas *glist_get_vis_canvas(t_glist *x);
 EXTERN int glist_isselected(t_glist *x, t_gobj *y);
 EXTERN void glist_select(t_glist *x, t_gobj *y);
 EXTERN void glist_deselect(t_glist *x, t_gobj *y);

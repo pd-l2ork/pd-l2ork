@@ -23,6 +23,7 @@ body {
 .graph .border {
     stroke: black;
     fill: none;
+    stroke: 1px;
 }
 
 /* Graph (or subpatch) that has been opened to inspect its contents */
@@ -481,10 +482,22 @@ text.activated {
     display: inline;
 }
 
-#patchsvg.editmode .selected .gop .border {
+#patchsvg.editmode .atom.gop .border {
     stroke: #ccc;
     fill: #eee;
 }
+
+#patchsvg.editmode .selected .atom.gop .border {
+    stroke: #ccc;
+    fill: #eee;
+}
+
+#patchsvg.editmode .gop.noselect .border {
+    stroke: black;
+    stroke: 1px;
+    fill: none;
+}
+
 
 #patchsvg.editmode .selected text {
     fill: #e87216;

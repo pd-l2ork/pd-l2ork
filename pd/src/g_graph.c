@@ -925,7 +925,7 @@ t_float glist_dpixtody(t_glist *x, t_float dypix)
     proportional-style GOP.  In this case we do a coordinate transformation. */
 int text_xpix(t_text *x, t_glist *glist)
 {
-    int xpix = 0; 
+    int xpix = 0;
     if (glist->gl_havewindow || !glist->gl_isgraph)
         xpix = x->te_xpix; 
     else if (glist->gl_goprect)
@@ -1006,6 +1006,34 @@ void glist_redraw(t_glist *x)
     }
 }
 
+/* ico@vt.edu 20200916: this function can be used for both GOP and
+   non-GOP drawing requests. it is originally designed to provide
+   correct parenttag info to the gui_gobj_new pdgui.js call. While
+   it is superfluous for toplevel drawing commands (and we may want
+   to optimize those cases by bypassing this altogether), it is critical
+   for nested GOP situations for both graphs and other objects because
+   of the way new GOPs are drawn in order to solve the nlet drawing order
+   and allow for clipping of objects outside its bounds.
+
+   parent_vis_glist tells us to what canvas
+   we should bind our parenttag that gui_gobj_new uses to reference
+   the svg subgroup inside which objects are drawn. This is important
+   in case we have nested GOP objects (toplevel->GOP1->GOP2). for gobjs
+   inside GOP1 they should reference GOP1 canvas name which is what the
+   routine below gets us. For GOP2 it will also give us GOP1 since that
+   is where we are being drawn. This way, each parenttag for each GOP
+   object on the same level will be unique and easily referenced by the
+   gobjs regardless of which GOP level they belong to (1, 2, 3... etc.).
+*/
+t_canvas *glist_get_vis_canvas(t_glist *x)
+{
+    t_glist *parent_vis_glist = x;
+    while (parent_vis_glist->gl_owner &&
+        parent_vis_glist->gl_owner != glist_getcanvas(x->gl_owner))
+            parent_vis_glist = parent_vis_glist->gl_owner;
+    return(parent_vis_glist);
+}
+
 /* --------------------------- widget behavior  ------------------- */
 
 int garray_getname(t_garray *x, t_symbol **namep);
@@ -1016,6 +1044,7 @@ t_symbol *garray_getlabelcolor(t_garray *x);
     graph decorations in toplevels... */
 static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
 {
+    post("graph_vis");
     t_glist *x = (t_glist *)gr;
     //fprintf(stderr,"graph vis canvas=%zx gobj=%zx %d\n",
     //    (t_int)parent_glist, (t_int)gr, vis);
@@ -1058,8 +1087,10 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
         int xpix, ypix;
         xpix = text_xpix(&x->gl_obj, parent_glist);
         ypix = text_ypix(&x->gl_obj, parent_glist);
-        gui_vmess("gui_gobj_new", "xxssiii",
-            glist_getcanvas(x->gl_owner), x,
+        gui_vmess("gui_gobj_new", "xxxssiii",
+            glist_getcanvas(x->gl_owner),
+            x,
+            x->gl_owner,
             tag, "graph", xpix, ypix,
             parent_glist == glist_getcanvas(x->gl_owner) ? 1 : 0);
         if (canvas_showtext(x))
@@ -1294,6 +1325,7 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
         {
             gop_redraw = 1;
             //fprintf(stderr,"drawing gop objects\n");
+            post("graph_vis drawing %lx...", g);
             gobj_vis(g, x, 1);
             //fprintf(stderr,"done\n");
             gop_redraw = 0;

@@ -2314,51 +2314,94 @@ exports.gui = gui;
 // In the future, it might make sense to combine the scalar and object
 // creation, in which case a flag to toggle the offset would be appropriate.
 
-function gui_gobj_new(cid, parenttag, tag, type, xpos, ypos, is_toplevel) {
-    //post("gui_gobj_new tag=" + tag + " parent=" + parenttag + " drawon=" + 
-    //    cid + " is_toplevel=" + is_toplevel + " xpos=" + xpos + " ypos=" + ypos);
-    var g, s;
-    xpos += 0.5,
-    ypos += 0.5;
-    if (is_toplevel) { // top level means it is a non-GOP object
+/* ico@vt.edu 20200916: added following params:
+   ownercid =  the canvas id to which gobj belongs. This is the same as cid
+               for toplevel gobjs and for non-toplevel gop-drawn objects, it
+               is the actual canvas the gobj belongs to. cid on the other hand
+               references the canvas on which gobj is being drawn and for gop-
+               drawn objects that may be a parent or even several levels above
+               the parent (e.g. toplevel->gop1->gop2 that is visible gop1, etc.).
+   parentcid = the immediate parent of the ownercid. This is needed to identify
+               appropriate class context below when we wish to reference the right
+               nested_gop and tgt below.
+*/
+function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplevel) {
+    post("gui_gobj_new type=" + type + " tag=" + tag + " ownercid=" + ownercid +
+        " parentcid=" + parentcid + " drawon=" + cid + " is_toplevel=" + is_toplevel +
+        " xpos=" + xpos + " ypos=" + ypos);
+    var g, sm,
+        draw_xpos = xpos + 0.5,
+        draw_ypos = ypos + 0.5;
+    //xpos += 0.5;
+    //ypos += 0.5;
+    if (type === "graph") { // GOP object
+        post("... GOP svg_elem=" + (is_toplevel === 1 ? "patchsvg" : 
+            (parentcid === cid ? "[ownercid]" + ownercid + "svg" :
+                "[parentcid]" + parentcid + "svg")));
         gui(cid).get_elem("patchsvg", function(svg_elem, w) {
-            var transform_string = "matrix(1,0,0,1," + xpos + "," + ypos + ")";
-            if (type === "graph") { // we make graph into another svg elem to allow for clipping
-                g = create_item(cid, "g", {
-                    id: tag + "gobj",
-                    transform: transform_string,
-                    class: type + (is_toplevel !== 0 ? "" : " gop") + 
-                        (type == "graph" ? " " + parenttag : "")
-                });
-                s = create_item(cid, "svg", {
-                    id: tag + "svg",
-                    class: (type == "graph" ? "graphsvg " + parenttag + "svg" : ""),
-                    x: - 1,
-                    y: - 1,
-                });
-                add_gobj_to_svg(svg_elem, g);
-                g.appendChild(s);
-            } else {
-                g = create_item(cid, "g", {
-                    id: tag + "gobj",
-                    transform: transform_string,
-                    class: type + (is_toplevel !== 0 ? "" : " gop") + 
-                        (type == "graph" ? " " + parenttag : "")
-                });
-                add_gobj_to_svg(svg_elem, g);
+            var nested_gop;
+            if (is_toplevel === 0) {
+                nested_gop = w.document.getElementsByClassName(
+                    (parentcid === cid ? ownercid + "svg" : parentcid + "svg"));
+                if (parentcid === cid) {
+                    draw_xpos -= nested_gop[0].getCTM().e;
+                    draw_ypos -= nested_gop[0].getCTM().f;
+                } else {
+                    draw_xpos -= nested_gop[0].getAttribute("orig_xpos");
+                    draw_ypos -= nested_gop[0].getAttribute("orig_ypos");
+                }
+                post("... offset x=" + draw_xpos + " y=" + draw_ypos);
             }
-        });
-    } else { // an object drawn inside a GOP
-        gui(cid).get_elem("patchsvg", function(svg_elem, w) {
-            var tgt = w.document.getElementsByClassName(parenttag + "svg");
-            var transform_string = "matrix(1,0,0,1," + (xpos - tgt[0].getCTM().e) + "," + (ypos - tgt[0].getCTM().f) + ")";
+            var transform_string = "matrix(1,0,0,1," + draw_xpos + "," + draw_ypos + ")";
+            // we make graph into another svg elem to allow for clipping
             g = create_item(cid, "g", {
                 id: tag + "gobj",
                 transform: transform_string,
-                class: type + (is_toplevel !== 0 ? "" : " gop")
+                class: type + (is_toplevel !== 0 ? "" : " gop") + 
+                    (type == "graph" ? " " + ownercid : "")
             });
-            tgt[0].appendChild(g);
-            //add_gobj_to_svg(svg_elem, g);
+            var s = create_item(cid, "svg", {
+                id: tag + "svg",
+                class: (type == "graph" ? "graphsvg " + ownercid + "svg" : ""),
+                x: - 1,
+                y: - 1,
+                orig_xpos: xpos + 0.5,
+                orig_ypos: ypos + 0.5
+            });
+            add_gobj_to_svg((is_toplevel === 1 ? svg_elem : nested_gop[0]), g);
+            g.appendChild(s);
+        });
+    } else { // non-GOP object
+        gui(cid).get_elem("patchsvg", function(svg_elem, w) {
+            post("... classname=" + ownercid + "svg");
+            var transform_string;
+            if (is_toplevel === 0) {
+                var tgt = w.document.getElementsByClassName(
+                    (parentcid === cid ? ownercid + "svg" : parentcid + "svg"));
+                if (parentcid === cid) {
+                    draw_xpos -= tgt[0].getCTM().e;
+                    draw_ypos -= tgt[0].getCTM().f;
+                } else {
+                    draw_xpos -= tgt[0].getAttribute("orig_xpos");
+                    draw_ypos -= tgt[0].getAttribute("orig_ypos");
+                }
+                transform_string = "matrix(1,0,0,1," + draw_xpos + ", " + draw_ypos + ")";
+                post("... offset x=" + draw_xpos + " y=" + draw_ypos);
+            } else {
+                transform_string = "matrix(1,0,0,1," + draw_xpos + ", " + draw_ypos + ")";                
+            }
+            g = create_item(cid, "g", {
+                id: tag + "gobj",
+                transform: transform_string,
+                class: type + (is_toplevel !== 0 ? "" : " gop"),
+                orig_xpos: xpos,
+                orig_ypos: ypos
+            });
+            if (is_toplevel === 0) {
+                tgt[0].appendChild(g);
+            } else {
+                add_gobj_to_svg(svg_elem, g);
+            }
         });
     }
     return g;
@@ -2368,6 +2411,10 @@ function gui_text_draw_border(cid, tag, bgcolor, isbroken, width, height) {
     var isgop = 0;
     gui(cid).get_gobj(tag, function(e) {
         if(e.classList.contains("graph")) {
+            // ico@vt.edu 20200916:
+            // disable this for GOP drawing debugging purposes as this will 
+            // disable the svg clipping to allow for locating objects that
+            // may be erroneously drawn outside the boundaries...
             isgop = 1;
         }
     });
@@ -5393,7 +5440,7 @@ function gui_graph_tick_label(cid, tag, x, y, text, font, font_size, font_weight
 
 function gui_canvas_drawredrect(cid, x1, y1, x2, y2) {
     gui(cid).get_elem("patchsvg", function(svg_elem) {
-        var g = gui_gobj_new(cid, cid, cid, "gop_rect", x1, y1, 1);
+        var g = gui_gobj_new(cid, cid, cid, cid, "gop_rect", x1, y1, 1);
         var r = create_item(cid, "rect", {
             width: x2 - x1,
             height: y2 - y1,

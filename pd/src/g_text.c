@@ -224,6 +224,7 @@ static void canvas_objtext(t_glist *gl, int xpix, int ypix,
 
     x->te_xpix = xpix;
     x->te_ypix = ypix;
+    post("textobj x=%d y=%d", xpix, ypix);
     x->te_width = width;
     x->te_type = T_OBJECT;
     /* let's see if iemgui objects did not already set the value to 1,
@@ -2230,9 +2231,12 @@ static void text_vis(t_gobj *z, t_glist *glist, int vis)
                 t_rtext *y = glist_findrtext(glist, x);
                 // make a group
                 text_getrect(&x->te_g, glist, &x1, &y1, &x2, &y2);
-                gui_vmess("gui_gobj_new", "xxssiii",
+                gui_vmess("gui_gobj_new", "xxxssiii",
                     glist_getcanvas(glist),
+                    // if it is not toplevel and glist_getcanvas is not gl_owner
+                    // this means we are drawn 2nd or deeper level down
                     glist,
+                    glist->gl_owner,
                     rtext_gettag(y),
                     type,
                     x1,
