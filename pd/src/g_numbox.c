@@ -220,13 +220,14 @@ static void my_numbox_draw_new(t_my_numbox *x, t_glist *glist)
     }
     my_numbox_ftoa(x);
     sprintf(cbuf, "#%6.6x", x->x_gui.x_fcol);
-    gui_vmess("gui_numbox_draw_text", "xxsisifii",
+    gui_vmess("gui_numbox_draw_text", "xxsisifiii",
         canvas,
         x,
         x->x_buf,
         x->x_gui.x_fontsize,
         cbuf,
-        x1+half+2, y1+half+d, x1, y1);
+        x1+half+2, y1+half+d, x1, y1,
+        glist_istoplevel(x->x_gui.x_glist));
 }
 
 /* Not sure that this is needed anymore */

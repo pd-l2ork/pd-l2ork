@@ -3248,7 +3248,7 @@ function gui_numbox_new(cid, ownercid, parentcid, tag, color, x, y, w, h, is_top
             stroke: "black",
             "stroke-width": 1,
             id: (tag + "border"),
-            "class": "border"
+            "class": (is_toplevel === 1 ? " toplevel " : "") + "border"
         });
         g.appendChild(border);
     });
@@ -3260,7 +3260,7 @@ function gui_numbox_coords(cid, tag, w, h) {
     });
 }
 
-function gui_numbox_draw_text(cid, tag, text, font_size, color,xpos, ypos, basex,basey) {
+function gui_numbox_draw_text(cid, tag, text, font_size, color,xpos, ypos, basex, basey, is_toplevel) {
     // kludge alert -- I'm not sure why I need to add half to the ypos
     // below. But it works for most font sizes.
     gui(cid).get_gobj(tag)
@@ -3271,9 +3271,10 @@ function gui_numbox_draw_text(cid, tag, text, font_size, color,xpos, ypos, basex
             transform: "translate(" +
                         (xpos - basex) + "," +
                         ((ypos - basey + (ypos - basey) * 0.5)|0) + ")",
-            "font-size": font_size,
+            "font-size": font_size + 2,
             fill: color,
-            id: tag + "text"
+            id: tag + "text",
+            class: (is_toplevel === 1 ? "toplevel" : "")
         }),
         text_node = w.document.createTextNode(text);
         svg_text.appendChild(text_node);
@@ -3289,7 +3290,7 @@ function gui_numbox_update(cid, tag, fcolor, bgcolor, font_name, font_size, font
     })
     .get_elem(tag + "text", {
         fill: fcolor,
-        "font-size": font_size
+        "font-size": font_size + 2
     })
     // label may or may not exist, but that's covered by the API
     .get_elem(tag + "label", function() {
