@@ -1380,7 +1380,7 @@ static void gatom_vis(t_gobj *z, t_glist *glist, int vis)
             int x1, y1;
             t_rtext *y = glist_findrtext(x->a_glist, &x->a_text);
             gatom_getwherelabel(x, glist, &x1, &y1);
-            gui_vmess("gui_text_new", "xssiiisi",
+            gui_vmess("gui_text_new", "xssiiisii",
                 glist_getcanvas(glist),
                 rtext_gettag(y),
                 "gatom",
@@ -1388,7 +1388,8 @@ static void gatom_vis(t_gobj *z, t_glist *glist, int vis)
                 x1, // left margin
                 y1, // top margin
                 canvas_realizedollar(x->a_glist, x->a_label)->s_name,
-                sys_hostfontsize(glist_getfont(glist))
+                sys_hostfontsize(glist_getfont(glist)),
+                glist_istoplevel(glist)
             );
         }
         else
@@ -1840,7 +1841,7 @@ static void dropdown_vis(t_gobj *z, t_glist *glist, int vis)
             int x1, y1;
             t_rtext *y = glist_findrtext(x->a_glist, &x->a_text);
             dropdown_getwherelabel(x, glist, &x1, &y1);
-            gui_vmess("gui_text_new", "xssiiisi",
+            gui_vmess("gui_text_new", "xssiiisii",
                 glist_getcanvas(glist),
                 rtext_gettag(y),
                 "dropdown",
@@ -1848,7 +1849,8 @@ static void dropdown_vis(t_gobj *z, t_glist *glist, int vis)
                 x1, // left margin
                 y1, // top margin
                 canvas_realizedollar(x->a_glist, x->a_label)->s_name,
-                sys_hostfontsize(glist_getfont(glist))
+                sys_hostfontsize(glist_getfont(glist)),
+                glist_istoplevel(glist)
             );
         }
         else
@@ -2604,13 +2606,14 @@ void text_drawborder(t_text *x, t_glist *glist,
         broken = (pd_class(&x->te_pd) == text_class) ? 1 : 0;
         if (firsttime)
         {
-            gui_vmess("gui_text_draw_border", "xssiii",
+            gui_vmess("gui_text_draw_border", "xssiiii",
                 glist_getcanvas(glist),
                 tag,
                 "none",
                 broken,
                 x2 - x1,
-                y2 - y1);
+                y2 - y1,
+                glist_istoplevel(glist));
         }
         else
         {
@@ -2679,13 +2682,14 @@ void text_drawborder(t_text *x, t_glist *glist,
     {
         if (firsttime)
         {
-            gui_vmess("gui_text_draw_border", "xssiii",
+            gui_vmess("gui_text_draw_border", "xssiiii",
                 glist_getcanvas(glist),
                 tag,
                 "none",
                 0,
                 x2 - x1,
-                y2 - y1);
+                y2 - y1,
+                glist_istoplevel(glist));
         }
         else
         {

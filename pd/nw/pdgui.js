@@ -2315,25 +2315,36 @@ exports.gui = gui;
 // creation, in which case a flag to toggle the offset would be appropriate.
 
 /* ico@vt.edu 20200916: added following params:
-   ownercid =  the canvas id to which gobj belongs. This is the same as cid
-               for toplevel gobjs and for non-toplevel gop-drawn objects, it
-               is the actual canvas the gobj belongs to. cid on the other hand
-               references the canvas on which gobj is being drawn and for gop-
-               drawn objects that may be a parent or even several levels above
-               the parent (e.g. toplevel->gop1->gop2 that is visible gop1, etc.).
-   parentcid = the immediate parent of the ownercid. This is needed to identify
-               appropriate class context below when we wish to reference the right
-               nested_gop and tgt below.
+   ownercid    = the canvas id to which gobj belongs. This is the same as cid
+                 for toplevel gobjs and for non-toplevel gop-drawn objects, it
+                 is the actual canvas the gobj belongs to. cid on the other hand
+                 references the canvas on which gobj is being drawn and for gop-
+                 drawn objects that may be a parent or even several levels above
+                 the parent (e.g. toplevel->gop1->gop2 that is visible gop1, etc.).
+
+   parentcid   = the immediate parent of the ownercid. This is needed to identify
+                 appropriate class context below when we wish to reference the right
+                 nested_gop and tgt below.
+
+   is_toplevel = behaves the same as the is_toplevel inside c code with one notable
+                 exception: when drawing a gop graph, is_toplevel means the gop being
+                 drawn is exactly one level below the toplevel, so that it can be
+                 drawn as a GOP graph. This is critical for the new GOP implementation
+                 that truly lends a window inside a GOP subpatch/abstraction instead
+                 of the old klunky implemnetation that only draws items that fit
+                 inside GOP, except that it also draws scalars and other things
+                 happily outside of its bounds. IMPORTANT: this variable is now present
+                 in many (most?) drawing commands as it allows us to differentiate
+                 between the two contexts and offers a convenient way to filter objects
+                 whose selection border should be highlighted when they are selected.
 */
 function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplevel) {
-    post("gui_gobj_new type=" + type + " tag=" + tag + " ownercid=" + ownercid +
-        " parentcid=" + parentcid + " drawon=" + cid + " is_toplevel=" + is_toplevel +
-        " xpos=" + xpos + " ypos=" + ypos);
-    var g, sm,
-        draw_xpos = xpos + 0.5,
-        draw_ypos = ypos + 0.5;
-    //xpos += 0.5;
-    //ypos += 0.5;
+    post("gui_gobj_new drawon=" + cid + " ownercid=" + ownercid +
+        " parentcid=" + parentcid + " tag=" + tag + " type=" + type +
+        " xpos=" + xpos + " ypos=" + ypos + " is_toplevel=" + is_toplevel);
+    var g, sm, draw_xpos, draw_ypos;
+    draw_xpos = xpos;
+    draw_ypos = ypos;
     if (type === "graph") { // GOP object
         post("... GOP svg_elem=" + (is_toplevel === 1 ? "patchsvg" : 
             (parentcid === cid ? "[ownercid]" + ownercid + "svg" :
@@ -2351,22 +2362,23 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
                     draw_ypos -= nested_gop[0].getAttribute("orig_ypos");
                 }
                 post("... offset x=" + draw_xpos + " y=" + draw_ypos);
+            } else {
+                draw_xpos += 0.5;
+                draw_ypos += 0.5;
             }
             var transform_string = "matrix(1,0,0,1," + draw_xpos + "," + draw_ypos + ")";
             // we make graph into another svg elem to allow for clipping
             g = create_item(cid, "g", {
                 id: tag + "gobj",
                 transform: transform_string,
-                class: type + (is_toplevel !== 0 ? "" : " gop") + 
+                class: type + (is_toplevel === 0 ? "" : " gop") + 
                     (type == "graph" ? " " + ownercid : "")
             });
             var s = create_item(cid, "svg", {
                 id: tag + "svg",
                 class: (type == "graph" ? "graphsvg " + ownercid + "svg" : ""),
-                x: - 1,
-                y: - 1,
-                orig_xpos: xpos + 0.5,
-                orig_ypos: ypos + 0.5
+                orig_xpos: xpos,
+                orig_ypos: ypos
             });
             add_gobj_to_svg((is_toplevel === 1 ? svg_elem : nested_gop[0]), g);
             g.appendChild(s);
@@ -2379,17 +2391,20 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
                 var tgt = w.document.getElementsByClassName(
                     (parentcid === cid ? ownercid + "svg" : parentcid + "svg"));
                 if (parentcid === cid) {
+                    draw_xpos += 0.5;
+                    draw_ypos += 0.5;
                     draw_xpos -= tgt[0].getCTM().e;
                     draw_ypos -= tgt[0].getCTM().f;
                 } else {
                     draw_xpos -= tgt[0].getAttribute("orig_xpos");
                     draw_ypos -= tgt[0].getAttribute("orig_ypos");
                 }
-                transform_string = "matrix(1,0,0,1," + draw_xpos + ", " + draw_ypos + ")";
                 post("... offset x=" + draw_xpos + " y=" + draw_ypos);
             } else {
-                transform_string = "matrix(1,0,0,1," + draw_xpos + ", " + draw_ypos + ")";                
+                draw_xpos += 0.5;
+                draw_ypos += 0.5;              
             }
+            transform_string = "matrix(1,0,0,1," + draw_xpos + ", " + draw_ypos + ")";  
             g = create_item(cid, "g", {
                 id: tag + "gobj",
                 transform: transform_string,
@@ -2407,7 +2422,8 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
     return g;
 }
 
-function gui_text_draw_border(cid, tag, bgcolor, isbroken, width, height) {
+function gui_text_draw_border(cid, tag, bgcolor, isbroken, width, height, is_toplevel) {
+    post("===gui_text_draw_border is_toplevel=" + is_toplevel);
     var isgop = 0;
     gui(cid).get_gobj(tag, function(e) {
         if(e.classList.contains("graph")) {
@@ -2420,56 +2436,32 @@ function gui_text_draw_border(cid, tag, bgcolor, isbroken, width, height) {
     });
     if (isgop) {
         gui(cid).get_elem(tag + "svg", function(e) {
-            e.setAttribute("width", width + 1);
-            e.setAttribute("height", height + 1);
+            e.setAttribute("width", width);
+            e.setAttribute("height", height);
         });
     }
-    /*if (isgop) {
-        // ico@vt.edu 20200914:
-        // we insert border below GOP objects to maintain
-        // compatibility with 1.x LATER: rethink this.
-        // perhaps GOP could have an option of using image
-        // instead of the frame which would solve the K12 need.
-        // Or, better yet, GOP could have a flag for frame
-        // in front or behind the GOP objects? I like that better,
-        // as it increases the overall flexibility and the usefulness
-        // of the ggee/image.
-        gui(cid).get_gobj(tag, function(frag) {
-                var rect = create_item(cid, "rect", {
-                    width: width,
-                    height: height,
-                    //"shape-rendering": "crispEdges",
-                    class: "border",
-                });
-                frag.insertBefore(rect, frag.childNodes[0]);
-                return frag;
-            });
-    } else {*/
-        gui(cid).get_gobj(tag)
-        .append(function(frag) {
-            // isbroken means either
-            //     a) the object couldn't create or
-            //     b) the box is empty
-            var rect = create_item(cid, "rect", {
-                width: width,
-                height: height,
-                //"shape-rendering": "crispEdges",
-                class: "border",
-            });
-            if (isbroken === 1) {
-                rect.classList.add("broken_border");
-            }
-            frag.appendChild(rect);
-            return frag;
+    gui(cid).get_gobj(tag)
+    .append(function(frag) {
+        // isbroken means either
+        //     a) the object couldn't create or
+        //     b) the box is empty
+        var rect = create_item(cid, "rect", {
+            width: width,
+            height: height,
+            //"shape-rendering": "crispEdges",
+            class: (is_toplevel === 1 ? "toplevel " : "") + "border",
         });
-    //}
+        if (isbroken === 1) {
+            rect.classList.add("broken_border");
+        }
+        frag.appendChild(rect);
+        return frag;
+    });
 }
 
-/* ico@vt.edu 20200916: parenttag is currently unused. Leaving it in for the
-   time being until we know for sure it is not needed anymore. */
 function gui_gobj_draw_io(cid, parenttag, tag, x1, y1, x2, y2, basex, basey,
     type, i, is_signal, is_iemgui) {
-    gui(cid).get_gobj(tag)
+    gui(cid).get_gobj(parenttag)
     .append(function(frag) {
         var xlet_class, xlet_id, rect;
         if (is_iemgui) {
@@ -2501,8 +2493,6 @@ function gui_gobj_draw_io(cid, parenttag, tag, x1, y1, x2, y2, basex, basey,
     });
 }
 
-/* ico@vt.edu 20200916: parenttag here was apparently never used. Leaving it in 
-   the time being until we know for sure it is indeed not needed. */
 function gui_gobj_redraw_io(cid, parenttag, tag, x, y, type, i, basex, basey) {
     // We have to check for null. Here's why...
     // if you create a gatom:
@@ -2843,7 +2833,8 @@ function gobj_font_y_kludge(fontsize) {
     }
 }
 
-function gui_text_new(cid, tag, type, isselected, left_margin, font_height, text, font) {
+function gui_text_new(cid, tag, type, isselected, left_margin,
+    font_height, text, font, is_toplevel) {
     //ico@vt.edu: different text spacing for GOPs
     //post("gui_text_new type=" + type + " tag=" + tag);
     var xoff = 0.5; // Default value for normal objects, GOP uses -0.5
@@ -2859,6 +2850,9 @@ function gui_text_new(cid, tag, type, isselected, left_margin, font_height, text
     var classname = "box_text";
     if (type === "atom") {
         classname = "box_text data";
+    }
+    if (is_toplevel === 1) {
+        classname = classname + " toplevel";
     }
     gui(cid).get_gobj(tag, function(e) {
         if(e.classList.contains("graph")) {
@@ -3242,11 +3236,11 @@ function numbox_data_string(w, h) {
 }
 
 // Todo: send fewer parameters from c
-function gui_numbox_new(cid, tag, color, x, y, w, h, is_toplevel) {
+function gui_numbox_new(cid, ownercid, parentcid, tag, color, x, y, w, h, is_toplevel) {
     // numbox doesn't have a standard iemgui border,
     // so we must create its gobj manually
     gui(cid).get_elem("patchsvg", function() {
-        var g = gui_gobj_new(cid, tag, "iemgui", x, y, is_toplevel);
+        var g = gui_gobj_new(cid, ownercid, parentcid, tag, "iemgui", x, y, is_toplevel);
         var data = numbox_data_string(w, h);
         var border = create_item(cid, "path", {
             d: data,
@@ -4725,7 +4719,7 @@ function gui_configure_grid(cid, tag, w, h, bg_color, has_grid, x_l, y_l) {
 
 function gui_grid_new(cid, tag, x, y, is_toplevel) {
     gui(cid).get_elem("patchsvg", function(svg_elem) {
-        gui_gobj_new(cid, tag, "obj", x, y, is_toplevel);
+        gui_gobj_new(cid, cid, cid, tag, "obj", x, y, is_toplevel);
     });
     gui(cid).get_gobj(tag)
     .append(function(frag) {
@@ -4813,7 +4807,7 @@ function gui_pianoroll_erase_innards(cid, tag) {
 function gui_mknob_new(cid, tag, x, y, is_toplevel, show_in, show_out,
     is_footils_knob) {
     gui(cid).get_elem("patchsvg", function(svg_elem) {
-        gui_gobj_new(cid, tag, "obj", x, y, is_toplevel);
+        gui_gobj_new(cid, cid, cid, tag, "obj", x, y, is_toplevel);
     });
     gui(cid).get_gobj(tag)
     .append(function(frag) {
@@ -4909,7 +4903,7 @@ function gui_turn_mknob(cid, tag, x1, y1, x2, y2, is_footils_knob, val) {
 // room_sim_2d and room_sim_3d objects from iemlib
 function gui_room_sim_new(cid, tag, x, y, w, h, is_toplevel) {
     gui(cid).get_elem("patchsvg", function(svg_elem) {
-        gui_gobj_new(cid, tag, "obj", x, y, is_toplevel);
+        gui_gobj_new(cid, cid, cid, tag, "obj", x, y, is_toplevel);
     });
     gui(cid).get_gobj(tag)
     .append(function(frag) {
@@ -5288,7 +5282,7 @@ function gui_graph_deleteborder(cid, tag) {
 }
 
 function gui_graph_label(cid, tag, font_size, font_height, is_selected,
-    legacy_mode, array_of_attr_arrays) {
+    legacy_mode, is_toplevel, array_of_attr_arrays) {
     // first let's check if we have any colors other than black. If so we
     // we will create a little rectangle next to the label to show the color.
     var show_color_rect = false;
@@ -5321,7 +5315,7 @@ function gui_graph_label(cid, tag, font_size, font_height, is_selected,
                 y = font_height * (i + 1);
             }
             gui_text_new(cid, tag, "graph_label", !!is_selected,
-                x, y, a.label, font_size);
+                x, y, a.label, font_size, is_toplevel);
         })
         .get_gobj(tag)
         .append(function(frag) {

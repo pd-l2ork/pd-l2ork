@@ -373,6 +373,12 @@ text.activated {
     fill: #eee;
 }
 
+/* atom box */
+.atom.selected .border {
+    stroke: #e87216;
+}
+
+
 .graphsvg.atom.border {
     stroke: #ccc;
     fill: #eee;
@@ -477,34 +483,13 @@ text.activated {
    
    ico@vt.edu added selection highlight only if we are in editmode
 */
-#patchsvg.editmode :not(.gop).selected .border {
+.selected .toplevel.border {
     stroke: #e87216;
     display: inline;
 }
 
-#patchsvg.editmode .atom.gop .border {
-    stroke: #ccc;
-    fill: #eee;
-}
-
-#patchsvg.editmode .selected .atom.gop .border {
-    stroke: #ccc;
-    fill: #eee;
-}
-
-#patchsvg.editmode .gop.noselect .border {
-    stroke: black;
-    stroke: 1px;
-    fill: none;
-}
-
-
-#patchsvg.editmode .selected text {
+.selected .box_text.toplevel {
     fill: #e87216;
-}
-
-#patchsvg.editmode .selected .gop text {
-    fill: black;
 }
 
 /* text inside selected objects

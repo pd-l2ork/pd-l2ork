@@ -198,8 +198,10 @@ static void my_numbox_draw_new(t_my_numbox *x, t_glist *glist)
     int x1=text_xpix(&x->x_gui.x_obj, glist), x2=x1+x->x_numwidth;
     int y1=text_ypix(&x->x_gui.x_obj, glist), y2=y1+x->x_gui.x_h;
 
-    gui_vmess("gui_numbox_new", "xxsiiiii",
+    gui_vmess("gui_numbox_new", "xxxxsiiiii",
         canvas,
+        x->x_gui.x_glist,
+        x->x_gui.x_glist->gl_owner,
         x,
         cbuf,
         x1,

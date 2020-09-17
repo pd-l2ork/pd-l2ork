@@ -362,13 +362,14 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
         if (action == SEND_FIRST)
         {
             //fprintf(stderr,"send_first rtext=%zx t_text=%zx\n", x, x->x_text);
-            gui_vmess("gui_text_new", "xssiiisi",
+            gui_vmess("gui_text_new", "xssiiisii",
                 canvas, x->x_tag, rtext_gettype(x)->s_name,
                 glist_isselected(x->x_glist, ((t_gobj*)x->x_text)),
                 LMARGIN,
                 fontheight,
                 tempbuf,
-                sys_hostfontsize(font));
+                sys_hostfontsize(font),
+                glist_istoplevel(x->x_glist));
                
         }
         else if (action == SEND_UPDATE)

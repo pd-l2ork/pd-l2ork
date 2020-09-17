@@ -1006,34 +1006,6 @@ void glist_redraw(t_glist *x)
     }
 }
 
-/* ico@vt.edu 20200916: this function can be used for both GOP and
-   non-GOP drawing requests. it is originally designed to provide
-   correct parenttag info to the gui_gobj_new pdgui.js call. While
-   it is superfluous for toplevel drawing commands (and we may want
-   to optimize those cases by bypassing this altogether), it is critical
-   for nested GOP situations for both graphs and other objects because
-   of the way new GOPs are drawn in order to solve the nlet drawing order
-   and allow for clipping of objects outside its bounds.
-
-   parent_vis_glist tells us to what canvas
-   we should bind our parenttag that gui_gobj_new uses to reference
-   the svg subgroup inside which objects are drawn. This is important
-   in case we have nested GOP objects (toplevel->GOP1->GOP2). for gobjs
-   inside GOP1 they should reference GOP1 canvas name which is what the
-   routine below gets us. For GOP2 it will also give us GOP1 since that
-   is where we are being drawn. This way, each parenttag for each GOP
-   object on the same level will be unique and easily referenced by the
-   gobjs regardless of which GOP level they belong to (1, 2, 3... etc.).
-*/
-t_canvas *glist_get_vis_canvas(t_glist *x)
-{
-    t_glist *parent_vis_glist = x;
-    while (parent_vis_glist->gl_owner &&
-        parent_vis_glist->gl_owner != glist_getcanvas(x->gl_owner))
-            parent_vis_glist = parent_vis_glist->gl_owner;
-    return(parent_vis_glist);
-}
-
 /* --------------------------- widget behavior  ------------------- */
 
 int garray_getname(t_garray *x, t_symbol **namep);
@@ -1122,13 +1094,14 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
     {
         if (vis && gobj_shouldvis(gr, parent_glist))
         {
-            gui_vmess("gui_text_draw_border", "xssiii",
+            gui_vmess("gui_text_draw_border", "xssiiii",
                 glist_getcanvas(x->gl_owner),
                 tag,
                 "none",
                 0,
                 x2 - x1,
-                y2 - y1);
+                y2 - y1,
+                1);
             glist_noselect(x->gl_owner);
             gui_vmess("gui_graph_fill_border", "xsi",
                 glist_getcanvas(x->gl_owner),
@@ -1164,25 +1137,27 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
             (x->gl_ylabelx > 0.5*(x->gl_x1 + x->gl_x2) ? "w" : "e");
         char *xlabelanchor =
             (x->gl_xlabely > 0.5*(x->gl_y1 + x->gl_y2) ? "s" : "n");
-        gui_vmess("gui_text_draw_border", "xssiii",
+        gui_vmess("gui_text_draw_border", "xssiiii",
             glist_getcanvas(x->gl_owner),
             tag,
             "none",
             0,
             x2 - x1,
-            y2 - y1);
+            y2 - y1,
+            (glist_getcanvas(x->gl_owner) == x->gl_owner ? 1 : 0));
             /* write garrays' names along the top. Since we can have multiple
                arrays inside a single graph, we want to send all the fun
                label data to the GUI in one message. That way the GUI can do
                fun stuff like selectively displaying a color key if we have
                multiple arrays with different colors. */
-        gui_start_vmess("gui_graph_label", "xsiiii",
+        gui_start_vmess("gui_graph_label", "xsiiiii",
             glist_getcanvas(x),
             tag,
             sys_hostfontsize(glist_getfont(x)),
             sys_fontheight(glist_getfont(x)),
             glist_isselected(x, gr),
-            sys_legacy
+            sys_legacy,
+            (glist_getcanvas(x->gl_owner) == x->gl_owner ? 1 : 0)
         );
 
             /* Now start an array to hold each array of label info */

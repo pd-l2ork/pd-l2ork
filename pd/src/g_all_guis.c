@@ -1393,15 +1393,16 @@ void iemgui_base_draw_new(t_iemgui *x)
     gop_redraw = gr;
     char colorbuf[MAXPDSTRING];
     sprintf(colorbuf, "#%6.6x", x->x_bcol);
-    gui_vmess("gui_gobj_new", "xxsiii", canvas, x,
-        "iemgui", x1, y1, glist_istoplevel(x->x_glist));
-    gui_vmess("gui_text_draw_border", "xxsiii",
+    gui_vmess("gui_gobj_new", "xxxxsiii", canvas, x->x_glist,
+        x->x_glist->gl_owner, x, "iemgui", x1, y1, glist_istoplevel(x->x_glist));
+    gui_vmess("gui_text_draw_border", "xxsiiii",
         canvas,
         x,
         colorbuf,
         0,
         x2 - x1,
-        y2 - y1);
+        y2 - y1,
+        glist_istoplevel(x->x_glist));
     sprintf(colorbuf, "#%6.6x", x->x_bcol);
     gui_vmess("gui_iemgui_base_color", "xxs",
         canvas, x, colorbuf);
