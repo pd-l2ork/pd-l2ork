@@ -3235,7 +3235,7 @@ function numbox_data_string(w, h) {
     .join(" ");
 }
 
-// Todo: send fewer parameters from c
+// TODO: send fewer parameters from c (ico@vt.edu 20200916: not sure if this is possible)
 function gui_numbox_new(cid, ownercid, parentcid, tag, color, x, y, w, h, is_toplevel) {
     // numbox doesn't have a standard iemgui border,
     // so we must create its gobj manually
@@ -3260,7 +3260,7 @@ function gui_numbox_coords(cid, tag, w, h) {
     });
 }
 
-function gui_numbox_draw_text(cid,tag,text,font_size,color,xpos,ypos,basex,basey) {
+function gui_numbox_draw_text(cid, tag, text, font_size, color,xpos, ypos, basex,basey) {
     // kludge alert -- I'm not sure why I need to add half to the ypos
     // below. But it works for most font sizes.
     gui(cid).get_gobj(tag)
@@ -3355,7 +3355,7 @@ function gui_radio_new(cid, tag, p1, p2, p3, p4, i, basex, basey) {
     });
 }
 
-function gui_radio_create_buttons(cid,tag,color,p1,p2,p3,p4,basex,basey,i,state) {
+function gui_radio_create_buttons(cid ,tag, color, p1, p2, p3, p4, basex, basey, i, state) {
     gui(cid).get_gobj(tag)
     .append(function(frag) {
         var b = create_item(cid, "rect", {
@@ -3406,7 +3406,7 @@ function gui_radio_update(cid, tag, fgcolor, prev, next) {
     });
 }
 
-function gui_vumeter_draw_text(cid,tag,color,xpos,ypos,text,index,basex,basey, font_size, font_weight) {
+function gui_vumeter_draw_text(cid, tag, color, xpos, ypos, text, index, basex, basey, font_size, font_weight) {
     gui(cid).get_gobj(tag)
     .append(function(frag, w) {
         var svg_text = create_item(cid, "text", {
@@ -3452,7 +3452,7 @@ function gui_vumeter_erase_text(cid, tag, i) {
     });
 }
 
-function gui_vumeter_create_steps(cid,tag,color,p1,p2,p3,p4,width,basex,basey,i) {
+function gui_vumeter_create_steps(cid, tag, color, p1, p2, p3, p4, width, basex, basey, i) {
     gui(cid).get_gobj(tag)
     .append(function(frag) {
         var l = create_item(cid, "line", {
@@ -3475,7 +3475,7 @@ function gui_vumeter_update_steps(cid, tag, i, width) {
     });
 }
 
-function gui_vumeter_update_step_coords(cid,tag,i,x1,y1,x2,y2,basex,basey) {
+function gui_vumeter_update_step_coords(cid, tag, i, x1, y1, x2, y2, basex, basey) {
     gui(cid).get_elem(tag + "led_" + i, {
         x1: x1 - basex,
         y1: y1 - basey,
@@ -3484,7 +3484,7 @@ function gui_vumeter_update_step_coords(cid,tag,i,x1,y1,x2,y2,basex,basey) {
     });
 }
 
-function gui_vumeter_draw_rect(cid,tag,color,p1,p2,p3,p4,basex,basey) {
+function gui_vumeter_draw_rect(cid, tag, color, p1, p2, p3, p4, basex, basey) {
     gui(cid).get_gobj(tag)
     .append(function(frag) {
         var rect = create_item(cid, "rect", {
@@ -3524,7 +3524,7 @@ function gui_vumeter_update_peak_width(cid, tag, width) {
     });
 }
 
-function gui_vumeter_draw_peak(cid,tag,color,p1,p2,p3,p4,width,basex,basey) {
+function gui_vumeter_draw_peak(cid, tag, color, p1, p2, p3, p4, width, basex, basey) {
     gui(cid).get_gobj(tag)
     .append(function(frag) {
         var line = create_item(cid, "line", {
