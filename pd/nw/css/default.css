@@ -20,18 +20,6 @@ body {
     font-family: "DejaVu Sans Mono";
 }
 
-.graph .border {
-    stroke: black;
-    fill: none;
-    stroke: 1px;
-}
-
-/* Graph (or subpatch) that has been opened to inspect its contents */
-.graph.has_window .border {
-    stroke: black;
-    fill: gray;
-}
-
 /* delete the default scrollbars, and let's make our own */
 .patch_body::-webkit-scrollbar {
     width: 0px;
@@ -481,14 +469,41 @@ text.activated {
       This lets us highlight an object's border, unless it is inside a gop
       canvas.
    
-   ico@vt.edu added selection highlight only if we are in editmode
+   ico@vt.edu 20200916: above does not work anymore due to the fact that
+   now things are getting properly embedded inside the DOM structure when
+   it comes to GOP objects. As a result we need a whole new set of rules.
+   I still for some reason am unable to figure out why :not directive is
+   not working well, or at all.
 */
+
+/* Any non-GOP toplevel border when selected */
 .selected .toplevel.border {
     stroke: #e87216;
     display: inline;
 }
 
-.selected .box_text.toplevel {
+/* Default border for graphs, using unique name to distinguish between
+   borders assigned to GOPs vs. objects inside it, such as numbox */
+.graph .gopborder {
+    stroke: black;
+    fill: none;
+    stroke: 1px;
+}
+
+/* Graph (or subpatch) that has been opened to inspect its contents */
+.graph.has_window .gopborder {
+    stroke: black;
+    fill: gray;
+}
+
+/* Only toplevel GOP should have its border selected when selected */
+.selected .toplevel.gopborder {
+    stroke: #e87216;
+    display: inline;
+}
+
+/* Any toplevel text can be also selected */
+.selected text.toplevel {
     fill: #e87216;
 }
 

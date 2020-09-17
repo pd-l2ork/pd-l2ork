@@ -2345,7 +2345,7 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
     var g, sm, draw_xpos, draw_ypos;
     draw_xpos = xpos;
     draw_ypos = ypos;
-    if (type === "graph") { // GOP object
+    if (type === "graph") { // graph object
         post("... GOP svg_elem=" + (is_toplevel === 1 ? "patchsvg" : 
             (parentcid === cid ? "[ownercid]" + ownercid + "svg" :
                 "[parentcid]" + parentcid + "svg")));
@@ -2383,13 +2383,12 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
             add_gobj_to_svg((is_toplevel === 1 ? svg_elem : nested_gop[0]), g);
             g.appendChild(s);
         });
-    } else { // non-GOP object
+    } else { // non-graph object (can be inside a GOP, tested with is_toplevel)
         gui(cid).get_elem("patchsvg", function(svg_elem, w) {
             post("... classname=" + ownercid + "svg");
             var transform_string;
             if (is_toplevel === 0) {
-                var tgt = w.document.getElementsByClassName(
-                    (parentcid === cid ? ownercid + "svg" : parentcid + "svg"));
+                var tgt = w.document.getElementsByClassName(ownercid + "svg");
                 if (parentcid === cid) {
                     draw_xpos += 0.5;
                     draw_ypos += 0.5;
@@ -2408,13 +2407,15 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
             g = create_item(cid, "g", {
                 id: tag + "gobj",
                 transform: transform_string,
-                class: type + (is_toplevel !== 0 ? "" : " gop"),
+                class: type,
                 orig_xpos: xpos,
                 orig_ypos: ypos
             });
             if (is_toplevel === 0) {
+                post("GOP appendChild")
                 tgt[0].appendChild(g);
             } else {
+                post("add_gop_to_svg");
                 add_gobj_to_svg(svg_elem, g);
             }
         });
@@ -2449,7 +2450,8 @@ function gui_text_draw_border(cid, tag, bgcolor, isbroken, width, height, is_top
             width: width,
             height: height,
             //"shape-rendering": "crispEdges",
-            class: (is_toplevel === 1 ? "toplevel " : "") + "border",
+            class: (is_toplevel === 1 ? "toplevel " : "") + 
+                (isgop === 1 ? "gopborder" : "border"),
         });
         if (isbroken === 1) {
             rect.classList.add("broken_border");
@@ -3239,7 +3241,7 @@ function numbox_data_string(w, h) {
 function gui_numbox_new(cid, ownercid, parentcid, tag, color, x, y, w, h, is_toplevel) {
     // numbox doesn't have a standard iemgui border,
     // so we must create its gobj manually
-    gui(cid).get_elem("patchsvg", function() {
+    //gui(cid).get_elem("patchsvg", function() {
         var g = gui_gobj_new(cid, ownercid, parentcid, tag, "iemgui", x, y, is_toplevel);
         var data = numbox_data_string(w, h);
         var border = create_item(cid, "path", {
@@ -3251,7 +3253,7 @@ function gui_numbox_new(cid, ownercid, parentcid, tag, color, x, y, w, h, is_top
             "class": (is_toplevel === 1 ? " toplevel " : "") + "border"
         });
         g.appendChild(border);
-    });
+    //});
 }
 
 function gui_numbox_coords(cid, tag, w, h) {
