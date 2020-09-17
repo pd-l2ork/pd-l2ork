@@ -3265,6 +3265,7 @@ function gui_numbox_coords(cid, tag, w, h) {
 function gui_numbox_draw_text(cid, tag, text, font_size, color,xpos, ypos, basex, basey, is_toplevel) {
     // kludge alert -- I'm not sure why I need to add half to the ypos
     // below. But it works for most font sizes.
+    post("font_size=" + font_size);
     gui(cid).get_gobj(tag)
     .append(function(frag, w) {
     	//post("ypos=" + ypos + " int=" + Math.floor(ypos));
@@ -3273,7 +3274,7 @@ function gui_numbox_draw_text(cid, tag, text, font_size, color,xpos, ypos, basex
             transform: "translate(" +
                         (xpos - basex) + "," +
                         ((ypos - basey + (ypos - basey) * 0.5)|0) + ")",
-            "font-size": font_size + 2,
+            "font-size": font_size,
             fill: color,
             id: tag + "text",
             class: (is_toplevel === 1 ? "toplevel" : "")
@@ -3292,7 +3293,7 @@ function gui_numbox_update(cid, tag, fcolor, bgcolor, font_name, font_size, font
     })
     .get_elem(tag + "text", {
         fill: fcolor,
-        "font-size": font_size + 2
+        "font-size": font_size
     })
     // label may or may not exist, but that's covered by the API
     .get_elem(tag + "label", function() {
