@@ -3250,7 +3250,7 @@ function gui_numbox_new(cid, ownercid, parentcid, tag, color, x, y, w, h, is_top
             stroke: "black",
             "stroke-width": 1,
             id: (tag + "border"),
-            "class": (is_toplevel === 1 ? " toplevel " : "") + "border"
+            "class": (is_toplevel === 1 ? "toplevel " : "") + "border"
         });
         g.appendChild(border);
     //});
@@ -3801,7 +3801,8 @@ function gui_iemgui_label_displace_drag_handle(cid, tag, dx, dy) {
     });
 }
 
-function gui_mycanvas_new(cid,tag,color,x1,y1,x2_vis,y2_vis,x2,y2) {
+function gui_mycanvas_new(cid, ownercid, parentcid, tag, color, x1, y1,
+    x2_vis, y2_vis, x2, y2, is_toplevel) {
     gui(cid).get_gobj(tag)
     .append(function(frag) {
         var rect_vis, rect, g;
@@ -3831,7 +3832,7 @@ function gui_mycanvas_new(cid,tag,color,x1,y1,x2_vis,y2_vis,x2,y2) {
             fill: "none",
             stroke: color,
             id: tag + "drag_handle",
-            "class": "border mycanvas_border"
+            "class": (is_toplevel === 1 ? "toplevel " : "") + "border mycanvas_border"
             }
         );
         frag.appendChild(rect_vis);

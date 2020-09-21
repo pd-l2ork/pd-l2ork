@@ -27,11 +27,13 @@ void my_canvas_draw_new(t_my_canvas *x, t_glist *glist)
     char cbuf[8];
     sprintf(cbuf, "#%6.6x", x->x_gui.x_bcol);
 
-    gui_vmess("gui_gobj_new", "xxsiii", canvas,
+    gui_vmess("gui_gobj_new", "xxxxsiii", canvas,
+        x->x_gui.x_glist, x->x_gui.x_glist->gl_owner,
         x, "iemgui", x1, y1, glist_istoplevel(glist));
-    gui_vmess("gui_mycanvas_new", "xxsiiiiii", canvas,
+    gui_vmess("gui_mycanvas_new", "xxxxsiiiiiii", canvas,
+        x->x_gui.x_glist, x->x_gui.x_glist->gl_owner,
         x, cbuf, x1, y1, x1+x->x_vis_w, y1+x->x_vis_h,
-        x1+x->x_gui.x_w, y1+x->x_gui.x_h);
+        x1+x->x_gui.x_w, y1+x->x_gui.x_h, glist_istoplevel(glist));
 }
 
 void my_canvas_draw_move(t_my_canvas *x, t_glist *glist)
