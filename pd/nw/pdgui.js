@@ -5504,23 +5504,23 @@ function gui_cord_inspector_update(cid, text, basex, basey, bg_size, y1, y2, mov
         svg_text = get_item(cid, "cord_inspector_text"),
         polypoints_array;
     gobj.setAttributeNS(null, "transform",
-            "translate(" + (basex + 10.5) + "," + (basey + 0.5) + ")");
+            "translate(" + (basex + 8.5) + "," + (basey + 0.5) + ")");
     gobj.setAttributeNS(null, "pointer-events", "none");
     gobj.classList.remove("flash");
     // Lots of fudge factors here, tailored to the current default font size
     configure_item(rect, {
-        x: 13,
+        x: 5,
         y: y1 - basey,
         width: bg_size - basex,
         height: y2 - basey + 10
     });
-    polypoints_array = [8,0,13,5,13,-5];
+    polypoints_array = [0,0,8,6.5,8,-6.5];
     configure_item(poly, {
         points: polypoints_array.join()
     });
     configure_item(svg_text, {
-        x: 20,
-        y: 5,
+        x: 10,
+        y: 3.5,
     });
     // set the text
     svg_text.textContent = text;
