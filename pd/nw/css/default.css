@@ -362,6 +362,12 @@ text.activated {
     fill: #eee;
 }
 
+/* flatgui knob border */
+.flatgui.knob.border {
+    stroke: none;
+    fill: none;
+}
+
 /* for dropdown box we want to visually distinguish boxes that output
    the index from boxes that output the value. For now we do that by
    stroking the arrow for boxes that output an index. For boxes that
