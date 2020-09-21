@@ -3714,15 +3714,18 @@ function toggle_drag_handle_cursors(e, is_label, state) {
 exports.toggle_drag_handle_cursors = toggle_drag_handle_cursors;
 
 // Show or hide little handle for dragging around iemgui labels
-function gui_iemgui_label_show_drag_handle(cid, tag, state, x, y, cnv_resize) {
+function gui_iemgui_label_show_drag_handle(cid, tag, state, x, y, cnv_resize, is_toplevel) {
     if (state !== 0) {
         gui(cid).get_gobj(tag)
         .append(function(frag, w) {
             var g, rect, top_right, bottom_right;
             g = create_item(cid, "g", {
-                class: (cid === tag) ? "gop_drag_handle move_handle border" :
-                    cnv_resize !== 0 ? "cnv_resize_handle border" :
-                    "label_drag_handle move_handle border",
+                class: (cid === tag) ? "gop_drag_handle move_handle " +
+                    (is_toplevel === 1 ? " toplevel" : "") + " border" :
+                    cnv_resize !== 0 ? "cnv_resize_handle" +
+                    (is_toplevel === 1 ? " toplevel" : "") + " border" :
+                    "label_drag_handle move_handle" + (is_toplevel === 1 ? " toplevel" : "")
+                    + " border",
                 transform: "matrix(1, 0, 0, 1, 0, 0)"
             });
             // Here we use a "line" shape so that we can control its color

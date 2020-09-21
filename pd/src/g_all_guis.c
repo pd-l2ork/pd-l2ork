@@ -869,8 +869,8 @@ void scalehandle_draw_select(t_scalehandle *h, int px, int py)
     scalehandle_draw_erase(h);
 
     if (!h->h_vis) {
-        gui_vmess("gui_iemgui_label_show_drag_handle", "xxiiii",
-            canvas, x, 1, px - sx, py - sy, h->h_scale);
+        gui_vmess("gui_iemgui_label_show_drag_handle", "xxiiiii",
+            canvas, x, 1, px - sx, py - sy, h->h_scale, glist_istoplevel(h->h_glist));
         h->h_vis = 1;
     }
 }
@@ -908,13 +908,14 @@ void scalehandle_draw_erase(t_scalehandle *h)
 {
     //t_canvas *canvas = glist_getcanvas(h->h_glist);
     if (!h->h_vis) return;
-    gui_vmess("gui_iemgui_label_show_drag_handle", "xxiiii",
+    gui_vmess("gui_iemgui_label_show_drag_handle", "xxiiiii",
         h->h_glist,
         h->h_master,
         0,
         0,
         0,
-        h->h_scale);
+        h->h_scale,
+        glist_istoplevel(h->h_glist));
     h->h_vis = 0;
 }
 
