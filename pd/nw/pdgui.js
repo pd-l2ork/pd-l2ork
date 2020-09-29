@@ -6456,7 +6456,6 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
                     // we do not worry about removing this event listener since the
                     // editable paragraph will be deleted once the text has been committed.
                     var text = p.innerHTML;
-                    post("text=" + text + " elem=" + p);
                     if (text === "") {
                         p.style.setProperty("-webkit-padding-before", "3px");
                         p.style.setProperty("-webkit-padding-after", "2px");
