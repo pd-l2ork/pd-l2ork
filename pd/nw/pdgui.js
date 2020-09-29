@@ -6439,7 +6439,7 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
             // ico@vt.edu: 2020-09-28: For older nw.js, we now have two
             // different conditions for the padding at creation time. See
             // the 2020-09-28 comment below for more info.
-            if (!check_nw_version("0.46")) {
+            if (!check_nw_version("0.24")) {
                 if (text === "") {
                     p.style.setProperty("-webkit-padding-before", "3px");
                     p.style.setProperty("-webkit-padding-after", "2px");
