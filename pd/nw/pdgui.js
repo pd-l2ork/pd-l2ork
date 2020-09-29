@@ -6433,13 +6433,38 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         }
         // set backgroundimage for message box
         if (type === "msg") {
-            // ico@vt.edu: 2020-08-31: message boxes are uniquely borked
-            // so, we do our best to address that here. We have two different
-            // conditions for the padding at creation time. See 2020-09-28
-            // comment below for more info.
-            if (text === "") {
-                p.style.setProperty("-webkit-padding-before", "3px");
-                p.style.setProperty("-webkit-padding-after", "2px");
+            // ico@vt.edu 2020-08-31: message boxes are uniquely borked
+            // so, we do our best to address that here.
+
+            // ico@vt.edu: 2020-09-28: For older nw.js, we now have two
+            // different conditions for the padding at creation time. See
+            // the 2020-09-28 comment below for more info.
+            if (!check_nw_version("0.46")) {
+                if (text === "") {
+                    p.style.setProperty("-webkit-padding-before", "3px");
+                    p.style.setProperty("-webkit-padding-after", "2px");
+                } else {
+                    p.style.setProperty("-webkit-padding-before", "2px");
+                    p.style.setProperty("-webkit-padding-after", "3px");
+                }
+                p.addEventListener("input", function() {
+                    // ico@vt.edu 2020-09-28: we do this because msg object has a funny
+                    // appearance whereby a caret without any text is positioned higher
+                    // than when there is text. LATER: check if this is necessary for
+                    // newer versions of nw.js, as it sounds like a nw.js bug.
+
+                    // we do not worry about removing this event listener since the
+                    // editable paragraph will be deleted once the text has been committed.
+                    var text = p.innerHTML;
+                    post("text=" + text + " elem=" + p);
+                    if (text === "") {
+                        p.style.setProperty("-webkit-padding-before", "3px");
+                        p.style.setProperty("-webkit-padding-after", "2px");
+                    } else {
+                        p.style.setProperty("-webkit-padding-before", "2px");
+                        p.style.setProperty("-webkit-padding-after", "3px");
+                    }
+                });
             } else {
                 p.style.setProperty("-webkit-padding-before", "2px");
                 p.style.setProperty("-webkit-padding-after", "3px");
@@ -6450,24 +6475,6 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
             shove_svg_background_data_into_css(patchwin[cid].window,
                 parseInt(get_gobj(cid, tag).getBoundingClientRect().height /
                     (parseInt(p.style.lineHeight) / 100 * font_size)));
-            p.addEventListener("input", function() {
-                // ico@vt.edu 2020-09-28: we do this because msg object has a funny
-                // appearance whereby a caret without any text is positioned higher
-                // than when there is text. LATER: check if this is necessary for
-                // newer versions of nw.js, as it sounds like a nw.js bug.
-
-                // we do not worry about removing this event listener since the
-                // editable paragraph will be deleted once the text has been committed.
-                var text = p.innerHTML;
-                post("text=" + text + " elem=" + p);
-                if (text === "") {
-                    p.style.setProperty("-webkit-padding-before", "3px");
-                    p.style.setProperty("-webkit-padding-after", "2px");
-                } else {
-                    p.style.setProperty("-webkit-padding-before", "2px");
-                    p.style.setProperty("-webkit-padding-after", "3px");
-                }
-            });
         }
         // remove leading/trailing whitespace
         text = text.trim();
