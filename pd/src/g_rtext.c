@@ -634,7 +634,7 @@ void rtext_activate(t_rtext *x, int state)
 
     /* we need to get scroll to make sure we've got the
        correct bbox for the svg */
-    canvas_getscroll(glist_getcanvas(canvas));
+    scrollbar_synchronous_update(glist_getcanvas(canvas));
     /* ugly hack to get around the fact that x_buf is not
        null terminated. If this becomes a problem we can revisit
        it later */

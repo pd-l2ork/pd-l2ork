@@ -346,7 +346,7 @@ void canvas_howputnew(t_canvas *x, int *connectp, int *xpixp, int *ypixp,
                 indx = nobj-1;
         }
         x->gl_editor->e_onmotion = MA_NONE;
-        canvas_getscroll(x);
+        scrollbar_synchronous_update(x);
     }
     else
     {

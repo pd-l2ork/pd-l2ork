@@ -444,6 +444,7 @@ struct _parentwidgetbehavior
 #define CURSOR_SCROLL 9
 #define CURSOR_EDITMODE_RESIZE_Y 10
 #define CURSOR_EDITMODE_MOVE 11
+#define CURSOR_EDITMODE_MOTION 12
 EXTERN void canvas_setcursor(t_glist *x, unsigned int cursornum);
 
 extern t_canvas *canvas_editing;    /* last canvas to start text edting */ 

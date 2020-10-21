@@ -1848,6 +1848,13 @@ function gui_canvas_cursor(cid, pd_event_type) {
             case "cursor_editmode_move":
                 c = "move";
                 break;
+            case "cursor_editmode_motion":
+                c = "pointer";
+                var textentry = get_item(cid, "new_object_textentry");
+                if (textentry) {
+                    textentry.style.setProperty("cursor", c);
+                }
+                break;
         }
         patch.style.cursor = c;
     });

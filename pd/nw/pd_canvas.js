@@ -300,6 +300,17 @@ var canvas_events = (function() {
                 // evt.preventDefault();
                 return false;
             },
+            activatedmousemove: function(evt) {
+                let [pointer_x, pointer_y] = evt.type === "touchmove"
+                    ? [Math.trunc(evt.touches[0].pageX),
+                       Math.trunc(evt.touches[0].pageY)]
+                    : [evt.pageX, evt.pageY];
+                pdgui.pdsend(name, "text_activated_motion",
+                    (pointer_x + svg_view.x),
+                    (pointer_y + svg_view.y),
+                    (evt.shiftKey + (pdgui.cmd_or_ctrl_key(evt) << 1))
+                );
+            },
             mousedown: function(evt) {
                 // ico@vt.edu capture middle click for a different type of scroll
                 // currently disabled due to problem with scrollBy and zoom
@@ -450,6 +461,8 @@ var canvas_events = (function() {
                 evt.preventDefault();
             },
             text_mousemove: function(evt) {
+                //pdgui.post("text_mousemove");
+                events.activatedmousemove(evt);
                 evt.stopPropagation();
                 //evt.preventDefault();
                 return false;
@@ -506,6 +519,14 @@ var canvas_events = (function() {
                     return;
                 }
                 //pdgui.post("leaving floating mode");
+                /* here we revert the cursor for the textentry to default.
+                   this was activated at the creation time, see
+                   canvas_startmotion inside the g_editor.c. after we
+                   have done this, we update the scrollbars in case
+                   the element has been placed in a way that the scrollbars
+                   become unnecessary. */
+                textbox().style.setProperty("cursor", "initial");
+                pdgui.gui_canvas_get_immediate_scroll(name);
                 canvas_events.text();
                 evt.stopPropagation();
                 evt.preventDefault();

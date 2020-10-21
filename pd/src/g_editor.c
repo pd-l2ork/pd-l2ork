@@ -2554,7 +2554,8 @@ static char *cursorlist[] = {
     "cursor_editmode_resize_bottom_right",
     "cursor_scroll",
     "cursor_editmode_resize_vert",
-    "cursor_editmode_move"
+    "cursor_editmode_move",
+    "cursor_editmode_motion"
 };
 
 void canvas_setcursor(t_canvas *x, unsigned int cursornum)
@@ -5341,6 +5342,7 @@ void canvas_mouseup(t_canvas *x,
     {
             /* after motion or resizing, if there's only one text item
                 selected, activate the text */
+    	canvas_setcursor(x, CURSOR_EDITMODE_NOTHING);
         scrollbar_synchronous_update(x);
         if (x->gl_editor->e_selection &&
             !(x->gl_editor->e_selection->sel_next))
@@ -5839,6 +5841,20 @@ static void delay_move(t_canvas *x)
     x->gl_editor->e_ywas = x->gl_editor->e_ynew;
 }
 
+/* ico@vt.edu 2020-10-21: added simple motion that keeps updating last
+   xy position without all the other actions. This is useful when we just
+   let go of the object that was just created and which followed the mouse
+   until user clicked to let it go. This is where this function comes into
+   play in order to update variables in setlastxymod
+*/
+void canvas_text_activated_motion(t_canvas *x, t_floatarg xpos, t_floatarg ypos,
+    t_floatarg fmod)
+{
+	//post("canvas_text_activated_motion");
+	int mod = fmod;
+	glist_setlastxymod(x, xpos, ypos, mod);
+}
+
 void canvas_motion(t_canvas *x, t_floatarg xpos, t_floatarg ypos,
     t_floatarg fmod)
 {
@@ -5993,7 +6009,7 @@ void canvas_startmotion(t_canvas *x)
     if (!x->gl_editor) return;
     glist_getnextxy(x, &xval, &yval);
     //if (xval == 0 && yval == 0) return;
-    canvas_setcursor(x, CURSOR_EDITMODE_NOTHING);
+    canvas_setcursor(x, CURSOR_EDITMODE_MOTION);
     x->gl_editor->e_onmotion = MA_MOVE;
     x->gl_editor->e_xwas = xval;
     x->gl_editor->e_ywas = yval;
@@ -8409,6 +8425,7 @@ void glist_setlastxy(t_glist *gl, int xval, int yval)
 
 void glist_setlastxymod(t_glist *gl, int xval, int yval, int mod)
 {
+	//post("setlastxymod %d %d", xval, yval);
     canvas_last_glist = gl;
     canvas_last_glist_x = xval;
     canvas_last_glist_y = yval;
@@ -8544,6 +8561,8 @@ void g_editor_setup(void)
         A_GIMME, A_NULL);
     class_addmethod(canvas_class, (t_method)canvas_motion, gensym("motion"),
         A_FLOAT, A_FLOAT, A_FLOAT, A_NULL);
+    class_addmethod(canvas_class, (t_method)canvas_text_activated_motion,
+    	gensym("text_activated_motion"), A_FLOAT, A_FLOAT, A_FLOAT, A_NULL);
     class_addmethod(canvas_class, (t_method)glist_noselect,
         gensym("noselect"), A_NULL);
     class_addmethod(canvas_class, (t_method)canvas_enterobj, gensym("enter"),
