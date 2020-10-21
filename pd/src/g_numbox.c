@@ -32,6 +32,11 @@ static void my_numbox_motion(t_my_numbox *x, t_floatarg dx, t_floatarg dy);
 static void my_numbox_ftoa(t_my_numbox *x , int append);
 static void my_numbox_list(t_my_numbox *x, t_symbol *s, int ac, t_atom *av);
 
+// used for when user presses esc to release exclusive focus and to prevent
+// propagation of that keypress to bound events that are checked for inside
+// g_editor.c's canvas_key right after processing the glist_grabbed events
+static int delayed_exclusive_release = 0;
+
 static void my_numbox_tick_reset(t_my_numbox *x)
 {
     //post("tick_reset\n");
@@ -50,7 +55,9 @@ static void my_numbox_remove_grab(t_my_numbox *x)
     if (x->x_focused)
     {
         x->x_focused = 0;
-        glist_grab(x->x_gui.x_glist, 0, 0, 0, 0, 0, 0, 0);
+        glist_grab(x->x_gui.x_glist, 0, 0, 0, 0, 0, 0, 
+            delayed_exclusive_release);
+        delayed_exclusive_release = 0;
     }
 }
 
@@ -175,8 +182,8 @@ static void my_numbox_draw_update(t_gobj *client, t_glist *glist)
         }
         else if (x->x_focused == 2) {
             // the following two options are triggered when one presses return while retaining
-            // the focus. so, we make sure to subtract the '>' that should dissappear, and adjust
-            // visible digits accordingly below
+            // the focus. so, we make sure to subtract the '>' that should dissappear, and
+            // adjust visible digits accordingly below
             if (x->x_gui.x_changed == 2)
             {
                 // if we pressed enter while having a value outside the min/max bounds
@@ -963,8 +970,14 @@ static void my_numbox_key(void *z, t_floatarg fkey)
         sys_queuegui(x, x->x_gui.x_glist, my_numbox_draw_update);
     }
 
+    // pressing Esc key removes exclusive focus
     if(c==27)
     {
+        /* special case: we set -1 for the exclusive value that is then converted to
+           0 inside g_editor.c, so as to avoid passing key press immediately
+           to bound objects
+        */
+        delayed_exclusive_release = -1;
         clock_unset(x->x_clock_reset);
         my_numbox_tick_reset(x);
     }

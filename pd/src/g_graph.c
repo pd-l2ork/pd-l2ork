@@ -394,12 +394,15 @@ void glist_grab(t_glist *x, t_gobj *y, t_glistmotionfn motionfn, t_glistkeyfn ke
 
 // change glist_grab exclusive flag separate from the rest
 // only do so if e_grab is not null
+//  1 = enable exclusive focus
+//  0 = disable exclusive focus
+// -1 = delayed disable of the exclusive focus inside g_editor.c's canvas_key
 int glist_grab_exclusive(t_glist *x, int exclusive)
 {
     t_glist *x2 = glist_getcanvas(x);
     if (x2->gl_editor->e_grab)
     {
-        if (exclusive != 0 && exclusive != 1) return(1);
+        if (exclusive < -1 || exclusive > 1) return(1);
         x2->gl_editor->exclusive = exclusive;
         return(0);
     }

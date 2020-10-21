@@ -3609,13 +3609,17 @@ static int text_resizing_hotspot(t_canvas *x, t_object *ob, int xpos, int ypos,
             (ob->ob_pd->c_name != gensym("vsl") || x2 - x1 > 15) &&
             (ob->ob_pd->c_name != gensym("hsl") || x2 - x1 > 15);
 
+        post("compare %d %d", x2-24, x1 + IOWIDTH + 6);
+
         if (can_resize_x &&
             xpos >= x2 - 4 && ypos <= y2 + offset - 10 && ypos > y2 + offset - 24)
             return CURSOR_EDITMODE_RESIZE_X;
         else if (xpos >= x2 - 4 && ypos <= y2 + offset && ypos > y2 + offset - 10)
             return CURSOR_EDITMODE_RESIZE;
         else if (can_resize_y &&
-                 xpos >= x2 - 12 &&
+                // TODO: calculate location of the rightmost nlet...
+                 xpos >= ((x2 - 24) > (x1 + IOWIDTH + 6) ?
+                    (x2 - 24) : (x1 + IOWIDTH + 7)) &&
                  ypos >= y2 + offset - 5 &&
                  ypos <= y2 + offset)
             return CURSOR_EDITMODE_RESIZE_Y;
@@ -3849,77 +3853,13 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
                    the way to the GUI just handle resizing a stupid rectangle.
                 */
 
-            // if we are inside a resizing hotspot of a text object...
-            if (in_text_resizing_hotspot)
-            {
-                // ...and we are clicking...
-                if (doit)
-                {
-                    // ...select the object
-                    if (!glist_isselected(x, y) ||
-                        x->gl_editor->e_selection->sel_next)
-                    {
-                        glist_noselect(x);
-                        glist_select(x, y);
-                    }
-
-                    x->gl_editor->e_onmotion = MA_RESIZE;
-                    x->gl_editor->e_xwas = x1;
-                    x->gl_editor->e_ywas = y1;
-                    x->gl_editor->e_xnew = xpos;
-                    x->gl_editor->e_ynew = ypos;
-                    /* For normal text objects/atom boxes, subpatches and
-                       graphs we just go ahead and set an undo point here.
-                       GUI objects have their own click callback where they
-                       do this. */
-                    int isgraph = (ob->ob_pd == canvas_class &&
-                        ((t_canvas *)ob)->gl_isgraph);
-
-                    if (default_type || isgraph)
-                        canvas_undo_add(x, 6, "resize",
-                            canvas_undo_set_apply(x, glist_getindex(x, y)));
-
-                    /* Scalehandle callbacks */
-                    if (isgraph)
-                    {
-                        t_scalehandle *sh = ((t_canvas *)ob)->x_handle;
-                        /* Special case: we're abusing the value of h_scale
-                           to differentiate between this case and the case
-                           of clicking the red gop rectangle. */
-                        sh->h_scale = 1;
-                        pd_vmess(&sh->h_pd, gensym("_click"), "fff",
-                            (t_float)in_text_resizing_hotspot,
-                            (t_float)xpos, (t_float)ypos);
-                    }
-                    else if (ob->te_iemgui)
-                    {
-                        t_scalehandle *sh = ((t_iemgui *)ob)->x_handle;
-                        pd_vmess(&sh->h_pd, gensym("_click"), "fff",
-                            (t_float)in_text_resizing_hotspot,
-                            (t_float)xpos, (t_float)ypos);
-                    }
-                    else if (!default_type)
-                    {
-                        /* Scope~ and grid */
-                        pd_vmess(&ob->ob_pd, gensym("_click_for_resizing"),
-                           "fff", (t_float)in_text_resizing_hotspot,
-                           (t_float)xpos, (t_float)ypos);
-                    }
-                }
-                // we are in the resize hotspot but are not clicking yet
-                else
-                {
-                    canvas_setcursor(x, in_text_resizing_hotspot);
-                    canvas_check_nlet_highlights(x);
-                }
-            }
             /* look for an outlet
                 if object is valid, has outlets,
                 and we are within the bottom area of an object
                 ico@vt.edu: 2020-06-05 added expanded hotspot for
                 nlets for easier pinpointing
             */
-            else if (ob && (noutlet = obj_noutlets(ob)) && ypos >= y2-6)
+            if (ob && (noutlet = obj_noutlets(ob)) && ypos >= y2-6)
             {
                 int width = x2 - x1;
                 int nout1 = (noutlet > 1 ? noutlet - 1 : 1);
@@ -4026,6 +3966,77 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
                         goto nooutletafterall;
                 }
             }
+
+            /* 2020-10-07 ico@vt.edu: moved outlet detection before the resize
+               area detection, so that we can extend both x and y resize sides
+               to the full size of those sides, except where there are nlets.
+            */
+
+            // if we are inside a resizing hotspot of a text object...
+            else if (in_text_resizing_hotspot)
+            {
+                // ...and we are clicking...
+                if (doit)
+                {
+                    // ...select the object
+                    if (!glist_isselected(x, y) ||
+                        x->gl_editor->e_selection->sel_next)
+                    {
+                        glist_noselect(x);
+                        glist_select(x, y);
+                    }
+
+                    x->gl_editor->e_onmotion = MA_RESIZE;
+                    x->gl_editor->e_xwas = x1;
+                    x->gl_editor->e_ywas = y1;
+                    x->gl_editor->e_xnew = xpos;
+                    x->gl_editor->e_ynew = ypos;
+                    /* For normal text objects/atom boxes, subpatches and
+                       graphs we just go ahead and set an undo point here.
+                       GUI objects have their own click callback where they
+                       do this. */
+                    int isgraph = (ob->ob_pd == canvas_class &&
+                        ((t_canvas *)ob)->gl_isgraph);
+
+                    if (default_type || isgraph)
+                        canvas_undo_add(x, 6, "resize",
+                            canvas_undo_set_apply(x, glist_getindex(x, y)));
+
+                    /* Scalehandle callbacks */
+                    if (isgraph)
+                    {
+                        t_scalehandle *sh = ((t_canvas *)ob)->x_handle;
+                        /* Special case: we're abusing the value of h_scale
+                           to differentiate between this case and the case
+                           of clicking the red gop rectangle. */
+                        sh->h_scale = 1;
+                        pd_vmess(&sh->h_pd, gensym("_click"), "fff",
+                            (t_float)in_text_resizing_hotspot,
+                            (t_float)xpos, (t_float)ypos);
+                    }
+                    else if (ob->te_iemgui)
+                    {
+                        t_scalehandle *sh = ((t_iemgui *)ob)->x_handle;
+                        pd_vmess(&sh->h_pd, gensym("_click"), "fff",
+                            (t_float)in_text_resizing_hotspot,
+                            (t_float)xpos, (t_float)ypos);
+                    }
+                    else if (!default_type)
+                    {
+                        /* Scope~ and grid */
+                        pd_vmess(&ob->ob_pd, gensym("_click_for_resizing"),
+                           "fff", (t_float)in_text_resizing_hotspot,
+                           (t_float)xpos, (t_float)ypos);
+                    }
+                }
+                // we are in the resize hotspot but are not clicking yet
+                else
+                {
+                    canvas_setcursor(x, in_text_resizing_hotspot);
+                    canvas_check_nlet_highlights(x);
+                }
+            }
+
             /* look for an inlet (these are colored differently
                 since they are not connectable)
                 ico@vt.edu: 2020-06-05 added expanded hotspot for
@@ -5616,9 +5627,9 @@ void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av)
     // and not so subtle regressions. I am here introducing it becuase doing so
     // allows us to have some really nice flexibility in respect to grabbed objects.
     // For instance, by allowing grabbed events to propagate first, objects like
-    // iemgui numbox and gatom can grab exclusive hold of key presses in select cases
+    // iemgui numbox can grab exclusive hold of key presses in select cases
     // before such events propagate to other bound elements. So, here
-    // we do grabbed keynameafn here for key presses and releases
+    // we do grabbed keynameafn for key presses and releases
     if (x && x->gl_editor && x->gl_editor->e_grab)
     {
         // as per vanilla behavior, we first send keynums, then keynames
@@ -5637,11 +5648,14 @@ void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av)
         }
     }
 
+    // debug:
+    //post("exclusive=%d", (x && x->gl_editor ? x->gl_editor->exclusive : 0));
+
     // now broadcast key press to key et al. objects
     // 2020-10-05 ico@vt.edu: only do so if we do not have an object
     // that has grabbed the keyboard exclusively, such as gatom or iemgui numbox
     //post("canvas_key exclusive=%d", (x  && x->gl_editor ? x->gl_editor->exclusive : 0));
-    if (!x || !x->gl_editor || !x->gl_editor->e_grab || !x->gl_editor->exclusive)
+    if (!x || !x->gl_editor || !x->gl_editor->exclusive)
     {
         if (!autorepeat)
         {
@@ -5670,6 +5684,14 @@ void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av)
             SETSYMBOL(at+1, gotkeysym);
             pd_list(keynamesym_a->s_thing, 0, 2, at);
         }
+    }
+
+    // now process delayed removal of exclusivity which is here, so that when an object
+    // releases exclusivity via keyboard key (e.g. iemgui numbox does this using
+    // Esc key), that key is not immediately passed to bound objects
+    if (x && x->gl_editor && x->gl_editor->exclusive == -1)
+    {
+    	x->gl_editor->exclusive = 0;
     }
 
     if (!x || !x->gl_editor)
