@@ -3837,8 +3837,7 @@ function gui_iemgui_label_show_drag_handle(cid, tag, state, x, y, cnv_resize) {
                 class: (cid === tag) ? "gop_drag_handle move_handle border" :
                     cnv_resize !== 0 ? "cnv_resize_handle border" :
                     "label_drag_handle move_handle border",
-                transform: "matrix(1, 0, 0, 1, " +
-                    (cid === tag ? "0, 0)" : (cnv_resize ? "0, 0)" : "0, 0)"))
+                transform: "matrix(1, 0, 0, 1, 0, 0)"
             });
             // Here we use a "line" shape so that we can control its color
             // using the "border" class (for iemguis) or the "gop_rect" class
