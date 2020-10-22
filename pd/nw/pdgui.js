@@ -3830,7 +3830,6 @@ exports.toggle_drag_handle_cursors = toggle_drag_handle_cursors;
 // Show or hide little handle for dragging around iemgui labels
 function gui_iemgui_label_show_drag_handle(cid, tag, state, x, y, cnv_resize) {
     if (state !== 0) {
-        post("show_drag_handle");
         gui(cid).get_gobj(tag)
         .append(function(frag, w) {
             var g, rect, top_right, bottom_right;
@@ -3857,12 +3856,12 @@ function gui_iemgui_label_show_drag_handle(cid, tag, state, x, y, cnv_resize) {
             } else if (cnv_resize) {
                 // if we are mycanvas resize hook found in the bottom right corner
                 rect = create_item(cid, "path", {
-                    d: "M " + (x-23) + " " + y + " L " + (x-8) + 
-                        " " + y + " L " + (x-8) + " " + (y-15) + " z",
+                    d: "M " + (x-16) + " " + y + " L " + (x-8) + 
+                        " " + y + " L " + (x-8) + " " + (y-8) + " z",
                     class: "unconstrained",
                     fill: "red",
                     stroke: "red",
-                    opacity: 0.5
+                    opacity: 0
                 });
             } else {
                 // otherwise we are a label hook
@@ -3874,35 +3873,35 @@ function gui_iemgui_label_show_drag_handle(cid, tag, state, x, y, cnv_resize) {
                     opacity: 0.5
                 */
                 rect = create_item(cid, "line", {
-                    x1: x+4,
-                    y1: y+2,
-                    x2: x+4,
-                    y2: y + 10,
-                    "stroke-width": 8,
+                    x1: x+5,
+                    y1: y+3,
+                    x2: x+5,
+                    y2: y + 9,
+                    "stroke-width": 6,
                     class: "unconstrained",
-                    fill: "red",
-                    stroke: "red",
-                    opacity: 0.5
+                    //fill: "red",
+                    //stroke: "red",
+                    //opacity: 0.5
                 });
             }
             g.classList.add("clickable_resize_handle");
             if (cnv_resize) {
                 top_right = create_item(cid, "rect", {
-                    x: x -  11,
-                    y: y -  16,
-                    width:   3,
-                    height: 11,
-                    fill:   "rgba(255,255,255,0)",
-                    stroke: "rgba(255,255,255,0)",
+                    x:      x-11,
+                    y:         0,
+                    width:     3,
+                    height:  y-6,
+                    fill:   "rgba(0,255,0,0)",
+                    stroke: "rgba(0,255,0,0)",
                     class: "constrain_top_right"
                 });
                 bottom_right = create_item(cid, "rect", {
-                    x: x -  24,
-                    y: y -   3,
-                    width:  11,
-                    height:  3,
-                    fill:   "rgba(255,255,255,0)",
-                    stroke: "rgba(255,255,255,0)",
+                    x:        0,
+                    y:      y-3,
+                    width: x-14,
+                    height:   3,
+                    fill:   "rgba(0,0,255,0)",
+                    stroke: "rgba(0,0,255,0)",
                     class: "constrain_bottom_right"
                 });                
             } else {
@@ -3929,22 +3928,22 @@ function gui_iemgui_label_show_drag_handle(cid, tag, state, x, y, cnv_resize) {
                 });
                 */
                 top_right = create_item(cid, "rect", {
-                    x: x +  (cid === tag ? 4 : 1.5),
-                    y: y +  (cid === tag ? 15.5 : 0.5),
-                    width:  (cid === tag ? 3 : 5),
-                    height: (cid === tag ? 11 : 7),
+                    x: x +  (cid === tag ? 4 : 2.5),
+                    y: y +  (cid === tag ? 15.5 : 3.5),
+                    width:  (cid === tag ? 3 : 1),
+                    height: (cid === tag ? 11 : 5),
                     fill:   "rgba(0,255,0,0)",
-                    stroke: "rgba(0,255,0,1)",
+                    stroke: "rgba(0,255,0,0)",
                     "fill-opacity": "0",
                     class: "constrain_top_right"
                 });
                 bottom_right = create_item(cid, "rect", {
-                    x: x + 8.5,
-                    y: y +  (cid === tag ? 11 : 8.5),
-                    width:  (cid === tag ? 11 : 7),
-                    height: (cid === tag ? 3 : 5),
+                    x: x + 4.5,
+                    y: y +  (cid === tag ? 11 : 3.5),
+                    width:  (cid === tag ? 11 : 3),
+                    height: (cid === tag ? 3 : 1),
                     fill:   "rgba(0,0,255,0)",
-                    stroke: "rgba(0,0,255,1)",
+                    stroke: "rgba(0,0,255,0)",
                     "fill-opacity": "0",
                     class: "constrain_bottom_right"
                 });
@@ -3977,9 +3976,9 @@ function gui_iemgui_label_show_drag_handle(cid, tag, state, x, y, cnv_resize) {
             // Need to check for null here...
             if (g) {
                 g.parentNode.removeChild(g);
-            } else {
+            }/* else {
                 post("error: couldn't delete the iemgui drag handle!");
-            }
+            }*/
         });
     }
 }

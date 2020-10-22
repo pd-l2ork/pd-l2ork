@@ -133,7 +133,6 @@ static void iemgui_init_sym2dollararg(t_iemgui *x, t_symbol **symp,
     }
 }
 
-int color_format_warned;
 static t_symbol *color2symbol(int col)
 {
     const int compat = (pd_compatibilitylevel < 48) ? 1 : 0;
@@ -151,21 +150,6 @@ static t_symbol *color2symbol(int col)
     }
     else
     {
-        if (!color_format_warned)
-        {
-            post("warning: saving iemgui colors as hex symbol. These colors "
-                 "are readable in Pd Vanilla since 0.47, but they are not "
-                 "readable in Purr Data version 2.12.0 or earlier. "
-                 "If you need to remain compatible with older versions of Purr "
-                 "Data please run in compatibility mode with Vanilla version "
-                 "0.47 like this:");
-            post("");
-            post("[compatibility 0.47(");
-            post("|");
-            post("[send pd]");
-            post("");
-            color_format_warned = 1;    
-        }
         snprintf(colname, MAXPDSTRING-1, "#%06x", col);
     }
     return gensym(colname);
@@ -729,6 +713,7 @@ void iemgui_vis(t_gobj *z, t_glist *glist, int vis)
     }
 }
 
+static int color_format_warned = 0;
 void iemgui_save(t_iemgui *x, t_symbol **srl, t_symbol **bflcol)
 {
     if (srl) {
@@ -738,6 +723,21 @@ void iemgui_save(t_iemgui *x, t_symbol **srl, t_symbol **bflcol)
     }
     iemgui_all_sym2dollararg(x, srl);
     iemgui_all_col2save(x, bflcol);
+    if (!color_format_warned)
+    {
+        post("warning: saving iemgui colors as hex symbol. These colors "
+             "are readable in Pd Vanilla since 0.47, but they are not "
+             "readable in Purr Data version 2.12.0 or earlier. "
+             "If you need to remain compatible with older versions of Purr "
+             "Data please run in compatibility mode with Vanilla version "
+             "0.47 like this:");
+        post("");
+        post("[compatibility 0.47(");
+        post("|");
+        post("[send pd]");
+        post("");
+        color_format_warned = 1;    
+    }
 }
 
 void iemgui_properties(t_iemgui *x, t_symbol **srl)

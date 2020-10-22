@@ -227,6 +227,7 @@ mark.console_find_highlighted {
 
 #selection_rectangle {
     stroke: #e87216;
+    fill: rgba(232,114,22,0.2);
 }
 
 /* The outline to show the visible area for a Graph-On-Parent canvas,
