@@ -2555,7 +2555,7 @@ static char *cursorlist[] = {
     "cursor_scroll",
     "cursor_editmode_resize_vert",
     "cursor_editmode_move",
-    "cursor_editmode_motion"
+    "cursor_editmode_floating"
 };
 
 void canvas_setcursor(t_canvas *x, unsigned int cursornum)
@@ -3596,7 +3596,7 @@ static int text_resizing_hotspot(t_canvas *x, t_object *ob, int xpos, int ypos,
         ob->ob_pd->c_name == gensym("grid"))
     {
             /* stay out of the way of outlet in the bottom right-hand corner */
-        int offset = (obj_noutlets(ob) > 1) ? -4 : 0;
+        int offset = (obj_noutlets(ob) > 1) ? -IOHOTSPOT : 0;
             /* We want to disable horiz and vert anchors for [bng], [tgl],
                [hradio] and [vradio]. These widgets only have one
                dimension that can be resized-- the other is handled
@@ -3610,22 +3610,36 @@ static int text_resizing_hotspot(t_canvas *x, t_object *ob, int xpos, int ypos,
             (ob->ob_pd->c_name != gensym("vsl") || x2 - x1 > 15) &&
             (ob->ob_pd->c_name != gensym("hsl") || x2 - x1 > 15);
 
-        post("compare %d %d", x2-24, x1 + IOWIDTH + 6);
+        //post("compare right=%d leftmost-outlet-right-side=%d left=%d", \
+        	x2-24, x1 + IOWIDTH + 6, x1);
+        //post("ypos=%d y2-y1=%d", ypos, y2 - y1);
+        //post("mouse=(%d,%d) box=(x:%d-%d,y:%d-%d) can_resize=(%d,%d)", \
+        	xpos, ypos, x1, x2, y1, y2, can_resize_x, can_resize_y);
 
         if (can_resize_x &&
-            xpos >= x2 - 4 && ypos <= y2 + offset - 10 && ypos > y2 + offset - 24)
+            xpos >= x2 - 5 && ypos <= y2 + offset - 10 && ypos > y1)
+        {
+        	//post("...x");
             return CURSOR_EDITMODE_RESIZE_X;
-        else if (xpos >= x2 - 4 && ypos <= y2 + offset && ypos > y2 + offset - 10)
+        }
+        else if (xpos >= x2 - 5 && ypos <= y2 + offset && ypos > y2 + offset - 10)
+        {
+        	//post("...xy");
             return CURSOR_EDITMODE_RESIZE;
+        }
         else if (can_resize_y &&
-                // TODO: calculate location of the rightmost nlet...
-                 xpos >= ((x2 - 24) > (x1 + IOWIDTH + 6) ?
-                    (x2 - 24) : (x1 + IOWIDTH + 7)) &&
+                 xpos > x1 + (ob->te_iemgui ? IOWIDTH + IOHOTSPOT : 0)  &&
                  ypos >= y2 + offset - 5 &&
                  ypos <= y2 + offset)
+        {
+        	//post("...y");
             return CURSOR_EDITMODE_RESIZE_Y;
+        }
         else
+        {
+        	//post("...nothing");
             return 0;
+        }
     }
     else
         return 0;
@@ -3854,13 +3868,78 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
                    the way to the GUI just handle resizing a stupid rectangle.
                 */
 
+            // if we are inside a resizing hotspot of a text object...
+            if (in_text_resizing_hotspot)
+            {
+                // ...and we are clicking...
+                if (doit)
+                {
+                    // ...select the object
+                    if (!glist_isselected(x, y) ||
+                        x->gl_editor->e_selection->sel_next)
+                    {
+                        glist_noselect(x);
+                        glist_select(x, y);
+                    }
+
+                    x->gl_editor->e_onmotion = MA_RESIZE;
+                    x->gl_editor->e_xwas = x1;
+                    x->gl_editor->e_ywas = y1;
+                    x->gl_editor->e_xnew = xpos;
+                    x->gl_editor->e_ynew = ypos;
+                    /* For normal text objects/atom boxes, subpatches and
+                       graphs we just go ahead and set an undo point here.
+                       GUI objects have their own click callback where they
+                       do this. */
+                    int isgraph = (ob->ob_pd == canvas_class &&
+                        ((t_canvas *)ob)->gl_isgraph);
+
+                    if (default_type || isgraph)
+                        canvas_undo_add(x, 6, "resize",
+                            canvas_undo_set_apply(x, glist_getindex(x, y)));
+
+                    /* Scalehandle callbacks */
+                    if (isgraph)
+                    {
+                        t_scalehandle *sh = ((t_canvas *)ob)->x_handle;
+                        /* Special case: we're abusing the value of h_scale
+                           to differentiate between this case and the case
+                           of clicking the red gop rectangle. */
+                        sh->h_scale = 1;
+                        pd_vmess(&sh->h_pd, gensym("_click"), "fff",
+                            (t_float)in_text_resizing_hotspot,
+                            (t_float)xpos, (t_float)ypos);
+                    }
+                    else if (ob->te_iemgui)
+                    {
+                        t_scalehandle *sh = ((t_iemgui *)ob)->x_handle;
+                        pd_vmess(&sh->h_pd, gensym("_click"), "fff",
+                            (t_float)in_text_resizing_hotspot,
+                            (t_float)xpos, (t_float)ypos);
+                    }
+                    else if (!default_type)
+                    {
+                        /* Scope~ and grid */
+                        pd_vmess(&ob->ob_pd, gensym("_click_for_resizing"),
+                           "fff", (t_float)in_text_resizing_hotspot,
+                           (t_float)xpos, (t_float)ypos);
+                    }
+                }
+                // we are in the resize hotspot but are not clicking yet
+                else
+                {
+                    canvas_setcursor(x, in_text_resizing_hotspot);
+                    canvas_check_nlet_highlights(x);
+                }
+            }
             /* look for an outlet
                 if object is valid, has outlets,
                 and we are within the bottom area of an object
                 ico@vt.edu: 2020-06-05 added expanded hotspot for
                 nlets for easier pinpointing
             */
-            if (ob && (noutlet = obj_noutlets(ob)) && ypos >= y2-6)
+            else if (ob && (noutlet = obj_noutlets(ob)) &&
+            	ypos >= y2-((y2-y1)/2 > IOHOTSPOT ? IOHOTSPOT : (y2-y1)/2-1))
             {
                 int width = x2 - x1;
                 int nout1 = (noutlet > 1 ? noutlet - 1 : 1);
@@ -3876,9 +3955,9 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
                 //post("xpos=%d closest=%d noutlet=%d \
                     nout1=%d hotspot=%d IOWIDTH=%d enlarged=%d",
                 //    xpos, closest, noutlet, nout1, hotspot, IOWIDTH, enlarged);
-                // if have found an outlet and are within its range...
+                // if we have found an outlet and are within its range...
                 if (closest < noutlet &&
-                    xpos >= (hotspot-6) && xpos <= (hotspot+IOWIDTH+6))
+                    xpos >= (hotspot-IOHOTSPOT) && xpos <= (hotspot+IOWIDTH+IOHOTSPOT))
                 {
                     //post("Outlet found...");
                     //...and we are clicking on it
@@ -3967,84 +4046,13 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
                         goto nooutletafterall;
                 }
             }
-
-            /* 2020-10-07 ico@vt.edu: moved outlet detection before the resize
-               area detection, so that we can extend both x and y resize sides
-               to the full size of those sides, except where there are nlets.
-            */
-
-            // if we are inside a resizing hotspot of a text object...
-            else if (in_text_resizing_hotspot)
-            {
-                // ...and we are clicking...
-                if (doit)
-                {
-                    // ...select the object
-                    if (!glist_isselected(x, y) ||
-                        x->gl_editor->e_selection->sel_next)
-                    {
-                        glist_noselect(x);
-                        glist_select(x, y);
-                    }
-
-                    x->gl_editor->e_onmotion = MA_RESIZE;
-                    x->gl_editor->e_xwas = x1;
-                    x->gl_editor->e_ywas = y1;
-                    x->gl_editor->e_xnew = xpos;
-                    x->gl_editor->e_ynew = ypos;
-                    /* For normal text objects/atom boxes, subpatches and
-                       graphs we just go ahead and set an undo point here.
-                       GUI objects have their own click callback where they
-                       do this. */
-                    int isgraph = (ob->ob_pd == canvas_class &&
-                        ((t_canvas *)ob)->gl_isgraph);
-
-                    if (default_type || isgraph)
-                        canvas_undo_add(x, 6, "resize",
-                            canvas_undo_set_apply(x, glist_getindex(x, y)));
-
-                    /* Scalehandle callbacks */
-                    if (isgraph)
-                    {
-                        t_scalehandle *sh = ((t_canvas *)ob)->x_handle;
-                        /* Special case: we're abusing the value of h_scale
-                           to differentiate between this case and the case
-                           of clicking the red gop rectangle. */
-                        sh->h_scale = 1;
-                        pd_vmess(&sh->h_pd, gensym("_click"), "fff",
-                            (t_float)in_text_resizing_hotspot,
-                            (t_float)xpos, (t_float)ypos);
-                    }
-                    else if (ob->te_iemgui)
-                    {
-                        t_scalehandle *sh = ((t_iemgui *)ob)->x_handle;
-                        pd_vmess(&sh->h_pd, gensym("_click"), "fff",
-                            (t_float)in_text_resizing_hotspot,
-                            (t_float)xpos, (t_float)ypos);
-                    }
-                    else if (!default_type)
-                    {
-                        /* Scope~ and grid */
-                        pd_vmess(&ob->ob_pd, gensym("_click_for_resizing"),
-                           "fff", (t_float)in_text_resizing_hotspot,
-                           (t_float)xpos, (t_float)ypos);
-                    }
-                }
-                // we are in the resize hotspot but are not clicking yet
-                else
-                {
-                    canvas_setcursor(x, in_text_resizing_hotspot);
-                    canvas_check_nlet_highlights(x);
-                }
-            }
-
             /* look for an inlet (these are colored differently
                 since they are not connectable)
                 ico@vt.edu: 2020-06-05 added expanded hotspot for
                 nlets for easier pinpointing
             */
             else if (ob && (ninlet = obj_ninlets(ob))
-                && ypos <= y1+6)
+                && ypos <= y1+((y2-y1)/2 > IOHOTSPOT ? IOHOTSPOT : (y2-y1)/2-1))
             {
                 canvas_setcursor(x, CURSOR_EDITMODE_NOTHING);
                 int width = x2 - x1;
@@ -4056,7 +4064,7 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
                    highlighted to make it easier to "hit" the nlet */
                 // if have found an inlet and are within its range...
                 if (closest < ninlet &&
-                    xpos >= (hotspot-6) && xpos <= (hotspot+IOWIDTH+6))
+                    xpos >= (hotspot-IOHOTSPOT) && xpos <= (hotspot+IOWIDTH+IOHOTSPOT))
                 {
                        t_rtext *yr = glist_findrtext(x, (t_text *)&ob->ob_g);
 
@@ -6009,7 +6017,7 @@ void canvas_startmotion(t_canvas *x)
     if (!x->gl_editor) return;
     glist_getnextxy(x, &xval, &yval);
     //if (xval == 0 && yval == 0) return;
-    canvas_setcursor(x, CURSOR_EDITMODE_MOTION);
+    canvas_setcursor(x, CURSOR_EDITMODE_FLOATING);
     x->gl_editor->e_onmotion = MA_MOVE;
     x->gl_editor->e_xwas = xval;
     x->gl_editor->e_ywas = yval;

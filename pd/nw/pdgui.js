@@ -1848,7 +1848,7 @@ function gui_canvas_cursor(cid, pd_event_type) {
             case "cursor_editmode_move":
                 c = "move";
                 break;
-            case "cursor_editmode_motion":
+            case "cursor_editmode_floating":
                 c = "pointer";
                 var textentry = get_item(cid, "new_object_textentry");
                 if (textentry) {
