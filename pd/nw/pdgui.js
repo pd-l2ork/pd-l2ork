@@ -3830,6 +3830,7 @@ exports.toggle_drag_handle_cursors = toggle_drag_handle_cursors;
 // Show or hide little handle for dragging around iemgui labels
 function gui_iemgui_label_show_drag_handle(cid, tag, state, x, y, cnv_resize) {
     if (state !== 0) {
+        post("show_drag_handle");
         gui(cid).get_gobj(tag)
         .append(function(frag, w) {
             var g, rect, top_right, bottom_right;
@@ -3838,7 +3839,7 @@ function gui_iemgui_label_show_drag_handle(cid, tag, state, x, y, cnv_resize) {
                     cnv_resize !== 0 ? "cnv_resize_handle border" :
                     "label_drag_handle move_handle border",
                 transform: "matrix(1, 0, 0, 1, " +
-                    (cid === tag ? "11, 11)" : "0, 0)")
+                    (cid === tag ? "0, 0)" : (cnv_resize ? "0, 0)" : "0, 0)"))
             });
             // Here we use a "line" shape so that we can control its color
             // using the "border" class (for iemguis) or the "gop_rect" class
@@ -3847,48 +3848,107 @@ function gui_iemgui_label_show_drag_handle(cid, tag, state, x, y, cnv_resize) {
             // to define than a "rect" for that case.
             if (cid === tag) {
                 rect = create_item(cid, "path", {
-                    d: "M -11 -11 L 3 -11 L -11 3 z",
-                    x1: x,
-                    y1: y,
-                    x2: x,
-                    y2: y + 14,
+                    d: "M 1 1 L 15 1 L 1 15 z",
                     class: "unconstrained",
                     fill: "red",
+                    stroke: "red",
+                    opacity: 0.5
+                });
+            } else if (cnv_resize) {
+                // if we are mycanvas resize hook found in the bottom right corner
+                rect = create_item(cid, "path", {
+                    d: "M " + (x-23) + " " + y + " L " + (x-8) + 
+                        " " + y + " L " + (x-8) + " " + (y-15) + " z",
+                    class: "unconstrained",
+                    fill: "red",
+                    stroke: "red",
                     opacity: 0.5
                 });
             } else {
-                rect = create_item(cid, "line", {
-                    x1: x,
-                    y1: y,
-                    x2: x,
-                    y2: y + 14,
-                    "stroke-width": 14,
+                // otherwise we are a label hook
+                /*rect = create_item(cid, "path", {
+                    d: "M " + (x+8) + " " + y + " L " + (x+20) +
+                        " " + y + " L " + (x+8) + " " + (y+12) + " z",
                     class: "unconstrained",
+                    fill: "red",
+                    opacity: 0.5
+                */
+                rect = create_item(cid, "line", {
+                    x1: x+4,
+                    y1: y+2,
+                    x2: x+4,
+                    y2: y + 10,
+                    "stroke-width": 8,
+                    class: "unconstrained",
+                    fill: "red",
+                    stroke: "red",
                     opacity: 0.5
                 });
             }
             g.classList.add("clickable_resize_handle");
-            top_right = create_item(cid, "rect", {
-                x: x +  (cid === tag ? -8 : 1.5),
-                y: y +  (cid === tag ? 3.5 : 0.5),
-                width:  (cid === tag ? 3 : 5),
-                height: (cid === tag ? 11 : 7),
-                fill:   "rgba(255,255,255,0)",
-                stroke: "rgba(255,255,255,0)",
-                "fill-opacity": "0",
-                class: "constrain_top_right"
-            });
-            bottom_right = create_item(cid, "rect", {
-                x: x - 3.5,
-                y: y +  (cid === tag ? -1 : 8.5),
-                width:  (cid === tag ? 11 : 7),
-                height: (cid === tag ? 3 : 5),
-                fill:   "rgba(255,255,255,0)",
-                stroke: "rgba(255,255,255,0)",
-                "fill-opacity": "0",
-                class: "constrain_bottom_right"
-
-            });
+            if (cnv_resize) {
+                top_right = create_item(cid, "rect", {
+                    x: x -  11,
+                    y: y -  16,
+                    width:   3,
+                    height: 11,
+                    fill:   "rgba(255,255,255,0)",
+                    stroke: "rgba(255,255,255,0)",
+                    class: "constrain_top_right"
+                });
+                bottom_right = create_item(cid, "rect", {
+                    x: x -  24,
+                    y: y -   3,
+                    width:  11,
+                    height:  3,
+                    fill:   "rgba(255,255,255,0)",
+                    stroke: "rgba(255,255,255,0)",
+                    class: "constrain_bottom_right"
+                });                
+            } else {
+                /* experimental new approach, I don't like the cursor
+                   blocking the view of the label, so the user is
+                   unable to see how the label fits with the rest
+                top_right = create_item(cid, "rect", {
+                    x: x +  (cid === tag ? 4 : 8),
+                    y: y +  (cid === tag ? 15.5 : 3),
+                    width:  2,
+                    height: (cid === tag ? 11 : 9),
+                    fill:   "rgba(0,255,0,0)",
+                    stroke: "rgba(0,255,0,0)",
+                    class: "constrain_top_right"
+                });
+                bottom_right = create_item(cid, "rect", {
+                    x: x + 11,
+                    y: y +  (cid === tag ? 11 : 0),
+                    width:  (cid === tag ? 11 : 9),
+                    height: 2,
+                    fill:   "rgba(0,0,255,0)",
+                    stroke: "rgba(0,0,255,0)",
+                    class: "constrain_bottom_right"
+                });
+                */
+                top_right = create_item(cid, "rect", {
+                    x: x +  (cid === tag ? 4 : 1.5),
+                    y: y +  (cid === tag ? 15.5 : 0.5),
+                    width:  (cid === tag ? 3 : 5),
+                    height: (cid === tag ? 11 : 7),
+                    fill:   "rgba(0,255,0,0)",
+                    stroke: "rgba(0,255,0,1)",
+                    "fill-opacity": "0",
+                    class: "constrain_top_right"
+                });
+                bottom_right = create_item(cid, "rect", {
+                    x: x + 8.5,
+                    y: y +  (cid === tag ? 11 : 8.5),
+                    width:  (cid === tag ? 11 : 7),
+                    height: (cid === tag ? 3 : 5),
+                    fill:   "rgba(0,0,255,0)",
+                    stroke: "rgba(0,0,255,1)",
+                    "fill-opacity": "0",
+                    class: "constrain_bottom_right"
+                });
+            }
             g.appendChild(rect);
             g.appendChild(top_right);
             g.appendChild(bottom_right);
