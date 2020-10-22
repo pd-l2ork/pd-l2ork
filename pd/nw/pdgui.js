@@ -3837,39 +3837,57 @@ function gui_iemgui_label_show_drag_handle(cid, tag, state, x, y, cnv_resize) {
                 class: (cid === tag) ? "gop_drag_handle move_handle border" :
                     cnv_resize !== 0 ? "cnv_resize_handle border" :
                     "label_drag_handle move_handle border",
-                transform: "matrix(1, 0, 0, 1, 0, 0)"
+                transform: "matrix(1, 0, 0, 1, " +
+                    (cid === tag ? "11, 11)" : "0, 0)")
             });
             // Here we use a "line" shape so that we can control its color
             // using the "border" class (for iemguis) or the "gop_rect" class
             // for the graph-on-parent rectangle anchor. In both cases the
             // styles set a stroke property, and a single thick line is easier
             // to define than a "rect" for that case.
-            rect = create_item(cid, "line", {
-                x1: x,
-                y1: y,
-                x2: x,
-                y2: y + 14,
-                "stroke-width": 14,
-                class: "unconstrained"
-            });
+            if (cid === tag) {
+                rect = create_item(cid, "path", {
+                    d: "M -11 -11 L 3 -11 L -11 3 z",
+                    x1: x,
+                    y1: y,
+                    x2: x,
+                    y2: y + 14,
+                    class: "unconstrained",
+                    fill: "red",
+                    opacity: 0.5
+                });
+            } else {
+                rect = create_item(cid, "line", {
+                    x1: x,
+                    y1: y,
+                    x2: x,
+                    y2: y + 14,
+                    "stroke-width": 14,
+                    class: "unconstrained",
+                    opacity: 0.5
+                });
+            }
             g.classList.add("clickable_resize_handle");
             top_right = create_item(cid, "rect", {
-                x: x + 1.5,
-                y: y + 0.5,
-                width: 5,
-                height: 7,
-                fill: "black",
+                x: x +  (cid === tag ? -8 : 1.5),
+                y: y +  (cid === tag ? 3.5 : 0.5),
+                width:  (cid === tag ? 3 : 5),
+                height: (cid === tag ? 11 : 7),
+                fill:   "rgba(255,255,255,0)",
+                stroke: "rgba(255,255,255,0)",
                 "fill-opacity": "0",
                 class: "constrain_top_right"
             });
             bottom_right = create_item(cid, "rect", {
-                x: x - 6.5,
-                y: y + 8.5,
-                width: 7,
-                height: 5,
-                fill: "black",
+                x: x - 3.5,
+                y: y +  (cid === tag ? -1 : 8.5),
+                width:  (cid === tag ? 11 : 7),
+                height: (cid === tag ? 3 : 5),
+                fill:   "rgba(255,255,255,0)",
+                stroke: "rgba(255,255,255,0)",
                 "fill-opacity": "0",
                 class: "constrain_bottom_right"
+
             });
             g.appendChild(rect);
             g.appendChild(top_right);
