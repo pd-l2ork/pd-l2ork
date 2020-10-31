@@ -1636,15 +1636,37 @@ function nw_create_patch_window_menus(gui, w, name) {
     });
     minit(m.edit.cut, {
         enabled: true,
-        click: function () { pdgui.pdsend(name, "cut"); }
+        click: function () {
+            pdgui.pdsend(name, "cut");
+            // ico@vt.edu 2020-10-30 if we are cutting inside find box
+            if (canvas_events.get_state() === "search") {
+                if (document.getSelection()) {
+                    document.execCommand("cut");
+                }
+            }
+        }
     });
     minit(m.edit.copy, {
         enabled: true,
-        click: function () { pdgui.pdsend(name, "copy"); }
+        click: function () {
+            pdgui.pdsend(name, "copy");
+            // ico@vt.edu 2020-10-30 if we are copying inside find box
+            if (canvas_events.get_state() === "search") {
+                if (document.getSelection()) {
+                    document.execCommand("copy");
+                }
+            }
+        }
     });
     minit(m.edit.paste, {
         enabled: true,
-        click: function () { pdgui.pdsend(name, "paste"); }
+        click: function () {
+            pdgui.pdsend(name, "paste");
+            // ico@vt.edu 2020-10-30 if we are pasting inside find box
+            if (canvas_events.get_state() === "search") {
+                document.execCommand("paste");
+            }
+        }
     });
     minit(m.edit.paste_clipboard, {
         enabled: true,
@@ -1669,6 +1691,10 @@ function nw_create_patch_window_menus(gui, w, name) {
                 // contenteditable element (needed because
                 // the stupid MacBuiltin is buggy-- see pd_menus.js)
                 document.execCommand("selectAll", false, null);
+            }
+            // ico@vt.edu 2020-10-30 if we are pasting inside find box
+            if (canvas_events.get_state() === "search") {
+                document.execCommand("selectAll");
             }
         }
     });

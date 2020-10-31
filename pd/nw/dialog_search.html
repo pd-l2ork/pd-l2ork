@@ -529,7 +529,12 @@ function console_find_callback() {
 }
 
 function console_find_keypress(elem, e) {
-    console_find_text(elem, e, console_find_callback);
+    //pdgui.post(e.keyCode + " " + e.ctrlKey);
+    // ico@vt.edu 2020-10-31: not sure why here ctrl+f does not register
+    // with keyCode 70 and instead does 6 which is equivalent of a help event
+    if(!e.ctrlKey || e.keyCode !== 6) {
+        console_find_text(elem, e, console_find_callback);
+    }
 }
 
 function console_find_highlight_all(elem) {
@@ -558,9 +563,11 @@ function console_find_highlight_all(elem) {
 
 var console_find_traverse = (function() {
     var count = 0,
-        wrap_tag = "mark";
+        wrap_tag = "mark",
+        last_action = 0; // direction last request was made
     return {
         next: function() {
+            count += last_action * (last_action >= 0 ? 1 : -1);
             var i, last, next,
                 console_text = document.getElementById("results"),
                 elements = console_text.getElementsByTagName(wrap_tag);
@@ -577,18 +584,53 @@ var console_find_traverse = (function() {
                 // but only if necessary.
                 // I don't think this is available on all browsers...
                 elements[i].scrollIntoViewIfNeeded();
-                count++;
+                last_action = 1;
+            }
+        },
+        prev: function() {
+            count += last_action * (last_action <= 0 ? 1 : -1);
+            var i, last, next,
+                console_text = document.getElementById("results"),
+                elements = console_text.getElementsByTagName(wrap_tag);
+            if (elements.length > 0) {
+                if (count < 0) {
+                    count += elements.length;
+                }
+                i = count % elements.length;
+                elements[i].classList.add("console_find_current");
+                if (elements.length > 1) {
+                    last = i === 0 ? elements.length - 1 : i - 1;
+                    next = (i + 1) % elements.length;
+                    elements[last].classList.remove("console_find_current");
+                    elements[next].classList.remove("console_find_current");
+                }
+                // adjust the scrollbar to make sure the element is visible,
+                // but only if necessary.
+                // I don't think this is available on all browsers...
+                elements[i].scrollIntoViewIfNeeded();
+                last_action = -1;
             }
         },
         set_index: function(c) {
             count = c;
+            last_action = 0;
         }
     }
 }());
 
+// ico@vt.edu 2020-10-30: Here we prevent autorepeat from messing with the
+// shift key detection (LATER: may use the same approach for other modifiers)
+var shiftKey = 0;
 function console_find_keydown(elem, evt) {
     if (evt.keyCode === 13) {
-        console_find_traverse.next();
+        if (evt.shiftKey && shiftKey === 0) {
+            shiftKey = 1;
+        }
+        if (shiftKey) {
+            console_find_traverse.prev();
+        } else {
+            console_find_traverse.next();
+        }
         evt.stopPropagation();
         evt.preventDefault();
         return false;
@@ -597,6 +639,13 @@ function console_find_keydown(elem, evt) {
     } else if (evt.keyCode === 8 || // backspace or delete
                evt.keyCode === 46) {
         console_find_text(elem, evt, console_find_callback);
+    }
+}
+
+function console_find_keyup(evt) {
+    //pdgui.post("keyup=" + evt.keyCode);
+    if (!evt.shiftKey && shiftKey === 1) {
+        shiftKey = 0;
     }
 }
 
@@ -718,7 +767,7 @@ function add_events() {
 
     // Find bar
     var find_bar = document.getElementById("console_find_text");
-    find_bar.placeholder = "Search in Console";
+    find_bar.placeholder = "Search Results";
     find_bar.addEventListener("keydown",
         function(evt) {
             if (find_bar_shortcut(evt)) {
@@ -734,9 +783,24 @@ function add_events() {
             }
         }, false
     );
+    find_bar.addEventListener("keyup",
+        function(e) {
+            return console_find_keyup(e);
+        }, false
+    );
     find_bar.addEventListener("keypress",
         function(evt) {
             console_find_keypress(this, evt);
+        }, false
+    );
+    find_bar.addEventListener("cut",
+        function(e) {
+            console_find_text(this, e, console_find_callback);
+        }, false
+    );
+    find_bar.addEventListener("paste",
+        function(e) {
+            console_find_text(this, e, console_find_callback);
         }, false
     );
 

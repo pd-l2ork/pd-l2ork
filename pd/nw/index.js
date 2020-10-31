@@ -211,9 +211,11 @@ function console_find_highlight_all(elem) {
 var console_find_traverse = (function () {
     var count = 0,
         console_text = document.getElementById("p1"),
-        wrap_tag = "mark";
+        wrap_tag = "mark",
+        last_action = 0; // direction last request was made
     return {
         next: function () {
+            count += last_action * (last_action >= 0 ? 1 : -1);
             var i, last, next,
                 elements = console_text.getElementsByTagName(wrap_tag);
             if (elements.length > 0) {
@@ -229,18 +231,53 @@ var console_find_traverse = (function () {
                 // but only if necessary.
                 // I don't think this is available on all browsers...
                 elements[i].scrollIntoViewIfNeeded();
-                count++;
+                last_action = 1;
+            }
+        },
+        prev: function () {
+            count += last_action * (last_action <= 0 ? 1 : -1);
+            var i, last, next,
+                elements = console_text.getElementsByTagName(wrap_tag);
+            if (elements.length > 0) {
+                if (count < 0) {
+                    count += elements.length;
+                }
+                i = count % elements.length;
+                elements[i].classList.add("console_find_current");
+                if (elements.length > 1) {
+                    last = i === 0 ? elements.length - 1 : i - 1;
+                    next = (i + 1) % elements.length;
+                    elements[last].classList.remove("console_find_current");
+                    elements[next].classList.remove("console_find_current");
+                }
+                // adjust the scrollbar to make sure the element is visible,
+                // but only if necessary.
+                // I don't think this is available on all browsers...
+                elements[i].scrollIntoViewIfNeeded();
+                last_action = -1;
             }
         },
         set_index: function(c) {
             count = c;
+            last_action = 0;
         }
     };
 }());
 
+// ico@vt.edu 2020-10-30: Here we prevent autorepeat from messing with the
+// shift key detection (LATER: may use the same approach for other modifiers)
+var shiftKey = 0;
 function console_find_keydown(evt) {
+    //pdgui.post("keydown=" + evt.keyCode);
     if (evt.keyCode === 13) {
-        console_find_traverse.next();
+        if (evt.shiftKey && shiftKey === 0) {
+            shiftKey = 1;
+        }
+        if (shiftKey) {
+            console_find_traverse.prev();
+        } else {
+            console_find_traverse.next();
+        }
         evt.stopPropagation();
         evt.preventDefault();
         return false;
@@ -249,6 +286,13 @@ function console_find_keydown(evt) {
     } else if (evt.keyCode === 8 || // backspace or delete
                evt.keyCode === 46) {
         console_find_text(evt, console_find_callback);
+    }
+}
+
+function console_find_keyup(evt) {
+    //pdgui.post("keyup=" + evt.keyCode);
+    if (!evt.shiftKey && shiftKey === 1) {
+        shiftKey = 0;
     }
 }
 
@@ -271,9 +315,24 @@ function add_events() {
             return console_find_keydown(e);
         }, false
     );
+    find_bar.addEventListener("keyup",
+        function(e) {
+            return console_find_keyup(e);
+        }, false
+    );
     find_bar.addEventListener("keypress",
         function(e) {
             console_find_keypress(e);
+        }, false
+    );
+    find_bar.addEventListener("cut",
+        function(e) {
+            console_find_text(e, console_find_callback);
+        }, false
+    );
+    find_bar.addEventListener("paste",
+        function(e) {
+            console_find_text(e, console_find_callback);
         }, false
     );
     // DSP toggle
@@ -599,8 +658,13 @@ function nw_create_pd_window_menus(gui, w) {
         enabled: true,
         click: function () {
             var container_id = "p1", range;
-            // This should work across browsers
-            if (w.document.selection) {
+            // ico@vt.edu 2020-10-30 if we are doing select all inside find box
+            var find_bar = w.document.getElementById("console_find"),
+                state = find_bar.style.getPropertyValue("display");
+            if (state !== "none") {
+                document.execCommand("selectAll");
+            } else if (w.document.selection) {
+                // This should work across browsers
                 range = w.document.body.createTextRange();
                 range.moveToElementText(w.document.getElementById(container_id));
                 range.select();
