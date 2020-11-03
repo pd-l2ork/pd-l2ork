@@ -495,7 +495,7 @@ function create_menu(gui, type) {
             label: l("menu.number2"),
             key: shortcuts.menu.number2.key,
             modifiers: shortcuts.menu.number2.modifiers,
-            tooltip: l("menu.number2")
+            tooltip: l("menu.number2_tt")
         }));
         put_menu.append(m.put.vslider = new gui.MenuItem({
             label: l("menu.vslider"),
@@ -508,6 +508,12 @@ function create_menu(gui, type) {
             key: shortcuts.menu.hslider.key,
             modifiers: shortcuts.menu.hslider.modifiers,
             tooltip: l("menu.hslider_tt")
+        }));
+        put_menu.append(m.put.knob = new gui.MenuItem({
+            label: l("menu.knob"),
+            key: shortcuts.menu.knob.key,
+            modifiers: shortcuts.menu.knob.modifiers,
+            tooltip: l("menu.knob_tt")
         }));
         put_menu.append(m.put.vradio = new gui.MenuItem({
             label: l("menu.vradio"),

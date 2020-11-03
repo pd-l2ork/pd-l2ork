@@ -213,6 +213,8 @@
     "vslider_tt": "Füge dem Patch einen vertikalen Schieberegler zur Eingabe und Anzeige von Zahlen hinzu",
     "hslider": "HSchieberegler",
     "hslider_tt": "Füge dem Patch einen horizontalen Schieberegler zur Eingabe und Anzeige von Zahlen hinzu",
+    "knob": "Drehknopf",
+    "knob_tt": "Fügen Sie dem Patch ein Drehknopf zur Eingabe und Anzeige von Zahlen hinzu",
     "vradio": "VRadio",
     "vradio_tt": "Füge dem Patch eine vertikale Gruppe von Radio-Tastern zur Auswahl eines Zahlenwertes hinzu",
     "hradio": "HRadio",

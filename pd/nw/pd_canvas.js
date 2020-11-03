@@ -2000,6 +2000,14 @@ function nw_create_patch_window_menus(gui, w, name) {
             pdgui.pdsend(name, "hslider 0");
         }
     });
+    minit(m.put.knob, {
+        enabled: true,
+        click: function() {
+            update_live_box();
+            pdgui.pdsend(name, "dirty 1");
+            pdgui.pdsend(name, "obj_abstraction flatgui/knob -16 -16");
+        }
+    });
     minit(m.put.vradio, {
         enabled: true,
         click: function() {

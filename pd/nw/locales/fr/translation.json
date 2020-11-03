@@ -213,6 +213,8 @@
     "vslider_tt": "Ajouter un curseur vertical Vslider au canevas (pour faire varier / afficher des chiffres)",
     "hslider":    "Slider horizontal",
     "hslider_tt": "Ajouter un curseur horizontal Hslider au canevas (pour faire varier / afficher des chiffres)",
+    "knob":    "Bouton rotatif",
+    "knob_tt": "Ajoutez un bouton rotatif au patch (pour faire varier / afficher des chiffres)",
     "vradio":    "Sélecteur vertical",
     "vradio_tt": "Ajouter un groupe vertical de boutons radio Vradio au canevas (pour choisir/afficher une valeur)",
     "hradio":    "Sélecteur horizontal",

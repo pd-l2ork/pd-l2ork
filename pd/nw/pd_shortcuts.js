@@ -55,6 +55,7 @@ exports.menu = {
   "number2": { key: "n", modifiers: cmd_or_ctrl + "+shift" },
   "vslider": { key: "v", modifiers: cmd_or_ctrl + "+shift" },
   "hslider": { key: "h", modifiers: cmd_or_ctrl + "+shift" },
+  "knob": { key: "k", modifiers: cmd_or_ctrl + "+shift" },
   "vradio": { key: "d", modifiers: cmd_or_ctrl + "+shift" },
   "hradio": { key: "i", modifiers: cmd_or_ctrl + "+shift" },
   "vu":     { key: "u", modifiers: cmd_or_ctrl + "+shift" },
