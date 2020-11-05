@@ -3442,7 +3442,6 @@ extern void canvas_bng(t_glist *gl, t_symbol *s, int argc, t_atom *argv);
 extern void canvas_toggle(t_glist *gl, t_symbol *s, int argc, t_atom *argv);
 extern void canvas_vslider(t_glist *gl, t_symbol *s, int argc, t_atom *argv);
 extern void canvas_hslider(t_glist *gl, t_symbol *s, int argc, t_atom *argv);
-extern void canvas_knob(t_glist *gl, t_symbol *s, int argc, t_atom *argv);
 extern void canvas_vdial(t_glist *gl, t_symbol *s, int argc, t_atom *argv);
     /* old version... */
 extern void canvas_hdial(t_glist *gl, t_symbol *s, int argc, t_atom *argv);

@@ -533,11 +533,6 @@ void canvas_hslider(t_glist *gl, t_symbol *s, int argc, t_atom *argv)
     canvas_iemguis(gl, gensym("hsl"));
 }
 
-void canvas_knob(t_glist *gl, t_symbol *s, int argc, t_atom *argv)
-{
-    canvas_iemguis(gl, gensym("hsl"));
-}
-
 void canvas_hdial(t_glist *gl, t_symbol *s, int argc, t_atom *argv)
 {
     canvas_iemguis(gl, gensym("hdl"));
