@@ -43,7 +43,14 @@ typedef struct _preset_hub_data
 {
 	t_preset_node *phd_node;		// if the node is erased, this will be NULL (inactive)
 	int *phd_pn_gl_loc;				// last known location of the node (according to the hub)
-	int  phd_pn_gl_loc_length;		// location array's length (see x_preset.c for explanation)
+	int  phd_pn_gl_loc_length;		// location array's length (see x_preset.c for explanation)\
+
+	// used for preset hubs that save to file, so that we can keep the original
+	// node location in case patch state changes, as the file is unable to keep
+	// up with those changes, which may render older saved presets invalid 
+	int *phd_pn_was_gl_loc;
+	int  phd_pn_was_gl_loc_length;
+
 	struct _preset_hub_data *phd_next;
 	t_node_preset *phd_npreset;
 } t_preset_hub_data;

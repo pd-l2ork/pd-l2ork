@@ -11,7 +11,7 @@
 #include "x_preset.h"
 #include "s_stuff.h"
 
-#define PH_DEBUG 0
+#define PH_DEBUG 1
 
 /*      changes in order happen when doing one of the following: cut, 
         undo cut, delete, undo delete, to front, and to back.
@@ -62,6 +62,8 @@ void preset_hub_read(t_preset_hub *x, t_symbol *filename);
 void preset_hub_write(t_preset_hub *x, t_symbol *filename);
 void preset_hub_readpreset(t_preset_hub *x, t_symbol *filename);
 void preset_hub_writepreset(t_preset_hub *x, t_symbol *filename, float preset);
+void preset_hub_initfileloc(t_preset_hub *x);
+void preset_hub_updatefileloc(t_preset_hub *x);
 
 static int preset_node_location_changed(t_preset_node *x);
 static void preset_node_update_my_glist_location(t_preset_node *x);
@@ -606,6 +608,18 @@ void preset_node_request_hub_writepreset(t_preset_node *x, t_symbol *filename,
         preset_hub_writepreset(x->pn_hub, filename, preset);
 }
 
+void preset_node_request_hub_initfileloc(t_preset_node *x)
+{
+    if (x->pn_hub)
+        preset_hub_initfileloc(x->pn_hub);
+}
+
+void preset_node_request_hub_updatefileloc(t_preset_node *x)
+{
+    if (x->pn_hub)
+        preset_hub_updatefileloc(x->pn_hub);
+}
+
 void preset_node_set_and_output_value(t_preset_node *x, t_alist val)
 {
     if(PH_DEBUG)
@@ -907,6 +921,13 @@ void preset_node_setup(void)
         (t_method)preset_node_request_hub_writepreset,
         gensym("writepreset"), A_DEFSYM, A_DEFFLOAT, 0);
 
+    class_addmethod(preset_node_class,
+        (t_method)preset_node_request_hub_initfileloc,
+        gensym("initfileloc"), A_NULL, 0);
+    class_addmethod(preset_node_class,
+        (t_method)preset_node_request_hub_updatefileloc,
+        gensym("updatefileloc"), A_NULL, 0);
+
     // we use anything to cover virtually all presetable types of data
     class_addanything(preset_node_class, preset_node_anything);
 }
@@ -923,7 +944,13 @@ typedef enum
     H_NODE,
     H_LOCATION,
     H_PRESET,
-    H_PRESET_DATA
+    H_PRESET_DATA,
+    H_WAS,
+    H_WAS_LOCATION /* ico@vt.edu 2020-11-05:
+                      wasnode and waslocation are used to store snapshot of the original
+                      location for file preseet operations since saved preset files do
+                      not automatically adjust to changes in node locations
+                   */
 }  t_hub_parser;
 
 /*    syntax for saving a preset hub (all in a single line, here it is
@@ -1666,7 +1693,7 @@ void preset_hub_read(t_preset_hub *x, t_symbol *filename)
 
     if (filename == &s_)
     {
-        pd_error(x, "no read filename given\n");
+        pd_error(x, "no read filename given");
         goto preset_hub_read_fail;
     }
 
@@ -1748,6 +1775,7 @@ void preset_hub_read(t_preset_hub *x, t_symbol *filename)
                                 if (!loc_data)
                                     loc_data = (int*)calloc(loc_length,
                                         sizeof(loc_data));
+                                //WHY IS THE FOLLOWING IS LINE HERE?
                                 loc_data[loc_length-1] =
                                     (int)atom_getfloat(&argv[i]);
                                 if(PH_DEBUG)
@@ -1952,7 +1980,7 @@ void preset_hub_write(t_preset_hub *x, t_symbol *filename)
 
     if (filename == &s_)
     {
-        pd_error(x, "no write filename given\n");
+        pd_error(x, "no write filename given");
         goto preset_hub_write_fail;
     }
 
@@ -2047,7 +2075,7 @@ void preset_hub_readpreset(t_preset_hub *x, t_symbol *filename)
 
     if (filename == &s_)
     {
-        pd_error(x, "no readpreset filename given\n");
+        pd_error(x, "no readpreset filename given");
         goto preset_hub_readpreset_fail;
     }
 
@@ -2346,7 +2374,7 @@ void preset_hub_writepreset(t_preset_hub *x, t_symbol *filename, float preset)
 
     if (filename == &s_)
     {
-        pd_error(x, "no writepreset filename given\n");
+        pd_error(x, "no writepreset filename given");
         goto preset_hub_writepreset_fail;
     }
 
@@ -2357,16 +2385,29 @@ void preset_hub_writepreset(t_preset_hub *x, t_symbol *filename, float preset)
         while (phd)
         {
             if(PH_DEBUG) fprintf(stderr,"    saving phd\n");
-            /* designate a node and state whether it is active or disabled
+            /* designate a node and length whether it is active or disabled
                (disabled nodes are ones that have presets saved but have been
                deleted since-- we keep these in the case of undo actions during
                the session that may go beyond saving something into a file) */
             binbuf_addv(b, "si", gensym("%node%"), phd->phd_pn_gl_loc_length);
 
-            // gather info about the length of the node's location and store it
-            for (i = 0; i < phd->phd_pn_gl_loc_length; i++)
+            /* add "was" information that we use to keep track of original node
+             positions and use them to relate preset data saved previously into
+             a file */
+            if (phd->phd_pn_was_gl_loc_length)
             {
-                binbuf_addv(b,"i", (int)phd->phd_pn_gl_loc[i]);
+                pd_error(x, "no initialized node locations found--please use "
+                            "initloc or updateloc command before saving a preset "
+                            "to a file");
+                goto preset_hub_writepreset_fail;
+            }
+
+            /* since we're saving to a file, gather info about the length of the
+               node's *was* location and instead of the actual node location and
+               store it as node location, so that readpreset reads it correctly */
+            for (i = 0; i < phd->phd_pn_was_gl_loc_length; i++)
+            {
+                binbuf_addv(b,"i", (int)phd->phd_pn_was_gl_loc[i]);
             }
 
             // save preset data
@@ -2411,6 +2452,76 @@ void preset_hub_writepreset(t_preset_hub *x, t_symbol *filename, float preset)
     if (b) binbuf_free(b);
     SETFLOAT(ap+0, (t_float)result);
     outlet_anything(x->ph_outlet, gensym("writepreset"), 1, ap);
+}
+
+void preset_hub_initfileloc(t_preset_hub *x)
+{
+    if (!x->ph_extern_file)
+    {
+        pd_error(x, "updatefileloc only works for hubs that store and retrieve "
+                    "their preset data from a file");
+        return;
+    }
+
+    t_atom ap[2];
+    t_preset_hub_data *hd1 = x->ph_data;
+    int i = 0, count = 0;
+
+    while(hd1)
+    {
+        if (hd1->phd_pn_was_gl_loc_length)
+        {
+            hd1->phd_pn_was_gl_loc_length = 0;
+            if (hd1->phd_pn_was_gl_loc)
+                free(hd1->phd_pn_was_gl_loc);
+            hd1->phd_pn_was_gl_loc =
+                            (int*)calloc(hd1->phd_pn_gl_loc_length,
+                                sizeof(hd1->phd_pn_was_gl_loc));
+            hd1->phd_pn_was_gl_loc_length = hd1->phd_pn_gl_loc_length;
+            for(i = 0; i < hd1->phd_pn_gl_loc_length; i++)
+            {
+                hd1->phd_pn_was_gl_loc[i] = hd1->phd_pn_gl_loc[i];
+            }
+            count++;
+        }
+        hd1 = hd1->ph_data->phd_next;
+    }
+    SETFLOAT(ap+0, (t_float)count);
+    outlet_anything(x->ph_outlet, gensym("initfileloc"), 1, ap);
+}
+
+void preset_hub_updatefileloc(t_preset_hub *x)
+{
+    if (!x->ph_extern_file)
+    {
+        pd_error(x, "updatefileloc only works for hubs that store and retrieve "
+                    "their preset data from a file");
+        return;
+    }
+
+    t_atom ap[1];
+    t_preset_hub_data *hd1 = x->ph_data;
+    int i = 0, count = 0;
+
+    while(hd1)
+    {
+        if (!hd1->phd_pn_was_gl_loc_length)
+        {
+            hd1->phd_pn_was_gl_loc_length = 0;
+            if (hd1->phd_pn_was_gl_loc)
+                free(hd1->phd_pn_was_gl_loc);
+            hd1->phd_pn_was_gl_loc =
+                            (int*)calloc(hd1->phd_pn_gl_loc_length,
+                                sizeof(hd1->phd_pn_was_gl_loc));
+            hd1->phd_pn_was_gl_loc_length = hd1->phd_pn_gl_loc_length;
+            for(i = 0; i < hd1->phd_pn_gl_loc_length; i++)
+            {
+                hd1->phd_pn_was_gl_loc[i] = hd1->phd_pn_gl_loc[i];
+            }
+            count++;
+        }
+        hd1 = hd1->ph_data->phd_next;
+    }
 }
 
 static void *preset_hub_new(t_symbol *s, int argc, t_atom *argv)
@@ -2583,6 +2694,8 @@ static void *preset_hub_new(t_symbol *s, int argc, t_atom *argv)
                     if (PH_DEBUG) fprintf(stderr,"    new node\n");
                     hd2 = (t_preset_hub_data *)t_getbytes(sizeof(*hd2));
                     hd2->phd_pn_gl_loc_length = 0;
+                    // also init wasnode value even if we do not need it
+                    hd2->phd_pn_was_gl_loc_length = 0;
                     if (hd1)
                     {
                         hd1->phd_next = hd2;
@@ -2598,6 +2711,12 @@ static void *preset_hub_new(t_symbol *s, int argc, t_atom *argv)
                        appended to previous node... */
                     np1 = NULL;
                     h_cur = H_NODE;
+                }
+                else if (!strcmp(atom_getsymbol(&argv[i])->s_name, "%was%"))
+                {
+                    // beginning of the original node location
+                    if (PH_DEBUG) fprintf(stderr,"    new wasnode\n");
+                    h_cur = H_WAS;
                 }
                 else if (!strcmp(atom_getsymbol(&argv[i])->s_name, "%preset%"))
                 {
@@ -2632,8 +2751,9 @@ static void *preset_hub_new(t_symbol *s, int argc, t_atom *argv)
                         hd2->phd_pn_gl_loc =
                             (int*)calloc(hd2->phd_pn_gl_loc_length,
                                 sizeof(hd2->phd_pn_gl_loc));
+                    //WHY IS THE FOLLOWING IS LINE HERE?
                     hd2->phd_pn_gl_loc[hd2->phd_pn_gl_loc_length-1] =
-                        (int)atom_getfloat(&argv[i]); //WHY IS THIS HERE?
+                        (int)atom_getfloat(&argv[i]);
                     if (PH_DEBUG)
                         fprintf(stderr,"    loc length = %d\n",
                             hd2->phd_pn_gl_loc_length);
@@ -2647,6 +2767,32 @@ static void *preset_hub_new(t_symbol *s, int argc, t_atom *argv)
                     if (PH_DEBUG)
                         fprintf(stderr,"    loc = %d\n",
                             hd2->phd_pn_gl_loc[loc_pos]);
+                    loc_pos++;
+                }
+                else if (h_cur == H_WAS)
+                {
+                    // wasnode location length
+                    hd2->phd_pn_was_gl_loc_length = (int)atom_getfloat(&argv[i]);
+                    // reconstruct the dynamic location array
+                    if (!hd2->phd_pn_was_gl_loc)
+                        hd2->phd_pn_was_gl_loc =
+                            (int*)calloc(hd2->phd_pn_was_gl_loc_length,
+                                sizeof(hd2->phd_pn_was_gl_loc));
+                    hd2->phd_pn_was_gl_loc[hd2->phd_pn_was_gl_loc_length-1] =
+                        (int)atom_getfloat(&argv[i]); //WHY IS THIS HERE?
+                    if (PH_DEBUG)
+                        fprintf(stderr,"    wasloc length = %d\n",
+                            hd2->phd_pn_was_gl_loc_length);
+                    loc_pos = 0;
+                    h_cur = H_WAS_LOCATION;
+                }
+                else if (h_cur == H_WAS_LOCATION)
+                {
+                    // node waslocation data
+                    hd2->phd_pn_was_gl_loc[loc_pos] = (int)atom_getfloat(&argv[i]);
+                    if (PH_DEBUG)
+                        fprintf(stderr,"    wasloc = %d\n",
+                            hd2->phd_pn_was_gl_loc[loc_pos]);
                     loc_pos++;
                 }
                 else if (h_cur == H_PRESET)
@@ -2787,6 +2933,7 @@ static void preset_hub_free(t_preset_hub* x)
             }
             hd2 = hd1->phd_next;
             free(hd1->phd_pn_gl_loc);
+            free(hd1->phd_pn_was_gl_loc);
             freebytes(hd1, sizeof(*hd1));
             hd1 = hd2;
         }
@@ -2834,6 +2981,11 @@ void preset_hub_setup(void)
         gensym("readpreset"), A_DEFSYM, A_DEFFLOAT, 0);
     class_addmethod(preset_hub_class, (t_method)preset_hub_writepreset,
         gensym("writepreset"), A_DEFSYM, A_DEFFLOAT, 0);
+
+    class_addmethod(preset_hub_class, (t_method)preset_hub_initfileloc,
+        gensym("initfileloc"), A_NULL, 0);
+    class_addmethod(preset_hub_class, (t_method)preset_hub_updatefileloc,
+        gensym("updatefileloc"), A_NULL, 0);
 
     // we'll use this to output current preset...
     class_addbang(preset_hub_class, preset_hub_bang);
