@@ -11,7 +11,7 @@
 #include "x_preset.h"
 #include "s_stuff.h"
 
-#define PH_DEBUG 1
+#define PH_DEBUG 0
 
 /*      changes in order happen when doing one of the following: cut, 
         undo cut, delete, undo delete, to front, and to back.
@@ -62,6 +62,7 @@ void preset_hub_read(t_preset_hub *x, t_symbol *filename);
 void preset_hub_write(t_preset_hub *x, t_symbol *filename);
 void preset_hub_readpreset(t_preset_hub *x, t_symbol *filename);
 void preset_hub_writepreset(t_preset_hub *x, t_symbol *filename, float preset);
+void preset_hub_clearfileloc(t_preset_hub *x);
 void preset_hub_initfileloc(t_preset_hub *x);
 void preset_hub_updatefileloc(t_preset_hub *x);
 
@@ -608,6 +609,12 @@ void preset_node_request_hub_writepreset(t_preset_node *x, t_symbol *filename,
         preset_hub_writepreset(x->pn_hub, filename, preset);
 }
 
+void preset_node_request_hub_clearfileloc(t_preset_node *x)
+{
+    if (x->pn_hub)
+        preset_hub_clearfileloc(x->pn_hub);
+}
+
 void preset_node_request_hub_initfileloc(t_preset_node *x)
 {
     if (x->pn_hub)
@@ -631,15 +638,27 @@ void preset_node_set_and_output_value(t_preset_node *x, t_alist val)
         alist_clone(&val, &x->pn_val, 0, val.l_n);
         XL_ATOMS_ALLOCA(outv, x->pn_val.l_n);
         alist_toatoms(&x->pn_val, outv, 0, x->pn_val.l_n);
-        outlet_list(x->pn_outlet, &s_list, x->pn_val.l_n, outv);
+
+        if (x->pn_val.l_n > 1)
+            outlet_list(x->pn_outlet, &s_list, x->pn_val.l_n, outv);
+        else if (outv->a_type == A_FLOAT)
+            outlet_float(x->pn_outlet, outv->a_w.w_float);
+        else if (outv->a_type == A_SYMBOL)
+            outlet_symbol(x->pn_outlet, outv->a_w.w_symbol);
+        else
+            pd_error(x, "unsupported format encountered by the "
+                "preset_node_set_and_output_value call");
+
         if(PH_DEBUG)
         {
             if (outv->a_type == A_SYMBOL)
                 fprintf(stderr,"    %zx outputs %s\n",
                     (t_int)x, outv->a_w.w_symbol->s_name);
             else if (outv->a_type == A_FLOAT)
+            {
                 fprintf(stderr,"    %zx outputs %f\n",
                     (t_int)x, outv->a_w.w_float);
+            }
         }
         XL_ATOMS_FREEA(outv, x->pn_val.l_n);
     }
@@ -922,6 +941,9 @@ void preset_node_setup(void)
         gensym("writepreset"), A_DEFSYM, A_DEFFLOAT, 0);
 
     class_addmethod(preset_node_class,
+        (t_method)preset_node_request_hub_clearfileloc,
+        gensym("clearfileloc"), A_NULL, 0);
+    class_addmethod(preset_node_class,
         (t_method)preset_node_request_hub_initfileloc,
         gensym("initfileloc"), A_NULL, 0);
     class_addmethod(preset_node_class,
@@ -982,6 +1004,7 @@ void preset_hub_save(t_gobj *z, t_binbuf *b)
     int i;
     t_preset_hub_data *phd;
     t_node_preset *np;
+    int warned = 0;
 
     t_preset_hub *x = (t_preset_hub *)z;
 
@@ -992,57 +1015,80 @@ void preset_hub_save(t_gobj *z, t_binbuf *b)
 
     binbuf_addv(b, "s", gensym("%hidden%"));
 
-    /* save preset data with the patch only if we are not
-       saving into an external file */
-    if (!x->ph_extern_file)
+    phd = x->ph_data;
+    while (phd)
     {
-
-        phd = x->ph_data;
-        while (phd)
+    	// only save node and preset if it is active, this prevents stale
+    	// data that will be unnecessary since undo is also purged once
+    	// the file is reloaded from the disk
+    	if (phd->phd_node)
         {
-        	// only save node and preset if it is active, this prevents stale
-        	// data that will be unnecessary since undo is also purged once
-        	// the file is reloaded from the disk
-        	if (phd->phd_node)
+            if(PH_DEBUG) fprintf(stderr,"    saving phd\n");
+            /* designate a node and state whether it is active or disabled
+               (disabled nodes are ones that have presets saved but have been
+               deleted since-- we keep these in the case of undo actions during
+               the session that may go beyond saving something into a file) */
+            binbuf_addv(b, "si", gensym("%node%"), phd->phd_pn_gl_loc_length);
+
+            // gather info about the length of the node's location and store it
+            for (i = 0; i < phd->phd_pn_gl_loc_length; i++)
             {
-	            if(PH_DEBUG) fprintf(stderr,"    saving phd\n");
-	            /* designate a node and state whether it is active or disabled
-	               (disabled nodes are ones that have presets saved but have been
-	               deleted since-- we keep these in the case of undo actions during
-	               the session that may go beyond saving something into a file) */
-	            binbuf_addv(b, "si", gensym("%node%"), phd->phd_pn_gl_loc_length);
+                binbuf_addv(b,"i", (int)phd->phd_pn_gl_loc[i]);
+            }
 
-	            // gather info about the length of the node's location and store it
-	            for (i = 0; i < phd->phd_pn_gl_loc_length; i++)
-	            {
-	                binbuf_addv(b,"i", (int)phd->phd_pn_gl_loc[i]);
-	            }
-
-	            // save preset data
-	            np = phd->phd_npreset;
-	            while (np)
-	            {
-	                if (np->np_val.l_n > 0)
-	                {
-	                    binbuf_addv(b, "si", gensym("%preset%"),
-	                        (int)np->np_preset);
-	                    for (i = 0; i < np->np_val.l_n; i++)
-	                    {
-	                        if (np->np_val.l_vec[i].l_a.a_type == A_FLOAT)
-	                            binbuf_addv(b, "f",
-	                                np->np_val.l_vec[i].l_a.a_w.w_float);
-	                        else if (np->np_val.l_vec[i].l_a.a_type == A_SYMBOL)
-	                            binbuf_addv(b, "s",
-	                                np->np_val.l_vec[i].l_a.a_w.w_symbol);    
-	                    }
-	                }
-	                np = np->np_next;
-	            }
-	        }
-
-            phd = phd->phd_next;
+            // if we have 'was' values we save them
+            if (x->ph_extern_file)
+            {
+                if (!phd->phd_pn_was_gl_loc_length)
+                {
+                    if (!warned)
+                    {
+                        post("warning: preset_hub with a file flag is being saved "
+                             "without the file location values being initialized--"
+                             "this may cause presets to stop working after the patch "
+                             "has been altered");
+                        warned = 1;
+                    }
+                }
+                else
+                {
+                    binbuf_addv(b, "si", gensym("%was%"),
+                        phd->phd_pn_was_gl_loc_length);
+                    for (i = 0; i < phd->phd_pn_was_gl_loc_length; i++)
+                    {
+                        binbuf_addv(b,"i", (int)phd->phd_pn_was_gl_loc[i]);
+                    }
+                }
+            } 
+            else
+            {
+                /* save preset data with the patch only if we are not
+                   saving into an external file */
+                np = phd->phd_npreset;
+                while (np)
+                {
+                    if (np->np_val.l_n > 0)
+                    {
+                        binbuf_addv(b, "si", gensym("%preset%"),
+                            (int)np->np_preset);
+                        for (i = 0; i < np->np_val.l_n; i++)
+                        {
+                            if (np->np_val.l_vec[i].l_a.a_type == A_FLOAT)
+                                binbuf_addv(b, "f",
+                                    np->np_val.l_vec[i].l_a.a_w.w_float);
+                            else if (np->np_val.l_vec[i].l_a.a_type == A_SYMBOL)
+                                binbuf_addv(b, "s",
+                                    np->np_val.l_vec[i].l_a.a_w.w_symbol);    
+                        }
+                    }
+                    np = np->np_next;
+                }
+            }
         }
+
+        phd = phd->phd_next;
     }
+
     if (PH_DEBUG) fprintf(stderr,"    done\n");
     binbuf_addv(b, ";");
 }
@@ -1447,6 +1493,8 @@ void preset_hub_reset(t_preset_hub *h)
 
     h->ph_data = NULL;
 
+    h->ph_init_file_loc = 0;
+
     /* and finally request pairing with nodes (since we deleted all our
        references) */
     glob_preset_node_list_seek_hub();
@@ -1690,11 +1738,21 @@ void preset_hub_read(t_preset_hub *x, t_symbol *filename)
     int found_node = 0;
     int ignore_entry = 0;
     int data_count = 0;
+    int no_was = 0;
 
     if (filename == &s_)
     {
         pd_error(x, "no read filename given");
         goto preset_hub_read_fail;
+    }
+
+    if (!x->ph_init_file_loc)
+    {
+        post("warning: file node locations have not yet been initialized, "
+             "suggesting this may be an older patch--to ensure file presets "
+             "continue to work as you edit your patch, please use initloc or "
+             "updateloc command before continuing to edit the patch");
+        no_was = 1;        
     }
 
     // we only try to do this if we have valid paired nodes
@@ -1804,22 +1862,46 @@ void preset_hub_read(t_preset_hub *x, t_symbol *filename)
                                     /* we use hd1 to navigate and hd2 to
                                        populate first check for existing
                                        nodes and reenable them if they match
-                                       location */
+                                       location--do this against "was" values
+                                       instead of node values, since node
+                                       values may have changed since the
+                                       preset file was saved */
                                     hd1 = x->ph_data;
                                     while (hd1)
                                     {
-                                        if (!preset_hub_compare_loc(
-                                                hd1->phd_pn_gl_loc,
-                                                hd1->phd_pn_gl_loc_length,
-                                                loc_data, loc_length))
+                                        if (no_was)
                                         {
-                                            /* if this hub node data's location
-                                               matches that of the node */
-                                            if (PH_DEBUG)
-                                                fprintf(stderr,
-                                                   "    found matching node\n");
-                                            found_node = 1;
-                                            break;
+                                            if (!preset_hub_compare_loc(
+                                                    hd1->phd_pn_gl_loc,
+                                                    hd1->phd_pn_gl_loc_length,
+                                                    loc_data, loc_length))
+                                            {
+                                                /* if this hub node data's location
+                                                   matches that of the node */
+                                                if (PH_DEBUG)
+                                                    fprintf(stderr,
+                                                       "    found matching "
+                                                       "node (no 'was' present)\n");
+                                                found_node = 1;
+                                                break;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (!preset_hub_compare_loc(
+                                                    hd1->phd_pn_was_gl_loc,
+                                                    hd1->phd_pn_was_gl_loc_length,
+                                                    loc_data, loc_length))
+                                            {
+                                                /* if this hub node data's location
+                                                   matches that of the node */
+                                                if (PH_DEBUG)
+                                                    fprintf(stderr,
+                                                       "    found matching "
+                                                       "'was' node\n");
+                                                found_node = 1;
+                                                break;
+                                            }
                                         }
                                         hd1 = hd1->phd_next;
                                     }
@@ -1832,8 +1914,8 @@ void preset_hub_read(t_preset_hub *x, t_symbol *filename)
                                            able to predictably recreate node
                                            locations even if they wanted to */
                                         if (PH_DEBUG)
-                                            fprintf(stderr,
-                                          "    failed to find matching node\n");
+                                            fprintf(stderr, "    failed to "
+                                                "find matching 'was' node\n");
                                         ignore_entry = 1;
                                     }
 
@@ -1901,8 +1983,11 @@ void preset_hub_read(t_preset_hub *x, t_symbol *filename)
                                 pos++;
 
                                 /* figure out how long of variable data list
-                                   follows the preset descriptor */
-                                while (pos + data_count < natom &&
+                                   follows the preset descriptor--here we 
+                                   subtract 1 from natom since pos starts 
+                                   from zero, which corresponds with natom's
+                                   one */
+                                while (pos + data_count < natom - 1 &&
                                        strcmp(
                                         atom_getsymbol(argv+data_count)->s_name,
                                         "%preset%") &&
@@ -1931,10 +2016,12 @@ void preset_hub_read(t_preset_hub *x, t_symbol *filename)
                                 if (PH_DEBUG)
                                 {
                                     if ((argv)->a_type == A_SYMBOL)
-                                        fprintf(stderr,"    1st_element = %s\n",
+                                        fprintf(stderr,
+                                            "    1st_element symbol = %s\n",
                                             atom_getsymbol(argv)->s_name);
                                     else if ((argv)->a_type == A_FLOAT)
-                                        fprintf(stderr,"    1st_element = %f\n",
+                                        fprintf(stderr,
+                                            "    1st_element float = %f\n",
                                             atom_getfloat(argv));
                                     else
                                         fprintf(stderr,
@@ -1984,6 +2071,14 @@ void preset_hub_write(t_preset_hub *x, t_symbol *filename)
         goto preset_hub_write_fail;
     }
 
+    if (!x->ph_init_file_loc)
+    {
+        pd_error(x, "file node locations have not yet been initialized--"
+                    "please use initloc or updateloc command before "
+                    "saving the preset_hub data to a file");
+        goto preset_hub_write_fail;        
+    }
+
     phd = x->ph_data;
     if (phd)
     {
@@ -1991,16 +2086,30 @@ void preset_hub_write(t_preset_hub *x, t_symbol *filename)
         while (phd)
         {
             if(PH_DEBUG) fprintf(stderr,"    saving phd\n");
-            /* designate a node and state whether it is active or disabled
+
+            /* add "was" information that we use to keep track of original node
+             positions and use them to relate preset data saved previously into
+             a file */
+            if (!phd->phd_pn_was_gl_loc_length)
+            {
+                pd_error(x, "at least one uninitialized file node location found--"
+                            "please use initloc or updateloc command before "
+                            "saving presets to a file");
+                goto preset_hub_write_fail;
+            }
+
+            /* designate a node and length whether it is active or disabled
                (disabled nodes are ones that have presets saved but have been
                deleted since-- we keep these in the case of undo actions during
                the session that may go beyond saving something into a file) */
-            binbuf_addv(b, "si", gensym("%node%"), phd->phd_pn_gl_loc_length);
+            binbuf_addv(b, "si", gensym("%node%"), phd->phd_pn_was_gl_loc_length);
 
-            // gather info about the length of the node's location and store it
-            for (i = 0; i < phd->phd_pn_gl_loc_length; i++)
+            /* since we're saving to a file, gather info about the length of the
+               node's *was* location and instead of the actual node location and
+               store it as node location, so that readpreset reads it correctly */
+            for (i = 0; i < phd->phd_pn_was_gl_loc_length; i++)
             {
-                binbuf_addv(b,"i", (int)phd->phd_pn_gl_loc[i]);
+                binbuf_addv(b,"i", (int)phd->phd_pn_was_gl_loc[i]);
             }
 
             // save preset data
@@ -2070,6 +2179,7 @@ void preset_hub_readpreset(t_preset_hub *x, t_symbol *filename)
     int found_node = 0;
     int ignore_entry = 0;
     int data_count = 0;
+    int no_was = 0;
 
     int recall_preset = -1;
 
@@ -2077,6 +2187,15 @@ void preset_hub_readpreset(t_preset_hub *x, t_symbol *filename)
     {
         pd_error(x, "no readpreset filename given");
         goto preset_hub_readpreset_fail;
+    }
+
+    if (!x->ph_init_file_loc)
+    {
+        post("warning: file node locations have not yet been initialized, "
+             "suggesting this may be an older patch--to ensure file presets "
+             "continue to work as you edit your patch, please use initloc or "
+             "updateloc command before continuing to edit the patch");
+        no_was = 1;        
     }
 
     // we only try to do this if we have valid paired nodes
@@ -2172,7 +2291,7 @@ void preset_hub_readpreset(t_preset_hub *x, t_symbol *filename)
                                 loc_data[loc_length-1] =
                                     (int)atom_getfloat(&argv[i]);
                                 if (PH_DEBUG)
-                                    fprintf(stderr,"    loc length = %d\n",
+                                    fprintf(stderr,"    wasloc length = %d\n",
                                         loc_length);
                                 loc_pos = 0;
                                 h_cur = H_LOCATION;
@@ -2197,22 +2316,46 @@ void preset_hub_readpreset(t_preset_hub *x, t_symbol *filename)
                                     /* we use hd1 to navigate and hd2 to
                                        populate first check for existing
                                        nodes and reenable them if they match
-                                       location */
+                                       location--do this against "was" values
+                                       instead of node values, since node
+                                       values may have changed since the
+                                       preset file was saved */
                                     hd1 = x->ph_data;
                                     while (hd1)
                                     {
-                                        if (!preset_hub_compare_loc(
-                                                hd1->phd_pn_gl_loc,
-                                                hd1->phd_pn_gl_loc_length,
-                                                loc_data, loc_length))
+                                        if (no_was)
                                         {
-                                            /* if this hub node data's location
-                                               matches that of the node */
-                                            if (PH_DEBUG)
-                                                fprintf(stderr,
-                                                   "    found matching node\n");
-                                            found_node = 1;
-                                            break;
+                                            if (!preset_hub_compare_loc(
+                                                    hd1->phd_pn_gl_loc,
+                                                    hd1->phd_pn_gl_loc_length,
+                                                    loc_data, loc_length))
+                                            {
+                                                /* if this hub node data's location
+                                                   matches that of the node */
+                                                if (PH_DEBUG)
+                                                    fprintf(stderr,
+                                                       "    found matching "
+                                                       "node (no 'was' present)\n");
+                                                found_node = 1;
+                                                break;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (!preset_hub_compare_loc(
+                                                    hd1->phd_pn_was_gl_loc,
+                                                    hd1->phd_pn_was_gl_loc_length,
+                                                    loc_data, loc_length))
+                                            {
+                                                /* if this hub node data's location
+                                                   matches that of the node */
+                                                if (PH_DEBUG)
+                                                    fprintf(stderr,
+                                                       "    found matching "
+                                                       "'was' node\n");
+                                                found_node = 1;
+                                                break;
+                                            }
                                         }
                                         hd1 = hd1->phd_next;
                                     }
@@ -2226,7 +2369,7 @@ void preset_hub_readpreset(t_preset_hub *x, t_symbol *filename)
                                            locations even if they wanted to */
                                         if (PH_DEBUG)
                                             fprintf(stderr, "    failed to "
-                                                    "find matching node\n");
+                                                "find matching 'was' node\n");
                                         ignore_entry = 1;
                                     }
 
@@ -2294,8 +2437,11 @@ void preset_hub_readpreset(t_preset_hub *x, t_symbol *filename)
                                 pos++;
 
                                 /* figure out how long of variable data list
-                                   follows the preset descriptor */
-                                while (pos + data_count < natom &&
+                                   follows the preset descriptor--here we 
+                                   subtract 1 from natom since pos starts 
+                                   from zero, which corresponds with natom's
+                                   one */
+                                while (pos + data_count < natom - 1 &&
                                        strcmp(
                                         atom_getsymbol(argv+data_count)->s_name,
                                             "%preset%") &&
@@ -2324,10 +2470,12 @@ void preset_hub_readpreset(t_preset_hub *x, t_symbol *filename)
                                 if (PH_DEBUG)
                                 {
                                     if ((argv)->a_type == A_SYMBOL)
-                                        fprintf(stderr,"    1st_element = %s\n",
+                                        fprintf(stderr,
+                                            "    1st_element symbol = %s\n",
                                             atom_getsymbol(argv)->s_name);
                                     else if ((argv)->a_type == A_FLOAT)
-                                        fprintf(stderr,"    1st_element = %f\n",
+                                        fprintf(stderr,
+                                            "    1st_element float = %f\n",
                                             atom_getfloat(argv));
                                     else
                                         fprintf(stderr,
@@ -2378,6 +2526,14 @@ void preset_hub_writepreset(t_preset_hub *x, t_symbol *filename, float preset)
         goto preset_hub_writepreset_fail;
     }
 
+    if (!x->ph_init_file_loc)
+    {
+        pd_error(x, "file node locations have not yet been initialized--"
+                    "please use initloc or updateloc command before "
+                    "saving a preset to a file");
+        goto preset_hub_writepreset_fail;        
+    }
+
     phd = x->ph_data;
     if (phd)
     {
@@ -2385,22 +2541,23 @@ void preset_hub_writepreset(t_preset_hub *x, t_symbol *filename, float preset)
         while (phd)
         {
             if(PH_DEBUG) fprintf(stderr,"    saving phd\n");
+ 
+            /* add "was" information that we use to keep track of original node
+             positions and use them to relate preset data saved previously into
+             a file */
+            if (!phd->phd_pn_was_gl_loc_length)
+            {
+                pd_error(x, "at least one uninitialized file node location found--"
+                            "please use initloc or updateloc command before "
+                            "saving the preset hub data to a file");
+                goto preset_hub_writepreset_fail;
+            }
+
             /* designate a node and length whether it is active or disabled
                (disabled nodes are ones that have presets saved but have been
                deleted since-- we keep these in the case of undo actions during
                the session that may go beyond saving something into a file) */
-            binbuf_addv(b, "si", gensym("%node%"), phd->phd_pn_gl_loc_length);
-
-            /* add "was" information that we use to keep track of original node
-             positions and use them to relate preset data saved previously into
-             a file */
-            if (phd->phd_pn_was_gl_loc_length)
-            {
-                pd_error(x, "no initialized node locations found--please use "
-                            "initloc or updateloc command before saving a preset "
-                            "to a file");
-                goto preset_hub_writepreset_fail;
-            }
+            binbuf_addv(b, "si", gensym("%node%"), phd->phd_pn_was_gl_loc_length);
 
             /* since we're saving to a file, gather info about the length of the
                node's *was* location and instead of the actual node location and
@@ -2454,11 +2611,11 @@ void preset_hub_writepreset(t_preset_hub *x, t_symbol *filename, float preset)
     outlet_anything(x->ph_outlet, gensym("writepreset"), 1, ap);
 }
 
-void preset_hub_initfileloc(t_preset_hub *x)
+void preset_hub_clearfileloc(t_preset_hub *x)
 {
     if (!x->ph_extern_file)
     {
-        pd_error(x, "updatefileloc only works for hubs that store and retrieve "
+        pd_error(x, "clearfileloc only works for hubs that store and retrieve "
                     "their preset data from a file");
         return;
     }
@@ -2474,17 +2631,54 @@ void preset_hub_initfileloc(t_preset_hub *x)
             hd1->phd_pn_was_gl_loc_length = 0;
             if (hd1->phd_pn_was_gl_loc)
                 free(hd1->phd_pn_was_gl_loc);
-            hd1->phd_pn_was_gl_loc =
-                            (int*)calloc(hd1->phd_pn_gl_loc_length,
-                                sizeof(hd1->phd_pn_was_gl_loc));
-            hd1->phd_pn_was_gl_loc_length = hd1->phd_pn_gl_loc_length;
-            for(i = 0; i < hd1->phd_pn_gl_loc_length; i++)
-            {
-                hd1->phd_pn_was_gl_loc[i] = hd1->phd_pn_gl_loc[i];
-            }
             count++;
         }
-        hd1 = hd1->ph_data->phd_next;
+        hd1 = hd1->phd_next;
+    }
+
+    x->ph_init_file_loc = 0;
+    if (count) canvas_dirty(x->ph_canvas, 1);
+    SETFLOAT(ap+0, (t_float)count);
+    outlet_anything(x->ph_outlet, gensym("clearfileloc"), 1, ap); 
+}
+
+void preset_hub_initfileloc(t_preset_hub *x)
+{
+    if (!x->ph_extern_file)
+    {
+        pd_error(x, "initfileloc only works for hubs that store and retrieve "
+                    "their preset data from a file");
+        return;
+    }
+
+    t_atom ap[2];
+    t_preset_hub_data *hd1 = x->ph_data;
+    int i = 0, count = 0;
+
+    while(hd1)
+    {
+        if (hd1->phd_pn_was_gl_loc_length)
+        {
+            hd1->phd_pn_was_gl_loc_length = 0;
+            if (hd1->phd_pn_was_gl_loc)
+                free(hd1->phd_pn_was_gl_loc);
+        }
+        hd1->phd_pn_was_gl_loc =
+            (int*)calloc(hd1->phd_pn_gl_loc_length,
+                sizeof(hd1->phd_pn_was_gl_loc));
+        hd1->phd_pn_was_gl_loc_length = hd1->phd_pn_gl_loc_length;
+        for(i = 0; i < hd1->phd_pn_gl_loc_length; i++)
+        {
+            hd1->phd_pn_was_gl_loc[i] = hd1->phd_pn_gl_loc[i];
+        }
+        count++;
+        hd1 = hd1->phd_next;
+    }
+
+    if (count)
+    {
+        x->ph_init_file_loc = 1;
+        canvas_dirty(x->ph_canvas, 1);
     }
     SETFLOAT(ap+0, (t_float)count);
     outlet_anything(x->ph_outlet, gensym("initfileloc"), 1, ap);
@@ -2520,8 +2714,16 @@ void preset_hub_updatefileloc(t_preset_hub *x)
             }
             count++;
         }
-        hd1 = hd1->ph_data->phd_next;
+        hd1 = hd1->phd_next;
     }
+
+    if (count)
+    {
+        x->ph_init_file_loc = 1;
+        canvas_dirty(x->ph_canvas, 1);
+    }
+    SETFLOAT(ap+0, (t_float)count);
+    outlet_anything(x->ph_outlet, gensym("updatefileloc"), 1, ap);
 }
 
 static void *preset_hub_new(t_symbol *s, int argc, t_atom *argv)
@@ -2612,6 +2814,7 @@ static void *preset_hub_new(t_symbol *s, int argc, t_atom *argv)
     x = (t_preset_hub *)pd_new(preset_hub_class);
     x->ph_invis = 0;
     x->ph_extern_file = 0;
+    x->ph_init_file_loc = 0;
 
     // read basic creation arguments
     x->ph_name = name;
@@ -2716,6 +2919,7 @@ static void *preset_hub_new(t_symbol *s, int argc, t_atom *argv)
                 {
                     // beginning of the original node location
                     if (PH_DEBUG) fprintf(stderr,"    new wasnode\n");
+                    x->ph_init_file_loc = 1;
                     h_cur = H_WAS;
                 }
                 else if (!strcmp(atom_getsymbol(&argv[i])->s_name, "%preset%"))
@@ -2982,6 +3186,8 @@ void preset_hub_setup(void)
     class_addmethod(preset_hub_class, (t_method)preset_hub_writepreset,
         gensym("writepreset"), A_DEFSYM, A_DEFFLOAT, 0);
 
+    class_addmethod(preset_hub_class, (t_method)preset_hub_clearfileloc,
+        gensym("clearfileloc"), A_NULL, 0);
     class_addmethod(preset_hub_class, (t_method)preset_hub_initfileloc,
         gensym("initfileloc"), A_NULL, 0);
     class_addmethod(preset_hub_class, (t_method)preset_hub_updatefileloc,

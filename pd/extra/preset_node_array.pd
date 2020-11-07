@@ -1,45 +1,45 @@
-#N canvas 290 90 469 572 10;
-#X obj -30 451 until;
-#X obj -30 473 list append;
-#X obj -30 495 list split 1;
-#X obj 57 534 f;
-#X obj 87 534 + 1;
-#X msg 72 512 0;
-#X obj -30 517 t f b;
-#X obj -6 410 t b l b;
-#X text 45 409 write incoming list to table;
-#X obj 39 316 list prepend;
-#X obj 39 339 t l;
-#X obj 39 365 list;
-#X obj 138 161 until;
-#X obj 138 208 f;
-#X obj 168 208 + 1;
-#X msg 183 161 0;
-#X obj 138 129 35;
-#X text 161 129 table size;
-#X obj 153 105 + 3;
-#X text 180 105 multiple of 4 + 3;
-#X text 136 245 read out table to list;
-#X obj 153 84 expr size("$s1");
-#X obj 246 134 inlet;
-#X obj 246 157 t b a;
-#X msg 246 205;
-#X obj 93 41 t 1 b b b b 0;
-#X obj -6 387 gate 1 1;
-#X text 180 13 pd-l2ork only: bang on manual changeOR manually send
+#N canvas 290 90 465 579 10;
+#X obj 5 451 until;
+#X obj 5 473 list append;
+#X obj 5 495 list split 1;
+#X obj 92 534 f;
+#X obj 122 534 + 1;
+#X msg 107 512 0;
+#X obj 5 517 t f b;
+#X obj 29 410 t b l b;
+#X text 80 409 write incoming list to table;
+#X obj 74 316 list prepend;
+#X obj 74 339 t l;
+#X obj 74 365 list;
+#X obj 173 161 until;
+#X obj 173 208 f;
+#X obj 203 208 + 1;
+#X msg 218 161 0;
+#X obj 173 129 35;
+#X text 196 129 table size;
+#X obj 188 105 + 3;
+#X text 215 105 multiple of 4 + 3;
+#X text 171 245 read out table to list;
+#X obj 188 84 expr size("$s1");
+#X obj 281 134 inlet;
+#X obj 281 157 t b a;
+#X msg 281 205;
+#X obj 128 41 t 1 b b b b 0;
+#X obj 29 387 gate 1 1;
+#X text 223 3 pd-l2ork only: bang on manual changeOR manually send
 bang on loading a file;
-#X text 224 540 Based on rc-patches by Dan WilcoxCleaned up by Ivica
+#X text 259 545 Based on rc-patches by Dan WilcoxCleaned up by Ivica
 Ico Bukvic;
-#X obj 93 18 r \$1_changed;
-#X obj 153 63 symbol \$1;
-#X obj 138 229 tabread \$1;
-#X obj -6 558 tabwrite \$1;
-#X obj 339 114 loadbang;
-#X obj 339 136 symbol \$2;
-#X obj 339 158 route 0;
-#X obj 290 266 preset_node;
-#X msg 378 180 set \$1;
-#X obj 273 180 list prepend set;
+#X obj 128 18 r \$1_changed;
+#X obj 188 63 symbol \$1;
+#X obj 173 229 tabread \$1;
+#X obj 29 558 tabwrite \$1;
+#X obj 374 114 loadbang;
+#X obj 374 136 symbol \$2;
+#X obj 374 158 route 0;
+#X obj 325 266 preset_node;
+#X msg 413 180 set \$1;
+#X obj 308 180 list prepend set;
 #X connect 0 0 1 0;
 #X connect 1 0 2 0;
 #X connect 2 0 6 0;

@@ -69,6 +69,10 @@ struct _preset_hub
 									// 0 = standard mode (saving with patch) 
 									// 1 = saving into external file
 
+	int ph_init_file_loc;			// whether we have initialized 'was' file loc
+									// 0 = no
+									// 1 = yes
+
 	t_canvas *ph_canvas;
 
 	struct _preset_hub *ph_next;	// next hub on the same canvas
