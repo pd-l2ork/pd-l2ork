@@ -151,21 +151,21 @@ same canvas as the abstraction:;
 #X text 168 205 inside it.;
 #X text 40 171 [preset_hub foo] <-- this won't apply to [bar] because
 ;
-#X restore 461 1140 pd More_info;
-#N canvas 33 29 755 624 More_info 1;
+#X restore 466 1140 pd More_info;
+#N canvas 33 29 755 637 More_info 0;
 #X obj -9 -1 cnv 15 755 20 empty \$0-pddp.cnv.subheading empty 3 12
 0 14 #c4dcdc #000000 0;
 #X text -3 1 [preset_hub] More info on reading/writing operations;
 #X obj 19 159 hradio 15 1 0 4 empty empty empty 0 -8 0 10 #fcfcfc #000000
-#000000 0;
+#000000 2;
 #X msg 19 179 recall \$1;
 #X obj 85 159 hradio 15 1 0 4 empty empty empty 0 -8 0 10 #fcfcfc #000000
-#000000 0;
+#000000 2;
 #X msg 85 179 store \$1;
 #X floatatom 10 390 5 0 0 0 - - -, f 5;
 #X symbolatom 10 433 10 0 0 0 - - -, f 10;
 #X msg 151 179 reset;
-#X text 303 507 Loading a preset into a hub that already has data will
+#X text 303 509 Loading a preset into a hub that already has data will
 automatically result in a merge. As you experiment with mixing and
 merging various presets \, notice how nodes in a preset that do not
 have the right match in the current patch will be silently discarded
@@ -173,30 +173,17 @@ to minimize clutter among presets., f 71;
 #X msg 9 28 read preset_hub_all.preset;
 #X msg 9 83 readpreset preset_hub_one.preset;
 #X obj 9 303 print preset_hub_another_says;
-#X text 303 579 NB: check for write permissions before trying to save
+#X text 303 581 NB: check for write permissions before trying to save
 files into specific folders., f 71;
-#X text 303 267 So \, what do each of these three commands do? clearfileloc
-clears all file loc data. Without such data you will not be able to
-save preset files (whether whole preset_hub state or a single preset)
-and will get a warning when trying to load one. initfileloc initializes
-all locations \, while updatefileloc only updates ones that have not
-yet been initialized. This last option is \, for instance \, useful
-when you are editing a well-established patch that already has file
-locations included and then add another node., f 71;
 #X msg 151 205 clearfileloc;
 #X msg 151 225 initfileloc;
 #X msg 151 245 updatefileloc;
-#X text 303 377 With the file locations taken care of \, click on read
-to read all presets stored in a separate file. Try recalling presets
-0 and 1 Note how storing a new preset does not make the patch dirty
-due to use of the "file" flag., f 71;
-#X text 303 435 Now \, reset the hub by clicking on the "reset" message.
-The hub should be now clear of any presets. Now read a single preset
-by clicking on readpreset message on the left. Notice how only preset
-1 has any data (in this case identical to that found in all presets
-file we loaded using the read call above., f 71;
 #X msg 9 49 write ~/Desktop/preset_hub_all.preset;
 #X msg 9 104 writepreset ~/Desktop/preset_hub_one.preset 1;
+#X obj 9 282 preset_hub anotherone file %hidden% %node% 1 20 %node%
+1 21;
+#X obj 10 368 preset_node anotherone;
+#X obj 10 411 preset_node anotherone;
 #X text 303 26 Notice how when trying to read a preset you get a warning
 that the file locations have not been initialized? To fix this \, press
 either initfileloc or updatefileloc. Doing so will create a current
@@ -206,37 +193,51 @@ depends to locate them) may change. While this is dynamically updated
 when using embedded presets inside the patch itself \, previously saved
 files with its stored node locations have no way of knowing that there
 have been any changes which may result in nodes not being found and
-therefore presets not loading properly. This is where file loc comes
-into play. The user has the ability to decide when the snapshot should
-be taken (e.g. usually once you are happy with the layout and do not
-see major new changes taking place). At that point in time \, such
-a snapshot will kep the file-related locations and will not change
-them unless explicitly requested by the user. This way \, once an old
-preset file has been loaded \, its node locations will be compared
-with the patch-save file locations which should remain the same regardless
-of how the nodes change their locations on the patch., f 71;
-#X obj 9 282 preset_hub anotherone file %hidden% %node% 1 24 %node%
-1 25;
-#X obj 10 368 preset_node anotherone;
-#X obj 10 411 preset_node anotherone;
+therefore presets not loading properly. This is why we have the fileloc
+commands. Using them \, the user has the ability to decide when the
+snapshot should be taken (e.g. usually once you are happy with the
+layout and do not see major new changes taking place). At that point
+in time \, such a snapshot will keep the file-related locations and
+will not change them unless explicitly requested by the user. These
+will be kept in parallel with the dynamic (actual) ones. This way \,
+once an old preset file has been loaded \, its node locations will
+be compared with the patch-save file locations which should remain
+the same regardless of how the nodes change their locations in the
+patch., f 71;
+#X text 303 280 So \, what do each of these three commands do? clearfileloc
+clears all file loc data. Without such data you will not be able to
+save preset files (whether whole preset_hub state or a single preset)
+and will get a warning when trying to load one. initfileloc initializes
+all locations \, while updatefileloc only updates ones that have not
+yet been initialized. This last option is \, for instance \, useful
+when you are editing a well-established patch that already has file
+locations included and then add a new node that doesn't., f 71;
+#X text 303 391 With the file locations taken care of \, click on read
+to read all presets stored in a separate file. Try recalling presets
+0-2 \, Note how storing a new preset does not make the patch dirty
+due to the use of the "file" flag., f 71;
+#X text 303 450 Now \, reset the hub by clicking on the "reset" message.
+The hub should be now clear of any presets. Then \, read a single preset
+by clicking on the readpreset message on the left. Notice how only
+preset 1 has any data., f 71;
 #X connect 2 0 3 0;
-#X connect 3 0 23 0;
+#X connect 3 0 19 0;
 #X connect 4 0 5 0;
-#X connect 5 0 23 0;
-#X connect 6 0 24 0;
-#X connect 7 0 25 0;
-#X connect 8 0 23 0;
-#X connect 10 0 23 0;
-#X connect 11 0 23 0;
-#X connect 15 0 23 0;
-#X connect 16 0 23 0;
-#X connect 17 0 23 0;
-#X connect 20 0 23 0;
-#X connect 21 0 23 0;
-#X connect 23 0 12 0;
-#X connect 24 0 6 0;
-#X connect 25 0 7 0;
-#X restore 461 1285 pd More_info;
+#X connect 5 0 19 0;
+#X connect 6 0 20 0;
+#X connect 7 0 21 0;
+#X connect 8 0 19 0;
+#X connect 10 0 19 0;
+#X connect 11 0 19 0;
+#X connect 14 0 19 0;
+#X connect 15 0 19 0;
+#X connect 16 0 19 0;
+#X connect 17 0 19 0;
+#X connect 18 0 19 0;
+#X connect 19 0 12 0;
+#X connect 20 0 6 0;
+#X connect 21 0 7 0;
+#X restore 466 1285 pd More_info;
 #X text 98 1561 Presets with Arrays- arrays cannot be accessed directly
 as they have no direct inlets and outlets. For this reason we use preset_node_array
 abstraction to read/write to/from arrays. For additional info see;
@@ -275,7 +276,7 @@ patcher before looking one level up.;
 #X connect 5 0 3 0;
 #X connect 6 0 4 0;
 #X connect 7 0 8 0;
-#X restore 461 1186 pd More_info;
+#X restore 466 1186 pd More_info;
 #X text 178 475 - recall the values stored at index n (n must be >=
 0);
 #X text 98 1514 Default values- depending on the expected data format

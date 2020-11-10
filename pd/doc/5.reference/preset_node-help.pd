@@ -3,7 +3,7 @@
 0;
 #X obj 105 279 cnv 15 60 37 empty empty empty 20 12 0 14 #fcc4c4 #404040
 0;
-#X obj -2 1293 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12
+#X obj -2 1435 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12
 0 14 #dcdcdc #404040 0;
 #X obj -2 0 cnv 15 552 40 empty \$0-pddp.cnv.header preset_node 3 12
 0 18 #c4dcdc #000000 0;
@@ -18,25 +18,25 @@ to conform to the PDDP template for Pd version 0.42.;
 #X text 12 65 INLET_0 anything;
 #X text 12 85 OUTLET_0 anything;
 #X text 12 105 AUTHOR Ivica Ico Bukvic (c) 2012 <ico@vt.edu>;
-#X restore 498 1295 pd META;
-#X obj -2 810 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
+#X restore 498 1437 pd META;
+#X obj -2 952 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
 13 #dcdcdc #000000 0;
-#X obj -2 1014 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8
+#X obj -2 1156 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8
 12 0 13 #dcdcdc #000000 0;
-#X obj -2 1064 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8
+#X obj -2 1206 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8
 12 0 13 #dcdcdc #000000 0;
-#X obj 76 380 cnv 17 3 424 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
+#X obj 66 380 cnv 17 3 566 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
 #9c9c9c 0;
 #N canvas 102 481 428 93 Related_objects 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
 #X text 7 1 [preset_node] Related Objects;
-#X obj 22 36 preset_hub default %hidden%;
-#X obj 141 36 preset_node_array;
-#X restore 99 1295 pd Related_objects;
-#X obj 76 819 cnv 17 3 40 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
+#X obj 97 36 preset_node_array;
+#X obj 22 36 preset_hub %hidden% %node% 2 2 36;
+#X restore 99 1437 pd Related_objects;
+#X obj 66 961 cnv 17 3 40 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
 #9c9c9c 0;
-#X obj 2 1295 pddp/pddplink all_about_help_patches.pd -text Usage Guide
+#X obj 2 1437 pddp/pddplink all_about_help_patches.pd -text Usage Guide
 ;
 #X text 9 20 universal preset system for pd-l2ork;
 #X obj 472 3 preset_node;
@@ -91,15 +91,15 @@ nlah 1 %preset% 2 1 2 3 4 %node% 2 50 0 %preset% 0 0 %preset% 1 1 %preset%
 #X connect 0 0 1 0;
 #X connect 2 0 3 0;
 #X restore 115 289 pd sub;
-#X text 96 399 clearall;
-#X text 96 419 purge;
-#X text 97 818 anything;
-#X text 167 818 - [preset_node] makes an invisible connection from
+#X text 89 401 clearall;
+#X text 89 500 purge;
+#X text 87 961 anything;
+#X text 176 961 - [preset_node] makes an invisible connection from
 the object below it back to its inlet. It can recall whatever type
 of message the connected object can output.;
-#X text 96 1105 Scope- [preset_hub foo] is local to its patch and all
+#X text 96 1247 Scope- [preset_hub foo] is local to its patch and all
 of that patch's children (i.e. \, subpatches and abstractions).;
-#X obj 96 1133 pddp/pddplink preset_hub-help.pd;
+#X obj 96 1275 pddp/pddplink preset_hub-help.pd;
 #N canvas 411 177 428 483 More_info 0;
 #X obj 271 378 cnv 15 39 23 empty empty empty 20 12 0 14 #fcc4c4 #404040
 0;
@@ -150,68 +150,68 @@ hub.;
 #X connect 17 0 20 0;
 #X connect 18 0 19 0;
 #X connect 19 0 21 0;
-#X restore 457 1105 pd More_info;
-#X text 166 419 - purge all orphaned/unused nodes (forwarded to hub)
+#X restore 457 1247 pd More_info;
+#X text 176 500 - purge all orphaned/unused nodes (forwarded to hub)
 ;
-#X text 96 470 reset;
-#X text 96 439 recall;
-#X text 96 510 store;
-#X text 166 470 - reset all preset node data (forwarded to hub);
-#X text 166 510 - store the current state at index n (forwarded to
+#X text 89 553 reset;
+#X text 89 520 recall;
+#X text 89 594 store;
+#X text 176 553 - reset all preset node data (forwarded to hub);
+#X text 176 594 - store the current state at index n (forwarded to
 hub);
-#X text 166 399 - clear all node data at preset n (forwarded to hub)
+#X text 176 401 - clear all node data at preset n (forwarded to hub)
 ;
-#X text 96 379 clear;
-#X text 166 379 - clear this node data at preset n (forwarded to hub)
+#X text 89 381 clear;
+#X text 176 381 - clear this node data at preset n (forwarded to hub)
 ;
-#X text 96 490 set;
-#X text 166 490 - change context (hub) node is paired with;
+#X text 89 574 set;
+#X text 176 574 - change context (hub) node is paired with;
 #X msg 229 284 set another;
 #X msg 308 284 set test;
 #X obj 381 293 cnv 15 44 27 empty empty empty 20 12 0 14 #c4dcdc #404040
 0;
 #X floatatom 387 298 5 0 0 0 - - -, f 5;
-#X text 169 1031 - OPTIONAL scope for this preset (defaults to null
+#X text 176 1173 - OPTIONAL scope for this preset (defaults to null
 or "");
-#X text 96 658 read;
-#X text 96 702 write;
-#X text 96 732 readpreset;
-#X text 96 772 writepreset;
-#X text 166 732 - read one preset (optional 3rd argumemnt \, otherwise
+#X text 89 758 read;
+#X text 89 791 write;
+#X text 89 824 readpreset;
+#X text 89 916 writepreset;
+#X text 176 824 - read one preset (optional 3rd argumemnt \, otherwise
 preset 0) from a file named in the second argument (forwarded to hub)
 ;
-#X text 166 772 - write one preset (optional 3rd argumemnt \, otherwise
+#X text 176 916 - write one preset (optional 3rd argumemnt \, otherwise
 preset 0) to a file named in the second argument (forwarded to hub)
 ;
-#X text 96 1153 Reading and writing- see preset_hub-help.pd for more
+#X text 96 1295 Reading and writing- see preset_hub-help.pd for more
 info.;
-#X obj 96 1167 pddp/pddplink preset_hub-help.pd;
+#X obj 96 1309 pddp/pddplink preset_hub-help.pd;
 #X msg 186 232 clear 0;
-#X text 96 1228 Presets with Arrays- arrays cannot be accessed directly
+#X text 96 1370 Presets with Arrays- arrays cannot be accessed directly
 as they have no direct inlets and outlets. For this reason we use preset_node_array
 abstraction to read/write to/from arrays. For additional info see;
-#X obj 288 1267 pddp/pddplink preset_node_array-help.pd;
-#X text 79 1031 1) symbol/float;
-#X text 166 439 - recall the values stored at index n where n must
+#X obj 288 1409 pddp/pddplink preset_node_array-help.pd;
+#X text 79 1173 1) symbol/float;
+#X text 176 520 - recall the values stored at index n where n must
 be >= 0 (forwarded to hub);
-#X text 96 1074 Recall values- only values 0 or greater are valid.
+#X text 96 1216 Recall values- only values 0 or greater are valid.
 No negative preset numbers are possible.;
-#X text 96 1185 Default values- depending on the expected data format
+#X text 96 1327 Default values- depending on the expected data format
 messages when supplied no argument default to null (empty string) or
 0;
-#X text 96 529 sort;
-#X text 166 529 - sort all presets chronologically and assign them
+#X text 89 614 sort;
+#X text 176 614 - sort all presets chronologically and assign them
 new preset numbers one after another starting with a value n or 0 if
 no value provided (forwarded to hub);
-#X text 166 702 - write all presets to a file named in the first argument
+#X text 176 791 - write all presets to a file named in the first argument
 (forwarded to hub);
-#X text 166 672 - reads all presets from a file named in the first
+#X text 176 758 - reads all presets from a file named in the first
 argument (forwarded to hub);
-#X obj 76 867 cnv 17 3 142 empty \$0-pddp.cnv.let.0 1 5 9 0 16 #dcdcdc
+#X obj 66 1009 cnv 17 3 142 empty \$0-pddp.cnv.let.0 1 5 9 0 16 #dcdcdc
 #9c9c9c 0;
 #X msg 145 51 status;
 #X obj 238 94 print node_test_says;
-#X text 97 866 list;
+#X text 87 1009 list;
 #N canvas 433 184 450 243 preset_without_a_hub_example 0;
 #X msg 93 108 status;
 #X obj 252 151 print node_test_says;
@@ -220,15 +220,15 @@ argument (forwarded to hub);
 there is no hub it is compatible with;
 #X connect 0 0 2 0;
 #X connect 2 1 1 0;
-#X restore 167 990 pd preset_without_a_hub_example;
-#X text 96 574 status;
-#X text 166 574 - outputs status via node's right (status) outlet whether
+#X restore 176 1133 pd preset_without_a_hub_example;
+#X text 89 660 status;
+#X text 176 660 - outputs status via node's right (status) outlet whether
 any of hub's nodes have been altered since the last time a preset was
 stored (0=no \, 1=yes) \, effectively reporting if the current hub's
 state is saved or not (also referred to as dirty) \; in addition to
 reporting hub's state \, if the node is not paired with any hub \,
 it will report a -1;
-#X text 167 866 - status outlet where [preset_node] outputs status
+#X text 176 1009 - status outlet where [preset_node] outputs status
 of the hub it is paired with (if any). Like hubs \, nodes report hub's
 two states: 0 for state being clean (as in no nodes have changed values
 since last preset was stored) \, and 1 for dirty (meaning one or more
@@ -236,6 +236,17 @@ nodes have changed values since last store). In addition \, node can
 also report a state of -1 which means it has not been paired with a
 hub yet (or in other words \, it did not find a hub it can pair with
 based on requested parameters \, namely scope).;
+#X text 89 870 updatefileloc;
+#X text 89 421 clearfileloc;
+#X text 89 454 initfileloc;
+#X text 176 421 - clears all node locations (used for saving presets
+to a file only \, forwarded to hub);
+#X text 176 454 - initializes all node locations to be equal to their
+current locations (used for saving presets to a file only \, forwarded
+to hub);
+#X text 176 870 - updates current known node locations for nodes that
+do not have this data initialized (used for saving presets to a file
+only \, forwarded to hub);
 #X connect 15 0 24 0;
 #X connect 16 0 15 0;
 #X connect 17 0 15 0;
