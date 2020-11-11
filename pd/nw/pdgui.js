@@ -6536,6 +6536,11 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
 	    } else {
 	    	// Anything else but message
 			configure_item(gobj, { visibility: "hidden" });
+            // Explicitly also hide text since it sometimes remains visible
+            // (e.g. when a multi-line comment is activated and user deletes
+            // a line or more from it, sometimes the original text is still
+            // visible)
+            gui(cid).get_gobj(tag).q(".box_text", { visibility: "hidden" });
 	    }
 
         p = patchwin[cid].window.document.createElement("p");
