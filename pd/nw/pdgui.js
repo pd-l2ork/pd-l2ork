@@ -4698,13 +4698,13 @@ function gui_image_toggle_border(cid, tag, x, y, w, h, onoff) {
             var b = create_item(cid, "path", {
                 "stroke-width": "1",
                 fill: "none",
-                d: ["m", x, y, w, 0,
-                    "m", 0, 0, 0, h,
-                    "m", 0, 0, -w, 0,
-                    "m", 0, 0, 0, -h
+                d: ["m", -w/2, -h/2, w+1, 0,
+                    "m", 0, 0, 0, h+1,
+                    "m", 0, 0, -w-1, 0,
+                    "m", 0, 0, 0, -h-1
                    ].join(" "),
                 visibility: "visible",
-                class: "border"
+                class: "image border"
             });
             frag.appendChild(b);
             return frag;

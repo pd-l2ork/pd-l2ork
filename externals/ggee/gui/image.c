@@ -32,6 +32,10 @@ typedef struct _image
 
 /* widget helper functions */
 static void image_select(t_gobj *z, t_glist *glist, int state);
+/* from g_editor.c--we use this to detect if the user has clicked with the
+   right button, so that even in runtime they can select ggee/image help
+*/
+extern int glob_lmclick;
 
 t_symbol *image_trytoopen(t_image* x)
 {
@@ -185,7 +189,8 @@ static void image_getrect(t_gobj *z, t_glist *glist,
     // return 0 size to allow for click relegation to hidden objects below
     // CAREFUL: this code is not reusable for objects that have more than
     // one inlet or outlet because it will cram them together
-    if ((glist_getcanvas(glist) != glist && !x->x_click) || (!glist->gl_edit && !x->x_click))
+    if (glob_lmclick && 
+        ((glist_getcanvas(glist) != glist && !x->x_click) || (!glist->gl_edit && !x->x_click)))
     {
         *xp2 = *xp1;
         // only if we have an image loaded and we are placed within a GOP obliterate the height
@@ -229,50 +234,40 @@ static void image_select(t_gobj *z, t_glist *glist, int state)
 {
     //fprintf(stderr,"image_select %d\n", state);
     t_image *x = (t_image *)z;
-    if (state)
+
+    if (x->x_glist == glist_getcanvas(x->x_glist))
     {
-        if (x->x_glist == glist_getcanvas(glist))
-        {
-            //x->x_selected = state;
-            if (!x->x_gop_spill && (x->x_img_width + x->x_img_height) >= 2)
-            {
-                sys_vgui(".x%x.c create prect %d %d %d %d \
-                        -tags %xSEL -strokewidth 1 -stroke $pd_colors(selection)\n",
-                    glist_getcanvas(glist),
-                    text_xpix(&x->x_obj, glist) - x->x_img_width/2,
-                    text_ypix(&x->x_obj, glist) - x->x_img_height/2,
-                    text_xpix(&x->x_obj, glist) + x->x_img_width/2,
-                    text_ypix(&x->x_obj, glist) + x->x_img_height/2, x);
-            }
-            else
-            {
-                sys_vgui(".x%x.c create prect %d %d %d %d \
-                        -tags %xSEL -strokewidth 1 -stroke $pd_colors(selection)\n",
-                    glist_getcanvas(glist),
-                    text_xpix(&x->x_obj, glist) - x->x_width/2,
-                    text_ypix(&x->x_obj, glist) - x->x_height/2,
-                    text_xpix(&x->x_obj, glist) + x->x_width/2,
-                    text_ypix(&x->x_obj, glist) + x->x_height/2, x);
-            }
-            gui_vmess("gui_image_toggle_border", "xxi", glist_getcanvas(glist),
-                x, 1);
+        int height, width, x1, x2, y1, y2;
+
+        // Borrowing getrect code here since getrect has also an exception
+        // where non-edit mode stuff does not yield proper info (x1 is made
+        // equal to x2 and therefore object's selection box rendered invisible)
+        if (!x->x_gop_spill && (x->x_img_width + x->x_img_height) >= 2) {
+            width = x->x_img_width;
+            height = x->x_img_height;
         }
-        gui_vmess("gui_gobj_select", "xx", glist_getcanvas(glist), x);
-        //if (glist->gl_owner && !glist_istoplevel(glist))
-        //sys_vgui(".x%x.c addtag selected withtag %xS\n", glist_getcanvas(glist), x);
-        //sys_vgui(".x%x.c addtag selected withtag %xMT\n", glist_getcanvas(glist), x);
-        //sys_vgui(".x%x.c addtag selected withtag %xSEL\n", glist_getcanvas(glist), x);
-    }
-    else
-    {
-        //sys_vgui("catch {.x%x.c delete %xSEL}\n",
-        //glist_getcanvas(glist), x);
-        //if (glist->gl_owner && !glist_istoplevel(glist))
-        //sys_vgui(".x%zx.c dtag %xS selected\n", glist_getcanvas(glist), x);
-        //sys_vgui(".x%zx.c dtag %xMT selected\n", glist_getcanvas(glist), x);
-        gui_vmess("gui_image_toggle_border", "xxi", glist_getcanvas(glist),
-            x, 0);
-        gui_vmess("gui_gobj_deselect", "xx", glist_getcanvas(glist), x);
+        else
+        {
+            width = x->x_width;
+            height = x->x_height;
+        }
+        x1 = text_xpix(&x->x_obj, glist) - width/2;
+        y1 = text_ypix(&x->x_obj, glist) - height/2;
+        x2 = text_xpix(&x->x_obj, glist) + width/2;
+        y2 = text_ypix(&x->x_obj, glist) + height/2;
+
+        if (state)
+        {
+            gui_vmess("gui_image_toggle_border", "xxiiiii", glist, x,
+                x1, y1, x2 - x1, y2 - y1, 1);
+            gui_vmess("gui_gobj_select", "xx", glist, x);
+        }
+        else
+        {
+            gui_vmess("gui_image_toggle_border", "xxiiiii", glist, x,
+                x1, y1, x2 - x1, y2 - y1, 0);
+            gui_vmess("gui_gobj_deselect", "xx", glist, x);
+        }
     }
 }
 
@@ -331,7 +326,6 @@ static t_widgetbehavior image_widgetbehavior;
 
 static int image_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix, int shift, int alt, int dbl, int doit)
 {
-    //printf("doit=%d\n", doit);
     t_image *x = (t_image *)z;
     if (doit && x->x_click)
         outlet_bang(x->x_obj.ob_outlet);

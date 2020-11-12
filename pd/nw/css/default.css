@@ -553,6 +553,16 @@ text.activated {
     fill: gray !important;
 }
 
+/* special case for ggee/image since it draws border only when selected */
+.image.border {
+    stroke: #e87216;
+    display: default;
+}
+
+.noselect .image.border {
+    display: none;
+}
+
 #console_find {
     width: 100%;
     height: 1em;
