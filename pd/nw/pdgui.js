@@ -4512,8 +4512,8 @@ function gui_image_free(obj_tag) {
     var c = pd_cache.get(obj_tag);
     if (c) {
         pd_cache.free(obj_tag); // empty the image(s)
-    } else {
-        post("image: warning: no image data in cache to free");
+    /*} else {
+        post("image: warning: no image data in cache to free"); */
     }
 }
 
@@ -4537,8 +4537,8 @@ function img_size_setter(cid, svg_image_tag, type, data, tk_anchor) {
         // ico@vt.edu here we subtract one from the svg interpretation
         // of the anchor to keep it 1.x and K12 mode compatible
         configure_item(get_item(cid, svg_image_tag), {
-            width: w + 1,
-            height: h + 1,
+            width: w,
+            height: h,
             x: tk_anchor === "center" ? 0 - w/2 : 0,
             y: tk_anchor === "center" ? 0 - h/2 : 0
         });
@@ -4698,10 +4698,10 @@ function gui_image_toggle_border(cid, tag, x, y, w, h, onoff) {
             var b = create_item(cid, "path", {
                 "stroke-width": "1",
                 fill: "none",
-                d: ["m", -w/2, -h/2, w+1, 0,
-                    "m", 0, 0, 0, h+1,
-                    "m", 0, 0, -w-1, 0,
-                    "m", 0, 0, 0, -h-1
+                d: ["m", -w/2, -h/2, w, 0,
+                    "m", 0, 0, 0, h,
+                    "m", 0, 0, -w, 0,
+                    "m", 0, 0, 0, -h
                    ].join(" "),
                 visibility: "visible",
                 class: "image border"
@@ -6032,6 +6032,12 @@ function gui_iemgui_dialog(did, attr_array) {
         attr_array_to_object(attr_array));
 }
 
+function gui_image_dialog(did, attr_array) {
+    create_window(did, "iemgui", 298, 414-5,
+        popup_coords[2] + 10, popup_coords[3] + 60,
+        attr_array_to_object(attr_array));
+}
+
 function gui_dialog_set_field(did, field_name, value) {
     var elem = dialogwin[did].window.document.getElementsByName(field_name)[0];
     elem.value = value;
@@ -6501,6 +6507,8 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
     font_size, font_width, font_height, is_gop, state, sel_start, sel_end) {
     var range, svg_view, p,
         gobj = get_gobj(cid, tag), zoom;
+    //post("gui_textarea tag="+tag+" type="+type+" text=<"+
+    //    text+"> state="+state+" gobj="+gobj);
     gui(cid).get_nw_window(function(nw_win) {
         zoom = nw_win.zoomLevel;
     });
@@ -6535,12 +6543,16 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
 	        gui(cid).get_gobj(tag).q(".box_text", { visibility: "hidden" });
 	    } else {
 	    	// Anything else but message
-			configure_item(gobj, { visibility: "hidden" });
-            // Explicitly also hide text since it sometimes remains visible
-            // (e.g. when a multi-line comment is activated and user deletes
-            // a line or more from it, sometimes the original text is still
-            // visible)
-            gui(cid).get_gobj(tag).q(".box_text", { visibility: "hidden" });
+            // Here we check if gobj is valid as some externals (e.g. ggee/image)
+            // do not handle hiding here because they have non-convetional elements
+            if (gobj) {
+		        configure_item(gobj, { visibility: "hidden" });
+                // Explicitly also hide text since it sometimes remains visible
+                // (e.g. when a multi-line comment is activated and user deletes
+                // a line or more from it, sometimes the original text is still
+                // visible)
+                gui(cid).get_gobj(tag).q(".box_text", { visibility: "hidden" });
+            }
 	    }
 
         p = patchwin[cid].window.document.createElement("p");
