@@ -1,10 +1,10 @@
 #N canvas 429 34 607 627 10;
-#X obj 74 489 ggee/image @pd_extra/ggee/logo100.gif 0;
+#X obj 40 439 ggee/image @pd_extra/ggee/logo100.gif 0 0;
 #X text 38 14 Incorporate images. This is instantiated with;
 #X text 38 34 [image logo100.gif];
 #X msg 40 395 open \$1;
-#X obj 40 351 bng 15 250 50 0 empty empty empty 0 -6 0 10 -4034 -1
--1;
+#X obj 40 351 bng 15 250 50 0 empty empty empty 0 -6 0 10 #00fc04 #000000
+#000000;
 #X obj 40 372 openpanel;
 #N canvas 369 218 396 195 META 0;
 #X text 12 125 HELP_PATCH_AUTHORS "pd meta" information added by Jonathan
@@ -17,30 +17,30 @@ Wilkes for Pd version 0.42.;
 image;
 #X text 12 65 INLET_0 open gopspill gopspill_size click;
 #X restore 550 603 pd META;
-#X obj 162 489 ggee/image @pd_extra/ggee/logo100.gif 1;
+#X obj 155 482 ggee/image @pd_extra/ggee/logo100.gif 1 0;
 #X obj 155 348 loadbang;
 #X msg 155 371 1;
 #X msg 155 395 gopspill \$1;
 #X floatatom 184 371 5 0 0 0 - - -, f 5;
-#X obj 259 558 ggee/image @pd_extra/ggee/empty_image.png 0;
+#X obj 247 546 ggee/image @pd_extra/ggee/empty_image.png 0 0;
 #X msg 247 505 open \$1;
-#X obj 247 461 bng 15 250 50 0 empty empty empty 0 -6 0 10 -4034 -1
--1;
+#X obj 247 461 bng 15 250 50 0 empty empty empty 0 -6 0 10 #00fc04
+#000000 #000000;
 #X obj 247 482 openpanel;
 #X text 38 50 [image] works with .gif \, .ppm \, .pgm and .png image
 formats only., f 64;
 #X text 276 535 this is how an empty imagelooks like when createdwithout
 any parameters;
 #X msg 352 483 click \$1;
-#X obj 352 463 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
-1;
-#X obj 247 582 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
--1 -1;
+#X obj 352 463 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1;
+#X obj 247 582 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
 #X msg 101 291 click \$1;
-#X obj 101 271 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
-1;
-#X obj 155 548 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
--1 -1;
+#X obj 101 271 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1;
+#X obj 155 548 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
 #X text 413 466 toggling click on enablesobject to capture clicksand
 broadcast them as bangsvia its only outlet;
 #X text 39 85 Pd-L2Ork version of [image] also has a special feature

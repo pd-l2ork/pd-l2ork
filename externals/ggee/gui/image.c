@@ -28,6 +28,8 @@ typedef struct _image
     t_symbol* x_receive;
     //int x_selected;
     //t_symbol* send;
+    int x_legacy;
+    int x_img_loaded;
 } t_image;
 
 /* widget helper functions */
@@ -67,6 +69,7 @@ extern int glob_autopatch_connectme;
 
 static void image_drawme(t_image *x, t_glist *glist, int firstime)
 {
+    //post("image_drawme");
     if(gobj_shouldvis((t_gobj *)x, glist))
     {
         t_text *t = (t_text *)x;
@@ -78,11 +81,11 @@ static void image_drawme(t_image *x, t_glist *glist, int firstime)
             // image only. Since we need to wait for the callback from
             // the GUI to determine the custom image size, we can only
             // compensate for the default image
-            if (glob_autopatch_connectme)
+            /*if (glob_autopatch_connectme)
             {
                 x->x_obj.te_xpix += 12;
                 x->x_obj.te_ypix += 12;
-            }
+            }*/
             // since we have shouldvis satisfied, we should be safe doing this?
             // make a new gobj, border, etc.
             gui_vmess("gui_gobj_new", "xssiii",
@@ -106,7 +109,7 @@ static void image_drawme(t_image *x, t_glist *glist, int firstime)
                 glist_getcanvas(glist),
                 rtext_gettag(y), // need to convert to rtext tag
                 x,
-                "center");
+                "nw");              
             //sys_vgui("catch {.x%zx.c delete %xS}\n", glist_getcanvas(glist), x);
             //sys_vgui(".x%x.c create image %d %d -tags %xS\n",
             //    glist_getcanvas(glist),text_xpix(&x->x_obj, glist),
@@ -125,6 +128,15 @@ static void image_drawme(t_image *x, t_glist *glist, int firstime)
                 rtext_gettag(y),
                 text_xpix(&x->x_obj, glist),
                 text_ypix(&x->x_obj, glist));
+            if (x->x_img_loaded)
+            {
+                gui_vmess("gui_ggee_image_offset", "xsxii",
+                    glist_getcanvas(glist),
+                    rtext_gettag(y), // need to convert to rtext tag
+                    x,
+                    (x->x_gop_spill ? -(x->x_img_width/2 - x->x_width/2) : 0),
+                    (x->x_gop_spill ? -(x->x_img_height/2 - x->x_height/2) : 0));  
+            } 
             if (glist_isselected(x->x_glist, (t_gobj *)x) && glist_getcanvas(x->x_glist) == x->x_glist)
             {
                 image_select((t_gobj *)x, glist_getcanvas(x->x_glist), 0);
@@ -173,6 +185,7 @@ static t_symbol *get_filename(t_int argc, t_atom *argv)
 static void image_getrect(t_gobj *z, t_glist *glist,
     int *xp1, int *yp1, int *xp2, int *yp2)
 {
+    //post("image_getrect");
     int width, height;
     t_image* x = (t_image*)z;
 
@@ -185,10 +198,10 @@ static void image_getrect(t_gobj *z, t_glist *glist,
         width = x->x_width;
         height = x->x_height;
     }
-    *xp1 = text_xpix(&x->x_obj, glist) - width/2;
-    *yp1 = text_ypix(&x->x_obj, glist) - height/2;
-    *xp2 = text_xpix(&x->x_obj, glist) + width/2;
-    *yp2 = text_ypix(&x->x_obj, glist) + height/2;
+    *xp1 = text_xpix(&x->x_obj, glist);
+    *yp1 = text_ypix(&x->x_obj, glist);
+    *xp2 = text_xpix(&x->x_obj, glist) + width;
+    *yp2 = text_ypix(&x->x_obj, glist) + height;
 
     // if we have click detection disabled and we are in runmode,
     // return 0 size to allow for click relegation to hidden objects below
@@ -211,7 +224,7 @@ static void image_getrect(t_gobj *z, t_glist *glist,
 static void image_displace(t_gobj *z, t_glist *glist,
     int dx, int dy)
 {
-    //fprintf(stderr,"image displace\n");
+    //post("image_displace");
     t_image *x = (t_image *)z;
     x->x_obj.te_xpix += dx;
     x->x_obj.te_ypix += dy;
@@ -222,7 +235,7 @@ static void image_displace(t_gobj *z, t_glist *glist,
 static void image_displace_wtag(t_gobj *z, t_glist *glist,
     int dx, int dy)
 {
-    //fprintf(stderr,"image displace_wtag\n");
+    //post("image_displace_wtag");
     t_image *x = (t_image *)z;
     x->x_obj.te_xpix += dx;
     x->x_obj.te_ypix += dy;
@@ -256,10 +269,10 @@ static void image_select(t_gobj *z, t_glist *glist, int state)
             width = x->x_width;
             height = x->x_height;
         }
-        x1 = text_xpix(&x->x_obj, glist) - width/2;
-        y1 = text_ypix(&x->x_obj, glist) - height/2;
-        x2 = text_xpix(&x->x_obj, glist) + width/2;
-        y2 = text_ypix(&x->x_obj, glist) + height/2;
+        x1 = text_xpix(&x->x_obj, glist);
+        y1 = text_ypix(&x->x_obj, glist);
+        x2 = text_xpix(&x->x_obj, glist) + width;
+        y2 = text_ypix(&x->x_obj, glist) + height;
 
         t_text *t = (t_text *)x;
         t_rtext *y = glist_findrtext(glist, t);
@@ -297,8 +310,14 @@ static void image_delete(t_gobj *z, t_glist *glist)
 
 static void image_vis(t_gobj *z, t_glist *glist, int vis)
 {
-    //fprintf(stderr,"image_vis %d\n", vis);
+    //post("image_vis");
     t_image* x = (t_image*)z;
+    if (x->x_legacy && !x->x_gop_spill)
+    {
+        //post("vis offset");
+        x->x_obj.te_xpix -= x->x_img_width/2;
+        x->x_obj.te_ypix -= x->x_img_height/2;
+    }
     if (vis)
         image_drawme(x, glist, 1);
     else
@@ -309,11 +328,12 @@ static void image_vis(t_gobj *z, t_glist *glist, int vis)
 
 static void image_save(t_gobj *z, t_binbuf *b)
 {
+    //post("image_save");
     t_image *x = (t_image *)z;
-    binbuf_addv(b, "ssiissi", gensym("#X"), gensym("obj"),
+    binbuf_addv(b, "ssiissii", gensym("#X"), gensym("obj"),
                 x->x_obj.te_xpix, x->x_obj.te_ypix,   
                 atom_getsymbol(binbuf_getvec(x->x_obj.te_binbuf)),
-                x->x_fname, x->x_gop_spill);
+                x->x_fname, x->x_gop_spill, x->x_click);
     binbuf_addv(b, ";");
 }
 
@@ -332,7 +352,8 @@ static t_widgetbehavior image_widgetbehavior;
 
 }*/
 
-static int image_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix, int shift, int alt, int dbl, int doit)
+static int image_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix,
+    int shift, int alt, int dbl, int doit)
 {
     t_image *x = (t_image *)z;
     if (doit && x->x_click)
@@ -361,7 +382,7 @@ static void image_click(t_image *x, t_float f)
 
 static void image_gop_spill(t_image* x, t_floatarg f)
 {
-    x->x_gop_spill = (f >= 0 ? f : 0);
+    x->x_gop_spill = (f == 0 || f == 1 ? f : 0);
     image_displace((t_gobj*)x, x->x_glist, 0.0, 0.0);
 }
 
@@ -372,14 +393,15 @@ static void image_gop_spill_size(t_image* x, t_floatarg f)
     // selection frame around the selection box
     if ((int)f >= 3)
     {
-        x->x_width = (int)f;
-        x->x_height = x->x_width;
+        x->x_width = ((int)f <= x->x_img_width ? (int)f : x->x_img_width);
+        x->x_height = ((int)f <= x->x_img_height ? (int)f : x->x_img_height);
         image_displace((t_gobj*)x, x->x_glist, 0.0, 0.0);
     }
 }
 
 static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
 {
+    x->x_img_loaded = 0;
     x->x_fname = get_filename(argc, argv);
     x->x_img_width = 0;
     x->x_img_height = 0;
@@ -401,7 +423,7 @@ static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
             glist_getcanvas(x->x_glist),
             rtext_gettag(y),
             x,
-            "center");
+            "nw");
         gui_vmess("gui_image_size_callback", "xxs",
             glist_getcanvas(x->x_glist), x, x->x_receive->s_name);
     }
@@ -411,6 +433,7 @@ static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
 
 static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
     //fprintf(stderr,"received w %f h %f should %d spill %d\n", w, h, gobj_shouldvis((t_gobj *)x, glist_getcanvas(x->x_glist)), x->x_gop_spill);
+    x->x_img_loaded = 1;
     x->x_img_width = w;
     x->x_img_height = h;
     if (x->x_img_width + x->x_img_height == 0)
@@ -443,13 +466,23 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
             x->x_img_width,
             x->x_img_height);
         */
+        if (x->x_legacy && !x->x_gop_spill)
+        {
+            //post("callback offset");
+            x->x_obj.te_xpix -= x->x_img_width/2;
+            x->x_obj.te_ypix -= x->x_img_height/2;
+            x->x_legacy = 0;
+            //image_displace((t_gobj *)x, glist_getcanvas_(x->x_glist),
+            //    -(x->x_img_width)/2, -(x->x_img_height)/2);
+        }
+        image_drawme(x, glist_getcanvas(x->x_glist), 0);
 
-        if (glist_isselected(x->x_glist, (t_gobj *)x) && glist_getcanvas(x->x_glist) == x->x_glist)
+        /*if (glist_isselected(x->x_glist, (t_gobj *)x) && glist_getcanvas(x->x_glist) == x->x_glist)
         {
             image_select((t_gobj *)x, glist_getcanvas(x->x_glist), 0);
             image_select((t_gobj *)x, glist_getcanvas(x->x_glist), 1);
         }
-        canvas_fixlinesfor(x->x_glist,(t_text*) x);
+        canvas_fixlinesfor(x->x_glist,(t_text*) x);*/
     }
 }
 
@@ -552,6 +585,8 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
     x->x_img_height = 0;
     x->x_gop_spill = 0;
     x->x_click = 0;
+    x->x_legacy = 0;
+    x->x_img_loaded = 0;
     //x->x_clicked = 0;
     //x->x_selected = 0;
     x->x_fname = get_filename(argc, argv);
@@ -565,7 +600,7 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
     if (argc && argv[0].a_type == A_FLOAT)
     {
         //we have optional gop_spill flag first
-        post("gop_spill succeeded\n");
+        //post("gop_spill succeeded");
         x->x_gop_spill = (int)atom_getfloat(&argv[0]);
         argc--;
         argv++;
@@ -573,10 +608,16 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
     if (argc && argv[0].a_type == A_FLOAT)
     {
         //we have optional click flag first
-        post("click succeeded\n");
+        //post("click succeeded");
         x->x_click = (int)atom_getfloat(&argv[0]);
         argc--;
         argv++;
+    } else {
+        // we are dealing with a legacy object
+        post("detected legacy ggee/image object... translating, so that when the "
+             "patch is saved with the new version of pd-l2ork, it retains the same "
+             "location...");
+        x->x_legacy = 1;        
     }
     // Create default receiver
     char buf[MAXPDSTRING];

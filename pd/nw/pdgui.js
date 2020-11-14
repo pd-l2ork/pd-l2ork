@@ -4534,8 +4534,6 @@ function img_size_setter(cid, svg_image_tag, type, data, tk_anchor) {
     img.onload = function() {
         w = this.width,
         h = this.height;
-        // ico@vt.edu here we subtract one from the svg interpretation
-        // of the anchor to keep it 1.x and K12 mode compatible
         configure_item(get_item(cid, svg_image_tag), {
             width: w,
             height: h,
@@ -4677,6 +4675,18 @@ function gui_gobj_draw_image(cid, tag, image_key, tk_anchor) {
     });
 }
 
+// ico@vt.edu 2020-11-13:
+// Special function just for ggee/image designed to deal with the
+// gop_spill option while supporting the newly introduced compliance
+// with the xpix and ypix corresponding to the true top-left corner
+// of the object's clickable area
+function gui_ggee_image_offset(cid, tag, image_key, xoffset, yoffset) {
+    configure_item(get_item(cid, tag), {
+        x: xoffset,
+        y: yoffset
+    });
+}
+
 function gui_image_size_callback(cid, key, callback) {
     var img = new pd_window.Image(); // create an image in the pd_window context
     img.onload = function() {
@@ -4698,7 +4708,7 @@ function gui_image_toggle_border(cid, tag, x, y, w, h, onoff) {
             var b = create_item(cid, "path", {
                 "stroke-width": "1",
                 fill: "none",
-                d: ["m", -w/2, -h/2, w, 0,
+                d: ["m", 0, 0, w, 0,
                     "m", 0, 0, 0, h,
                     "m", 0, 0, -w, 0,
                     "m", 0, 0, 0, -h
