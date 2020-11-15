@@ -72,25 +72,12 @@ static void image_drawme(t_image *x, t_glist *glist, int firstime)
     //post("image_drawme");
     if(gobj_shouldvis((t_gobj *)x, glist))
     {
-        t_text *t = (t_text *)x;
-        t_rtext *y = glist_findrtext(glist, t);
         if (firstime)
         {
             t_symbol *fname = image_trytoopen(x);
-            // check if we are autopatching and offset for the default
-            // image only. Since we need to wait for the callback from
-            // the GUI to determine the custom image size, we can only
-            // compensate for the default image
-            /*if (glob_autopatch_connectme)
-            {
-                x->x_obj.te_xpix += 12;
-                x->x_obj.te_ypix += 12;
-            }*/
-            // since we have shouldvis satisfied, we should be safe doing this?
-            // make a new gobj, border, etc.
-            gui_vmess("gui_gobj_new", "xssiii",
+            gui_vmess("gui_gobj_new", "xxsiii",
                 glist_getcanvas(glist),
-                rtext_gettag(y),
+                x,
                 "obj",
                 text_xpix(&x->x_obj, glist),
                 text_ypix(&x->x_obj, glist),
@@ -105,9 +92,9 @@ static void image_drawme(t_image *x, t_glist *glist, int firstime)
                     glist_getcanvas(glist), x);
             }
             // draw the new canvas image
-            gui_vmess("gui_gobj_draw_image", "xsxs",
+            gui_vmess("gui_gobj_draw_image", "xxxs",
                 glist_getcanvas(glist),
-                rtext_gettag(y), // need to convert to rtext tag
+                x,
                 x,
                 "nw");              
             //sys_vgui("catch {.x%zx.c delete %xS}\n", glist_getcanvas(glist), x);
@@ -123,16 +110,16 @@ static void image_drawme(t_image *x, t_glist *glist, int firstime)
             //sys_vgui(".x%x.c coords %xS %d %d\n",
             //    glist_getcanvas(glist), x,
             //    text_xpix(&x->x_obj, glist), text_ypix(&x->x_obj, glist));
-            gui_vmess("gui_image_coords", "xsii",
+            gui_vmess("gui_image_coords", "xxii",
                 glist_getcanvas(glist),
-                rtext_gettag(y),
+                x,
                 text_xpix(&x->x_obj, glist),
                 text_ypix(&x->x_obj, glist));
-            if (x->x_img_loaded)
+            if (0 && x->x_img_loaded)
             {
-                gui_vmess("gui_ggee_image_offset", "xsxii",
+                gui_vmess("gui_ggee_image_offset", "xxxii",
                     glist_getcanvas(glist),
-                    rtext_gettag(y), // need to convert to rtext tag
+                    x,
                     x,
                     (x->x_gop_spill ? -(x->x_img_width/2 - x->x_width/2) : 0),
                     (x->x_gop_spill ? -(x->x_img_height/2 - x->x_height/2) : 0));  
@@ -149,9 +136,7 @@ static void image_drawme(t_image *x, t_glist *glist, int firstime)
 
 static void image_erase(t_image* x, t_glist* glist)
 {
-    t_text *t = (t_text *)x;
-    t_rtext *y = glist_findrtext(glist, t);
-    gui_vmess("gui_gobj_erase", "xs", glist_getcanvas(glist), rtext_gettag(y));
+    gui_vmess("gui_gobj_erase", "xx", glist_getcanvas(glist), x);
 }
 
 static t_symbol *get_filename(t_int argc, t_atom *argv)
@@ -250,45 +235,41 @@ static void image_displace_wtag(t_gobj *z, t_glist *glist,
 
 static void image_select(t_gobj *z, t_glist *glist, int state)
 {
-    //fprintf(stderr,"image_select %d\n", state);
+    //post("image_select %d\n", state);
     t_image *x = (t_image *)z;
 
-    if (x->x_glist == glist_getcanvas(x->x_glist))
+    int height, width, x1, x2, y1, y2;
+
+    // Borrowing getrect code here since getrect has also an exception
+    // where non-edit mode stuff does not yield proper info (x1 is made
+    // equal to x2 and therefore object's selection box rendered invisible)
+    if (!x->x_gop_spill && (x->x_img_width + x->x_img_height) >= 2) {
+        width = x->x_img_width;
+        height = x->x_img_height;
+    }
+    else
     {
-        int height, width, x1, x2, y1, y2;
+        width = x->x_width;
+        height = x->x_height;
+    }
+    x1 = text_xpix(&x->x_obj, glist);
+    y1 = text_ypix(&x->x_obj, glist);
+    x2 = text_xpix(&x->x_obj, glist) + width;
+    y2 = text_ypix(&x->x_obj, glist) + height;
 
-        // Borrowing getrect code here since getrect has also an exception
-        // where non-edit mode stuff does not yield proper info (x1 is made
-        // equal to x2 and therefore object's selection box rendered invisible)
-        if (!x->x_gop_spill && (x->x_img_width + x->x_img_height) >= 2) {
-            width = x->x_img_width;
-            height = x->x_img_height;
-        }
-        else
-        {
-            width = x->x_width;
-            height = x->x_height;
-        }
-        x1 = text_xpix(&x->x_obj, glist);
-        y1 = text_ypix(&x->x_obj, glist);
-        x2 = text_xpix(&x->x_obj, glist) + width;
-        y2 = text_ypix(&x->x_obj, glist) + height;
-
-        t_text *t = (t_text *)x;
-        t_rtext *y = glist_findrtext(glist, t);
-
-        if (state)
-        {
-            gui_vmess("gui_image_toggle_border", "xsiiiii", glist, rtext_gettag(y),
+    if (state)
+    {
+        if (x->x_glist == glist_getcanvas(x->x_glist))
+            gui_vmess("gui_image_toggle_border", "xxiiiii", glist, x,
                 x1, y1, x2 - x1, y2 - y1, 1);
-            gui_vmess("gui_gobj_select", "xs", glist, rtext_gettag(y));
-        }
-        else
-        {
-            gui_vmess("gui_image_toggle_border", "xsiiiii", glist, rtext_gettag(y),
+        gui_vmess("gui_gobj_select", "xx", glist_getcanvas(x->x_glist), x);
+    }
+    else
+    {
+        if (x->x_glist == glist_getcanvas(x->x_glist))
+            gui_vmess("gui_image_toggle_border", "xxiiiii", glist, x,
                 x1, y1, x2 - x1, y2 - y1, 0);
-            gui_vmess("gui_gobj_deselect", "xs", glist, rtext_gettag(y));
-        }
+        gui_vmess("gui_gobj_deselect", "xx", glist_getcanvas(x->x_glist), x);
     }
 }
 
@@ -312,12 +293,6 @@ static void image_vis(t_gobj *z, t_glist *glist, int vis)
 {
     //post("image_vis");
     t_image* x = (t_image*)z;
-    if (x->x_legacy && !x->x_gop_spill)
-    {
-        //post("vis offset");
-        x->x_obj.te_xpix -= x->x_img_width/2;
-        x->x_obj.te_ypix -= x->x_img_height/2;
-    }
     if (vis)
         image_drawme(x, glist, 1);
     else
@@ -330,10 +305,10 @@ static void image_save(t_gobj *z, t_binbuf *b)
 {
     //post("image_save");
     t_image *x = (t_image *)z;
-    binbuf_addv(b, "ssiissii", gensym("#X"), gensym("obj"),
+    binbuf_addv(b, "ssiissiii", gensym("#X"), gensym("obj"),
                 x->x_obj.te_xpix, x->x_obj.te_ypix,   
                 atom_getsymbol(binbuf_getvec(x->x_obj.te_binbuf)),
-                x->x_fname, x->x_gop_spill, x->x_click);
+                x->x_fname, x->x_gop_spill, x->x_click, x->x_width);
     binbuf_addv(b, ";");
 }
 
@@ -406,8 +381,6 @@ static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
     x->x_img_width = 0;
     x->x_img_height = 0;
     t_symbol *fname = image_trytoopen(x);
-    t_text *t = (t_text *)x;
-    t_rtext *y = glist_findrtext(x->x_glist, t);
     if (fname) {
         gui_vmess("gui_load_image", "xxs",
             glist_getcanvas(x->x_glist), x, fname->s_name);
@@ -419,9 +392,9 @@ static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
     }
     if (glist_isvisible(glist_getcanvas(x->x_glist)))
     {
-        gui_vmess("gui_image_configure", "xsxs",
+        gui_vmess("gui_image_configure", "xxxs",
             glist_getcanvas(x->x_glist),
-            rtext_gettag(y),
+            x,
             x,
             "nw");
         gui_vmess("gui_image_size_callback", "xxs",
@@ -432,7 +405,8 @@ static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
 }
 
 static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
-    //fprintf(stderr,"received w %f h %f should %d spill %d\n", w, h, gobj_shouldvis((t_gobj *)x, glist_getcanvas(x->x_glist)), x->x_gop_spill);
+    //fprintf(stderr,"received w %f h %f should %d spill %d\n", w, h, \
+        gobj_shouldvis((t_gobj *)x, glist_getcanvas(x->x_glist)), x->x_gop_spill);
     x->x_img_loaded = 1;
     x->x_img_width = w;
     x->x_img_height = h;
@@ -446,7 +420,9 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
             return;
         }
     }
-    if (!gobj_shouldvis((t_gobj *)x, x->x_glist) && !x->x_gop_spill)
+    // removed in the following statement additional condition
+    // as it does not seem necessary: && !x->x_gop_spill
+    if (!gobj_shouldvis((t_gobj *)x, x->x_glist))
     {
             //fprintf(stderr,"erasing\n");
             image_erase(x, glist_getcanvas(x->x_glist));
@@ -466,16 +442,22 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
             x->x_img_width,
             x->x_img_height);
         */
-        if (x->x_legacy && !x->x_gop_spill)
+        if (x->x_legacy)
         {
-            //post("callback offset");
+            post("callback offset");
             x->x_obj.te_xpix -= x->x_img_width/2;
             x->x_obj.te_ypix -= x->x_img_height/2;
             x->x_legacy = 0;
+            //if (x->x_glist != glist_getcanvas(x->x_glist))
+            //    glist_redraw(x->x_glist);
             //image_displace((t_gobj *)x, glist_getcanvas_(x->x_glist),
             //    -(x->x_img_width)/2, -(x->x_img_height)/2);
         }
-        image_drawme(x, glist_getcanvas(x->x_glist), 0);
+        // the following call *must* use x->x_glist, not glist_getcanvas
+        // because otherwise gop objects are erroneously drawn on a parent
+        // canvas' x and y coordinates instead of ones inside the gop
+        // subpatch/abstraction
+        image_drawme(x, x->x_glist, 0);
 
         /*if (glist_isselected(x->x_glist, (t_gobj *)x) && glist_getcanvas(x->x_glist) == x->x_glist)
         {
@@ -589,6 +571,10 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
     x->x_img_loaded = 0;
     //x->x_clicked = 0;
     //x->x_selected = 0;
+
+    // used for the last if statement since we decrement argc below
+    int n_args = argc;
+
     x->x_fname = get_filename(argc, argv);
     if (strlen(x->x_fname->s_name) > 0)
     {
@@ -612,7 +598,17 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
         x->x_click = (int)atom_getfloat(&argv[0]);
         argc--;
         argv++;
-    } else {
+    }
+
+    if (argc && argv[0].a_type == A_FLOAT)
+    {
+        //we have optional click flag first
+        post("width succeeded");
+        x->x_width = (int)atom_getfloat(&argv[0]);
+        argc--;
+        argv++;
+    }
+    else if (n_args > 0) {
         // we are dealing with a legacy object
         post("detected legacy ggee/image object... translating, so that when the "
              "patch is saved with the new version of pd-l2ork, it retains the same "

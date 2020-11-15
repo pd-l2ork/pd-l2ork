@@ -554,12 +554,12 @@ text.activated {
 }
 
 /* special case for ggee/image since it draws border only when selected */
-.image.border {
+.editmode .image.border {
     stroke: #e87216;
-    display: default;
+    display: inline;
 }
 
-.noselect .image.border {
+.image.border {
     display: none;
 }
 
