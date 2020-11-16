@@ -5797,7 +5797,7 @@ void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av)
         cursor to indicate how the click action changes
         NEW: do so only if not doing anything else in edit mode */
     if (x && keynum == 0 &&
-        !strncmp(gotkeysym->s_name, "Alt", 3))
+        !strncmp(gotkeysym->s_name, "Alt", 3) && !autorepeat)
     {
         //fprintf(stderr,"ctrl\n");
         glob_alt = down;
