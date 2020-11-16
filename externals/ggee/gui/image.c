@@ -118,7 +118,7 @@ static void image_drawme(t_image *x, t_glist *glist, int firstime)
                 x,
                 text_xpix(&x->x_obj, glist),
                 text_ypix(&x->x_obj, glist));
-            if (0 && x->x_img_loaded)
+            if (x->x_img_loaded)
             {
                 gui_vmess("gui_ggee_image_offset", "xxxii",
                     glist_getcanvas(glist),
@@ -370,17 +370,34 @@ static void image_gop_spill(t_image* x, t_floatarg f)
     image_displace((t_gobj*)x, x->x_glist, 0.0, 0.0);
 }
 
-static void image_gop_spill_size(t_image* x, t_floatarg f)
+static void image_gop_spill_size(t_image* x, t_floatarg w, t_floatarg h)
 {
-    //printf("image_gop_spill_size=%d\n", (int)f);
+    //post("image_gop_spill_size %d %d", (int)w, (int)h);
     // we need a size of at least 3 to have a meaningful
     // selection frame around the selection box
-    if ((int)f >= 3)
+    if (!x->x_gop_spill)
+        return;
+
+    int changed = 0;
+
+    if ((int)w >= 3)
     {
-        x->x_width = ((int)f <= x->x_img_width ? (int)f : x->x_img_width);
-        x->x_height = ((int)f <= x->x_img_height ? (int)f : x->x_img_height);
-        image_displace((t_gobj*)x, x->x_glist, 0.0, 0.0);
+        x->x_width = ((int)w <= x->x_img_width ? (int)w : x->x_img_width);
+        changed = 1;
     }
+
+    if ((int)h >= 3)
+    {
+        x->x_height = ((int)h <= x->x_img_height ? (int)h : x->x_img_height);
+        changed = 1;
+    }
+    else if (changed)
+    {
+        x->x_height = ((int)w <= x->x_img_height ? (int)w : x->x_img_height);
+    }
+
+    if (changed)
+        image_displace((t_gobj*)x, x->x_glist, 0.0, 0.0);
 }
 
 static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
@@ -509,7 +526,9 @@ static void image_properties(t_gobj *z, t_glist *owner)
     gui_s("visible_height");    gui_i(x->x_img_height);
     gui_s("gop_spill");         gui_i(x->x_gop_spill);
     gui_s("click");             gui_i(x->x_click);
-    gui_s("lock_aspect_ratio"); gui_i(x->x_click); //TODO
+    gui_s("lock_aspect_ratio"); gui_i(x->x_click);      //TODO
+    gui_s("reset_size");        gui_i(x->x_img_width);  //TODO
+    gui_s("reset_height");      gui_i(x->x_img_height); //TODO
     gui_s("send_symbol");       gui_s(x->x_send->s_name);
     gui_s("receive_symbol");    gui_s(x->x_receive->s_name);
     gui_end_array();
@@ -685,7 +704,7 @@ void image_setup(void)
     class_addmethod(image_class, (t_method)image_gop_spill, gensym("gopspill"),
         A_DEFFLOAT, 0);
     class_addmethod(image_class, (t_method)image_gop_spill_size, gensym("gopspill_size"),
-        A_DEFFLOAT, 0);
+        A_DEFFLOAT, A_DEFFLOAT, 0);
     class_addmethod(image_class, (t_method)image_imagesize_callback,\
                      gensym("_imagesize"), A_DEFFLOAT, A_DEFFLOAT, 0);
 
