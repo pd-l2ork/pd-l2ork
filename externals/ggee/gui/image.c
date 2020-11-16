@@ -24,13 +24,16 @@ typedef struct _image
     int x_gop_spill;
     int x_click;
     //t_float x_clicked;
-    t_symbol* x_fname;
-    t_symbol* x_receive;
     //int x_selected;
-    //t_symbol* send;
+    t_symbol* x_fname;
+    t_symbol* x_inlet;
+    t_symbol* x_receive;
+    t_symbol* x_send;
     int x_legacy;
     int x_img_loaded;
 } t_image;
+
+static t_symbol *s_empty;
 
 /* widget helper functions */
 static void image_select(t_gobj *z, t_glist *glist, int state);
@@ -102,7 +105,7 @@ static void image_drawme(t_image *x, t_glist *glist, int firstime)
             //    glist_getcanvas(glist),text_xpix(&x->x_obj, glist),
             //    text_ypix(&x->x_obj, glist), x);
             gui_vmess("gui_image_size_callback", "xxs",
-                glist_getcanvas(glist), x, x->x_receive->s_name);
+                glist_getcanvas(glist), x, x->x_inlet->s_name);
         }
         else
         {
@@ -305,10 +308,12 @@ static void image_save(t_gobj *z, t_binbuf *b)
 {
     //post("image_save");
     t_image *x = (t_image *)z;
-    binbuf_addv(b, "ssiissiii", gensym("#X"), gensym("obj"),
+    binbuf_addv(b, "ssiissiiiss", gensym("#X"), gensym("obj"),
                 x->x_obj.te_xpix, x->x_obj.te_ypix,   
                 atom_getsymbol(binbuf_getvec(x->x_obj.te_binbuf)),
-                x->x_fname, x->x_gop_spill, x->x_click, x->x_width);
+                x->x_fname, x->x_gop_spill, x->x_click, x->x_width,
+                x->x_send, x->x_receive
+                );
     binbuf_addv(b, ";");
 }
 
@@ -332,7 +337,11 @@ static int image_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix,
 {
     t_image *x = (t_image *)z;
     if (doit && x->x_click)
+    {
         outlet_bang(x->x_obj.ob_outlet);
+        if (x->x_send != s_empty && x->x_send->s_thing && x->x_send != x->x_receive)
+            pd_bang(x->x_send->s_thing);
+    }
     // LATER: figure out how to do click on and click off
     // and provide a toggle button behavior instead
     /*{
@@ -398,7 +407,7 @@ static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
             x,
             "nw");
         gui_vmess("gui_image_size_callback", "xxs",
-            glist_getcanvas(x->x_glist), x, x->x_receive->s_name);
+            glist_getcanvas(x->x_glist), x, x->x_inlet->s_name);
     }
     //image_vis((t_gobj *)x, x->x_glist, 0);
     //image_vis((t_gobj *)x, x->x_glist, 1);
@@ -444,7 +453,7 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
         */
         if (x->x_legacy)
         {
-            post("callback offset");
+            //post("callback offset");
             x->x_obj.te_xpix -= x->x_img_width/2;
             x->x_obj.te_ypix -= x->x_img_height/2;
             x->x_legacy = 0;
@@ -493,10 +502,16 @@ static void image_properties(t_gobj *z, t_glist *owner)
 
     gui_start_vmess("gui_image_dialog", "s", gfx_tag);
     gui_start_array();
-    gui_s("type"); gui_s("image");
-    gui_s("width");  gui_i(x->x_width);
-    gui_s("gop_spill"); gui_i(x->x_gop_spill);
-    gui_s("click"); gui_i(x->x_click);
+    gui_s("type");              gui_s("image");
+    gui_s("width");             gui_i(x->x_width);
+    gui_s("height");            gui_i(x->x_height);
+    gui_s("visible_width");     gui_i(x->x_img_width);
+    gui_s("visible_height");    gui_i(x->x_img_height);
+    gui_s("gop_spill");         gui_i(x->x_gop_spill);
+    gui_s("click");             gui_i(x->x_click);
+    gui_s("lock_aspect_ratio"); gui_i(x->x_click); //TODO
+    gui_s("send_symbol");       gui_s(x->x_send->s_name);
+    gui_s("receive_symbol");    gui_s(x->x_receive->s_name);
     gui_end_array();
     gui_end_vmess();
 }
@@ -549,7 +564,11 @@ static void image_free(t_image *x)
 {
     //sys_vgui("image delete img%x\n", x);
     gui_vmess("gui_image_free", "x", x);
-    if (x->x_receive)
+    if (x->x_inlet)
+    {
+        pd_unbind(&x->x_obj.ob_pd,x->x_inlet);
+    }
+    if (x->x_receive != s_empty)
     {
         pd_unbind(&x->x_obj.ob_pd,x->x_receive);
     }
@@ -561,18 +580,20 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
 {
     t_image *x = (t_image *)pd_new(image_class);
     x->x_glist = (t_glist*) canvas_getcurrent();
-    x->x_width = 15;
-    x->x_height = 15;
+    x->x_width = 25;
+    x->x_height = 25;
     x->x_img_width = 0;
     x->x_img_height = 0;
     x->x_gop_spill = 0;
     x->x_click = 0;
     x->x_legacy = 0;
     x->x_img_loaded = 0;
+    x->x_send = s_empty;
+    x->x_receive = s_empty;
     //x->x_clicked = 0;
     //x->x_selected = 0;
 
-    // used for the last if statement since we decrement argc below
+    // used for the last if statement since we decrement the argc below
     int n_args = argc;
 
     x->x_fname = get_filename(argc, argv);
@@ -585,7 +606,6 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
     }
     if (argc && argv[0].a_type == A_FLOAT)
     {
-        //we have optional gop_spill flag first
         //post("gop_spill succeeded");
         x->x_gop_spill = (int)atom_getfloat(&argv[0]);
         argc--;
@@ -593,34 +613,56 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
     }
     if (argc && argv[0].a_type == A_FLOAT)
     {
-        //we have optional click flag first
         //post("click succeeded");
         x->x_click = (int)atom_getfloat(&argv[0]);
         argc--;
         argv++;
     }
-
     if (argc && argv[0].a_type == A_FLOAT)
     {
-        //we have optional click flag first
-        post("width succeeded");
+        //post("width succeeded");
         x->x_width = (int)atom_getfloat(&argv[0]);
         argc--;
         argv++;
     }
+    if (argc && argv[0].a_type == A_SYMBOL)
+    {
+        //we have optional click flag first
+        //post("send succeeded");
+        if (argv[0].a_type == A_SYMBOL)
+            x->x_send = atom_getsymbolarg(0, argc, argv);
+        else
+            pd_error(x, "image: invalid send format--must be a symbol.");
+        argc--;
+        argv++;
+    }
+    if (argc && argv[0].a_type == A_SYMBOL)
+    {
+        //we have optional click flag first
+        //post("receive succeeded");
+        if (argv[0].a_type == A_SYMBOL)
+            x->x_receive = atom_getsymbolarg(0, argc, argv);
+        else
+            pd_error(x, "image: invalid receive format--must be a symbol.");
+        argc--;
+        argv++;
+    }
     else if (n_args > 0) {
-        // we are dealing with a legacy object
-        post("detected legacy ggee/image object... translating, so that when the "
-             "patch is saved with the new version of pd-l2ork, it retains the same "
-             "location...");
+        // we are dealing with a legacy object and NOT a newly instantiated object
+        // which has no arguments
+        post("image: detected legacy patch... translating, so that when the "
+             "patch is saved with the new version of pd-l2ork, the image "
+             "object retains the same location...");
         x->x_legacy = 1;        
     }
     // Create default receiver
     char buf[MAXPDSTRING];
     sprintf(buf, "#%zx", (t_uint)x);
-    x->x_receive = gensym(buf);
-    pd_bind(&x->x_obj.ob_pd, x->x_receive);
+    x->x_inlet = gensym(buf);
+    pd_bind(&x->x_obj.ob_pd, x->x_inlet);
     outlet_new(&x->x_obj, &s_bang);
+    if (x->x_receive != s_empty)
+        pd_bind(&x->x_obj.ob_pd, x->x_receive);    
     //outlet_new(&x->x_obj, &s_float);
     return (x);
 }
@@ -651,4 +693,6 @@ void image_setup(void)
     class_setwidget(image_class, &image_widgetbehavior);
     class_setsavefn(image_class, image_save);
     class_setpropertiesfn(image_class, image_properties);
+
+    s_empty = gensym("empty");
 }
