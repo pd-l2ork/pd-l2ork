@@ -3,6 +3,7 @@
 #include "g_canvas.h"
 #include "s_stuff.h"
 #include <stdio.h>
+#include <g_all_guis.h>
 
 #ifdef _MSC_VER
 #pragma warning( disable : 4244 )
@@ -15,8 +16,7 @@ static t_class *image_class;
 
 typedef struct _image
 {
-    t_object x_obj;
-    t_glist * x_glist;
+    t_iemgui x_gui;
     int x_width;
     int x_height;
     int x_img_width;
@@ -27,13 +27,11 @@ typedef struct _image
     //int x_selected;
     t_symbol* x_fname;
     t_symbol* x_inlet;
-    t_symbol* x_receive;
-    t_symbol* x_send;
     int x_legacy;
     int x_img_loaded;
 } t_image;
 
-static t_symbol *s_empty;
+extern t_symbol *s_image_empty;
 
 /* widget helper functions */
 static void image_select(t_gobj *z, t_glist *glist, int state);
@@ -51,11 +49,13 @@ t_symbol *image_trytoopen(t_image* x)
     {
         return 0;
     }
-    t_glist *glist = glist_getcanvas(x->x_glist);
-    canvas_makefilename(glist_getcanvas(x->x_glist), x->x_fname->s_name,
-        fname, FILENAME_MAX);
+    canvas_makefilename(
+        glist_getcanvas(x->x_gui.x_glist),
+        x->x_fname->s_name,
+        fname, FILENAME_MAX
+        );
     // try to open the file
-    if (file = sys_fopen(fname, "r"))
+    if ((file = sys_fopen(fname, "r")))
     {
         sys_fclose(file);
         return gensym(fname);
@@ -82,8 +82,8 @@ static void image_drawme(t_image *x, t_glist *glist, int firstime)
                 glist_getcanvas(glist),
                 x,
                 "obj",
-                text_xpix(&x->x_obj, glist),
-                text_ypix(&x->x_obj, glist),
+                text_xpix(&x->x_gui.x_obj, glist),
+                text_ypix(&x->x_gui.x_obj, glist),
                 glist_istoplevel(glist));
             if (fname) {
                 gui_vmess("gui_load_image", "xxs",
@@ -116,8 +116,8 @@ static void image_drawme(t_image *x, t_glist *glist, int firstime)
             gui_vmess("gui_image_coords", "xxii",
                 glist_getcanvas(glist),
                 x,
-                text_xpix(&x->x_obj, glist),
-                text_ypix(&x->x_obj, glist));
+                text_xpix(&x->x_gui.x_obj, glist),
+                text_ypix(&x->x_gui.x_obj, glist));
             if (x->x_img_loaded)
             {
                 gui_vmess("gui_ggee_image_offset", "xxxii",
@@ -127,12 +127,13 @@ static void image_drawme(t_image *x, t_glist *glist, int firstime)
                     (x->x_gop_spill ? -(x->x_img_width/2 - x->x_width/2) : 0),
                     (x->x_gop_spill ? -(x->x_img_height/2 - x->x_height/2) : 0));  
             } 
-            if (glist_isselected(x->x_glist, (t_gobj *)x) && glist_getcanvas(x->x_glist) == x->x_glist)
+            if (glist_isselected(x->x_gui.x_glist, (t_gobj *)x) &&
+                glist_getcanvas(x->x_gui.x_glist) == x->x_gui.x_glist)
             {
-                image_select((t_gobj *)x, glist_getcanvas(x->x_glist), 0);
-                image_select((t_gobj *)x, glist_getcanvas(x->x_glist), 1);
+                image_select((t_gobj *)x, glist_getcanvas(x->x_gui.x_glist), 0);
+                image_select((t_gobj *)x, glist_getcanvas(x->x_gui.x_glist), 1);
             }
-            canvas_fixlinesfor(x->x_glist, (t_text*)x);
+            canvas_fixlinesfor(x->x_gui.x_glist, (t_text*)x);
         }
     }
 }
@@ -186,10 +187,10 @@ static void image_getrect(t_gobj *z, t_glist *glist,
         width = x->x_width;
         height = x->x_height;
     }
-    *xp1 = text_xpix(&x->x_obj, glist);
-    *yp1 = text_ypix(&x->x_obj, glist);
-    *xp2 = text_xpix(&x->x_obj, glist) + width;
-    *yp2 = text_ypix(&x->x_obj, glist) + height;
+    *xp1 = text_xpix(&x->x_gui.x_obj, glist);
+    *yp1 = text_ypix(&x->x_gui.x_obj, glist);
+    *xp2 = text_xpix(&x->x_gui.x_obj, glist) + width;
+    *yp2 = text_ypix(&x->x_gui.x_obj, glist) + height;
 
     // if we have click detection disabled and we are in runmode,
     // return 0 size to allow for click relegation to hidden objects below
@@ -214,8 +215,8 @@ static void image_displace(t_gobj *z, t_glist *glist,
 {
     //post("image_displace");
     t_image *x = (t_image *)z;
-    x->x_obj.te_xpix += dx;
-    x->x_obj.te_ypix += dy;
+    x->x_gui.x_obj.te_xpix += dx;
+    x->x_gui.x_obj.te_ypix += dy;
     image_drawme(x, glist, 0);
     canvas_fixlinesfor(glist,(t_text*) x);
 }
@@ -225,8 +226,8 @@ static void image_displace_wtag(t_gobj *z, t_glist *glist,
 {
     //post("image_displace_wtag");
     t_image *x = (t_image *)z;
-    x->x_obj.te_xpix += dx;
-    x->x_obj.te_ypix += dy;
+    x->x_gui.x_obj.te_xpix += dx;
+    x->x_gui.x_obj.te_ypix += dy;
     /*sys_vgui(".x%x.c coords %xSEL %d %d %d %d\n",
            glist_getcanvas(glist), x,
            text_xpix(&x->x_obj, glist), text_ypix(&x->x_obj, glist),
@@ -255,24 +256,24 @@ static void image_select(t_gobj *z, t_glist *glist, int state)
         width = x->x_width;
         height = x->x_height;
     }
-    x1 = text_xpix(&x->x_obj, glist);
-    y1 = text_ypix(&x->x_obj, glist);
-    x2 = text_xpix(&x->x_obj, glist) + width;
-    y2 = text_ypix(&x->x_obj, glist) + height;
+    x1 = text_xpix(&x->x_gui.x_obj, glist);
+    y1 = text_ypix(&x->x_gui.x_obj, glist);
+    x2 = text_xpix(&x->x_gui.x_obj, glist) + width;
+    y2 = text_ypix(&x->x_gui.x_obj, glist) + height;
 
     if (state)
     {
-        if (x->x_glist == glist_getcanvas(x->x_glist))
+        if (x->x_gui.x_glist == glist_getcanvas(x->x_gui.x_glist))
             gui_vmess("gui_image_toggle_border", "xxiiiii", glist, x,
                 x1, y1, x2 - x1, y2 - y1, 1);
-        gui_vmess("gui_gobj_select", "xx", glist_getcanvas(x->x_glist), x);
+        gui_vmess("gui_gobj_select", "xx", glist_getcanvas(x->x_gui.x_glist), x);
     }
     else
     {
-        if (x->x_glist == glist_getcanvas(x->x_glist))
+        if (x->x_gui.x_glist == glist_getcanvas(x->x_gui.x_glist))
             gui_vmess("gui_image_toggle_border", "xxiiiii", glist, x,
                 x1, y1, x2 - x1, y2 - y1, 0);
-        gui_vmess("gui_gobj_deselect", "xx", glist_getcanvas(x->x_glist), x);
+        gui_vmess("gui_gobj_deselect", "xx", glist_getcanvas(x->x_gui.x_glist), x);
     }
 }
 
@@ -308,12 +309,14 @@ static void image_save(t_gobj *z, t_binbuf *b)
 {
     //post("image_save");
     t_image *x = (t_image *)z;
+    t_symbol *bflcol[3];
+    t_symbol *srl[3];
+    iemgui_save(&x->x_gui, srl, bflcol);
     binbuf_addv(b, "ssiissiiiss", gensym("#X"), gensym("obj"),
-                x->x_obj.te_xpix, x->x_obj.te_ypix,   
-                atom_getsymbol(binbuf_getvec(x->x_obj.te_binbuf)),
-                x->x_fname, x->x_gop_spill, x->x_click, x->x_width,
-                x->x_send, x->x_receive
-                );
+                x->x_gui.x_obj.te_xpix, x->x_gui.x_obj.te_ypix,   
+                atom_getsymbol(binbuf_getvec(x->x_gui.x_obj.te_binbuf)),
+                x->x_fname, x->x_gop_spill, x->x_click, x->x_gui.x_w,
+                srl[0], srl[1]);
     binbuf_addv(b, ";");
 }
 
@@ -338,9 +341,7 @@ static int image_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix,
     t_image *x = (t_image *)z;
     if (doit && x->x_click)
     {
-        outlet_bang(x->x_obj.ob_outlet);
-        if (x->x_send != s_empty && x->x_send->s_thing && x->x_send != x->x_receive)
-            pd_bang(x->x_send->s_thing);
+        iemgui_out_bang(&x->x_gui, 0, 1);
     }
     // LATER: figure out how to do click on and click off
     // and provide a toggle button behavior instead
@@ -367,7 +368,7 @@ static void image_click(t_image *x, t_float f)
 static void image_gop_spill(t_image* x, t_floatarg f)
 {
     x->x_gop_spill = (f == 0 || f == 1 ? f : 0);
-    image_displace((t_gobj*)x, x->x_glist, 0.0, 0.0);
+    image_displace((t_gobj*)x, x->x_gui.x_glist, 0.0, 0.0);
 }
 
 static void image_gop_spill_size(t_image* x, t_floatarg w, t_floatarg h)
@@ -397,7 +398,7 @@ static void image_gop_spill_size(t_image* x, t_floatarg w, t_floatarg h)
     }
 
     if (changed)
-        image_displace((t_gobj*)x, x->x_glist, 0.0, 0.0);
+        image_displace((t_gobj*)x, x->x_gui.x_glist, 0.0, 0.0);
 }
 
 static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
@@ -409,22 +410,22 @@ static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
     t_symbol *fname = image_trytoopen(x);
     if (fname) {
         gui_vmess("gui_load_image", "xxs",
-            glist_getcanvas(x->x_glist), x, fname->s_name);
+            glist_getcanvas(x->x_gui.x_glist), x, fname->s_name);
     }
     else
     {
         gui_vmess("gui_load_default_image", "xx",
-            glist_getcanvas(x->x_glist), x);
+            glist_getcanvas(x->x_gui.x_glist), x);
     }
-    if (glist_isvisible(glist_getcanvas(x->x_glist)))
+    if (glist_isvisible(glist_getcanvas(x->x_gui.x_glist)))
     {
         gui_vmess("gui_image_configure", "xxxs",
-            glist_getcanvas(x->x_glist),
+            glist_getcanvas(x->x_gui.x_glist),
             x,
             x,
             "nw");
         gui_vmess("gui_image_size_callback", "xxs",
-            glist_getcanvas(x->x_glist), x, x->x_inlet->s_name);
+            glist_getcanvas(x->x_gui.x_glist), x, x->x_inlet->s_name);
     }
     //image_vis((t_gobj *)x, x->x_glist, 0);
     //image_vis((t_gobj *)x, x->x_glist, 1);
@@ -448,10 +449,10 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
     }
     // removed in the following statement additional condition
     // as it does not seem necessary: && !x->x_gop_spill
-    if (!gobj_shouldvis((t_gobj *)x, x->x_glist))
+    if (!gobj_shouldvis((t_gobj *)x, x->x_gui.x_glist))
     {
             //fprintf(stderr,"erasing\n");
-            image_erase(x, glist_getcanvas(x->x_glist));
+            image_erase(x, glist_getcanvas(x->x_gui.x_glist));
     }
     else
     {
@@ -471,8 +472,8 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
         if (x->x_legacy)
         {
             //post("callback offset");
-            x->x_obj.te_xpix -= x->x_img_width/2;
-            x->x_obj.te_ypix -= x->x_img_height/2;
+            x->x_gui.x_obj.te_xpix -= x->x_img_width/2;
+            x->x_gui.x_obj.te_ypix -= x->x_img_height/2;
             x->x_legacy = 0;
             //if (x->x_glist != glist_getcanvas(x->x_glist))
             //    glist_redraw(x->x_glist);
@@ -483,7 +484,7 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
         // because otherwise gop objects are erroneously drawn on a parent
         // canvas' x and y coordinates instead of ones inside the gop
         // subpatch/abstraction
-        image_drawme(x, x->x_glist, 0);
+        image_drawme(x, x->x_gui.x_glist, 0);
 
         /*if (glist_isselected(x->x_glist, (t_gobj *)x) && glist_getcanvas(x->x_glist) == x->x_glist)
         {
@@ -494,10 +495,66 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
     }
 }
 
+static void image__clickhook(t_scalehandle *sh, int newstate)
+{
+    post("image__clickhook");
+    t_image *x = (t_image *)(sh->h_master);
+    if (newstate)
+    {
+        canvas_apply_setundo(x->x_gui.x_glist, (t_gobj *)x);
+    }
+    if (sh->h_scale)
+    {
+        int x1, y1, x2, y2;
+        image_getrect((t_gobj *)x, x->x_gui.x_glist, &x1, &y1, &x2, &y2);
+        sh->h_adjust_x = sh->h_offset_x - (x2-x1);
+        sh->h_adjust_y = sh->h_offset_y - (y2-y1);
+        /* Hack to set the cursor since we're doing and end-run
+           around canas_doclick here */
+    }
+    sh->h_dragon = newstate;
+}
+
+static void image__motionhook(t_scalehandle *sh, t_floatarg mouse_x, t_floatarg mouse_y)
+{
+    post("image__motionhook");
+    if (sh->h_scale)
+    {
+        t_image *x = (t_image *)(sh->h_master);
+
+        int width = (sh->h_constrain == CURSOR_EDITMODE_RESIZE_Y) ?
+            text_xpix(&x->x_gui.x_obj, x->x_gui.x_glist) :
+            (int)mouse_x - text_xpix(&x->x_gui.x_obj, x->x_gui.x_glist) -
+                sh->h_adjust_x;
+        int height = (sh->h_constrain == CURSOR_EDITMODE_RESIZE_X) ?
+            text_ypix(&x->x_gui.x_obj, x->x_gui.x_glist) :
+            (int)mouse_y - text_ypix(&x->x_gui.x_obj, x->x_gui.x_glist) -
+                sh->h_adjust_y;
+        x->x_gui.x_w  = maxi(width, 3);
+        x->x_gui.x_h = maxi(height, 3);
+
+        scalehandle_drag_scale(sh);
+        //TODO: update image
+
+        if (glist_isvisible(x->x_gui.x_glist))
+        {
+            //my_canvas_draw_move(x, x->x_gui.x_glist);
+            //scalehandle_unclick_scale(sh);
+        }
+
+        int properties = gfxstub_haveproperties((void *)x);
+        if (properties)
+        {
+            //properties_set_field_int(properties,"rng.min_ent",width);
+            //properties_set_field_int(properties,"rng.max_ent",height);
+        }
+    }
+}
+
 static void image_properties(t_gobj *z, t_glist *owner)
 {
     t_image *x = (t_image *)z;
-    char buf[800], *gfx_tag;
+    char /*buf[800],*/ *gfx_tag;
 
     /*
     sprintf(buf, "pdtk_iemgui_dialog %%s |nbx| \
@@ -515,22 +572,23 @@ static void image_properties(t_gobj *z, t_glist *owner)
         0xffffff & x->x_gui.x_lcol);
     //gfxstub_new(&x->x_gui.x_obj.ob_pd, x, buf);
     */
-    gfx_tag = gfxstub_new2(&x->x_obj.ob_pd, x);
+    gfx_tag = gfxstub_new2(&x->x_gui.x_obj.ob_pd, x);
 
     gui_start_vmess("gui_image_dialog", "s", gfx_tag);
     gui_start_array();
     gui_s("type");              gui_s("image");
-    gui_s("width");             gui_i(x->x_width);
-    gui_s("height");            gui_i(x->x_height);
+    gui_s("file");              gui_s(x->x_fname->s_name); //TODO
+    gui_s("width");             gui_i(x->x_gui.x_w);
+    gui_s("height");            gui_i(x->x_gui.x_h);
     gui_s("visible_width");     gui_i(x->x_img_width);
     gui_s("visible_height");    gui_i(x->x_img_height);
-    gui_s("gop_spill");         gui_i(x->x_gop_spill);
-    gui_s("click");             gui_i(x->x_click);
+    gui_s("gop_spill");         gui_i(x->x_gop_spill);  //RENAME
+    gui_s("click");             gui_i(x->x_click);      //RENAME
     gui_s("lock_aspect_ratio"); gui_i(x->x_click);      //TODO
     gui_s("reset_size");        gui_i(x->x_img_width);  //TODO
     gui_s("reset_height");      gui_i(x->x_img_height); //TODO
-    gui_s("send_symbol");       gui_s(x->x_send->s_name);
-    gui_s("receive_symbol");    gui_s(x->x_receive->s_name);
+    gui_s("send_symbol");       gui_s(x->x_gui.x_snd->s_name);
+    gui_s("receive_symbol");    gui_s(x->x_gui.x_rcv->s_name);
     gui_end_array();
     gui_end_vmess();
 }
@@ -538,6 +596,7 @@ static void image_properties(t_gobj *z, t_glist *owner)
 static void image_dialog(t_image *x, t_symbol *s, int argc,
     t_atom *argv)
 {
+    //TODOLICIOUS
 /*    if (atom_getintarg(19, argc, argv))
         canvas_apply_setundo(x->x_gui.x_glist, (t_gobj *)x);
     x->x_gui.x_w = maxi(atom_getintarg(0, argc, argv),1);
@@ -585,32 +644,38 @@ static void image_free(t_image *x)
     gui_vmess("gui_image_free", "x", x);
     if (x->x_inlet)
     {
-        pd_unbind(&x->x_obj.ob_pd,x->x_inlet);
+        pd_unbind(&x->x_gui.x_obj.ob_pd,x->x_inlet);
     }
-    if (x->x_receive != s_empty)
+    if (x->x_gui.x_rcv != s_empty)
     {
-        pd_unbind(&x->x_obj.ob_pd,x->x_receive);
+        pd_unbind(&x->x_gui.x_obj.ob_pd,x->x_gui.x_rcv);
     }
-    //sys_vgui(".x%x.c delete %xSEL\n", x);
-    //sys_vgui(".x%x.c delete %xS\n", x);
+    if (x->x_gui.x_handle) scalehandle_free(x->x_gui.x_handle);
 }
 
 static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
 {
     t_image *x = (t_image *)pd_new(image_class);
-    x->x_glist = (t_glist*) canvas_getcurrent();
+    x->x_gui.x_glist = (t_glist*) canvas_getcurrent();
     x->x_width = 25;
     x->x_height = 25;
+    x->x_gui.x_w = x->x_width;
+    x->x_gui.x_h = x->x_height;
     x->x_img_width = 0;
     x->x_img_height = 0;
     x->x_gop_spill = 0;
     x->x_click = 0;
     x->x_legacy = 0;
     x->x_img_loaded = 0;
-    x->x_send = s_empty;
-    x->x_receive = s_empty;
+    x->x_gui.x_snd = s_empty;
+    x->x_gui.x_rcv = s_empty;
     //x->x_clicked = 0;
     //x->x_selected = 0;
+    // These are unused and only initialized, so that we can safely use
+    // iemgui calls...
+    x->x_gui.x_bcol = 0x00;
+    x->x_gui.x_fcol = 0x00;
+    x->x_gui.x_lcol = 0x00;
 
     // used for the last if statement since we decrement the argc below
     int n_args = argc;
@@ -641,6 +706,15 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
     {
         //post("width succeeded");
         x->x_width = (int)atom_getfloat(&argv[0]);
+        x->x_gui.x_w = x->x_width;
+        argc--;
+        argv++;
+    }
+    if (argc && argv[0].a_type == A_FLOAT)
+    {
+        //post("height succeeded");
+        x->x_height = (int)atom_getfloat(&argv[0]);
+        x->x_gui.x_h = x->x_height;
         argc--;
         argv++;
     }
@@ -649,7 +723,7 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
         //we have optional click flag first
         //post("send succeeded");
         if (argv[0].a_type == A_SYMBOL)
-            x->x_send = atom_getsymbolarg(0, argc, argv);
+            x->x_gui.x_snd = atom_getsymbolarg(0, argc, argv);
         else
             pd_error(x, "image: invalid send format--must be a symbol.");
         argc--;
@@ -660,7 +734,7 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
         //we have optional click flag first
         //post("receive succeeded");
         if (argv[0].a_type == A_SYMBOL)
-            x->x_receive = atom_getsymbolarg(0, argc, argv);
+            x->x_gui.x_rcv = atom_getsymbolarg(0, argc, argv);
         else
             pd_error(x, "image: invalid receive format--must be a symbol.");
         argc--;
@@ -674,15 +748,23 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
              "object retains the same location...");
         x->x_legacy = 1;        
     }
+    x->x_gui.x_draw = (t_iemfunptr)image_drawme;
     // Create default receiver
     char buf[MAXPDSTRING];
     sprintf(buf, "#%zx", (t_uint)x);
     x->x_inlet = gensym(buf);
-    pd_bind(&x->x_obj.ob_pd, x->x_inlet);
-    outlet_new(&x->x_obj, &s_bang);
-    if (x->x_receive != s_empty)
-        pd_bind(&x->x_obj.ob_pd, x->x_receive);    
+    pd_bind(&x->x_gui.x_obj.ob_pd, x->x_inlet);
+    outlet_new(&x->x_gui.x_obj, &s_bang);
+    if (x->x_gui.x_rcv != s_empty)
+        pd_bind(&x->x_gui.x_obj.ob_pd, x->x_gui.x_rcv);    
     //outlet_new(&x->x_obj, &s_float);
+    x->x_gui.x_handle = scalehandle_new(
+        (t_object *)x,
+        x->x_gui.x_glist,
+        2,
+        image__clickhook,
+        image__motionhook);
+    x->x_gui.x_obj.te_iemgui = 1;
     return (x);
 }
 
@@ -712,6 +794,4 @@ void image_setup(void)
     class_setwidget(image_class, &image_widgetbehavior);
     class_setsavefn(image_class, image_save);
     class_setpropertiesfn(image_class, image_properties);
-
-    s_empty = gensym("empty");
 }

@@ -4720,6 +4720,11 @@ function gui_image_toggle_border(cid, tag, x, y, w, h, onoff) {
             return frag;
         });
     }
+    // here we borrow the mycanvas resize handles
+    // and add 8 to the width since the function below is originally
+    // aimed at mycanvas and its offset
+    post("toggle_border calls handle " + w + " " + h);
+    gui_iemgui_label_show_drag_handle(cid, tag, onoff, w + 8, h, 1);
 }
 
 /*function gui_image_toggle_border(cid, tag, state) {
