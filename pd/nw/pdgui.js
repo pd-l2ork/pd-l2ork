@@ -4544,6 +4544,33 @@ function img_size_setter(cid, svg_image_tag, type, data, tk_anchor) {
     img.src = "data:image/" + type + ";base64," + data;
 }
 
+function img_size_resizable_setter(cid, svg_image_tag, type, data, tk_anchor, w, h, constrain) {
+    var img = new pd_window.window.Image(),
+        imgw, imgh;
+    img.onload = function() {
+        imgw = this.width,
+        imgh = this.height;
+        configure_item(get_item(cid, svg_image_tag), {
+            width: w,
+            height: h,
+            orig_width: imgw,
+            orig_height: imgh,
+            x: tk_anchor === "center" ? 0 - w/2 : 0,
+            y: tk_anchor === "center" ? 0 - h/2 : 0
+        });
+    };
+    img.src = "data:image/" + type + ";base64," + data;
+}
+
+function img_resize(cid, svg_image_tag, w, h, resizemode, aspectratio)
+{
+    configure_item(get_item(cid, svg_image_tag), {
+        preserveAspectRatio: aspectratio > 0 ? "xMinYMin meet" : "none",
+        width: w,
+        height: h
+    }); 
+}
+
 function gui_drawimage_vis(cid, x, y, obj, data, seqno, parent_tag) {
     gui(cid).get_elem(parent_tag) // main <g> within the scalar
     .append(function(frag) {
@@ -4658,7 +4685,10 @@ function gui_load_image(cid, key, filepath) {
 // tof/imagebang. For the meaning of tk_anchor see img_size_setter. This
 // interface assumes there is only one image per gobject. If you try to
 // set more you'll get duplicate ids.
-function gui_gobj_draw_image(cid, tag, image_key, tk_anchor) {
+// ico@vt.edu 2020-11-17: added requested width, height, and constrain
+// aspect ratio which is used by the ggee/image, and in addition the
+// image type (0 = ggee, 1 = moonlib)
+function gui_gobj_draw_image(cid, tag, image_key, tk_anchor, w, h, constrain, type) {
     gui(cid).get_gobj(tag)
     .append(function(frag) {
         var i = create_item(cid, "image", {
@@ -4668,8 +4698,14 @@ function gui_gobj_draw_image(cid, tag, image_key, tk_anchor) {
         i.setAttributeNS("http://www.w3.org/1999/xlink", "href",
             "data:image/" + pd_cache.get(image_key).type + ";base64," +
              pd_cache.get(image_key).data);
-        img_size_setter(cid, tag, pd_cache.get(image_key).type,
-            pd_cache.get(image_key).data, tk_anchor);
+        if (type === 0) {
+            img_size_resizable_setter(cid, tag,
+                pd_cache.get(image_key).type, pd_cache.get(image_key).data,
+                tk_anchor, w, h, constrain);
+        } else {
+            img_size_setter(cid, tag, pd_cache.get(image_key).type,
+                pd_cache.get(image_key).data, tk_anchor);
+        }
         frag.appendChild(i);
         return frag;
     });
@@ -4696,7 +4732,7 @@ function gui_image_size_callback(cid, key, callback) {
         ";base64," + pd_cache.get(key).data;
 }
 
-function gui_image_toggle_border(cid, tag, x, y, w, h, onoff) {
+function gui_image_toggle_border(cid, tag, x, y, w, h, imgw, imgh, onoff) {
     if (onoff == 0) {
         gui(cid).get_gobj(tag)
         .q("path", function(border) {
@@ -4723,8 +4759,8 @@ function gui_image_toggle_border(cid, tag, x, y, w, h, onoff) {
     // here we borrow the mycanvas resize handles
     // and add 8 to the width since the function below is originally
     // aimed at mycanvas and its offset
-    post("toggle_border calls handle " + w + " " + h);
-    gui_iemgui_label_show_drag_handle(cid, tag, onoff, w + 8, h, 1);
+    //post("toggle_border calls handle " + w + " " + h);
+    gui_iemgui_label_show_drag_handle(cid, tag, onoff, imgw + 8, imgh, 1);
 }
 
 /*function gui_image_toggle_border(cid, tag, state) {
@@ -4733,6 +4769,21 @@ function gui_image_toggle_border(cid, tag, x, y, w, h, onoff) {
         visibility: state === 0 ? "hidden" : "visible"
     });
 }*/
+
+function gui_image_update_border(cid, tag, w, h, imgw, imgh) {
+    gui(cid).get_gobj(tag, function(e) {
+        var a = e.querySelectorAll("path");
+        configure_item(a[0], {
+            d: ["m", 0, 0, w, 0,
+                "m", 0, 0, 0, h,
+                "m", 0, 0, -w, 0,
+                "m", 0, 0, 0, -h
+               ].join(" "),
+        });
+    });
+    gui_iemgui_label_show_drag_handle(cid, tag, 0, imgw + 8, imgh, 1);
+    gui_iemgui_label_show_drag_handle(cid, tag, 1, imgw + 8, imgh, 1);
+}
 
 // Switch the data for an existing svg image
 function gui_image_configure(cid, tag, image_key, tk_anchor) {

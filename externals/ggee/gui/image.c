@@ -17,8 +17,8 @@ static t_class *image_class;
 typedef struct _image
 {
     t_iemgui x_gui;
-    int x_width;
-    int x_height;
+    int x_adj_img_width;
+    int x_adj_img_height;
     int x_img_width;
     int x_img_height;
     int x_gop_spill;
@@ -29,13 +29,23 @@ typedef struct _image
     t_symbol* x_inlet;
     int x_legacy;
     int x_img_loaded;
+    int x_constrain;
 } t_image;
+
+// x_gui.x_w and x_h are used for the getbox size. This could be either
+// both the image and selection box size (when gop_spill is off), or only
+// the selection box size (when gop_spill is on)
+
+// x_img_width and x_img_height are the image's original size
+
+// x_adj_img_width and height are adjusted image size (based on user input)
 
 extern t_symbol *s_image_empty;
 
 /* widget helper functions */
 static void image_select(t_gobj *z, t_glist *glist, int state);
 static void image_vis(t_gobj *z, t_glist *glist, int vis);
+static void image_resize(t_image *x, t_glist *glist, int width, int height, int resizemode);
 /* from g_editor.c--we use this to detect if the user has clicked with the
    right button, so that even in runtime they can select ggee/image help
 */
@@ -95,11 +105,16 @@ static void image_drawme(t_image *x, t_glist *glist, int firstime)
                     glist_getcanvas(glist), x);
             }
             // draw the new canvas image
-            gui_vmess("gui_gobj_draw_image", "xxxs",
+            gui_vmess("gui_gobj_draw_image", "xxxsiiii",
                 glist_getcanvas(glist),
                 x,
                 x,
-                "nw");              
+                "nw",
+                x->x_gui.x_w,
+                x->x_gui.x_h,
+                x->x_constrain,
+                0 // this denotes ggee/image object type
+            );
             //sys_vgui("catch {.x%zx.c delete %xS}\n", glist_getcanvas(glist), x);
             //sys_vgui(".x%x.c create image %d %d -tags %xS\n",
             //    glist_getcanvas(glist),text_xpix(&x->x_obj, glist),
@@ -117,16 +132,22 @@ static void image_drawme(t_image *x, t_glist *glist, int firstime)
                 glist_getcanvas(glist),
                 x,
                 text_xpix(&x->x_gui.x_obj, glist),
-                text_ypix(&x->x_gui.x_obj, glist));
+                text_ypix(&x->x_gui.x_obj, glist)
+            );
             if (x->x_img_loaded)
             {
-                gui_vmess("gui_ggee_image_offset", "xxxii",
-                    glist_getcanvas(glist),
-                    x,
-                    x,
-                    (x->x_gop_spill ? -(x->x_img_width/2 - x->x_width/2) : 0),
-                    (x->x_gop_spill ? -(x->x_img_height/2 - x->x_height/2) : 0));  
-            } 
+                if (x->x_gop_spill)
+                    image_resize(x, glist_getcanvas(glist),
+                        x->x_adj_img_width, x->x_adj_img_height, 0);
+                else
+                    gui_vmess("gui_ggee_image_offset", "xxxii",
+                        glist_getcanvas(glist),
+                        x,
+                        x,
+                        (x->x_gop_spill ? -(x->x_adj_img_width/2 - x->x_gui.x_w/2) : 0),
+                        (x->x_gop_spill ? -(x->x_adj_img_height/2 - x->x_gui.x_h/2) : 0)
+                    );
+            }
             if (glist_isselected(x->x_gui.x_glist, (t_gobj *)x) &&
                 glist_getcanvas(x->x_gui.x_glist) == x->x_gui.x_glist)
             {
@@ -174,18 +195,20 @@ static t_symbol *get_filename(t_int argc, t_atom *argv)
 static void image_getrect(t_gobj *z, t_glist *glist,
     int *xp1, int *yp1, int *xp2, int *yp2)
 {
-    //post("image_getrect");
+    post("image_getrect");
     int width, height;
     t_image* x = (t_image*)z;
 
-    if (!x->x_gop_spill && (x->x_img_width + x->x_img_height) >= 2) {
-        width = x->x_img_width;
-        height = x->x_img_height;
+    if (!x->x_gop_spill && (x->x_adj_img_width + x->x_adj_img_height) >= 2) {
+        width = x->x_adj_img_width;
+        height = x->x_adj_img_height;
+        //post("image_getrect A");
     }
     else
     {
-        width = x->x_width;
-        height = x->x_height;
+        width = x->x_gui.x_w;
+        height = x->x_gui.x_h;
+        //post("image_getrect B");
     }
     *xp1 = text_xpix(&x->x_gui.x_obj, glist);
     *yp1 = text_ypix(&x->x_gui.x_obj, glist);
@@ -207,7 +230,7 @@ static void image_getrect(t_gobj *z, t_glist *glist,
             //*yp2 = *yp1;
         //}
     }
-    //fprintf(stderr,"image_getrect %d %d %d %d\n", *xp1, *yp1, *xp2, *yp2);
+    //post("...%d %d %d %d", *xp1, *yp1, *xp2, *yp2);
 }
 
 static void image_displace(t_gobj *z, t_glist *glist,
@@ -247,14 +270,16 @@ static void image_select(t_gobj *z, t_glist *glist, int state)
     // Borrowing getrect code here since getrect has also an exception
     // where non-edit mode stuff does not yield proper info (x1 is made
     // equal to x2 and therefore object's selection box rendered invisible)
-    if (!x->x_gop_spill && (x->x_img_width + x->x_img_height) >= 2) {
-        width = x->x_img_width;
-        height = x->x_img_height;
+    if (!x->x_gop_spill && (x->x_adj_img_width + x->x_adj_img_height) >= 2) {
+        width = x->x_adj_img_width;
+        height = x->x_adj_img_height;
+        //post("image_getrect A");
     }
     else
     {
-        width = x->x_width;
-        height = x->x_height;
+        width = x->x_gui.x_w;
+        height = x->x_gui.x_h;
+        //post("image_getrect B");
     }
     x1 = text_xpix(&x->x_gui.x_obj, glist);
     y1 = text_ypix(&x->x_gui.x_obj, glist);
@@ -264,15 +289,20 @@ static void image_select(t_gobj *z, t_glist *glist, int state)
     if (state)
     {
         if (x->x_gui.x_glist == glist_getcanvas(x->x_gui.x_glist))
-            gui_vmess("gui_image_toggle_border", "xxiiiii", glist, x,
-                x1, y1, x2 - x1, y2 - y1, 1);
+            gui_vmess("gui_image_toggle_border", "xxiiiiiii", glist, x,
+                x1, y1, x2 - x1, y2 - y1,
+                (x2 - x1) + (x->x_adj_img_width/2 - (x2 - x1)/2),
+                (y2 - y1) + (x->x_adj_img_height/2 - (y2 - y1)/2),
+                1
+            );
+        post("toggle border on %d %d", x2-x1, (x2 - x1) + (x->x_adj_img_width/2 - (x2 - x1)/2));
         gui_vmess("gui_gobj_select", "xx", glist_getcanvas(x->x_gui.x_glist), x);
     }
     else
     {
         if (x->x_gui.x_glist == glist_getcanvas(x->x_gui.x_glist))
-            gui_vmess("gui_image_toggle_border", "xxiiiii", glist, x,
-                x1, y1, x2 - x1, y2 - y1, 0);
+            gui_vmess("gui_image_toggle_border", "xxiiiiiii", glist, x,
+                0, 0, 0, 0, 0, 0, 0);
         gui_vmess("gui_gobj_deselect", "xx", glist_getcanvas(x->x_gui.x_glist), x);
     }
 }
@@ -312,11 +342,13 @@ static void image_save(t_gobj *z, t_binbuf *b)
     t_symbol *bflcol[3];
     t_symbol *srl[3];
     iemgui_save(&x->x_gui, srl, bflcol);
-    binbuf_addv(b, "ssiissiiiss", gensym("#X"), gensym("obj"),
+    post("image_save srl %s %s %s", srl[0]->s_name, srl[1]->s_name, srl[2]->s_name);
+    binbuf_addv(b, "ssiissiiiisssiii", gensym("#X"), gensym("obj"),
                 x->x_gui.x_obj.te_xpix, x->x_gui.x_obj.te_ypix,   
                 atom_getsymbol(binbuf_getvec(x->x_gui.x_obj.te_binbuf)),
                 x->x_fname, x->x_gop_spill, x->x_click, x->x_gui.x_w,
-                srl[0], srl[1]);
+                x->x_gui.x_h, srl[0], srl[1], srl[2], x->x_adj_img_width,
+                x->x_adj_img_height, x->x_constrain);
     binbuf_addv(b, ";");
 }
 
@@ -354,6 +386,13 @@ static int image_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix,
         x->x_clicked = 0;
         outlet_float(x->x_obj.ob_outlet, x->x_clicked);
     }*/
+
+    // this is how we catch mouse-up but only if the object calls glist_grab
+    /*else if (dbl == -1)
+    {
+
+    }*/
+
     return(1);
 }
 
@@ -377,24 +416,28 @@ static void image_gop_spill_size(t_image* x, t_floatarg w, t_floatarg h)
     // we need a size of at least 3 to have a meaningful
     // selection frame around the selection box
     if (!x->x_gop_spill)
+    {
+        post("warning: image is ignoring the gop_spill message "
+             "since the gop_spill option is disabled");
         return;
+    }
 
     int changed = 0;
 
     if ((int)w >= 3)
     {
-        x->x_width = ((int)w <= x->x_img_width ? (int)w : x->x_img_width);
+        x->x_gui.x_w = ((int)w <= x->x_adj_img_width ? (int)w : x->x_adj_img_width);
         changed = 1;
     }
 
     if ((int)h >= 3)
     {
-        x->x_height = ((int)h <= x->x_img_height ? (int)h : x->x_img_height);
+        x->x_gui.x_h = ((int)h <= x->x_adj_img_height ? (int)h : x->x_adj_img_height);
         changed = 1;
     }
     else if (changed)
     {
-        x->x_height = ((int)w <= x->x_img_height ? (int)w : x->x_img_height);
+        x->x_gui.x_h = ((int)w <= x->x_adj_img_height ? (int)w : x->x_adj_img_height);
     }
 
     if (changed)
@@ -437,6 +480,11 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
     x->x_img_loaded = 1;
     x->x_img_width = w;
     x->x_img_height = h;
+    if (!x->x_adj_img_width || !x->x_adj_img_height)
+    {
+        x->x_adj_img_width = x->x_img_width;
+        x->x_adj_img_height = x->x_img_height;
+    }
     if (x->x_img_width + x->x_img_height == 0)
     {
         //invalid image
@@ -444,6 +492,7 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
         {
             x->x_fname = gensym("@pd_extra/ggee/empty_image.png");
             image_trytoopen(x);
+            post("callback invalid image");
             return;
         }
     }
@@ -486,13 +535,84 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
         // subpatch/abstraction
         image_drawme(x, x->x_gui.x_glist, 0);
 
-        /*if (glist_isselected(x->x_glist, (t_gobj *)x) && glist_getcanvas(x->x_glist) == x->x_glist)
+        if (glist_isselected(x->x_gui.x_glist, (t_gobj *)x) &&
+            glist_getcanvas(x->x_gui.x_glist) == x->x_gui.x_glist)
         {
-            image_select((t_gobj *)x, glist_getcanvas(x->x_glist), 0);
-            image_select((t_gobj *)x, glist_getcanvas(x->x_glist), 1);
+            image_select((t_gobj *)x, glist_getcanvas(x->x_gui.x_glist), 0);
+            image_select((t_gobj *)x, glist_getcanvas(x->x_gui.x_glist), 1);
         }
-        canvas_fixlinesfor(x->x_glist,(t_text*) x);*/
+        
+        canvas_fixlinesfor(x->x_gui.x_glist,(t_text*) x);
     }
+}
+
+// resizemode is primarily used for the motionhook (constrain resize by neither
+// axis or 0, by X axis or 1, or by Y axis or 2). Most other calls will use 0.
+static void image_resize(t_image *x, t_glist *glist, int width, int height, int resizemode)
+{
+    int c, cb = 0; // constrain and change_border
+    if (x->x_constrain == 2) { // custom
+        c = x->x_gui.x_w / x->x_gui.x_h;
+    } else if (x->x_constrain == 1) {
+        c = x->x_img_width / x->x_img_height;
+    }
+
+    if (x->x_constrain > 0)
+    {
+        switch (resizemode)
+        {
+            case 0:
+                x->x_adj_img_width = maxi(width, 3);
+                x->x_adj_img_height = maxi(width * (1/c), 3);
+                break;
+            case 1:
+                x->x_adj_img_width = maxi(width, 3);
+                x->x_adj_img_height = maxi(width * (1/c), 3);
+                break;
+            case 2:
+                x->x_adj_img_width = maxi(height * c, 3);
+                x->x_adj_img_height = maxi(height, 3);
+                break;
+        }
+    } else {
+        x->x_adj_img_width = maxi(width, 3);
+        x->x_adj_img_height = maxi(height, 3);
+    }
+
+    post("image_resize w=%d h=%d | final %d %d", width, height,
+        x->x_adj_img_width, x->x_adj_img_height);
+
+    gui_vmess("img_resize", "xxiiii",
+        glist_getcanvas(glist),
+        x,
+        x->x_adj_img_width,
+        x->x_adj_img_height,
+        resizemode,
+        x->x_constrain        
+    );
+    gui_vmess("gui_ggee_image_offset", "xxxii",
+        glist_getcanvas(glist),
+        x,
+        x,
+        (x->x_gop_spill ? -(x->x_adj_img_width/2 - x->x_gui.x_w/2) : 0),
+        (x->x_gop_spill ? -(x->x_adj_img_height/2 - x->x_gui.x_h/2) : 0)
+    );
+    if (x->x_gui.x_w > x->x_adj_img_width || !x->x_gop_spill)
+    {
+        x->x_gui.x_w = x->x_adj_img_width;
+        cb = 1;
+    }
+    if (x->x_gui.x_h > x->x_adj_img_height || !x->x_gop_spill)
+    {
+        x->x_gui.x_h = x->x_adj_img_height;
+        cb = 1;
+    }
+    if (cb)
+        gui_vmess("gui_image_update_border", "xxiiii", 
+            glist_getcanvas(glist), x, x->x_gui.x_w, x->x_gui.x_h,
+            x->x_gui.x_w + (x->x_adj_img_width/2 - x->x_gui.x_w/2),
+            x->x_gui.x_h + (x->x_adj_img_height/2 - x->x_gui.x_w/2)
+        );
 }
 
 static void image__clickhook(t_scalehandle *sh, int newstate)
@@ -507,8 +627,9 @@ static void image__clickhook(t_scalehandle *sh, int newstate)
     {
         int x1, y1, x2, y2;
         image_getrect((t_gobj *)x, x->x_gui.x_glist, &x1, &y1, &x2, &y2);
-        sh->h_adjust_x = sh->h_offset_x - (x2-x1);
-        sh->h_adjust_y = sh->h_offset_y - (y2-y1);
+        sh->h_adjust_x = sh->h_offset_x - (x2 + (x->x_adj_img_width/2 - x->x_gui.x_w/2));
+        sh->h_adjust_y = sh->h_offset_y - (y2 + (x->x_adj_img_height/2 - x->x_gui.x_h/2));
+        post("offset %d", sh->h_adjust_x);
         /* Hack to set the cursor since we're doing and end-run
            around canas_doclick here */
     }
@@ -517,29 +638,56 @@ static void image__clickhook(t_scalehandle *sh, int newstate)
 
 static void image__motionhook(t_scalehandle *sh, t_floatarg mouse_x, t_floatarg mouse_y)
 {
-    post("image__motionhook");
+    //post("image__motionhook %d %d", (int)mouse_x, (int)mouse_y);
     if (sh->h_scale)
     {
+        int c; // aspect ratio
         t_image *x = (t_image *)(sh->h_master);
+        post("w=%d h=%d aimgw=%d aimgh=%d | mx=%d my=%d | adjx=%d adjy=%d",
+            x->x_gui.x_w, x->x_gui.x_h, x->x_adj_img_width, x->x_adj_img_height,
+            (int)mouse_x, (int)mouse_y, sh->h_adjust_x, sh->h_adjust_y);
 
         int width = (sh->h_constrain == CURSOR_EDITMODE_RESIZE_Y) ?
-            text_xpix(&x->x_gui.x_obj, x->x_gui.x_glist) :
-            (int)mouse_x - text_xpix(&x->x_gui.x_obj, x->x_gui.x_glist) -
-                sh->h_adjust_x;
+            x->x_adj_img_width :
+            (x->x_gop_spill) ?
+                ((int)mouse_x - (x->x_gui.x_obj.te_xpix + x->x_gui.x_w/2)
+                    - sh->h_adjust_x) * 2 :
+                (int)mouse_x - x->x_gui.x_obj.te_xpix;
         int height = (sh->h_constrain == CURSOR_EDITMODE_RESIZE_X) ?
-            text_ypix(&x->x_gui.x_obj, x->x_gui.x_glist) :
-            (int)mouse_y - text_ypix(&x->x_gui.x_obj, x->x_gui.x_glist) -
-                sh->h_adjust_y;
-        x->x_gui.x_w  = maxi(width, 3);
-        x->x_gui.x_h = maxi(height, 3);
-
-        scalehandle_drag_scale(sh);
-        //TODO: update image
+            x->x_adj_img_height :
+            (x->x_gop_spill) ?
+                ((int)mouse_y - (x->x_gui.x_obj.te_ypix + x->x_gui.x_h/2)
+                    - sh->h_adjust_y) * 2 :
+                (int)mouse_y - x->x_gui.x_obj.te_ypix;
+        post("c img_resize %d %d", width, height);
+        // this function is in g_all_guis.c and in nw.js does nothing
+        // LATER: remove it altogether
+        //scalehandle_drag_scale(sh);
 
         if (glist_isvisible(x->x_gui.x_glist))
         {
             //my_canvas_draw_move(x, x->x_gui.x_glist);
             //scalehandle_unclick_scale(sh);
+            int resizemode = 0; // normal resize
+            if (sh->h_constrain == CURSOR_EDITMODE_RESIZE_X)
+                resizemode = 1;
+            else if (sh->h_constrain == CURSOR_EDITMODE_RESIZE_Y)
+                resizemode = 2;
+
+            image_resize(x, x->x_gui.x_glist, width, height, resizemode);
+
+            gui_vmess("gui_image_update_border", "xxiiiii", 
+                x->x_gui.x_glist, x, x->x_gui.x_w, x->x_gui.x_h,
+                x->x_gui.x_w + (x->x_adj_img_width/2 - x->x_gui.x_w/2),
+                x->x_gui.x_h + (x->x_adj_img_height/2 - x->x_gui.x_w/2)
+            );
+            //scalehandle_unclick_scale(sh);
+            // here instead of scalehandle_unclick_scale we only call
+            // calls inside that function that we need, since reselecting
+            // creates extra image
+            iemgui_io_draw_move(x);
+            canvas_fixlinesfor(x->x_gui.x_glist, (t_text *)x);
+            canvas_getscroll(x->x_gui.x_glist);
         }
 
         int properties = gfxstub_haveproperties((void *)x);
@@ -657,18 +805,20 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
 {
     t_image *x = (t_image *)pd_new(image_class);
     x->x_gui.x_glist = (t_glist*) canvas_getcurrent();
-    x->x_width = 25;
-    x->x_height = 25;
-    x->x_gui.x_w = x->x_width;
-    x->x_gui.x_h = x->x_height;
+    x->x_gui.x_w = 25;
+    x->x_gui.x_h = 25;
     x->x_img_width = 0;
     x->x_img_height = 0;
+    // we initialize adjusted img w/h as zero until we know otherwise
+    // this allows us to set it to same as x_img_width/height in the
+    // image_imagesize_callback. Otherwise, we use it to resize it there
+    x->x_adj_img_width = 0;
+    x->x_adj_img_height = 0;
     x->x_gop_spill = 0;
     x->x_click = 0;
     x->x_legacy = 0;
     x->x_img_loaded = 0;
-    x->x_gui.x_snd = s_empty;
-    x->x_gui.x_rcv = s_empty;
+    x->x_constrain = 1;
     //x->x_clicked = 0;
     //x->x_selected = 0;
     // These are unused and only initialized, so that we can safely use
@@ -681,6 +831,15 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
     int n_args = argc;
 
     x->x_fname = get_filename(argc, argv);
+    
+    // this should take care of the sends and receives (we ignore label since
+    // image does not use it--we may want to rethink this later...)
+    if (argc >= 8)
+        iemgui_new_getnames(&x->x_gui, 4, argv);
+    else
+        iemgui_new_getnames(&x->x_gui, 4, 0);
+
+
     if (strlen(x->x_fname->s_name) > 0)
     {
         //post("get_filename succeeded <%s> <%s>\n", 
@@ -705,38 +864,41 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
     if (argc && argv[0].a_type == A_FLOAT)
     {
         //post("width succeeded");
-        x->x_width = (int)atom_getfloat(&argv[0]);
-        x->x_gui.x_w = x->x_width;
+        x->x_gui.x_w = (int)atom_getfloat(&argv[0]);
         argc--;
         argv++;
     }
     if (argc && argv[0].a_type == A_FLOAT)
     {
         //post("height succeeded");
-        x->x_height = (int)atom_getfloat(&argv[0]);
-        x->x_gui.x_h = x->x_height;
+        x->x_gui.x_h = (int)atom_getfloat(&argv[0]);
         argc--;
         argv++;
     }
-    if (argc && argv[0].a_type == A_SYMBOL)
+    if (argc >= 3)
     {
-        //we have optional click flag first
-        //post("send succeeded");
-        if (argv[0].a_type == A_SYMBOL)
-            x->x_gui.x_snd = atom_getsymbolarg(0, argc, argv);
-        else
-            pd_error(x, "image: invalid send format--must be a symbol.");
+        argc -= 3;
+        argv += 3;
+    }
+    if (argc && argv[0].a_type == A_FLOAT)
+    {
+        //post("adj_img_width succeeded");
+        x->x_adj_img_width = (int)atom_getfloat(&argv[0]);
         argc--;
         argv++;
     }
-    if (argc && argv[0].a_type == A_SYMBOL)
+    if (argc && argv[0].a_type == A_FLOAT)
     {
-        //we have optional click flag first
-        //post("receive succeeded");
-        if (argv[0].a_type == A_SYMBOL)
-            x->x_gui.x_rcv = atom_getsymbolarg(0, argc, argv);
-        else
-            pd_error(x, "image: invalid receive format--must be a symbol.");
+        //post("adj_img_height succeeded");
+        x->x_adj_img_height = (int)atom_getfloat(&argv[0]);
+        argc--;
+        argv++;
+    }
+
+    if (argc && argv[0].a_type == A_FLOAT)
+    {
+        //post("constrain succeeded");
+        x->x_constrain = (int)atom_getfloat(&argv[0]);
         argc--;
         argv++;
     }
@@ -748,6 +910,8 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
              "object retains the same location...");
         x->x_legacy = 1;        
     }
+
+    post("image_new srl %s %s %s", x->x_gui.x_snd->s_name, x->x_gui.x_rcv->s_name, x->x_gui.x_lab->s_name);
     x->x_gui.x_draw = (t_iemfunptr)image_drawme;
     // Create default receiver
     char buf[MAXPDSTRING];
@@ -761,10 +925,18 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
     x->x_gui.x_handle = scalehandle_new(
         (t_object *)x,
         x->x_gui.x_glist,
-        2,
+        1,
         image__clickhook,
         image__motionhook);
-    x->x_gui.x_obj.te_iemgui = 1;
+    sprintf(buf, "_s%zx", (t_uint)x);
+    pd_bind((t_pd *)x->x_gui.x_handle, x->x_gui.x_handle->h_bindsym = gensym(buf));
+    // we set te_iemgui to denote 3rd-party iemgui-based object
+    // 0 = non-iemgui
+    // 1 = iemgui
+    // 2 = 3rd-party iemgui-based that uses mycanvas resize hooks
+    x->x_gui.x_obj.te_iemgui = 2;
+    post("image_new w=%d h=%d adjw=%d adjh=%d", x->x_gui.x_w, x->x_gui.x_h,
+        x->x_adj_img_width, x->x_adj_img_height);
     return (x);
 }
 

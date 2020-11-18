@@ -3731,7 +3731,7 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
             t_selection *sel;
             for (sel = x->gl_editor->e_selection; sel; sel = sel->sel_next)
             {
-                if (sel && ((t_text *)sel->sel_what)->te_iemgui == 1)
+                if (sel && ((t_text *)sel->sel_what)->te_iemgui > 0)
                 {
                     // iemgui exception to hide all handles that may interfere
                     // with the mouse cursor and its ability to move/deselect
@@ -6024,7 +6024,7 @@ void canvas_startmotion(t_canvas *x)
     t_selection *sel;
     for (sel = x->gl_editor->e_selection; sel; sel = sel->sel_next)
     {
-        if (sel && ((t_text *)sel->sel_what)->te_iemgui == 1)
+        if (sel && ((t_text *)sel->sel_what)->te_iemgui > 0)
         {
             // iemgui exception to hide all handles that may interfere
             // with the mouse cursor and its ability to move/deselect

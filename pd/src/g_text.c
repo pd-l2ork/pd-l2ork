@@ -227,8 +227,9 @@ static void canvas_objtext(t_glist *gl, int xpix, int ypix,
     x->te_width = width;
     x->te_type = T_OBJECT;
     /* let's see if iemgui objects did not already set the value to 1,
+       (for 3rd-party iemgui-based objects this is set to 2),
        otherwise set it explicitly to 0 */
-    if (x->te_iemgui != 1)
+    if (x->te_iemgui != 1 || x->te_iemgui != 2)
         x->te_iemgui = 0;
     glist_add(gl, &x->te_g);
 
