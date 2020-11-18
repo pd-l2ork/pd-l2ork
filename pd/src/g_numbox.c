@@ -683,7 +683,7 @@ static void my_numbox_click(t_my_numbox *x, t_floatarg xpos, t_floatarg ypos,
 }
 
 // this one gets called on both mouse down and mouse up (doit reports the mouse state)
-// it is also called when there is motion without dragging, which alos reports doit as 0
+// it is also called when there is motion without dragging, which also reports doit as 0
 static int my_numbox_newclick(t_gobj *z, struct _glist *glist,
     int xpix, int ypix, int shift, int alt, int dbl, int doit)
 {
