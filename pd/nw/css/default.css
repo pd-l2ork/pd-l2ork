@@ -553,14 +553,18 @@ text.activated {
     fill: gray !important;
 }
 
-/* special case for ggee/image since it draws border only when selected */
+/* special case for ggee/image since its border is only visible in edit mode */
 .editmode .image.border {
+    stroke: #ccc;
+    visibility: visible;
+}
+
+.editmode .selected .image.border {
     stroke: #e87216;
-    display: inline;
 }
 
 .image.border {
-    display: none;
+    visibility: hidden;
 }
 
 #console_find {

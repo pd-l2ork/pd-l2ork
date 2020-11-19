@@ -17,19 +17,25 @@ static t_class *image_class;
 typedef struct _image
 {
     t_iemgui x_gui;
-    int x_adj_img_width;
+    int x_adj_img_width;    // user customized width/height
     int x_adj_img_height;
-    int x_img_width;
+    int x_img_width;        // original image width/height
     int x_img_height;
-    int x_gop_spill;
-    int x_click;
+    int x_constrain_w;      // used for custom constrain
+    int x_constrain_h;
+    int x_gop_spill;        // toggle clickable size to be smaller than the image
+    int x_click;            // toggle bang or 0/1 click recognition
     //t_float x_clicked;
     //int x_selected;
-    t_symbol* x_fname;
+    t_symbol* x_fname;      // file name
     t_symbol* x_inlet;
-    int x_legacy;
-    int x_img_loaded;
-    int x_constrain;
+    int x_legacy;           // flag for when detecting a legacy object
+    int x_img_loaded;       // check if an image has been loaded
+    int x_constrain;        /* constrain aspect ratio:
+                               0 = free resize
+                               1 = fixed aspect ratio of the original image
+                               2 = custom aspect ratio specified by user
+                            */
 } t_image;
 
 // x_gui.x_w and x_h are used for the getbox size. This could be either
@@ -45,7 +51,7 @@ extern t_symbol *s_image_empty;
 /* widget helper functions */
 static void image_select(t_gobj *z, t_glist *glist, int state);
 static void image_vis(t_gobj *z, t_glist *glist, int vis);
-static void image_resize(t_image *x, t_glist *glist, int width, int height, int resizemode);
+static void image_and_border_resize(t_image *x, t_glist *glist, int width, int height, int resizemode);
 /* from g_editor.c--we use this to detect if the user has clicked with the
    right button, so that even in runtime they can select ggee/image help
 */
@@ -115,6 +121,11 @@ static void image_drawme(t_image *x, t_glist *glist, int firstime)
                 x->x_constrain,
                 0 // this denotes ggee/image object type
             );
+            // draw border (it will be invisible in runmode via css adjustments)
+            if (x->x_gui.x_glist == glist_getcanvas(x->x_gui.x_glist))
+                gui_vmess("gui_image_draw_border", "xxiiiii", glist, x,
+                    x->x_gui.x_obj.te_xpix, x->x_gui.x_obj.te_ypix,
+                    x->x_gui.x_w, x->x_gui.x_h, 1);
             //sys_vgui("catch {.x%zx.c delete %xS}\n", glist_getcanvas(glist), x);
             //sys_vgui(".x%x.c create image %d %d -tags %xS\n",
             //    glist_getcanvas(glist),text_xpix(&x->x_obj, glist),
@@ -137,7 +148,7 @@ static void image_drawme(t_image *x, t_glist *glist, int firstime)
             if (x->x_img_loaded)
             {
                 if (x->x_gop_spill)
-                    image_resize(x, glist_getcanvas(glist),
+                    image_and_border_resize(x, glist_getcanvas(glist),
                         x->x_adj_img_width, x->x_adj_img_height, 0);
                 else
                     gui_vmess("gui_ggee_image_offset", "xxxii",
@@ -162,6 +173,9 @@ static void image_drawme(t_image *x, t_glist *glist, int firstime)
 static void image_erase(t_image* x, t_glist* glist)
 {
     gui_vmess("gui_gobj_erase", "xx", glist_getcanvas(glist), x);
+    //if (glist == x->x_gui.x_glist)
+    //    gui_vmess("gui_image_draw_border", "xxiiiii", glist, x,
+    //        0, 0, 0, 0);
 }
 
 static t_symbol *get_filename(t_int argc, t_atom *argv)
@@ -195,7 +209,6 @@ static t_symbol *get_filename(t_int argc, t_atom *argv)
 static void image_getrect(t_gobj *z, t_glist *glist,
     int *xp1, int *yp1, int *xp2, int *yp2)
 {
-    post("image_getrect");
     int width, height;
     t_image* x = (t_image*)z;
 
@@ -220,7 +233,8 @@ static void image_getrect(t_gobj *z, t_glist *glist,
     // CAREFUL: this code is not reusable for objects that have more than
     // one inlet or outlet because it will cram them together
     if (glob_lmclick && 
-        ((glist_getcanvas(glist) != glist && !x->x_click) || (!glist->gl_edit && !x->x_click)))
+        ((glist_getcanvas(glist) != glist && !x->x_click) ||
+            (!glist->gl_edit && !x->x_click)))
     {
         *xp2 = *xp1;
         // only if we have an image loaded and we are placed within a GOP obliterate the height
@@ -288,21 +302,39 @@ static void image_select(t_gobj *z, t_glist *glist, int state)
 
     if (state)
     {
-        if (x->x_gui.x_glist == glist_getcanvas(x->x_gui.x_glist))
+        /*if (x->x_gui.x_glist == glist_getcanvas(x->x_gui.x_glist))
             gui_vmess("gui_image_toggle_border", "xxiiiiiii", glist, x,
                 x1, y1, x2 - x1, y2 - y1,
-                (x2 - x1) + (x->x_adj_img_width/2 - (x2 - x1)/2),
-                (y2 - y1) + (x->x_adj_img_height/2 - (y2 - y1)/2),
+                (x2 - x1) + (x->x_adj_img_width/2 - (x2 - x1)/2) - 
+                    (x->x_adj_img_width == x->x_gui.x_w ? 0 : 2),
+                (y2 - y1) + (x->x_adj_img_height/2 - (y2 - y1)/2) -
+                    (x->x_adj_img_height == x->x_gui.x_h ? 0 : 2),
                 1
             );
         post("toggle border on %d %d", x2-x1, (x2 - x1) + (x->x_adj_img_width/2 - (x2 - x1)/2));
+        */
+        // here we borrow the iemgui mycanvas resize handles
+        // and add 8 to the width since the function below is originally
+        // aimed at mycanvas and its offset. Do this only if we are on
+        // our own parent canvas...
+        if (glist == x->x_gui.x_glist)
+            gui_vmess("gui_iemgui_label_show_drag_handle", "xxiiii",
+                glist, x, state, 
+                (x2 - x1) + (x->x_adj_img_width/2 - (x2 - x1)/2) - 
+                    (x->x_adj_img_width == x->x_gui.x_w ? 0 : 2) + 8,
+                (y2 - y1) + (x->x_adj_img_height/2 - (y2 - y1)/2) -
+                    (x->x_adj_img_height == x->x_gui.x_h ? 0 : 2),
+                1);
         gui_vmess("gui_gobj_select", "xx", glist_getcanvas(x->x_gui.x_glist), x);
     }
     else
     {
-        if (x->x_gui.x_glist == glist_getcanvas(x->x_gui.x_glist))
+        /*if (x->x_gui.x_glist == glist_getcanvas(x->x_gui.x_glist))
             gui_vmess("gui_image_toggle_border", "xxiiiiiii", glist, x,
                 0, 0, 0, 0, 0, 0, 0);
+        */
+        gui_vmess("gui_iemgui_label_show_drag_handle", "xxiiii",
+            glist, x, state, 0, 0, 1);
         gui_vmess("gui_gobj_deselect", "xx", glist_getcanvas(x->x_gui.x_glist), x);
     }
 }
@@ -407,8 +439,30 @@ static void image_click(t_image *x, t_float f)
 static void image_gop_spill(t_image* x, t_floatarg f)
 {
     x->x_gop_spill = (f == 0 || f == 1 ? f : 0);
+    if (x->x_img_loaded)
+        image_and_border_resize(
+            x, x->x_gui.x_glist, x->x_adj_img_width, x->x_adj_img_height, 0);
     image_displace((t_gobj*)x, x->x_gui.x_glist, 0.0, 0.0);
 }
+
+// constrain is by default on (or 1)
+static void image_constrain(t_image* x, t_floatarg f)
+{
+    x->x_constrain = (f >= 0 && f <= 2 ? f : 1);
+    if (x->x_img_loaded)
+    {
+        if (x->x_constrain == 2)
+        {
+            x->x_constrain_w = x->x_adj_img_width;
+            x->x_constrain_h = x->x_adj_img_height;
+            post("constrain request 2 %d %d", x->x_constrain_w, x->x_constrain_h);
+        }
+        image_and_border_resize(
+            x, x->x_gui.x_glist, x->x_adj_img_width, x->x_adj_img_height, 0);
+    }
+    image_displace((t_gobj*)x, x->x_gui.x_glist, 0.0, 0.0);
+}
+
 
 static void image_gop_spill_size(t_image* x, t_floatarg w, t_floatarg h)
 {
@@ -441,7 +495,12 @@ static void image_gop_spill_size(t_image* x, t_floatarg w, t_floatarg h)
     }
 
     if (changed)
+    {
+        if (x->x_img_loaded)
+            image_and_border_resize(
+                x, x->x_gui.x_glist, x->x_adj_img_width, x->x_adj_img_height, 0);
         image_displace((t_gobj*)x, x->x_gui.x_glist, 0.0, 0.0);
+    }
 }
 
 static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
@@ -484,6 +543,11 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
     {
         x->x_adj_img_width = x->x_img_width;
         x->x_adj_img_height = x->x_img_height;
+    }
+    if (x->x_constrain == 2)
+    {
+        x->x_constrain_w = x->x_adj_img_width;
+        x->x_constrain_h = x->x_adj_img_height;
     }
     if (x->x_img_width + x->x_img_height == 0)
     {
@@ -548,13 +612,14 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
 
 // resizemode is primarily used for the motionhook (constrain resize by neither
 // axis or 0, by X axis or 1, or by Y axis or 2). Most other calls will use 0.
-static void image_resize(t_image *x, t_glist *glist, int width, int height, int resizemode)
+static void image_and_border_resize(
+    t_image *x, t_glist *glist, int width, int height, int resizemode)
 {
-    int c, cb = 0; // constrain and change_border
+    t_float c; // constrain
     if (x->x_constrain == 2) { // custom
-        c = x->x_gui.x_w / x->x_gui.x_h;
+        c = (float)x->x_constrain_w / (float)x->x_constrain_h;
     } else if (x->x_constrain == 1) {
-        c = x->x_img_width / x->x_img_height;
+        c = (float)x->x_img_width / (float)x->x_img_height;
     }
 
     if (x->x_constrain > 0)
@@ -579,10 +644,12 @@ static void image_resize(t_image *x, t_glist *glist, int width, int height, int 
         x->x_adj_img_height = maxi(height, 3);
     }
 
-    post("image_resize w=%d h=%d | final %d %d", width, height,
+    post("image_resize border w=%d h=%d | curimg w=%d h=%d | newimg %d %d",
+        x->x_gui.x_w, x->x_gui.x_h,
+        width, height,
         x->x_adj_img_width, x->x_adj_img_height);
 
-    gui_vmess("img_resize", "xxiiii",
+    gui_vmess("gui_ggee_image_resize", "xxiiii",
         glist_getcanvas(glist),
         x,
         x->x_adj_img_width,
@@ -600,19 +667,13 @@ static void image_resize(t_image *x, t_glist *glist, int width, int height, int 
     if (x->x_gui.x_w > x->x_adj_img_width || !x->x_gop_spill)
     {
         x->x_gui.x_w = x->x_adj_img_width;
-        cb = 1;
     }
     if (x->x_gui.x_h > x->x_adj_img_height || !x->x_gop_spill)
     {
         x->x_gui.x_h = x->x_adj_img_height;
-        cb = 1;
     }
-    if (cb)
-        gui_vmess("gui_image_update_border", "xxiiii", 
-            glist_getcanvas(glist), x, x->x_gui.x_w, x->x_gui.x_h,
-            x->x_gui.x_w + (x->x_adj_img_width/2 - x->x_gui.x_w/2),
-            x->x_gui.x_h + (x->x_adj_img_height/2 - x->x_gui.x_w/2)
-        );
+    gui_vmess("gui_image_update_border", "xxii", 
+        glist_getcanvas(glist), x, x->x_gui.x_w, x->x_gui.x_h);
 }
 
 static void image__clickhook(t_scalehandle *sh, int newstate)
@@ -629,7 +690,6 @@ static void image__clickhook(t_scalehandle *sh, int newstate)
         image_getrect((t_gobj *)x, x->x_gui.x_glist, &x1, &y1, &x2, &y2);
         sh->h_adjust_x = sh->h_offset_x - (x2 + (x->x_adj_img_width/2 - x->x_gui.x_w/2));
         sh->h_adjust_y = sh->h_offset_y - (y2 + (x->x_adj_img_height/2 - x->x_gui.x_h/2));
-        post("offset %d", sh->h_adjust_x);
         /* Hack to set the cursor since we're doing and end-run
            around canas_doclick here */
     }
@@ -643,8 +703,8 @@ static void image__motionhook(t_scalehandle *sh, t_floatarg mouse_x, t_floatarg 
     {
         int c; // aspect ratio
         t_image *x = (t_image *)(sh->h_master);
-        post("w=%d h=%d aimgw=%d aimgh=%d | mx=%d my=%d | adjx=%d adjy=%d",
-            x->x_gui.x_w, x->x_gui.x_h, x->x_adj_img_width, x->x_adj_img_height,
+        //post("w=%d h=%d aimgw=%d aimgh=%d | mx=%d my=%d | adjx=%d adjy=%d",\
+            x->x_gui.x_w, x->x_gui.x_h, x->x_adj_img_width, x->x_adj_img_height,\
             (int)mouse_x, (int)mouse_y, sh->h_adjust_x, sh->h_adjust_y);
 
         int width = (sh->h_constrain == CURSOR_EDITMODE_RESIZE_Y) ?
@@ -659,7 +719,7 @@ static void image__motionhook(t_scalehandle *sh, t_floatarg mouse_x, t_floatarg 
                 ((int)mouse_y - (x->x_gui.x_obj.te_ypix + x->x_gui.x_h/2)
                     - sh->h_adjust_y) * 2 :
                 (int)mouse_y - x->x_gui.x_obj.te_ypix;
-        post("c img_resize %d %d", width, height);
+        //post("c img_resize %d %d", width, height);
         // this function is in g_all_guis.c and in nw.js does nothing
         // LATER: remove it altogether
         //scalehandle_drag_scale(sh);
@@ -674,13 +734,24 @@ static void image__motionhook(t_scalehandle *sh, t_floatarg mouse_x, t_floatarg 
             else if (sh->h_constrain == CURSOR_EDITMODE_RESIZE_Y)
                 resizemode = 2;
 
-            image_resize(x, x->x_gui.x_glist, width, height, resizemode);
+            image_and_border_resize(x, x->x_gui.x_glist, width, height, resizemode);
 
             gui_vmess("gui_image_update_border", "xxiiiii", 
                 x->x_gui.x_glist, x, x->x_gui.x_w, x->x_gui.x_h,
                 x->x_gui.x_w + (x->x_adj_img_width/2 - x->x_gui.x_w/2),
-                x->x_gui.x_h + (x->x_adj_img_height/2 - x->x_gui.x_w/2)
+                x->x_gui.x_h + (x->x_adj_img_height/2 - x->x_gui.x_h/2)
             );
+
+            gui_vmess("gui_iemgui_label_show_drag_handle", "xxiiii",
+                x->x_gui.x_glist, x, 0, 0, 0, 1);
+            gui_vmess("gui_iemgui_label_show_drag_handle", "xxiiii",
+                x->x_gui.x_glist, x, 1, 
+                x->x_gui.x_w + (x->x_adj_img_width/2 - x->x_gui.x_w/2) - 
+                    (x->x_adj_img_width == x->x_gui.x_w ? 0 : 2) + 8,
+                x->x_gui.x_h + (x->x_adj_img_height/2 - x->x_gui.x_h/2) -
+                    (x->x_adj_img_height == x->x_gui.x_h ? 0 : 2),
+                1);
+
             //scalehandle_unclick_scale(sh);
             // here instead of scalehandle_unclick_scale we only call
             // calls inside that function that we need, since reselecting
@@ -956,6 +1027,8 @@ void image_setup(void)
     class_addmethod(image_class, (t_method)image_open, gensym("open"),
         A_GIMME, 0);
     class_addmethod(image_class, (t_method)image_gop_spill, gensym("gopspill"),
+        A_DEFFLOAT, 0);
+    class_addmethod(image_class, (t_method)image_constrain, gensym("constrain"),
         A_DEFFLOAT, 0);
     class_addmethod(image_class, (t_method)image_gop_spill_size, gensym("gopspill_size"),
         A_DEFFLOAT, A_DEFFLOAT, 0);

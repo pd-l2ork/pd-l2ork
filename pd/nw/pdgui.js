@@ -3855,8 +3855,8 @@ function gui_iemgui_label_show_drag_handle(cid, tag, state, x, y, cnv_resize) {
             } else if (cnv_resize) {
                 // if we are mycanvas resize hook found in the bottom right corner
                 rect = create_item(cid, "path", {
-                    d: "M " + (x-16) + " " + y + " L " + (x-8) + 
-                        " " + y + " L " + (x-8) + " " + (y-8) + " z",
+                    d: "M " + (x-18) + " " + (y-2) + " L " + (x-10) + 
+                        " " + (y-2) + " L " + (x-10) + " " + (y-10) + " z",
                     class: "unconstrained",
                     fill: "red",
                     stroke: "red",
@@ -3889,7 +3889,7 @@ function gui_iemgui_label_show_drag_handle(cid, tag, state, x, y, cnv_resize) {
                     x:      x-11,
                     y:         0,
                     width:     3,
-                    height:  y-6,
+                    height:  y-8,
                     fill:   "rgba(0,255,0,0)",
                     stroke: "rgba(0,255,0,0)",
                     class: "constrain_top_right"
@@ -3897,7 +3897,7 @@ function gui_iemgui_label_show_drag_handle(cid, tag, state, x, y, cnv_resize) {
                 bottom_right = create_item(cid, "rect", {
                     x:        0,
                     y:      y-3,
-                    width: x-14,
+                    width: x-16,
                     height:   3,
                     fill:   "rgba(0,0,255,0)",
                     stroke: "rgba(0,0,255,0)",
@@ -4562,10 +4562,10 @@ function img_size_resizable_setter(cid, svg_image_tag, type, data, tk_anchor, w,
     img.src = "data:image/" + type + ";base64," + data;
 }
 
-function img_resize(cid, svg_image_tag, w, h, resizemode, aspectratio)
+function gui_ggee_image_resize(cid, svg_image_tag, w, h, resizemode, constrain)
 {
     configure_item(get_item(cid, svg_image_tag), {
-        preserveAspectRatio: aspectratio > 0 ? "xMinYMin meet" : "none",
+        preserveAspectRatio: constrain == 1 ? "xMinYMin meet" : "none",
         width: w,
         height: h
     }); 
@@ -4693,7 +4693,7 @@ function gui_gobj_draw_image(cid, tag, image_key, tk_anchor, w, h, constrain, ty
     .append(function(frag) {
         var i = create_item(cid, "image", {
             id: tag,
-            preserveAspectRatio: "xMinYMin meet"
+            preserveAspectRatio: constrain ? "xMinYMin meet" : "none"
         });
         i.setAttributeNS("http://www.w3.org/1999/xlink", "href",
             "data:image/" + pd_cache.get(image_key).type + ";base64," +
@@ -4732,7 +4732,7 @@ function gui_image_size_callback(cid, key, callback) {
         ";base64," + pd_cache.get(key).data;
 }
 
-function gui_image_toggle_border(cid, tag, x, y, w, h, imgw, imgh, onoff) {
+function gui_image_draw_border(cid, tag, x, y, w, h/*, imgw, imgh*/, onoff) {
     if (onoff == 0) {
         gui(cid).get_gobj(tag)
         .q("path", function(border) {
@@ -4756,11 +4756,6 @@ function gui_image_toggle_border(cid, tag, x, y, w, h, imgw, imgh, onoff) {
             return frag;
         });
     }
-    // here we borrow the mycanvas resize handles
-    // and add 8 to the width since the function below is originally
-    // aimed at mycanvas and its offset
-    //post("toggle_border calls handle " + w + " " + h);
-    gui_iemgui_label_show_drag_handle(cid, tag, onoff, imgw + 8, imgh, 1);
 }
 
 /*function gui_image_toggle_border(cid, tag, state) {
@@ -4770,7 +4765,8 @@ function gui_image_toggle_border(cid, tag, x, y, w, h, imgw, imgh, onoff) {
     });
 }*/
 
-function gui_image_update_border(cid, tag, w, h, imgw, imgh) {
+function gui_image_update_border(cid, tag, w, h) {
+
     gui(cid).get_gobj(tag, function(e) {
         var a = e.querySelectorAll("path");
         configure_item(a[0], {
@@ -4781,8 +4777,6 @@ function gui_image_update_border(cid, tag, w, h, imgw, imgh) {
                ].join(" "),
         });
     });
-    gui_iemgui_label_show_drag_handle(cid, tag, 0, imgw + 8, imgh, 1);
-    gui_iemgui_label_show_drag_handle(cid, tag, 1, imgw + 8, imgh, 1);
 }
 
 // Switch the data for an existing svg image
