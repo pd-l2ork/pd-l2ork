@@ -36,6 +36,9 @@ typedef struct _image
                                1 = fixed aspect ratio of the original image
                                2 = custom aspect ratio specified by user
                             */
+    int x_mouse_x;          // used to track mouse position
+    int x_mouse_y;
+    t_atom   x_at[3];       // temporary buffer for outputting clickmode 2 messages
 } t_image;
 
 // x_gui.x_w and x_h are used for the getbox size. This could be either
@@ -63,7 +66,8 @@ t_symbol *image_trytoopen(t_image* x)
     FILE *file;
     if (x->x_fname == &s_)
     {
-        return 0;
+        x->x_fname = gensym("@pd_extra/ggee/empty_image.png");
+        //return 0;
     }
     canvas_makefilename(
         glist_getcanvas(x->x_gui.x_glist),
@@ -374,7 +378,6 @@ static void image_save(t_gobj *z, t_binbuf *b)
     t_symbol *bflcol[3];
     t_symbol *srl[3];
     iemgui_save(&x->x_gui, srl, bflcol);
-    post("image_save srl %s %s %s", srl[0]->s_name, srl[1]->s_name, srl[2]->s_name);
     binbuf_addv(b, "ssiissiiiisssiii", gensym("#X"), gensym("obj"),
                 x->x_gui.x_obj.te_xpix, x->x_gui.x_obj.te_ypix,   
                 atom_getsymbol(binbuf_getvec(x->x_gui.x_obj.te_binbuf)),
@@ -399,41 +402,70 @@ static t_widgetbehavior image_widgetbehavior;
 
 }*/
 
+static void image_motion(t_image *x, t_floatarg dx, t_floatarg dy)
+{
+    if (x->x_click == 2)
+    {
+        x->x_mouse_x += dx;
+        x->x_mouse_x = maxi(x->x_mouse_x, x->x_gui.x_obj.te_xpix);
+        x->x_mouse_x = mini(x->x_mouse_x, x->x_gui.x_obj.te_xpix + x->x_gui.x_w);
+
+        x->x_mouse_y += dy;
+        x->x_mouse_y = maxi(x->x_mouse_y, x->x_gui.x_obj.te_ypix);
+        x->x_mouse_y = mini(x->x_mouse_y, x->x_gui.x_obj.te_ypix + x->x_gui.x_h);
+
+        SETFLOAT(x->x_at, 1.0);
+        SETFLOAT(x->x_at+1, (t_floatarg)(x->x_mouse_x - x->x_gui.x_obj.te_xpix));
+        SETFLOAT(x->x_at+2, (t_floatarg)(x->x_mouse_y - x->x_gui.x_obj.te_ypix));
+        iemgui_out_list(&x->x_gui, 0, 0, &s_list, 3, x->x_at);
+    }
+}
+
 static int image_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix,
     int shift, int alt, int dbl, int doit)
 {
     t_image *x = (t_image *)z;
     if (doit && x->x_click)
     {
-        iemgui_out_bang(&x->x_gui, 0, 1);
+        x->x_mouse_x = xpix;
+        x->x_mouse_y = ypix;
+        glist_grab(x->x_gui.x_glist, &x->x_gui.x_obj.te_g,
+                    image_motion, 0, 0, (t_floatarg)xpix, (t_floatarg)ypix, 0);
+        if (x->x_click == 1)
+        {
+            iemgui_out_bang(&x->x_gui, 0, 1);
+        }
+        else if (x->x_click == 2)
+        {
+            SETFLOAT(x->x_at, 1.0);
+            SETFLOAT(x->x_at+1, (t_floatarg)(x->x_mouse_x - x->x_gui.x_obj.te_xpix));
+            SETFLOAT(x->x_at+2, (t_floatarg)(x->x_mouse_y - x->x_gui.x_obj.te_ypix));
+            iemgui_out_list(&x->x_gui, 0, 0, &s_list, 3, x->x_at);
+        }
+
     }
-    // LATER: figure out how to do click on and click off
-    // and provide a toggle button behavior instead
-    /*{
-        x->x_clicked = 1;
-        outlet_float(x->x_obj.ob_outlet, x->x_clicked);
-    }
-    else if (x->x_clicked)
-    {
-        x->x_clicked = 0;
-        outlet_float(x->x_obj.ob_outlet, x->x_clicked);
-    }*/
 
     // this is how we catch mouse-up but only if the object calls glist_grab
-    /*else if (dbl == -1)
+    // and has a motionfn
+    else if (dbl == -1)
     {
-
-    }*/
+        if (x->x_click == 2)
+        {
+            SETFLOAT(x->x_at, 0.0);
+            SETFLOAT(x->x_at+1, (t_floatarg)(xpix - x->x_gui.x_obj.te_xpix));
+            SETFLOAT(x->x_at+2, (t_floatarg)(ypix - x->x_gui.x_obj.te_ypix));
+            iemgui_out_list(&x->x_gui, 0, 0, &s_list, 3, x->x_at);
+        }
+        glist_grab(x->x_gui.x_glist, 0, 0, 0, 0, 0, 0, 0);
+    }
 
     return(1);
 }
 
-static void image_click(t_image *x, t_float f)
+static void image_clickmode(t_image *x, t_float f)
 {
-    if (f == 0)
-        x->x_click = 0;
-    else if (f == 1)
-        x->x_click = 1;
+    if (f >= 0 && f <= 2)
+        x->x_click = (int)f;
 }
 
 static void image_gop_spill(t_image* x, t_floatarg f)
@@ -455,7 +487,6 @@ static void image_constrain(t_image* x, t_floatarg f)
         {
             x->x_constrain_w = x->x_adj_img_width;
             x->x_constrain_h = x->x_adj_img_height;
-            post("constrain request 2 %d %d", x->x_constrain_w, x->x_constrain_h);
         }
         image_and_border_resize(
             x, x->x_gui.x_glist, x->x_adj_img_width, x->x_adj_img_height, 0);
@@ -506,6 +537,9 @@ static void image_gop_spill_size(t_image* x, t_floatarg w, t_floatarg h)
 static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
 {
     x->x_img_loaded = 0;
+    t_symbol *oldfname = NULL;
+    if (strcmp("@pd_extra/ggee/empty_image.png", x->x_fname->s_name) != 0)
+        oldfname = x->x_fname;
     x->x_fname = get_filename(argc, argv);
     x->x_img_width = 0;
     x->x_img_height = 0;
@@ -516,10 +550,22 @@ static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
     }
     else
     {
-        gui_vmess("gui_load_default_image", "xx",
-            glist_getcanvas(x->x_gui.x_glist), x);
+        if (!oldfname)
+        {
+            pd_error(x, "requested image %s not found... "
+                "reverting to default...", x->x_fname->s_name);
+            gui_vmess("gui_load_default_image", "xx",
+                glist_getcanvas(x->x_gui.x_glist), x);
+        }
+        else
+        {
+            pd_error(x, "requested image %s not found... "
+                "reverting filename to the current image %s...",
+                x->x_fname->s_name, oldfname->s_name);
+            x->x_fname = oldfname;
+        }
     }
-    if (glist_isvisible(glist_getcanvas(x->x_gui.x_glist)))
+    if (x->x_fname != oldfname && glist_isvisible(glist_getcanvas(x->x_gui.x_glist)))
     {
         gui_vmess("gui_image_configure", "xxxs",
             glist_getcanvas(x->x_gui.x_glist),
@@ -554,9 +600,10 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
         //invalid image
         if (strcmp("@pd_extra/ggee/empty_image.png", x->x_fname->s_name) != 0)
         {
+            pd_error(x, "image %s not found... opening default image...",
+                x->x_fname->s_name);
             x->x_fname = gensym("@pd_extra/ggee/empty_image.png");
             image_trytoopen(x);
-            post("callback invalid image");
             return;
         }
     }
@@ -644,11 +691,6 @@ static void image_and_border_resize(
         x->x_adj_img_height = maxi(height, 3);
     }
 
-    post("image_resize border w=%d h=%d | curimg w=%d h=%d | newimg %d %d",
-        x->x_gui.x_w, x->x_gui.x_h,
-        width, height,
-        x->x_adj_img_width, x->x_adj_img_height);
-
     gui_vmess("gui_ggee_image_resize", "xxiiii",
         glist_getcanvas(glist),
         x,
@@ -676,9 +718,20 @@ static void image_and_border_resize(
         glist_getcanvas(glist), x, x->x_gui.x_w, x->x_gui.x_h);
 }
 
+// resets the image to its original size
+static void image_reset(t_image *x)
+{
+    if (x->x_img_loaded)
+    {
+        x->x_adj_img_width = x->x_img_width;
+        x->x_adj_img_height = x->x_img_height;
+        image_and_border_resize(x, x->x_gui.x_glist,
+            x->x_adj_img_width, x->x_adj_img_width, 0);
+    }
+}
+
 static void image__clickhook(t_scalehandle *sh, int newstate)
 {
-    post("image__clickhook");
     t_image *x = (t_image *)(sh->h_master);
     if (newstate)
     {
@@ -897,24 +950,39 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
     x->x_gui.x_bcol = 0x00;
     x->x_gui.x_fcol = 0x00;
     x->x_gui.x_lcol = 0x00;
+    char buf[MAXPDSTRING];
 
     // used for the last if statement since we decrement the argc below
     int n_args = argc;
 
-    x->x_fname = get_filename(argc, argv);
+    /*post("image instantiating...");
+    for(int i = 0; i < argc; i++)
+    {
+        if (argv[i].a_type == A_FLOAT)
+        {
+            post("...%d arg f: %d", i, (int)atom_getfloat(&argv[i]));
+        }
+        else if (argv[i].a_type == A_SYMBOL)
+        {
+            post("...%d arg s: <%s>", i, atom_getsymbol(argv)->s_name);
+        }
+        else
+            post("...%d unknown variable", i);
+    }
+    post("...done argc=%d", argc);*/
     
     // this should take care of the sends and receives (we ignore label since
     // image does not use it--we may want to rethink this later...)
-    if (argc >= 8)
-        iemgui_new_getnames(&x->x_gui, 4, argv);
+    if (argc >= 9)
+        iemgui_new_getnames(&x->x_gui, 5, argv);
     else
-        iemgui_new_getnames(&x->x_gui, 4, 0);
+        iemgui_new_getnames(&x->x_gui, 5, 0);
 
-
+    x->x_fname = get_filename(argc, argv);
     if (strlen(x->x_fname->s_name) > 0)
     {
-        //post("get_filename succeeded <%s> <%s>\n", 
-        //    x->x_fname->s_name, atom_getsymbol(argv)->s_name);
+        //post("get_filename succeeded <%s> <%s>\n", \
+            x->x_fname->s_name, atom_getsymbol(argv)->s_name);
         argc--;
         argv++;
     }
@@ -982,14 +1050,12 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
         x->x_legacy = 1;        
     }
 
-    post("image_new srl %s %s %s", x->x_gui.x_snd->s_name, x->x_gui.x_rcv->s_name, x->x_gui.x_lab->s_name);
     x->x_gui.x_draw = (t_iemfunptr)image_drawme;
     // Create default receiver
-    char buf[MAXPDSTRING];
     sprintf(buf, "#%zx", (t_uint)x);
     x->x_inlet = gensym(buf);
     pd_bind(&x->x_gui.x_obj.ob_pd, x->x_inlet);
-    outlet_new(&x->x_gui.x_obj, &s_bang);
+    outlet_new(&x->x_gui.x_obj, 0);
     if (x->x_gui.x_rcv != s_empty)
         pd_bind(&x->x_gui.x_obj.ob_pd, x->x_gui.x_rcv);    
     //outlet_new(&x->x_obj, &s_float);
@@ -1006,8 +1072,6 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
     // 1 = iemgui
     // 2 = 3rd-party iemgui-based that uses mycanvas resize hooks
     x->x_gui.x_obj.te_iemgui = 2;
-    post("image_new w=%d h=%d adjw=%d adjh=%d", x->x_gui.x_w, x->x_gui.x_h,
-        x->x_adj_img_width, x->x_adj_img_height);
     return (x);
 }
 
@@ -1022,8 +1086,10 @@ void image_setup(void)
     class_addmethod(image_class, (t_method)image_color, gensym("color"),
         A_SYMBOL, 0);
 */
-    class_addmethod(image_class, (t_method)image_click, gensym("click"),
+    class_addmethod(image_class, (t_method)image_clickmode, gensym("clickmode"),
         A_DEFFLOAT, 0);
+    class_addmethod(image_class, (t_method)image_reset, gensym("reset"),
+        A_NULL, 0);
     class_addmethod(image_class, (t_method)image_open, gensym("open"),
         A_GIMME, 0);
     class_addmethod(image_class, (t_method)image_gop_spill, gensym("gopspill"),
@@ -1034,6 +1100,7 @@ void image_setup(void)
         A_DEFFLOAT, A_DEFFLOAT, 0);
     class_addmethod(image_class, (t_method)image_imagesize_callback,\
                      gensym("_imagesize"), A_DEFFLOAT, A_DEFFLOAT, 0);
+    iemgui_class_addmethods(image_class);
 
     image_setwidget();
     class_setwidget(image_class, &image_widgetbehavior);
