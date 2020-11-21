@@ -534,6 +534,38 @@ static void image_gop_spill_size(t_image* x, t_floatarg w, t_floatarg h)
     }
 }
 
+static void image_size(t_image* x, t_floatarg w, t_floatarg h)
+{
+    //post("image_size %d %d", (int)w, (int)h);
+    // we need a size of at least 3 to have a meaningful
+    // selection frame around the selection box
+    int changed = 0;
+
+    if ((int)w >= 3)
+    {
+        x->x_adj_img_width = (int)w;
+        changed = 1;
+    }
+
+    if ((int)h >= 3)
+    {
+        x->x_adj_img_height = (int)h;
+        changed = 1;
+    }
+    else if (changed)
+    {
+        x->x_adj_img_height = (int)w;
+    }
+
+    if (changed)
+    {
+        if (x->x_img_loaded)
+            image_and_border_resize(
+                x, x->x_gui.x_glist, x->x_adj_img_width, x->x_adj_img_height, 0);
+        image_displace((t_gobj*)x, x->x_gui.x_glist, 0.0, 0.0);
+    }
+}
+
 static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
 {
     x->x_img_loaded = 0;
@@ -1086,7 +1118,7 @@ void image_setup(void)
     class_addmethod(image_class, (t_method)image_color, gensym("color"),
         A_SYMBOL, 0);
 */
-    class_addmethod(image_class, (t_method)image_clickmode, gensym("clickmode"),
+    class_addmethod(image_class, (t_method)image_clickmode, gensym("click"),
         A_DEFFLOAT, 0);
     class_addmethod(image_class, (t_method)image_reset, gensym("reset"),
         A_NULL, 0);
@@ -1097,6 +1129,8 @@ void image_setup(void)
     class_addmethod(image_class, (t_method)image_constrain, gensym("constrain"),
         A_DEFFLOAT, 0);
     class_addmethod(image_class, (t_method)image_gop_spill_size, gensym("gopspill_size"),
+        A_DEFFLOAT, A_DEFFLOAT, 0);
+    class_addmethod(image_class, (t_method)image_size, gensym("size"),
         A_DEFFLOAT, A_DEFFLOAT, 0);
     class_addmethod(image_class, (t_method)image_imagesize_callback,\
                      gensym("_imagesize"), A_DEFFLOAT, A_DEFFLOAT, 0);
