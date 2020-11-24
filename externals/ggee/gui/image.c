@@ -136,6 +136,7 @@ static void image_drawme(t_image *x, t_glist *glist, int firstime)
             //    text_ypix(&x->x_obj, glist), x);
             gui_vmess("gui_image_size_callback", "xxs",
                 glist_getcanvas(glist), x, x->x_inlet->s_name);
+            iemgui_label_draw_new(&x->x_gui);
         }
         else
         {
@@ -169,6 +170,7 @@ static void image_drawme(t_image *x, t_glist *glist, int firstime)
                 image_select((t_gobj *)x, glist_getcanvas(x->x_gui.x_glist), 0);
                 image_select((t_gobj *)x, glist_getcanvas(x->x_gui.x_glist), 1);
             }
+            iemgui_label_draw_move(&x->x_gui);
             canvas_fixlinesfor(x->x_gui.x_glist, (t_text*)x);
         }
     }
@@ -304,7 +306,7 @@ static void image_select(t_gobj *z, t_glist *glist, int state)
     x2 = text_xpix(&x->x_gui.x_obj, glist) + width;
     y2 = text_ypix(&x->x_gui.x_obj, glist) + height;
 
-    if (state)
+    if (state && x->x_gui.x_selected == NULL)
     {
         /*if (x->x_gui.x_glist == glist_getcanvas(x->x_gui.x_glist))
             gui_vmess("gui_image_toggle_border", "xxiiiiiii", glist, x,
@@ -330,6 +332,12 @@ static void image_select(t_gobj *z, t_glist *glist, int state)
                     (x->x_adj_img_height == x->x_gui.x_h ? 0 : 2),
                 1);
         gui_vmess("gui_gobj_select", "xx", glist_getcanvas(x->x_gui.x_glist), x);
+        x->x_gui.x_selected = glist;
+        if (x->x_gui.x_lab != s_empty)
+        {
+            scalehandle_draw_select(
+                x->x_gui.x_lhandle, x->x_gui.x_ldx + 5, x->x_gui.x_ldy + 10);
+        }
     }
     else
     {
@@ -340,7 +348,10 @@ static void image_select(t_gobj *z, t_glist *glist, int state)
         gui_vmess("gui_iemgui_label_show_drag_handle", "xxiiii",
             glist, x, state, 0, 0, 1);
         gui_vmess("gui_gobj_deselect", "xx", glist_getcanvas(x->x_gui.x_glist), x);
+        x->x_gui.x_selected = NULL;
+        scalehandle_draw_erase(x->x_gui.x_lhandle);
     }
+    iemgui_label_draw_select(&x->x_gui);
 }
 
 static void image_activate(t_gobj *z, t_glist *glist, int state)
@@ -378,12 +389,14 @@ static void image_save(t_gobj *z, t_binbuf *b)
     t_symbol *bflcol[3];
     t_symbol *srl[3];
     iemgui_save(&x->x_gui, srl, bflcol);
-    binbuf_addv(b, "ssiissiiiisssiii", gensym("#X"), gensym("obj"),
+    binbuf_addv(b, "ssiissiiiisssiiiiis", gensym("#X"), gensym("obj"),
                 x->x_gui.x_obj.te_xpix, x->x_gui.x_obj.te_ypix,   
                 atom_getsymbol(binbuf_getvec(x->x_gui.x_obj.te_binbuf)),
                 x->x_fname, x->x_gop_spill, x->x_click, x->x_gui.x_w,
                 x->x_gui.x_h, srl[0], srl[1], srl[2], x->x_adj_img_width,
-                x->x_adj_img_height, x->x_constrain);
+                x->x_adj_img_height, x->x_constrain,
+                iem_fstyletoint(&x->x_gui), x->x_gui.x_fontsize,
+                bflcol[2]);
     binbuf_addv(b, ";");
 }
 
@@ -768,6 +781,8 @@ static void image__clickhook(t_scalehandle *sh, int newstate)
     if (newstate)
     {
         canvas_apply_setundo(x->x_gui.x_glist, (t_gobj *)x);
+        if (!sh->h_scale)
+            scalehandle_click_label(sh);
     }
     if (sh->h_scale)
     {
@@ -853,6 +868,7 @@ static void image__motionhook(t_scalehandle *sh, t_floatarg mouse_x, t_floatarg 
             //properties_set_field_int(properties,"rng.max_ent",height);
         }
     }
+    scalehandle_dragon_label(sh, mouse_x, mouse_y);
 }
 
 static void image_properties(t_gobj *z, t_glist *owner)
@@ -986,6 +1002,7 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
 
     // used for the last if statement since we decrement the argc below
     int n_args = argc;
+    int fs = 10;
 
     /*post("image instantiating...");
     for(int i = 0; i < argc; i++)
@@ -1065,11 +1082,32 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
         argc--;
         argv++;
     }
-
     if (argc && argv[0].a_type == A_FLOAT)
     {
         //post("constrain succeeded");
         x->x_constrain = (int)atom_getfloat(&argv[0]);
+        argc--;
+        argv++;
+    }
+    if (argc && argv[0].a_type == A_FLOAT)
+    {
+        //post("font style succeeded");
+        iem_inttofstyle(&x->x_gui, atom_getintarg(0, argc, argv));
+        argc--;
+        argv++;
+    }
+    if (argc && argv[0].a_type == A_FLOAT)
+    {
+        //post("font size succeeded");
+        fs = (int)atom_getfloat(&argv[0]);
+        argc--;
+        argv++;
+    }
+
+    if (argc && argv[0].a_type == A_SYMBOL)
+    {
+        //post("labelcolor succeeded");
+        iemgui_all_loadcolors(&x->x_gui, 0, 0, argv);
         argc--;
         argv++;
     }
@@ -1081,6 +1119,12 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
              "object retains the same location...");
         x->x_legacy = 1;        
     }
+
+    if(fs < 4)
+        fs = 4;
+    x->x_gui.x_fontsize = fs;
+    if (x->x_gui.x_font_style < 0 || x->x_gui.x_font_style > 2)
+        x->x_gui.x_font_style = 0;
 
     x->x_gui.x_draw = (t_iemfunptr)image_drawme;
     // Create default receiver
@@ -1095,6 +1139,12 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
         (t_object *)x,
         x->x_gui.x_glist,
         1,
+        image__clickhook,
+        image__motionhook);
+    x->x_gui.x_lhandle = scalehandle_new(
+        (t_object *)x,
+        x->x_gui.x_glist,
+        0,
         image__clickhook,
         image__motionhook);
     sprintf(buf, "_s%zx", (t_uint)x);
