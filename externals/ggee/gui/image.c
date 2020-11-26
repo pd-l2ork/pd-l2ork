@@ -25,8 +25,6 @@ typedef struct _image
     int x_constrain_h;
     int x_gop_spill;        // toggle clickable size to be smaller than the image
     int x_click;            // toggle bang or 0/1 click recognition
-    //t_float x_clicked;
-    //int x_selected;
     t_symbol* x_fname;      // file name
     t_symbol* x_inlet;
     int x_legacy;           // flag for when detecting a legacy object
@@ -39,6 +37,11 @@ typedef struct _image
     int x_mouse_x;          // used to track mouse position
     int x_mouse_y;
     t_atom   x_at[3];       // temporary buffer for outputting clickmode 2 messages
+    t_float x_rot_x;        // rotation point location x and y
+    t_float x_rot_y;
+    int x_rot_pt_init;      // whether the rotation point has been initialized
+                            // we use this since rotation point could be anything
+    t_float x_rot_angle;    // rotation angle
 } t_image;
 
 // x_gui.x_w and x_h are used for the getbox size. This could be either
@@ -54,7 +57,8 @@ extern t_symbol *s_image_empty;
 /* widget helper functions */
 static void image_select(t_gobj *z, t_glist *glist, int state);
 static void image_vis(t_gobj *z, t_glist *glist, int vis);
-static void image_and_border_resize(t_image *x, t_glist *glist, int width, int height, int resizemode);
+static void image_update(t_image *x, t_glist *glist, int width, int height, int resizemode);
+static void image_dorotate(t_image *x);
 /* from g_editor.c--we use this to detect if the user has clicked with the
    right button, so that even in runtime they can select ggee/image help
 */
@@ -153,7 +157,7 @@ static void image_drawme(t_image *x, t_glist *glist, int firstime)
             if (x->x_img_loaded)
             {
                 if (x->x_gop_spill)
-                    image_and_border_resize(x, glist_getcanvas(glist),
+                    image_update(x, glist_getcanvas(glist),
                         x->x_adj_img_width, x->x_adj_img_height, 0);
                 else
                     gui_vmess("gui_ggee_image_offset", "xxxii",
@@ -389,14 +393,14 @@ static void image_save(t_gobj *z, t_binbuf *b)
     t_symbol *bflcol[3];
     t_symbol *srl[3];
     iemgui_save(&x->x_gui, srl, bflcol);
-    binbuf_addv(b, "ssiissiiiisssiiiiis", gensym("#X"), gensym("obj"),
+    binbuf_addv(b, "ssiissiiiisssiiiiisfff", gensym("#X"), gensym("obj"),
                 x->x_gui.x_obj.te_xpix, x->x_gui.x_obj.te_ypix,   
                 atom_getsymbol(binbuf_getvec(x->x_gui.x_obj.te_binbuf)),
                 x->x_fname, x->x_gop_spill, x->x_click, x->x_gui.x_w,
                 x->x_gui.x_h, srl[0], srl[1], srl[2], x->x_adj_img_width,
                 x->x_adj_img_height, x->x_constrain,
                 iem_fstyletoint(&x->x_gui), x->x_gui.x_fontsize,
-                bflcol[2]);
+                bflcol[2], x->x_rot_x, x->x_rot_y, x->x_rot_angle);
     binbuf_addv(b, ";");
 }
 
@@ -485,7 +489,7 @@ static void image_gop_spill(t_image* x, t_floatarg f)
 {
     x->x_gop_spill = (f == 0 || f == 1 ? f : 0);
     if (x->x_img_loaded)
-        image_and_border_resize(
+        image_update(
             x, x->x_gui.x_glist, x->x_adj_img_width, x->x_adj_img_height, 0);
     image_displace((t_gobj*)x, x->x_gui.x_glist, 0.0, 0.0);
 }
@@ -501,7 +505,7 @@ static void image_constrain(t_image* x, t_floatarg f)
             x->x_constrain_w = x->x_adj_img_width;
             x->x_constrain_h = x->x_adj_img_height;
         }
-        image_and_border_resize(
+        image_update(
             x, x->x_gui.x_glist, x->x_adj_img_width, x->x_adj_img_height, 0);
     }
     image_displace((t_gobj*)x, x->x_gui.x_glist, 0.0, 0.0);
@@ -541,7 +545,7 @@ static void image_gop_spill_size(t_image* x, t_floatarg w, t_floatarg h)
     if (changed)
     {
         if (x->x_img_loaded)
-            image_and_border_resize(
+            image_update(
                 x, x->x_gui.x_glist, x->x_adj_img_width, x->x_adj_img_height, 0);
         image_displace((t_gobj*)x, x->x_gui.x_glist, 0.0, 0.0);
     }
@@ -573,7 +577,7 @@ static void image_size(t_image* x, t_floatarg w, t_floatarg h)
     if (changed)
     {
         if (x->x_img_loaded)
-            image_and_border_resize(
+            image_update(
                 x, x->x_gui.x_glist, x->x_adj_img_width, x->x_adj_img_height, 0);
         image_displace((t_gobj*)x, x->x_gui.x_glist, 0.0, 0.0);
     }
@@ -652,6 +656,15 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
             return;
         }
     }
+    // if we got this far, we have a successfully loaded image, and if no rotation
+    // point has been set, we set the default rotation point at the image center
+    if (!x->x_rot_pt_init)
+    {
+        x->x_rot_x = (t_float)x->x_adj_img_width / 2.0;
+        x->x_rot_y = (t_float)x->x_adj_img_height / 2.0;
+        x->x_rot_pt_init = 1;
+    }
+
     // removed in the following statement additional condition
     // as it does not seem necessary: && !x->x_gop_spill
     if (!gobj_shouldvis((t_gobj *)x, x->x_gui.x_glist))
@@ -704,8 +717,7 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
 
 // resizemode is primarily used for the motionhook (constrain resize by neither
 // axis or 0, by X axis or 1, or by Y axis or 2). Most other calls will use 0.
-static void image_and_border_resize(
-    t_image *x, t_glist *glist, int width, int height, int resizemode)
+static void image_update(t_image *x, t_glist *glist, int width, int height, int resizemode)
 {
     t_float c; // constrain
     if (x->x_constrain == 2) { // custom
@@ -761,6 +773,11 @@ static void image_and_border_resize(
     }
     gui_vmess("gui_image_update_border", "xxii", 
         glist_getcanvas(glist), x, x->x_gui.x_w, x->x_gui.x_h);
+    image_dorotate(x);
+    SETSYMBOL(x->x_at, gensym("size"));
+    SETFLOAT(x->x_at+1, (t_floatarg)(x->x_adj_img_width));
+    SETFLOAT(x->x_at+2, (t_floatarg)(x->x_adj_img_height));
+    iemgui_out_list(&x->x_gui, 0, 0, &s_list, 3, x->x_at);
 }
 
 // resets the image to its original size
@@ -770,8 +787,57 @@ static void image_reset(t_image *x)
     {
         x->x_adj_img_width = x->x_img_width;
         x->x_adj_img_height = x->x_img_height;
-        image_and_border_resize(x, x->x_gui.x_glist,
+        image_update(x, x->x_gui.x_glist,
             x->x_adj_img_width, x->x_adj_img_width, 0);
+    }
+}
+
+static void image_dorotate(t_image *x)
+{
+    // variables for calculating the spill offset
+    int off_x = 0;
+    int off_y = 0;
+    if (x->x_gop_spill)
+    {
+        if (x->x_gui.x_w < x->x_adj_img_width)
+            off_x = x->x_adj_img_width / 2 - x->x_gui.x_w / 2;
+        if (x->x_gui.x_w < x->x_adj_img_width)
+            off_y = x->x_adj_img_height / 2 - x->x_gui.x_h / 2;
+    }
+    gui_vmess("gui_ggee_image_rotate", "xxfii", 
+        glist_getcanvas(x->x_gui.x_glist), x, x->x_rot_angle,
+        (t_int)x->x_rot_x - off_x, (t_int)x->x_rot_y - off_y);   
+}
+
+static void image_rotate(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
+{
+    if (argc && x->x_img_loaded && argv[0].a_type == A_FLOAT)
+    {
+        if (argc == 1 && argv[0].a_type == A_FLOAT)
+        {
+            // rotate around the center of the image
+            x->x_rot_angle = atom_getfloat(&argv[0]);
+            image_dorotate(x);
+
+        } 
+        else if (argc == 3 && argv[1].a_type == A_FLOAT && argv[2].a_type == A_FLOAT)
+        {
+            // rotate around a specified origin
+            x->x_rot_angle = atom_getfloat(&argv[0]);
+            x->x_rot_x = atom_getfloat(&argv[1]);
+            x->x_rot_y = atom_getfloat(&argv[2]);
+            x->x_rot_pt_init = 1;
+            image_dorotate(x);        
+        }
+        else
+            goto fail;
+    }
+    else
+    {
+fail:
+        pd_error(x, "invalid number, type of arguments, or rotation origin values "
+            "for the rotate command: should be either 1 or 3 floats with origin "
+            "values between 0 and the image width/height...");
     }
 }
 
@@ -834,7 +900,7 @@ static void image__motionhook(t_scalehandle *sh, t_floatarg mouse_x, t_floatarg 
             else if (sh->h_constrain == CURSOR_EDITMODE_RESIZE_Y)
                 resizemode = 2;
 
-            image_and_border_resize(x, x->x_gui.x_glist, width, height, resizemode);
+            image_update(x, x->x_gui.x_glist, width, height, resizemode);
 
             gui_vmess("gui_image_update_border", "xxiiiii", 
                 x->x_gui.x_glist, x, x->x_gui.x_w, x->x_gui.x_h,
@@ -991,10 +1057,12 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
     x->x_legacy = 0;
     x->x_img_loaded = 0;
     x->x_constrain = 1;
-    //x->x_clicked = 0;
-    //x->x_selected = 0;
-    // These are unused and only initialized, so that we can safely use
-    // iemgui calls...
+    x->x_rot_x = 0;
+    x->x_rot_y = 0;
+    x->x_rot_pt_init = 0;
+    x->x_rot_angle = 0;
+    // We only use the label color and initialize others, so that we can
+    // safely use the iemgui calls...
     x->x_gui.x_bcol = 0x00;
     x->x_gui.x_fcol = 0x00;
     x->x_gui.x_lcol = 0x00;
@@ -1103,11 +1171,33 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
         argc--;
         argv++;
     }
-
     if (argc && argv[0].a_type == A_SYMBOL)
     {
-        //post("labelcolor succeeded");
+        //post("label color succeeded");
         iemgui_all_loadcolors(&x->x_gui, 0, 0, argv);
+        argc--;
+        argv++;
+    }
+    if (argc && argv[0].a_type == A_FLOAT)
+    {
+        //post("rotate x succeeded");
+        x->x_rot_x = atom_getfloat(&argv[0]);
+        argc--;
+        argv++;
+    }
+    if (argc && argv[0].a_type == A_FLOAT)
+    {
+        //post("rotate y succeeded");
+        x->x_rot_y = atom_getfloat(&argv[0]);
+        x->x_rot_pt_init = 1;
+        argc--;
+        argv++;
+    }
+
+    if (argc && argv[0].a_type == A_FLOAT)
+    {
+        //post("rotate angle succeeded");
+        x->x_rot_angle = atom_getfloat(&argv[0]);
         argc--;
         argv++;
     }
@@ -1134,7 +1224,6 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
     outlet_new(&x->x_gui.x_obj, 0);
     if (x->x_gui.x_rcv != s_empty)
         pd_bind(&x->x_gui.x_obj.ob_pd, x->x_gui.x_rcv);    
-    //outlet_new(&x->x_obj, &s_float);
     x->x_gui.x_handle = scalehandle_new(
         (t_object *)x,
         x->x_gui.x_glist,
@@ -1182,6 +1271,8 @@ void image_setup(void)
         A_DEFFLOAT, A_DEFFLOAT, 0);
     class_addmethod(image_class, (t_method)image_size, gensym("size"),
         A_DEFFLOAT, A_DEFFLOAT, 0);
+    class_addmethod(image_class, (t_method)image_rotate, gensym("rotate"),
+        A_GIMME, 0);
     class_addmethod(image_class, (t_method)image_imagesize_callback,\
                      gensym("_imagesize"), A_DEFFLOAT, A_DEFFLOAT, 0);
     iemgui_class_addmethods(image_class);

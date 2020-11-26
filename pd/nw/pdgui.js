@@ -4562,12 +4562,17 @@ function img_size_resizable_setter(cid, svg_image_tag, type, data, tk_anchor, w,
     img.src = "data:image/" + type + ";base64," + data;
 }
 
-function gui_ggee_image_resize(cid, svg_image_tag, w, h, resizemode, constrain)
-{
+function gui_ggee_image_resize(cid, svg_image_tag, w, h, resizemode, constrain) {
     configure_item(get_item(cid, svg_image_tag), {
         preserveAspectRatio: constrain == 1 ? "xMinYMin meet" : "none",
         width: w,
         height: h
+    }); 
+}
+
+function gui_ggee_image_rotate(cid, svg_image_tag, angle, x, y) {
+    configure_item(get_item(cid, svg_image_tag), {
+        transform: "rotate(" + angle + "," + x + "," + y + ")"
     }); 
 }
 
