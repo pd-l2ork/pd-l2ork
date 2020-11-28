@@ -6092,7 +6092,7 @@ function gui_iemgui_dialog(did, attr_array) {
     // We are subtracting 25 for the menu
     // ico@vt.edu: since adding frameless window, we use top 20px for draggable titlebar,
     // so now we subtract only 5 (25-20)
-    create_window(did, "iemgui", 298, 414-5,
+    create_window(did, "iemgui", 305, 414-5,
         popup_coords[2] + 10, popup_coords[3] + 60,
         attr_array_to_object(attr_array));
 }
