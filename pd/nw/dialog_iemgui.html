@@ -678,6 +678,9 @@ function populate_form(attr_object) {
             if (elem.length > 0) {
                 if (attr.slice(-5) === "color") {
                     var hex_string = Number(attr_object[attr]).toString(16);
+                    while(hex_string.length < 6) {
+                        hex_string = "0" + hex_string;
+                    }
                     var color_string = "#" +
                         (hex_string === "0" ? "000000" : hex_string);
                     //pdgui.post("color is " + color_string);
