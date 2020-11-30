@@ -23,7 +23,7 @@
       "image_click_tt": "specify click mode (0=no click detection, 1=bang-on-click, 2=1 on mouse-down and 0 on mouse-up)",
       "image_constrain": "constrain",
       "image_constrain_tt": "constrain image aspect ratio (0=no constrain, 1=original image aspect ratio, 2=current image aspect ratio)",
-      "filename_browse": "browse",
+      "filename_tt": "specify image file path (can be relative or absolute and you can also use @pd_extra and @pd_help aliases)",
       "filename_browse_tt": "use your system's file browser to select a new image file",
       "image_rotate_x": "x",
       "image_rotate_x_tt": "x of the rotation origin relative to the top left corner of the image selection border, expressed in pixels",

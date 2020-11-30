@@ -1286,9 +1286,11 @@ void iemgui_draw_io(t_iemgui *x, int old_sr_flags)
         n = 0;
     int a=old_sr_flags&IEM_GUI_OLD_SND_FLAG;
     int b=x->x_snd!=s_empty;
-    //fprintf(stderr, "%zx SND: old_sr_flags=%d SND_FLAG=%d || "
-    //                "OUTCOME: OLD_SND_FLAG=%d not_empty=%d\n",
-    //  (t_int)x, old_sr_flags, IEM_GUI_OLD_SND_FLAG, a, b);
+    /*
+    post("%zx SND: old_sr_flags=%d SND_FLAG=%d || "
+         "OUTCOME: OLD_SND_FLAG=%d not_empty=%d\n",
+         (t_int)x, old_sr_flags, IEM_GUI_OLD_SND_FLAG, a, b);
+    */
     
     if (a && !b)
     {
@@ -1312,9 +1314,11 @@ void iemgui_draw_io(t_iemgui *x, int old_sr_flags)
     }
     a = old_sr_flags & IEM_GUI_OLD_RCV_FLAG;
     b = x->x_rcv != s_empty;
-    //fprintf(stderr, "%zx RCV: old_sr_flags=%d RCV_FLAG=%d || "
-    //                  "OUTCOME: OLD_RCV_FLAG=%d not_empty=%d\n",
-    //    (t_int)x, old_sr_flags, IEM_GUI_OLD_RCV_FLAG, a, b);
+    /*
+    post("%zx RCV: old_sr_flags=%d RCV_FLAG=%d || "
+         "OUTCOME: OLD_RCV_FLAG=%d not_empty=%d\n",
+         (t_int)x, old_sr_flags, IEM_GUI_OLD_RCV_FLAG, a, b);
+    */
     if (a && !b)
     {
         for (i=0; i<n; i++)

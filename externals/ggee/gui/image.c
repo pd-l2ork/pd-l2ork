@@ -55,6 +55,7 @@ typedef struct _image
 // x_adj_img_width and height are adjusted image size (based on user input)
 
 extern t_symbol *s_image_empty;
+extern int gfxstub_haveproperties(void *key);
 
 /* widget helper functions */
 static void image_select(t_gobj *z, t_glist *glist, int state);
@@ -98,6 +99,7 @@ extern int glob_autopatch_connectme;
 
 static void image_drawme(t_image *x, t_glist *glist)
 {
+    post("image_drawme %d", x->x_draw_firstime);
     if(gobj_shouldvis((t_gobj *)x, glist))
     {
         if (x->x_draw_firstime)
@@ -163,17 +165,15 @@ static void image_drawme(t_image *x, t_glist *glist)
             );
             if (x->x_img_loaded)
             {
-                if (x->x_gop_spill)
-                    image_update(x, glist_getcanvas(glist),
-                        x->x_adj_img_width, x->x_adj_img_height, 0);
-                else
-                    gui_vmess("gui_ggee_image_offset", "xxxii",
-                        glist_getcanvas(glist),
-                        x,
-                        x,
-                        (x->x_gop_spill ? -(x->x_adj_img_width/2 - x->x_gui.x_w/2) : 0),
-                        (x->x_gop_spill ? -(x->x_adj_img_height/2 - x->x_gui.x_h/2) : 0)
-                    );
+                image_update(x, glist_getcanvas(glist),
+                    x->x_adj_img_width, x->x_adj_img_height, 0);
+                gui_vmess("gui_ggee_image_offset", "xxxii",
+                    glist_getcanvas(glist),
+                    x,
+                    x,
+                    (x->x_gop_spill ? -(x->x_adj_img_width/2 - x->x_gui.x_w/2) : 0),
+                    (x->x_gop_spill ? -(x->x_adj_img_height/2 - x->x_gui.x_h/2) : 0)
+                );
             }
             if (glist_isselected(x->x_gui.x_glist, (t_gobj *)x) &&
                 glist_getcanvas(x->x_gui.x_glist) == x->x_gui.x_glist)
@@ -459,7 +459,7 @@ static int image_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix,
         x->x_mouse_x = xpix;
         x->x_mouse_y = ypix;
         glist_grab(x->x_gui.x_glist, &x->x_gui.x_obj.te_g,
-                    image_motion, 0, 0, (t_floatarg)xpix, (t_floatarg)ypix, 0);
+            (t_glistmotionfn)image_motion, 0, 0, (t_floatarg)xpix, (t_floatarg)ypix, 0);
         if (x->x_click == 1)
         {
             iemgui_out_bang(&x->x_gui, 0, 1);
@@ -668,6 +668,7 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
             return;
         }
     }
+    post("image_imagesize_callback %f %f | %d %d", w, h, x->x_adj_img_width, x->x_adj_img_height);
     // if we got this far, we have a successfully loaded image, and if no rotation
     // point has been set, we set the default rotation point at the image center
     if (!x->x_rot_pt_init)
@@ -686,19 +687,8 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
     }
     else
     {
-        //sys_vgui("catch {.x%x.c delete %xMT}\n", glist_getcanvas(x->x_glist), x);
-        // reselect if we are on a toplevel canvas to adjust the selection rectangle, if necessary
-
-        /* ico@vt.edu: this does not work for the spill mode, so we will have to
-           draw the select box on demand
-        gui_vmess("gui_image_draw_border", "xxiiii",
-            glist_getcanvas(x->x_glist),
-            x,
-            0 - x->x_img_width/2,
-            0 - x->x_img_height/2,
-            x->x_img_width,
-            x->x_img_height);
-        */
+        // if necessary, reselect if we are on a toplevel canvas to adjust
+        // the selection rectangle
         if (x->x_legacy)
         {
             //post("callback offset");
@@ -732,6 +722,7 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
 // axis or 0, by X axis or 1, or by Y axis or 2). Most other calls will use 0.
 static void image_update(t_image *x, t_glist *glist, int width, int height, int resizemode)
 {
+    post("image_update");
     t_float c; // constrain
     if (x->x_constrain == 2) { // custom
         c = (float)x->x_constrain_w / (float)x->x_constrain_h;
@@ -786,6 +777,7 @@ static void image_update(t_image *x, t_glist *glist, int width, int height, int 
     }
     gui_vmess("gui_image_update_border", "xxii", 
         glist_getcanvas(glist), x, x->x_gui.x_w, x->x_gui.x_h);
+    iemgui_io_draw_move(&x->x_gui);
     image_dorotate(x);
     SETSYMBOL(x->x_at, gensym("size"));
     SETFLOAT(x->x_at+1, (t_floatarg)(x->x_adj_img_width));
@@ -943,8 +935,10 @@ static void image__motionhook(t_scalehandle *sh, t_floatarg mouse_x, t_floatarg 
         int properties = gfxstub_haveproperties((void *)x);
         if (properties)
         {
-            //properties_set_field_int(properties,"rng.min_ent",width);
-            //properties_set_field_int(properties,"rng.max_ent",height);
+            properties_set_field_int(properties,"visible_width",x->x_adj_img_width);
+            properties_set_field_int(properties,"visible_height",x->x_adj_img_height);
+            properties_set_field_int(properties,"width",x->x_gui.x_w);
+            properties_set_field_int(properties,"height",x->x_gui.x_h);
         }
     }
     scalehandle_dragon_label(sh, mouse_x, mouse_y);
@@ -953,27 +947,11 @@ static void image__motionhook(t_scalehandle *sh, t_floatarg mouse_x, t_floatarg 
 static void image_properties(t_gobj *z, t_glist *owner)
 {
     t_image *x = (t_image *)z;
-    char /*buf[800],*/ *gfx_tag;
+    char *gfx_tag;
     t_symbol *srl[3];
 
     iemgui_properties(&x->x_gui, srl);
 
-    /*
-    sprintf(buf, "pdtk_iemgui_dialog %%s |nbx| \
-        -------dimensions(digits)(pix):------- %d %d width: %d %d height: \
-        -----------output-range:----------- %g min: %g max: %d \
-        %d lin log %d %d log-height: %d {%s} {%s} {%s} %d %d %d %d %d %d %d\n",
-        x->x_gui.x_w, 1, x->x_gui.x_h, 8, x->x_min, x->x_max,
-        x->x_drawstyle,
-        x->x_lin0_log1, x->x_gui.x_loadinit, -1,
-        x->x_log_height,
-        srl[0]->s_name, srl[1]->s_name, srl[2]->s_name,
-        x->x_gui.x_ldx, x->x_gui.x_ldy,
-        x->x_gui.x_font_style, x->x_gui.x_fontsize,
-        0xffffff & x->x_gui.x_bcol, 0xffffff & x->x_gui.x_fcol,
-        0xffffff & x->x_gui.x_lcol);
-    //gfxstub_new(&x->x_gui.x_obj.ob_pd, x, buf);
-    */
     gfx_tag = gfxstub_new2(&x->x_gui.x_obj.ob_pd, x);
 
     gui_start_vmess("gui_image_dialog", "s", gfx_tag);
@@ -984,11 +962,11 @@ static void image_properties(t_gobj *z, t_glist *owner)
     gui_s("height");            gui_i(x->x_gui.x_h);
     gui_s("visible_width");     gui_i(x->x_adj_img_width);
     gui_s("visible_height");    gui_i(x->x_adj_img_height);
-    gui_s("gop_spill");         gui_i(x->x_gop_spill);          //RENAME
-    gui_s("click");             gui_i(x->x_click);              //RENAME
-    gui_s("constrain");         gui_i(x->x_constrain);          //TODO
-    gui_s("reset_width");       gui_i(x->x_img_width);          //TODO
-    gui_s("reset_height");      gui_i(x->x_img_height);         //TODO
+    gui_s("gop_spill");         gui_i(x->x_gop_spill);
+    gui_s("click");             gui_i(x->x_click);
+    gui_s("constrain");         gui_i(x->x_constrain);
+    gui_s("reset_width");       gui_i(x->x_img_width);
+    gui_s("reset_height");      gui_i(x->x_img_height);
     gui_s("send_symbol");       gui_s(x->x_gui.x_snd->s_name);
     gui_s("receive_symbol");    gui_s(x->x_gui.x_rcv->s_name);
     gui_s("rotate");            gui_f(x->x_rot_angle);
@@ -1007,34 +985,77 @@ static void image_properties(t_gobj *z, t_glist *owner)
 static void image_dialog(t_image *x, t_symbol *s, int argc,
     t_atom *argv)
 {
-    //TODOLICIOUS
-/*    if (atom_getintarg(19, argc, argv))
-        canvas_apply_setundo(x->x_gui.x_glist, (t_gobj *)x);
-    x->x_gui.x_w = maxi(atom_getintarg(0, argc, argv),1);
-    x->x_gui.x_h = maxi(atom_getintarg(1, argc, argv),8);
-    double min = atom_getfloatarg(2, argc, argv);
-    double max = atom_getfloatarg(3, argc, argv);
-    x->x_lin0_log1 = !!atom_getintarg(4, argc, argv);
-    x->x_log_height = maxi(atom_getintarg(6, argc, argv),10);
-    x->x_drawstyle = (int)atom_getintarg(18, argc, argv);
-    iemgui_dialog(&x->x_gui, argc, argv);
-    x->x_numwidth = my_numbox_calc_fontwidth(x);
+    //post("image_dialog argc=%d", argc); // 20 args in total
+    t_symbol *srl[3];
+    int oldsndrcvable = 0;
 
-    my_numbox_check_minmax(x, min, max);
-    // automatically adjust the number font size
-    x->x_num_fontsize = maxi(x->x_gui.x_h * 0.9, IEM_FONT_MINSIZE);
+    if (atom_getintarg(19, argc, argv))
+        canvas_apply_setundo(x->x_gui.x_glist, (t_gobj *)x);
+    x->x_fname = get_filename(argc, argv);
+    x->x_gui.x_w = atom_getintarg(1, argc, argv);
+    x->x_gui.x_h = atom_getintarg(2, argc, argv);
+    x->x_adj_img_width = atom_getintarg(3, argc, argv);
+    x->x_adj_img_height = atom_getintarg(4, argc, argv);
+    x->x_gop_spill = atom_getintarg(5, argc, argv);
+    x->x_click = atom_getintarg(6, argc, argv);
+    x->x_constrain = atom_getintarg(7, argc, argv);
+    srl[0] = iemgui_getfloatsymarg(8,argc,argv);
+    srl[1] = iemgui_getfloatsymarg(9,argc,argv);
+    x->x_rot_angle = atom_getintarg(10, argc, argv);
+    x->x_rot_x = atom_getintarg(11, argc, argv);
+    x->x_rot_y = atom_getintarg(12, argc, argv);
+    srl[2] = iemgui_getfloatsymarg(13,argc,argv);
+    x->x_gui.x_ldx = atom_getintarg(14, argc, argv);
+    x->x_gui.x_ldy = atom_getintarg(15, argc, argv);
+    x->x_gui.x_lcol = atom_getintarg(16, argc, argv) & 0xffffff;
+    int f = atom_getintarg(17, argc, argv); // font style (resolved below)
+    x->x_gui.x_fontsize = maxi(atom_getintarg(18, argc, argv),4);
+
+    if(iemgui_has_rcv(&x->x_gui)) oldsndrcvable |= IEM_GUI_OLD_RCV_FLAG;
+    if(iemgui_has_snd(&x->x_gui)) oldsndrcvable |= IEM_GUI_OLD_SND_FLAG;
+    iemgui_all_raute2dollar(srl);
+
+    // replace ascii code 11 (\v or vertical tab) with spaces
+    // we do this so that the string with spaces can survive argc,argv
+    // conversion when coming from dialog side of things where it is parsed
+    char *c;
+    for(c = srl[2]->s_name; c != NULL && *c != '\0'; c++)
+    {
+        if(*c == '\v')
+        {
+            *c = ' ';
+        }
+    }
+
+    x->x_gui.x_snd_unexpanded=srl[0];
+    srl[0]=canvas_realizedollar(x->x_gui.x_glist, srl[0]);
+    x->x_gui.x_rcv_unexpanded=srl[1];
+    srl[1]=canvas_realizedollar(x->x_gui.x_glist, srl[1]);
+    x->x_gui.x_lab_unexpanded=srl[2];
+    srl[2]=canvas_realizedollar(x->x_gui.x_glist, srl[2]);
+    if(srl[1]!=x->x_gui.x_rcv)
+    {
+        if(iemgui_has_rcv(&x->x_gui))
+            pd_unbind((t_pd *)&x->x_gui, x->x_gui.x_rcv);
+        x->x_gui.x_rcv = srl[1];
+        pd_bind((t_pd *)&x->x_gui, x->x_gui.x_rcv);
+    }
+    x->x_gui.x_snd = srl[0];
+    x->x_gui.x_lab = srl[2];
+    if(f<0 || f>2) f=0;
+    x->x_gui.x_font_style = f;
+    iemgui_verify_snd_ne_rcv(&x->x_gui);
+    canvas_dirty(x->x_gui.x_glist, 1);
+
     // normally, you'd do move+config, but here you have to do erase+new
     // because iemgui_draw_io does not support changes to x_drawstyle.
-    iemgui_draw_erase(&x->x_gui);
-    iemgui_draw_new(&x->x_gui);
-    //iemgui_draw_move(&x->x_gui);
-    //iemgui_draw_config(&x->x_gui);
-    scalehandle_draw(&x->x_gui);
-    if (x->x_gui.x_selected)
-        iemgui_select((t_gobj *)x,x->x_gui.x_glist,1);
-    //canvas_restore_original_position(x->x_gui.x_glist, (t_gobj *)x,"bogus",-1);
+    image_vis(x, x->x_gui.x_glist, 0);
+    image_vis(x, x->x_gui.x_glist, 1);
+    if (x->x_gui.x_selected) {
+        image_select((t_gobj *)x, x->x_gui.x_glist, 0);
+        image_select((t_gobj *)x, x->x_gui.x_glist, 1);
+    }
     scrollbar_update(x->x_gui.x_glist);
-*/
 }
 
 void image_draw(t_my_numbox *x, t_glist *glist, int mode)
@@ -1310,6 +1331,8 @@ void image_setup(void)
         A_DEFFLOAT, A_DEFFLOAT, 0);
     class_addmethod(image_class, (t_method)image_rotate, gensym("rotate"),
         A_GIMME, 0);
+    class_addmethod(image_class, (t_method)image_dialog,
+        gensym("dialog"), A_GIMME, 0);
     class_addmethod(image_class, (t_method)image_imagesize_callback,\
                      gensym("_imagesize"), A_DEFFLOAT, A_DEFFLOAT, 0);
     iemgui_class_addmethods(image_class);
