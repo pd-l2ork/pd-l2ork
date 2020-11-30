@@ -136,10 +136,6 @@ static void image_drawme(t_image *x, t_glist *glist)
                 gui_vmess("gui_image_draw_border", "xxiiiii", glist, x,
                     x->x_gui.x_obj.te_xpix, x->x_gui.x_obj.te_ypix,
                     x->x_gui.x_w, x->x_gui.x_h, 1);
-            //sys_vgui("catch {.x%zx.c delete %xS}\n", glist_getcanvas(glist), x);
-            //sys_vgui(".x%x.c create image %d %d -tags %xS\n",
-            //    glist_getcanvas(glist),text_xpix(&x->x_obj, glist),
-            //    text_ypix(&x->x_obj, glist), x);
             gui_vmess("gui_image_size_callback", "xxs",
                 glist_getcanvas(glist), x, x->x_inlet->s_name);
             iemgui_label_draw_new(&x->x_gui);
@@ -153,9 +149,6 @@ static void image_drawme(t_image *x, t_glist *glist)
         else
         {
             // move the gobj
-            //sys_vgui(".x%x.c coords %xS %d %d\n",
-            //    glist_getcanvas(glist), x,
-            //    text_xpix(&x->x_obj, glist), text_ypix(&x->x_obj, glist));
             gui_vmess("gui_image_coords", "xxii",
                 glist_getcanvas(glist),
                 x,
@@ -190,9 +183,6 @@ static void image_erase(t_image* x, t_glist* glist)
 {
     gui_vmess("gui_gobj_erase", "xx", glist_getcanvas(glist), x);
     x->x_gui.x_vis = 0;
-    //if (glist == x->x_gui.x_glist)
-    //    gui_vmess("gui_image_draw_border", "xxiiiii", glist, x,
-    //        0, 0, 0, 0);
 }
 
 static t_symbol *get_filename(t_int argc, t_atom *argv)
@@ -254,12 +244,6 @@ static void image_getrect(t_gobj *z, t_glist *glist,
             (!glist->gl_edit && !x->x_click)))
     {
         *xp2 = *xp1;
-        // only if we have an image loaded and we are placed within a GOP obliterate the height
-        //if (glist_getcanvas(glist) != glist && (x->x_img_width + x->x_img_height) >= 2)
-        //{
-            //printf("blah\n");
-            //*yp2 = *yp1;
-        //}
     }
     //post("...%d %d %d %d", *xp1, *yp1, *xp2, *yp2);
 }
@@ -283,12 +267,7 @@ static void image_displace_wtag(t_gobj *z, t_glist *glist,
     t_image *x = (t_image *)z;
     x->x_gui.x_obj.te_xpix += dx;
     x->x_gui.x_obj.te_ypix += dy;
-    /*sys_vgui(".x%x.c coords %xSEL %d %d %d %d\n",
-           glist_getcanvas(glist), x,
-           text_xpix(&x->x_obj, glist), text_ypix(&x->x_obj, glist),
-           text_xpix(&x->x_obj, glist) + x->x_width, text_ypix(&x->x_obj, glist) + x->x_height);
-
-    image_drawme(x, glist, 0);*/
+    //image_drawme(x, glist, 0);
     canvas_fixlinesfor(glist,(t_text*) x);
 }
 
@@ -320,17 +299,6 @@ static void image_select(t_gobj *z, t_glist *glist, int state)
 
     if (state && x->x_gui.x_selected == NULL)
     {
-        /*if (x->x_gui.x_glist == glist_getcanvas(x->x_gui.x_glist))
-            gui_vmess("gui_image_toggle_border", "xxiiiiiii", glist, x,
-                x1, y1, x2 - x1, y2 - y1,
-                (x2 - x1) + (x->x_adj_img_width/2 - (x2 - x1)/2) - 
-                    (x->x_adj_img_width == x->x_gui.x_w ? 0 : 2),
-                (y2 - y1) + (x->x_adj_img_height/2 - (y2 - y1)/2) -
-                    (x->x_adj_img_height == x->x_gui.x_h ? 0 : 2),
-                1
-            );
-        post("toggle border on %d %d", x2-x1, (x2 - x1) + (x->x_adj_img_width/2 - (x2 - x1)/2));
-        */
         // here we borrow the iemgui mycanvas resize handles
         // and add 8 to the width since the function below is originally
         // aimed at mycanvas and its offset. Do this only if we are on
@@ -353,10 +321,6 @@ static void image_select(t_gobj *z, t_glist *glist, int state)
     }
     else if (!state && x->x_gui.x_selected == glist)
     {
-        /*if (x->x_gui.x_glist == glist_getcanvas(x->x_gui.x_glist))
-            gui_vmess("gui_image_toggle_border", "xxiiiiiii", glist, x,
-                0, 0, 0, 0, 0, 0, 0);
-        */
         gui_vmess("gui_iemgui_label_show_drag_handle", "xxiiii",
             glist, x, state, 0, 0, 1);
         gui_vmess("gui_gobj_deselect", "xx", glist_getcanvas(x->x_gui.x_glist), x);
@@ -395,8 +359,6 @@ static void image_vis(t_gobj *z, t_glist *glist, int vis)
         image_erase(x,glist);
 }
 
-/* can we use the normal text save function ?? */
-
 static void image_save(t_gobj *z, t_binbuf *b)
 {
     //post("image_save");
@@ -417,19 +379,6 @@ static void image_save(t_gobj *z, t_binbuf *b)
 }
 
 static t_widgetbehavior image_widgetbehavior;
-
-/*void image_size(t_image* x,t_floatarg w,t_floatarg h) {
-     x->x_width = w;
-     x->x_height = h;
-     image_displace((t_gobj*)x, x->x_glist, 0.0, 0.0);
-}*/
-
-/*void image_color(t_image* x,t_symbol* col)
-{
-     //outlet_bang(x->x_obj.ob_outlet); only bang if there was a bang .. 
-     //so color black does the same as bang, but doesn't forward the bang 
-
-}*/
 
 static void image_motion(t_image *x, t_floatarg dx, t_floatarg dy)
 {
@@ -504,6 +453,23 @@ static void image_gop_spill(t_image* x, t_floatarg f)
         image_update(
             x, x->x_gui.x_glist, x->x_adj_img_width, x->x_adj_img_height, 0);
     image_displace((t_gobj*)x, x->x_gui.x_glist, 0.0, 0.0);
+    int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+    {
+        properties_set_field_int(properties,"gop_spill",x->x_gop_spill);
+    }
+}
+
+// preempt the g_all_guis.c from grabbing color changes, so that we can
+// update the gfxstub properties
+static void image_color(t_image *x, t_symbol *s, int ac, t_atom *av)
+{
+    iemgui_color(&x->x_gui, s, ac, av);
+    int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+    {
+        properties_set_field_int(properties,"label_color",0xffffff & x->x_gui.x_lcol);
+    }   
 }
 
 // constrain is by default on (or 1)
@@ -521,13 +487,18 @@ static void image_constrain(t_image* x, t_floatarg f)
             x, x->x_gui.x_glist, x->x_adj_img_width, x->x_adj_img_height, 0);
     }
     image_displace((t_gobj*)x, x->x_gui.x_glist, 0.0, 0.0);
+    int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+    {
+        properties_set_field_int(properties,"constrain",x->x_constrain);
+    }
 }
 
 
 static void image_gop_spill_size(t_image* x, t_floatarg w, t_floatarg h)
 {
     //post("image_gop_spill_size %d %d", (int)w, (int)h);
-    // we need a size of at least 3 to have a meaningful
+    // we need a size of at least IEM_GUI_MINSIZE (8) to have a meaningful
     // selection frame around the selection box
     if (!x->x_gop_spill)
     {
@@ -538,13 +509,13 @@ static void image_gop_spill_size(t_image* x, t_floatarg w, t_floatarg h)
 
     int changed = 0;
 
-    if ((int)w >= 3)
+    if ((int)w >= IEM_GUI_MINSIZE)
     {
         x->x_gui.x_w = ((int)w <= x->x_adj_img_width ? (int)w : x->x_adj_img_width);
         changed = 1;
     }
 
-    if ((int)h >= 3)
+    if ((int)h >= IEM_GUI_MINSIZE)
     {
         x->x_gui.x_h = ((int)h <= x->x_adj_img_height ? (int)h : x->x_adj_img_height);
         changed = 1;
@@ -561,22 +532,28 @@ static void image_gop_spill_size(t_image* x, t_floatarg w, t_floatarg h)
                 x, x->x_gui.x_glist, x->x_adj_img_width, x->x_adj_img_height, 0);
         image_displace((t_gobj*)x, x->x_gui.x_glist, 0.0, 0.0);
     }
+    int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+    {
+        properties_set_field_int(properties,"width",x->x_gui.x_w);
+        properties_set_field_int(properties,"height",x->x_gui.x_h);
+    }
 }
 
 static void image_size(t_image* x, t_floatarg w, t_floatarg h)
 {
     //post("image_size %d %d", (int)w, (int)h);
-    // we need a size of at least 3 to have a meaningful
+    // we need a size of at least IEM_GUI_MINSIZE (8) to have a meaningful
     // selection frame around the selection box
     int changed = 0;
 
-    if ((int)w >= 3)
+    if ((int)w >= IEM_GUI_MINSIZE)
     {
         x->x_adj_img_width = (int)w;
         changed = 1;
     }
 
-    if ((int)h >= 3)
+    if ((int)h >= IEM_GUI_MINSIZE)
     {
         x->x_adj_img_height = (int)h;
         changed = 1;
@@ -592,6 +569,14 @@ static void image_size(t_image* x, t_floatarg w, t_floatarg h)
             image_update(
                 x, x->x_gui.x_glist, x->x_adj_img_width, x->x_adj_img_height, 0);
         image_displace((t_gobj*)x, x->x_gui.x_glist, 0.0, 0.0);
+    }
+    int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+    {
+        properties_set_field_int(properties,"visible_width",x->x_adj_img_width);
+        properties_set_field_int(properties,"visible_height",x->x_adj_img_height);
+        properties_set_field_int(properties,"width",x->x_gui.x_w);
+        properties_set_field_int(properties,"height",x->x_gui.x_h);
     }
 }
 
@@ -641,7 +626,7 @@ static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
 }
 
 static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
-    //fprintf(stderr,"received w %f h %f should %d spill %d\n", w, h, \
+    //post("received w %f h %f should %d spill %d\n", w, h, \
         gobj_shouldvis((t_gobj *)x, glist_getcanvas(x->x_glist)), x->x_gop_spill);
     x->x_img_loaded = 1;
     x->x_img_width = w;
@@ -1056,8 +1041,6 @@ static void image_dialog(t_image *x, t_symbol *s, int argc,
     iemgui_verify_snd_ne_rcv(&x->x_gui);
     canvas_dirty(x->x_gui.x_glist, 1);
 
-    // normally, you'd do move+config, but here you have to do erase+new
-    // because iemgui_draw_io does not support changes to x_drawstyle.
     image_vis(x, x->x_gui.x_glist, 0);
     image_vis(x, x->x_gui.x_glist, 1);
     if (x->x_gui.x_selected) {
@@ -1332,12 +1315,6 @@ void image_setup(void)
     image_class = class_new(gensym("image"),
                 (t_newmethod)image_new, (t_method)image_free,
                 sizeof(t_image),0, A_GIMME,0);
-/*
-    class_addmethod(image_class, (t_method)image_size, gensym("size"),
-        A_FLOAT, A_FLOAT, 0);
-    class_addmethod(image_class, (t_method)image_color, gensym("color"),
-        A_SYMBOL, 0);
-*/
     class_addmethod(image_class, (t_method)image_clickmode, gensym("click"),
         A_DEFFLOAT, 0);
     class_addmethod(image_class, (t_method)image_reset, gensym("reset"),
@@ -1358,6 +1335,9 @@ void image_setup(void)
         gensym("dialog"), A_GIMME, 0);
     class_addmethod(image_class, (t_method)image_imagesize_callback,\
                      gensym("_imagesize"), A_DEFFLOAT, A_DEFFLOAT, 0);
+    // let's preempt color call, so that we can sidestep horribly optimized g_all_guis.c
+    class_addmethod(image_class, (t_method)image_color,
+        gensym("color"), A_GIMME, 0);    
     iemgui_class_addmethods(image_class);
 
     image_setwidget();

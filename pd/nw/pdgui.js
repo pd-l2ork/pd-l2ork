@@ -6107,8 +6107,26 @@ function gui_image_dialog(did, attr_array) {
 
 function gui_dialog_set_field(did, field_name, value) {
     var elem = dialogwin[did].window.document.getElementsByName(field_name)[0];
-    elem.value = value;
-    dialogwin[did].window.update_attr(elem);
+    if (elem)
+    {
+        if (elem.type === "checkbox") {
+            elem.checked = (value === 1 ? true : false);
+        } else if (elem.type === "select-one") {
+            elem.selectedIndex = value;
+        } else if (elem.type === "color") {
+            var hex_string = Number(value).toString(16);
+            while(hex_string.length < 6) {
+                hex_string = "0" + hex_string;
+            }
+            var color_string = "#" +
+                (hex_string === "0" ? "000000" : hex_string);
+            elem.value = color_string;
+        } else {
+            elem.value = value;
+        }
+        elem.onchange();
+    }
+    //dialogwin[did].window.update_attr(elem);
 }
 
 // Used when undoing a font size change when the font dialog is open
