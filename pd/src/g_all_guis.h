@@ -261,6 +261,7 @@ EXTERN void scalehandle_draw(t_iemgui *x);
 EXTERN t_scalehandle *scalehandle_new(t_object *x, t_glist *glist, int scale, t_clickhandlefn chf, t_motionhandlefn mhf);
 EXTERN void scalehandle_free(t_scalehandle *h);
 EXTERN void properties_set_field_int(t_int props, const char *gui_field, int value);
+EXTERN void properties_set_field_float(t_int props, const char *gui_field, t_floatarg value);
 EXTERN void scalehandle_dragon_label(t_scalehandle *h, float f1, float f2);
 EXTERN void scalehandle_click_label(t_scalehandle *h);
 EXTERN void scalehandle_click_scale(t_scalehandle *h);

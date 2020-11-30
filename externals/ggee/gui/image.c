@@ -99,7 +99,6 @@ extern int glob_autopatch_connectme;
 
 static void image_drawme(t_image *x, t_glist *glist)
 {
-    post("image_drawme %d", x->x_draw_firstime);
     if(gobj_shouldvis((t_gobj *)x, glist))
     {
         if (x->x_draw_firstime)
@@ -405,14 +404,15 @@ static void image_save(t_gobj *z, t_binbuf *b)
     t_symbol *bflcol[3];
     t_symbol *srl[3];
     iemgui_save(&x->x_gui, srl, bflcol);
-    binbuf_addv(b, "ssiissiiiisssiiiiisfff", gensym("#X"), gensym("obj"),
+    binbuf_addv(b, "ssiissiiiisssiiiiisiifff", gensym("#X"), gensym("obj"),
                 x->x_gui.x_obj.te_xpix, x->x_gui.x_obj.te_ypix,   
                 atom_getsymbol(binbuf_getvec(x->x_gui.x_obj.te_binbuf)),
                 x->x_fname, x->x_gop_spill, x->x_click, x->x_gui.x_w,
                 x->x_gui.x_h, srl[0], srl[1], srl[2], x->x_adj_img_width,
                 x->x_adj_img_height, x->x_constrain,
                 iem_fstyletoint(&x->x_gui), x->x_gui.x_fontsize,
-                bflcol[2], x->x_rot_x, x->x_rot_y, x->x_rot_angle);
+                bflcol[2], x->x_gui.x_ldx, x->x_gui.x_ldy,
+                x->x_rot_x, x->x_rot_y, x->x_rot_angle);
     binbuf_addv(b, ";");
 }
 
@@ -668,7 +668,6 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
             return;
         }
     }
-    post("image_imagesize_callback %f %f | %d %d", w, h, x->x_adj_img_width, x->x_adj_img_height);
     // if we got this far, we have a successfully loaded image, and if no rotation
     // point has been set, we set the default rotation point at the image center
     if (!x->x_rot_pt_init)
@@ -716,13 +715,23 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
         
         canvas_fixlinesfor(x->x_gui.x_glist,(t_text*) x);
     }
+
+    int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+    {
+        properties_set_field_int(properties,"visible_width",x->x_adj_img_width);
+        properties_set_field_int(properties,"visible_height",x->x_adj_img_height);
+        properties_set_field_int(properties,"width",x->x_gui.x_w);
+        properties_set_field_int(properties,"height",x->x_gui.x_h);
+        properties_set_field_float(properties,"rotate_x",x->x_rot_x);
+        properties_set_field_float(properties,"rotate_y",x->x_rot_y);
+    }
 }
 
 // resizemode is primarily used for the motionhook (constrain resize by neither
 // axis or 0, by X axis or 1, or by Y axis or 2). Most other calls will use 0.
 static void image_update(t_image *x, t_glist *glist, int width, int height, int resizemode)
 {
-    post("image_update");
     t_float c; // constrain
     if (x->x_constrain == 2) { // custom
         c = (float)x->x_constrain_w / (float)x->x_constrain_h;
@@ -735,21 +744,21 @@ static void image_update(t_image *x, t_glist *glist, int width, int height, int 
         switch (resizemode)
         {
             case 0:
-                x->x_adj_img_width = maxi(width, 3);
-                x->x_adj_img_height = maxi(width * (1/c), 3);
+                x->x_adj_img_width = maxi(width, IEM_GUI_MINSIZE);
+                x->x_adj_img_height = maxi(width * (1/c), IEM_GUI_MINSIZE);
                 break;
             case 1:
-                x->x_adj_img_width = maxi(width, 3);
-                x->x_adj_img_height = maxi(width * (1/c), 3);
+                x->x_adj_img_width = maxi(width, IEM_GUI_MINSIZE);
+                x->x_adj_img_height = maxi(width * (1/c), IEM_GUI_MINSIZE);
                 break;
             case 2:
-                x->x_adj_img_width = maxi(height * c, 3);
-                x->x_adj_img_height = maxi(height, 3);
+                x->x_adj_img_width = maxi(height * c, IEM_GUI_MINSIZE);
+                x->x_adj_img_height = maxi(height, IEM_GUI_MINSIZE);
                 break;
         }
     } else {
-        x->x_adj_img_width = maxi(width, 3);
-        x->x_adj_img_height = maxi(height, 3);
+        x->x_adj_img_width = maxi(width, IEM_GUI_MINSIZE);
+        x->x_adj_img_height = maxi(height, IEM_GUI_MINSIZE);
     }
 
     gui_vmess("gui_ggee_image_resize", "xxiiii",
@@ -991,7 +1000,7 @@ static void image_dialog(t_image *x, t_symbol *s, int argc,
 
     if (atom_getintarg(19, argc, argv))
         canvas_apply_setundo(x->x_gui.x_glist, (t_gobj *)x);
-    x->x_fname = get_filename(argc, argv);
+    x->x_fname = atom_getsymbolarg(0, argc, argv);
     x->x_gui.x_w = atom_getintarg(1, argc, argv);
     x->x_gui.x_h = atom_getintarg(2, argc, argv);
     x->x_adj_img_width = atom_getintarg(3, argc, argv);
@@ -1002,8 +1011,8 @@ static void image_dialog(t_image *x, t_symbol *s, int argc,
     srl[0] = iemgui_getfloatsymarg(8,argc,argv);
     srl[1] = iemgui_getfloatsymarg(9,argc,argv);
     x->x_rot_angle = atom_getintarg(10, argc, argv);
-    x->x_rot_x = atom_getintarg(11, argc, argv);
-    x->x_rot_y = atom_getintarg(12, argc, argv);
+    x->x_rot_x = atom_getfloatarg(11, argc, argv);
+    x->x_rot_y = atom_getfloatarg(12, argc, argv);
     srl[2] = iemgui_getfloatsymarg(13,argc,argv);
     x->x_gui.x_ldx = atom_getintarg(14, argc, argv);
     x->x_gui.x_ldy = atom_getintarg(15, argc, argv);
@@ -1233,6 +1242,20 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
     {
         //post("label color succeeded");
         iemgui_all_loadcolors(&x->x_gui, 0, 0, argv);
+        argc--;
+        argv++;
+    }
+    if (argc && argv[0].a_type == A_FLOAT)
+    {
+        //post("label x succeeded");
+        x->x_gui.x_ldx = (int)atom_getfloat(&argv[0]);
+        argc--;
+        argv++;
+    }
+    if (argc && argv[0].a_type == A_FLOAT)
+    {
+        //post("label y succeeded");
+        x->x_gui.x_ldy = (int)atom_getfloat(&argv[0]);
         argc--;
         argv++;
     }

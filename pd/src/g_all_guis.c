@@ -986,6 +986,16 @@ void properties_set_field_int(t_int props, const char *gui_field, int value)
         value);
 }
 
+void properties_set_field_float(t_int props, const char *gui_field, t_floatarg value)
+{
+    char tagbuf[MAXPDSTRING];
+    sprintf(tagbuf, ".gfxstub%zx", props);
+    gui_vmess("gui_dialog_set_field", "ssf",
+        tagbuf,
+        gui_field,
+        value);
+}
+
 void scalehandle_dragon_label(t_scalehandle *h, float mouse_x, float mouse_y)
 {
     if (h->h_dragon && !h->h_scale)

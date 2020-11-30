@@ -81,7 +81,7 @@ input[type="number"] {
             </td>
             <td data-i18n="[title]iem.prop.visible_width_tt">
               <input type="number" name="visible_width" min="3"
-                     onchange="update_wh(this);">
+                     onchange="update_wh(this, 0);">
             </td>
             <td>
               <label data-i18n="[title]iem.prop.visible_height_tt">
@@ -91,7 +91,7 @@ input[type="number"] {
             <td data-i18n="[title]iem.prop.visible_height_tt"
                 style="text-align: right; margin-right: 1px;">
               <input type="number" name="visible_height" min="3"
-                     onchange="update_wh(this);">
+                     onchange="update_wh(this, 1);">
             </td>
           </tr>
 
@@ -116,7 +116,7 @@ input[type="number"] {
             </td>
             <td data-i18n="[title]iem.prop.image_sel_width_tt" class="image_sel_width_tt">
               <input type="number" name="width" min="3"
-                     onchange="update_wh(this);">
+                     onchange="update_wh(this, 2);">
             </td>
             <td>
               <label data-i18n="[title]iem.prop.image_sel_height_tt" class="image_sel_height_tt">
@@ -126,7 +126,7 @@ input[type="number"] {
             <td data-i18n="[title]iem.prop.image_sel_height_tt" class="image_sel_height_tt"
                 style="text-align: right; margin-right: 1px;">
               <input type="number" name="height" min="3"
-                     onchange="update_wh(this);">
+                     onchange="update_wh(this, 3);">
             </td>
           </tr>
 
@@ -190,7 +190,7 @@ input[type="number"] {
                      style="width: 167px;">
                 <option value="0">disabled (default)</option>
                 <option value="1">bang on click</option>
-                <option value="2">1/0 mousedown/mouseup</option>
+                <option value="2">mouse(1/0) x y</option>
               </select>
             </td>
           </tr>
@@ -358,69 +358,124 @@ function strip_problem_chars(arg) {
     return ret;
 }
 
-function update_wh(elem) {
-  // match the minimum possible size to what the object allows
-  if (elem.value < 3) {
-    elem.value = 3;
-  }
-  var c = document.getElementsByName('constrain')[0].value;
-  var ar = document.getElementsByName('aspect_ratio')[0];
-  if (c === 1) {
-    //TODO
-  } else if (c === 2) {
+/* we use which to more easily identify which of the 4 possible variables
+   we are dealing with:
 
-  }
-  update_attr(elem);
+   0=visible_width
+   1=visible_height
+   2=width
+   3=height
+*/
+function update_wh(elem, which) {
+    // match the minimum possible size to what the object allows
+    if (elem.value < 8) {
+        elem.value = 8;
+    }
+
+    var w  = document.getElementsByName('visible_width')[0],
+        h  = document.getElementsByName('visible_height')[0],
+        bw = document.getElementsByName('width')[0],
+        bh = document.getElementsByName('height')[0],
+        c  = parseInt(document.getElementsByName('constrain')[0].value),
+        ar = parseFloat(document.getElementsByName('aspect_ratio')[0].value),
+        g  = document.getElementsByName('gop_spill')[0].checked ? 1 : 0;
+
+    // if we are dealing with visible_w/h consider the constraint
+    if (which < 2) {
+
+        if (c > 0) {
+            if (which === 0) {
+                h.value = parseInt(w.value / ar);
+                if (h.value < 8) {
+                    h.value = 8;
+                    w.value = parseInt(h.value * ar);
+                }
+            } else {
+                w.value = parseInt(h.value * ar);
+                if (w.value < 8) {
+                    w.value = 8;
+                    h.value = parseInt(w.value / ar);
+                }
+            }
+        }
+        update_attr(w);
+        update_attr(h);
+        if (g) {
+            if (Number(bw.value) > Number(w.value)) {
+                bw.value = w.value;
+                update_attr(bw);
+            }
+            if (Number(bh.value) > Number(h.value)) {
+                bh.value = h.value;
+                update_attr(bh);
+            }
+        }
+    } else {
+        // we are dealing with gop-spill values
+        if (which === 2) {
+            if (Number(elem.value) > Number(w.value)) {
+                elem.value = w.value;
+            }
+        } else {
+            if (Number(elem.value) > Number(h.value)) {
+                elem.value = h.value;
+            }
+        }
+        update_attr(elem);
+    }
 }
 
 function update_filename(result) {
-  var newfile = result.value;
-  if(pdgui.nw_os_is_windows) {
-    newfile = newfile.replace(/\\/g, '\/');
-  }
-  document.getElementsByName('filename')[0].value = newfile;
+    var newfile = result.value;
+    if(pdgui.nw_os_is_windows) {
+        newfile = newfile.replace(/\\/g, '\/');
+    }
+    document.getElementsByName('filename')[0].value = newfile;
+    update_attr(document.getElementsByName('filename')[0]);
 }
 
 function image_browse() {
-  var start_path = pdgui.get_pd_opendir();
-  pdgui.post("image_browse <" + start_path + ">");
-  if(pdgui.nw_os_is_windows) {
-    start_path = start_path.replace(/\//g, '\\');
-  }
-  //document.getElementById('fileDialog').setAttribute('nwworkingdir', cur_dir);
-  var dialog_options = {
-        style: "display: none;",
-        type: "file",
-        id: "openpanel_dialog",
-        onchange: "update_filename(this);",
-        // using an absolute path here, see comment above
-        nwworkingdir: start_path
-    };
-  var input_string = pdgui.build_file_dialog_string(dialog_options);
-  document.querySelector("#openpanelSpan").innerHTML = input_string;
-  //<input id="fileDialog" type="file" name="name" style="display: none;"
-  //  onchange="update_file(this);" nwworkingdir />
-  document.getElementById('openpanel_dialog').click();
+    var start_path = pdgui.get_pd_opendir();
+    pdgui.post("image_browse <" + start_path + ">");
+    if(pdgui.nw_os_is_windows) {
+      start_path = start_path.replace(/\//g, '\\');
+    }
+    // the following does not work due to nw.js bug, so we use dialog_options approach
+    //document.getElementById('fileDialog').setAttribute('nwworkingdir', cur_dir);
+    var dialog_options = {
+          style: "display: none;",
+          type: "file",
+          id: "openpanel_dialog",
+          onchange: "update_filename(this);",
+          nwworkingdir: start_path
+      };
+    var input_string = pdgui.build_file_dialog_string(dialog_options);
+    document.querySelector("#openpanelSpan").innerHTML = input_string;
+    //<input id="fileDialog" type="file" name="name" style="display: none;"
+    //  onchange="update_file(this);" nwworkingdir />
+    document.getElementById('openpanel_dialog').click();
 }
 
 function update_constrain(elem) {
-  var cur_w = document.getElementsByName('visible_width')[0];
-  var cur_h = document.getElementsByName('visible_height')[0];
-  var ar = document.getElementsByName('aspect_ratio')[0];
-  if (parseInt(elem.value) === 1) {
-      var ratio = document.getElementsByName('reset_width')[0].value /
-          document.getElementsByName('reset_height')[0].value;
-      // adjust height based on the width:
-      cur_h.value = parseInt(cur_w.value / ratio);
-      ar.value = ratio;
-  } else if (parseInt(elem.value) === 2) {
-      ar.value = cur_w.value / cur_h.value;
-  }
-  // if the value is 0 we only update the constrain value since there is no
-  // requested aspect ratio constraint. Similarly, if the value is 2, then the
-  // user has specified the current width/height as the basis for the ratio,
-  // so, we have also nothing else to do at this point in time.
-  update_attr(elem, true);
+    var cur_w = document.getElementsByName('visible_width')[0];
+    var cur_h = document.getElementsByName('visible_height')[0];
+    var ar = document.getElementsByName('aspect_ratio')[0];
+    if (parseInt(elem.value) === 1) {
+        var ratio = document.getElementsByName('reset_width')[0].value /
+            document.getElementsByName('reset_height')[0].value;
+        // adjust height based on the width:
+        ar.value = ratio;
+    } else if (parseInt(elem.value) === 2) {
+        ar.value = cur_w.value / cur_h.value;
+    }
+    // if the value is 0 we only update the constrain value since there is no
+    // requested aspect ratio constraint. Similarly, if the value is 2, then the
+    // user has specified the current width/height as the basis for the ratio,
+    // so, we have also nothing else to do at this point in time.
+    update_attr(elem);
+    // manually request updating of the w/h values to conform to the new setting
+    update_wh(cur_w, 0);
+
 }
 
 function update_gop_spill(elem) {
@@ -432,6 +487,8 @@ function update_gop_spill(elem) {
       document.getElementsByName('height')[0].disabled = true;
     }
     update_attr(elem);
+    // manually request updating of the w/h values to conform to the new setting
+    update_wh(document.getElementsByName('visible_width')[0], 0);
 }
 
 function update_attr(elem, symbol_field) {
@@ -541,19 +598,6 @@ function ok() {
     cancel(false);
 }
 
-function change_width_and_height_labels() {
-    [".mknob_steps", ".mknob_size"].forEach(function(sel) {
-        Array.prototype.forEach.call(
-            document.body.querySelectorAll(sel), function(e) {
-            e.setAttribute("data-i18n", "iem.prop" + sel);
-        });
-	Array.prototype.forEach.call(
-            document.body.querySelectorAll(sel + "_tt"), function(e) {
-                e.setAttribute("data-i18n", "[title]iem.prop" + sel + "_tt");
-        });
-    });
-}
-
 // This gets called from the nw_create_window function in index.html
 // It provides us with our window id from the C side.  Once we have it
 // we can create the menu and register event callbacks
@@ -571,12 +615,6 @@ function register_window_id(gfxstub, attr_object) {
     add_events(gfxstub);
     pdgui.gui_check_for_dialog_appearance_inconsistencies(gfxstub);
 
-    // Special case for [moonlib/mknob] which leverages the iemgui dialog--
-    // change the label for "height" to "steps"
-    if (attr_object.type === "mknob") {
-        change_width_and_height_labels();
-    }
-
     // ico@vt.edu TODO: translate the window title
     // for the timebeing we just give it english version
     //document.getElementById("titlebar_title").textContent = "[" + 
@@ -591,6 +629,9 @@ function register_window_id(gfxstub, attr_object) {
     document.getElementsByClassName("container")[0]
         .style.setProperty("display", "inline");
     pdgui.resize_window(pd_object_callback);
+    // update constrain to calculate aspect_ratio
+    update_constrain(document.getElementsByName("constrain")[0]);
+    // update gop_spill to toggle editability of the border size
     update_gop_spill(document.getElementsByName("gop_spill")[0]);
 }
 
@@ -630,6 +671,9 @@ function populate_form(attr_object) {
             if (elem.length > 0) {
                 if (attr.slice(-5) === "color") {
                     var hex_string = Number(attr_object[attr]).toString(16);
+                    while(hex_string.length < 6) {
+                        hex_string = "0" + hex_string;
+                    }
                     var color_string = "#" +
                         (hex_string === "0" ? "000000" : hex_string);
                     //pdgui.post("color is " + color_string);

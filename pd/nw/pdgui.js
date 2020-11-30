@@ -2519,7 +2519,6 @@ function gui_text_draw_border(cid, tag, bgcolor, isbroken, width, height) {
 
 function gui_gobj_draw_io(cid, parenttag, tag, x1, y1, x2, y2, basex, basey,
     type, i, is_signal, is_iemgui) {
-    post("gui_gobj_draw_io tag=" + tag + " iem=" + is_iemgui);
     gui(cid).get_gobj(parenttag)
     .append(function(frag) {
         var xlet_class, xlet_id, rect;
