@@ -511,15 +511,21 @@ text.activated {
     stroke-width: 1;
 }
 
-/* iemgui inlet or outlet */
-.xlet_iemgui {
+/* iemgui inlet or outlet in editmode */
+.editmode .xlet_iemgui {
     stroke: black;
     fill: black;
     stroke-width: 1;
+    visibility: visible;
+}
+
+/* iemgui inlet or outlet -- ico@vt.edu 2020-11-29:; by default now hidden */
+.xlet_iemgui {
+    visibility: hidden;
 }
 
 /* text label for an iemgui */
-.iemgui_label_selected {
+.editmode .iemgui_label_selected {
     fill: #e87216;
 }
 
@@ -564,6 +570,16 @@ text.activated {
 }
 
 .image.border {
+    visibility: hidden;
+}
+
+.editmode .label_drag_handle,
+.editmode .gop_drag_handle {
+    stroke: #e87216;
+    visibility: visible;
+}
+
+.label_drag_handle, .gop_drag_handle {
     visibility: hidden;
 }
 

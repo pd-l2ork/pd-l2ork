@@ -2519,6 +2519,7 @@ function gui_text_draw_border(cid, tag, bgcolor, isbroken, width, height) {
 
 function gui_gobj_draw_io(cid, parenttag, tag, x1, y1, x2, y2, basex, basey,
     type, i, is_signal, is_iemgui) {
+    post("gui_gobj_draw_io tag=" + tag + " iem=" + is_iemgui);
     gui(cid).get_gobj(parenttag)
     .append(function(frag) {
         var xlet_class, xlet_id, rect;
@@ -2559,6 +2560,7 @@ function gui_gobj_redraw_io(cid, parenttag, tag, x, y, type, i, basex, basey) {
     //       text_drawborder (firsttime=0) -> glist_drawiofor (firsttime=0)
     // This means that a new gatom tries to redraw its inlets before
     // it has created them.
+    post("gui_gobj_redraw_io " + tag);
     gui(cid).get_elem(tag + type + i, {
         x: x - basex,
         y: y - basey
@@ -2566,6 +2568,7 @@ function gui_gobj_redraw_io(cid, parenttag, tag, x, y, type, i, basex, basey) {
 }
 
 function gui_gobj_erase_io(cid, tag) {
+    post("gui_gobj_erase_io " + tag);
     gui(cid).get_elem(tag, function(e) {
         e.parentNode.removeChild(e);
     });
@@ -6098,7 +6101,7 @@ function gui_iemgui_dialog(did, attr_array) {
 }
 
 function gui_image_dialog(did, attr_array) {
-    create_window(did, "image", 298, 414-5,
+    create_window(did, "image", 293, 414-5,
         popup_coords[2] + 10, popup_coords[3] + 60,
         attr_array_to_object(attr_array));
 }

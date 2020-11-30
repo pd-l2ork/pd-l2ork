@@ -18,7 +18,33 @@
           </td>
         </tr>
       </table>
-    <form> 
+    <form>
+
+      <fieldset> 
+        <legend data-i18n="iem.prop.heading.filename">wrong stuff</legend> 
+
+        <table>
+          <tr class="filename prop hidden">
+            <td>
+              <label data-i18n="[title]iem.prop.filename_tt">
+                <span data-i18n="iem.prop.filename"></span>
+              </label>
+            </td>
+            <td data-i18n="[title]iem.prop.filename_tt">
+              <input type="text" name="filename"
+                     onchange="update_attr(this, true);"
+                     style="width: 14em;">
+            </td>
+            <td data-i18n="[title]iem.prop.filename_browse_tt">
+		      <button type="button" onClick="image_browse()"
+		      		data-i18n="[title]iem.prop.filename_browse_tt">
+		        <span data-i18n="iem.prop.filename_browse"></span>
+		      </button>
+            </td>
+          </tr>
+        </table>
+      </fieldset> 
+
       <fieldset> 
         <legend data-i18n="iem.prop.heading.size"></legend> 
 
@@ -67,26 +93,24 @@
                      onchange="update_attr(this);">
             </td>
           </tr>
-          <tr class="width prop hidden">
-            <td>
-              <label data-i18n="[title]iem.prop.width_tt" class="mknob_size_tt"> 
-                <span data-i18n="iem.prop.width" class="mknob_size"></span>
+
+          <tr class="constrain prop hidden">
+            <td style="width:87px;">
+              <label data-i18n="[title]iem.prop.image_constrain_tt">
+                <span data-i18n="iem.prop.image_constrain"></span>
               </label>
             </td>
-            <td data-i18n="[title]iem.prop.width_tt" class="mknob_size_tt">
-              <input type="text" name="width"
-                     onchange="update_attr(this);">
-            </td>
-            <td>
-              <label data-i18n="[title]iem.prop.height_tt" class="mknob_steps_tt">
-                <span data-i18n="iem.prop.height" class="mknob_steps"></span>
-              </label>
-            </td>
-            <td data-i18n="[title]iem.prop.height_tt" class="mknob_steps_tt">
-              <input type="text" name="height"
-                     onchange="update_attr(this);">
+            <td colspan="3" data-i18n="[title]iem.prop.image_constrain_tt">
+              <select name="constrain"
+                     onchange="update_constrain(this);"
+                     style="width: 167px;">
+                <option value="0">none</option>
+                <option value="1">image w/h ratio (default)</option>
+                <option value="2">current w/h ratio</option>
+              </select>
             </td>
           </tr>
+
           <tr class="visible_width prop hidden">
             <td>
               <label data-i18n="[title]iem.prop.visible_width_tt">
@@ -102,8 +126,44 @@
                 <span data-i18n="iem.prop.visible_height"></span>
               </label>
             </td>
-            <td data-i18n="[title]iem.prop.visible_height_tt">
+            <td data-i18n="[title]iem.prop.visible_height_tt"
+                style="text-align: right; margin-right: 1px;">
               <input type="text" name="visible_height"
+                     onchange="update_attr(this);">
+            </td>
+          </tr>
+
+          <tr><td style="padding-bottom: 6px;"></td></tr>
+
+          <tr class="gop_spill prop hidden">
+          	<td colspan="4">
+            <label data-i18n="[title]iem.prop.image_gop_spill_tt">
+              <input type="checkbox" name="gop_spill" value="on"
+                     onchange="update_gop_spill(this);" style="margin-left: 1px;">
+              <span data-i18n="iem.prop.image_gop_spill"></span>
+            </label>
+            <br>
+        	</td>
+          </tr>
+
+          <tr class="width prop hidden">
+            <td>
+              <label data-i18n="[title]iem.prop.image_sel_width_tt" class="image_sel_width_tt"> 
+                <span data-i18n="iem.prop.image_sel_width" class="image_sel_width"></span>
+              </label>
+            </td>
+            <td data-i18n="[title]iem.prop.image_sel_width_tt" class="image_sel_width_tt">
+              <input type="text" name="width"
+                     onchange="update_attr(this);">
+            </td>
+            <td>
+              <label data-i18n="[title]iem.prop.image_sel_height_tt" class="image_sel_height_tt">
+                <span data-i18n="iem.prop.image_sel_height" class="image_sel_height"></span>
+              </label>
+            </td>
+            <td data-i18n="[title]iem.prop.image_sel_height_tt" class="image_sel_height_tt"
+                style="text-align: right; margin-right: 1px;">
+              <input type="text" name="height"
                      onchange="update_attr(this);">
             </td>
           </tr>
@@ -159,31 +219,78 @@
                      onchange="update_attr(this);">
             </td>
           </tr>
+
+          <tr><td style="padding-bottom: 6px;"></td></tr>
         </table>
 
-        <div class="gop_spill prop hidden">
-          <label data-i18n="[title]iem.prop.init_tt">
-            <input type="checkbox" name="init" value="on"
-                   onchange="update_attr(this);">
-            <span data-i18n="iem.prop.init"></span>
-          </label>
-          <br>
-        </div>
+        <table class="pairs">
+          <tr class="rotate prop hidden">
+            <td style="width:76px;">
+              <label data-i18n="[title]iem.prop.image_rotate_title_tt"
+                  class="image_rotate_title_tt"> 
+                <span data-i18n="iem.prop.image_rotate_title"
+                  class="image_rotate_title"></span>
+              </label>
+            </td>
+            <td>
+              <label data-i18n="[title]iem.prop.image_rotate_x_tt" class="image_rotate_x_tt"> 
+                <span data-i18n="iem.prop.image_rotate_x" class="image_rotate_x"></span>
+              </label>
+            </td>
+            <td data-i18n="[title]iem.prop.image_rotate_x_tt" class="image_rotate_x_tt">
+              <input type="text" name="rotate_x" style="width: 3em;"
+                     onchange="update_attr(this);">
+            </td>
+            <td>
+              <label data-i18n="[title]iem.prop.image_rotate_y_tt" class="image_rotate_y_tt">
+                <span data-i18n="iem.prop.image_rotate_y" class="image_rotate_y"></span>
+              </label>
+            </td>
+            <td data-i18n="[title]iem.prop.image_rotate_y_tt" class="image_rotate_y_tt">
+              <input type="text" name="rotate_y" style="width: 3em;"
+                     onchange="update_attr(this);">
+            </td>
+            <td>
+              <label data-i18n="[title]iem.prop.image_rotate_tt" class="image_rotate_tt">
+                <span data-i18n="iem.prop.image_rotate" class="image_rotate"
+                  style="margin-left: 3px;"></span>
+              </label>
+            </td>
+            <td data-i18n="[title]iem.prop.image_rotate_tt" class="image_rotate_tt"
+                style="text-align: right; margin-right: 1px;">
+              <input type="text" name="rotate" style="width: 3em;"
+                     onchange="update_attr(this);">
+            </td>
+          </tr>
+        </table> 
+
+        <table class="pairs">
+          <tr><td style="padding-bottom: 6px;"></td></tr>
+
+          <tr class="click prop hidden" style="margin-bottom: 7px;">
+            <td style="width:87px;">
+              <label data-i18n="[title]iem.prop.image_click_tt">
+                <span data-i18n="iem.prop.image_click"
+                  style="margin-right: 6px;"></span>
+              </label>
+            </td>
+            <td colspan="3" data-i18n="[title]iem.prop.image_click_tt">
+              <select name="click"
+                     onchange="update_attr(this);"
+                     style="width: 167px;">
+                <option value="0">disabled (default)</option>
+                <option value="1">bang on click</option>
+                <option value="2">1/0 mousedown/mouseup</option>
+              </select>
+            </td>
+          </tr>
+        </table>              
 
         <div class="vu_scale prop hidden">
           <label data-i18n="[title]iem.prop.vu_scale_tt">
             <span data-i18n="iem.prop.vu_scale"></span>
             <input type="checkbox" name="vu_scale" value="on"
                    onchange="update_attr(this);">
-          </label>
-          <br>
-        </div>
-
-        <div class="click prop hidden">
-          <label data-i18n="[title]iem.prop.log_scale_tt">
-            <input type="checkbox" name="log_scaling" value="on"
-                   onchange="update_attr(this);">
-            <span data-i18n="iem.prop.log_scale"></span>
           </label>
           <br>
         </div>
@@ -230,7 +337,7 @@
         </table>
       </fieldset> 
 
-      <fieldset class="hidden"> 
+      <fieldset> 
         <legend data-i18n="iem.prop.heading.label">wrong stuff</legend> 
 
         <table class="pairs">
@@ -288,7 +395,7 @@
         </table>
       </fieldset> 
 
-      <fieldset class="hidden"> 
+      <fieldset> 
       <legend data-i18n="iem.prop.heading.colors"></legend> 
 
       <table class="draw_style prop hidden" style="margin-bottom: 7px;">
@@ -309,7 +416,7 @@
               <option value="3">draw number only</option> 
             </select>
           </td>
-          <td>
+         </tr>
       </table>
 
       <div class="background_color prop hidden">
@@ -344,6 +451,8 @@
       <input type="hidden" name="minimum_size">
       <input type="hidden" name="range_schedule">
       <input type="hidden" name="hide_frame">
+      <input type="hidden" name="reset_width">
+      <input type="hidden" name="reset_height">
     </div>
 
     <div class="submit_buttons">
@@ -359,7 +468,12 @@
     </div>
 
   </form> 
-  </div>      
+  </div>  
+
+  <span id = "openpanelSpan">
+    <input style="display:none;" id="openpanel_dialog" onchange="update_filename(this);"
+      type="file" />
+  </span>
 
   <script>
 "use strict";
@@ -376,6 +490,8 @@ var pd_object_callback,
     old_attrs = {}, // original state. Used if we cancel the dialog
     new_attrs = {}; // changed state. Used if we apply or click "Ok"
 
+/* begin function declarations */
+
 function substitute_space(arg) {
     var fake_space = String.fromCharCode(11);
     return arg.split(" ").join(fake_space);
@@ -389,6 +505,63 @@ function strip_problem_chars(arg) {
         ret = ret.split(problem_chars[i]).join("");
     }
     return ret;
+}
+
+function update_filename(result) {
+  var newfile = result.value;
+  if(pdgui.nw_os_is_windows) {
+    newfile = newfile.replace(/\\/g, '\/');
+  }
+  document.getElementsByName('filename')[0].value = newfile;
+}
+
+function image_browse() {
+  var start_path = pdgui.get_pd_opendir();
+  pdgui.post("image_browse <" + start_path + ">");
+  if(pdgui.nw_os_is_windows) {
+    start_path = start_path.replace(/\//g, '\\');
+  }
+  //document.getElementById('fileDialog').setAttribute('nwworkingdir', cur_dir);
+  var dialog_options = {
+        style: "display: none;",
+        type: "file",
+        id: "openpanel_dialog",
+        onchange: "update_filename(this);",
+        // using an absolute path here, see comment above
+        nwworkingdir: start_path
+    };
+  var input_string = pdgui.build_file_dialog_string(dialog_options);
+  document.querySelector("#openpanelSpan").innerHTML = input_string;
+  //<input id="fileDialog" type="file" name="name" style="display: none;"
+  //  onchange="update_file(this);" nwworkingdir />
+  document.getElementById('openpanel_dialog').click();
+}
+
+function update_constrain(elem) {
+  if (parseInt(elem.value) === 1) {
+      var ratio = document.getElementsByName('reset_width')[0].value /
+          document.getElementsByName('reset_height')[0].value;
+      // adjust height based on the width:
+      var cur_h = document.getElementsByName('visible_height')[0];
+      cur_h.value = parseInt(
+          document.getElementsByName('visible_width')[0].value / ratio);
+  }
+  // if the value is 0 we only update the constrain value since there is no
+  // requested aspect ratio constraint. Similarly, if the value is 2, then the
+  // user has specified the current width/height as the basis for the ratio,
+  // so, we have also nothing else to do at this point in time.
+  update_attr(elem, true);
+}
+
+function update_gop_spill(elem) {
+    if (elem.checked) {
+      document.getElementsByName('width')[0].disabled = false;
+      document.getElementsByName('height')[0].disabled = false;
+    } else {
+      document.getElementsByName('width')[0].disabled = true;
+      document.getElementsByName('height')[0].disabled = true;
+    }
+    update_attr(elem);
 }
 
 function update_attr(elem, symbol_field) {
@@ -640,6 +813,7 @@ function register_window_id(gfxstub, attr_object) {
     document.getElementsByClassName("container")[0]
         .style.setProperty("display", "inline");
     pdgui.resize_window(pd_object_callback);
+    update_gop_spill(document.getElementsByName("gop_spill")[0]);
 }
 
 function tr_text(id) {

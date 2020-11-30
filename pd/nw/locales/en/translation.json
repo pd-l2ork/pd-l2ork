@@ -5,16 +5,35 @@
           "size":    "size and behavior",
           "messages": "messaging",
           "label":   "label",
-          "colors":  "appearance"
+          "colors":  "appearance",
+          "filename": "filename"
       },
       "size_tt": "size of the iemgui",
       "size": "size",
       "select_size": "selection size",
       "select_size_tt": "size of the selection rectangle used to select and drag the object",
-      "visible_width": "width",
-      "visible_width_tt": "width of the rectangle",
+
+      "visible_width": "image width",
+      "visible_width_tt": "user-specified image width",
       "visible_height": "height",
-      "visible_height_tt": "height of the rectangle",
+      "visible_height_tt": "user-specified image height",
+      "image_gop_spill": "graph-on-parent spill",
+      "image_gop_spill_tt": "toggle different selection and bounding box size than the image (enables image to spill outside of the graph-on-parent subpatch)",
+      "image_click": "click mode",
+      "image_click_tt": "specify click mode (0=no click detection, 1=bang-on-click, 2=1 on mouse-down and 0 on mouse-up)",
+      "image_constrain": "constrain",
+      "image_constrain_tt": "constrain image aspect ratio (0=no constrain, 1=original image aspect ratio, 2=current image aspect ratio)",
+      "filename_browse": "browse",
+      "filename_browse_tt": "use your system's file browser to select a new image file",
+      "image_rotate_x": "x",
+      "image_rotate_x_tt": "x of the rotation origin relative to the top left corner of the image selection border, expressed in pixels",
+      "image_rotate_y": "y",
+      "image_rotate_y_tt": "y of the rotation origin relative to the top left corner of the image selection border, expressed in pixels",
+      "image_rotate": "∠",
+      "image_rotate_tt": "rotation angle expressed in degrees",
+      "image_rotate_title": "rotate",
+      "image_rotate_title_tt": "options for rotating the image",
+
       "nonzero_value": "nonzero value",
       "nonzero_value_tt": "value to output when the toggle shows an 'x'",
       "flash_interrupt": "interrupt",
@@ -74,7 +93,11 @@
       "mknob_steps":  "# of steps",
       "mknob_steps_tt": "number of dial positions for the knob",
       "mknob_size":   "size",
-      "mknob_size_tt": "size of the knob"
+      "mknob_size_tt": "size of the knob",
+      "image_sel_width":       "border width",
+      "image_sel_width_tt":     "width of the selection box in pixels",
+      "image_sel_height":       "height",
+      "image_sel_height_tt":    "height of the selection box in pixels"
     }
   },
   "gatom": {

@@ -42,6 +42,8 @@ typedef struct _image
     int x_rot_pt_init;      // whether the rotation point has been initialized
                             // we use this since rotation point could be anything
     t_float x_rot_angle;    // rotation angle
+    int x_draw_firstime;    // removed the firstime flag from drawme, so that it is
+                            // compatible with iemgui DRAW_CONFIG call
 } t_image;
 
 // x_gui.x_w and x_h are used for the getbox size. This could be either
@@ -94,12 +96,11 @@ t_symbol *image_trytoopen(t_image* x)
 // in case it is being autopatched
 extern int glob_autopatch_connectme;
 
-static void image_drawme(t_image *x, t_glist *glist, int firstime)
+static void image_drawme(t_image *x, t_glist *glist)
 {
-    //post("image_drawme");
     if(gobj_shouldvis((t_gobj *)x, glist))
     {
-        if (firstime)
+        if (x->x_draw_firstime)
         {
             t_symbol *fname = image_trytoopen(x);
             gui_vmess("gui_gobj_new", "xxsiii",
@@ -141,6 +142,12 @@ static void image_drawme(t_image *x, t_glist *glist, int firstime)
             gui_vmess("gui_image_size_callback", "xxs",
                 glist_getcanvas(glist), x, x->x_inlet->s_name);
             iemgui_label_draw_new(&x->x_gui);
+            x->x_draw_firstime = 0;
+
+            iemgui_draw_io(&x->x_gui, 7);
+            // here we manually set this to avoid g_all_guis.c to redundantly
+            // redraw label and other issues
+            x->x_gui.x_vis = 1;
         }
         else
         {
@@ -183,6 +190,7 @@ static void image_drawme(t_image *x, t_glist *glist, int firstime)
 static void image_erase(t_image* x, t_glist* glist)
 {
     gui_vmess("gui_gobj_erase", "xx", glist_getcanvas(glist), x);
+    x->x_gui.x_vis = 0;
     //if (glist == x->x_gui.x_glist)
     //    gui_vmess("gui_image_draw_border", "xxiiiii", glist, x,
     //        0, 0, 0, 0);
@@ -264,7 +272,8 @@ static void image_displace(t_gobj *z, t_glist *glist,
     t_image *x = (t_image *)z;
     x->x_gui.x_obj.te_xpix += dx;
     x->x_gui.x_obj.te_ypix += dy;
-    image_drawme(x, glist, 0);
+    x->x_draw_firstime = 0;
+    image_drawme(x, glist);
     canvas_fixlinesfor(glist,(t_text*) x);
 }
 
@@ -343,7 +352,7 @@ static void image_select(t_gobj *z, t_glist *glist, int state)
                 x->x_gui.x_lhandle, x->x_gui.x_ldx + 5, x->x_gui.x_ldy + 10);
         }
     }
-    else
+    else if (!state && x->x_gui.x_selected == glist)
     {
         /*if (x->x_gui.x_glist == glist_getcanvas(x->x_gui.x_glist))
             gui_vmess("gui_image_toggle_border", "xxiiiiiii", glist, x,
@@ -379,7 +388,10 @@ static void image_vis(t_gobj *z, t_glist *glist, int vis)
     //post("image_vis");
     t_image* x = (t_image*)z;
     if (vis)
-        image_drawme(x, glist, 1);
+    {
+        x->x_draw_firstime = 1;
+        image_drawme(x, glist);
+    }
     else
         image_erase(x,glist);
 }
@@ -702,7 +714,8 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
         // because otherwise gop objects are erroneously drawn on a parent
         // canvas' x and y coordinates instead of ones inside the gop
         // subpatch/abstraction
-        image_drawme(x, x->x_gui.x_glist, 0);
+        x->x_draw_firstime = 0;
+        image_drawme(x, x->x_gui.x_glist);
 
         if (glist_isselected(x->x_gui.x_glist, (t_gobj *)x) &&
             glist_getcanvas(x->x_gui.x_glist) == x->x_gui.x_glist)
@@ -941,6 +954,9 @@ static void image_properties(t_gobj *z, t_glist *owner)
 {
     t_image *x = (t_image *)z;
     char /*buf[800],*/ *gfx_tag;
+    t_symbol *srl[3];
+
+    iemgui_properties(&x->x_gui, srl);
 
     /*
     sprintf(buf, "pdtk_iemgui_dialog %%s |nbx| \
@@ -963,18 +979,27 @@ static void image_properties(t_gobj *z, t_glist *owner)
     gui_start_vmess("gui_image_dialog", "s", gfx_tag);
     gui_start_array();
     gui_s("type");              gui_s("image");
-    gui_s("file");              gui_s(x->x_fname->s_name); //TODO
+    gui_s("filename");          gui_s(x->x_fname->s_name);
     gui_s("width");             gui_i(x->x_gui.x_w);
     gui_s("height");            gui_i(x->x_gui.x_h);
-    gui_s("visible_width");     gui_i(x->x_img_width);
-    gui_s("visible_height");    gui_i(x->x_img_height);
-    gui_s("gop_spill");         gui_i(x->x_gop_spill);  //RENAME
-    gui_s("click");             gui_i(x->x_click);      //RENAME
-    gui_s("lock_aspect_ratio"); gui_i(x->x_click);      //TODO
-    gui_s("reset_size");        gui_i(x->x_img_width);  //TODO
-    gui_s("reset_height");      gui_i(x->x_img_height); //TODO
+    gui_s("visible_width");     gui_i(x->x_adj_img_width);
+    gui_s("visible_height");    gui_i(x->x_adj_img_height);
+    gui_s("gop_spill");         gui_i(x->x_gop_spill);          //RENAME
+    gui_s("click");             gui_i(x->x_click);              //RENAME
+    gui_s("constrain");         gui_i(x->x_constrain);          //TODO
+    gui_s("reset_width");       gui_i(x->x_img_width);          //TODO
+    gui_s("reset_height");      gui_i(x->x_img_height);         //TODO
     gui_s("send_symbol");       gui_s(x->x_gui.x_snd->s_name);
     gui_s("receive_symbol");    gui_s(x->x_gui.x_rcv->s_name);
+    gui_s("rotate");            gui_f(x->x_rot_angle);
+    gui_s("rotate_x");          gui_f(x->x_rot_x);
+    gui_s("rotate_y");          gui_f(x->x_rot_y);
+    gui_s("label");             gui_s(srl[2]->s_name);
+    gui_s("x_offset");          gui_i(x->x_gui.x_ldx);
+    gui_s("y_offset");          gui_i(x->x_gui.x_ldy);
+    gui_s("label_color");       gui_i(0xffffff & x->x_gui.x_lcol);
+    gui_s("font_style");        gui_i(x->x_gui.x_font_style);
+    gui_s("font_size");         gui_i(x->x_gui.x_fontsize);
     gui_end_array();
     gui_end_vmess();
 }
@@ -1010,6 +1035,15 @@ static void image_dialog(t_image *x, t_symbol *s, int argc,
     //canvas_restore_original_position(x->x_gui.x_glist, (t_gobj *)x,"bogus",-1);
     scrollbar_update(x->x_gui.x_glist);
 */
+}
+
+void image_draw(t_my_numbox *x, t_glist *glist, int mode)
+{
+    if(mode == IEM_GUI_DRAW_MODE_UPDATE)      sys_queuegui(x, glist, image_drawme);
+    //else if(mode == IEM_GUI_DRAW_MODE_MOVE)   my_numbox_draw_move(x, glist);
+    else if(mode == IEM_GUI_DRAW_MODE_NEW)    image_drawme(x, glist);
+    //else if(mode == IEM_GUI_DRAW_MODE_SELECT) iemgui_select(x, glist);
+    else if(mode == IEM_GUI_DRAW_MODE_CONFIG) image_drawme(x, glist);
 }
 
 static void image_setwidget(void)
@@ -1066,13 +1100,16 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
     x->x_gui.x_bcol = 0x00;
     x->x_gui.x_fcol = 0x00;
     x->x_gui.x_lcol = 0x00;
+    x->x_gui.x_ldy = -8; // default label y offset
+    x->x_draw_firstime = 1;
     char buf[MAXPDSTRING];
 
     // used for the last if statement since we decrement the argc below
     int n_args = argc;
     int fs = 10;
 
-    /*post("image instantiating...");
+    /* For debugging:
+    post("image instantiating...");
     for(int i = 0; i < argc; i++)
     {
         if (argv[i].a_type == A_FLOAT)
@@ -1086,10 +1123,10 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
         else
             post("...%d unknown variable", i);
     }
-    post("...done argc=%d", argc);*/
+    post("...done argc=%d", argc);
+    */
     
-    // this should take care of the sends and receives (we ignore label since
-    // image does not use it--we may want to rethink this later...)
+    // this should take care of the sends and receives
     if (argc >= 9)
         iemgui_new_getnames(&x->x_gui, 5, argv);
     else
@@ -1216,7 +1253,7 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
     if (x->x_gui.x_font_style < 0 || x->x_gui.x_font_style > 2)
         x->x_gui.x_font_style = 0;
 
-    x->x_gui.x_draw = (t_iemfunptr)image_drawme;
+    x->x_gui.x_draw = (t_iemfunptr)image_draw;
     // Create default receiver
     sprintf(buf, "#%zx", (t_uint)x);
     x->x_inlet = gensym(buf);
