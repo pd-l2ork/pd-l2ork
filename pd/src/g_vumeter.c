@@ -530,7 +530,7 @@ static void vu_properties(t_gobj *z, t_glist *owner)
         0xffffff & x->x_gui.x_bcol, -1/*no front-color*/,
         0xffffff & x->x_gui.x_lcol);
     //gfxstub_new(&x->x_gui.x_obj.ob_pd, x, buf);
-    gfx_tag = gfxstub_new2(&x->x_gui.x_obj.ob_pd, x);
+    gfx_tag = gfxstub_new2(&x->x_gui.x_obj.ob_pd, &x->x_gui);
 
     gui_start_vmess("gui_iemgui_dialog", "s", gfx_tag);
 

@@ -23,14 +23,21 @@
 
 #define IEMGUI_MAX_NUM_LEN 32
 
-#define SCALE_NUM_MINWIDTH 1
-#define SCALE_NUM_MINHEIGHT 8
-#define SCALE_GOP_MINWIDTH 12
+#define SCALE_NUM_MINWIDTH   1
+#define SCALE_NUM_MINHEIGHT  8
+#define SCALE_GOP_MINWIDTH  12
 #define SCALE_GOP_MINHEIGHT 12
 #define SCALEHANDLE_WIDTH   14
 #define SCALEHANDLE_HEIGHT  14
 #define LABELHANDLE_WIDTH   14
 #define LABELHANDLE_HEIGHT  14
+
+#define IEM_GUI_PROP_COLORS   0
+#define IEM_GUI_PROP_SEND     1
+#define IEM_GUI_PROP_RECEIVE  2
+#define IEM_GUI_PROP_LABEL    3
+#define IEM_GUI_PROP_LABEL_XY 4
+#define IEM_GUI_PROP_FONT     5
 
 typedef void (*t_iemfunptr)(void *x, t_glist *glist, int mode);
 

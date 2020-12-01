@@ -238,7 +238,7 @@ static void knob_properties(t_gobj *z, t_glist *owner)
     t_symbol *srl[3];
 
     iemgui_properties(&x->x_gui, srl);
-    gfx_tag = gfxstub_new2(&x->x_gui.x_obj.ob_pd, x);
+    gfx_tag = gfxstub_new2(&x->x_gui.x_obj.ob_pd, &x->x_gui);
 
     gui_start_vmess("gui_iemgui_dialog", "s", gfx_tag);
     gui_start_array();

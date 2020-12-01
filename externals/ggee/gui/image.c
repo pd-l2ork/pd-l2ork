@@ -36,7 +36,7 @@ typedef struct _image
                             */
     int x_mouse_x;          // used to track mouse position
     int x_mouse_y;
-    t_atom   x_at[3];       // temporary buffer for outputting clickmode 2 messages
+    t_atom   x_at[5];       // temporary buffer for outputting clickmode 2 messages
     t_float x_rot_x;        // rotation point location x and y
     t_float x_rot_y;
     int x_rot_pt_init;      // whether the rotation point has been initialized
@@ -174,6 +174,7 @@ static void image_drawme(t_image *x, t_glist *glist)
                 image_select((t_gobj *)x, glist_getcanvas(x->x_gui.x_glist), 1);
             }
             iemgui_label_draw_move(&x->x_gui);
+            iemgui_label_draw_config(&x->x_gui);
             canvas_fixlinesfor(x->x_gui.x_glist, (t_text*)x);
         }
     }
@@ -256,7 +257,12 @@ static void image_displace(t_gobj *z, t_glist *glist,
     x->x_gui.x_obj.te_xpix += dx;
     x->x_gui.x_obj.te_ypix += dy;
     x->x_draw_firstime = 0;
-    image_drawme(x, glist);
+    gui_vmess("gui_image_coords", "xxii",
+        glist_getcanvas(glist),
+        x,
+        text_xpix(&x->x_gui.x_obj, glist),
+        text_ypix(&x->x_gui.x_obj, glist)
+    );
     canvas_fixlinesfor(glist,(t_text*) x);
 }
 
@@ -269,6 +275,11 @@ static void image_displace_wtag(t_gobj *z, t_glist *glist,
     x->x_gui.x_obj.te_ypix += dy;
     //image_drawme(x, glist, 0);
     canvas_fixlinesfor(glist,(t_text*) x);
+}
+
+static void image_draw_move(t_image *x, t_glist *glist)
+{
+    image_displace((t_gobj *)x, glist, 0, 0);
 }
 
 static void image_select(t_gobj *z, t_glist *glist, int state)
@@ -385,17 +396,19 @@ static void image_motion(t_image *x, t_floatarg dx, t_floatarg dy)
     if (x->x_click == 2)
     {
         x->x_mouse_x += dx;
-        x->x_mouse_x = maxi(x->x_mouse_x, x->x_gui.x_obj.te_xpix);
-        x->x_mouse_x = mini(x->x_mouse_x, x->x_gui.x_obj.te_xpix + x->x_gui.x_w);
+        //x->x_mouse_x = maxi(x->x_mouse_x, x->x_gui.x_obj.te_xpix);
+        //x->x_mouse_x = mini(x->x_mouse_x, x->x_gui.x_obj.te_xpix + x->x_gui.x_w);
 
         x->x_mouse_y += dy;
-        x->x_mouse_y = maxi(x->x_mouse_y, x->x_gui.x_obj.te_ypix);
-        x->x_mouse_y = mini(x->x_mouse_y, x->x_gui.x_obj.te_ypix + x->x_gui.x_h);
+        //x->x_mouse_y = maxi(x->x_mouse_y, x->x_gui.x_obj.te_ypix);
+        //x->x_mouse_y = mini(x->x_mouse_y, x->x_gui.x_obj.te_ypix + x->x_gui.x_h);
 
         SETFLOAT(x->x_at, 1.0);
-        SETFLOAT(x->x_at+1, (t_floatarg)(x->x_mouse_x - x->x_gui.x_obj.te_xpix));
-        SETFLOAT(x->x_at+2, (t_floatarg)(x->x_mouse_y - x->x_gui.x_obj.te_ypix));
-        iemgui_out_list(&x->x_gui, 0, 0, &s_list, 3, x->x_at);
+        SETFLOAT(x->x_at+1, (t_floatarg)(x->x_gui.x_obj.te_xpix));
+        SETFLOAT(x->x_at+2, (t_floatarg)(x->x_gui.x_obj.te_ypix));
+        SETFLOAT(x->x_at+3, (t_floatarg)(x->x_mouse_x - x->x_gui.x_obj.te_xpix));
+        SETFLOAT(x->x_at+4, (t_floatarg)(x->x_mouse_y - x->x_gui.x_obj.te_ypix));
+        iemgui_out_list(&x->x_gui, 0, 0, &s_list, 5, x->x_at);
     }
 }
 
@@ -416,9 +429,11 @@ static int image_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix,
         else if (x->x_click == 2)
         {
             SETFLOAT(x->x_at, 1.0);
-            SETFLOAT(x->x_at+1, (t_floatarg)(x->x_mouse_x - x->x_gui.x_obj.te_xpix));
-            SETFLOAT(x->x_at+2, (t_floatarg)(x->x_mouse_y - x->x_gui.x_obj.te_ypix));
-            iemgui_out_list(&x->x_gui, 0, 0, &s_list, 3, x->x_at);
+            SETFLOAT(x->x_at+1, (t_floatarg)(x->x_gui.x_obj.te_xpix));
+            SETFLOAT(x->x_at+2, (t_floatarg)(x->x_gui.x_obj.te_ypix));
+            SETFLOAT(x->x_at+3, (t_floatarg)(x->x_mouse_x - x->x_gui.x_obj.te_xpix));
+            SETFLOAT(x->x_at+4, (t_floatarg)(x->x_mouse_y - x->x_gui.x_obj.te_ypix));
+            iemgui_out_list(&x->x_gui, 0, 0, &s_list, 5, x->x_at);
         }
 
     }
@@ -430,9 +445,11 @@ static int image_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix,
         if (x->x_click == 2)
         {
             SETFLOAT(x->x_at, 0.0);
-            SETFLOAT(x->x_at+1, (t_floatarg)(xpix - x->x_gui.x_obj.te_xpix));
-            SETFLOAT(x->x_at+2, (t_floatarg)(ypix - x->x_gui.x_obj.te_ypix));
-            iemgui_out_list(&x->x_gui, 0, 0, &s_list, 3, x->x_at);
+            SETFLOAT(x->x_at+1, (t_floatarg)(x->x_gui.x_obj.te_xpix));
+            SETFLOAT(x->x_at+2, (t_floatarg)(x->x_gui.x_obj.te_ypix));
+            SETFLOAT(x->x_at+3, (t_floatarg)(xpix - x->x_gui.x_obj.te_xpix));
+            SETFLOAT(x->x_at+4, (t_floatarg)(ypix - x->x_gui.x_obj.te_ypix));
+            iemgui_out_list(&x->x_gui, 0, 0, &s_list, 5, x->x_at);
         }
         glist_grab(x->x_gui.x_glist, 0, 0, 0, 0, 0, 0, 0);
     }
@@ -459,7 +476,7 @@ static void image_gop_spill(t_image* x, t_floatarg f)
         properties_set_field_int(properties,"gop_spill",x->x_gop_spill);
     }
 }
-
+/*
 // preempt the g_all_guis.c from grabbing color changes, so that we can
 // update the gfxstub properties
 static void image_color(t_image *x, t_symbol *s, int ac, t_atom *av)
@@ -471,6 +488,7 @@ static void image_color(t_image *x, t_symbol *s, int ac, t_atom *av)
         properties_set_field_int(properties,"label_color",0xffffff & x->x_gui.x_lcol);
     }   
 }
+*/
 
 // constrain is by default on (or 1)
 static void image_constrain(t_image* x, t_floatarg f)
@@ -621,6 +639,9 @@ static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
         gui_vmess("gui_image_size_callback", "xxs",
             glist_getcanvas(x->x_gui.x_glist), x, x->x_inlet->s_name);
     }
+
+    if (x->x_fname == oldfname)
+        x->x_img_loaded = 1;
     //image_vis((t_gobj *)x, x->x_glist, 0);
     //image_vis((t_gobj *)x, x->x_glist, 1);
 }
@@ -985,7 +1006,7 @@ static void image_dialog(t_image *x, t_symbol *s, int argc,
 
     if (atom_getintarg(19, argc, argv))
         canvas_apply_setundo(x->x_gui.x_glist, (t_gobj *)x);
-    x->x_fname = atom_getsymbolarg(0, argc, argv);
+    image_open(x, NULL, 1, argv);
     x->x_gui.x_w = atom_getintarg(1, argc, argv);
     x->x_gui.x_h = atom_getintarg(2, argc, argv);
     x->x_adj_img_width = atom_getintarg(3, argc, argv);
@@ -1021,39 +1042,29 @@ static void image_dialog(t_image *x, t_symbol *s, int argc,
         }
     }
 
-    x->x_gui.x_snd_unexpanded=srl[0];
-    srl[0]=canvas_realizedollar(x->x_gui.x_glist, srl[0]);
-    x->x_gui.x_rcv_unexpanded=srl[1];
-    srl[1]=canvas_realizedollar(x->x_gui.x_glist, srl[1]);
-    x->x_gui.x_lab_unexpanded=srl[2];
-    srl[2]=canvas_realizedollar(x->x_gui.x_glist, srl[2]);
-    if(srl[1]!=x->x_gui.x_rcv)
-    {
-        if(iemgui_has_rcv(&x->x_gui))
-            pd_unbind((t_pd *)&x->x_gui, x->x_gui.x_rcv);
-        x->x_gui.x_rcv = srl[1];
-        pd_bind((t_pd *)&x->x_gui, x->x_gui.x_rcv);
-    }
-    x->x_gui.x_snd = srl[0];
+    iemgui_send(&x->x_gui, srl[0]);
+    iemgui_receive(&x->x_gui, srl[1]);
+
     x->x_gui.x_lab = srl[2];
     if(f<0 || f>2) f=0;
     x->x_gui.x_font_style = f;
-    iemgui_verify_snd_ne_rcv(&x->x_gui);
-    canvas_dirty(x->x_gui.x_glist, 1);
 
-    image_vis(x, x->x_gui.x_glist, 0);
-    image_vis(x, x->x_gui.x_glist, 1);
+    // we should not use this, as doing so messes up the drawing order
+    //image_vis(x, x->x_gui.x_glist, 0);
+    //image_vis(x, x->x_gui.x_glist, 1);
+    image_draw(x, x->x_gui.x_glist);
     if (x->x_gui.x_selected) {
         image_select((t_gobj *)x, x->x_gui.x_glist, 0);
         image_select((t_gobj *)x, x->x_gui.x_glist, 1);
     }
     scrollbar_update(x->x_gui.x_glist);
+    canvas_dirty(x->x_gui.x_glist, 1);
 }
 
-void image_draw(t_my_numbox *x, t_glist *glist, int mode)
+void image_draw(t_image *x, t_glist *glist, int mode)
 {
     if(mode == IEM_GUI_DRAW_MODE_UPDATE)      sys_queuegui(x, glist, image_drawme);
-    //else if(mode == IEM_GUI_DRAW_MODE_MOVE)   my_numbox_draw_move(x, glist);
+    else if(mode == IEM_GUI_DRAW_MODE_MOVE)   image_draw_move(x, glist);
     else if(mode == IEM_GUI_DRAW_MODE_NEW)    image_drawme(x, glist);
     //else if(mode == IEM_GUI_DRAW_MODE_SELECT) iemgui_select(x, glist);
     else if(mode == IEM_GUI_DRAW_MODE_CONFIG) image_drawme(x, glist);
@@ -1334,10 +1345,7 @@ void image_setup(void)
     class_addmethod(image_class, (t_method)image_dialog,
         gensym("dialog"), A_GIMME, 0);
     class_addmethod(image_class, (t_method)image_imagesize_callback,\
-                     gensym("_imagesize"), A_DEFFLOAT, A_DEFFLOAT, 0);
-    // let's preempt color call, so that we can sidestep horribly optimized g_all_guis.c
-    class_addmethod(image_class, (t_method)image_color,
-        gensym("color"), A_GIMME, 0);    
+                     gensym("_imagesize"), A_DEFFLOAT, A_DEFFLOAT, 0);    
     iemgui_class_addmethods(image_class);
 
     image_setwidget();

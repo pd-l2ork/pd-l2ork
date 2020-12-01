@@ -318,6 +318,7 @@ void iemgui_send(t_iemgui *x, t_symbol *s)
     x->x_snd = snd = canvas_realizedollar(x->x_glist, snd);
     iemgui_verify_snd_ne_rcv(x);
     iemgui_draw_io(x, oldsndrcvable);
+    iemgui_update_properties(x, IEM_GUI_PROP_SEND);
 }
 
 void iemgui_receive(t_iemgui *x, t_symbol *s)
@@ -348,6 +349,7 @@ void iemgui_receive(t_iemgui *x, t_symbol *s)
     }
     iemgui_verify_snd_ne_rcv(x);
     iemgui_draw_io(x, oldsndrcvable);
+    iemgui_update_properties(x, IEM_GUI_PROP_RECEIVE);
 }
 
 void iemgui_label(t_iemgui *x, t_symbol *s)
@@ -361,6 +363,7 @@ void iemgui_label(t_iemgui *x, t_symbol *s)
 
     if (glist_isvisible(x->x_glist) && lab != old)
         iemgui_shouldvis(x, IEM_GUI_DRAW_MODE_CONFIG);
+    iemgui_update_properties(x, IEM_GUI_PROP_LABEL);
 }
 
 void iemgui_label_pos(t_iemgui *x, t_symbol *s, int ac, t_atom *av)
@@ -380,6 +383,7 @@ void iemgui_label_pos(t_iemgui *x, t_symbol *s, int ac, t_atom *av)
             y1);
         iemgui_shouldvis(x, IEM_GUI_DRAW_MODE_CONFIG);
     }
+    iemgui_update_properties(x, IEM_GUI_PROP_LABEL_XY);
 }
 
 void iemgui_label_font(t_iemgui *x, t_symbol *s, int ac, t_atom *av)
@@ -398,6 +402,7 @@ void iemgui_label_font(t_iemgui *x, t_symbol *s, int ac, t_atom *av)
             x->x_fontsize);
         iemgui_shouldvis(x, IEM_GUI_DRAW_MODE_CONFIG);
     }
+    iemgui_update_properties(x, IEM_GUI_PROP_FONT);
 }
 
 //Sans: 84 x 10 (14) -> 6 x 10 -> 1.0
@@ -644,6 +649,7 @@ void iemgui_color(t_iemgui *x, t_symbol *s, int ac, t_atom *av)
             x->x_draw(x, x->x_glist, IEM_GUI_DRAW_MODE_CONFIG);
             iemgui_label_draw_config(x);
         }
+        iemgui_update_properties(x, IEM_GUI_PROP_COLORS);
     }
 }
 
@@ -855,6 +861,49 @@ float maxf(float a, float b) {return a>b?a:b;}
 
 extern t_class *my_canvas_class;
 
+/* dynamically update properties dialog (if it exists) for iemgui mapped calls
+   0 = colors (bfl)
+   1 = send
+   2 = receive
+   3 = label
+   4 = label x y
+   5 = label font style and size
+*/
+void iemgui_update_properties(t_iemgui *x, int option)
+{
+    t_symbol *srl[3];
+    iemgui_properties(x, srl);
+
+    int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+    {
+        switch(option) {
+            case 0:
+                properties_set_field_int(properties,"background_color",0xffffff & x->x_bcol);
+                properties_set_field_int(properties,"foreground_color",0xffffff & x->x_fcol);
+                properties_set_field_int(properties,"label_color",0xffffff & x->x_lcol);
+                break;
+            case 1:
+                properties_set_field_symbol(properties,"send_symbol",srl[0]->s_name);
+                break;
+            case 2:
+                properties_set_field_symbol(properties,"receive_symbol",srl[1]->s_name);
+                break;
+            case 3:
+                properties_set_field_symbol(properties,"label",srl[2]->s_name);
+                break;
+            case 4:
+                properties_set_field_int(properties,"x_offset",x->x_ldx);
+                properties_set_field_int(properties,"y_offset",x->x_ldy);
+                break;
+            case 5:
+                properties_set_field_int(properties,"font_style",x->x_font_style);
+                properties_set_field_int(properties,"font_size",x->x_fontsize);
+                break;
+        }
+    }
+}
+
 // in 18 cases only, because canvas does not fit the pattern below.
 // canvas has no label handle and has a motion handle
 // but in the case of canvas, the "iemgui" tag is added (it wasn't the case originally)
@@ -991,6 +1040,16 @@ void properties_set_field_float(t_int props, const char *gui_field, t_floatarg v
     char tagbuf[MAXPDSTRING];
     sprintf(tagbuf, ".gfxstub%zx", props);
     gui_vmess("gui_dialog_set_field", "ssf",
+        tagbuf,
+        gui_field,
+        value);
+}
+
+void properties_set_field_symbol(t_int props, const char *gui_field, t_symbol value)
+{
+    char tagbuf[MAXPDSTRING];
+    sprintf(tagbuf, ".gfxstub%zx", props);
+    gui_vmess("gui_dialog_set_field", "sss",
         tagbuf,
         gui_field,
         value);

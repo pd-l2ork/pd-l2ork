@@ -2559,7 +2559,6 @@ function gui_gobj_redraw_io(cid, parenttag, tag, x, y, type, i, basex, basey) {
     //       text_drawborder (firsttime=0) -> glist_drawiofor (firsttime=0)
     // This means that a new gatom tries to redraw its inlets before
     // it has created them.
-    post("gui_gobj_redraw_io " + tag);
     gui(cid).get_elem(tag + type + i, {
         x: x - basex,
         y: y - basey
@@ -2567,7 +2566,6 @@ function gui_gobj_redraw_io(cid, parenttag, tag, x, y, type, i, basex, basey) {
 }
 
 function gui_gobj_erase_io(cid, tag) {
-    post("gui_gobj_erase_io " + tag);
     gui(cid).get_elem(tag, function(e) {
         e.parentNode.removeChild(e);
     });
@@ -6107,6 +6105,8 @@ function gui_image_dialog(did, attr_array) {
 
 function gui_dialog_set_field(did, field_name, value) {
     var elem = dialogwin[did].window.document.getElementsByName(field_name)[0];
+    // since g_all_guis.c iemgui_update_properties blindly calls all the possible
+    // options that not all objects have, here we check if the requested option is valid
     if (elem)
     {
         if (elem.type === "checkbox") {

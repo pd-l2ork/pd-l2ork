@@ -20,7 +20,7 @@
       "image_gop_spill": "graph-on-parent spill",
       "image_gop_spill_tt": "toggle different selection and bounding box size than the image (enables image to spill outside of the graph-on-parent subpatch)",
       "image_click": "click mode",
-      "image_click_tt": "specify click mode (0=no click detection, 1=bang-on-click, 2=1 on mouse-down and 0 on mouse-up)",
+      "image_click_tt": "specify click mode (0=no click detection, 1=bang-on-click, 2=1 on mouse-down and 0 on mouse-up with relative and absolute x/y pairs)",
       "image_constrain": "constrain",
       "image_constrain_tt": "constrain image aspect ratio (0=no constrain, 1=original image aspect ratio, 2=current image aspect ratio)",
       "filename_tt": "specify image file path (can be relative or absolute and you can also use @pd_extra and @pd_help aliases)",

@@ -250,7 +250,7 @@ static void bng_properties(t_gobj *z, t_glist *owner)
         0xffffff & x->x_gui.x_fcol,
         0xffffff & x->x_gui.x_lcol);
 
-    gfx_tag = gfxstub_new2(&x->x_gui.x_obj.ob_pd, x);
+    gfx_tag = gfxstub_new2(&x->x_gui.x_obj.ob_pd, &x->x_gui);
     /* todo: send along the x/y of the object here so we can
        create the window in the right place */
 

@@ -3589,8 +3589,10 @@ static int text_resizing_hotspot(t_canvas *x, t_object *ob, int xpos, int ypos,
         }
     }
 
-        /* gop canvases, gop red rectangle, scope, grid, iemguis except [cnv] */
-    if ((ob->te_iemgui && ob->ob_pd != my_canvas_class) ||
+        /* gop canvases, gop red rectangle, scope, grid, iemguis except [cnv] and custom
+           3rd party iemgui-based objects, such as ggee/image that have custom resizing
+           behavior like mycanvas */
+    if ((ob->te_iemgui == 1 && ob->ob_pd != my_canvas_class) ||
         (ob->ob_pd == canvas_class && ((t_canvas *)ob)->gl_isgraph) ||
         ob->ob_pd->c_name == gensym("Scope~") ||
         ob->ob_pd->c_name == gensym("grid"))
