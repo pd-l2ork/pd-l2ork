@@ -803,7 +803,7 @@ static void knob_free(t_knob *x)
 {
     if (iemgui_has_rcv(&x->x_gui))
     pd_unbind(&x->x_gui.x_obj.ob_pd, x->x_gui.x_rcv);
-    gfxstub_deleteforkey(x);
+    gfxstub_deleteforkey(&x->x_gui);
 }
 
 void knob_setup(void)
