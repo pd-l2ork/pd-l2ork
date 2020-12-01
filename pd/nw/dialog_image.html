@@ -303,7 +303,31 @@ input[type="number"] {
       </fieldset> 
 
       <fieldset> 
-      <legend data-i18n="iem.prop.heading.colors"></legend> 
+      <legend data-i18n="iem.prop.heading.colors"></legend>
+      <table class="pairs" width="100%">
+          <tr class="visible prop hidden">
+            <td style="vertical-align: top;">
+              <label data-i18n="[title]iem.prop.image_visible_tt">
+                <input type="checkbox" name="visible" value="on"
+                       onchange="update_attr(this);" style="margin-left: 1px;">
+              </label>
+            </td>
+            <td width="40%">
+              <label data-i18n="[title]iem.prop.image_visible_tt" style="padding-bottom:2px;">
+                <span data-i18n="iem.prop.image_visible"></span>
+              </label>
+            </td>
+            <td style="text-align:right;" width="40%">
+              <label data-i18n="[title]iem.prop.image_alpha_tt" class="image_alpha_tt"> 
+                <span data-i18n="iem.prop.image_alpha" class="image_alpha"></span>
+              </label>
+            </td>
+            <td data-i18n="[title]iem.prop.image_alpha_tt" class="image_alpha_tt">
+              <input type="number" name="alpha" min="0" max="1"
+                     onchange="update_attr(this);">
+            </td>
+          </tr>
+      </table>
 
       <div class="label_color prop hidden">
         <label data-i18n="[title]iem.prop.label_color_tt">
@@ -603,6 +627,8 @@ function send_params(attrs, create_undo_point) {
         attrs.label_color,
         attrs.font_style,
         attrs.font_size,
+        attrs.visible,
+        attrs.alpha,
         create_undo_point ? 1 : 0 // whether we set an undo point
     );
 }

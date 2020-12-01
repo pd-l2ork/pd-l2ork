@@ -4570,6 +4570,18 @@ function gui_ggee_image_resize(cid, svg_image_tag, w, h, resizemode, constrain) 
     }); 
 }
 
+function gui_ggee_image_toggle_visible(cid, svg_image_tag, visible) {
+    configure_item(get_item(cid, svg_image_tag), {
+        visibility: (visible ? "visible" : "hidden")
+    });    
+}
+
+function gui_ggee_image_alpha(cid, svg_image_tag, alpha) {
+    configure_item(get_item(cid, svg_image_tag), {
+        opacity: alpha
+    });    
+}
+
 function gui_ggee_image_rotate(cid, svg_image_tag, angle, x, y) {
     configure_item(get_item(cid, svg_image_tag), {
         transform: "rotate(" + angle + "," + x + "," + y + ")"

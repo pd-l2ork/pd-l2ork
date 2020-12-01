@@ -44,6 +44,8 @@ typedef struct _image
     t_float x_rot_angle;    // rotation angle
     int x_draw_firstime;    // removed the firstime flag from drawme, so that it is
                             // compatible with iemgui DRAW_CONFIG call
+    int x_visible;          // whether image should be visible
+    t_float x_alpha;        // image alpha
 } t_image;
 
 // x_gui.x_w and x_h are used for the getbox size. This could be either
@@ -62,6 +64,8 @@ static void image_select(t_gobj *z, t_glist *glist, int state);
 static void image_vis(t_gobj *z, t_glist *glist, int vis);
 static void image_update(t_image *x, t_glist *glist, int width, int height, int resizemode);
 static void image_dorotate(t_image *x);
+static void image_visible(t_image *x, t_floatarg f);
+static void image_alpha(t_image *x, t_floatarg f);
 /* from g_editor.c--we use this to detect if the user has clicked with the
    right button, so that even in runtime they can select ggee/image help
 */
@@ -92,10 +96,6 @@ t_symbol *image_trytoopen(t_image* x)
         return 0;
     }
 }
-
-// defined in s_main.c and used to offset object at creation time
-// in case it is being autopatched
-extern int glob_autopatch_connectme;
 
 static void image_drawme(t_image *x, t_glist *glist)
 {
@@ -144,10 +144,14 @@ static void image_drawme(t_image *x, t_glist *glist)
             iemgui_draw_io(&x->x_gui, 7);
             // here we manually set this to avoid g_all_guis.c to redundantly
             // redraw label and other issues
+            image_visible(x, x->x_visible);
+            image_alpha(x, x->x_alpha);
             x->x_gui.x_vis = 1;
         }
         else
         {
+            image_visible(x, x->x_visible);
+            image_alpha(x, x->x_alpha);
             // move the gobj
             gui_vmess("gui_image_coords", "xxii",
                 glist_getcanvas(glist),
@@ -377,7 +381,7 @@ static void image_save(t_gobj *z, t_binbuf *b)
     t_symbol *bflcol[3];
     t_symbol *srl[3];
     iemgui_save(&x->x_gui, srl, bflcol);
-    binbuf_addv(b, "ssiissiiiisssiiiiisiifff", gensym("#X"), gensym("obj"),
+    binbuf_addv(b, "ssiissiiiisssiiiiisiifffif", gensym("#X"), gensym("obj"),
                 x->x_gui.x_obj.te_xpix, x->x_gui.x_obj.te_ypix,   
                 atom_getsymbol(binbuf_getvec(x->x_gui.x_obj.te_binbuf)),
                 x->x_fname, x->x_gop_spill, x->x_click, x->x_gui.x_w,
@@ -385,7 +389,7 @@ static void image_save(t_gobj *z, t_binbuf *b)
                 x->x_adj_img_height, x->x_constrain,
                 iem_fstyletoint(&x->x_gui), x->x_gui.x_fontsize,
                 bflcol[2], x->x_gui.x_ldx, x->x_gui.x_ldy,
-                x->x_rot_x, x->x_rot_y, x->x_rot_angle);
+                x->x_rot_x, x->x_rot_y, x->x_rot_angle, x->x_visible, x->x_alpha);
     binbuf_addv(b, ";");
 }
 
@@ -476,19 +480,36 @@ static void image_gop_spill(t_image* x, t_floatarg f)
         properties_set_field_int(properties,"gop_spill",x->x_gop_spill);
     }
 }
-/*
-// preempt the g_all_guis.c from grabbing color changes, so that we can
-// update the gfxstub properties
-static void image_color(t_image *x, t_symbol *s, int ac, t_atom *av)
+
+static void image_alpha(t_image *x, t_floatarg f)
 {
-    iemgui_color(&x->x_gui, s, ac, av);
+    if (f > 1.0) f = 1.0;
+    if (f < 0.0) f = 0.0;
+    x->x_alpha = f;
+    gui_vmess("gui_ggee_image_alpha", "xxf",
+        glist_getcanvas(x->x_gui.x_glist), x, x->x_alpha);
     int properties = gfxstub_haveproperties((void *)x);
     if (properties)
     {
-        properties_set_field_int(properties,"label_color",0xffffff & x->x_gui.x_lcol);
-    }   
+        properties_set_field_float(properties,"alpha",x->x_alpha);
+    }
 }
-*/
+
+static void image_visible(t_image *x, t_floatarg f)
+{
+
+    if (f == 0 || f == 1)
+    {
+        x->x_visible = (int)f;
+        gui_vmess("gui_ggee_image_toggle_visible", "xxi",
+            glist_getcanvas(x->x_gui.x_glist), x, x->x_visible);
+    }
+    int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+    {
+        properties_set_field_int(properties,"visible",x->x_visible);
+    }
+}
 
 // constrain is by default on (or 1)
 static void image_constrain(t_image* x, t_floatarg f)
@@ -744,6 +765,8 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
         properties_set_field_int(properties,"height",x->x_gui.x_h);
         properties_set_field_float(properties,"rotate_x",x->x_rot_x);
         properties_set_field_float(properties,"rotate_y",x->x_rot_y);
+        properties_set_field_float(properties,"reset_width",x->x_img_width);
+        properties_set_field_float(properties,"reset_height",x->x_img_height);
     }
 }
 
@@ -807,6 +830,7 @@ static void image_update(t_image *x, t_glist *glist, int width, int height, int 
         glist_getcanvas(glist), x, x->x_gui.x_w, x->x_gui.x_h);
     iemgui_io_draw_move(&x->x_gui);
     image_dorotate(x);
+    scrollbar_update(x->x_gui.x_glist);
     SETSYMBOL(x->x_at, gensym("size"));
     SETFLOAT(x->x_at+1, (t_floatarg)(x->x_adj_img_width));
     SETFLOAT(x->x_at+2, (t_floatarg)(x->x_adj_img_height));
@@ -839,7 +863,14 @@ static void image_dorotate(t_image *x)
     }
     gui_vmess("gui_ggee_image_rotate", "xxfii", 
         glist_getcanvas(x->x_gui.x_glist), x, x->x_rot_angle,
-        (t_int)x->x_rot_x - off_x, (t_int)x->x_rot_y - off_y);   
+        (t_int)x->x_rot_x - off_x, (t_int)x->x_rot_y - off_y);
+    int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+    {
+        properties_set_field_int(properties,"rotate_x",x->x_rot_x);
+        properties_set_field_int(properties,"rotate_y",x->x_rot_y);
+        properties_set_field_int(properties,"rotate",x->x_rot_angle);
+    }
 }
 
 static void image_rotate(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
@@ -1004,6 +1035,8 @@ static void image_properties(t_gobj *z, t_glist *owner)
     gui_s("label_color");       gui_i(0xffffff & x->x_gui.x_lcol);
     gui_s("font_style");        gui_i(x->x_gui.x_font_style);
     gui_s("font_size");         gui_i(x->x_gui.x_fontsize);
+    gui_s("visible");           gui_i(x->x_visible);
+    gui_s("alpha");             gui_f(x->x_alpha);
     gui_end_array();
     gui_end_vmess();
 }
@@ -1011,12 +1044,12 @@ static void image_properties(t_gobj *z, t_glist *owner)
 static void image_dialog(t_image *x, t_symbol *s, int argc,
     t_atom *argv)
 {
-    //post("image_dialog argc=%d", argc); // 20 args in total
+    //post("image_dialog argc=%d", argc); // 22 args in total
     t_symbol *srl[3];
     int oldsndrcvable = 0;
     t_symbol *oldfname = x->x_fname;
 
-    if (atom_getintarg(19, argc, argv))
+    if (atom_getintarg(21, argc, argv))
         canvas_apply_setundo(x->x_gui.x_glist, (t_gobj *)x);
     image_open(x, NULL, 1, argv);
     x->x_gui.x_w = atom_getintarg(1, argc, argv);
@@ -1037,6 +1070,8 @@ static void image_dialog(t_image *x, t_symbol *s, int argc,
     x->x_gui.x_lcol = atom_getintarg(16, argc, argv) & 0xffffff;
     int f = atom_getintarg(17, argc, argv); // font style (resolved below)
     x->x_gui.x_fontsize = maxi(atom_getintarg(18, argc, argv),4);
+    x->x_visible = atom_getintarg(19, argc, argv);
+    x->x_alpha = atom_getfloatarg(20, argc, argv);
 
     if(iemgui_has_rcv(&x->x_gui)) oldsndrcvable |= IEM_GUI_OLD_RCV_FLAG;
     if(iemgui_has_snd(&x->x_gui)) oldsndrcvable |= IEM_GUI_OLD_SND_FLAG;
@@ -1070,7 +1105,6 @@ static void image_dialog(t_image *x, t_symbol *s, int argc,
         image_select((t_gobj *)x, x->x_gui.x_glist, 0);
         image_select((t_gobj *)x, x->x_gui.x_glist, 1);
     }
-    scrollbar_update(x->x_gui.x_glist);
     canvas_dirty(x->x_gui.x_glist, 1);
 }
 
@@ -1140,6 +1174,8 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
     x->x_gui.x_lcol = 0x00;
     x->x_gui.x_ldy = -8; // default label y offset
     x->x_draw_firstime = 1;
+    x->x_visible = 1;
+    x->x_alpha = 1.0;
     char buf[MAXPDSTRING];
 
     // used for the last if statement since we decrement the argc below
@@ -1282,11 +1318,24 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
         argc--;
         argv++;
     }
-
     if (argc && argv[0].a_type == A_FLOAT)
     {
         //post("rotate angle succeeded");
         x->x_rot_angle = atom_getfloat(&argv[0]);
+        argc--;
+        argv++;
+    }
+    if (argc && argv[0].a_type == A_FLOAT)
+    {
+        //post("visible succeeded");
+        x->x_visible = atom_getfloat(&argv[0]);
+        argc--;
+        argv++;
+    }
+    if (argc && argv[0].a_type == A_FLOAT)
+    {
+        //post("alpha succeeded");
+        x->x_alpha = atom_getfloat(&argv[0]);
         argc--;
         argv++;
     }
@@ -1298,6 +1347,8 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
              "object retains the same location...");
         x->x_legacy = 1;        
     }
+
+    post("visible = %d", x->x_visible);
 
     if(fs < 4)
         fs = 4;
@@ -1349,6 +1400,10 @@ void image_setup(void)
     class_addmethod(image_class, (t_method)image_gop_spill, gensym("gopspill"),
         A_DEFFLOAT, 0);
     class_addmethod(image_class, (t_method)image_constrain, gensym("constrain"),
+        A_DEFFLOAT, 0);
+    class_addmethod(image_class, (t_method)image_visible, gensym("visible"),
+        A_DEFFLOAT, 0);
+    class_addmethod(image_class, (t_method)image_alpha, gensym("alpha"),
         A_DEFFLOAT, 0);
     class_addmethod(image_class, (t_method)image_gop_spill_size, gensym("gopspill_size"),
         A_DEFFLOAT, A_DEFFLOAT, 0);

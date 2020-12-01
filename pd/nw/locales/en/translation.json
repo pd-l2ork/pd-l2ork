@@ -34,7 +34,11 @@
       "image_rotate_title": "rotate",
       "image_rotate_title_tt": "options for rotating the image",
       "image_reset_tt" : "reset user-specified size to the original image dimensions",
-      "image_rotate_center" : "(re)center the origin of the rotation based on the current user-specified size",
+      "image_rotate_center_tt" : "(re)center the origin of the rotation based on the current user-specified size",
+      "image_visible": "visibility",
+      "image_visible_tt": "toggle visibility of the image on/off",
+      "image_alpha": "alpha",
+      "image_alpha_tt": "adjust alpha or transparency of the image (0-1)",
 
       "nonzero_value": "nonzero value",
       "nonzero_value_tt": "value to output when the toggle shows an 'x'",

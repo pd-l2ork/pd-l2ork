@@ -547,7 +547,8 @@ text.activated {
 }
 
 /* can't remember why this was tagged !important */
-.xlet_selected {
+.editmode .xlet_selected,
+.editmode .xlet_iemgui.xlet_selected {
     stroke: #e87216;
     fill: #e87216;
     stroke-width: 5;
