@@ -40,12 +40,12 @@ input[type="number"] {
             <td data-i18n="[title]iem.prop.filename_tt">
               <input type="text" name="filename"
                      onchange="update_attr(this, true);"
-                     style="width: 16em;">
+                     style="width: 17em;">
             </td>
             <td data-i18n="[title]iem.prop.filename_browse_tt">
 		      <input type="button" onClick="image_browse()" name="filebrowse"
 		      		data-i18n="[title]iem.prop.filename_browse_tt" value="..."
-              style="width:32px">
+              style="width:28px">
 		      </button>
             </td>
           </tr>
@@ -57,15 +57,15 @@ input[type="number"] {
 
         <table class="pairs">
           <tr class="constrain prop hidden">
-            <td style="width:87px;">
+            <td style="width:74px;">
               <label data-i18n="[title]iem.prop.image_constrain_tt">
                 <span data-i18n="iem.prop.image_constrain"></span>
               </label>
             </td>
-            <td colspan="3" data-i18n="[title]iem.prop.image_constrain_tt">
+            <td colspan="4" data-i18n="[title]iem.prop.image_constrain_tt">
               <select name="constrain"
                      onchange="update_constrain(this);"
-                     style="width: 167px;">
+                     style="width: 189px;">
                 <option value="0">none</option>
                 <option value="1">image w/h ratio (default)</option>
                 <option value="2">current w/h ratio</option>
@@ -92,6 +92,12 @@ input[type="number"] {
                 style="text-align: right; margin-right: 1px;">
               <input type="number" name="visible_height" min="3"
                      onchange="update_wh(this, 1);">
+            </td>
+            <td data-i18n="[title]iem.prop.image_reset_tt">
+          <input type="button" onClick="image_reset_size();" name="reset_size"
+              data-i18n="[title]iem.prop.image_reset_tt" value="&#11034"
+              style="padding-left:4px;width:24px;">
+          </button>
             </td>
           </tr>
 
@@ -133,9 +139,9 @@ input[type="number"] {
           <tr><td style="padding-bottom: 6px;"></td></tr>
         </table>
 
-        <table class="pairs">
+        <table class="pairs" cellspacing="1">
           <tr class="rotate prop hidden">
-            <td>
+            <td style="width:64px;">
               <label data-i18n="[title]iem.prop.image_rotate_title_tt"
                   class="image_rotate_title_tt"> 
                 <span data-i18n="iem.prop.image_rotate_title"
@@ -147,11 +153,12 @@ input[type="number"] {
                 <span data-i18n="iem.prop.image_rotate_x" class="image_rotate_x"></span>
               </label>
             </td>
-            <td data-i18n="[title]iem.prop.image_rotate_x_tt" class="image_rotate_x_tt">
+            <td data-i18n="[title]iem.prop.image_rotate_x_tt" class="image_rotate_x_tt"
+                style="margin-bottom: 1px;">
               <input type="number" name="rotate_x" style="width: 4em;"
                      onchange="update_attr(this);">
             </td>
-            <td>
+            <td style="width: 40px; text-align: right;">
               <label data-i18n="[title]iem.prop.image_rotate_y_tt" class="image_rotate_y_tt">
                 <span data-i18n="iem.prop.image_rotate_y" class="image_rotate_y"></span>
               </label>
@@ -160,14 +167,22 @@ input[type="number"] {
               <input type="number" name="rotate_y" style="width: 4em;"
                      onchange="update_attr(this);">
             </td>
+            <td data-i18n="[title]iem.prop.image_rotate_center_tt">
+          <input type="button" onClick="image_rotate_center();" name="center"
+              data-i18n="[title]iem.prop.image_rotate_center_tt" value="+">
+          </button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+            </td>
             <td>
               <label data-i18n="[title]iem.prop.image_rotate_tt" class="image_rotate_tt">
-                <span data-i18n="iem.prop.image_rotate" class="image_rotate"
-                  style="margin-left: 2px;"></span>
+                <span data-i18n="iem.prop.image_rotate" class="image_rotate"></span>
               </label>
             </td>
-            <td data-i18n="[title]iem.prop.image_rotate_tt" class="image_rotate_tt"
-                style="text-align: right;">
+              <td colspan="4" data-i18n="[title]iem.prop.image_rotate_tt" class="image_rotate_tt"
+                style="text-align: left;">
               <input type="number" name="rotate" style="width: 4em;"
                      onchange="update_attr(this);">
             </td>
@@ -178,7 +193,7 @@ input[type="number"] {
           <tr><td style="padding-bottom: 6px;"></td></tr>
 
           <tr class="click prop hidden" style="margin-bottom: 7px;">
-            <td style="width:87px;">
+            <td style="width:74px;">
               <label data-i18n="[title]iem.prop.image_click_tt">
                 <span data-i18n="iem.prop.image_click"
                   style="margin-right: 6px;"></span>
@@ -187,7 +202,7 @@ input[type="number"] {
             <td colspan="3" data-i18n="[title]iem.prop.image_click_tt">
               <select name="click"
                      onchange="update_attr(this);"
-                     style="width: 167px;">
+                     style="width: 189px;">
                 <option value="0">disabled (default)</option>
                 <option value="1">bang on click</option>
                 <option value="2">mouse(1/0) origin(x,y) (x,y)</option>
@@ -200,14 +215,14 @@ input[type="number"] {
       <fieldset> 
         <legend data-i18n="iem.prop.heading.messages"></legend> 
 
-        <table>
+        <table width="100%">
           <tr class="send_symbol prop hidden">
             <td>
               <label data-i18n="[title]iem.prop.send_tt">
                 <span data-i18n="iem.prop.send"></span>
               </label>
             </td>
-            <td data-i18n="[title]iem.prop.send_tt">
+            <td data-i18n="[title]iem.prop.send_tt" style="text-align:right;">
               <input type="text" name="send_symbol"
                      onchange="update_attr(this, true);"
                      style="width: 12em;">
@@ -219,7 +234,7 @@ input[type="number"] {
                 <span data-i18n="iem.prop.receive"></span>
               </label>
             </td>
-            <td data-i18n="[title]iem.prop.receive_tt">
+            <td data-i18n="[title]iem.prop.receive_tt" style="text-align:right;">
               <input type="text" name="receive_symbol"
                      onchange="update_attr(this, true);"
                      style="width: 12em;">
@@ -232,7 +247,7 @@ input[type="number"] {
       <fieldset> 
         <legend data-i18n="iem.prop.heading.label">wrong stuff</legend> 
 
-        <table class="pairs">
+        <table class="pairs" width="100%">
           <tr class="label prop hidden">
             <td>
               <label data-i18n="[title]iem.prop.label_tt">
@@ -242,7 +257,7 @@ input[type="number"] {
             <td data-i18n="[title]iem.prop.label_tt">
               <input type="text" name="label"
                      onchange="update_attr(this, true);"
-                     style="width: 131px;">
+                     style="width: 135px;">
             </td>
             <td>
               <label data-i18n="[title]iem.prop.xoffset_tt">
@@ -260,7 +275,7 @@ input[type="number"] {
             </td>
             <td data-i18n="[title]iem.prop.yoffset_tt">
               <input type="text" name="y_offset"
-                     onchange="update_attr(this);">
+                     onchange="update_attr(this);" style="margin-right:1px;">
             </td>
           </tr>
           <tr class="font_style prop hidden">
@@ -280,7 +295,7 @@ input[type="number"] {
               <label data-i18n="[title]iem.prop.fontsize_tt">
                 <span data-i18n="iem.prop.fontsize"></span>
                 <input type="text" name="font_size"
-                       onchange="update_attr(this);">
+                       onchange="update_attr(this);" style="margin-right:4px;">
               <label>
             </td>
           </tr>
@@ -356,6 +371,30 @@ function strip_problem_chars(arg) {
         ret = ret.split(problem_chars[i]).join("");
     }
     return ret;
+}
+
+function image_reset_size() {
+    var w  = document.getElementsByName('visible_width')[0],
+        h  = document.getElementsByName('visible_height')[0],
+        rw = document.getElementsByName('reset_width')[0].value,
+        rh = document.getElementsByName('reset_height')[0].value;
+
+    w.value = rw;
+    h.value = rh;
+    update_wh(w, 0);
+    update_wh(h, 1);
+}
+
+function image_rotate_center() {
+    var w  = document.getElementsByName('visible_width')[0].value,
+        h  = document.getElementsByName('visible_height')[0].value,
+        rx = document.getElementsByName('rotate_x')[0],
+        ry = document.getElementsByName('rotate_y')[0];
+
+    rx.value = Number(w)/2;
+    ry.value = Number(h)/2;
+    update_attr(rx);
+    update_attr(ry); 
 }
 
 /* we use which to more easily identify which of the 4 possible variables

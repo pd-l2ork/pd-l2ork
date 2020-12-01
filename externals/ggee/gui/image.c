@@ -1052,7 +1052,7 @@ static void image_dialog(t_image *x, t_symbol *s, int argc,
     // we should not use this, as doing so messes up the drawing order
     //image_vis(x, x->x_gui.x_glist, 0);
     //image_vis(x, x->x_gui.x_glist, 1);
-    image_draw(x, x->x_gui.x_glist);
+    image_draw(x, x->x_gui.x_glist, IEM_GUI_DRAW_MODE_UPDATE);
     if (x->x_gui.x_selected) {
         image_select((t_gobj *)x, x->x_gui.x_glist, 0);
         image_select((t_gobj *)x, x->x_gui.x_glist, 1);
