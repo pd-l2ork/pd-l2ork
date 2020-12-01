@@ -518,7 +518,7 @@ static void radio_free(t_radio *x)
 {
     if(iemgui_has_rcv(&x->x_gui))
         pd_unbind(&x->x_gui.x_obj.ob_pd, x->x_gui.x_rcv);
-    gfxstub_deleteforkey(x);
+    gfxstub_deleteforkey(&x->x_gui);
 
     if (x->x_gui. x_handle) scalehandle_free(x->x_gui. x_handle);
     if (x->x_gui.x_lhandle) scalehandle_free(x->x_gui.x_lhandle);

@@ -506,7 +506,7 @@ static void bng_ff(t_bng *x)
     clock_free(x->x_clock_lck);
     clock_free(x->x_clock_brk);
     clock_free(x->x_clock_hld);
-    gfxstub_deleteforkey(x);
+    gfxstub_deleteforkey(&x->x_gui);
 
     if (x->x_gui. x_handle) scalehandle_free(x->x_gui. x_handle);
     if (x->x_gui.x_lhandle) scalehandle_free(x->x_gui.x_lhandle);

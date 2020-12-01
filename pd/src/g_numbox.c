@@ -1154,7 +1154,7 @@ static void my_numbox_free(t_my_numbox *x)
         pd_unbind(&x->x_gui.x_obj.ob_pd, x->x_gui.x_rcv);
     my_numbox_remove_grab(x);
     clock_free(x->x_clock_reset);
-    gfxstub_deleteforkey(x);
+    gfxstub_deleteforkey(&x->x_gui);
 
     if (x->x_gui. x_handle) scalehandle_free(x->x_gui. x_handle);
     if (x->x_gui.x_lhandle) scalehandle_free(x->x_gui.x_lhandle);

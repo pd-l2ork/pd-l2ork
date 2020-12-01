@@ -629,7 +629,11 @@ static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
             x->x_fname = oldfname;
         }
     }
-    if (x->x_fname != oldfname && glist_isvisible(glist_getcanvas(x->x_gui.x_glist)))
+    // this used to check whether the fname has changed using,
+    // if (x->x_fname != oldfname && ... Doing so, however, prevents
+    // dialog values to stick since user may not want to change the
+    // the filename, yet they need to pass it together with other vars
+    if (glist_isvisible(glist_getcanvas(x->x_gui.x_glist)))
     {
         gui_vmess("gui_image_configure", "xxxs",
             glist_getcanvas(x->x_gui.x_glist),
@@ -644,6 +648,15 @@ static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
         x->x_img_loaded = 1;
     //image_vis((t_gobj *)x, x->x_glist, 0);
     //image_vis((t_gobj *)x, x->x_glist, 1);
+}
+
+static void image_reload(t_image *x)
+{
+    if (x->x_img_loaded)
+    {
+        SETSYMBOL(x->x_at, x->x_fname);
+        image_open(x, NULL, 1, &x->x_at);
+    }
 }
 
 static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
@@ -850,14 +863,12 @@ static void image_rotate(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
             image_dorotate(x);        
         }
         else
-            goto fail;
+            pd_error(x, "rotate: invalid number or type of arguments--"
+                "should be either 1 or 3 floats...");
     }
     else
     {
-fail:
-        pd_error(x, "invalid number, type of arguments, or rotation origin values "
-            "for the rotate command: should be either 1 or 3 floats with origin "
-            "values between 0 and the image width/height...");
+        pd_error(x, "rotate: no image loaded yet...");
     }
 }
 
@@ -1003,6 +1014,7 @@ static void image_dialog(t_image *x, t_symbol *s, int argc,
     //post("image_dialog argc=%d", argc); // 20 args in total
     t_symbol *srl[3];
     int oldsndrcvable = 0;
+    t_symbol *oldfname = x->x_fname;
 
     if (atom_getintarg(19, argc, argv))
         canvas_apply_setundo(x->x_gui.x_glist, (t_gobj *)x);
@@ -1052,7 +1064,8 @@ static void image_dialog(t_image *x, t_symbol *s, int argc,
     // we should not use this, as doing so messes up the drawing order
     //image_vis(x, x->x_gui.x_glist, 0);
     //image_vis(x, x->x_gui.x_glist, 1);
-    image_draw(x, x->x_gui.x_glist, IEM_GUI_DRAW_MODE_UPDATE);
+    // we don't need this either, since it is called by the image callback
+    //image_draw(x, x->x_gui.x_glist, IEM_GUI_DRAW_MODE_UPDATE);
     if (x->x_gui.x_selected) {
         image_select((t_gobj *)x, x->x_gui.x_glist, 0);
         image_select((t_gobj *)x, x->x_gui.x_glist, 1);
@@ -1086,6 +1099,7 @@ static void image_free(t_image *x)
 {
     //sys_vgui("image delete img%x\n", x);
     gui_vmess("gui_image_free", "x", x);
+    gfxstub_deleteforkey(&x->x_gui);
     if (x->x_inlet)
     {
         pd_unbind(&x->x_gui.x_obj.ob_pd,x->x_inlet);
@@ -1342,6 +1356,8 @@ void image_setup(void)
         A_DEFFLOAT, A_DEFFLOAT, 0);
     class_addmethod(image_class, (t_method)image_rotate, gensym("rotate"),
         A_GIMME, 0);
+    class_addmethod(image_class, (t_method)image_reload, gensym("reload"),
+        A_NULL, 0);
     class_addmethod(image_class, (t_method)image_dialog,
         gensym("dialog"), A_GIMME, 0);
     class_addmethod(image_class, (t_method)image_imagesize_callback,\

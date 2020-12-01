@@ -38,7 +38,8 @@ PDDLL = pd.dll
 
 DLLWRAP= dllwrap
 
-MORECFLAGS = -O3 -funroll-loops -fomit-frame-pointer 
+# for debigging replace -O3 with -ggdb
+MORECFLAGS = -funroll-loops -fomit-frame-pointer -O3
 
 PADIR = $(pd_src)/portaudio
 ASIODIR = $(pd_src)/lib/ASIOSDK2.3

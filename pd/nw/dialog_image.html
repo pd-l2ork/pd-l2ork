@@ -95,7 +95,7 @@ input[type="number"] {
             </td>
             <td data-i18n="[title]iem.prop.image_reset_tt">
           <input type="button" onClick="image_reset_size();" name="reset_size"
-              data-i18n="[title]iem.prop.image_reset_tt" value="&#11034"
+              data-i18n="[title]iem.prop.image_reset_tt" value="&#11148"
               style="padding-left:4px;width:24px;">
           </button>
             </td>
@@ -576,10 +576,10 @@ function iemgui_unescape(s) {
 
 function send_params(attrs, create_undo_point) {
 
-    var send_symbol = attrs.send_symbol,
+    var send_symbol = iemgui_escape(attrs.send_symbol),
         receive_symbol = attrs.receive_symbol,
         label =  attrs["label"];
-    send_symbol = iemgui_escape(send_symbol);
+    //send_symbol = iemgui_escape(send_symbol);
     receive_symbol = iemgui_escape(receive_symbol);
     label = iemgui_escape(label);
 
@@ -699,7 +699,7 @@ function populate_form(attr_object) {
         // Unhide the span with the class with the same name as the id
         var prop_group = document.getElementsByClassName(attr)[0];
         if (prop_group !== undefined) {
-            console.log("the thing here is " + attr);
+            console.log("the thing here is " + attr + " and value is " + attr_object[attr]);
             prop_group.classList.remove("hidden");
         }
         // iemguis use the string 'empty' for null because of
