@@ -3630,7 +3630,8 @@ static int text_resizing_hotspot(t_canvas *x, t_object *ob, int xpos, int ypos,
             return CURSOR_EDITMODE_RESIZE;
         }
         else if (can_resize_y &&
-                 xpos > x1 + (ob->te_iemgui ? IOWIDTH + IOHOTSPOT : 0)  &&
+                 xpos > x1 + (ob->te_iemgui ||
+                    obj_noutlets(ob) > 0 ? IOWIDTH + IOHOTSPOT : 0)  &&
                  ypos >= y2 + offset - 5 &&
                  ypos <= y2 + offset)
         {
