@@ -2040,6 +2040,14 @@ function nw_create_patch_window_menus(gui, w, name) {
             pdgui.pdsend(name, "mycnv 0");
         }
     });
+    minit(m.put.image, {
+        enabled: true,
+        click: function() {
+            update_live_box();
+            pdgui.pdsend(name, "dirty 1");
+            pdgui.pdsend(name, "obj_abstraction ggee/image 0 0");
+        }
+    });
     //minit(m.put.graph, {
     //    enabled: true,
     //    click: function() {

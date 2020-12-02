@@ -244,6 +244,8 @@
     "hslider_tt": "Add a horizontal slider to the canvas for scrolling numbers",
     "knob": "Knob",
     "knob_tt": "Add a rotary knob for scrolling numbers",
+    "image": "Image",
+    "image_tt": "Add an image",
     "vradio": "Vradio",
     "vradio_tt": "Add a vertical group of radio buttons to the canvas for selecting a value",
     "hradio": "Hradio",

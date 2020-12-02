@@ -539,6 +539,12 @@ function create_menu(gui, type) {
             modifiers: shortcuts.menu.cnv.modifiers,
             tooltip: l("menu.cnv_tt")
         }));
+        put_menu.append(m.put.image = new gui.MenuItem({
+            label: l("menu.image"),
+            key: shortcuts.menu.image.key,
+            modifiers: shortcuts.menu.image.modifiers,
+            tooltip: l("menu.image_tt")
+        }));
         put_menu.append(new gui.MenuItem({ type: "separator" }));
         //putMenu.append(m.put.graph = new gui.MenuItem());
         put_menu.append(m.put.array = new gui.MenuItem({

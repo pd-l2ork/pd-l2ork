@@ -60,6 +60,7 @@ exports.menu = {
   "hradio": { key: "i", modifiers: cmd_or_ctrl + "+shift" },
   "vu":     { key: "u", modifiers: cmd_or_ctrl + "+shift" },
   "cnv": { key: "c", modifiers: cmd_or_ctrl + "+shift" },
+  "image": { key: "g", modifiers: cmd_or_ctrl + "+shift" },
 
   "nextwin": { key: "PageDown", modifiers: cmd_or_ctrl },
   "prevwin": { key: "PageUp", modifiers: cmd_or_ctrl },
