@@ -1,3 +1,8 @@
+/*
+    image object by Ivica Ico Bukvic <ico@vt.edu> 2020-12-03
+    this object is backwards compatible with the ggee/image
+*/
+
 #include <string.h>
 #include <m_pd.h>
 #include "g_canvas.h"
@@ -1339,7 +1344,7 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
         argc--;
         argv++;
     }
-    else if (n_args > 0) {
+    else if (n_args > 1) {
         // we are dealing with a legacy object and NOT a newly instantiated object
         // which has no arguments
         post("image: detected legacy patch... translating, so that when the "
@@ -1348,8 +1353,7 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
         x->x_legacy = 1;        
     }
 
-    post("visible = %d", x->x_visible);
-
+    iemgui_verify_snd_ne_rcv(&x->x_gui);
     if(fs < 4)
         fs = 4;
     x->x_gui.x_fontsize = fs;
