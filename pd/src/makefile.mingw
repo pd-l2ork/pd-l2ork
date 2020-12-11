@@ -38,7 +38,7 @@ PDDLL = pd.dll
 
 DLLWRAP= dllwrap
 
-# for debigging replace -O3 with -ggdb
+# for debugging replace -O3 with -ggdb
 MORECFLAGS = -funroll-loops -fomit-frame-pointer -O3
 
 PADIR = $(pd_src)/portaudio
