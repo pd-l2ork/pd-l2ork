@@ -383,18 +383,18 @@ void binbuf_addbinbuf(t_binbuf *x, t_binbuf *y)
         switch (ap->a_type)
         {
         case A_FLOAT:
-            //fprintf(stderr,"addbinbuf: float\n");
+            post("addbinbuf: float");
             break;
         case A_SEMI:
-            //fprintf(stderr,"addbinbuf: semi\n");
+            post("addbinbuf: semi");
             SETSYMBOL(ap, gensym(";"));
             break;
         case A_COMMA:
-            //fprintf(stderr,"addbinbuf: comma\n");
+            post("addbinbuf: comma");
             SETSYMBOL(ap, gensym(","));
             break;
         case A_DOLLAR:
-            //fprintf(stderr,"addbinbuf: dollar\n");
+            post("addbinbuf: dollar");
             if(ap->a_w.w_index==DOLLARALL){ /* JMZ: $@ expansion */
                 SETSYMBOL(ap, gensym("$@"));
             } else {
@@ -403,17 +403,20 @@ void binbuf_addbinbuf(t_binbuf *x, t_binbuf *y)
             }
             break;
         case A_DOLLSYM:
-            //fprintf(stderr,"addbinbuf: dollsym\n");
+            post("addbinbuf: dollsym");
             atom_string(ap, tbuf, MAXPDSTRING);
             SETSYMBOL(ap, gensym(tbuf));
             break;
         case A_SYMBOL:
-            //fprintf(stderr,"addbinbuf: symbol\n");
-                /* FIXME make this general */
-            /*if (!strcmp(ap->a_w.w_symbol->s_name, ";"))
-                SETSYMBOL(ap, gensym(";"));
+            post("addbinbuf: symbol %s", ap->a_w.w_symbol->s_name);
+            // ico@vt.edu 2020-12-11: Here we escape comma and semi in case
+            // they are interpreted as symbols, which implies they were
+            // prepended with a '\'. Doing this will ensure that the patch
+            // is reopened the same way it was saved.
+            if (!strcmp(ap->a_w.w_symbol->s_name, ";"))
+                SETSYMBOL(ap, gensym("\\\;"));
             else if (!strcmp(ap->a_w.w_symbol->s_name, ","))
-                SETSYMBOL(ap, gensym(","));*/
+                SETSYMBOL(ap, gensym("\\\,"));
             break;
         default:
             bug("binbuf_addbinbuf");
