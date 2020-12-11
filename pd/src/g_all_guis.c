@@ -405,6 +405,45 @@ void iemgui_label_font(t_iemgui *x, t_symbol *s, int ac, t_atom *av)
     iemgui_update_properties(x, IEM_GUI_PROP_FONT);
 }
 
+// ico@vt.edu 2020-12-11: pass various css attribute changes
+void iemgui_css(t_iemgui *x, t_symbol *s, int argc, t_atom *argv)
+{
+    if (argc > 2 && glist_isvisible(x->x_glist))
+    {
+        gui_start_vmess("gui_iemgui_css", "xxss",
+            glist_getcanvas(x->x_glist),
+            x,
+            atom_getsymbol(argv)->s_name,
+            atom_getsymbol(argv+1)->s_name
+        );
+        gui_start_array();
+
+        int i;
+        for (i = 2; i < argc; i++)
+        {
+            if (argv[i].a_type == A_FLOAT)
+            {
+                gui_f(atom_getfloat(argv+i));
+            }
+            else if (argv[i].a_type == A_SEMI)
+            {
+                gui_s(";");
+            }
+            else if (argv[i].a_type == A_COMMA)
+            {
+                gui_s(",");
+            }
+            else
+            {
+                gui_s(atom_getsymbol(argv+i)->s_name);
+            }
+        }
+
+        gui_end_array();
+        gui_end_vmess();
+    }
+}
+
 //Sans: 84 x 10 (14) -> 6 x 10 -> 1.0
 //Helvetica: 70 x 10 (14) -> 5 x 10 -> 0.83333
 //Times: 61 x 10 (14) -> 4.357 x 10 -> 0.72619; 0.735 appears to work better
@@ -1614,6 +1653,7 @@ void iemgui_class_addmethods(t_class *c)
         gensym("label_pos"), A_GIMME, 0);
     class_addmethod(c, (t_method)iemgui_label_font,
         gensym("label_font"), A_GIMME, 0);
+    class_addmethod(c, (t_method)iemgui_css, gensym("css"), A_GIMME, 0);
 }
 
 void g_iemgui_setup (void)

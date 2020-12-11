@@ -2507,7 +2507,8 @@ function gui_text_draw_border(cid, tag, bgcolor, isbroken, width, height) {
             width: width,
             height: height,
             //"shape-rendering": "crispEdges",
-            class: "border"
+            class: "border",
+            id: tag + "border"
         });
         if (isbroken === 1) {
             rect.classList.add("broken_border");
@@ -2923,6 +2924,7 @@ function gobj_font_y_kludge(fontsize) {
 
 function gui_text_new(cid, tag, type, isselected, left_margin, font_height, text, font) {
     //ico@vt.edu: different text spacing for GOPs
+    post("gui_text_new " + text);
     //post("gui_text_new type=" + type + " tag=" + tag);
     var xoff = 0.5; // Default value for normal objects, GOP uses -0.5
     /* ico@vt.edu 20200907: the following id_suffix is used for gatom objects.
@@ -3211,6 +3213,13 @@ function gui_canvas_hide_selection(cid) {
 }
 
 // iemguis
+
+function gui_iemgui_css(cid, tag, elem, prop, args) {
+    gui(cid).get_elem(tag+elem, function(item) {
+        item.style.setProperty(prop, args.join(' '));
+        //item.setAttribute(prop, args.join(' '));
+    });
+}
 
 function gui_bng_new(cid, tag, cx, cy, radius) {
     gui(cid).get_gobj(tag)
