@@ -39,6 +39,8 @@ void bng_draw_update(t_gobj *xgobj, t_glist *glist)
 
 void bng_draw_new(t_bng *x, t_glist *glist)
 {
+    char cbuf[8];
+    sprintf(cbuf, "#%6.6x", x->x_flashed ? x->x_gui.x_fcol : x->x_gui.x_bcol);
     t_canvas *canvas=glist_getcanvas(glist);
     int x1=text_xpix(&x->x_gui.x_obj, glist);
     int y1=text_ypix(&x->x_gui.x_obj, glist);
@@ -57,6 +59,13 @@ void bng_draw_new(t_bng *x, t_glist *glist)
     gui_vmess("gui_bng_new", "xxfff",
         canvas,
         &x->x_gui,
+        cx - x1,
+        cy - y1,
+        cr);
+    gui_vmess("gui_bng_configure", "xxsfff",
+        canvas,
+        x,
+        cbuf,
         cx - x1,
         cy - y1,
         cr);
