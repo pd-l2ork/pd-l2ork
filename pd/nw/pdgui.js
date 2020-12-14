@@ -2924,7 +2924,6 @@ function gobj_font_y_kludge(fontsize) {
 
 function gui_text_new(cid, tag, type, isselected, left_margin, font_height, text, font) {
     //ico@vt.edu: different text spacing for GOPs
-    post("gui_text_new " + text);
     //post("gui_text_new type=" + type + " tag=" + tag);
     var xoff = 0.5; // Default value for normal objects, GOP uses -0.5
     /* ico@vt.edu 20200907: the following id_suffix is used for gatom objects.
@@ -4784,12 +4783,12 @@ function gui_image_draw_border(cid, tag, x, y, w, h/*, imgw, imgh*/, onoff) {
     }
 }
 
-/*function gui_image_toggle_border(cid, tag, state) {
+function gui_image_toggle_border(cid, tag, state) {
     gui(cid).get_gobj(tag)
     .q(".border", {
         visibility: state === 0 ? "hidden" : "visible"
     });
-}*/
+}
 
 function gui_image_update_border(cid, tag, w, h) {
 
