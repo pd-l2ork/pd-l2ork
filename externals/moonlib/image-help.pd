@@ -10,7 +10,7 @@
 #X text 248 550 \, but it's a hack of Gunter Geiger's image...;
 #X obj 112 222 cnv 15 80 40 empty empty empty 20 12 0 14 -1 -66577
 0;
-#X obj 122 236 image examples/play.gif 0;
+#X obj 122 236 moonlib/image examples/play.gif 0;
 #X obj 348 304 cnv 15 20 20 empty empty empty 20 12 0 14 -1 -66577
 0;
 #X obj 372 285 t a;
@@ -21,12 +21,12 @@
 #X msg 424 268 open examples/sinw.gif;
 #X msg 425 286 open examples/squarew.gif;
 #X msg 425 303 open examples/saww.gif;
-#X obj 360 315 image examples/saww.gif 0;
-#X obj 136 236 image examples/rec.gif 0;
-#X obj 152 236 image examples/pause.gif 0;
-#X obj 185 232 image examples/sinw.gif 0;
-#X obj 185 244 image examples/squarew.gif 0;
-#X obj 185 256 image examples/saww.gif 0;
+#X obj 360 315 moonlib/image examples/saww.gif 0;
+#X obj 136 236 moonlib/image examples/rec.gif 0;
+#X obj 152 236 moonlib/image examples/pause.gif 0;
+#X obj 185 232 moonlib/image examples/sinw.gif 0;
+#X obj 185 244 moonlib/image examples/squarew.gif 0;
+#X obj 185 256 moonlib/image examples/saww.gif 0;
 #N canvas 183 192 77 40 (subpatch) 0;
 #X obj 87 205 t a;
 #X msg 127 127 open examples/sinw.gif;
@@ -34,7 +34,7 @@
 #X msg 165 171 open examples/saww.gif;
 #X obj -1 0 tgl 40 0 empty empty empty 0 -6 0 8 -262144 -1 -1 0 1;
 #X obj 0 1 cnv 15 40 40 empty empty empty 20 12 0 14 -1 -66577 0;
-#X obj 26 20 image examples/sinw.gif 0;
+#X obj 26 20 moonlib/image examples/sinw.gif 0;
 #X obj 127 84 i;
 #X obj 153 85 + 1;
 #X obj 179 85 mod 3;
@@ -62,7 +62,7 @@
 #X obj 298 362 hsl 128 15 0 63 0 0 empty empty empty -2 -6 0 8 -262144
 -1 -1 0 1;
 #X obj 295 384 i;
-#X obj 202 504 image /home/user/purr-data/externals/moonlib/examples/rec.gif
+#X obj 202 504 moonlib/image /home/user/purr-data/externals/moonlib/image/examples/rec.gif
 0;
 #X obj 295 407 change;
 #X text 6 311 For animations \, it's beter to preload images:;

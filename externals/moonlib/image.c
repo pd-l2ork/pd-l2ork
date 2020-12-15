@@ -380,6 +380,10 @@ static void image_setwidget(void)
 
 static void *image_new(t_symbol *image, t_float type)
 {
+    post("warning: moonlib/image is a defunct, unsupported, and buggy object and is"
+         " included purely for legacy support reasons. Please use ggee/image or simply"
+         " image instead. It provides all the moonlib/image functionality and more"
+         " without the bugs.");
     t_image *x = (t_image *)pd_new(image_class);
     char key[MAXPDSTRING];
     x->x_glist = (t_glist *)canvas_getcurrent();
