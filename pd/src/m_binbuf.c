@@ -383,18 +383,18 @@ void binbuf_addbinbuf(t_binbuf *x, t_binbuf *y)
         switch (ap->a_type)
         {
         case A_FLOAT:
-            post("addbinbuf: float");
+            //post("addbinbuf: float");
             break;
         case A_SEMI:
-            post("addbinbuf: semi");
+            //post("addbinbuf: semi");
             SETSYMBOL(ap, gensym(";"));
             break;
         case A_COMMA:
-            post("addbinbuf: comma");
+            //post("addbinbuf: comma");
             SETSYMBOL(ap, gensym(","));
             break;
         case A_DOLLAR:
-            post("addbinbuf: dollar");
+            //post("addbinbuf: dollar");
             if(ap->a_w.w_index==DOLLARALL){ /* JMZ: $@ expansion */
                 SETSYMBOL(ap, gensym("$@"));
             } else {
@@ -403,12 +403,12 @@ void binbuf_addbinbuf(t_binbuf *x, t_binbuf *y)
             }
             break;
         case A_DOLLSYM:
-            post("addbinbuf: dollsym");
+            //post("addbinbuf: dollsym");
             atom_string(ap, tbuf, MAXPDSTRING);
             SETSYMBOL(ap, gensym(tbuf));
             break;
         case A_SYMBOL:
-            post("addbinbuf: symbol %s", ap->a_w.w_symbol->s_name);
+            //post("addbinbuf: symbol %s", ap->a_w.w_symbol->s_name);
             // ico@vt.edu 2020-12-11: Here we escape comma and semi in case
             // they are interpreted as symbols, which implies they were
             // prepended with a '\'. Doing this will ensure that the patch
