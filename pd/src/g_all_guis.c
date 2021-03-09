@@ -30,6 +30,12 @@ int iemgui_clip_size(int size) {return maxi(size,IEM_GUI_MINSIZE);}
 int iemgui_clip_font(int size) {return maxi(size,IEM_FONT_MINSIZE);}
 static void scalehandle_check_and_redraw(t_iemgui *x);
 
+/* forward declarations */
+void iemgui_update_properties(t_iemgui *x, int option);
+void properties_set_field_int(t_int props, const char *gui_field, int value);
+void properties_set_field_float(t_int props, const char *gui_field, t_floatarg value);
+void properties_set_field_symbol(t_int props, const char *gui_field, t_symbol *value);
+
 /* helper function to negate legacy draw offset for labels
 */
 void iemgui_getrect_legacy_label(t_iemgui *x, int *xp1, int *yp1)
@@ -923,13 +929,13 @@ void iemgui_update_properties(t_iemgui *x, int option)
                 properties_set_field_int(properties,"label_color",0xffffff & x->x_lcol);
                 break;
             case 1:
-                properties_set_field_symbol(properties,"send_symbol",srl[0]->s_name);
+                properties_set_field_symbol(properties,"send_symbol",srl[0]);
                 break;
             case 2:
-                properties_set_field_symbol(properties,"receive_symbol",srl[1]->s_name);
+                properties_set_field_symbol(properties,"receive_symbol",srl[1]);
                 break;
             case 3:
-                properties_set_field_symbol(properties,"label",srl[2]->s_name);
+                properties_set_field_symbol(properties,"label",srl[2]);
                 break;
             case 4:
                 properties_set_field_int(properties,"x_offset",x->x_ldx);
@@ -1084,14 +1090,14 @@ void properties_set_field_float(t_int props, const char *gui_field, t_floatarg v
         value);
 }
 
-void properties_set_field_symbol(t_int props, const char *gui_field, t_symbol value)
+void properties_set_field_symbol(t_int props, const char *gui_field, t_symbol *value)
 {
     char tagbuf[MAXPDSTRING];
     sprintf(tagbuf, ".gfxstub%zx", props);
     gui_vmess("gui_dialog_set_field", "sss",
         tagbuf,
         gui_field,
-        value);
+        value->s_name);
 }
 
 void scalehandle_dragon_label(t_scalehandle *h, float mouse_x, float mouse_y)
