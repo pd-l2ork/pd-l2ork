@@ -924,10 +924,10 @@ static void gatom_retext(t_gatom *x, int senditup, int recolor)
 {
 	//post("gatom_retext senditup=%d recolor=%d", senditup, recolor);
     t_canvas *canvas = glist_getcanvas(x->a_glist);
-    t_rtext *y = glist_findrtext(x->a_glist, &x->a_text);
     if (recolor)
     {
         //post("gatom click off");
+        t_rtext *y = glist_findrtext(x->a_glist, &x->a_text);
         gui_vmess("gui_gatom_activate", "xsi",
             canvas, rtext_gettag(y), 0);
     	x->a_shift_clicked = 0;
@@ -1239,7 +1239,7 @@ static void gatom_click(t_gatom *x,
     t_floatarg xpos, t_floatarg ypos, t_floatarg shift, t_floatarg ctrl,
     t_floatarg alt)
 {
-	//post("gatom_click shift=%f ctrl=%f alt=%f", shift, ctrl, alt);
+	//post("gatom_click shift=%f ctrl=%f alt=%f x=%lx", shift, ctrl, alt, x->a_glist);
     //pd_bind(&x->a_text.ob_pd, gensym("#keyname_a"));
 	//post("bind");
     if (x->a_text.te_width == 1)
@@ -2301,6 +2301,7 @@ static void text_vis(t_gobj *z, t_glist *glist, int vis)
 static int text_click(t_gobj *z, struct _glist *glist,
     int xpix, int ypix, int shift, int alt, int dbl, int doit)
 {
+    //post("text_click %lx", glist);
     t_text *x = (t_text *)z;
     if (x->te_type == T_OBJECT)
     {
@@ -2319,11 +2320,11 @@ static int text_click(t_gobj *z, struct _glist *glist,
     {
         /* Note: dropdown has its own click handler */
         t_canvas *canvas = glist_getcanvas(glist);
-        t_rtext *y = glist_findrtext(glist, x);
         if (doit)
         {
             //post("gatom click on");
             /* Change the gatom text color when it's clicked? Need to test... */
+            t_rtext *y = glist_findrtext(glist, x);
             gui_vmess("gui_gatom_activate", "xsi",
                 canvas, rtext_gettag(y), 1);
             gatom_click((t_gatom *)x, (t_floatarg)xpix, (t_floatarg)ypix,
