@@ -2482,6 +2482,7 @@ exports.gui = gui;
 // creation, in which case a flag to toggle the offset would be appropriate.
 
 function gui_gobj_new(cid, tag, type, xpos, ypos, is_toplevel, is_canvas_obj) {
+    //post("gui_gobj_new " + cid + " " + tag + " " + type);
     var g;
     xpos += 0.5,
     ypos += 0.5,
@@ -6004,6 +6005,14 @@ function gui_gatom_activate(cid, tag, state) {
         } else {
             e.classList.remove("activated");
         }
+    });
+}
+
+function gui_gatom_css(cid, tag, elem, prop, args) {
+    var target = null;
+    gui(cid).get_gobj(tag, function(item) {
+        target = item.getElementsByClassName(elem);
+        target[0].style.setProperty(prop, args.join(' '));
     });
 }
 

@@ -1309,6 +1309,46 @@ static void gatom_exclusive(t_gatom *x, t_floatarg f)
     }
 }
 
+// ico@vt.edu 2021-03-22: pass various css attribute changes
+void gatom_css(t_gatom *x, t_symbol *s, int argc, t_atom *argv)
+{
+    if (argc > 2 && glist_isvisible(x->a_glist))
+    {
+        t_rtext *y = glist_findrtext(x->a_glist, &x->a_text);
+        gui_start_vmess("gui_gatom_css", "xsss",
+            glist_getcanvas(x->a_glist),
+            rtext_gettag(y),
+            atom_getsymbol(argv)->s_name,
+            atom_getsymbol(argv+1)->s_name
+        );
+        gui_start_array();
+
+        int i;
+        for (i = 2; i < argc; i++)
+        {
+            if (argv[i].a_type == A_FLOAT)
+            {
+                gui_f(atom_getfloat(argv+i));
+            }
+            else if (argv[i].a_type == A_SEMI)
+            {
+                gui_s(";");
+            }
+            else if (argv[i].a_type == A_COMMA)
+            {
+                gui_s(",");
+            }
+            else
+            {
+                gui_s(atom_getsymbol(argv+i)->s_name);
+            }
+        }
+
+        gui_end_array();
+        gui_end_vmess();
+    }
+}
+
 EXTERN int glist_getindex(t_glist *x, t_gobj *y);
 EXTERN int canvas_apply_restore_original_position(t_canvas *x, int pos);
 
@@ -3074,6 +3114,7 @@ void g_text_setup(void)
         A_GIMME, 0);
     class_addmethod(gatom_class, (t_method)gatom_exclusive, gensym("exclusive"),
         A_FLOAT, 0);
+    class_addmethod(gatom_class, (t_method)gatom_css, gensym("css"), A_GIMME, 0);
     class_setwidget(gatom_class, &gatom_widgetbehavior);
     class_setpropertiesfn(gatom_class, gatom_properties);
 
