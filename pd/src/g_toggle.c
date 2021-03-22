@@ -274,7 +274,7 @@ static void toggle_bang(t_toggle *x)
 
 static void toggle_dialog(t_toggle *x, t_symbol *s, int argc, t_atom *argv)
 {
-    if (atom_getintarg(19, argc, argv))
+    if (atom_getintarg(20, argc, argv))
         canvas_apply_setundo(x->x_gui.x_glist, (t_gobj *)x);
     x->x_gui.x_h =
     x->x_gui.x_w = iemgui_clip_size(atom_getintarg(0, argc, argv));

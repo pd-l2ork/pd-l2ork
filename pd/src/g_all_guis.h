@@ -141,6 +141,10 @@ typedef struct _slider
     double   x_last;
     int      x_is_last_float; // bool
     int      x_orient; // bool: 0=horizontal ([hsl]), 1=vertical ([vsl])
+    int      x_exclusive;   /* used to set the numbox keyboard focus to exclusive (1) or
+                               non-exclusive (0, default). For sliders this is limited
+                               solely to holding shift since no other key commands are
+                               used. */
 } t_slider;
 
 typedef struct _radio
@@ -216,6 +220,8 @@ typedef struct _my_numbox
                                even if we arrive back at the previous number, it does not
                                activate with exclusive keyboard focus. This is why old_val
                                comparison is not a good one */
+    int      x_exclusive;   /* used to set the numbox keyboard focus to exclusive (1) or
+                               non-exclusive (0, default) */
 } t_my_numbox;
 
 extern int sys_noloadbang;

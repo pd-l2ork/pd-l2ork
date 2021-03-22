@@ -31,6 +31,7 @@ static void my_numbox_remove_grab(t_my_numbox *x);
 static void my_numbox_motion(t_my_numbox *x, t_floatarg dx, t_floatarg dy);
 static void my_numbox_ftoa(t_my_numbox *x , int append);
 static void my_numbox_list(t_my_numbox *x, t_symbol *s, int ac, t_atom *av);
+static void my_numbox_exclusive(t_my_numbox *x, t_floatarg f);
 
 // used for when user presses esc to release exclusive focus and to prevent
 // propagation of that keypress to bound events that are checked for inside
@@ -502,7 +503,7 @@ static void my_numbox_save(t_gobj *z, t_binbuf *b)
         x->x_gui.x_changed = 1;
         sys_queuegui(x, x->x_gui.x_glist, my_numbox_draw_update);
     }
-    binbuf_addv(b, "ssiisiiffiisssiiiisssfii;", gensym("#X"),gensym("obj"),
+    binbuf_addv(b, "ssiisiiffiisssiiiisssfiii;", gensym("#X"),gensym("obj"),
         (int)x->x_gui.x_obj.te_xpix, (int)x->x_gui.x_obj.te_ypix,
         gensym("nbx"), x->x_gui.x_w, x->x_gui.x_h,
         (t_float)x->x_min, (t_float)x->x_max,
@@ -510,7 +511,7 @@ static void my_numbox_save(t_gobj *z, t_binbuf *b)
         srl[0], srl[1], srl[2], x->x_gui.x_ldx, x->x_gui.x_ldy,
         iem_fstyletoint(&x->x_gui), x->x_gui.x_fontsize,
         bflcol[0], bflcol[1], bflcol[2],
-        x->x_val, x->x_log_height, x->x_drawstyle);
+        x->x_val, x->x_log_height, x->x_drawstyle, x->x_exclusive);
 }
 
 int my_numbox_check_minmax(t_my_numbox *x, double min, double max)
@@ -603,6 +604,7 @@ static void my_numbox_properties(t_gobj *z, t_glist *owner)
     gui_s("foreground_color"); gui_i(0xffffff & x->x_gui.x_fcol);
     gui_s("label_color");      gui_i(0xffffff & x->x_gui.x_lcol);
     gui_s("draw_style");       gui_i(x->x_drawstyle);
+    gui_s("exclusive");        gui_i(x->x_exclusive);
     gui_end_array();
     gui_end_vmess();
 }
@@ -615,7 +617,7 @@ static void my_numbox_bang(t_my_numbox *x)
 static void my_numbox_dialog(t_my_numbox *x, t_symbol *s, int argc,
     t_atom *argv)
 {
-    if (atom_getintarg(19, argc, argv))
+    if (atom_getintarg(20, argc, argv))
         canvas_apply_setundo(x->x_gui.x_glist, (t_gobj *)x);
     x->x_gui.x_w = maxi(atom_getintarg(0, argc, argv),1);
     x->x_gui.x_h = maxi(atom_getintarg(1, argc, argv),8);
@@ -624,6 +626,7 @@ static void my_numbox_dialog(t_my_numbox *x, t_symbol *s, int argc,
     x->x_lin0_log1 = !!atom_getintarg(4, argc, argv);
     x->x_log_height = maxi(atom_getintarg(6, argc, argv),10);
     x->x_drawstyle = (int)atom_getintarg(18, argc, argv);
+    x->x_exclusive = (int)atom_getintarg(19, argc, argv);
     iemgui_dialog(&x->x_gui, argc, argv);
     x->x_numwidth = my_numbox_calc_fontwidth(x);
 
@@ -652,8 +655,10 @@ static void my_numbox_motion(t_my_numbox *x, t_floatarg dx, t_floatarg dy)
         x->x_dragged = 1;
         // if we have clicked and have started dragging, this means we want to
         // change number by dragging, so here we disable the exclusive nature
-        // of glist_grab
-        glist_grab_exclusive(x->x_gui.x_glist, 0);
+        // of glist_grab. we only do so if we are in exclusive mode. otherwise,
+        // no disabling is necessary
+        if (x->x_exclusive == 1)
+            glist_grab_exclusive(x->x_gui.x_glist, 0);
 
         if(x->x_gui.x_finemoved)
             k2 = 0.01;
@@ -758,11 +763,11 @@ static int my_numbox_newclick(t_gobj *z, struct _glist *glist,
             //post("|...letting go focused=1");
             if (!x->x_dragged)
             {
-                //post("|...entering exclusive");
+                //post("|...entering keyboard focus (if enabled, using exclusive)");
                 x->x_focused = 3;
                 glist_grab(x->x_gui.x_glist, &x->x_gui.x_obj.te_g,
                     (t_glistmotionfn)my_numbox_motion, my_numbox_key, my_numbox_list,
-                    (t_floatarg)xpix, (t_floatarg)ypix, 1);
+                    (t_floatarg)xpix, (t_floatarg)ypix, x->x_exclusive);
                 sys_queuegui(x, x->x_gui.x_glist, my_numbox_draw_update);
             }
             else
@@ -977,7 +982,10 @@ static void my_numbox_key(void *z, t_floatarg fkey)
            0 inside g_editor.c, so as to avoid passing key press immediately
            to bound objects
         */
-        delayed_exclusive_release = -1;
+        if (x->x_exclusive == 1)
+            delayed_exclusive_release = -1;
+        else
+            delayed_exclusive_release = 0;
         clock_unset(x->x_clock_reset);
         my_numbox_tick_reset(x);
     }
@@ -1062,11 +1070,23 @@ static void my_numbox_list(t_my_numbox *x, t_symbol *s, int ac, t_atom *av)
     }
 }
 
+static void my_numbox_exclusive(t_my_numbox *x, t_floatarg f)
+{
+    if ((int)f != x->x_exclusive && (f == 0.0 || f == 1.0))
+    {
+        x->x_exclusive = (int)f;
+        t_glist *gl = glist_getcanvas(x->x_gui.x_glist);
+        if (gl->gl_editor && gl->gl_editor->e_grab &&
+            gl->gl_editor->e_grab == (t_gobj *)x)
+                glist_grab_exclusive(gl, x->x_exclusive);
+    }
+}
+
 static void *my_numbox_new(t_symbol *s, int argc, t_atom *argv)
 {
     t_my_numbox *x = (t_my_numbox *)pd_new(my_numbox_class);
     int w=5, h=14;
-    int lilo=0, ldx=0, ldy=-8;
+    int lilo=0, ldx=0, ldy=-8, ex=0;
     int fs=10;
     int log_height=256;
     double min=-1.0e+37, max=1.0e+37,v=0.0;
@@ -1074,6 +1094,7 @@ static void *my_numbox_new(t_symbol *s, int argc, t_atom *argv)
     x->x_gui.x_bcol = 0xFCFCFC;
     x->x_gui.x_fcol = 0x00;
     x->x_gui.x_lcol = 0x00;
+
 
     if((argc >= 17)&&IS_A_FLOAT(argv,0)&&IS_A_FLOAT(argv,1)
        &&IS_A_FLOAT(argv,2)&&IS_A_FLOAT(argv,3)
@@ -1104,6 +1125,8 @@ static void *my_numbox_new(t_symbol *s, int argc, t_atom *argv)
     x->x_drawstyle = 0; // default behavior
     if((argc == 19)&&IS_A_FLOAT(argv,18))
         x->x_drawstyle = (int)atom_getintarg(18, argc, argv);
+    if (argc == 20&&IS_A_FLOAT(argv,19))
+            ex = atom_getintarg(19, argc, argv);
     x->x_gui.x_draw = (t_iemfunptr)my_numbox_draw;
     x->x_gui.x_glist = (t_glist *)canvas_getcurrent();
     x->x_val = x->x_gui.x_loadinit ? v : 0.0;
@@ -1144,6 +1167,7 @@ static void *my_numbox_new(t_symbol *s, int argc, t_atom *argv)
     x->x_yresize_x = 0;
     x->x_shiftclick = 0;
     x->x_dragged = 0;
+    x->x_exclusive = ex;
 
     return (x);
 }
@@ -1194,6 +1218,8 @@ void g_numbox_setup(void)
         gensym("log_height"), A_FLOAT, 0);
     class_addmethod(my_numbox_class, (t_method)my_numbox_drawstyle,
         gensym("drawstyle"), A_FLOAT, 0);
+    class_addmethod(my_numbox_class, (t_method)my_numbox_exclusive,
+        gensym("exclusive"), A_FLOAT, 0);
 
     wb_init(&my_numbox_widgetbehavior,my_numbox_getrect,my_numbox_newclick);
     class_setwidget(my_numbox_class, &my_numbox_widgetbehavior);
