@@ -94,7 +94,9 @@
       "dropdown_outtype": "output",
       "dropdown_outtype_tt": "whether to output the index or the value",
       "width": "Breite",
-      "width_tt": "Breite (in Zeichen)"
+      "width_tt": "Breite (in Zeichen)",
+      "exclusive": "exklusiver tastaturfokus",
+      "exclusive_tt": "ob das objekt alle tastatureingaben erfasst, während es fokussiert ist"
     }
   },
   "menu": {

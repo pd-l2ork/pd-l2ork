@@ -123,7 +123,9 @@
       "dropdown_outtype": "output",
       "dropdown_outtype_tt": "whether to output the index or the value",
       "width": "width",
-      "width_tt": "width (in characters)"
+      "width_tt": "width (in characters)",
+      "exclusive": "exclusive keyboard focus",
+      "exclusive_tt": "whether the object captures all keyboard input while focused"
     }
   },
   "menu": {

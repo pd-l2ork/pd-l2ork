@@ -158,8 +158,18 @@
                 <span data-i18n="gatom.prop.label_bottom"></span>
 
               </label>
-
+            </td>
+          </tr>
         </table>
+
+        <div class="exclusive">
+          <label data-i18n="[title]gatom.prop.exclusive_tt">
+            <input type="checkbox" id="exclusive" name="exclusive" value="on"
+                   onchange="update_attr(this);">
+            <span data-i18n="gatom.prop.exclusive"></span>
+          </label>
+          <br>
+        </div>
 
       </fieldset> 
 
@@ -242,7 +252,11 @@ function gatom_unescape(str) {
 }
 
 function update_attr(elem) {
-    new_attrs[elem.name] = elem.value;
+    if (elem.type === "checkbox") {
+        new_attrs[elem.name] = elem.checked ? 1 : 0;
+    }
+    else
+      new_attrs[elem.name] = elem.value;
 }
 
 function update_dropdown_outtype(elem) {
@@ -260,6 +274,7 @@ function send_params(attrs, create_undo_point) {
         +attrs.labelpos,
         gatom_escape(attrs.receive_symbol),
         gatom_escape(attrs.send_symbol),
+        +attrs.exclusive,
         create_undo_point ? 1 : 0
     );
 }
@@ -388,6 +403,7 @@ function populate_form(attributes) {
             radios[i].checked = true;
         }
     }
+    get_elem("exclusive").checked = attributes.exclusive;
 }
 
 function add_events(name) {

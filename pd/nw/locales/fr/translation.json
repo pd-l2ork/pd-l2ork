@@ -94,7 +94,9 @@
       "dropdown_outtype":    "Sortie",
       "dropdown_outtype_tt": "Sortir l'index ou la valeur",
       "width":    "largeur",
-      "width_tt": "Largeur (en nombre de caractères)"
+      "width_tt": "Largeur (en nombre de caractères)",
+      "exclusive": "focus clavier exclusif",
+      "exclusive_tt": "si l'objet capture toutes les entrées du clavier pendant la mise au point"
     }
   },
   "menu": {
