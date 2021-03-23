@@ -41,7 +41,6 @@ typedef struct _image
                             */
     int x_mouse_x;          // used to track mouse position
     int x_mouse_y;
-    t_atom   x_at[5];       // temporary buffer for outputting clickmode 2 messages
     t_float x_rot_x;        // rotation point location x and y
     t_float x_rot_y;
     int x_rot_pt_init;      // whether the rotation point has been initialized
@@ -404,6 +403,7 @@ static void image_motion(t_image *x, t_floatarg dx, t_floatarg dy)
 {
     if (x->x_click == 2)
     {
+        t_atom at[5];
         x->x_mouse_x += dx;
         //x->x_mouse_x = maxi(x->x_mouse_x, x->x_gui.x_obj.te_xpix);
         //x->x_mouse_x = mini(x->x_mouse_x, x->x_gui.x_obj.te_xpix + x->x_gui.x_w);
@@ -412,12 +412,12 @@ static void image_motion(t_image *x, t_floatarg dx, t_floatarg dy)
         //x->x_mouse_y = maxi(x->x_mouse_y, x->x_gui.x_obj.te_ypix);
         //x->x_mouse_y = mini(x->x_mouse_y, x->x_gui.x_obj.te_ypix + x->x_gui.x_h);
 
-        SETFLOAT(x->x_at, 1.0);
-        SETFLOAT(x->x_at+1, (t_floatarg)(x->x_gui.x_obj.te_xpix));
-        SETFLOAT(x->x_at+2, (t_floatarg)(x->x_gui.x_obj.te_ypix));
-        SETFLOAT(x->x_at+3, (t_floatarg)(x->x_mouse_x - x->x_gui.x_obj.te_xpix));
-        SETFLOAT(x->x_at+4, (t_floatarg)(x->x_mouse_y - x->x_gui.x_obj.te_ypix));
-        iemgui_out_list(&x->x_gui, 0, 0, &s_list, 5, x->x_at);
+        SETFLOAT(at, 1.0);
+        SETFLOAT(at+1, (t_floatarg)(x->x_gui.x_obj.te_xpix));
+        SETFLOAT(at+2, (t_floatarg)(x->x_gui.x_obj.te_ypix));
+        SETFLOAT(at+3, (t_floatarg)(x->x_mouse_x - x->x_gui.x_obj.te_xpix));
+        SETFLOAT(at+4, (t_floatarg)(x->x_mouse_y - x->x_gui.x_obj.te_ypix));
+        iemgui_out_list(&x->x_gui, 0, 0, &s_list, 5, at);
     }
 }
 
@@ -425,6 +425,8 @@ static int image_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix,
     int shift, int alt, int dbl, int doit)
 {
     t_image *x = (t_image *)z;
+    t_atom at[5];
+
     if (doit && x->x_click)
     {
         x->x_mouse_x = xpix;
@@ -437,12 +439,12 @@ static int image_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix,
         }
         else if (x->x_click == 2)
         {
-            SETFLOAT(x->x_at, 1.0);
-            SETFLOAT(x->x_at+1, (t_floatarg)(x->x_gui.x_obj.te_xpix));
-            SETFLOAT(x->x_at+2, (t_floatarg)(x->x_gui.x_obj.te_ypix));
-            SETFLOAT(x->x_at+3, (t_floatarg)(x->x_mouse_x - x->x_gui.x_obj.te_xpix));
-            SETFLOAT(x->x_at+4, (t_floatarg)(x->x_mouse_y - x->x_gui.x_obj.te_ypix));
-            iemgui_out_list(&x->x_gui, 0, 0, &s_list, 5, x->x_at);
+            SETFLOAT(at, 1.0);
+            SETFLOAT(at+1, (t_floatarg)(x->x_gui.x_obj.te_xpix));
+            SETFLOAT(at+2, (t_floatarg)(x->x_gui.x_obj.te_ypix));
+            SETFLOAT(at+3, (t_floatarg)(x->x_mouse_x - x->x_gui.x_obj.te_xpix));
+            SETFLOAT(at+4, (t_floatarg)(x->x_mouse_y - x->x_gui.x_obj.te_ypix));
+            iemgui_out_list(&x->x_gui, 0, 0, &s_list, 5, at);
         }
 
     }
@@ -453,12 +455,12 @@ static int image_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix,
     {
         if (x->x_click == 2)
         {
-            SETFLOAT(x->x_at, 0.0);
-            SETFLOAT(x->x_at+1, (t_floatarg)(x->x_gui.x_obj.te_xpix));
-            SETFLOAT(x->x_at+2, (t_floatarg)(x->x_gui.x_obj.te_ypix));
-            SETFLOAT(x->x_at+3, (t_floatarg)(xpix - x->x_gui.x_obj.te_xpix));
-            SETFLOAT(x->x_at+4, (t_floatarg)(ypix - x->x_gui.x_obj.te_ypix));
-            iemgui_out_list(&x->x_gui, 0, 0, &s_list, 5, x->x_at);
+            SETFLOAT(at, 0.0);
+            SETFLOAT(at+1, (t_floatarg)(x->x_gui.x_obj.te_xpix));
+            SETFLOAT(at+2, (t_floatarg)(x->x_gui.x_obj.te_ypix));
+            SETFLOAT(at+3, (t_floatarg)(xpix - x->x_gui.x_obj.te_xpix));
+            SETFLOAT(at+4, (t_floatarg)(ypix - x->x_gui.x_obj.te_ypix));
+            iemgui_out_list(&x->x_gui, 0, 0, &s_list, 5, at);
         }
         glist_grab(x->x_gui.x_glist, 0, 0, 0, 0, 0, 0, 0);
     }
@@ -680,8 +682,9 @@ static void image_reload(t_image *x)
 {
     if (x->x_img_loaded)
     {
-        SETSYMBOL(x->x_at, x->x_fname);
-        image_open(x, NULL, 1, &x->x_at);
+        t_atom at[1];
+        SETSYMBOL(at, x->x_fname);
+        image_open(x, NULL, 1, &at);
     }
 }
 
@@ -780,6 +783,7 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
 static void image_update(t_image *x, t_glist *glist, int width, int height, int resizemode)
 {
     t_float c; // constrain
+    t_atom at[3];
     if (x->x_constrain == 2) { // custom
         c = (float)x->x_constrain_w / (float)x->x_constrain_h;
     } else if (x->x_constrain == 1) {
@@ -836,10 +840,10 @@ static void image_update(t_image *x, t_glist *glist, int width, int height, int 
     iemgui_io_draw_move(&x->x_gui);
     image_dorotate(x);
     scrollbar_update(x->x_gui.x_glist);
-    SETSYMBOL(x->x_at, gensym("size"));
-    SETFLOAT(x->x_at+1, (t_floatarg)(x->x_adj_img_width));
-    SETFLOAT(x->x_at+2, (t_floatarg)(x->x_adj_img_height));
-    iemgui_out_list(&x->x_gui, 0, 0, &s_list, 3, x->x_at);
+    SETSYMBOL(at, gensym("size"));
+    SETFLOAT(at+1, (t_floatarg)(x->x_adj_img_width));
+    SETFLOAT(at+2, (t_floatarg)(x->x_adj_img_height));
+    iemgui_out_list(&x->x_gui, 0, 0, &s_list, 3, at);
 }
 
 // resets the image to its original size
@@ -880,31 +884,34 @@ static void image_dorotate(t_image *x)
 
 static void image_rotate(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
 {
-    if (argc && x->x_img_loaded && argv[0].a_type == A_FLOAT)
+    if (glist_isvisible(glist_getcanvas(x->x_gui.x_glist)))
     {
-        if (argc == 1 && argv[0].a_type == A_FLOAT)
+        if (argc && x->x_img_loaded && argv[0].a_type == A_FLOAT)
         {
-            // rotate around the center of the image
-            x->x_rot_angle = atom_getfloat(&argv[0]);
-            image_dorotate(x);
+            if (argc == 1 && argv[0].a_type == A_FLOAT)
+            {
+                // rotate around the center of the image
+                x->x_rot_angle = atom_getfloat(&argv[0]);
+                image_dorotate(x);
 
-        } 
-        else if (argc == 3 && argv[1].a_type == A_FLOAT && argv[2].a_type == A_FLOAT)
-        {
-            // rotate around a specified origin
-            x->x_rot_angle = atom_getfloat(&argv[0]);
-            x->x_rot_x = atom_getfloat(&argv[1]);
-            x->x_rot_y = atom_getfloat(&argv[2]);
-            x->x_rot_pt_init = 1;
-            image_dorotate(x);        
+            } 
+            else if (argc == 3 && argv[1].a_type == A_FLOAT && argv[2].a_type == A_FLOAT)
+            {
+                // rotate around a specified origin
+                x->x_rot_angle = atom_getfloat(&argv[0]);
+                x->x_rot_x = atom_getfloat(&argv[1]);
+                x->x_rot_y = atom_getfloat(&argv[2]);
+                x->x_rot_pt_init = 1;
+                image_dorotate(x);        
+            }
+            else
+                pd_error(x, "rotate: invalid number or type of arguments--"
+                    "should be either 1 or 3 floats...");
         }
         else
-            pd_error(x, "rotate: invalid number or type of arguments--"
-                "should be either 1 or 3 floats...");
-    }
-    else
-    {
-        pd_error(x, "rotate: no image loaded yet...");
+        {
+            pd_error(x, "rotate: no image loaded yet...");
+        }
     }
 }
 
