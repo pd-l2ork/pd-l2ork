@@ -4725,11 +4725,11 @@ function gui_gobj_draw_image(cid, tag, image_key, tk_anchor, w, h, constrain, ty
             "data:image/" + pd_cache.get(image_key).type + ";base64," +
              pd_cache.get(image_key).data);
         if (type === 0) {
-            img_size_resizable_setter(cid, tag,
+            img_size_resizable_setter(cid, tag+"image",
                 pd_cache.get(image_key).type, pd_cache.get(image_key).data,
                 tk_anchor, w, h, constrain);
         } else {
-            img_size_setter(cid, tag, pd_cache.get(image_key).type,
+            img_size_setter(cid, tag+"image", pd_cache.get(image_key).type,
                 pd_cache.get(image_key).data, tk_anchor);
         }
         frag.appendChild(i);
@@ -4807,12 +4807,12 @@ function gui_image_update_border(cid, tag, w, h) {
 
 // Switch the data for an existing svg image
 function gui_image_configure(cid, tag, image_key, tk_anchor) {
-    gui(cid).get_elem(tag, function(e) {
+    gui(cid).get_elem(tag+"image", function(e) {
         if (pd_cache.get(image_key)) {
             e.setAttributeNS("http://www.w3.org/1999/xlink", "href",
                 "data:image/" + pd_cache.get(image_key).type + ";base64," +
                  pd_cache.get(image_key).data);
-            img_size_setter(cid, tag, pd_cache.get(image_key).type,
+            img_size_setter(cid, tag+"image", pd_cache.get(image_key).type,
                 pd_cache.get(image_key).data, tk_anchor);
         } else {
             // need to change this to an actual error
@@ -4826,7 +4826,7 @@ function gui_image_coords(cid, tag, x, y) {
     // ggee/image accepts a message that can trigger this, meaning
     // [loadbang] can end up calling this before the patchwindow exists.
     // So we have to check for existence below
-    gui(cid).get_gobj(tag, function(e) {
+    gui(cid).get_gobj(tag+"image", function(e) {
         elem_move(e, x, y);
     });
 }
