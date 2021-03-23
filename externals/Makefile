@@ -775,6 +775,11 @@ ggee_install:
 	make -C $(externals_src)/ggee DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
 	cp $(externals_src)/ggee/gui/logo100.gif $(DESTDIR)/$(objectsdir)/ggee
 	cp $(externals_src)/ggee/gui/empty_image.png $(DESTDIR)/$(objectsdir)/ggee
+	cp $(externals_src)/ggee/gui/source3.png $(DESTDIR)/$(objectsdir)/ggee
+	cp $(externals_src)/ggee/gui/surround-room.jpg $(DESTDIR)/$(objectsdir)/ggee
+	cp $(externals_src)/ggee/gui/vu.png $(DESTDIR)/$(objectsdir)/ggee
+	cp $(externals_src)/ggee/gui/vu-dial.png $(DESTDIR)/$(objectsdir)/ggee
+	cp $(externals_src)/ggee/gui/vu-led.png $(DESTDIR)/$(objectsdir)/ggee
 
 ggee_clean:
 	make -C $(externals_src)/ggee clean
