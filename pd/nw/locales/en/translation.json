@@ -103,7 +103,9 @@
       "image_sel_width":       "border width",
       "image_sel_width_tt":     "width of the selection box in pixels",
       "image_sel_height":       "height",
-      "image_sel_height_tt":    "height of the selection box in pixels"
+      "image_sel_height_tt":    "height of the selection box in pixels",
+      "exclusive":    "exclusive keyboard focus",
+      "exclusive_tt": "whether the object captures all keyboard input while focused"
     }
   },
   "gatom": {

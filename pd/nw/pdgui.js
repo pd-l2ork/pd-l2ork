@@ -4572,7 +4572,7 @@ function img_size_resizable_setter(cid, svg_image_tag, type, data, tk_anchor, w,
 }
 
 function gui_ggee_image_resize(cid, svg_image_tag, w, h, resizemode, constrain) {
-    configure_item(get_item(cid, svg_image_tag), {
+    configure_item(get_item(cid, svg_image_tag+"image"), {
         preserveAspectRatio: constrain == 1 ? "xMinYMin meet" : "none",
         width: w,
         height: h
@@ -4580,19 +4580,19 @@ function gui_ggee_image_resize(cid, svg_image_tag, w, h, resizemode, constrain) 
 }
 
 function gui_ggee_image_toggle_visible(cid, svg_image_tag, visible) {
-    configure_item(get_item(cid, svg_image_tag), {
+    configure_item(get_item(cid, svg_image_tag+"image"), {
         visibility: (visible ? "visible" : "hidden")
     });    
 }
 
 function gui_ggee_image_alpha(cid, svg_image_tag, alpha) {
-    configure_item(get_item(cid, svg_image_tag), {
+    configure_item(get_item(cid, svg_image_tag+"image"), {
         opacity: alpha
     });    
 }
 
 function gui_ggee_image_rotate(cid, svg_image_tag, angle, x, y) {
-    configure_item(get_item(cid, svg_image_tag), {
+    configure_item(get_item(cid, svg_image_tag+"image"), {
         transform: "rotate(" + angle + "," + x + "," + y + ")"
     }); 
 }
@@ -4718,7 +4718,7 @@ function gui_gobj_draw_image(cid, tag, image_key, tk_anchor, w, h, constrain, ty
     gui(cid).get_gobj(tag)
     .append(function(frag) {
         var i = create_item(cid, "image", {
-            id: tag,
+            id: tag + "image",
             preserveAspectRatio: constrain ? "xMinYMin meet" : "none"
         });
         i.setAttributeNS("http://www.w3.org/1999/xlink", "href",
@@ -4743,7 +4743,7 @@ function gui_gobj_draw_image(cid, tag, image_key, tk_anchor, w, h, constrain, ty
 // with the xpix and ypix corresponding to the true top-left corner
 // of the object's clickable area
 function gui_ggee_image_offset(cid, tag, image_key, xoffset, yoffset) {
-    configure_item(get_item(cid, tag), {
+    configure_item(get_item(cid, tag+"image"), {
         x: xoffset,
         y: yoffset
     });

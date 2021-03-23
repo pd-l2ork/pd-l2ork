@@ -74,7 +74,9 @@
       "mknob_steps":  "# de pas",
       "mknob_steps_tt": "Nombre de positions du cadran pour le bouton",
       "mknob_size":    "Taille",
-      "mknob_size_tt": "Taille du bouton"
+      "mknob_size_tt": "Taille du bouton",
+      "exclusive": "focus clavier exclusif",
+      "exclusive_tt": "si l'objet capture toutes les entrées du clavier pendant la mise au point"
     }
   },
   "gatom": {

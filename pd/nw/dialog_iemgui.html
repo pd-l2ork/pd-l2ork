@@ -196,6 +196,15 @@
           </label>
           <br>
         </div>
+
+        <div class="exclusive prop hidden">
+          <label data-i18n="[title]iem.prop.exclusive_tt">
+            <input type="checkbox" name="exclusive" value="on"
+                   onchange="update_attr(this);">
+            <span data-i18n="iem.prop.exclusive"></span>
+          </label>
+          <br>
+        </div>        
       </fieldset> 
 
       <fieldset> 
@@ -511,6 +520,9 @@ function send_params(attrs, create_undo_point) {
     var init = +attrs["init"];
     if (!init) { init = 0; }
 
+    var exclusive = +attrs["exclusive"];
+    if (!exclusive) { exclusive = 0; }
+
     var slot7 = attrs.log_height;
     if (slot7 === undefined) {
         slot7 = attrs["number"];
@@ -554,8 +566,9 @@ function send_params(attrs, create_undo_point) {
         font_style, font_size,
         background_color, foreground_color,
         label_color,
-        slot18, // steady on click
+        slot18,     // steady on click
         draw_style, // numbox draw style
+        exclusive,  // exclusive keyboard access
         create_undo_point ? 1 : 0 // whether we set an undo point
     );
 }

@@ -1,17 +1,14 @@
-#N canvas 428 39 555 619 10;
-#X obj 0 595 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
-14 -228856 -66577 0;
+#N canvas 166 116 553 718 10;
+#X obj 0 696 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
+14 #dcdcdc #404040 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header hslider 3 12 0 18
--204280 -1 0;
+#c4dcdc #000000 0;
 #X obj 0 291 cnv 3 550 3 empty \$0-pddp.cnv.inlets inlets 8 12 0 13
--228856 -1 0;
-#N canvas 482 291 494 344 META 0;
+#dcdcdc #000000 0;
+#N canvas 482 291 372 268 META 0;
 #X text 12 135 LIBRARY internal;
 #X text 12 45 LICENSE SIBSD;
-#X text 12 155 AUTHOR Thomas Musil;
 #X text 12 175 WEBSITE;
-#X text 12 215 HELP_PATCH_AUTHORS Jonathan Wilkes revised the patch
-to conform to the PDDP template for Pd version 0.42.;
 #X text 12 25 KEYWORDS control storage GUI nonlocal;
 #X text 12 65 DESCRIPTION horizontal gui-slider;
 #X text 12 5 ALIAS hsl;
@@ -19,45 +16,49 @@ to conform to the PDDP template for Pd version 0.42.;
 send label label_pos label_font color pos delta;
 #X text 12 115 OUTLET_0 float;
 #X text 12 195 RELEASE_DATE 2002;
-#X restore 500 597 pd META;
-#X obj 0 410 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
-13 -228856 -1 0;
-#X obj 0 461 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8 12
-0 13 -228856 -1 0;
-#X obj 0 546 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
-0 13 -228856 -1 0;
-#X obj 78 300 cnv 17 3 105 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X text 12 215 HELP_PATCH_AUTHORS Jonathan Wilkes revised the patch
+to conform to the PDDP template for Pd version 0.42. Further revisions
+by Ivica Ico Bukvic.;
+#X text 12 155 AUTHOR Thomas Musil and Ivica Ico Bukvic;
+#X restore 504 698 pd META;
+#X obj 0 511 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
+13 #dcdcdc #000000 0;
+#X obj 0 562 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8 12
+0 13 #dcdcdc #000000 0;
+#X obj 0 647 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
+0 13 #dcdcdc #000000 0;
+#X obj 78 300 cnv 17 3 203 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
+#9c9c9c 0;
 #N canvas 211 518 428 112 Related_objects 0;
 #X obj 19 52 x_all_guis bng tgl vsl hsl hradio vradio vu cnv nbx;
 #X text 17 28 All iem-gui objects:;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
-14 -204280 -1 0;
+14 #c4dcdc #000000 0;
 #X text 7 1 [hslider] Related Objects;
-#X restore 100 597 pd Related_objects;
-#X obj 78 419 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X restore 100 698 pd Related_objects;
+#X obj 78 520 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
+#9c9c9c 0;
 #X text 291 175 and receive names. Right-;
 #X text 291 190 click and choose;
 #X text 290 206 "Properties" to set them \,;
-#X text 98 299 float;
-#X text 98 340 list;
-#X text 98 419 float;
+#X text 98 408 float;
+#X text 98 438 list;
+#X text 98 520 float;
 #X text 291 220 or change them with messages (see below);
-#X obj 414 45 hsl 128 15 0 127 0 0 empty empty empty -2 -8 0 10 -262144
--1 -1 0 1;
-#X floatatom 135 116 4 0 0 0 - - -, f 4;
+#X obj 414 45 hsl 128 15 0 127 0 0 empty empty empty -2 -8 0 10 #fcfcfc
+#000000 #000000 0 1 0;
+#X floatatom 135 116 4 0 0 0 - - - 0, f 4;
 #X msg 199 69 set \$1;
-#X floatatom 155 48 4 0 0 0 - - -, f 4;
-#X obj 135 138 bng 15 250 50 0 empty empty empty 8 -8 0 10 -262144
--1 -1;
-#X obj 135 49 bng 15 250 50 0 empty empty empty 8 -8 0 10 -262144 -1
--1;
+#X floatatom 155 48 4 0 0 0 - - - 0, f 4;
+#X obj 135 138 bng 15 250 50 0 empty empty empty 8 -8 0 10 #fcfcfc
+#000000 #000000;
+#X obj 135 49 bng 15 250 50 0 empty empty empty 8 -8 0 10 #fcfcfc #000000
+#000000;
 #X obj 138 94 hsl 101 15 25 75 0 1 foo1_snd foo1_rcv empty 8 -8 0 10
--225280 -1109 -1 3900 1;
-#X floatatom 199 48 4 0 0 0 - - -, f 4;
-#X floatatom 292 141 4 0 0 0 - - -, f 4;
-#X floatatom 292 48 4 0 0 0 - - -, f 4;
+#d8fcfc #004450 #000000 3900 1 0;
+#X floatatom 199 48 4 0 0 0 - - - 0, f 4;
+#X floatatom 292 141 4 0 0 0 - - - 0, f 4;
+#X floatatom 292 48 4 0 0 0 - - - 0, f 4;
 #X obj 179 140 print;
 #N canvas 276 200 290 224 once 0;
 #X obj 38 47 t b b f;
@@ -77,11 +78,11 @@ send label label_pos label_font color pos delta;
 #X connect 5 0 0 0;
 #X restore 179 116 pd once;
 #X obj 59 177 hsl 73 15 55 3520 1 1 goo2_snd goo2_rcv log.freq. 8 7
-0 10 -204800 -260818 -90133 1618 1;
+0 10 #c4fcfc #fcac44 #580050 1618 1 0;
 #X obj 56 203 ftom;
-#X floatatom 56 227 4 0 0 0 - - -, f 4;
-#X floatatom 143 215 9 0 0 0 - - -, f 9;
-#X floatatom 56 132 4 0 0 0 - - -, f 4;
+#X floatatom 56 227 4 0 0 0 - - - 0, f 4;
+#X floatatom 143 215 9 0 0 0 - - - 0, f 9;
+#X floatatom 56 132 4 0 0 0 - - - 0, f 4;
 #X obj 56 153 mtof;
 #X obj 292 92 s foo1_rcv;
 #X obj 292 117 r foo1_snd;
@@ -93,9 +94,9 @@ send label label_pos label_font color pos delta;
 selected gui-object. Right-click and choose "Properties" to modify
 its appearance.;
 #X text 290 159 hslider has settable send;
-#X text 98 356 Special messages can be sent to [hslider] to change
+#X text 98 454 Special messages can be sent to [hslider] to change
 its properties:;
-#X text 168 419 - when the slider value is changed by clicking \, dragging
+#X text 168 520 - when the slider value is changed by clicking \, dragging
 \, or sending a float to the inlet \, the new slider value is sent
 to the outlet.;
 #N canvas 94 219 428 370 hsl-creation-arguments 0;
@@ -115,17 +116,17 @@ value \, save an hsl in a patch and view it in a text editor to get
 the right value for sliderPosition. Or \, refer to hslider_set in g_hslider.c
 for conversion between sliderPosition and slider value.;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
-14 -204280 -1 0;
+14 #c4dcdc #000000 0;
 #X text 7 1 [hslider] Creation Arguments and Dynamic Patching;
 #X msg 22 247 obj 150 335 hsl 75 20 -1 1 0 1 send receive Celaeno 12
 -9 0 12 7 13 21 4400 0;
 #X connect 7 0 0 0;
-#X restore 170 521 pd hsl-creation-arguments;
+#X restore 170 622 pd hsl-creation-arguments;
 #N canvas 66 11 463 602 Setting_slider_properties_through_messages
 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
-14 -204280 -1 0;
-#X floatatom 11 188 1 0 1 0 - #0-soc -, f 1;
+14 #c4dcdc #000000 0;
+#X floatatom 11 188 1 0 1 0 - #0-soc - 0, f 1;
 #X text 323 34 no init;
 #X text 8 169 steady-on-click;
 #X text 339 169 label;
@@ -182,18 +183,18 @@ for conversion between sliderPosition and slider value.;
 #X text 60 351 2.y-offset;
 #X obj 11 405 s hsl_rcv;
 #X obj 138 404 s hsl_rcv;
-#X obj 273 325 cnv 15 157 82 empty empty empty 20 12 0 14 -1 -66577
+#X obj 273 325 cnv 15 157 82 empty empty empty 20 12 0 14 #000000 #404040
 0;
-#X obj 274 326 cnv 15 155 80 empty empty empty 20 12 0 14 -261682 -66577
+#X obj 274 326 cnv 15 155 80 empty empty empty 20 12 0 14 #fce0c4 #404040
 0;
 #N canvas 366 206 174 259 flash-time 0;
 #X obj 68 180 pack;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-width empty
-0 -8 0 12 -262144 -1 -1 128 256 0;
+0 -8 0 12 #fcfcfc #000000 #000000 128 256 0 0;
 #X obj 103 124 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-height empty
-0 -8 0 12 -262144 -1 -1 15 256 0;
+0 -8 0 12 #fcfcfc #000000 #000000 15 256 0 0;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 1 1 0 1;
@@ -206,9 +207,9 @@ for conversion between sliderPosition and slider value.;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-bottom empty
-0 -8 0 12 -262144 -1 -1 0 256 0;
+0 -8 0 12 #fcfcfc #000000 #000000 0 256 0 0;
 #X obj 103 124 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-top empty 0
--8 0 12 -262144 -1 -1 127 256 0;
+-8 0 12 #fcfcfc #000000 #000000 127 256 0 0;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 1 1 0 1;
@@ -221,9 +222,9 @@ for conversion between sliderPosition and slider value.;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-xlabel empty
-0 -8 0 12 -262144 -1 -1 -2 256 0;
+0 -8 0 12 #fcfcfc #000000 #000000 -2 256 0 0;
 #X obj 103 124 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-ylabel empty
-0 -8 0 12 -262144 -1 -1 -8 256 0;
+0 -8 0 12 #fcfcfc #000000 #000000 -8 256 0 0;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 1 1 0 1;
@@ -236,9 +237,9 @@ for conversion between sliderPosition and slider value.;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 0 2 0 0 \$0-dummy \$0-font empty 0 -8 0 12
--262144 -1 -1 0 256 0;
+#fcfcfc #000000 #000000 0 256 0 0;
 #X obj 103 124 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-font-size empty
-0 -8 0 12 -262144 -1 -1 10 256 0;
+0 -8 0 12 #fcfcfc #000000 #000000 10 256 0 0;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 1 1 0 1;
@@ -254,12 +255,12 @@ for conversion between sliderPosition and slider value.;
 #X obj 33 262 outlet;
 #X obj 33 237 pack 0 0 0;
 #X obj 120 197 t b a;
-#X obj 103 104 nbx 3 14 0 29 0 0 \$0-dummy \$0-bg empty 0 -8 0 12 -262144
--1 -1 0 256 0;
+#X obj 103 104 nbx 3 14 0 29 0 0 \$0-dummy \$0-bg empty 0 -8 0 12 #fcfcfc
+#000000 #000000 0 256 0 0;
 #X obj 103 124 nbx 3 14 0 29 0 0 \$0-dummy \$0-front empty 0 -8 0 12
--262144 -1 -1 12 256 0;
+#fcfcfc #000000 #000000 12 256 0 0;
 #X obj 103 144 nbx 3 14 0 29 0 0 \$0-dummy \$0-label empty 0 -8 0 12
--262144 -1 -1 12 256 0;
+#fcfcfc #000000 #000000 12 256 0 0;
 #X connect 0 0 2 0;
 #X connect 0 1 2 1;
 #X connect 2 0 1 0;
@@ -285,17 +286,17 @@ for conversion between sliderPosition and slider value.;
 #X obj 96 497 pack 0 0 0;
 #X obj 115 456 t b a;
 #X obj 168 455 t b a;
-#X obj 104 124 vradio 15 1 0 3 empty empty empty 0 -8 0 10 -262144
--1 -1 0;
+#X obj 104 124 vradio 15 1 0 3 empty empty empty 0 -8 0 10 #fcfcfc
+#000000 #000000 0;
 #X text 120 120 1.bg;
 #X text 120 137 2.front;
 #X text 120 153 3.label;
-#X obj 103 105 nbx 3 14 0 255 0 0 \$0-dummy \$0-r empty 0 -8 0 10 -262144
--258113 -1 0 256 0;
-#X obj 133 105 nbx 3 14 0 255 0 0 \$0-dummy \$0-g empty 0 -8 0 10 -262144
--13381 -1 0 256 0;
-#X obj 163 105 nbx 3 14 0 255 0 0 \$0-dummy \$0-b empty 0 -8 0 10 -262144
--4160 -1 0 256 0;
+#X obj 103 105 nbx 3 14 0 255 0 0 \$0-dummy \$0-r empty 0 -8 0 10 #fcfcfc
+#fc0400 #000000 0 256 0 0;
+#X obj 133 105 nbx 3 14 0 255 0 0 \$0-dummy \$0-g empty 0 -8 0 10 #fcfcfc
+#0c4410 #000000 0 256 0 0;
+#X obj 163 105 nbx 3 14 0 255 0 0 \$0-dummy \$0-b empty 0 -8 0 10 #fcfcfc
+#0400fc #000000 0 256 0 0;
 #X connect 1 0 2 0;
 #X connect 1 1 2 1;
 #X connect 2 0 3 0;
@@ -329,8 +330,8 @@ for conversion between sliderPosition and slider value.;
 #X msg 218 540 pos \$1 \$2;
 #X msg 318 540 delta \$1 \$2;
 #X obj 318 517 list;
-#X obj 318 470 bng 20 250 50 0 empty empty empty 17 7 0 10 -262144
--1 -1;
+#X obj 318 470 bng 20 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
 #X text 397 469 1.x-delta;
 #X text 397 491 2.y-delta;
 #N canvas 366 206 174 259 flash-time 0;
@@ -338,9 +339,9 @@ for conversion between sliderPosition and slider value.;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-xpos empty 0
--8 0 12 -262144 -1 -1 300 256 0;
+-8 0 12 #fcfcfc #000000 #000000 300 256 0 0;
 #X obj 103 124 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-ypos empty 0
--8 0 12 -262144 -1 -1 350 256 0;
+-8 0 12 #fcfcfc #000000 #000000 350 256 0 0;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 1 1 0 1;
@@ -353,9 +354,9 @@ for conversion between sliderPosition and slider value.;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 -20 20 0 0 \$0-dummy \$0-xdelta empty 0 -8
-0 12 -262144 -1 -1 0 256 0;
+0 12 #fcfcfc #000000 #000000 0 256 0 0;
 #X obj 103 124 nbx 3 14 -20 20 0 0 \$0-dummy \$0-ydelta empty 0 -8
-0 12 -262144 -1 -1 0 256 0;
+0 12 #fcfcfc #000000 #000000 0 256 0 0;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 1 1 0 1;
@@ -363,7 +364,7 @@ for conversion between sliderPosition and slider value.;
 #X connect 4 0 1 0;
 #X coords 0 -1 1 1 48 42 2 100 100;
 #X restore 347 470 pd flash-time;
-#X floatatom 329 384 5 0 0 0 - - -, f 5;
+#X floatatom 329 384 5 0 0 0 - - - 0, f 5;
 #X obj 11 579 s hsl_rcv;
 #X obj 318 565 s hsl_rcv;
 #X obj 218 565 s hsl_rcv;
@@ -372,7 +373,7 @@ for conversion between sliderPosition and slider value.;
 #X text 266 469 1.x-pos;
 #X text 266 491 2.y-pos;
 #X obj 289 356 hsl 128 15 0 127 0 0 hsl-snd hsl-rcv mySlider -2 -8
-0 10 -262144 -1 -1 0 1;
+0 10 #fcfcfc #000000 #000000 0 1 0;
 #X connect 1 0 7 0;
 #X connect 5 0 27 0;
 #X connect 6 0 20 0;
@@ -403,24 +404,119 @@ for conversion between sliderPosition and slider value.;
 #X connect 71 0 65 0;
 #X connect 72 0 67 1;
 #X connect 81 0 73 0;
-#X restore 101 388 pd Setting_slider_properties_through_messages;
+#X restore 98 486 pd Setting_slider_properties_through_messages;
 #X text 11 21 horizontal gui-slider;
-#X text 98 466 18;
-#X text 168 466 - creating an [hslider] object without arguments sets
+#X text 98 567 18;
+#X text 168 567 - creating an [hslider] object without arguments sets
 default values for its gui-properties. See the subpatch below to learn
 how to dynamically instantiate a [bng] object with custom properties:
 ;
-#X text 215 551 (c) musil@iem.kug.ac.at;
-#X text 257 564 IEM KUG;
-#X text 232 576 graz \, austria 2002;
-#X text 168 299 - a float updates the slider value and is sent to the
+#X text 405 652 (c) musil@iem.kug.ac.at;
+#X text 447 665 IEM KUG;
+#X text 422 677 graz \, austria 2002;
+#X text 168 408 - a float updates the slider value and is sent to the
 outlet.;
-#X text 168 340 - a list is truncated to the first element.;
-#X obj 4 597 pddp/pddplink all_about_help_patches.pd -text Usage Guide
+#X text 168 438 - a list is truncated to the first element.;
+#X obj 4 698 pddp/pddplink all_about_help_patches.pd -text Usage Guide
 ;
-#X text 98 323 bang;
-#X text 168 323 - output the current slider value.;
-#X text 436 8 [hslider] or [hsl];
+#X text 98 299 bang;
+#X text 168 299 - output the current slider value.;
+#X text 435 12 [hslider] or [hsl];
+#X text 98 316 exclusive;
+#N canvas 599 201 467 468 exclusive_focus 0;
+#X obj 0 -594 cnv 15 466 21 empty \$0-pddp.cnv.subheading empty 3 12
+0 14 #c4dcdc #000000 0;
+#X text 5 -591 Exclusive focus;
+#X obj 156 -432 loadbang;
+#X obj 156 -407 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1 1;
+#X msg 156 -384 exclusive \$1;
+#X obj 156 -279 key;
+#X floatatom 156 -254 5 0 0 0 - - - 0, f 5;
+#X obj 196 -279 keyname;
+#X obj 196 -254 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1 1;
+#X symbolatom 235 -254 10 0 0 0 - - - 0, f 10;
+#X obj 156 -360 hsl 128 15 0 127 0 0 empty empty empty -2 -8 0 10 #fcfcfc
+#000000 #000000 0 1 1;
+#X obj 156 -337 hsl 128 15 0 127 0 0 empty empty empty -2 -8 0 10 #fcfcfc
+#000000 #000000 0 1 0;
+#X text 5 -567 Notice how when sliding the top slider while toggling
+shift key (used to toggle fine movement) there is no output via the
+key and keyname objects \, whereas the bottom one still outputs shift
+key presses while focused. This is because the top slider has its exclusive
+flag set on (the default is the backwards compatible off). This exclusivity
+can be set via the object dialog or via the message., f 75;
+#X connect 2 0 3 0;
+#X connect 3 0 4 0;
+#X connect 4 0 10 0;
+#X connect 5 0 6 0;
+#X connect 7 0 8 0;
+#X connect 7 1 9 0;
+#X restore 168 386 pd exclusive_focus;
+#N canvas 277 184 467 593 advanced_css_properties 0;
+#X obj 157 -307 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
+#X msg 130 -416 css border fill rgba(255 \\\, 0 \\\, 255 \\\, 0.9)
+;
+#X msg 222 -181 0;
+#X floatatom 173 -131 5 0 0 0 - - - 0, f 5;
+#X floatatom 82 -131 5 0 0 0 - - - 0, f 5;
+#X obj 222 -203 sel 0;
+#X obj 37 -61 print;
+#X obj 82 -109 pack 0 0 0, f 31;
+#X obj 156 -231 t f f f f;
+#X floatatom 265 -131 5 0 0 0 - - - 0, f 5;
+#X obj 82 -156 expr 1+$f1/20;
+#X obj 265 -156 expr $f1*-.5;
+#X msg 114 -439 css border transform skew(\$1deg);
+#X obj 0 -594 cnv 15 466 21 empty \$0-pddp.cnv.subheading empty 3 12
+0 14 #c4dcdc #000000 0;
+#X obj 5 -516 pddplink https://www.w3schools.com/css/default.asp;
+#X obj 157 -260 counter 1 0 3;
+#X obj 157 -285 metro 20;
+#X floatatom 114 -460 5 0 0 0 - - - 0, f 5;
+#X msg 82 -86 css border transform scale(\$1) translate(\$2px \\\,
+\$3px);
+#X text 5 -591 Advanced CSS properties;
+#X obj 114 -385 hsl 128 15 0 127 0 0 empty empty empty -2 -8 0 10 #fcfcfc
+#000000 #000000 0 1 0;
+#X obj 82 -60 hsl 128 15 0 127 0 0 hsl-output empty empty -2 -8 0 10
+#fcfcfc #000000 #000000 0 1 0;
+#X obj 157 -330 r hsl-output;
+#X obj 173 -156 expr $f1*-2;
+#X text 5 -567 In Pd-L2Ork \, all iemgui objects can receive various
+CSS commands that can further modify their behavior. Below are two
+examples. To be able to address appropriate elements \, use the Show
+DevTools option found in the Help menu. For more info on the CSS commands
+\, visit:, f 75;
+#X connect 0 0 16 0;
+#X connect 1 0 20 0;
+#X connect 2 0 16 0;
+#X connect 3 0 7 1;
+#X connect 4 0 7 0;
+#X connect 5 0 2 0;
+#X connect 7 0 18 0;
+#X connect 8 0 10 0;
+#X connect 8 1 23 0;
+#X connect 8 2 11 0;
+#X connect 8 3 5 0;
+#X connect 9 0 7 2;
+#X connect 10 0 4 0;
+#X connect 11 0 9 0;
+#X connect 12 0 20 0;
+#X connect 15 0 8 0;
+#X connect 16 0 15 0;
+#X connect 17 0 12 0;
+#X connect 18 0 6 0;
+#X connect 18 0 21 0;
+#X connect 22 0 0 0;
+#X connect 23 0 3 0;
+#X restore 170 664 pd advanced_css_properties;
+#X text 168 316 - sets the exclusive keyboard focus on (1) or off (0
+\, default). With it set "on" when the user is moving the slider with
+a shift key \, objects like key and keyname will receive no input until
+the user removes focus from the object by clicking outside of it.;
 #X connect 18 0 21 0;
 #X connect 19 0 23 0;
 #X connect 20 0 23 0;

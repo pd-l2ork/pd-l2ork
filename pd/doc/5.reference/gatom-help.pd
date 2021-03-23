@@ -1,23 +1,23 @@
-#N canvas 428 36 553 702 10;
+#N canvas 126 117 553 702 10;
 #X obj 0 680 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
 14 #dcdcdc #404040 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header gatom 3 12 0 18
 #c4dcdc #000000 0;
 #X obj 0 231 cnv 3 550 3 empty \$0-pddp.cnv.inlets inlets 8 12 0 13
 #dcdcdc #000000 0;
-#N canvas 486 289 494 344 META 0;
+#N canvas 486 289 386 262 META 0;
 #X text 12 115 LIBRARY internal;
 #X text 12 155 WEBSITE http://crca.ucsd.edu/~msp/;
 #X text 12 35 LICENSE SIBSD;
-#X text 12 135 AUTHOR Miller Puckette;
-#X text 12 195 HELP_PATCH_AUTHORS Updated for Pd version 0.34. Jonathan
-Wilkes revised the patch to conform to the PDDP template for Pd version
-0.42.;
 #X text 12 75 INLET_0 float bang symbol set;
 #X text 12 95 OUTLET_0 float;
 #X text 12 175 RELEASE_DATE 1997;
 #X text 12 55 DESCRIPTION atom (number box and symbol box);
 #X text 12 5 KEYWORDS control storage GUI nonlocal symbol_op;
+#X text 12 135 AUTHOR Miller Puckette and Ivica Ico Bukvic;
+#X text 12 195 HELP_PATCH_AUTHORS Updated for Pd version 0.34. Jonathan
+Wilkes revised the patch to conform to the PDDP template for Pd version
+0.42. Additional improvements by Ivica Ico Bukvic.;
 #X restore 504 682 pd META;
 #X obj 0 481 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
 13 #dcdcdc #000000 0;
@@ -34,7 +34,7 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X obj 21 42 float;
 #X obj 61 42 list;
 #X obj 102 45 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
-#fcfcfc #000000 #000000 0 256 0;
+#fcfcfc #000000 #000000 0 256 0 0;
 #X obj 169 42 drawnumber;
 #X restore 102 682 pd Related_objects;
 #X obj 78 240 cnv 17 3 220 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
@@ -104,7 +104,7 @@ to "gatom-help-snd";
 to "Number_box_7" when using non-local send and receive names. If you
 want to use both \, see the [nbx] object:;
 #X obj 71 626 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
-#fcfcfc #000000 #000000 0 256 0;
+#fcfcfc #000000 #000000 0 256 0 0;
 #X floatatom 13 3 5 0 0 0 - - - 0, f 5;
 #X connect 27 0 31 0;
 #X connect 29 0 28 0;
@@ -155,11 +155,11 @@ and begin typing. Then click "Enter" to finish and output it.;
 #N canvas 277 184 467 607 advanced_css_properties 0;
 #X obj 157 -307 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
-#X floatatom 114 -370 5 0 0 0 - - - 0, f 5;
-#X msg 141 -393 css data font-size 20px;
+#X floatatom 104 -360 5 0 0 0 - - - 0, f 5;
+#X msg 131 -383 css data font-size 20px;
 #X symbolatom 82 -33 43 0 0 0 - to-symbol-gatom symbol-atom-output
 0, f 43;
-#X msg 130 -416 css border fill rgba(255 \\\, 0 \\\, 255 \\\, 0.9)
+#X msg 120 -406 css border fill rgba(255 \\\, 0 \\\, 255 \\\, 0.9)
 ;
 #X msg 222 -181 0;
 #X floatatom 173 -131 5 0 0 0 - - - 0, f 5;
@@ -175,7 +175,7 @@ and begin typing. Then click "Enter" to finish and output it.;
 \$3px);
 #X obj 173 -156 expr $f1*-4;
 #X obj 157 -330 r symbol-atom-output;
-#X msg 114 -439 css border transform skew(\$1deg);
+#X msg 104 -429 css border transform skew(\$1deg);
 #X obj 0 -594 cnv 15 466 21 empty \$0-pddp.cnv.subheading empty 3 12
 0 14 #c4dcdc #000000 0;
 #X floatatom 12 -591 5 0 0 0 - - - 0, f 5;
@@ -191,6 +191,7 @@ send. Note that CSS commands work for both types of gatom. For more
 info on the CSS commands \, visit:, f 75;
 #X obj 157 -260 counter 1 0 3;
 #X obj 157 -285 metro 20;
+#X floatatom 104 -451 5 0 0 0 - - - 0, f 5;
 #X connect 0 0 26 0;
 #X connect 2 0 1 0;
 #X connect 4 0 1 0;
@@ -213,6 +214,7 @@ info on the CSS commands \, visit:, f 75;
 #X connect 18 0 1 0;
 #X connect 25 0 11 0;
 #X connect 26 0 25 0;
+#X connect 27 0 18 0;
 #X restore 255 656 pd advanced_css_properties;
 #X text 98 256 exclusive;
 #X text 168 256 - sets the exclusive keyboard focus on (1) or off (0

@@ -1,10 +1,10 @@
-#N canvas 429 34 558 622 10;
-#X obj 0 595 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
-14 -228856 -66577 0;
-#X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header vu 3 12 0 18 -204280
--1 0;
+#N canvas 118 145 553 648 10;
+#X obj 0 626 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
+14 #dcdcdc #404040 0;
+#X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header vu 3 12 0 18 #c4dcdc
+#000000 0;
 #X obj 0 287 cnv 3 550 3 empty \$0-pddp.cnv.inlets inlets 8 12 0 13
--228856 -1 0;
+#dcdcdc #000000 0;
 #N canvas 488 283 494 344 META 0;
 #X text 12 155 LIBRARY internal;
 #X text 12 25 LICENSE SIBSD;
@@ -20,41 +20,41 @@ label_font color pos delta;
 #X text 12 215 RELEASE_DATE 2002;
 #X text 12 235 HELP_PATCH_AUTHORS Jonathan Wilkes revised the patch
 to conform to the PDDP template for Pd version 0.42.;
-#X restore 500 597 pd META;
-#X obj 0 435 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
-13 -228856 -1 0;
-#X obj 0 489 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8 12
-0 13 -228856 -1 0;
-#X obj 0 572 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
-0 13 -228856 -1 0;
+#X restore 505 628 pd META;
+#X obj 0 456 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
+13 #dcdcdc #000000 0;
+#X obj 0 510 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8 12
+0 13 #dcdcdc #000000 0;
+#X obj 0 593 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
+0 13 #dcdcdc #000000 0;
 #N canvas 207 509 428 126 Related_objects 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
-14 -204280 -1 0;
+14 #c4dcdc #000000 0;
 #X text 8 2 [vu] Related Objects;
 #X obj 22 91 x_all_guis bng tgl vsl hsl hradio vradio vu cnv nbx;
 #X text 20 67 All iem-gui objects:;
 #X obj 23 43 env~;
-#X restore 92 597 pd Related_objects;
-#X obj 78 296 cnv 17 3 90 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X text 98 295 float;
-#X obj 78 444 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 396 cnv 17 3 30 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
-#X text 98 312 list;
-#X text 98 396 float;
-#X text 98 412 list;
-#X text 168 312 - a 2-item list will be distributed to the two inlets
+#X restore 92 628 pd Related_objects;
+#X obj 78 296 cnv 17 3 115 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
+#9c9c9c 0;
+#X text 98 318 float;
+#X obj 78 465 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
+#9c9c9c 0;
+#X obj 78 417 cnv 17 3 30 empty \$0-pddp.cnv.let.1 1 5 9 0 16 #dcdcdc
+#9c9c9c 0;
+#X text 98 335 list;
+#X text 98 417 float;
+#X text 98 433 list;
+#X text 168 335 - a 2-item list will be distributed to the two inlets
 ;
-#X text 98 444 float;
-#X obj 78 466 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
-#X text 98 466 float;
+#X text 98 465 float;
+#X obj 78 487 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 #dcdcdc
+#9c9c9c 0;
+#X text 98 487 float;
 #N canvas 76 117 428 416 vu-creation-arguments 0;
 #X obj 25 237 s pd-vu-creation-arguments;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
-14 -204280 -1 0;
+14 #c4dcdc #000000 0;
 #X text 8 2 [vu] Creation Arguments;
 #X text 22 163 For example \, click the msg-box to dynamically create
 a [vu]:;
@@ -67,11 +67,11 @@ not instantiate correctly.;
 #X msg 25 195 obj 160 280 vu 15 120 fff Elektra -15 -12 0 12 26 12
 0 0;
 #X connect 6 0 0 0;
-#X restore 170 549 pd vu-creation-arguments;
+#X restore 170 570 pd vu-creation-arguments;
 #N canvas 75 10 429 610 Changing_GUI_Properties 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
-14 -204280 -1 0;
-#X floatatom 130 62 1 0 1 0 - #0-scale -, f 1;
+14 #c4dcdc #000000 0;
+#X floatatom 130 62 1 0 1 0 - #0-scale - 0, f 1;
 #X text 124 38 display scale;
 #X msg 130 116 scale \$1;
 #X obj 130 141 s vu_rcv;
@@ -97,9 +97,9 @@ not instantiate correctly.;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-width empty
-0 -8 0 12 -262144 -1 -1 15 256 0;
+0 -8 0 12 #fcfcfc #000000 #000000 15 256 0 0;
 #X obj 103 124 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-height empty
-0 -8 0 12 -262144 -1 -1 120 256 0;
+0 -8 0 12 #fcfcfc #000000 #000000 120 256 0 0;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 1 1 0 1;
@@ -125,9 +125,9 @@ not instantiate correctly.;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-xlabel empty
-0 -8 0 12 -262144 -1 -1 -1 256 0;
+0 -8 0 12 #fcfcfc #000000 #000000 -1 256 0 0;
 #X obj 103 124 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-ylabel empty
-0 -8 0 12 -262144 -1 -1 -8 256 0;
+0 -8 0 12 #fcfcfc #000000 #000000 -8 256 0 0;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 1 1 0 1;
@@ -140,9 +140,9 @@ not instantiate correctly.;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 0 2 0 0 \$0-dummy \$0-font empty 0 -8 0 12
--262144 -1 -1 0 256 0;
+#fcfcfc #000000 #000000 0 256 0 0;
 #X obj 103 124 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-font-size empty
-0 -8 0 12 -262144 -1 -1 10 256 0;
+0 -8 0 12 #fcfcfc #000000 #000000 10 256 0 0;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 1 1 0 1;
@@ -155,10 +155,10 @@ not instantiate correctly.;
 #N canvas 364 205 169 292 flash-time 0;
 #X obj 69 196 t b a;
 #X obj 33 262 outlet;
-#X obj 103 104 nbx 3 14 0 29 0 0 \$0-dummy \$0-bg empty 0 -8 0 12 -262144
--1 -1 12 256 0;
+#X obj 103 104 nbx 3 14 0 29 0 0 \$0-dummy \$0-bg empty 0 -8 0 12 #fcfcfc
+#000000 #000000 12 256 0 0;
 #X obj 103 124 nbx 3 14 0 29 0 0 \$0-dummy \$0-label empty 0 -8 0 12
--262144 -1 -1 12 256 0;
+#fcfcfc #000000 #000000 12 256 0 0;
 #X obj 33 237 pack 0 0;
 #X connect 0 0 4 0;
 #X connect 0 1 4 1;
@@ -179,15 +179,15 @@ not instantiate correctly.;
 #X obj 96 355 - 1;
 #X obj 96 385 list prepend 0;
 #X obj 115 456 t b a;
-#X obj 104 124 vradio 15 1 0 2 empty empty empty 0 -8 0 10 -262144
--1 -1 0;
+#X obj 104 124 vradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
+#000000 #000000 0;
 #X text 120 120 1.bg;
-#X obj 103 105 nbx 3 14 0 255 0 0 \$0-dummy \$0-r empty 0 -8 0 10 -262144
--258113 -1 0 256 0;
-#X obj 133 105 nbx 3 14 0 255 0 0 \$0-dummy \$0-g empty 0 -8 0 10 -262144
--13381 -1 0 256 0;
-#X obj 163 105 nbx 3 14 0 255 0 0 \$0-dummy \$0-b empty 0 -8 0 10 -262144
--4160 -1 0 256 0;
+#X obj 103 105 nbx 3 14 0 255 0 0 \$0-dummy \$0-r empty 0 -8 0 10 #fcfcfc
+#fc0400 #000000 0 256 0 0;
+#X obj 133 105 nbx 3 14 0 255 0 0 \$0-dummy \$0-g empty 0 -8 0 10 #fcfcfc
+#0c4410 #000000 0 256 0 0;
+#X obj 163 105 nbx 3 14 0 255 0 0 \$0-dummy \$0-b empty 0 -8 0 10 #fcfcfc
+#0400fc #000000 0 256 0 0;
 #X text 120 137 2.label;
 #X obj 96 410 route 0 1;
 #X obj 96 497 pack 0 0;
@@ -221,8 +221,8 @@ not instantiate correctly.;
 #X msg 22 560 pos \$1 \$2;
 #X msg 154 560 delta \$1 \$2;
 #X obj 154 536 list;
-#X obj 154 485 bng 20 250 50 0 empty empty empty 17 7 0 10 -262144
--1 -1;
+#X obj 154 485 bng 20 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
 #X text 70 484 1.x-position;
 #X text 70 506 2.y-position;
 #X text 233 484 1.x-delta;
@@ -232,9 +232,9 @@ not instantiate correctly.;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-xpos empty 0
--8 0 12 -262144 -1 -1 330 256 0;
+-8 0 12 #fcfcfc #000000 #000000 330 256 0 0;
 #X obj 103 124 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-ypos empty 0
--8 0 12 -262144 -1 -1 245 256 0;
+-8 0 12 #fcfcfc #000000 #000000 245 256 0 0;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 1 1 0 1;
@@ -247,9 +247,9 @@ not instantiate correctly.;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 -20 20 0 0 \$0-dummy \$0-xdelta empty 0 -8
-0 12 -262144 -1 -1 0 256 0;
+0 12 #fcfcfc #000000 #000000 0 256 0 0;
 #X obj 103 124 nbx 3 14 -20 20 0 0 \$0-dummy \$0-ydelta empty 0 -8
-0 12 -262144 -1 -1 0 256 0;
+0 12 #fcfcfc #000000 #000000 0 256 0 0;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 1 1 0 1;
@@ -257,10 +257,10 @@ not instantiate correctly.;
 #X connect 4 0 1 0;
 #X coords 0 -1 1 1 48 42 2 100 100;
 #X restore 183 485 pd flash-time;
-#X obj 296 213 cnv 15 102 177 empty empty empty 20 12 0 14 -1 -66577
-0;
-#X obj 297 214 cnv 15 100 175 empty empty empty 20 12 0 14 -261682
--66577 0;
+#X obj 296 213 cnv 15 102 177 empty empty empty 20 12 0 14 #000000
+#404040 0;
+#X obj 297 214 cnv 15 100 175 empty empty empty 20 12 0 14 #fce0c4
+#404040 0;
 #X obj 22 275 s vu_rcv;
 #X obj 154 275 s vu_rcv;
 #X obj 22 432 s vu_rcv;
@@ -268,8 +268,8 @@ not instantiate correctly.;
 #X obj 22 585 s vu_rcv;
 #X text 6 2 [vu] Changing Properties through Messages;
 #X msg 349 114 label my-vu;
-#X obj 330 245 vu 15 120 vu_rcv my-vu -1 -8 0 10 -33289 -33289 1 0
-;
+#X obj 330 245 vu 15 120 vu_rcv my-vu -1 -8 0 10 #202020 #202020 1
+0;
 #X connect 1 0 3 0;
 #X connect 3 0 4 0;
 #X connect 7 0 6 0;
@@ -291,10 +291,10 @@ not instantiate correctly.;
 #X connect 47 0 39 0;
 #X connect 48 0 41 1;
 #X connect 57 0 11 0;
-#X restore 172 375 pd Changing_GUI_Properties;
-#X text 97 345 see the following subpatch for messages that change
+#X restore 172 389 pd Changing_GUI_Properties;
+#X text 97 359 see the following subpatch for messages that change
 the gui-properties of [vu]:;
-#X text 168 493 - creating a [vu] without any arguments will set default
+#X text 168 514 - creating a [vu] without any arguments will set default
 values for all gui-properties. See the subpatch below to learn how
 to dynamically instantiate a [vu] object with custom properties:;
 #X text 170 239 Use the UP- \, DOWN- \, LEFT- or RIGHT-key to move
@@ -305,19 +305,20 @@ its appearance.;
 #X text 340 142 "Properties" to set them \,;
 #X text 341 156 or change them with messages;
 #X text 341 170 (see the subpatch below);
-#X floatatom 259 90 7 -110 20 1 dB - -, f 7;
-#X obj 42 48 tgl 15 1 empty empty empty 8 -8 0 10 -262144 -1 -1 0 1
-;
-#X obj 43 125 vu 15 120 foo7_rcv vu-meter 60 0 0 10 -1 -355 1 0;
-#X floatatom 42 259 6 0 0 1 dB - -, f 6;
-#X floatatom 104 259 6 0 0 1 dB - -, f 6;
+#X floatatom 259 90 7 -110 20 1 dB - - 0, f 7;
+#X obj 42 48 tgl 15 1 empty empty empty 8 -8 0 10 #fcfcfc #000000 #000000
+0 1;
+#X obj 43 125 vu 15 120 foo7_rcv vu-meter 60 0 0 10 #000000 #001488
+1 0;
+#X floatatom 42 259 6 0 0 1 dB - - 0, f 6;
+#X floatatom 104 259 6 0 0 1 dB - - 0, f 6;
 #X text 108 68 <list> of rms \, peak;
 #X obj 259 197 s foo7_rcv;
 #X obj 259 168 pack 0 0;
-#X floatatom 277 113 7 -110 20 1 dB - -, f 7;
+#X floatatom 277 113 7 -110 20 1 dB - - 0, f 7;
 #X obj 277 138 t b f;
-#X floatatom 52 90 7 -110 20 1 dB - -, f 7;
-#X floatatom 120 90 7 -110 20 1 dB - -, f 7;
+#X floatatom 52 90 7 -110 20 1 dB - - 0, f 7;
+#X floatatom 120 90 7 -110 20 1 dB - - 0, f 7;
 #N canvas 44 136 290 278 source 0;
 #X obj 40 95 random 102;
 #X obj 40 171 - 101;
@@ -349,17 +350,36 @@ its appearance.;
 #X restore 42 68 pd source;
 #X text 340 95 [vu] has settable send;
 #X text 11 23 gui-vu-meter-display;
-#X text 98 493 12;
-#X text 168 295 - rms level.;
-#X text 168 396 - peak-level.;
-#X text 168 412 - a list will be truncated to the first element.;
-#X text 168 444 - rms level.;
-#X text 168 466 - peak-level.;
-#X text 98 328 bang;
-#X text 168 328 - a bang will output the current values of the inlets.
+#X text 98 514 12;
+#X text 168 318 - rms level.;
+#X text 168 417 - peak-level.;
+#X text 168 433 - a list will be truncated to the first element.;
+#X text 168 465 - rms level.;
+#X text 168 487 - peak-level.;
+#X text 98 301 bang;
+#X text 168 301 - a bang will output the current values of the inlets.
 ;
-#X obj 4 597 pddp/pddplink all_about_help_patches.pd -text Usage Guide
+#X obj 4 628 pddp/pddplink all_about_help_patches.pd -text Usage Guide
 ;
+#N canvas 277 184 467 345 advanced_css_properties 0;
+#X msg 90 -436 css border fill rgba(255 \\\, 0 \\\, 255 \\\, 0.9);
+#X msg 74 -459 css border transform skew(\$1deg);
+#X obj 0 -594 cnv 15 466 21 empty \$0-pddp.cnv.subheading empty 3 12
+0 14 #c4dcdc #000000 0;
+#X obj 5 -516 pddplink https://www.w3schools.com/css/default.asp;
+#X floatatom 74 -480 5 0 0 0 - - - 0, f 5;
+#X text 5 -591 Advanced CSS properties;
+#X text 5 -567 In Pd-L2Ork \, all iemgui objects can receive various
+CSS commands that can further modify their behavior. Below are two
+examples. To be able to address appropriate elements \, use the Show
+DevTools option found in the Help menu. For more info on the CSS commands
+\, visit:, f 75;
+#X obj 74 -406 vu 15 120 empty empty -1 -8 0 10 #404040 #000000 1 0
+;
+#X connect 0 0 7 0;
+#X connect 1 0 7 0;
+#X connect 4 0 1 0;
+#X restore 170 602 pd advanced_css_properties;
 #X connect 29 0 36 0;
 #X connect 30 0 41 0;
 #X connect 31 0 32 0;

@@ -74,7 +74,9 @@
       "mknob_steps":  "# of steps",
       "mknob_steps_tt": "number of dial positions for the knob",
       "mknob_size":   "size",
-      "mknob_size_tt": "size of the knob"
+      "mknob_size_tt": "size of the knob",
+      "exclusive": "exklusiver tastaturfokus",
+      "exclusive_tt": "ob das objekt alle tastatureingaben erfasst, während es fokussiert ist"
     }
   },
   "gatom": {
