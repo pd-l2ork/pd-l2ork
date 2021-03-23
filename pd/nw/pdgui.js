@@ -4826,7 +4826,7 @@ function gui_image_coords(cid, tag, x, y) {
     // ggee/image accepts a message that can trigger this, meaning
     // [loadbang] can end up calling this before the patchwindow exists.
     // So we have to check for existence below
-    gui(cid).get_gobj(tag+"image", function(e) {
+    gui(cid).get_gobj(tag, function(e) {
         elem_move(e, x, y);
     });
 }
