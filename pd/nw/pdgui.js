@@ -1034,7 +1034,7 @@ function canvas_check_geometry(cid) {
         cnv_width = patchwin[cid].window.innerWidth,
         cnv_height = patchwin[cid].window.innerHeight;
     //post("canvas_check_geometry w=" + win_w + " h=" + win_h +
-    //    " x=" + win_x + " y=" + win_y + "cnv_w=" + cnw_width + " cnv_h=" + cnv_height);
+    //    " x=" + win_x + " y=" + win_y + " cnv_w=" + cnv_width + " cnv_h=" + cnv_height);
 
     // ico@vt.edu 2020-08-31:
     // why does Windows have different innerWidth and innerHeight from other OSs?

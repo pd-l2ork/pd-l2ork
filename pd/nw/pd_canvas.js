@@ -1291,6 +1291,7 @@ var canvas_events = (function() {
             // events closing the Window this isn't actually closing the window
             // yet
             gui.Window.get().on("close", function() {
+                pdgui.canvas_check_geometry(name);
                 pdgui.pdsend(name, "menuclose 0");
             });
             // update viewport size when window size changes
@@ -1607,7 +1608,10 @@ function nw_create_patch_window_menus(gui, w, name) {
     });
     minit(m.file.close, {
         enabled: true,
-        click: function() { pdgui.menu_close(name); }
+        click: function() {
+            pdgui.canvas_check_geometry(name);
+            pdgui.menu_close(name);
+        }
     });
     minit(m.file.quit, {
         click: pdgui.menu_quit
