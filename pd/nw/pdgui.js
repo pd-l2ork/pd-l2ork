@@ -6717,6 +6717,24 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
             width_spec == 0 ? "3ch" :
                 (is_gop == 1 ? width_spec - 3 + "px" :
                     (width_spec < 0 ? (-width_spec) - 2 + "px" : width_spec + "ch")));
+        if (is_gop !== 1 && width_spec < 0)
+        {
+            // we are a new object box with no specified width, so we need to update
+            // min-width when the text is less long than the maximum allowed 60px
+            p.oninput = function(obj){
+                // we use this to force min-width when entering new text into the object
+                // and/or message boxes, so that we can ensure that objects don't get
+                // shorter width than allowed by default. Once they have been given a
+                // user-specified width, this is no longer an issue.
+                var tl = p.innerText.length;
+                var mw = parseInt(p.style.maxWidth, 10);
+                if (tl <= 3)
+                    p.style.setProperty("min-width", "3ch");
+                else if (tl > 3 && tl < mw-1)
+                    p.style.setProperty("min-width", tl+"ch");
+            };
+        }
+        //p.style.setProperty("white-space", "break-spaces");
 
         if (is_gop == 1) {
             p.style.setProperty("min-height", height_spec - 4 + "px");
