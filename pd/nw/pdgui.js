@@ -2833,13 +2833,17 @@ function text_to_tspans(cid, svg_text, text) {
     // Get fontsize (minus the trailing "px")
     fontsize = svg_text.getAttribute("font-size").slice(0, -2);
     for (i = 0; i < len; i++) {
+        // remove backslashes
+        var newtext = lines[i].replace(/\\,/g,",");
         tspan = create_item(cid, "tspan", {
             dy: i == 0 ? 0 : text_line_height_kludge(+fontsize, "gui") + "px",
-            x: 0
+            x: 0,
         });
+        // make sure that spaces properly show
+        tspan.style.setProperty("white-space", "pre");
         // find a way to abstract away the canvas array and the DOM here
         text_node = patchwin[cid].window.document
-                    .createTextNode(lines[i]);
+                    .createTextNode(newtext);
         tspan.appendChild(text_node);
         svg_text.appendChild(tspan);
     }
@@ -3774,6 +3778,8 @@ function gui_iemgui_label_new(cid, tag, x, y, color, text, fontname, fontweight,
                 iemgui_font_height(fontname, fontsize) / 2 + ")",
             id: tag + "label"
         });
+        // make sure that spaces properly show
+        svg_text.style.setProperty("white-space", "pre");
         var text_node = w.document.createTextNode(text);
         svg_text.appendChild(text_node);
         frag.appendChild(svg_text);
