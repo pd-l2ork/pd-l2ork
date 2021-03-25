@@ -4336,7 +4336,7 @@ function gui_draw_configure(cid, tag, attr, val) {
 // the default behavior.
 function gui_draw_viewbox(cid, tag, attr, val) {
     // Value will be an empty array if the user provided no values
-    post("gui_draw_viewbox cid=" + cid + " tag=" + tag + " attr=" + attr + " val=" + val);
+    //post("gui_draw_viewbox cid=" + cid + " tag=" + tag + " attr=" + attr + " val=" + val);
     gui(cid).get_elem("patchsvg", function(svg_elem) {
         if (val.length) {
             gui_draw_configure(cid, tag, attr, val)
@@ -4725,7 +4725,8 @@ function gui_gobj_draw_image(cid, tag, image_key, tk_anchor, w, h, constrain, ty
     .append(function(frag) {
         var i = create_item(cid, "image", {
             id: tag + "image",
-            preserveAspectRatio: constrain ? "xMinYMin meet" : "none"
+            preserveAspectRatio: constrain ? "xMinYMin meet" : "none",
+            display: (type === 0 ? "none" : "block")
         });
         i.setAttributeNS("http://www.w3.org/1999/xlink", "href",
             "data:image/" + pd_cache.get(image_key).type + ";base64," +
@@ -4741,6 +4742,18 @@ function gui_gobj_draw_image(cid, tag, image_key, tk_anchor, w, h, constrain, ty
         frag.appendChild(i);
         return frag;
     });
+}
+
+// ico@vt.edu 2021-03-25:
+// We use this to remove flicker due to asynchronous loading of image and its
+// potential repositioning due to ggee's gop_spill option, so we initially
+// make the image invisible in the gui_gobj_draw_image, and make it visible
+// here only after we know the image has successfully loaded. See image_drawme
+// function call inside ggee/image.c file.
+function gui_ggee_image_display(cid, tag) {
+    configure_item(get_item(cid, tag+"image"), {
+        display: "block"
+    });   
 }
 
 // ico@vt.edu 2020-11-13:

@@ -175,8 +175,9 @@ static void image_drawme(t_image *x, t_glist *glist)
                     (x->x_gop_spill ? -(x->x_adj_img_height/2 - x->x_gui.x_h/2) : 0)
                 );
             }
-            if (glist_isselected(x->x_gui.x_glist, (t_gobj *)x) &&
-                glist_getcanvas(x->x_gui.x_glist) == x->x_gui.x_glist)
+            gui_vmess("gui_ggee_image_display", "xx", glist_getcanvas(glist), x);
+
+            if (glist_isselected(x->x_gui.x_glist, (t_gobj *)x))
             {
                 image_select((t_gobj *)x, glist_getcanvas(x->x_gui.x_glist), 0);
                 image_select((t_gobj *)x, glist_getcanvas(x->x_gui.x_glist), 1);
@@ -292,7 +293,7 @@ static void image_draw_move(t_image *x, t_glist *glist)
 
 static void image_select(t_gobj *z, t_glist *glist, int state)
 {
-    //post("image_select %d\n", state);
+    //post("image_select %d", state);
     t_image *x = (t_image *)z;
 
     int height, width, x1, x2, y1, y2;
@@ -316,26 +317,34 @@ static void image_select(t_gobj *z, t_glist *glist, int state)
     x2 = text_xpix(&x->x_gui.x_obj, glist) + width;
     y2 = text_ypix(&x->x_gui.x_obj, glist) + height;
 
-    if (state && x->x_gui.x_selected == NULL)
+    if (state)
     {
+        // we need to redundantly call gui_gobj_select due to weird
+        // order of redraw/reselect that causes gop object with visible image
+        // upon cut/undo-cut to not have the image selected
+        gui_vmess("gui_gobj_select", "xx", glist_getcanvas(x->x_gui.x_glist), x);
         // here we borrow the iemgui mycanvas resize handles
         // and add 8 to the width since the function below is originally
         // aimed at mycanvas and its offset. Do this only if we are on
         // our own parent canvas...
-        if (glist == x->x_gui.x_glist)
-            gui_vmess("gui_iemgui_label_show_drag_handle", "xxiiii",
-                glist, x, state, 
-                (x2 - x1) + (x->x_adj_img_width/2 - (x2 - x1)/2) - 
-                    (x->x_adj_img_width == x->x_gui.x_w ? 0 : 2) + 8,
-                (y2 - y1) + (x->x_adj_img_height/2 - (y2 - y1)/2) -
-                    (x->x_adj_img_height == x->x_gui.x_h ? 0 : 2),
-                1);
-        gui_vmess("gui_gobj_select", "xx", glist_getcanvas(x->x_gui.x_glist), x);
-        x->x_gui.x_selected = glist;
-        if (x->x_gui.x_lab != s_empty)
+        if (x->x_gui.x_selected == NULL)
         {
-            scalehandle_draw_select(
-                x->x_gui.x_lhandle, x->x_gui.x_ldx + 5, x->x_gui.x_ldy + 10);
+            if (glist == x->x_gui.x_glist)
+            {
+                gui_vmess("gui_iemgui_label_show_drag_handle", "xxiiii",
+                    glist, x, state, 
+                    (x2 - x1) + (x->x_adj_img_width/2 - (x2 - x1)/2) - 
+                        (x->x_adj_img_width == x->x_gui.x_w ? 0 : 2) + 8,
+                    (y2 - y1) + (x->x_adj_img_height/2 - (y2 - y1)/2) -
+                        (x->x_adj_img_height == x->x_gui.x_h ? 0 : 2),
+                    1);
+                if (x->x_gui.x_lab != s_empty)
+                {
+                    scalehandle_draw_select(
+                        x->x_gui.x_lhandle, x->x_gui.x_ldx + 5, x->x_gui.x_ldy + 10);
+                }
+            }
+            x->x_gui.x_selected = glist;
         }
     }
     else if (!state && x->x_gui.x_selected == glist)
@@ -375,7 +384,7 @@ static void image_vis(t_gobj *z, t_glist *glist, int vis)
         image_drawme(x, glist);
     }
     else
-        image_erase(x,glist);
+        image_erase(x, glist);
 }
 
 static void image_save(t_gobj *z, t_binbuf *b)
@@ -835,9 +844,12 @@ static void image_update(t_image *x, t_glist *glist, int width, int height, int 
     {
         x->x_gui.x_h = x->x_adj_img_height;
     }
-    gui_vmess("gui_image_update_border", "xxii", 
-        glist_getcanvas(glist), x, x->x_gui.x_w, x->x_gui.x_h);
-    iemgui_io_draw_move(&x->x_gui);
+    if(glist_istoplevel(x->x_gui.x_glist))
+    {
+        gui_vmess("gui_image_update_border", "xxii", 
+            glist_getcanvas(glist), x, x->x_gui.x_w, x->x_gui.x_h);
+        iemgui_io_draw_move(&x->x_gui);
+    }
     image_dorotate(x);
     scrollbar_update(x->x_gui.x_glist);
     SETSYMBOL(at, gensym("size"));
@@ -964,7 +976,7 @@ static void image__motionhook(t_scalehandle *sh, t_floatarg mouse_x, t_floatarg 
         // LATER: remove it altogether
         //scalehandle_drag_scale(sh);
 
-        if (glist_isvisible(x->x_gui.x_glist))
+        if (glist_istoplevel(x->x_gui.x_glist))
         {
             //my_canvas_draw_move(x, x->x_gui.x_glist);
             //scalehandle_unclick_scale(sh);
@@ -1426,8 +1438,8 @@ void image_setup(void)
         A_NULL, 0);
     class_addmethod(image_class, (t_method)image_dialog,
         gensym("dialog"), A_GIMME, 0);
-    class_addmethod(image_class, (t_method)image_imagesize_callback,\
-                     gensym("_imagesize"), A_DEFFLOAT, A_DEFFLOAT, 0);    
+    class_addmethod(image_class, (t_method)image_imagesize_callback,
+        gensym("_imagesize"), A_DEFFLOAT, A_DEFFLOAT, 0);    
     iemgui_class_addmethods(image_class);
 
     image_setwidget();
