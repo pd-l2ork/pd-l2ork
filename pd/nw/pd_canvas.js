@@ -880,6 +880,7 @@ var canvas_events = (function() {
                 // here.  I want those newlines: although that isn't
                 // standard in Pd-Vanilla, Pd-l2ork uses and preserves
                 // them inside comments
+                // TODO!: address here the unwanted truncating of comment objects
                 var fudi_msg = text_to_fudi(textbox().innerText),
                     fudi_array = string_to_array_of_chunks(fudi_msg),
                     i;
