@@ -155,16 +155,27 @@ var canvas_events = (function() {
                 text = text.replace(/\n/g, "\u000B");
                 text = text.replace(/ /g, "\u00A0");
                 var lines = text.split('\v');
-                var i;
+                var i;//, j;
                 text = "";
                 for(i = 0; i < lines.length; i++) {
                     if (lines[i] == "")
-                        lines[i] = " ";
-                    if (i < lines.length - 1)
+                        lines[i] = "\u00A0";
+                    if (i < lines.length - 1) {
                         text = text.concat(lines[i], '\v');
-                    else
+                    } else {
                         text = text.concat(lines[i]);
+                    }
+                    /*
+                    pdgui.post(">>>>>>>>>>>>>>");
+                    for(j=0;j<lines[i].length;j++)
+                        pdgui.post("..."+lines[i][j].charCodeAt());
+                    */
                 }
+                /*
+                pdgui.post("================================");
+                for(j=0;j<text.length;j++)
+                    pdgui.post("..."+text[j].charCodeAt());
+                */
             } else {
                 text = text.replace(/\u0020+/g, " ");
             }
