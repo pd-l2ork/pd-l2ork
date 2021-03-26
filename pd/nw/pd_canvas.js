@@ -131,7 +131,7 @@ var canvas_events = (function() {
                 return prev.concat(curr)
             }).join(" ");
         },
-        text_to_fudi = function(text) {
+        text_to_fudi = function(text, iscomment) {
             text = text.trim();
             // special case for draw path d="arbitrary path string" ...
             if (text.search(/^draw\s+path\s+d\s*=\s*"/) !== -1) {
@@ -146,8 +146,28 @@ var canvas_events = (function() {
             // escape "," and ";"
             text = text.replace(/(?!\\)(,|;)/g, " \\$1 ");
 
-            // filter consecutive ascii32
-            text = text.replace(/\u0020+/g, " ");
+            // filter consecutive ascii32 OR deal with spaces and
+            // \n symbols inside comments to retain them. Also,
+            // have to carefully treat \n by themselves (whcih become
+            // \v). We add a space to each of them to ensure that
+            // added lines are properly displayed in the comment.
+            if (iscomment === 1) {
+                text = text.replace(/\n/g, "\u000B");
+                text = text.replace(/ /g, "\u00A0");
+                var lines = text.split('\v');
+                var i;
+                text = "";
+                for(i = 0; i < lines.length; i++) {
+                    if (lines[i] == "")
+                        lines[i] = " ";
+                    if (i < lines.length - 1)
+                        text = text.concat(lines[i], '\v');
+                    else
+                        text = text.concat(lines[i]);
+                }
+            } else {
+                text = text.replace(/\u0020+/g, " ");
+            }
             return text;
         },
         string_to_array_of_chunks = function(msg) {
@@ -490,7 +510,7 @@ var canvas_events = (function() {
             text_keydown: function(evt) {
                 evt.stopPropagation();
                 setTimeout(function() {
-                    pdgui.gui_message_update_textarea_border(textbox(), 0);
+                    pdgui.gui_message_update_textarea_border(textbox(), 1);
                 }, 0);
                 //evt.preventDefault();
                 return false;
@@ -880,8 +900,9 @@ var canvas_events = (function() {
                 // here.  I want those newlines: although that isn't
                 // standard in Pd-Vanilla, Pd-l2ork uses and preserves
                 // them inside comments
-                // TODO!: address here the unwanted truncating of comment objects
-                var fudi_msg = text_to_fudi(textbox().innerText),
+                var iscomment = textbox().getAttribute("type");
+                var fudi_msg = text_to_fudi(textbox().innerText,
+                        (iscomment === "comment" ? 1 : 0)),
                     fudi_array = string_to_array_of_chunks(fudi_msg),
                     i;
                 for (i = 0; i < fudi_array.length; i++) {

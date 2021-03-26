@@ -557,6 +557,8 @@ void rtext_select(t_rtext *x, int state)
     //canvas_editing = canvas;
 }
 
+EXTERN void scrollbar_synchronous_update(t_glist *glist);
+
 void rtext_activate(t_rtext *x, int state)
 {
     //fprintf(stderr,"rtext_activate state=%d\n", state);
@@ -645,7 +647,9 @@ void rtext_activate(t_rtext *x, int state)
     gui_vmess("gui_textarea", "xssiiiisiiiiiii",
         canvas,
         x->x_tag,
-        (pd_class((t_pd *)x->x_text) == message_class ? "msg" : "obj"),
+        (pd_class((t_pd *)x->x_text) == message_class ? "msg" :
+            pd_class((t_pd *)x->x_text) == text_class &&
+                x->x_text->te_type == T_TEXT ? "comment" : "obj"),
         x->x_text->te_xpix,
         x->x_text->te_ypix,
         widthspec,

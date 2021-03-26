@@ -2619,23 +2619,28 @@ function gui_message_update_textarea_border(elem, init_width) {
 	if (elem.classList.contains("msg")) {
 		if (init_width) {
 			var i, ncols = 0,
-			    text = elem.innerHTML,
+			    text = elem.innerText,
 			    textByLine = text.split(/\r*\n/);
 			for (i = 0; i < textByLine.length; i++) {
 				if (textByLine[i].length > ncols) {
 					ncols = textByLine[i].length;
 				}
 			}
+            var minw = parseInt(elem.style.minWidth);
+            var spec = elem.getAttribute("width_spec");
+            if(ncols < 3 && spec <= 0)
+                ncols = 3;
+            if(spec > 0)
+                ncols = spec;
 			configure_item(elem, {
 	            cols: ncols
         	});
         	gui_gobj_erase_io(elem.getAttribute("cid"), elem.getAttribute("tag"));
 		}
-
 		gui_message_redraw_border(
 			elem.getAttribute("cid"),
 			elem.getAttribute("tag"),
-			parseInt(elem.offsetWidth / elem.getAttribute("font_width")) * elem.getAttribute("font_width") + 4,
+			ncols * elem.getAttribute("font_width") + 4,
 			parseInt(elem.offsetHeight / elem.getAttribute("font_height")) * elem.getAttribute("font_height") + 4
 			);
 	}
@@ -6642,6 +6647,12 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         gobj = get_gobj(cid, tag), zoom;
     //post("gui_textarea tag="+tag+" type="+type+" text=<"+
     //    text+"> state="+state+" gobj="+gobj);
+
+    // replace \v for \n and \u00A0 for " ". This is only used by the comments,
+    // so it only affects the comment object, while the rest should be unaffected
+    text = text.replace(/\v/g, "\n");
+    text = text.replace(/\u00A0/g, " ");
+
     gui(cid).get_nw_window(function(nw_win) {
         zoom = nw_win.zoomLevel;
     });
@@ -6694,11 +6705,16 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
             cid: cid,
             tag: tag,
             font_width: font_width,
-            font_height: font_height
+            font_height: font_height,
+            "type" : type,
+            "width_spec": width_spec
         });
         svg_view = patchwin[cid].window.document.getElementById("patchsvg")
             .viewBox.baseVal;
-        p.classList.add(type);
+        if (type === "comment")
+            p.classList.add("obj");
+        else
+            p.classList.add(type);
         p.contentEditable = "true";
 
         if (is_gop == 0) {
@@ -6744,14 +6760,19 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
                 // we use this to force min-width when entering new text into the object
                 // and/or message boxes, so that we can ensure that objects don't get
                 // shorter width than allowed by default. Once they have been given a
-                // user-specified width, this is no longer an issue.
+                // user-specified width or there is an \n, this is no longer an issue.
                 var tl = p.innerText.length;
                 var mw = parseInt(p.style.maxWidth, 10);
                 if (tl <= 3)
                     p.style.setProperty("min-width", "3ch");
                 else if (tl > 3 && tl < mw-1)
+                {
+                    var n = p.innerText.indexOf("\n");
+                    if (n < tl && n > 3)
+                        tl = n;
                     p.style.setProperty("min-width", tl+"ch");
-            };
+                }
+            }; 
         }
         //p.style.setProperty("white-space", "break-spaces");
 
