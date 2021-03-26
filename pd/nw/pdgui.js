@@ -6772,6 +6772,22 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
                         tl = n;
                     p.style.setProperty("min-width", tl+"ch");
                 }
+                var text = p.innerText.split('\n');
+                var m;
+                var lngth = text.length;
+                //post(">>>>>>>>>>>>length="+ p.innerText.split('\n').length);
+                for(n=0; n < text.length; n++) {
+                    {
+                        //post("====");
+                        //for (m=0; m<text[n].length; m++)
+                            //post("...<"+text[n][m]+"> "+text[n][m].charCodeAt());
+                        if (text[n].length == 0 && n == text.length - 1) {
+                            //post("YEAH!");
+                            lngth--;
+                        }
+                    }
+                }
+                pdsend(cid, "cah", lngth);
             }; 
         }
         //p.style.setProperty("white-space", "break-spaces");
@@ -6824,10 +6840,12 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         }
 
         // MSG approach
-        var i, nlets = patchwin[cid].window.document
-        	.getElementById(tag+"gobj").querySelectorAll(".xlet_control");
-        for (i = 0; i < nlets.length; i++) {
-        	nlets[i].style.setProperty("visibility", "visible");        	
+        if (type === "msg") {
+            var i, nlets = patchwin[cid].window.document
+            	.getElementById(tag+"gobj").querySelectorAll(".xlet_control");
+            for (i = 0; i < nlets.length; i++) {
+            	nlets[i].style.setProperty("visibility", "visible");        	
+            }
         }
         gui(cid).get_gobj(tag).q(".box_text", { visibility: "visible" });
 

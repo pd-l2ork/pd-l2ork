@@ -3432,6 +3432,32 @@ t_glist *pd_checkglist(t_pd *x)
     else return (0);
 }
 
+extern void rtext_update_active_nlines(t_rtext *, int nlines);
+
+// ico@vt.edu 2021-03-26:
+// this is used to update temporary height of the object being edited
+// to ensure that the object's patch cords are also correctly repositioned
+// while editing, since its height due to added lines may change
+static void canvas_active_height(t_canvas *x, t_floatarg f)
+{
+    if (x->gl_editor && x->gl_editor->e_selection)
+    {
+        t_gobj *g = x->gl_editor->e_selection->sel_what;
+        // do we need this? the code below fails to recognize valid objects
+        //if (pd_class(&((t_text *)g)->te_pd) == text_class ||
+        //    pd_class(&((t_text *)g)->te_pd) == message_class)
+        //{
+            t_rtext *y = glist_findrtext(x, ((t_text *)g));
+            if (y)
+            {
+                rtext_update_active_nlines(y, (int)f);
+                //post("updating active obj height %d", (int)f);
+                canvas_fixlinesfor(x, ((t_text *)g));
+            }
+        //}
+    }
+}
+
 /* ------------------------------- setup routine ------------------------ */
 
     /* why are some of these "glist" and others "canvas"? */
@@ -3550,6 +3576,8 @@ void g_canvas_setup(void)
         gensym("scroll"), A_FLOAT, 0);
     class_addmethod(canvas_class, (t_method)canvas_show_menu,
         gensym("menu"), A_FLOAT, 0);
+    class_addmethod(canvas_class, (t_method)canvas_active_height,
+        gensym("cah"), A_FLOAT, 0);
 
 /* ---------------------- list handling ------------------------ */
     class_addmethod(canvas_class, (t_method)glist_clear, gensym("clear"),

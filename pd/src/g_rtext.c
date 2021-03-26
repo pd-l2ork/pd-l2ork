@@ -42,6 +42,9 @@ struct _rtext
     int x_selstart; /*-- byte offset --*/
     int x_selend;   /*-- byte offset --*/
     int x_active;
+    int x_active_nlines; /* number of lines that may be different from normal
+                            used to update cords as the edited object height
+                            changes */
     int x_drawnwidth;
     int x_drawnheight;
     t_text *x_text;
@@ -57,7 +60,7 @@ t_rtext *rtext_new(t_glist *glist, t_text *who)
     x->x_glist = glist;
     x->x_next = glist->gl_editor->e_rtext;
     x->x_selstart = x->x_selend = x->x_active =
-        x->x_drawnwidth = x->x_drawnheight = 0;
+        x->x_active_nlines = x->x_drawnwidth = x->x_drawnheight = 0;
     binbuf_gettext(who->te_binbuf, &x->x_buf, &x->x_bufsize);
     glist->gl_editor->e_rtext = x;
     // here we use a more complex tag which will later help us properly
@@ -342,7 +345,8 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
         tempbuf[outchars_b++] = '\0';
 
         pixwide = ncolumns * fontwidth + (LMARGIN + RMARGIN);
-        pixhigh = nlines * fontheight + (TMARGIN + BMARGIN);
+        pixhigh = (x->x_active_nlines > 0 ? x->x_active_nlines : nlines) *
+            fontheight + (TMARGIN + BMARGIN);
         //printf("outchars_b=%d bufsize=%d %d\n", outchars_b, x->x_bufsize, x->x_buf[outchars_b]);
 
         if (action && x->x_text->te_width && x->x_text->te_type != T_ATOM)
@@ -514,6 +518,16 @@ int rtext_height(t_rtext *x)
     return (h);
 }
 
+// used to keep track of the edited area, so that patch cords
+// are updated dynamically
+void rtext_update_active_nlines(t_rtext *x, int nlines)
+{
+    if (!x->x_active)
+        return;
+    if (nlines >= 0)
+        x->x_active_nlines = nlines;
+}
+
 void rtext_draw(t_rtext *x)
 {
     int w = 0, h = 0, indx;
@@ -583,6 +597,7 @@ void rtext_activate(t_rtext *x, int state)
         x->x_selstart = 0;
         x->x_selend = x->x_bufsize;
         x->x_active = 1;
+        x->x_active_nlines = 0;
     }
     else
     {
@@ -591,6 +606,7 @@ void rtext_activate(t_rtext *x, int state)
         if (glist->gl_editor->e_textedfor == x)
             glist->gl_editor->e_textedfor = 0;
         x->x_active = 0;
+        x->x_active_nlines = 0;
     }
 
     /* check if it has a window */

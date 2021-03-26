@@ -2260,13 +2260,17 @@ static void text_select(t_gobj *z, t_glist *glist, int state)
 /* state:
    0. deactivate
    1. activate text
-   2. activate "floating" text (i.e., a new empty obj that follows the mouse) */
+   2. activate "floating" text (i.e., a new empty obj that follows the mouse)
+
+   this is used for message and text classes */
 static void text_activate(t_gobj *z, t_glist *glist, int state)
 {
     t_text *x = (t_text *)z;
     t_rtext *y = glist_findrtext(glist, x);
     if (z->g_pd != gatom_class && z->g_pd != dropdown_class)
         rtext_activate(y, state);
+    if (state == 0)
+        canvas_fixlinesfor(glist, x);
 }
 
 static void text_delete(t_gobj *z, t_glist *glist)
