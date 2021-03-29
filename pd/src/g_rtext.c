@@ -227,7 +227,6 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
         int inindex_c = 0; // index location in the u8 chars
         int selstart_b = 0, selend_b = 0; // selection start and end
         // buffer size in u8 chars
-        //fprintf(stderr,"buf = <%s> | last 2 chars = %d %d\n", x->x_buf, x->x_buf[x->x_bufsize-1], x->x_buf[x->x_bufsize]);
         int x_bufsize_c = u8_charnum(x->x_buf, x->x_bufsize);
             /* if we're a GOP (the new, "goprect" style) borrow the font size
             from the inside to preserve the spacing */
@@ -316,7 +315,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
             nlines++;
         }
         // append new line in case we end our input with an \n
-        if (x_bufsize_c > 0 && (x->x_buf[x_bufsize_c - 1] == '\n' || x->x_buf[x_bufsize_c - 1] == '\v'))
+        if (x_bufsize_c > 0 && (x->x_buf[x->x_bufsize - 1] == '\n' || x->x_buf[x->x_bufsize - 1] == '\v'))
         {
             nlines++;
             tempbuf[outchars_b++] = '\n';
