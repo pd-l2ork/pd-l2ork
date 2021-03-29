@@ -161,11 +161,12 @@ static void pddplink_activate(t_gobj *z, t_glist *glist, int state)
     t_rtext *y = glist_findrtext(glist, (t_text *)x);
     rtext_activate(y, state);
     x->x_rtextactive = state;
-    //2020-11-11 ico@vt.edu: the following appears to be no more needed:
-    /*if (!state) {
+    // 2020-11-11 ico@vt.edu: the following is needed when clicking on
+    // another object to activate, while this one is still activated
+    if (!state) {
         pddplink_vis(z, glist, 0);
         pddplink_vis(z, glist, 1);
-    }*/
+    }
 }
 
 static int pddplink_wbclick(t_gobj *z, t_glist *glist, int xpix, int ypix,
