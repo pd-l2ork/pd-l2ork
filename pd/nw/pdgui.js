@@ -4725,13 +4725,17 @@ function gui_load_image(cid, key, filepath) {
 // ico@vt.edu 2020-11-17: added requested width, height, and constrain
 // aspect ratio which is used by the ggee/image, and in addition the
 // image type (0 = ggee, 1 = moonlib)
-function gui_gobj_draw_image(cid, tag, image_key, tk_anchor, w, h, constrain, type) {
+// ico@vt.edu 2021-03-30: added isgop which is used only for ggee/image
+// to toggle visibility off before the image is properly positioned through
+// a callback. this removes flicker.
+function gui_gobj_draw_image(cid, tag, image_key, tk_anchor, w, h, constrain, type, isgop) {
     gui(cid).get_gobj(tag)
     .append(function(frag) {
+        //post("gui_gobj_draw_image type="+type+" isgop="+isgop);
         var i = create_item(cid, "image", {
             id: tag + "image",
             preserveAspectRatio: constrain ? "xMinYMin meet" : "none",
-            display: (type === 0 ? "none" : "block")
+            display: (type === 0 && isgop === 1 ? "none" : "block")
         });
         i.setAttributeNS("http://www.w3.org/1999/xlink", "href",
             "data:image/" + pd_cache.get(image_key).type + ";base64," +

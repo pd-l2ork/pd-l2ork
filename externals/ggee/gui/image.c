@@ -135,7 +135,7 @@ static void image_drawme(t_image *x, t_glist *glist)
                     glist_getcanvas(glist), x);
             }
             // draw the new canvas image
-            gui_vmess("gui_gobj_draw_image", "xxxsiiii",
+            gui_vmess("gui_gobj_draw_image", "xxxsiiiii",
                 glist_getcanvas(glist),
                 x,
                 x,
@@ -143,7 +143,13 @@ static void image_drawme(t_image *x, t_glist *glist)
                 x->x_gui.x_w,
                 x->x_gui.x_h,
                 x->x_constrain,
-                0 // this denotes ggee/image object type
+                0, // this denotes ggee/image object type
+                   // 0 = ggee/image
+                   // 1 = moonlib/image
+                x->x_gop_spill // for ggee/image this lets the nw.js know
+                               // if we have gop_spill enabled, so that we
+                               // can hide the visibility until image is
+                               // loaded and properly displaced
             );
             // draw border (it will be invisible in runmode via css adjustments)
             if (x->x_gui.x_glist == glist_getcanvas(x->x_gui.x_glist))
