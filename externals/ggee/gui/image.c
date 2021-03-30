@@ -116,6 +116,16 @@ static void image_drawme(t_image *x, t_glist *glist)
                 text_ypix(&x->x_gui.x_obj, glist),
                 glist_istoplevel(glist));
             if (fname) {
+                // if we are using gop_spill, reloading may cause flicker
+                // because the image may need to be repositioned after
+                // being loaded, so we toggle its visibility until the image
+                // is loaded and its size is known to pd via the callback
+                // the gui_ggee_image_display in pdgui.js checks if there is
+                // a valid object before trying to change ints configuration,
+                // so we don't have to do that here.
+                if (x->x_gop_spill)
+                    gui_vmess("gui_ggee_image_display", "xxi",
+                        glist_getcanvas(glist), x, 0);
                 gui_vmess("gui_load_image", "xxs",
                     glist_getcanvas(glist), x, fname->s_name);
             }
@@ -175,7 +185,9 @@ static void image_drawme(t_image *x, t_glist *glist)
                     (x->x_gop_spill ? -(x->x_adj_img_height/2 - x->x_gui.x_h/2) : 0)
                 );
             }
-            gui_vmess("gui_ggee_image_display", "xx", glist_getcanvas(glist), x);
+            if (x->x_gop_spill)
+                gui_vmess("gui_ggee_image_display", "xxi",
+                    glist_getcanvas(glist), x, 1);
 
             if (glist_isselected(x->x_gui.x_glist, (t_gobj *)x))
             {
@@ -646,6 +658,9 @@ static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
     x->x_img_height = 0;
     t_symbol *fname = image_trytoopen(x);
     if (fname) {
+        if (x->x_gop_spill)
+            gui_vmess("gui_ggee_image_display", "xxi", 
+                glist_getcanvas(x->x_gui.x_glist), x, 0);
         gui_vmess("gui_load_image", "xxs",
             glist_getcanvas(x->x_gui.x_glist), x, fname->s_name);
     }

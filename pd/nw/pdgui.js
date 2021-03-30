@@ -4753,12 +4753,22 @@ function gui_gobj_draw_image(cid, tag, image_key, tk_anchor, w, h, constrain, ty
 // We use this to remove flicker due to asynchronous loading of image and its
 // potential repositioning due to ggee's gop_spill option, so we initially
 // make the image invisible in the gui_gobj_draw_image, and make it visible
-// here only after we know the image has successfully loaded. See image_drawme
-// function call inside ggee/image.c file.
-function gui_ggee_image_display(cid, tag) {
-    configure_item(get_item(cid, tag+"image"), {
-        display: "block"
-    });   
+// only after we know the image has successfully loaded. See image_drawme
+// and image_open functions call inside ggee/image.c file.
+function gui_ggee_image_display(cid, tag, vis) {
+    // check if the image exists yet
+    //post("gui_ggee_image_display check=" + get_item(cid, tag+"image"));
+    if (get_item(cid, tag+"image") !== null) {
+        if (vis === 1) {
+            configure_item(get_item(cid, tag+"image"), {
+                display: "block"
+            });
+        } else if (vis === 0) {
+            configure_item(get_item(cid, tag+"image"), {
+                display: "none"
+            });
+        }
+    }
 }
 
 // ico@vt.edu 2020-11-13:
