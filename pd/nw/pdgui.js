@@ -6748,11 +6748,43 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
             width_spec > 0 ? width_spec + "ch" : "60ch");
         //p.style.setProperty("width", -width_spec - 2 + "px");
         p.style.setProperty("-webkit-padding-after", "1px");
-        p.style.setProperty("min-width",
-            width_spec == 0 ? "3ch" :
-                (is_gop == 1 ? width_spec - 3 + "px" :
-                    (width_spec < 0 ? (-width_spec) - 2 + "px" : width_spec + "ch")));
-        if (is_gop !== 1 && width_spec < 0)
+
+        // ico@vt.edu 2021-03-29: here we use the same code as the one below in the
+        // oninput call, to ensure that the initial object width is as it should be
+        // regardless of whether the object is overlapping the right window edge or
+        // not. this only applies to regular non-gop objects.
+        //post("width_spec="+width_spec);
+        if (is_gop == 0 && width_spec <= 0)
+        {
+            var tl = text.trim().length;
+            var mw = parseInt(p.style.maxWidth, 10);
+            if (tl <= 3 && width_spec <= 0)
+                p.style.setProperty("min-width", "3ch");
+            else if (tl > 3 && tl < mw-1)
+            {
+                var text2lines = text.split('\n');
+                var i, j, n;
+                n = 0;
+                for (i = 0; i < text2lines.length; i++) {
+                    j = text2lines[i].length;
+                    if (j > n) {
+                        n = j;
+                    }
+                }
+                if (n < tl)
+                    tl = n;
+                p.style.setProperty("min-width", tl+"ch");
+            }
+            //post("maxw="+mw+" minw="+tl+" n="+n);
+        } else {
+            // otherwise fall back to the old way
+            // LATER: clean this up since gop and other situations do not apply anymore
+            p.style.setProperty("min-width",
+                width_spec == 0 ? "3ch" :
+                    (is_gop == 1 ? width_spec - 3 + "px" :
+                        (width_spec < 0 ? (-width_spec) - 2 + "px" : width_spec + "ch")));
+        }
+        if (is_gop !== 1 && width_spec <= 0)
         {
             // we are a new object box with no specified width, so we need to update
             // min-width when the text is less long than the maximum allowed 60px
@@ -6763,28 +6795,33 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
                 // user-specified width or there is an \n, this is no longer an issue.
                 var tl = p.innerText.length;
                 var mw = parseInt(p.style.maxWidth, 10);
-                if (tl <= 3)
+                if (tl <= 3 && width_spec <= 0)
                     p.style.setProperty("min-width", "3ch");
                 else if (tl > 3 && tl < mw-1)
                 {
-                    var n = p.innerText.indexOf("\n");
-                    if (n < tl && n > 3)
+                    var text2lines = text.split('\n');
+                    var i, j, n;
+                    n = 0;
+                    for (i = 0; i < text2lines.length; i++) {
+                        j = text2lines[i].length;
+                        if (j > n) {
+                            n = j;
+                        }
+                    }
+                    if (n < tl)
                         tl = n;
                     p.style.setProperty("min-width", tl+"ch");
                 }
                 var text = p.innerText.split('\n');
-                var m;
                 var lngth = text.length;
                 //post(">>>>>>>>>>>>length="+ p.innerText.split('\n').length);
-                for(n=0; n < text.length; n++) {
-                    {
-                        //post("====");
-                        //for (m=0; m<text[n].length; m++)
-                            //post("...<"+text[n][m]+"> "+text[n][m].charCodeAt());
-                        if (text[n].length == 0 && n == text.length - 1) {
-                            //post("YEAH!");
-                            lngth--;
-                        }
+                for(n = 0; n < text.length; n++) {
+                    //post("====");
+                    //for (m=0; m<text[n].length; m++)
+                        //post("...<"+text[n][m]+"> "+text[n][m].charCodeAt());
+                    if (text[n].length == 0 && n == text.length - 1) {
+                        //post("YEAH!");
+                        lngth--;
                     }
                 }
                 pdsend(cid, "cah", lngth);

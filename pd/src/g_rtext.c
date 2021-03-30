@@ -227,9 +227,11 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
         int inindex_c = 0; // index location in the u8 chars
         int selstart_b = 0, selend_b = 0; // selection start and end
         // buffer size in u8 chars
+        //post("\nbuf = <%s> | last 2 chars = %d %d", x->x_buf, x->x_buf[x->x_bufsize-1], x->x_buf[x->x_bufsize]);
         int x_bufsize_c = u8_charnum(x->x_buf, x->x_bufsize);
             /* if we're a GOP (the new, "goprect" style) borrow the font size
             from the inside to preserve the spacing */
+        //post("x_bufsize=%d x_bufsize_c=%d", x->x_bufsize, x_bufsize_c);
         if (pd_class(&x->x_text->te_pd) == canvas_class &&
             ((t_glist *)(x->x_text))->gl_isgraph &&
             ((t_glist *)(x->x_text))->gl_goprect)
@@ -254,14 +256,16 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
             int eatchar = 1;
             //fprintf(stderr, "firstone <%s> inindex_b=%d maxindex_b=%d\n", x->x_buf + inindex_b, inindex_b, maxindex_b);
             int foundit_b  = firstone(x->x_buf + inindex_b, '\n', maxindex_b);
+            //int oldinindex_b = 0;
             int foundit_c;
             //following deals with \v replacement for \n in multiline comments
             int foundit_bv  = firstone(x->x_buf + inindex_b, '\v', maxindex_b);
             if ((foundit_bv < foundit_b && foundit_bv != -1) ||
                 (foundit_b == -1 && foundit_bv != -1))
                 foundit_b = foundit_bv;
-            if (foundit_b < 0) //if we did not find an \n
+            if (foundit_b < 0) //if we did not find an \n or a \v
             { 
+                //post("no v found %d", foundit_b);
                 /* too much text to fit in one line? */
                 if (inchars_c > widthlimit_c)
                 {
@@ -286,9 +290,13 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
                     eatchar = 0;
                 }
             }
-            else
+            else {
+                //post("found v %d", foundit_b);
                 foundit_c = u8_charnum(x->x_buf + inindex_b, foundit_b);
+            }
+            //post("final foundit_b=%d", foundit_b);
 
+            // this is true when the object takes a signle line
             if (nlines == findy)
             {
                 int actualx = (findx < 0 ? 0 :
@@ -305,20 +313,39 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
                 x->x_selend <= inindex_b + foundit_b + eatchar)
                     selend_b = x->x_selend + outchars_b - inindex_b;
             outchars_b += foundit_b;
+            //post("+++ eat=%d %d(%c)", eatchar, x->x_buf[inindex_b+foundit_b], x->x_buf[inindex_b+foundit_b]);
             inindex_b += (foundit_b + eatchar);
             inindex_c += (foundit_c + eatchar);
+            //post("...%d(%c) [%d(%c)]", x->x_buf[inindex_b], x->x_buf[inindex_b],
+            //    x->x_buf[inindex_c], x->x_buf[inindex_c]);
             if (inindex_b < x->x_bufsize)
                 tempbuf[outchars_b++] = '\n';
             // if we found a row that is longer than previous (total width)
             if (foundit_c > ncolumns)
                 ncolumns = foundit_c;
-            nlines++;
+            // ico@vt.edu 2021-03-30:
+            // only if we did not find a \v or an \n do we add a line here
+            // after extensive testing it appears not doing so adds extra lines
+            // and makes comments in particular have extra padded lines at the end
+            // this is because foundit_b is always 0 when it finds a \v or an \n
+            if (foundit_b) nlines++;
+            //post("////////////// new=%d old=%d lines=%d", inindex_b, oldinindex_b, nlines);
+            //oldinindex_b = inindex_b;
         }
+        /*char out[6];
+        startpost("text: ");
+        for (int i=0; i < x->x_bufsize; i++)
+        {
+            sprintf(out, "%d(%c)", x->x_buf[i], x->x_buf[i]);
+            poststring(&out);
+        }
+        endpost();*/
         // append new line in case we end our input with an \n
         if (x_bufsize_c > 0 && (x->x_buf[x->x_bufsize - 1] == '\n' || x->x_buf[x->x_bufsize - 1] == '\v'))
         {
             nlines++;
             tempbuf[outchars_b++] = '\n';
+            //post("add endline");
             //tempbuf[outchars_b] = '\0';
             //outchars_b++;
         }
@@ -346,6 +373,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
         pixwide = ncolumns * fontwidth + (LMARGIN + RMARGIN);
         pixhigh = (x->x_active_nlines > 0 ? x->x_active_nlines : nlines) *
             fontheight + (TMARGIN + BMARGIN);
+        //post("rtext_senditup %d %d", nlines, x->x_active_nlines);
         //printf("outchars_b=%d bufsize=%d %d\n", outchars_b, x->x_bufsize, x->x_buf[outchars_b]);
 
         if (action && x->x_text->te_width && x->x_text->te_type != T_ATOM)
