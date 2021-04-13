@@ -534,7 +534,7 @@ int glist_getindex(t_glist *x, t_gobj *y);
     /* call this for selected objects only */
 void glist_deselect(t_glist *x, t_gobj *y)
 {
-    //fprintf(stderr, "deselect\n");
+    //post("deselect");
     int fixdsp = 0;
     //static int reenter = 0;
     /* if (reenter) return; */

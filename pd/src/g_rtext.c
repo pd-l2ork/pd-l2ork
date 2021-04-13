@@ -626,14 +626,14 @@ EXTERN void scrollbar_synchronous_update(t_glist *glist);
 
 void rtext_activate(t_rtext *x, int state)
 {
-    //fprintf(stderr,"rtext_activate state=%d\n", state);
+    //post("rtext_activate state=%d", state);
     int w = 0, h = 0, widthspec, heightspec, indx, isgop,
         selstart = -1, selend = -1;
     char *tmpbuf;
     t_glist *glist = x->x_glist;
     t_canvas *canvas = glist_getcanvas(glist);
     if (state && x->x_active) {
-        //fprintf(stderr, "duplicate rtext_activate\n");
+        //post("duplicate rtext_activate");
         return;
     }
     // the following prevents from selecting all when inside an
@@ -745,7 +745,7 @@ static int rtext_compare_special_chars(const char c)
 
 void rtext_key(t_rtext *x, int keynum, t_symbol *keysym)
 {
-    //fprintf(stderr,"rtext_key %d %s\n", keynum, keysym->s_name);
+    //post("rtext_key %d %s", keynum, keysym->s_name);
     int w = 0, h = 0, indx, i, newsize, ndel;
     if (keynum)
     {

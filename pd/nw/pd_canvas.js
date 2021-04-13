@@ -537,7 +537,13 @@ var canvas_events = (function() {
                 return false;
             },
             text_mousedown: function(evt) {
-                if (textbox() !== evt.target && !target_is_scrollbar(evt)) {
+                // here we check whether we are also not a child of a parentnode
+                // this happens when one presses return while editing the object
+                // text via new_object_textentry (see pdgui.js), which causes
+                // the text to be split between the main <p> and a child <div>
+                if (textbox() !== evt.target &&
+                    textbox() !== evt.target.parentNode &&
+                    !target_is_scrollbar(evt)) {
                     utils.create_obj();
                     // send a mousedown and mouseup event to Pd to instantiate
                     // the object
