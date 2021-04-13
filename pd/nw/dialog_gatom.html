@@ -162,6 +162,15 @@
           </tr>
         </table>
 
+        <div class="limit">
+          <label data-i18n="[title]gatom.prop.limit_tt">
+            <input type="checkbox" id="limit" name="limit" value="on"
+                   onchange="update_attr(this);">
+            <span data-i18n="gatom.prop.limit"></span>
+          </label>
+          <br>
+        </div>
+
         <div class="exclusive">
           <label data-i18n="[title]gatom.prop.exclusive_tt">
             <input type="checkbox" id="exclusive" name="exclusive" value="on"
@@ -275,6 +284,7 @@ function send_params(attrs, create_undo_point) {
         gatom_escape(attrs.receive_symbol),
         gatom_escape(attrs.send_symbol),
         +attrs.exclusive,
+        +attrs.limit,
         create_undo_point ? 1 : 0
     );
 }
@@ -326,10 +336,28 @@ function register_window_id(gfxstub, attributes) {
     translate_form();
     populate_form(attributes);
 
-    // hide outtype select for "dropdown", or draglo/hi for "gatom"
-    document.querySelector(attributes.name === "atom" ? ".outtype" : ".draglo")
-        .style.setProperty("display", "none");
-
+    // we use this for symbol atom (satom), number atom (atom), and dropdown
+    // later separate the dropdown from the atom to prevent premature optimizations
+    // from bogging down the development
+    if (attributes.name === "dropdown")
+    {
+        document.querySelector(".draglo")
+            .style.setProperty("display", "none");
+        document.querySelector(".limit")
+            .style.setProperty("display", "none");
+    }
+    else if (attributes.name === "satom")
+    {
+        document.querySelector(".draglo")
+            .style.setProperty("display", "none");
+        document.querySelector(".limit")
+            .style.setProperty("display", "none");
+        document.querySelector(".outtype")
+            .style.setProperty("display", "none");
+    }
+    else if (attributes.name === "atom")
+        document.querySelector(".outtype")
+            .style.setProperty("display", "none");
 
     // Hack... change incoming "-" to empty string
     if (attributes.label === "-") { attributes.label = ""; }
@@ -381,12 +409,14 @@ function get_elem(name) {
 }
 
 function populate_form(attributes) {
+    //pdgui.post("attributes.name="+attributes.name);
     var label, snd, rcv, labelpos, i, radios;
     get_elem("width").value = attributes.width;
     if (attributes.name === "atom") {
         get_elem("draglo").value = attributes.draglo;
         get_elem("draghi").value = attributes.draghi;
-    } else {
+        get_elem("limit").value = attributes.limit;
+    } else if (attributes.name === "dropdown") {
         get_elem("outtype_select").selectedIndex = attributes.outtype;
     }
     label = attributes.label;
@@ -404,6 +434,7 @@ function populate_form(attributes) {
         }
     }
     get_elem("exclusive").checked = attributes.exclusive;
+    get_elem("limit").checked = attributes.limit;
 }
 
 function add_events(name) {

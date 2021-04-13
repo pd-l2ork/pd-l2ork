@@ -76,7 +76,9 @@
       "mknob_size":    "Taille",
       "mknob_size_tt": "Taille du bouton",
       "exclusive": "focus clavier exclusif",
-      "exclusive_tt": "si l'objet capture toutes les entrées du clavier pendant la mise au point"
+      "exclusive_tt": "si l'objet capture toutes les entrées du clavier pendant la mise au point",
+      "limit": "basculer min/max pour les valeurs saisies",
+      "limit_tt": "garder les valeurs saisies dans les limites minimum/maximum"
     }
   },
   "gatom": {

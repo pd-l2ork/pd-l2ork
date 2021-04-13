@@ -93,12 +93,14 @@
       "label_bottom": "unten",
       "label_left": "links",
       "label_right": "rechts",
-      "dropdown_outtype": "output",
-      "dropdown_outtype_tt": "whether to output the index or the value",
+      "dropdown_outtype": "ausgabe",
+      "dropdown_outtype_tt": "ob der Index oder der Wert ausgegeben werden soll",
       "width": "Breite",
       "width_tt": "Breite (in Zeichen)",
       "exclusive": "exklusiver tastaturfokus",
-      "exclusive_tt": "ob das objekt alle tastatureingaben erfasst, während es fokussiert ist"
+      "exclusive_tt": "ob das objekt alle tastatureingaben erfasst, während es fokussiert ist",
+      "limit": "min/max für eingegebene Werte",
+      "limit_tt": "Halten Sie die eingegebenen Werte innerhalb der min/max Grenzen"
     }
   },
   "menu": {

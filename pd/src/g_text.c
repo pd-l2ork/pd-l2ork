@@ -28,6 +28,8 @@ static void text_displace(t_gobj *z, t_glist *glist,
     int dx, int dy);
 static void text_getrect(t_gobj *z, t_glist *glist,
     int *xp1, int *yp1, int *xp2, int *yp2);
+static int text_click(t_gobj *z, struct _glist *glist,
+    int xpix, int ypix, int shift, int alt, int dbl, int doit);
 void canvas_howputnew(t_canvas *x, int *connectp, int *xpixp, int *ypixp,
     int *indexp, int *totalp);
 
@@ -883,9 +885,10 @@ typedef struct _gatom
     t_symbol *a_expanded_to; /* a_symto after $0, $1, ...  expansion */
     int a_shift_clicked;	 /* used to keep old text after \n. this is
     							activated by shift+clicking no the object */
-    int a_exclusive;           /* used to set the keyboard focus exclusive
-                                (off by default) 
-                             */
+    int a_exclusive;         /* used to set the keyboard focus exclusive
+                                (off by default) */
+    int a_hard_limit;        /* used to hard limit float output with
+                                drag limit values when typed */
 } t_gatom;
 
     /* prepend "-" as necessary to avoid empty strings, so we can
@@ -1174,7 +1177,22 @@ static void gatom_key(void *z, t_floatarg f)
     else if (c == '\n')
     {
         if (x->a_atom.a_type == A_FLOAT) {
-            if (x->a_buf[0]) x->a_atom.a_w.w_float = atof(x->a_buf);
+            t_float val;
+            if (x->a_buf[0])
+            {
+                val = atof(x->a_buf);
+                if (x->a_hard_limit)
+                {
+                    if (x->a_draglo != 0 || x->a_draghi != 0)
+                    {
+                        if (val < x->a_draglo)
+                            val = x->a_draglo;
+                        if (val > x->a_draghi)
+                            val = x->a_draghi;
+                    }
+                }
+                x->a_atom.a_w.w_float = val;
+            }
             //sprintf(x->a_buf, "%f", x->a_atom.a_w.w_float);
             //post("got float f=<%f> s=<%s>", x->a_atom.a_w.w_float, x->a_buf);
 
@@ -1242,7 +1260,8 @@ static void gatom_click(t_gatom *x,
     t_floatarg xpos, t_floatarg ypos, t_floatarg shift, t_floatarg ctrl,
     t_floatarg alt)
 {
-	//post("gatom_click shift=%f ctrl=%f alt=%f x=%lx", shift, ctrl, alt, x->a_glist);
+	//post("gatom_click shift=%f x=%f y=%f ctrl=%f alt=%f x=%lx", \
+        xpos, ypos, shift, ctrl, alt, x->a_glist);
     //pd_bind(&x->a_text.ob_pd, gensym("#keyname_a"));
 	//post("bind");
     if (x->a_text.te_width == 1)
@@ -1285,7 +1304,7 @@ static void gatom_click(t_gatom *x,
         // (which differentiates the button press or 1 from the aforesaid
         // two events). Long story short, we seek exclusive focus
         // with the vanilla gatom, based on its exlcusive flag (default off),
-        ///so that we can match the rest of the behavior.
+        // so that we can match the rest of the behavior.
 	   	glist_grab(x->a_glist, &x->a_text.te_g, gatom_motion, gatom_key,
 	        gatom_list, xpos, ypos, x->a_exclusive);
 	    //post("a_shift_clicked=%d", x->a_shift_clicked);
@@ -1295,6 +1314,46 @@ static void gatom_click(t_gatom *x,
 			x->a_buf[0] = 0;
 	    //post("a_shift_clicked=%d <%s>", x->a_shift_clicked, x->a_buf);
     }
+}
+
+static void gatom_focus(t_gatom *x, t_floatarg f)
+{
+    if (f == 1)
+    {
+        if (glist_isvisible(glist_getcanvas(x->a_glist)))
+        {
+            int xpos, ypos;
+            // first force remove grab from the previously grabbed object
+            t_glist *gl = glist_getcanvas(x->a_glist);
+            if (gl->gl_editor->e_grab && gl->gl_editor->e_keyfn)
+            {
+                (* gl->gl_editor->e_keyfn) (gl->gl_editor->e_grab, 0);
+                glist_grab(gl, 0, 0, 0, 0, 0, 0, 0);
+            }
+            glist_getnextxy(glist_getcanvas(x->a_glist), &xpos, &ypos);
+            text_click((t_gobj *)x, x->a_glist, xpos, ypos, 0, 0, 0, 1);
+        }
+        else
+        {
+            pd_error(x, "you can only focus gatoms when they are visible");
+        }
+    }
+    else if (f == 0)
+    {
+        if (glist_isvisible(glist_getcanvas(x->a_glist)))
+        {
+            gatom_key((void *)x, 0.0);
+        }
+        else
+        {
+            pd_error(x, "you can only focus gatoms when they are visible");
+        }
+    }
+}
+
+static void gatom_commit(t_gatom *x)
+{
+    gatom_key((void *)x, 10.0);
 }
 
 static void gatom_exclusive(t_gatom *x, t_floatarg f)
@@ -1357,7 +1416,7 @@ static void gatom_param(t_gatom *x, t_symbol *sel, int argc, t_atom *argv)
 {
     /* Check if we need to set an undo point. This happens if the user
        clicks the "Ok" button, but not when clicking "Apply" or "Cancel" */
-    if (atom_getintarg(8, argc, argv))
+    if (atom_getintarg(9, argc, argv))
         canvas_apply_setundo(x->a_glist, (t_gobj *)x);
 
     t_float width = atom_getfloatarg(0, argc, argv);
@@ -1368,6 +1427,7 @@ static void gatom_param(t_gatom *x, t_symbol *sel, int argc, t_atom *argv)
     t_symbol *symfrom = gatom_unescapit(atom_getsymbolarg(5, argc, argv));
     t_symbol *symto = gatom_unescapit(atom_getsymbolarg(6, argc, argv));
     t_float exclusive = atom_getfloatarg(7, argc, argv);
+    t_float limit = atom_getfloatarg(8, argc, argv);
 
     gobj_vis(&x->a_text.te_g, x->a_glist, 0);
     if (!*symfrom->s_name && *x->a_symfrom->s_name)
@@ -1397,6 +1457,21 @@ static void gatom_param(t_gatom *x, t_symbol *sel, int argc, t_atom *argv)
     x->a_text.te_width = width;
     x->a_wherelabel = ((int)wherelabel & 3);
     gatom_exclusive(x, exclusive);
+    x->a_hard_limit = limit;
+    if (x->a_atom.a_type == A_FLOAT && limit)
+    {
+        t_atom at;
+        t_float f = x->a_atom.a_w.w_float;
+        if (x->a_draglo != 0 || x->a_draghi != 0)
+        {
+            if (f < x->a_draglo)
+                f = x->a_draglo;
+            if (f > x->a_draghi)
+                f = x->a_draghi;
+        }
+        SETFLOAT(&at, f);
+        gatom_set(x, 0, 1, &at);
+    }
     x->a_label = label;
     if (*x->a_symfrom->s_name)
         pd_unbind(&x->a_text.te_pd,
@@ -1508,6 +1583,7 @@ void canvas_atom(t_glist *gl, t_atomtype type,
     x->a_symto = x->a_expanded_to = &s_;
     x->a_shift_clicked = 0;
     x->a_exclusive = 0;
+    x->a_hard_limit = 0;
     if (type == A_FLOAT)
     {
         x->a_atom.a_w.w_float = 0;
@@ -1614,7 +1690,7 @@ static void gatom_properties(t_gobj *z, t_glist *owner)
     gui_start_vmess("gui_gatom_dialog", "s",
         gfxstub_new2(&x->a_text.te_pd, x));
     gui_start_array();
-    gui_s("name");     gui_s("atom");
+    gui_s("name");     gui_s(x->a_atom.a_type == A_FLOAT ? "atom" : "satom");
     gui_s("width");    gui_i(x->a_text.te_width);
     gui_s("draglo");   gui_f(x->a_draglo);
     gui_s("draghi");   gui_f(x->a_draghi);
@@ -1623,6 +1699,7 @@ static void gatom_properties(t_gobj *z, t_glist *owner)
     gui_s("receive_symbol");  gui_s(gatom_escapit(x->a_symfrom)->s_name);
     gui_s("send_symbol");     gui_s(gatom_escapit(x->a_symto)->s_name);
     gui_s("exclusive");       gui_i(x->a_exclusive);
+    gui_s("limit");           gui_i(x->a_hard_limit);
     gui_end_array();
     gui_end_vmess();
 }
@@ -2458,13 +2535,14 @@ void text_save(t_gobj *z, t_binbuf *b)
             t_symbol *label = gatom_escapit(((t_gatom *)x)->a_label);
             t_symbol *symfrom = gatom_escapit(((t_gatom *)x)->a_symfrom);
             t_symbol *symto = gatom_escapit(((t_gatom *)x)->a_symto);
-            binbuf_addv(b, "ssiiifffsssi", gensym("#X"), sel,
+            binbuf_addv(b, "ssiiifffsssii", gensym("#X"), sel,
                 (int)x->te_xpix, (int)x->te_ypix, (int)x->te_width,
                 (double)((t_gatom *)x)->a_draglo,
                 (double)((t_gatom *)x)->a_draghi,
                 (double)((t_gatom *)x)->a_wherelabel,
                 label, symfrom, symto,
-                (int)((t_gatom *)x)->a_exclusive);
+                (int)((t_gatom *)x)->a_exclusive,
+                (int)((t_gatom *)x)->a_hard_limit);
         }
         else
         {
@@ -3118,6 +3196,10 @@ void g_text_setup(void)
         A_GIMME, 0);
     class_addmethod(gatom_class, (t_method)gatom_exclusive, gensym("exclusive"),
         A_FLOAT, 0);
+    class_addmethod(gatom_class, (t_method)gatom_focus, gensym("focus"),
+        A_FLOAT, 0);
+    class_addmethod(gatom_class, (t_method)gatom_commit, gensym("commit"),
+        A_NULL, 0);
     class_addmethod(gatom_class, (t_method)gatom_css, gensym("css"), A_GIMME, 0);
     class_setwidget(gatom_class, &gatom_widgetbehavior);
     class_setpropertiesfn(gatom_class, gatom_properties);

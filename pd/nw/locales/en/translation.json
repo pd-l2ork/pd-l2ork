@@ -127,7 +127,9 @@
       "width": "width",
       "width_tt": "width (in characters)",
       "exclusive": "exclusive keyboard focus",
-      "exclusive_tt": "whether the object captures all keyboard input while focused"
+      "exclusive_tt": "whether the object captures all keyboard input while focused",
+      "limit": "min/max limit for typed values",
+      "limit_tt": "keep typed values within the minimum/maximum limits"
     }
   },
   "menu": {
