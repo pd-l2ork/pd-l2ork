@@ -1,5 +1,5 @@
-#N canvas 126 117 553 702 10;
-#X obj 0 680 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
+#N canvas 65 32 553 901 10;
+#X obj 0 879 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
 14 #dcdcdc #404040 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header gatom 3 12 0 18
 #c4dcdc #000000 0;
@@ -9,7 +9,6 @@
 #X text 12 115 LIBRARY internal;
 #X text 12 155 WEBSITE http://crca.ucsd.edu/~msp/;
 #X text 12 35 LICENSE SIBSD;
-#X text 12 75 INLET_0 float bang symbol set;
 #X text 12 95 OUTLET_0 float;
 #X text 12 175 RELEASE_DATE 1997;
 #X text 12 55 DESCRIPTION atom (number box and symbol box);
@@ -18,45 +17,47 @@
 #X text 12 195 HELP_PATCH_AUTHORS Updated for Pd version 0.34. Jonathan
 Wilkes revised the patch to conform to the PDDP template for Pd version
 0.42. Additional improvements by Ivica Ico Bukvic.;
-#X restore 504 682 pd META;
-#X obj 0 481 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
+#X text 12 75 INLET_0 bang commit exclusive float focus list symbol
+set;
+#X restore 504 881 pd META;
+#X obj 0 581 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
 13 #dcdcdc #000000 0;
-#X obj 0 555 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8 12
+#X obj 0 655 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8 12
 0 13 #dcdcdc #000000 0;
-#X obj 0 584 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
+#X obj 0 684 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 #dcdcdc #000000 0;
-#X text 98 559 (none);
+#X text 98 659 (none);
 #N canvas 214 517 428 109 Related_objects 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
 #X text 47 1 Related Objects;
-#X floatatom 9 3 5 0 0 0 - - - 0, f 5;
+#X floatatom 9 3 5 0 0 0 - - - 0 0, f 5;
 #X obj 21 42 float;
 #X obj 61 42 list;
 #X obj 102 45 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
 #fcfcfc #000000 #000000 0 256 0 0;
 #X obj 169 42 drawnumber;
-#X restore 102 682 pd Related_objects;
-#X obj 78 240 cnv 17 3 220 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
+#X restore 102 881 pd Related_objects;
+#X obj 78 240 cnv 17 3 335 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
 #9c9c9c 0;
-#X text 98 489 float;
-#X obj 78 490 cnv 17 3 60 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
+#X text 98 589 float;
+#X obj 78 590 cnv 17 3 60 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
 #9c9c9c 0;
-#X floatatom 401 9 5 0 0 0 - - - 0, f 5;
-#X floatatom 25 58 0 0 0 0 - - - 0;
-#X floatatom 25 96 0 0 0 0 - - - 0;
+#X floatatom 401 9 5 0 0 0 - - - 0 0, f 5;
+#X floatatom 25 58 0 0 0 0 - - - 0 0;
+#X floatatom 25 96 0 0 0 0 - - - 0 0;
 #X msg 469 76 set 45;
-#X floatatom 469 104 0 0 0 0 - - - 0;
+#X floatatom 469 104 0 0 0 0 - - - 0 0;
 #X text 98 239 bang;
-#X text 98 343 float;
-#X text 98 373 list;
-#X text 98 393 symbol;
-#X text 98 423 set;
+#X text 98 386 float;
+#X text 98 459 list;
+#X text 98 479 symbol;
+#X text 98 509 set;
 #N canvas 98 96 468 652 Number_box_properties 0;
 #X obj 1 1 cnv 15 466 21 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
-#X floatatom 70 102 12 0 0 0 - - - 0, f 12;
-#X floatatom 71 223 1 0 0 0 - - - 0, f 1;
+#X floatatom 70 102 12 0 0 0 - - - 0 0, f 12;
+#X floatatom 71 223 1 0 0 0 - - - 0 0, f 1;
 #X text 50 3 Properties for gatom;
 #X text 20 38 Right click on a number box and choose "Properties" to
 change the following:;
@@ -64,25 +65,25 @@ change the following:;
 #X text 69 69 - width of the number box (in characters). By default
 the width is 5 characters.;
 #X text 148 102 width = 12 characters;
-#X floatatom 70 123 2 0 0 0 - - - 0, f 2;
+#X floatatom 70 123 2 0 0 0 - - - 0 0, f 2;
 #X text 148 123 width = 2 characters;
 #X text 69 164 If you select a width of 0 \, the number box will grow
 as needed to hold the number--BUT BEWARE \, THIS IS EXPENSIVE IN CPU
 TIME. In a production patch \, you'll want to set a specific width.
 ;
-#X floatatom 70 143 0 0 0 0 - - - 0;
+#X floatatom 70 143 0 0 0 0 - - - 0 0;
 #X text 148 143 width = 0 characters (read below);
 #X text 69 240 A width of one gives a clickable toggle switch a la
 Max.;
 #X text 88 223 width = 1 character: toggle between 0 and 1;
 #X text 19 260 limits;
-#X floatatom 71 282 5 0 127 0 - - - 0, f 5;
+#X floatatom 71 282 5 0 127 0 - - - 0 0, f 5;
 #X text 109 281 numbers between 0 and 127;
 #X text 69 260 - set lower and upper limits for scrolling the number
 box;
 #X text 68 300 This only affects scrolling- you can still send values
 to the number box that are outside these limits.;
-#X floatatom 71 353 5 0 127 1 my_number_box - - 0, f 5;
+#X floatatom 71 353 5 0 127 1 my_number_box - - 0 0, f 5;
 #X text 19 331 label;
 #X text 69 331 - give the number box a visible name;
 #X text 68 371 Use the radio buttons to reposition the label to the
@@ -91,7 +92,7 @@ label will automatically be converted to underscores.;
 #X text 19 413 messages;
 #X text 69 413 - nonlocal send and receive;
 #X floatatom 193 532 5 0 0 2 Number_box_7 gatom-help-rcv gatom-help-snd
-0, f 5;
+0 0, f 5;
 #X obj 276 540 r gatom-help-snd;
 #X obj 71 516 s gatom-help-rcv;
 #X msg 71 490 28;
@@ -99,23 +100,23 @@ label will automatically be converted to underscores.;
 and receive names to send messages through the number box. "Number-box-7"
 below is set to receive messages to "gatom-help-rcv" \, and send messages
 to "gatom-help-snd";
-#X floatatom 276 563 5 0 0 0 - - - 0, f 5;
+#X floatatom 276 563 5 0 0 0 - - - 0 0, f 5;
 #X text 68 583 Notice that you cannot make local connections with wires
 to "Number_box_7" when using non-local send and receive names. If you
 want to use both \, see the [nbx] object:;
 #X obj 71 626 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
 #fcfcfc #000000 #000000 0 256 0 0;
-#X floatatom 13 3 5 0 0 0 - - - 0, f 5;
+#X floatatom 13 3 5 0 0 0 - - - 0 0, f 5;
 #X connect 27 0 31 0;
 #X connect 29 0 28 0;
-#X restore 102 656 pd Number_box_properties;
-#X obj 4 682 pddp/pddplink all_about_help_patches.pd -text Usage Guide
+#X restore 102 855 pd Number_box_properties;
+#X obj 4 881 pddp/pddplink all_about_help_patches.pd -text Usage Guide
 ;
-#X symbolatom 25 138 10 0 0 0 - - - 0, f 10;
+#X symbolatom 25 138 10 0 0 0 - - - 0 0, f 10;
 #X text 11 23 atom (number box and symbol box);
-#X symbolatom 481 9 10 0 0 0 - - - 0, f 10;
+#X symbolatom 481 9 10 0 0 0 - - - 0 0, f 10;
 #X text 445 9 and;
-#X symbolatom 25 174 10 0 0 0 - - - 0, f 10;
+#X symbolatom 25 174 10 0 0 0 - - - 0 0, f 10;
 #X text 61 52 A number box allows you to display a number or enter
 a number using the mouse and keyboard. When a number arrives at the
 number box's inlet \, it is displayed and sent to the outlet. You can
@@ -128,25 +129,25 @@ cannot change the value by clicking and dragging.;
 ;
 #X text 168 239 - sends the current value to the outlet.;
 #X msg 469 156 set foo;
-#X symbolatom 469 180 10 0 0 0 - - - 0, f 10;
-#X text 168 393 - symbol box only: an incoming symbol is displayed
+#X symbolatom 469 180 10 0 0 0 - - - 0 0, f 10;
+#X text 168 479 - symbol box only: an incoming symbol is displayed
 and output. (Number box will display and output zero.);
-#X text 168 343 - number box only: sets the current value and outputs
+#X text 168 386 - number box only: sets the current value and outputs
 it. (Symbol box will display 'float' and output 'symbol float'.);
-#X text 168 373 - a list will be truncated to the first item.;
-#X text 168 423 - displays the incoming value without outputting it
+#X text 168 459 - a list will be truncated to the first item.;
+#X text 168 509 - displays the incoming value without outputting it
 (e.g. \, "set 23" will cause a number box to display 23). Sending a
 set message without a value does not change the current value of a
 number box or symbol box.;
-#X text 168 489 - number box only: outputs a float for each message
+#X text 168 589 - number box only: outputs a float for each message
 it receives (except set).;
-#X text 98 519 symbol;
-#X text 168 519 - symbol box only: outputs a symbol message for each
+#X text 98 619 symbol;
+#X text 168 619 - symbol box only: outputs a symbol message for each
 message it receives (except set).;
-#X text 100 622 Control-clicking (or command-clicking on a mac) toggles
+#X text 100 821 Control-clicking (or command-clicking on a mac) toggles
 the value between 0 and the last nonzero value.;
-#X floatatom 59 630 5 0 0 0 - - - 0, f 5;
-#X text 100 588 You can shift-click a number box and drag to change
+#X floatatom 59 829 5 0 0 0 - - - 0 0, f 5;
+#X text 100 688 You can shift-click a number box and drag to change
 the number by hundredths instead of ones.;
 #X text 61 118 The number box is called "Number" in the "Put" menu.
 ;
@@ -155,20 +156,20 @@ and begin typing. Then click "Enter" to finish and output it.;
 #N canvas 277 184 467 607 advanced_css_properties 0;
 #X obj 157 -307 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
-#X floatatom 104 -360 5 0 0 0 - - - 0, f 5;
+#X floatatom 104 -360 5 0 0 0 - - - 0 0, f 5;
 #X msg 131 -383 css data font-size 20px;
 #X symbolatom 82 -33 43 0 0 0 - to-symbol-gatom symbol-atom-output
-0, f 43;
+0 0, f 43;
 #X msg 120 -406 css border fill rgba(255 \\\, 0 \\\, 255 \\\, 0.9)
 ;
 #X msg 222 -181 0;
-#X floatatom 173 -131 5 0 0 0 - - - 0, f 5;
-#X floatatom 82 -131 5 0 0 0 - - - 0, f 5;
+#X floatatom 173 -131 5 0 0 0 - - - 0 0, f 5;
+#X floatatom 82 -131 5 0 0 0 - - - 0 0, f 5;
 #X obj 222 -203 sel 0;
 #X obj 37 -61 print;
 #X obj 82 -109 pack 0 0 0, f 31;
 #X obj 156 -231 t f f f f;
-#X floatatom 265 -131 5 0 0 0 - - - 0, f 5;
+#X floatatom 265 -131 5 0 0 0 - - - 0 0, f 5;
 #X obj 82 -156 expr 1+$f1/20;
 #X obj 265 -156 expr $f1*-.5;
 #X msg 82 -86 css border transform scale(\$1) translate(\$2px \\\,
@@ -178,7 +179,7 @@ and begin typing. Then click "Enter" to finish and output it.;
 #X msg 104 -429 css border transform skew(\$1deg);
 #X obj 0 -594 cnv 15 466 21 empty \$0-pddp.cnv.subheading empty 3 12
 0 14 #c4dcdc #000000 0;
-#X floatatom 12 -591 5 0 0 0 - - - 0, f 5;
+#X floatatom 12 -591 5 0 0 0 - - - 0 0, f 5;
 #X text 49 -591 Advanced CSS properties for gatom;
 #X obj 82 -61 s to-symbol-gatom;
 #X obj 5 -489 pddplink https://www.w3schools.com/css/default.asp;
@@ -191,7 +192,7 @@ send. Note that CSS commands work for both types of gatom. For more
 info on the CSS commands \, visit:, f 75;
 #X obj 157 -260 counter 1 0 3;
 #X obj 157 -285 metro 20;
-#X floatatom 104 -451 5 0 0 0 - - - 0, f 5;
+#X floatatom 104 -451 5 0 0 0 - - - 0 0, f 5;
 #X connect 0 0 26 0;
 #X connect 2 0 1 0;
 #X connect 4 0 1 0;
@@ -215,18 +216,18 @@ info on the CSS commands \, visit:, f 75;
 #X connect 25 0 11 0;
 #X connect 26 0 25 0;
 #X connect 27 0 18 0;
-#X restore 255 656 pd advanced_css_properties;
-#X text 98 256 exclusive;
-#X text 168 256 - sets the exclusive keyboard focus on (1) or off (0
+#X restore 254 855 pd advanced_css_properties;
+#X text 98 299 exclusive;
+#X text 168 299 - sets the exclusive keyboard focus on (1) or off (0
 \, default). With it set "on" when the user is typing into the gatom
 \, objects like key and keyname will receive no input until the user
 removes focus from the object by clicking outside of it.;
 #N canvas 599 201 467 468 exclusive_focus 0;
 #X obj 0 -594 cnv 15 466 21 empty \$0-pddp.cnv.subheading empty 3 12
 0 14 #c4dcdc #000000 0;
-#X floatatom 12 -591 5 0 0 0 - - - 0, f 5;
+#X floatatom 12 -591 5 0 0 0 - - - 0 0, f 5;
 #X text 49 -591 Exclusive focus;
-#X floatatom 136 -336 13 0 0 0 - - - 1, f 13;
+#X floatatom 136 -336 13 0 0 0 - - - 1 0, f 13;
 #X text 5 -567 Notice how when typing into the left gatom there is
 no output via the key and keyname objects \, whereas while typing into
 the right gatom \, there is? This is because the left gatom has its
@@ -237,13 +238,13 @@ The same is true for both the number and symbol gatom., f 75;
 #X obj 136 -407 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1 1;
 #X msg 136 -384 exclusive \$1;
-#X symbolatom 238 -336 19 0 0 0 - - - 0, f 19;
+#X symbolatom 238 -336 19 0 0 0 - - - 0 0, f 19;
 #X obj 136 -279 key;
-#X floatatom 136 -254 5 0 0 0 - - - 0, f 5;
+#X floatatom 136 -254 5 0 0 0 - - - 0 0, f 5;
 #X obj 176 -279 keyname;
 #X obj 176 -254 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1 1;
-#X symbolatom 215 -254 10 0 0 0 - - - 0, f 10;
+#X symbolatom 215 -254 10 0 0 0 - - - 0 0, f 10;
 #X text 243 -354 then type here:;
 #X text 142 -354 type here:;
 #X connect 5 0 6 0;
@@ -252,7 +253,62 @@ The same is true for both the number and symbol gatom., f 75;
 #X connect 9 0 10 0;
 #X connect 11 0 12 0;
 #X connect 11 1 13 0;
-#X restore 273 319 pd exclusive_focus;
+#X restore 273 362 pd exclusive_focus;
+#X text 98 416 focus;
+#X text 168 416 - focuses (1) or removes focus (0) from the gatom \,
+effectively simulating the gatom being clicked on. Useful for enabling
+navigation between number boxes using keyboard.;
+#X text 98 256 commit;
+#X text 168 256 - simulates pressing enter while the object is focused
+\, which results in committing whatever values are currently entered
+\, or simply reiterating the last pressed value.;
+#X text 100 722 By default \, low and high limits (settable in properties)
+apply only to the mouse drags. Pd-L2Ork version also has the hard limit
+option that applies the same to the values entered via keyboard \,
+which are truncated upon committing them (by pressing enter or passing
+a "commit" message to the object). The limits apply only to the number
+version of the gatom.;
+#N canvas 379 363 466 367 gatom-focus 0;
+#X obj -1 0 cnv 15 466 21 empty \$0-pddp.cnv.subheading empty 3 12
+0 14 #c4dcdc #000000 0;
+#X floatatom 11 3 5 0 0 0 - - - 0 0, f 5;
+#X text 48 3 Gatom focus;
+#X msg 116 263 focus \$1;
+#X floatatom 116 297 5 0 0 0 - - - 0 0, f 5;
+#X obj 116 232 tgl 23 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1;
+#X obj 116 154 key;
+#X msg 180 263 commit;
+#X obj 116 179 sel 32 96;
+#X obj 141 207 t 0 b, f 7;
+#X text 181 172 press space to toggle editingpress ~ key to commit
+current value;
+#X obj 116 321 print focused-gatom-output;
+#X obj 94 321 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000;
+#X obj 229 263 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
+#X text 4 27 In Pd-L2Ork \, gatoms allow for focusing and committing
+of values via focus 1/0 and commit messages. Please note that the focus
+message requires that the object is visible \, while commit can be
+used at any time and effectively defaults to a bang-like event. One
+notable difference between bang and commit is that commit simulates
+the pressing of the enter key once the new value is entered \, thus
+committing any newly edited value. Focusing an gatom will automatically
+terminate focus on any previously focused object \, so the unfocusing
+part of the example below is entirely optional., f 75;
+#X connect 3 0 4 0;
+#X connect 4 0 11 0;
+#X connect 4 0 12 0;
+#X connect 5 0 3 0;
+#X connect 6 0 8 0;
+#X connect 7 0 4 0;
+#X connect 8 0 5 0;
+#X connect 8 1 9 0;
+#X connect 9 0 5 0;
+#X connect 9 1 7 0;
+#X connect 9 1 13 0;
+#X restore 418 855 pd gatom-focus;
 #X connect 13 0 14 0;
 #X connect 15 0 16 0;
 #X connect 24 0 28 0;
