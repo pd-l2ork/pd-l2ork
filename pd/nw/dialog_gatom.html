@@ -58,6 +58,18 @@
             </td>
           </tr>
 
+
+          <tr class="limit prop">
+            <td colspan="4">
+              <label data-i18n="[title]gatom.prop.limit_tt">
+                <input type="checkbox" id="limit" name="limit" value="on"
+                       onchange="update_attr(this);">
+                <span data-i18n="gatom.prop.limit"></span>
+              </label>
+              <br>
+            </td>
+          </tr>
+
           <tr class="outtype prop">
             <td>
               <label data-i18n="[title]gatom.prop.dropdown_outtype_tt">
@@ -161,15 +173,6 @@
             </td>
           </tr>
         </table>
-
-        <div class="limit">
-          <label data-i18n="[title]gatom.prop.limit_tt">
-            <input type="checkbox" id="limit" name="limit" value="on"
-                   onchange="update_attr(this);">
-            <span data-i18n="gatom.prop.limit"></span>
-          </label>
-          <br>
-        </div>
 
         <div class="exclusive">
           <label data-i18n="[title]gatom.prop.exclusive_tt">
