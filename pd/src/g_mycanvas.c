@@ -95,8 +95,8 @@ static void my_canvas__motionhook(t_scalehandle *sh, t_floatarg mouse_x, t_float
             x->x_vis_h :
             (int)mouse_y - text_ypix(&x->x_gui.x_obj, x->x_gui.x_glist) -
                 sh->h_adjust_y;
-        x->x_vis_w = maxi(width, IEM_GUI_MINSIZE);
-        x->x_vis_h = maxi(height, IEM_GUI_MINSIZE);
+        x->x_vis_w = maxi(width, IEM_GUI_MYCANVAS_MINSIZE);
+        x->x_vis_h = maxi(height, IEM_GUI_MYCANVAS_MINSIZE);
 
         scalehandle_drag_scale(sh);
 
@@ -197,7 +197,7 @@ static void my_canvas_properties(t_gobj *z, t_glist *owner)
     gui_s("selection_size"); gui_i(x->x_gui.x_w);
     gui_s("visible_width");  gui_i(x->x_vis_w);
     gui_s("visible_height"); gui_i(x->x_vis_h);
-    gui_s("minimum_size");   gui_i(IEM_GUI_MINSIZE);
+    gui_s("minimum_size");   gui_i(IEM_GUI_MYCANVAS_MINSIZE);
 
     gui_s("range_schedule"); // no idea what this is...
     gui_i(0);
