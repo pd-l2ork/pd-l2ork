@@ -143,8 +143,11 @@ var canvas_events = (function() {
             // escape special $@ sign
             text = text.replace(/(\$@)/g, "\\$@");
 
-            // escape "," and ";"
-            text = text.replace(/(?!\\)(,|;)/g, " \\$1 ");
+            //pdgui.post("text_to_fudi:\n...before <"+text+">");
+            
+            //var j;
+            //for(j=0;j<text.length;j++)
+            //    pdgui.post("..."+text[j].charCodeAt()+"("+text[j]+")");
 
             // filter consecutive ascii32 OR deal with spaces and
             // \n symbols inside comments to retain them. Also,
@@ -152,14 +155,24 @@ var canvas_events = (function() {
             // \v). We add a space to each of them to ensure that
             // added lines are properly displayed in the comment.
             if (iscomment === 1) {
-                text = text.replace(/\n/g, "\u000B");
-                text = text.replace(/ /g, "\u00A0");
+                // escape "," and ";"
+                //text = text.replace(/(?<!\\)(;|,)/g, "\\$1");
+                text = text.replace(/(\\;|\\,)/g, "\\\\$1");
+                text = text.replace(/(?<!\\)(;|,)/g, "\\$1");
+                text = text.replace(/(?<!\ |\\)(\\;|\\,)/g, " $1");
+                text = text.replace(/(\\;|\\,)(?!\ )/g, "$1 ");
+                text = text.replace(/(\\ )/g, " ");
+
+                // substitute spaces and \n, so that we can preserve
+                // comment formatting
+                text = text.replace(/\n/g, "\v");
+                //text = text.replace(/ /g, "\u00A0");
                 var lines = text.split('\v');
                 var i;//, j;
                 text = "";
                 for(i = 0; i < lines.length; i++) {
-                    if (lines[i] == "")
-                        lines[i] = "\u00A0";
+                    //if (lines[i] == "")
+                    //    lines[i] = "\u00A0";
                     if (i < lines.length - 1) {
                         text = text.concat(lines[i], '\v');
                     } else {
@@ -177,8 +190,33 @@ var canvas_events = (function() {
                     pdgui.post("..."+text[j].charCodeAt());
                 */
             } else {
+                // escape , and ; and differentiate between those
+                // that are real and those that are just written (pre-escaped)
+                // NOTE: if the escaped , and ; is not preceded by a space
+                // it does not need triple \\\ before it since it will be 
+                // bundled with the symbol starting with letters before it.
+                // if it is standing by itself, it will be escaped by \\\ later
+                // on the c side of things, as reflected in the saved file.
+                // therefore abc\, will be escaped in a way that treats it
+                // simply as a character, while abc \, will result in a functional
+                // comma, becoming abc \\\, when saved.
+                text = text.replace(/(\\;|\\,)/g, "\\\\$1");
+                text = text.replace(/(?<!\\)(;|,)/g, "\\$1");
+                text = text.replace(/(?<!\ |\\)(\\;|\\,)/g, " $1");
+                text = text.replace(/(\\;|\\,)(?!\ )/g, "$1 ");
+                //text = text.replace(/(\\ )/g, " ");
+
+                // get rid of extra consecutive spaces
                 text = text.replace(/\u0020+/g, " ");
             }
+            // we need to make sure that the very last character is not a backslash
+            // which can escape the final semicolon and cause a lot of problems...
+            //pdgui.post("...last char=<" + text[text.length-1] +">");
+            if (text[text.length-1] === '\\') {
+                //pdgui.post("...got a backslash as the last char...");
+                text = text.replace(/.$/,'\0');
+            }
+            //pdgui.post("...after  <"+text+">");
             return text;
         },
         string_to_array_of_chunks = function(msg) {

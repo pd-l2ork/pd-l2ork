@@ -215,9 +215,14 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
     //fprintf(stderr,"rtext_senditup <%s>\n", x->x_buf);
     if (x)
     {
+        int iscomment = 0;
+        if (pd_class(&x->x_text->te_pd) == text_class &&
+                x->x_text->te_type == T_TEXT)
+            iscomment = 1;
+        //post("iscomment=%d", iscomment);
         char smallbuf[200] = { '\0' }, *tempbuf;
         int outchars_b = 0, nlines = 0, ncolumns = 0,
-            pixwide, pixhigh, font, fontwidth, fontheight, findx, findy;
+            pixwide, pixhigh, font, fontwidth, fontheight, findx, findy;//, bvfound;
         int reportedindex = 0;
         t_canvas *canvas = glist_getcanvas(x->x_glist);
         int widthspec_c = x->x_text->te_width; // width if any specified
@@ -247,6 +252,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
         else tempbuf = smallbuf;
         while (x_bufsize_c - inindex_c > 0)
         {
+            //bvfound = 0;
             int inchars_b  = x->x_bufsize - inindex_b;
             int inchars_c  = x_bufsize_c  - inindex_c;
             int maxindex_c =
@@ -262,9 +268,11 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
             int foundit_bv  = firstone(x->x_buf + inindex_b, '\v', maxindex_b);
             if ((foundit_bv < foundit_b && foundit_bv != -1) ||
                 (foundit_b == -1 && foundit_bv != -1))
+            {
                 foundit_b = foundit_bv;
+            }
             if (foundit_b < 0) //if we did not find an \n or a \v
-            { 
+            {
                 //post("no v found %d", foundit_b);
                 /* too much text to fit in one line? */
                 if (inchars_c > widthlimit_c)
@@ -291,12 +299,13 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
                 }
             }
             else {
-                //post("found v %d", foundit_b);
+                //post("found b=%d bv=%d", foundit_b, foundbv);
                 foundit_c = u8_charnum(x->x_buf + inindex_b, foundit_b);
+                //bvfound = 1;
             }
             //post("final foundit_b=%d", foundit_b);
 
-            // this is true when the object takes a signle line
+            // this is true when the object takes a single line
             if (nlines == findy)
             {
                 int actualx = (findx < 0 ? 0 :
@@ -317,12 +326,23 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
             inindex_b += (foundit_b + eatchar);
             inindex_c += (foundit_c + eatchar);
             //post("...%d(%c) [%d(%c)]", x->x_buf[inindex_b], x->x_buf[inindex_b],
-            //    x->x_buf[inindex_c], x->x_buf[inindex_c]);
-            if (inindex_b < x->x_bufsize)
+            //    x->x_buf[inindex_c-1], x->x_buf[inindex_c-1]);
+            if (inindex_b < x->x_bufsize && (!iscomment || tempbuf[outchars_b-1] != '\n'))
+            {
+                //post("rtext adding endline: %d", tempbuf[outchars_b-1]);
                 tempbuf[outchars_b++] = '\n';
+            }
             // if we found a row that is longer than previous (total width)
-            if (foundit_c > ncolumns)
-                ncolumns = foundit_c;
+            if (foundit_c > ncolumns) {
+                ncolumns = foundit_c; // - (x->x_buf[inindex_c-2] != ';' && bvfound ? 1 : 0);
+                /*post("larger ncolumns %d %d %d | %d %d | %d",
+                    x->x_buf[inindex_c-2],
+                    x->x_buf[inindex_c-1],
+                    x->x_buf[inindex_c-0],
+                    foundit_b,
+                    ncolumns,
+                    bvfound);*/
+            }
             // ico@vt.edu 2021-03-30:
             // only if we did not find a \v or an \n do we add a line here
             // after extensive testing it appears not doing so adds extra lines
@@ -341,7 +361,10 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
         }
         endpost();*/
         // append new line in case we end our input with an \n
-        if (x_bufsize_c > 0 && (x->x_buf[x->x_bufsize - 1] == '\n' || x->x_buf[x->x_bufsize - 1] == '\v'))
+        if (x_bufsize_c > 0 && 
+                (x->x_buf[x->x_bufsize - 1] == '\n' ||
+                 x->x_buf[x->x_bufsize - 1] == '\v')
+            )
         {
             nlines++;
             tempbuf[outchars_b++] = '\n';
@@ -392,7 +415,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
         }
         if (action == SEND_FIRST)
         {
-            //fprintf(stderr,"send_first rtext=%zx t_text=%zx\n", x, x->x_text);
+            //post("send_first <%s>", tempbuf);
             gui_vmess("gui_text_new", "xssiiisi",
                 canvas, x->x_tag, rtext_gettype(x)->s_name,
                 glist_isselected(x->x_glist, ((t_gobj*)x->x_text)),
@@ -404,6 +427,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
         }
         else if (action == SEND_UPDATE)
         {
+            //post("send_update <%s>", tempbuf);
             gui_vmess("gui_text_set", "xss", canvas, x->x_tag, tempbuf);
 
             // We add the check for T_MESSAGE below so that the box border

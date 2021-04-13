@@ -2617,13 +2617,20 @@ function message_border_points(width, height) {
 // the drawing of the msg box
 function gui_message_update_textarea_border(elem, init_width) {
 	if (elem.classList.contains("msg")) {
-		if (init_width) {
+        /*
+        var rect = elem.getBoundingClientRect();
+        var width = rect["right"] - rect["x"];
+        var height = rect["bottom"] - rect["y"];
+        */
+        //post("msg border <"+width+" "+height+">");
+		/*if (init_width) {
 			var i, ncols = 0,
 			    text = elem.innerText,
 			    textByLine = text.split(/\r*\n/);
 			for (i = 0; i < textByLine.length; i++) {
 				if (textByLine[i].length > ncols) {
 					ncols = textByLine[i].length;
+                    //post("ncols="+ncols);
 				}
 			}
             var minw = parseInt(elem.style.minWidth);
@@ -2632,16 +2639,19 @@ function gui_message_update_textarea_border(elem, init_width) {
                 ncols = 3;
             if(spec > 0)
                 ncols = spec;
-			configure_item(elem, {
-	            cols: ncols
-        	});
-        	gui_gobj_erase_io(elem.getAttribute("cid"), elem.getAttribute("tag"));
-		}
+            else if (ncols > 60)
+                ncols = 60;
+			//configure_item(elem, {
+	        //    cols: ncols
+        	//});
+        	//gui_gobj_erase_io(elem.getAttribute("cid"), elem.getAttribute("tag"));
+		}*/
 		gui_message_redraw_border(
 			elem.getAttribute("cid"),
 			elem.getAttribute("tag"),
-			ncols * elem.getAttribute("font_width") + 4,
-			parseInt(elem.offsetHeight / elem.getAttribute("font_height")) * elem.getAttribute("font_height") + 4
+			elem.offsetWidth + 4,
+			parseInt(elem.offsetHeight / elem.getAttribute("font_height")) *
+                elem.getAttribute("font_height") + 4
 			);
 	}
 }
@@ -2832,14 +2842,29 @@ function text_line_height_kludge(fontsize, fontsize_type) {
 }
 
 function text_to_tspans(cid, svg_text, text) {
-    var lines, i, len, tspan, fontsize, text_node;
+    var lines, i, len, tspan, fontsize, newtext, text_node, type;
+
     lines = text.split("\n");
     len = lines.length;
     // Get fontsize (minus the trailing "px")
     fontsize = svg_text.getAttribute("font-size").slice(0, -2);
     for (i = 0; i < len; i++) {
-        // remove backslashes
-        var newtext = lines[i].replace(/\\,/g,",");
+        // remove escaped commas and semicolons in gatom and comment objects only
+        newtext = null;
+        type = svg_text.parentNode;
+        if (type !== null) {
+            type = type.classList;
+            if (type !== null && type.contains("atom")) {
+                //post("text_to_tspans " + 
+                //    (type.contains("comment") ? "comment" : "other") + " escaping");
+                newtext = lines[i].replace(/\\,/g,",");
+                newtext = newtext.replace(/\\;/g,";");
+            }
+        }
+        if (newtext == null)
+        {
+            newtext = lines[i];
+        }
         tspan = create_item(cid, "tspan", {
             dy: i == 0 ? 0 : text_line_height_kludge(+fontsize, "gui") + "px",
             x: 0,
@@ -2944,6 +2969,16 @@ function gui_text_new(cid, tag, type, isselected, left_margin, font_height, text
     difference here to provide the two with different tag names, so that we can
     prevent the label from being also "activated" (e.g. when user clicks on the
     gatom to edit its contents in non-edit mode). */
+
+    if (type === "text") {
+        // if we are comment, remove escaped stuf
+        // we need to do this here because text_to_tspans will not know its parent
+        // and therefore the escaping there will not have any effect when called
+        // below
+        //text = text.replace(/\\,/g,",");
+        //text = text.replace(/\\;/g,";");
+    }
+
     var classname = "box_text";
     if (type === "atom") {
         classname = "box_text data";
@@ -6664,8 +6699,13 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
 
     // replace \v for \n and \u00A0 for " ". This is only used by the comments,
     // so it only affects the comment object, while the rest should be unaffected
-    text = text.replace(/\v/g, "\n");
-    text = text.replace(/\u00A0/g, " ");
+    if (type === "comment") {
+        //post("...replacing");
+        text = text.replace(/\v/g, "\n");
+        // we get rid of multiple consecutive \n because binbuf inserts
+        // at some point \n behind ; which results in a growing comment
+        text = text.replace(/\n+/g, "\n");
+    }
 
     gui(cid).get_nw_window(function(nw_win) {
         zoom = nw_win.zoomLevel;
@@ -6813,7 +6853,7 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
                     p.style.setProperty("min-width", "3ch");
                 else if (tl > 3 && tl < mw-1)
                 {
-                    var text2lines = text.split('\n');
+                    var text2lines = p.innerText.split('\n');
                     var i, j, n;
                     n = 0;
                     for (i = 0; i < text2lines.length; i++) {
@@ -6826,19 +6866,9 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
                         tl = n;
                     p.style.setProperty("min-width", tl+"ch");
                 }
-                var text = p.innerText.split('\n');
-                var lngth = text.length;
-                //post(">>>>>>>>>>>>length="+ p.innerText.split('\n').length);
-                for(n = 0; n < text.length; n++) {
-                    //post("====");
-                    //for (m=0; m<text[n].length; m++)
-                        //post("...<"+text[n][m]+"> "+text[n][m].charCodeAt());
-                    if (text[n].length == 0 && n == text.length - 1) {
-                        //post("YEAH!");
-                        lngth--;
-                    }
-                }
-                pdsend(cid, "cah", lngth);
+                var pheight = parseInt(p.offsetHeight / p.getAttribute('font_height'));
+                //post("height="+ pheight + " " + p.getAttribute('font_height'));
+                pdsend(cid, "cah", pheight);
             }; 
         }
         //p.style.setProperty("white-space", "break-spaces");
@@ -6867,7 +6897,7 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
             //shove_svg_background_data_into_css(patchwin[cid].window,
             //    parseInt(get_gobj(cid, tag).getBoundingClientRect().height /
             //        (parseInt(p.style.lineHeight) / 100 * font_size)));
-        	gui_message_update_textarea_border(p,1);
+        	gui_message_update_textarea_border(p, 1);
         }
         p.focus();
         select_text(cid, p, sel_start, sel_end);

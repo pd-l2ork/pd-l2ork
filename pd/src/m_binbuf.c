@@ -86,7 +86,7 @@ void binbuf_clear(t_binbuf *x)
     /* convert text to a binbuf */
 void binbuf_text(t_binbuf *x, char *text, size_t size)
 {
-    //fprintf(stderr, "current text: %.*s\n", size, text);
+    //post("current text: %d <%s>", size, text);
     char buf[MAXPDSTRING+1], *bufp, *ebuf = buf+MAXPDSTRING;
     const char *textp = text, *etext = text+size;
     t_atom *ap;
@@ -102,8 +102,17 @@ void binbuf_text(t_binbuf *x, char *text, size_t size)
         while ((textp != etext) && (*textp == ' ' || *textp == '\n'
             || *textp == '\r' || *textp == '\t')) textp++;
         if (textp == etext) break;
-        if (*textp == ';') SETSEMI(ap), textp++;
-        else if (*textp == ',') SETCOMMA(ap), textp++;
+        if ((*textp == ';' && *textp == text) ||
+            (*textp == ';' && *(textp-1) != '\\'))
+        {
+            SETSEMI(ap), textp++;
+        }
+        else if ((*textp == ',' && *textp == text) ||
+            (*textp == ',' && *(textp-1) != '\\'))
+        {
+            //post("comma");
+            SETCOMMA(ap), textp++;
+        }
         else
         {
                 /* it's an atom other than a comma or semi */
@@ -266,9 +275,12 @@ void binbuf_gettext(t_binbuf *x, char **bufp, int *lengthp)
         newlength = length + strlen(string) + 1;
         if (!(newbuf = resizebytes(buf, length, newlength))) break;
         buf = newbuf;
-        //fprintf(stderr,"string=<%s> buf=<%s> length=%d\n", string, buf, length);
+        //post("string=<%s> buf=<%s> length=%d\n", string, buf, length);
         strcpy(buf + length, string);
         length = newlength;
+        // this is where we automatically add \n after ;
+        // for the time being, we will keep this as-is, even though
+        // it is a kludge, mainly to keep backwards compatibility
         if (ap->a_type == A_SEMI) buf[length-1] = '\n';
         else buf[length-1] = ' ';
         //if (ap->a_type == A_COMMA) length--;

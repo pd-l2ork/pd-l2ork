@@ -8545,8 +8545,9 @@ static void canvas_buftotext(t_canvas *x, t_symbol *s, int argc, t_atom *argv)
             else
                 x->gl_editor->e_textdirty = 1;
             binbuf_free(b);
-            // Set the dirty flag since we've changed the rtext content...
-            canvas_dirty(x, 1);
+            // Set the dirty flag only if we've changed the rtext content...
+            if (x->gl_editor->e_textdirty == 1)
+                canvas_dirty(x, 1);
             x->gl_editor->e_onmotion = MA_NONE; // undo any mouse actions
             break;
         }

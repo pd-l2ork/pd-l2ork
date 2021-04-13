@@ -2293,7 +2293,7 @@ static void text_get_typestring(int type, char *buf)
 
 static void text_vis(t_gobj *z, t_glist *glist, int vis)
 {
-    //fprintf(stderr,"text_vis %d\n", vis);
+    //post("text_vis %d", vis);
     t_text *x = (t_text *)z;
     int x1, y1, x2, y2;
     char type[8];
