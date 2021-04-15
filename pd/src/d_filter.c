@@ -2,7 +2,7 @@
 * For information on usage and redistribution, and for a DISCLAIMER OF ALL
 * WARRANTIES, see the file, "LICENSE.txt," in this distribution.  */
 
-/*  "filters", both linear and nonlinear. 
+/*  "filters", both linear and nonlinear.
 */
 #include "m_pd.h"
 #include <math.h>
@@ -57,7 +57,7 @@ static t_int *sighip_perform(t_int *w)
     t_sample *in = (t_sample *)(w[1]);
     t_sample *out = (t_sample *)(w[2]);
     t_hipctl *c = (t_hipctl *)(w[3]);
-    int n = (t_int)(w[4]);
+    int n = (int)w[4];
     int i;
     t_sample last = c->c_x;
     t_sample coef = c->c_coef;
@@ -71,7 +71,7 @@ static t_int *sighip_perform(t_int *w)
             last = new;
         }
         if (PD_BIGORSMALL(last))
-            last = 0; 
+            last = 0;
         c->c_x = last;
     }
     else
@@ -88,7 +88,7 @@ static t_int *sighip_perform_old(t_int *w)
     t_sample *in = (t_sample *)(w[1]);
     t_sample *out = (t_sample *)(w[2]);
     t_hipctl *c = (t_hipctl *)(w[3]);
-    int n = (t_int)(w[4]);
+    int n = (int)w[4];
     int i;
     t_sample last = c->c_x;
     t_sample coef = c->c_coef;
@@ -101,7 +101,7 @@ static t_int *sighip_perform_old(t_int *w)
             last = new;
         }
         if (PD_BIGORSMALL(last))
-            last = 0; 
+            last = 0;
         c->c_x = last;
     }
     else
@@ -195,7 +195,7 @@ static t_int *siglop_perform(t_int *w)
     t_sample *in = (t_sample *)(w[1]);
     t_sample *out = (t_sample *)(w[2]);
     t_lopctl *c = (t_lopctl *)(w[3]);
-    int n = (t_int)(w[4]);
+    int n = (int)w[4];
     int i;
     t_sample last = c->c_x;
     t_sample coef = c->c_coef;
@@ -213,7 +213,7 @@ static void siglop_dsp(t_siglop *x, t_signal **sp)
     x->x_sr = sp[0]->s_sr;
     siglop_ft1(x,  x->x_hz);
     dsp_add(siglop_perform, 4,
-        sp[0]->s_vec, sp[1]->s_vec, 
+        sp[0]->s_vec, sp[1]->s_vec,
             x->x_ctl, (t_int)sp[0]->s_n);
 
 }
@@ -320,7 +320,7 @@ static t_int *sigbp_perform(t_int *w)
     t_sample *in = (t_sample *)(w[1]);
     t_sample *out = (t_sample *)(w[2]);
     t_bpctl *c = (t_bpctl *)(w[3]);
-    int n = (t_int)(w[4]);
+    int n = (int)w[4];
     int i;
     t_sample last = c->c_x1;
     t_sample prev = c->c_x2;
@@ -348,7 +348,7 @@ static void sigbp_dsp(t_sigbp *x, t_signal **sp)
     x->x_sr = sp[0]->s_sr;
     sigbp_docoef(x, x->x_freq, x->x_q);
     dsp_add(sigbp_perform, 4,
-        sp[0]->s_vec, sp[1]->s_vec, 
+        sp[0]->s_vec, sp[1]->s_vec,
             x->x_ctl, (t_int)sp[0]->s_n);
 
 }
@@ -408,7 +408,7 @@ static t_int *sigbiquad_perform(t_int *w)
     t_sample *in = (t_sample *)(w[1]);
     t_sample *out = (t_sample *)(w[2]);
     t_biquadctl *c = (t_biquadctl *)(w[3]);
-    int n = (t_int)(w[4]);
+    int n = (int)w[4];
     int i;
     t_sample last = c->c_x1;
     t_sample prev = c->c_x2;
@@ -421,7 +421,7 @@ static t_int *sigbiquad_perform(t_int *w)
     {
         t_sample output =  *in++ + fb1 * last + fb2 * prev;
         if (PD_BIGORSMALL(output))
-            output = 0; 
+            output = 0;
         *out++ = ff1 * output + ff2 * last + ff3 * prev;
         prev = last;
         last = output;
@@ -475,7 +475,7 @@ static void sigbiquad_set(t_sigbiquad *x, t_symbol *s, int argc, t_atom *argv)
 static void sigbiquad_dsp(t_sigbiquad *x, t_signal **sp)
 {
     dsp_add(sigbiquad_perform, 4,
-        sp[0]->s_vec, sp[1]->s_vec, 
+        sp[0]->s_vec, sp[1]->s_vec,
             x->x_ctl, (t_int)sp[0]->s_n);
 
 }
@@ -523,7 +523,7 @@ static t_int *sigsamphold_perform(t_int *w)
     t_sample *in2 = (t_sample *)(w[2]);
     t_sample *out = (t_sample *)(w[3]);
     t_sigsamphold *x = (t_sigsamphold *)(w[4]);
-    int n = (t_int)(w[5]);
+    int n = (int)w[5];
     int i;
     t_sample lastin = x->x_lastin;
     t_sample lastout = x->x_lastout;
@@ -542,7 +542,7 @@ static t_int *sigsamphold_perform(t_int *w)
 static void sigsamphold_dsp(t_sigsamphold *x, t_signal **sp)
 {
     dsp_add(sigsamphold_perform, 5,
-        sp[0]->s_vec, sp[1]->s_vec, sp[2]->s_vec, 
+        sp[0]->s_vec, sp[1]->s_vec, sp[2]->s_vec,
             x, (t_int)sp[0]->s_n);
 }
 
@@ -599,7 +599,7 @@ static t_int *sigrpole_perform(t_int *w)
     t_sample *in2 = (t_sample *)(w[2]);
     t_sample *out = (t_sample *)(w[3]);
     t_sigrpole *x = (t_sigrpole *)(w[4]);
-    int n = (t_int)(w[5]);
+    int n = (int)w[5];
     int i;
     t_sample last = x->x_last;
     for (i = 0; i < n; i++)
@@ -617,7 +617,7 @@ static t_int *sigrpole_perform(t_int *w)
 static void sigrpole_dsp(t_sigrpole *x, t_signal **sp)
 {
     dsp_add(sigrpole_perform, 5,
-        sp[0]->s_vec, sp[1]->s_vec, sp[2]->s_vec, 
+        sp[0]->s_vec, sp[1]->s_vec, sp[2]->s_vec,
             x, (t_int)sp[0]->s_n);
 }
 
@@ -672,7 +672,7 @@ static t_int *sigrzero_perform(t_int *w)
     t_sample *in2 = (t_sample *)(w[2]);
     t_sample *out = (t_sample *)(w[3]);
     t_sigrzero *x = (t_sigrzero *)(w[4]);
-    int n = (t_int)(w[5]);
+    int n = (int)w[5];
     int i;
     t_sample last = x->x_last;
     for (i = 0; i < n; i++)
@@ -689,7 +689,7 @@ static t_int *sigrzero_perform(t_int *w)
 static void sigrzero_dsp(t_sigrzero *x, t_signal **sp)
 {
     dsp_add(sigrzero_perform, 5,
-        sp[0]->s_vec, sp[1]->s_vec, sp[2]->s_vec, 
+        sp[0]->s_vec, sp[1]->s_vec, sp[2]->s_vec,
             x, (t_int)sp[0]->s_n);
 }
 
@@ -744,7 +744,7 @@ static t_int *sigrzero_rev_perform(t_int *w)
     t_sample *in2 = (t_sample *)(w[2]);
     t_sample *out = (t_sample *)(w[3]);
     t_sigrzero_rev *x = (t_sigrzero_rev *)(w[4]);
-    int n = (t_int)(w[5]);
+    int n = (int)w[5];
     int i;
     t_sample last = x->x_last;
     for (i = 0; i < n; i++)
@@ -761,7 +761,7 @@ static t_int *sigrzero_rev_perform(t_int *w)
 static void sigrzero_rev_dsp(t_sigrzero_rev *x, t_signal **sp)
 {
     dsp_add(sigrzero_rev_perform, 5,
-        sp[0]->s_vec, sp[1]->s_vec, sp[2]->s_vec, 
+        sp[0]->s_vec, sp[1]->s_vec, sp[2]->s_vec,
             x, (t_int)sp[0]->s_n);
 }
 
@@ -827,7 +827,7 @@ static t_int *sigcpole_perform(t_int *w)
     t_sample *outre = (t_sample *)(w[5]);
     t_sample *outim = (t_sample *)(w[6]);
     t_sigcpole *x = (t_sigcpole *)(w[7]);
-    int n = (t_int)(w[8]);
+    int n = (int)w[8];
     int i;
     t_sample lastre = x->x_lastre;
     t_sample lastim = x->x_lastim;
@@ -853,7 +853,7 @@ static t_int *sigcpole_perform(t_int *w)
 static void sigcpole_dsp(t_sigcpole *x, t_signal **sp)
 {
     dsp_add(sigcpole_perform, 8,
-        sp[0]->s_vec, sp[1]->s_vec, sp[2]->s_vec, sp[3]->s_vec, 
+        sp[0]->s_vec, sp[1]->s_vec, sp[2]->s_vec, sp[3]->s_vec,
         sp[4]->s_vec, sp[5]->s_vec, x, (t_int)sp[0]->s_n);
 }
 
@@ -871,7 +871,7 @@ static void sigcpole_set(t_sigcpole *x, t_float re, t_float im)
 void sigcpole_setup(void)
 {
     sigcpole_class = class_new(gensym("cpole~"),
-        (t_newmethod)sigcpole_new, 0, sizeof(t_sigcpole), 0, 
+        (t_newmethod)sigcpole_new, 0, sizeof(t_sigcpole), 0,
             A_DEFFLOAT, A_DEFFLOAT, 0);
     CLASS_MAINSIGNALIN(sigcpole_class, t_sigcpole, x_f);
     class_addmethod(sigcpole_class, (t_method)sigcpole_set,
@@ -882,7 +882,7 @@ void sigcpole_setup(void)
         gensym("dsp"), A_CANT, 0);
 }
 
-/* -------------- czero~ - complex one-pole filter (raw) --------------- */
+/* -------------- czero~ - complex one-zero filter (raw) --------------- */
 
 typedef struct sigczero
 {
@@ -920,7 +920,7 @@ static t_int *sigczero_perform(t_int *w)
     t_sample *outre = (t_sample *)(w[5]);
     t_sample *outim = (t_sample *)(w[6]);
     t_sigczero *x = (t_sigczero *)(w[7]);
-    int n = (t_int)(w[8]);
+    int n = (int)w[8];
     int i;
     t_sample lastre = x->x_lastre;
     t_sample lastim = x->x_lastim;
@@ -943,7 +943,7 @@ static t_int *sigczero_perform(t_int *w)
 static void sigczero_dsp(t_sigczero *x, t_signal **sp)
 {
     dsp_add(sigczero_perform, 8,
-        sp[0]->s_vec, sp[1]->s_vec, sp[2]->s_vec, sp[3]->s_vec, 
+        sp[0]->s_vec, sp[1]->s_vec, sp[2]->s_vec, sp[3]->s_vec,
         sp[4]->s_vec, sp[5]->s_vec, x, (t_int)sp[0]->s_n);
 }
 
@@ -961,7 +961,7 @@ static void sigczero_set(t_sigczero *x, t_float re, t_float im)
 void sigczero_setup(void)
 {
     sigczero_class = class_new(gensym("czero~"),
-        (t_newmethod)sigczero_new, 0, sizeof(t_sigczero), 0, 
+        (t_newmethod)sigczero_new, 0, sizeof(t_sigczero), 0,
             A_DEFFLOAT, A_DEFFLOAT, 0);
     CLASS_MAINSIGNALIN(sigczero_class, t_sigczero, x_f);
     class_addmethod(sigczero_class, (t_method)sigczero_set,
@@ -972,7 +972,7 @@ void sigczero_setup(void)
         gensym("dsp"), A_CANT, 0);
 }
 
-/* -------------- czero_rev~ - complex one-pole filter (raw) --------------- */
+/* ------ czero_rev~ - complex one-zero filter (raw, reverse form) ----- */
 
 typedef struct sigczero_rev
 {
@@ -1010,7 +1010,7 @@ static t_int *sigczero_rev_perform(t_int *w)
     t_sample *outre = (t_sample *)(w[5]);
     t_sample *outim = (t_sample *)(w[6]);
     t_sigczero_rev *x = (t_sigczero_rev *)(w[7]);
-    int n = (t_int)(w[8]);
+    int n = (int)w[8];
     int i;
     t_sample lastre = x->x_lastre;
     t_sample lastim = x->x_lastim;
@@ -1035,7 +1035,7 @@ static t_int *sigczero_rev_perform(t_int *w)
 static void sigczero_rev_dsp(t_sigczero_rev *x, t_signal **sp)
 {
     dsp_add(sigczero_rev_perform, 8,
-        sp[0]->s_vec, sp[1]->s_vec, sp[2]->s_vec, sp[3]->s_vec, 
+        sp[0]->s_vec, sp[1]->s_vec, sp[2]->s_vec, sp[3]->s_vec,
         sp[4]->s_vec, sp[5]->s_vec, x, (t_int)sp[0]->s_n);
 }
 
@@ -1053,7 +1053,7 @@ static void sigczero_rev_set(t_sigczero_rev *x, t_float re, t_float im)
 void sigczero_rev_setup(void)
 {
     sigczero_rev_class = class_new(gensym("czero_rev~"),
-        (t_newmethod)sigczero_rev_new, 0, sizeof(t_sigczero_rev), 0, 
+        (t_newmethod)sigczero_rev_new, 0, sizeof(t_sigczero_rev), 0,
             A_DEFFLOAT, A_DEFFLOAT, 0);
     CLASS_MAINSIGNALIN(sigczero_rev_class, t_sigczero_rev, x_f);
     class_addmethod(sigczero_rev_class, (t_method)sigczero_rev_set,
@@ -1063,6 +1063,114 @@ void sigczero_rev_setup(void)
     class_addmethod(sigczero_rev_class, (t_method)sigczero_rev_dsp,
         gensym("dsp"), A_CANT, 0);
 }
+
+/* ---------------- slop~ - slewing low-pass filter ----------------- */
+
+typedef struct slop_tilde
+{
+    t_object x_obj;
+    t_sample x_f;
+    t_sample x_coef;
+    t_sample x_last;
+    t_sample x_sigin;
+    t_sample x_freqin;
+    t_sample x_poslimitin;
+    t_sample x_posfreqin;
+    t_sample x_neglimitin;
+    t_sample x_negfreqin;
+} t_slop_tilde;
+
+t_class *slop_tilde_class;
+
+static void *slop_tilde_new(t_symbol *s, int argc, t_atom *argv)
+{
+    t_slop_tilde *x = (t_slop_tilde *)pd_new(slop_tilde_class);
+    signalinlet_new(&x->x_obj, atom_getfloatarg(0, argc, argv));
+    signalinlet_new(&x->x_obj, atom_getfloatarg(1, argc, argv));
+    signalinlet_new(&x->x_obj, atom_getfloatarg(2, argc, argv));
+    signalinlet_new(&x->x_obj, atom_getfloatarg(3, argc, argv));
+    signalinlet_new(&x->x_obj, atom_getfloatarg(4, argc, argv));
+    outlet_new(&x->x_obj, &s_signal);
+    x->x_coef = 0;
+    return (x);
+}
+
+static void slop_tilde_set(t_slop_tilde *x, t_floatarg q)
+{
+    x->x_last = q;
+}
+
+static t_int *slop_tilde_perform(t_int *w)
+{
+    t_slop_tilde *x = (t_slop_tilde *)(w[1]);
+    t_sample *sigin = (t_sample *)(w[2]);
+    t_sample *freqin = (t_sample *)(w[3]);
+    t_sample *neglimit = (t_sample *)(w[4]);
+    t_sample *negfreqin = (t_sample *)(w[5]);
+    t_sample *poslimit = (t_sample *)(w[6]);
+    t_sample *posfreqin = (t_sample *)(w[7]);
+    t_sample coef = x->x_coef;
+    t_sample *out = (t_sample *)(w[8]);
+    int n = (int)w[9];
+    int i;
+    t_sample last = x->x_last;
+    for (i = 0; i < n; i++)
+    {
+        t_sample diff = *sigin++ - last;
+        t_sample inc = *freqin++ * coef, diffinc;
+        t_sample posinc = *posfreqin++ * coef;
+        t_sample neginc = *negfreqin++ * coef;
+        t_sample maxdiff = *poslimit++;
+        t_sample mindiff = *neglimit++;
+        if (inc < 0.f)
+            inc = 0.f;
+        else if (inc > 1.f)
+            inc = 1.f;
+        if (posinc < 0.f)
+            posinc = 0.f;
+        else if (posinc > 1.f)
+            posinc = 1.f;
+        if (neginc < 0.f)
+            neginc = 0.f;
+        else if (neginc > 1.f)
+            neginc = 1.f;
+        if (maxdiff < 0)
+            maxdiff = 0;
+        if (mindiff < 0)
+            mindiff = 0;
+        if (diff > maxdiff)
+            diffinc = posinc * (diff- maxdiff) + inc * maxdiff;
+        else if (diff < -mindiff)
+            diffinc = neginc * (diff + mindiff) - inc * mindiff;
+        else diffinc = inc * diff;
+        last = *out++ = last + diffinc;
+    }
+    if (PD_BIGORSMALL(last))
+        last = 0;
+    x->x_last = last;
+    return (w+10);
+}
+
+static void slop_tilde_dsp(t_slop_tilde *x, t_signal **sp)
+{
+    x->x_coef = (2 * 3.14159) / sp[0]->s_sr;
+    dsp_add(slop_tilde_perform, 9,
+        x, sp[0]->s_vec, sp[1]->s_vec, sp[2]->s_vec, sp[3]->s_vec, sp[4]->s_vec,
+            sp[5]->s_vec, sp[6]->s_vec, (t_int)sp[0]->s_n);
+
+}
+
+void slop_tilde_setup(void)
+{
+    slop_tilde_class = class_new(gensym("slop~"), (t_newmethod)slop_tilde_new, 0,
+        sizeof(t_slop_tilde), 0, A_GIMME, 0);
+    CLASS_MAINSIGNALIN(slop_tilde_class, t_slop_tilde, x_f);
+    class_addmethod(slop_tilde_class, (t_method)slop_tilde_dsp,
+        gensym("dsp"), A_CANT, 0);
+    class_addmethod(slop_tilde_class, (t_method)slop_tilde_set, gensym("set"),
+        A_FLOAT, 0);
+}
+
 
 /* ------------------------ setup routine ------------------------- */
 
@@ -1079,4 +1187,5 @@ void d_filter_setup(void)
     sigcpole_setup();
     sigczero_setup();
     sigczero_rev_setup();
+    slop_tilde_setup();
 }
