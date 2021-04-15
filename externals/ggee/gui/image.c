@@ -1089,7 +1089,10 @@ static void image_properties(t_gobj *z, t_glist *owner)
 static void image_dialog(t_image *x, t_symbol *s, int argc,
     t_atom *argv)
 {
-    //post("image_dialog argc=%d", argc); // 22 args in total
+    /*post("image_dialog argc=%d undo=%d incoming-label=<%s> cur-label=<%s>", argc,
+        atom_getintarg(21, argc, argv),
+        iemgui_getfloatsymarg(13,argc,argv)->s_name,
+        x->x_gui.x_lab->s_name);*/ // 22 args in total
     t_symbol *srl[3];
     int oldsndrcvable = 0;
     t_symbol *oldfname = x->x_fname;
@@ -1134,9 +1137,16 @@ static void image_dialog(t_image *x, t_symbol *s, int argc,
         }
     }
 
+    x->x_gui.x_snd_unexpanded=srl[0];
+    srl[0]=canvas_realizedollar(x->x_gui.x_glist, srl[0]);
+    x->x_gui.x_rcv_unexpanded=srl[1];
+    srl[1]=canvas_realizedollar(x->x_gui.x_glist, srl[1]);
+    x->x_gui.x_lab_unexpanded=srl[2];
+    srl[2]=canvas_realizedollar(x->x_gui.x_glist, srl[2]);
+
     iemgui_send(&x->x_gui, srl[0]);
     iemgui_receive(&x->x_gui, srl[1]);
-
+    iemgui_verify_snd_ne_rcv(&x->x_gui);
     x->x_gui.x_lab = srl[2];
     if(f<0 || f>2) f=0;
     x->x_gui.x_font_style = f;

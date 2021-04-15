@@ -813,9 +813,10 @@ int iemgui_dialog(t_iemgui *x, int argc, t_atom *argv)
     x->x_ldy = atom_getintarg(11, argc, argv);
     int f = atom_getintarg(12, argc, argv);
     x->x_fontsize = maxi(atom_getintarg(13, argc, argv),4);
-    x->x_bcol = atom_getintarg(14, argc, argv) & 0xffffff;
-    x->x_fcol = atom_getintarg(15, argc, argv) & 0xffffff;
-    x->x_lcol = atom_getintarg(16, argc, argv) & 0xffffff;
+    //iemgui_all_loadcolors(&x->x_gui, argv+14, argv+15, argv+16);
+    x->x_bcol = iemgui_getcolorarg(x, 14, argc, argv) & 0xffffff;
+    x->x_fcol = iemgui_getcolorarg(x, 15, argc, argv) & 0xffffff;
+    x->x_lcol = iemgui_getcolorarg(x, 16, argc, argv) & 0xffffff;
     int oldsndrcvable=0;
     if(iemgui_has_rcv(x)) oldsndrcvable |= IEM_GUI_OLD_RCV_FLAG;
     if(iemgui_has_snd(x)) oldsndrcvable |= IEM_GUI_OLD_SND_FLAG;

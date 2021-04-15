@@ -1,32 +1,32 @@
-#N canvas 151 59 552 897 10;
-#X obj 0 1145 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
+#N canvas 151 59 552 730 10;
+#X obj 0 1611 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
 14 #dcdcdc #404040 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header ggee/image 3 12
 0 18 #c4dcdc #000000 0;
 #X obj 0 500 cnv 3 550 3 empty \$0-pddp.cnv.inlets inlets 8 12 0 13
 #dcdcdc #000000 0;
-#N canvas 387 298 384 286 META 0;
+#N canvas 707 445 384 311 META 0;
 #X text 10 175 LIBRARY internal;
 #X text 10 9 NAME ggee/image;
 #X text 10 29 ALIAS N/A;
 #X text 10 49 KEYWORDS GUI image iemgui;
 #X text 10 69 LICENSE GNU GPL v3;
 #X text 10 89 DESCRIPTION gui-image;
-#X text 10 155 OUTLET_0 bang list(mousedown \, absX \, absY \, x \,
-y) size (x \, y);
 #X text 10 195 AUTHOR Ivica Ico Bukvic & L2Ork;
 #X text 10 215 WEBSITE ico.bukvic.net;
 #X text 10 255 HELP_PATCH_AUTHORS Ivica Ico Bukvic;
-#X text 10 109 gopspi alpha click color constrain delta dialog gopspill
-gopspill_size label label_font label_pos open pos receive reload reset
-rotate send size visible;
 #X text 10 235 RELEASE_DATE 2021;
-#X restore 503 1147 pd META;
-#X obj 0 975 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
+#X text 10 155 OUTLET_0 bang list(mousedown \, absX \, absY \, x \,
+y) size(x \, y);
+#X text 10 109 gopspi alpha click color constrain delta gopspill gopspill_size
+label label_font label_pos open pos receive reload reset rotate send
+size visible;
+#X restore 503 1613 pd META;
+#X obj 0 1331 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
 13 #dcdcdc #000000 0;
-#X obj 0 1012 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8 12
+#X obj 0 1458 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8 12
 0 13 #dcdcdc #000000 0;
-#X obj 0 1097 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8
+#X obj 0 1553 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8
 12 0 13 #dcdcdc #000000 0;
 #N canvas 219 507 428 128 Related_objects 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
@@ -36,78 +36,27 @@ rotate send size visible;
 #X text 8 2 [ggee/image] Related Objects;
 #X text 18 45 moonlib/image use is strongly discouraged as the object
 is buggy and included only for legacy purposes.;
-#X restore 102 1147 pd Related_objects;
-#X obj 78 509 cnv 17 3 140 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
+#X restore 102 1613 pd Related_objects;
+#X obj 78 509 cnv 17 3 759 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
 #9c9c9c 0;
-#X text 98 525 float;
-#X text 98 555 list;
-#X text 98 983 float;
-#X obj 78 984 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
+#X obj 78 1340 cnv 17 3 113 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
 #9c9c9c 0;
-#X text 168 525 - a float to the left inlet will be displayed \, stored
-\, and sent to the outlet.;
-#X text 168 555 - a list will be truncated to the first item.;
-#X text 98 571 set;
-#X text 168 571 - sending a set message followed by a value (e.g. \,
-"set 14") will display and store the value without outputting it.;
-#X text 97 601 see the following subpatch for messages that change
-the gui-properties of [nbx]:;
-#N canvas 49 27 446 599 Changing_GUI_Properties 0;
-#X text 17 152 log height;
-#X text 340 24 no init;
-#X msg 350 94 init 1;
-#X msg 340 43 init 0;
-#X msg 242 64 lin;
-#X msg 252 94 log;
-#X text 238 24 linear/;
-#X text 238 39 logarithmical;
-#X text 349 58 init value;
-#X text 350 73 on loadbang;
-#X obj 242 119 s nbx_rcv;
-#X obj 340 119 s nbx_rcv;
-#X msg 17 175 log_height 256;
-#X obj 17 245 s nbx_rcv;
-#X text 346 152 label;
-#X msg 346 172 label blabla;
-#X text 115 153 change send name;
-#X text 220 152 change receive name;
-#X obj 117 245 s nbx_rcv;
-#X obj 223 245 s nbx_rcv;
-#X obj 346 245 s nbx_rcv;
-#X msg 117 175 send nbx1_snd;
-#X msg 127 200 send nbx_snd;
-#X obj 231 222 s z_rcv;
-#X msg 223 174 receive z_rcv;
-#X msg 231 199 receive nbx_rcv;
-#N canvas 372 228 161 250 init 0;
-#X obj 16 11 loadbang;
-#X obj 16 42 f \$0;
-#X msg 16 73 \; \$1-xpos 320 \; \$1-ypos 330 \; \$1-xlabel 0 \; \$1-ylabel
--8 \; \$1-font-size 10 \; \$1-width 5 \; \$1-height 14 \; \$1-bg 0
-\; \$1-front 12 \; \$1-label 12;
+#N canvas 49 27 446 613 Changing_GUI_Properties 0;
+#X text 246 152 label;
+#X msg 246 172 label blabla;
+#X text 15 153 change send name;
+#X text 120 152 change receive name;
+#X obj 131 222 s z_rcv;
+#X msg 123 174 receive z_rcv;
+#N canvas 372 228 136 239 init 0;
+#X obj 16 18 loadbang;
+#X obj 16 44 f \$0;
+#X msg 16 73 \; \$1-xpos 336 \; \$1-ypos 330 \; \$1-xlabel -4 \; \$1-ylabel
+-10 \; \$1-font-size 10 \; \$1-width 25 \; \$1-height 25 \; \$1-bg
+0 \; \$1-front 12 \; \$1-label 12;
 #X connect 0 0 1 0;
 #X connect 1 0 2 0;
-#X restore 360 400 pd init;
-#N canvas 366 206 174 259 flash-time 0;
-#X obj 68 180 pack;
-#X obj 103 149 t b a;
-#X obj 68 205 outlet;
-#X obj 103 104 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-bottom empty
-0 -8 0 12 #fcfcfc #000000 #000000 0 256 0 0;
-#X obj 103 124 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-top empty 0
--8 0 12 #fcfcfc #000000 #000000 0 256 0 0;
-#X connect 0 0 2 0;
-#X connect 1 0 0 0;
-#X connect 1 1 0 1;
-#X connect 3 0 0 0;
-#X connect 4 0 1 0;
-#X coords 0 -1 1 1 48 42 2 100 100;
-#X restore 124 44 pd flash-time;
-#X text 121 23 output-range;
-#X text 173 46 1.bottom;
-#X text 173 66 2.top;
-#X msg 124 94 range \$1 \$2;
-#X obj 124 118 s nbx_rcv;
+#X restore 384 36 pd init;
 #X text 15 280 label position;
 #X text 137 280 font properties;
 #X msg 17 387 label_pos \$1 \$2;
@@ -121,9 +70,9 @@ the gui-properties of [nbx]:;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-xlabel empty
-0 -8 0 12 #fcfcfc #000000 #000000 0 256 0 0;
+0 -8 0 12 #fcfcfc #000000 #000000 -4 256 0 0;
 #X obj 103 124 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-ylabel empty
-0 -8 0 12 #fcfcfc #000000 #000000 -8 256 0 0;
+0 -8 0 12 #fcfcfc #000000 #000000 -10 256 0 0;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 1 1 0 1;
@@ -236,7 +185,7 @@ the gui-properties of [nbx]:;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-xpos empty 0
--8 0 12 #fcfcfc #000000 #000000 320 256 0 0;
+-8 0 12 #fcfcfc #000000 #000000 336 256 0 0;
 #X obj 103 124 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-ypos empty 0
 -8 0 12 #fcfcfc #000000 #000000 330 256 0 0;
 #X connect 0 0 2 0;
@@ -265,21 +214,14 @@ the gui-properties of [nbx]:;
 0;
 #X obj 305 292 cnv 15 90 90 empty empty empty 20 12 0 14 #fce0c4 #404040
 0;
-#X obj 320 330 nbx 5 14 -1e+37 1e+37 0 0 nbx_snd nbx_rcv my_nbx 0 -8
-0 10 #fcfcfc #202020 #202020 0 256 0 0;
-#X obj 17 412 s nbx_rcv;
-#X obj 139 412 s nbx_rcv;
-#X obj 18 577 s nbx_rcv;
-#X obj 349 577 s nbx_rcv;
-#X obj 237 577 s nbx_rcv;
 #N canvas 366 206 174 259 flash-time 0;
 #X obj 68 180 pack;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-width empty
-0 -8 0 12 #fcfcfc #000000 #000000 5 256 0 0;
+0 -8 0 12 #fcfcfc #000000 #000000 25 256 0 0;
 #X obj 103 124 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-height empty
-0 -8 0 12 #fcfcfc #000000 #000000 14 256 0 0;
+0 -8 0 12 #fcfcfc #000000 #000000 25 256 0 0;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 1 1 0 1;
@@ -287,54 +229,58 @@ the gui-properties of [nbx]:;
 #X connect 4 0 1 0;
 #X coords 0 -1 1 1 48 42 2 100 100;
 #X restore 17 44 pd flash-time;
-#X obj 17 118 s nbx_rcv;
 #X text 66 46 1.width;
 #X text 66 66 2.height;
 #X text 14 23 dimensions;
 #X msg 17 94 size \$1 \$2;
-#X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
+#X obj 1 0 cnv 15 444 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
-#X text 8 2 [nbx] Changing GUI Properties through Messages;
-#X msg 356 197 label my_nbx;
+#X text 8 1 [nbx] Changing GUI Properties through Messages;
 #X text 285 466 1.x-pos;
 #X text 285 488 2.y-pos;
-#X connect 2 0 11 0;
-#X connect 3 0 11 0;
-#X connect 4 0 10 0;
-#X connect 5 0 10 0;
-#X connect 12 0 13 0;
-#X connect 15 0 20 0;
-#X connect 21 0 18 0;
-#X connect 22 0 18 0;
-#X connect 24 0 19 0;
-#X connect 25 0 23 0;
-#X connect 27 0 31 0;
-#X connect 31 0 32 0;
-#X connect 35 0 62 0;
-#X connect 36 0 63 0;
-#X connect 41 0 35 0;
-#X connect 42 0 36 0;
-#X connect 45 0 64 0;
-#X connect 46 0 45 0;
-#X connect 47 0 45 0;
-#X connect 53 0 66 0;
-#X connect 54 0 65 0;
-#X connect 55 0 54 0;
-#X connect 56 0 55 0;
-#X connect 57 0 53 0;
-#X connect 58 0 55 1;
-#X connect 67 0 72 0;
-#X connect 72 0 68 0;
-#X connect 75 0 20 0;
-#X restore 170 635 pd Changing_GUI_Properties;
-#X obj 4 1147 pddp/pddplink all_about_help_patches.pd -text Usage Guide
+#X obj 336 330 ggee/image @pd_extra/ggee/empty_image.png 0 0 25 25
+empty img_rcv my_img 25 25 0 0 10 #202020 -4 -10 12.5 12.5 0 1 1;
+#X obj 17 118 s img_rcv;
+#X obj 17 245 s img_rcv;
+#X obj 123 245 s img_rcv;
+#X obj 246 245 s img_rcv;
+#X obj 17 412 s img_rcv;
+#X obj 139 412 s img_rcv;
+#X obj 18 577 s img_rcv;
+#X obj 237 577 s img_rcv;
+#X obj 349 577 s img_rcv;
+#X msg 131 199 receive img_rcv;
+#X msg 17 175 send img1_snd;
+#X msg 27 200 send img_snd;
+#X msg 256 197 label my_img;
+#X connect 1 0 48 0;
+#X connect 5 0 47 0;
+#X connect 9 0 49 0;
+#X connect 10 0 50 0;
+#X connect 15 0 9 0;
+#X connect 16 0 10 0;
+#X connect 19 0 51 0;
+#X connect 20 0 19 0;
+#X connect 21 0 19 0;
+#X connect 27 0 52 0;
+#X connect 28 0 53 0;
+#X connect 29 0 28 0;
+#X connect 30 0 29 0;
+#X connect 31 0 27 0;
+#X connect 32 0 29 1;
+#X connect 35 0 39 0;
+#X connect 39 0 45 0;
+#X connect 54 0 4 0;
+#X connect 55 0 46 0;
+#X connect 56 0 46 0;
+#X connect 57 0 48 0;
+#X restore 168 1564 pd Changing_GUI_Properties;
+#X obj 4 1613 pddp/pddplink all_about_help_patches.pd -text Usage Guide
 ;
-#X text 98 510 bang;
-#X text 168 510 - output the current value;
 #X text 465 12 [ggee/image];
 #X text 11 23 gui-image;
-#X text 97 1016 21;
-#X text 168 1015 - if you create an [image] object without arguments
+#X text 97 1468 21;
+#X text 168 1468 - if you create an [image] object without arguments
 \, default values are chosen for the GUI-properties. See the subpatch
 below to learn how to dynamically instantiate a [image] with custom
 properties:;
@@ -368,7 +314,7 @@ visible alpha;
 12 12 45 1 0.7;
 #X connect 6 0 7 0;
 #X connect 9 0 4 0;
-#X restore 170 1074 pd image-creation-arguments;
+#X restore 168 1530 pd image-creation-arguments;
 #X obj 482 51 pddp/dsp;
 #X obj 227 319 ggee/image vu.png 0 0 287 162 empty empty empty 287
 162 1 0 10 #000000 0 -8 12.5 12.5 0 1 1;
@@ -390,14 +336,14 @@ visible alpha;
 #000000 0 1;
 #X msg 456 295 visible \$1;
 #X obj 287 375 ggee/image vu-dial.png 0 0 65 81 empty dial empty 65
-81 1 0 10 #000000 0 -8 81 102 -4.5894 1 1;
+81 1 0 10 #000000 0 -8 81 102 -4.78725 1 1;
 #X obj 456 253 > 99.9;
 #X obj 393 146 t f f, f 11;
-#N canvas 117 156 469 625 control-surface 0;
+#N canvas 167 85 469 625 control-surface 0;
 #X obj 73 279 ggee/image surround-room.jpg 1 2 320 250 empty background
 empty 400 300 0 0 10 #000000 2 5 200 150 0 1 1;
-#X obj 259 397 ggee/image source3.gif 1 0 18 18 nada handle empty 36
-36 1 0 10 #00ff00 23 23 18 18 230 1 1;
+#X obj 265 395 ggee/image source3.gif 1 0 18 18 nada handle empty 36
+36 1 0 10 #00ff00 23 23 18 18 190 1 1;
 #N canvas 216 126 1118 670 surface-interaction 0;
 #X obj 100 162 unpack 0 0 0 0 0, f 55;
 #X obj 100 220 sel 1;
@@ -409,7 +355,7 @@ empty 400 300 0 0 10 #000000 2 5 200 150 0 1 1;
 #000000 #000000 0 256 0 0;
 #X msg 471 602 size \$1 \$1;
 #X obj 255 452 sin;
-#X floatatom 255 477 14 0 0 0 - - - 0, f 14;
+#X floatatom 255 477 14 0 0 0 - - - 0 0, f 14;
 #X obj 255 289 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 0 1;
 #X msg 293 374 0;
@@ -422,7 +368,7 @@ empty 400 300 0 0 10 #000000 2 5 200 150 0 1 1;
 #X obj 568 558 * 10;
 #X obj 568 502 metro 25;
 #X msg 568 602 rotate \$1 \$2 \$2;
-#X floatatom 619 558 5 0 0 0 - - - 0, f 5;
+#X floatatom 619 558 5 0 0 0 - - - 0 0, f 5;
 #X obj 540 524 / 2;
 #X obj 43 60 route size;
 #X obj 43 38 list trim;
@@ -431,13 +377,13 @@ empty 400 300 0 0 10 #000000 2 5 200 150 0 1 1;
 #X obj 568 463 loadbang;
 #X obj 568 580 pack 0 18;
 #X obj 700 488 sin;
-#X floatatom 700 513 14 0 0 0 - - - 0, f 14;
+#X floatatom 700 513 14 0 0 0 - - - 0 0, f 14;
 #X obj 700 289 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 0 1;
 #X msg 738 374 0;
 #X obj 700 309 metro 10;
 #X obj 700 428 expr $f1/5*3.14159;
-#X floatatom 901 513 14 0 0 0 - - - 0, f 14;
+#X floatatom 901 513 14 0 0 0 - - - 0 0, f 14;
 #X obj 901 488 cos;
 #X obj 700 453 t f f;
 #X obj 700 562 pack 0 0;
@@ -555,14 +501,13 @@ empty 400 300 0 0 10 #000000 2 5 200 150 0 1 1;
 #X restore 73 568 pd surface-interaction;
 #X obj 73 593 tgl 15 0 empty empty click -28 6 0 8 #fcfcfc #000000
 #000000 0 1;
-#X floatatom 137 593 5 0 0 0 x - - 0, f 5;
-#X floatatom 202 593 5 0 0 0 y - - 0, f 5;
+#X floatatom 137 593 5 0 0 0 x - - 0 0, f 5;
+#X floatatom 202 593 5 0 0 0 y - - 0 0, f 5;
 #X obj 0 0 cnv 15 468 21 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
 #X text 6 3 Image as a control surface;
 #X text 6 27 The example below explores the clickmode 2 which outputs
 a list of 5 values:, f 75;
-#X text 6 57 click on/off (1/0) origin_x origin_y x y., f 75;
 #X text 6 74 Origin x and y refer to the top-left corner of the selectable
 image border. In this case the border is smaller because of the gop_spill
 option being enabled. The second x/y pair refers to the relative position
@@ -575,12 +520,12 @@ set to 0 \, this means it does not register any clicks and therefore
 \, like a comment \, passes clicks to the object underneath it. Animations
 consisting of the handle and the background shuddering are enclosed
 inside the subpatch pd surface-interaction., f 75;
-#X obj 221 227 r todo;
+#X text 6 57 click on/off (1/0) origin_x origin_y mouse_x mouse_y.
+, f 75;
 #X connect 0 0 2 0;
 #X connect 2 0 3 0;
 #X connect 2 1 4 0;
 #X connect 2 2 5 0;
-#X connect 11 0 0 0;
 #X restore 14 271 pd control-surface;
 #X text 14 57 image object is a completely reworked image manipulation
 object based on the old ggee/image. It is fully backwards-compatible
@@ -590,12 +535,12 @@ right you can see a VU dial consisting of three images \, the background
 visibility is toggled when the input level exceeds unity. Enable DSP
 and use microphone or manually alter the value in the topmost number
 box to monitor its behavior.;
-#X text 405 1114 (c) ico@vt.edu 2020/1;
-#N canvas 727 338 383 373 advanced_css_properties 0;
+#X text 412 1587 (c) ico@vt.edu 2020/1;
+#N canvas 81 261 383 373 advanced_css_properties 0;
 #X obj 48 163 ggee/image vu.png 0 0 287 162 empty empty empty 287 162
 1 0 10 #000000 0 -8 12.5 12.5 0 1 1;
 #X msg 48 142 css image transform skew(\$1deg);
-#X floatatom 48 122 5 0 0 0 - - - 0, f 5;
+#X floatatom 48 122 5 0 0 0 - - - 0 0, f 5;
 #X obj 0 0 cnv 15 383 21 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
 #X text 6 3 Advanced CSS properties;
@@ -606,21 +551,78 @@ Below is an example of such a manipulation using the transform CSS
 call. For more info on the CSS commands \, visit:, f 61;
 #X connect 1 0 0 0;
 #X connect 2 0 1 0;
-#X restore 170 1114 pd advanced_css_properties;
+#X restore 168 1587 pd advanced_css_properties;
 #X text 14 184 A more advanced set of features can be studied in the
 subpatch below that explores image's newfound ability to monitor for
 toggle action and mouse x and y positions which can be used as a foundation
 for creating interactive control surfaces. Click on the subpatch "pd
 control-surface" to open it and learn more., f 58;
-#N canvas 0 0 450 300 advanced-features 1;
-#X msg 21 121 reset;
-#X obj 21 146 s todo;
+#N canvas 565 65 384 719 advanced-features 0;
 #X obj 0 0 cnv 15 383 21 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
-#X text 6 3 Advanced CSS properties;
-#X obj 6 79 pddplink https://www.w3schools.com/css/default.asp;
-#X text 5 27 TODO, f 61;
-#X connect 0 0 1 0;
+#X msg 37 86 this is a label;
+#X obj 37 111 tosymbol;
+#X msg 37 136 label \$1;
+#X msg 50 162 label;
+#X text 108 124 Note that first two iemgui values do not apply to image
+object \, since image has no foreground or background color \, so we
+give these parameters a value of 0 The last value applies to the label
+, f 34;
+#X msg 108 209 color 0 0 #FF00FF;
+#X obj 37 660 ggee/image @pd_extra/ggee/empty_image.png 0 0 25 25 empty
+empty empty 25 25 1 0 10 #000000 0 -8 12.5 12.5 0 1 1;
+#X obj 222 264 nbx 5 14 0 1 0 0 empty empty empty 0 -8 0 10 #fcfcfc
+#000000 #000000 0 256 0 0;
+#X msg 222 284 alpha \$1;
+#X obj 286 264 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1;
+#X msg 286 284 visible \$1;
+#X floatatom 160 600 5 0 0 0 - - - 0 0, f 5;
+#X floatatom 250 385 5 0 0 0 - - - 0 0, f 5;
+#X obj 250 440 pack 0 0, f 12;
+#X msg 250 464 size \$1 \$2;
+#X floatatom 292 385 5 0 0 0 - - - 0 0, f 5;
+#X obj 292 409 t b f;
+#X msg 160 622 rotate \$1 0 0;
+#X floatatom 154 262 5 0 0 0 - - - 0 0, f 5;
+#X msg 154 284 rotate \$1;
+#X msg 121 464 reset;
+#X msg 252 622 reload;
+#X obj 165 442 nbx 5 14 0 2 0 0 empty empty empty 0 -8 0 10 #fcfcfc
+#000000 #000000 0 256 0 0;
+#X msg 165 464 constrain \$1;
+#X text 6 3 Advanced features;
+#X text 81 394 Note the size message is affected by the current constrain
+mode, f 22;
+#X text 159 512 Note that this rotate variantalso permanently changes
+thecenter of rotation. by default \, the center is the middle of
+theimage \, or in this casespecifically x:12.5 y:12.5;
+#X text 6 28 Below is a selection of options that are unique to the
+image object \, plus the label color command that ignores first two
+arguments because the image does not have those elements.;
+#X connect 1 0 2 0;
+#X connect 2 0 3 0;
+#X connect 3 0 7 0;
+#X connect 4 0 7 0;
+#X connect 6 0 7 0;
+#X connect 8 0 9 0;
+#X connect 9 0 7 0;
+#X connect 10 0 11 0;
+#X connect 11 0 7 0;
+#X connect 12 0 18 0;
+#X connect 13 0 14 0;
+#X connect 14 0 15 0;
+#X connect 15 0 7 0;
+#X connect 16 0 17 0;
+#X connect 17 0 14 0;
+#X connect 17 1 14 1;
+#X connect 18 0 7 0;
+#X connect 19 0 20 0;
+#X connect 20 0 7 0;
+#X connect 21 0 7 0;
+#X connect 22 0 7 0;
+#X connect 23 0 24 0;
+#X connect 24 0 7 0;
 #X restore 14 462 pd advanced-features;
 #X text 14 310 Below are some examples of these more advanced features.
 The gop_spill is a special option we can use to "skin" GOP-enabled
@@ -628,18 +630,101 @@ patches by allowing the image to spill outside the GOP boundaries.
 As evidenced in the control-surface patch \, one can also use the same
 to create an artificial boundary for such a control surface., f 34
 ;
-#X text 333 635 TODO;
+#X text 98 510 alpha;
+#X text 168 510 - sets the image alpha (transparency) \, 0 being fully
+transparent \, and 1 being fully opaque;
+#X text 98 540 click;
+#X text 168 540 - specifies the click mode: 0 no click detected 1
+output bang when clicked  2 output a list when clicked (mousedown
+1/0 \, image's top- left clickable corner's absolute X and absolute
+Y \, relative  mouse x \, mouse y (with the top-left image corner
+being the  origin);
+#X text 98 635 color;
+#X text 168 635 - specifies the label color using iemgui style messaging
+;
+#X text 98 652 constrain;
+#X text 168 652 - constrain image's resize aspect ratio (either via
+resize handle located in the bottom-right corner of the select border
+in the edit mode \, or via the properties dialog): 0 no constrain
+(free x and y axis resize) 1 constrain to the ratio defined by the
+original image size  (default) 2 constrain to the current size ratio
+;
+#X text 98 747 delta;
+#X text 168 747 - iemgui option for nudging the object by a relative
+x and y values;
+#X text 98 817 gopspill;
+#X text 168 833 - enable (1) or disable (0) the selectable size to
+be smaller than the actual image size. this is useful when placing
+images inside a gop-enabled subpatch \, which in turn allows the image
+to stick outside the gop object and therefore provide a "skin" for
+the abstraction that may not conform to the rectangular nature of a
+gop-enabled subpatch or an abstraction.;
+#X text 98 928 gopspill_size;
+#X text 188 928 - specify x and y size of the selectable area (the
+area will be always centered inside the object)., f 53;
+#X text 98 958 label;
+#X text 168 958 - set the iemgui label. for custom spacing use the
+dialog. sending label without any arguments \, removes the label.;
+#X text 98 988 label_font;
+#X text 168 988 - specify iemgui label font size.;
+#X text 98 1005 label_pos;
+#X text 168 1005 - set the label location (relative to the object's
+origin).;
+#X text 98 1022 open;
+#X text 168 1022 - open image file. the path can be relative or absolute.
+you can also use @pd_extra argument to point to the extra folder location.
+if file is not found \, the image will revert to the default image.
+;
+#X text 98 1078 pos;
+#X text 168 1078 - specify absolute x/y position of the image on the
+patch canvas.;
+#X text 98 1108 receive;
+#X text 98 1125 reload;
+#X text 168 1125 - reload the currently loaded image (e.g. if it was
+edited after it was already loaded by the image object).;
+#X text 98 1155 reset;
+#X text 168 1155 - reset image size to its default (natural) size \,
+overriding any constraint settings.;
+#X text 98 1185 rotate;
+#X text 168 1185 - rotate image by sending two different types of messasges:
+1 argument: rotation angle in degrees (around a rotation  center set
+in the object properties 3 arguments: rotation angle in degrees \,
+x and y of the  rotation point;
+#X text 98 1254 send;
+#X text 168 1254 - set iemgui send value.;
+#X text 168 1108 - set iemgui receive value.;
+#X text 98 1271 size;
+#X text 168 1271 - set the image x and y size. the outcome conforms
+to the constraints set by the constrain option.;
+#X text 98 1301 visible;
+#X text 168 1301 - toggle image visibility (1=visible \, 0=invisible).
+;
+#X text 98 777 dialog;
+#X text 168 777 - iemgui message sent from the properties dialog that
+can be also used to change multiple properties in a single message.
+you can also control whether such a change triggers the dirty canvas
+event. for more info \, see the bng help file:;
+#X obj 515 819 bng 11 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
+#X text 98 1340 bang;
+#X text 168 1340 - outputs bang if the click mode is set to 1;
+#X text 98 1357 list;
+#X text 168 1357 - outputs the following list whne th click mode is
+set to 2 \,  as follows: 1: mousedown 1/0 2: top-left selection
+border origin x 3: top-left selection border origin y 4: mouse position
+calculated from the origin x 5: mouse position calculated from the
+origin y;
+#X connect 20 0 21 0;
+#X connect 21 0 26 0;
+#X connect 22 0 24 0;
+#X connect 23 0 19 0;
+#X connect 24 0 25 0;
+#X connect 25 0 23 0;
+#X connect 26 0 34 0;
+#X connect 27 0 18 0;
+#X connect 28 0 18 0;
 #X connect 30 0 31 0;
-#X connect 31 0 36 0;
-#X connect 32 0 34 0;
-#X connect 33 0 29 0;
-#X connect 34 0 35 0;
-#X connect 35 0 33 0;
-#X connect 36 0 44 0;
-#X connect 37 0 28 0;
-#X connect 38 0 28 0;
-#X connect 40 0 41 0;
-#X connect 41 0 39 0;
-#X connect 43 0 40 0;
-#X connect 44 0 32 0;
-#X connect 44 1 43 0;
+#X connect 31 0 29 0;
+#X connect 33 0 30 0;
+#X connect 34 0 22 0;
+#X connect 34 1 33 0;

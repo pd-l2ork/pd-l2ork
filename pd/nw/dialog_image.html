@@ -606,6 +606,7 @@ function send_params(attrs, create_undo_point) {
     //send_symbol = iemgui_escape(send_symbol);
     receive_symbol = iemgui_escape(receive_symbol);
     label = iemgui_escape(label);
+    //pdgui.post("send_params label=<"+label+">");
 
     pdgui.pdsend(pd_object_callback, "dialog",
         attrs.filename,

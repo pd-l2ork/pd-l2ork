@@ -81,23 +81,6 @@ by Ivica Ico Bukvic.;
 #X msg 75 49 0;
 #X text 321 142 and receive names. Right-;
 #X text 321 157 click and choose;
-#N canvas 85 201 428 309 bng_creation_arguments 0;
-#X text 12 28 "bng" can be called with 14 creation arguments. These
-are not "optional" - all parameters must be filled or the gui-bng will
-not instantiate correctly.;
-#X text 12 132 For example \, click the msg-box to dynamically create
-a bng:;
-#X text 12 80 bng creation arguments: Size Hold Interrupt Init sendName
-receiveName Label labelXOff labelYOff Font# fontSize bgColor foregroundColor
-lblColor;
-#X obj 13 196 s pd-bng_creation_arguments;
-#X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
-14 #c4dcdc #000000 0;
-#X text 7 2 [bng] Creation Arguments and Dynamic Patching;
-#X msg 13 154 obj 180 240 bng 30 500 50 0 send receive Atlas -2 40
-0 12 9 2 18;
-#X connect 6 0 3 0;
-#X restore 100 522 pd bng_creation_arguments;
 #X text 320 173 "Properties" to set them \,;
 #X text 320 126 [bng] has settable send;
 #X text 110 250 Use the UP- \, DOWN- \, LEFT- or RIGHT-key to move
@@ -435,13 +418,13 @@ the gui-properties of [bng]:;
 #X obj 0 -594 cnv 15 466 21 empty \$0-pddp.cnv.subheading empty 3 12
 0 14 #c4dcdc #000000 0;
 #X obj 5 -516 pddplink https://www.w3schools.com/css/default.asp;
-#X floatatom 67 -397 5 0 0 0 - - - 0, f 5;
+#X floatatom 67 -397 5 0 0 0 - - - 0 0, f 5;
 #X text 5 -591 Advanced CSS properties;
 #X obj 67 -325 bng 36 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
 #X msg 83 -353 css border fill rgba(255 \\\, 255 \\\, 255 \\\, 0.3)
 ;
-#X floatatom 36 -478 5 0 0 0 - - - 0, f 5;
+#X floatatom 36 -478 5 0 0 0 - - - 0 0, f 5;
 #X msg 36 -457 css button transform skew(\$1deg);
 #X msg 36 -431 css button transform-origin 16px 16px;
 #X obj 59 -206 cnv 15 48 47 empty empty empty 20 12 0 14 #62b0ff #404040
@@ -456,7 +439,7 @@ the gui-properties of [bng]:;
 #X text 56 -121 CSS below animates button press;
 #N canvas 378 207 301 461 animate 0;
 #X obj 20 237 sin;
-#X floatatom 20 259 14 0 0 0 - - - 0, f 14;
+#X floatatom 20 259 14 0 0 0 - - - 0 0, f 14;
 #X obj 20 61 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000 #000000
 0 1;
 #X msg 58 147 0;
@@ -511,6 +494,35 @@ DevTools option found in the Help menu. For more info on the CSS commands
 #X connect 13 0 12 0;
 #X connect 18 0 17 0;
 #X restore 213 556 pd advanced_css_properties;
+#N canvas 182 139 428 512 bng_creation_arguments_&_dialog 0;
+#X text 12 28 "bng" can be called with 14 creation arguments. These
+are not "optional" - all parameters must be filled or the gui-bng will
+not instantiate correctly., f 66;
+#X text 12 132 For example \, click the msg-box to dynamically create
+a bng:, f 66;
+#X text 12 80 bng creation arguments: Size Hold Interrupt Init sendName
+receiveName Label labelXOff labelYOff Font# fontSize bgColor foregroundColor
+lblColor, f 66;
+#X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
+14 #c4dcdc #000000 0;
+#X text 7 2 [bng] Creation Arguments and Dynamic Patching;
+#X msg 13 154 obj 180 240 bng 30 500 50 0 send receive Atlas -2 40
+0 12 9 2 18;
+#X obj 13 196 s pd-bng_creation_arguments_&_dialog;
+#X msg 13 412 dialog 30 500 50 0 0 0 0 send receive Atlas -2 40 0 12
+#fdb #ff0000 #00ff00;
+#X text 12 312 bng and other iemgui objects also allow for borrowing
+the dialog messaging to change multiple settings via a single message.
+to construct such a message \, copy the creation message above \, remove
+the first 4 arguments \, and add as many 0s before the send argument
+until the send argument is 8th in order. making this kind of a change
+to the iemgui object will not trigger dirty flag unless you add a 1
+as the last argument \, following the color arguments., f 66;
+#X obj 13 450 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000;
+#X connect 5 0 6 0;
+#X connect 7 0 9 0;
+#X restore 100 522 pd bng_creation_arguments_&_dialog;
 #X connect 14 0 13 0;
 #X connect 16 0 17 0;
 #X connect 17 0 15 0;
