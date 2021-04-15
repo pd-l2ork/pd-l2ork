@@ -409,6 +409,19 @@ int glist_grab_exclusive(t_glist *x, int exclusive)
     return(1);
 }
 
+// ico@vt.edu 2021-04-15: used for allowing message-induced focus on gatoms
+// needs to disable motionfn enabled by the text_click->gatom_click call
+// to disable accidental drag that may result from a scripted focus, but not
+// from the actual clicked focus
+void glist_grab_disable_motion(t_glist *x)
+{
+    if (x->gl_editor->e_grab && x->gl_editor->e_motionfn)
+    {
+        x->gl_editor->e_onmotion = 0;
+        x->gl_editor->e_motionfn = 0;
+    }
+}
+
 t_canvas *glist_getcanvas(t_glist *x)
 {
     //fprintf(stderr,"glist_getcanvas\n");

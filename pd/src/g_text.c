@@ -1332,6 +1332,11 @@ static void gatom_focus(t_gatom *x, t_floatarg f)
             }
             glist_getnextxy(glist_getcanvas(x->a_glist), &xpos, &ypos);
             text_click((t_gobj *)x, x->a_glist, xpos, ypos, 0, 0, 0, 1);
+            // now remove the mouse motion function to prevent weird dislocation
+            // of values due to simultaneous drag while still holding the key
+            // pressed that is responsible for activating the focus (that is
+            // assuming that a key is being used to shift focus)
+            glist_grab_disable_motion(gl);
         }
         else
         {

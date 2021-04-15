@@ -492,6 +492,7 @@ EXTERN void glist_grab(t_glist *x, t_gobj *y, t_glistmotionfn motionfn,
     t_glistkeyfn keyfn, t_glistkeynameafn keynameafn,
     int xpos, int ypos, int exclusive);
 EXTERN int glist_grab_exclusive(t_glist *x, int exclusive);
+EXTERN void glist_grab_disable_motion(t_glist *x);
 EXTERN int glist_isvisible(t_glist *x);
 EXTERN int glist_istoplevel(t_glist *x);
 EXTERN t_glist *glist_findgraph(t_glist *x);
