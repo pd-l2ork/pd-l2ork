@@ -162,6 +162,7 @@ var canvas_events = (function() {
                 text = text.replace(/(?<!\ |\\)(\\;|\\,)/g, " $1");
                 text = text.replace(/(\\;|\\,)(?!\ )/g, "$1 ");
                 text = text.replace(/(\\ )/g, " ");
+                text = text.replace(/\u0020+/g, " ");
 
                 // substitute spaces and \n, so that we can preserve
                 // comment formatting
@@ -206,7 +207,9 @@ var canvas_events = (function() {
                 text = text.replace(/(\\;|\\,)(?!\ )/g, "$1 ");
                 //text = text.replace(/(\\ )/g, " ");
 
-                // get rid of extra consecutive spaces
+                // get rid of extra consecutive spaces, including escaped ones
+                // until we figure out a better way to handle those
+                text = text.replace(/(\\ )/g, " ");
                 text = text.replace(/\u0020+/g, " ");
             }
             // we need to make sure that the very last character is not a backslash
