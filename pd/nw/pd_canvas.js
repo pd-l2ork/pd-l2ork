@@ -137,13 +137,15 @@ var canvas_events = (function() {
             if (text.search(/^draw\s+path\s+d\s*=\s*"/) !== -1) {
                 text = text_to_normalized_svg_path(text);
             }
+            //pdgui.post("text_to_fudi:\n...before <"+text+">");
             // escape dollar signs
+            //text = text.replace(/(\\\$[0-9]+)/g, "\\\$1");
             text = text.replace(/(\$[0-9]+)/g, "\\$1");
 
             // escape special $@ sign
+            //text = text.replace(/(\\\$@)/g, "\\\$@");
             text = text.replace(/(\$@)/g, "\\$@");
 
-            //pdgui.post("text_to_fudi:\n...before <"+text+">");
             
             //var j;
             //for(j=0;j<text.length;j++)

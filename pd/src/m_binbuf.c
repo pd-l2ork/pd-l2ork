@@ -379,7 +379,7 @@ done:
 }
 
 /* add a binbuf to another one for saving.  Semicolons and commas go to
-symbols ";", "'",; We assume here (probably incorrectly) that there's
+symbols ";", ",",; We assume here (probably incorrectly) that there's
 no symbol whose name is ";" - should we be escaping those?. */
 
 void binbuf_addbinbuf(t_binbuf *x, t_binbuf *y)
@@ -388,9 +388,12 @@ void binbuf_addbinbuf(t_binbuf *x, t_binbuf *y)
     t_binbuf *z = binbuf_new();
     int i;
     t_atom *ap;
+    char escapedollsym[MAXPDSTRING+2];
     binbuf_add(z, y->b_n, y->b_vec);
     for (i = 0, ap = z->b_vec; i < z->b_n; i++, ap++)
     {
+        escapedollsym[0] = '\\';
+        escapedollsym[1] = '\0';
         char tbuf[MAXPDSTRING];
         switch (ap->a_type)
         {
@@ -415,20 +418,27 @@ void binbuf_addbinbuf(t_binbuf *x, t_binbuf *y)
             }
             break;
         case A_DOLLSYM:
-            //post("addbinbuf: dollsym");
             atom_string(ap, tbuf, MAXPDSTRING);
             SETSYMBOL(ap, gensym(tbuf));
+            //post("addbinbuf: dollsym <%s>", ap->a_w.w_symbol->s_name);
             break;
         case A_SYMBOL:
             //post("addbinbuf: symbol %s", ap->a_w.w_symbol->s_name);
-            // ico@vt.edu 2020-12-11: Here we escape comma and semi in case
+            // ico@vt.edu 2020-12-11: Here we escape , ; and $ in case
             // they are interpreted as symbols, which implies they were
             // prepended with a '\'. Doing this will ensure that the patch
             // is reopened the same way it was saved.
+            //post("addbinbuf: symbol <%s>", ap->a_w.w_symbol->s_name);
             if (!strcmp(ap->a_w.w_symbol->s_name, ";"))
                 SETSYMBOL(ap, gensym("\\\;"));
             else if (!strcmp(ap->a_w.w_symbol->s_name, ","))
                 SETSYMBOL(ap, gensym("\\\,"));
+            else if (ap->a_w.w_symbol->s_name[0] == '$')
+            {
+                strcat(escapedollsym, ap->a_w.w_symbol->s_name);
+                SETSYMBOL(ap, gensym(escapedollsym));
+                //post("...got $: adjusting... <%s>", escapedollsym);
+            }
             break;
         default:
             bug("binbuf_addbinbuf");
@@ -640,7 +650,8 @@ static t_symbol *binbuf_dorealizedollsym(t_pd *target, t_symbol *s, int ac,
      * whenever this happened, enable this code
      */
     substr=strchr(str, '$');
-    if (!substr || substr-str >= MAXPDSTRING)
+    //post("binbuf_dorealizedollsym str=<%s> substr=%d", str, substr-str);
+    if (!substr || substr-str > 0) // was substr-str >= MAXPDSTRING
         return (s);
 
     strncat(buf2, str, (substr-str));
