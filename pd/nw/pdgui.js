@@ -2857,8 +2857,7 @@ function text_to_tspans(cid, svg_text, text) {
             if (type !== null && type.contains("atom")) {
                 //post("text_to_tspans " + 
                 //    (type.contains("comment") ? "comment" : "other") + " escaping");
-                newtext = lines[i].replace(/\\,/g,",");
-                newtext = newtext.replace(/\\;/g,";");
+                newtext = lines[i].replace(/\\/g,"");
             }
         }
         if (newtext == null)
