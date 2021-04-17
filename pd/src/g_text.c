@@ -1115,6 +1115,44 @@ static void gatom_motion(void *z, t_floatarg dx, t_floatarg dy)
     }
 }
 
+// ico@vt.edu 2021-04-16: function for adding ... to the gatom
+// that is being edited via keyboard--we do ... only instead of the
+// first three characters (in case they are not present). otherwise
+// we introduce a cascading set of problems on the front-end which is
+// trying to figure out when to introduce a '>' due to text overflow.
+static void gatom_redraw_text_w_dots(t_gatom *x, char *sbuf)
+{
+    if (strlen(x->a_buf) == 0)
+    {
+        if (x->a_text.te_width >= 3)
+            sprintf(sbuf, "...");
+        else if (x->a_text.te_width == 2)
+            sprintf(sbuf, "..");
+        else if (x->a_text.te_width == 1 && x->a_atom.a_type == A_SYMBOL)
+            sprintf(sbuf, ".");
+    }
+    else if (strlen(x->a_buf) == 1)
+    {
+        if (x->a_text.te_width >= 3)
+            sprintf(sbuf, "%s..", x->a_buf);
+        else if (x->a_text.te_width == 2)
+            sprintf(sbuf, "%s.", x->a_buf);
+        else if (x->a_text.te_width == 1 && x->a_atom.a_type == A_SYMBOL)
+            sprintf(sbuf, x->a_buf);
+    }
+    else if (strlen(x->a_buf) == 2)
+    {
+        if (x->a_text.te_width >= 3)
+            sprintf(sbuf, "%s.", x->a_buf);
+        else if (x->a_text.te_width == 2)
+            sprintf(sbuf, "%s", x->a_buf);
+        else if (x->a_text.te_width == 1 && x->a_atom.a_type == A_SYMBOL)
+            sprintf(sbuf, x->a_buf); 
+    }
+    else
+        sprintf(sbuf, "%s", x->a_buf);
+}
+
 static void gatom_key(void *z, t_floatarg f)
 {
     t_gatom *x = (t_gatom *)z;
@@ -1250,18 +1288,7 @@ static void gatom_key(void *z, t_floatarg f)
     return;
 redraw:
         /* LATER figure out how to avoid creating all these symbols! */
-    // ico@vt.edu 2021-04-16: here we do ... only instead of the first
-    // three characters (in case they are not present). otherwise, we
-    // introduce a cascading set of problems on the front-end which is
-    // trying to figure out when to introduce a '>' due to text overflow.
-    if (strlen(x->a_buf) == 0) 
-        sprintf(sbuf, "%s...", x->a_buf);
-    else if (strlen(x->a_buf) == 1)
-        sprintf(sbuf, "%s..", x->a_buf);
-    else if (strlen(x->a_buf) == 2)
-        sprintf(sbuf, "%s.", x->a_buf);
-    else
-        sprintf(sbuf, "%s", x->a_buf);
+    gatom_redraw_text_w_dots(x, &sbuf);
     SETSYMBOL(&at, gensym(sbuf));
     binbuf_clear(x->a_text.te_binbuf);
     binbuf_add(x->a_text.te_binbuf, 1, &at);
@@ -1276,10 +1303,9 @@ static void gatom_click(t_gatom *x,
         xpos, ypos, shift, ctrl, alt, x->a_glist);
     //pd_bind(&x->a_text.ob_pd, gensym("#keyname_a"));
 	//post("bind");
-    if (x->a_text.te_width == 1)
+    if (x->a_text.te_width == 1 && x->a_atom.a_type == A_FLOAT)
     {
-        if (x->a_atom.a_type == A_FLOAT)
-            gatom_float(x, (x->a_atom.a_w.w_float == 0));
+        gatom_float(x, (x->a_atom.a_w.w_float == 0));
     }
     else
     {
@@ -1301,7 +1327,7 @@ static void gatom_click(t_gatom *x,
         {
             char sbuf[ATOMBUFSIZE + 4];
             t_atom at;
-            sprintf(sbuf, "%s...", x->a_buf);
+            gatom_redraw_text_w_dots(x, &sbuf);
             SETSYMBOL(&at, gensym(sbuf));
             binbuf_clear(x->a_text.te_binbuf);
             binbuf_add(x->a_text.te_binbuf, 1, &at);
