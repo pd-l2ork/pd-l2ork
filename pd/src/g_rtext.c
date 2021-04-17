@@ -208,6 +208,7 @@ flag is set from the GUI if this happens.  LATER take this out: early 2006? */
 
 extern int sys_oldtclversion;           
 extern int is_dropdown(t_text *x);
+extern t_class *gatom_class;
 
 static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
     int *indexp)
@@ -270,6 +271,11 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
                 (foundit_b == -1 && foundit_bv != -1))
             {
                 foundit_b = foundit_bv;
+            }
+            // ico@vt.edu 2021-04-16: if we are gatom, we need to pack everything
+            // into a single line, so that the nw.js side can do accurate truncating
+            if (pd_class(&x->x_text->te_pd) == gatom_class) {
+                foundit_b = x_bufsize_c;
             }
             if (foundit_b < 0) //if we did not find an \n or a \v
             {
@@ -416,10 +422,11 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
         if (action == SEND_FIRST)
         {
             //post("send_first <%s>", tempbuf);
-            gui_vmess("gui_text_new", "xssiiisi",
+            gui_vmess("gui_text_new", "xssiiiisi",
                 canvas, x->x_tag, rtext_gettype(x)->s_name,
                 glist_isselected(x->x_glist, ((t_gobj*)x->x_text)),
                 LMARGIN,
+                sys_fontwidth(glist_getfont(x->x_glist)),
                 fontheight,
                 tempbuf,
                 sys_hostfontsize(font));
@@ -518,12 +525,13 @@ void rtext_retext(t_rtext *x)
             x->x_buf = t_resizebytes(x->x_buf, bufsize, 1);
             bufsize = 1;
         }
-        else if (bufsize > text->te_width)
+        // ico@vt.edu 2021-04-16: we now handle this inside pdgui.js
+        /*else if (bufsize > text->te_width)
         {
             x->x_buf[text->te_width - 1] = '>';
             x->x_buf = t_resizebytes(x->x_buf, bufsize, text->te_width);
             bufsize = text->te_width;
-        }
+        }*/
     done:
         x->x_bufsize = bufsize;
     }

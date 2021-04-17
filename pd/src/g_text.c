@@ -21,7 +21,7 @@
 
 t_class *text_class;
 t_class *message_class;
-static t_class *gatom_class;
+t_class *gatom_class;
 static t_class *dropdown_class;
 static void text_vis(t_gobj *z, t_glist *glist, int vis);
 static void text_displace(t_gobj *z, t_glist *glist,
@@ -1122,6 +1122,7 @@ static void gatom_key(void *z, t_floatarg f)
     //post("gatom_key %f shift=%d strlen=%d <%s>", \
         f, x->a_shift, strlen(x->a_buf), x->a_buf);
     int len = strlen(x->a_buf);
+    int ndots;
     t_atom at;
     char sbuf[ATOMBUFSIZE + 4];
     if (c == 0)
@@ -1249,7 +1250,18 @@ static void gatom_key(void *z, t_floatarg f)
     return;
 redraw:
         /* LATER figure out how to avoid creating all these symbols! */
-    sprintf(sbuf, "%s...", x->a_buf);
+    // ico@vt.edu 2021-04-16: here we do ... only instead of the first
+    // three characters (in case they are not present). otherwise, we
+    // introduce a cascading set of problems on the front-end which is
+    // trying to figure out when to introduce a '>' due to text overflow.
+    if (strlen(x->a_buf) == 0) 
+        sprintf(sbuf, "%s...", x->a_buf);
+    else if (strlen(x->a_buf) == 1)
+        sprintf(sbuf, "%s..", x->a_buf);
+    else if (strlen(x->a_buf) == 2)
+        sprintf(sbuf, "%s.", x->a_buf);
+    else
+        sprintf(sbuf, "%s", x->a_buf);
     SETSYMBOL(&at, gensym(sbuf));
     binbuf_clear(x->a_text.te_binbuf);
     binbuf_add(x->a_text.te_binbuf, 1, &at);

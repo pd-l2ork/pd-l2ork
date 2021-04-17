@@ -2842,28 +2842,63 @@ function text_line_height_kludge(fontsize, fontsize_type) {
 }
 
 function text_to_tspans(cid, svg_text, text) {
-    var lines, i, len, tspan, fontsize, newtext, text_node, type;
+    var lines, i, isatom, len, tspan, fontsize, newtext, text_node;
 
+    //post("incoming text=<"+text+">");
+    isatom = 0;
+    //post("parentnode"+target);
     lines = text.split("\n");
     len = lines.length;
     // Get fontsize (minus the trailing "px")
     fontsize = svg_text.getAttribute("font-size").slice(0, -2);
+    //post("text_to_tspans " + len + " " + svg_text.classList);
     for (i = 0; i < len; i++) {
         // remove escaped commas and semicolons in gatom and comment objects only
         newtext = null;
-        type = svg_text.parentNode;
-        if (type !== null) {
-            type = type.classList;
-            if (type !== null && type.contains("atom")) {
-                //post("text_to_tspans " + 
-                //    (type.contains("comment") ? "comment" : "other") + " escaping");
-                newtext = lines[i].replace(/\\/g,"");
+        if (svg_text.classList.contains("atom")) {
+            //post("text_to_tspans " + 
+            //    (type.contains("comment") ? "comment" : "other") + " escaping");
+            isatom = 1;
+            //newtext = text.replace(/\n/g, '');
+            newtext = text.replace(/\\/g,'');
+            //post("atom newtext=<" + newtext +">");
+            // ico@vt.edu 2021-04-16:
+            // now truncate gatom by adding '>' at the end of overflow
+            // we do this here because it is more flexible and efficient than
+            // in c, since this is done post-escaping the \\s
+            var parentWidth;
+            // if we have no parent, that means we are resizing the gatom using
+            // mouse which forces recreation of the text from c using
+            // gui_text_new and since we are appended to the parent only after
+            // text_to_tspans (see the end of the gui_text_new call), we have
+            // no parent and have to do this ugly workaround to find our parent.
+            // if, on the other hand we have a parent, then we are likely editing
+            // the contents of the gatom and therefore we can simply look for
+            // our parent. either way, we need to truncate text, so that it does
+            // not overflow outside the box width.
+            if (svg_text.parentNode === null)
+            {
+                parentWidth = patchwin[cid].window.document.getElementById(
+                    svg_text.id.replace(/text/g,'gobj')).getBBox().width;
+            }
+            else
+                parentWidth = svg_text.parentNode.getBBox().width;
+
+            //post("contains data newtext=" + newtext + " " + parentWidth);
+            var width = Math.floor(
+                parentWidth / svg_text.getAttribute("font-width"));
+            //post(newtext.length + " " + width);
+            if (newtext.length > width) {
+                //post("old newtext=<"+newtext+">");
+                newtext = newtext.substr(0, width-1) + '>';
+                //post("new newtext=<"+newtext+">");
             }
         }
         if (newtext == null)
         {
             newtext = lines[i];
         }
+
         tspan = create_item(cid, "tspan", {
             dy: i == 0 ? 0 : text_line_height_kludge(+fontsize, "gui") + "px",
             x: 0,
@@ -2875,6 +2910,8 @@ function text_to_tspans(cid, svg_text, text) {
                     .createTextNode(newtext);
         tspan.appendChild(text_node);
         svg_text.appendChild(tspan);
+        if (isatom)
+            break;
     }
 }
 
@@ -2956,7 +2993,8 @@ function gobj_font_y_kludge(fontsize) {
     }
 }
 
-function gui_text_new(cid, tag, type, isselected, left_margin, font_height, text, font) {
+function gui_text_new(cid, tag, type, isselected, left_margin,
+    font_width, font_height, text, font) {
     //ico@vt.edu: different text spacing for GOPs
     //post("gui_text_new type=" + type + " tag=" + tag);
     var xoff = 0.5; // Default value for normal objects, GOP uses -0.5
@@ -2980,7 +3018,7 @@ function gui_text_new(cid, tag, type, isselected, left_margin, font_height, text
 
     var classname = "box_text";
     if (type === "atom") {
-        classname = "box_text data";
+        classname = "box_text data atom";
     }
     gui(cid).get_gobj(tag, function(e) {
         xoff = e.classList.contains("graph") ? -0.5 : 0.5;
@@ -3010,6 +3048,7 @@ function gui_text_new(cid, tag, type, isselected, left_margin, font_height, text
             // text is handled under tk...
             // 'dominant-baseline': 'hanging',
             "shape-rendering": "crispEdges",
+            "font-width": font_width,
             "font-size": pd_fontsize_to_gui_fontsize(font) + "px",
             "font-weight": "normal",
             id: tag + "text",
