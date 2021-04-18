@@ -2994,7 +2994,7 @@ function gobj_font_y_kludge(fontsize) {
 }
 
 function gui_text_new(cid, tag, type, isselected, left_margin,
-    font_width, font_height, text, font) {
+    font_height, text, font, font_width) {
     //ico@vt.edu: different text spacing for GOPs
     //post("gui_text_new type=" + type + " tag=" + tag);
     var xoff = 0.5; // Default value for normal objects, GOP uses -0.5
