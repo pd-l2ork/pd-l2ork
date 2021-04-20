@@ -6331,6 +6331,10 @@ static int canvas_dofind(t_canvas *x, int *myindex1p)
                         vmess(&x->gl_pd, gensym("menu-open"), "");
                         canvas_editmode(x, 1.);
                         glist_select(x, y);
+                        //post("find A");
+                        t_rtext *yrt = glist_findrtext(x, (t_text *)y);
+                        gui_vmess("gui_canvas_scroll_to_found_gobj", "xs",
+                            x, rtext_gettag(yrt));
                         return (1);
                     }
                 }
@@ -6343,7 +6347,13 @@ static int canvas_dofind(t_canvas *x, int *myindex1p)
         {
             (*myindex1p)++;
             if (canvas_dofind((t_canvas *)y, myindex1p))
+            {
+                //post("find B");
+                t_rtext *yrt = glist_findrtext(x, (t_text *)y);
+                gui_vmess("gui_canvas_scroll_to_found_gobj", "xs",
+                    x, rtext_gettag(yrt));
                 return (1);
+            }
         }
     }
     return (0);

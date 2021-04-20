@@ -6841,28 +6841,35 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         //p.style.setProperty("width", -width_spec - 2 + "px");
         p.style.setProperty("-webkit-padding-after", "1px");
 
-        // ico@vt.edu 2021-03-29: here we use the same code as the one below in the
-        // oninput call, to ensure that the initial object width is as it should be
-        // regardless of whether the object is overlapping the right window edge or
-        // not. this only applies to regular non-gop objects.
+        // ico@vt.edu 2021-03-29 (updated 2021-04-20 because activation of a comment
+        // that spills over to the right results in a width truncation which only
+        // applies to when the object is initiall activated, thus requiring a slightly
+        // different treatment of the two approaches):
+        // here we use similar code as the one below in the oninput call, to ensure
+        // that the initial object width is as it should be regardless of whether the
+        // object is overlapping the right window edge or not. this only applies to
+        // regular non-gop objects.
         //post("width_spec="+width_spec);
         if (is_gop == 0 && width_spec <= 0)
         {
             var tl = text.trim().length;
             var mw = parseInt(p.style.maxWidth, 10);
+            //post("mw="+mw+" tl="+tl);
             if (tl <= 3 && width_spec <= 0)
                 p.style.setProperty("min-width", "3ch");
-            else if (tl > 3 && tl < mw-1)
+            else if (tl > 3)
             {
                 var text2lines = text.split('\n');
                 var i, j, n;
                 n = 0;
                 for (i = 0; i < text2lines.length; i++) {
                     j = text2lines[i].length;
-                    if (j > n) {
+                    if (j > n && j < mw-1) {
                         n = j;
                     }
                 }
+                if (n == 0)
+                    n = mw;
                 if (n < tl)
                     tl = n;
                 p.style.setProperty("min-width", tl+"ch");
@@ -7041,6 +7048,62 @@ function zoom_level_to_chrome_percent(nw_win) {
     }
     return zoom;
 }
+
+// ico@vt.edu 2021-04-20: used to autoscroll after doing the "find" request
+// on the main patch canvas
+function gui_canvas_scroll_to_found_gobj(cid, tag) {
+    var x1, y1, x2, y2;
+    var gobj = get_gobj(cid, tag);
+    //post("gobj="+gobj+" tag="+tag);
+    var bbox = gobj.getBBox();
+    x1 = gobj.getCTM().e;
+    y1 = gobj.getCTM().f;
+    x2 = x1 + bbox.width;
+    y2 = y1 + bbox.height;
+    //post("x1="+x1+" y1="+y1+" x2="+x2+" y2="+y2);
+    /*window.scrollBy({
+        top: -100,
+        left: -100,
+        behavior: 'smooth'
+    });*/
+    gui(cid).get_nw_window(function(nw_win) {
+        var svg_elem = nw_win.window.document.getElementById("patchsvg");
+        var { x: x, y: y, w: width, h: height,
+            mw: min_width, mh: min_height } = canvas_params(nw_win);
+        //post("x="+x+" y="+y+" w="+width+" h="+height+
+        //  " mw="+min_width+" mh="+min_height);
+        //post("scrollX="+nw_win.window.scrollX+
+        //  " scrollY="+nw_win.window.scrollY);
+        var tlx, tly, brx, bry; // top-left x and y, bottom-right x and y
+        var offsetx = 0, offsety = 0; // final offset
+
+        tlx = x + nw_win.window.scrollX;
+        tly = y + nw_win.window.scrollY;
+        brx = tlx + min_width;
+        bry = tly + min_height;
+        //post("("+tlx+","+tly+") | ("+brx+","+bry+")");
+
+        if (x2 - brx > 0)
+            offsetx = x2 - brx + 30;
+        else if (x1 - tlx < 0)
+            offsetx = x1 - tlx - 30;
+
+        if (y2 - bry > 0)
+            offsety = y2 - bry + 30;
+        else if (y1 - tly < 0)
+            offsety = y1 - tly - 30;
+
+        //post("final x:"+offsetx+" y:"+offsety);
+        nw_win.window.scrollBy({
+            left: offsetx,
+            top: offsety,
+            behavior: 'smooth'
+        });
+    });
+}
+
+exports.gui_canvas_scroll_to_found_gobj = gui_canvas_scroll_to_found_gobj;
+
 
 // leverages the get_nw_window method in the callers...
 function canvas_params(nw_win)

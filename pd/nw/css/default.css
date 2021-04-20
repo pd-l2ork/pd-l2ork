@@ -590,7 +590,7 @@ text.activated {
     padding-top: 2px;
     padding-left: 3px;
     padding-bottom: 9px;
-    background: silver;
+    background: rgba(192,192,192,0.85);
     position: fixed;
     bottom: 0;
     left: 0;
@@ -602,7 +602,7 @@ text.activated {
     padding-top: 2px;
     padding-left: 3px;
     padding-bottom: 9px;
-    background: silver;
+    background: rgba(192,192,192,0.85);
     position: fixed;
     bottom: 0;
     left: 0;
