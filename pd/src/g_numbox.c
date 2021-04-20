@@ -1120,11 +1120,13 @@ static void *my_numbox_new(t_symbol *s, int argc, t_atom *argv)
         v = atom_getfloatarg(16, argc, argv);
     }
     else iemgui_new_getnames(&x->x_gui, 6, 0);
-    if((argc == 18)&&IS_A_FLOAT(argv,17))
+    if((argc >= 18)&&IS_A_FLOAT(argv,17))
         log_height = maxi(atom_getintarg(17, argc, argv),10);
     x->x_drawstyle = 0; // default behavior
-    if((argc == 19)&&IS_A_FLOAT(argv,18))
+    if((argc >= 19)&&IS_A_FLOAT(argv,18))
+    {
         x->x_drawstyle = (int)atom_getintarg(18, argc, argv);
+    }
     if (argc == 20&&IS_A_FLOAT(argv,19))
             ex = atom_getintarg(19, argc, argv);
     x->x_gui.x_draw = (t_iemfunptr)my_numbox_draw;
