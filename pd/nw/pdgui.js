@@ -3290,12 +3290,18 @@ function gui_canvas_move_selection(cid, x1, y1, x2, y2) {
     new_x2 = (x1 > x2 ? x1 + 0.5 : x2 + 0.5);
     new_y2 = (y1 > y2 ? y1 + 0.5 : y2 + 0.5);
     gui(cid).get_elem("selection_rectangle", function(elem) {
-        //post(elem.getAttribute("points"));
         var old_points = elem.getAttribute("points").split(",");
-        old_x1 = (old_points[0] < old_points[2] ? old_points[0] : old_points[2]);
-        old_y1 = (old_points[1] < old_points[7] ? old_points[1] : old_points[7]);
-        old_x2 = (old_points[0] > old_points[2] ? old_points[0] : old_points[2]);
-        old_y2 = (old_points[1] > old_points[7] ? old_points[1] : old_points[7]);
+        //post("points: 0="+old_points[0]+" 1="+old_points[1]+
+        //    " 2="+old_points[2]+" 7="+old_points[7]+" | "+
+        //    (old_points[1]<old_points[7] ? "one" : "seven"));
+        old_x1 = (parseFloat(old_points[0]) < parseFloat(old_points[2])
+            ? old_points[0] : old_points[2]);
+        old_y1 = (parseFloat(old_points[1]) < parseFloat(old_points[7])
+            ? old_points[1] : old_points[7]);
+        old_x2 = (parseFloat(old_points[0]) > parseFloat(old_points[2])
+            ? old_points[0] : old_points[2]);
+        old_y2 = (parseFloat(old_points[1]) > parseFloat(old_points[7])
+            ? old_points[1] : old_points[7]);
     });
     //post("old: "+old_x1+" "+old_y1+" | "+old_x2+" "+old_y2);
     //post("new: "+new_x1+" "+new_y1+" | "+new_x2+" "+new_y2);
@@ -3310,29 +3316,42 @@ function gui_canvas_move_selection(cid, x1, y1, x2, y2) {
         var svg_elem = nw_win.window.document.getElementById("patchsvg");
         var { x: x, y: y, w: width, h: height,
             mw: min_width, mh: min_height } = canvas_params(nw_win);
+        //post("mw="+min_width+" mh="+min_height+" w="+width+" h="+height);
+        // if there is nothing on the canvas, or the contents are only
+        // using a subset of the canvas, we need to use window boundaries
+        // as the edges of the selection area
+        if (width < min_width) {
+            width = min_width;
+        }
+        if (height < min_height) {
+            height = min_height;
+        }
         //post("scrollX="+nw_win.window.scrollX+
         //  " scrollY="+nw_win.window.scrollY);
 
         // limit selection box size to the canvas size
+        // we subtract margins to make it got one pixel away from the edge
+        // except for the bottom, where we may want to add -5 because the
+        // current nw.js has some unexplained dead space at the bottom
         if (x1 < x + 1) {
             x1 = x + 1;
             //post("x1 left");
-        } else if (x1 > width + x - 1) {
+        } else if (x1 > width + x - 2) {
             x1 = width + x - 1;
             //post("x1 right");
         }
         if (x2 < x + 1) {
             x2 = x + 1;
             //post("x2 left");
-        } else if (x2 > width + x - 1) {
-            x2 = width + x - 1;
+        } else if (x2 > width + x - 2) {
+            x2 = width + x - 2;
             //post("x2 right");
         }
         if (y1 < y + 1) {
             y1 = y + 1;
             //post("y1 top");
-        } else if (y1 > height + y - 1) {
-            y1 = height + y - 1;
+        } else if (y1 > height + y - 2) {
+            y1 = height + y - 2;
             //post("y1 bottom");
         } if (y2 < y + 1) {
             y2 = y + 1;
@@ -3343,8 +3362,8 @@ function gui_canvas_move_selection(cid, x1, y1, x2, y2) {
         }
 
         /*
-        post("x="+x+" y="+y+" raw_w="+width+" w="+(width + x - 1)+
-            " raw_h="+height+" h="+(height + y - 2)+
+        post("x="+x+" y="+y+" raw_w="+width+" w="+(width + x - 2)+
+            " raw_h="+height+" h="+(height + y - 5)+
             " | "+x1+" "+y1+" "+x2+" "+y2);
         */
 
@@ -7254,9 +7273,17 @@ function canvas_params(nw_win)
     // calculate the canvas parameters (svg bounding box and window geometry)
     // for do_getscroll and do_optimalzoom
     //post("nw_win=" + nw_win + " " + nw_win.window + " " + nw_win.window.document);
-    var bbox, width, height, min_width, min_height, x, y, svg_elem;
+    var bbox, width, height, min_width, min_height, x, y, selbox, svg_elem;
     svg_elem = nw_win.window.document.getElementById("patchsvg");
+    // ico@vt.edu 20210421: hide selection box, so that we don't include it in the
+    // bbox calculation
+    selbox = nw_win.window.document.getElementById("selection_rectangle");
+    if(selbox)
+        selbox.style.display = "none";
     bbox = svg_elem.getBBox();
+    // ... now make it back visible
+    if(selbox)
+        selbox.style.display = "block";
     //post("canvas_params calculated bbox: " + bbox.width + " " + bbox.height);
     // We try to do Pd-extended style canvas origins. That is, coord (0, 0)
     // should be in the top-left corner unless there are objects with a
