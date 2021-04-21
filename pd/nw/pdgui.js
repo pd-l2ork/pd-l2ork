@@ -6892,6 +6892,8 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
     if (state !== 0) {
         // Make sure we're in editmode
         canvas_set_editmode(cid, 1);
+        // scroll to the object in case not all of it is visible
+        gui_canvas_scroll_to_gobj(cid, tag, 1);
         // Hide the gobj while we edit.  However, we want the gobj to
         // contribute to the svg's bbox-- that way when the new_object_textentry
         // goes away we still have the same dimensions.  Otherwise the user
