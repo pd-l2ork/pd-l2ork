@@ -3280,12 +3280,153 @@ function gui_canvas_draw_selection(cid, x1, y1, x2, y2) {
 }
 
 function gui_canvas_move_selection(cid, x1, y1, x2, y2) {
-    var points_array = [x1 + 0.5, y1 + 0.5, x2 + 0.5, y1 + 0.5,
-                        x2 + 0.5, y2 + 0.5, x1 + 0.5, y2 + 0.5];
-    gui(cid).get_elem("selection_rectangle", {
-        points: points_array
-    });
 
+    // need to detect in which way are we expanding the selection
+    // this is used to then affect the scroll logic further below
+    var old_x1, old_y1, old_x2, old_y2,
+        new_x1, new_y1, new_x2, new_y2;
+    new_x1 = (x1 < x2 ? x1 + 0.5 : x2 + 0.5);
+    new_y1 = (y1 < y2 ? y1 + 0.5 : y2 + 0.5);
+    new_x2 = (x1 > x2 ? x1 + 0.5 : x2 + 0.5);
+    new_y2 = (y1 > y2 ? y1 + 0.5 : y2 + 0.5);
+    gui(cid).get_elem("selection_rectangle", function(elem) {
+        //post(elem.getAttribute("points"));
+        var old_points = elem.getAttribute("points").split(",");
+        old_x1 = (old_points[0] < old_points[2] ? old_points[0] : old_points[2]);
+        old_y1 = (old_points[1] < old_points[7] ? old_points[1] : old_points[7]);
+        old_x2 = (old_points[0] > old_points[2] ? old_points[0] : old_points[2]);
+        old_y2 = (old_points[1] > old_points[7] ? old_points[1] : old_points[7]);
+    });
+    //post("old: "+old_x1+" "+old_y1+" | "+old_x2+" "+old_y2);
+    //post("new: "+new_x1+" "+new_y1+" | "+new_x2+" "+new_y2);
+    var lr = 0, ud = 0; // lr: -1 left, 1 right, ud: -1 up, 1 down
+    if (old_x2 != new_x2) lr = 1;
+    if (old_x1 != new_x1) lr = -1;
+    if (old_y2 != new_y2) ud = 1;
+    if (old_y1 != new_y1) ud = -1;
+    //post("lr="+lr+" ud="+ud);
+
+    gui(cid).get_nw_window(function(nw_win) {
+        var svg_elem = nw_win.window.document.getElementById("patchsvg");
+        var { x: x, y: y, w: width, h: height,
+            mw: min_width, mh: min_height } = canvas_params(nw_win);
+        //post("scrollX="+nw_win.window.scrollX+
+        //  " scrollY="+nw_win.window.scrollY);
+
+        // limit selection box size to the canvas size
+        if (x1 < x + 1) {
+            x1 = x + 1;
+            //post("x1 left");
+        } else if (x1 > width + x - 1) {
+            x1 = width + x - 1;
+            //post("x1 right");
+        }
+        if (x2 < x + 1) {
+            x2 = x + 1;
+            //post("x2 left");
+        } else if (x2 > width + x - 1) {
+            x2 = width + x - 1;
+            //post("x2 right");
+        }
+        if (y1 < y + 1) {
+            y1 = y + 1;
+            //post("y1 top");
+        } else if (y1 > height + y - 1) {
+            y1 = height + y - 1;
+            //post("y1 bottom");
+        } if (y2 < y + 1) {
+            y2 = y + 1;
+            //post("y2 top");
+        } else if (y2 > height + y - 2) {
+            y2 = height + y - 2;
+            //post("y2 bottom");
+        }
+
+        /*
+        post("x="+x+" y="+y+" raw_w="+width+" w="+(width + x - 1)+
+            " raw_h="+height+" h="+(height + y - 2)+
+            " | "+x1+" "+y1+" "+x2+" "+y2);
+        */
+
+        var points_array = [x1 + 0.5, y1 + 0.5, x2 + 0.5, y1 + 0.5,
+            x2 + 0.5, y2 + 0.5, x1 + 0.5, y2 + 0.5];
+
+        gui(cid).get_elem("selection_rectangle", {
+            points: points_array
+        });
+        // now check for selection outside the window boundaries and
+        // whether we need to invoke the scrolling
+        var gobj;
+        gui(cid).get_elem("selection_rectangle", function(elem) {
+            gobj = elem;
+        });
+        var x1b, y1b, x2b, y2b;
+        var bbox = gobj.getBBox();
+        x1b = bbox.x;
+        y1b = bbox.y;
+        x2b = x1b + bbox.width;
+        y2b = y1b + bbox.height;
+        //post("x1="+x1+" y1="+y1+" x2="+x2+" y2="+y2);
+
+
+        var tlx, tly, brx, bry; // top-left x and y, bottom-right x and y
+        var offsetx = 0, offsety = 0; // final offset
+
+        tlx = x + nw_win.window.scrollX;
+        tly = y + nw_win.window.scrollY;
+        brx = tlx + min_width;
+        bry = tly + min_height;
+        //post("("+tlx+","+tly+") | ("+brx+","+bry+")");
+        if (lr == 1) {
+            if (x2b - brx > 0)
+                offsetx = x2b - brx;
+            else if (x2 - tlx < 0)
+                offsetx = x2b - tlx;
+        } else if (lr == -1) {
+            if (x1b - tlx < 0)
+                offsetx = x1b - tlx;
+            else if (x1 - brx > 0)
+                offsetx = x1b - brx;
+        }
+
+        if (ud == 1) {
+            if (y2b - bry > 0)
+                offsety = y2b - bry;
+            else if (y2b - tly < 0)
+                offsety = y2b - tly;
+        } else if (ud == -1) {
+            if (y1b - tly < 0)
+                offsety = y1b - tly;
+            else if (y1b - bry > 0)
+                offsety = y1b - bry;
+        }
+
+        var inc = 10; // scroll increment
+        if (offsetx > 0) offsetx = inc;
+        else if (offsetx < 0) offsetx = -inc;
+        if (offsety > 0) offsety = inc;
+        else if (offsety < 0) offsety = -inc;
+        /*
+        if (x2 - brx > 0)
+            offsetx = x2 - brx;
+        else if (x1 - tlx < 0)
+            offsetx = x1 - tlx;
+
+        if (y2 - bry > 0)
+            offsety = y2 - bry;
+        else if (y1 - tly < 0)
+            offsety = y1 - tly;
+        */
+
+        //post("final x:"+offsetx+" y:"+offsety);
+        nw_win.window.scrollBy({
+            //left: (offsetx > 0 ? 10 : -10),
+            //top: (offsety > 0 ? 10 : -10),
+            left: offsetx,
+            top: offsety,
+            behavior: 'auto'
+        });
+    });
 }
 
 function gui_canvas_hide_selection(cid) {
@@ -7051,7 +7192,7 @@ function zoom_level_to_chrome_percent(nw_win) {
 
 // ico@vt.edu 2021-04-20: used to autoscroll after doing the "find" request
 // on the main patch canvas
-function gui_canvas_scroll_to_found_gobj(cid, tag) {
+function gui_canvas_scroll_to_gobj(cid, tag, smooth) {
     var x1, y1, x2, y2;
     var gobj = get_gobj(cid, tag);
     //post("gobj="+gobj+" tag="+tag);
@@ -7097,12 +7238,12 @@ function gui_canvas_scroll_to_found_gobj(cid, tag) {
         nw_win.window.scrollBy({
             left: offsetx,
             top: offsety,
-            behavior: 'smooth'
+            behavior: (smooth === 1 ? 'smooth' : 'auto')
         });
     });
 }
 
-exports.gui_canvas_scroll_to_found_gobj = gui_canvas_scroll_to_found_gobj;
+exports.gui_canvas_scroll_to_gobj = gui_canvas_scroll_to_gobj;
 
 
 // leverages the get_nw_window method in the callers...
