@@ -1,4 +1,4 @@
-#N canvas 464 13 647 524 12;
+#N canvas 270 70 647 524 12;
 #X obj 27 15 pdcontrol;
 #X text 106 15 -- communicate with pd and/or this patch;
 #X text 403 457 updated for Pd version 0.50.;
@@ -19,10 +19,10 @@
 #X msg 57 187 dir;
 #X text 100 187 get directory this patch is in;
 #X msg 63 225 dir 0 ../3.audio-examples/A00.intro.pd, f 32;
-#N canvas 5 94 529 365 args 1;
+#N canvas 5 94 529 365 args 0;
 #X obj 127 209 print;
 #X text 185 140 <= get arguments;
-#X obj 127 174 pdcontrol-abs foo 100 \$0-x \\\$0 \$1 \$2-x;
+#X obj 127 174 pdcontrol-abs foo 100 \$0-x \$0 \$1 \$2-x;
 #X msg 127 140 args 0;
 #X text 40 23 This is useful for managing a variable number of arguments.
 When it receives the 'args' message \, [pdcontrol] outputs the loaded
