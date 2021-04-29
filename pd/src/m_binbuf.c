@@ -650,8 +650,15 @@ static t_symbol *binbuf_dorealizedollsym(t_pd *target, t_symbol *s, int ac,
      * whenever this happened, enable this code
      */
     substr=strchr(str, '$');
-    //post("binbuf_dorealizedollsym str=<%s> substr=%d", str, substr-str);
-    if (!substr || substr-str > 0) // was substr-str >= MAXPDSTRING
+    /*
+    post("binbuf_dorealizedollsym str=<%s> substr=%d", str, substr-str);
+    if (substr-str > 0 && substr-str < MAXPDSTRING)
+        post("... <%c>", str[substr-str-1]);
+    */
+    // ico@vt.edu 2021-04-29: added third condition to check if $ is preceded
+    // by a backslash, in which case the dollsym should remain unrealized
+    if (!substr || substr-str >= MAXPDSTRING ||
+        (substr-str > 0 && substr-str < MAXPDSTRING && str[substr-str-1] == '\\'))
         return (s);
 
     strncat(buf2, str, (substr-str));
