@@ -3340,7 +3340,12 @@ void canvasgop__motionhook(t_scalehandle *sh, t_floatarg mouse_x,
             x->gl_pixheight = tmp_y_final;
         owner->gl_editor->e_xnew = mouse_x;
         owner->gl_editor->e_ynew = mouse_y;
-        canvas_fixlinesfor(owner, (t_text *)x);
+        // ico@vt.edu 2021-04-29: here we don't have to check if we have
+        // gl_owner since we already know we are adjusting our size on the
+        // parent patch. this is also why the commented-out canvas_fixlinesfor
+        // is not properly working.
+        //canvas_fixlinesfor(owner, (t_text *)x);
+        canvas_fixlinesfor(glist_getcanvas(x->gl_owner), (t_text *)x);
         gobj_vis((t_gobj *)x, x->gl_owner, 1);
         canvas_dirty(owner, 1);
 
@@ -3397,6 +3402,9 @@ void canvasgop__motionhook(t_scalehandle *sh, t_floatarg mouse_x,
         {
             gobj_vis(&x->gl_gobj, x->gl_owner, 0);
             gobj_vis(&x->gl_gobj, x->gl_owner, 1);
+            // ico@vt.edu 2021-04-29: we also need to adjust patch cords
+            // on the parent window here
+            canvas_fixlinesfor(glist_getcanvas(x->gl_owner), (t_text *)x);
         }
     }
     else /* move_gop hook */
