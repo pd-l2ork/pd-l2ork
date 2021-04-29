@@ -707,6 +707,9 @@ static void *vu_new(t_symbol *s, int argc, t_atom *argv)
     x->x_gui.legacy_x = -1;
     x->x_gui.legacy_y = -1;
 
+    x->x_gui.x_color2 = &x->x_gui.x_lcol;
+    x->x_gui.x_color3 = NULL;
+
     return (x);
 }
 

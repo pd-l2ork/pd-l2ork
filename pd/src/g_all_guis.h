@@ -114,6 +114,10 @@ typedef struct _iemgui
     int legacy_y;                 // legacy y offset
     //int click_x;                  // click getrect x offset
     //int click_y;                  // click getrect y offset
+                             // we use the following to accommodate objects that do not use all colors
+    int *x_color1;             // references 1st color, by default x_bcol
+    int *x_color2;             // references 2nd color, by default x_fcol
+    int *x_color3;             // references 3rd color, by default x_lcol
 } t_iemgui;
 
 typedef struct _bng

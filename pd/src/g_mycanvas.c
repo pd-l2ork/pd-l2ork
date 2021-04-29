@@ -210,7 +210,7 @@ static void my_canvas_properties(t_gobj *z, t_glist *owner)
     gui_s("font_style"); gui_i(x->x_gui.x_font_style);
     gui_s("font_size"); gui_i(x->x_gui.x_fontsize);
     gui_s("background_color"); gui_i(0xffffff & x->x_gui.x_bcol);
-    gui_s("foreground_color"); gui_i(0xffffff & x->x_gui.x_fcol);
+    //gui_s("foreground_color"); gui_i(0xffffff & x->x_gui.x_fcol);
     gui_s("label_color"); gui_i(0xffffff & x->x_gui.x_lcol);
     
     gui_end_array();
@@ -351,6 +351,9 @@ static void *my_canvas_new(t_symbol *s, int argc, t_atom *argv)
 
     x->x_gui.legacy_x = 0;
     x->x_gui.legacy_y = 1;
+
+    x->x_gui.x_color2 = &x->x_gui.x_lcol;
+    x->x_gui.x_color3 = NULL;
 
     return (x);
 }

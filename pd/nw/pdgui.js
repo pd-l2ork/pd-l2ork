@@ -6424,7 +6424,8 @@ function gui_dialog_set_field(did, field_name, value) {
         } else {
             elem.value = value;
         }
-        elem.onchange();
+        if (elem.type !== "hidden")
+            elem.onchange();
     }
     //dialogwin[did].window.update_attr(elem);
 }

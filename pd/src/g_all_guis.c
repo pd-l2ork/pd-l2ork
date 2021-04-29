@@ -674,8 +674,8 @@ void iemgui_color(t_iemgui *x, t_symbol *s, int ac, t_atom *av)
 {
     if (ac)
     {
-        if (ac >= 1)
-            x->x_bcol = iemgui_compatible_colorarg(x, 0, ac, av);
+        if (ac >= 1 && x->x_color1)
+            *x->x_color1 = iemgui_compatible_colorarg(x, 0, ac, av);
         if (ac >= 2)
         {
                 /* if there are only two args, the old style was to make
@@ -684,11 +684,13 @@ void iemgui_color(t_iemgui *x, t_symbol *s, int ac, t_atom *av)
                    present. */
             if (ac == 2 && iemgui_old_color_args(ac, av))
                 x->x_lcol = iemgui_compatible_colorarg(x, 1, ac, av);
-            else
-                x->x_fcol = iemgui_compatible_colorarg(x, 1, ac, av);
+            else {
+                if (x->x_color2)
+                    *x->x_color2 = iemgui_compatible_colorarg(x, 1, ac, av);
+            }
         }
-        if (ac >= 3)
-            x->x_lcol = iemgui_compatible_colorarg(x, 2, ac, av);
+        if (ac >= 3 && x->x_color3)
+            *x->x_color3 = iemgui_compatible_colorarg(x, 2, ac, av);
         if (glist_isvisible(x->x_glist))
         {
             x->x_draw(x, x->x_glist, IEM_GUI_DRAW_MODE_CONFIG);
@@ -858,6 +860,9 @@ void iem_inttosymargs(t_iemgui *x, int n)
     x->x_loadinit = (n >>  0);
     x->x_locked = 0;
     x->x_reverse = 0;
+    x->x_color1 = &x->x_bcol;
+    x->x_color2 = &x->x_fcol;
+    x->x_color3 = &x->x_lcol;
 }
 
 int iem_symargstoint(t_iemgui *x)

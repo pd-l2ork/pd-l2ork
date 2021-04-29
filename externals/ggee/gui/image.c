@@ -1144,10 +1144,17 @@ static void image_dialog(t_image *x, t_symbol *s, int argc,
     x->x_gui.x_lab_unexpanded=srl[2];
     srl[2]=canvas_realizedollar(x->x_gui.x_glist, srl[2]);
 
-    iemgui_send(&x->x_gui, srl[0]);
-    iemgui_receive(&x->x_gui, srl[1]);
-    iemgui_verify_snd_ne_rcv(&x->x_gui);
+    if(srl[1]!=x->x_gui.x_rcv)
+    {
+        if(iemgui_has_rcv(&x->x_gui))
+            pd_unbind((t_pd *)&x->x_gui, x->x_gui.x_rcv);
+        x->x_gui.x_rcv = srl[1];
+        pd_bind((t_pd *)&x->x_gui, x->x_gui.x_rcv);
+    }
+    x->x_gui.x_snd = srl[0];
     x->x_gui.x_lab = srl[2];
+    iemgui_verify_snd_ne_rcv(&x->x_gui);
+    iemgui_draw_io(&x->x_gui, oldsndrcvable);
     if(f<0 || f>2) f=0;
     x->x_gui.x_font_style = f;
 
@@ -1437,6 +1444,11 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
     // 1 = iemgui
     // 2 = 3rd-party iemgui-based that uses mycanvas resize hooks
     x->x_gui.x_obj.te_iemgui = 2;
+
+    x->x_gui.x_color1 = &x->x_gui.x_lcol;
+    x->x_gui.x_color2 = NULL;
+    x->x_gui.x_color3 = NULL;
+
     return (x);
 }
 
