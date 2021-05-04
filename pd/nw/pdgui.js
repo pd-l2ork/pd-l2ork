@@ -2807,6 +2807,183 @@ function gui_canvas_delete_line(cid, tag) {
     gui_canvas_get_scroll(cid);
 }
 
+// ico@vt.edu 2021-05-03: autoscroll when patchcord exceeds the window size
+// LATER: refactor this and consider combining with gui_canvas_move_selection
+function gui_canvas_patchcord_scroll(cid, x1, y1, x2, y2) {
+    //post("gui_canvas_patchcord_scroll");
+    // need to detect in which way are we expanding the selection
+    // this is used to then affect the scroll logic further below
+    var old_x1, old_y1, old_x2, old_y2,
+        new_x1, new_y1, new_x2, new_y2;
+    new_x1 = (x1 < x2 ? x1 + 0.5 : x2 + 0.5);
+    new_y1 = (y1 < y2 ? y1 + 0.5 : y2 + 0.5);
+    new_x2 = (x1 > x2 ? x1 + 0.5 : x2 + 0.5);
+    new_y2 = (y1 > y2 ? y1 + 0.5 : y2 + 0.5);
+    gui(cid).get_elem("newcord", function(elem) {
+        var old_points = elem.getAttribute("d").split(" ");
+        //post("points: 0="+old_points[0]+" 1="+old_points[1]+
+        //    " 2="+old_points[2]+" 7="+old_points[7]+" | "+
+        //    (old_points[1]<old_points[7] ? "one" : "seven"));
+        old_x1 = (parseFloat(old_points[1]) < parseFloat(old_points[11])
+            ? old_points[1] : old_points[11]);
+        old_y1 = (parseFloat(old_points[2]) < parseFloat(old_points[12])
+            ? old_points[2] : old_points[12]);
+        old_x2 = (parseFloat(old_points[1]) > parseFloat(old_points[11])
+            ? old_points[1] : old_points[11]);
+        old_y2 = (parseFloat(old_points[2]) > parseFloat(old_points[12])
+            ? old_points[2] : old_points[12]);
+    });
+    //post("old: "+old_x1+" "+old_y1+" | "+old_x2+" "+old_y2);
+    //post("new: "+new_x1+" "+new_y1+" | "+new_x2+" "+new_y2);
+    var lr = 0, ud = 0; // lr: -1 left, 1 right, ud: -1 up, 1 down
+    if (old_x2 != new_x2) lr = 1;
+    if (old_x1 != new_x1) lr = -1;
+    if (old_y2 != new_y2) ud = 1;
+    if (old_y1 != new_y1) ud = -1;
+    //post("lr="+lr+" ud="+ud);
+
+    gui(cid).get_nw_window(function(nw_win) {
+        var svg_elem = nw_win.window.document.getElementById("patchsvg");
+        var { x: x, y: y, w: width, h: height,
+            mw: min_width, mh: min_height } = canvas_params(nw_win);
+        //post("mw="+min_width+" mh="+min_height+" w="+width+" h="+height);
+        // if there is nothing on the canvas, or the contents are only
+        // using a subset of the canvas, we need to use window boundaries
+        // as the edges of the selection area
+        if (width < min_width) {
+            width = min_width;
+        }
+        if (height < min_height) {
+            height = min_height;
+        }
+        //post("scrollX="+nw_win.window.scrollX+
+        //  " scrollY="+nw_win.window.scrollY);
+
+        /* this is only valid for selection box, not the patch cord
+           so we comment it out here
+        // limit selection box size to the canvas size
+        // we subtract margins to make it got one pixel away from the edge
+        // except for the bottom, where we may want to add -5 because the
+        // current nw.js has some unexplained dead space at the bottom
+        if (x1 < x + 1) {
+            x1 = x + 1;
+            //post("x1 left");
+        } else if (x1 > width + x - 2) {
+            x1 = width + x - 1;
+            //post("x1 right");
+        }
+        if (x2 < x + 1) {
+            x2 = x + 1;
+            //post("x2 left");
+        } else if (x2 > width + x - 2) {
+            x2 = width + x - 2;
+            //post("x2 right");
+        }
+        if (y1 < y + 1) {
+            y1 = y + 1;
+            //post("y1 top");
+        } else if (y1 > height + y - 2) {
+            y1 = height + y - 2;
+            //post("y1 bottom");
+        } if (y2 < y + 1) {
+            y2 = y + 1;
+            //post("y2 top");
+        } else if (y2 > height + y - 2) {
+            y2 = height + y - 2;
+            //post("y2 bottom");
+        }*/
+
+        /*
+        post("x="+x+" y="+y+" raw_w="+width+" w="+(width + x - 2)+
+            " raw_h="+height+" h="+(height + y - 5)+
+            " | "+x1+" "+y1+" "+x2+" "+y2);
+        */
+
+        /*
+        var points_array = [x1 + 0.5, y1 + 0.5, x2 + 0.5, y1 + 0.5,
+            x2 + 0.5, y2 + 0.5, x1 + 0.5, y2 + 0.5];
+
+        gui(cid).get_elem("selection_rectangle", {
+            points: points_array
+        });
+        */
+        // now check for selection outside the window boundaries and
+        // whether we need to invoke the scrolling
+        var gobj;
+        gui(cid).get_elem("newcord", function(elem) {
+            gobj = elem;
+        });
+        var x1b, y1b, x2b, y2b;
+        var bbox = gobj.getBBox();
+        x1b = bbox.x;
+        y1b = bbox.y;
+        x2b = x1b + bbox.width;
+        y2b = y1b + bbox.height;
+        //post("x1="+x1+" y1="+y1+" x2="+x2+" y2="+y2);
+
+
+        var tlx, tly, brx, bry; // top-left x and y, bottom-right x and y
+        var offsetx = 0, offsety = 0; // final offset
+
+        tlx = x + nw_win.window.scrollX;
+        tly = y + nw_win.window.scrollY;
+        brx = tlx + min_width;
+        bry = tly + min_height;
+        //post("("+tlx+","+tly+") | ("+brx+","+bry+")");
+        if (lr == 1) {
+            if (x2b - brx > 0)
+                offsetx = x2b - brx;
+            else if (x2 - tlx < 0)
+                offsetx = x2b - tlx;
+        } else if (lr == -1) {
+            if (x1b - tlx < 0)
+                offsetx = x1b - tlx;
+            else if (x1 - brx > 0)
+                offsetx = x1b - brx;
+        }
+
+        if (ud == 1) {
+            if (y2b - bry > 0)
+                offsety = y2b - bry;
+            else if (y2b - tly < 0)
+                offsety = y2b - tly;
+        } else if (ud == -1) {
+            if (y1b - tly < 0)
+                offsety = y1b - tly;
+            else if (y1b - bry > 0)
+                offsety = y1b - bry;
+        }
+
+        var inc = 10; // scroll increment
+        if (offsetx > 0) offsetx = inc;
+        else if (offsetx < 0) offsetx = -inc;
+        if (offsety > 0) offsety = inc;
+        else if (offsety < 0) offsety = -inc;
+        /*
+        if (x2 - brx > 0)
+            offsetx = x2 - brx;
+        else if (x1 - tlx < 0)
+            offsetx = x1 - tlx;
+
+        if (y2 - bry > 0)
+            offsety = y2 - bry;
+        else if (y1 - tly < 0)
+            offsety = y1 - tly;
+        */
+
+        //post("final x:"+offsetx+" y:"+offsety);
+        if (offsetx != 0 || offsety != 0) {
+            nw_win.window.scrollBy({
+                //left: (offsetx > 0 ? 10 : -10),
+                //top: (offsety > 0 ? 10 : -10),
+                left: offsetx,
+                top: offsety,
+                behavior: 'auto'
+            });
+        }
+    });
+}
+
 function gui_canvas_update_line(cid, tag, x1, y1, x2, y2, yoff) {
     // We have to check for existence here for the special case of
     // preset_node which hides a wire that feeds back from the downstream
@@ -2822,6 +2999,17 @@ function gui_canvas_update_line(cid, tag, x1, y1, x2, y2, yoff) {
         d_array = ["M",x1+xoff,y1+xoff,
                    "Q",x1+xoff,y1+yoff+xoff,x1+halfx+xoff,y1+halfy+xoff,
                    "Q",x2+xoff,y2-yoff+xoff,x2+xoff,y2+xoff];
+        // ico@vt.edu 2021-05-03:
+        // if we are a new cord created by a user, we will have a tag
+        // "newcord", as reflected in g_editor.c, so we need to check
+        // if we need to autoscroll when the patch cord exceeds the
+        // window size and window is scrollable. Here, we don't worry
+        // about updating patch cord and getting bbox because patch cords
+        // do not enlarge the canvas if the mouse goes outside the canvas'
+        // current bbox.
+        if (tag === "newcord") {
+            gui_canvas_patchcord_scroll(cid, x1, y1, x2, y2);
+        }
         configure_item(e, { d: d_array.join(" ") });
     });
 }
@@ -3280,7 +3468,7 @@ function gui_canvas_draw_selection(cid, x1, y1, x2, y2) {
 }
 
 function gui_canvas_move_selection(cid, x1, y1, x2, y2) {
-
+    //post("gui_canvas_move_selection");
     // need to detect in which way are we expanding the selection
     // this is used to then affect the scroll logic further below
     var old_x1, old_y1, old_x2, old_y2,
@@ -3438,13 +3626,15 @@ function gui_canvas_move_selection(cid, x1, y1, x2, y2) {
         */
 
         //post("final x:"+offsetx+" y:"+offsety);
-        nw_win.window.scrollBy({
-            //left: (offsetx > 0 ? 10 : -10),
-            //top: (offsety > 0 ? 10 : -10),
-            left: offsetx,
-            top: offsety,
-            behavior: 'auto'
-        });
+        if (offsetx != 0 || offsety != 0) {
+            nw_win.window.scrollBy({
+                //left: (offsetx > 0 ? 10 : -10),
+                //top: (offsety > 0 ? 10 : -10),
+                left: offsetx,
+                top: offsety,
+                behavior: 'auto'
+            });
+        }
     });
 }
 
@@ -7215,6 +7405,7 @@ function zoom_level_to_chrome_percent(nw_win) {
 // ico@vt.edu 2021-04-20: used to autoscroll after doing the "find" request
 // on the main patch canvas
 function gui_canvas_scroll_to_gobj(cid, tag, smooth) {
+    post("gui_canvas_scroll_to_gobj");
     var x1, y1, x2, y2;
     var gobj = get_gobj(cid, tag);
     //post("gobj="+gobj+" tag="+tag);
@@ -7273,18 +7464,23 @@ function canvas_params(nw_win)
 {
     // calculate the canvas parameters (svg bounding box and window geometry)
     // for do_getscroll and do_optimalzoom
-    //post("nw_win=" + nw_win + " " + nw_win.window + " " + nw_win.window.document);
-    var bbox, width, height, min_width, min_height, x, y, selbox, svg_elem;
+    //post("canvas_params nw_win=" + nw_win + " " + nw_win.window + " " + nw_win.window.document);
+    var bbox, width, height, min_width, min_height, x, y, selbox, patchcord, svg_elem;
     svg_elem = nw_win.window.document.getElementById("patchsvg");
     // ico@vt.edu 20210421: hide selection box, so that we don't include it in the
     // bbox calculation
     selbox = nw_win.window.document.getElementById("selection_rectangle");
+    patchcord = nw_win.window.document.getElementById("newcord");
     if(selbox)
         selbox.style.display = "none";
+    if(patchcord)
+        patchcord.style.display = "none";
     bbox = svg_elem.getBBox();
     // ... now make it back visible
     if(selbox)
         selbox.style.display = "block";
+    if(patchcord)
+        patchcord.style.display = "block";
     //post("canvas_params calculated bbox: " + bbox.width + " " + bbox.height);
     // We try to do Pd-extended style canvas origins. That is, coord (0, 0)
     // should be in the top-left corner unless there are objects with a
@@ -7310,8 +7506,8 @@ function canvas_params(nw_win)
     // to innerWidth and innerHeight for some reason giving out inconsistent
     // values. For this reason, I have added the checks in the index.js'
     // nw_create_window, and the pdgui.js' canvas_check_geometry.
-    min_width = nw_win.window.innerWidth;
-    min_height = nw_win.window.innerHeight;
+    min_width = nw_win.window.innerWidth + 3;
+    min_height = nw_win.window.innerHeight + 3;
     
     var body_elem = nw_win.window.document.body;
     body_elem.style.width = min_width + "px";
@@ -7336,13 +7532,13 @@ function canvas_params(nw_win)
     var zoom = zoom_level_to_chrome_percent(nw_win);
     var yScrollSize, yScrollTopOffset;
     var vscroll = nw_win.window.document.getElementById("vscroll");
-    yScrollSize = min_height / height; // used to be (min_height - 1) / height
-    yScrollTopOffset = Math.floor((nw_win.window.scrollY / height) * (min_height + 3));
+    yScrollSize = (min_height + nw_version_bbox_offset) / height; // used to be (min_height - 1) / height
+    yScrollTopOffset = Math.floor((nw_win.window.scrollY / height) * (min_height + 3) - 1);
     
     // yScrollSize reflects the amount of the patch we currently see,
     // so if it drops below 1, that means we need our scrollbars 
     if (yScrollSize < 1) {
-        var yHeight = Math.floor(yScrollSize * (min_height + 3 + nw_version_bbox_offset));
+        var yHeight = Math.floor(yScrollSize * min_height);
         vscroll.style.setProperty("height", (yHeight - 1 + nw_version_bbox_offset) + "px");
         // was (yScrollTopOffset + 2) to make it peel away from the edge
         vscroll.style.setProperty("top", (yScrollTopOffset + 0) + "px");
@@ -7364,11 +7560,11 @@ function canvas_params(nw_win)
     
     var xScrollSize, xScrollLeftOffset;
     var hscroll = nw_win.window.document.getElementById("hscroll");
-    xScrollSize = min_width / width; // used to be (min_width - 1) / width
-    xScrollLeftOffset = Math.floor((nw_win.window.scrollX / width) * (min_width + 3));
+    xScrollSize = (min_width + nw_version_bbox_offset) / width; // used to be (min_width - 1) / width
+    xScrollLeftOffset = Math.floor((nw_win.window.scrollX / width) * (min_width + 3) - 1);
 
     if (xScrollSize < 1) {
-        var xWidth = Math.floor(xScrollSize * (min_width + 3));
+        var xWidth = Math.floor(xScrollSize * min_width);
         hscroll.style.setProperty("width", (xWidth - 1) + "px");
         // was (xScrollTopOffset + 2) to make it peel away from the edge
         hscroll.style.setProperty("left", (xScrollLeftOffset + 0) + "px");
@@ -7419,6 +7615,7 @@ exports.pd_do_getscroll = pd_do_getscroll;*/
 var nw_version_bbox_offset = check_nw_version("0.46") ? 0 : -4;
 
 function do_getscroll(cid, checkgeom) {
+    //post("do_getscroll");
     // Since we're throttling these getscroll calls, they can happen after
     // the patch has been closed. We remove the cid from the patchwin
     // object on close, so we can just check to see if our Window object has
@@ -7467,7 +7664,7 @@ var checkgeom_and_getscroll_var = {};
 var overriding_getscroll_var = {};
 
 // We use a setTimeout here for two reasons:
-// 1. nw.js has a nasty Renderer bug  when you try to modify the
+// 1. nw.js has a nasty Renderer bug when you try to modify the
 //    window before the document has finished loading. To get
 //    the error get rid of the setTimeout
 // 2. This should protect the user from triggering a bunch of
@@ -7479,6 +7676,7 @@ var overriding_getscroll_var = {};
 //    graphics from displaying until the user releases the mouse,
 //    which would be a buggy UI
 function gui_canvas_get_scroll(cid) {
+    //post("gui_canvas_get_scroll");
     //post("win=" + cid);
     //win_width = win.style.width;
     //win_height = win.style.height;
@@ -7510,6 +7708,7 @@ exports.gui_canvas_get_scroll = gui_canvas_get_scroll;
 */
 
 function gui_canvas_get_overriding_scroll(cid) {
+    //post("gui_canvas_get_overriding_scroll");
     //post("win=" + cid);
     //win_width = win.style.width;
     //win_height = win.style.height;
@@ -7533,7 +7732,7 @@ exports.gui_canvas_get_overriding_scroll = gui_canvas_get_overriding_scroll;
 */
 
 function gui_canvas_get_immediate_scroll(cid) {
-    //post("gui_canvas_get_immediate_scroll");
+    post("gui_canvas_get_immediate_scroll");
     do_getscroll(cid, 0);
 }
 
@@ -7730,13 +7929,15 @@ function gui_update_scrollbars(cid) {
         var svg_elem = nw_win.window.document.getElementById("patchsvg");
         
         if (vscroll.style.visibility == "visible")
-        {
-            var height, min_height;  
-            min_height = nw_win.window.innerHeight + 3;
-            height = svg_elem.getAttribute('height');
-            
+        { 
+            var min_height = nw_win.window.innerHeight + 3;
+            var height = svg_elem.getAttribute('height');
             var yScrollSize, yScrollTopOffset;
-            yScrollSize = (min_height - 4) / height;
+
+            height |= 0;  // drop everything to the right of the decimal point
+            min_height |= 0;
+            
+            yScrollSize = (min_height + nw_version_bbox_offset) / height;
             yScrollTopOffset = Math.floor((nw_win.window.scrollY / height) * min_height);
             
             if (yScrollSize < 1) {
@@ -7757,8 +7958,11 @@ function gui_update_scrollbars(cid) {
             var min_width = nw_win.window.innerWidth + 3;
             var width = svg_elem.getAttribute('width');
             var xScrollSize, xScrollTopOffset;
+
+            width |= 0; // drop everything to the right of the decimal point
+            min_width |= 0;
             
-            xScrollSize = (min_width - 4) / width;
+            xScrollSize = (min_width + nw_version_bbox_offset) / width;
             xScrollTopOffset = Math.floor((nw_win.window.scrollX / width) * min_width);
             
             /* console.log("win_width=" + min_width + " bbox=" +

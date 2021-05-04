@@ -4553,6 +4553,9 @@ void canvas_updateconnection(t_canvas *x, int lx1, int ly1, int lx2, int ly2,
         if (yoff > ymax) yoff = ymax;
         if (tag)
         {
+            // this is used for existing connections
+            // e.g. when moving an object which requries
+            // visually updating of its existing connections
             sprintf(cord_tag, "l%zx", (t_int)tag);
             gui_vmess("gui_canvas_update_line", "xsiiiii",
                 x,
@@ -4565,6 +4568,7 @@ void canvas_updateconnection(t_canvas *x, int lx1, int ly1, int lx2, int ly2,
         }
         else
         {
+            // this is used for new user-drawn connections
             gui_vmess("gui_canvas_update_line", "xsiiiii",
                 x,
                 "newcord",
