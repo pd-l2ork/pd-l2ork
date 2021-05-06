@@ -7405,7 +7405,7 @@ function zoom_level_to_chrome_percent(nw_win) {
 // ico@vt.edu 2021-04-20: used to autoscroll after doing the "find" request
 // on the main patch canvas
 function gui_canvas_scroll_to_gobj(cid, tag, smooth) {
-    post("gui_canvas_scroll_to_gobj");
+    //post("gui_canvas_scroll_to_gobj");
     var x1, y1, x2, y2;
     var gobj = get_gobj(cid, tag);
     //post("gobj="+gobj+" tag="+tag);
@@ -7732,7 +7732,7 @@ exports.gui_canvas_get_overriding_scroll = gui_canvas_get_overriding_scroll;
 */
 
 function gui_canvas_get_immediate_scroll(cid) {
-    post("gui_canvas_get_immediate_scroll");
+    //post("gui_canvas_get_immediate_scroll");
     do_getscroll(cid, 0);
 }
 
