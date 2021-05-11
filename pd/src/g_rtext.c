@@ -288,6 +288,15 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
                     more text */
                     foundit_b =
                         lastone(x->x_buf + inindex_b, ' ', maxindex_b + 1);
+
+                    // ico@vt.edu 2021-05-10: here we also check for hyphen
+                    // since HTML line breaks also allow for those to happen
+                    // at a point where the hyphen is.
+                    foundit_bv =
+                        lastone(x->x_buf + inindex_b, '-', maxindex_b + 1);
+                    if (foundit_bv > foundit_b)
+                        foundit_b = foundit_bv;
+
                     if (foundit_b < 0)
                     {
                         foundit_b = maxindex_b;
