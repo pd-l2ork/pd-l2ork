@@ -220,7 +220,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
         if (pd_class(&x->x_text->te_pd) == text_class &&
                 x->x_text->te_type == T_TEXT)
             iscomment = 1;
-        //post("iscomment=%d", iscomment);
+        //post("iscomment=%d <%s>", iscomment, x->x_buf);
         char smallbuf[200] = { '\0' }, *tempbuf;
         int outchars_b = 0, nlines = 0, ncolumns = 0,
             pixwide, pixhigh, font, fontwidth, fontheight, findx, findy;//, bvfound;
@@ -358,6 +358,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
             //post("////////////// new=%d old=%d lines=%d", inindex_b, oldinindex_b, nlines);
             //oldinindex_b = inindex_b;
         }
+
         /*char out[6];
         startpost("text: ");
         for (int i=0; i < x->x_bufsize; i++)
@@ -367,7 +368,10 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
         }
         endpost();*/
         // append new line in case we end our input with an \n
-        if (x_bufsize_c > 0 && 
+        // 2021-05-10 ico@vt.edu: but do not do so if we have this at the end of
+        // a comment, because that is pointless. this also ensures vanilla
+        // compatibility.
+        if (!iscomment && x_bufsize_c > 0 && 
                 (x->x_buf[x->x_bufsize - 1] == '\n' ||
                  x->x_buf[x->x_bufsize - 1] == '\v')
             )
@@ -421,7 +425,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
         }
         if (action == SEND_FIRST)
         {
-            //post("send_first <%s>", tempbuf);
+            post("send_first <%s>", tempbuf);
             gui_vmess("gui_text_new", "xssiiisii",
                 canvas, x->x_tag, rtext_gettype(x)->s_name,
                 glist_isselected(x->x_glist, ((t_gobj*)x->x_text)),
@@ -434,7 +438,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
         }
         else if (action == SEND_UPDATE)
         {
-            //post("send_update <%s>", tempbuf);
+            post("send_update <%s>", tempbuf);
             gui_vmess("gui_text_set", "xss", canvas, x->x_tag, tempbuf);
 
             // We add the check for T_MESSAGE below so that the box border
