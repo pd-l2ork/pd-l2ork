@@ -181,6 +181,16 @@ function add_events(name) {
             close_window();
         }
     });
+
+    document.onkeydown = function(evt) {
+        //pdgui.post("keydown ctrl="+pdgui.cmd_or_ctrl_key(evt)+ " key="+evt.keyCode);
+        if (pdgui.cmd_or_ctrl_key(evt) && evt.keyCode === 13) { // enter
+            ok();
+        } else if (evt.keyCode === 27) { // escape
+            cancel();
+        }
+    };
+
     document.getElementById("text").onchange = function() {
         dirty = true;
     }
