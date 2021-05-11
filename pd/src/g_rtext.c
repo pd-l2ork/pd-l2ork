@@ -425,7 +425,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
         }
         if (action == SEND_FIRST)
         {
-            post("send_first <%s>", tempbuf);
+            //post("send_first <%s>", tempbuf);
             gui_vmess("gui_text_new", "xssiiisii",
                 canvas, x->x_tag, rtext_gettype(x)->s_name,
                 glist_isselected(x->x_glist, ((t_gobj*)x->x_text)),
@@ -438,7 +438,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
         }
         else if (action == SEND_UPDATE)
         {
-            post("send_update <%s>", tempbuf);
+            //post("send_update <%s>", tempbuf);
             gui_vmess("gui_text_set", "xss", canvas, x->x_tag, tempbuf);
 
             // We add the check for T_MESSAGE below so that the box border
