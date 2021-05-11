@@ -7155,6 +7155,12 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
             "type" : type,
             "width_spec": width_spec
         });
+
+        // ico@vt.edu 2021-05-10: hide overflow, so that the selection
+        // does not stick out of the object when the object's text is
+        // multiline and therefore implicitly has a line break character
+        p.style.setProperty("overflow", "hidden");
+
         svg_view = patchwin[cid].window.document.getElementById("patchsvg")
             .viewBox.baseVal;
         if (type === "comment")
@@ -7166,6 +7172,9 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         if (is_gop == 0) {
             // do we need to assign here color from the css theme instead?
             p.style.setProperty("background-color", "#f6f8f8");
+            // ico@vt.edu 2021-05-10: added a bit of right padding to make
+            // the activated box better match the regular one
+            p.style.setProperty("padding-right", "2px");
         } else {
             // ico@vt.edu: added tweaks to ensure the GOP selection
             // border is near identical to that of its regular border
