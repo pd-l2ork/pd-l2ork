@@ -568,7 +568,7 @@ var canvas_events = (function() {
             text_keydown: function(evt) {
                 evt.stopPropagation();
                 setTimeout(function() {
-                    pdgui.gui_message_update_textarea_border(textbox(), 1);
+                    pdgui.gui_message_update_textarea_border(name, textbox(), 1);
                 }, 0);
                 //evt.preventDefault();
                 return false;

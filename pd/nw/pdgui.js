@@ -2615,7 +2615,7 @@ function message_border_points(width, height) {
 
 // called from pd_canvas.js text events to deal with 
 // the drawing of the msg box
-function gui_message_update_textarea_border(elem, init_width) {
+function gui_message_update_textarea_border(cid, elem, init_width) {
 	if (elem.classList.contains("msg")) {
         /*
         var rect = elem.getBoundingClientRect();
@@ -2653,6 +2653,7 @@ function gui_message_update_textarea_border(elem, init_width) {
 			parseInt(elem.offsetHeight / elem.getAttribute("font_height")) *
                 elem.getAttribute("font_height") + 4
 			);
+        do_getscroll(cid, 1);
 	}
 }
 
@@ -7267,6 +7268,8 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
                 var pheight = parseInt(p.offsetHeight / p.getAttribute('font_height'));
                 //post("height="+ pheight + " " + p.getAttribute('font_height'));
                 pdsend(cid, "cah", pheight);
+                gui_message_update_textarea_border(cid, p, 1);
+
             }; 
         }
         //p.style.setProperty("white-space", "break-spaces");
@@ -7295,7 +7298,7 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
             //shove_svg_background_data_into_css(patchwin[cid].window,
             //    parseInt(get_gobj(cid, tag).getBoundingClientRect().height /
             //        (parseInt(p.style.lineHeight) / 100 * font_size)));
-        	gui_message_update_textarea_border(p, 1);
+        	gui_message_update_textarea_border(cid, p, 1);
         }
         p.focus();
         select_text(cid, p, sel_start, sel_end);
