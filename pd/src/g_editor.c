@@ -6450,8 +6450,8 @@ static int glist_dofinderror(t_glist *gl, void *error_object)
         {
             /* got it... now show it. */
             glist_noselect(gl);
-            canvas_vis(glist_getcanvas(gl), 1);
-            canvas_editmode(glist_getcanvas(gl), 1.);
+            canvas_vis(gl, 1);
+            canvas_editmode(gl, 1.);
             glist_select(gl, g);
             gobj_emphasize(gl, g);
             return (1);
