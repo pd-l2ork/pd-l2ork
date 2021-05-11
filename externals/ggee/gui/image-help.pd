@@ -48,12 +48,12 @@ is buggy and included only for legacy purposes.;
 #X text 120 152 change receive name;
 #X obj 131 222 s z_rcv;
 #X msg 123 174 receive z_rcv;
-#N canvas 372 228 136 239 init 0;
+#N canvas 372 228 138 218 init 0;
 #X obj 16 18 loadbang;
 #X obj 16 44 f \$0;
 #X msg 16 73 \; \$1-xpos 336 \; \$1-ypos 330 \; \$1-xlabel -4 \; \$1-ylabel
 -10 \; \$1-font-size 10 \; \$1-width 25 \; \$1-height 25 \; \$1-bg
-0 \; \$1-front 12 \; \$1-label 12;
+0;
 #X connect 0 0 1 0;
 #X connect 1 0 2 0;
 #X restore 384 36 pd init;
@@ -208,7 +208,7 @@ is buggy and included only for legacy purposes.;
 #X text 285 466 1.x-pos;
 #X text 285 488 2.y-pos;
 #X obj 336 330 ggee/image @pd_extra/ggee/empty_image.png 0 0 25 25
-empty img_rcv my_img 25 25 0 0 10 #202020 -4 -10 12.5 12.5 0 1 1;
+empty img_rcv my_img 25 25 0 0 10 #fcfcfc -4 -10 12.5 12.5 0 1 1;
 #X obj 17 118 s img_rcv;
 #X obj 17 245 s img_rcv;
 #X obj 123 245 s img_rcv;
@@ -224,7 +224,7 @@ empty img_rcv my_img 25 25 0 0 10 #202020 -4 -10 12.5 12.5 0 1 1;
 #X msg 256 197 label my_img;
 #X text 59 470 1.label;
 #X obj 18 471 nbx 3 14 0 29 0 0 \$0-dummy \$0-bg empty 0 -8 0 12 #fcfcfc
-#000000 #000000 12 256 0 0;
+#000000 #000000 0 256 0 0;
 #X msg 18 552 color \$1;
 #X msg 82 552 color #a5476d;
 #X text 82 518 newer and better way to assign color:, f 20;
