@@ -2310,6 +2310,14 @@ function get_item(cid, item_id) {
     return patchwin[cid].window.document.getElementById(item_id);
 }
 
+// Convenience function to determine whether the window has posted yet
+function check_cid(cid) {
+    if (patchwin[cid])
+        return 1;
+    else
+        return 0;
+}
+
 // Similar to [canvas create] in tk
 function create_item(cid, type, args) {
     var item = patchwin[cid].window.document
@@ -5186,15 +5194,17 @@ function gui_gobj_draw_image(cid, tag, image_key, tk_anchor, w, h, constrain, ty
 function gui_ggee_image_display(cid, tag, vis) {
     // check if the image exists yet
     //post("gui_ggee_image_display check=" + get_item(cid, tag+"image"));
-    if (get_item(cid, tag+"image") !== null) {
-        if (vis === 1) {
-            configure_item(get_item(cid, tag+"image"), {
-                display: "block"
-            });
-        } else if (vis === 0) {
-            configure_item(get_item(cid, tag+"image"), {
-                display: "none"
-            });
+    if (check_cid(cid)) {
+        if (get_item(cid, tag+"image") !== null) {
+            if (vis === 1) {
+                configure_item(get_item(cid, tag+"image"), {
+                    display: "block"
+                });
+            } else if (vis === 0) {
+                configure_item(get_item(cid, tag+"image"), {
+                    display: "none"
+                });
+            }
         }
     }
 }
