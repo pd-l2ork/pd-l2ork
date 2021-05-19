@@ -1745,10 +1745,11 @@ function nw_create_patch_window_menus(gui, w, name) {
     minit(m.edit.paste, {
         enabled: true,
         click: function () {
-            pdgui.pdsend(name, "paste");
             // ico@vt.edu 2020-10-30 if we are pasting inside find box
             if (canvas_events.get_state() === "search") {
                 document.execCommand("paste");
+            } else {
+                pdgui.pdsend(name, "paste");
             }
         }
     });
