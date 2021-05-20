@@ -7104,6 +7104,8 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         text = text.replace(/\v/g, "\n");
         // we get rid of multiple consecutive \n because binbuf inserts
         // at some point \n behind ; which results in a growing comment
+        // this, however, currently prevents inserted empty lines inside comments
+        // to display properly without adding at least one space
         text = text.replace(/\n+/g, "\n");
     }
 
@@ -7216,7 +7218,7 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
 
         // ico@vt.edu 2021-03-29 (updated 2021-04-20 because activation of a comment
         // that spills over to the right results in a width truncation which only
-        // applies to when the object is initiall activated, thus requiring a slightly
+        // applies to when the object is initially activated, thus requiring a slightly
         // different treatment of the two approaches):
         // here we use similar code as the one below in the oninput call, to ensure
         // that the initial object width is as it should be regardless of whether the
@@ -7237,15 +7239,26 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
                 n = 0;
                 for (i = 0; i < text2lines.length; i++) {
                     j = text2lines[i].length;
-                    if (j > n && j < mw-1) {
-                        n = j;
+                    if (j > n) {
+                        if (j < mw-1)
+                            n = j;
+                        else
+                            n = mw;
                     }
                 }
                 if (n == 0)
                     n = mw;
                 if (n < tl)
                     tl = n;
-                p.style.setProperty("min-width", tl+"ch");
+                // here we again ask for width_spec since this may have been
+                // a multiline comment where still individual lines were no
+                // longer than the 3 chars and the width_spec may have not been
+                // set, so we need to fall back to the width of 3 even if we are
+                // narrower
+                if (tl <= 3 && width_spec <= 0)
+                    p.style.setProperty("min-width", "3ch");
+                else
+                    p.style.setProperty("min-width", tl+"ch");
             }
             //post("maxw="+mw+" minw="+tl+" n="+n);
         } else {
@@ -7269,7 +7282,7 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
                 var mw = parseInt(p.style.maxWidth, 10);
                 if (tl <= 3 && width_spec <= 0)
                     p.style.setProperty("min-width", "3ch");
-                else if (tl > 3 && tl < mw-1)
+                else if (tl > 3)
                 {
                     var text2lines = p.innerText.split('\n');
                     var i, j, n;
@@ -7277,12 +7290,24 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
                     for (i = 0; i < text2lines.length; i++) {
                         j = text2lines[i].length;
                         if (j > n) {
-                            n = j;
+                            if (j < mw-1)
+                                n = j;
+                            else
+                                n = mw;
                         }
                     }
                     if (n < tl)
                         tl = n;
-                    p.style.setProperty("min-width", tl+"ch");
+                    // here we again ask for width_spec since this may have been
+                    // a multiline comment where still individual lines were no
+                    // longer than the 3 chars and the width_spec may have not been
+                    // set, so we need to fall back to the width of 3 even if we are
+                    // narrower
+                    if (tl <= 3 && width_spec <= 0)
+                        p.style.setProperty("min-width", "3ch");
+                    else
+                        p.style.setProperty("min-width", tl+"ch");
+                    //post("maxw="+mw+" minw="+tl+" n="+n);
                 }
                 var pheight = parseInt(p.offsetHeight / p.getAttribute('font_height'));
                 //post("height="+ pheight + " " + p.getAttribute('font_height'));
