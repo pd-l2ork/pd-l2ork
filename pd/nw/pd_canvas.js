@@ -166,7 +166,7 @@ var canvas_events = (function() {
                 text = text.replace(/(\\ )/g, " ");
                 text = text.replace(/\u0020+/g, " ");
 
-                // substitute spaces and \n, so that we can preserve
+                // substitute \n, so that we can preserve
                 // comment formatting
                 text = text.replace(/\n/g, "\v");
                 //text = text.replace(/ /g, "\u00A0");
