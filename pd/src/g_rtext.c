@@ -61,7 +61,10 @@ t_rtext *rtext_new(t_glist *glist, t_text *who)
     x->x_next = glist->gl_editor->e_rtext;
     x->x_selstart = x->x_selend = x->x_active =
         x->x_active_nlines = x->x_drawnwidth = x->x_drawnheight = 0;
-    binbuf_gettext(who->te_binbuf, &x->x_buf, &x->x_bufsize);
+    if (who->te_type == T_TEXT)
+        binbuf_getrawtext(who->te_binbuf, &x->x_buf, &x->x_bufsize);
+    else
+        binbuf_gettext(who->te_binbuf, &x->x_buf, &x->x_bufsize);
     glist->gl_editor->e_rtext = x;
     // here we use a more complex tag which will later help us properly
     // select objects inside a gop on its parent that are otherwise not
@@ -342,9 +345,13 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
             inindex_c += (foundit_c + eatchar);
             //post("...%d(%c) [%d(%c)]", x->x_buf[inindex_b], x->x_buf[inindex_b],
             //    x->x_buf[inindex_c-1], x->x_buf[inindex_c-1]);
-            if (inindex_b < x->x_bufsize && (!iscomment || tempbuf[outchars_b-1] != '\n'))
+            if (inindex_b < x->x_bufsize) // && (!iscomment || tempbuf[outchars_b-1] != '\n'))
             {
-                //post("rtext adding endline: %d", tempbuf[outchars_b-1]);
+                /*post("rtext adding endline: b-1=<%c> b=%d b==n?%d b==v?%d",
+                    tempbuf[outchars_b-1],
+                    tempbuf[outchars_b],
+                    (tempbuf[outchars_b] == '\n' ? 1 : 0),
+                    (tempbuf[outchars_b] == '\v' ? 1 : 0));*/
                 tempbuf[outchars_b++] = '\n';
             }
             // if we found a row that is longer than previous (total width)
@@ -363,9 +370,10 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
             // after extensive testing it appears not doing so adds extra lines
             // and makes comments in particular have extra padded lines at the end
             // this is because foundit_b is always 0 when it finds a \v or an \n
-            if (foundit_b) nlines++;
+            if (foundit_b >= 0) nlines++;
             //post("////////////// new=%d old=%d lines=%d", inindex_b, oldinindex_b, nlines);
             //oldinindex_b = inindex_b;
+            //post("nlines=%d", nlines);
         }
 
         /*char out[6];
@@ -730,6 +738,7 @@ void rtext_activate(t_rtext *x, int state)
        it later */
     tmpbuf = t_getbytes(x->x_bufsize + 1);
     sprintf(tmpbuf, "%.*s", (int)x->x_bufsize, x->x_buf);
+    //post("rtext_activate tmpbuf=<%s>", tmpbuf);
     /* in case x_bufsize is 0... */
     tmpbuf[x->x_bufsize] = '\0';
     gui_vmess("gui_textarea", "xssiiiisiiiiiii",

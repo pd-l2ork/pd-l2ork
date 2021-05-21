@@ -298,6 +298,55 @@ void binbuf_gettext(t_binbuf *x, char **bufp, int *lengthp)
     *lengthp = length;
 }
 
+    /* convert a binbuf to text without adding an \n after semi
+       this is used for comments (and later possibly other objects
+       that require raw interpretation of the text); no null termination. */
+void binbuf_getrawtext(t_binbuf *x, char **bufp, int *lengthp)
+{
+    char *buf = getbytes(0), *newbuf;
+    int length = 0;
+    char string[MAXPDSTRING];
+    t_atom *ap;
+    int indx;
+    int newlength;
+
+    for (ap = x->b_vec, indx = x->b_n; indx--; ap++)
+    {
+        //fprintf(stderr,"=====\n");
+        if ((ap->a_type == A_SEMI || ap->a_type == A_COMMA) &&
+                length && buf[length-1] == ' ') 
+        {
+            //fprintf(stderr, "subtracting length\n");
+            length--;
+        }
+        atom_string(ap, string, MAXPDSTRING);
+        newlength = length + strlen(string) + 1;
+        if (!(newbuf = resizebytes(buf, length, newlength))) break;
+        buf = newbuf;
+        //post("string=<%s> buf=<%s> length=%d\n", string, buf, length);
+        strcpy(buf + length, string);
+        length = newlength;
+        // this is where we automatically add \n after ;
+        // for the time being, we will keep this as-is, even though
+        // it is a kludge, mainly to keep backwards compatibility
+        ////if (ap->a_type == A_SEMI) buf[length-1] = '\n';
+        ////else buf[length-1] = ' ';
+        buf[length-1] = ' ';
+        ////if (ap->a_type == A_COMMA) length--;
+    }
+    if (length && buf[length-1] == ' ')
+    {
+        if (newbuf = t_resizebytes(buf, length, length-1))
+        {
+            buf = newbuf;
+            length--;
+        }
+    }
+    //fprintf(stderr,"binbuf_gettext: <%s>\n", buf);
+    *bufp = buf;
+    *lengthp = length;
+}
+
 /* LATER improve the out-of-space behavior below.  Also fix this so that
 writing to file doesn't buffer everything together. */
 

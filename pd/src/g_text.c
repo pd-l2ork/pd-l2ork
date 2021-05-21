@@ -3071,8 +3071,16 @@ void text_setto(t_text *x, t_glist *glist, char *buf, int bufsize, int pos)
             //first check if the contents have changed to see if there
             //is any point of recreating the object
             //fprintf(stderr,"setto not canvas\n");
-            binbuf_gettext(x->te_binbuf, &c1, &i1);
-            binbuf_gettext(b, &c2, &i2);
+            if (x->te_type == T_TEXT)
+            {
+                binbuf_getrawtext(x->te_binbuf, &c1, &i1);
+                binbuf_getrawtext(b, &c2, &i2);
+            }
+            else
+            {
+                binbuf_gettext(x->te_binbuf, &c1, &i1);
+                binbuf_gettext(b, &c2, &i2);
+            }
             /* It might be nice here to make another attempt at loading
                broken objects. For example, there may now be an abstraction
                in the canvas path-- if so, we should create it.
@@ -3152,10 +3160,16 @@ void text_setto(t_text *x, t_glist *glist, char *buf, int bufsize, int pos)
                 }
             }
         }
-        binbuf_gettext(x->te_binbuf, &c1, &i1);
+        if (x->te_type == T_TEXT)
+            binbuf_getrawtext(x->te_binbuf, &c1, &i1);
+        else
+            binbuf_gettext(x->te_binbuf, &c1, &i1);
         t_binbuf *b = binbuf_new();
         binbuf_text(b, buf, bufsize);
-        binbuf_gettext(b, &c2, &i2);
+        if (x->te_type == T_TEXT)
+            binbuf_getrawtext(b, &c2, &i2);
+        else
+            binbuf_gettext(b, &c2, &i2);
         if (!c1 || i1 != i2 || strncmp(c1, c2, i1))
         {
             canvas_undo_add(glist_getcanvas(glist), 10, "typing",

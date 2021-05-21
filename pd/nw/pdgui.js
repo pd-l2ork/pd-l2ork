@@ -3093,6 +3093,12 @@ function text_to_tspans(cid, svg_text, text) {
         }
         if (newtext == null)
         {
+            // 2021-05-21 ico@vt.edu: here we add a bogus space because
+            // tspan is ignored unless it has at least one char inside it
+            // we do not have to do this later when sending things back
+            // because this is only used when an inactive object is drawn
+            if (lines[i] === '')
+                lines[i] = ' ';
             newtext = lines[i];
         }
 
@@ -3193,7 +3199,7 @@ function gobj_font_y_kludge(fontsize) {
 function gui_text_new(cid, tag, type, isselected, left_margin,
     font_height, text, font, font_width) {
     //ico@vt.edu: different text spacing for GOPs
-    //post("gui_text_new type=" + type + " tag=" + tag);
+    //post("gui_text_new type=" + type + " tag=" + tag + " text=<" + text + ">");
     var xoff = 0.5; // Default value for normal objects, GOP uses -0.5
     /* ico@vt.edu 20200907: the following id_suffix is used for gatom objects.
     When activated, they tend to highlight both the label and the gatom contents
@@ -3274,6 +3280,7 @@ function gui_gobj_erase(cid, tag) {
 }
 
 function gui_text_set (cid, tag, text) {
+    //post("gui_text_set tag=" + tag + " text=<" + text + ">");
     gui(cid).get_elem(tag + "text", function(e) {
         text = text.trim();
         e.textContent = "";
@@ -7106,7 +7113,7 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         // at some point \n behind ; which results in a growing comment
         // this, however, currently prevents inserted empty lines inside comments
         // to display properly without adding at least one space
-        text = text.replace(/\n+/g, "\n");
+        //text = text.replace(/\n+/g, "\n");
     }
 
     gui(cid).get_nw_window(function(nw_win) {

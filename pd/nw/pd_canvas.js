@@ -157,6 +157,16 @@ var canvas_events = (function() {
             // \v). We add a space to each of them to ensure that
             // added lines are properly displayed in the comment.
             if (iscomment === 1) {
+                // 2021-05-21: we need the following to get rid of
+                // extra endlines that were created after semis by
+                // the c code, so that we can match the original state
+                // LATER: consider adding endlines only inside js
+                // UPDATE: later has already happened, so this is not
+                // necessary anymore
+                //pdgui.post("comment_to_fudi before <" + text + ">");
+                //text = text.replace(/;\n/g, ";");
+                //pdgui.post("................after <" + text + ">");
+
                 // escape "," and ";"
                 //text = text.replace(/(?<!\\)(;|,)/g, "\\$1");
                 text = text.replace(/(\\;|\\,)/g, "\\\\$1");

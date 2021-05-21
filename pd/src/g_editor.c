@@ -8571,11 +8571,20 @@ static void canvas_buftotext(t_canvas *x, t_symbol *s, int argc, t_atom *argv)
             char *buf;
             t_binbuf *b = binbuf_new();
             binbuf_restore(b, binbuf_getnatom(newobjbuf), binbuf_getvec(newobjbuf));
-            binbuf_gettext(b, &buf, &length);
+            if (((t_text *)y)->te_type == T_TEXT)
+                binbuf_getrawtext(b, &buf, &length);
+            else
+                binbuf_gettext(b, &buf, &length);
             /* We hand off "buf" to rtext as its x_buf member, and "length"
                as x_bufsize. Pd will handle deallocation of those members
                automatically, so we don't need to free the "buf" here. */
             rtext_settext(rtext, buf, length);
+            /*
+            post("canvas_buftotext check dirty:");
+            binbuf_print(b);
+            post("-----");
+            binbuf_print(((t_text *)y)->te_binbuf);
+            */
             /* Here we are abusing binbuf_match-- it was written only to see
                if a subset of a binbuf matches a larger one. So we have to
                also compare the size of both binbufs to tell if it is an
