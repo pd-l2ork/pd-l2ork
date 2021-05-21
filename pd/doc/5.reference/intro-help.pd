@@ -1,9 +1,10 @@
-#N canvas 14 5 478 505 10;
-#X obj -14 -2 cnv 6 6 503 empty empty empty 5 14 0 20 -260097 -191407
+#N canvas 140 191 478 505 10;
+#X obj -14 -2 cnv 6 6 503 empty empty empty 5 14 0 20 #fc8000 #b8b8b8
 0;
-#X obj -41 -2 cnv 15 26 503 empty empty empty 5 14 0 20 -139274 -262144
+#X obj -41 -2 cnv 15 26 503 empty empty empty 5 14 0 20 #880024 #fcfcfc
 0;
-#X obj -13 31 ggee/image @pd_extra/K12/icons/l2ork.png;
+#X obj -35 6 ggee/image @pd_extra/K12/icons/l2ork.png 0 0 48 50 empty
+empty empty 48 50 1 0 10 #000000 0 -8 24 25 0 1 1;
 #X obj 77 421 pddp/pddplink http://l2ork.music.vt.edu;
 #X obj 49 460 pddp/pddplink http://disis.music.vt.edu/listinfo/l2ork-dev
 ;
