@@ -1,0 +1,61 @@
+L2Ork Tweeter by Ivica Ico Bukvic <ico@vt.edu>
+ico.bukvic.net
+l2ork.icat.vt.edu
+
+Released under the GPL v3 License
+https://www.gnu.org/licenses/gpl-3.0.en.html
+
+
+
+CHANGELOG (Date Format: DD-MM-YYYY)
+-----------------------------------
+18-04-2021 0.42
+*Updated patch to support new pd-l2ork 2.16 features.
+
+19-11-2020 0.41
+*Changed and improved the overdrive level keyboard shortcuts (see the documentation widget for more info)
+*Added panning keyboard shortcuts and changed the loop length keyboard shortcuts to leave room for the panning shortcuts. 
+*Other small cosmetic fixes.
+
+11-11-2020 0.4
+*Requires Pd-L2Ork 2.15.2 or newer.
+*Based on the new preset_hub and preset_node mechanisms that allow for easier editing of the original L2OrkTweet patch.
+*Improved overdrive instrument audio level slider to allow turning off the sound output with supporting keyboard shortcuts.
+*Added supplemental documentation with additional keyboard shortcuts located in the top right corner of the window.
+*Now includes 72 instrument presets and dozens of loops.
+*Bunch of small bug fixes and cosmetic tweaks.
+
+22-09-2020 0.36
+*Requires Purr-Data 2.15 or newer.
+*Changed carrier and modulator to use dropdown option which will allow for addition of new waveforms.
+*Added square wave and pink noise as the fourth and fifth available waveforms for both carrier and modulator.
+*Added ability to open sessions via file browser.
+*Increased room for decimal pitch transposition to accomodate microtonal tuning.
+*Increased room for instrument name.
+*Fixed a bug where L2OrkTweet.pd abstraction got dirty every time a preset is saved.
+*Added server-side ability to obfuscate key chars created on the tracker.
+*47+ new instrument presets, a couple new loops, and a new demo session.
+*Changed default port to 9002 since Microsoft Windows10 now has 9001 reserved system-wide.
+*Ensured that the default saved and recalled loops and presets are 1, not 0.
+*Minor cosmetic fixes.
+
+16-05-2020 0.35
+*Added link info in the server response as to where to download the latest version in case the client has an outdated version.
+*Updated nlr abstraction to make it compatible with Purr-Data 2.11 or newer.
+*Fixed regression/incompatibility with the Purr-Data 2.11 where the output level does not come up when activating instrument for the first time.
+*Small typo fix in the comment.
+
+15-05-2020 0.34
+*In offline mode enabled the use of the buttons on all instruments and changed the instrument number colors to orange on the instruments that are not selected as the primary to reflect this. This should allow for a better solo live jamming setup. 
+*Auto-enabled the keyboard when switching between instruments in offline mode (LATER: consider doing the same for the online connection).
+
+06-05-2020 0.33
+*Added ability to insert and delete empty notes while also reindexing all events after the time bar (keys ~ and shift+delete, respectively). This is in addition to the regular delete function that only erases the spot where the time bar is located without reindexing notes after it. You can also delete a range of values by holding delete key and sliding your slider across the tracker, as well as insert and delete at a precise location by clicking and relocating the tracker time bar before activating either action.
+*Added ability to save session title using the chat message--enter the chat message before saving the session and the same will be announced both locally and over the network via console when it is recalled.
+*Added ability for the server to log the number of new manually played notes (recalled loops are counted only once at the time they are recalled).
+*Added server admin functions to set the same loop length for all users, or provide user-specific lengths in a form of a 10-value array.
+*Cleaned-up presets and updated session files to include titles.
+*Made the instrument name widget smaller to make room for the transposition number, placed the transposition number within the instrument synth parameters panel (middle upper row of the main instrument panel), and expanded the darker purple panel on the left control panel to make room for the insert control button (~ key).
+*Bunch of small functional and cosmetic bug-fixes.
+
+04-05-2020 0.32 First Public Stable Release

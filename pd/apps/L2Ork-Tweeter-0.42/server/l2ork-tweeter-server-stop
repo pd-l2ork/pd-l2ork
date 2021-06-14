@@ -1,0 +1,1 @@
+killall pd-l2ork &> /dev/null

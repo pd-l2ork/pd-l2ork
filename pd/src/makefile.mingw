@@ -32,6 +32,7 @@ GFLAGS = -DINSTALL_PREFIX=\"$(prefix)\"
 libpddir = $(DESTDIR)$(prefix)
 pddocdir = $(libpddir)/doc
 libpdbindir = $(libpddir)/bin
+pdappdir = $(DESTDIR)$(prefix)/apps
 
 PDEXEC = pd.exe
 PDDLL = pd.dll
@@ -293,6 +294,7 @@ install:  all
 	cp -pr $(DESTDIR)$(includedir)/pdl2ork $(DESTDIR)$(includedir)/pd
 	install -p m_pd.h $(DESTDIR)$(includedir)
 	rsync -ax --exclude=.git --exclude=.svn ../doc/* $(pddocdir)
+	rsync -ax --exclude=.git --exclude=.svn ../apps/* $(pdappdir)
 	cp -rf ../doc/about $(pddocdir)/
 	mv $(ABOUT_FILE) $(ABOUT_FILE).tmp
 	cat $(ABOUT_FILE).tmp | sed 's|PD_VERSION|Pd version $(PD_L2ORK_VERSION) ($(PD_BUILD_VERSION))|' \
@@ -348,6 +350,7 @@ test_locations:
 	@echo "LIBDIR  $(libdir)"
 	@echo "OBJECTSDIR  $(objectsdir)"
 	@echo "PDDOCDIR  $(pddocdir)"
+	@echo "PDAPPDIR  $(pdappdir)"
 	@echo "LIBPDDIR  $(libpddir)"
 	@echo "LIBPDBINDIR  $(libpdbindir)"
 	@echo "HELPDIR  $(helpdir)"

@@ -1,0 +1,122 @@
+#N canvas 210 91 999 699 10;
+#X obj 42 73 route \$1;
+#X obj 42 97 route \$2;
+#X text 99 97 select the right value;
+#X obj 42 613 outlet;
+#X obj 397 30 inlet;
+#X obj 447 30 loadbang;
+#X obj 447 327 \$1;
+#X text 515 303 only send network messages out if this is a local instance
+, f 30;
+#X obj 531 530 s client-out;
+#X obj 42 30 r network-in;
+#X obj 593 30 inlet;
+#X text 631 30 manually set instance;
+#X obj 474 278 r myclientnum;
+#X obj 447 349 == -1;
+#X obj 531 508 list prepend \$2;
+#X text 99 73 select the right client;
+#X obj 474 303 t b f;
+#X obj 352 435 gate 2 1;
+#X obj 447 372 + 1;
+#X obj 447 396 f;
+#X obj 352 460 t b b 0;
+#X floatatom 447 421 5 0 0 0 - - -, f 5;
+#X obj 486 421 + 1;
+#X obj 486 486 gate 2 1;
+#X obj 462 508 route bang;
+#X floatatom 486 446 5 0 0 0 - - -, f 5;
+#X obj 486 396 r network-status;
+#X obj 126 613 outlet;
+#X obj 99 573 t f b;
+#X text 170 566 optional second outlet cancels message to the engine
+(this is necessary for tracker's metro as it will move at least once
+before it receives 0 \, even in zero logical time), f 23;
+#X obj 151 410 r local-report-request;
+#X obj 151 386 s local-report-response;
+#X obj 151 346 list prepend \$1;
+#X obj 151 326 list prepend \$2;
+#X obj 151 366 list trim;
+#X obj 397 67 t f f;
+#X obj 151 430 t b 1;
+#X obj 178 136 gate 1 0;
+#X obj 178 156 t f f 0;
+#X obj 99 548 f \$3;
+#X obj 151 248 gate 2 1;
+#X obj 112 136 loadbang;
+#X obj 112 157 \$4;
+#X obj 112 178 + 1;
+#X obj 112 220 moses 1;
+#X obj 112 199 moses 3;
+#X text 209 198 4th argument \, when set to 1 (default 0) \, disables
+the use of the local (e.g. tracker) variable for session saving purposes
+due to delay in timing the metro (based on the tracker-time variable)
+which prematurely starts tracker variable, f 32;
+#X text 325 566 the [t b b 0] thing is designed to override local user
+messing with network user's settings since pd-l2ork does not have an
+option to ignore actions on gui objects. the gate above branches into
+two conditions. left is for recalling latest network-enabled data and
+by doing so overriding user input (since it should be disallowed) \,
+while the right has two options: do the same as incoming networked
+data because we are not connected and need to store latest data \,
+or forward to the network., f 67;
+#X obj 787 30 inlet;
+#X text 825 30 override the last known value (used for the from-tracker-time
+when loading a session), f 24;
+#X obj 251 326 r override-access-all-buttons;
+#X msg 251 346 2;
+#X obj 42 121 route bang;
+#X connect 0 0 1 0;
+#X connect 1 0 52 0;
+#X connect 4 0 35 0;
+#X connect 5 0 6 0;
+#X connect 6 0 13 0;
+#X connect 9 0 0 0;
+#X connect 10 0 6 0;
+#X connect 10 0 0 1;
+#X connect 10 0 32 1;
+#X connect 12 0 16 0;
+#X connect 13 0 18 0;
+#X connect 14 0 8 0;
+#X connect 16 0 6 0;
+#X connect 16 1 13 1;
+#X connect 17 0 20 0;
+#X connect 17 1 23 1;
+#X connect 18 0 19 0;
+#X connect 19 0 17 0;
+#X connect 19 0 21 0;
+#X connect 20 0 19 0;
+#X connect 20 1 39 0;
+#X connect 20 2 17 0;
+#X connect 22 0 25 0;
+#X connect 23 0 24 0;
+#X connect 23 1 14 0;
+#X connect 24 1 39 1;
+#X connect 25 0 23 0;
+#X connect 26 0 22 0;
+#X connect 28 0 3 0;
+#X connect 28 1 27 0;
+#X connect 30 0 36 0;
+#X connect 32 0 34 0;
+#X connect 33 0 32 0;
+#X connect 34 0 31 0;
+#X connect 35 0 17 1;
+#X connect 35 1 37 1;
+#X connect 36 0 3 0;
+#X connect 36 1 37 0;
+#X connect 37 0 38 0;
+#X connect 38 0 40 1;
+#X connect 38 1 39 1;
+#X connect 38 2 37 0;
+#X connect 39 0 28 0;
+#X connect 40 0 33 0;
+#X connect 41 0 42 0;
+#X connect 42 0 43 0;
+#X connect 43 0 45 0;
+#X connect 44 1 40 0;
+#X connect 45 0 44 0;
+#X connect 48 0 39 0;
+#X connect 50 0 51 0;
+#X connect 51 0 17 0;
+#X connect 52 0 3 0;
+#X connect 52 1 39 0;

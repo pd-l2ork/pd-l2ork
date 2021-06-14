@@ -6,7 +6,7 @@ var defaultOpt = {
   all: false,
   recursive: true,
   files: true,
-  directories: false,
+  directories: true,
   ignore: false
 };
 
