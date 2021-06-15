@@ -343,6 +343,16 @@ then
 		cp -f ../../l2ork_addons/flext/config-lnx-pd-gcc.txt.rpi ../../externals/grill/trunk/flext/buildsys/config-lnx-pd-gcc.txt
 		cat ../../externals/OSCx/src/Makefile | sed -e s/-lpd//g > ../../externals/OSCx/src/Makefile
 	fi
+	# copy K12 abstractions
+	if [[ $os == "win" ]]; then
+		cp -rf ../../l2ork_addons/K12 ../../packages/win32_inno/build/extra
+	elif [[ $os == "win64" ]]; then
+		cp -rf ../../l2ork_addons/K12 ../../packages/win64_inno/build/extra
+	elif [[ $os == "osx" ]]; then
+		cp -rf ../../l2ork_addons/K12 ../../packages/darwin_app/build/extra
+	else
+		cp -rf ../../l2ork_addons/K12 ../../packages/linux_make/build$inst_dir/lib/pd-l2ork/extra
+	fi
 	if [[ $os == "win" || $os == "win64" ]]; then
 		echo "Making Windows package..."
 		echo `pwd`
@@ -391,7 +401,6 @@ then
 		fi
 		cd ../
 	fi
-
 	echo "done with l2ork addons."
 	cd ../
 	# finish install for deb
