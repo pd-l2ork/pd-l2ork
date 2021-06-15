@@ -72,6 +72,7 @@ ifeq ($(LIGHT),yes)
 	install -p pd-settings-light.reg $(DESTDIR)$(prefix)/pd-settings.reg
 else
 	install -p pd-settings.reg $(DESTDIR)$(prefix)
+	install -d apps $(DESTDIR)$(prefix)/
 endif
 
 #==============================================================================#

@@ -79,6 +79,9 @@ ifeq ($(shell uname -r | sed 's|10\.[0-9][0-9]*\.[0-9][0-9]*|10|'),10)
 else
 	$(MAKE) -C $(packages_src) $(DEST_PATHS) extended_install
 endif
+ifneq ($(LIGHT),yes)
+	install -d $(cvs_root_dir)/apps $(DESTDIR)/
+endif
 	# Huge kludge to move all the nw.js files in $DESTDIR/bin to
 	# $DESTDIR. We need to do this because the nw.js app expects
 	# package.json to be inside $DESTDIR. So all the rest of the
