@@ -80,7 +80,10 @@ else
 	$(MAKE) -C $(packages_src) $(DEST_PATHS) extended_install
 endif
 ifneq ($(LIGHT),yes)
-	install -d $(cvs_root_dir)/apps $(DESTDIR)/
+	@echo "Adding apps folder..."
+	cp -rf $(cvs_root_dir)/apps $(DESTDIR)/
+	@echo "Adding K12 abstractions..."
+	cp -rf $(cvs_root_dir)/l2ork_addons/K12 $(DESTDIR)/extra/
 endif
 	# Huge kludge to move all the nw.js files in $DESTDIR/bin to
 	# $DESTDIR. We need to do this because the nw.js app expects

@@ -72,7 +72,10 @@ ifeq ($(LIGHT),yes)
 	install -p pd-settings-light.reg $(DESTDIR)$(prefix)/pd-settings.reg
 else
 	install -p pd-settings.reg $(DESTDIR)$(prefix)
-	install -d apps $(DESTDIR)$(prefix)/
+	@echo "Adding apps folder..."
+	cp -rf $(cvs_root_dir)/apps $(DESTDIR)$(prefix)/
+	@echo "Adding K12 abstractions..."
+	cp -rf $(cvs_root_dir)/l2ork_addons/K12 $(DESTDIR)$(prefix)/extra/
 endif
 
 #==============================================================================#

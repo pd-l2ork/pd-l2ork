@@ -90,7 +90,9 @@ tarbz2: installer_settings installer_makefile installer_readme
 # Any special staging for the "Burrito Supreme" installer goes here.
 debstage: $(bindir)
 ifneq ($(LIGHT),yes)
-# add K12 mode
+	@echo "Adding apps folder..."
+	cp -rf ../../apps $(DESTDIR)$(libpddir)/	
+	@echo "Adding K12 abstractions..."
 	cp -rf ../../l2ork_addons/K12/ $(DESTDIR)$(libpddir)/extra/
 # add arduino library
 	cp -rf ../../externals/hardware/arduino $(DESTDIR)$(libpddir)/extra/
