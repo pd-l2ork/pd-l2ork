@@ -1616,6 +1616,8 @@ function doc_open (dir, basename) {
     } else {
         pdsend("pd open", enquote(defunkify_windows_path(basename)),
             enquote(defunkify_windows_path(norm_path)));
+        pdsend("pd add-recent-file",
+            enquote(defunkify_windows_path(path.join(norm_path, basename))));
     }
 }
 
