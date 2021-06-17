@@ -204,7 +204,7 @@ static void netserver_socketreceiver_free(t_netserver_socketreceiver *x)
 static void netserver_send(t_netserver *x, t_symbol *s, int argc, t_atom *argv)
 {
    int sockfd, client = -1, i;
-   if(x->x_nconnections < 0)
+   if(x->x_nconnections <= 0)
    {
 	  if (x->x_log_pri >= LOG_WARNING)
 		  post("netserver: no clients connected");
@@ -304,7 +304,7 @@ static void netserver_send(t_netserver *x, t_symbol *s, int argc, t_atom *argv)
 static void netserver_client_send(t_netserver *x, t_symbol *s, int argc, t_atom *argv)
 {
    int sockfd, client;
-   if(x->x_nconnections < 0)
+   if(x->x_nconnections <= 0)
    {
 	  if (x->x_log_pri >= LOG_WARNING)
 		 post("netserver: no clients connected");
@@ -388,18 +388,21 @@ static void netserver_client_send(t_netserver *x, t_symbol *s, int argc, t_atom 
 /* broadcasts a message to all connected clients */
 static void netserver_broadcast(t_netserver *x, t_symbol *s, int argc, t_atom *argv)
 {
-   int i, client = x->x_nconnections;	/* number of clients to send to */
-   t_atom at[256];
-   for(i = 0; i < argc; i++)
+   if(x->x_nconnections > 0)
    {
-	  at[i + 1] = argv[i];
-   }
-   argc++;
-   /* enumerate through the clients and send each the message */
-   while(client--)
-   {
-	  SETFLOAT(at, client + 1);	/* prepend number of client */
-	  netserver_client_send(x, s, argc, at);
+       int i, client = x->x_nconnections;	/* number of clients to send to */
+       t_atom at[256];
+       for(i = 0; i < argc; i++)
+       {
+          at[i + 1] = argv[i];
+       }
+       argc++;
+       /* enumerate through the clients and send each the message */
+       while(client--)
+       {
+          SETFLOAT(at, client + 1);	/* prepend number of client */
+          netserver_client_send(x, s, argc, at);
+       }
    }
 }
 
