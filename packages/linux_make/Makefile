@@ -70,7 +70,7 @@ install:
 #
 #==============================================================================#
 
-PACKAGE_NAME = pd-l2ork-$(PD_VERSION)-`uname -m`
+PACKAGE_NAME = Pd-L2Ork-$(PD_VERSION)-`uname -m`
 
 ifeq ($(LIGHT),yes)
 default = light

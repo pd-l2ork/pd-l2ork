@@ -16,7 +16,7 @@ BUILD_BASE = $(CWD)/build
 #PD_APP_NAME = $(PACKAGE_NAME)
 # but we want just the real name of the application
 PD_APP_NAME = $(APPLICATION_NAME)
-PD_SHORT_NAME = "Purr-Data"
+PD_SHORT_NAME = "Pd-L2Ork"
 PD_APP_CONTENTS = $(BUILD_BASE)/$(PD_APP_NAME).app/Contents
 DESTDIR = $(PD_APP_CONTENTS)/Resources/app.nw
 
@@ -193,7 +193,7 @@ darwin_app_core: darwin_app_wrapper
 
 package: dmg
 
-VOLUME_NAME = Pd-l2ork
+VOLUME_NAME = Pd-L2Ork
 dmg:
 	rm -f build.dmg
 	hdiutil create -format UDRW -fs HFS+ -srcfolder "$(BUILD_BASE)" \
