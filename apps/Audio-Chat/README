@@ -1,0 +1,8 @@
+Simple lossless monaural audio chat for up to 10 users
+by Ivica Ico Bukvic (c) 2021
+Released under a GNU GPL v3 license
+
+If using a custom server, don't forget to update the connection settings.
+
+You can start the remote server as follows:
+pd-l2ork -r 44100 -nogui -nosound tcp-audio-server.pd
