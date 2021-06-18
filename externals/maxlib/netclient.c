@@ -146,14 +146,17 @@ static void *netclient_child_connect(void *w)
 static void netclient_connect(t_netclient *x, t_symbol *hostname,
     t_floatarg fportno)
 {
+    if (x->x_fd == -1)
+    {
 		/* we get hostname and port and pass them on
 		to the child thread that establishes the connection */
-	x->x_hostname = hostname->s_name;
-	x->x_port = fportno;
-	x->x_connectstate = 0;
-		/* start child thread */
-	if(pthread_create( &x->x_threadid, &x->x_threadattr, netclient_child_connect, x) < 0)
-		post("netclient: could not create new thread");
+    	x->x_hostname = hostname->s_name;
+    	x->x_port = fportno;
+    	x->x_connectstate = 0;
+    		/* start child thread */
+    	if(pthread_create( &x->x_threadid, &x->x_threadattr, netclient_child_connect, x) < 0)
+    		post("netclient: could not create new thread");
+    }
 }
 
 static void netclient_disconnect(t_netclient *x)
