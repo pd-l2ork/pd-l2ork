@@ -1,0 +1,59 @@
+#N canvas 606 129 664 716 10;
+#X obj 19 215 cnv 15 130 138 empty empty empty 20 12 0 14 #ffbfbf #404040
+0;
+#X obj 156 440 tcp-audio-client;
+#X floatatom 55 225 13 0 0 0 pin: - - 0 0, f 13;
+#X obj 131 548 dac~;
+#X obj 249 471 tgl 19 0 empty empty status: -44 8 0 10 #fcfcfc #000000
+#000000 0 1;
+#X obj 264 21 adc~;
+#X text 297 21 microphone input;
+#X obj 141 521 *~;
+#X obj 116 320 tgl 19 0 empty empty server->user: -80 8 0 10 #fcfcfc
+#000000 #000000 0 1;
+#X text 163 548 audio from the server;
+#X msg 116 465 \$1 10;
+#X obj 116 490 line~;
+#N canvas 727 338 450 283 connections 0;
+#X msg 140 136 disconnect;
+#X msg 120 98 connect 198.82.152.114 9999;
+#X msg 129 117 connect localhost 9999;
+#X obj 120 168 outlet;
+#X obj 120 39 inlet;
+#X obj 120 64 sel 1 0;
+#X connect 0 0 3 0;
+#X connect 1 0 3 0;
+#X connect 2 0 3 0;
+#X connect 4 0 5 0;
+#X connect 5 0 1 0;
+#X connect 5 1 0 0;
+#X restore 202 418 pd connections;
+#X obj 116 244 tgl 19 0 empty empty connect: -51 7 0 10 #fcfcfc #000000
+#000000 0 1;
+#X obj 249 391 *~;
+#X obj 116 297 tgl 19 0 empty empty user->server: -80 8 0 10 #fcfcfc
+#000000 #000000 0 1;
+#X msg 224 335 \$1 10;
+#X obj 224 360 line~;
+#X text 45 276 toggle audio;
+#X text 18 20 Before starting \, make sure that your sample rate is
+set to 44 \, 100Hz. You will find this option in Edit->Preferences
+, f 32;
+#X obj 19 510 loadbang;
+#X msg 19 535 \; pd dsp 1;
+#X connect 1 0 7 1;
+#X connect 1 1 4 0;
+#X connect 2 0 1 0;
+#X connect 5 0 14 1;
+#X connect 7 0 3 0;
+#X connect 7 0 3 1;
+#X connect 8 0 10 0;
+#X connect 10 0 11 0;
+#X connect 11 0 7 0;
+#X connect 12 0 1 1;
+#X connect 13 0 12 0;
+#X connect 14 0 1 2;
+#X connect 15 0 16 0;
+#X connect 16 0 17 0;
+#X connect 17 0 14 0;
+#X connect 20 0 21 0;
