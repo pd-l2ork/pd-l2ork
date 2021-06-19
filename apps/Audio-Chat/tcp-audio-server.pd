@@ -205,68 +205,68 @@ to all \, with some chat messages filtered for admin, f 66;
 #X obj 35 410 array set client1;
 #X text 322 10 Receiving...;
 #X text 982 10 Sending...;
-#X obj 780 173 phasor~ 0;
-#X obj 831 115 change;
-#X obj 831 67 samplerate~;
-#X obj 831 43 loadbang;
-#X obj 780 198 *~ 4096;
-#X obj 831 139 t 0.5 f;
-#X obj 831 91 / 4096;
-#X obj 765 271 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X obj 988 153 phasor~ 0;
+#X obj 1039 106 change;
+#X obj 1039 64 samplerate~;
+#X obj 1039 43 loadbang;
+#X obj 988 178 *~ 4096;
+#X obj 1039 127 t 0.5 f;
+#X obj 1039 85 / 4096;
+#X obj 765 281 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1 1;
-#X obj 765 290 *~;
-#X obj 765 222 loadbang;
-#X obj 780 243 tabread~ client1;
-#X obj 869 271 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X obj 765 300 *~;
+#X obj 765 232 loadbang;
+#X obj 780 253 tabread~ client1;
+#X obj 869 281 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1 1;
-#X obj 869 290 *~;
-#X obj 869 222 loadbang;
-#X obj 884 243 tabread~ client2;
-#X obj 973 271 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X obj 869 300 *~;
+#X obj 869 232 loadbang;
+#X obj 884 253 tabread~ client2;
+#X obj 973 281 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1 1;
-#X obj 973 290 *~;
-#X obj 973 222 loadbang;
-#X obj 988 243 tabread~ client3;
-#X obj 1077 271 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X obj 973 300 *~;
+#X obj 973 232 loadbang;
+#X obj 988 253 tabread~ client3;
+#X obj 1077 281 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1 1;
-#X obj 1077 290 *~;
-#X obj 1077 222 loadbang;
-#X obj 1181 271 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X obj 1077 300 *~;
+#X obj 1077 232 loadbang;
+#X obj 1181 281 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1 1;
-#X obj 1181 290 *~;
-#X obj 1181 222 loadbang;
-#X obj 1092 243 tabread~ client4;
-#X obj 1196 243 tabread~ client5;
-#X obj 765 363 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X obj 1181 300 *~;
+#X obj 1181 232 loadbang;
+#X obj 1092 253 tabread~ client4;
+#X obj 1196 253 tabread~ client5;
+#X obj 765 373 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1 1;
-#X obj 765 382 *~;
-#X obj 765 314 loadbang;
-#X obj 780 335 tabread~ client2;
-#X obj 869 363 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X obj 765 392 *~;
+#X obj 765 324 loadbang;
+#X obj 780 345 tabread~ client2;
+#X obj 869 373 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1 1;
-#X obj 869 382 *~;
-#X obj 869 314 loadbang;
-#X obj 884 335 tabread~ client3;
-#X obj 973 363 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X obj 869 392 *~;
+#X obj 869 324 loadbang;
+#X obj 884 345 tabread~ client3;
+#X obj 973 373 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1 1;
-#X obj 973 382 *~;
-#X obj 973 314 loadbang;
-#X obj 1077 363 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X obj 973 392 *~;
+#X obj 973 324 loadbang;
+#X obj 1077 373 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1 1;
-#X obj 1077 382 *~;
-#X obj 1077 314 loadbang;
-#X obj 988 335 tabread~ client4;
-#X obj 1092 335 tabread~ client5;
-#X obj 1181 363 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X obj 1077 392 *~;
+#X obj 1077 324 loadbang;
+#X obj 988 345 tabread~ client4;
+#X obj 1092 345 tabread~ client5;
+#X obj 1181 373 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1 1;
-#X obj 1181 382 *~;
-#X obj 1181 314 loadbang;
-#X obj 1196 335 tabread~ client5;
-#X obj 759 417 bang~;
-#X obj 759 468 + 1;
-#X obj 759 444 f -4;
-#X obj 759 492 moses 4;
-#X obj 798 519 t b b 0;
+#X obj 1181 392 *~;
+#X obj 1181 324 loadbang;
+#X obj 1196 345 tabread~ client5;
+#X obj 759 426 bang~;
+#X obj 759 477 + 1;
+#X obj 759 453 f -4;
+#X obj 759 501 moses 4;
+#X obj 798 528 t b b 0;
 #X obj 863 558 loadbang;
 #X msg 863 580 -1;
 #X obj 817 603 array get return;
@@ -341,16 +341,16 @@ to all \, with some chat messages filtered for admin, f 66;
 #X obj 596 583 array set client10;
 #X obj 57 101 sel -1;
 #X msg 57 122 0;
-#X obj 721 222 r tog1;
-#X obj 825 222 r tog2;
-#X obj 929 222 r tog3;
-#X obj 1033 222 r tog4;
-#X obj 1136 222 r tog5;
-#X obj 721 314 r tog6;
-#X obj 825 314 r tog7;
-#X obj 929 314 r tog8;
-#X obj 1033 314 r tog9;
-#X obj 1132 314 r tog10;
+#X obj 721 232 r tog1;
+#X obj 825 232 r tog2;
+#X obj 929 232 r tog3;
+#X obj 1033 232 r tog4;
+#X obj 1136 232 r tog5;
+#X obj 721 324 r tog6;
+#X obj 825 324 r tog7;
+#X obj 929 324 r tog8;
+#X obj 1033 324 r tog9;
+#X obj 1132 324 r tog10;
 #X connect 0 0 6 1;
 #X connect 1 0 2 0;
 #X connect 2 0 140 0;
@@ -382,6 +382,15 @@ to all \, with some chat messages filtered for admin, f 66;
 #X connect 18 0 22 0;
 #X connect 19 0 18 0;
 #X connect 20 0 26 0;
+#X connect 20 0 30 0;
+#X connect 20 0 62 0;
+#X connect 20 0 58 0;
+#X connect 20 0 57 0;
+#X connect 20 0 50 0;
+#X connect 20 0 46 0;
+#X connect 20 0 42 0;
+#X connect 20 0 41 0;
+#X connect 20 0 34 0;
 #X connect 21 0 16 1;
 #X connect 21 1 16 0;
 #X connect 22 0 17 0;
