@@ -391,7 +391,7 @@ static void netserver_broadcast(t_netserver *x, t_symbol *s, int argc, t_atom *a
    if(x->x_nconnections > 0)
    {
        int i, client = x->x_nconnections;	/* number of clients to send to */
-       t_atom at[256];
+       t_atom at[argc+1];
        for(i = 0; i < argc; i++)
        {
           at[i + 1] = argv[i];
