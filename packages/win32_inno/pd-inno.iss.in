@@ -748,6 +748,7 @@ Source: build\doc\manuals\Pd\ReadMe.html; DestDir: {app}; Flags: isreadme
 ;Source: build\doc\manuals\Pd\License.html; DestDir: {app}; Flags: isreadme
 ;Source: build\doc\manuals\Pd\Pd-LICENSE.txt; DestDir: {app}; Flags: isreadme
 Source: build\pd-settings.reg; DestDir: {app}; Flags: ignoreversion
+Source: build\apps\*.*; DestDir: {app}\apps; Flags: ignoreversion confirmoverwrite recursesubdirs uninsremovereadonly
 Source: build\bin\*.*; DestDir: {app}\bin; Flags: ignoreversion confirmoverwrite recursesubdirs uninsremovereadonly
 Source: build\doc\*.*; DestDir: {app}\doc; Flags: ignoreversion confirmoverwrite recursesubdirs uninsremovereadonly; Attribs: readonly
 Source: build\extra\*.*; DestDir: {app}\extra; Flags: ignoreversion recursesubdirs uninsremovereadonly promptifolder; Attribs: readonly
