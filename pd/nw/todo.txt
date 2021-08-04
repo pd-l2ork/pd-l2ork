@@ -396,8 +396,8 @@ Crashers
 
 ***
 
-Differences in Purr Data and Pd
----------------------------
+Differences in Pd-L2Ork and Pd
+------------------------------
 
 When editing box content, you cannot currently trigger xlet highlight when
 mousing over xlets.  This is a consequence of the current iteration of moving

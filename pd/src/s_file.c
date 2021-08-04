@@ -49,7 +49,7 @@ void sys_doflags( void);
 
 #ifdef UNIX
 
-#define USER_CONFIG_DIR ".purr-data"
+#define USER_CONFIG_DIR ".pd-l2ork"
 
 static char *sys_prefbuf;
 
@@ -194,11 +194,11 @@ static int sys_getpreference(const char *key, char *value, int size)
     HKEY hkey;
     DWORD bigsize = size;
     LONG err = RegOpenKeyEx(HKEY_CURRENT_USER,
-        "Software\\Purr-Data", 0,  KEY_QUERY_VALUE, &hkey);
+        "Software\\Pd-L2Ork", 0,  KEY_QUERY_VALUE, &hkey);
     if (err != ERROR_SUCCESS)
     {
         err = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-            "Software\\Purr-Data", 0,  KEY_QUERY_VALUE, &hkey);
+            "Software\\Pd-L2Ork", 0,  KEY_QUERY_VALUE, &hkey);
         if (err != ERROR_SUCCESS)
         {
             return (0);
@@ -226,7 +226,7 @@ static void sys_putpreference(const char *key, const char *value)
 {
     HKEY hkey;
     LONG err = RegCreateKeyEx(HKEY_CURRENT_USER,
-        "Software\\Purr-Data", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_SET_VALUE,
+        "Software\\Pd-L2Ork", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_SET_VALUE,
         NULL, &hkey, NULL);
     if (err != ERROR_SUCCESS)
     {

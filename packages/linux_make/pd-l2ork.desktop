@@ -25,7 +25,7 @@ Name=JACK
 Exec=/bin/sh -c "pd-l2ork -jack"
 
 [Desktop Action ForceQuit]
-# Kill all running instances of Purr Data and the corresponding nw.js
+# Kill all running instances of Pd-L2Ork and the corresponding nw.js
 # processes. Useful as a last resort if the application seems to hang for some
 # reason. You might want to add the -9 option to kill the application even if
 # it's completely locked up.
@@ -38,22 +38,22 @@ Exec=/bin/sh -c "/usr/bin/killall pd-l2ork nw"
 # these, add them to the Actions= line above.
 
 [Desktop Action Unique]
-# Launch a new instance of Purr Data each time this action is invoked.
+# Launch a new instance of Pd-L2Ork each time this action is invoked.
 Name=Unique
 Name[de]=Unikat
-Exec=/bin/sh -c "purr-data -unique"
+Exec=/bin/sh -c "pd-l2ork -unique"
 
 [Desktop Action Verbose]
-# Launch Purr Data in verbose mode (lots of messages useful for debugging).
+# Launch Pd-L2Ork in verbose mode (lots of messages useful for debugging).
 Name=Verbose
 Name[de]=Ausführlich
 Name[fr]=Verbeux
-Exec=/bin/sh -c "purr-data -verbose"
+Exec=/bin/sh -c "pd-l2ork -verbose"
 
 [Desktop Action NoPrefs]
-# Launch Purr Data without reading its configuration file (useful if the
+# Launch Pd-L2Ork without reading its configuration file (useful if the
 # program won't launch because the preferences got messed up very badly).
 Name=No Prefs
 Name[de]=Ohne Voreinstellungen
 Name[fr]=Sans Préférence
-Exec=/bin/sh -c "purr-data -noprefs"
+Exec=/bin/sh -c "pd-l2ork -noprefs"

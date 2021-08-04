@@ -25,7 +25,7 @@
     -->
 
     <types>
-        <type name="org.puredata.pd-patch">  <!-- add one <type>...</type> entry for each UTI that you need to define.
+        <type name="org.pd-l2ork.pd-patch">  <!-- add one <type>...</type> entry for each UTI that you need to define.
          
             <!-- 'allattrs' is a whitespace separated list of all of the attributes that this UTI type normally has.
                  It does not have to be exhaustive. -->
@@ -36,7 +36,7 @@
             </displayattrs>
             
         </type>
-		<type name="org.puredata.max-patch">
+		<type name="org.pd-l2ork.max-patch">
             <allattrs>
             </allattrs>
 			<displayattrs>

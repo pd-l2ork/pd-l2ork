@@ -225,18 +225,18 @@ static void pd_tilde_donew(t_pd_tilde *x, char *pddir, char *schedlibdir,
     /* Windows is still relying on makefile.mingw which still uses the
        name "pd" for the executable, so we need an ifdef here. Yuck! */
 #ifdef _WIN32
-    snprintf(tmpbuf, MAXPDSTRING, "%s/bin/pd" EXTENT, pddir);
+    snprintf(tmpbuf, MAXPDSTRING, "%s/bin/pd-l2ork" EXTENT, pddir);
 #else
     snprintf(tmpbuf, MAXPDSTRING, "%s/bin/pd-l2ork" EXTENT, pddir);
 #endif
     sys_bashfilename(tmpbuf, pdexecbuf);
     if (stat(pdexecbuf, &statbuf) < 0)
     {
-        snprintf(tmpbuf, MAXPDSTRING, "%s/../../../bin/pd" EXTENT, pddir);
+        snprintf(tmpbuf, MAXPDSTRING, "%s/../../../bin/pd-l2ork" EXTENT, pddir);
         sys_bashfilename(tmpbuf, pdexecbuf);
         if (stat(pdexecbuf, &statbuf) < 0)
         {
-            snprintf(tmpbuf, MAXPDSTRING, "%s/pd" EXTENT, pddir);
+            snprintf(tmpbuf, MAXPDSTRING, "%s/pd-l2ork" EXTENT, pddir);
             sys_bashfilename(tmpbuf, pdexecbuf);
             if (stat(pdexecbuf, &statbuf) < 0)
             {

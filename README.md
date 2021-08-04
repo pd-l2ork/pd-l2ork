@@ -13,7 +13,7 @@ maintainers:
 * [Three Paragraph Overview](#three-paragraph-overview)
 * [Goals](#goals)
 * [User Guide](#user-guide)
-* [Relationship of Purr Data to Pure Data](#relationship-of-purr-data-to-pure-data)
+* [Relationship of Pd-L2Ork to Pure Data](#relationship-of-purr-data-to-pure-data)
 * [Build Guide](#build-guide)
   * [Gnu/Linux](#linux)
   * [OSX](#osx-64-bit-using-homebrew)
@@ -66,30 +66,17 @@ Pd-L2ork has the following goals:
 
 ### User Guide and Weblinks
 
-For a more in-depth look at Purr Data for new users and developers, see:
-
-<https://agraef.github.io/purr-data-intro/Purr-Data-Intro.html>
-
-For more resources see:
-
-<https://agraef.github.io/purr-data/>
-
-For Ico Bukvic's original Pd-l2ork website see:
+For Pd-L2Ork website see:
 
 <http://l2ork.music.vt.edu/main/make-your-own-l2ork/software/>
-
-(Note that the latter link is more about "classic" Pd-L2Ork a.k.a. Pd-L2Ork 1.0, see below. But it also contains some information about Purr Data.)
  
-### Relationship of Purr Data to Pure Data
+### Relationship of Pd-L2Ork to Pure Data
 
 There are three maintained distributions of Pure Data:
 
-1. Purr Data. This is the 2.0 version of Pd-l2ork. It ships with lots of
+1. This is the 2.x version of Pd-L2Ork. It ships with lots of
    external libraries and uses a modern GUI written using HTML5.
-2. Pd-L2Ork 1.0, the version used by Ivica Bukvic for his laptop orchestra.
-   Pd-l2ork 1.0 uses tcl/tk (and tkpath) for the GUI. You can find it
-   [here](http://l2ork.music.vt.edu/main/make-your-own-l2ork/software/).
-3. Pure Data "Vanilla".  Miller Puckette's personal version which he hosts on
+2. Pure Data "Vanilla".  Miller Puckette's personal version which he hosts on
    his website and maintains.  It doesn't come with external libraries
    pre-installed, but it does include an interface you can use to search
    and install external libraries maintained and packaged by other developers.
@@ -98,25 +85,21 @@ There are three maintained distributions of Pure Data:
 
 **Windows and OSX:**
 
-Releases are done on GitHub:
+Releases are provided on the L2Ork's webpage:
 
-<https://github.com/jonwwilkes/purr-data/releases>
-
-This is where the packages first come out as soon as Jonathan Wilkes releases them. The same packages can also be dowloaded (usually shortly after release) on Albert Gräf's mirror, which also provides a website, wiki, additional documentation, and an up-to-date mirror of the source code repository:
-
-<https://github.com/agraef/purr-data/releases>
+<http://l2ork.music.vt.edu/main/make-your-own-l2ork/software/>
 
 **Linux:**
 
-Packages for various Linux distributions (including Arch, Debian, Ubuntu, and openSUSE) are available through the JGU package repositories maintained by Albert Gräf on the OBS (Open Build System). Detailed instructions can be found [here](https://github.com/agraef/purr-data/wiki/Installation#linux).
+Releases for Debian/Ubuntu are provided on the L2Ork's webpage:
 
-You can also just go to the [OBS Download](https://software.opensuse.org/download/package?package=purr-data&project=home%3Aaggraef), pick your Linux system, and follow the instructions.
+<http://l2ork.music.vt.edu/main/make-your-own-l2ork/software/>
 
 ### Build Guide
 
-Purr Data is usually built by just running `make` in the toplevel source directory after checking out the sources from its git repository. This works across all supported platforms (Linux, Mac and Windows at this time). The Makefile also offers the customary targets to clean (`make clean`, or `make realclean` to put the sources in pristine state again) and to roll a self-contained distribution tarball (`make dist`), as well as some other convenience targets  (please check the comments at the beginning of the Makefile for more information).
+Pd-L2Ork is usually built by just running `make` in the toplevel source directory after checking out the sources from its git repository. This works across all supported platforms (Linux, Mac and Windows at this time). The Makefile also offers the customary targets to clean (`make clean`, or `make realclean` to put the sources in pristine state again) and to roll a self-contained distribution tarball (`make dist`), as well as some other convenience targets  (please check the comments at the beginning of the Makefile for more information).
 
-However, to make this work, you will most likely have to install some prerequisites first: *build tools* such as a C/C++ compiler and the make program itself, as well as *dependencies*, the libraries that Purr Data needs. Detailed instructions for each of the supported platforms are given below.
+However, to make this work, you will most likely have to install some prerequisites first: *build tools* such as a C/C++ compiler and the make program itself, as well as *dependencies*, the libraries that Pd-L2Ork needs. Detailed instructions for each of the supported platforms are given below.
 
 #### Linux
 
@@ -144,9 +127,9 @@ Hard drive space required: *roughly 2.5 GB*
 2. The gui toolkit may require installing the following extra dependencies
         sudo apt-get install gconf2 libnss3
 
-3. Clone the Purr-Data repository *(2 to 10 minutes)*
+3. Clone the Pd-L2Ork repository *(2 to 10 minutes)*
 
-        git clone https://git.purrdata.net/jwilkes/purr-data.git
+        git clone https://github.com/pd-l2ork/pd-l2ork.git
 
 4. Compile the code *(5 minutes [light] to 1.5 hours [full])*
 
@@ -185,13 +168,13 @@ Hard drive space required: *roughly 2 GB*
         brew install libquicktime
         brew install pkg-config
 
-3. Clone the Purr-Data repository *(10 minutes)*
+3. Clone the Pd-L2Ork repository *(10 minutes)*
 
-        git clone https://git.purrdata.net/jwilkes/purr-data.git
+        git clone https://github.com/pd-l2ork/pd-l2ork.git
 
 4. Change to the source directory
 
-        cd purr-data
+        cd pd-l2ork
 
 5. Build the OSX app and the installer disk image (.dmg file) *(15 minutes)*
 
@@ -228,7 +211,7 @@ since it will usually contain spaces, making the build fail.
 
 4. Install the dependencies *(5-10 minutes)*  
    Once the shell opens, we need to install the dependencies for building
-   Purr Data. First we need to update all the packages:
+   Pd-L2Ork. First we need to update all the packages:
 
         pacman -Syu
 
@@ -252,21 +235,21 @@ since it will usually contain spaces, making the build fail.
           rsync unzip wget
 
 5. Download the source code *(3-6 minutes)*  
-   Issue the following command to create a new directory "purr-data" and clone
+   Issue the following command to create a new directory "pd-l2ork" and clone
    the repository to it:
 
-        git clone https://git.purrdata.net/jwilkes/purr-data.git
+        git clone https://github.com/pd-l2ork/pd-l2ork.git
 
 6. Enter the source directory *(less than a minute)*
 
-        cd purr-data
+        cd pd-l2ork
 
-7. Finally, build Purr-Data *(45-80 minutes)*
+7. Finally, build Pd-L2Ork *(45-80 minutes)*
 
         make
 
 8. Look in the top level source directory and double-click the setup file to
-   start installing Purr Data on your system.
+   start installing Pd-L2Ork on your system.
 
 #### Windows 64-bit Using msys2
 
@@ -278,28 +261,7 @@ The instructions are exactly the same as for the 32 bit build (see above), but t
 
 ### Code of Conduct
 
-1. No sarcasm, please
-2. Don't appear to lack empathy
-3. You can't live here. If you're spending hours a day writing Purr Data
-   code or-- worse-- spending hours a day *writing emails about* code that 
-   has yet to be written, you're doing it wrong
-4. If working on something for the first time, ask to be mentored
-5. If no one asked you to mentor them, don't teach
-6. It is better to let small things go then to risk taking time away from
-   solving bigger problems
-
-It is a bad idea to break this Code of Conduct *even if* no one complains
-about your behavior.
-
-### Project Governance
-
-* the three maintainers listed at the top of this document are the ones in
-  charge of this project
-* unanimous decisions are preferred
-* 2 out of 3 can break a disagreement
-* there will only ever be three maintainers of this project at any given time.
-  If you'd like to temporarily step in as one of the three,
-  send an inquiry to the list and we cany discuss it
+Please be kind, ask questions, and offer help wherever possible. Our community is small but nonetheless strong and its greatest strength is its collegiality.
 
 ### Contributor Guide
 
@@ -307,15 +269,12 @@ Contributing is easy:
 
 1. Join the development list:
    http://disis.music.vt.edu/cgi-bin/mailman/listinfo/l2ork-dev
-2. Fork Purr Data using the gitlab UI and then try to build it from source
+2. Fork Pd-L2Ork using the gitlab UI and then try to build it from source
    for your own platform using the [Build Guide](#build-guide) above. 
    If you run into problems ask on the development list for help.
-3. Once you have successfully built Purr Data, install it and make sure it
+3. Once you have successfully built Pd-L2Ork, install it and make sure it
    runs correctly.
-4. Start making changes to the code with brief, clear commit messages. If you
-   want some practice you can try fixing one of the bugs on the issue tracker
-   labeled
-   ["good-first-bug"](https://git.purrdata.net/jwilkes/purr-data/issues?label_name%5B%5D=good-first-bug)
+4. Start making changes to the code with brief, clear commit messages.
 5. One you are done fixing the bug or adding your feature, make a merge request
    in the Gitlab UI so we can merge the fix for the next release.
 
@@ -323,63 +282,19 @@ A few guidelines:
 * There should be a short and clear commit message for each merge request.
 * Short and clear title and description are required for each merge request.
 * There should be a short branch name related to the issue, like "update-readme".
-* _No prototypes, please_. Purr Data's biggest strength is that users can
+* _No prototypes, please_. Pd-L2Ork's biggest strength is that users can
   turn an idea into working code very quickly. But a prototyping language that 
-  is itself a prototype isn't very useful. That means Purr Data's core code
+  is itself a prototype isn't very useful. That means Pd-L2Ork's core code
   and libraries must be stable, consistent, well-documented, and easy to use.
 * Develop incrementally. Small, solid improvements to the software are
   preferable to large, disruptive ones.
 * Try not to duplicate existing functionality.
-  For backwards compatibility Purr Data ships many legacy
+  For backwards compatibility Pd-L2Ork ships many legacy
   libraries which unfortunately duplicate the same functionality. This makes
   it harder to learn how to use Pd, and makes it burdensome to read patches
   and keep track of all the disparate implementations.
 * Keep dependencies to a minimum. Cross-platform dependency handling is
-  unfortunately still an open research problem. In the even that you need
-  an external library dependency, please mirror it at git.purrdata.net
-  so that the build system doesn't depend on the availability of external
-  infrastructure.
-
-Here are some of the current tasks:
-
-* writing small audio/visual Pd games or demos to include in the next release
-  * skills needed: ability to write Pd programs
-  * status: I wrote a little sprite-based game that will ship with the next
-    version of Pd-L2Ork.  In it, the character walks around in an actual
-    Pd diagram shoots at the objects to progress, and to make realtime
-    changes to the music.
-    What I'd like is to include a new, smallish game with each release
-    that has a link in the Pd console.  It can be a little demo or game,
-    just something fun that shows off what can be done using Pure Data.
-* designing/implementing regression test template
-  * skills needed: knowledge about... regression tests. :)  But also some
-    expertise in using Pd so that the tests themselves can
-    be written in Pure Data.  At the same time, they should
-    be able to be run as part of the automated packaging
-    process (i.e., in -nogui mode).
-  * status: some externals have their own testing environments, but they are
-    limited as they require manual intervention to run and read the
-    results inside a graphical window.
-    We currently have a crude test system that at least ensures that each
-    external library instantiates without crashing.
-    Here's an email thread with Katja Vetter's design, which looks to
-    be automatable:
-    http://markmail.org/message/t7yitfc55anus76i#query:+page:1+mid:chb56ve7kea2qumn+state:results
-    And Mathieu Bouchard's "pure unity" (not sure if this is the most
-    recent link...):
-    http://sourceforge.net/p/pure-data/svn/HEAD/tree/tags/externals/pureunity/pureunity-0.0/
-* adding support for double precision to the external libraries that ship with purr-data
-  * skills needed: knowledge about data types in C language(specially float and double)
-  * status: the core classes of purr data and the freeverb~ external library
-    have been changed to support both float and double but still the remaining
-    external libraries only have support for single precision.
-    The task ahead is to add double precision support to these external libraries.
-    As per the current resources we have the merge requests that have been used to add double
-    precision support to the core libraries:
-    https://git.purrdata.net/jwilkes/purr-data/merge_requests?scope=all&utf8=%E2%9C%93&state=merged&author_username=pranay_36
-    And Katja Vetter's double precision patches to the pd-double project which were
-    actually used for adding double precision support to the core libraries of purr-data.
-    https://github.com/pd-projects/pd-double/commit/982ad1aa1a82b9bcd29c5b6a6e6b597675d5f300
+  unfortunately still an open research problem.
 
 ### Human Interface Guidelines
 

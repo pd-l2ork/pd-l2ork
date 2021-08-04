@@ -16,13 +16,13 @@ that didn't really belong anywhere. */
 /* Use this if you want to point the guidir at a local copy of the
  * repo while developing. Then recompile and copy the pd-l2ork binary
  * to the system path. After that you can make changes to the gui code
- * in purr-data/pd/nw and test them without having to recompile the
+ * in pd-l2ork/pd/nw and test them without having to recompile the
  * pd-l2ork binary.
  * If you do this, make sure you have run tar_em_up.sh first to fetch and
- * extract the nw binary to purr-data/pd/nw/nw
+ * extract the nw binary to pd-l2ork/pd/nw/nw
  */
 
-#define GUIDIR "" /* "/home/user/purr-data/pd/nw" */
+#define GUIDIR "" /* "/home/user/pd-l2ork/pd/nw" */
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -1277,7 +1277,7 @@ static void set_datadir(char *buf, int new_gui_instance, int portno)
         strcpy(dir, env);
         strcat(dir, "\\");
 #endif
-    strcat(dir, "purr-data");
+    strcat(dir, "pd-l2ork");
     if (new_gui_instance)
     {
         char portbuf[10];
@@ -1489,7 +1489,7 @@ int sys_startgui(const char *guidir)
                use that dir to find the nw binary. */
             if (strcmp(GUIDIR, ""))
                 strcpy(guidir2, "\"" GUIDIR "\"");
-            //strcpy(guidir2, "\"/home/user/purr-data/pd/nw\"");
+            //strcpy(guidir2, "\"/home/user/pd-l2ork/pd/nw\"");
             sprintf(cmdbuf,
                 "\"%s\" %s %s "
                 "%d localhost %s %s " X_SPECIFIER,
@@ -1531,7 +1531,7 @@ int sys_startgui(const char *guidir)
                use that dir to find the nw binary. */
             if (strcmp(GUIDIR, ""))
                 strcpy(guidir2, "\"" GUIDIR "\"");
-            //strcpy(guidir2, "\"/home/user/purr-data/pd/nw\"");
+            //strcpy(guidir2, "\"/home/user/pd-l2ork/pd/nw\"");
             sprintf(cmdbuf,
                 "%s/nw/nw %s %s "
                 "%d localhost %s %s " X_SPECIFIER,

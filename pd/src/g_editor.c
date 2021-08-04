@@ -6159,7 +6159,7 @@ void glob_verifyquit(void *dummy, t_floatarg f)
     }
     else
     {
-        post("Quitting Pd...");
+        post("Quitting Pd-L2Ork...");
         glob_quit(0, 0);
     }
 }

@@ -90,7 +90,7 @@ function create_menu(gui, type) {
     // there is no way to get <command-v> shortcut to trigger the
     // DOM "paste" event.
     if (osx) {
-        window_menu.createMacBuiltin("purr-data");
+        window_menu.createMacBuiltin("Pd-L2Ork");
     }
 
     // File menu

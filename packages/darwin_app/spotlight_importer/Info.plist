@@ -49,8 +49,8 @@
 			<string>MDImporter</string>
 			<key>LSItemContentTypes</key>
 			<array>
-				<string>org.puredata.pd-patch</string>
-				<string>org.puredata.max-patch</string>
+				<string>org.pd-l2ork.pd-patch</string>
+				<string>org.pd-l2ork.max-patch</string>
 			</array>
 		</dict>
 	</array>

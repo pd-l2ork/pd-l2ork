@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>PurrData</string>
+	<string>Pd-L2Ork</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
@@ -32,11 +32,11 @@
 	<key>CFBundleIconFile</key>
 	<string>app.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>net.purrdata.nwjs</string>
+	<string>net.pd-l2ork.nwjs</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>PurrData</string>
+	<string>Pd-L2Ork</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -71,7 +71,7 @@
 			<key>UTTypeConformsTo</key>
 			<string>public.plain-text</string>
 			<key>UTTypeIdentifier</key>
-			<string>net.purrdata.pd-patch</string>
+			<string>net.pd-l2ork.pd-patch</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>

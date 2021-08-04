@@ -120,12 +120,11 @@ darwin_app_wrapper: Info.plist
 	install -m0644 -p Info.plist "$(PD_APP_CONTENTS)"
 	install -m0644 -p *.icns  "$(PD_APP_CONTENTS)/Resources"
 	# Now change the localized app name in Resources/*.lproj from nwjs
-	# to "Purr Data". For some reason "CFBundleDisplayName" doesn't accept
-	# spaces so we give it "PurrData"
+	# to "Pd-L2Ork".
 	for file in $(BUILD_BASE)/*.app/Contents/Resources/*.lproj/InfoPlist.strings; do \
 		plutil -convert json "$$file"; \
-		LC_ALL=C sed -i.bak 's/"CFBundleName":"nwjs"/"CFBundleName":"Purr Data"/g' "$$file"; \
-		LC_ALL=C sed -i.bak 's/"CFBundleDisplayName":"nwjs"/"CFBundleDisplayName":"PurrData"/g' "$$file"; \
+		LC_ALL=C sed -i.bak 's/"CFBundleName":"nwjs"/"CFBundleName":"Pd-L2Ork"/g' "$$file"; \
+		LC_ALL=C sed -i.bak 's/"CFBundleDisplayName":"nwjs"/"CFBundleDisplayName":"Pd-L2Ork"/g' "$$file"; \
 		rm "$$file".bak; \
 		plutil -convert binary1 "$$file"; \
 	done
@@ -144,7 +143,7 @@ Info.plist: Info.plist.in
 spotlight_importer_install:
 	cd spotlight_importer && xcodebuild
 	install -d -m0755 "$(PD_APP_CONTENTS)/Library/Spotlight"
-	cp -Rp spotlight_importer/build/Release/PureData.mdimporter "$(PD_APP_CONTENTS)/Library/Spotlight"
+	cp -Rp spotlight_importer/build/Release/Pd-L2Ork.mdimporter "$(PD_APP_CONTENTS)/Library/Spotlight"
 
 # tigital's Gem window focus black magic
 rez_install:

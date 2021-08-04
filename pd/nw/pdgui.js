@@ -191,8 +191,8 @@ var index_start_time;
 
 // Filenames for the index cache, relative to the user's homedir.
 const cache_basename = nw_os_is_windows
-      ? "~/AppData/Roaming/Purr-Data/search"
-      : "~/.purr-data/search";
+      ? "~/AppData/Roaming/Pd-L2Ork/search"
+      : "~/.pd-l2ork/search";
 const cache_name = cache_basename + ".index";
 const stamps_name = cache_basename + ".stamps";
 
@@ -2069,8 +2069,8 @@ var secondary_pd_engines = {};
 // This is an alarmingly complicated and brittle approach to opening
 // files from a secondary instance of Pd in a currently running instance.
 // It works something like this:
-// 1. User is running an instance of Purr Data.
-// 2. User runs another instance of Purr Data from the command line, specifying
+// 1. User is running an instance of Pd-L2Ork.
+// 2. User runs another instance of Pd-L2Ork from the command line, specifying
 //    files to be opened as command line args. Or, they click on a file which
 //    in the desktop or file manager which triggers the same behavior.
 // 2. A new Pd process starts-- let's call it a "secondary pd engine".

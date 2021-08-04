@@ -427,9 +427,9 @@ then
 		mv packages/darwin_app/Pd*.dmg .
 	elif [ $inno -gt 0 ]; then
 		if [[ $os == "win64" ]]; then
-		    mv packages/win64_inno/Output/Purr*.exe .
+		    mv packages/win64_inno/Output/Pd-L2Ork*.exe .
 		else
-		    mv packages/win32_inno/Output/Purr*.exe .
+		    mv packages/win32_inno/Output/Pd-L2Ork*.exe .
 		fi
 	fi
 fi

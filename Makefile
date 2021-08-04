@@ -1,5 +1,5 @@
 
-# Toplevel Makefile for Purr Data. Please note that at present this is just a
+# Toplevel Makefile for Pd-L2Ork. Please note that at present this is just a
 # thin wrapper around l2ork_addons/tar_em_up.sh, the traditional Pd-l2ork
 # build script.
 
@@ -70,10 +70,10 @@
 # given in abstractions/Makefile and externals/Makefile, respectively (look
 # for targets looking like `foo_install`). Also note that even though a
 # subsequent `make install` will then include your addons, they won't be
-# enabled by default, so you'll have to do that manually in Purr Data's
+# enabled by default, so you'll have to do that manually in Pd-L2Ork's
 # `Startup` dialog. Simply adding the name of the addon in the `Libraries`
 # list should normally do the trick. Or you can add an option like `-lib foo`
-# when running Purr Data from the command line.
+# when running Pd-L2Ork from the command line.
 
 .PHONY: all incremental checkout clean realclean dist
 
@@ -170,10 +170,10 @@ else ifeq ($(os),Darwin)
 pdprog = packages/darwin_app/build/*.app/Contents/Resources/app.nw/bin/pd-l2ork
 else ifeq ($(os),MINGW64)
 # Msys2 mingw64
-pdprog = packages/win64_inno/build/bin/pd.exe
+pdprog = packages/win64_inno/build/bin/pd-l2ork.exe
 else ifeq ($(os),MINGW32)
 # Msys2 mingw32
-pdprog = packages/win32_inno/build/bin/pd.exe
+pdprog = packages/win32_inno/build/bin/pd-l2ork.exe
 endif
 
 ifneq ($(pdprog),)
@@ -235,8 +235,8 @@ endif
 # commit.
 debversion = $(shell grep PD_L2ORK_VERSION pd/src/m_pd.h | sed 's|^.define *PD_L2ORK_VERSION *"\(.*\)".*|\1|')+git$(shell test -d .git && git rev-list --count HEAD)+$(shell test -d .git && git rev-parse --short HEAD)
 # Source tarball and folder.
-debsrc = purr-data_$(debversion).orig.tar.gz
-debdist = purr-data-$(debversion)
+debsrc = pd-l2ork_$(debversion).orig.tar.gz
+debdist = pd-l2ork-$(debversion)
 
 # Submodules (Gem, etc.).
 submodules = $(sort $(shell test -d .git && (git config --file .gitmodules --get-regexp path | awk '{ print $$2 }')))

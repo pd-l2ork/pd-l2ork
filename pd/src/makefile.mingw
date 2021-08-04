@@ -33,7 +33,7 @@ libpddir = $(DESTDIR)$(prefix)
 pddocdir = $(libpddir)/doc
 libpdbindir = $(libpddir)/bin
 
-PDEXEC = pd.exe
+PDEXEC = pd-l2ork.exe
 PDDLL = pd.dll
 
 DLLWRAP= dllwrap
@@ -166,7 +166,7 @@ PD_BUILD_VERSION := $(shell git log -1 --format=%cd --date=short | sed -e 's/-//
 
 .PHONY: all install clean externs testbin
 
-all: config.h $(PDDLL) $(PDEXEC) pdsend.exe pdreceive.exe pd.com externs
+all: config.h $(PDDLL) $(PDEXEC) pdsend.exe pdreceive.exe pd-l2ork.com externs
 
 config.h: config.h.in
 	cp config.h.in config.h
@@ -207,9 +207,9 @@ $(PDEXEC): s_entry.o pd.res
 	$(CC) $(LDFLAGS) -mwindows -o $(PDEXEC) s_entry.o pd.res $(LIBS) -L. -lpd
 	$(STRIP) -s $(PDEXEC)
 
-pd.com: s_entry.o
-	$(CC) $(LDFLAGS) -o pd.com s_entry.o $(LIBS) -L. -lpd
-	$(STRIP) -s pd.com
+pd-l2ork.com: s_entry.o
+	$(CC) $(LDFLAGS) -o pd-l2ork.com s_entry.o $(LIBS) -L. -lpd
+	$(STRIP) -s pd-l2ork.com
 
 $(PDDLL): $(OBJC)
 	$(CXX) -shared $(LDFLAGS) -o $(PDDLL) $(OBJC) $(LIBS) \
@@ -258,13 +258,13 @@ externs: $(EXTERNALS_SRC:.c=.dll)
 #	$(STRIP) $*.dll
 
 # kludge to put stuff into the pd/bin dir for testing
-testbin: $(PDEXEC) $(PDDLL) pd.com
+testbin: $(PDEXEC) $(PDDLL) pd-l2ork.com
 	echo "Copying files to $(BIN_DIR)"
 	install -d $(BIN_DIR)
 	install -p pd.tk $(BIN_DIR)
 	install -p $(PDDLL) $(BIN_DIR)
 	install -p pd.ico $(BIN_DIR)
-	install -p pd.com $(BIN_DIR)
+	install -p pd-l2ork.com $(BIN_DIR)
 	install -p $(PDEXEC) $(BIN_DIR)
 
 ABOUT_FILE=$(pddocdir)/1.manual/1.introduction.txt
@@ -274,7 +274,7 @@ install:  all
 # rsync the nw directory, which includes the nw binary itself
 	rsync -ax --exclude=.git --exclude=.svn ../nw/* $(DESTDIR)$(bindir)
 	install -p $(PDEXEC) $(DESTDIR)$(bindir)/$(PDEXEC)
-	install -p pd.com $(DESTDIR)$(bindir)/pd.com
+	install -p pd-l2ork.com $(DESTDIR)$(bindir)/pd-l2ork.com
 	install -p pd.dll $(DESTDIR)$(bindir)/pd.dll
 	install -p pddll.def $(DESTDIR)$(bindir)/pddll.def
 	install -p pd.a $(DESTDIR)$(bindir)/pd.lib
@@ -313,7 +313,7 @@ install:  all
 
 clean:
 	-rm -f -- $(BIN_DIR)/*.*
-	-rm -f -- $(PDEXEC) pdsend.exe pdreceive.exe pd.com
+	-rm -f -- $(PDEXEC) pdsend.exe pdreceive.exe pd-l2ork.com
 	-rm -f -- $(PDDLL) pdtcl.dll pdtcl.a pdtcl.def
 	-rm -f -- $(OBJ) $(GOBJ) $(SROBJ) $(PAOBJ) $(ASIOOBJ) $(PMOBJ)
 	-rm -f -- $(pd_src)/extra/*/*.dll $(pd_src)/extra/*/*.o
