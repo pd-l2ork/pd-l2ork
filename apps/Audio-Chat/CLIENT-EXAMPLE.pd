@@ -1,19 +1,19 @@
-#N canvas 606 129 664 716 10;
-#X obj 19 215 cnv 15 130 138 empty empty empty 20 12 0 14 #ffbfbf #404040
+#N canvas 801 74 608 697 10;
+#X obj 19 335 cnv 15 126 134 empty empty empty 20 12 0 14 #ffbfbf #404040
 0;
-#X obj 156 440 tcp-audio-client;
-#X floatatom 55 225 13 0 0 0 pin: - - 0 0, f 13;
-#X obj 131 548 dac~;
-#X obj 249 471 tgl 19 0 empty empty status: -44 8 0 10 #fcfcfc #000000
+#X obj 156 550 tcp-audio-client;
+#X floatatom 55 345 13 0 0 0 pin: - - 0 0, f 13;
+#X obj 131 658 dac~;
+#X obj 249 581 tgl 19 0 empty empty status: -44 8 0 10 #fcfcfc #000000
 #000000 0 1;
 #X obj 264 21 adc~;
 #X text 297 21 microphone input;
-#X obj 141 521 *~;
-#X obj 116 320 tgl 19 0 empty empty server->user: -80 8 0 10 #fcfcfc
+#X obj 141 631 *~;
+#X obj 116 440 tgl 19 0 empty empty server->user: -80 8 0 10 #fcfcfc
 #000000 #000000 0 1;
-#X text 163 548 audio from the server;
-#X msg 116 465 \$1 10;
-#X obj 116 490 line~;
+#X text 163 658 audio from the server;
+#X msg 116 575 \$1 10;
+#X obj 116 600 line~;
 #N canvas 727 338 450 283 connections 0;
 #X msg 140 136 disconnect;
 #X msg 120 98 connect 198.82.152.114 9999;
@@ -27,26 +27,51 @@
 #X connect 4 0 5 0;
 #X connect 5 0 1 0;
 #X connect 5 1 0 0;
-#X restore 202 418 pd connections;
-#X obj 116 244 tgl 19 0 empty empty connect: -51 7 0 10 #fcfcfc #000000
+#X restore 202 528 pd connections;
+#X obj 116 364 tgl 19 0 empty empty connect: -51 7 0 10 #fcfcfc #000000
 #000000 0 1;
-#X obj 249 391 *~;
-#X obj 116 297 tgl 19 0 empty empty user->server: -80 8 0 10 #fcfcfc
+#X obj 249 501 *~;
+#X obj 116 417 tgl 19 0 empty empty user->server: -80 8 0 10 #fcfcfc
 #000000 #000000 0 1;
-#X msg 224 335 \$1 10;
-#X obj 224 360 line~;
-#X text 45 276 toggle audio;
-#X text 18 20 Before starting \, make sure that your sample rate is
-set to 44 \, 100Hz. You will find this option in Edit->Preferences
-, f 32;
-#X obj 19 510 loadbang;
-#X msg 19 535 \; pd dsp 1;
+#X msg 224 445 \$1 10;
+#X obj 224 470 line~;
+#X text 45 396 toggle audio;
+#X obj 19 620 loadbang;
+#X msg 19 645 \; pd dsp 1;
+#X obj 358 630 dac~;
+#X obj 358 598 *~;
+#X msg 373 548 \$1 10;
+#X obj 373 573 line~;
+#X obj 321 351 cnv 15 178 172 empty empty empty 20 12 0 14 #ffbfbf
+#404040 0;
+#X obj 472 496 tgl 19 0 empty empty local\ preview: -99 8 0 10 #fcfcfc
+#000000 #000000 0 1;
+#X obj 264 445 *~;
+#X obj 279 423 osc~;
+#X obj 431 404 nbx 5 16 0 10000 0 0 empty empty effect\ level: -80
+5 0 10 #fcfcfc #000000 #000000 0 256 0 0;
+#X text 18 18 Before starting \, make sure that your sample rate is
+set to 44100Hz. You will find this option in Edit->Preferences, f
+32;
+#X obj 401 166 k12/fx_reverb;
+#X obj 498 166 k12/fx_multitap;
+#X text 327 358 Use value of ~30 for starwars greedo voice or around~100
+for a wall-e effect.;
+#X text 390 630 local audio preview;
+#X text 327 423 Note that enabling localpreview may cause feedback.You
+are strongly encouragedto use headphones and loweryour audio volume.
+;
+#X text 399 53 You may want to add some of the following effects by
+connecting adc~ output (or pitchshift output \, depending if you wish
+to use them in parallel or in series) and sending their output to the
+*~ below., f 31;
+#X obj 264 166 K12/fx_pitchshift;
 #X connect 1 0 7 1;
 #X connect 1 1 4 0;
 #X connect 2 0 1 0;
-#X connect 5 0 14 1;
-#X connect 7 0 3 0;
+#X connect 5 0 37 0;
 #X connect 7 0 3 1;
+#X connect 7 0 3 0;
 #X connect 8 0 10 0;
 #X connect 10 0 11 0;
 #X connect 11 0 7 0;
@@ -56,4 +81,14 @@ set to 44 \, 100Hz. You will find this option in Edit->Preferences
 #X connect 15 0 16 0;
 #X connect 16 0 17 0;
 #X connect 17 0 14 0;
-#X connect 20 0 21 0;
+#X connect 19 0 20 0;
+#X connect 22 0 21 0;
+#X connect 22 0 21 1;
+#X connect 23 0 24 0;
+#X connect 24 0 22 1;
+#X connect 26 0 23 0;
+#X connect 27 0 14 1;
+#X connect 27 0 22 0;
+#X connect 28 0 27 1;
+#X connect 29 0 28 0;
+#X connect 37 0 27 0;
