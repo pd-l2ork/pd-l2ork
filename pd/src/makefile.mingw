@@ -229,7 +229,7 @@ pd.res: pd.rc
 #	--output-lib=vst.a --dllname=vstschedlib.dll s_audio_vst.o pd.a $(LIBS)
 
 # for making objects included with Pd, [expr] is whacky, so its built
-# separately, and pd~ doesn't build on Windows yet
+# separately
 EXTERNALS_SRC := $(wildcard $(pd_src)/extra/[a-z]*/*.c)
 #EXPR_SRC = vexp.c vexp_fun.c vexp_if.c
 #EXPR_OBJ =  $(patsubst %.c, $(pd_src)/extra/expr~/%.o, $(EXPR_SRC))
