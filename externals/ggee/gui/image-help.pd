@@ -613,11 +613,6 @@ to create an artificial boundary for such a control surface., f 34
 #X text 168 510 - sets the image alpha (transparency) \, 0 being fully
 transparent \, and 1 being fully opaque;
 #X text 98 540 click;
-#X text 168 540 - specifies the click mode: 0 no click detected 1
-output bang when clicked  2 output a list when clicked (mousedown
-1/0 \, image's top- left clickable corner's absolute X and absolute
-Y \, relative  mouse x \, mouse y (with the top-left image corner
-being the  origin);
 #X text 98 635 color;
 #X text 168 635 - specifies the label color using iemgui style messaging
 ;
@@ -631,7 +626,7 @@ original image size  (default) 2 constrain to the current size ratio
 #X text 98 747 delta;
 #X text 168 747 - iemgui option for nudging the object by a relative
 x and y values;
-#X text 98 817 gopspill;
+#X text 98 833 gopspill;
 #X text 168 833 - enable (1) or disable (0) the selectable size to
 be smaller than the actual image size. this is useful when placing
 images inside a gop-enabled subpatch \, which in turn allows the image
@@ -689,10 +684,15 @@ event. for more info \, see the bng help file:;
 #X text 168 1340 - outputs bang if the click mode is set to 1;
 #X text 98 1357 list;
 #X text 168 1357 - outputs the following list whne th click mode is
-set to 2 \,  as follows: 1: mousedown 1/0 2: top-left selection
-border origin x 3: top-left selection border origin y 4: mouse position
+set to 2 \, as follows: 1: mousedown 1/0 2: top-left selection border
+origin x 3: top-left selection border origin y 4: mouse position
 calculated from the origin x 5: mouse position calculated from the
 origin y;
+#X text 168 540 - specifies the click mode: 0 no click detected 1
+output bang when clicked  2 output a list when clicked (mousedown
+1/0 \, image's top- left clickable corner's absolute X and absolute
+Y \, relative  mouse x \, mouse y (with the top-left image corner
+being the  origin);
 #X connect 20 0 21 0;
 #X connect 21 0 26 0;
 #X connect 22 0 24 0;
