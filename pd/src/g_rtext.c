@@ -265,11 +265,15 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
                 x->x_bufsize - inindex_b);
             int eatchar = 1;
             //fprintf(stderr, "firstone <%s> inindex_b=%d maxindex_b=%d\n", x->x_buf + inindex_b, inindex_b, maxindex_b);
-            int foundit_b  = firstone(x->x_buf + inindex_b, '\n', maxindex_b);
+            // ico@vt.edu 2021-08-06:
+            // we add to foundit_b and foundit_bv one extra spot in case
+            // the user-entered \n is right at the point of the maximum width
+            // since we will eat this char, it is all good
+            int foundit_b  = firstone(x->x_buf + inindex_b, '\n', maxindex_b + 1);
             //int oldinindex_b = 0;
             int foundit_c;
             //following deals with \v replacement for \n in multiline comments
-            int foundit_bv  = firstone(x->x_buf + inindex_b, '\v', maxindex_b);
+            int foundit_bv  = firstone(x->x_buf + inindex_b, '\v', maxindex_b + 1);
             if ((foundit_bv < foundit_b && foundit_bv != -1) ||
                 (foundit_b == -1 && foundit_bv != -1))
             {
@@ -282,7 +286,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
             }
             if (foundit_b < 0) //if we did not find an \n or a \v
             {
-                //post("no v found %d", foundit_b);
+                //post("no n or v found %d", foundit_b);
                 /* too much text to fit in one line? */
                 if (inchars_c > widthlimit_c)
                 {
@@ -297,8 +301,12 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
                     // at a point where the hyphen is.
                     foundit_bv =
                         lastone(x->x_buf + inindex_b, '-', maxindex_b + 1);
-                    if (foundit_bv > foundit_b)
-                        foundit_b = foundit_bv;
+                    // if '-' is chosen for the linebreak, we add one to the string
+                    // size and we make eatchar 0 to ensure '-' is not dropped
+                    if (foundit_bv > foundit_b) {
+                        foundit_b = foundit_bv + 1;
+                        eatchar = 0;
+                    }
 
                     if (foundit_b < 0)
                     {
@@ -347,12 +355,34 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
             //    x->x_buf[inindex_c-1], x->x_buf[inindex_c-1]);
             if (inindex_b < x->x_bufsize) // && (!iscomment || tempbuf[outchars_b-1] != '\n'))
             {
-                /*post("rtext adding endline: b-1=<%c> b=%d b==n?%d b==v?%d",
+                // ico@vt.edu 2021-08-06:
+                // really frail way of dealing with \n at the end of the line length, in which
+                // case they need to be eaten since the newline will be automatically added
+                // given we have exceeded the object width limit. LATER: rework all this, so that
+                // the box calculation and mouse detection takes place GUI-side.
+                /*post("rtext adding endline: b-1=<%c> b-1=%d foundit_b=%d \
+                      eatchar=%d maxindex_b=%d inindex_b=%d",
                     tempbuf[outchars_b-1],
-                    tempbuf[outchars_b],
-                    (tempbuf[outchars_b] == '\n' ? 1 : 0),
-                    (tempbuf[outchars_b] == '\v' ? 1 : 0));*/
-                tempbuf[outchars_b++] = '\n';
+                    tempbuf[outchars_b-1],
+                    foundit_b,
+                    eatchar,
+                    maxindex_b,
+                    x->x_buf[inindex_b]);*/
+                // ico@vt.edu 2021-08-06:
+                // only add a newline in case the line length is not equal the maximum length
+                // and the character that follows is not an \n or a \v
+                if (foundit_b != maxindex_b ||
+                    (x->x_buf[inindex_b] != '\n' && x->x_buf[inindex_b] != '\v')) {
+                    //post("...adding");
+                    tempbuf[outchars_b++] = '\n';
+                } else {
+                    // ico@vt.edu 2021-08-06:
+                    // here we subtract a line since the throwaway \n or \v character that will
+                    // be leftover from a previous line (which was ended at the object's length
+                    // by an \n or \v), will generate a ghost extra line causing formatting
+                    // problems...
+                    nlines--;
+                }
             }
             // if we found a row that is longer than previous (total width)
             if (foundit_c > ncolumns) {
