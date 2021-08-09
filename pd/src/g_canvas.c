@@ -3232,6 +3232,7 @@ void canvasgop_checksize(t_canvas *x)
 void canvasgop__clickhook(t_scalehandle *sh, int newstate)
 {
     t_canvas *x = (t_canvas *)(sh->h_master);
+    //post("canvas_clickhook %d", newstate);
 
     /* So ugly: if the user is dragging the bottom right-hand corner of
        a gop subcanvas on the parent, we already set an undo event for it.
@@ -3274,6 +3275,7 @@ void canvasgop__clickhook(t_scalehandle *sh, int newstate)
     else /* move_gop hook */
     {
         /* Same as above... */
+        //post("move_gop hook");
         //sys_vgui("lower %s\n", sh->h_pathname);
     }
 }
@@ -3409,6 +3411,7 @@ void canvasgop__motionhook(t_scalehandle *sh, t_floatarg mouse_x,
     }
     else /* move_gop hook */
     {
+        //post("canvas_motionhook");
         int properties = gfxstub_haveproperties((void *)x);
         if (properties)
         {
@@ -3429,6 +3432,15 @@ void canvasgop__motionhook(t_scalehandle *sh, t_floatarg mouse_x,
             x, x1, y1, x2, y2);
         sh->h_dragx = dx;
         sh->h_dragy = dy;
+        // ico@vt.edu 2021-08-09: this is an overriding scroll
+        // request that, if sent continuously, will override
+        // the previous call and thus save the precious CPU cycles.
+        // this will result in the scrollbar update finally taking
+        // place after the movement has ceased and this function
+        // not being called for at least the minimum duration 
+        // specified inside the pdgui.js
+        // (see gui_canvas_get_immediate_scroll inside pdgui.js)
+        canvas_getscroll(x);
     }
 }
 

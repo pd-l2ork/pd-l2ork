@@ -1605,6 +1605,7 @@ void scrollbar_synchronous_update(t_glist *glist)
     // glist_getcanvas is probably not needed but not before we make
     // sure that there are unneded calls of this kind being made by
     // non-toplevel objects...
+    //post("scrollbar_scynchronous_update");
     gui_vmess("gui_canvas_get_immediate_scroll",
         "x", glist_getcanvas(glist));
 }

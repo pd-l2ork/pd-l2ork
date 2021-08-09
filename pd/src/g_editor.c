@@ -5360,6 +5360,7 @@ static void canvas_doregion(t_canvas *x, int xpos, int ypos, int doit)
 void canvas_mouseup(t_canvas *x,
     t_floatarg fxpos, t_floatarg fypos, t_floatarg fwhich)
 {
+    //post("canvas_mouseup %d %d", (int)fwhich, x->gl_editor->e_onmotion);
     //if (toggle_moving == 1) {
     //    toggle_moving = 0;
     //    sys_vgui("pdtk_toggle_xy_tooltip .x%zx %d\n", x, 0);
@@ -5383,6 +5384,7 @@ void canvas_mouseup(t_canvas *x,
         canvas_doregion(x, xpos, ypos, 1);
     else if (x->gl_editor->e_onmotion == MA_MOVE)
     {
+        post("...MA_MOVE");
             /* after motion or resizing, if there's only one text item
                 selected, activate the text */
     	canvas_setcursor(x, CURSOR_EDITMODE_NOTHING);
@@ -5400,6 +5402,13 @@ void canvas_mouseup(t_canvas *x,
         //    (t_int)x, (int)fxpos, (int)fypos);
         x->gl_editor->e_onmotion = MA_NONE;
         canvas_setcursor(x, CURSOR_EDITMODE_NOTHING);        
+    }
+    // ico@vt.edu 2021-08-09: added this condition to account
+    // for scrollbar refresh when resizing a GOP-enabled subpatch
+    // or an abstraction
+    else if (x->gl_editor->e_onmotion == MA_RESIZE)
+    {
+        scrollbar_synchronous_update(x);       
     }
     
     if ((x->gl_editor->e_onmotion != MA_CONNECT &&
