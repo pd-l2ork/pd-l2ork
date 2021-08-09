@@ -535,8 +535,9 @@ static void image_visible(t_image *x, t_floatarg f)
     if (f == 0 || f == 1)
     {
         x->x_visible = (int)f;
-        gui_vmess("gui_ggee_image_toggle_visible", "xxi",
-            glist_getcanvas(x->x_gui.x_glist), x, x->x_visible);
+        if (x->x_img_loaded)
+            gui_vmess("gui_ggee_image_toggle_visible", "xxi",
+                glist_getcanvas(x->x_gui.x_glist), x, x->x_visible);
     }
     int properties = gfxstub_haveproperties((void *)x);
     if (properties)
