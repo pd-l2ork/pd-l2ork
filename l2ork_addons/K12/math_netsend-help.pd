@@ -1,28 +1,19 @@
-#N canvas 334 55 502 574 10;
-#X obj 310 29 cnv 15 243 107 empty empty empty 20 12 0 14 -233017 -66577
+#N canvas 334 73 502 574 10;
+#X obj 245 29 cnv 15 243 107 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
-#X obj 80 201 cnv 15 473 207 empty empty empty 20 12 0 14 -233017 -66577
+#X obj 15 201 cnv 15 473 207 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
-#X obj 186 -29 preset_hub k12 %hidden% %node% 2 5 9 %node% 2 7 8 %preset%
-1 2 %preset% 0 1 %preset% 2 3 %preset% 3 4 %node% 2 6 4 %node% 2 8
-8 %node% 2 9 8 %node% 2 10 8 %node% 2 10 4 %preset% 0 0 %node% 2 14
-6 %node% 2 14 10 %node% 2 7 7 %node% 2 9 7 %node% 2 9 7 %node% 2 9
-3 %node% 2 12 5 %preset% 0 0 %node% 2 12 9 %preset% 0 127 %node% 2
-8 7 %preset% 0 0.15748 %node% 2 8 3 %preset% 0 4000 %node% 2 11 31
-%node% 2 12 5 %node% 2 12 9 %node% 2 10 6 %preset% 0 127 %node% 2 10
-12 %preset% 0 0 %node% 2 10 13 %preset% 0 1 %node% 2 12 3 %preset%
-0 kerplop %node% 2 13 11 %preset% 0 120 %node% 2 14 8 %node% 2 11 3
-%preset% 0 kerplop %node% 2 10 3 %preset% 0 3000 %node% 2 10 7 %preset%
-0 0 %node% 2 11 7 %preset% 0 81 %node% 2 13 3 %preset% 0 kerplop %node%
-2 13 3 %preset% 0 kerplop %node% 2 22 3 %node% 2 22 11 %node% 2 23
-5 %node% 2 23 9 %node% 2 24 3 %node% 2 24 3 %node% 2 26 3 %node% 2
-24 3 %node% 2 25 3 %node% 2 19 8 %node% 2 14 8 %node% 2 9 18 %node%
-2 7 3 %preset% 0 4000 %node% 2 7 17 %node% 2 13 8 %node% 2 16 7;
-#X obj 65 -4 cnv 3 501 3 empty empty empty 5 14 0 20 -260097 -191407
+#X obj 121 -29 preset_hub k12 %hidden% %node% 2 10 6 %preset% 0 0 %node%
+2 9 6 %node% 2 16 6 %preset% 0 1 %node% 2 7 2 %preset% 0 3000 %node%
+2 7 13 %preset% 0 localhost %node% 2 8 2 %preset% 0 3000 %node% 2 11
+2 %preset% 0 something %node% 2 12 2 %preset% 0 something %node% 2
+13 7;
+#X obj 0 -4 cnv 3 501 3 empty empty empty 5 14 0 20 #fc8000 #b8b8b8
 0;
-#X obj 65 -33 cnv 15 501 28 empty empty Math/NetSend 5 14 0 20 -139274
--262144 0;
-#X obj 535 0 ggee/image @pd_extra/K12/icons/l2ork.png;
+#X obj 0 -33 cnv 15 501 28 empty empty Math/NetSend 5 14 0 20 #880024
+#fcfcfc 0;
+#X obj 447 -25 ggee/image @pd_extra/K12/icons/l2ork.png 0 0 48 50 empty
+empty empty 48 50 1 0 10 #000000 0 -8 24 25 0 1 1;
 #N canvas 529 184 450 300 META 0;
 #X text 13 6 DESCRIPTION Math Netsend sends tagged data over network
 ;
@@ -30,16 +21,16 @@
 ;
 #X text 13 50 OUTLET_0 Outputs 1 on successul connection and 0 on failed
 connection;
-#X restore 515 824 pd META;
-#X obj 89 210 K12/math_netsend 0;
-#X obj 89 537 K12/math_netreceive 0;
-#X obj 89 19 K12/math_number 0;
-#X obj 89 765 K12/math_number 0;
-#X obj 89 99 K12/math_tag 0;
-#X obj 89 651 K12/math_routebytag 0;
-#X obj 455 38 K12/preset 0;
-#X text 317 90 Recall leftmost presetto start the example.;
-#X text 187 203 The Math NetSend object sends data information over
+#X restore 450 829 pd META;
+#X obj 24 210 K12/math_netsend 0;
+#X obj 24 537 K12/math_netreceive 0;
+#X obj 24 19 K12/math_number 0;
+#X obj 24 765 K12/math_number 0;
+#X obj 24 99 K12/math_tag 0;
+#X obj 24 651 K12/math_routebytag 0;
+#X obj 390 38 K12/preset 0;
+#X text 252 90 Recall leftmost presetto start the example.;
+#X text 122 206 The Math NetSend object sends data information over
 the network to another computer. In this example \, we are first tagging
 numbers with the tag 'kerplop'. These tagged numbers are then given
 to the Math NetSend object. The NetSend object then sends these tagged
@@ -49,8 +40,8 @@ Math NetSend's partner object is the Math NetReceive object. Change
 the top number box to see the NetReceive object receive the numbers
 you send. Netsend's outlet outputs 1 on successful connect \, 0 otherwise.Look
 at the help files for the NetReceive \, Tag \, and RouteByTag objects
-for more information on how those objects work.;
-#X obj 89 429 K12/math_number 0;
+for more information on how those objects work., f 59;
+#X obj 24 429 K12/math_number 0;
 #X connect 7 0 16 0;
 #X connect 8 0 12 0;
 #X connect 9 0 11 0;

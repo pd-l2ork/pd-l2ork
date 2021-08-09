@@ -1,5 +1,5 @@
-#N canvas 407 89 508 563 10;
-#X obj 18 133 cnv 15 478 156 empty empty empty 20 12 0 14 -233017 -66577
+#N canvas 406 97 502 563 10;
+#X obj 8 133 cnv 15 478 156 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
 #N canvas 507 463 450 134 META 0;
 #X text 8 43 INLET_0 Connect the Wii Connect object here;
@@ -7,25 +7,25 @@
 axis;
 #X text 8 9 DESCRIPTION Monitors Wiimote's x-axis \, y \, or z-axis
 acceleration;
-#X restore 456 499 pd META;
-#X obj 24 21 K12/wii_connect;
-#X obj 8 -6 cnv 3 501 3 empty empty empty 5 14 0 20 -260097 -191407
+#X restore 446 501 pd META;
+#X obj 14 21 K12/wii_connect;
+#X obj -2 -6 cnv 3 501 3 empty empty empty 5 14 0 20 #fc8000 #b8b8b8
 0;
-#X obj 24 318 K12/math_number;
-#X obj 251 -30 preset_hub k12 %hidden% %node% 2 5 14 %node% 2 5 28
-%node% 2 3 7 %node% 2 8 1 %node% 2 1 33 %node% 2 1 34 %node% 2 6 7
-%node% 2 7 10 %node% 2 7 6 %node% 2 7 6 %node% 2 4 7 %node% 2 8 6;
-#X obj 8 -35 cnv 15 501 28 empty empty Wii/Accelerometer 5 14 0 20
--139274 -262144 0;
-#X obj 478 -2 ggee/image @pd_extra/K12/icons/l2ork.png 0;
-#X obj 24 139 K12/wii_accelerometer;
-#X text 123 146 The Wii Accelerometer object takes one input from the
+#X obj 14 318 K12/math_number;
+#X obj 241 -30 preset_hub k12 %hidden% %node% 2 4 6 %node% 2 8 5;
+#X obj -2 -35 cnv 15 501 28 empty empty Wii/Accelerometer 5 14 0 20
+#880024 #fcfcfc 0;
+#X obj 444 -27 ggee/image @pd_extra/K12/icons/l2ork.png 0 0 48 50 empty
+empty empty 48 50 1 0 10 #000000 0 -8 24 25 0 1 1;
+#X obj 14 139 K12/wii_accelerometer;
+#X text 113 146 The Wii Accelerometer object takes one input from the
 Wii Connect object. It can monitor one of the three axes (X \, Y \,
 and Z) of the Wiimote. It outputs values between -1 and 1 reflecting
 selected axis' acceleration and direction. Its output can be used in
 data calculations or to drive an instrument (e.g. control how loud
 it is based on wiimote motion.Click on one of the three buttons to
 select x \, y \, or z axis as your source.;
-#X obj 282 409 image @pd_extra/K12/images/wiimote_axes.png 0;
+#X obj 168 309 image @pd_extra/K12/images/wiimote_axes.png 0 0 208
+200 empty empty empty 208 200 1 0 10 #000000 0 -8 104 100 0 1 1;
 #X connect 2 0 8 0;
 #X connect 8 0 4 0;

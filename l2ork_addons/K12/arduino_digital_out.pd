@@ -1,10 +1,10 @@
-#N canvas 256 92 512 323 10;
-#X obj 58 237 outlet;
-#X obj 228 45 ggee/image @pd_extra/K12/objects/arduino_digital_out_off.png
-1;
-#X obj 228 -60 loadbang;
-#X obj 58 -60 inlet;
-#X obj 240 -15 preset_node k12;
+#N canvas 256 101 512 323 10;
+#X obj 58 287 outlet;
+#X obj 216 82 ggee/image @pd_extra/K12/objects/arduino_digital_out_off.png
+1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
+;
+#X obj 58 20 inlet;
+#X obj 240 35 preset_node k12;
 #N canvas 722 353 518 255 pin_parser 0;
 #X obj 171 23 inlet;
 #X obj 37 220 outlet;
@@ -21,36 +21,32 @@
 #X connect 4 1 6 0;
 #X connect 5 0 2 0;
 #X connect 6 0 2 0;
-#X restore 277 104 pd pin_parser;
-#X obj 277 126 t f f;
-#X obj 58 162 pack 0 0;
-#X msg 304 172 pinMode \$1 output;
-#X msg 58 185 digital \$2 \$1;
-#X text 208 45 OUTPUT;
-#X text 206 61 pin:;
-#X obj 230 64 nbx 3 14 -1 13 0 1 empty empty empty 0 -8 0 10 -262144
--1 -1 -1 256 3;
-#X msg 228 -37 open @pd_extra/K12/objects/arduino_digital_out_off.png
-;
-#X obj 58 37 split 0 1;
-#X obj 109 63 > 1;
-#X obj 58 12 int;
-#X obj 304 149 pipe 1000;
-#X connect 2 0 13 0;
-#X connect 3 0 16 0;
-#X connect 4 0 12 0;
-#X connect 5 0 6 0;
-#X connect 5 1 1 0;
-#X connect 6 0 7 1;
-#X connect 6 1 17 0;
-#X connect 7 0 9 0;
+#X restore 277 154 pd pin_parser;
+#X obj 277 176 t f f;
+#X obj 58 212 pack 0 0;
+#X msg 304 222 pinMode \$1 output;
+#X msg 58 235 digital \$2 \$1;
+#X text 208 95 OUTPUT;
+#X text 206 111 pin:;
+#X obj 230 114 nbx 3 14 -1 13 0 1 empty empty empty 0 -8 0 10 #fcfcfc
+#000000 #000000 -1 256 3 0;
+#X obj 58 87 split 0 1;
+#X obj 109 113 > 1;
+#X obj 58 62 int;
+#X obj 304 199 pipe 1000;
+#X connect 2 0 14 0;
+#X connect 3 0 11 0;
+#X connect 4 0 5 0;
+#X connect 4 1 1 0;
+#X connect 5 0 6 1;
+#X connect 5 1 15 0;
+#X connect 6 0 8 0;
+#X connect 7 0 0 0;
 #X connect 8 0 0 0;
-#X connect 9 0 0 0;
-#X connect 12 0 5 0;
-#X connect 13 0 1 0;
-#X connect 14 0 7 0;
-#X connect 14 1 15 0;
+#X connect 11 0 4 0;
+#X connect 12 0 6 0;
+#X connect 12 1 13 0;
+#X connect 13 0 6 0;
+#X connect 14 0 12 0;
 #X connect 15 0 7 0;
-#X connect 16 0 14 0;
-#X connect 17 0 8 0;
-#X coords 0 -1 1 1 89 89 2 183 13;
+#X coords 0 -1 1 1 90 90 2 183 62;

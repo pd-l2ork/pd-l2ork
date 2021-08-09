@@ -1,22 +1,17 @@
-#N canvas 58 24 502 501 10;
-#X obj 79 134 cnv 15 469 103 empty empty empty 20 12 0 14 -233017 -66577
+#N canvas 64 73 502 501 10;
+#X obj 10 134 cnv 15 469 103 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
-#X obj 186 -36 preset_hub k12 %hidden% %node% 2 5 9 %node% 2 7 8 %preset%
-1 2 %preset% 0 10 %node% 2 6 4 %node% 2 8 8 %preset% 0 5 %node% 2 9
-8 %node% 2 9 8 %node% 2 13 4 %preset% 0 0 %node% 2 14 6 %node% 2 14
-10 %node% 2 10 4 %preset% 0 1 %node% 2 11 9 %node% 2 10 13 %preset%
-0 120 %node% 2 11 8 %preset% 0 120 %node% 2 12 9 %node% 2 13 21 %preset%
-0 10 %node% 2 6 7 %preset% 0 1 %node% 2 7 7 %preset% 0 1 %node% 2 10
-7 %node% 2 12 3 %preset% 0 1 %node% 2 12 19 %preset% 0 16 %node% 2
-12 3 %node% 2 12 11 %node% 2 8 7 %preset% 0 120 %node% 2 10 3 %node%
-2 10 19 %node% 2 11 3 %node% 2 11 11 %node% 2 12 8 %node% 2 12 0 %preset%
-0 120 %node% 2 12 4 %preset% 0 1 %node% 2 10 8 %node% 2 11 0 %node%
-2 11 4;
-#X obj 65 -10 cnv 3 501 3 empty empty empty 5 14 0 20 -260097 -191407
+#X obj 117 -36 preset_hub k12 %hidden% %node% 2 11 3 %preset% 0 1 %preset%
+1 1 %node% 2 11 0 %preset% 0 60 %preset% 1 240 %node% 2 12 2 %preset%
+0 1 %preset% 1 1 %node% 2 12 18 %preset% 0 16 %preset% 1 16 %node%
+2 6 6 %preset% 0 1 %preset% 1 1 %node% 2 7 6 %preset% 0 7 %preset%
+1 13 %node% 2 8 6 %preset% 0 60 %preset% 1 240 %node% 2 10 7;
+#X obj -4 -10 cnv 3 501 3 empty empty empty 5 14 0 20 #fc8000 #b8b8b8
 0;
-#X obj 65 -38 cnv 15 501 28 empty empty Logic/Metronome 5 14 0 20 -139274
--262144 0;
-#X obj 535 -6 ggee/image @pd_extra/K12/icons/l2ork.png 0;
+#X obj -4 -38 cnv 15 501 28 empty empty Logic/Metronome 5 14 0 20 #880024
+#fcfcfc 0;
+#X obj 442 -31 ggee/image @pd_extra/K12/icons/l2ork.png 0 0 48 50 empty
+empty empty 48 50 1 0 10 #000000 0 -8 24 25 0 1 1;
 #N canvas 168 371 378 128 META 0;
 #X text 13 69 INLET_1 Send the tempo in BPM here;
 #X text 13 38 INLET_0 Send a 1 to turn the metro on and a 0 to turn
@@ -24,18 +19,18 @@ the metro off;
 #X text 13 91 OUTLET_0 Outputs 1 when the metronome fires;
 #X text 13 6 DESCRIPTION The metronome outputs a number 1 at the specified
 time interval when the toggle is on;
-#X restore 510 436 pd META;
-#X obj 86 18 K12/math_number;
-#X obj 86 373 K12/math_number;
-#X obj 193 18 K12/math_number;
-#X text 182 147 The Logic Metronome object outputs a 1 on a certain
+#X restore 442 436 pd META;
+#X obj 17 18 K12/math_number;
+#X obj 17 373 K12/math_number;
+#X obj 124 18 K12/math_number;
+#X text 123 145 The Logic Metronome object outputs a 1 on a certain
 time interval when the toggle is on. The speed is determined by the
 number box and is in Beats Per Minute (BPM). Send a 1 into the left
 inlet to turn it on and a 0 to turn it off. Set the speed by sending
-a number in BPM to the right inlet.;
-#X obj 458 31 K12/preset;
-#X obj 86 140 K12/logic_metronome;
-#X obj 86 260 K12/logic_counter;
+a number in BPM to the right inlet., f 57;
+#X obj 389 31 K12/preset;
+#X obj 17 140 K12/logic_metronome;
+#X obj 17 260 K12/logic_counter;
 #X connect 6 0 11 0;
 #X connect 8 0 11 1;
 #X connect 11 0 12 0;

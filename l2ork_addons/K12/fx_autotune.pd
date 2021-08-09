@@ -1,35 +1,33 @@
-#N canvas 284 99 450 470 10;
+#N canvas 284 117 466 449 10;
 #X obj 10 15 inlet~;
 #X obj 10 410 outlet~;
-#X obj 131 159 ggee/image @pd_extra/K12/objects/fx_autotune.png 1 0
+#X obj 131 160 ggee/image @pd_extra/K12/objects/fx_autotune.png 1 0
 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
-#X obj 131 74 loadbang;
 #X obj 10 308 autotune~;
-#X msg 131 97 open @pd_extra/K12/objects/fx_autotune.png;
-#N canvas 609 221 450 281 keys 0;
-#X obj 74 141 tgl 13 0 empty empty C 4 7 0 10 #fcfcfc #000000 #fc8000
+#N canvas 609 230 478 281 keys 0;
+#X obj 74 141 tgl 13 0 empty empty C 3 6 0 10 #fcfcfc #000000 #fc8000
 0 1;
-#X obj 87 141 tgl 13 0 empty empty C# 1 7 0 10 #000000 #fcfcfc #fc8000
+#X obj 87 141 tgl 13 0 empty empty C# 0 6 0 10 #000000 #fcfcfc #fc8000
 0 1;
-#X obj 100 141 tgl 13 0 empty empty D 4 7 0 10 #fcfcfc #000000 #fc8000
+#X obj 100 141 tgl 13 0 empty empty D 3 6 0 10 #fcfcfc #000000 #fc8000
 0 1;
-#X obj 126 141 tgl 13 0 empty empty E 4 7 0 10 #fcfcfc #000000 #fc8000
+#X obj 126 141 tgl 13 0 empty empty E 3 6 0 10 #fcfcfc #000000 #fc8000
 0 1;
-#X obj 139 141 tgl 13 0 empty empty F 4 7 0 10 #fcfcfc #000000 #fc8000
+#X obj 139 141 tgl 13 0 empty empty F 3 6 0 10 #fcfcfc #000000 #fc8000
 0 1;
-#X obj 113 141 tgl 13 0 empty empty D# 1 7 0 10 #000000 #fcfcfc #fc8000
+#X obj 113 141 tgl 13 0 empty empty D# 0 6 0 10 #000000 #fcfcfc #fc8000
 0 1;
-#X obj 74 156 tgl 13 0 empty empty F# 1 7 0 10 #000000 #fcfcfc #fc8000
+#X obj 74 156 tgl 13 0 empty empty F# 0 6 0 10 #000000 #fcfcfc #fc8000
 0 1;
-#X obj 87 156 tgl 13 0 empty empty G 4 7 0 10 #fcfcfc #000000 #fc8000
+#X obj 87 156 tgl 13 0 empty empty G 3 6 0 10 #fcfcfc #000000 #fc8000
 0 1;
-#X obj 113 156 tgl 13 0 empty empty A 4 7 0 10 #fcfcfc #000000 #fc8000
+#X obj 113 156 tgl 13 0 empty empty A 3 6 0 10 #fcfcfc #000000 #fc8000
 0 1;
-#X obj 100 156 tgl 13 0 empty empty G# 1 7 0 10 #000000 #fcfcfc #fc8000
+#X obj 100 156 tgl 13 0 empty empty G# 0 6 0 10 #000000 #fcfcfc #fc8000
 0 1;
-#X obj 139 156 tgl 13 0 empty empty B 4 7 0 10 #fcfcfc #000000 #fc8000
+#X obj 139 156 tgl 13 0 empty empty B 3 6 0 10 #fcfcfc #000000 #fc8000
 0 1;
-#X obj 126 156 tgl 13 0 empty empty A# 1 7 0 10 #000000 #fcfcfc #fc8000
+#X obj 126 156 tgl 13 0 empty empty A# 0 6 0 10 #000000 #fcfcfc #fc8000
 0 1;
 #N canvas 379 181 544 389 format 0;
 #X obj 29 8 inlet;
@@ -131,6 +129,7 @@
 #X obj 233 58 preset_node k12;
 #X obj 335 58 preset_node k12;
 #X connect 0 0 12 3;
+#X connect 0 0 14 0;
 #X connect 1 0 12 4;
 #X connect 2 0 12 5;
 #X connect 3 0 12 7;
@@ -168,19 +167,17 @@
 #X obj 61 387 ftom;
 #X msg 94 264 tune 440 \, smooth 0.01 \, fcorr 1 \, lfodepth 0.25 \,
 lforate 5 \, mix 1 \, correct 1;
-#X connect 0 0 4 0;
-#X connect 3 0 5 0;
-#X connect 4 0 1 0;
-#X connect 4 1 13 0;
-#X connect 4 2 12 1;
-#X connect 5 0 2 0;
-#X connect 6 0 4 0;
-#X connect 7 0 9 0;
-#X connect 8 0 15 0;
-#X connect 9 0 10 0;
-#X connect 10 0 4 0;
-#X connect 12 0 14 0;
-#X connect 13 0 12 0;
-#X connect 14 0 11 0;
-#X connect 15 0 4 0;
-#X coords 0 -1 1 1 89 89 2 98 140;
+#X connect 0 0 3 0;
+#X connect 3 0 1 0;
+#X connect 3 1 11 0;
+#X connect 3 2 10 1;
+#X connect 4 0 3 0;
+#X connect 5 0 7 0;
+#X connect 6 0 13 0;
+#X connect 7 0 8 0;
+#X connect 8 0 3 0;
+#X connect 10 0 12 0;
+#X connect 11 0 10 0;
+#X connect 12 0 9 0;
+#X connect 13 0 3 0;
+#X coords 0 -1 1 1 90 90 2 98 140;

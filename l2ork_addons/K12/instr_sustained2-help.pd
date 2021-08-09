@@ -1,7 +1,7 @@
-#N canvas 208 24 502 500 10;
+#N canvas 208 64 510 500 10;
 #X obj 260 -12 preset_hub k12 %hidden% %node% 2 3 14 %node% 2 3 28
-%node% 2 3 33 %node% 2 3 34;
-#X obj 16 254 cnv 15 475 97 empty empty empty 20 12 0 14 -233017 -66577
+;
+#X obj 16 254 cnv 15 475 97 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
 #X obj 20 142 K12/wii_speed;
 #X obj 20 377 output;
@@ -14,13 +14,14 @@ object;
 loudness;
 #X text 10 9 DESCRIPTION This instrument makes long notes and sounds
 like brass;
-#X restore 456 458 pd META;
+#X restore 456 457 pd META;
 #X obj 20 257 K12/instr_sustained2;
-#X obj 8 9 cnv 3 501 3 empty empty empty 5 14 0 20 -260097 -191407
+#X obj 8 9 cnv 3 501 3 empty empty empty 5 14 0 20 #fc8000 #b8b8b8
 0;
-#X obj 8 -19 cnv 15 501 28 empty empty Instrument/Brass 5 14 0 20 -139274
--262144 0;
-#X obj 479 12 ggee/image @pd_extra/K12/icons/l2ork.png;
+#X obj 8 -19 cnv 15 501 28 empty empty Instrument/Brass 5 14 0 20 #880024
+#fcfcfc 0;
+#X obj 455 -10 ggee/image @pd_extra/K12/icons/l2ork.png 0 0 48 50 empty
+empty empty 48 50 1 0 10 #000000 0 -8 24 25 0 1 1;
 #X obj 20 27 K12/wii_connect;
 #X text 121 259 The Buzz instrument generates long notes and sounds
 like a brass instrument. Connect an input device to the left inlet

@@ -1,22 +1,20 @@
-#N canvas 383 39 502 580 10;
-#X obj 25 52 cnv 15 481 369 empty empty empty 20 12 0 14 -233017 -66577
+#N canvas 497 94 502 580 10;
+#X obj 5 52 cnv 15 481 369 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
-#X obj 138 -34 preset_hub k12 %hidden% %node% 2 5 9 %node% 2 7 8 %preset%
-1 2 %preset% 0 1 %preset% 2 3 %preset% 3 4 %node% 2 9 7 %node% 2 3
-8 %node% 2 8 7 %node% 2 4 7 %preset% 0 10 %preset% 1 20 %preset% 2
-30 %preset% 3 1337;
-#X obj 17 -8 cnv 3 501 3 empty empty empty 5 14 0 20 -260097 -191407
+#X obj 118 -34 preset_hub k12 %hidden% %node% 2 4 6 %preset% 0 1 %preset%
+1 50 %preset% 2 3.14 %preset% 3 -42 %node% 2 3 7;
+#X obj -3 -8 cnv 3 501 3 empty empty empty 5 14 0 20 #fc8000 #b8b8b8
 0;
-#X obj 31 57 K12/preset;
-#X obj 31 445 K12/math_number;
+#X obj 11 57 K12/preset;
+#X obj 11 445 K12/math_number;
 #N canvas 172 259 450 300 META 0;
 #X text 13 6 DESCRIPTION Use this to save different presets in your
 program. Click on a store box to store a preset in that slot \, and
 click on a recall box to recall that preset;
 #X text 14 56 INLET_0 Values 0-3 will recall presets 0-3;
 #X text 13 77 INLET_1 Values 0-3 will store presets 0-3;
-#X restore 462 515 pd META;
-#X text 141 56 The preset object allows you save all the specific settings
+#X restore 445 518 pd META;
+#X text 121 56 The preset object allows you save all the specific settings
 of your objects and recall them later. For example you can save the
 number in a number box. You store the values by clicking one of the
 store boxes. Recall your preset by clicking the corresponding recall
@@ -24,13 +22,14 @@ box. Similarly \, you can send a number between 0 and 3 to the left
 inlet to recall that preset \, or a number between 0 and 3 to the right
 inlet to store that preset. Using the inlets or clicking on the boxes
 does the same thing.;
-#X text 141 183 The preset object can be placed anywhere in the patch
+#X text 121 183 The preset object can be placed anywhere in the patch
 and does not have to be connected to any objects to store and recall
 their values.;
-#X obj 17 -37 cnv 15 501 28 empty empty Preset 5 14 0 20 -139274 -262144
+#X obj -3 -37 cnv 15 501 28 empty empty Preset 5 14 0 20 #880024 #fcfcfc
 0;
-#X obj 487 -4 ggee/image @pd_extra/K12/icons/l2ork.png 0;
-#X text 140 229 In this example \, we have stored four presets that
+#X obj 443 -29 ggee/image @pd_extra/K12/icons/l2ork.png 0 0 48 50 empty
+empty empty 48 50 1 0 10 #000000 0 -8 24 25 0 1 1;
+#X text 120 229 In this example \, we have stored four presets that
 have different numbers in this Math Number object. Click on recall
 in the Preset object and notice that the number changes. Then \, change
 the number in the number box and click on one of the store boxes. When

@@ -1,26 +1,21 @@
-#N canvas 416 41 509 639 10;
-#X obj 261 43 cnv 15 231 103 empty empty empty 20 12 0 14 -233017 -66577
+#N canvas 416 73 502 639 10;
+#X obj 261 43 cnv 15 231 103 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
 #X obj 233 -22 preset_hub k12 %hidden% %node% 2 5 14 %preset% 0 100
-%preset% 1 100 %node% 2 5 28 %preset% 0 0 %preset% 1 0 %node% 2 11
-10 %node% 2 8 5 %preset% 0 0 %preset% 1 -12 %node% 2 8 7 %preset% 0
-0 %preset% 1 0 %node% 2 10 7 %preset% 0 1 %preset% 1 1 %node% 2 9 7
-%preset% 1 -12 %preset% 0 0 %node% 2 9 8 %node% 2 15 8 %preset% 0 100
-%preset% 1 100 %node% 2 15 9 %preset% 0 0 %preset% 1 0 %node% 3 15
-17 14 %preset% 0 /home/ico/K12/voice2.wav %preset% 1 /home/ico/K12/voice2.wav
-%node% 2 10 5 %preset% 0 60 %preset% 1 60 %node% 3 11 6 14 %preset%
-0 0 %preset% 1 1 %node% 3 11 6 15 %node% 3 11 6 16 %preset% 0 0 %preset%
-1 1 %node% 3 11 6 17 %node% 3 11 6 18 %preset% 0 0 %preset% 1 1 %node%
-3 11 6 19 %preset% 0 0 %preset% 1 1 %node% 3 11 6 20 %node% 3 11 6
-21 %preset% 0 0 %preset% 1 1 %node% 3 11 6 22 %node% 3 11 6 23 %preset%
-0 0 %preset% 1 1 %node% 3 11 6 24 %node% 3 11 6 25 %preset% 0 0 %preset%
-1 1 %node% 2 12 7 %preset% 0 60.0574 %preset% 1 60.0575;
-#X obj 11 166 cnv 15 481 225 empty empty empty 20 12 0 14 -228856 -66577
+%preset% 1 100 %node% 2 5 28 %preset% 0 0 %preset% 1 0 %node% 2 10
+5 %preset% 0 60 %preset% 1 60 %node% 3 11 4 14 %preset% 0 0 %preset%
+1 1 %node% 3 11 4 15 %node% 3 11 4 16 %preset% 1 1 %preset% 0 0 %node%
+3 11 4 17 %preset% 0 0 %node% 3 11 4 18 %preset% 1 1 %preset% 0 0 %node%
+3 11 4 19 %node% 3 11 4 20 %node% 3 11 4 21 %preset% 0 0 %preset% 1
+1 %node% 3 11 4 22 %node% 3 11 4 23 %preset% 1 1 %preset% 0 0 %node%
+3 11 4 24 %node% 3 11 4 25 %node% 2 8 6 %preset% 0 0 %preset% 1 0 %node%
+2 9 7 %node% 2 12 6 %preset% 0 60.0575 %preset% 1 60.0575;
+#X obj 11 166 cnv 15 481 225 empty empty empty 20 12 0 14 #dcdcdc #404040
 0;
-#X obj 0 -2 cnv 3 501 3 empty empty empty 5 14 0 20 -260097 -191407
+#X obj 0 -2 cnv 3 501 3 empty empty empty 5 14 0 20 #fc8000 #b8b8b8
 0;
-#X obj 0 -30 cnv 15 501 28 empty empty FX/Autotune 5 14 0 20 -139274
--262144 0;
+#X obj 0 -30 cnv 15 501 28 empty empty FX/Autotune 5 14 0 20 #880024
+#fcfcfc 0;
 #X obj 19 495 K12/output;
 #N canvas 531 445 392 172 META 0;
 #X text 7 120 OUTLET_0 Connect this to a sound object or sound output
@@ -33,8 +28,9 @@ to match closest desired pitch in a scale.;
 (-12 to 12 \, default 0);
 #X text 7 140 OUTLET_1 Outputs detected pitch as a value between 0
 and 127;
-#X restore 447 576 pd META;
-#X obj 471 1 ggee/image @pd_extra/K12/icons/l2ork.png 0;
+#X restore 447 583 pd META;
+#X obj 447 -24 ggee/image @pd_extra/K12/icons/l2ork.png 0 0 48 50 empty
+empty empty 48 50 1 0 10 #000000 0 -8 24 25 0 1 1;
 #X obj 133 86 K12/math_number;
 #X obj 396 49 K12/preset;
 #X obj 19 57 K12/signal_saw;

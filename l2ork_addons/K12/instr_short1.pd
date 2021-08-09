@@ -1,8 +1,8 @@
-#N canvas 361 169 480 360 10;
-#X obj 16 96 inlet;
-#X obj 17 280 outlet~;
+#N canvas 361 178 480 360 10;
+#X obj 16 136 inlet;
+#X obj 17 320 outlet~;
 #N canvas 2 50 450 300 (subpatch) 0;
-#X array \$0-bass 10000 float 3;
+#X array \$0-bass 10000 float 3 black black;
 #A 0 6.10352e-05 0 0 0 0 -3.05176e-05 0 0 3.05176e-05 -3.05176e-05
 3.05176e-05 -6.10352e-05 3.05176e-05 0 -3.05176e-05 0 3.05176e-05 -6.10352e-05
 0 0 0 0 0 -3.05176e-05 0 0 0 -6.10352e-05 0 0 -3.05176e-05 0 0 0 -6.10352e-05
@@ -1391,17 +1391,16 @@
 -0.590851 -0.594025 -0.597137 -0.600128 -0.603088 -0.605927 -0.608734
 -0.61145;
 #X coords 0 1 10000 -1 200 140 1;
-#X restore 232 -6 graph;
-#X obj 17 235 *~;
-#X obj 141 205 line~;
-#X obj 385 245 ggee/image @pd_extra/K12/objects/instr_short1.png 1;
-#X obj 343 253 cnv 15 65 22 empty empty Bass 18 9 1 20 -262144 -66577
+#X restore 212 34 graph;
+#X obj 17 275 *~;
+#X obj 141 245 line~;
+#X obj 373 233 ggee/image @pd_extra/K12/objects/instr_short1.png 1
+0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
+#X obj 344 253 cnv 15 65 22 empty empty Bass 18 9 1 20 #fcfcfc #404040
 0;
-#X obj 16 143 select 1;
-#X obj 16 183 tabplay~ \$0-bass;
-#X msg 141 180 2 \, 0 100;
-#X obj 212 144 loadbang;
-#X msg 212 165 open @pd_extra/K12/objects/instr_short1.png;
+#X obj 16 183 select 1;
+#X obj 16 223 tabplay~ \$0-bass;
+#X msg 141 220 2 \, 0 100;
 #X connect 0 0 7 0;
 #X connect 3 0 1 0;
 #X connect 4 0 3 1;
@@ -1409,5 +1408,4 @@
 #X connect 7 0 8 0;
 #X connect 8 0 3 0;
 #X connect 9 0 4 0;
-#X connect 10 0 11 0;
-#X coords 0 -1 1 1 89 89 2 340 213;
+#X coords 0 -1 1 1 90 90 2 340 213;

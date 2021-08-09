@@ -1,20 +1,23 @@
-#N canvas 162 14 496 407 10;
-#X obj 110 64 outlet;
-#X obj 228 45 ggee/image @pd_extra/K12/objects/arduino_analog_in.png
-1;
-#X obj 228 -60 loadbang;
-#X obj 58 -60 inlet;
-#X obj 240 -15 preset_node k12;
-#X obj 110 8 route a;
-#X obj 58 -15 route arduino list;
-#X obj 77 183 gate 1 0;
-#X obj 58 105 t b 1 f;
-#X obj 122 162 f, f 2;
-#X obj 224 180 change;
-#X msg 224 202 symbol arduino-\$1;
-#X symbolatom 228 62 3 0 0 0 - - -, f 3;
-#X text 203 61 pin:;
-#N canvas 300 197 755 407 pin_parser 0;
+#N canvas 162 64 413 407 10;
+#X obj 173 105 ggee/image @pd_extra/K12/objects/arduino_analog_in.png
+1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
+;
+#X obj 66 136 outlet;
+#X obj 173 105 ggee/image @pd_extra/K12/objects/arduino_analog_in_off.png
+1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
+;
+#X obj 14 12 inlet;
+#X obj 196 57 preset_node k12;
+#X obj 66 80 route a;
+#X obj 14 57 route arduino list;
+#X obj 33 255 gate 1 0;
+#X obj 14 177 t b 1 f;
+#X obj 78 234 f, f 2;
+#X obj 180 252 change;
+#X msg 180 274 symbol arduino-\$1;
+#X symbolatom 184 134 3 0 0 0 - - - 0 0, f 3;
+#X text 159 133 pin:;
+#N canvas 440 420 530 407 pin_parser 0;
 #X obj 18 18 inlet;
 #X obj 148 202 outlet;
 #X obj 306 275 outlet;
@@ -27,9 +30,8 @@
 #X obj 307 198 t b;
 #X obj 423 198 t b;
 #X obj 18 45 sel A0 A1 A2 A3 A4 A5, f 68;
-#X msg 423 220 open @pd_extra/K12/objects/arduino_analog_in_off.png
-;
-#X msg 307 250 open @pd_extra/K12/objects/arduino_analog_in.png;
+#X msg 307 250 visible 0;
+#X msg 423 220 visible 1;
 #X connect 0 0 11 0;
 #X connect 3 0 1 0;
 #X connect 3 0 9 0;
@@ -43,8 +45,8 @@
 #X connect 7 0 9 0;
 #X connect 8 0 1 0;
 #X connect 8 0 9 0;
-#X connect 9 0 13 0;
-#X connect 10 0 12 0;
+#X connect 9 0 12 0;
+#X connect 10 0 13 0;
 #X connect 11 0 3 0;
 #X connect 11 1 4 0;
 #X connect 11 2 5 0;
@@ -54,16 +56,13 @@
 #X connect 11 6 10 0;
 #X connect 12 0 2 0;
 #X connect 13 0 2 0;
-#X restore 277 104 pd pin_parser;
-#X obj 110 41 route -1;
-#X obj 77 298 send, f 25;
-#X obj 340 -15 loadbang;
-#X msg 340 7 symbol ---;
-#X text 209 45 INPUT;
-#X msg 77 255 pinMode \$1 analog;
-#X msg 228 -37 open @pd_extra/K12/objects/arduino_analog_in_off.png
-;
-#X connect 2 0 21 0;
+#X restore 233 176 pd pin_parser;
+#X obj 66 113 route -1;
+#X obj 33 370 send, f 25;
+#X obj 296 57 loadbang;
+#X msg 296 79 symbol ---;
+#X text 165 117 INPUT;
+#X msg 33 327 pinMode \$1 analog;
 #X connect 3 0 6 0;
 #X connect 4 0 12 0;
 #X connect 5 0 15 0;
@@ -79,10 +78,9 @@
 #X connect 12 0 14 0;
 #X connect 14 0 15 1;
 #X connect 14 0 9 0;
-#X connect 14 1 1 0;
-#X connect 15 0 0 0;
+#X connect 14 1 2 0;
+#X connect 15 0 1 0;
 #X connect 17 0 18 0;
 #X connect 18 0 12 0;
 #X connect 20 0 16 0;
-#X connect 21 0 1 0;
-#X coords 0 -1 1 1 89 89 2 183 13;
+#X coords 0 -1 1 1 90 90 2 140 85;

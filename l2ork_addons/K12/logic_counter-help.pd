@@ -1,38 +1,35 @@
-#N canvas 64 36 503 503 10;
-#X obj 88 243 cnv 15 468 102 empty empty empty 20 12 0 14 -233017 -66577
+#N canvas 64 73 502 503 10;
+#X obj 7 243 cnv 15 468 102 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
-#X obj 186 -36 preset_hub k12 %hidden% %node% 2 5 9 %node% 2 7 8 %preset%
-1 2 %preset% 0 10 %node% 2 6 4 %node% 2 8 8 %preset% 0 5 %node% 2 9
-8 %node% 2 9 8 %node% 2 13 4 %preset% 0 0 %node% 2 14 6 %node% 2 14
-10 %node% 2 10 4 %preset% 0 1 %node% 2 11 9 %node% 2 10 13 %preset%
-0 120 %node% 2 11 8 %preset% 0 120 %node% 2 12 9 %node% 2 13 21 %preset%
-0 10 %node% 2 6 7 %preset% 0 1 %node% 2 7 7 %preset% 0 1 %node% 2 10
-7 %node% 2 12 3 %preset% 0 1 %node% 2 12 19 %preset% 0 16 %node% 2
-12 3 %node% 2 12 11 %node% 2 8 7 %preset% 0 60 %node% 2 10 3 %node%
-2 10 19 %node% 2 12 8 %node% 2 12 0 %preset% 0 60 %node% 2 12 4 %preset%
-0 1 %node% 2 10 8 %node% 2 11 0 %node% 2 11 4;
-#X obj 65 -10 cnv 3 501 3 empty empty empty 5 14 0 20 -260097 -191407
+#X obj 105 -36 preset_hub k12 %hidden% %node% 2 11 0 %preset% 0 60
+%preset% 1 240 %node% 2 12 2 %preset% 0 1 %preset% 1 13 %node% 2 12
+18 %preset% 0 16 %preset% 1 7 %node% 2 6 6 %preset% 0 1 %preset% 1
+1 %node% 2 7 6 %preset% 0 9 %preset% 1 12 %node% 2 8 6 %preset% 0 60
+%preset% 1 240 %node% 2 10 7 %node% 2 11 3 %preset% 0 1 %preset% 1
+1;
+#X obj -16 -10 cnv 3 501 3 empty empty empty 5 14 0 20 #fc8000 #b8b8b8
 0;
-#X obj 65 -38 cnv 15 501 28 empty empty Logic/Counter 5 14 0 20 -139274
--262144 0;
-#X obj 535 -6 ggee/image @pd_extra/K12/icons/l2ork.png 0;
+#X obj -16 -38 cnv 15 501 28 empty empty Logic/Counter 5 14 0 20 #880024
+#fcfcfc 0;
+#X obj 430 -31 ggee/image @pd_extra/K12/icons/l2ork.png 0 0 48 50 empty
+empty empty 48 50 1 0 10 #000000 0 -8 24 25 0 1 1;
 #N canvas 169 405 382 106 META 0;
 #X text 13 6 DESCRIPTION This counts from the start number to the end
 number;
 #X text 10 38 INLET_0 Send a 1 to output the next number in the count
 ;
 #X text 11 66 OUTLET_0 Outputs the next number in the count;
-#X restore 510 436 pd META;
-#X obj 96 18 K12/math_number;
-#X obj 96 368 K12/math_number;
-#X obj 240 18 K12/math_number;
-#X text 191 263 The Logic Counter object counts from the start number
+#X restore 431 438 pd META;
+#X obj 15 18 K12/math_number;
+#X obj 15 368 K12/math_number;
+#X obj 159 18 K12/math_number;
+#X text 116 260 The Logic Counter object counts from the start number
 to the end number. It outputs the next number in the count when the
 inlet receives a number 1 If the start number is greate than the end
-number it will count down or vice-versa.;
-#X obj 458 31 K12/preset;
-#X obj 96 140 K12/logic_metronome;
-#X obj 96 250 K12/logic_counter;
+number it will count down or vice-versa., f 57;
+#X obj 377 31 K12/preset;
+#X obj 15 140 K12/logic_metronome;
+#X obj 15 250 K12/logic_counter;
 #X connect 6 0 11 0;
 #X connect 8 0 11 1;
 #X connect 11 0 12 0;

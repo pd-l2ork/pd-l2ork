@@ -1,20 +1,18 @@
-#N canvas 318 94 502 570 10;
-#X obj 347 -21 preset_hub k12 %hidden% %node% 2 6 14 %preset% 0 100
+#N canvas 318 103 502 616 10;
+#X obj 227 -21 preset_hub k12 %hidden% %node% 2 6 14 %preset% 0 100
 %preset% 1 100 %preset% 2 100 %preset% 3 100 %node% 2 7 37 %preset%
 0 1 %preset% 1 29.5714 %preset% 2 29.5714 %preset% 3 29.5714 %node%
 2 7 38 %preset% 0 25.974 %preset% 1 0 %preset% 2 0 %preset% 3 12.987
-%node% 2 7 39 %preset% 0 0 %node% 2 8 7 %preset% 0 60 %preset% 1 60
-%preset% 2 72 %preset% 3 48 %node% 2 9 8 %node% 2 14 1 %preset% 0 100
-%node% 2 6 28 %preset% 0 1 %preset% 1 1 %preset% 2 1 %preset% 3 1 %node%
-2 13 1 %preset% 0 100 %node% 2 12 1 %node% 2 7 36 %preset% 0 1 %preset%
-1 1 %preset% 2 1 %preset% 3 1;
-#X obj 120 160 cnv 15 480 295 empty empty empty 20 12 0 14 -233017
--66577 0;
-#X obj 112 -3 cnv 3 501 3 empty empty empty 5 14 0 20 -260097 -191407
+%node% 2 12 1 %node% 2 7 36 %preset% 0 1 %preset% 1 1 %preset% 2 1
+%preset% 3 1 %node% 2 6 25 %node% 2 8 6 %node% 2 9 7;
+#X obj 0 160 cnv 15 480 295 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
-#X obj 112 -31 cnv 15 501 28 empty empty Signal/Sampler 5 14 0 20 -139274
--262144 0;
-#X obj 583 0 ggee/image @pd_extra/K12/icons/l2ork.png;
+#X obj -8 -3 cnv 3 501 3 empty empty empty 5 14 0 20 #fc8000 #b8b8b8
+0;
+#X obj -8 -31 cnv 15 501 28 empty empty Signal/Sampler 5 14 0 20 #880024
+#fcfcfc 0;
+#X obj 439 -22 ggee/image @pd_extra/K12/icons/l2ork.png 0 0 48 50 empty
+empty empty 48 50 1 0 10 #000000 0 -8 24 25 0 1 1;
 #N canvas 406 27 450 514 META 0;
 #X text 16 42 INLET_0 Connect any signal to here. This is the signal
 to be recorded;
@@ -24,30 +22,30 @@ it back at different pitches;
 triggers the playback when it receives the pitch;
 #X text 15 111 OUTLET_0 This is the sample signal that is played back
 ;
-#X restore 560 555 pd META;
-#X obj 127 477 K12/output;
-#X obj 127 166 K12/signal_sampler;
-#X obj 274 41 K12/math_number;
-#X obj 499 41 K12/preset;
-#X text 227 361 To Playback: Send the right inlet the number of the
+#X restore 440 560 pd META;
+#X obj 7 477 K12/output;
+#X obj 7 166 K12/signal_sampler;
+#X obj 154 41 K12/math_number;
+#X obj 379 41 K12/preset;
+#X text 107 361 To Playback: Send the right inlet the number of the
 pitch for playback. A pitch of 60 gives you the same pitch that was
 recorded. The Sampler will only playback the range you specify with
 the start and end sliders.;
-#X text 227 300 To Record: specify a number greater than zero by dragging
+#X text 107 300 To Record: specify a number greater than zero by dragging
 over the number after "snd:". Then \, press the red button. It will
 record for up to ten seconds \, but you can stop it by pressing record
 again.;
-#X obj 128 41 K12/signal_microphone;
-#X text 226 419 To preivew the sound \, click on the green play button.
+#X obj 7 41 K12/signal_microphone;
+#X text 106 419 To preivew the sound \, click on the green play button.
 It will playback at the specified pitch at the right inlet.;
-#X text 227 162 The Sampler object allows you to record a sound and
+#X text 107 162 The Sampler object allows you to record a sound and
 then play it back at different speeds. Send a signal (like the microphone)
 to the left inlet. The right inlet sets the pitch of the playback.
 60 is the normal pitch. You can pick at what point the same starts
 and ends with the sliders. If you put the start slider past the end
 slider \, then the sample will play backwards. The outlet outputs the
 sample.;
-#X text 227 262 Before being able to preview the sound recall the first
+#X text 107 262 Before being able to preview the sound recall the first
 preset to configure all settings.;
 #X connect 7 0 6 0;
 #X connect 8 0 7 1;

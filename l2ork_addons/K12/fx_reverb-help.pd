@@ -1,9 +1,9 @@
-#N canvas 169 23 502 669 10;
+#N canvas 169 37 502 669 10;
 #X obj 137 -69 preset_hub k12 %hidden% %node% 2 2 14 %preset% 0 40.5349
-%node% 2 2 28 %preset% 0 0 %node% 2 9 7 %preset% 0 64 %node% 2 11 8
-%node% 2 14 7 %preset% 0 1 %node% 2 15 0 %preset% 0 240 %node% 2 15
-4 %preset% 0 1 %node% 2 16 5 %preset% 0 60 %node% 2 16 9 %preset% 0
-72 %node% 2 8 9;
+%node% 2 2 28 %preset% 0 0 %node% 2 14 0 %preset% 0 240 %node% 2 8
+8 %preset% 0 1 %node% 2 9 6 %preset% 0 116 %node% 2 11 7 %node% 2 13
+6 %preset% 0 1 %node% 2 14 3 %preset% 0 1 %node% 2 15 4 %preset% 0
+0 %node% 2 15 8 %preset% 0 127;
 #X obj 0 412 cnv 15 468 101 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
 #X obj 7 529 K12/output;
@@ -26,7 +26,6 @@ empty empty 48 50 1 0 10 #000000 0 -8 24 25 0 1 1;
 #X obj 223 -11 cnv 15 243 107 empty empty empty 20 12 0 14 #e0e0e0
 #404040 0;
 #X obj 368 -2 K12/preset 0;
-#X text 230 50 Recall leftmost presetto start the example.;
 #X text 103 427 The Reverb effect makes the sound sound like it's in
 a room or other space. The default reverb object has 4 settings \,
 ranging from small to really spacious reverb. Connect any signal to
@@ -35,10 +34,12 @@ outlet., f 59;
 #X obj 7 221 K12/math_number 0;
 #X obj 119 -10 K12/logic_metronome;
 #X obj 119 104 K12/math_random;
+#X text 228 3 Recall leftmost presetto start the example.Then experiment
+withdifferent reverbsettings by clickingon the reverb object.;
 #X connect 7 0 8 0;
 #X connect 8 0 2 0;
 #X connect 9 0 7 1;
-#X connect 14 0 7 0;
-#X connect 15 0 16 0;
-#X connect 16 0 9 0;
+#X connect 13 0 7 0;
+#X connect 14 0 15 0;
+#X connect 15 0 9 0;
 #X coords 0 0 1 1 181 81 0;

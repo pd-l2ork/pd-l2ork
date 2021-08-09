@@ -1,20 +1,16 @@
-#N canvas 47 14 502 652 10;
-#X obj 493 -238 preset_hub k12 %hidden% %node% 2 13 8 %preset% 0 440
-%preset% 1 440 %preset% 2 440 %preset% 3 440 %node% 2 2 14 %preset%
-0 100 %preset% 1 100 %preset% 2 72.093 %preset% 3 72.093 %node% 2 7
-5 %preset% 0 10 %preset% 1 20 %preset% 2 30 %preset% 3 40 %node% 2
-7 7 %preset% 0 60 %preset% 1 67 %preset% 2 30 %preset% 3 40 %node%
-2 2 28 %preset% 0 1 %preset% 1 1 %node% 2 8 8 %node% 2 9 8 %node% 2
-10 4 %preset% 0 1 %preset% 1 1 %node% 2 10 5 %preset% 0 250 %preset%
-1 2000 %node% 2 11 6 %preset% 0 1 %preset% 1 1 %node% 2 14 6 %preset%
-0 1 %node% 2 14 5 %preset% 0 1 %node% 2 14 7 %preset% 0 127 %preset%
-1 80 %node% 2 12 7 %node% 2 15 7 %node% 2 17 7 %preset% 0 60 %preset%
-1 67 %node% 2 13 7 %preset% 0 127 %preset% 1 80 %node% 2 15 7 %preset%
-0 60 %preset% 1 67 %node% 2 16 5 %preset% 0 1 %preset% 1 1 %node% 2
-16 6 %preset% 0 0 %preset% 1 0;
-#X obj 224 179 cnv 15 473 219 empty empty empty 20 12 0 14 -233017
--66577 0;
-#X obj 231 423 K12/output;
+#N canvas 47 46 502 652 10;
+#X obj 283 -238 preset_hub k12 %hidden% %node% 2 2 14 %preset% 0 100
+%preset% 1 100 %preset% 2 72.093 %preset% 3 72.093 %node% 2 2 28 %preset%
+0 1 %preset% 1 1 %node% 2 10 4 %preset% 0 1 %preset% 1 1000 %node%
+2 14 6 %preset% 0 127 %preset% 1 127 %node% 2 16 5 %preset% 0 1 %preset%
+1 1 %node% 2 16 6 %preset% 0 0 %preset% 1 0 %node% 2 12 6 %preset%
+1 25 %preset% 0 65 %node% 2 15 6 %preset% 1 1 %preset% 0 1 %node% 2
+17 6 %preset% 0 65 %preset% 1 60 %node% 2 8 7 %node% 2 10 3 %preset%
+0 1 %preset% 1 1 %node% 2 9 6 %node% 2 11 5 %preset% 0 1 %preset% 1
+1;
+#X obj 14 179 cnv 15 473 219 empty empty empty 20 12 0 14 #e0e0e0 #404040
+0;
+#X obj 21 423 K12/output;
 #N canvas 520 270 379 204 META 0;
 #X text 7 53 INLET_0 Connect MIDI note to play a note \, MIDI instrument
 to change instrument \, and MIDI control to change instrument properties
@@ -25,27 +21,28 @@ loads a GM (General MIDI) soundfont;
 #X text 8 139 OUTLET_1 Outputs audio of synth's right channel (you
 can mix it with the left if you are not interested in panning the sound)
 ;
-#X restore 649 497 pd META;
-#X obj 209 -215 cnv 3 501 3 empty empty empty 5 14 0 20 -260097 -191407
+#X restore 448 497 pd META;
+#X obj -1 -215 cnv 3 501 3 empty empty empty 5 14 0 20 #fc8000 #b8b8b8
 0;
-#X obj 209 -243 cnv 15 501 28 empty empty MIDI/Synth 5 14 0 20 -139274
--262144 0;
-#X obj 680 -212 ggee/image @pd_extra/K12/icons/l2ork.png 0;
-#X obj 445 -183 cnv 15 253 102 empty empty empty 20 12 0 14 -233017
--66577 0;
-#X obj 602 -177 K12/preset;
-#X obj 230 185 K12/midi_synth;
-#X obj 230 -56 K12/midi_note;
-#X obj 342 27 K12/midi_instrument;
-#X obj 342 -56 K12/math_number;
-#X text 453 -130 Recall 0th presetto start the example \, then try
+#X obj -1 -243 cnv 15 501 28 empty empty MIDI/Synth 5 14 0 20 #880024
+#fcfcfc 0;
+#X obj 446 -237 ggee/image @pd_extra/K12/icons/l2ork.png 0 0 48 50
+empty empty empty 48 50 1 0 10 #000000 0 -8 24 25 0 1 1;
+#X obj 235 -183 cnv 15 253 102 empty empty empty 20 12 0 14 #e0e0e0
+#404040 0;
+#X obj 392 -177 K12/preset;
+#X obj 20 185 K12/midi_synth;
+#X obj 20 -56 K12/midi_note;
+#X obj 132 27 K12/midi_instrument;
+#X obj 132 -56 K12/math_number;
+#X text 243 -130 Recall 0th presetto start the example \, then try
 preset 1, f 23;
-#X obj 336 -158 K12/math_number;
-#X obj 454 -56 K12/math_number;
-#X obj 454 27 K12/midi_control;
-#X obj 230 -158 K12/math_number;
-#X obj 328 372 pddplink doc/GM_instrument_list.html;
-#X text 327 187 MIDI synth plays soundfonts (sf2 files). By default
+#X obj 126 -158 K12/math_number;
+#X obj 244 -56 K12/math_number;
+#X obj 244 27 K12/midi_control;
+#X obj 20 -158 K12/math_number;
+#X obj 118 372 pddplink doc/GM_instrument_list.html;
+#X text 117 187 MIDI synth plays soundfonts (sf2 files). By default
 it offers GM (General MIDI) sound bank. For its input it receives messages
 exclusively from MIDI note (note on/off information) \, MIDI instrument
 (change instrument) \, and MIDI control (change instrument properties)

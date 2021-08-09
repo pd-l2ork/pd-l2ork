@@ -1,18 +1,16 @@
-#N canvas 529 123 420 319 10;
-#X obj 141 205 ggee/image @pd_extra/K12/objects/signal_saw.png 1;
-#X obj 141 82 loadbang;
-#X obj 75 54 inlet;
-#X obj 39 332 outlet~;
-#X obj 38 307 phasor~;
-#X obj 115 54 preset_node k12;
-#X obj 100 211 nbx 5 19 -1e+37 1e+37 0 0 \$0-s-null \$0-r-null empty
-0 -8 0 16 -262144 -1 -1 0 256 1;
-#X msg 141 105 open @pd_extra/K12/objects/signal_saw.png;
-#X obj 60 279 mtof;
-#X connect 1 0 7 0;
-#X connect 2 0 6 0;
-#X connect 4 0 3 0;
+#N canvas 529 132 342 319 10;
+#X obj 129 123 ggee/image @pd_extra/K12/objects/signal_saw.png 1 0
+25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
+#X obj 66 34 inlet;
+#X obj 39 262 outlet~;
+#X obj 38 237 phasor~;
+#X obj 106 34 preset_node k12;
+#X obj 105 141 nbx 5 19 -1e+37 1e+37 0 0 \$0-s-null \$0-r-null empty
+0 -8 0 16 #fcfcfc #000000 #000000 0 256 1 0;
+#X obj 60 209 mtof;
+#X connect 1 0 5 0;
+#X connect 3 0 2 0;
+#X connect 4 0 5 0;
 #X connect 5 0 6 0;
-#X connect 6 0 8 0;
-#X connect 8 0 4 0;
-#X coords 0 -1 1 1 89 89 2 96 173;
+#X connect 6 0 3 0;
+#X coords 0 -1 1 1 90 90 2 96 103;

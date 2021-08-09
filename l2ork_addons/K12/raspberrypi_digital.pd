@@ -1,78 +1,74 @@
-#N canvas 247 123 436 523 10;
-#X obj 292 333 outlet;
-#X obj 228 45 ggee/image @pd_extra/K12/objects/raspberrypi_gpio_digital_off.png
-1;
-#X obj 221 -161 loadbang;
-#X obj 240 43 nbx 2 14 0 10 0 0 empty empty channel: -48 8 0 11 -262144
--1 -1 0 256 3;
-#X obj 283 8 preset_node k12;
-#X obj 458 114 coll rpi_gpio.coll;
+#N canvas 541 196 471 550 10;
+#X obj 132 493 outlet;
+#X obj 56 193 ggee/image @pd_extra/K12/objects/raspberrypi_gpio_digital_off.png
+1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
+;
+#X obj 80 203 nbx 2 14 0 10 0 0 empty empty channel: -48 8 0 11 #fcfcfc
+#000000 #000000 0 256 3 0;
+#X obj 123 168 preset_node k12;
+#X obj 298 274 coll rpi_gpio.coll;
 #C restore;
-#X obj 292 285 disis_gpio;
-#X obj 229 77 hradio 15 1 0 2 empty empty I/O: -25 7 0 10 -262144 -260097
--1 0;
-#X msg 323 196 symbol out;
-#X msg 258 196 symbol in;
-#X obj 276 149 select 0 1, f 11;
-#X obj 194 154 - 1;
-#X obj 194 175 abs;
-#X obj 194 196 metro 100;
-#X obj 303 31 preset_node k12;
-#X obj 527 226 inlet;
-#X obj 230 -98 sel 0 1;
-#X msg 276 226 direction \$1 \, open;
-#X msg 398 226 unexport \, export \$1;
-#X obj 217 58 cnv 15 52 15 empty \$0-r-cnv pin:0 4 7 0 11 -262144 -99865
+#X obj 132 445 disis_gpio;
+#X obj 69 237 hradio 15 1 0 2 empty empty I/O: -25 7 0 10 #fcfcfc #fc8000
+#000000 0;
+#X msg 163 356 symbol out;
+#X msg 98 356 symbol in;
+#X obj 116 309 select 0 1, f 11;
+#X obj 34 314 - 1;
+#X obj 34 335 abs;
+#X obj 34 356 metro 100;
+#X obj 143 191 preset_node k12;
+#X obj 367 386 inlet;
+#X msg 116 386 direction \$1 \, open;
+#X msg 238 386 unexport \, export \$1;
+#X obj 57 218 cnv 15 52 15 empty \$0-r-cnv pin:0 4 7 0 11 #fcfcfc #606060
 0;
-#X obj 470 140 sprintf pin:%d;
-#X obj 470 161 tosymbol;
-#X msg 470 182 label \$1;
-#X obj 470 203 s \$0-r-cnv;
-#X msg 221 -76 open @pd_extra/K12/objects/raspberrypi_gpio_digital_off.png
+#X obj 310 300 sprintf pin:%d;
+#X obj 310 321 tosymbol;
+#X msg 310 342 label \$1;
+#X obj 310 363 s \$0-r-cnv;
+#X obj 56 50 change;
+#X obj 271 252 t b f;
+#X obj 247 301 select 0;
+#X msg 247 324 unexport;
+#X text 72 236 i;
+#X text 87 236 o;
+#X obj 367 407 change;
+#X obj 132 469 change;
+#X obj 56 193 ggee/image @pd_extra/K12/objects/raspberrypi_gpio_digital_on.png
+1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 0 1
 ;
-#X msg 249 -53 open @pd_extra/K12/objects/raspberrypi_gpio_digital_on.png
-;
-#X obj 230 -120 change;
-#X obj 431 92 t b f;
-#X obj 407 141 select 0;
-#X msg 407 164 unexport;
-#X text 232 75 i;
-#X text 247 74 o;
-#X obj 527 247 change;
-#X obj 292 309 change;
-#X connect 3 0 4 0;
-#X connect 3 0 27 0;
-#X connect 4 0 3 0;
-#X connect 5 0 20 0;
-#X connect 5 0 28 0;
-#X connect 6 0 33 0;
-#X connect 6 1 26 0;
-#X connect 7 0 10 0;
-#X connect 7 0 11 0;
-#X connect 8 0 17 0;
-#X connect 9 0 17 0;
-#X connect 10 0 9 0;
-#X connect 10 1 8 0;
+#X msg 56 77 visible \$1;
+#X connect 2 0 3 0;
+#X connect 2 0 23 0;
+#X connect 3 0 2 0;
+#X connect 4 0 18 0;
+#X connect 4 0 24 0;
+#X connect 5 0 29 0;
+#X connect 5 1 22 0;
+#X connect 6 0 9 0;
+#X connect 6 0 10 0;
+#X connect 7 0 15 0;
+#X connect 8 0 15 0;
+#X connect 9 0 8 0;
+#X connect 9 1 7 0;
+#X connect 10 0 11 0;
 #X connect 11 0 12 0;
-#X connect 12 0 13 0;
+#X connect 12 0 5 0;
 #X connect 13 0 6 0;
-#X connect 14 0 7 0;
-#X connect 15 0 32 0;
-#X connect 16 0 24 0;
-#X connect 16 1 25 0;
-#X connect 17 0 6 0;
-#X connect 18 0 6 0;
+#X connect 14 0 28 0;
+#X connect 15 0 5 0;
+#X connect 16 0 5 0;
+#X connect 18 0 19 0;
+#X connect 19 0 20 0;
 #X connect 20 0 21 0;
-#X connect 21 0 22 0;
-#X connect 22 0 23 0;
-#X connect 24 0 1 0;
-#X connect 25 0 1 0;
-#X connect 26 0 16 0;
-#X connect 27 0 7 0;
-#X connect 27 1 5 0;
-#X connect 28 0 29 0;
-#X connect 28 1 18 0;
-#X connect 29 0 6 0;
-#X connect 32 0 6 0;
-#X connect 33 0 0 0;
-#X coords 0 -1 1 1 89 89 2 183 13;
+#X connect 22 0 31 0;
+#X connect 23 0 6 0;
+#X connect 23 1 4 0;
+#X connect 24 0 25 0;
+#X connect 24 1 16 0;
+#X connect 25 0 5 0;
+#X connect 28 0 5 0;
+#X connect 29 0 0 0;
+#X connect 31 0 30 0;
+#X coords 0 -1 1 1 90 90 2 23 173;
