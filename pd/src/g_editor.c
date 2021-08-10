@@ -5384,7 +5384,7 @@ void canvas_mouseup(t_canvas *x,
         canvas_doregion(x, xpos, ypos, 1);
     else if (x->gl_editor->e_onmotion == MA_MOVE)
     {
-        post("...MA_MOVE");
+        //post("...MA_MOVE");
             /* after motion or resizing, if there's only one text item
                 selected, activate the text */
     	canvas_setcursor(x, CURSOR_EDITMODE_NOTHING);
