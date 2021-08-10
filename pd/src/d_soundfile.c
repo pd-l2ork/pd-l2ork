@@ -1464,6 +1464,8 @@ static void soundfiler_readascii(t_soundfiler *x, char *filename,
         garray_redraw(garrays[i]);
 }
 
+EXTERN void sys_expandpathelems(const char *name, const char *result);
+
     /* soundfiler_read ...
     
     usage: read [flags] filename table ...
@@ -1491,7 +1493,7 @@ static void soundfiler_read(t_soundfiler *x, t_symbol *s,
     long skipframes = 0, finalsize = 0,
         maxsize = DEFMAXSIZE, itemsread = 0;
     int fd = -1;
-    char endianness, *filename;
+    char endianness, filename[FILENAME_MAX], *unexpandedfilename;
     t_garray *garrays[MAXSFCHANS];
     t_word *vecs[MAXSFCHANS];
     char sampbuf[SAMPBUFSIZE];
@@ -1665,7 +1667,8 @@ static void soundfiler_read(t_soundfiler *x, t_symbol *s,
         argerror(x, s, argc, argv, "filename must be a symbol");
         goto done;
     }
-    filename = av[0].a_w.w_symbol->s_name;
+    unexpandedfilename = av[0].a_w.w_symbol->s_name;
+    sys_expandpathelems(unexpandedfilename, filename);
     ac--; av++;
     
     for (i = 0; i < ac; i++)
@@ -1693,25 +1696,25 @@ static void soundfiler_read(t_soundfiler *x, t_symbol *s,
     }
     if (ascii)
     {
-        soundfiler_readascii(x, filename, ac, garrays, vecs, resize,
+        soundfiler_readascii(x, &filename, ac, garrays, vecs, resize,
             finalsize);
         return;
     }
-    fd = open_soundfile_via_canvas(x->x_canvas, filename, &info, skipframes);
+    fd = open_soundfile_via_canvas(x->x_canvas, &filename, &info, skipframes);
     
     if (fd < 0)
     {
-        argerror(x, s, argc, argv, "%s: %s", filename, (errno == EIO ?
+        argerror(x, s, argc, argv, "%s: %s", &filename, (errno == EIO ?
             "unknown or bad header format" : strerror(errno)));
         /* don't bail yet so we can potentially give a warning below */
     }
 
     /* check if the filename looks like a flag; if so, post a warning */
     int nodash;
-    if (file_is_a_flag_name(gensym(filename), &nodash))
+    if (file_is_a_flag_name(gensym(&filename), &nodash))
     {
         post("warning: filename '%s' looks like a flag%s",
-            filename, nodash ? " name" : "");
+            &filename, nodash ? " name" : "");
     }
 
     /* Now that we've posted our warning, bail if we couldn't open the file */
