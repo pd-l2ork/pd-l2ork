@@ -873,6 +873,68 @@ function post_startup_messages() {
     }
 }
 
+var fs = require('fs');
+var path = require('path');
+
+function copyFileSync( source, target ) {
+
+    var targetFile = target;
+
+    // If target is a directory, a new file with the same name will be created
+    if ( fs.existsSync( target ) ) {
+        if ( fs.lstatSync( target ).isDirectory() ) {
+            targetFile = path.join( target, path.basename( source ) );
+        }
+    }
+
+    fs.writeFileSync(targetFile, fs.readFileSync(source));
+}
+
+function copyFolderRecursiveSync( source, target ) {
+    var files = [];
+
+    // Check if folder needs to be created or integrated
+    var targetFolder = path.join( target, path.basename( source ) );
+    if ( !fs.existsSync( targetFolder ) ) {
+        fs.mkdirSync( targetFolder );
+    }
+
+    // Copy
+    if ( fs.lstatSync( source ).isDirectory() ) {
+        files = fs.readdirSync( source );
+        files.forEach( function ( file ) {
+            var curSource = path.join( source, file );
+            if ( fs.lstatSync( curSource ).isDirectory() ) {
+                copyFolderRecursiveSync( curSource, targetFolder );
+            } else {
+                copyFileSync( curSource, targetFolder );
+            }
+        } );
+    }
+}
+
+function copy_apps_into_user_folder() {
+    const fs = require('fs');
+    var homedir;
+    if (pdgui.nw_os_is_windows) {
+        homedir = process.env.HOMEPATH;
+    } else {
+        homedir = process.env.HOME;
+    }
+
+    const dir = homedir + '/Pd-L2Ork';
+    //pdgui.post("dir=" + dir + "\nprocess.cwd=" + process.cwd());
+    if (fs.existsSync(dir)) {
+        pdgui.post("User app directory found...");
+    } else {
+        pdgui.post("User app directory not found...\nCreating directory " + dir + "...");
+        fs.mkdirSync(dir, '0755');
+        pdgui.post("Copying Pd-L2Ork Apps...");
+        copyFolderRecursiveSync(process.cwd()+"/../apps/", dir);
+        pdgui.post("Done!")
+    }
+}
+
 function gui_init(win) {
     set_vars(win);
     add_events();
@@ -880,6 +942,7 @@ function gui_init(win) {
     // Set up the Pd Window
     gui.Window.get().setMinimumSize(350, 250);
     post_startup_messages();
+    copy_apps_into_user_folder();
     // Now we create a connection from the GUI to Pd, in one of two ways:
     // 1) If the GUI was started by Pd, then we create a tcp client and
     //    connect on the port Pd fed us in our command line arguments.
