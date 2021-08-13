@@ -1,0 +1,67 @@
+DISIS/L2Ork Sensel Purr-Data (and Pure-Data) external for interfacing with the Sensel Morph
+by Rachel Hachem <rachelly@vt.edu> and Ivica Ico Bukvic <ico@vt.edu>
+http://l2ork.icat.vt.edu
+Released under the GPL v3 license <https://www.gnu.org/licenses/gpl-3.0.en.html>
+
+
+
+CHANGELOG
+---------
+2020-04-13 0.9.0
+  Initial release by Rachel Hachem <rachelly@vt.edu>
+  under the guidance of Ivica Ico Bukvic <ico@vt.edu>
+
+2020-05-20 1.0.0
+  Threaded implementation with additional features,
+  including, disconnect, free, identify, improved
+  console output, versioning, and updated help file by
+  Ivica Ico Bukvic <ico@vt.edu>
+
+2020-05-22 v.1.1.0
+  Improved integration of the contacts API to fix
+  contact id and provide contact status, as well as
+  address missed contact status changes, reworked
+  polling logic and removed reliance on the external
+  metro, added total contact count, and setting the
+  polling time by Ivica Ico Bukvic <ico@vt.edu>
+
+2020-05-22 v.1.2.0
+  Introduced ability to change LED brightness and
+  further improved the help file by Ivica Ico Bukvic
+  <ico@vt.edu>
+
+
+
+BUILD INSTRUCTIONS
+------------------
+To build for Purr-Data (pd-vanilla setup may be similar with some subtle changes in the include paths and likely does not require MSYS environment, so on Windows changes may be more significant):
+
+
+
+1) Set up a build environment:
+
+On Windows follow instructions on setting up the MSYS2 environment for Purr-Data (make sure it matches your OS in terms of 32-bit vs 64-bit--most modern iterations of Windows are 64-bit). Info on how to do this can be found here: https://github.com/agraef/purr-data/blob/master/README.md#windows-32-bit-using-msys2
+
+On Linux and OSX make sure you have your build gcc environment all set up (consult the OS documentation)
+
+
+
+2) Install the Sensel lib for your OS found at https://github.com/sensel/sensel-api/tree/master/sensel-install
+
+
+
+3) Using a terminal (in Windows use the MSYS2 MinGW 32-bit shell) go into this folder and run the following command (these options are assuming you have everything installed in a default path--if you don't you will need to adjust paths accordingly):
+
+Linux: make pdincludepath=/usr/include/pd-l2ork/
+
+OSX: make pdincludepath=/Applications/Pd-l2ork.app/Contents/Resources/app.nw/include/pd-l2ork/
+
+Windows: make pdincludepath=/c/Program\ Files\ \(x86\)/Purr\ Data/include/pdl2ork pdbinpath=/c/Program\ Files\ \(x86\)/Purr\ Data/bin/
+
+
+
+4) If everything compiles correctly, you should be able to run Purr-Data and open the sensel-help.pd to test it out.
+
+
+
+Currently, the external only supports detecting of individual contact points and their traits. Future revisions should focus on outputting the grayscale matrix of the surface pressure in a Gem-compatible format (and/or using other Pure-Data-compatible matrix formats that may be used by alternative visual data processing libraries).

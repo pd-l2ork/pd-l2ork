@@ -1,0 +1,263 @@
+#N canvas 58 52 1296 693 10;
+#X obj 698 169 cnv 15 174 83 empty empty empty 20 12 0 14 -261689 -66577
+0;
+#X obj 490 136 sensel;
+#X obj 523 159 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#X msg 490 14 discover;
+#X msg 569 39 connect SM01174813923;
+#X msg 490 39 disconnect;
+#X msg 490 64 identify;
+#X text 540 158 connection indicator;
+#X msg 569 64 connect SM01172411629;
+#X text 15 81 Released under the GPL v3 License: https://www.gnu.org/licenses/gpl-3.0.en.html
+, f 45;
+#X text 15 186 disconnect: disconnects from a connected sensel morph
+device, f 75;
+#X text 15 135 discover: discovers and connects to the first available
+sensel morph device, f 75;
+#X text 15 152 identify: lists all available sensel morph devices'
+serial numbers, f 69;
+#X text 15 118 INPUTS:;
+#X text 15 283 OUTPUTS:;
+#X text 15 347 1: contact point number;
+#X floatatom 655 402 5 0 0 0 X: - -, f 5;
+#X text 15 300 right outlet: indicates connection status (1=connected
+\, 0=disconnected), f 72;
+#X floatatom 709 402 5 0 0 0 Y: - -, f 5;
+#X floatatom 788 402 5 0 0 0 Force: - -, f 5;
+#X text 563 401 1st contact;
+#X floatatom 672 464 5 0 0 0 X: - -, f 5;
+#X floatatom 726 464 5 0 0 0 Y: - -, f 5;
+#X floatatom 805 464 5 0 0 0 Force: - -, f 5;
+#X text 580 463 2nd contact;
+#X floatatom 689 526 5 0 0 0 X: - -, f 5;
+#X floatatom 743 526 5 0 0 0 Y: - -, f 5;
+#X floatatom 822 526 5 0 0 0 Force: - -, f 5;
+#X floatatom 707 588 5 0 0 0 X: - -, f 5;
+#X floatatom 761 588 5 0 0 0 Y: - -, f 5;
+#X floatatom 840 588 5 0 0 0 Force: - -, f 5;
+#X floatatom 724 650 5 0 0 0 X: - -, f 5;
+#X floatatom 778 650 5 0 0 0 Y: - -, f 5;
+#X floatatom 857 650 5 0 0 0 Force: - -, f 5;
+#X obj 890 136 sensel;
+#X obj 923 159 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X msg 890 14 discover;
+#X msg 971 38 connect SM01174813923;
+#X msg 890 38 disconnect;
+#X msg 890 64 identify;
+#X text 940 158 connection indicator;
+#X msg 971 62 connect SM01172411629;
+#X floatatom 1056 402 5 0 0 0 X: - -, f 5;
+#X floatatom 1109 402 5 0 0 0 Y: - -, f 5;
+#X floatatom 1188 402 5 0 0 0 Force: - -, f 5;
+#X text 964 401 1st contact;
+#X floatatom 1073 464 5 0 0 0 X: - -, f 5;
+#X floatatom 1126 464 5 0 0 0 Y: - -, f 5;
+#X floatatom 1205 464 5 0 0 0 Force: - -, f 5;
+#X text 981 463 2nd contact;
+#X floatatom 1090 524 5 0 0 0 X: - -, f 5;
+#X floatatom 1143 524 5 0 0 0 Y: - -, f 5;
+#X floatatom 1222 524 5 0 0 0 Force: - -, f 5;
+#X floatatom 1108 588 5 0 0 0 X: - -, f 5;
+#X floatatom 1161 588 5 0 0 0 Y: - -, f 5;
+#X floatatom 1240 588 5 0 0 0 Force: - -, f 5;
+#X floatatom 1125 650 5 0 0 0 X: - -, f 5;
+#X floatatom 1178 650 5 0 0 0 Y: - -, f 5;
+#X floatatom 1257 650 5 0 0 0 Force: - -, f 5;
+#X text 15 169 connect <serial-number>: connects to a device with a
+matching serial number, f 75;
+#X text 934 123 This is a second instance for connecting second sensel
+to the same computer, f 42;
+#X obj 698 301 print output_from_sensel_1;
+#X obj 490 377 unpack 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+#X text 15 364 2: contact status (0=invalid \, 1=start \, 2=move \,
+3=end);
+#X text 15 381 3: orientation;
+#X text 15 398 4: major axis;
+#X text 15 415 5: minor axis;
+#X text 15 432 6: delta x;
+#X text 15 449 7: delta y;
+#X text 15 466 8: delta force;
+#X text 15 483 9: delta area;
+#X text 15 500 10: min x;
+#X text 15 517 11: min y;
+#X text 15 534 12: max x;
+#X text 15 551 13: max y;
+#X text 15 568 14: peak x;
+#X text 15 585 15: peak y;
+#X text 15 602 16: peak force;
+#X text 15 619 17: x position;
+#X text 15 636 18: y position;
+#X text 15 653 19: total force;
+#X text 15 670 20: area;
+#X text 15 317 left outlet: list of all contact points \, with each
+contact outputted as a list consisting of 20 arguments:, f 68;
+#X obj 507 439 unpack 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+#X obj 524 501 unpack 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+#X obj 542 563 unpack 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+#X obj 559 625 unpack 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+#X text 597 525 3rd contact;
+#X text 615 587 4th contact;
+#X text 632 649 5th contact;
+#X text 998 523 3rd contact;
+#X text 1016 587 4th contact;
+#X text 1033 649 5th contact;
+#X obj 959 625 unpack 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+#X obj 942 563 unpack 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+#X obj 924 501 unpack 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+#X obj 907 439 unpack 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+#X obj 890 377 unpack 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+#X floatatom 698 350 5 0 0 0 - - -, f 5;
+#X text 734 350 total number of contacts;
+#X text 496 221 The route object focuses only on the first 5 points
+\, plus the total number of contacts. simply add more \, as needed
+\, up to the sensel morph's supported limit., f 32;
+#X msg 714 63 poll \$1;
+#X obj 714 44 nbx 5 14 1 100 0 1 empty empty empty 0 -8 0 10 -262144
+-1 -1 10 256 0;
+#X obj 281 439 timer;
+#X obj 281 418 t b b;
+#X floatatom 281 460 5 0 0 0 - - -, f 5;
+#X text 498 317 Since we already stripped the first argument (contact
+point number) \, unpacks below only have 19 arguments., f 28;
+#X obj 625 106 r led;
+#X text 663 92 Messages from below that set the sensel LEDs. The message
+format is: led <id> <brightness(0-100)>, f 36;
+#X text 15 203 poll: sets the polling rate in ms (1-100) at which the
+contact data is outputted. Each contact has 20 arguments described
+below., f 75;
+#X obj 840 608 sensel-led 3;
+#X obj 857 670 sensel-led 4;
+#X obj 822 546 sensel-led 2;
+#X obj 805 484 sensel-led 1;
+#X obj 788 422 sensel-led 0;
+#X obj 490 295 route 0 1 2 3 4;
+#X obj 698 329 route contacts;
+#X obj 490 179 t a a a;
+#X floatatom 989 316 5 0 0 0 - - -, f 5;
+#X obj 890 295 route 0 1 2 3 4;
+#X obj 989 295 route contacts;
+#N canvas 0 22 450 300 META 0;
+#X text 30 62 DESCRIPTION L2Ork external for the Sensel Morph multitouch
+controller;
+#X text 30 42 LICENSE GPL v3;
+#X text 30 22 KEYWORDS controller multitouch Sensel Morph L2Ork;
+#X text 30 95 INLET_0 connect disconnect discover identify poll led
+;
+#X text 30 115 OUTLET_0 numbered contacts list (20 args) and contacts
+message showing the current total number of contacts;
+#X text 30 148 LIBRARY external;
+#X text 30 168 AUTHOR Rachel Hachem and Ivica Ico Bukvic;
+#X text 30 188 WEBSITE http://l2ork.icat.vt.edu;
+#X text 30 208 RELEASE_DATE 2020;
+#X text 30 228 HELP_PATCH_AUTHORS Ivica Ico Bukvic;
+#X restore 211 671 pd META;
+#X obj 191 548 cnv 15 249 116 empty empty empty 20 12 0 14 -261689
+-66577 0;
+#X text 15 233 led <id> <brightness(0-100)>: sets the sensel morph
+led brightness \, sending a lot of led messages can quickly bog down
+the sensel device \, so rate control is encouraged (e.g. see the sensel-led
+abstraction)., f 76;
+#X text 15 51 Developed in collaboration with the Sensel Inc. Special
+thanks to Peter Nyboer for his support. See README for version info.
+, f 67;
+#X text 15 31 by Rachel Hachem <rachelly@vt.edu> and Ivica Ico Bukvic
+<ico@vt.edu>, f 68;
+#X text 15 14 DISIS/L2Ork Sensel Morph external;
+#X text 261 671 http://l2ork.icat.vt.edu;
+#X text 320 419 The number to the left shows time in ms between sensel
+frames. It varies based on the number of contacts \, LED messages to
+the Sensel object \, and may be useful for setting a reasonable polling
+rate)., f 27;
+#X obj 890 179 t a a;
+#X obj 730 258 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X text 747 257 Toggle console output;
+#X text 705 176 WARNING! Copious and prolonged console output in purr-data
+only can over time adversely affect the overall performance., f 26
+;
+#X text 200 556 IMPORTANT! On Linux \, to be able to connect to the
+sensel device \, you may need to adjust permissions for accessing the
+ttyACM* (serial) devices by adding your user to the dialout group by
+typing in terminal:, f 38;
+#X text 200 638 sudo adduser <your-username> dialout;
+#X obj 698 279 spigot;
+#X text 714 14 Set internal polling time (1-100ms \, default 10ms)
+, f 26;
+#X connect 1 0 117 0;
+#X connect 1 1 2 0;
+#X connect 3 0 1 0;
+#X connect 4 0 1 0;
+#X connect 5 0 1 0;
+#X connect 6 0 1 0;
+#X connect 8 0 1 0;
+#X connect 19 0 114 0;
+#X connect 23 0 113 0;
+#X connect 27 0 112 0;
+#X connect 30 0 110 0;
+#X connect 33 0 111 0;
+#X connect 34 0 129 0;
+#X connect 34 1 35 0;
+#X connect 36 0 34 0;
+#X connect 37 0 34 0;
+#X connect 38 0 34 0;
+#X connect 39 0 34 0;
+#X connect 41 0 34 0;
+#X connect 62 15 16 0;
+#X connect 62 16 18 0;
+#X connect 62 17 19 0;
+#X connect 83 15 21 0;
+#X connect 83 16 22 0;
+#X connect 83 17 23 0;
+#X connect 84 15 25 0;
+#X connect 84 16 26 0;
+#X connect 84 17 27 0;
+#X connect 85 15 28 0;
+#X connect 85 16 29 0;
+#X connect 85 17 30 0;
+#X connect 86 15 31 0;
+#X connect 86 16 32 0;
+#X connect 86 17 33 0;
+#X connect 93 15 56 0;
+#X connect 93 16 57 0;
+#X connect 93 17 58 0;
+#X connect 94 15 53 0;
+#X connect 94 16 54 0;
+#X connect 94 17 55 0;
+#X connect 95 15 50 0;
+#X connect 95 16 51 0;
+#X connect 95 17 52 0;
+#X connect 96 15 46 0;
+#X connect 96 16 47 0;
+#X connect 96 17 48 0;
+#X connect 97 15 42 0;
+#X connect 97 16 43 0;
+#X connect 97 17 44 0;
+#X connect 101 0 1 0;
+#X connect 102 0 101 0;
+#X connect 103 0 105 0;
+#X connect 104 0 103 0;
+#X connect 104 1 103 1;
+#X connect 107 0 1 0;
+#X connect 115 0 62 0;
+#X connect 115 0 104 0;
+#X connect 115 1 83 0;
+#X connect 115 2 84 0;
+#X connect 115 3 85 0;
+#X connect 115 4 86 0;
+#X connect 116 0 98 0;
+#X connect 117 0 115 0;
+#X connect 117 1 116 0;
+#X connect 117 2 135 0;
+#X connect 119 0 97 0;
+#X connect 119 1 96 0;
+#X connect 119 2 95 0;
+#X connect 119 3 94 0;
+#X connect 119 4 93 0;
+#X connect 120 0 118 0;
+#X connect 129 0 119 0;
+#X connect 129 1 120 0;
+#X connect 130 0 135 1;
+#X connect 135 0 61 0;
