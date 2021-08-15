@@ -139,7 +139,7 @@ ifeq ($(LIGHT),yes)
 lib_targets = loaders-libdir pddp
 INCREMENTAL = yes
 else
-lib_targets = adaptive arraysize autotune bassemu bendinfix boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui fluid freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemgui iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moocow moonlib motex mrpeach oscx pan pdcontainer pddp pdlua pdogg plugin pmpd rjlib sigpack smlib tof unauthorized vbap windowing zexy
+lib_targets = adaptive arraysize autotune bassemu bendinfix boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui fluid freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemgui iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moocow moonlib motex mrpeach oscx pan pdcontainer pddp pdlua pdogg plugin pmpd rjlib sensel sigpack smlib tof unauthorized vbap windowing zexy
 endif
 
 # NEW (IN-PROGRESS): flext
@@ -1707,6 +1707,39 @@ rtcmix_install:
 rtcmix_clean:
 	make -C $(externals_src)/rtcmix-in-pd clean
 	make -C $(externals_src)/rtcmix-in-pd/RTcmix*
+
+#------------------------------------------------------------------------------#
+# Sensel
+
+sensel:
+	cd $(externals_src)/sensel \
+		&& make
+
+sensel_install:
+	install -d $(DESTDIR)$(objectsdir)/sensel
+	install -p $(externals_src)/sensel/sensel.$(EXTENSION) \
+		$(DESTDIR)/$(objectsdir)/sensel
+	install -p $(externals_src)/sensel/*.pd \
+		$(DESTDIR)/$(objectsdir)/sensel
+	cp -rf $(externals_src)/sensel/sensel_examples \
+		$(DESTDIR)/$(objectsdir)/sensel
+ifeq ($(OS_NAME),darwin)
+	cp -f $(externals_src)/sensel/*dylib \
+		$(DESTDIR)/$(objectsdir)/sensel
+endif
+ifeq ($(OS_NAME),linux)
+	cp -f $(externals_src)/sensel/*so \
+		$(DESTDIR)/$(objectsdir)/sensel
+endif
+ifeq ($(OS_NAME),windows)
+	cp -f $(externals_src)/sensel/*dll \
+		$(DESTDIR)/$(objectsdir)/sensel
+	cp -f $(externals_src)/sensel/*lib \
+		$(DESTDIR)/$(objectsdir)/sensel
+endif
+
+sensel_clean:
+	make -C $(externals_src)/sensel clean
 
 #------------------------------------------------------------------------------#
 # SIGPACK
