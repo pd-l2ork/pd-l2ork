@@ -446,7 +446,9 @@
       "zoom": {
         "save_zoom":    "Sauver/Charger niveau zoom avec patch",
         "save_zoom_tt": "Enregistrer le niveau de zoom actuel avec le patch et le restaurer lors du chargement du patch"
-      },
+      }
+    },
+    "general": {
       "browser": {
         "browser_title": "Paramètres du navigateur d'Aide (AVERTISSEMENT: les modifier peut affecter les temps de démarrage!)",
         "browser_doc":    "Le navigateur d'Aide recherche uniquement dans le dossier 'doc'",
@@ -455,6 +457,11 @@
         "browser_path_tt": "Analyser également les Patches d'Aide dans le chemin d'Aide défini par l'utilisateur pour rechercher des mots clés consultables (plus lent)",
         "browser_init":    "Préparer l'index de l'Aide au démarrage de l'application",
         "browser_init_tt": "Si cette case est cochée, préparez l'index pour le navigateur d'Aide dès le démarrage de l'application"
+      },
+      "apps": {
+        "apps_title": "Pd-L2Ork Apps",
+        "restore": "Restaurer le dossier des applications utilisateur",
+        "restore_tt": "Restaurez la dernière version des applications incluses avec le Pd-L2Ork, en écrasant le contenu dans le dossier ~/Pd-L2Ork. Tous les fichiers que vous avez ajoutés dont les noms ne correspondent pas aux noms des fichiers inclus dans le dossier de l'application Pd-L2Ork (par exemple, les préréglages personnalisés du L2Ork Tweeter) resteront intacts."       
       }
     },
     "audio": {

@@ -72,6 +72,14 @@ select {
           <span data-i18n="prefs.heading.startup"></span>
         </label>
 
+        <input type="radio"
+               name="prefs_radio_group"
+               id="general_tab_radio"
+               class="tab5 prefs_tab"/>
+        <label for="general_tab_radio" data-i18n="[title]prefs.heading.general_tt">
+          <span data-i18n="prefs.heading.general"></span>
+        </label>
+
         <div class="tab1">
           <table class="tab_settings">
             <tr data-i18n="[title]prefs.audio.api_tt">
@@ -434,23 +442,6 @@ select {
                    id="autopatch_yoffset_value"
                    name="autopatch_yoffset_value"
                    data-i18n="[title]prefs.gui.autopatch_yoffset_tt">
-            <br/><br/>
-            <span data-i18n="prefs.gui.browser.browser_title"></span>
-            <br/>
-            <label data-i18n="[title]prefs.gui.browser.browser_doc_tt">
-              <input type="checkbox" id="browser_doc" name="browser_doc">
-              <span data-i18n="prefs.gui.browser.browser_doc"></span>
-            </label>
-            <br/>
-            <label data-i18n="[title]prefs.gui.browser.browser_path_tt">
-              <input type="checkbox" id="browser_path" name="browser_path">
-              <span data-i18n="prefs.gui.browser.browser_path"></span>
-            </label>
-            <br/>
-            <label data-i18n="[title]prefs.gui.browser.browser_init_tt">
-              <input type="checkbox" id="browser_init" name="browser_init">
-              <span data-i18n="prefs.gui.browser.browser_init"></span>
-            </label>
           </div>
         </div>
 
@@ -504,6 +495,34 @@ select {
             </label>
           </div>
         </div>
+
+        <div class="tab5">
+          <div class="tab_settings">
+            <span data-i18n="prefs.general.browser.browser_title"></span>
+            <br/>
+            <label data-i18n="[title]prefs.general.browser.browser_doc_tt">
+              <input type="checkbox" id="browser_doc" name="browser_doc">
+              <span data-i18n="prefs.general.browser.browser_doc"></span>
+            </label>
+            <br/>
+            <label data-i18n="[title]prefs.general.browser.browser_path_tt">
+              <input type="checkbox" id="browser_path" name="browser_path">
+              <span data-i18n="prefs.general.browser.browser_path"></span>
+            </label>
+            <br/>
+            <label data-i18n="[title]prefs.general.browser.browser_init_tt">
+              <input type="checkbox" id="browser_init" name="browser_init">
+              <span data-i18n="prefs.general.browser.browser_init"></span>
+            </label>
+            <br/><br/>
+            <span data-i18n="prefs.general.apps.apps_title"></span>
+            <br/>
+            <button type="button" onClick="restore_apps()"
+                data-i18n="[title]prefs.general.apps.restore_tt">
+              <span data-i18n="prefs.general.apps.restore"></span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <div class="submit_buttons prefs_buttons">
@@ -533,6 +552,10 @@ var pd_object_callback;
 
 var pd_audio_attrs;
 var pd_midi_attrs;
+
+function restore_apps() {
+  pdgui.restore_apps(1); // argument is 0 = do not force overwrite, or 1 = force overwrite
+}
 
 function ok() {
     apply(true);

@@ -434,7 +434,9 @@
       "audio": "Audio",
       "audio_tt": "configure the audio devices",
       "midi": "MIDI",
-      "midi_tt": "configure MIDI devices"
+      "midi_tt": "configure MIDI devices",
+      "general": "General",
+      "general_tt": "configure general settings"
     },
     "startup": {
       "flags": "startup flags",
@@ -477,7 +479,9 @@
       "zoom": {
         "save_zoom": "save/load zoom level with patch",
         "save_zoom_tt": "Save the current zoom level with the patch and restore it when reloading the patch"
-      },
+      }
+    },
+    "general": {
       "browser": {
         "browser_title": "Help browser settings (WARNING: changing these may affect startup times!)",
         "browser_doc": "help browser only searches the doc folder",
@@ -486,6 +490,11 @@
         "browser_path_tt": "Also scan help patches in the user-defined help path for searchable keywords (slower)",
         "browser_init": "prepare the help index at application start",
         "browser_init_tt": "If checked, prepare the index for the help browser already when the application starts"
+      },
+      "apps": {
+        "apps_title": "Pd-L2Ork Apps",
+        "restore": "Restore User Apps Folder",
+        "restore_tt": "Restore the latest version of apps included with the Pd-L2Ork, overwriting contents inside the ~/Pd-L2Ork folder. Any files you may have added whose names do not match the names of the files included in the Pd-L2Ork's app folder (e.g. custom L2Ork Tweeter presets) will remain intact."       
       }
     },
     "audio": {

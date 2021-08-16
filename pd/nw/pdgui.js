@@ -7974,7 +7974,6 @@ function gui_pddplink_open(filename, dir) {
     }
 }
 
-
 /* ico@vt.edu: this function is run when we scroll with a mouse wheel,
    a touchpad (e.g. two-finger scroll), or some other HID. It is
    linked from the pd_canvas.js and called from the garray_fittograph 1
@@ -8066,3 +8065,83 @@ function gui_osx_dialog_appearance(id)
     close_button.style.setProperty("line-height", "14px");
     close_button.style.setProperty("border-radius", "10px");
 }
+
+// functions for copying apps folder into the user folder
+var fs = require('fs');
+var path = require('path');
+
+function copyFileSync( source, target ) {
+
+    var targetFile = target;
+
+    // If target is a directory, a new file with the same name will be created
+    if ( fs.existsSync( target ) ) {
+        if ( fs.lstatSync( target ).isDirectory() ) {
+            targetFile = path.join( target, path.basename( source ) );
+        }
+    }
+
+    fs.writeFileSync(targetFile, fs.readFileSync(source));
+}
+
+function copyFolderRecursiveSync( source, target ) {
+    var files = [];
+
+    // Check if folder needs to be created or integrated
+    var targetFolder = path.join( target, path.basename( source ) );
+    if ( !fs.existsSync( targetFolder ) ) {
+        fs.mkdirSync( targetFolder );
+    }
+
+    // Copy
+    if ( fs.lstatSync( source ).isDirectory() ) {
+        files = fs.readdirSync( source );
+        files.forEach( function ( file ) {
+            var curSource = path.join( source, file );
+            if ( fs.lstatSync( curSource ).isDirectory() ) {
+                copyFolderRecursiveSync( curSource, targetFolder );
+            } else {
+                copyFileSync( curSource, targetFolder );
+            }
+        } );
+    }
+}
+
+function restore_apps(force) {
+    const fs = require('fs');
+    var homedir, dir;
+    if (nw_os_is_windows) {
+        homedir = process.env.HOMEPATH;
+    } else {
+        homedir = process.env.HOME;
+    }
+
+    if (nw_os_is_windows) {
+        dir = homedir + '\\Documents\\Pd-L2Ork';
+    } else {
+        dir = homedir + '/Pd-L2Ork';
+    }
+    //post("dir=" + dir + "\nprocess.cwd=" + process.cwd());
+    if (force == 0 && fs.existsSync(dir)) {
+        post("User app directory found. Skipping copying of the Pd-L2Ork apps into the " +
+                   "user folder. If you would like to force restore the apps to the latest " +
+                   "version included with this release of Pd-L2Ork, open the General tab " +
+                   "found in the Preferences, and click on the Restore User Apps Folder button...");
+    } else {
+        post("Restoring user apps folder...");
+        if (force == 0)
+            post("User app directory not found...\nCreating directory " + dir + "...");
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, '0755');
+        }
+        if (force == 0) post("Copying Pd-L2Ork Apps...");
+        if (nw_os_is_osx) {
+            copyFolderRecursiveSync(process.cwd()+"/apps/", dir);
+        } else {
+            copyFolderRecursiveSync(process.cwd()+"/../apps/", dir);
+        }
+        post("Done!")
+    }
+}
+
+exports.restore_apps = restore_apps;
