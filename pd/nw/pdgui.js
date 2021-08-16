@@ -1495,6 +1495,8 @@ function gui_canvas_set_cordinspector(cid, state) {
 function canvas_set_scrollbars(cid, scroll) {
     patchwin[cid].window.document.body.style.
         overflow = scroll ? "visible" : "hidden";
+    gui_update_scrollbars(cid);
+
 }
 
 exports.canvas_set_scrollbars = canvas_set_scrollbars;
@@ -7596,7 +7598,7 @@ function canvas_params(nw_win)
     
     // yScrollSize reflects the amount of the patch we currently see,
     // so if it drops below 1, that means we need our scrollbars 
-    if (yScrollSize < 1) {
+    if (yScrollSize < 1 && nw_win.window.document.body.style.overflow == "visible") {
         var yHeight = Math.floor(yScrollSize * min_height);
         vscroll.style.setProperty("height", (yHeight - 1 + nw_version_bbox_offset) + "px");
         // was (yScrollTopOffset + 2) to make it peel away from the edge
@@ -7621,8 +7623,9 @@ function canvas_params(nw_win)
     var hscroll = nw_win.window.document.getElementById("hscroll");
     xScrollSize = (min_width + nw_version_bbox_offset) / width; // used to be (min_width - 1) / width
     xScrollLeftOffset = Math.floor((nw_win.window.scrollX / width) * (min_width + 3) - 1);
+    //post("body_scroll=" + (nw_win.window.document.body.style.overflow));
 
-    if (xScrollSize < 1) {
+    if (xScrollSize < 1 && nw_win.window.document.body.style.overflow == "visible") {
         var xWidth = Math.floor(xScrollSize * min_width);
         hscroll.style.setProperty("width", (xWidth - 1) + "px");
         // was (xScrollTopOffset + 2) to make it peel away from the edge
@@ -7985,64 +7988,70 @@ function gui_update_scrollbars(cid) {
         var hscroll = nw_win.window.document.getElementById("hscroll");
         var vscroll = nw_win.window.document.getElementById("vscroll");
         var svg_elem = nw_win.window.document.getElementById("patchsvg");
-        
-        if (vscroll.style.visibility == "visible")
-        { 
-            var min_height = nw_win.window.innerHeight + 3;
-            var height = svg_elem.getAttribute('height');
-            var yScrollSize, yScrollTopOffset;
 
-            height |= 0;  // drop everything to the right of the decimal point
-            min_height |= 0;
-            
-            yScrollSize = (min_height + nw_version_bbox_offset) / height;
-            yScrollTopOffset = Math.floor((nw_win.window.scrollY / height) * min_height);
-            
-            if (yScrollSize < 1) {
-                var yHeight = Math.floor(yScrollSize * min_height);
-                vscroll.style.setProperty("height", (yHeight - 1 + nw_version_bbox_offset) + "px");
-                vscroll.style.setProperty("top", (yScrollTopOffset + 0) + "px");
-                vscroll.style.setProperty("-webkit-clip-path",
-                    "polygon(0px 0px, 5px 0px, 5px " + (yHeight - 1 + nw_version_bbox_offset) +
-                    "px, 0px " + (yHeight - 6 + nw_version_bbox_offset) + "px, 0px 5px)");
-                vscroll.style.setProperty("visibility", "visible");
-            } else {
-                vscroll.style.setProperty("visibility", "hidden");    
-            }
-        }
-
-        if (hscroll.style.visibility == "visible")
+        if (patchwin[cid].window.document.body.style.overflow != "visible")
         {
-            var min_width = nw_win.window.innerWidth + 3;
-            var width = svg_elem.getAttribute('width');
-            var xScrollSize, xScrollTopOffset;
+            vscroll.style.setProperty("visibility", "hidden");
+            hscroll.style.setProperty("visibility", "hidden");
+        } else {        
+            if (vscroll.style.visibility == "visible")
+            { 
+                var min_height = nw_win.window.innerHeight + 3;
+                var height = svg_elem.getAttribute('height');
+                var yScrollSize, yScrollTopOffset;
 
-            width |= 0; // drop everything to the right of the decimal point
-            min_width |= 0;
-            
-            xScrollSize = (min_width + nw_version_bbox_offset) / width;
-            xScrollTopOffset = Math.floor((nw_win.window.scrollX / width) * min_width);
-            
-            /* console.log("win_width=" + min_width + " bbox=" +
-                width + " xScrollSize=" + (xScrollSize * min_width) +
-                " topOffset=" + xScrollTopOffset); */
-
-            if (xScrollSize < 1) {
-                var xWidth = Math.floor(xScrollSize * min_width);
-                hscroll.style.setProperty("width", (xWidth - 1) + "px");
-                hscroll.style.setProperty("left", (xScrollTopOffset + 0) + "px");
-                hscroll.style.setProperty("-webkit-clip-path",
-                    "polygon(0px 0px, " + (xWidth - 6) + "px 0px, " +
-                    (xWidth - 1) + "px 5px, 0px 5px)");
-                hscroll.style.setProperty("visibility", "visible");
-            } else {
-                hscroll.style.setProperty("visibility", "hidden");    
+                height |= 0;  // drop everything to the right of the decimal point
+                min_height |= 0;
+                
+                yScrollSize = (min_height + nw_version_bbox_offset) / height;
+                yScrollTopOffset = Math.floor((nw_win.window.scrollY / height) * min_height);
+                
+                if (yScrollSize < 1) {
+                    var yHeight = Math.floor(yScrollSize * min_height);
+                    vscroll.style.setProperty("height", (yHeight - 1 + nw_version_bbox_offset) + "px");
+                    vscroll.style.setProperty("top", (yScrollTopOffset + 0) + "px");
+                    vscroll.style.setProperty("-webkit-clip-path",
+                        "polygon(0px 0px, 5px 0px, 5px " + (yHeight - 1 + nw_version_bbox_offset) +
+                        "px, 0px " + (yHeight - 6 + nw_version_bbox_offset) + "px, 0px 5px)");
+                    vscroll.style.setProperty("visibility", "visible");
+                } else {
+                    vscroll.style.setProperty("visibility", "hidden");    
+                }
             }
+
+            if (hscroll.style.visibility == "visible")
+            {
+                var min_width = nw_win.window.innerWidth + 3;
+                var width = svg_elem.getAttribute('width');
+                var xScrollSize, xScrollTopOffset;
+
+                width |= 0; // drop everything to the right of the decimal point
+                min_width |= 0;
+                
+                xScrollSize = (min_width + nw_version_bbox_offset) / width;
+                xScrollTopOffset = Math.floor((nw_win.window.scrollX / width) * min_width);
+                
+                /* console.log("win_width=" + min_width + " bbox=" +
+                    width + " xScrollSize=" + (xScrollSize * min_width) +
+                    " topOffset=" + xScrollTopOffset); */
+
+                if (xScrollSize < 1) {
+                    var xWidth = Math.floor(xScrollSize * min_width);
+                    hscroll.style.setProperty("width", (xWidth - 1) + "px");
+                    hscroll.style.setProperty("left", (xScrollTopOffset + 0) + "px");
+                    hscroll.style.setProperty("-webkit-clip-path",
+                        "polygon(0px 0px, " + (xWidth - 6) + "px 0px, " +
+                        (xWidth - 1) + "px 5px, 0px 5px)");
+                    hscroll.style.setProperty("visibility", "visible");
+                } else {
+                    hscroll.style.setProperty("visibility", "hidden");    
+                }
+            }
+            // for future reference
+            //nw_win.document.getElementById("hscroll").
+            //    style.setProperty("visibility", "visible");
+            //console.log("width="+width);
         }
-        // for future reference
-        //nw_win.document.getElementById("hscroll").
-        //    style.setProperty("visibility", "visible");
-        //console.log("width="+width);
     });
 }
 
