@@ -930,7 +930,11 @@ function copy_apps_into_user_folder() {
         pdgui.post("User app directory not found...\nCreating directory " + dir + "...");
         fs.mkdirSync(dir, '0755');
         pdgui.post("Copying Pd-L2Ork Apps...");
-        copyFolderRecursiveSync(process.cwd()+"/../apps/", dir);
+        if (pdgui.nw_os_is_osx) {
+            copyFolderRecursiveSync(process.cwd()+"/apps/", dir);
+        } else {
+            copyFolderRecursiveSync(process.cwd()+"/../apps/", dir);
+        }
         pdgui.post("Done!")
     }
 }
