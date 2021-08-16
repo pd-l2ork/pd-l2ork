@@ -6,6 +6,10 @@ sensel.class.sources = sensel.c
 sensel.class.ldlibs = -L./ -lsensel
 CPPFLAGS += -I./include
 
+define forWindows
+    sensel.class.ldlibs = -L./win-x86 -lsensel
+endef
+
 datafiles = sensel-help.pd sensel-led.pd sensel_examples
 
 include Makefile.pdlibbuilder.revised
