@@ -1714,6 +1714,12 @@ rtcmix_clean:
 sensel:
 	cd $(externals_src)/sensel \
 		&& make
+ifeq ($(OS_NAME),darwin)
+	@echo "adjusting linker for the darwin version of the sensel external..."
+	cd $(externals_src)/sensel && \
+		install_name_tool -change \
+		/usr/local/lib/libSensel.dylib @loader_path/libSensel.dylib sensel.pd_darwin
+endif
 
 sensel_install:
 	install -d $(DESTDIR)$(objectsdir)/sensel
@@ -1724,14 +1730,17 @@ sensel_install:
 	cp -rf $(externals_src)/sensel/sensel_examples \
 		$(DESTDIR)/$(objectsdir)/sensel
 ifeq ($(OS_NAME),darwin)
+	echo "installing darwin sensel libraries..."
 	cp -f $(externals_src)/sensel/*dylib \
 		$(DESTDIR)/$(objectsdir)/sensel
 endif
 ifeq ($(OS_NAME),linux)
+	echo "installing linux sensel libraries..."
 	cp -f $(externals_src)/sensel/*so \
 		$(DESTDIR)/$(objectsdir)/sensel
 endif
 ifeq ($(OS_NAME),windows)
+	echo "installing windows sensel libraries..."
 	cp -f $(externals_src)/sensel/*dll \
 		$(DESTDIR)/$(objectsdir)/sensel
 	cp -f $(externals_src)/sensel/*lib \
