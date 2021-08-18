@@ -766,10 +766,12 @@ function nw_create_pd_window_menus(gui, w) {
         minit(m.put.number2, { enabled: false });
         minit(m.put.vslider, { enabled: false });
         minit(m.put.hslider, { enabled: false });
+        minit(m.put.knob, { enabled: false });
         minit(m.put.vradio, { enabled: false });
         minit(m.put.hradio, { enabled: false });
         minit(m.put.vu, { enabled: false });
         minit(m.put.cnv, { enabled: false });
+        minit(m.put.image, { enabled: false });
         //minit(m.put.graph, { enabled: false });
         minit(m.put.array, { enabled: false });
     }
