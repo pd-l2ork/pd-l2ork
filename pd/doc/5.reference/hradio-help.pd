@@ -1,4 +1,4 @@
-#N canvas 466 124 553 617 10;
+#N canvas 494 141 553 617 10;
 #X obj 0 595 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
 14 #dcdcdc #404040 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header hradio 3 12 0 18
@@ -50,15 +50,15 @@ and further clean-up by Ivica Ico Bukvic.;
 #fcfcfc #000000 #000000 0;
 #X obj 27 50 bng 15 250 50 0 empty empty empty 8 -8 0 10 #fcfcfc #000000
 #000000;
-#X floatatom 27 207 4 0 0 0 - - - 0, f 4;
+#X floatatom 27 207 4 0 0 0 - - - 0 0, f 4;
 #X obj 27 229 bng 15 250 50 0 empty empty empty 8 -8 0 10 #fcfcfc #000000
 #000000;
 #X obj 72 179 tgl 12 0 empty empty empty 8 -8 0 10 #fcfcfc #000000
 #000000 0 1;
 #X obj 72 154 route 0 1 2 3 4 5 6 7 8 9, f 34;
 #X msg 172 71 set \$1;
-#X floatatom 172 50 4 0 9 0 - - - 0, f 4;
-#X floatatom 50 50 4 0 9 0 - - - 0, f 4;
+#X floatatom 172 50 4 0 9 0 - - - 0 0, f 4;
+#X floatatom 50 50 4 0 9 0 - - - 0 0, f 4;
 #X obj 92 179 tgl 12 0 empty empty empty 8 -8 0 10 #fcfcfc #000000
 #000000 0 1;
 #X obj 112 179 tgl 12 0 empty empty empty 8 -8 0 10 #fcfcfc #000000
@@ -82,8 +82,8 @@ and further clean-up by Ivica Ico Bukvic.;
 150 -8 0 12 #7c7c7c #c4fcc4 #000000 0;
 #X msg 107 76 3;
 #X msg 107 50 7;
-#X floatatom 292 59 5 0 0 0 - - - 0, f 5;
-#X floatatom 292 128 5 0 0 0 - - - 0, f 5;
+#X floatatom 292 59 5 0 0 0 - - - 0 0, f 5;
+#X floatatom 292 128 5 0 0 0 - - - 0 0, f 5;
 #X obj 292 80 s hradio-help-rcv;
 #X obj 292 105 r hradio-help-snd;
 #X text 98 303 float;
@@ -107,8 +107,8 @@ a [hradio]:;
 #X connect 6 0 0 0;
 #X restore 170 525 pd hradio-creation-arguments;
 #X text 291 210 or change them with messages (see below);
-#N canvas 79 8 428 608 Setting_hradio_properties_through_messages 0
-;
+#N canvas 79 22 428 608 Setting_hradio_properties_through_messages
+0;
 #X text 105 23 no init;
 #X text 161 155 label;
 #X msg 162 175 label blabla;
@@ -134,7 +134,7 @@ a [hradio]:;
 #X msg 105 42 init 0;
 #X text 114 61 init value;
 #X text 115 75 on loadbang;
-#X floatatom 198 42 3 0 20 0 - #0-number - 0, f 3;
+#X floatatom 198 42 3 0 20 0 - #0-number - 0 0, f 3;
 #X msg 198 94 number \$1;
 #X msg 322 92 send vradio_snd;
 #X msg 11 94 size \$1;
@@ -204,7 +204,7 @@ a [hradio]:;
 #X connect 6 0 3 0;
 #X coords 0 -1 1 1 48 62 2 100 100;
 #X restore 162 311 pd flash-time;
-#N canvas 0 0 306 317 flash-time 0;
+#N canvas 0 22 306 317 flash-time 0;
 #X obj 96 521 outlet;
 #X obj 162 230 t b f;
 #X obj 96 268 +;
@@ -303,7 +303,7 @@ a [hradio]:;
 0;
 #X obj 270 526 cnv 15 145 75 empty empty empty 20 12 0 14 #fce0c4 #404040
 0;
-#X floatatom 291 580 5 0 0 0 - - - 0, f 5;
+#X floatatom 291 580 5 0 0 0 - - - 0 0, f 5;
 #X obj 290 550 hradio 15 1 0 8 hradio_snd hradio_rcv myHradio 0 -8
 0 10 #fcfcfc #202020 #202020 0;
 #X obj 11 118 s hradio_rcv;
@@ -380,61 +380,62 @@ to dynamically instantiate a [hradio] object with custom properties:
 #N canvas 277 184 467 568 advanced_css_properties 0;
 #X obj 157 -307 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
-#X msg 130 -416 css border fill rgba(255 \\\, 0 \\\, 255 \\\, 0.9)
+#X msg 130 -396 css border fill rgba(255 \\\, 0 \\\, 255 \\\, 0.9)
 ;
 #X msg 222 -181 0;
-#X floatatom 173 -131 5 0 0 0 - - - 0, f 5;
-#X floatatom 82 -131 5 0 0 0 - - - 0, f 5;
+#X floatatom 173 -131 5 0 0 0 - - - 0 0, f 5;
+#X floatatom 82 -131 5 0 0 0 - - - 0 0, f 5;
 #X obj 222 -203 sel 0;
-#X obj 37 -61 print;
 #X obj 82 -109 pack 0 0 0, f 31;
 #X obj 156 -231 t f f f f;
-#X floatatom 265 -131 5 0 0 0 - - - 0, f 5;
+#X floatatom 265 -131 5 0 0 0 - - - 0 0, f 5;
 #X obj 82 -156 expr 1+$f1/20;
-#X obj 265 -156 expr $f1*-.5;
-#X msg 114 -439 css border transform skew(\$1deg);
+#X obj 265 -156 expr \\$f1*-.5;
+#X msg 114 -419 css border transform skew(\$1deg);
 #X obj 0 -594 cnv 15 466 21 empty \$0-pddp.cnv.subheading empty 3 12
 0 14 #c4dcdc #000000 0;
-#X obj 5 -516 pddplink https://www.w3schools.com/css/default.asp;
 #X obj 157 -260 counter 1 0 3;
 #X obj 157 -285 metro 20;
-#X floatatom 114 -460 5 0 0 0 - - - 0, f 5;
+#X floatatom 114 -440 5 0 0 0 - - - 0 0, f 5;
 #X msg 82 -86 css border transform scale(\$1) translate(\$2px \\\,
 \$3px);
 #X text 5 -591 Advanced CSS properties;
-#X obj 114 -389 hradio 15 1 0 8 empty empty empty 0 -8 0 10 #fcfcfc
+#X obj 114 -369 hradio 15 1 0 8 empty empty empty 0 -8 0 10 #fcfcfc
 #000000 #000000 0;
 #X obj 82 -62 hradio 15 0 0 8 hradio-output empty empty 0 -8 0 10 #fcfcfc
 #000000 #000000 0;
 #X obj 157 -330 r hradio-output;
-#X obj 173 -156 expr $f1*-2;
-#X text 5 -567 In Pd-L2Ork \, all iemgui objects can receive various
+#X obj 173 -156 expr \\$f1*-2;
+#X obj 106 -488 pddplink https://www.w3schools.com/css/default.asp
+;
+#X text 6 -567 In Pd-L2Ork \, all iemgui objects can receive various
 CSS commands that can further modify their behavior. Below are two
-examples. To be able to address appropriate elements \, use the Show
-DevTools option found in the Help menu. For more info on the CSS commands
-\, visit:, f 75;
-#X connect 0 0 16 0;
-#X connect 1 0 20 0;
-#X connect 2 0 16 0;
-#X connect 3 0 7 1;
-#X connect 4 0 7 0;
+examples. You should avoid using loadbang for providing CSS instructions
+to objects because such commands are dropped when the object is invisible
+and therefore does not exist on the HTML5 canvas. To be able to address
+appropriate elements \, use the Show DevTools option found in the Help
+menu. For more info on the CSS commands \, visit:, f 75;
+#X connect 0 0 14 0;
+#X connect 1 0 18 0;
+#X connect 2 0 14 0;
+#X connect 3 0 6 1;
+#X connect 4 0 6 0;
 #X connect 5 0 2 0;
-#X connect 7 0 18 0;
-#X connect 8 0 10 0;
-#X connect 8 1 23 0;
-#X connect 8 2 11 0;
-#X connect 8 3 5 0;
-#X connect 9 0 7 2;
-#X connect 10 0 4 0;
-#X connect 11 0 9 0;
-#X connect 12 0 20 0;
-#X connect 15 0 8 0;
-#X connect 16 0 15 0;
-#X connect 17 0 12 0;
-#X connect 18 0 6 0;
-#X connect 18 0 21 0;
-#X connect 22 0 0 0;
-#X connect 23 0 3 0;
+#X connect 6 0 16 0;
+#X connect 7 0 9 0;
+#X connect 7 1 21 0;
+#X connect 7 2 10 0;
+#X connect 7 3 5 0;
+#X connect 8 0 6 2;
+#X connect 9 0 4 0;
+#X connect 10 0 8 0;
+#X connect 11 0 18 0;
+#X connect 13 0 7 0;
+#X connect 14 0 13 0;
+#X connect 15 0 11 0;
+#X connect 16 0 19 0;
+#X connect 20 0 0 0;
+#X connect 21 0 3 0;
 #X restore 170 566 pd advanced_css_properties;
 #X connect 14 0 32 0;
 #X connect 15 0 16 0;

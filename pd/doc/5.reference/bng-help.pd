@@ -88,7 +88,7 @@ a selected gui-object. Right-click and choose "Properties" to modify
 its appearance.;
 #X text 321 187 or change them with messages;
 #X text 321 201 (see the subpatch below);
-#N canvas 48 5 428 610 Changing_GUI_Properties 0;
+#N canvas 48 22 428 610 Changing_GUI_Properties 0;
 #X text 239 33 no init;
 #X text 270 159 label position;
 #X text 167 451 delta;
@@ -173,7 +173,7 @@ its appearance.;
 #X connect 6 0 3 0;
 #X coords 0 -1 1 1 48 62 2 100 100;
 #X restore 171 316 pd flash-time;
-#N canvas 0 0 306 317 flash-time 0;
+#N canvas 0 22 306 317 flash-time 0;
 #X obj 96 521 outlet;
 #X obj 162 230 t b f;
 #X obj 96 268 +;
@@ -412,30 +412,30 @@ the gui-properties of [bng]:;
 #X obj 4 581 pddp/pddplink all_about_help_patches.pd -text Usage Guide
 ;
 #N canvas 214 92 467 582 advanced_css_properties 0;
-#X obj 59 -311 cnv 15 52 30 empty empty empty 20 12 0 14 #ff80c0 #404040
+#X obj 65 -97 bng 36 250 50 0 empty wobbly-button empty 17 7 0 10 #fcfcfc
+#000000 #000000;
+#X obj 59 -291 cnv 15 52 30 empty empty empty 20 12 0 14 #ff80c0 #404040
 0;
-#X msg 67 -376 css border transform skew(\$1deg);
+#X msg 67 -356 css border transform skew(\$1deg);
 #X obj 0 -594 cnv 15 466 21 empty \$0-pddp.cnv.subheading empty 3 12
 0 14 #c4dcdc #000000 0;
-#X obj 5 -516 pddplink https://www.w3schools.com/css/default.asp;
-#X floatatom 67 -397 5 0 0 0 - - - 0 0, f 5;
+#X obj 105 -488 pddplink https://www.w3schools.com/css/default.asp
+;
+#X floatatom 67 -377 5 0 0 0 - - - 0 0, f 5;
 #X text 5 -591 Advanced CSS properties;
-#X obj 67 -325 bng 36 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#X obj 67 -305 bng 36 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
-#X msg 83 -353 css border fill rgba(255 \\\, 255 \\\, 255 \\\, 0.3)
+#X msg 83 -333 css border fill rgba(255 \\\, 255 \\\, 255 \\\, 0.3)
 ;
-#X floatatom 36 -478 5 0 0 0 - - - 0 0, f 5;
-#X msg 36 -457 css button transform skew(\$1deg);
-#X msg 36 -431 css button transform-origin 16px 16px;
-#X obj 59 -206 cnv 15 48 47 empty empty empty 20 12 0 14 #62b0ff #404040
+#X floatatom 36 -458 5 0 0 0 - - - 0 0, f 5;
+#X msg 36 -437 css button transform skew(\$1deg);
+#X msg 36 -411 css button transform-origin 16px 16px;
+#X obj 59 -181 cnv 15 48 47 empty empty empty 20 12 0 14 #62b0ff #404040
 0;
-#X obj 65 -201 bng 36 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#X obj 65 -176 bng 36 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
-#X msg 65 -236 css border transparent \, css border stroke-width 0px
+#X text 56 -244 click message below for a borderless transparent button
 ;
-#X text 56 -259 click message below for a borderless transparent button
-;
-#X text 116 -311 note the partial transparency;
 #X text 56 -121 CSS below animates button press;
 #N canvas 378 207 301 461 animate 0;
 #X obj 20 237 sin;
@@ -444,7 +444,7 @@ the gui-properties of [bng]:;
 0 1;
 #X msg 58 147 0;
 #X obj 20 81 metro 10;
-#X obj 20 193 expr $f1/5*3.14159;
+#X obj 20 193 expr \\$f1/5*3.14159;
 #X obj 20 215 t f f;
 #X obj 20 103 counter 20;
 #X obj 58 125 sel 1;
@@ -453,10 +453,11 @@ the gui-properties of [bng]:;
 #X obj 20 171 t f f, f 20;
 #X msg 20 302 css button transform skew(\$1deg);
 #X obj 20 17 inlet;
-#X obj 20 39 t 1 0, f 12;
 #X obj 20 407 s wobbly-button;
-#X obj 40 345 loadbang;
 #X msg 40 370 css button transform-origin 16px 16px;
+#X obj 20 39 t 1 0 b, f 10;
+#X obj 224 277 gate 1 1;
+#X obj 224 302 t b 0;
 #X connect 0 0 1 0;
 #X connect 1 0 9 0;
 #X connect 2 0 4 0;
@@ -471,28 +472,35 @@ the gui-properties of [bng]:;
 #X connect 10 0 9 1;
 #X connect 11 0 5 0;
 #X connect 11 1 10 0;
-#X connect 12 0 15 0;
-#X connect 13 0 14 0;
-#X connect 14 0 2 0;
-#X connect 14 1 7 2;
-#X connect 16 0 17 0;
-#X connect 17 0 15 0;
+#X connect 12 0 14 0;
+#X connect 13 0 16 0;
+#X connect 15 0 14 0;
+#X connect 16 0 2 0;
+#X connect 16 1 7 2;
+#X connect 16 2 17 1;
+#X connect 17 0 18 0;
+#X connect 18 0 15 0;
+#X connect 18 1 17 0;
 #X restore 65 -55 pd animate;
-#X obj 65 -97 bng 36 250 50 0 empty wobbly-button empty 17 7 0 10 #fcfcfc
-#000000 #000000;
 #X text 5 -567 In Pd-L2Ork \, all iemgui objects can receive various
 CSS commands that can further modify their behavior. Below are two
-examples. To be able to address appropriate elements \, use the Show
-DevTools option found in the Help menu. For more info on the CSS commands
-\, visit:, f 75;
-#X connect 1 0 6 0;
-#X connect 4 0 1 0;
-#X connect 7 0 6 0;
-#X connect 8 0 9 0;
-#X connect 9 0 6 0;
-#X connect 10 0 6 0;
-#X connect 13 0 12 0;
-#X connect 18 0 17 0;
+examples. You should avoid using loadbang for providing CSS instructions
+to objects because such commands are dropped when the object is invisible
+and therefore does not exist on the HTML5 canvas. To be able to address
+appropriate elements \, use the Show DevTools option found in the Help
+menu. For more info on the CSS commands \, visit:, f 75;
+#X text 159 -313 click on the border fill message and note the partial
+transparency, f 34;
+#X msg 65 -221 css border transparent \, css border stroke-width 0px
+\, css border fill rgba(255 \\\, 255 \\\, 255\, 0);
+#X connect 0 0 16 0;
+#X connect 2 0 7 0;
+#X connect 5 0 2 0;
+#X connect 8 0 7 0;
+#X connect 9 0 10 0;
+#X connect 10 0 7 0;
+#X connect 11 0 7 0;
+#X connect 19 0 13 0;
 #X restore 213 556 pd advanced_css_properties;
 #N canvas 182 139 428 512 bng_creation_arguments_&_dialog 0;
 #X text 12 28 "bng" can be called with 14 creation arguments. These
@@ -518,8 +526,8 @@ the first 4 arguments \, and add as many 0s before the send argument
 until the send argument is 8th in order. making this kind of a change
 to the iemgui object will not trigger dirty flag unless you add a 1
 as the last argument \, following the color arguments., f 66;
-#X obj 13 450 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000;
+#X obj 13 450 bng 30 50 10 0 send receive Atlas -2 40 0 12 #ffddbb
+#ff0000 #00ff00;
 #X connect 5 0 6 0;
 #X connect 7 0 9 0;
 #X restore 100 522 pd bng_creation_arguments_&_dialog;

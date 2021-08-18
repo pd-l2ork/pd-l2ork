@@ -68,10 +68,10 @@ not instantiate correctly.;
 0 0;
 #X connect 6 0 0 0;
 #X restore 170 570 pd vu-creation-arguments;
-#N canvas 75 10 429 610 Changing_GUI_Properties 0;
+#N canvas 75 22 429 610 Changing_GUI_Properties 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
-#X floatatom 130 62 1 0 1 0 - #0-scale - 0, f 1;
+#X floatatom 130 62 1 0 1 0 - #0-scale - 0 0, f 1;
 #X text 124 38 display scale;
 #X msg 130 116 scale \$1;
 #X obj 130 141 s vu_rcv;
@@ -167,7 +167,7 @@ not instantiate correctly.;
 #X connect 4 0 1 0;
 #X coords 0 -1 1 1 48 42 2 100 100;
 #X restore 22 332 pd flash-time;
-#N canvas 0 0 306 317 flash-time 0;
+#N canvas 0 22 306 317 flash-time 0;
 #X obj 96 521 outlet;
 #X obj 162 230 t b f;
 #X obj 96 268 +;
@@ -305,20 +305,20 @@ its appearance.;
 #X text 340 142 "Properties" to set them \,;
 #X text 341 156 or change them with messages;
 #X text 341 170 (see the subpatch below);
-#X floatatom 259 90 7 -110 20 1 dB - - 0, f 7;
+#X floatatom 259 90 7 -110 20 1 dB - - 0 0, f 7;
 #X obj 42 48 tgl 15 1 empty empty empty 8 -8 0 10 #fcfcfc #000000 #000000
 0 1;
 #X obj 43 125 vu 15 120 foo7_rcv vu-meter 60 0 0 10 #000000 #001488
 1 0;
-#X floatatom 42 259 6 0 0 1 dB - - 0, f 6;
-#X floatatom 104 259 6 0 0 1 dB - - 0, f 6;
+#X floatatom 42 259 6 0 0 1 dB - - 0 0, f 6;
+#X floatatom 104 259 6 0 0 1 dB - - 0 0, f 6;
 #X text 108 68 <list> of rms \, peak;
 #X obj 259 197 s foo7_rcv;
 #X obj 259 168 pack 0 0;
-#X floatatom 277 113 7 -110 20 1 dB - - 0, f 7;
+#X floatatom 277 113 7 -110 20 1 dB - - 0 0, f 7;
 #X obj 277 138 t b f;
-#X floatatom 52 90 7 -110 20 1 dB - - 0, f 7;
-#X floatatom 120 90 7 -110 20 1 dB - - 0, f 7;
+#X floatatom 52 90 7 -110 20 1 dB - - 0 0, f 7;
+#X floatatom 120 90 7 -110 20 1 dB - - 0 0, f 7;
 #N canvas 44 136 290 278 source 0;
 #X obj 40 95 random 102;
 #X obj 40 171 - 101;
@@ -361,24 +361,26 @@ its appearance.;
 ;
 #X obj 4 628 pddp/pddplink all_about_help_patches.pd -text Usage Guide
 ;
-#N canvas 277 184 467 345 advanced_css_properties 0;
-#X msg 90 -436 css border fill rgba(255 \\\, 0 \\\, 255 \\\, 0.9);
-#X msg 74 -459 css border transform skew(\$1deg);
+#N canvas 277 184 467 399 advanced_css_properties 0;
+#X msg 90 -376 css border fill rgba(255 \\\, 0 \\\, 255 \\\, 0.9);
+#X msg 74 -399 css border transform skew(\$1deg);
 #X obj 0 -594 cnv 15 466 21 empty \$0-pddp.cnv.subheading empty 3 12
 0 14 #c4dcdc #000000 0;
-#X obj 5 -516 pddplink https://www.w3schools.com/css/default.asp;
-#X floatatom 74 -480 5 0 0 0 - - - 0, f 5;
+#X floatatom 74 -420 5 0 0 0 - - - 0 0, f 5;
 #X text 5 -591 Advanced CSS properties;
-#X text 5 -567 In Pd-L2Ork \, all iemgui objects can receive various
-CSS commands that can further modify their behavior. Below are two
-examples. To be able to address appropriate elements \, use the Show
-DevTools option found in the Help menu. For more info on the CSS commands
-\, visit:, f 75;
-#X obj 74 -406 vu 15 120 empty empty -1 -8 0 10 #404040 #000000 1 0
+#X obj 74 -346 vu 15 120 empty empty -1 -8 0 10 #404040 #000000 1 0
 ;
-#X connect 0 0 7 0;
-#X connect 1 0 7 0;
-#X connect 4 0 1 0;
+#X obj 42 -490 pddplink https://www.w3schools.com/css/default.asp;
+#X text 4 -568 In Pd-L2Ork \, all iemgui objects can receive various
+CSS commands that can further modify their behavior. Below is an example.
+You should avoid using loadbang for providing CSS instructions to objects
+because such commands are dropped when the object is invisible and
+therefore does not exist on the HTML5 canvas. To be able to address
+appropriate elements \, use the Show DevTools option found in the Help
+menu. For more info on the CSS commands \, visit:, f 75;
+#X connect 0 0 5 0;
+#X connect 1 0 5 0;
+#X connect 3 0 1 0;
 #X restore 170 602 pd advanced_css_properties;
 #X connect 29 0 36 0;
 #X connect 30 0 41 0;

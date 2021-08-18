@@ -1,4 +1,4 @@
-#N canvas 758 118 553 727 10;
+#N canvas 691 58 553 727 10;
 #X obj 0 705 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
 14 #dcdcdc #404040 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header vslider 3 12 0 18
@@ -48,11 +48,11 @@ its appearance.;
 #X text 168 545 - when the slider value is changed by clicking \, dragging
 \, or sending a float to the inlet \, the new slider value is sent
 to the outlet.;
-#N canvas 53 19 464 608 Setting_slider_properties_through_messages
+#N canvas 53 22 464 608 Setting_slider_properties_through_messages
 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
-#X floatatom 12 189 1 0 1 0 - #0-soc - 0, f 1;
+#X floatatom 12 189 1 0 1 0 - #0-soc - 0 0, f 1;
 #X text 324 35 no init;
 #X text 9 170 steady-on-click;
 #X text 11 309 label;
@@ -187,7 +187,7 @@ to the outlet.;
 #X connect 6 0 3 0;
 #X coords 0 -1 1 1 48 62 2 100 100;
 #X restore 12 470 pd flash-time;
-#N canvas 0 0 306 317 flash-time 0;
+#N canvas 0 22 306 317 flash-time 0;
 #X obj 96 521 outlet;
 #X obj 162 230 t b f;
 #X obj 96 268 +;
@@ -280,7 +280,7 @@ to the outlet.;
 #X connect 4 0 1 0;
 #X coords 0 -1 1 1 48 42 2 100 100;
 #X restore 348 471 pd flash-time;
-#X floatatom 392 337 5 0 0 0 - - - 0, f 5;
+#X floatatom 392 337 5 0 0 0 - - - 0 0, f 5;
 #X text 11 36 dimensions;
 #X text 267 470 1.x-pos;
 #X text 267 492 2.y-pos;
@@ -332,9 +332,9 @@ to the outlet.;
 #X connect 80 0 63 0;
 #X restore 108 510 pd Setting_slider_properties_through_messages;
 #X obj 57 213 ftom;
-#X floatatom 57 237 9 0 0 0 - - - 0, f 9;
-#X floatatom 104 213 9 0 0 0 - - - 0, f 9;
-#X floatatom 57 84 9 0 0 0 - - - 0, f 9;
+#X floatatom 57 237 9 0 0 0 - - - 0 0, f 9;
+#X floatatom 104 213 9 0 0 0 - - - 0 0, f 9;
+#X floatatom 57 84 9 0 0 0 - - - 0 0, f 9;
 #X obj 57 106 mtof;
 #X text 97 177 (0.01 pixels);
 #X text 99 148 shift-click & drag;
@@ -346,16 +346,16 @@ to the outlet.;
 #X text 379 186 choose "Properties" to;
 #X text 380 200 set them \, or change them;
 #X text 380 214 with messages (see below);
-#X floatatom 250 216 4 0 0 0 - - - 0, f 4;
+#X floatatom 250 216 4 0 0 0 - - - 0 0, f 4;
 #X msg 309 69 set \$1;
-#X floatatom 270 47 4 0 0 0 - - - 0, f 4;
+#X floatatom 270 47 4 0 0 0 - - - 0 0, f 4;
 #X obj 250 240 bng 15 250 50 0 empty empty empty 8 -8 0 10 #fcfcfc
 #000000 #000000;
 #X obj 250 47 bng 15 250 50 0 empty empty empty 8 -8 0 10 #fcfcfc #000000
 #000000;
-#X floatatom 309 48 4 0 0 0 - - - 0, f 4;
-#X floatatom 310 191 4 0 0 0 - - - 0, f 4;
-#X floatatom 309 100 4 0 0 0 - - - 0, f 4;
+#X floatatom 309 48 4 0 0 0 - - - 0 0, f 4;
+#X floatatom 310 191 4 0 0 0 - - - 0 0, f 4;
+#X floatatom 309 100 4 0 0 0 - - - 0 0, f 4;
 #X obj 250 102 vsl 15 101 100 300 0 1 foo3_snd foo3_rcv empty 8 -8
 0 10 #d8fcfc #004450 #000000 5350 1 0;
 #X obj 309 143 s foo3_rcv;
@@ -416,62 +416,63 @@ outlet.;
 #X text 168 318 - output the current slider value.;
 #X text 429 11 [vslider] or [vsl];
 #N canvas 277 184 467 593 advanced_css_properties 0;
-#X obj 154 -357 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#X obj 154 -327 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
-#X msg 50 -436 css border fill rgba(255 \\\, 0 \\\, 255 \\\, 0.9);
-#X msg 219 -231 0;
-#X floatatom 170 -181 5 0 0 0 - - - 0, f 5;
-#X floatatom 79 -181 5 0 0 0 - - - 0, f 5;
-#X obj 219 -253 sel 0;
-#X obj 34 -111 print;
-#X obj 79 -159 pack 0 0 0, f 31;
-#X obj 153 -281 t f f f f;
-#X floatatom 262 -181 5 0 0 0 - - - 0, f 5;
-#X obj 79 -206 expr 1+$f1/20;
-#X obj 262 -206 expr $f1*-.5;
-#X msg 34 -459 css border transform skew(\$1deg);
+#X msg 50 -406 css border fill rgba(255 \\\, 0 \\\, 255 \\\, 0.9);
+#X msg 219 -201 0;
+#X floatatom 170 -151 5 0 0 0 - - - 0 0, f 5;
+#X floatatom 79 -151 5 0 0 0 - - - 0 0, f 5;
+#X obj 219 -223 sel 0;
+#X obj 79 -129 pack 0 0 0, f 31;
+#X obj 153 -251 t f f f f;
+#X floatatom 262 -151 5 0 0 0 - - - 0 0, f 5;
+#X obj 79 -176 expr 1+$f1/20;
+#X obj 262 -176 expr \\$f1*-.5;
+#X msg 34 -429 css border transform skew(\$1deg);
 #X obj 0 -594 cnv 15 466 21 empty \$0-pddp.cnv.subheading empty 3 12
 0 14 #c4dcdc #000000 0;
-#X obj 5 -516 pddplink https://www.w3schools.com/css/default.asp;
-#X obj 154 -310 counter 1 0 3;
-#X obj 154 -335 metro 20;
-#X floatatom 34 -480 5 0 0 0 - - - 0, f 5;
-#X msg 79 -136 css border transform scale(\$1) translate(\$2px \\\,
+#X obj 154 -280 counter 1 0 3;
+#X obj 154 -305 metro 20;
+#X floatatom 34 -450 5 0 0 0 - - - 0 0, f 5;
+#X msg 79 -106 css border transform scale(\$1) translate(\$2px \\\,
 \$3px);
 #X text 5 -591 Advanced CSS properties;
-#X text 5 -567 In Pd-L2Ork \, all iemgui objects can receive various
-CSS commands that can further modify their behavior. Below are two
-examples. To be able to address appropriate elements \, use the Show
-DevTools option found in the Help menu. For more info on the CSS commands
-\, visit:, f 75;
-#X obj 34 -404 vsl 15 128 0 127 0 0 empty empty empty 0 -9 0 10 #fcfcfc
+#X obj 34 -374 vsl 15 128 0 127 0 0 empty empty empty 0 -9 0 10 #fcfcfc
 #000000 #000000 0 1 0;
-#X obj 79 -111 vsl 15 49 0 127 0 0 vsl-output empty empty 0 -9 0 10
-#fcfcfc #000000 #000000 700 1 0;
-#X obj 154 -380 r vsl-output;
-#X obj 170 -206 expr $f1*-0.5;
-#X connect 0 0 16 0;
-#X connect 1 0 21 0;
-#X connect 2 0 16 0;
-#X connect 3 0 7 1;
-#X connect 4 0 7 0;
+#X obj 79 -81 vsl 15 49 0 127 0 0 vsl-output empty empty 0 -9 0 10
+#fcfcfc #000000 #000000 0 1 0;
+#X obj 154 -350 r vsl-output;
+#X obj 170 -176 expr \\$f1*-0.5;
+#X obj 106 -488 pddplink https://www.w3schools.com/css/default.asp
+;
+#X text 6 -567 In Pd-L2Ork \, all iemgui objects can receive various
+CSS commands that can further modify their behavior. Below are two
+examples. You should avoid using loadbang for providing CSS instructions
+to objects because such commands are dropped when the object is invisible
+and therefore does not exist on the HTML5 canvas. To be able to address
+appropriate elements \, use the Show DevTools option found in the Help
+menu. For more info on the CSS commands \, visit:, f 75;
+#X connect 0 0 14 0;
+#X connect 1 0 18 0;
+#X connect 2 0 14 0;
+#X connect 3 0 6 1;
+#X connect 4 0 6 0;
 #X connect 5 0 2 0;
-#X connect 7 0 18 0;
-#X connect 8 0 10 0;
-#X connect 8 1 24 0;
-#X connect 8 2 11 0;
-#X connect 8 3 5 0;
-#X connect 9 0 7 2;
-#X connect 10 0 4 0;
-#X connect 11 0 9 0;
-#X connect 12 0 21 0;
-#X connect 15 0 8 0;
-#X connect 16 0 15 0;
-#X connect 17 0 12 0;
-#X connect 18 0 6 0;
-#X connect 18 0 22 0;
-#X connect 23 0 0 0;
-#X connect 24 0 3 0;
+#X connect 6 0 16 0;
+#X connect 7 0 9 0;
+#X connect 7 1 21 0;
+#X connect 7 2 10 0;
+#X connect 7 3 5 0;
+#X connect 8 0 6 2;
+#X connect 9 0 4 0;
+#X connect 10 0 8 0;
+#X connect 11 0 18 0;
+#X connect 13 0 7 0;
+#X connect 14 0 13 0;
+#X connect 15 0 11 0;
+#X connect 16 0 19 0;
+#X connect 20 0 0 0;
+#X connect 21 0 3 0;
 #X restore 170 683 pd advanced_css_properties;
 #X text 98 335 exclusive;
 #N canvas 599 201 467 468 exclusive_focus 0;
@@ -483,13 +484,13 @@ DevTools option found in the Help menu. For more info on the CSS commands
 #000000 1 1;
 #X msg 156 -404 exclusive \$1;
 #X obj 156 -219 key;
-#X floatatom 156 -194 5 0 0 0 - - - 0, f 5;
+#X floatatom 156 -194 5 0 0 0 - - - 0 0, f 5;
 #X obj 196 -219 keyname;
 #X obj 196 -194 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1 1;
-#X symbolatom 235 -194 10 0 0 0 - - - 0, f 10;
+#X symbolatom 235 -194 10 0 0 0 - - - 0 0, f 10;
 #X obj 156 -380 vsl 15 128 0 127 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1 0;
+#000000 #000000 0 1 1;
 #X text 5 -567 Notice how when sliding the left slider while toggling
 shift key (used to toggle fine movement) there is no output via the
 key and keyname objects \, whereas the right one still outputs shift

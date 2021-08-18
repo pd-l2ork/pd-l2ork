@@ -38,7 +38,7 @@
 #X obj 136 115 sel 0;
 #X msg 130 137 1e+37;
 #X obj 205 155 t a;
-#X floatatom 13 147 5 0 0 0 - - - 0, f 5;
+#X floatatom 13 147 5 0 0 0 - - - 0 0, f 5;
 #X obj 93 118 + 1;
 #X connect 0 0 3 0;
 #X connect 1 0 9 0;
@@ -66,7 +66,7 @@
 #X obj 257 43 spigot;
 #X obj 77 71 s \$0-k;
 #X obj 310 10 r \$0-k;
-#N canvas 0 0 450 300 score 0;
+#N canvas 0 22 450 300 score 0;
 #X obj 84 59 inlet;
 #X obj 84 113 f;
 #X obj 120 113 + 1;
@@ -91,7 +91,7 @@
 #X connect 10 0 6 0;
 #X restore 101 386 pd score;
 #X obj 68 95 metro 10;
-#N canvas 0 0 450 300 once 0;
+#N canvas 0 22 450 300 once 0;
 #X obj 26 21 inlet;
 #X obj 26 102 outlet;
 #X obj 26 75 t a b;
@@ -360,7 +360,7 @@ the gui-properties of [cnv]:;
 #X connect 4 0 1 0;
 #X coords 0 -1 1 1 48 42 2 100 100;
 #X restore 165 323 pd flash-time;
-#N canvas 0 0 306 317 flash-time 0;
+#N canvas 0 22 306 317 flash-time 0;
 #X obj 96 521 outlet;
 #X obj 162 230 t b f;
 #X obj 96 268 +;
@@ -529,16 +529,16 @@ a cnv:;
 #X text 168 463 - creating a [cnv] without any arguments will set default
 values for all gui-properties. See the subpatch below to learn how
 to dynamically instantiate a [cnv] object with custom properties:;
-#X floatatom 338 318 4 0 0 0 - - - 0, f 4;
-#X floatatom 382 318 4 0 0 0 - - - 0, f 4;
+#X floatatom 338 318 4 0 0 0 - - - 0 0, f 4;
+#X floatatom 382 318 4 0 0 0 - - - 0 0, f 4;
 #X text 349 334 x;
 #X text 393 334 y;
 #X obj 435 170 metro 100;
 #X obj 435 150 tgl 15 1 empty empty empty 20 8 0 10 #fcfcfc #000000
 #000000 1 1;
 #X obj 338 270 r from_K1;
-#X floatatom 435 318 4 0 0 0 - - - 0, f 4;
-#X floatatom 479 318 4 0 0 0 - - - 0, f 4;
+#X floatatom 435 318 4 0 0 0 - - - 0 0, f 4;
+#X floatatom 479 318 4 0 0 0 - - - 0 0, f 4;
 #X text 445 334 x;
 #X text 490 334 y;
 #X obj 435 270 r from_K2;
@@ -739,29 +739,32 @@ insteadpasses them to objects below it.;
 #X connect 0 0 4 0;
 #X restore 169 608 pd using_canvas_to_hide_objects_that_capture_mouse_clicks
 ;
-#N canvas 277 184 467 305 advanced_css_properties 0;
-#X obj 103 -376 cnv 15 142 46 empty empty empty 20 12 0 14 #e0e0e0
+#N canvas 277 184 467 328 advanced_css_properties 0;
+#X obj 103 -346 cnv 15 142 46 empty empty empty 20 12 0 14 #e0e0e0
 #404040 0;
 #X obj 0 -594 cnv 15 466 21 empty \$0-pddp.cnv.subheading empty 3 12
 0 14 #c4dcdc #000000 0;
-#X obj 5 -516 pddplink https://www.w3schools.com/css/default.asp;
-#X floatatom 84 -480 5 0 0 0 - - - 0, f 5;
+#X floatatom 84 -450 5 0 0 0 - - - 0 0, f 5;
 #X text 5 -591 Advanced CSS properties;
-#X obj 84 -387 cnv 15 188 23 empty top-canvas empty 20 12 0 14 #e0e0e0
+#X obj 84 -357 cnv 15 188 23 empty top-canvas empty 20 12 0 14 #e0e0e0
 #404040 0;
-#X obj 84 -411 s top-canvas;
-#X msg 84 -459 css rect transform skew(\$1deg);
-#X msg 100 -436 css rect fill rgba(255 \\\, 0 \\\, 255 \\\, 0.3);
-#X text 5 -567 In Pd-L2Ork \, all iemgui objects can receive various
-CSS commands that can further modify their behavior. Below is one example.
-To be able to address appropriate elements \, use the Show DevTools
-option found in the Help menu. For more info on the CSS commands \,
-visit:, f 75;
-#X text 279 -392 click on the color change CSS command above to make
+#X obj 84 -381 s top-canvas;
+#X msg 84 -429 css rect transform skew(\$1deg);
+#X msg 100 -406 css rect fill rgba(255 \\\, 0 \\\, 255 \\\, 0.3);
+#X text 279 -362 click on the color change CSS command above to make
 the top canvas semitransparent, f 20;
-#X connect 3 0 7 0;
-#X connect 7 0 6 0;
-#X connect 8 0 6 0;
+#X obj 107 -490 pddplink https://www.w3schools.com/css/default.asp
+;
+#X text 7 -569 In Pd-L2Ork \, all iemgui objects can receive various
+CSS commands that can further modify their behavior. Below are two
+examples. You should avoid using loadbang for providing CSS instructions
+to objects because such commands are dropped when the object is invisible
+and therefore does not exist on the HTML5 canvas. To be able to address
+appropriate elements \, use the Show DevTools option found in the Help
+menu. For more info on the CSS commands \, visit:, f 75;
+#X connect 2 0 6 0;
+#X connect 6 0 5 0;
+#X connect 7 0 5 0;
 #X restore 169 632 pd advanced_css_properties;
 #X connect 21 0 39 0;
 #X connect 22 0 21 0;

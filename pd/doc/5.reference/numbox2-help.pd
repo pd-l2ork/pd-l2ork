@@ -1,4 +1,4 @@
-#N canvas 302 104 553 790 10;
+#N canvas 236 44 553 790 10;
 #X obj 0 768 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
 14 #dcdcdc #404040 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header nbx 3 12 0 18 #c4dcdc
@@ -32,7 +32,7 @@ updated by Ivica Ico Bukvic.;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
 #X text 8 2 [nbx] Related Objects;
-#X floatatom 22 43 5 0 0 0 - - - 0, f 5;
+#X floatatom 22 43 5 0 0 0 - - - 0 0, f 5;
 #X obj 62 43 float;
 #X obj 106 43 int;
 #X obj 20 90 x_all_guis bng tgl vsl hsl hradio vradio vu cnv nbx;
@@ -45,21 +45,21 @@ updated by Ivica Ico Bukvic.;
 #X text 98 606 float;
 #X obj 78 607 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
 #9c9c9c 0;
-#X floatatom 28 175 6 0 0 0 - - - 0, f 6;
+#X floatatom 28 175 6 0 0 0 - - - 0 0, f 6;
 #X msg 57 94 set \$1;
-#X floatatom 48 49 6 0 0 0 - - - 0, f 6;
+#X floatatom 48 49 6 0 0 0 - - - 0 0, f 6;
 #X obj 28 199 bng 15 250 50 0 empty empty empty 8 -8 0 10 #fcfcfc #000000
 #000000;
 #X obj 28 49 bng 15 250 50 0 empty empty empty 8 -8 0 10 #fcfcfc #000000
 #000000;
-#X floatatom 57 71 4 0 0 0 - - - 0, f 4;
-#X floatatom 108 49 6 0 0 0 - - - 0, f 6;
-#X floatatom 366 48 7 0 0 0 - - - 0, f 7;
+#X floatatom 57 71 4 0 0 0 - - - 0 0, f 4;
+#X floatatom 108 49 6 0 0 0 - - - 0 0, f 6;
+#X floatatom 366 48 7 0 0 0 - - - 0 0, f 7;
 #X obj 241 159 ftom;
-#X floatatom 241 183 4 0 0 0 - - - 0, f 4;
-#X floatatom 287 159 9 0 0 0 - - - 0, f 9;
-#X floatatom 366 120 9 0 0 0 - - - 0, f 9;
-#X floatatom 241 63 4 0 0 0 - - - 0, f 4;
+#X floatatom 241 183 4 0 0 0 - - - 0 0, f 4;
+#X floatatom 287 159 9 0 0 0 - - - 0 0, f 9;
+#X floatatom 366 120 9 0 0 0 - - - 0 0, f 9;
+#X floatatom 241 63 4 0 0 0 - - - 0 0, f 4;
 #X obj 241 85 mtof;
 #X text 104 151 (0.01 pixels);
 #X msg 108 71 set \$1;
@@ -82,7 +82,7 @@ updated by Ivica Ico Bukvic.;
 #X obj 28 135 nbx 6 15 -1e+37 1e+37 0 0 foo13_snd foo13_rcv empty 45
 7 0 10 #d8fcfc #004450 #000000 0 256 0 0;
 #X obj 241 128 nbx 5 18 55 3520 1 0 goo14_snd goo14_rcv log.freq. 10
--10 0 14 #fcc4c4 #9c00fc #583000 63 256 0 0;
+-10 0 14 #fcc4c4 #9c00fc #583000 55 256 0 0;
 #X text 363 157 and receive names. Right-;
 #X text 363 172 click and choose;
 #X text 362 141 [nbx] has settable send;
@@ -214,7 +214,7 @@ the gui-properties of [nbx]:;
 #X connect 6 0 3 0;
 #X coords 0 -1 1 1 48 62 2 100 100;
 #X restore 18 467 pd flash-time;
-#N canvas 0 0 306 317 flash-time 0;
+#N canvas 0 22 306 317 flash-time 0;
 #X obj 96 521 outlet;
 #X obj 162 230 t b f;
 #X obj 96 268 +;
@@ -401,34 +401,38 @@ below to learn how to dynamically instantiate a [nbx] with custom properties:
 #X text 98 334 bang;
 #X text 168 334 - output the current value;
 #X text 302 738 based on numbox2 by musil@iem.kug.ac.at;
-#N canvas 277 184 467 360 advanced_css_properties 0;
-#X msg 130 -406 css border fill rgba(255 \\\, 0 \\\, 255 \\\, 0.9)
+#N canvas 277 184 467 392 advanced_css_properties 0;
+#X msg 130 -356 css border fill rgba(255 \\\, 0 \\\, 255 \\\, 0.9)
 ;
-#X msg 114 -429 css border transform skew(\$1deg);
+#X msg 114 -379 css border transform skew(\$1deg);
 #X obj 0 -594 cnv 15 466 21 empty \$0-pddp.cnv.subheading empty 3 12
 0 14 #c4dcdc #000000 0;
-#X obj 129 -541 pddplink https://www.w3schools.com/css/default.asp
-;
-#X obj 78 -291 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
+#X obj 78 -241 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
 #fcfcfc #000000 #000000 0 256 0 0;
-#X msg 141 -383 css text font-size 20px;
-#X floatatom 114 -450 5 0 0 0 - - - 0, f 5;
-#X floatatom 78 -494 5 0 0 0 - - - 0, f 5;
-#X msg 78 -473 css triangle transform scale(\$1);
-#X text 5 -567 In Pd-L2Ork \, all iemgui objects can receive various
-CSS commands that can further modify their behavior. Below is an example.
-For more info on the CSS commands \, visit:, f 75;
-#X msg 154 -330 css text transform rotate(\$1deg);
-#X floatatom 154 -350 5 0 0 0 - - - 0, f 5;
+#X msg 141 -333 css text font-size 20px;
+#X floatatom 114 -400 5 0 0 0 - - - 0 0, f 5;
+#X floatatom 78 -444 5 0 0 0 - - - 0 0, f 5;
+#X msg 78 -423 css triangle transform scale(\$1);
+#X msg 154 -280 css text transform rotate(\$1deg);
+#X floatatom 154 -300 5 0 0 0 - - - 0 0, f 5;
 #X text 6 -591 Advanced CSS properties;
-#X connect 0 0 4 0;
-#X connect 1 0 4 0;
-#X connect 5 0 4 0;
-#X connect 6 0 1 0;
-#X connect 7 0 8 0;
-#X connect 8 0 4 0;
-#X connect 10 0 4 0;
-#X connect 11 0 10 0;
+#X obj 108 -489 pddplink https://www.w3schools.com/css/default.asp
+;
+#X text 8 -567 In Pd-L2Ork \, all iemgui objects can receive various
+CSS commands that can further modify their behavior. Below are several
+examples. You should avoid using loadbang for providing CSS instructions
+to objects because such commands are dropped when the object is invisible
+and therefore does not exist on the HTML5 canvas. To be able to address
+appropriate elements \, use the Show DevTools option found in the Help
+menu. For more info on the CSS commands \, visit:, f 75;
+#X connect 0 0 3 0;
+#X connect 1 0 3 0;
+#X connect 4 0 3 0;
+#X connect 5 0 1 0;
+#X connect 6 0 7 0;
+#X connect 7 0 3 0;
+#X connect 8 0 3 0;
+#X connect 9 0 8 0;
 #X restore 103 737 pd advanced_css_properties;
 #X text 98 351 exclusive;
 #N canvas 599 201 467 468 exclusive_focus 0;
@@ -440,13 +444,13 @@ For more info on the CSS commands \, visit:, f 75;
 #000000 1 1;
 #X msg 156 -384 exclusive \$1;
 #X obj 156 -279 key;
-#X floatatom 156 -254 5 0 0 0 - - - 0, f 5;
+#X floatatom 156 -254 5 0 0 0 - - - 0 0, f 5;
 #X obj 196 -279 keyname;
 #X obj 196 -254 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 1 1;
-#X symbolatom 235 -254 10 0 0 0 - - - 0, f 10;
+#000000 0 1;
+#X symbolatom 235 -254 10 0 0 0 - - - 0 0, f 10;
 #X obj 156 -359 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0
-10 #fcfcfc #000000 #000000 34343 256 0 1;
+10 #fcfcfc #000000 #000000 0 256 0 1;
 #X obj 249 -359 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0
 10 #fcfcfc #000000 #000000 0 256 0 0;
 #X text 5 -567 Notice how when typing into the left numbox there is
