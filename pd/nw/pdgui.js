@@ -1867,8 +1867,14 @@ function gui_canvas_cursor(cid, pd_event_type) {
 // Note: cid can either be a real canvas id, or the string "pd" for the
 // console window
 function canvas_sendkey(cid, state, evt, char_code, repeat) {
-    var shift = evt.shiftKey ? 1 : 0,
+    var shift = 0, repeat_number = 0;
+    // ico@vt.edu 2021-08-20: here we check whether evt is not null because we use
+    // this same mechanism to paste text into gatom (see m.edit.paste
+    // inside the pd_canvas.js)
+    if (evt) {
+        shift = evt.shiftKey ? 1 : 0,
         repeat_number = repeat ? 1 : 0;
+    }
     //post("canvas_sendkey state=" + state + " evt=" + evt +
     //	" char_code=<" + char_code + "> repeat=" + repeat + " shift=" + shift);
     pdsend(cid, "key", state, char_code, shift, 1, repeat_number);
@@ -8154,3 +8160,21 @@ function restore_apps(force) {
 }
 
 exports.restore_apps = restore_apps;
+
+// ico@vt.edu 2021-08-20: variable to inform the pdgui when the object
+// has been grabbed. We use this to enable pasting of text inside gatoms
+// LATER: consider using this for other purposes, as well
+var gobj_grabbed = 0;
+
+function gui_gobj_grabbed(val) {
+    gobj_grabbed = val;
+    //post("gui_gobj_grabbed " + gobj_grabbed);
+}
+
+exports.gui_gobj_grabbed = gui_gobj_grabbed;
+
+function gui_is_gobj_grabbed() {
+    return gobj_grabbed;
+}
+
+exports.gui_is_gobj_grabbed = gui_is_gobj_grabbed;

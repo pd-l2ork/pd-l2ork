@@ -1755,9 +1755,18 @@ function nw_create_patch_window_menus(gui, w, name) {
     minit(m.edit.paste, {
         enabled: true,
         click: function () {
-            // ico@vt.edu 2020-10-30 if we are pasting inside find box
+            //pdgui.post("m.edit.paste " + pdgui.gui_is_gobj_grabbed());
             if (canvas_events.get_state() === "search") {
+                // ico@vt.edu 2020-10-30: pasting inside find box
                 document.execCommand("paste");
+            } else if (pdgui.gui_is_gobj_grabbed()) {
+                // ico@vt.edu 2021-08-20: pasting inside a grabbed object
+                //pdgui.post("gobj_grabbed paste <" + nw.Clipboard.get().get('text') + ">");
+                var paste_text = nw.Clipboard.get().get('text');
+                for (var i = 0; i < paste_text.length; i++) {
+                    pdgui.canvas_sendkey(name, 1, 0, paste_text.charCodeAt(i), 0);
+                    pdgui.canvas_sendkey(name, 0, 0, paste_text.charCodeAt(i), 0);
+                }
             } else {
                 pdgui.pdsend(name, "paste");
             }
