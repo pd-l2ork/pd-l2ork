@@ -1,4 +1,4 @@
-#N canvas 142 163 553 640 10;
+#N canvas 190 132 553 641 10;
 #X obj 0 618 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
 14 #dcdcdc #404040 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header toggle 3 12 0 18
@@ -375,40 +375,39 @@ initValue non-zeroValue;
 #X text 98 463 14;
 #X obj 4 620 pddp/pddplink all_about_help_patches.pd -text Usage Guide
 ;
-#N canvas 264 109 593 653 advanced_css_properties 0;
+#N canvas 264 109 583 653 advanced_css_properties 0;
 #X obj 0 -594 cnv 15 582 21 empty \$0-pddp.cnv.subheading empty 3 12
 0 14 #c4dcdc #000000 0;
 #X text 5 -591 Advanced CSS properties;
-#X obj 46 2 tgl 42 1 empty empty empty 17 7 0 10 #fcfcfc #000000 #000000
+#X obj 36 2 tgl 42 1 empty empty empty 17 7 0 10 #fcfcfc #000000 #000000
 1 1;
-#X obj 46 -474 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X obj 36 -474 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 0 1;
-#X obj 46 -434 counter 0 359;
-#X obj 46 -455 metro 5;
-#X msg 123 -474 0;
-#X floatatom 128 -282 5 0 0 0 - - - 0 0, f 5;
-#X msg 128 -262 css cross1 stroke-width \$1;
-#X msg 153 -474 45;
-#X msg 172 -129 css cross1 transform-origin 21px 21px \, css cross1
+#X obj 36 -434 counter 0 359;
+#X obj 36 -455 metro 5;
+#X msg 113 -474 0;
+#X floatatom 118 -282 5 0 0 0 - - - 0 0, f 5;
+#X msg 118 -262 css cross1 stroke-width \$1;
+#X msg 143 -474 45;
+#X msg 162 -129 css cross1 transform-origin 21px 21px \, css cross1
 transform scale(0.75) rotate(45deg) \, css cross1 stroke-width 50 \,
 css cross2 stroke-width 0;
-#X obj 46 -413 sprintf css cross1 transform rotate(%ddeg);
-#X obj 85 -390 sprintf css cross2 transform rotate(%ddeg);
-#X msg 162 -189 css cross1 transform scale(0.75) translate(7 \\\, 7)
+#X obj 36 -413 sprintf css cross1 transform rotate(%ddeg);
+#X obj 75 -390 sprintf css cross2 transform rotate(%ddeg);
+#X msg 152 -189 css cross1 transform scale(0.75) translate(7 \\\, 7)
 rotate(45 \\\, 21 \\\, 21) \, css cross1 stroke-width 50;
-#X msg 151 -216 css cross1 stroke black;
-#X text 106 -362 use the following to reset the toggle appearance:
+#X msg 141 -216 css cross1 stroke black;
+#X text 96 -362 use the following to reset the toggle appearance:;
+#X text 162 -146 use this to make toggle look like a square button:
 ;
-#X text 172 -146 use this to make toggle look like a square button:
-;
-#X msg 151 -237 css cross1 stroke pink;
-#X msg 106 -345 css cross1 stroke-width 2 \, css cross2 stroke-width
+#X msg 141 -237 css cross1 stroke pink;
+#X msg 96 -345 css cross1 stroke-width 2 \, css cross2 stroke-width
 2 \, css cross1 transform-origin 0px 0px \, css cross2 transform-origin
 0px 0px \, css cross1 transform rotate(0deg) \, css cross2 transform
 rotate(0deg);
-#X msg 192 -59 css cross1 transform-origin 21px 21px \, css cross2
+#X msg 182 -59 css cross1 transform-origin 21px 21px \, css cross2
 transform-origin 21px 21px;
-#X text 192 -76 change the rotation origin to center of the object:
+#X text 182 -76 change the rotation origin to center of the object:
 ;
 #X obj 8 -504 pddplink https://www.w3schools.com/css/default.asp;
 #X text 7 -568 In Pd-L2Ork \, all iemgui objects can receive various

@@ -1,4 +1,4 @@
-#N canvas 236 44 553 790 10;
+#N canvas 702 58 553 790 10;
 #X obj 0 768 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
 14 #dcdcdc #404040 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header nbx 3 12 0 18 #c4dcdc
@@ -401,20 +401,20 @@ below to learn how to dynamically instantiate a [nbx] with custom properties:
 #X text 98 334 bang;
 #X text 168 334 - output the current value;
 #X text 302 738 based on numbox2 by musil@iem.kug.ac.at;
-#N canvas 277 184 467 392 advanced_css_properties 0;
-#X msg 130 -356 css border fill rgba(255 \\\, 0 \\\, 255 \\\, 0.9)
-;
+#N canvas 579 277 467 421 advanced_css_properties 0;
+#X obj 54 -224 cnv 15 103 32 empty empty empty 20 12 0 14 #d5b8ef #404040
+0;
 #X msg 114 -379 css border transform skew(\$1deg);
 #X obj 0 -594 cnv 15 466 21 empty \$0-pddp.cnv.subheading empty 3 12
 0 14 #c4dcdc #000000 0;
-#X obj 78 -241 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
+#X obj 78 -231 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
 #fcfcfc #000000 #000000 0 256 0 0;
-#X msg 141 -333 css text font-size 20px;
+#X msg 153 -308 css text font-size 20px;
 #X floatatom 114 -400 5 0 0 0 - - - 0 0, f 5;
 #X floatatom 78 -444 5 0 0 0 - - - 0 0, f 5;
 #X msg 78 -423 css triangle transform scale(\$1);
-#X msg 154 -280 css text transform rotate(\$1deg);
-#X floatatom 154 -300 5 0 0 0 - - - 0 0, f 5;
+#X msg 179 -263 css text transform rotate(\$1deg);
+#X floatatom 179 -283 5 0 0 0 - - - 0 0, f 5;
 #X text 6 -591 Advanced CSS properties;
 #X obj 108 -489 pddplink https://www.w3schools.com/css/default.asp
 ;
@@ -425,7 +425,9 @@ to objects because such commands are dropped when the object is invisible
 and therefore does not exist on the HTML5 canvas. To be able to address
 appropriate elements \, use the Show DevTools option found in the Help
 menu. For more info on the CSS commands \, visit:, f 75;
-#X connect 0 0 3 0;
+#X msg 122 -356 css border fill rgba(255 \\\, 0 \\\, 255 \\\, 0) \,
+css border stroke-width 0px \, css triangle stroke-width 0px \, css
+triangle opacity 0;
 #X connect 1 0 3 0;
 #X connect 4 0 3 0;
 #X connect 5 0 1 0;
@@ -433,6 +435,7 @@ menu. For more info on the CSS commands \, visit:, f 75;
 #X connect 7 0 3 0;
 #X connect 8 0 3 0;
 #X connect 9 0 8 0;
+#X connect 13 0 3 0;
 #X restore 103 737 pd advanced_css_properties;
 #X text 98 351 exclusive;
 #N canvas 599 201 467 468 exclusive_focus 0;
@@ -447,7 +450,7 @@ menu. For more info on the CSS commands \, visit:, f 75;
 #X floatatom 156 -254 5 0 0 0 - - - 0 0, f 5;
 #X obj 196 -279 keyname;
 #X obj 196 -254 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 0 1;
+#000000 1 1;
 #X symbolatom 235 -254 10 0 0 0 - - - 0 0, f 10;
 #X obj 156 -359 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0
 10 #fcfcfc #000000 #000000 0 256 0 1;
