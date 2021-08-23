@@ -153,7 +153,7 @@ ifeq ($(OS_NAME),windows)
 else
   ifeq ($(OS_NAME),darwin)
 # on Mac OS X 10.6/Snow Leopard don't build hid since it needs Carbon
-    lib_targets += pdp iem16 apple
+    lib_targets += pdp iem16 apple gem
     ifneq ($(shell uname -r | sed 's|10\.[0-9][0-9]*\.[0-9][0-9]*|10|'),10)
       lib_targets +=
     endif
@@ -705,7 +705,7 @@ $(gem_src)/Gem.pd_linux: $(gem_src)/configure
 	$(MAKE) $(GEM_MAKEFLAGS) -C $(gem_src)
 
 $(gem_src)/Gem.pd_darwin: $(gem_src)/configure
-	cd $(gem_src) && ./configure \
+	cd $(gem_src) && autoreconf -vim && ./configure \
 		CXXFLAGS="-DHAVE_S_STUFF_H $(CFLAGS_ADD)" \
 		PKG_FTGL_CFLAGS="-I/sw/include -I/sw/include/freetype2 -I/sw/include/FTGL" \
 		--prefix=$(prefix) \
