@@ -1476,17 +1476,23 @@ ifeq ($(OS_NAME),windows)
 		$(DESTDIR)/$(objectsdir)/js
 	install -p $(externals_src)/pdjs-win/binaries/x86-windows/*.pd \
 		$(DESTDIR)/$(objectsdir)/js
+	install -p $(externals_src)/pdjs-win/binaries/x86-windows/*.js \
+		$(DESTDIR)/$(objectsdir)/js
 endif
 ifeq ($(OS_NAME),darwin)
 	install -p $(externals_src)/pdjs/binaries/x64-macos/js.$(EXTENSION) \
 		$(DESTDIR)/$(objectsdir)/js
 	install -p $(externals_src)/pdjs/binaries/x64-macos/*.pd \
 		$(DESTDIR)/$(objectsdir)/js
+	install -p $(externals_src)/pdjs/binaries/x64-macos/*.js \
+		$(DESTDIR)/$(objectsdir)/js
 endif
 ifeq ($(OS_NAME),linux)
 	install -p $(externals_src)/pdjs/binaries/x64-linux/js.$(EXTENSION) \
 		$(DESTDIR)/$(objectsdir)/js
 	install -p $(externals_src)/pdjs/binaries/x64-linux/*.pd \
+		$(DESTDIR)/$(objectsdir)/js
+	install -p $(externals_src)/pdjs/binaries/x64-linux/*.js \
 		$(DESTDIR)/$(objectsdir)/js
 endif
 
