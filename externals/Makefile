@@ -139,7 +139,7 @@ ifeq ($(LIGHT),yes)
 lib_targets = loaders-libdir pddp
 INCREMENTAL = yes
 else
-lib_targets = adaptive arraysize autotune bassemu bendinfix boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui fluid freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemgui iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moocow moonlib motex mrpeach oscx pan pdcontainer pddp pdlua pdogg plugin pmpd rjlib sensel sigpack smlib tof unauthorized vbap windowing zexy
+lib_targets = adaptive arraysize autotune bassemu bendinfix boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui fluid freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemgui iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moocow moonlib motex mrpeach oscx pan pdcontainer pddp pdjs pdlua pdogg plugin pmpd rjlib sensel sigpack smlib tof unauthorized vbap windowing zexy
 endif
 
 # NEW (IN-PROGRESS): flext
@@ -1443,6 +1443,72 @@ pddp_install:
 pddp_clean:
 	make -C $(externals_src)/pddp clean
 
+#------------------------------------------------------------------------------#
+# pdjs
+
+pdjs:
+ifeq ($(OS_NAME),windows)
+	cd $(externals_src)/pdjs-win/v8 && unzip -u lib.zip
+	cd $(externals_src)/pdjs-win \
+		&& /mingw32/bin/cmake -G Ninja -DVERSION=1.0 -DCMAKE_BUILD_TYPE=Debug \
+			-B out/build/x86-mingw-Debug/ -S . \
+		&& /mingw32/bin/cmake --build out/build/x86-mingw-Debug -- -v
+endif
+ifeq ($(OS_NAME),darwin)
+	cd $(externals_src)/pdjs/v8 && unzip -u lib.zip
+	cd $(externals_src)/pdjs \
+		&& cmake -G Ninja -DVERSION=1.0 -DCMAKE_BUILD_TYPE=Debug \
+			-B out/build/x64-macos-Debug/ -S . \
+		&& cmake --build out/build/x64-macos-Debug -- -v
+endif
+ifeq ($(OS_NAME),linux)
+	cd $(externals_src)/pdjs/v8 && unzip -u lib.zip
+	cd $(externals_src)/pdjs \
+		&& cmake -G Ninja -DVERSION=1.0 -DCMAKE_BUILD_TYPE=Debug \
+			-B out/build/x64-linux-Debug/ -S . \
+		&& cmake --build out/build/x64-linux-Debug -- -v
+endif
+
+pdjs_install:
+	install -d $(DESTDIR)$(objectsdir)/js
+ifeq ($(OS_NAME),windows)
+	install -p $(externals_src)/pdjs-win/binaries/x86-windows/js.$(EXTENSION) \
+		$(DESTDIR)/$(objectsdir)/js
+	install -p $(externals_src)/pdjs-win/binaries/x86-windows/*.pd \
+		$(DESTDIR)/$(objectsdir)/js
+endif
+ifeq ($(OS_NAME),darwin)
+	install -p $(externals_src)/pdjs/binaries/x64-macos/js.$(EXTENSION) \
+		$(DESTDIR)/$(objectsdir)/js
+	install -p $(externals_src)/pdjs/binaries/x64-macos/*.pd \
+		$(DESTDIR)/$(objectsdir)/js
+endif
+ifeq ($(OS_NAME),linux)
+	install -p $(externals_src)/pdjs/binaries/x64-linux/js.$(EXTENSION) \
+		$(DESTDIR)/$(objectsdir)/js
+	install -p $(externals_src)/pdjs/binaries/x64-linux/*.pd \
+		$(DESTDIR)/$(objectsdir)/js
+endif
+
+pdjs_clean:
+ifeq ($(OS_NAME),windows)
+	cd $(externals_src)/pdjs-win \
+		&& /mingw32/bin/cmake --build out/build/x86-mingw-Debug --target clean
+	cd $(externals_src)/pdjs-win/v8 && rm -rf lib
+	cd $(externals_src)/pdjs-win && rm -rf binaries
+endif
+ifeq ($(OS_NAME),darwin)
+	cd $(externals_src)/pdjs \
+		&& cmake --build out/build/x64-macos-Debug --target clean
+	cd $(externals_src)/pdjs/v8 && rm -rf lib
+	cd $(externals_src)/pdjs && rm -rf binaries
+endif
+ifeq ($(OS_NAME),linux)
+	cd $(externals_src)/pdjs \
+		&& cmake --build out/build/x64-linux-Debug --target clean
+	cd $(externals_src)/pdjs/v8 && rm -rf lib
+	cd $(externals_src)/pdjs && rm -rf binaries
+endif
 
 #------------------------------------------------------------------------------#
 # PDLUA
