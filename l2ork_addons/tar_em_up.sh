@@ -312,13 +312,26 @@ then
 	cd ../pd/src && aclocal && autoconf
 	if [[ $os == "win" ]]; then
 		cd ../../packages/win32_inno
+		# ico@vt.edu 2021-08-25: remove old inno files
+		# to force the creation of the new one
+		rm -f pd-inno.iss
+		rm -f pd-inno-light.iss
 	elif [[ $os == "win64" ]]; then
 		cd ../../packages/win64_inno
+		# ico@vt.edu 2021-08-25: remove old inno files
+		# to force the creation of the new one
+		rm -f pd-inno.iss
+		rm -f pd-inno-light.iss
 	elif [[ $os == "osx" ]]; then
 		cd ../../packages/darwin_app
 	else
 		cd ../../packages/linux_make
 	fi
+	# ico@vt.edu 2021-08-25: move this here so that all builds
+	# update the revision number regardless whether they are
+	# light, incremental, or all (full recompile)
+	test -f ../../pd/src/s_version.h || make -C .. git_version
+	cp ../../pd/src/s_version.h ../../externals/build/include
 	if [ $full -gt 1 -o $deb -eq 2 -o $inno -eq 2 -o $dmg -eq 2 ]
 	then
 		test $clean -ne 0 && make distclean || true
@@ -326,13 +339,12 @@ then
 		# s_stuff.h when we copy it below. XXXNOTE AG: The build seems
 		# to work just fine even when skipping all this, so why again
 		# is this needed?
-		test -f ../../pd/src/s_version.h || make -C .. git_version
 		cp ../../pd/src/g_all_guis.h ../../externals/build/include
 		cp ../../pd/src/g_canvas.h ../../externals/build/include
 		cp ../../pd/src/m_imp.h ../../externals/build/include
 		cp ../../pd/src/m_pd.h ../../externals/build/include
 		cp ../../pd/src/s_stuff.h ../../externals/build/include
-		cp ../../pd/src/s_version.h ../../externals/build/include
+		#cp ../../pd/src/s_version.h ../../externals/build/include
 		cp ../../pd/src/g_all_guis.h ../../externals/build/include
 		rm -rf build/
 	fi
