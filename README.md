@@ -122,7 +122,7 @@ Hard drive space required: *roughly 2.5 GB*
              mda-lv2 libmp3lame-dev libspeex-dev libgsl0-dev \
              portaudio19-dev liblua5.3-dev python-dev libsmpeg0 libjpeg62-turbo \
              flite1-dev libgsm1-dev libgtk2.0-dev git libstk0-dev \
-             libfluidsynth-dev fluid-soundfont-gm byacc
+             libfluidsynth-dev fluid-soundfont-gm byacc cmake ninja-build
 
 2. The gui toolkit may require installing the following extra dependencies
         sudo apt-get install gconf2 libnss3
@@ -167,6 +167,15 @@ Hard drive space required: *roughly 2 GB*
         brew install gsl
         brew install libquicktime
         brew install pkg-config
+        brew install gettext
+        brew install freetype2
+        brew install ftgl
+        brew install jpeg
+        brew install libtiff
+        brew install sdl
+        brew install glfw
+        brew install ninja
+        brew install cmake
 
 3. Clone the Pd-L2Ork repository *(10 minutes)*
 
@@ -232,7 +241,8 @@ since it will usually contain spaces, making the build fail.
           mingw-w64-i686-lua mingw-w64-i686-toolchain \
           mingw-w64-i686-libjpeg-turbo \
           mingw-w64-i686-speex \
-          rsync unzip wget
+          rsync unzip wget mingw-w64-i686-cmake \
+          mingw-w64-i686-ninja
 
 5. Download the source code *(3-6 minutes)*  
    Issue the following command to create a new directory "pd-l2ork" and clone
