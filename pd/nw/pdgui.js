@@ -7860,21 +7860,29 @@ exports.gui_canvas_optimal_zoom = gui_canvas_optimal_zoom;
 function gui_lower(cid, tag) {
     gui(cid).get_elem("patchsvg", function(svg_elem) {
         var first_child = svg_elem.firstElementChild,
-        selection = null,
+        first_cord = svg_elem.querySelector(".cord"),
+        child = first_child,
+        selection = [],
         gobj,
         len,
         i;
         if (tag === "selected") {
-            selection = svg_elem.getElementsByClassName("selected");
+            while (child !== null && child !== first_cord) {
+                if (child.classList.contains("selected")) {
+                    selection.push(child);
+                }
+                child = child.nextElementSibling;
+            }
+            //selection = svg_elem.getElementsByClassName("selected");
         } else {
             gobj = get_gobj(cid, tag);
             if (gobj !== null) {
                 selection = [gobj];
             }
         }
-        if (selection !== null) {
+        if (selection.length > 0) {
             len = selection.length;
-            for (i = len - 1; i >= 0; i--) {
+            for (i = 0; i < len; i++) {
                 svg_elem.insertBefore(selection[i], first_child);
             }
         }
@@ -7887,23 +7895,31 @@ function gui_lower(cid, tag) {
 // all the silly logic on the C side moved here
 function gui_raise(cid, tag) {
     gui(cid).get_elem("patchsvg", function(svg_elem) {
-        var first_child = svg_elem.querySelector(".cord"),
-        selection = null,
+        var first_child = svg_elem.firstElementChild,
+        first_cord = svg_elem.querySelector(".cord"),
+        child = first_child,
+        selection = [],
         gobj,
         len,
         i;
         if (tag === "selected") {
-            selection = svg_elem.getElementsByClassName("selected");
+            while (child !== null && child !== first_cord) {
+                if (child.classList.contains("selected")) {
+                    selection.push(child);
+                }
+                child = child.nextElementSibling;
+            }
+            //selection = svg_elem.getElementsByClassName("selected");
         } else {
             gobj = get_gobj(cid, tag);
             if (gobj !== null) {
                 selection = [gobj];
             }
         }
-        if (selection !== null) {
+        if (selection.length > 0) {
             len = selection.length;
-            for (i = len - 1; i >= 0; i--) {
-                svg_elem.insertBefore(selection[i], first_child);
+            for (i = 0; i < len; i++) {
+                svg_elem.insertBefore(selection[i], first_cord);
             }
         }
     });
