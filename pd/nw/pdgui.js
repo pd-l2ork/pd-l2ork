@@ -2762,6 +2762,7 @@ function gui_atom_draw_border(cid, tag, type, width, height) {
 }
 
 function gui_atom_redraw_border(cid, tag, type, width, height) {
+    //post("gui_atom_redraw_border");
     gui(cid).get_gobj(tag)
     .q("polygon",  {
         points: atom_border_points(width, height, type !== 0) 
@@ -3082,7 +3083,7 @@ function text_to_tspans(cid, svg_text, text) {
             // if, on the other hand we have a parent, then we are likely editing
             // the contents of the gatom and therefore we can simply look for
             // our parent. either way, we need to truncate text, so that it does
-            // not overflow outside the box width.
+
             if (svg_text.parentNode === null)
             {
                 parentWidth = patchwin[cid].window.document.getElementById(

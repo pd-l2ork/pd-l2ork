@@ -1122,6 +1122,22 @@ static void gatom_motion(void *z, t_floatarg dx, t_floatarg dy)
 // trying to figure out when to introduce a '>' due to text overflow.
 static void gatom_redraw_text_w_dots(t_gatom *x, char *sbuf)
 {
+    if (x->a_text.te_width == 0)
+    {
+        // special case for gatoms where lenght is indicated as 0
+        // which means the gatom will dynamically grow with the object
+        //post("gatom_redraw_text_w_dots special 0 width case");
+        sprintf(sbuf, "%s", x->a_buf);
+        if (strlen(x->a_buf) == 0)
+            sprintf(sbuf, "...");
+        else if (strlen(x->a_buf) == 1)
+            sprintf(sbuf, "%s..", x->a_buf);
+        else if (strlen(x->a_buf) == 2)
+            sprintf(sbuf, "%s.", x->a_buf);
+        else
+            sprintf(sbuf, x->a_buf);
+        return;
+    }
     if (strlen(x->a_buf) == 0)
     {
         if (x->a_text.te_width >= 3)
@@ -1172,14 +1188,27 @@ static void gatom_key(void *z, t_floatarg f)
         if (x->a_atom.a_type == A_FLOAT)
         {
             x->a_atom = x->a_atomold;
-            //if (x->a_buf[0]) x->a_atom.a_w.w_float = atof(x->a_buf);
-            //sprintf(x->a_buf, "%f", x->a_atom.a_w.w_float);
-            //post("got float f=<%f> s=<%s>", x->a_atom.a_w.w_float, x->a_buf);
+            /* ico@vt.edu 2021-08-25: this has all kinds of problems due to
+               conversion that adds bunch of unnecessary decimal points and
+               makes appending cumbersome
+            */
+            /*
+            if (x->a_shift_clicked)
+            {
+                if (x->a_buf[0]) x->a_atom.a_w.w_float = atof(x->a_buf);
+                else x->a_buf[0] = 0;
+                sprintf(x->a_buf, "%f", x->a_atom.a_w.w_float);
+                post("got float f=<%f> s=<%s>", x->a_atom.a_w.w_float, x->a_buf);
+            }
+            else
+                x->a_buf[0] = 0;
+            */
 
             // ico@vt.edu 20200904:
             // we reset internal buffer since there is currently no graceful way
             // to handle conversion from float to string and back without loss
-            // in the value accuracy
+            // in the value accuracy. this is why currently the shift click does
+            // not work on float gatoms
             x->a_buf[0] = 0;
             gatom_retext(x, 1, 1);
         }
@@ -1204,6 +1233,7 @@ static void gatom_key(void *z, t_floatarg f)
     }
     else if (c == '\b')
     {
+        //post("backspace");
         if (len > 0)
         {
         	if (x->a_shift)
@@ -1309,6 +1339,10 @@ static void gatom_click(t_gatom *x,
     }
     else
     {
+        // 2021-08-25 ico@vt.edu: the following alt is invoked by
+        // holding CTRL (on Linux) and clicking on a gatom. this
+        // effectively makes gatom toggle between 0 and 1 regardless
+        // its previous value (e.g. 123 will toggle to 0 and then to 1)
         if (alt)
         {
             if (x->a_atom.a_type != A_FLOAT) return;
@@ -1571,7 +1605,7 @@ static void gatom_displace(t_gobj *z, t_glist *glist,
 /* for gatom's label */
 static void gatom_vis(t_gobj *z, t_glist *glist, int vis)
 {
-    //post("gatom_vis");
+    //post("gatom_vis %d", vis);
     t_gatom *x = (t_gatom*)z;
     text_vis(z, glist, vis);
     if (*x->a_label->s_name)
@@ -2441,7 +2475,7 @@ static void text_vis(t_gobj *z, t_glist *glist, int vis)
         {
             if (gobj_shouldvis(&x->te_g, glist))
             {
-                //fprintf(stderr,"    draw it\n");
+                //post("text_vis drawit");
                 t_rtext *y = glist_findrtext(glist, x);
                 // make a group
                 text_getrect(&x->te_g, glist, &x1, &y1, &x2, &y2);
@@ -2869,7 +2903,10 @@ void text_drawborder(t_text *x, t_glist *glist,
         }
         else
         {
-            /* doesn't look like this ever gets called... */
+            /* ico@vt.edu 2021-08-25: this gets called when
+               a gatom has a width of 0, possibly in other
+               situations, as well */
+            //post("text_drawborder gui_atom_redraw_border");
             gui_vmess("gui_atom_redraw_border", "xsiii",
                 glist_getcanvas(glist),
                 tag,

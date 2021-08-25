@@ -485,24 +485,29 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
         }
         else if (action == SEND_UPDATE)
         {
-            //post("send_update <%s>", tempbuf);
-            gui_vmess("gui_text_set", "xss", canvas, x->x_tag, tempbuf);
-
             // We add the check for T_MESSAGE below so that the box border
             // gets resized correctly using our interim event handling in
-            // pd_canvas.html.  I could remove the conditional, but
-            // this part of Pd is convoluted enough that I'm not sure
-            // if there'd be any side effects.
+            // pd_canvas.html.
             // Additionally we avoid redrawing the border here for the
             // dropdown_class as that has its own special width handling.
+            // ico@vt.edu 2021-08-25: this is also where the gatom gets
+            // autoresized when its width is specified as 0. This is why
+            // we do this first, because the gatom width and consequently
+            // its '>' symbol that gets appended on strings larger than
+            // the gatom width is now calculated gui-side, so we need to
+            // first ensure that the width is correct
             if (glist_isvisible(x->x_glist) && !is_dropdown(x->x_text) &&
                 (pixwide != x->x_drawnwidth ||
                 pixhigh != x->x_drawnheight ||
                 x->x_text->te_type == T_MESSAGE)) 
             {
+                //post("rtext text_drawborder");
                 text_drawborder(x->x_text, x->x_glist, x->x_tag,
                     pixwide, pixhigh, 0);
             }
+            //post("send_update <%s>", tempbuf);
+            gui_vmess("gui_text_set", "xss", canvas, x->x_tag, tempbuf);
+
             if (x->x_active)
             {
                 if (selend_b > selstart_b)
