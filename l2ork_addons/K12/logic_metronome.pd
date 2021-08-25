@@ -1,33 +1,36 @@
-#N canvas 571 89 362 360 10;
-#X obj 59 54 preset_node k12;
-#X obj 19 92 inlet;
-#X obj 149 147 ggee/image @pd_extra/K12/objects/logic_metronome.png
+#N canvas 571 89 362 413 10;
+#X obj 189 114 preset_node k12;
+#X obj 19 22 inlet;
+#X obj 149 207 ggee/image @pd_extra/K12/objects/logic_metronome.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
-#X obj 62 86 preset_node k12;
-#X obj 125 154 tgl 20 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 1 1;
-#X obj 239 121 inlet;
-#X obj 19 120 sel 0 1;
-#X msg 38 150 1;
-#X msg 19 171 0;
-#X obj 150 226 expr 60000 / \\$f1;
-#X obj 73 249 metro 1000;
-#X msg 73 281 1;
-#X obj 73 314 outlet;
-#X obj 125 178 nbx 5 19 1 1e+37 0 0 \$0-s-null \$0-r-null empty 0 -8
-0 16 #fcfcfc #000000 #000000 240 256 1 0;
-#X text 147 154 on/off;
-#X text 142 197 speed(BPM);
-#X obj 278 121 loadbang;
-#X msg 278 143 set 60;
+#X obj 192 146 preset_node k12;
+#X obj 125 214 tgl 20 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1;
+#X obj 239 181 inlet;
+#X obj 19 45 sel 0 1;
+#X msg 38 128 1;
+#X msg 19 149 0;
+#X obj 150 286 expr 60000 / \\$f1;
+#X obj 73 309 metro 1000;
+#X msg 73 341 1;
+#X obj 73 374 outlet;
+#X obj 125 238 nbx 5 19 1 1e+37 0 0 \$0-s-null \$0-r-null empty 0 -8
+0 16 #fcfcfc #000000 #000000 60 256 1 0;
+#X text 147 214 on/off;
+#X text 142 257 speed(BPM);
+#X obj 278 181 loadbang;
+#X msg 278 203 set 60;
+#X obj 38 72 pipe 1;
+#X text 82 58 here we delay the "on" state by 1ms (pipe 1) to ensure
+counters and other things get their values first, f 36;
 #X connect 0 0 13 0;
 #X connect 1 0 6 0;
 #X connect 3 0 4 0;
 #X connect 4 0 10 0;
 #X connect 5 0 13 0;
 #X connect 6 0 8 0;
-#X connect 6 1 7 0;
+#X connect 6 1 18 0;
 #X connect 7 0 4 0;
 #X connect 8 0 4 0;
 #X connect 9 0 10 1;
@@ -36,4 +39,5 @@
 #X connect 13 0 9 0;
 #X connect 16 0 17 0;
 #X connect 17 0 13 0;
-#X coords 0 -1 1 1 90 90 2 116 127;
+#X connect 18 0 7 0;
+#X coords 0 -1 1 1 90 90 2 116 187;

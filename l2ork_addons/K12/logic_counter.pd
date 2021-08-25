@@ -22,7 +22,7 @@
 #X obj 11 446 outlet;
 #X obj 68 12 preset_node k12;
 #X obj 11 420 counter 1 10;
-#X obj 45 398 loadbang;
+#X obj 54 394 loadbang;
 #X obj 135 297 change;
 #X obj 135 318 t b;
 #X obj 21 265 t f f f;
@@ -59,6 +59,7 @@
 #X connect 23 2 12 0;
 #X connect 24 0 3 0;
 #X connect 24 1 1 0;
+#X connect 25 0 19 2;
 #X connect 25 1 11 1;
 #X connect 25 2 10 0;
 #X connect 25 3 24 0;
