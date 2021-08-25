@@ -109,7 +109,7 @@ ifneq ($(LIGHT),yes)
 	install -p $(bin_src)/libsystre-0.dll $(DESTDIR)$(bindir)/
 	install -p $(bin_src)/libtre-5.dll $(DESTDIR)$(bindir)/
 	# For fluid~
-	install -p $(bin_src)/libfluidsynth-2.dll $(DESTDIR)$(bindir)/
+	install -p $(bin_src)/libfluidsynth-*.dll $(DESTDIR)$(bindir)/
 	install -p $(bin_src)/SDL2.dll $(DESTDIR)$(bindir)/
 	install -p $(bin_src)/libgmodule-2.0-0.dll $(DESTDIR)$(bindir)/
 	install -p $(bin_src)/libreadline8.dll $(DESTDIR)$(bindir)/
