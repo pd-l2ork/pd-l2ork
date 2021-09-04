@@ -716,7 +716,13 @@ static int my_numbox_newclick(t_gobj *z, struct _glist *glist,
         if (!x->x_focused)
         {
             //post("|...focusing for the first time");
-            clock_delay(x->x_clock_reset, 3000);
+            // ico@vt.edu 2021-09-04: added msgfocus check when you issue
+            // the "focus" command for keyboard navigation in which case
+            // there should be no timeout
+            if (x->x_msgfocus == 0)
+                clock_delay(x->x_clock_reset, 3000);
+            else
+                clock_unset(x->x_clock_reset);
 
             if (shift)
                 my_numbox_ftoa(x, 1);
@@ -740,7 +746,8 @@ static int my_numbox_newclick(t_gobj *z, struct _glist *glist,
             // whatever was last stored and change focus back to mouse only
             // we check for the latter below...
             clock_unset(x->x_clock_reset);
-            clock_delay(x->x_clock_reset, 3000);
+            if (x->x_msgfocus == 0)
+                clock_delay(x->x_clock_reset, 3000);
             if (x->x_focused > 1)
                my_numbox_ftoa(x, 1);
             else 
@@ -883,7 +890,7 @@ static void my_numbox_loadbang(t_my_numbox *x, t_floatarg action)
 static void my_numbox_key(void *z, t_floatarg fkey)
 {
     t_my_numbox *x = z;
-    //post("numbox_key %f <%s>", fkey, x->x_buf);
+    //post("numbox_key %f <%s> focus=%d", fkey, x->x_buf, x->x_focused);
     if (fkey != 0)
     {
         x->x_focused = 3;
@@ -895,7 +902,8 @@ static void my_numbox_key(void *z, t_floatarg fkey)
         clock_unset(x->x_clock_reset);
         x->x_gui.x_changed = 1;
         my_numbox_draw_update(x, x->x_gui.x_glist);
-        clock_delay(x->x_clock_reset, 3000);
+        if (x->x_msgfocus == 0)
+            clock_delay(x->x_clock_reset, 3000);
         return;
     }
 
@@ -989,7 +997,7 @@ static void my_numbox_key(void *z, t_floatarg fkey)
         clock_unset(x->x_clock_reset);
         my_numbox_tick_reset(x);
     }
-    else
+    else if (x->x_msgfocus == 0)
         clock_delay(x->x_clock_reset, 3000);
 }
 
@@ -1082,6 +1090,56 @@ static void my_numbox_exclusive(t_my_numbox *x, t_floatarg f)
     }
 }
 
+static void my_numbox_focus(t_my_numbox *x, t_floatarg f)
+{
+    if ((int)f == 1)
+    {
+        if (glist_isvisible(glist_getcanvas(x->x_gui.x_glist)))
+        {
+            int xpos, ypos;
+            // first force remove grab from the previously grabbed object
+            t_glist *gl = glist_getcanvas(x->x_gui.x_glist);
+            if (gl->gl_editor->e_grab && gl->gl_editor->e_keyfn)
+            {
+                (* gl->gl_editor->e_keyfn) (gl->gl_editor->e_grab, 0);
+                glist_grab(gl, 0, 0, 0, 0, 0, 0, 0);
+            }
+            glist_getnextxy(glist_getcanvas(x->x_gui.x_glist), &xpos, &ypos);
+            x->x_msgfocus = 1;
+            my_numbox_newclick((t_gobj *)x, x->x_gui.x_glist, xpos, ypos, 0, 0, 0, 1);
+            // now simulate mouse-up since the grab does not happen until the mouse
+            // button is let go
+            my_numbox_newclick((t_gobj *)x, x->x_gui.x_glist, xpos, ypos, 0, 0, -1, 0);
+            // now remove the mouse motion function to prevent weird dislocation
+            // of values due to simultaneous drag while still holding the key
+            // pressed that is responsible for activating the focus (that is
+            // assuming that a key is being used to shift focus)
+            glist_grab_disable_motion(gl);
+        }
+        else
+        {
+            pd_error(x, "you can only focus iemgui numbox when it is visible");
+        }
+    }
+    else if ((int)f == 0)
+    {
+        if (glist_isvisible(glist_getcanvas(x->x_gui.x_glist)))
+        {
+            x->x_msgfocus = 0;
+            my_numbox_key((void *)x, 0.0);
+        }
+        else
+        {
+            pd_error(x, "you can only focus iemgui numbox when it is visible");
+        }
+    }
+}
+
+static void my_numbox_commit(t_my_numbox *x)
+{
+    my_numbox_key((void *)x, 10.0);
+}
+
 static void *my_numbox_new(t_symbol *s, int argc, t_atom *argv)
 {
     t_my_numbox *x = (t_my_numbox *)pd_new(my_numbox_class);
@@ -1170,6 +1228,7 @@ static void *my_numbox_new(t_symbol *s, int argc, t_atom *argv)
     x->x_shiftclick = 0;
     x->x_dragged = 0;
     x->x_exclusive = ex;
+    x->x_msgfocus = 0;
 
     return (x);
 }
@@ -1222,6 +1281,10 @@ void g_numbox_setup(void)
         gensym("drawstyle"), A_FLOAT, 0);
     class_addmethod(my_numbox_class, (t_method)my_numbox_exclusive,
         gensym("exclusive"), A_FLOAT, 0);
+    class_addmethod(my_numbox_class, (t_method)my_numbox_focus, gensym("focus"),
+        A_FLOAT, 0);
+    class_addmethod(my_numbox_class, (t_method)my_numbox_commit, gensym("commit"),
+        A_NULL, 0);
 
     wb_init(&my_numbox_widgetbehavior,my_numbox_getrect,my_numbox_newclick);
     class_setwidget(my_numbox_class, &my_numbox_widgetbehavior);

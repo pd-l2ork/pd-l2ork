@@ -227,6 +227,8 @@ typedef struct _my_numbox
                                comparison is not a good one */
     int      x_exclusive;   /* used to set the numbox keyboard focus to exclusive (1) or
                                non-exclusive (0, default) */
+    int      x_msgfocus;    /* used to detect when the focus was invoked through a message
+                               "focus", in which case we disable the focus timeout */
 } t_my_numbox;
 
 extern int sys_noloadbang;

@@ -1,4 +1,4 @@
-#N canvas 151 59 552 730 10;
+#N canvas 151 86 552 730 10;
 #X obj 0 1611 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
 14 #dcdcdc #404040 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header ggee/image 3 12
@@ -292,8 +292,8 @@ visible alpha;
 #X connect 9 0 4 0;
 #X restore 168 1530 pd image-creation-arguments;
 #X obj 482 51 pddp/dsp;
-#X obj 227 319 ggee/image vu.png 0 0 287 162 empty empty empty 287
-162 1 0 10 #000000 0 -8 12.5 12.5 0 1 1;
+#X obj 227 319 ggee/image vu.png 0 0 287 163 empty empty empty 287
+163 1 0 10 #000000 0 -8 12.5 12.5 0 1 1;
 #X obj 393 253 s dial;
 #X obj 393 83 adc~;
 #X obj 393 105 env~ 4096;
@@ -306,8 +306,8 @@ visible alpha;
 #000000 #000000 0 256 0 0;
 #X msg 227 273 reload;
 #X msg 227 295 open @pd_extra/ggee/empty_image.png;
-#X obj 456 377 ggee/image vu-led.png 0 0 28 35 empty empty empty 28
-35 1 0 10 #000000 0 -8 18 18 0 0 1;
+#X obj 456 377 ggee/image vu-led.png 0 0 28 36 empty empty empty 28
+36 1 0 10 #000000 0 -8 18 18 0 0 1;
 #X obj 456 275 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 0 1;
 #X msg 456 295 visible \$1;
@@ -315,83 +315,86 @@ visible alpha;
 81 1 0 10 #000000 0 -8 81 102 -4.78725 1 1;
 #X obj 456 253 > 99.9;
 #X obj 393 146 t f f, f 11;
-#N canvas 167 85 469 625 control-surface 0;
+#N canvas 167 112 469 625 control-surface 0;
 #X obj 73 279 ggee/image surround-room.jpg 1 2 320 250 empty background
 empty 400 300 0 0 10 #000000 2 5 200 150 0 1 1;
-#X obj 265 395 ggee/image source3.gif 1 0 18 18 nada handle empty 36
-36 1 0 10 #00ff00 23 23 18 18 190 1 1;
-#N canvas 216 126 1118 670 surface-interaction 0;
+#X obj 271 398 ggee/image source3.gif 1 0 18 18 nada handle empty 36
+36 1 0 10 #00ff00 23 23 18 18 10 1 1;
+#N canvas 269 171 1118 754 surface-interaction 0;
 #X obj 100 162 unpack 0 0 0 0 0, f 55;
 #X obj 100 220 sel 1;
-#X obj 100 266 pack 0 0 0, f 24;
-#X msg 100 290 pos \$2 \$3;
+#X obj 100 421 pack 0 0 0, f 24;
+#X msg 100 445 pos \$2 \$3;
 #X obj 251 199 nbx 5 14 0 320 0 0 empty empty empty 0 -8 0 10 #fcfcfc
 #000000 #000000 0 256 0 0;
 #X obj 427 199 nbx 5 14 0 250 0 0 empty empty empty 0 -8 0 10 #fcfcfc
 #000000 #000000 0 256 0 0;
-#X msg 471 602 size \$1 \$1;
-#X obj 255 452 sin;
-#X floatatom 255 477 14 0 0 0 - - - 0 0, f 14;
-#X obj 255 289 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X msg 471 692 size \$1 \$1;
+#X obj 255 542 sin;
+#X floatatom 255 567 14 0 0 0 - - - 0 0, f 14;
+#X obj 255 379 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 0 1;
-#X msg 293 374 0;
+#X msg 293 464 0;
 #X obj 521 197 change;
-#X obj 255 309 metro 10;
-#X obj 255 427 expr \\$f1/5*3.14159;
-#X obj 568 484 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X obj 255 399 metro 10;
+#X obj 255 517 expr \\$f1/5*3.14159;
+#X obj 568 576 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1 1;
-#X obj 568 524 counter 35;
-#X obj 568 558 * 10;
-#X obj 568 502 metro 25;
-#X msg 568 602 rotate \$1 \$2 \$2;
-#X floatatom 619 558 5 0 0 0 - - - 0 0, f 5;
-#X obj 540 524 / 2;
+#X obj 568 616 counter 35;
+#X obj 568 648 * 10;
+#X obj 568 594 metro 25;
+#X msg 568 692 rotate \$1 \$2 \$2;
+#X floatatom 619 648 5 0 0 0 - - - 0 0, f 5;
+#X obj 540 616 / 2;
 #X obj 43 60 route size;
 #X obj 43 38 list trim;
 #X obj 170 220 expr \\$f1+$f2-8;
 #X obj 346 220 expr \\$f1+$f2-8;
-#X obj 568 463 loadbang;
-#X obj 568 580 pack 0 18;
-#X obj 700 488 sin;
-#X floatatom 700 513 14 0 0 0 - - - 0 0, f 14;
-#X obj 700 289 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X obj 568 555 loadbang;
+#X obj 568 670 pack 0 18;
+#X obj 700 578 sin;
+#X floatatom 700 603 14 0 0 0 - - - 0 0, f 14;
+#X obj 700 379 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 0 1;
-#X msg 738 374 0;
-#X obj 700 309 metro 10;
-#X obj 700 428 expr \\$f1/5*3.14159;
-#X floatatom 901 513 14 0 0 0 - - - 0 0, f 14;
-#X obj 901 488 cos;
-#X obj 700 453 t f f;
-#X obj 700 562 pack 0 0;
-#X msg 700 587 size \$1 \$2;
-#X obj 700 624 s background;
+#X msg 738 464 0;
+#X obj 700 399 metro 10;
+#X obj 700 518 expr \\$f1/5*3.14159;
+#X floatatom 901 603 14 0 0 0 - - - 0 0, f 14;
+#X obj 901 578 cos;
+#X obj 700 543 t f f;
+#X obj 700 652 pack 0 0;
+#X msg 700 677 size \$1 \$2;
+#X obj 700 714 s background;
 #X obj 521 220 sel 1 0;
-#X obj 700 331 counter 20;
-#X obj 700 403 t f f f f, f 48;
-#X obj 255 331 counter 20;
-#X obj 700 537 expr int($f1*(10-$f2/2)+400+0.5);
-#X obj 901 537 expr int($f1*(10-$f2/2)+300+0.5);
-#X obj 293 352 sel 1;
-#X obj 738 352 sel 1;
-#X obj 255 502 expr int($f1*(10-$f2/2)+36+0.5)+$f2/2;
-#X msg 540 386 36;
+#X obj 700 421 counter 20;
+#X obj 700 493 t f f f f, f 48;
+#X obj 255 421 counter 20;
+#X obj 700 627 expr int($f1*(10-$f2/2)+400+0.5);
+#X obj 901 627 expr int($f1*(10-$f2/2)+300+0.5);
+#X obj 293 442 sel 1;
+#X obj 738 442 sel 1;
+#X obj 255 592 expr int($f1*(10-$f2/2)+36+0.5)+$f2/2;
+#X msg 540 476 36;
 #X obj 111 37 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 0 1;
 #X obj 100 92 lister;
 #X obj 111 60 metro 10;
-#X obj 170 243 average 5;
+#X obj 170 326 average 5;
 #X obj 145 92 counter 5;
 #X obj 182 113 sel 1;
 #X msg 182 134 0;
-#X obj 241 243 average 5;
-#X obj 255 402 t f f, f 37;
+#X obj 241 326 average 5;
+#X obj 255 492 t f f, f 37;
 #X obj 540 242 t b b 0 0;
-#X obj 100 634 s handle;
+#X obj 100 724 s handle;
 #X obj 13 92 print surface;
 #X obj 43 15 inlet;
 #X obj 55 220 outlet;
 #X obj 262 220 outlet;
 #X obj 439 220 outlet;
+#X obj 182 245 loadbang;
+#X obj 182 270 kalashnikov 5;
+#X obj 182 295 t 268 395;
 #X connect 0 0 1 0;
 #X connect 0 0 11 0;
 #X connect 0 0 62 0;
@@ -474,6 +477,10 @@ empty 400 300 0 0 10 #000000 2 5 200 150 0 1 1;
 #X connect 58 2 42 2;
 #X connect 58 3 9 0;
 #X connect 61 0 22 0;
+#X connect 65 0 66 0;
+#X connect 66 0 67 0;
+#X connect 67 0 52 0;
+#X connect 67 1 56 0;
 #X restore 73 568 pd surface-interaction;
 #X obj 73 593 tgl 15 0 empty empty click -28 6 0 8 #fcfcfc #000000
 #000000 0 1;

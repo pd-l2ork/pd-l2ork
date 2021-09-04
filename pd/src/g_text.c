@@ -1390,7 +1390,7 @@ static void gatom_click(t_gatom *x,
 
 static void gatom_focus(t_gatom *x, t_floatarg f)
 {
-    if (f == 1)
+    if ((int)f == 1)
     {
         if (glist_isvisible(glist_getcanvas(x->a_glist)))
         {
@@ -1415,7 +1415,7 @@ static void gatom_focus(t_gatom *x, t_floatarg f)
             pd_error(x, "you can only focus gatoms when they are visible");
         }
     }
-    else if (f == 0)
+    else if ((int)f == 0)
     {
         if (glist_isvisible(glist_getcanvas(x->a_glist)))
         {
