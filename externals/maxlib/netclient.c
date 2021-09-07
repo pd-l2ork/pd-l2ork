@@ -50,6 +50,13 @@
 
 #define INBUFSIZE 4096	/* maximum numbers of characters to read */
 
+/* ico@vt.edu 2021-09-07: define MSG_NOSIGNAL for Windows/Mac
+   we use this to prevent the external and with it pd-l2ork from
+   crashing in case a client suddenly drops and causes broken pipe */
+#ifndef MSG_NOSIGNAL
+#define MSG_NOSIGNAL 0
+#endif
+
 static char *version = "netclient v0.3.1, written by Olaf Matthes <olaf.matthes@gmx.de>";
 
 static t_class *netclient_class;
@@ -113,6 +120,11 @@ static void *netclient_child_connect(void *w)
     	sys_sockerror("socket");
     	return (x);
     }
+#ifdef OSX
+	int nspopt = 1;
+	if (setsockopt(sockfd, SO_NOSIGPIPE, &nspopt, sizeof(nspopt)) == -1)
+	  post("setsockopt SO_NOSIGPIPE failed\n");
+#endif    
 		/* connect socket using hostname provided in command line */
     server.sin_family = AF_INET;
     hp = gethostbyname(x->x_hostname);
@@ -189,7 +201,7 @@ static void netclient_send(t_netclient *x, t_symbol *s, int argc, t_atom *argv)
 	    static double lastwarntime;
 	    static double pleasewarn;
 	    double timebefore = sys_getrealtime();
-    	    int res = send(x->x_fd, buf, length-sent, 0);
+    	    int res = send(x->x_fd, buf, length-sent, MSG_NOSIGNAL);
     	    double timeafter = sys_getrealtime();
     	    int late = (timeafter - timebefore > 0.005);
     	    if (late || pleasewarn)

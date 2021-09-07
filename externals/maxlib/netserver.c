@@ -64,6 +64,13 @@
 #define LOG_INFO        6       /* informational */
 #define LOG_DEBUG       7       /* debug-level messages */
 
+/* ico@vt.edu 2021-09-07: define MSG_NOSIGNAL for Windows/Mac
+   we use this to prevent the external and with it pd-l2ork from
+   crashing in case a client suddenly drops and causes broken pipe */
+#ifndef MSG_NOSIGNAL
+#define MSG_NOSIGNAL 0
+#endif
+
 static char *version = 
    "netserver v0.2.hcs1 :: bidirectional communication for Pd\n"
    "             written by Olaf Matthes <olaf.matthes@gmx.de>\n"
@@ -264,7 +271,7 @@ static void netserver_send(t_netserver *x, t_symbol *s, int argc, t_atom *argv)
 		 static double lastwarntime;
 		 static double pleasewarn;
 		 double timebefore = clock_getlogicaltime();
-		 int res = send(sockfd, buf, length-sent, 0);
+		 int res = send(sockfd, buf, length-sent, MSG_NOSIGNAL);
 		 double timeafter = clock_getlogicaltime();
 		 int late = (timeafter - timebefore > 0.005);
 		 if (late || pleasewarn)
@@ -350,7 +357,7 @@ static void netserver_client_send(t_netserver *x, t_symbol *s, int argc, t_atom 
 		 static double lastwarntime;
 		 static double pleasewarn;
 		 double timebefore = clock_getlogicaltime();
-		 int res = send(sockfd, buf, length-sent, 0);
+		 int res = send(sockfd, buf, length-sent, MSG_NOSIGNAL);
 		 double timeafter = clock_getlogicaltime();
 		 int late = (timeafter - timebefore > 0.005);
 		 if (late || pleasewarn)
@@ -578,7 +585,13 @@ static void *netserver_new(t_floatarg fportno)
    /* this seems to work only in IRIX but is unnecessary in
 	  Linux.  Not sure what NT needs in place of this. */
    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, 0, 0) < 0)
-	  post("setsockopt failed\n");
+	  post("setsockopt SO_REUSEADDR failed\n");
+#endif
+
+#ifdef OSX
+	int nspopt = 1;
+	if (setsockopt(sockfd, SO_NOSIGPIPE, &nspopt, sizeof(nspopt)) == -1)
+	  post("setsockopt SO_NOSIGPIPE failed\n");
 #endif
 
    /* assign server port number */
