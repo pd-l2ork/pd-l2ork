@@ -9,8 +9,9 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
-30-08-2021 0.43
+07-09-2021 0.43
 *Increased maximum number of players to 12
+*Added a few more presets
 
 18-04-2021 0.42
 *Updated patch to support new pd-l2ork 2.16 features.

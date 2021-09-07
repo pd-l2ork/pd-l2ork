@@ -1,4 +1,4 @@
-#N canvas 133 0 1638 975 10;
+#N canvas 151 4 1638 975 10;
 #X obj -4 0 cnv 15 1637 973 empty empty empty 5 7 0 10 #444444 #fcfcfc
 0;
 #X obj 0 2 cnv 15 1631 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
@@ -767,8 +767,8 @@ f 25;
 #X connect 73 1 74 0;
 #X connect 76 1 72 0;
 #X restore 113 23 pd preset-logic;
-#N canvas 383 23 599 905 override 0;
-#X msg 541 113 0;
+#N canvas 383 23 711 905 override 0;
+#X msg 625 113 0;
 #X obj 136 44 keyname;
 #X obj 175 293 r nclients;
 #X obj 91 176 gate 1 0;
@@ -812,12 +812,15 @@ f 25;
 #X obj 91 474 delay 101;
 #X text 155 474 When connected \, this is delayed by 101 since the
 myid is delayed by 100 inside the L2OrkTweet abstraction;
-#X obj 175 65 sel ShiftF1 ShiftF2 ShiftF3 ShiftF4 ShiftF5 ShiftF6 ShiftF7
-ShiftF8 ShiftF9 ShiftF10;
 #X obj 195 675 kalashnikov 12;
+#X obj 175 65 sel ShiftF1 ShiftF2 ShiftF3 ShiftF4 ShiftF5 ShiftF6 ShiftF7
+ShiftF8 ShiftF9 ShiftF10 ShiftF11 ShiftF12;
+#X obj 541 113 t 11 1;
+#X obj 583 113 t 12 1;
+#X obj 145 267 print;
 #X connect 0 0 3 0;
 #X connect 1 0 3 1;
-#X connect 1 1 43 0;
+#X connect 1 1 44 0;
 #X connect 2 0 10 1;
 #X connect 3 0 7 0;
 #X connect 4 0 38 0;
@@ -866,22 +869,28 @@ ShiftF8 ShiftF9 ShiftF10;
 #X connect 38 2 8 0;
 #X connect 38 3 34 0;
 #X connect 38 4 5 0;
-#X connect 38 5 44 0;
+#X connect 38 5 43 0;
 #X connect 38 6 32 0;
 #X connect 39 0 40 0;
 #X connect 41 0 16 0;
-#X connect 43 0 19 0;
-#X connect 43 1 20 0;
-#X connect 43 2 21 0;
-#X connect 43 3 22 0;
-#X connect 43 4 23 0;
-#X connect 43 5 24 0;
-#X connect 43 6 25 0;
-#X connect 43 7 26 0;
-#X connect 43 8 27 0;
-#X connect 43 9 28 0;
-#X connect 43 10 0 0;
-#X connect 44 1 18 0;
+#X connect 43 1 18 0;
+#X connect 44 0 19 0;
+#X connect 44 1 20 0;
+#X connect 44 2 21 0;
+#X connect 44 3 22 0;
+#X connect 44 4 23 0;
+#X connect 44 5 24 0;
+#X connect 44 6 25 0;
+#X connect 44 7 26 0;
+#X connect 44 8 27 0;
+#X connect 44 9 28 0;
+#X connect 44 10 45 0;
+#X connect 44 11 46 0;
+#X connect 44 12 0 0;
+#X connect 45 0 6 1;
+#X connect 45 1 3 0;
+#X connect 46 0 6 1;
+#X connect 46 1 3 0;
 #X restore 317 23 pd override;
 #N canvas 615 291 659 502 chat-logic 0;
 #X obj 40 27 loadbang;
@@ -1213,7 +1222,7 @@ empty -5 -9 0 10 #80fc80 #008080 #fcfcfc;
 #X obj 809 30 nbx 4 15 1 9999 0 0 \$0-store-preset \$0-store-preset-r
 empty -64 5 0 12 #fcb46c #000000 #000000 1 256 0 1;
 #X obj 809 45 nbx 4 15 1 9999 0 0 \$0-recall-preset \$0-recall-preset-r
-empty -64 5 0 12 #80fc80 #000000 #000000 1 256 0 1;
+empty -64 5 0 12 #80fc80 #000000 #000000 73 256 0 1;
 #X obj 662 30 cnv 8 10 8 empty empty STORE\ PRESET\ (shift+a-:) -1
 5 0 10 #6c6c6c #fcfcfc 0;
 #X obj 656 45 cnv 8 10 8 empty empty RECALL\ PRESET\ (shift+z-/) -1
