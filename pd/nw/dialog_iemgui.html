@@ -204,7 +204,16 @@
             <span data-i18n="iem.prop.exclusive"></span>
           </label>
           <br>
-        </div>        
+        </div>
+
+        <div class="interactive prop hidden">
+          <label data-i18n="[title]iem.prop.interactive_tt">
+            <input type="checkbox" name="interactive" value="on"
+                   onchange="update_attr(this);">
+            <span data-i18n="iem.prop.interactive"></span>
+          </label>
+          <br>
+        </div>      
       </fieldset> 
 
       <fieldset> 
@@ -521,7 +530,11 @@ function send_params(attrs, create_undo_point) {
     if (!init) { init = 0; }
 
     var exclusive = +attrs["exclusive"];
-    if (!exclusive) { exclusive = 0; }
+    if (isNaN(exclusive)) { exclusive = "null"; }
+
+    var interactive = +attrs["interactive"];
+    //pdgui.post("interactive="+interactive);
+    if (isNaN(interactive)) { interactive = "null"; }
 
     var slot7 = attrs.log_height;
     if (slot7 === undefined) {
@@ -566,9 +579,10 @@ function send_params(attrs, create_undo_point) {
         font_style, font_size,
         background_color, foreground_color,
         label_color,
-        slot18,     // steady on click
-        draw_style, // numbox draw style
-        exclusive,  // exclusive keyboard access
+        slot18,      // steady on click
+        draw_style,  // numbox draw style
+        exclusive,   // exclusive keyboard access
+        interactive, // whether the object is interactive
         create_undo_point ? 1 : 0 // whether we set an undo point
     );
 }

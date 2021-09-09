@@ -19,6 +19,9 @@
 #define IEM_RADIO_MAX   128
 
 extern int gfxstub_haveproperties(void *key);
+
+static void radio_interactive(t_radio *x, t_floatarg f);
+
 t_widgetbehavior radio_widgetbehavior;
 t_class *hradio_class, *hradio_old_class;
 t_class *vradio_class, *vradio_old_class;
@@ -212,13 +215,13 @@ static void radio_save(t_gobj *z, t_binbuf *b)
         x->x_orient ? gensym("vradio") : gensym("hradio");
     
     iemgui_save(&x->x_gui, srl, bflcol);
-    binbuf_addv(b, "ssiisiiiisssiiiisssi", gensym("#X"),gensym("obj"),
+    binbuf_addv(b, "ssiisiiiisssiiiisssii", gensym("#X"),gensym("obj"),
         (int)x->x_gui.x_obj.te_xpix, (int)x->x_gui.x_obj.te_ypix,
         cname, x->x_gui.x_w,
         x->x_change, iem_symargstoint(&x->x_gui), x->x_number,
         srl[0], srl[1], srl[2], x->x_gui.x_ldx, x->x_gui.x_ldy,
         iem_fstyletoint(&x->x_gui), x->x_gui.x_fontsize,
-        bflcol[0], bflcol[1], bflcol[2], x->x_on);
+        bflcol[0], bflcol[1], bflcol[2], x->x_on, x->x_gui.x_click);
     binbuf_addv(b, ";");
 }
 
@@ -272,6 +275,7 @@ static void radio_properties(t_gobj *z, t_glist *owner)
     gui_s("background_color"); gui_i(0xffffff & x->x_gui.x_bcol);
     gui_s("foreground_color"); gui_i(0xffffff & x->x_gui.x_fcol);
     gui_s("label_color");      gui_i(0xffffff & x->x_gui.x_lcol);
+    gui_s("interactive");      gui_i(x->x_gui.x_click);
     
     gui_end_array();
     gui_end_vmess();
@@ -279,13 +283,14 @@ static void radio_properties(t_gobj *z, t_glist *owner)
 
 static void radio_dialog(t_radio *x, t_symbol *s, int argc, t_atom *argv)
 {
-    if (atom_getintarg(20, argc, argv))
+    if (atom_getintarg(21, argc, argv))
         canvas_apply_setundo(x->x_gui.x_glist, (t_gobj *)x);
     x->x_gui.x_h =
     x->x_gui.x_w = iemgui_clip_size(atom_getintarg(0, argc, argv));
     x->x_change = !!atom_getintarg(4, argc, argv);
     int num = atom_getintarg(6, argc, argv);
     int sr_flags = iemgui_dialog(&x->x_gui, argc, argv);
+    radio_interactive(x, atom_getfloatarg(20, argc, argv));
     if(x->x_number != num)
     {
         iemgui_draw_erase(&x->x_gui);
@@ -401,19 +406,22 @@ static void radio_float(t_radio *x, t_floatarg f)
 static void radio_click(t_radio *x, t_floatarg xpos, t_floatarg ypos,
     t_floatarg shift, t_floatarg ctrl, t_floatarg alt)
 {
-    if (x->x_orient) {
-        int yy = (int)ypos - text_ypix(&x->x_gui.x_obj, x->x_gui.x_glist);
-        radio_fout(x, (t_float)(yy / x->x_gui.x_h));
-    } else {
-        int xx = (int)xpos - text_xpix(&x->x_gui.x_obj, x->x_gui.x_glist)-1; 
-        radio_fout(x, (t_float)(xx / x->x_gui.x_w));
+    if (x->x_gui.x_click)
+    {
+        if (x->x_orient) {
+            int yy = (int)ypos - text_ypix(&x->x_gui.x_obj, x->x_gui.x_glist);
+            radio_fout(x, (t_float)(yy / x->x_gui.x_h));
+        } else {
+            int xx = (int)xpos - text_xpix(&x->x_gui.x_obj, x->x_gui.x_glist)-1; 
+            radio_fout(x, (t_float)(xx / x->x_gui.x_w));
+        }
     }
 }
 
 static int radio_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix,
     int shift, int alt, int dbl, int doit)
 {
-    if(doit)
+    if(((t_radio *)z)->x_gui.x_click && doit)
         radio_click((t_radio *)z, (t_floatarg)xpix, (t_floatarg)ypix,
             (t_floatarg)shift, 0, (t_floatarg)alt);
     return (1);
@@ -448,6 +456,14 @@ static void radio_size(t_radio *x, t_symbol *s, int ac, t_atom *av)
     iemgui_size(&x->x_gui);
 }
 
+static void radio_interactive(t_radio *x, t_floatarg f)
+{
+    if ((int)f == 0 || (int)f == 1)
+    {
+        x->x_gui.x_click = (int)f;
+    }
+}
+
 static void radio_double_change(t_radio *x) {x->x_change = 1;}
 static void radio_single_change(t_radio *x) {x->x_change = 0;}
 
@@ -465,8 +481,9 @@ static void *radio_new(t_symbol *s, int argc, t_atom *argv)
     x->x_gui.x_bcol = 0xFCFCFC;
     x->x_gui.x_fcol = 0x00;
     x->x_gui.x_lcol = 0x00;
+    x->x_gui.x_click = 1;
 
-    if((argc == 15)&&IS_A_FLOAT(argv,0)&&IS_A_FLOAT(argv,1)&&IS_A_FLOAT(argv,2)
+    if((argc >= 15)&&IS_A_FLOAT(argv,0)&&IS_A_FLOAT(argv,1)&&IS_A_FLOAT(argv,2)
        &&IS_A_FLOAT(argv,3)
        &&(IS_A_SYMBOL(argv,4)||IS_A_FLOAT(argv,4))
        &&(IS_A_SYMBOL(argv,5)||IS_A_FLOAT(argv,5))
@@ -485,6 +502,7 @@ static void *radio_new(t_symbol *s, int argc, t_atom *argv)
         fs = maxi(atom_getintarg(10, argc, argv),4);
         iemgui_all_loadcolors(&x->x_gui, argv+11, argv+12, argv+13);
         on = mini(maxi(atom_getintarg(14, argc, argv),0),num-1);
+        if (argc >= 16) x->x_gui.x_click = atom_getintarg(15, argc, argv);
     }
     else iemgui_new_getnames(&x->x_gui, 4, 0);
     x->x_gui.x_draw = (t_iemfunptr)radio_draw;
@@ -540,6 +558,8 @@ void radio_addmethods(t_class *c)
         gensym("double_change"), 0);
     class_addmethod(c, (t_method)radio_click, gensym("click"),
         A_FLOAT, A_FLOAT, A_FLOAT, A_FLOAT, A_FLOAT, 0);
+    class_addmethod(c, (t_method)radio_interactive, gensym("interactive"),
+        A_FLOAT, 0);
     class_setpropertiesfn(c, radio_properties);
     class_addmethod(c, (t_method)radio_dialog, gensym("dialog"), A_GIMME, 0);
     class_setsavefn(c, radio_save);

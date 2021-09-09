@@ -14,6 +14,9 @@
 #include <math.h>
 
 extern int gfxstub_haveproperties(void *key);
+
+static void toggle_interactive(t_toggle *x, t_floatarg f);
+
 t_widgetbehavior toggle_widgetbehavior;
 static t_class *toggle_class;
 
@@ -181,12 +184,13 @@ static void toggle_save(t_gobj *z, t_binbuf *b)
     t_symbol *bflcol[3];
     t_symbol *srl[3];
     iemgui_save(&x->x_gui, srl, bflcol);
-    binbuf_addv(b, "ssiisiisssiiiisssff;", gensym("#X"),gensym("obj"),
+    binbuf_addv(b, "ssiisiisssiiiisssffi;", gensym("#X"),gensym("obj"),
         (int)x->x_gui.x_obj.te_xpix, (int)x->x_gui.x_obj.te_ypix,
         gensym("tgl"), x->x_gui.x_w, iem_symargstoint(&x->x_gui),
         srl[0], srl[1], srl[2], x->x_gui.x_ldx, x->x_gui.x_ldy,
         iem_fstyletoint(&x->x_gui), x->x_gui.x_fontsize,
-        bflcol[0], bflcol[1], bflcol[2], x->x_on, x->x_nonzero);
+        bflcol[0], bflcol[1], bflcol[2], x->x_on, x->x_nonzero,
+        x->x_gui.x_click);
 }
 
 static void toggle_properties(t_gobj *z, t_glist *owner)
@@ -260,6 +264,9 @@ static void toggle_properties(t_gobj *z, t_glist *owner)
     gui_s("label_color");
     gui_i(0xffffff & x->x_gui.x_lcol);
 
+    gui_s("interactive");
+    gui_i(x->x_gui.x_click);
+
     gui_end_array();
     gui_end_vmess();
 }
@@ -274,7 +281,7 @@ static void toggle_bang(t_toggle *x)
 
 static void toggle_dialog(t_toggle *x, t_symbol *s, int argc, t_atom *argv)
 {
-    if (atom_getintarg(20, argc, argv))
+    if (atom_getintarg(21, argc, argv))
         canvas_apply_setundo(x->x_gui.x_glist, (t_gobj *)x);
     x->x_gui.x_h =
     x->x_gui.x_w = iemgui_clip_size(atom_getintarg(0, argc, argv));
@@ -285,6 +292,7 @@ static void toggle_dialog(t_toggle *x, t_symbol *s, int argc, t_atom *argv)
     if(x->x_on != 0.0)
         x->x_on = x->x_nonzero;
     int sr_flags = iemgui_dialog(&x->x_gui, argc, argv);
+    toggle_interactive(x, atom_getfloatarg(20, argc, argv));
     iemgui_draw_config(&x->x_gui);
     iemgui_draw_io(&x->x_gui, sr_flags);
     iemgui_shouldvis(&x->x_gui, IEM_GUI_DRAW_MODE_MOVE);
@@ -294,14 +302,20 @@ static void toggle_dialog(t_toggle *x, t_symbol *s, int argc, t_atom *argv)
 
 static void toggle_click(t_toggle *x, t_floatarg xpos, t_floatarg ypos,
     t_floatarg shift, t_floatarg ctrl, t_floatarg alt)
-{toggle_bang(x);}
+{
+    if (x->x_gui.x_click)
+        toggle_bang(x);
+}
 
 static int toggle_newclick(t_gobj *z, struct _glist *glist,
     int xpix, int ypix, int shift, int alt, int dbl, int doit)
 {
-    if(doit)
-        toggle_click((t_toggle *)z, (t_floatarg)xpix, (t_floatarg)ypix,
-            (t_floatarg)shift, 0, (t_floatarg)alt);
+    if (((t_toggle *)z)->x_gui.x_click)
+    {
+        if(doit)
+            toggle_click((t_toggle *)z, (t_floatarg)xpix, (t_floatarg)ypix,
+                (t_floatarg)shift, 0, (t_floatarg)alt);
+    }
     return (1);
 }
 
@@ -346,6 +360,14 @@ static void toggle_nonzero(t_toggle *x, t_floatarg f)
         x->x_nonzero = f;
 }
 
+static void toggle_interactive(t_toggle *x, t_floatarg f)
+{
+    if ((int)f == 0 || (int)f == 1)
+    {
+        x->x_gui.x_click = (int)f;
+    }
+}
+
 static void *toggle_new(t_symbol *s, int argc, t_atom *argv)
 {
     t_toggle *x = (t_toggle *)pd_new(toggle_class);
@@ -360,8 +382,9 @@ static void *toggle_new(t_symbol *s, int argc, t_atom *argv)
     x->x_gui.x_bcol = 0xFCFCFC;
     x->x_gui.x_fcol = 0x00;
     x->x_gui.x_lcol = 0x00;
+    x->x_gui.x_click = 1;
 
-    if(((argc == 13)||(argc == 14))&&IS_A_FLOAT(argv,0)
+    if((argc >= 13)&&IS_A_FLOAT(argv,0)
        &&IS_A_FLOAT(argv,1)
        &&(IS_A_SYMBOL(argv,2)||IS_A_FLOAT(argv,2))
        &&(IS_A_SYMBOL(argv,3)||IS_A_FLOAT(argv,3))
@@ -380,8 +403,10 @@ static void *toggle_new(t_symbol *s, int argc, t_atom *argv)
         on = atom_getfloatarg(12, argc, argv);
     }
     else iemgui_new_getnames(&x->x_gui, 2, 0);
-    if((argc == 14)&&IS_A_FLOAT(argv,13))
+    if((argc >= 14)&&IS_A_FLOAT(argv,13))
         nonzero = atom_getfloatarg(13, argc, argv);
+    if (argc >= 15&&IS_A_FLOAT(argv,14))
+            x->x_gui.x_click = atom_getintarg(14, argc, argv);
     x->x_gui.x_draw = (t_iemfunptr)toggle_draw;
 
     x->x_gui.x_glist = (t_glist *)canvas_getcurrent();
@@ -447,6 +472,8 @@ void g_toggle_setup(void)
     class_addmethod(toggle_class, (t_method)iemgui_init, gensym("init"),
         A_FLOAT, 0);
     class_addmethod(toggle_class, (t_method)toggle_nonzero, gensym("nonzero"),
+        A_FLOAT, 0);
+    class_addmethod(toggle_class, (t_method)toggle_interactive, gensym("interactive"),
         A_FLOAT, 0);
  
     wb_init(&toggle_widgetbehavior,toggle_getrect,toggle_newclick);

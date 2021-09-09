@@ -76,7 +76,9 @@
       "mknob_size":   "size",
       "mknob_size_tt": "size of the knob",
       "exclusive": "exklusiver tastaturfokus",
-      "exclusive_tt": "ob das objekt alle tastatureingaben erfasst, während es fokussiert ist"
+      "exclusive_tt": "ob das objekt alle tastatureingaben erfasst, während es fokussiert ist",
+      "interactive":    "interaktiv",
+      "interactive_tt": "ob der Nutzer direkt mit dem Objekt interagieren kann (z.B. durch Anklicken)"
     }
   },
   "gatom": {

@@ -1,3 +1,19 @@
+TODO:
+*Add interactive flag to gatoms and all iemguis that can be interacted with (tgl, bng, number2, vslider, hslider, vradio, hradio, knob)
+
+*Finish gop drawing order work (see if there is something in the branch log to pull as to the status of the work)
+	Redrawing entire canvas after tidy will not be necessary anymore
+
+*Deal with array manipulation and data structure drawing location issues
+
+*Tooltips
+
+*K12 menu/mode
+
+
+DONE:
+*Add focus/commit to numbox2
+
 C:
 *add toggle mode to image (using grab/motion, like gatom)
 *array in s-env draws on top of cnv, which it shouldn't (requires redrawing of the entire GOP, do we really want to do this?--this should solve itself once we decide to update rather than redraw messages)

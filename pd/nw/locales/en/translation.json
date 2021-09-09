@@ -105,7 +105,9 @@
       "image_sel_height":       "height",
       "image_sel_height_tt":    "height of the selection box in pixels",
       "exclusive":    "exclusive keyboard focus",
-      "exclusive_tt": "whether the object captures all keyboard input while focused"
+      "exclusive_tt": "whether the object captures all keyboard input while focused",
+      "interactive":    "interactive",
+      "interactive_tt": "whether the user can directly interact with the object (e.g. by clicking on it)"
     }
   },
   "gatom": {

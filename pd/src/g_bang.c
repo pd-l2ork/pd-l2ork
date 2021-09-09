@@ -22,6 +22,8 @@ extern int gfxstub_haveproperties(void *key);
 t_widgetbehavior bng_widgetbehavior;
 static t_class *bng_class;
 
+static void bng_interactive(t_bng *x, t_floatarg f);
+
 void bng_draw_update(t_gobj *xgobj, t_glist *glist)
 {
     t_bng *x = (t_bng *)xgobj;
@@ -209,14 +211,14 @@ static void bng_save(t_gobj *z, t_binbuf *b)
     t_symbol *srl[3];
 
     iemgui_save(&x->x_gui, srl, bflcol);
-    binbuf_addv(b, "ssiisiiiisssiiiisss;", gensym("#X"),gensym("obj"),
+    binbuf_addv(b, "ssiisiiiisssiiiisssi;", gensym("#X"),gensym("obj"),
         (int)x->x_gui.x_obj.te_xpix, (int)x->x_gui.x_obj.te_ypix,
         gensym("bng"), x->x_gui.x_w,
         x->x_flashtime_hold, x->x_flashtime_break,
         iem_symargstoint(&x->x_gui),
         srl[0], srl[1], srl[2], x->x_gui.x_ldx, x->x_gui.x_ldy,
         iem_fstyletoint(&x->x_gui), x->x_gui.x_fontsize,
-        bflcol[0], bflcol[1], bflcol[2]);
+        bflcol[0], bflcol[1], bflcol[2], x->x_gui.x_click);
 }
 
 void bng_check_minmax(t_bng *x, int ftbreak, int fthold)
@@ -317,6 +319,9 @@ static void bng_properties(t_gobj *z, t_glist *owner)
     gui_s("label_color");
     gui_i(0xffffff & x->x_gui.x_lcol);
 
+    gui_s("interactive");
+    gui_i(x->x_gui.x_click);
+
     gui_end_array();
     gui_end_vmess();
 }
@@ -361,12 +366,13 @@ static void bng_bang2(t_bng *x)/*wird immer gesendet, wenn moeglich*/
 
 static void bng_dialog(t_bng *x, t_symbol *s, int argc, t_atom *argv)
 {
-    if (atom_getintarg(20, argc, argv))
+    if (atom_getintarg(21, argc, argv))
         canvas_apply_setundo(x->x_gui.x_glist, (t_gobj *)x);
     x->x_gui.x_h = x->x_gui.x_w = atom_getintarg(0, argc, argv);
     int fthold = atom_getintarg(2, argc, argv);
     int ftbreak = atom_getintarg(3, argc, argv);
     int sr_flags = iemgui_dialog(&x->x_gui, argc, argv);
+    bng_interactive(x, atom_getfloatarg(20, argc, argv));
     bng_check_minmax(x, ftbreak, fthold);
     iemgui_draw_config(&x->x_gui);
     iemgui_draw_io(&x->x_gui, sr_flags);
@@ -378,16 +384,22 @@ static void bng_dialog(t_bng *x, t_symbol *s, int argc, t_atom *argv)
 static void bng_click(t_bng *x, t_floatarg xpos, t_floatarg ypos,
     t_floatarg shift, t_floatarg ctrl, t_floatarg alt)
 {
-    bng_set(x);
-    bng_bout(x,0);
+    if (x->x_gui.x_click)
+    {
+        bng_set(x);
+        bng_bout(x,0);
+    }
 }
 
 static int bng_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix,
     int shift, int alt, int dbl, int doit)
 {
-    if(doit)
-        bng_click((t_bng *)z, (t_floatarg)xpix, (t_floatarg)ypix,
-            (t_floatarg)shift, 0, (t_floatarg)alt);
+    if(((t_bng *)z)->x_gui.x_click)
+    {
+        if (doit)
+            bng_click((t_bng *)z, (t_floatarg)xpix, (t_floatarg)ypix,
+                (t_floatarg)shift, 0, (t_floatarg)alt);
+    }
     return (1);
 }
 
@@ -436,6 +448,14 @@ static void bng_tick_lck(t_bng *x)
     x->x_gui.x_locked = 0;
 }
 
+static void bng_interactive(t_bng *x, t_floatarg f)
+{
+    if ((int)f == 0 || (int)f == 1)
+    {
+        x->x_gui.x_click = (int)f;
+    }
+}
+
 static void *bng_new(t_symbol *s, int argc, t_atom *argv)
 {
     t_bng *x = (t_bng *)pd_new(bng_class);
@@ -451,8 +471,9 @@ static void *bng_new(t_symbol *s, int argc, t_atom *argv)
     x->x_gui.x_bcol = 0xFCFCFC;
     x->x_gui.x_fcol = 0x00;
     x->x_gui.x_lcol = 0x00;
+    x->x_gui.x_click = 1;
 
-    if((argc == 14)&&IS_A_FLOAT(argv,0)
+    if((argc >= 14)&&IS_A_FLOAT(argv,0)
        &&IS_A_FLOAT(argv,1)&&IS_A_FLOAT(argv,2)
        &&IS_A_FLOAT(argv,3)
        &&(IS_A_SYMBOL(argv,4)||IS_A_FLOAT(argv,4))
@@ -471,6 +492,7 @@ static void *bng_new(t_symbol *s, int argc, t_atom *argv)
         iem_inttofstyle(&x->x_gui, atom_getintarg(9, argc, argv));
         fs = maxi(atom_getintarg(10, argc, argv),4);
         iemgui_all_loadcolors(&x->x_gui, argv+11, argv+12, argv+13);
+        if (argc >= 15) x->x_gui.x_click = atom_getintarg(14, argc, argv);
     }
     else iemgui_new_getnames(&x->x_gui, 4, 0);
 
@@ -542,6 +564,8 @@ void g_bang_setup(void)
     class_addmethod(bng_class, (t_method)bng_flashtime, gensym("flashtime"),
         A_GIMME, 0);
     class_addmethod(bng_class, (t_method)iemgui_init, gensym("init"), A_FLOAT, 0);
+    class_addmethod(bng_class, (t_method)bng_interactive, gensym("interactive"),
+        A_FLOAT, 0);
  
     wb_init(&bng_widgetbehavior,bng_getrect,bng_newclick);
     class_setwidget(bng_class, &bng_widgetbehavior);

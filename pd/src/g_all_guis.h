@@ -97,6 +97,8 @@ typedef struct _iemgui
     int            x_changed; //bool //30  /* has the value changed so that we need to do graphic update
                                            /* in numbox we also use it to signify when the activated value
                                               has been changed and clipped */
+    int            x_click;                /* for interactive objects used to toggle the ability
+                                              for user to interact with them by clicking onto them */
 
                                   // grep -w "$1" *.[ch]|wc -l
     t_glist     *x_selected;      // 24 matches

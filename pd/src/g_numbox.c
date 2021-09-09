@@ -32,6 +32,7 @@ static void my_numbox_motion(t_my_numbox *x, t_floatarg dx, t_floatarg dy);
 static void my_numbox_ftoa(t_my_numbox *x , int append);
 static void my_numbox_list(t_my_numbox *x, t_symbol *s, int ac, t_atom *av);
 static void my_numbox_exclusive(t_my_numbox *x, t_floatarg f);
+static void my_numbox_interactive(t_my_numbox *x, t_floatarg f);
 
 // used for when user presses esc to release exclusive focus and to prevent
 // propagation of that keypress to bound events that are checked for inside
@@ -503,7 +504,7 @@ static void my_numbox_save(t_gobj *z, t_binbuf *b)
         x->x_gui.x_changed = 1;
         sys_queuegui(x, x->x_gui.x_glist, my_numbox_draw_update);
     }
-    binbuf_addv(b, "ssiisiiffiisssiiiisssfiii;", gensym("#X"),gensym("obj"),
+    binbuf_addv(b, "ssiisiiffiisssiiiisssfiiii;", gensym("#X"),gensym("obj"),
         (int)x->x_gui.x_obj.te_xpix, (int)x->x_gui.x_obj.te_ypix,
         gensym("nbx"), x->x_gui.x_w, x->x_gui.x_h,
         (t_float)x->x_min, (t_float)x->x_max,
@@ -511,7 +512,8 @@ static void my_numbox_save(t_gobj *z, t_binbuf *b)
         srl[0], srl[1], srl[2], x->x_gui.x_ldx, x->x_gui.x_ldy,
         iem_fstyletoint(&x->x_gui), x->x_gui.x_fontsize,
         bflcol[0], bflcol[1], bflcol[2],
-        x->x_val, x->x_log_height, x->x_drawstyle, x->x_exclusive);
+        x->x_val, x->x_log_height, x->x_drawstyle,
+        x->x_exclusive, x->x_gui.x_click);
 }
 
 int my_numbox_check_minmax(t_my_numbox *x, double min, double max)
@@ -605,6 +607,7 @@ static void my_numbox_properties(t_gobj *z, t_glist *owner)
     gui_s("label_color");      gui_i(0xffffff & x->x_gui.x_lcol);
     gui_s("draw_style");       gui_i(x->x_drawstyle);
     gui_s("exclusive");        gui_i(x->x_exclusive);
+    gui_s("interactive");      gui_i(x->x_gui.x_click);
     gui_end_array();
     gui_end_vmess();
 }
@@ -617,7 +620,7 @@ static void my_numbox_bang(t_my_numbox *x)
 static void my_numbox_dialog(t_my_numbox *x, t_symbol *s, int argc,
     t_atom *argv)
 {
-    if (atom_getintarg(20, argc, argv))
+    if (atom_getintarg(21, argc, argv))
         canvas_apply_setundo(x->x_gui.x_glist, (t_gobj *)x);
     x->x_gui.x_w = maxi(atom_getintarg(0, argc, argv),1);
     x->x_gui.x_h = maxi(atom_getintarg(1, argc, argv),8);
@@ -629,6 +632,7 @@ static void my_numbox_dialog(t_my_numbox *x, t_symbol *s, int argc,
     x->x_exclusive = (int)atom_getintarg(19, argc, argv);
     iemgui_dialog(&x->x_gui, argc, argv);
     x->x_numwidth = my_numbox_calc_fontwidth(x);
+    my_numbox_interactive(x, atom_getfloatarg(20, argc, argv));
 
     my_numbox_check_minmax(x, min, max);
     // automatically adjust the number font size
@@ -682,9 +686,10 @@ static void my_numbox_click(t_my_numbox *x, t_floatarg xpos, t_floatarg ypos,
                             t_floatarg shift, t_floatarg ctrl, t_floatarg alt)
 {
     //post("my_numbox_click: is this even being used at all other than below?");
-    glist_grab(x->x_gui.x_glist, &x->x_gui.x_obj.te_g,
-                (t_glistmotionfn)my_numbox_motion, 0, my_numbox_list,
-                xpos, ypos, 0);
+    if (x->x_gui.x_click)
+        glist_grab(x->x_gui.x_glist, &x->x_gui.x_obj.te_g,
+                    (t_glistmotionfn)my_numbox_motion, 0, my_numbox_list,
+                    xpos, ypos, 0);
 }
 
 // this one gets called on both mouse down and mouse up (doit reports the mouse state)
@@ -693,99 +698,102 @@ static int my_numbox_newclick(t_gobj *z, struct _glist *glist,
     int xpix, int ypix, int shift, int alt, int dbl, int doit)
 {
     t_my_numbox* x = (t_my_numbox *)z;
-    if (doit)
+    if (x->x_gui.x_click)
     {
-        //post("my_numbox_newclick calling my_numbox_click...");
-        my_numbox_click( x, (t_floatarg)xpix, (t_floatarg)ypix,
-            (t_floatarg)shift, 0, (t_floatarg)alt);
-
-        if (shift)
+        if (doit)
         {
-            x->x_gui.x_finemoved = 1;
-            x->x_shiftclick = 1;
-        }
-        else
-        {
-            x->x_gui.x_finemoved = 0;
-            x->x_shiftclick = 0;
-        }
-
-        // if we are clicking on the object for the first time and are
-        // about to focus onto it
-        // LATER: reconcile the following if/else statements
-        if (!x->x_focused)
-        {
-            //post("|...focusing for the first time");
-            // ico@vt.edu 2021-09-04: added msgfocus check when you issue
-            // the "focus" command for keyboard navigation in which case
-            // there should be no timeout
-            if (x->x_msgfocus == 0)
-                clock_delay(x->x_clock_reset, 3000);
-            else
-                clock_unset(x->x_clock_reset);
+            //post("my_numbox_newclick calling my_numbox_click...");
+            my_numbox_click( x, (t_floatarg)xpix, (t_floatarg)ypix,
+                (t_floatarg)shift, 0, (t_floatarg)alt);
 
             if (shift)
-                my_numbox_ftoa(x, 1);
-            else
-                x->x_buf[0] = 0;
-            x->x_focused = 1;
-            x->x_dragged = 0;
-
-            sys_queuegui(x, x->x_gui.x_glist, my_numbox_draw_update);
-        }
-        else
-        {
-            //post("|...refocusing");
-            // we have already been mouse focused only, and are clicking
-            // on the object again
-            //
-            // OR
-            //
-            // we have been keyboard focused and are clicking on the
-            // object again which should revert the value back to
-            // whatever was last stored and change focus back to mouse only
-            // we check for the latter below...
-            clock_unset(x->x_clock_reset);
-            if (x->x_msgfocus == 0)
-                clock_delay(x->x_clock_reset, 3000);
-            if (x->x_focused > 1)
-               my_numbox_ftoa(x, 1);
-            else 
-                x->x_buf[0] = 0;
-            x->x_focused = 1;
-            x->x_dragged = 0;
-            sys_queuegui(x, x->x_gui.x_glist, my_numbox_draw_update);
-        }
-    }
-    // we have to check if we are focused and that dbl (a.k.a. double-click) is -1
-    // as that suggests a genuine mouseup among all the mouse motion messages
-    // in g_editor.c that also have doit = 0
-    else if (x->x_focused && dbl == -1)
-    {
-        // here we check if the user has immediately let go of the mouse button
-        // which should put us in the exclusive text activated mode.
-        // we ignore focused = 2 state
-        if (x->x_focused == 1)
-        {
-            //post("|...letting go focused=1");
-            if (!x->x_dragged)
             {
-                //post("|...entering keyboard focus (if enabled, using exclusive)");
-                x->x_focused = 3;
-                glist_grab(x->x_gui.x_glist, &x->x_gui.x_obj.te_g,
-                    (t_glistmotionfn)my_numbox_motion, my_numbox_key, my_numbox_list,
-                    (t_floatarg)xpix, (t_floatarg)ypix, x->x_exclusive);
+                x->x_gui.x_finemoved = 1;
+                x->x_shiftclick = 1;
+            }
+            else
+            {
+                x->x_gui.x_finemoved = 0;
+                x->x_shiftclick = 0;
+            }
+
+            // if we are clicking on the object for the first time and are
+            // about to focus onto it
+            // LATER: reconcile the following if/else statements
+            if (!x->x_focused)
+            {
+                //post("|...focusing for the first time");
+                // ico@vt.edu 2021-09-04: added msgfocus check when you issue
+                // the "focus" command for keyboard navigation in which case
+                // there should be no timeout
+                if (x->x_msgfocus == 0)
+                    clock_delay(x->x_clock_reset, 3000);
+                else
+                    clock_unset(x->x_clock_reset);
+
+                if (shift)
+                    my_numbox_ftoa(x, 1);
+                else
+                    x->x_buf[0] = 0;
+                x->x_focused = 1;
+                x->x_dragged = 0;
+
                 sys_queuegui(x, x->x_gui.x_glist, my_numbox_draw_update);
             }
             else
             {
-                x->x_dragged = 0;
-                //post("|...dragging complete, deactivating");
-                // we have dragged the mouse, changed the value,
-                // and should immediately release focus
+                //post("|...refocusing");
+                // we have already been mouse focused only, and are clicking
+                // on the object again
+                //
+                // OR
+                //
+                // we have been keyboard focused and are clicking on the
+                // object again which should revert the value back to
+                // whatever was last stored and change focus back to mouse only
+                // we check for the latter below...
                 clock_unset(x->x_clock_reset);
-                x->x_gui.x_changed = 1;
-                my_numbox_tick_reset(x);
+                if (x->x_msgfocus == 0)
+                    clock_delay(x->x_clock_reset, 3000);
+                if (x->x_focused > 1)
+                   my_numbox_ftoa(x, 1);
+                else 
+                    x->x_buf[0] = 0;
+                x->x_focused = 1;
+                x->x_dragged = 0;
+                sys_queuegui(x, x->x_gui.x_glist, my_numbox_draw_update);
+            }
+        }
+        // we have to check if we are focused and that dbl (a.k.a. double-click) is -1
+        // as that suggests a genuine mouseup among all the mouse motion messages
+        // in g_editor.c that also have doit = 0
+        else if (x->x_focused && dbl == -1)
+        {
+            // here we check if the user has immediately let go of the mouse button
+            // which should put us in the exclusive text activated mode.
+            // we ignore focused = 2 state
+            if (x->x_focused == 1)
+            {
+                //post("|...letting go focused=1");
+                if (!x->x_dragged)
+                {
+                    //post("|...entering keyboard focus (if enabled, using exclusive)");
+                    x->x_focused = 3;
+                    glist_grab(x->x_gui.x_glist, &x->x_gui.x_obj.te_g,
+                        (t_glistmotionfn)my_numbox_motion, my_numbox_key, my_numbox_list,
+                        (t_floatarg)xpix, (t_floatarg)ypix, x->x_exclusive);
+                    sys_queuegui(x, x->x_gui.x_glist, my_numbox_draw_update);
+                }
+                else
+                {
+                    x->x_dragged = 0;
+                    //post("|...dragging complete, deactivating");
+                    // we have dragged the mouse, changed the value,
+                    // and should immediately release focus
+                    clock_unset(x->x_clock_reset);
+                    x->x_gui.x_changed = 1;
+                    my_numbox_tick_reset(x);
+                }
             }
         }
     }
@@ -1135,9 +1143,20 @@ static void my_numbox_focus(t_my_numbox *x, t_floatarg f)
     }
 }
 
+static void my_numbox_interactive(t_my_numbox *x, t_floatarg f)
+{
+    if ((int)f == 0 || (int)f == 1)
+    {
+        if ((int)f == 0)
+            my_numbox_focus(x, 0);
+        x->x_gui.x_click = (int)f;
+    }
+}
+
 static void my_numbox_commit(t_my_numbox *x)
 {
-    my_numbox_key((void *)x, 10.0);
+    if (x->x_msgfocus == 1)
+        my_numbox_key((void *)x, 10.0);
 }
 
 static void *my_numbox_new(t_symbol *s, int argc, t_atom *argv)
@@ -1152,6 +1171,7 @@ static void *my_numbox_new(t_symbol *s, int argc, t_atom *argv)
     x->x_gui.x_bcol = 0xFCFCFC;
     x->x_gui.x_fcol = 0x00;
     x->x_gui.x_lcol = 0x00;
+    x->x_gui.x_click = 1;
 
 
     if((argc >= 17)&&IS_A_FLOAT(argv,0)&&IS_A_FLOAT(argv,1)
@@ -1185,8 +1205,10 @@ static void *my_numbox_new(t_symbol *s, int argc, t_atom *argv)
     {
         x->x_drawstyle = (int)atom_getintarg(18, argc, argv);
     }
-    if (argc == 20&&IS_A_FLOAT(argv,19))
+    if (argc >= 20&&IS_A_FLOAT(argv,19))
             ex = atom_getintarg(19, argc, argv);
+    if (argc == 21&&IS_A_FLOAT(argv,20))
+            x->x_gui.x_click = atom_getfloatarg(20, argc, argv);
     x->x_gui.x_draw = (t_iemfunptr)my_numbox_draw;
     x->x_gui.x_glist = (t_glist *)canvas_getcurrent();
     x->x_val = x->x_gui.x_loadinit ? v : 0.0;
@@ -1285,6 +1307,8 @@ void g_numbox_setup(void)
         A_FLOAT, 0);
     class_addmethod(my_numbox_class, (t_method)my_numbox_commit, gensym("commit"),
         A_NULL, 0);
+    class_addmethod(my_numbox_class, (t_method)my_numbox_interactive, gensym("interactive"),
+        A_FLOAT, 0);
 
     wb_init(&my_numbox_widgetbehavior,my_numbox_getrect,my_numbox_newclick);
     class_setwidget(my_numbox_class, &my_numbox_widgetbehavior);

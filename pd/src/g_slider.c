@@ -14,6 +14,9 @@
 #include <math.h>
 
 extern int gfxstub_haveproperties(void *key);
+
+static void slider_interactive(t_slider *x, t_floatarg f);
+
 t_widgetbehavior slider_widgetbehavior;
 t_class *hslider_class;
 t_class *vslider_class;
@@ -192,7 +195,7 @@ static void slider_save(t_gobj *z, t_binbuf *b)
     t_symbol *bflcol[3];
     t_symbol *srl[3];
     iemgui_save(&x->x_gui, srl, bflcol);
-    binbuf_addv(b, "ssiisiiffiisssiiiisssiii", gensym("#X"),gensym("obj"),
+    binbuf_addv(b, "ssiisiiffiisssiiiisssiiii", gensym("#X"),gensym("obj"),
         (int)x->x_gui.x_obj.te_xpix, (int)x->x_gui.x_obj.te_ypix,
         gensym(x->x_orient ? "vsl" : "hsl"), x->x_gui.x_w, x->x_gui.x_h,
         (t_float)x->x_min, (t_float)x->x_max,
@@ -200,7 +203,7 @@ static void slider_save(t_gobj *z, t_binbuf *b)
         srl[0], srl[1], srl[2], x->x_gui.x_ldx, x->x_gui.x_ldy,
         iem_fstyletoint(&x->x_gui), x->x_gui.x_fontsize,
         bflcol[0], bflcol[1], bflcol[2],
-        x->x_val, x->x_steady, x->x_exclusive);
+        x->x_val, x->x_steady, x->x_exclusive, x->x_gui.x_click);
     binbuf_addv(b, ";");
 }
 
@@ -292,6 +295,7 @@ static void slider_properties(t_gobj *z, t_glist *owner)
     gui_s("foreground_color"); gui_i(0xffffff & x->x_gui.x_fcol);
     gui_s("label_color");      gui_i(0xffffff & x->x_gui.x_lcol);
     gui_s("exclusive");        gui_i(x->x_exclusive);
+    gui_s("interactive");      gui_i(x->x_gui.x_click);
 
     gui_end_array();
     gui_end_vmess();
@@ -317,7 +321,7 @@ static void slider_bang(t_slider *x)
 
 static void slider_dialog(t_slider *x, t_symbol *s, int argc, t_atom *argv)
 {
-    if (atom_getintarg(20, argc, argv))
+    if (atom_getintarg(21, argc, argv))
         canvas_apply_setundo(x->x_gui.x_glist, (t_gobj *)x);
     int w = atom_getintarg(0, argc, argv);
     int h = atom_getintarg(1, argc, argv);
@@ -327,6 +331,7 @@ static void slider_dialog(t_slider *x, t_symbol *s, int argc, t_atom *argv)
     x->x_steady = !!atom_getintarg(17, argc, argv);
     x->x_exclusive = (int)atom_getintarg(19, argc, argv);
     int sr_flags = iemgui_dialog(&x->x_gui, argc, argv);
+    slider_interactive(x, atom_getfloatarg(20, argc, argv));
     if (x->x_orient) {
         x->x_gui.x_w = iemgui_clip_size(w);
         int oldl = x->x_gui.x_h;
@@ -392,23 +397,26 @@ static void slider_list(t_my_numbox *x, t_symbol *s, int ac, t_atom *av)
 static void slider_click(t_slider *x, t_floatarg xpos, t_floatarg ypos,
     t_floatarg shift, t_floatarg ctrl, t_floatarg alt)
 {
-    if(!x->x_steady)
-        x->x_val = x->x_orient ?
-         (int)(100.0 * (x->x_gui.x_h + text_ypix(&x->x_gui.x_obj, x->x_gui.x_glist) - ypos)) :
-         (int)(100.0 * (        xpos - text_xpix(&x->x_gui.x_obj, x->x_gui.x_glist)));
-
-    int w = x->x_orient ? x->x_gui.x_h : x->x_gui.x_w;
-    x->x_val = mini(maxi(x->x_val,0),100*(w-1));
-    if (x->x_pos != x->x_val)
+    if (x->x_gui.x_click)
     {
-        x->x_pos = x->x_val;
-        x->x_gui.x_changed = 1;
-        x->x_gui.x_draw(x, x->x_gui.x_glist, IEM_GUI_DRAW_MODE_UPDATE);
+        if(!x->x_steady)
+            x->x_val = x->x_orient ?
+             (int)(100.0 * (x->x_gui.x_h + text_ypix(&x->x_gui.x_obj, x->x_gui.x_glist) - ypos)) :
+             (int)(100.0 * (        xpos - text_xpix(&x->x_gui.x_obj, x->x_gui.x_glist)));
+
+        int w = x->x_orient ? x->x_gui.x_h : x->x_gui.x_w;
+        x->x_val = mini(maxi(x->x_val,0),100*(w-1));
+        if (x->x_pos != x->x_val)
+        {
+            x->x_pos = x->x_val;
+            x->x_gui.x_changed = 1;
+            x->x_gui.x_draw(x, x->x_gui.x_glist, IEM_GUI_DRAW_MODE_UPDATE);
+        }
+        x->x_is_last_float=0; // does anyone know how this works with !steady && rcv==snd ?
+        slider_bang(x);
+        glist_grab(x->x_gui.x_glist, &x->x_gui.x_obj.te_g,
+            (t_glistmotionfn)slider_motion, 0, slider_list, xpos, ypos, x->x_exclusive);
     }
-    x->x_is_last_float=0; // does anyone know how this works with !steady && rcv==snd ?
-    slider_bang(x);
-    glist_grab(x->x_gui.x_glist, &x->x_gui.x_obj.te_g,
-        (t_glistmotionfn)slider_motion, 0, slider_list, xpos, ypos, x->x_exclusive);
 }
 
 static int slider_newclick(t_gobj *z, struct _glist *glist,
@@ -417,17 +425,19 @@ static int slider_newclick(t_gobj *z, struct _glist *glist,
     t_slider *x = (t_slider *)z;
     //post("slider_newclick dbl=%d doit=%d grabbed=%d", \
         dbl, doit, x->x_gui.x_glist->gl_editor->e_grab ? 1 : 0);
-
-    if(doit)
+    if (x->x_gui.x_click)
     {
-        slider_click(x, (t_floatarg)xpix, (t_floatarg)ypix, (t_floatarg)shift,
-            0, (t_floatarg)alt);
-        x->x_gui.x_finemoved = !!shift;
-    }
-    else if (dbl == -1)
-    {
-        // genuine mouseup
-        glist_grab(x->x_gui.x_glist, 0, 0, 0, 0, 0, 0, 0);
+        if(doit)
+        {
+            slider_click(x, (t_floatarg)xpix, (t_floatarg)ypix, (t_floatarg)shift,
+                0, (t_floatarg)alt);
+            x->x_gui.x_finemoved = !!shift;
+        }
+        else if (dbl == -1)
+        {
+            // genuine mouseup
+            glist_grab(x->x_gui.x_glist, 0, 0, 0, 0, 0, 0, 0);
+        }
     }
     return (1);
 }
@@ -520,6 +530,14 @@ static void slider_exclusive(t_slider *x, t_floatarg f)
     }
 }
 
+static void slider_interactive(t_slider *x, t_floatarg f)
+{
+    if ((int)f == 0 || (int)f == 1)
+    {
+        x->x_gui.x_click = (int)f;
+    }
+}
+
 static void *slider_new(t_symbol *s, int argc, t_atom *argv)
 {
     int orient = s==gensym("vsl") || s==gensym("vslider");
@@ -541,7 +559,7 @@ static void *slider_new(t_symbol *s, int argc, t_atom *argv)
     x->x_gui.x_bcol = 0xFCFCFC;
     x->x_gui.x_fcol = 0x00;
     x->x_gui.x_lcol = 0x00;
-
+    x->x_gui.x_click = 1;
 
     if(argc >= 17&&IS_A_FLOAT(argv,0)&&IS_A_FLOAT(argv,1)
        &&IS_A_FLOAT(argv,2)&&IS_A_FLOAT(argv,3)
@@ -570,10 +588,12 @@ static void *slider_new(t_symbol *s, int argc, t_atom *argv)
         v = atom_getintarg(16, argc, argv);
     }
     else iemgui_new_getnames(&x->x_gui, 6, 0);
-    if((argc == 18)&&IS_A_FLOAT(argv,17))
+    if((argc >= 18)&&IS_A_FLOAT(argv,17))
         steady = (int)atom_getintarg(17, argc, argv);
-    if (argc == 19&&IS_A_FLOAT(argv,18))
+    if (argc >= 19&&IS_A_FLOAT(argv,18))
             ex = atom_getintarg(18, argc, argv);
+    if (argc >= 20&&IS_A_FLOAT(argv,19))
+            x->x_gui.x_click = atom_getintarg(19, argc, argv);
     x->x_gui.x_draw = (t_iemfunptr)slider_draw;
     x->x_is_last_float = 0;
     x->x_last = 0.0;
@@ -648,6 +668,8 @@ void slider_addmethods(t_class *c) {
         A_FLOAT, A_FLOAT, 0);
     class_setsavefn(c, slider_save);
     class_addmethod(c, (t_method)slider_size, gensym("size"), A_GIMME, 0);
+    class_addmethod(c, (t_method)slider_interactive, gensym("interactive"),
+        A_FLOAT, 0);
     class_setwidget(c, &slider_widgetbehavior);
     class_addmethod(c, (t_method)slider_dialog, gensym("dialog"),
         A_GIMME, 0);
