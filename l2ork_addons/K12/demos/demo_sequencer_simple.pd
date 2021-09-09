@@ -6,13 +6,13 @@
 9 41 %preset% 0 70 %node% 2 9 46 %preset% 0 53 %node% 2 9 51 %preset%
 0 72 %node% 2 9 56 %preset% 0 67 %node% 2 9 61 %preset% 0 70 %node%
 2 9 66 %preset% 0 76 %node% 2 9 71 %preset% 0 65 %node% 2 9 76 %preset%
-0 69 %node% 2 9 81 %preset% 0 55 %node% 2 1 6 %preset% 0 72 %node%
-2 3 6 %preset% 0 1 %node% 2 4 8 %preset% 0 2 %node% 2 5 25 %preset%
-0 0 %node% 2 6 13 %preset% 0 419.545 %node% 2 6 14 %preset% 0 5 %node%
-2 7 6 %preset% 0 1 %node% 2 8 7 %node% 2 10 2 %preset% 0 1 %node% 2
-10 18 %preset% 0 16 %node% 2 11 6 %preset% 0 305.616 %node% 2 11 13
-%preset% 0 678.082 %node% 2 14 0 %preset% 0 240 %node% 2 14 3 %preset%
-0 1;
+0 69 %node% 2 9 81 %preset% 0 55 %node% 2 10 3 %preset% 0 1 %node%
+2 10 0 %preset% 0 240 %node% 2 1 6 %preset% 0 70 %node% 2 3 6 %preset%
+0 1 %node% 2 4 8 %preset% 0 2 %node% 2 5 25 %preset% 0 1 %node% 2 6
+13 %preset% 0 419.545 %node% 2 6 14 %preset% 0 5 %node% 2 7 6 %preset%
+0 1 %node% 2 8 7 %node% 2 11 2 %preset% 0 1 %node% 2 11 18 %preset%
+0 16 %node% 2 12 6 %preset% 0 305.616 %node% 2 12 13 %preset% 0 678.082
+;
 #X obj 168 47 K12/math_number 0;
 #X obj 86 121 K12/instr_sustained2 0;
 #X obj 37 25 K12/math_number 0;
@@ -22,20 +22,20 @@
 #X obj 188 163 K12/math_number 0;
 #X obj 17 -420 K12/preset 0;
 #X obj 168 -194 K12/logic_sequencer 0;
+#X obj 168 -420 K12/logic_metronome 0;
 #X obj 168 -306 K12/logic_counter 0;
 #X obj -12 354 K12/fx_multitap 0;
 #X text 14 -328 recall preset #0to begin;
 #X text 14 -291 by Ivica Ico Bukvic<ico@vt.edu> 2014-21;
-#X obj 168 -420 K12/logic_metronome 0;
 #X connect 1 0 2 1;
 #X connect 1 0 7 1;
 #X connect 2 0 6 0;
 #X connect 3 0 2 0;
 #X connect 4 0 5 0;
-#X connect 6 0 11 0;
+#X connect 6 0 12 0;
 #X connect 6 0 4 0;
 #X connect 7 0 6 1;
 #X connect 9 0 1 0;
-#X connect 10 0 9 0;
-#X connect 11 0 5 0;
-#X connect 14 0 10 0;
+#X connect 10 0 11 0;
+#X connect 11 0 9 0;
+#X connect 12 0 5 0;
