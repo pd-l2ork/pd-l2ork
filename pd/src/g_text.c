@@ -1714,8 +1714,12 @@ void canvas_atom(t_glist *gl, t_atomtype type,
         x->a_symto = gatom_unescapit(atom_getsymbolarg(8, argc, argv));
         if (argc > 9)
             x->a_exclusive = atom_getfloatarg(9, argc, argv);
-        if (argc > 10)
-            x->a_click = atom_getintarg(10, argc, argv);
+        if (argc > 10) {
+            x->a_hard_limit = atom_getintarg(10, argc, argv);
+        }
+        if (argc > 11) {
+            x->a_click = atom_getintarg(11, argc, argv);
+        }
         x->a_expanded_to = canvas_realizedollar(x->a_glist, x->a_symto);
         if (x->a_symto == &s_)
             outlet_new(&x->a_text,
@@ -2646,7 +2650,7 @@ void text_save(t_gobj *z, t_binbuf *b)
                 label, symfrom, symto,
                 (int)((t_gatom *)x)->a_exclusive,
                 (int)((t_gatom *)x)->a_hard_limit,
-                (int)((t_gatom *)x)->a_click);
+                ((t_gatom *)x)->a_click);
         }
         else
         {
