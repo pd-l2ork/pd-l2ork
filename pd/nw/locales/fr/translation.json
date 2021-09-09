@@ -102,7 +102,10 @@
       "exclusive": "focus clavier exclusif",
       "exclusive_tt": "si l'objet capture toutes les entrées du clavier pendant la mise au point",
       "limit": "basculer min/max pour les valeurs saisies",
-      "limit_tt": "garder les valeurs saisies dans les limites minimum/maximum"
+      "limit_tt": "garder les valeurs saisies dans les limites minimum/maximum",
+      "interactive":    "interactif",
+      "interactive_tt": "si l'utilisateur peut interagir directement avec l'objet (par exemple en cliquant dessus)"
+
     }
   },
   "menu": {

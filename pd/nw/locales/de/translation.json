@@ -102,7 +102,9 @@
       "exclusive": "exklusiver tastaturfokus",
       "exclusive_tt": "ob das objekt alle tastatureingaben erfasst, während es fokussiert ist",
       "limit": "min/max für eingegebene Werte",
-      "limit_tt": "Halten Sie die eingegebenen Werte innerhalb der min/max Grenzen"
+      "limit_tt": "Halten Sie die eingegebenen Werte innerhalb der min/max Grenzen",
+      "interactive":    "interaktiv",
+      "interactive_tt": "ob der Nutzer direkt mit dem Objekt interagieren kann (z.B. durch Anklicken)"
     }
   },
   "menu": {

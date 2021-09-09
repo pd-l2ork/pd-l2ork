@@ -183,6 +183,15 @@
           <br>
         </div>
 
+        <div class="interactive">
+          <label data-i18n="[title]gatom.prop.interactive_tt">
+            <input type="checkbox" id="interactive" name="interactive" value="on"
+                   onchange="update_attr(this);">
+            <span data-i18n="gatom.prop.interactive"></span>
+          </label>
+          <br>
+        </div>
+
       </fieldset> 
 
     <div class="submit_buttons">
@@ -288,6 +297,7 @@ function send_params(attrs, create_undo_point) {
         gatom_escape(attrs.send_symbol),
         +attrs.exclusive,
         +attrs.limit,
+        +attrs.interactive,
         create_undo_point ? 1 : 0
     );
 }
@@ -438,6 +448,7 @@ function populate_form(attributes) {
     }
     get_elem("exclusive").checked = attributes.exclusive;
     get_elem("limit").checked = attributes.limit;
+    get_elem("interactive").checked = attributes.interactive;
 }
 
 function add_events(name) {
