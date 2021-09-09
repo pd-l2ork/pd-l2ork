@@ -48,6 +48,8 @@ typedef struct _mknob
 t_widgetbehavior mknob_widgetbehavior;
 static t_class *mknob_class;
 
+static void mknob_interactive(t_mknob *x, t_floatarg f);
+
 /* widget helper functions */
 static void mknob_update_knob(t_mknob *x, t_glist *glist)
 {
@@ -159,11 +161,11 @@ static void mknob_getrect(t_gobj *z, t_glist *glist,
 static void mknob_save(t_gobj *z, t_binbuf *b)
 {
     t_mknob *x = (t_mknob *)z;
-    int bflcol[3];
+    t_symbol *bflcol[3];
     t_symbol *srl[3];
 
     iemgui_save(&x->x_gui, srl, bflcol);
-    binbuf_addv(b, "ssiisiiffiisssiiiiiiiii", gensym("#X"),gensym("obj"),
+    binbuf_addv(b, "ssiisiiffiisssiiiisssiii", gensym("#X"),gensym("obj"),
                 (t_int)x->x_gui.x_obj.te_xpix, (t_int)x->x_gui.x_obj.te_ypix,
                 atom_getsymbol(binbuf_getvec(x->x_gui.x_obj.te_binbuf)),
                 x->x_gui.x_w, x->x_gui.x_h,
@@ -171,9 +173,9 @@ static void mknob_save(t_gobj *z, t_binbuf *b)
                 x->x_lin0_log1, iem_symargstoint(x),
                 srl[0], srl[1], srl[2],
                 x->x_gui.x_ldx, x->x_gui.x_ldy,
-                iem_fstyletoint(x), x->x_gui.x_fontsize,
+                iem_fstyletoint(&x->x_gui), x->x_gui.x_fontsize,
                 bflcol[0], bflcol[1], bflcol[2],
-                x->x_val, x->x_steady);
+                x->x_val, x->x_steady, x->x_gui.x_click);
     binbuf_addv(b, ";");
 }
 
@@ -269,6 +271,7 @@ static void mknob_properties(t_gobj *z, t_glist *owner)
     gui_s("background_color"); gui_i(0xffffff & x->x_gui.x_bcol);
     gui_s("foreground_color"); gui_i(0xffffff & x->x_gui.x_fcol);
     gui_s("label_color");      gui_i(0xffffff & x->x_gui.x_lcol);
+    gui_s("interactive");      gui_i(x->x_gui.x_click);
 
     gui_end_array();
     gui_end_vmess();
@@ -318,7 +321,8 @@ static void mknob_bang(t_mknob *x)
 
 static void mknob_dialog(t_mknob *x, t_symbol *s, int argc, t_atom *argv)
 {
-    canvas_apply_setundo(x->x_gui.x_glist, (t_gobj *)x);
+    if (atom_getintarg(21, argc, argv))
+        canvas_apply_setundo(x->x_gui.x_glist, (t_gobj *)x);
     t_symbol *srl[3];
     int w = (int)atom_getintarg(0, argc, argv);
     int h = (int)atom_getintarg(1, argc, argv);
@@ -335,6 +339,7 @@ static void mknob_dialog(t_mknob *x, t_symbol *s, int argc, t_atom *argv)
     else
         x->x_steady = 0;
     sr_flags = iemgui_dialog(&x->x_gui, argc, argv);
+    mknob_interactive(x, atom_getintarg(20, argc, argv));
     //x->x_gui.x_h = iemgui_clip_size(h);
     //x->x_gui.x_w = iemgui_clip_size(w);
     mknob_check_wh(x, w, h);
@@ -438,25 +443,28 @@ static void mknob_motion_fullcircular(t_mknob *x, t_floatarg dx, t_floatarg dy)
 static void mknob_click(t_mknob *x, t_floatarg xpos, t_floatarg ypos,
                         t_floatarg shift, t_floatarg ctrl, t_floatarg alt)
 {
-    xm0 = xm = xpos;
-    ym0 = ym = ypos;
-    if (x->x_val > (100*x->x_H - 100))
-        x->x_val = 100*x->x_H - 100;
-    if (x->x_val < 0)
-        x->x_val = 0;
-    x->x_pos = x->x_val;
-    (*x->x_gui.x_draw)(x, x->x_gui.x_glist, IEM_GUI_DRAW_MODE_UPDATE);
-    mknob_bang(x);
+    if (x->x_gui.x_click)
+    {
+        xm0 = xm = xpos;
+        ym0 = ym = ypos;
+        if (x->x_val > (100*x->x_H - 100))
+            x->x_val = 100*x->x_H - 100;
+        if (x->x_val < 0)
+            x->x_val = 0;
+        x->x_pos = x->x_val;
+        (*x->x_gui.x_draw)(x, x->x_gui.x_glist, IEM_GUI_DRAW_MODE_UPDATE);
+        mknob_bang(x);
 
-    if (x->x_gui.x_h<0)
-        glist_grab(x->x_gui.x_glist, &x->x_gui.x_obj.te_g,
-                   (t_glistmotionfn)mknob_motion_fullcircular, 0, 0, xpos, ypos, 0);
-    else if (x->x_gui.x_h==0)
-        glist_grab(x->x_gui.x_glist, &x->x_gui.x_obj.te_g,
-                   (t_glistmotionfn)mknob_motion_circular, 0, 0, xpos, ypos, 0);
-    else
-        glist_grab(x->x_gui.x_glist, &x->x_gui.x_obj.te_g,
-                   (t_glistmotionfn)mknob_motion, 0, 0, xpos, ypos, 0);
+        if (x->x_gui.x_h<0)
+            glist_grab(x->x_gui.x_glist, &x->x_gui.x_obj.te_g,
+                       (t_glistmotionfn)mknob_motion_fullcircular, 0, 0, xpos, ypos, 0);
+        else if (x->x_gui.x_h==0)
+            glist_grab(x->x_gui.x_glist, &x->x_gui.x_obj.te_g,
+                       (t_glistmotionfn)mknob_motion_circular, 0, 0, xpos, ypos, 0);
+        else
+            glist_grab(x->x_gui.x_glist, &x->x_gui.x_obj.te_g,
+                       (t_glistmotionfn)mknob_motion, 0, 0, xpos, ypos, 0);
+    }
 }
 
 static int mknob_newclick(t_gobj *z, struct _glist *glist,
@@ -464,14 +472,17 @@ static int mknob_newclick(t_gobj *z, struct _glist *glist,
 {
     t_mknob *x = (t_mknob *)z;
 
-    if (doit)
+    if (x->x_gui.x_click)
     {
-        mknob_click( x, (t_floatarg)xpix, (t_floatarg)ypix, (t_floatarg)shift,
-                     0, (t_floatarg)alt);
-        if (shift)
-            x->x_gui.x_finemoved = 1;
-        else
-            x->x_gui.x_finemoved = 0;
+        if (doit)
+        {
+            mknob_click( x, (t_floatarg)xpix, (t_floatarg)ypix, (t_floatarg)shift,
+                         0, (t_floatarg)alt);
+            if (shift)
+                x->x_gui.x_finemoved = 1;
+            else
+                x->x_gui.x_finemoved = 0;
+        }
     }
     return (1);
 }
@@ -662,6 +673,14 @@ static void mknob__motionhook(t_scalehandle *sh,
     scalehandle_dragon_label(sh,mouse_x, mouse_y);
 }
 
+static void mknob_interactive(t_mknob *x, t_floatarg f)
+{
+    if ((int)f == 0 || (int)f == 1)
+    {
+        x->x_gui.x_click = (int)f;
+    }
+}
+
 static void *mknob_new(t_symbol *s, int argc, t_atom *argv)
 {
     t_mknob *x = (t_mknob *)pd_new(mknob_class);
@@ -675,15 +694,16 @@ static void *mknob_new(t_symbol *s, int argc, t_atom *argv)
     //t_iem_fstyle_flags *fstyle=(t_iem_fstyle_flags *)(&ifstyle);
     char str[144];
 
-    if(((argc == 17)||(argc == 18))&&IS_A_FLOAT(argv,0)&&IS_A_FLOAT(argv,1)
+    x->x_gui.x_click = 1;
+
+    if((argc >= 17)&&IS_A_FLOAT(argv,0)&&IS_A_FLOAT(argv,1)
             &&IS_A_FLOAT(argv,2)&&IS_A_FLOAT(argv,3)
             &&IS_A_FLOAT(argv,4)&&IS_A_FLOAT(argv,5)
             &&(IS_A_SYMBOL(argv,6)||IS_A_FLOAT(argv,6))
             &&(IS_A_SYMBOL(argv,7)||IS_A_FLOAT(argv,7))
             &&(IS_A_SYMBOL(argv,8)||IS_A_FLOAT(argv,8))
             &&IS_A_FLOAT(argv,9)&&IS_A_FLOAT(argv,10)
-            &&IS_A_FLOAT(argv,11)&&IS_A_FLOAT(argv,12)&&IS_A_FLOAT(argv,13)
-            &&IS_A_FLOAT(argv,14)&&IS_A_FLOAT(argv,15)&&IS_A_FLOAT(argv,16))
+            &&IS_A_FLOAT(argv,11)&&IS_A_FLOAT(argv,12)&&IS_A_FLOAT(argv,16))
     {
         w = (int)atom_getintarg(0, argc, argv);
         h = (int)atom_getintarg(1, argc, argv);
@@ -696,15 +716,15 @@ static void *mknob_new(t_symbol *s, int argc, t_atom *argv)
         ldy = (int)atom_getintarg(10, argc, argv);
         iem_inttofstyle(x, atom_getintarg(11, argc, argv));
         fs = (int)atom_getintarg(12, argc, argv);
-        bflcol[0] = (int)atom_getintarg(13, argc, argv);
-        bflcol[1] = (int)atom_getintarg(14, argc, argv);
-        bflcol[2] = (int)atom_getintarg(15, argc, argv);
+        iemgui_all_loadcolors(&x->x_gui, argv+13, argv+14, argv+15);
         v = (int)atom_getintarg(16, argc, argv);
     }
     else iemgui_new_getnames(&x->x_gui, 6, 0);
 
-    if((argc == 18)&&IS_A_FLOAT(argv,17))
+    if((argc >= 18)&&IS_A_FLOAT(argv,17))
         steady = (int)atom_getintarg(17, argc, argv);
+    if((argc >= 19)&&IS_A_FLOAT(argv,18))
+        x->x_gui.x_click = (int)atom_getintarg(18, argc, argv);
 
     x->x_gui.x_draw = (t_iemfunptr)mknob_draw;
     x->x_gui.x_glist = (t_glist *)canvas_getcurrent();
@@ -740,7 +760,7 @@ static void *mknob_new(t_symbol *s, int argc, t_atom *argv)
     mknob_check_wh(x, w, h);
     //mknob_check_width(x, w);
     mknob_check_minmax(x, min, max);
-    iemgui_all_colfromload(&x->x_gui, bflcol);
+    //iemgui_all_colfromload(&x->x_gui, bflcol);
     x->x_thick = 0;
     iemgui_verify_snd_ne_rcv(&x->x_gui);
     outlet_new(&x->x_gui.x_obj, &s_float);
@@ -800,6 +820,7 @@ void mknob_setup(void)
     class_addmethod(mknob_class, (t_method)mknob_lin, gensym("lin"), 0);
     class_addmethod(mknob_class, (t_method)mknob_init, gensym("init"), A_FLOAT, 0);
     class_addmethod(mknob_class, (t_method)mknob_steady, gensym("steady"), A_FLOAT, 0);
+    class_addmethod(mknob_class, (t_method)mknob_interactive, gensym("interactive"), A_FLOAT, 0);
     /*if(!iemgui_key_sym)
     iemgui_key_sym = gensym("#keyname");*/
     mknob_widgetbehavior.w_getrectfn =    mknob_getrect;
