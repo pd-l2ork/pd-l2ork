@@ -104,8 +104,9 @@
       "limit": "basculer min/max pour les valeurs saisies",
       "limit_tt": "garder les valeurs saisies dans les limites minimum/maximum",
       "interactive":    "interactif",
-      "interactive_tt": "si l'utilisateur peut interagir directement avec l'objet (par exemple en cliquant dessus)"
-
+      "interactive_tt": "si l'utilisateur peut interagir directement avec l'objet (par exemple en cliquant dessus)",
+      "autoupdate":    "mise à jour sur la touche haut/bas",
+      "autoupdate_tt": "sortie automatiquement la valeur à chaque changement à l'aide des touches haut/bas (y compris shift+haut/bas)"
     }
   },
   "menu": {

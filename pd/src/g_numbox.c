@@ -504,7 +504,7 @@ static void my_numbox_save(t_gobj *z, t_binbuf *b)
         x->x_gui.x_changed = 1;
         sys_queuegui(x, x->x_gui.x_glist, my_numbox_draw_update);
     }
-    binbuf_addv(b, "ssiisiiffiisssiiiisssfiiii;", gensym("#X"),gensym("obj"),
+    binbuf_addv(b, "ssiisiiffiisssiiiisssfiiiii;", gensym("#X"),gensym("obj"),
         (int)x->x_gui.x_obj.te_xpix, (int)x->x_gui.x_obj.te_ypix,
         gensym("nbx"), x->x_gui.x_w, x->x_gui.x_h,
         (t_float)x->x_min, (t_float)x->x_max,
@@ -513,7 +513,7 @@ static void my_numbox_save(t_gobj *z, t_binbuf *b)
         iem_fstyletoint(&x->x_gui), x->x_gui.x_fontsize,
         bflcol[0], bflcol[1], bflcol[2],
         x->x_val, x->x_log_height, x->x_drawstyle,
-        x->x_exclusive, x->x_gui.x_click);
+        x->x_exclusive, x->x_gui.x_click, x->x_autoupdate);
 }
 
 int my_numbox_check_minmax(t_my_numbox *x, double min, double max)
@@ -608,6 +608,7 @@ static void my_numbox_properties(t_gobj *z, t_glist *owner)
     gui_s("draw_style");       gui_i(x->x_drawstyle);
     gui_s("exclusive");        gui_i(x->x_exclusive);
     gui_s("interactive");      gui_i(x->x_gui.x_click);
+    gui_s("autoupdate");       gui_i(x->x_autoupdate);
     gui_end_array();
     gui_end_vmess();
 }
@@ -632,7 +633,8 @@ static void my_numbox_dialog(t_my_numbox *x, t_symbol *s, int argc,
     x->x_exclusive = (int)atom_getintarg(19, argc, argv);
     iemgui_dialog(&x->x_gui, argc, argv);
     x->x_numwidth = my_numbox_calc_fontwidth(x);
-    my_numbox_interactive(x, atom_getfloatarg(20, argc, argv));
+    my_numbox_interactive(x, atom_getintarg(20, argc, argv));
+    x->x_autoupdate = atom_getintarg(22, argc, argv);
 
     my_numbox_check_minmax(x, min, max);
     // automatically adjust the number font size
@@ -1053,7 +1055,10 @@ static void my_numbox_list(t_my_numbox *x, t_symbol *s, int ac, t_atom *av)
                 }
                 else
                     sprintf(x->x_buf, "%g", atof(x->x_buf) + 1);
-                my_numbox_key((void *)x, -1);
+                if (x->x_autoupdate)
+                    my_numbox_key((void *)x, 10);
+                else
+                    my_numbox_key((void *)x, -1);
             }
             else if (!strcmp("ShiftUp", av[1].a_w.w_symbol->s_name))
             {
@@ -1062,7 +1067,10 @@ static void my_numbox_list(t_my_numbox *x, t_symbol *s, int ac, t_atom *av)
                     sprintf(x->x_buf, "%g", 0.01);
                 else
                     sprintf(x->x_buf, "%g", atof(x->x_buf) + 0.01);
-                my_numbox_key((void *)x, -1);
+                if (x->x_autoupdate)
+                    my_numbox_key((void *)x, 10);
+                else
+                    my_numbox_key((void *)x, -1);
             }
             else if (!strcmp("Down", av[1].a_w.w_symbol->s_name))
             {
@@ -1071,7 +1079,10 @@ static void my_numbox_list(t_my_numbox *x, t_symbol *s, int ac, t_atom *av)
                     sprintf(x->x_buf, "%g", -1.0);
                 else
                     sprintf(x->x_buf, "%g", atof(x->x_buf) - 1);
-                my_numbox_key((void *)x, -1);
+                if (x->x_autoupdate)
+                    my_numbox_key((void *)x, 10);
+                else
+                    my_numbox_key((void *)x, -1);
             }
             else if (!strcmp("ShiftDown", av[1].a_w.w_symbol->s_name))
             {
@@ -1080,7 +1091,10 @@ static void my_numbox_list(t_my_numbox *x, t_symbol *s, int ac, t_atom *av)
                     sprintf(x->x_buf, "%g", -0.01);
                 else
                     sprintf(x->x_buf, "%g", atof(x->x_buf) - 0.01);
-                my_numbox_key((void *)x, -1);
+                if (x->x_autoupdate)
+                    my_numbox_key((void *)x, 10);
+                else                
+                    my_numbox_key((void *)x, -1);
             }
         }
     }
@@ -1172,6 +1186,7 @@ static void *my_numbox_new(t_symbol *s, int argc, t_atom *argv)
     x->x_gui.x_fcol = 0x00;
     x->x_gui.x_lcol = 0x00;
     x->x_gui.x_click = 1;
+    x->x_autoupdate = 0;
 
 
     if((argc >= 17)&&IS_A_FLOAT(argv,0)&&IS_A_FLOAT(argv,1)
@@ -1207,8 +1222,10 @@ static void *my_numbox_new(t_symbol *s, int argc, t_atom *argv)
     }
     if (argc >= 20&&IS_A_FLOAT(argv,19))
             ex = atom_getintarg(19, argc, argv);
-    if (argc == 21&&IS_A_FLOAT(argv,20))
-            x->x_gui.x_click = atom_getfloatarg(20, argc, argv);
+    if (argc >= 21&&IS_A_FLOAT(argv,20))
+            x->x_gui.x_click = atom_getintarg(20, argc, argv);
+    if (argc >= 22&&IS_A_FLOAT(argv,21))
+            x->x_autoupdate = atom_getintarg(21, argc, argv);
     x->x_gui.x_draw = (t_iemfunptr)my_numbox_draw;
     x->x_gui.x_glist = (t_glist *)canvas_getcurrent();
     x->x_val = x->x_gui.x_loadinit ? v : 0.0;

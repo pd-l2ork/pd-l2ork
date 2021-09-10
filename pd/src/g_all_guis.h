@@ -231,6 +231,9 @@ typedef struct _my_numbox
                                non-exclusive (0, default) */
     int      x_msgfocus;    /* used to detect when the focus was invoked through a message
                                "focus", in which case we disable the focus timeout */
+    int      x_autoupdate;  /* used to re-send the latest value when using the keyboard
+                               up and down keys while the numbox is activated
+                               (off by default) */
 } t_my_numbox;
 
 extern int sys_noloadbang;

@@ -107,7 +107,9 @@
       "exclusive":    "exclusive keyboard focus",
       "exclusive_tt": "whether the object captures all keyboard input while focused",
       "interactive":    "interactive",
-      "interactive_tt": "whether the user can directly interact with the object (e.g. by clicking on it)"
+      "interactive_tt": "whether the user can directly interact with the object (e.g. by clicking on it)",
+      "autoupdate":    "update on up/down key",
+      "autoupdate_tt": "automatically output value on each change using up/down keys (including shift+up/down)"
     }
   },
   "gatom": {

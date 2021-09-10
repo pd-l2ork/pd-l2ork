@@ -197,6 +197,15 @@
           <br>
         </div>
 
+        <div class="autoupdate prop hidden">
+          <label data-i18n="[title]iem.prop.autoupdate_tt">
+            <input type="checkbox" name="autoupdate" value="on"
+                   onchange="update_attr(this);">
+            <span data-i18n="iem.prop.autoupdate"></span>
+          </label>
+          <br>
+        </div>
+
         <div class="exclusive prop hidden">
           <label data-i18n="[title]iem.prop.exclusive_tt">
             <input type="checkbox" name="exclusive" value="on"
@@ -533,8 +542,10 @@ function send_params(attrs, create_undo_point) {
     if (isNaN(exclusive)) { exclusive = "null"; }
 
     var interactive = +attrs["interactive"];
-    //pdgui.post("interactive="+interactive);
     if (isNaN(interactive)) { interactive = "null"; }
+
+    var autoupdate = +attrs["autoupdate"];
+    if (isNaN(autoupdate)) { autoupdate = "null"; }
 
     var slot7 = attrs.log_height;
     if (slot7 === undefined) {
@@ -583,7 +594,8 @@ function send_params(attrs, create_undo_point) {
         draw_style,  // numbox draw style
         exclusive,   // exclusive keyboard access
         interactive, // whether the object is interactive
-        create_undo_point ? 1 : 0 // whether we set an undo point
+        create_undo_point ? 1 : 0, // whether we set an undo point
+        autoupdate
     );
 }
 
