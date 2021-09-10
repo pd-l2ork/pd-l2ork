@@ -3,7 +3,7 @@
 0;
 #X obj 0 2 cnv 15 1631 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 1 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ 0.43\ by
+#X obj 1 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ 0.44\ by
 4 5 0 10 #6c6c6c #fcfcfc 0;
 #X obj 234 3 cnv 15 125 16 empty empty (c)\ 2020\ Released\ under\ the
 4 6 0 10 #6c6c6c #fcfcfc 0;
@@ -11,25 +11,25 @@
 0;
 #X obj 9 28 cnv 8 121 8 empty empty HOSTNAME:PORT -1 5 0 10 #6c6c6c
 #fcfcfc 0;
-#X symbolatom 8 42 37 0 0 2 - #0-hostname-r #0-hostname-s 1 0, f 37
-;
+#X symbolatom 8 42 37 0 0 2 - #0-hostname-r #0-hostname-s 1 0 1, f
+37;
 #X obj 395 24 cnv 15 490 41 empty empty empty 4 5 0 10 #6c6c6c #fcfcfc
 0;
 #X obj 888 24 cnv 15 555 41 empty empty empty 4 5 0 10 #6c6c6c #fcfcfc
 0;
 #X obj 894 28 cnv 8 70 8 empty empty CHAT -1 5 0 10 #6c6c6c #fcfcfc
 0;
-#X symbolatom 894 42 90 0 0 0 - #0-chat-r #0-chat-s 1 0, f 90;
+#X symbolatom 894 42 90 0 0 0 - #0-chat-r #0-chat-s 1 0 1, f 90;
 #X obj 1446 24 cnv 15 184 41 empty empty empty 4 5 0 10 #6c6c6c #fcfcfc
 0;
 #X obj 1501 28 cnv 8 70 8 empty empty SESSION\ NAME -1 5 0 10 #6c6c6c
 #fcfcfc 0;
 #X symbolatom 1474 42 21 0 0 0 - session-name-r session-name-s 1 0
-, f 21;
+1, f 21;
 #X obj 1455 42 bng 16 250 50 0 load-session load-session-r LOAD -4
--9 0 10 #80fc80 #008080 #fcfcfc;
+-9 0 10 #80fc80 #008080 #fcfcfc 1;
 #X obj 1605 42 bng 16 250 50 0 save-session save-session-r SAVE -5
--9 0 10 #fcb46c #fc6418 #fcfcfc;
+-9 0 10 #fcb46c #fc6418 #fcfcfc 1;
 #N canvas 769 452 503 135 settings 0;
 #N canvas 139 226 861 565 loop-logic 0;
 #X obj 506 413 r myclientnum;
@@ -45,7 +45,7 @@
 #C restore;
 #X obj 127 159 gate 1 0;
 #X obj 172 136 key;
-#X floatatom 127 244 5 0 0 0 - - - 0 0, f 5;
+#X floatatom 127 244 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 195 159 loadbang;
 #X obj 146 43 keyname;
 #X obj 185 65 sel Shift;
@@ -67,7 +67,7 @@ f 25;
 #C restore;
 #X obj 505 159 gate 1 0;
 #X obj 550 136 key;
-#X floatatom 505 244 5 0 0 0 - - - 0 0, f 5;
+#X floatatom 505 244 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 573 159 loadbang;
 #X obj 524 43 keyname;
 #X obj 563 65 sel Shift;
@@ -169,7 +169,7 @@ f 25;
 #X obj 272 279 list prepend send;
 #X obj 272 301 list trim;
 #X obj 20 137 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 0 1;
+#000000 0 1 1;
 #X obj 20 156 metro 1000;
 #X msg 20 177 ping;
 #X obj 20 219 list trim;
@@ -256,8 +256,8 @@ also addresses weird timing issues during init if the spam is allowed.
 #X obj 145 135 sel 0 1;
 #X obj 145 285 t b l;
 #X obj 186 661 outlet;
-#X floatatom 81 80 8 0 0 0 - - - 0 0, f 8;
-#X floatatom 133 387 5 0 0 0 - - - 0 0, f 5;
+#X floatatom 81 80 8 0 0 0 - - - 0 0 1, f 8;
+#X floatatom 133 387 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 133 364 r myclientnum;
 #X obj 133 436 + 1;
 #X obj 133 461 gate 2 1;
@@ -306,7 +306,7 @@ server-compatible version of the client available at http://l2ork.music.vt.edu/m
 #X msg 92 570 color -4.44147e+06;
 #X msg 256 813 0;
 #X obj 313 844 nbx 5 14 0 1e+37 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0 256 0 0;
+#000000 #000000 0 256 0 0 1 0;
 #X obj 20 538 sel 0 1;
 #X obj 861 140 delay 250;
 #X obj 489 621 sel -1;
@@ -338,7 +338,7 @@ to keep its state in sync with the server (does not work for guests)
 #X msg 409 81 0;
 #X obj 277 129 sel 1;
 #X obj 277 150 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#000000 #000000;
+#000000 #000000 1;
 #X obj 277 173 s disconnect;
 #X text 305 108 use Shift+Ctrl+F12 to disconnect;
 #X obj 609 180 r myclientnum;
@@ -557,12 +557,12 @@ to keep its state in sync with the server (does not work for guests)
 #X obj 329 215 text set override;
 #X obj 442 215 text delete override;
 #X obj 75 148 f;
-#X floatatom 75 211 5 0 0 0 - - - 0 0, f 5;
+#X floatatom 75 211 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 75 169 t f f;
 #X msg 75 385 \; \$1-main-out-override bang \;;
 #X obj 329 192 pack 0 0;
 #X obj 374 172 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 0 1;
+#000000 0 1 1;
 #X text 393 171 DEBUG;
 #X obj 176 96 - 1;
 #X obj 75 190 text get override 1;
@@ -619,7 +619,7 @@ to keep its state in sync with the server (does not work for guests)
 #C restore;
 #X obj 66 165 gate 1 0;
 #X obj 111 142 key;
-#X floatatom 66 250 5 0 0 0 - - - 0 0, f 5;
+#X floatatom 66 250 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 134 165 loadbang;
 #X obj 85 49 keyname;
 #X obj 124 71 sel Shift;
@@ -638,7 +638,7 @@ f 25;
 #C restore;
 #X obj 506 165 gate 1 0;
 #X obj 551 142 key;
-#X floatatom 506 250 5 0 0 0 - - - 0 0, f 5;
+#X floatatom 506 250 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 574 165 loadbang;
 #X obj 525 49 keyname;
 #X obj 564 71 sel Shift;
@@ -772,7 +772,7 @@ f 25;
 #X obj 136 44 keyname;
 #X obj 175 293 r nclients;
 #X obj 91 176 gate 1 0;
-#X floatatom 46 538 5 0 0 0 - - - 0 0, f 5;
+#X floatatom 46 538 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 104 675 s myclientnum;
 #X obj 91 268 f;
 #X obj 91 198 sel 1;
@@ -1175,12 +1175,12 @@ broadcast via internet (if connected) upon loading a session, f 42
 #X obj 204 125 s version;
 #X obj 177 269 s title-version-r;
 #X text 215 76 update version here;
-#X floatatom 138 76 5 0 0 0 - - - 0 0, f 5;
+#X floatatom 138 76 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 177 221 tosymbol;
 #X msg 177 245 label \$1;
 #X text 99 75 DEBUG;
 #X msg 177 197 L2Ork Tweeter \$1 by;
-#X msg 177 76 0.43;
+#X msg 177 76 0.44;
 #X connect 0 0 10 0;
 #X connect 1 0 9 0;
 #X connect 1 1 2 0;
@@ -1193,13 +1193,13 @@ broadcast via internet (if connected) upon loading a session, f 42
 #X connect 5 0 6 0;
 #X restore 1559 3 pd settings;
 #X obj 239 42 nbx 2 16 0 12 0 0 \$0-slot-s null-r empty 1 -9 0 12 #fcb46c
-#000000 #000000 0 256 0 1;
+#000000 #000000 0 256 0 1 1 0;
 #X obj 243 28 cnv 8 10 8 empty empty SLOT -1 5 0 10 #6c6c6c #fcfcfc
 0;
 #X obj 283 24 cnv 15 55 41 empty empty empty 4 5 0 10 #6c6c6c #fcfcfc
 0;
 #X obj 302 42 bng 16 250 50 0 reconnect null-r CONNECT -13 -9 0 10
-#fc6418 #000000 #fcfcfc;
+#fc6418 #000000 #fcfcfc 1;
 #X obj 341 24 cnv 15 51 41 empty empty empty 4 5 0 10 #6c6c6c #fcfcfc
 0;
 #X obj 352 42 cnv 15 30 16 null-s nclients-gui 0 3 6 0 12 #202020 #fcfcfc
@@ -1208,29 +1208,29 @@ broadcast via internet (if connected) upon loading a session, f 42
 0;
 #X obj -1 68 core/L2OrkTweet 1;
 #X obj 545 30 nbx 4 15 1 9999 0 0 \$0-store-loop \$0-store-loop-r empty
--64 5 0 12 #fcb46c #000000 #000000 1 256 0 1;
+-64 5 0 12 #fcb46c #000000 #000000 1 256 0 1 1 0;
 #X obj 545 45 nbx 4 15 1 9999 0 0 \$0-recall-loop \$0-recall-loop-r
-empty -64 5 0 12 #80fc80 #000000 #000000 1 256 0 1;
+empty -64 5 0 12 #80fc80 #000000 #000000 1 256 0 1 1 0;
 #X obj 410 30 cnv 8 10 8 empty empty STORE\ LOOP\ (shift+1-0) -1 5
 0 10 #6c6c6c #fcfcfc 0;
 #X obj 404 45 cnv 8 10 8 empty empty RECALL\ LOOP\ (shift+q-p) -1 5
 0 10 #6c6c6c #fcfcfc 0;
 #X obj 599 30 bng 15 250 50 0 \$0-store-loop-apply \$0-store-loop-apply-r
-empty -5 -9 0 10 #fcb46c #fc6418 #fcfcfc;
+empty -5 -9 0 10 #fcb46c #fc6418 #fcfcfc 1;
 #X obj 599 45 bng 15 250 50 0 \$0-recall-loop-apply \$0-recall-loop-apply-r
-empty -5 -9 0 10 #80fc80 #008080 #fcfcfc;
+empty -5 -9 0 10 #80fc80 #008080 #fcfcfc 1;
 #X obj 809 30 nbx 4 15 1 9999 0 0 \$0-store-preset \$0-store-preset-r
-empty -64 5 0 12 #fcb46c #000000 #000000 1 256 0 1;
+empty -64 5 0 12 #fcb46c #000000 #000000 1 256 0 1 1 0;
 #X obj 809 45 nbx 4 15 1 9999 0 0 \$0-recall-preset \$0-recall-preset-r
-empty -64 5 0 12 #80fc80 #000000 #000000 73 256 0 1;
+empty -64 5 0 12 #80fc80 #000000 #000000 1 256 0 1 1 0;
 #X obj 662 30 cnv 8 10 8 empty empty STORE\ PRESET\ (shift+a-:) -1
 5 0 10 #6c6c6c #fcfcfc 0;
 #X obj 656 45 cnv 8 10 8 empty empty RECALL\ PRESET\ (shift+z-/) -1
 5 0 10 #6c6c6c #fcfcfc 0;
 #X obj 863 30 bng 15 250 50 0 \$0-store-preset-apply \$0-store-preset-apply-r
-empty -5 -9 0 10 #fcb46c #fc6418 #fcfcfc;
+empty -5 -9 0 10 #fcb46c #fc6418 #fcfcfc 1;
 #X obj 863 45 bng 15 250 50 0 \$0-recall-preset-apply \$0-recall-preset-apply-r
-empty -5 -9 0 10 #80fc80 #008080 #fcfcfc;
+empty -5 -9 0 10 #80fc80 #008080 #fcfcfc 1;
 #X obj -1 219 core/L2OrkTweet 2;
 #X obj -1 370 core/L2OrkTweet 3;
 #X obj -1 521 core/L2OrkTweet 4;
