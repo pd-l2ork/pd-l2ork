@@ -9,15 +9,18 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+10-09-2021 0.44
+*Reworked synth pitch transposition to allow for keyboard-based detuning without retriggering a note.
+
 07-09-2021 0.43
-*Increased maximum number of players to 12
-*Added a few more presets
+*Increased maximum number of players to 12.
+*Added a few more presets.
 
 18-04-2021 0.42
 *Updated patch to support new pd-l2ork 2.16 features.
 
 19-11-2020 0.41
-*Changed and improved the overdrive level keyboard shortcuts (see the documentation widget for more info)
+*Changed and improved the overdrive level keyboard shortcuts (see the documentation widget for more info).
 *Added panning keyboard shortcuts and changed the loop length keyboard shortcuts to leave room for the panning shortcuts. 
 *Other small cosmetic fixes.
 
