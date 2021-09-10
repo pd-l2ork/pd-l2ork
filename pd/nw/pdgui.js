@@ -8168,9 +8168,20 @@ function restore_apps(force) {
         }
         if (force == 0) post("Copying Pd-L2Ork Apps...");
         if (nw_os_is_osx) {
-            copyFolderRecursiveSync(process.cwd()+"/apps/", dir);
+            // ico@vt.edu 2021-09-10:
+            // here we need to reference lib_dir which is initialized inside index.js
+            // otherwise process.cwd() when invoked from the preferences window
+            // returns the user's home folder which results in a failed copy operation
+            // as a safety, the same is use for Windows and Linux below
+            if (force == 1)
+                copyFolderRecursiveSync(lib_dir+"/apps/", dir);
+            else
+                copyFolderRecursiveSync(process.cwd()+"/apps/", dir);
         } else {
-            copyFolderRecursiveSync(process.cwd()+"/../apps/", dir);
+            if (force == 1)
+                copyFolderRecursiveSync(lib_dir+"/../apps/", dir);
+            else
+                copyFolderRecursiveSync(process.cwd()+"/../apps/", dir);
         }
         post("Done!")
     }

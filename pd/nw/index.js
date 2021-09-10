@@ -882,7 +882,6 @@ function gui_init(win) {
     // Set up the Pd Window
     gui.Window.get().setMinimumSize(350, 250);
     post_startup_messages();
-    pdgui.restore_apps(0);
     // Now we create a connection from the GUI to Pd, in one of two ways:
     // 1) If the GUI was started by Pd, then we create a tcp client and
     //    connect on the port Pd fed us in our command line arguments.
@@ -891,6 +890,7 @@ function gui_init(win) {
     // Pd always starts the GUI with a certain set of command line arguments. If
     // those arguments aren't present then we assume we need to start Pd.
     connect();
+    pdgui.restore_apps(0);
 }
 
 window.onload = function() {
