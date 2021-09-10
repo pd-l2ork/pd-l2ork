@@ -1,8 +1,5 @@
 TODO:
-*Add interactive flag to gatoms and all iemguis that can be interacted with (tgl, bng, number2, vslider, hslider, vradio, hradio, knob, mknob)
-	Gatoms need to be interactive by default DONE
-	Fix weird coloring of the mknob DONE
-	Finish help files
+*Check if the defunct image object works.
 
 *Finish gop drawing order work (see if there is something in the branch log to pull as to the status of the work)
 	Redrawing entire canvas after tidy will not be necessary anymore
@@ -14,11 +11,16 @@ TODO:
 *K12 menu/mode
 
 L2Ork Tweeter:
-*Smooth pitch changing (maybe hook the detuning directly to signal generators without triggering the envelope?)
 
 
 DONE:
 *Add focus/commit to numbox2
+*Add output option whenever an arrow up/down is pressed on the numbox2 while it is activated (with or without shift)
+*Add interactive flag to gatoms and all iemguis that can be interacted with (gatom, tgl, bng, number2, vslider, hslider, vradio, hradio, knob, mknob)
+	Gatoms need to be interactive by default
+	Fix weird coloring of the mknob
+	Finish help files
+*L2Ork Tweeter: Enabled smooth pitch changing (detuning directly to signal generators without triggering the envelope)
 
 C:
 *add toggle mode to image (using grab/motion, like gatom)
