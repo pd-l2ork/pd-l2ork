@@ -1,54 +1,55 @@
-#N canvas 0 31 677 358 10;
-#X obj 0 0 cnv 8 100 60 empty empty mknob 20 20 1 18 -262144 -1109
+#N canvas 653 399 677 358 10;
+#X obj 0 0 cnv 8 100 60 empty empty mknob 20 20 1 18 #fcfcfc #004450
 0;
-#X floatatom 55 149 5 0 0 0 - - -;
-#X floatatom 55 68 5 0 0 0 - - -;
+#X floatatom 55 209 5 0 0 0 - - - 0 0 1, f 5;
+#X floatatom 55 108 5 0 0 0 - - - 0 0 1, f 5;
 #X text 104 208 Just an adaptation of musil's slider.;
-#X obj 138 224 hsl 128 15 0 127 0 0 empty empty empty -2 -6 0 8 -262144
--1 -1 0 1;
+#X obj 138 224 hsl 128 15 0 127 0 0 empty empty empty -2 -6 0 8 #fcfcfc
+#000000 #000000 0 1 0 1;
 #X text 103 222 See:;
-#X msg 3 107 set \$1;
-#X floatatom 190 114 5 0 0 0 - - -;
-#X obj 190 95 r foo-snd;
-#X floatatom 190 60 5 0 0 0 - - -;
-#X obj 190 76 s foo-rcv;
-#X text 135 12 gui-round-knob;
-#X text 2 302 (c) moonix: Antoine Rousseau 2003;
-#X obj 149 57 mknob 25 100 0 100 0 0 foo-snd foo-rcv empty -2 -6 192
-8 -225271 -1 -1 0 1;
-#X obj 55 85 mknob 30 100 0 127 0 0 empty empty empty -2 -6 0 8 -241291
--24198 -1 0 1;
-#X obj 55 126 mknob 15 100 127 0 0 0 empty empty empty -2 -6 0 8 -258699
--24198 -1 0 1;
+#X msg 3 167 set \$1;
+#X floatatom 255 161 5 0 0 0 - - - 0 0 1, f 5;
+#X obj 255 142 r foo-snd;
+#X floatatom 255 107 5 0 0 0 - - - 0 0 1, f 5;
+#X obj 255 123 s foo-rcv;
+#X text 125 12 gui-round-knob;
+#X text 8 331 (c) moonix: Antoine Rousseau 2003;
+#X obj 224 104 mknob 25 100 0 100 0 0 foo-snd foo-rcv empty -2 -6 0
+8 #d8fcd8 #000000 #000000 0 1 1;
+#X obj 55 145 mknob 30 100 0 127 0 0 empty empty empty -2 -6 0 8 #e8e828
+#14e814 #000000 0 1 1;
+#X obj 55 186 mknob 15 100 127 0 0 0 empty empty empty -2 -6 0 8 #fc2828
+#14e814 #000000 9900 1 1;
 #X text 306 40 "mouse" parameter sets mouse;
 #X text 309 50 excursion for full range.;
 #X text 309 62 Set it with "size" parameter:;
-#X obj 398 201 mknob 25 -1 0 127 0 0 empty empty empty -2 -6 0 8 -262144
--1 -1 11024 1;
-#X msg 369 96 size 25 300;
-#X msg 398 119 size 25 10;
-#X text 452 96 low sensibility;
-#X text 474 120 high sens;
-#X text 494 142 default;
-#X msg 413 141 size 25 100;
-#X text 497 164 angular control;
-#X msg 427 165 size 25 0;
-#X text 518 187 full angular control;
-#X msg 443 188 size 25 -1;
-#X text 273 253 Note: there is in the sources a patch named mknob.pd.tk.diff
-to add (in pd.tk) mknob in the Pd "Put" menu \, and to give the hotkey
-"Alt-k" to it. It will only work for Pd0.37 \, but it can help to do
-the modif by hand for another version.;
-#N canvas 518 217 494 344 META 0;
-#X text 12 25 LICENSE GPL v2;
-#X text 12 105 AUTHOR Antoine Rousseau;
-#X text 12 125 HELP_PATCH_AUTHORS Antoine Rousseau. "pd meta" information
-added by Jonathan Wilkes for Pd version 0.42.;
-#X text 12 45 DESCRIPTION round gui knob;
-#X text 12 5 KEYWORDS control GUI;
-#X text 12 65 INLET_0 float size;
-#X text 12 85 OUTLET_0 float;
-#X restore 620 330 pd META;
+#X obj 398 263 mknob 57 57 0 127 0 0 empty empty empty -2 -6 0 8 #fcfcfc
+#000000 #000000 0 1 1;
+#X msg 369 138 size 25 300;
+#X msg 398 161 size 25 10;
+#X text 452 138 low sensibility;
+#X text 474 162 high sens;
+#X text 494 184 default;
+#X msg 413 183 size 25 100;
+#X text 497 206 angular control;
+#X msg 427 207 size 25 0;
+#X text 518 229 full angular control;
+#X msg 443 230 size 25 -1;
+#N canvas 929 511 374 216 META 0;
+#X text 12 45 LICENSE GPL v2;
+#X text 12 65 DESCRIPTION round gui knob;
+#X text 12 25 KEYWORDS control GUI;
+#X text 12 85 INLET_0 float size;
+#X text 12 105 OUTLET_0 float;
+#X text 12 145 HELP_PATCH_AUTHORS Antoine Rousseau and Ivica Ico Bukvic.
+"pd meta" information added by Jonathan Wilkes for Pd version 0.42.
+;
+#X text 12 125 AUTHOR Antoine Rousseau and Ivica Ico Bukvic;
+#X restore 622 333 pd META;
+#X obj 97 86 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000 #000000
+1 1 1;
+#X msg 97 107 interactive \$1;
+#X obj 97 63 loadbang;
 #X connect 2 0 14 0;
 #X connect 6 0 14 0;
 #X connect 8 0 7 0;
@@ -61,3 +62,6 @@ added by Jonathan Wilkes for Pd version 0.42.;
 #X connect 25 0 19 0;
 #X connect 27 0 19 0;
 #X connect 29 0 19 0;
+#X connect 31 0 32 0;
+#X connect 32 0 14 0;
+#X connect 33 0 31 0;

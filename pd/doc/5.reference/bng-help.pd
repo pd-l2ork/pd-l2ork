@@ -1,5 +1,5 @@
-#N canvas 118 117 553 602 10;
-#X obj 0 579 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
+#N canvas 118 153 553 682 10;
+#X obj 0 659 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
 14 #dcdcdc #404040 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header bng 3 12 0 18 #c4dcdc
 #000000 0;
@@ -19,14 +19,14 @@ to conform to the PDDP template for Pd version 0.42. Further revisions
 by Ivica Ico Bukvic.;
 #X text 12 135 AUTHOR Thomas Musil and Ivica Ico Bukvic;
 #X text 12 175 RELEASE_DATE 2009/2021;
-#X restore 504 581 pd META;
-#X obj 0 408 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
+#X restore 504 661 pd META;
+#X obj 0 488 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
 13 #dcdcdc #000000 0;
-#X obj 0 445 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8 12
+#X obj 0 525 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8 12
 0 13 #dcdcdc #000000 0;
-#X obj 0 547 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
+#X obj 0 627 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 #dcdcdc #000000 0;
-#X obj 78 309 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
+#X obj 78 309 cnv 17 3 173 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
 #9c9c9c 0;
 #N canvas 220 497 428 129 Related_objects 0;
 #X obj 22 43 bang;
@@ -39,13 +39,13 @@ by Ivica Ico Bukvic.;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
 #X text 7 2 [bng] Related Objects;
-#X restore 101 581 pd Related_objects;
-#X text 98 417 bang;
-#X obj 78 417 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
+#X restore 101 661 pd Related_objects;
+#X text 98 497 bang;
+#X obj 78 497 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
 #9c9c9c 0;
-#X text 98 308 anything;
+#X text 98 310 anything;
 #X obj 526 13 bng 15 250 50 0 foo5_rcv empty empty 17 7 0 10 #fcfcfc
-#000000 #000000;
+#000000 #000000 1;
 #X obj 144 227 print;
 #N canvas 598 330 187 198 once 0;
 #X msg 38 77 1;
@@ -62,11 +62,11 @@ by Ivica Ico Bukvic.;
 #X connect 4 0 1 0;
 #X restore 144 203 pd once;
 #X obj 116 228 bng 15 250 50 0 empty empty empty 8 -8 0 10 #fcfcfc
-#000000 #000000;
+#000000 #000000 1;
 #X obj 75 110 bng 15 250 50 0 empty empty empty 8 -8 0 10 #fcfcfc #000000
-#000000;
+#000000 1;
 #X obj 116 148 bng 50 950 50 1 foo5_snd foo5_rcv big-bang 57 25 0 12
-#fcfcc8 #fcac44 #8c0808;
+#fcfcc8 #fcac44 #8c0808 1;
 #X msg 116 49 33;
 #X msg 157 49 -3.14;
 #X msg 180 97 11 22 33.33;
@@ -75,9 +75,9 @@ by Ivica Ico Bukvic.;
 #X obj 292 72 s foo5_rcv;
 #X obj 292 102 r foo5_snd;
 #X obj 292 53 bng 15 250 50 0 empty empty empty 8 -8 0 10 #fcfcfc #000000
-#000000;
+#000000 1;
 #X obj 292 126 bng 15 250 50 0 empty empty empty 8 -8 0 10 #fcfcfc
-#000000 #000000;
+#000000 #000000 1;
 #X msg 75 49 0;
 #X text 321 142 and receive names. Right-;
 #X text 321 157 click and choose;
@@ -140,9 +140,9 @@ its appearance.;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-interrupt empty
-0 -8 0 12 #fcfcfc #000000 #000000 50 256 0 0;
+0 -8 0 12 #fcfcfc #000000 #000000 50 256 0 0 1 0;
 #X obj 103 124 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-hold empty 0
--8 0 12 #fcfcfc #000000 #000000 250 256 0 0;
+-8 0 12 #fcfcfc #000000 #000000 250 256 0 0 1 0;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 1 1 0 1;
@@ -158,11 +158,11 @@ its appearance.;
 #X obj 33 237 pack 0 0 0;
 #X obj 120 197 t b a;
 #X obj 103 104 nbx 3 14 0 29 0 0 \$0-dummy \$0-bg empty 0 -8 0 12 #fcfcfc
-#000000 #000000 0 256 0 0;
+#000000 #000000 0 256 0 0 1 0;
 #X obj 103 124 nbx 3 14 0 29 0 0 \$0-dummy \$0-front empty 0 -8 0 12
-#fcfcfc #000000 #000000 12 256 0 0;
+#fcfcfc #000000 #000000 12 256 0 0 1 0;
 #X obj 103 144 nbx 3 14 0 29 0 0 \$0-dummy \$0-label empty 0 -8 0 12
-#fcfcfc #000000 #000000 12 256 0 0;
+#fcfcfc #000000 #000000 12 256 0 0 1 0;
 #X connect 0 0 2 0;
 #X connect 0 1 2 1;
 #X connect 2 0 1 0;
@@ -189,16 +189,16 @@ its appearance.;
 #X obj 115 456 t b a;
 #X obj 168 455 t b a;
 #X obj 104 124 vradio 15 1 0 3 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0;
+#000000 #000000 0 1;
 #X text 120 120 1.bg;
 #X text 120 137 2.front;
 #X text 120 153 3.label;
 #X obj 103 105 nbx 3 14 0 255 0 0 \$0-dummy \$0-r empty 0 -8 0 10 #fcfcfc
-#fc0400 #000000 0 256 0 0;
+#fc0400 #000000 0 256 0 0 1 0;
 #X obj 133 105 nbx 3 14 0 255 0 0 \$0-dummy \$0-g empty 0 -8 0 10 #fcfcfc
-#0c4410 #000000 0 256 0 0;
+#0c4410 #000000 0 256 0 0 1 0;
 #X obj 163 105 nbx 3 14 0 255 0 0 \$0-dummy \$0-b empty 0 -8 0 10 #fcfcfc
-#0400fc #000000 0 256 0 0;
+#0400fc #000000 0 256 0 0 1 0;
 #X connect 1 0 2 0;
 #X connect 1 1 2 1;
 #X connect 2 0 3 0;
@@ -228,13 +228,13 @@ its appearance.;
 #X text 248 85 loadbang;
 #X obj 168 534 list;
 #X obj 168 473 bng 20 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#000000 #000000;
+#000000 #000000 1;
 #X obj 310 466 cnv 15 102 102 empty empty empty 20 12 0 14 #000000
 #404040 0;
 #X obj 311 467 cnv 15 100 100 empty empty empty 20 12 0 14 #fce0c4
 #404040 0;
 #X obj 340 500 bng 15 250 50 1 bng-snd bng_rcv myBang 17 7 0 10 #fcfcfc
-#202020 #202020;
+#202020 #202020 1;
 #X text 62 318 1.font(0-2);
 #X text 62 339 2.height;
 #X text 220 318 1.bg;
@@ -245,16 +245,16 @@ its appearance.;
 #X text 247 472 1.x-delta;
 #X text 247 494 2.y-delta;
 #X obj 13 53 nbx 3 14 8 200 0 0 empty \$0-dim empty 0 -8 0 12 #fcfcfc
-#000000 #000000 15 256 0 0;
+#000000 #000000 15 256 0 0 1 0;
 #X text 58 51 size;
 #N canvas 366 206 174 259 flash-time 0;
 #X obj 68 180 pack;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-xlabel empty
-0 -8 0 12 #fcfcfc #000000 #000000 17 256 0 0;
+0 -8 0 12 #fcfcfc #000000 #000000 17 256 0 0 1 0;
 #X obj 103 124 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-ylabel empty
-0 -8 0 12 #fcfcfc #000000 #000000 7 256 0 0;
+0 -8 0 12 #fcfcfc #000000 #000000 7 256 0 0 1 0;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 1 1 0 1;
@@ -267,9 +267,9 @@ its appearance.;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 0 2 0 0 \$0-dummy \$0-font empty 0 -8 0 12
-#fcfcfc #000000 #000000 0 256 0 0;
+#fcfcfc #000000 #000000 0 256 0 0 1 0;
 #X obj 103 124 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-font-size empty
-0 -8 0 12 #fcfcfc #000000 #000000 10 256 0 0;
+0 -8 0 12 #fcfcfc #000000 #000000 10 256 0 0 1 0;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 1 1 0 1;
@@ -282,9 +282,9 @@ its appearance.;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-xpos empty 0
--8 0 12 #fcfcfc #000000 #000000 340 256 0 0;
+-8 0 12 #fcfcfc #000000 #000000 340 256 0 0 1 0;
 #X obj 103 124 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-ypos empty 0
--8 0 12 #fcfcfc #000000 #000000 500 256 0 0;
+-8 0 12 #fcfcfc #000000 #000000 500 256 0 0 1 0;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 1 1 0 1;
@@ -297,9 +297,9 @@ its appearance.;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 -20 20 0 0 \$0-dummy \$0-xdelta empty 0 -8
-0 12 #fcfcfc #000000 #000000 0 256 0 0;
+0 12 #fcfcfc #000000 #000000 0 256 0 0 1 0;
 #X obj 103 124 nbx 3 14 -20 20 0 0 \$0-dummy \$0-ydelta empty 0 -8
-0 12 #fcfcfc #000000 #000000 0 256 0 0;
+0 12 #fcfcfc #000000 #000000 0 256 0 0 1 0;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 1 1 0 1;
@@ -339,33 +339,33 @@ its appearance.;
 #X connect 62 0 13 0;
 #X connect 63 0 14 0;
 #X connect 64 0 45 1;
-#X restore 101 380 pd Changing_GUI_Properties;
-#X text 168 463 - creating a [bng] without any arguments will set default
+#X restore 100 460 pd Changing_GUI_Properties;
+#X text 168 543 - creating a [bng] without any arguments will set default
 values for all gui-properties. See the subpatch below to learn how
 to dynamically instantiate a [bng] object with custom properties:;
 #X text 11 23 gui-bang;
 #N canvas 43 24 428 573 bng_properties 0;
 #X text 22 53 1 Size;
 #X obj 104 60 bng 8 250 50 0 empty empty 8 10 4 0 8 #fcfcfc #000000
-#000000;
+#000000 1;
 #X obj 129 53 bng 15 250 50 0 empty empty 15 17 9 0 8 #fcfcfc #000000
-#000000;
+#000000 1;
 #X obj 164 43 bng 25 250 50 0 empty empty 25 27 20 0 8 #fcfcfc #000000
-#000000;
+#000000 1;
 #X text 51 75 Default size is 15 pixels. The minimum size is 8 and
 it does not have a maximum size.;
 #X text 23 258 3 Hold;
 #X obj 93 258 bng 15 50 10 0 empty empty 50 17 8 0 8 #fcfcfc #000000
-#000000;
+#000000 1;
 #X obj 128 258 bng 15 750 50 0 empty empty 750 17 8 0 8 #fcfcfc #000000
-#000000;
+#000000 1;
 #X text 23 341 4 Receive Symbol/Send Symbol;
 #X text 49 356 This object can act as its own send or receive object.
 ;
 #X obj 41 391 bng 15 250 50 0 link_this_bang empty This_one_sends_a_bang
-17 8 0 10 #fcfcfc #000000 #000000;
+17 8 0 10 #fcfcfc #000000 #000000 1;
 #X obj 41 412 bng 15 250 50 0 empty link_this_bang This_one_receives_it.
-17 8 0 10 #fcfcfc #000000 #000000;
+17 8 0 10 #fcfcfc #000000 #000000 1;
 #X text 232 370 Here is the alternative method.;
 #X text 26 447 5 GUI Options;
 #X text 49 469 The other properties are 'name' \, 'x/y offset' \, 'font
@@ -382,7 +382,7 @@ bng sends its message immediately regardless of the hold value.;
 the bng will quickly flash again for the duration you set in this interrupt
 property.;
 #X obj 24 203 bng 15 1000 50 0 empty empty empty 0 -6 0 8 #fcfcfc #000000
-#000000;
+#000000 1;
 #X text 47 187 This bng will hold for 1000 milliseconds \, but interrupt
 for 50 milliseconds if it gets a second message during its "hold".
 Click it once...wait. Then click it multiple times rather quickly to
@@ -394,7 +394,7 @@ see the effect.;
 by Dave Sabine as part of a project called pddp proposed by Krzysztof
 Czaja to build comprehensive documentation for Pd.;
 #X obj 338 439 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#000000 #000000;
+#000000 #000000 1;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
 #X text 7 2 [bng] Properties;
@@ -402,18 +402,17 @@ Czaja to build comprehensive documentation for Pd.;
 #X connect 22 0 16 0;
 #X connect 23 0 26 0;
 #X connect 24 0 22 0;
-#X restore 101 556 pd bng_properties;
-#X text 80 463 14;
-#X text 168 418 - [bng] only outputs a bang message.;
-#X text 168 308 - [bng] outputs a bang message in response to any message
+#X restore 101 636 pd bng_properties;
+#X text 168 498 - [bng] only outputs a bang message.;
+#X text 168 310 - [bng] outputs a bang message in response to any message
 that has not been defined to affect gui-properties (see below).;
-#X text 98 346 See the following subpatch for messages that change
+#X text 98 426 See the following subpatch for messages that change
 the gui-properties of [bng]:;
-#X obj 4 581 pddp/pddplink all_about_help_patches.pd -text Usage Guide
+#X obj 4 661 pddp/pddplink all_about_help_patches.pd -text Usage Guide
 ;
 #N canvas 214 92 467 582 advanced_css_properties 0;
 #X obj 65 -97 bng 36 250 50 0 empty wobbly-button empty 17 7 0 10 #fcfcfc
-#000000 #000000;
+#000000 #000000 1;
 #X obj 59 -291 cnv 15 52 30 empty empty empty 20 12 0 14 #ff80c0 #404040
 0;
 #X msg 67 -356 css border transform skew(\$1deg);
@@ -421,27 +420,27 @@ the gui-properties of [bng]:;
 0 14 #c4dcdc #000000 0;
 #X obj 105 -488 pddplink https://www.w3schools.com/css/default.asp
 ;
-#X floatatom 67 -377 5 0 0 0 - - - 0 0, f 5;
+#X floatatom 67 -377 5 0 0 0 - - - 0 0 1, f 5;
 #X text 5 -591 Advanced CSS properties;
 #X obj 67 -305 bng 36 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#000000 #000000;
+#000000 #000000 1;
 #X msg 83 -333 css border fill rgba(255 \\\, 255 \\\, 255 \\\, 0.3)
 ;
-#X floatatom 36 -458 5 0 0 0 - - - 0 0, f 5;
+#X floatatom 36 -458 5 0 0 0 - - - 0 0 1, f 5;
 #X msg 36 -437 css button transform skew(\$1deg);
 #X msg 36 -411 css button transform-origin 16px 16px;
 #X obj 59 -181 cnv 15 48 47 empty empty empty 20 12 0 14 #62b0ff #404040
 0;
 #X obj 65 -176 bng 36 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#000000 #000000;
+#000000 #000000 1;
 #X text 56 -244 click message below for a borderless transparent button
 ;
 #X text 56 -121 CSS below animates button press;
 #N canvas 378 207 301 461 animate 0;
 #X obj 20 237 sin;
-#X floatatom 20 259 14 0 0 0 - - - 0 0, f 14;
+#X floatatom 20 259 14 0 0 0 - - - 0 0 1, f 14;
 #X obj 20 61 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000 #000000
-0 1;
+0 1 1;
 #X msg 58 147 0;
 #X obj 20 81 metro 10;
 #X obj 20 193 expr \\$f1/5*3.14159;
@@ -501,36 +500,45 @@ transparency, f 34;
 #X connect 10 0 7 0;
 #X connect 11 0 7 0;
 #X connect 19 0 13 0;
-#X restore 213 556 pd advanced_css_properties;
-#N canvas 182 139 428 512 bng_creation_arguments_&_dialog 0;
-#X text 12 28 "bng" can be called with 14 creation arguments. These
-are not "optional" - all parameters must be filled or the gui-bng will
-not instantiate correctly., f 66;
+#X restore 213 636 pd advanced_css_properties;
+#N canvas 453 207 428 569 bng_creation_arguments_&_dialog 0;
 #X text 12 132 For example \, click the msg-box to dynamically create
 a bng:, f 66;
-#X text 12 80 bng creation arguments: Size Hold Interrupt Init sendName
-receiveName Label labelXOff labelYOff Font# fontSize bgColor foregroundColor
-lblColor, f 66;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
 #X text 7 2 [bng] Creation Arguments and Dynamic Patching;
-#X msg 13 154 obj 180 240 bng 30 500 50 0 send receive Atlas -2 40
-0 12 9 2 18;
 #X obj 13 196 s pd-bng_creation_arguments_&_dialog;
-#X msg 13 412 dialog 30 500 50 0 0 0 0 send receive Atlas -2 40 0 12
-#fdb #ff0000 #00ff00;
+#X obj 13 510 bng 30 50 10 0 empty empty empty -2 40 0 12 #ffffff #000000
+#000000 0;
+#X text 12 80 bng creation arguments: Size Hold Interrupt Init sendName
+receiveName Label labelXOff labelYOff Font# fontSize bgColor foregroundColor
+lblColor interactive, f 66;
+#X text 12 28 "bng" can be called with 15 creation arguments. These
+are not "optional" - all parameters must be filled or the gui-bng will
+not instantiate correctly., f 66;
 #X text 12 312 bng and other iemgui objects also allow for borrowing
 the dialog messaging to change multiple settings via a single message.
 to construct such a message \, copy the creation message above \, remove
 the first 4 arguments \, and add as many 0s before the send argument
-until the send argument is 8th in order. making this kind of a change
-to the iemgui object will not trigger dirty flag unless you add a 1
-as the last argument \, following the color arguments., f 66;
-#X obj 13 450 bng 30 50 10 0 send receive Atlas -2 40 0 12 #ffddbb
-#ff0000 #00ff00;
-#X connect 5 0 6 0;
-#X connect 7 0 9 0;
-#X restore 100 522 pd bng_creation_arguments_&_dialog;
+until the send argument is 8th in order. then \, add additional zeros
+at the end until you reach 20 arguments in total (not including the
+"dialog" message) and then either 0 or 1 to ensure that the object
+is interactive. making this kind of a change to the iemgui object will
+not trigger dirty flag unless you append a 1 as the last argument \,
+following the interactive argument., f 66;
+#X msg 13 472 dialog 30 500 50 0 0 0 0 send receive Atlas -2 40 0 12
+#fdb #ff0000 #00ff00 0 0 0 1;
+#X msg 13 154 obj 180 240 bng 30 500 50 0 send receive Atlas -2 40
+0 12 9 2 18 1;
+#X connect 8 0 4 0;
+#X connect 9 0 3 0;
+#X restore 100 602 pd bng_creation_arguments_&_dialog;
+#X text 98 353 interactive;
+#X text 168 353 - allows user to specify if the object will respond
+to user clicks (1 or on by default). Disabling it (0) will ensure that
+the object is strictly there to display value that can be only altered
+via an incoming connnection.;
+#X text 80 543 15;
 #X connect 14 0 13 0;
 #X connect 16 0 17 0;
 #X connect 17 0 15 0;
