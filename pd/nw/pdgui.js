@@ -8172,16 +8172,14 @@ function restore_apps(force) {
             // here we need to reference lib_dir which is initialized inside index.js
             // otherwise process.cwd() when invoked from the preferences window
             // returns the user's home folder which results in a failed copy operation
-            // as a safety, the same is use for Windows and Linux below
+            // this does not affect Windows, at least not on the current version of nw.js
+            // LATER: check this against future nw.js versions
             if (force == 1)
                 copyFolderRecursiveSync(lib_dir+"/apps/", dir);
             else
                 copyFolderRecursiveSync(process.cwd()+"/apps/", dir);
         } else {
-            if (force == 1)
-                copyFolderRecursiveSync(lib_dir+"/../apps/", dir);
-            else
-                copyFolderRecursiveSync(process.cwd()+"/../apps/", dir);
+            copyFolderRecursiveSync(process.cwd()+"/../apps/", dir);
         }
         post("Done!")
     }
