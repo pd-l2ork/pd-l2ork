@@ -117,8 +117,8 @@ Hard drive space required: *roughly 2.5 GB*
              libmpeg3-dev libquicktime-dev libv4l-dev libraw1394-dev \
              libdc1394-22-dev libfftw3-dev libvorbis-dev ladspa-sdk \
              dssi-dev tap-plugins invada-studio-plugins-ladspa blepvco \
-             swh-plugins mcp-plugins cmt blop slv2-jack omins rev-plugins \
-             libslv2-dev dssi-utils vco-plugins wah-plugins fil-plugins \
+             swh-plugins mcp-plugins cmt blop omins rev-plugins \
+             dssi-utils vco-plugins wah-plugins fil-plugins \
              mda-lv2 libmp3lame-dev libspeex-dev libgsl0-dev \
              portaudio19-dev liblua5.3-dev python-dev libsmpeg0 libjpeg62-turbo \
              flite1-dev libgsm1-dev libgtk2.0-dev git libstk0-dev \
