@@ -1290,15 +1290,24 @@ var canvas_events = (function() {
             });
 
             // Listen to paste event
-            // XXXTODO: Not sure whether this is even needed any more, as the
-            // paste-from-clipboard functionality has been moved to its own menu
-            // option. So this code may possibly be removed in the future. -ag
+            // ico@vt.edu 2021-09-28: This is used by OSX only?, so we
+            // redundantly reproduce here the paste when gatom has been grabbed
             document.addEventListener("paste", function(evt) {
                 if (canvas_events.get_state() !== "normal") {
                     return;
                 }
-                // Send a canvas "paste" message to Pd
-                pdgui.pdsend(name, "paste");
+                if (pdgui.gui_is_gobj_grabbed()) {
+                    // ico@vt.edu 2021-09-28: pasting inside a grabbed object
+                    //pdgui.post("gobj_grabbed paste <" + nw.Clipboard.get().get('text') + ">");
+                    var paste_text = nw.Clipboard.get().get('text');
+                    for (var i = 0; i < paste_text.length; i++) {
+                        pdgui.canvas_sendkey(name, 1, 0, paste_text.charCodeAt(i), 0);
+                        pdgui.canvas_sendkey(name, 0, 0, paste_text.charCodeAt(i), 0);
+                    }
+                } else {
+                    // Send a canvas "paste" message to Pd
+                    pdgui.pdsend(name, "paste");
+                }
             });
 
             // MouseWheel event for zooming
