@@ -1,6 +1,6 @@
-#N canvas 0 31 450 300 10;
+#N canvas 727 338 450 293 10;
 #X msg 106 44 bang;
-#X floatatom 158 43 5 0 0 0 - - -;
+#X floatatom 158 43 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 254 180 print kalashnikov_done;
 #X obj 73 154 print uzi_index;
 #X obj 88 182 print uzi_done;
@@ -11,7 +11,7 @@
 #X obj 58 88 uzi 3;
 #X text 41 14 uzi aka kalashnikov is an easy way to serialize bangs
 ;
-#N canvas 463 219 494 344 META 1;
+#N canvas 463 219 494 344 META 0;
 #X text 12 145 HELP_PATCH_AUTHORS "pd meta" information added by Jonathan
 Wilkes for Pd version 0.42.;
 #X text 12 125 AUTHOR d13@klingt.org;
