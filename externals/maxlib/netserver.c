@@ -51,7 +51,7 @@
 #define SOCKET_ERROR -1
 #endif
 
-#define MAX_CONNECT  32		/* maximum number of connections */
+#define MAX_CONNECT  128	 /* maximum number of connections */
 #define INBUFSIZE    4096   /* size of receiving data buffer */
 
 /* message levels from syslog.h */
@@ -72,9 +72,10 @@
 #endif
 
 static char *version = 
-   "netserver v0.2.hcs1 :: bidirectional communication for Pd\n"
+   "netserver v0.3 :: bidirectional communication for Pd\n"
    "             written by Olaf Matthes <olaf.matthes@gmx.de>\n"
-   "             syslogging by Hans-Christoph Steiner <hans@eds.org> ";
+   "             syslogging by Hans-Christoph Steiner <hans@eds.org>\n"
+   "             stability and functional improvements by Ivica Ico Bukvic <ico@vt.edu>";
 
 /* ----------------------------- netserver ------------------------- */
 
@@ -120,6 +121,26 @@ static t_netserver_socketreceiver *netserver_socketreceiver_new(void *owner, t_n
    x->sr_socketreceivefn = socketreceivefn;
    if (!(x->sr_inbuf = malloc(INBUFSIZE))) bug("t_netserver_socketreceiver");
    return (x);
+}
+
+/* ico@vt.edu 2021-10-01: OS-agnostic helper function for ensuring
+   sockets are non-blocking, adapted from from:
+   https://stackoverflow.com/questions/1543466/how-do-i-change-a-tcp-socket-to-be-non-blocking/1549344
+   returns 0 on success, or 1 if there was an error
+*/
+static int SetSocketBlockingEnabled(int fd, int blocking)
+{
+   if (fd < 0) return 1;
+
+#ifdef WIN32
+   unsigned long mode = blocking ? 0 : 1;
+   return (ioctlsocket(fd, FIONBIO, &mode) == 0) ? 0 : 1;
+#else
+   int flags = fcntl(fd, F_GETFL, 0);
+   if (flags == -1) return false;
+   flags = blocking ? (flags & ~O_NONBLOCK) : (flags | O_NONBLOCK);
+   return (fcntl(fd, F_SETFL, flags) == 0) ? 0 : 1;
+#endif
 }
 
 /* this is in a separately called subroutine so that the buffer isn't
@@ -496,6 +517,8 @@ static void netserver_connectpoll(t_netserver *x)
    if (fd < 0) post("netserver: accept failed");
    else
    {
+     // ico@vt.edu 2021-10-01: make socket non-blocking
+     SetSocketBlockingEnabled(fd, 0);
 	  t_netserver_socketreceiver *y = netserver_socketreceiver_new((void *)x, 
 																   (t_netserver_socketnotifier)netserver_notify,
 																   (x->x_msgout ? netserver_doit : 0));
@@ -604,6 +627,8 @@ static void *netserver_new(t_floatarg fportno)
 	  sys_closesocket(sockfd);
 	  return (0);
    }
+   // ico@vt.edu 2021-10-01: make socket non-blocking
+   SetSocketBlockingEnabled(sockfd, 0);
    x->x_msgout = outlet_new(&x->x_obj, &s_anything);
 
    /* streaming protocol */
