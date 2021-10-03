@@ -1,11 +1,11 @@
-#N canvas 151 4 1638 975 10;
+#N canvas 142 7 1638 975 10;
 #X obj -4 0 cnv 15 1637 973 empty empty empty 5 7 0 10 #444444 #fcfcfc
 0;
 #X obj 0 2 cnv 15 1631 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 1 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ 0.45\ by
+#X obj 1 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ 0.46\ by
 4 5 0 10 #6c6c6c #fcfcfc 0;
-#X obj 234 3 cnv 15 125 16 empty empty (c)\ 2020\ Released\ under\ the
+#X obj 234 3 cnv 15 125 16 empty empty (c)\ 2020-1\ Released\ under\ the
 4 6 0 10 #6c6c6c #fcfcfc 0;
 #X obj 0 24 cnv 15 280 41 empty empty empty 4 5 0 10 #6c6c6c #fcfcfc
 0;
@@ -165,7 +165,7 @@ f 25;
 #X connect 58 1 50 1;
 #X connect 59 0 50 1;
 #X restore 17 23 pd loop-logic;
-#N canvas 737 23 1134 954 network-io 0;
+#N canvas 737 23 1145 954 network-io 0;
 #X obj 272 279 list prepend send;
 #X obj 272 301 list trim;
 #X obj 20 137 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
@@ -1180,7 +1180,7 @@ broadcast via internet (if connected) upon loading a session, f 42
 #X msg 177 245 label \$1;
 #X text 99 75 DEBUG;
 #X msg 177 197 L2Ork Tweeter \$1 by;
-#X msg 177 76 0.45;
+#X msg 177 76 0.46;
 #X connect 0 0 10 0;
 #X connect 1 0 9 0;
 #X connect 1 1 2 0;
@@ -1190,6 +1190,92 @@ broadcast via internet (if connected) upon loading a session, f 42
 #X connect 9 0 6 0;
 #X connect 10 0 1 0;
 #X restore 283 52 pd version;
+#N canvas 724 350 589 509 local-copy-logic 0;
+#X obj 22 22 r local-copyfrom-mode;
+#X obj 210 22 r local-copyfrom-data;
+#X obj 210 72 route 0;
+#X obj 210 47 list trim;
+#X text 277 47 we first do list trim since trimming is not taken care
+of in net-io abstractions \, as this is a more efficient way of doing
+the same. then \, we check for data that is prepended with 0 such data
+does not have copyfrom context set and therefore we ignore it. see
+net-io abstractions and look for the \$5 argument for more info.,
+f 48;
+#X obj 225 393 list prepend;
+#X obj 294 369 r myclientnum;
+#X obj 225 416 s network-in;
+#X floatatom 22 47 5 0 0 0 - - - 0 0 1, f 5;
+#X obj 22 175 gate 6 0;
+#X obj 118 309 route preset;
+#X obj 199 309 route preset-all;
+#X obj 304 309 route loop;
+#X obj 373 309 route loop-all;
+#X obj 118 289 gate 1 0;
+#X obj 199 289 gate 1 0;
+#X obj 304 289 gate 1 0;
+#X obj 373 289 gate 1 0;
+#X obj 249 146 t b a;
+#X text 17 397 Copyfrom modes: 1 - single click - preset2 - double
+click - loop3 - triple click - preset+loop4 - shift + single click
+- preset-all 5 - shift + double click - loop-all6 - shift + triple
+click - preset-all+loop-all;
+#X obj 22 224 t 1 0 0 0;
+#X obj 85 224 t 0 0 1 0;
+#X obj 148 224 t 1 0 1 0;
+#X obj 211 224 t 1 1 0 0;
+#X obj 274 224 t 0 0 1 1;
+#X obj 337 224 t 1 1 1 1;
+#X connect 0 0 8 0;
+#X connect 1 0 3 0;
+#X connect 2 1 18 0;
+#X connect 3 0 2 0;
+#X connect 5 0 7 0;
+#X connect 6 0 5 1;
+#X connect 8 0 9 0;
+#X connect 9 0 20 0;
+#X connect 9 1 21 0;
+#X connect 9 2 22 0;
+#X connect 9 3 23 0;
+#X connect 9 4 24 0;
+#X connect 9 5 25 0;
+#X connect 10 0 5 0;
+#X connect 11 0 5 0;
+#X connect 12 0 5 0;
+#X connect 13 0 5 0;
+#X connect 14 0 10 0;
+#X connect 15 0 11 0;
+#X connect 16 0 12 0;
+#X connect 17 0 13 0;
+#X connect 18 0 9 1;
+#X connect 18 1 17 1;
+#X connect 18 1 16 1;
+#X connect 18 1 15 1;
+#X connect 18 1 14 1;
+#X connect 20 0 14 0;
+#X connect 20 1 15 0;
+#X connect 20 2 16 0;
+#X connect 20 3 17 0;
+#X connect 21 0 14 0;
+#X connect 21 1 15 0;
+#X connect 21 2 16 0;
+#X connect 21 3 17 0;
+#X connect 22 0 14 0;
+#X connect 22 1 15 0;
+#X connect 22 2 16 0;
+#X connect 22 3 17 0;
+#X connect 23 0 14 0;
+#X connect 23 1 15 0;
+#X connect 23 2 16 0;
+#X connect 23 3 17 0;
+#X connect 24 0 14 0;
+#X connect 24 1 15 0;
+#X connect 24 2 16 0;
+#X connect 24 3 17 0;
+#X connect 25 0 14 0;
+#X connect 25 1 15 0;
+#X connect 25 2 16 0;
+#X connect 25 3 17 0;
+#X restore 153 52 pd local-copy-logic;
 #X connect 5 0 6 0;
 #X restore 1559 3 pd settings;
 #X obj 239 42 nbx 2 16 0 12 0 0 \$0-slot-s null-r empty 1 -9 0 12 #fcb46c
@@ -1222,7 +1308,7 @@ empty -5 -9 0 10 #80fc80 #008080 #fcfcfc 1;
 #X obj 809 30 nbx 4 15 1 9999 0 0 \$0-store-preset \$0-store-preset-r
 empty -64 5 0 12 #fcb46c #000000 #000000 1 256 0 1 1 0;
 #X obj 809 45 nbx 4 15 1 9999 0 0 \$0-recall-preset \$0-recall-preset-r
-empty -64 5 0 12 #80fc80 #000000 #000000 1 256 0 1 1 0;
+empty -64 5 0 12 #80fc80 #000000 #000000 1097 256 0 1 1 0;
 #X obj 662 30 cnv 8 10 8 empty empty STORE\ PRESET\ (shift+a-:) -1
 5 0 10 #6c6c6c #fcfcfc 0;
 #X obj 656 45 cnv 8 10 8 empty empty RECALL\ PRESET\ (shift+z-/) -1
@@ -1240,7 +1326,7 @@ empty -5 -9 0 10 #80fc80 #008080 #fcfcfc 1;
 #X obj 816 219 core/L2OrkTweet 8;
 #X obj 816 370 core/L2OrkTweet 9;
 #X obj 816 521 core/L2OrkTweet 10;
-#N canvas 678 241 516 566 supplemental-documentation 0;
+#N canvas 678 241 516 515 supplemental-documentation 0;
 #X text 10 11 Please consider viewing the introductory video found
 at:;
 #X obj 9 31 pddp/pddplink http://bit.ly/L2Ork-Tweeter;
@@ -1261,11 +1347,22 @@ f 82;
 #X text 10 101 ' (key next to Return): set instrument output level
 to zero (OVR/LVL slider). Repeat press sets it temporarily to the last
 known value \, while upon release it reverts to zero., f 82;
+#X text 10 339 Sharing Loops and Patterns;
+#X text 11 416 single click - copy presetdouble click - copy looptriple
+click - copy preset and loopshift + single click - copy preset \,
+including also main out and pan values shift + double click - copy
+loop \, including time syncshift + triple click - copy everything
+, f 81;
+#X text 10 360 As of 0.46 you can now easily share your patterns and
+loops with others. To do so \, you will want to click on the user number
+you wish to copy instrument and/or loop from \, using one of the following
+clicking actions that need to be performed within the 500ms of initiating
+the first click:, f 82;
 #X restore 1299 3 pd supplemental-documentation (click here);
 #X obj 1144 3 pddp/pddplink http://l2ork.icat.vt.edu;
 #X obj 136 3 pddp/pddplink http://ico.bukvic.net -text Ivica Ico Bukvic
 ;
-#X obj 406 3 pddp/pddplink https://www.gnu.org/licenses/gpl-3.0.en.html
+#X obj 417 3 pddp/pddplink https://www.gnu.org/licenses/gpl-3.0.en.html
 -text GPL v3 License;
 #X obj 816 672 core/L2OrkTweet 11;
 #X obj 816 823 core/L2OrkTweet 12;

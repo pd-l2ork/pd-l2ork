@@ -1,8 +1,8 @@
-#N canvas 466 402 884 512 10;
+#N canvas 401 240 884 654 10;
 #X obj 42 73 route \$1;
 #X obj 42 97 route \$2;
 #X text 99 97 select the right value;
-#X obj 42 413 outlet;
+#X obj 42 573 outlet;
 #X obj 397 30 inlet;
 #X obj 447 30 loadbang;
 #X obj 447 157 \$1;
@@ -21,22 +21,22 @@
 #X obj 447 202 + 1;
 #X obj 447 226 f;
 #X obj 352 290 t b b 0;
-#X floatatom 447 251 5 0 0 0 - - -, f 5;
+#X floatatom 447 251 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 486 251 + 1;
 #X obj 486 296 gate 2 1;
-#X text 325 366 the [t b b 0] thing is designed to override local user
+#X text 553 500 the [t b b 0] thing is designed to override local user
 messing with network user's settings since pd-l2ork does not have an
 option to ignore actions on gui objects. the gate above branches into
 two conditions. left is for recalling latest network-enabled data and
 by doing so overriding user input (since it should be disallowed) \,
 while the right has two options: do the same as incoming networked
 data because we are not connected and need to store latest data \,
-or forward to the network., f 65;
+or forward to the network., f 51;
 #X obj 462 319 route bang;
-#X floatatom 486 276 5 0 0 0 - - -, f 5;
+#X floatatom 486 276 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 486 226 r network-status;
-#X obj 126 413 outlet;
-#X text 170 366 optional second outlet cancels message to the engine
+#X obj 126 573 outlet;
+#X text 170 526 optional second outlet cancels message to the engine
 (this is necessary for tracker's metro as it will move at least once
 before it receives 0 \, even in zero logical time), f 23;
 #X obj 144 272 r local-report-request;
@@ -46,20 +46,33 @@ before it receives 0 \, even in zero logical time), f 23;
 #X obj 144 221 list trim;
 #X obj 144 292 t b 1;
 #X obj 144 136 gate 1 0;
-#X obj 99 348 lister;
-#X obj 397 67 t l l;
+#X obj 99 508 lister;
 #X obj 144 156 t l l 0;
 #X obj 42 121 route bang;
-#X obj 99 373 t l b;
+#X obj 99 533 t l b;
+#X obj 391 475 gate 1 0;
+#X obj 391 365 r local-copyfrom;
+#X obj 391 413 sel 1;
+#X obj 397 67 t l l l;
+#X obj 391 389 == \$1;
+#X obj 391 547 s local-copyfrom-data;
+#X obj 391 499 list prepend \$2;
+#X obj 391 523 list prepend \$3;
+#X obj 391 437 t 1 0 b 1 0;
+#X obj 454 475 outlet;
+#X text 501 398 third outlet below is used for the local copying of
+the tracker sync which requires complex interaction with the tracker-time
+3-argument value list designed to ensure sub-tick sync., f 31;
 #X connect 0 0 1 0;
-#X connect 1 0 40 0;
-#X connect 4 0 38 0;
+#X connect 1 0 39 0;
+#X connect 4 0 44 0;
 #X connect 5 0 6 0;
 #X connect 6 0 13 0;
 #X connect 9 0 0 0;
 #X connect 10 0 6 0;
 #X connect 10 0 0 1;
 #X connect 10 0 32 1;
+#X connect 10 0 45 1;
 #X connect 12 0 16 0;
 #X connect 13 0 18 0;
 #X connect 14 0 8 0;
@@ -85,14 +98,26 @@ before it receives 0 \, even in zero logical time), f 23;
 #X connect 34 0 31 0;
 #X connect 35 0 3 0;
 #X connect 35 1 36 0;
-#X connect 36 0 39 0;
-#X connect 37 0 41 0;
-#X connect 38 0 17 1;
-#X connect 38 1 36 1;
-#X connect 39 0 33 0;
-#X connect 39 1 37 1;
-#X connect 39 2 36 0;
+#X connect 36 0 38 0;
+#X connect 37 0 40 0;
+#X connect 38 0 33 0;
+#X connect 38 1 37 1;
+#X connect 38 2 36 0;
+#X connect 39 0 3 0;
+#X connect 39 1 37 0;
 #X connect 40 0 3 0;
-#X connect 40 1 37 0;
-#X connect 41 0 3 0;
-#X connect 41 1 28 0;
+#X connect 40 1 28 0;
+#X connect 41 0 47 0;
+#X connect 42 0 45 0;
+#X connect 43 0 49 0;
+#X connect 44 0 17 1;
+#X connect 44 1 36 1;
+#X connect 44 2 41 1;
+#X connect 45 0 43 0;
+#X connect 47 0 48 0;
+#X connect 48 0 46 0;
+#X connect 49 0 50 0;
+#X connect 49 1 41 0;
+#X connect 49 2 3 0;
+#X connect 49 3 41 0;
+#X connect 49 4 50 0;

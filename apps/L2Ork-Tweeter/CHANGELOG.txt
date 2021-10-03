@@ -9,6 +9,15 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+01-10-2021 0.46
+*Fixed inaccurate positioning of notes when manually adjusting the tracker bar location.
+*Added ability to provide name for your client and enabled server handling of the same.
+*Added ability for the user to copy another user's instrument preset, loop, as well as sync and all other data. See the supplemental documentation subpatch for more info.
+
+24-09-2021 0.45
+*Reversed use of ' and return keys for adjusting audio levels to minimize unwanted muting of the instrument when typing (and forgetting to disable the keyboard).
+*Added more presets (new total is 90) and one new session.
+
 10-09-2021 0.44
 *Requires 10-09-2021 build of pd-l2ork or newer.
 *Reworked synth pitch transposition to allow for keyboard-based detuning without retriggering a note.
