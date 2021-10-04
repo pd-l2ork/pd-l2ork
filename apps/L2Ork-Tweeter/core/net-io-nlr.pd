@@ -1,4 +1,4 @@
-#N canvas 298 292 858 579 10;
+#N canvas 298 292 778 579 10;
 #X obj 42 73 route \$1;
 #X obj 42 97 route \$2;
 #X text 99 97 select the right value;
@@ -6,8 +6,8 @@
 #X obj 397 30 inlet;
 #X obj 447 30 loadbang;
 #X obj 447 157 \$1;
-#X text 474 86 only send network messages out if this is a local instance
-;
+#X text 474 74 only send network messages out if this is a local instance
+, f 30;
 #X obj 531 341 s client-out;
 #X obj 42 30 r network-in;
 #X obj 593 30 inlet;
@@ -25,14 +25,14 @@
 #X floatatom 447 251 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 486 251 + 1;
 #X obj 486 296 gate 2 1;
-#X text 550 417 the [t b b 0] thing is designed to override local user
+#X text 352 456 the [t b b 0] thing is designed to override local user
 messing with network user's settings since pd-l2ork does not have an
 option to ignore actions on gui objects. the gate above branches into
 two conditions. left is for recalling latest network-enabled data and
 by doing so overriding user input (since it should be disallowed) \,
 while the right has two options: do the same as incoming networked
 data because we are not connected and need to store latest data \,
-or forward to the network., f 48;
+or forward to the network., f 67;
 #X obj 462 319 route bang;
 #X floatatom 486 276 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 486 226 r network-status;
@@ -44,24 +44,14 @@ before it receives 0 \, even in zero logical time), f 23;
 #X text 140 188 nlr stands for no local report because these controls
 are triggers and have no state, f 32;
 #X obj 42 121 route bang;
-#X obj 379 432 t 0 b 1;
-#X obj 379 468 gate 1 0;
-#X obj 379 358 r local-copyfrom;
-#X obj 379 407 sel 1;
-#X obj 397 97 t f f;
-#X obj 379 382 == \$1;
-#X obj 379 537 s local-copyfrom-data;
-#X obj 379 491 list prepend \$2;
-#X obj 379 514 list prepend \$3;
 #X connect 0 0 1 0;
 #X connect 1 0 33 0;
-#X connect 4 0 38 0;
+#X connect 4 0 18 1;
 #X connect 5 0 6 0;
 #X connect 6 0 13 0;
 #X connect 9 0 0 0;
 #X connect 10 0 6 0;
 #X connect 10 0 0 1;
-#X connect 10 0 39 1;
 #X connect 12 0 16 0;
 #X connect 13 0 19 0;
 #X connect 14 0 8 0;
@@ -86,14 +76,3 @@ are triggers and have no state, f 32;
 #X connect 30 1 29 0;
 #X connect 33 0 3 0;
 #X connect 33 1 17 0;
-#X connect 34 0 35 0;
-#X connect 34 1 17 0;
-#X connect 34 2 35 0;
-#X connect 35 0 41 0;
-#X connect 36 0 39 0;
-#X connect 37 0 34 0;
-#X connect 38 0 18 1;
-#X connect 38 1 35 1;
-#X connect 39 0 37 0;
-#X connect 41 0 42 0;
-#X connect 42 0 40 0;
