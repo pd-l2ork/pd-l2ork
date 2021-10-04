@@ -137,7 +137,7 @@ static int SetSocketBlockingEnabled(int fd, int blocking)
    return (ioctlsocket(fd, FIONBIO, &mode) == 0) ? 0 : 1;
 #else
    int flags = fcntl(fd, F_GETFL, 0);
-   if (flags == -1) return false;
+   if (flags == -1) return 1;
    flags = blocking ? (flags & ~O_NONBLOCK) : (flags | O_NONBLOCK);
    return (fcntl(fd, F_SETFL, flags) == 0) ? 0 : 1;
 #endif
