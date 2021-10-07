@@ -309,9 +309,9 @@ static void netserver_send(t_netserver *x, t_symbol *s, int argc, t_atom *argv)
 		 }
 		 if (res <= 0)
 		 {
-			sys_sockerror("netserver");
+			//sys_sockerror("netserver");
 			if (x->x_log_pri >= LOG_ERR) 
-			   post("netserver: could not send data to client");
+			   post("netserver: could not send data to the client");
 			break;
 		 }
 		 else
@@ -395,9 +395,9 @@ static void netserver_client_send(t_netserver *x, t_symbol *s, int argc, t_atom 
 		 }
 		 if (res <= 0)
 		 {
-			sys_sockerror("netserver");
+			//sys_sockerror("netserver");
 			if (x->x_log_pri >= LOG_ERR)
-			   post("netserver: could not send data to cient");
+			   post("netserver: could not send data to the client");
 			break;
 		 }
 		 else
@@ -591,7 +591,7 @@ static void *netserver_new(t_floatarg fportno)
 
    x = (t_netserver *)pd_new(netserver_class);
 /* set default debug message level */
-   x->x_log_pri = LOG_ERR;
+   x->x_log_pri = LOG_CRIT;
 /* create a socket */
    sockfd = socket(AF_INET, SOCK_STREAM, 0);
    if (x->x_log_pri >= LOG_NOTICE)
