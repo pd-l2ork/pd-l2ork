@@ -1709,6 +1709,7 @@ static t_binbuf *binbuf_convert(t_binbuf *oldb, int maxtopd)
 int binbuf_match(t_binbuf *inbuf, t_binbuf *searchbuf, int wholeword)
 {
     int indexin, nmatched;
+    char dollarstr[MAXPDSTRING];
     for (indexin = 0; indexin <= inbuf->b_n - searchbuf->b_n; indexin++)
     {
         for (nmatched = 0; nmatched < searchbuf->b_n; nmatched++)
@@ -1717,28 +1718,48 @@ int binbuf_match(t_binbuf *inbuf, t_binbuf *searchbuf, int wholeword)
                 *a2 = &searchbuf->b_vec[nmatched];
             if (a1->a_type == A_SEMI || a1->a_type == A_COMMA)
             {
+                //post("A_SEMI OR A_COMMA");
                 if (a2->a_type != a1->a_type)
                     goto nomatch;
             }
             else if (a1->a_type == A_FLOAT)
             {
+                //post("A_FLOAT");
                 if (a2->a_type != a1->a_type ||
                     a1->a_w.w_float != a2->a_w.w_float)
                         goto nomatch;
             }
             else if (a1->a_type == A_DOLLAR)
             {
+                //post("A_DOLLAR");
                 if (a2->a_type != a1->a_type || 
                     a1->a_w.w_index != a2->a_w.w_index)
                         goto nomatch;
             }
             else if (a1->a_type == A_SYMBOL || a1->a_type == A_DOLLSYM)
             {
-                if ((a2->a_type != A_SYMBOL && a2->a_type != A_DOLLSYM)
-                    || (wholeword && a1->a_w.w_symbol != a2->a_w.w_symbol)
+                //post("A_SYMBOL OR A_DOLLSYM");
+                if (a2->a_type == A_SYMBOL || a2->a_type == A_DOLLSYM)
+                {
+                    /*
+                    post("strstr=%d A:<%s> B:<%s>", 
+                        (strstr(a1->a_w.w_symbol->s_name,
+                            a2->a_w.w_symbol->s_name) == NULL ? 0 : 1),
+                        a1->a_w.w_symbol->s_name, a2->a_w.w_symbol->s_name);
+                    */
+                    if ((wholeword && a1->a_w.w_symbol != a2->a_w.w_symbol)
                     || (!wholeword &&  !strstr(a1->a_w.w_symbol->s_name,
                                         a2->a_w.w_symbol->s_name)))
                         goto nomatch;
+                } else if (a2->a_type == A_DOLLAR) {
+                    sprintf(dollarstr, "$%d", a2->a_w.w_index);
+                    //post("resulting dolsym=<%s>", dollarstr);
+                    if (!strstr(a1->a_w.w_symbol->s_name,
+                                        dollarstr))
+                        goto nomatch;
+                } else {
+                    goto nomatch;
+                }
             }           
         }
         return (1);

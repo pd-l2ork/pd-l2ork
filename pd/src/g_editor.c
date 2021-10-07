@@ -84,6 +84,9 @@ extern t_class *text_class;
 //extern void iemgui_getrect_mouse(t_gobj *x, int *xp1, int *yp1,
 //    int *xp2, int *yp2);
 
+static int canvas_find_index1, canvas_find_index2, canvas_find_wholeword;
+static t_binbuf *canvas_findbuf;
+
 int do_not_redraw = 0;     // used to optimize redrawing
 int old_displace = 0;      // for legacy displaces within gop that are not
                            // visible to displaceselection
@@ -619,7 +622,7 @@ void glist_deselect(t_glist *x, t_gobj *y)
 
 void glist_noselect(t_glist *x)
 {
-    //fprintf(stderr,"glist_noselect\n");
+    //post("glist_noselect");
     if (x->gl_editor)
     {
         if (x->gl_editor->e_selection)
@@ -4344,6 +4347,11 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
 
             glist_noselect(x);
 
+            // ico@vt.edu 2021-10-06: reset indices for find back as if we haven't
+            // searched yet for anything, effectively restarting the search
+            canvas_find_index1 = 0;
+            canvas_find_index2 = -1;
+
             //buf->u_redo = (t_undo_sel *)canvas_undo_set_selection(x);
             //canvas_undo_add(x, 11, "selection", buf);
         }
@@ -6314,9 +6322,6 @@ static void canvas_menufont(t_canvas *x, t_floatarg newsize)
             x2->gl_font);
     }*/
 }
-
-static int canvas_find_index1, canvas_find_index2, canvas_find_wholeword;
-static t_binbuf *canvas_findbuf;
 
     /* find an atom or string of atoms */
 static int canvas_dofind(t_canvas *x, int *myindex1p)

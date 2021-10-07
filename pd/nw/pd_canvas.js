@@ -396,6 +396,7 @@ var canvas_events = (function() {
                 );
             },
             mousedown: function(evt) {
+                //pdgui.post("pdcanvas mousedown");
                 // ico@vt.edu capture middle click for a different type of scroll
                 // currently disabled due to problem with scrollBy and zoom
                 /*if (evt.which == 2)
@@ -628,7 +629,10 @@ var canvas_events = (function() {
                 //return false;
             },
             find_click: function(evt) {
+                //pdgui.post("pdcanvas find_click");
                 var t = document.getElementById("canvas_find_text").value;
+                //var w = document.getElementById("canvas_find_whole_word").checked;
+                //pdgui.post("whole="+(w ? "1" : "0"));
                 if (t !== "") {
                     if (t === last_search_term) {
                         pdgui.pdsend(name, "findagain");
@@ -639,11 +643,34 @@ var canvas_events = (function() {
                     }
                 }
                 last_search_term = t;
+                // ico@vt.edu 2021-10-06:
+                // we do not need these here because the find_bar has its
+                // catch-all find_ignore event and is located below all
+                // find widgets and above the actual canvas
+                //evt.stopPropagation();
+                //evt.preventDefault();
+            },
+            find_ignore: function(evt) {
+                //pdgui.post("find_ignore");
+                evt.stopPropagation();
+                // ico@vt.edu 2021-10-06: if we also preventDefault, the
+                // entry box cannot be focused anymore
+                //evt.preventDefault();
             },
             find_keydown: function(evt) {
                 if (evt.keyCode === 13) {
                     events.find_click(evt);
                 }
+            },
+            match_words: function(evt) {
+                // ico@vt.edu 2021-10-06: curiously we need to make the
+                // variable equal to inverted value of the checkbox
+                match_words_state =
+                    !document.getElementById("canvas_find_whole_word").checked;
+                //pdgui.post("whole_words " + match_words_state);
+                // ico@vt.edu 2021-10-06: reset find process since we have
+                // changed parameters, so findagain now makes no more sense
+                canvas_events.find_reset();
             },
             scalar_draggable_mousemove: function(evt) {
                 let [new_x, new_y] = evt.type === "touchmove"
@@ -1112,6 +1139,7 @@ var canvas_events = (function() {
                 .addEventListener("wheel", events.dropdown_menu_wheel, false);
         },
         search: function() {
+            //pdgui.post("search");
             canvas_events.none();
             document.addEventListener("keydown", events.find_keydown, false);
             state = "search";
@@ -1137,8 +1165,17 @@ var canvas_events = (function() {
         match_words: function(state) {
             match_words_state = state;
         },
+        get_match_words: function() {
+            return match_words_state;
+        },
         find_reset: function() {
             last_search_term = "";
+        },
+        get_last_search_term: function() {
+            return last_search_term;
+        },
+        set_last_search_term: function(value) {
+            last_search_term = value;
         },
         add_scalar_draggable: function(cid, tag, scalar_sym, drawcommand_sym,
             event_name, array_sym, index) {
@@ -1364,8 +1401,11 @@ var canvas_events = (function() {
                     console.log("tried to savepanel something");
                 }, false
             );
+            document.querySelector("#canvas_find")
+                .addEventListener("mousedown", events.find_ignore, false
+            );
             document.querySelector("#canvas_find_text")
-                .addEventListener("focusin", canvas_events.search, false
+                .addEventListener("mousedown", canvas_events.search, false
             );
 
             // disable drag and drop for the time being
@@ -1384,7 +1424,10 @@ var canvas_events = (function() {
                 canvas_events.normal, false
             );
             document.querySelector("#canvas_find_button")
-                .addEventListener("click", events.find_click
+                .addEventListener("mousedown", events.find_click
+            );
+            document.querySelector("#canvas_find_whole_word")
+                .addEventListener("mousedown", events.match_words
             );
             // We need to separate these into nw_window events and html5 DOM
             // events closing the Window this isn't actually closing the window
@@ -1931,6 +1974,10 @@ function nw_create_patch_window_menus(gui, w, name) {
             // if there's a box being edited, try to instantiate it in Pd
             instantiate_live_box();
             if (state === "none") {
+                //pdgui.post("m.edit.find state=none");
+                // ico@vt.edu 2021-10-06: send fake mouse up in case we were doing
+                // a selection box, so that the selection does not get stuck 
+                pdgui.pdsend(name, "mouseup_fake");
                 find_bar.style.setProperty("display", "inline");
                 find_bar_text.focus();
                 find_bar_text.select();
@@ -1950,7 +1997,17 @@ function nw_create_patch_window_menus(gui, w, name) {
     minit(m.edit.findagain, {
         enabled: true,
         click: function() {
-            pdgui.pdsend(name, "findagain");
+            if (canvas_events.get_last_search_term() === "") {
+                //pdgui.post("A");
+                var t = document.getElementById("canvas_find_text").value;
+                pdgui.pdsend(name, "find",
+                pdgui.encode_for_dialog(t),
+                canvas_events.get_match_words() ? "1" : "0");
+                canvas_events.set_last_search_term(t);
+            } else {
+                //pdgui.post("B");
+                pdgui.pdsend(name, "findagain");
+            }
         }
     });
     minit(m.edit.finderror, {
