@@ -1319,9 +1319,25 @@ var canvas_events = (function() {
             // Copy event
             document.addEventListener("copy", function(evt) {
                 // On OSX, this event gets triggered when we're editing
-                // inside an object/message box. So we only forward the
-                // copy message to Pd if we're in a "normal" canvas state
-                if (canvas_events.get_state() === "normal") {
+                // inside an object/message box, inclduing activated objects.
+                if (pdgui.gui_is_gobj_grabbed()) {
+                    // ico@vt.edu 2021-10-08: copying contents of a grabbed object
+                    //pdgui.post("gobj_grabbed copy");
+                    var clipboard = nw.Clipboard.get();
+                    var activated_gobj =
+                        document.getElementsByClassName("activated");
+                    // currently we only support copying from gatoms and number2
+                    // gatoms will belong to the class atom, while number2 will have
+                    // parent object that will belong to the class iemgui
+                    if (activated_gobj[0].classList.contains("atom"))
+                        clipboard.set(activated_gobj[0].textContent, 'text');
+                    else if (activated_gobj[0].parentNode.classList.contains("iemgui")) {
+                        var output = activated_gobj[0].textContent.replace('>', '');
+                        clipboard.set(output, 'text');
+                    }
+                } else if (canvas_events.get_state() === "normal") {
+                    // So, we only forward the copy message to Pd if we're in a
+                    // "normal" canvas state
                     pdgui.pdsend(name, "copy");
                 }
             });
