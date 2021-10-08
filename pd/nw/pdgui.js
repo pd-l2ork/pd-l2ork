@@ -1333,6 +1333,7 @@ function canvas_menuclose_callback(cid_for_dialog, cid, force) {
     // at least until we quit sending incessant "motion" messages to the core).
     w.setTimeout(function() {
         dialog.showModal();
+        doc.getElementById('save_before_quit').className = 'in';
     }, 150);
 }
 
@@ -7117,6 +7118,7 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         gobj = get_gobj(cid, tag), zoom;
     //post("gui_textarea tag="+tag+" type="+type+" text=<"+
     //    text+"> state="+state+" gobj="+gobj);
+    //post("gui_textarea width_spec="+width_spec);
 
     // replace \v for \n and \u00A0 for " ". This is only used by the comments,
     // so it only affects the comment object, while the rest should be unaffected
@@ -7186,7 +7188,7 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
             font_width: font_width,
             font_height: font_height,
             "type" : type,
-            "width_spec": width_spec
+            "width_spec": width_spec,
         });
 
         // ico@vt.edu 2021-05-10: hide overflow, so that the selection
@@ -7237,6 +7239,12 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         //p.style.setProperty("width", -width_spec - 2 + "px");
         p.style.setProperty("-webkit-padding-after", "1px");
 
+        // ico@vt.edu 2021-10-07: set the minimum width according to the width_spec
+        // variable if it is less than zero
+        if (type !== "msg" && width_spec < 0) {
+            p.style.setProperty("min-width", (-width_spec - 4) + "px");
+        }
+
         // ico@vt.edu 2021-03-29 (updated 2021-04-20 because activation of a comment
         // that spills over to the right results in a width truncation which only
         // applies to when the object is initially activated, thus requiring a slightly
@@ -7251,7 +7259,7 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
             var tl = text.trim().length;
             var mw = parseInt(p.style.maxWidth, 10);
             //post("mw="+mw+" tl="+tl);
-            if (tl <= 3 && width_spec <= 0)
+            if (tl <= 3 && width_spec == 0)
                 p.style.setProperty("min-width", "3ch");
             else if (tl > 3)
             {
@@ -7275,20 +7283,24 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
                 // a multiline comment where still individual lines were no
                 // longer than the 3 chars and the width_spec may have not been
                 // set, so we need to fall back to the width of 3 even if we are
-                // narrower
-                if (tl <= 3 && width_spec <= 0)
+                // narrower unless our object cannot be smaller than minwidthpx
+                // because of the number of inlets or outlets
+                if (tl <= 3 && width_spec == 0)
                     p.style.setProperty("min-width", "3ch");
-                else
+                else if (width_spec < 0 && font_width * tl > -width_spec)
                     p.style.setProperty("min-width", tl+"ch");
+                else if (width_spec < 0)
+                    p.style.setProperty("min-width", (-width_spec-4)+"px");
             }
             //post("maxw="+mw+" minw="+tl+" n="+n);
         } else {
             // otherwise fall back to the old way
-            // LATER: clean this up since gop and other situations do not apply anymore
             p.style.setProperty("min-width",
                 width_spec == 0 ? "3ch" :
-                    (is_gop == 1 ? width_spec - 3 + "px" :
-                        (width_spec < 0 ? (-width_spec) - 2 + "px" : width_spec + "ch")));
+                    (is_gop == 1 ?
+                        (Math.abs(width_spec) - 2) + "px" :
+                            (width_spec < 0 ? width_spec - 2 + "px" : width_spec+"ch")
+            ));
         }
         if (is_gop !== 1 && width_spec <= 0)
         {
@@ -7301,7 +7313,7 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
                 // user-specified width or there is an \n, this is no longer an issue.
                 var tl = p.innerText.length;
                 var mw = parseInt(p.style.maxWidth, 10);
-                if (tl <= 3 && width_spec <= 0)
+                if (tl <= 3 && width_spec == 0)
                     p.style.setProperty("min-width", "3ch");
                 else if (tl > 3)
                 {
@@ -7324,11 +7336,13 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
                     // longer than the 3 chars and the width_spec may have not been
                     // set, so we need to fall back to the width of 3 even if we are
                     // narrower
-                    if (tl <= 3 && width_spec <= 0)
+                    if (tl <= 3 && width_spec == 0)
                         p.style.setProperty("min-width", "3ch");
-                    else
+                    else if (width_spec < 0 && font_width * tl > -width_spec)
                         p.style.setProperty("min-width", tl+"ch");
                     //post("maxw="+mw+" minw="+tl+" n="+n);
+                    else if (width_spec < 0)
+                        p.style.setProperty("min-width", (-width_spec-4)+"px");
                 }
                 var pheight = parseInt(p.offsetHeight / p.getAttribute('font_height'));
                 //post("height="+ pheight + " " + p.getAttribute('font_height'));

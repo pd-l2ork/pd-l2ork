@@ -693,6 +693,7 @@ void rtext_activate(t_rtext *x, int state)
     //post("rtext_activate state=%d", state);
     int w = 0, h = 0, widthspec, heightspec, indx, isgop,
         selstart = -1, selend = -1;
+    int xmin, xmax, tmp;
     char *tmpbuf;
     t_glist *glist = x->x_glist;
     t_canvas *canvas = glist_getcanvas(glist);
@@ -742,13 +743,20 @@ void rtext_activate(t_rtext *x, int state)
     if (pd_class((t_pd*)x->x_text) == canvas_class &&
         ((t_canvas *)x->x_text)->gl_isgraph)
     {
-        widthspec = ((t_canvas *)x->x_text)->gl_pixwidth;
+        // ico@vt.edu 2021-10-07: we need to get the rectangle in case
+        // gop object has more nlets than can fit on the size specified
+        // in its properties, so that the activated object size matches
+        // its regular size.
+        gobj_getrect(&x->x_text->te_g, x->x_glist, &xmin, &tmp, &xmax, &tmp);
+        if (xmax - xmin > ((t_canvas *)x->x_text)->gl_pixwidth)
+            widthspec = -(xmax-xmin);
+        else
+            widthspec = ((t_canvas *)x->x_text)->gl_pixwidth;
         heightspec = ((t_canvas *)x->x_text)->gl_pixheight;
         isgop = 1;
     }
     else
     {
-        int xmin, xmax, tmp;
         gobj_getrect(&x->x_text->te_g, x->x_glist, &xmin, &tmp, &xmax, &tmp);
             /* width if specified. If not, we send the bounding width as
                a negative number */
