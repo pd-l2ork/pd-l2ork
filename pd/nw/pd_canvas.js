@@ -1795,12 +1795,28 @@ function nw_create_patch_window_menus(gui, w, name) {
     minit(m.edit.copy, {
         enabled: true,
         click: function () {
-            pdgui.pdsend(name, "copy");
             // ico@vt.edu 2020-10-30 if we are copying inside find box
             if (canvas_events.get_state() === "search") {
                 if (document.getSelection()) {
                     document.execCommand("copy");
                 }
+            } else if (pdgui.gui_is_gobj_grabbed()) {
+                // ico@vt.edu 2021-10-08: copying contents of a grabbed object
+                //pdgui.post("gobj_grabbed copy");
+                var clipboard = nw.Clipboard.get();
+                var activated_gobj =
+                    document.getElementsByClassName("activated");
+                // currently we only support copying from gatoms and number2
+                // gatoms will belong to the class atom, while number2 will have
+                // parent object that will belong to the class iemgui
+                if (activated_gobj[0].classList.contains("atom"))
+                    clipboard.set(activated_gobj[0].textContent, 'text');
+                else if (activated_gobj[0].parentNode.classList.contains("iemgui")) {
+                    var output = activated_gobj[0].textContent.replace('>', '');
+                    clipboard.set(output, 'text');
+                }
+            } else {
+                pdgui.pdsend(name, "copy");
             }
         }
     });
