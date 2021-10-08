@@ -1333,7 +1333,6 @@ function canvas_menuclose_callback(cid_for_dialog, cid, force) {
     // at least until we quit sending incessant "motion" messages to the core).
     w.setTimeout(function() {
         dialog.showModal();
-        doc.getElementById('save_before_quit').className = 'in';
     }, 150);
 }
 
