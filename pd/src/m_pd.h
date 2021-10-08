@@ -270,7 +270,12 @@ typedef struct _text        /* patchable object - graphical, with text */
     short te_ypix;
     short te_width;             /* requested width in chars, 0 if auto */
     unsigned int te_type:2;     /* from defs below */
-    unsigned int te_iemgui:2;	/* if this is an iemgui (for nlets color) */
+    unsigned int te_iemgui:2;	/* if this is an iemgui (for nlets color) 
+                                   also used for defining custom iemgui
+                                   objects, like ggee/image that uses
+                                   value 2 to adopt mycanvas resize 
+                                   behavior, and 3 to also allow for
+                                   passthrough click tracking */
 } t_text;
 
 #define T_TEXT 0        /* just a textual comment */

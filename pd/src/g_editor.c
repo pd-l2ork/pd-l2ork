@@ -3692,6 +3692,15 @@ static int canvas_upx, canvas_upy;
 
 static int ctrl_runmode_warned;
 
+// ico@vt.edu 2021-10-08: here we define these statically
+// because they will be reused for the mouseup call
+// where we redistribute calls to all objects that catch
+// mouse motion, including mouse clicks while passing them
+// also through
+static int shiftmod = 0;
+static int ctrlmod = 0;
+static int altmod = 0;
+
     /* mouse click */
 void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
     int mod, int doit)
@@ -3704,9 +3713,10 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
     //post("canvas_doclick %d", doit);
 
     t_gobj *y;
-    int shiftmod, runmode, ctrlmod, altmod, doublemod = 0, rightclick,
+    int runmode, doublemod = 0, rightclick,
         in_text_resizing_hotspot, default_type;
-    int x1=0, y1=0, x2=0, y2=0, clickreturned = 0;
+    int x1=0, y1=0, x2=0, y2=0, clickreturned = 0, 
+        passthroughclick = 0;
     t_gobj *yclick = NULL;
     t_object *ob;
 
@@ -3808,10 +3818,32 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
             {
                 ob = pd_checkobject(&y->g_pd);
                 /* do not give clicks to comments or cnv during runtime */
-                if (!ob || (ob->te_type != T_TEXT && ob->ob_pd != my_canvas_class))
+                /* ico@vt.edu 2021-10-08: also do not give clicks to the
+                   ggee/image object if it is in click_mode 3 because that
+                   one needs to be passed through below it, so we manually
+                   acknowledge the click here without interrupting the flow */
+                //if (ob)
+                //    post("clicking on object with te_iemgui=%d",
+                //        ((t_text *)y)->te_iemgui);
+                if (!ob || 
+                     (ob->te_type != T_TEXT && ob->ob_pd != my_canvas_class &&
+                        ((t_text *)y)->te_iemgui != 3)
+                   )
+                {
                     yclick = y;
+                    //post("yclick is set to %lx %d <%s>", y,
+                    //   ((t_text *)y)->te_iemgui, ob->ob_pd->c_name->s_name);
+                }
+                if (ob && ((t_text *)y)->te_iemgui == 3)
+                {
+                    passthroughclick = gobj_click(y, x, xpos, ypos,
+                        shiftmod, (altmod && (!x->gl_edit)) || ctrlmod,
+                        0, doit);
+                    //post("clicking on a pass-through image %lx", y);
+                }
                 //fprintf(stderr,"    MAIN found clickable %d\n",
                 //    clickreturned);
+
             }
         }
         if (yclick)
@@ -3819,6 +3851,7 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
                 clickreturned = gobj_click(yclick, x, xpos, ypos,
                     shiftmod, (altmod && (!x->gl_edit)) || ctrlmod,
                     0, doit);
+                //post("MAIN clicking %lx", yclick);
                 //fprintf(stderr, "    MAIN clicking\n");
         }
         // if we are not clicking
@@ -5374,7 +5407,10 @@ void canvas_mouseup(t_canvas *x,
     //    sys_vgui("pdtk_toggle_xy_tooltip .x%zx %d\n", x, 0);
     //}
     int xpos = fxpos, ypos = fypos, which = fwhich;
-    /* post("mouseup %d %d %d", xpos, ypos, which); */
+    int x1, x2, y1, y2, passthroughclick;
+    t_gobj *y;
+    t_object *ob;
+    //post("mouseup %d %d %d", xpos, ypos, x->gl_editor->e_onmotion);
     if (!x->gl_editor)
     {
         bug("editor");
@@ -5450,6 +5486,28 @@ void canvas_mouseup(t_canvas *x,
         else
             glist_grab(x, 0, 0, 0, 0, 0, 0, 0);
         x->gl_editor->e_onmotion = MA_NONE;
+    }
+
+    // ico@vt.edu 2021-10-08: lastly look for any passthrough objects that should
+    // catch the mouseup event even though they have not grabbed the mouse focus
+    for (y = x->gl_list; y; y = y->g_next)
+    {
+        // check if the object wants to be clicked
+        if (canvas_hitbox(x, y, xpos, ypos, &x1, &y1, &x2, &y2))
+        {
+            ob = pd_checkobject(&y->g_pd);
+            /* do not give clicks to comments or cnv during runtime */
+            /* ico@vt.edu 2021-10-08: also do not give clicks to the
+               ggee/image object if it is in click_mode 3 because that
+               one needs to be passed through below it, so we manually
+               acknowledge the click here without interrupting the flow */
+            if (ob && ((t_text *)y)->te_iemgui == 3)
+            {
+                passthroughclick = gobj_click(y, x, xpos, ypos,
+                    shiftmod, (altmod && (!x->gl_edit)) || ctrlmod, -1, 0);
+                //post("clicking on a pass-through image %lx", y);
+            }
+        }
     }
 
     //fprintf(stderr,"canvas_mouseup -> canvas_doclick %d\n", which);

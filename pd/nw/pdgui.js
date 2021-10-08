@@ -7238,6 +7238,13 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         //p.style.setProperty("width", -width_spec - 2 + "px");
         p.style.setProperty("-webkit-padding-after", "1px");
 
+        // ico@vt.edu 2021-10-08: disable shadowing effect on message boxes
+        // since it obliterates visibility of its edges
+        if (type == "msg") {
+            p.style.setProperty("box-shadow", "none");
+            p.style.setProperty("animation", "none");
+        }
+
         // ico@vt.edu 2021-10-07: set the minimum width according to the width_spec
         // variable if it is less than zero
         if (type !== "msg" && width_spec < 0) {

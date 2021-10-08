@@ -17,7 +17,7 @@
 
 /* ------------------------ image ----------------------------- */
 
-static t_class *image_class;
+t_class *image_class;
 
 typedef struct _image
 {
@@ -29,7 +29,8 @@ typedef struct _image
     int x_constrain_w;      // used for custom constrain
     int x_constrain_h;
     int x_gop_spill;        // toggle clickable size to be smaller than the image
-    int x_click;            // toggle bang or 0/1 click recognition
+    int x_click;            // toggle no click recognition (0), bang (1),
+                            // toggle (2), or passthrough toggle (3)
     t_symbol* x_fname;      // file name
     t_symbol* x_inlet;
     int x_legacy;           // flag for when detecting a legacy object
@@ -50,6 +51,8 @@ typedef struct _image
                             // compatible with iemgui DRAW_CONFIG call
     int x_visible;          // whether image should be visible
     t_float x_alpha;        // image alpha
+    int x_mode3_click;      // keep track of the click for the mode 3 since
+                            // mouse up is faked by sending dbl = -1 variable
 } t_image;
 
 // x_gui.x_w and x_h are used for the getbox size. This could be either
@@ -453,19 +456,20 @@ static int image_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix,
 {
     t_image *x = (t_image *)z;
     t_atom at[5];
+    //post("image_newclick x->x_click=%d iemgui=%d", x->x_click, x->x_gui.x_obj.te_iemgui);
 
-    if (doit && x->x_click)
+    if (doit && x->x_click && x->x_click < 3)
     {
-        x->x_mouse_x = xpix;
-        x->x_mouse_y = ypix;
-        glist_grab(x->x_gui.x_glist, &x->x_gui.x_obj.te_g,
-            (t_glistmotionfn)image_motion, 0, 0, (t_floatarg)xpix, (t_floatarg)ypix, 0);
         if (x->x_click == 1)
         {
             iemgui_out_bang(&x->x_gui, 0, 1);
         }
         else if (x->x_click == 2)
         {
+            x->x_mouse_x = xpix;
+            x->x_mouse_y = ypix;
+            glist_grab(x->x_gui.x_glist, &x->x_gui.x_obj.te_g,
+                (t_glistmotionfn)image_motion, 0, 0, (t_floatarg)xpix, (t_floatarg)ypix, 0);
             SETFLOAT(at, 1.0);
             SETFLOAT(at+1, (t_floatarg)(x->x_gui.x_obj.te_xpix));
             SETFLOAT(at+2, (t_floatarg)(x->x_gui.x_obj.te_ypix));
@@ -478,18 +482,39 @@ static int image_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix,
 
     // this is how we catch mouse-up but only if the object calls glist_grab
     // and has a motionfn
-    else if (dbl == -1)
+    else if (dbl == -1 && x->x_click == 2)
     {
-        if (x->x_click == 2)
-        {
-            SETFLOAT(at, 0.0);
-            SETFLOAT(at+1, (t_floatarg)(x->x_gui.x_obj.te_xpix));
-            SETFLOAT(at+2, (t_floatarg)(x->x_gui.x_obj.te_ypix));
-            SETFLOAT(at+3, (t_floatarg)(xpix - x->x_gui.x_obj.te_xpix));
-            SETFLOAT(at+4, (t_floatarg)(ypix - x->x_gui.x_obj.te_ypix));
-            iemgui_out_list(&x->x_gui, 0, 0, &s_list, 5, at);
-        }
         glist_grab(x->x_gui.x_glist, 0, 0, 0, 0, 0, 0, 0);
+        SETFLOAT(at, 0.0);
+        SETFLOAT(at+1, (t_floatarg)(x->x_gui.x_obj.te_xpix));
+        SETFLOAT(at+2, (t_floatarg)(x->x_gui.x_obj.te_ypix));
+        SETFLOAT(at+3, (t_floatarg)(xpix - x->x_gui.x_obj.te_xpix));
+        SETFLOAT(at+4, (t_floatarg)(ypix - x->x_gui.x_obj.te_ypix));
+        iemgui_out_list(&x->x_gui, 0, 0, &s_list, 5, at);
+    }
+
+    // now check if we are in the mode 3 in which case we pass everything regardless
+    // whether we have clicked or not
+    else if (x->x_click == 3)
+    {
+        //post("mode 3 dbl=%d doit=%d", dbl, doit);
+        if (doit) 
+        {
+            x->x_mode3_click = 1;
+            //glist_grab(x->x_gui.x_glist, &x->x_gui.x_obj.te_g,
+            //    (t_glistmotionfn)image_motion, 0, 0, (t_floatarg)xpix, (t_floatarg)ypix, 0);
+        }
+        if (dbl == -1) 
+        {
+            x->x_mode3_click = 0;
+            //glist_grab(x->x_gui.x_glist, 0, 0, 0, 0, 0, 0, 0);
+        }
+        SETFLOAT(at, (t_floatarg)x->x_mode3_click);
+        SETFLOAT(at+1, (t_floatarg)(x->x_gui.x_obj.te_xpix));
+        SETFLOAT(at+2, (t_floatarg)(x->x_gui.x_obj.te_ypix));
+        SETFLOAT(at+3, (t_floatarg)(xpix - x->x_gui.x_obj.te_xpix));
+        SETFLOAT(at+4, (t_floatarg)(ypix - x->x_gui.x_obj.te_ypix));
+        iemgui_out_list(&x->x_gui, 0, 0, &s_list, 5, at);
     }
 
     return(1);
@@ -497,8 +522,12 @@ static int image_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix,
 
 static void image_clickmode(t_image *x, t_float f)
 {
-    if (f >= 0 && f <= 2)
+    if (f >= 0 && f <= 3)
         x->x_click = (int)f;
+    // ico@vt.edu 2021-10-08: change the iemgui object version
+    // based on whether it has passthrough click mode, so that
+    // g_editor.c can handle it properly
+    x->x_gui.x_obj.te_iemgui = (x->x_click == 3 ? 3 : 2);
 }
 
 static void image_gop_spill(t_image* x, t_floatarg f)
@@ -1444,11 +1473,15 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
     // 0 = non-iemgui
     // 1 = iemgui
     // 2 = 3rd-party iemgui-based that uses mycanvas resize hooks
-    x->x_gui.x_obj.te_iemgui = 2;
+    // 3 = same as 2 that also both captures both mouse motion and clicks, while
+    //     also passing the same to clickable objects below it
+    x->x_gui.x_obj.te_iemgui = (x->x_click == 3 ? 3 : 2);
+    post("click=%d iemgui=%d", x->x_click, x->x_gui.x_obj.te_iemgui);
 
     x->x_gui.x_color1 = &x->x_gui.x_lcol;
     x->x_gui.x_color2 = NULL;
     x->x_gui.x_color3 = NULL;
+    x->x_mode3_click = 0;
 
     return (x);
 }
