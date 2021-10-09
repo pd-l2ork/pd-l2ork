@@ -7974,10 +7974,25 @@ function gui_find_lowest_and_arrange(cid, reference_element_tag, objtag) {
 exports.dialog_bindings = function(did) {
     var dwin = dialogwin[did].window;
     dwin.document.onkeydown = function(evt) {
+        //post("onkeydown " + evt.keyCode + " " + evt.ctrlKey);
         if (evt.keyCode === 13) { // enter
             dwin.ok();
         } else if (evt.keyCode === 27) { // escape
             dwin.cancel();
+        } else if (evt.keyCode == 65 && evt.ctrlKey) { // ctrl+a
+            //post("onkeydown ctrl+a");
+            var element = dwin.document.activeElement;
+            var tagName = element.tagName.toLowerCase();
+            if (tagName === 'input') {
+                //post("...got input");
+                var type = element.getAttribute('type').toLowerCase();
+                if (type === "text" || type === "number")
+                {
+                    //post("...we got text or number, selecting")
+                    element.select();
+                }
+            }
+            evt.preventDefault();
         }
     };
     dwin.document.onkeypress = function(evt) {
