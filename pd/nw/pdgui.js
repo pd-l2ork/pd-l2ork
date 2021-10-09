@@ -7980,6 +7980,14 @@ exports.dialog_bindings = function(did) {
             dwin.cancel();
         }
     };
+    dwin.document.onkeypress = function(evt) {
+        //post("onkeypress " + evt.which + " " + evt.ctrlKey);
+        if (evt.which == 23 && evt.ctrlKey) {
+            //post("Ctrl-W pressed");
+            evt.preventDefault();
+            dwin.cancel();
+        }
+    }
 }
 
 exports.resize_window = function(did) {
