@@ -1,4 +1,4 @@
-#N canvas 166 125 553 775 10;
+#N canvas 166 134 553 775 10;
 #X obj 0 752 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
 14 #dcdcdc #404040 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header hslider 3 12 0 18
@@ -122,7 +122,7 @@ not instantiate correctly.;
 -9 0 12 7 13 21 4400 0 0 1;
 #X connect 7 0 0 0;
 #X restore 170 678 pd hsl-creation-arguments;
-#N canvas 66 22 463 602 Setting_slider_properties_through_messages
+#N canvas 66 64 463 602 Setting_slider_properties_through_messages
 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
@@ -372,8 +372,8 @@ not instantiate correctly.;
 #X text 7 1 [hslider] Set Properties through Messages;
 #X text 266 469 1.x-pos;
 #X text 266 491 2.y-pos;
-#X obj 289 356 hsl 128 15 0 127 0 0 hsl-snd hsl-rcv mySlider -2 -8
-0 10 #fcfcfc #000000 #000000 0 1 0 1;
+#X obj 289 356 hsl 128 15 0 127 0 0 hsl_snd hsl_rcv mySlider -2 -8
+0 10 #fcfcfc #202020 #202020 0 1 0 1;
 #X connect 1 0 7 0;
 #X connect 5 0 27 0;
 #X connect 6 0 20 0;
@@ -434,7 +434,7 @@ outlet.;
 #X floatatom 156 -254 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 196 -279 keyname;
 #X obj 196 -254 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 0 1 1;
+#000000 1 1 1;
 #X symbolatom 235 -254 10 0 0 0 - - - 0 0 1, f 10;
 #X obj 156 -360 hsl 128 15 0 127 0 0 empty empty empty -2 -8 0 10 #fcfcfc
 #000000 #000000 0 1 1 1;
