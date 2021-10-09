@@ -64,7 +64,7 @@ typedef struct _image
 // x_adj_img_width and height are adjusted image size (based on user input)
 
 extern t_symbol *s_image_empty;
-extern int gfxstub_haveproperties(void *key);
+extern t_int gfxstub_haveproperties(void *key);
 
 /* widget helper functions */
 static void image_select(t_gobj *z, t_glist *glist, int state);
@@ -537,7 +537,7 @@ static void image_gop_spill(t_image* x, t_floatarg f)
         image_update(
             x, x->x_gui.x_glist, x->x_adj_img_width, x->x_adj_img_height, 0);
     image_displace((t_gobj*)x, x->x_gui.x_glist, 0.0, 0.0);
-    int properties = gfxstub_haveproperties((void *)x);
+    t_int properties = gfxstub_haveproperties((void *)x);
     if (properties)
     {
         properties_set_field_int(properties,"gop_spill",x->x_gop_spill);
@@ -551,7 +551,7 @@ static void image_alpha(t_image *x, t_floatarg f)
     x->x_alpha = f;
     gui_vmess("gui_ggee_image_alpha", "xxf",
         glist_getcanvas(x->x_gui.x_glist), x, x->x_alpha);
-    int properties = gfxstub_haveproperties((void *)x);
+    t_int properties = gfxstub_haveproperties((void *)x);
     if (properties)
     {
         properties_set_field_float(properties,"alpha",x->x_alpha);
@@ -568,7 +568,7 @@ static void image_visible(t_image *x, t_floatarg f)
             gui_vmess("gui_ggee_image_toggle_visible", "xxi",
                 glist_getcanvas(x->x_gui.x_glist), x, x->x_visible);
     }
-    int properties = gfxstub_haveproperties((void *)x);
+    t_int properties = gfxstub_haveproperties((void *)x);
     if (properties)
     {
         properties_set_field_int(properties,"visible",x->x_visible);
@@ -590,7 +590,7 @@ static void image_constrain(t_image* x, t_floatarg f)
             x, x->x_gui.x_glist, x->x_adj_img_width, x->x_adj_img_height, 0);
     }
     image_displace((t_gobj*)x, x->x_gui.x_glist, 0.0, 0.0);
-    int properties = gfxstub_haveproperties((void *)x);
+    t_int properties = gfxstub_haveproperties((void *)x);
     if (properties)
     {
         properties_set_field_int(properties,"constrain",x->x_constrain);
@@ -635,7 +635,7 @@ static void image_gop_spill_size(t_image* x, t_floatarg w, t_floatarg h)
                 x, x->x_gui.x_glist, x->x_adj_img_width, x->x_adj_img_height, 0);
         image_displace((t_gobj*)x, x->x_gui.x_glist, 0.0, 0.0);
     }
-    int properties = gfxstub_haveproperties((void *)x);
+    t_int properties = gfxstub_haveproperties((void *)x);
     if (properties)
     {
         properties_set_field_int(properties,"width",x->x_gui.x_w);
@@ -673,7 +673,7 @@ static void image_size(t_image* x, t_floatarg w, t_floatarg h)
                 x, x->x_gui.x_glist, x->x_adj_img_width, x->x_adj_img_height, 0);
         image_displace((t_gobj*)x, x->x_gui.x_glist, 0.0, 0.0);
     }
-    int properties = gfxstub_haveproperties((void *)x);
+    t_int properties = gfxstub_haveproperties((void *)x);
     if (properties)
     {
         properties_set_field_int(properties,"visible_width",x->x_adj_img_width);
@@ -824,7 +824,7 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
         canvas_fixlinesfor(x->x_gui.x_glist,(t_text*) x);
     }
 
-    int properties = gfxstub_haveproperties((void *)x);
+    t_int properties = gfxstub_haveproperties((void *)x);
     if (properties)
     {
         properties_set_field_int(properties,"visible_width",x->x_adj_img_width);
@@ -936,7 +936,7 @@ static void image_dorotate(t_image *x)
     gui_vmess("gui_ggee_image_rotate", "xxfii", 
         glist_getcanvas(x->x_gui.x_glist), x, x->x_rot_angle,
         (t_int)x->x_rot_x - off_x, (t_int)x->x_rot_y - off_y);
-    int properties = gfxstub_haveproperties((void *)x);
+    t_int properties = gfxstub_haveproperties((void *)x);
     if (properties)
     {
         properties_set_field_int(properties,"rotate_x",x->x_rot_x);
@@ -1064,7 +1064,7 @@ static void image__motionhook(t_scalehandle *sh, t_floatarg mouse_x, t_floatarg 
             canvas_getscroll(x->x_gui.x_glist);
         }
 
-        int properties = gfxstub_haveproperties((void *)x);
+        t_int properties = gfxstub_haveproperties((void *)x);
         if (properties)
         {
             properties_set_field_int(properties,"visible_width",x->x_adj_img_width);

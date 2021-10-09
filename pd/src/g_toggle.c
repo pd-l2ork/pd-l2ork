@@ -13,7 +13,7 @@
 #include "g_all_guis.h"
 #include <math.h>
 
-extern int gfxstub_haveproperties(void *key);
+extern t_int gfxstub_haveproperties(void *key);
 
 static void toggle_interactive(t_toggle *x, t_floatarg f);
 
@@ -145,7 +145,7 @@ static void toggle__motionhook(t_scalehandle *sh, t_floatarg mouse_x, t_floatarg
             scalehandle_unclick_scale(sh);
         }
 
-        int properties = gfxstub_haveproperties((void *)x);
+        t_int properties = gfxstub_haveproperties((void *)x);
         if (properties)
         {
             int new_w = x->x_gui.x_w + sh->h_dragx;

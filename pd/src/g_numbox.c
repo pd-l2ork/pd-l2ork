@@ -19,7 +19,7 @@
 #define MY_NUMBOX_FLOAT_SPECIFIER "%.14lg"
 #endif
 
-extern int gfxstub_haveproperties(void *key);
+extern t_int gfxstub_haveproperties(void *key);
 static void my_numbox_draw_select(t_my_numbox *x, t_glist *glist);
 static void my_numbox_key(void *z, t_floatarg fkey);
 static void my_numbox_draw_update(t_gobj *client, t_glist *glist);
@@ -455,7 +455,7 @@ static void my_numbox__motionhook(t_scalehandle *sh,
             //gobj_vis(x, x->x_gui.x_glist, 1);
             scalehandle_unclick_scale(sh);
         }
-        int properties = gfxstub_haveproperties((void *)x);
+        t_int properties = gfxstub_haveproperties((void *)x);
         if (properties)
         {
             properties_set_field_int(properties,"width",x->x_scalewidth);

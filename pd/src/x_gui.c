@@ -119,7 +119,7 @@ char *gfxstub_new2(t_pd *owner, void *key)
 
 
 
-int gfxstub_haveproperties(void *key)
+t_int gfxstub_haveproperties(void *key)
 {
     t_gfxstub *x;
     for (x = gfxstub_list; x; x = x->x_next)

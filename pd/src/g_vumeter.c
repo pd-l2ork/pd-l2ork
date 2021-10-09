@@ -60,7 +60,7 @@ int iemgui_vu_col[]=
     15,15,15,15,15,15,15,15,15,15,14,14,13,13,13,13,13,13,13,13,13,13,13,19,19,19
 };
 
-extern int gfxstub_haveproperties(void *key);
+extern t_int gfxstub_haveproperties(void *key);
 void vu_check_height(t_vu *x, int h);
 t_widgetbehavior vu_widgetbehavior;
 t_class *vu_class;
@@ -310,7 +310,7 @@ static void vu__motionhook(t_scalehandle *sh, t_floatarg mouse_x, t_floatarg mou
             scalehandle_unclick_scale(sh);
         }
 
-        int properties = gfxstub_haveproperties((void *)x);
+        t_int properties = gfxstub_haveproperties((void *)x);
         if (properties)
         {
             int new_w = width;

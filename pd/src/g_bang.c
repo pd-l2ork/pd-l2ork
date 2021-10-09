@@ -18,7 +18,7 @@
 #define IEM_BNG_MINHOLDFLASHTIME 50
 #define IEM_BNG_MINBREAKFLASHTIME 10
 
-extern int gfxstub_haveproperties(void *key);
+extern t_int gfxstub_haveproperties(void *key);
 t_widgetbehavior bng_widgetbehavior;
 static t_class *bng_class;
 
@@ -171,7 +171,7 @@ static void bng__motionhook(t_scalehandle *sh,
             scalehandle_unclick_scale(sh);
         }
 
-        int properties = gfxstub_haveproperties((void *)x);
+        t_int properties = gfxstub_haveproperties((void *)x);
         if (properties)
         {
             int new_w = x->x_gui.x_w + sh->h_dragx;

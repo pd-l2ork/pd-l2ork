@@ -3177,7 +3177,7 @@ void canvasgop_draw_move(t_canvas *x, int doit)
         scrollbar_update(x->gl_owner);
 }
 
-extern int gfxstub_haveproperties(void *key);
+extern t_int gfxstub_haveproperties(void *key);
 extern void canvas_canvas_setundo(t_canvas *x);
 extern void graph_checkgop_rect(t_gobj *z, t_glist *glist,
     int *xp1, int *yp1, int *xp2, int *yp2);
@@ -3364,7 +3364,7 @@ void canvasgop__motionhook(t_scalehandle *sh, t_floatarg mouse_x,
                 x->gl_ymargin + x->gl_pixheight);
         }
 
-        int properties = gfxstub_haveproperties((void *)x);
+        t_int properties = gfxstub_haveproperties((void *)x);
         if (properties)
         {
             properties_set_field_int(properties,
@@ -3389,7 +3389,7 @@ void canvasgop__motionhook(t_scalehandle *sh, t_floatarg mouse_x,
             x->gl_ymargin,
             x->gl_xmargin + width,
             x->gl_ymargin + height);
-        int properties = gfxstub_haveproperties((void *)x);
+        t_int properties = gfxstub_haveproperties((void *)x);
         if (properties)
         {
             properties_set_field_int(properties,
@@ -3412,7 +3412,7 @@ void canvasgop__motionhook(t_scalehandle *sh, t_floatarg mouse_x,
     else /* move_gop hook */
     {
         //post("canvas_motionhook");
-        int properties = gfxstub_haveproperties((void *)x);
+        t_int properties = gfxstub_haveproperties((void *)x);
         if (properties)
         {
             properties_set_field_int(properties,

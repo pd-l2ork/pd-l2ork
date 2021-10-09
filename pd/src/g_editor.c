@@ -1872,7 +1872,7 @@ void *canvas_undo_set_canvas(t_canvas *x)
     return (buf);
 }
 
-extern int gfxstub_haveproperties(void *key);
+extern t_int gfxstub_haveproperties(void *key);
 
 void canvas_undo_canvas_apply(t_canvas *x, void *z, int action)
 {
@@ -3713,6 +3713,10 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
     //post("canvas_doclick %d", doit);
 
     t_gobj *y;
+    // instantiate total number of gobj in gl_list and a number of
+    // passthrough objects, plus a counting variable
+    int numgobj = 0, numptgobj = 0, i;
+
     int runmode, doublemod = 0, rightclick,
         in_text_resizing_hotspot, default_type;
     int x1=0, y1=0, x2=0, y2=0, clickreturned = 0, 
@@ -3809,41 +3813,59 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
     // if we are in runmode and it is not middle- or right-click
     if (runmode && !rightclick)
     {
-        //fprintf(stderr, "runmode && !rightclick\n");
-        for (y = x->gl_list; y; y = y->g_next)
+        if (x->gl_list)
         {
-            // check if the object wants to be clicked
-            // (we pick the topmost clickable)
-            if (canvas_hitbox(x, y, xpos, ypos, &x1, &y1, &x2, &y2))
+            // find out how many objects there are in the gl_list
+            // we use this to allocate an array of pointers, so that
+            // we can distribute clicks in order from topmost to
+            // bottommost (or stop at a non-passthrough object)
+            // see mode 3 for iemgui in m_pd.h and ggee/image
+            for (y = x->gl_list; y; y = y->g_next)
+                numgobj++;
+            t_gobj *ypt[numgobj];
+
+            //fprintf(stderr, "runmode && !rightclick\n");
+            for (y = x->gl_list; y; y = y->g_next)
             {
-                ob = pd_checkobject(&y->g_pd);
-                /* do not give clicks to comments or cnv during runtime */
-                /* ico@vt.edu 2021-10-08: also do not give clicks to the
-                   ggee/image object if it is in click_mode 3 because that
-                   one needs to be passed through below it, so we manually
-                   acknowledge the click here without interrupting the flow */
-                //if (ob)
-                //    post("clicking on object with te_iemgui=%d",
-                //        ((t_text *)y)->te_iemgui);
-                if (!ob || 
-                     (ob->te_type != T_TEXT && ob->ob_pd != my_canvas_class &&
-                        ((t_text *)y)->te_iemgui != 3)
-                   )
+                // check if the object wants to be clicked
+                // (we pick the topmost clickable)
+                if (canvas_hitbox(x, y, xpos, ypos, &x1, &y1, &x2, &y2))
                 {
-                    yclick = y;
-                    //post("yclick is set to %lx %d <%s>", y,
-                    //   ((t_text *)y)->te_iemgui, ob->ob_pd->c_name->s_name);
+                    ob = pd_checkobject(&y->g_pd);
+                    /* do not give clicks to comments or cnv during runtime */
+                    /* ico@vt.edu 2021-10-08: also do not give clicks to the
+                       ggee/image object if it is in click_mode 3 because that
+                       one needs to be passed through below it, so we manually
+                       acknowledge the click here without interrupting the flow */
+                    //if (ob)
+                    //    post("clicking on object with te_iemgui=%d",
+                    //        ((t_text *)y)->te_iemgui);
+                    if (!ob || 
+                         (ob->te_type != T_TEXT && ob->ob_pd != my_canvas_class &&
+                            ((t_text *)y)->te_iemgui != 3)
+                       )
+                    {
+                        yclick = y;
+                        //post("yclick is set to %lx %d <%s>", y,
+                        //   ((t_text *)y)->te_iemgui, ob->ob_pd->c_name->s_name);
+                    }
+                    if (ob && ((t_text *)y)->te_iemgui == 3)
+                    {
+                        ypt[numptgobj] = y;
+                        numptgobj++;
+                        //post("clicking on a pass-through image %lx", y);
+                    }
+                    //fprintf(stderr,"    MAIN found clickable %d\n",
+                    //    clickreturned);
+
                 }
-                if (ob && ((t_text *)y)->te_iemgui == 3)
-                {
-                    passthroughclick = gobj_click(y, x, xpos, ypos,
+            }
+            if (numptgobj)
+            {
+                for(i = numptgobj-1; i >= 0; i--)
+                    passthroughclick = gobj_click(ypt[i], x, xpos, ypos,
                         shiftmod, (altmod && (!x->gl_edit)) || ctrlmod,
                         0, doit);
-                    //post("clicking on a pass-through image %lx", y);
-                }
-                //fprintf(stderr,"    MAIN found clickable %d\n",
-                //    clickreturned);
-
             }
         }
         if (yclick)
@@ -5407,7 +5429,12 @@ void canvas_mouseup(t_canvas *x,
     //    sys_vgui("pdtk_toggle_xy_tooltip .x%zx %d\n", x, 0);
     //}
     int xpos = fxpos, ypos = fypos, which = fwhich;
+
     int x1, x2, y1, y2, passthroughclick;
+    // instantiate total number of gobj in gl_list and a number of
+    // passthrough objects, plus a counting variable
+    int numgobj = 0, numptgobj = 0, i;
+
     t_gobj *y;
     t_object *ob;
     //post("mouseup %d %d %d", xpos, ypos, x->gl_editor->e_onmotion);
@@ -5490,23 +5517,41 @@ void canvas_mouseup(t_canvas *x,
 
     // ico@vt.edu 2021-10-08: lastly look for any passthrough objects that should
     // catch the mouseup event even though they have not grabbed the mouse focus
-    for (y = x->gl_list; y; y = y->g_next)
+    if (x->gl_list)
     {
-        // check if the object wants to be clicked
-        if (canvas_hitbox(x, y, xpos, ypos, &x1, &y1, &x2, &y2))
+        // find out how many objects there are in the gl_list
+        // we use this to allocate an array of pointers, so that
+        // we can distribute clicks in order from topmost to
+        // bottommost (or stop at a non-passthrough object)
+        // see mode 3 for iemgui in m_pd.h and ggee/image
+        for (y = x->gl_list; y; y = y->g_next)
+            numgobj++;
+        t_gobj *ypt[numgobj];
+
+        for (y = x->gl_list; y; y = y->g_next)
         {
-            ob = pd_checkobject(&y->g_pd);
-            /* do not give clicks to comments or cnv during runtime */
-            /* ico@vt.edu 2021-10-08: also do not give clicks to the
-               ggee/image object if it is in click_mode 3 because that
-               one needs to be passed through below it, so we manually
-               acknowledge the click here without interrupting the flow */
-            if (ob && ((t_text *)y)->te_iemgui == 3)
+            // check if the object wants to be clicked
+            if (canvas_hitbox(x, y, xpos, ypos, &x1, &y1, &x2, &y2))
             {
-                passthroughclick = gobj_click(y, x, xpos, ypos,
-                    shiftmod, (altmod && (!x->gl_edit)) || ctrlmod, -1, 0);
-                //post("clicking on a pass-through image %lx", y);
+                ob = pd_checkobject(&y->g_pd);
+                /* do not give clicks to comments or cnv during runtime */
+                /* ico@vt.edu 2021-10-08: also do not give clicks to the
+                   ggee/image object if it is in click_mode 3 because that
+                   one needs to be passed through below it, so we manually
+                   acknowledge the click here without interrupting the flow */
+                if (ob && ((t_text *)y)->te_iemgui == 3)
+                {
+                    ypt[numptgobj] = y;
+                    numptgobj++;
+                    //post("clicking on a pass-through image %lx", y);
+                }
             }
+        }
+        if (numptgobj)
+        {
+            for(i = numptgobj-1; i >= 0; i--)
+                passthroughclick = gobj_click(ypt[i], x, xpos, ypos,
+                    shiftmod, (altmod && (!x->gl_edit)) || ctrlmod, -1, 0);
         }
     }
 

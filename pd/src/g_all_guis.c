@@ -32,7 +32,7 @@ static void scalehandle_check_and_redraw(t_iemgui *x);
 
 /* forward declarations */
 void iemgui_update_properties(t_iemgui *x, int option);
-void properties_set_field_int(t_int props, const char *gui_field, int value);
+void properties_set_field_int(long props, const char *gui_field, int value);
 void properties_set_field_float(t_int props, const char *gui_field, t_floatarg value);
 void properties_set_field_symbol(t_int props, const char *gui_field, t_symbol *value);
 
@@ -903,7 +903,7 @@ char *iem_get_tag(t_canvas *glist, t_iemgui *iem_obj)
 //----------------------------------------------------------------
 // SCALEHANDLE COMMON CODE (by Mathieu, refactored from existing code)
 
-extern int gfxstub_haveproperties(void *key);
+extern t_int gfxstub_haveproperties(void *key);
 
 int   mini(int   a, int   b) {return a<b?a:b;}
 int   maxi(int   a, int   b) {return a>b?a:b;}
@@ -922,10 +922,11 @@ extern t_class *my_canvas_class;
 */
 void iemgui_update_properties(t_iemgui *x, int option)
 {
+    //post("iemgui_update_properties option=%d", option);
     t_symbol *srl[3];
     iemgui_properties(x, srl);
 
-    int properties = gfxstub_haveproperties((void *)x);
+    t_int properties = gfxstub_haveproperties((void *)x);
     if (properties)
     {
         switch(option) {
@@ -1076,8 +1077,9 @@ void scalehandle_free(t_scalehandle *h)
     pd_free((t_pd *)h);
 }
 
-void properties_set_field_int(t_int props, const char *gui_field, int value)
+void properties_set_field_int(long props, const char *gui_field, int value)
 {
+    //post("properties_set_field_int %lx %zx %s %d", props, props, gui_field, value);
     char tagbuf[MAXPDSTRING];
     sprintf(tagbuf, ".gfxstub%zx", props);
     gui_vmess("gui_dialog_set_field", "ssi",
@@ -1118,7 +1120,7 @@ void scalehandle_dragon_label(t_scalehandle *h, float mouse_x, float mouse_y)
         h->h_dragx = dx;
         h->h_dragy = dy;
 
-        int properties = gfxstub_haveproperties((void *)x);
+        t_int properties = gfxstub_haveproperties((void *)x);
         if (properties)
         {
             int new_x = x->x_ldx + h->h_dragx;

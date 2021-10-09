@@ -18,7 +18,7 @@
 
 #define IEM_RADIO_MAX   128
 
-extern int gfxstub_haveproperties(void *key);
+extern t_int gfxstub_haveproperties(void *key);
 
 static void radio_interactive(t_radio *x, t_floatarg f);
 
@@ -168,7 +168,7 @@ static void radio__motionhook(t_scalehandle *sh, t_floatarg mouse_x, t_floatarg 
             scalehandle_unclick_scale(sh);
         }
 
-        int properties = gfxstub_haveproperties((void *)x);
+        t_int properties = gfxstub_haveproperties((void *)x);
         if (properties)
         {
             properties_set_field_int(properties,"size", x->x_orient ?

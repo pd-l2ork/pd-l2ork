@@ -13,7 +13,7 @@
 #include "g_all_guis.h"
 #include <math.h>
 
-extern int gfxstub_haveproperties(void *key);
+extern t_int gfxstub_haveproperties(void *key);
 void my_canvas_draw_select(t_my_canvas* x, t_glist* glist);
 
 t_widgetbehavior my_canvas_widgetbehavior;
@@ -106,7 +106,7 @@ static void my_canvas__motionhook(t_scalehandle *sh, t_floatarg mouse_x, t_float
             scalehandle_unclick_scale(sh);
         }
 
-        int properties = gfxstub_haveproperties((void *)x);
+        t_int properties = gfxstub_haveproperties((void *)x);
         if (properties)
         {
             properties_set_field_int(properties,"rng.min_ent",width);
