@@ -7974,12 +7974,15 @@ function gui_find_lowest_and_arrange(cid, reference_element_tag, objtag) {
 exports.dialog_bindings = function(did) {
     var dwin = dialogwin[did].window;
     dwin.document.onkeydown = function(evt) {
-        //post("onkeydown " + evt.keyCode + " " + evt.ctrlKey);
+        //post("onkeydown=" + evt.keyCode + " ctrl=" +
+        //    evt.ctrlKey + " meta=" + evt.metaKey);
         if (evt.keyCode === 13) { // enter
             dwin.ok();
         } else if (evt.keyCode === 27) { // escape
             dwin.cancel();
-        } else if (evt.keyCode == 65 && evt.ctrlKey) { // ctrl+a
+        } else if (!nw_os_is_osx && evt.keyCode == 65 && evt.ctrlKey ||
+                    nw_os_is_osx && evt.keyCode == 65 && evt.metaKey) {
+            // cmd/ctrl+a
             //post("onkeydown ctrl+a");
             var element = dwin.document.activeElement;
             var tagName = element.tagName.toLowerCase();
@@ -7994,10 +7997,15 @@ exports.dialog_bindings = function(did) {
             }
             evt.preventDefault();
         }
+        else if (nw_os_is_osx && evt.keyCode == 87 && evt.metaKey) {
+            //post("OSX version of cmd+w");
+            evt.preventDefault();
+            dwin.cancel();
+        }
     };
     dwin.document.onkeypress = function(evt) {
         //post("onkeypress " + evt.which + " " + evt.ctrlKey);
-        if (evt.which == 23 && evt.ctrlKey) {
+        if (!nw_os_is_osx && evt.which == 23 && evt.ctrlKey) {
             //post("Ctrl-W pressed");
             evt.preventDefault();
             dwin.cancel();
