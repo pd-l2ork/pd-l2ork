@@ -15,6 +15,11 @@
 #pragma warning( disable : 4305 )
 #endif
 
+#ifdef _WIN32
+#include <stdlib.h>
+#define realpath(N,R) _fullpath((R),(N),_MAX_PATH)
+#endif
+
 /* ------------------------ image ----------------------------- */
 
 t_class *image_class;
