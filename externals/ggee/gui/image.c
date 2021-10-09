@@ -456,7 +456,7 @@ static int image_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix,
 {
     t_image *x = (t_image *)z;
     t_atom at[5];
-    //post("image_newclick x->x_click=%d iemgui=%d", x->x_click, x->x_gui.x_obj.te_iemgui);
+    //post("image_newclick x->x_click=%d dbl=%d iemgui=%d", x->x_click, dbl, x->x_gui.x_obj.te_iemgui);
 
     if (doit && x->x_click && x->x_click < 3)
     {
@@ -504,17 +504,27 @@ static int image_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix,
             //glist_grab(x->x_gui.x_glist, &x->x_gui.x_obj.te_g,
             //    (t_glistmotionfn)image_motion, 0, 0, (t_floatarg)xpix, (t_floatarg)ypix, 0);
         }
-        if (dbl == -1) 
+        // the following can be either -1 for a regular mouseup or -2 for a silent one
+        // -2 is used when we are in mode 3 and the mouseup comes outside the object
+        // which means the object should not have received the mouseup unless grabbed,
+        // yet in mode 3 because we pass the click through to objects below, we cannot
+        // grab the object, since currently the mostly inherited behavior of a grab
+        // is that there can be only one of those per canvas.
+        else if (dbl < 0) 
         {
             x->x_mode3_click = 0;
             //glist_grab(x->x_gui.x_glist, 0, 0, 0, 0, 0, 0, 0);
         }
-        SETFLOAT(at, (t_floatarg)x->x_mode3_click);
-        SETFLOAT(at+1, (t_floatarg)(x->x_gui.x_obj.te_xpix));
-        SETFLOAT(at+2, (t_floatarg)(x->x_gui.x_obj.te_ypix));
-        SETFLOAT(at+3, (t_floatarg)(xpix - x->x_gui.x_obj.te_xpix));
-        SETFLOAT(at+4, (t_floatarg)(ypix - x->x_gui.x_obj.te_ypix));
-        iemgui_out_list(&x->x_gui, 0, 0, &s_list, 5, at);
+
+        if (dbl != -2)
+        {
+            SETFLOAT(at, (t_floatarg)x->x_mode3_click);
+            SETFLOAT(at+1, (t_floatarg)(x->x_gui.x_obj.te_xpix));
+            SETFLOAT(at+2, (t_floatarg)(x->x_gui.x_obj.te_ypix));
+            SETFLOAT(at+3, (t_floatarg)(xpix - x->x_gui.x_obj.te_xpix));
+            SETFLOAT(at+4, (t_floatarg)(ypix - x->x_gui.x_obj.te_ypix));
+            iemgui_out_list(&x->x_gui, 0, 0, &s_list, 5, at);
+        }
     }
 
     return(1);
