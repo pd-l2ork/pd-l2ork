@@ -129,8 +129,16 @@ static void image_drawme(t_image *x, t_glist *glist)
                 if (x->x_gop_spill)
                     gui_vmess("gui_ggee_image_display", "xxi",
                         glist_getcanvas(glist), x, 0);
+                // ico@vt.edu 2021-10-08: here we need to convert the path
+                // to realpath because nw.js has an inconsistent way of
+                // handling paths. e.g., when running pd-l2ork on Linux from
+                // a command line, first time you open the patch it works ok.
+                // however, if you open it the second time from the recent
+                // files menu, it fails to locate files with a relative path.
+                char realfname[FILENAME_MAX];
+                realpath(fname->s_name, realfname);
                 gui_vmess("gui_load_image", "xxs",
-                    glist_getcanvas(glist), x, fname->s_name);
+                    glist_getcanvas(glist), x, realfname);
             }
             else
             {
@@ -707,8 +715,16 @@ static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
         if (x->x_gop_spill)
             gui_vmess("gui_ggee_image_display", "xxi", 
                 glist_getcanvas(x->x_gui.x_glist), x, 0);
+        // ico@vt.edu 2021-10-08: here we need to convert the path
+        // to realpath because nw.js has an inconsistent way of
+        // handling paths. e.g., when running pd-l2ork on Linux from
+        // a command line, first time you open the patch it works ok.
+        // however, if you open it the second time from the recent
+        // files menu, it fails to locate files with a relative path.
+        char realfname[FILENAME_MAX];
+        realpath(fname->s_name, realfname);
         gui_vmess("gui_load_image", "xxs",
-            glist_getcanvas(x->x_gui.x_glist), x, fname->s_name);
+            glist_getcanvas(x->x_gui.x_glist), x, realfname);
     }
     else
     {
@@ -1146,6 +1162,7 @@ static void image_dialog(t_image *x, t_symbol *s, int argc,
     x->x_adj_img_height = atom_getintarg(4, argc, argv);
     x->x_gop_spill = atom_getintarg(5, argc, argv);
     x->x_click = atom_getintarg(6, argc, argv);
+    x->x_gui.x_obj.te_iemgui = (x->x_click == 3 ? 3 : 2);
     x->x_constrain = atom_getintarg(7, argc, argv);
     srl[0] = iemgui_getfloatsymarg(8,argc,argv);
     srl[1] = iemgui_getfloatsymarg(9,argc,argv);
@@ -1486,7 +1503,7 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
     // 3 = same as 2 that also both captures both mouse motion and clicks, while
     //     also passing the same to clickable objects below it
     x->x_gui.x_obj.te_iemgui = (x->x_click == 3 ? 3 : 2);
-    post("click=%d iemgui=%d", x->x_click, x->x_gui.x_obj.te_iemgui);
+    //post("click=%d iemgui=%d", x->x_click, x->x_gui.x_obj.te_iemgui);
 
     x->x_gui.x_color1 = &x->x_gui.x_lcol;
     x->x_gui.x_color2 = NULL;

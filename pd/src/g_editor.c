@@ -6030,7 +6030,7 @@ void canvas_motion(t_canvas *x, t_floatarg xpos, t_floatarg ypos,
     t_floatarg fmod)
 {
     static t_symbol *mousemotionsym;
-    //fprintf(stderr,"motion %d %d %d %d\n",
+    //post("motion %d %d %d %d",
     //    (int)xpos, (int)ypos, (int)fmod, canvas_last_glist_mod);
     //fprintf(stderr,"canvas_motion=%d\n",x->gl_editor->e_onmotion);
     int mod = fmod;
@@ -6085,6 +6085,50 @@ void canvas_motion(t_canvas *x, t_floatarg xpos, t_floatarg ypos,
             ypos - x->gl_editor->e_ywas);
         x->gl_editor->e_xwas = xpos;
         x->gl_editor->e_ywas = ypos;
+
+        // ico@vt.edu 2021-10-08: if we are in passout mode, which
+        // means mouse pointer has been grabbed by an object, thus
+        // preventing other objects from accessing the pointer info,
+        // here we look for any passthrough objects that should
+        // catch the motion event
+        t_gobj *y;
+        t_object *ob;
+        int numgobj = 0, numptgobj = 0, i, passthroughclick,
+            x1, x2, y1, y2;
+        if (x->gl_list)
+        {
+            // find out how many objects there are in the gl_list
+            // we use this to allocate an array of pointers, so that
+            // we can distribute clicks in order from topmost to
+            // bottommost (or stop at a non-passthrough object)
+            // see mode 3 for iemgui in m_pd.h and ggee/image
+            for (y = x->gl_list; y; y = y->g_next)
+                numgobj++;
+            t_gobj *ypt[numgobj];
+
+            for (y = x->gl_list; y; y = y->g_next)
+            {
+                ob = pd_checkobject(&y->g_pd);
+                if (ob && ((t_text *)y)->te_iemgui == 3)
+                {
+                    ypt[numptgobj] = y;
+                    numptgobj++;
+                }
+            }
+            if (numptgobj)
+            {
+                for(i = numptgobj-1; i >= 0; i--)
+                {
+                    // check if we are above the object and if so send it
+                    // a mouseup event by using the dbl = - 1 hack
+                    if (canvas_hitbox(x, ypt[i], xpos, ypos, &x1, &y1, &x2, &y2))
+                    {
+                        passthroughclick = gobj_click(ypt[i], x, xpos, ypos,
+                            shiftmod, (altmod && (!x->gl_edit)) || ctrlmod, 0, 0);
+                    }
+                }
+            }
+        }
     }
     else if (x->gl_editor->e_onmotion == MA_RESIZE)
     {
