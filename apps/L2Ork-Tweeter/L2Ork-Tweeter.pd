@@ -3,9 +3,9 @@
 0;
 #X obj 0 2 cnv 15 1631 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 1 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ 0.5\ by
+#X obj 1 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.50\ by
 4 5 0 10 #6c6c6c #fcfcfc 0;
-#X obj 234 3 cnv 15 125 16 empty empty (c)\ 2020-1\ Released\ under\ the
+#X obj 247 3 cnv 15 125 16 empty empty (c)\ 2020-1\ Released\ under\ the
 4 6 0 10 #6c6c6c #fcfcfc 0;
 #X obj 0 24 cnv 15 280 41 empty empty empty 4 5 0 10 #6c6c6c #fcfcfc
 0;
@@ -248,7 +248,6 @@ when message from server calls for a report (to sync other clients)
 #X text 858 41 avoid spamming connect request (only 1 per second).
 also addresses weird timing issues during init if the spam is allowed.
 , f 45;
-#X obj 693 792 t l l;
 #N canvas 195 164 552 685 check-version 0;
 #X obj 145 35 inlet;
 #X obj 52 364 s disconnect;
@@ -314,7 +313,6 @@ server-compatible version of the client available at http://l2ork.music.vt.edu/m
 #X text 817 664 locally disconnects client if its ping is running late
 to keep its state in sync with the server (does not work for guests)
 , f 23;
-#X msg 720 820 server \$1 \$2;
 #X obj 489 736 pack 0 s;
 #X msg 489 758 guest \$2;
 #X obj 861 206 lister;
@@ -389,6 +387,9 @@ to keep its state in sync with the server (does not work for guests)
 #X obj 978 575 t f f;
 #X obj 978 596 > 0;
 #X msg 20 380 pd-l2ork.music.vt.edu:9002;
+#X obj 693 792 t l l;
+#X msg 720 819 \$2;
+#X obj 720 843 sprintf server v.%.02f;
 #X connect 0 0 1 0;
 #X connect 1 0 34 1;
 #X connect 2 0 3 0;
@@ -410,14 +411,14 @@ to keep its state in sync with the server (does not work for guests)
 #X connect 19 0 20 0;
 #X connect 20 0 10 0;
 #X connect 21 0 56 0;
-#X connect 22 0 101 0;
+#X connect 22 0 99 0;
 #X connect 25 1 26 0;
 #X connect 26 0 15 0;
 #X connect 26 1 15 0;
 #X connect 28 0 35 0;
-#X connect 29 1 104 0;
+#X connect 29 1 102 0;
 #X connect 30 0 71 1;
-#X connect 31 0 126 0;
+#X connect 31 0 124 0;
 #X connect 32 0 33 0;
 #X connect 33 0 2 0;
 #X connect 34 0 6 0;
@@ -425,32 +426,32 @@ to keep its state in sync with the server (does not work for guests)
 #X connect 40 0 39 0;
 #X connect 40 1 38 0;
 #X connect 42 0 0 0;
-#X connect 43 0 135 0;
+#X connect 43 0 133 0;
 #X connect 44 0 45 0;
-#X connect 46 0 93 0;
-#X connect 49 0 82 0;
+#X connect 46 0 91 0;
+#X connect 49 0 81 0;
 #X connect 51 0 22 0;
-#X connect 51 1 85 0;
+#X connect 51 1 84 0;
 #X connect 51 2 52 0;
 #X connect 53 0 9 0;
-#X connect 53 1 104 0;
+#X connect 53 1 102 0;
 #X connect 53 2 50 0;
-#X connect 53 3 128 0;
+#X connect 53 3 126 0;
 #X connect 53 4 25 0;
 #X connect 55 0 2 0;
 #X connect 56 0 55 0;
-#X connect 57 0 86 0;
+#X connect 57 0 85 0;
 #X connect 57 1 58 0;
 #X connect 58 0 61 0;
 #X connect 58 1 60 0;
 #X connect 59 0 62 0;
 #X connect 60 0 59 1;
-#X connect 60 0 90 1;
+#X connect 60 0 88 1;
 #X connect 61 0 59 1;
-#X connect 61 0 90 1;
+#X connect 61 0 88 1;
 #X connect 62 0 54 0;
 #X connect 64 0 67 1;
-#X connect 65 0 87 0;
+#X connect 65 0 86 0;
 #X connect 65 1 57 0;
 #X connect 65 2 66 0;
 #X connect 66 0 67 0;
@@ -458,82 +459,83 @@ to keep its state in sync with the server (does not work for guests)
 #X connect 67 0 69 0;
 #X connect 68 0 70 0;
 #X connect 69 0 68 0;
-#X connect 70 0 121 0;
+#X connect 70 0 119 0;
 #X connect 71 0 72 0;
 #X connect 72 0 74 0;
 #X connect 72 1 51 0;
 #X connect 72 2 71 0;
 #X connect 73 0 71 0;
 #X connect 74 0 73 0;
-#X connect 76 0 77 0;
-#X connect 76 1 89 0;
-#X connect 77 0 54 0;
-#X connect 78 0 84 0;
-#X connect 80 0 79 0;
-#X connect 81 0 79 0;
-#X connect 82 0 83 0;
-#X connect 83 0 28 0;
-#X connect 84 0 80 0;
-#X connect 84 1 81 0;
-#X connect 85 0 97 0;
-#X connect 86 0 90 0;
-#X connect 86 1 59 0;
-#X connect 87 1 63 0;
+#X connect 76 0 54 0;
+#X connect 77 0 83 0;
+#X connect 79 0 78 0;
+#X connect 80 0 78 0;
+#X connect 81 0 82 0;
+#X connect 82 0 28 0;
+#X connect 83 0 79 0;
+#X connect 83 1 80 0;
+#X connect 84 0 95 0;
+#X connect 85 0 88 0;
+#X connect 85 1 59 0;
+#X connect 86 1 63 0;
+#X connect 88 0 89 0;
 #X connect 89 0 54 0;
-#X connect 90 0 91 0;
-#X connect 91 0 54 0;
-#X connect 92 0 96 0;
-#X connect 93 0 92 1;
-#X connect 94 0 6 0;
-#X connect 95 1 99 1;
-#X connect 96 0 99 0;
-#X connect 96 1 95 0;
+#X connect 90 0 94 0;
+#X connect 91 0 90 1;
+#X connect 92 0 6 0;
+#X connect 93 1 97 1;
+#X connect 94 0 97 0;
+#X connect 94 1 93 0;
+#X connect 95 0 90 0;
+#X connect 95 1 96 0;
+#X connect 96 0 93 0;
 #X connect 97 0 92 0;
-#X connect 97 1 98 0;
-#X connect 98 0 95 0;
-#X connect 99 0 94 0;
-#X connect 100 0 6 0;
-#X connect 101 0 100 0;
-#X connect 102 0 101 1;
-#X connect 104 0 36 0;
-#X connect 104 1 83 0;
-#X connect 104 2 37 0;
-#X connect 105 0 107 0;
-#X connect 105 1 106 0;
+#X connect 98 0 6 0;
+#X connect 99 0 98 0;
+#X connect 100 0 99 1;
+#X connect 102 0 36 0;
+#X connect 102 1 82 0;
+#X connect 102 2 37 0;
+#X connect 103 0 105 0;
+#X connect 103 1 104 0;
+#X connect 104 0 107 0;
+#X connect 104 1 108 0;
+#X connect 105 0 106 0;
 #X connect 106 0 109 0;
-#X connect 106 1 110 0;
-#X connect 107 0 108 0;
-#X connect 108 0 111 0;
-#X connect 109 0 108 1;
-#X connect 110 0 108 1;
-#X connect 111 0 112 0;
-#X connect 112 0 113 0;
-#X connect 115 0 116 1;
-#X connect 115 0 119 1;
-#X connect 116 0 117 0;
-#X connect 117 1 125 0;
-#X connect 118 0 80 0;
-#X connect 119 0 120 0;
-#X connect 120 0 34 1;
-#X connect 122 0 123 0;
-#X connect 123 0 34 1;
-#X connect 126 0 119 0;
-#X connect 126 1 116 0;
-#X connect 127 0 119 0;
-#X connect 128 0 63 0;
-#X connect 128 1 65 0;
-#X connect 128 2 76 0;
-#X connect 128 3 103 0;
-#X connect 128 4 124 0;
-#X connect 128 5 132 1;
-#X connect 128 6 54 0;
-#X connect 129 0 133 0;
-#X connect 130 0 131 0;
+#X connect 107 0 106 1;
+#X connect 108 0 106 1;
+#X connect 109 0 110 0;
+#X connect 110 0 111 0;
+#X connect 113 0 114 1;
+#X connect 113 0 117 1;
+#X connect 114 0 115 0;
+#X connect 115 1 123 0;
+#X connect 116 0 79 0;
+#X connect 117 0 118 0;
+#X connect 118 0 34 1;
+#X connect 120 0 121 0;
+#X connect 121 0 34 1;
+#X connect 124 0 117 0;
+#X connect 124 1 114 0;
+#X connect 125 0 117 0;
+#X connect 126 0 63 0;
+#X connect 126 1 65 0;
+#X connect 126 2 134 0;
+#X connect 126 3 101 0;
+#X connect 126 4 122 0;
+#X connect 126 5 130 1;
+#X connect 126 6 54 0;
+#X connect 127 0 131 0;
+#X connect 128 0 129 0;
+#X connect 130 0 128 0;
+#X connect 131 0 132 0;
+#X connect 131 1 128 1;
 #X connect 132 0 130 0;
-#X connect 133 0 134 0;
-#X connect 133 1 130 1;
-#X connect 134 0 132 0;
-#X connect 135 0 44 0;
+#X connect 133 0 44 0;
+#X connect 134 0 76 0;
+#X connect 134 1 135 0;
+#X connect 135 0 136 0;
+#X connect 136 0 54 0;
 #X restore 221 23 pd network-io;
 #N canvas 353 215 1163 639 preset-logic 0;
 #X obj 100 376 r \$0-store-preset;
@@ -1176,19 +1178,19 @@ broadcast via internet (if connected) upon loading a session, f 42
 #X obj 177 269 s title-version-r;
 #X text 215 76 update version here;
 #X floatatom 138 76 5 0 0 0 - - - 0 0 1, f 5;
-#X obj 177 221 tosymbol;
 #X msg 177 245 label \$1;
 #X text 99 75 DEBUG;
-#X msg 177 197 L2Ork Tweeter \$1 by;
 #X msg 177 76 0.5;
-#X connect 0 0 10 0;
+#X obj 177 168 sprintf L2Ork Tweeter v.%.02f by;
+#X obj 177 193 tosymbol;
+#X connect 0 0 8 0;
 #X connect 1 0 9 0;
 #X connect 1 1 2 0;
 #X connect 5 0 1 0;
-#X connect 6 0 7 0;
-#X connect 7 0 3 0;
-#X connect 9 0 6 0;
-#X connect 10 0 1 0;
+#X connect 6 0 3 0;
+#X connect 8 0 1 0;
+#X connect 9 0 10 0;
+#X connect 10 0 6 0;
 #X restore 283 52 pd version;
 #N canvas 724 350 589 509 local-copy-logic 0;
 #X obj 22 22 r local-copyfrom-mode;
@@ -1326,11 +1328,22 @@ empty -5 -9 0 10 #80fc80 #008080 #fcfcfc 1;
 #X obj 816 219 core/L2OrkTweet 8;
 #X obj 816 370 core/L2OrkTweet 9;
 #X obj 816 521 core/L2OrkTweet 10;
-#N canvas 678 241 516 515 supplemental-documentation 0;
+#N canvas 705 180 513 585 supplemental-documentation 0;
+#X obj 0 0 cnv 15 512 583 empty empty empty 20 12 0 14 #e0e0e0 #404040
+0;
+#X obj 10 510 cnv 15 65 17 empty empty empty 20 12 0 14 #fcb46c #404040
+0;
+#X obj 10 339 cnv 15 160 17 empty empty empty 20 12 0 14 #fcb46c #404040
+0;
+#X obj 10 289 cnv 15 52 17 empty empty empty 20 12 0 14 #fcb46c #404040
+0;
+#X obj 10 226 cnv 15 112 17 empty empty empty 20 12 0 14 #fcb46c #404040
+0;
+#X obj 10 81 cnv 15 106 17 empty empty empty 20 12 0 14 #fcb46c #404040
+0;
 #X text 10 11 Please consider viewing the introductory video found
 at:;
 #X obj 9 31 pddp/pddplink http://bit.ly/L2Ork-Tweeter;
-#X text 10 51 Additional Commands;
 #X text 10 81 Instrument Levels;
 #X text 10 226 Instrument Presets;
 #X text 10 247 Shift+Up/Down: increase/decrease preset instrument number
@@ -1348,21 +1361,28 @@ f 82;
 to zero (OVR/LVL slider). Repeat press sets it temporarily to the last
 known value \, while upon release it reverts to zero., f 82;
 #X text 10 339 Sharing Loops and Patterns;
-#X text 11 416 single click - copy presetdouble click - copy looptriple
+#X text 10 416 single click - copy presetdouble click - copy looptriple
 click - copy preset and loopshift + single click - copy preset \,
 including also main out and pan values shift + double click - copy
 loop \, including time syncshift + triple click - copy everything
-, f 81;
+, f 82;
 #X text 10 360 As of 0.46 you can now easily share your patterns and
 loops with others. To do so \, you will want to click on the user number
 you wish to copy instrument and/or loop from \, using one of the following
 clicking actions that need to be performed within the 500ms of initiating
 the first click:, f 82;
+#X text 11 510 Hover Mode;
+#X text 11 531 When hover mode is enabled \, you can enter notes anywhere
+on the tracker timeline regardless where the timebar is currently located.
+Delete \, shift+delete \, and ~ (insert) also work in this mode.,
+f 82;
+#X text 10 51 Below is a list of additional commands that are not clearly
+annotated elsewhere., f 82;
 #X restore 1299 3 pd supplemental-documentation (click here);
 #X obj 1144 3 pddp/pddplink http://l2ork.icat.vt.edu;
-#X obj 136 3 pddp/pddplink http://ico.bukvic.net -text Ivica Ico Bukvic
+#X obj 149 3 pddp/pddplink http://ico.bukvic.net -text Ivica Ico Bukvic
 ;
-#X obj 417 3 pddp/pddplink https://www.gnu.org/licenses/gpl-3.0.en.html
+#X obj 430 3 pddp/pddplink https://www.gnu.org/licenses/gpl-3.0.en.html
 -text GPL v3 License;
 #X obj 816 672 core/L2OrkTweet 11;
 #X obj 816 823 core/L2OrkTweet 12;

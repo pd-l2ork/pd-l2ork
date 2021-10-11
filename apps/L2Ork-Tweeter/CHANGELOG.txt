@@ -16,6 +16,10 @@ CHANGELOG (Date Format: DD-MM-YYYY)
 *Updated and optimized the left panel to make room for the hover mode option.
 *Updated server to also support the hover mode.
 *Swapped tab and alt key functions to make play button easier to access.
+*Cleaned up and optimized L2OrkTweet.pd abstraction.
+*Improved version printout for both client and server.
+*Made sure that the timebar is only accessible on your own track, or on all tracks in offline mode.
+*Other small bug-fixes.
 
 01-10-2021 0.46
 *Fixed inaccurate positioning of notes when manually adjusting the tracker bar location.

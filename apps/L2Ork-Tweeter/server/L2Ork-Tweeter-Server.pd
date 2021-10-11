@@ -717,7 +717,7 @@ to all \, with some chat messages filtered for admin, f 80;
 #X obj 786 132 moses 1;
 #X obj 202 875 pack 0 0 0;
 #X obj 232 719 loadbang;
-#X msg 202 855 \$1 \$2;
+#X msg 202 853 \$1 \$2;
 #X obj 232 766 t f f;
 #X obj 121 815 print server;
 #X msg 121 792 L2Ork Tweeter Server version \$1;
