@@ -1,4 +1,4 @@
-#N canvas 151 140 554 755 10;
+#N canvas 151 149 554 755 10;
 #X obj 0 1808 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
 14 #dcdcdc #404040 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header ggee/image 3 12
@@ -485,20 +485,20 @@ set to 2 \, as follows: 1: mousedown 1/0 2: top-left selection border
 origin x 3: top-left selection border origin y 4: mouse position
 calculated from the origin x 5: mouse position calculated from the
 origin y;
-#N canvas 216 176 446 708 mode_3_example 0;
-#X obj 147 390 hsl 115 76 0 1 0 0 empty hover-slider empty -2 -8 0
-10 #ff3333 #202020 #202020 1685 1 0 0;
-#X obj 206 583 print mode_3_image_output;
-#X obj 149 550 route size;
-#X obj 149 525 list trim;
-#X obj 100 583 unpack 0 0 0 0 0;
-#X obj 151 611 / 115;
-#X obj 151 662 s hover-slider;
-#X obj 193 611 expr int((1-$f1/73)*9);
-#X floatatom 160 473 5 0 0 0 - - - 0 0 0, f 5;
-#X text 196 473 slider output;
-#X text 211 525 ggee/image output;
-#X msg 193 636 color #f\$1\$1 12 12;
+#N canvas 216 110 446 783 mode_3_example 0;
+#X obj 147 470 hsl 115 76 0 1 0 0 empty hover-slider empty -2 -8 0
+10 #ff1111 #202020 #202020 297 1 0 0;
+#X obj 206 663 print mode_3_image_output;
+#X obj 149 630 route size;
+#X obj 149 605 list trim;
+#X obj 100 663 unpack 0 0 0 0 0;
+#X obj 151 691 / 115;
+#X obj 151 742 s hover-slider;
+#X obj 193 691 expr int((1-$f1/73)*9);
+#X floatatom 160 553 5 0 0 0 - - - 0 0 0, f 5;
+#X text 196 553 slider output;
+#X text 211 605 ggee/image output;
+#X msg 193 716 color #f\$1\$1 12 12;
 #X obj 0 0 cnv 15 444 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
 #X text 7 1 [image] Changing GUI Properties through Messages;
@@ -514,28 +514,34 @@ propagation will also stop with the topmost non-passthrough object
 \, as is the case with traditional pd behavior. Lastly \, note some
 objects are not designed to capture clicks in runtime mode \, such
 as the mycanvas object., f 72;
-#X obj 236 394 bng 27 250 50 0 output-bang hover-bang empty 17 7 0
-10 #ff3333 #202020 #202020 1;
-#X obj 149 391 ggee/image @pd_extra/ggee/empty_image.png 0 3 116 73
+#X obj 236 474 bng 27 250 50 0 output-bang hover-bang empty 17 7 0
+10 #ff1111 #202020 #202020 1;
+#X obj 149 471 ggee/image @pd_extra/ggee/empty_image.png 0 3 116 73
 empty empty empty 116 73 0 0 10 #000000 0 -8 12.5 12.5 0 1 0.5;
-#X obj 248 662 s hover-bang;
-#X obj 289 473 bng 15 250 50 0 empty output-bang empty 17 7 0 10 #fcfcfc
+#X obj 248 742 s hover-bang;
+#X obj 289 553 bng 15 250 50 0 empty output-bang empty 17 7 0 10 #fcfcfc
 #000000 #000000 1;
-#X text 308 466 bang output(via receive);
-#X text 4 185 In the example below \, the slider below the semitransparent
+#X text 308 546 bang output(via receive);
+#X text 4 182 In the example below \, the slider below the semitransparent
 image is not interactive \, meaning it does not detect the pointer
 clicks. This is because it is driven by the image above \, which controls
 both its position and color without requiring a mouse click. Note \,
 however \, that the bang button under the image is interactive and
-does respond to clicks \, while the image still affects the slider.
-This way \, user can effectively control two different widgets via
-the same (semi)transparent image object. Note that even in an object
-below "grabs" the pointer focus \, all image objects above it using
-mode 3 will continue to receive updates. This is wy we also disable
-the interactivity of the slider in the example below. Otherwise \,
-the grab will effecitvely "fight" the input from the image that is
-being sent to the slider via the hover-slider send (even though in
-this case their values would be essentially identical)., f 72;
+does respond to clicks \, while the image still affects the slider
+(and bang background color to make it blend with the slider). This
+way \, user can effectively control two different widgets via the same
+(semi)transparent image object. Note also that even if an object below
+"grabs" the pointer focus \, all image objects above it using mode
+3 will continue to receive updates. This is why we also disable the
+interactivity of the slider in the example below. Otherwise \, the
+grab will effecitvely "fight" the input from the image that is being
+sent to the slider via the hover-slider send found at the bottom of
+the example (even though in this case their values would be essentially
+identical)., f 72;
+#X text 4 391 Lastly \, in mode 3 \, mouse clicks and motion are detected
+only when the mouse is hovering above the mode-3-enabled image. It
+reports mousedown as 1 \, mouseup as -1 and the no-change state (whether
+the user holds the mouse pressed or released) as 0, f 72;
 #X connect 0 0 8 0;
 #X connect 2 1 1 0;
 #X connect 2 1 4 0;
