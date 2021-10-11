@@ -1,5 +1,5 @@
 PD-L2ORK TODO:
-*Check if activated comments have proper width (looks like they are getting px instead of chars since the last patch)
+*update the install README
 
 *check if the defunct image object works.
 
@@ -68,6 +68,8 @@ TWEETER TODO:
 *Make reliable sync when doing copying of loops and patterns (maybe send the sync data back to server?)
 
 *Add ability for the instructor to alter others' settings?
+
+*In offline mode, enable keyboards and other input for multiple tracks
 
 
 
