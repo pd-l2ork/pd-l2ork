@@ -105,7 +105,8 @@ int glob_ctrl = 0;
 int glob_alt = 0;
 
 static t_glist *canvas_last_glist;
-static int canvas_last_glist_x=20, canvas_last_glist_y=20, canvas_last_glist_mod;
+static int canvas_last_glist_x=20, canvas_last_glist_y=20, canvas_last_glist_mod,
+    canvas_last_glist_click;
 
 struct _outlet
 {
@@ -3713,7 +3714,7 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
        to array_motion so that we can update corresponding send when
        the array has been changed */
     array_garray = NULL;
-    //post("canvas_doclick %d", doit);
+    //post("canvas_doclick %d %d | %d", xpos, ypos, doit);
 
     t_gobj *y;
     // instantiate total number of gobj in gl_list and a number of
@@ -5407,9 +5408,20 @@ static void canvas_doregion(t_canvas *x, int xpos, int ypos, int doit)
 */ 
 void canvas_passthrough_click(t_canvas *x, t_int xpos, t_int ypos, t_int click)
 {
-    //post("canvas_passthrough_click %d", click);
+    //post("canvas_passthrough_click %d %d | %d", xpos, ypos, click);
     // ico@vt.edu 2021-10-08: lastly look for any passthrough objects that should
     // catch the mouseup event even though they have not grabbed the mouse focus
+
+    /*
+    // don't do redundant runs in case we are using keyboard, which also triggers
+    // motion and possibly doclick calls
+    if (x == canvas_last_glist && canvas_last_glist_x == xpos &&
+        canvas_last_glist_y == ypos && canvas_last_glist_click == click)
+    {
+        post("...passthrough returning");
+        return;
+    }*/
+    //post("...continuing");
     if (x->gl_list)
     {
 
@@ -5434,25 +5446,28 @@ void canvas_passthrough_click(t_canvas *x, t_int xpos, t_int ypos, t_int click)
             ob = pd_checkobject(&y->g_pd);
             // if we are a canvas class with a GOP enabled
             // do the same function inside it
-            if (ob->ob_pd == canvas_class && ((t_canvas *)ob)->gl_isgraph)
+            if (ob)
             {
-                //post("...traversing GOP subpatch...");
-                canvas_passthrough_click((t_canvas *)y, xpos, ypos, click);
-            }
-            /* do not give clicks to comments or cnv during runtime */
-            /* ico@vt.edu 2021-10-08: also do not give clicks to the
-               ggee/image object if it is in click_mode 3 because that
-               one needs to be passed through below it, so we manually
-               acknowledge the click here without interrupting the flow */
-            if (ob && ((t_text *)y)->te_iemgui == 3)
-            {
-                ypt[numptgobj] = y;
-                numptgobj++;
-                //post("clicking on a pass-through image %lx", y);
+                if (ob->ob_pd == canvas_class && ((t_canvas *)ob)->gl_isgraph)
+                {
+                    if (canvas_hitbox(x, y, xpos, ypos, &x1, &y1, &x2, &y2))
+                    {
+                        //post("...traversing GOP subpatch...");
+                        canvas_passthrough_click(
+                            (t_canvas *)y, xpos, ypos, click);
+                    }
+                }
+                else if (((t_text *)y)->te_iemgui == 3)
+                {
+                    ypt[numptgobj] = y;
+                    numptgobj++;
+                    //post("clicking on a pass-through image %lx", y);
+                }
             }
         }
         if (numptgobj)
         {
+            //post("...numptgobj=%d", numptgobj);
             for(i = numptgobj-1; i >= 0; i--)
             {
                 // check if we are above the object and if so send it
@@ -5463,13 +5478,13 @@ void canvas_passthrough_click(t_canvas *x, t_int xpos, t_int ypos, t_int click)
                     passthroughclick = gobj_click(ypt[i], x, xpos, ypos,
                         shiftmod, (altmod && (!x->gl_edit)) || ctrlmod,
                             (click >= 0 ? 0 : -1), (click > 0 ? click : 0));
-                } else if (click == -1) {
+                }/* else if (click == -1) {
                     //post("...mouseup off-hitbox click %d", click);
                     // otherwise send them the dbl = -2 mouseup which is
                     // used to reset internal mousedown variable for the mode 3
                     passthroughclick = gobj_click(ypt[i], x, xpos, ypos,
                         shiftmod, (altmod && (!x->gl_edit)) || ctrlmod, -2, 0);
-                }
+                }*/
             }
         }
     }

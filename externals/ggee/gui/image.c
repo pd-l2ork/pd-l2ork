@@ -458,7 +458,7 @@ static void image_motion(t_image *x, t_floatarg dx, t_floatarg dy)
         //x->x_mouse_y = maxi(x->x_mouse_y, x->x_gui.x_obj.te_ypix);
         //x->x_mouse_y = mini(x->x_mouse_y, x->x_gui.x_obj.te_ypix + x->x_gui.x_h);
 
-        SETFLOAT(at, 1.0);
+        SETFLOAT(at, 0.0);
         SETFLOAT(at+1, (t_floatarg)x1);
         SETFLOAT(at+2, (t_floatarg)y1);
         SETFLOAT(at+3, (t_floatarg)x->x_mouse_x);
@@ -535,9 +535,15 @@ static int image_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix,
         // is that there can be only one of those per canvas.
         else if (dbl < 0) 
         {
-            x->x_mode3_click = 0;
+            x->x_mode3_click = -1;
             //post("==image mode3_click=%d", x->x_mode3_click);
             //glist_grab(x->x_gui.x_glist, 0, 0, 0, 0, 0, 0, 0);
+        }
+        else
+        {
+            // we neither clicked nor released the mouse button, which could mean
+            // we are either holding it clicked or not pressing
+            x->x_mode3_click = 0;
         }
 
         if (dbl != -2)
