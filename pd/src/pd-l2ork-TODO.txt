@@ -1,24 +1,37 @@
 PD-L2ORK TODO:
-*update the install README
+*update the install README.
 
 *check if the defunct image object works.
 
-*work on proper gop drawing (see the branch where the work was started)
+*finish and integrate gop drawing order work (see if there is something in the branch log to pull as to the status of the work).
+	*Redrawing entire canvas after tidy will not be necessary anymore.
 
-*Deal with array manipulation and data structure drawing location issues
+*deal with array manipulation and data structure drawing location issues.
 
-*Tooltips
+*tooltips.
 
-*K12 menu/mode
+*K12 menu/mode.
 
-*check for stray bug where bang and other objects stop working and bang objects gets stuck in on mode until the mouse is moved (nw.js bug?)
+*fix inefficiency of the profuse console output.
 
-*check for stray bug where suddenly copy/paste stops working
+*add ability to custom name each instance of pd-l2ork (pd~?).
+
+RARE:
+*Pd-L2Ork sporadic crashes when opening/closing L2OrkTweet.pd and L2Ork-Tweeter.pd.
+*check for stray bug where bang and other objects stop working and bang objects gets stuck in on mode until the mouse is moved (nw.js bug?).
+*check for stray bug where suddenly copy/paste stops working.
+*Check if passthrough still passes pointer motion to other canvases that are not gop (e.g. tracker).
 
 
  
 
 PD-L2ORK DONE:
+*Add focus/commit to numbox2
+*Add output option whenever an arrow up/down is pressed on the numbox2 while it is activated (with or without shift)
+*Add interactive flag to gatoms and all iemguis that can be interacted with (gatom, tgl, bng, number2, vslider, hslider, vradio, hradio, knob, mknob)
+*Gatoms need to be interactive by default
+*Fix weird coloring of the mknob
+*Update help files
 *gatom when edited from larger length to smaller, ends up having garbage (e.g. one that has 3 chars or numbers, activate it, and then start typing--after first char you end-up having garbage there) ONLY APPLIES TO THE 0 width gatoms (both text and number ones)
 *"sorry, I could not find the source of that error" should be message if it is a message and not an error
 *clicking on find box and then onto the canvas makes canvs interpret it as a selection box
@@ -74,6 +87,7 @@ TWEETER TODO:
 
 
 TWEETER DONE:
+*L2Ork Tweeter: Enabled smooth pitch changing (detuning directly to signal generators without triggering the envelope).
 *0.50 requires latest Pd-L2Ork 20211012 or newer due to new features added to the core pd-l2ork
 *Fixed bug where shift+delete deleted twice
 *Added hover mode ability to add notes based on the mouse (as opposed to the time bar) position. 00Made erasing using delete and shift+delete to support the hover mode. Also made insert (shift+` or ~) to support the hover mode.
@@ -83,47 +97,14 @@ TWEETER DONE:
 
 
 
-
-OLD (NEED TO MERGE WITH ABOVE):
-*Check if the defunct image object works.
-
-*Finish gop drawing order work (see if there is something in the branch log to pull as to the status of the work)
-	Redrawing entire canvas after tidy will not be necessary anymore
-
-*Deal with array manipulation and data structure drawing location issues
-
-*Tooltips
-
-*K12 menu/mode
-
-L2Ork Tweeter:
+HELP FILES TODO:
 
 
-DONE:
-*Add focus/commit to numbox2
-*Add output option whenever an arrow up/down is pressed on the numbox2 while it is activated (with or without shift)
-*Add interactive flag to gatoms and all iemguis that can be interacted with (gatom, tgl, bng, number2, vslider, hslider, vradio, hradio, knob, mknob)
-	Gatoms need to be interactive by default
-	Fix weird coloring of the mknob
-	Finish help files
-*L2Ork Tweeter: Enabled smooth pitch changing (detuning directly to signal generators without triggering the envelope)
 
-C:
-*add toggle mode to image (using grab/motion, like gatom)
-*array in s-env draws on top of cnv, which it shouldn't (requires redrawing of the entire GOP, do we really want to do this?--this should solve itself once we decide to update rather than redraw messages)
-*messages should be aware of $0?
-*verbosity level for the console
-*Draw SECONDARY redrect on gop scalar patchers to reflect the viewport?
+HELP FILES DONE:
 
-*object synonyms do not instantiate until the main object has been instantiated (no solution--advise getting rid of aliases or making one monster startup setup routine)
-*number2 should maintain focus after return to allow for entering next value (like regular number)
-	*number and number2 arrow down/up should inc/dec value
-*Add  netsend/receive~ for RPi objects to the RPi build IN PROGRESS
-*Redesign main window interface
-*add ability to custom name each instance of pd-l2ork (pd~?)
-*shared sends and receives among multiple instances?
-*scalar in a subpatch is visible even if it spills outside GOP (for legacy purposes we will keep this, and will hopefully fix this soon with the implementation of a window on a canvas)
+
 
 K12:
 
-Help:
+
