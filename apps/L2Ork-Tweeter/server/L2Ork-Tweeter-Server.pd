@@ -728,20 +728,20 @@ to all \, with some chat messages filtered for admin, f 80;
 #X obj 214 384 kalashnikov 12;
 #X obj 63 403 kalashnikov 12;
 #X obj 1238 379 kalashnikov 12;
+#X text 1240 905 (c) 2020-1 Ivica Ico Bukvic ico.bukvic.net;
+#X text 1170 715 34 in total with 4 not broadcast for the purpose of
+updating clients: reset \, clear \, flanger-mod-amp (activated by the
+[t b f] from the flanger-hz) \, and note. Instead \, these are sent
+as-needed, f 58;
 #X text 1170 612 network vocabulary: reset \, clear \, delete \, tracker
 \, tracker-char \, tracker-data \, tracker-note \, tracker-time \,
 loop \, keyboard \, loop-length \, octave \, carrier \, modulator \,
 overdrive \, note-dur \, harmonicity \, mod-amp \, ae \, me \, dry-amp
 \, reverb-amp \, reverb-type \, echo-amp \, echo-ms \, echo-fb \, flanger-amp
 \, flanger-hz \, flanger-mod-amp \, flanger-ms \, out-amp \, out-pan
-\, inst-name \, username, f 58;
-#X msg 232 741 0.46;
-#X text 1240 905 (c) 2020-1 Ivica Ico Bukvic ico.bukvic.net;
-#X text 1170 715 34 in total with 4 not broadcast for the purpose of
-updating clients: reset \, clear \, flanger-mod-amp (activated by the
-[t b f] from the flanger-hz) \, and note. Instead \, these are sent
-as-needed, f 58;
-#X obj 160 576 kalashnikov 30;
+\, inst-name \, username \, hover, f 58;
+#X obj 160 576 kalashnikov 31;
+#X msg 232 741 0.5;
 #X connect 0 0 76 0;
 #X connect 0 0 115 0;
 #X connect 2 0 141 1;
@@ -803,7 +803,7 @@ as-needed, f 58;
 #X connect 63 0 66 0;
 #X connect 63 1 67 1;
 #X connect 64 0 70 0;
-#X connect 65 0 175 0;
+#X connect 65 0 174 0;
 #X connect 65 1 60 1;
 #X connect 66 0 67 0;
 #X connect 66 1 64 1;
@@ -896,7 +896,7 @@ as-needed, f 58;
 #X connect 155 3 79 0;
 #X connect 157 1 156 0;
 #X connect 158 0 164 0;
-#X connect 159 0 172 0;
+#X connect 159 0 175 0;
 #X connect 160 0 158 0;
 #X connect 161 0 163 0;
 #X connect 161 1 158 2;
@@ -909,5 +909,5 @@ as-needed, f 58;
 #X connect 168 1 91 0;
 #X connect 169 1 62 0;
 #X connect 170 1 96 0;
-#X connect 172 0 161 0;
-#X connect 175 1 58 0;
+#X connect 174 1 58 0;
+#X connect 175 0 161 0;

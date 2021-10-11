@@ -45,7 +45,7 @@
 #X obj 182 410 t b;
 #X obj 266 126 gate 2 2, f 10;
 #X obj 75 410 preset_node null;
-#X text 48 60 outlet 1 is when it is not a local instance (to prevent
+#X text 77 111 outlet 1 is when it is not a local instance (to prevent
 editing) and 2 when it is \, so that the local data is updated, f
 30;
 #X obj 462 460 t b;
