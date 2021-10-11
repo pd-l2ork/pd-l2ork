@@ -10,7 +10,7 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
 10-10-2021 0.50
-*0.50 requires latest Pd-L2Ork 20211012 or newer due to new features added to the core pd-l2ork
+*0.50 requires latest Pd-L2Ork 20211011 or newer due to new features added to the core pd-l2ork
 *Fixed bug where shift+delete deleted twice
 *Added hover mode ability to add notes based on the mouse (as opposed to the time bar) position. 00Made erasing using delete and shift+delete to support the hover mode. Also made insert (shift+` or ~) to support the hover mode.
 *Updated and optimized the left panel to make room for the hover mode option.
