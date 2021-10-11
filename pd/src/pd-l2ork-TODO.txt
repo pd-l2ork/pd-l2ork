@@ -1,4 +1,88 @@
-TODO:
+PD-L2ORK TODO:
+*Check if activated comments have proper width (looks like they are getting px instead of chars since the last patch)
+
+*check if the defunct image object works.
+
+*work on proper gop drawing (see the branch where the work was started)
+
+*Deal with array manipulation and data structure drawing location issues
+
+*Tooltips
+
+*K12 menu/mode
+
+*check for stray bug where bang and other objects stop working and bang objects gets stuck in on mode until the mouse is moved (nw.js bug?)
+
+*check for stray bug where suddenly copy/paste stops working
+
+
+ 
+
+PD-L2ORK DONE:
+*gatom when edited from larger length to smaller, ends up having garbage (e.g. one that has 3 chars or numbers, activate it, and then start typing--after first char you end-up having garbage there) ONLY APPLIES TO THE 0 width gatoms (both text and number ones)
+*"sorry, I could not find the source of that error" should be message if it is a message and not an error
+*clicking on find box and then onto the canvas makes canvs interpret it as a selection box
+*pressing return with the find bar open after you've already found an item and with the item deselected, does not reinitiate search
+*search unable to find a phrase embedded inside another word (e.g. $1-local-$5-blah will not be found when searching for $5)
+*Fixed netserver's extraneous benign errors: netserver: Resource temporarily unavailable (11) and netserver: could not send data to the client (including a typo)
+*object width that is wider than text width due to the number of nlets when being edited does not size itself properly
+*add copy option to gatoms (add the gatom value to the clipboard)
+*Revamped the search box fixing bugs, regressions, and adding missing features.
+  *Fixed HTML bug in pd_canvas.html
+  *Added ability to properly detect wholeword vs partial word search
+  *Ensured that when clicking on the find bar the click does not propagate onto the canvas, which could cause erroneous selection boxes and other issues.
+  *Made sure that the existing selection box upon invoking the find bar is properly handled with a fake mouseup event.
+  *Ensured that when one changes whole word option or deselects last found object, the search process restarts from the beginning.
+  *Made it possible to search for A_DOLLAR inside an A_DOLLSYM (e.g. searching for $3 inside blah-$3-something would erroneously yield no results).
+*More stability improvements to the maxlib/netserver.
+  *Fixed extraneous benign errors due to the use of the new non-blocking mode. Made default debug output more conservative.
+*fixed activated text box size and side-stepped the cord update issue, updated close dialog animation.
+  *When text box is activated and the number of inlets or outlets requires that the object be wider than its text or specified width, the object now specifies appropriate width.
+  *During editing because updating cords is not currently easy to do given that this logic is now spread across both nw.js and C, the edited object now has an aura (achieved through CSS) that ensures that the cords at least appear to fade out into nothing during the editing process, until the object is deactivated, at which point the C code will update cord locations.
+  *Closing dialog is now animated and makes the visual experience a bit "smoother".
+*add click mode 3 for the ggee/image that allows for tracking the cursor whithout preventing the passing of the click to objects below.
+  *Updated core pd-l2ork engine behavior to allow for passing of pointer behavior to passthrough objects even if
+   an object is grabbed.
+  *Ensured proper stacking order (top to bottom).
+  *Updated dialog and help files.
+*Fixed a bug where opening recent image-help.pd file inside an instance of pd-l2ork spawned f
+rom a command line, causes error when trying to open the image file associated with the image obje
+ct because of nw.js' inability to handle relative paths provided by the pd-l2ork engine.
+*Cosmetic fixes to help files
+*Fixed bug where select all inside the dialogs (when selecting a text or numbers) on OSX selects canvas objects instead. Added ctrl/cmd+w for closing all dialogs that bind to the pdgui.dialog_bindings(windowname). Added ctrl/cmd+a for selecting text and numbers only on all dialogs that bind to the same call.
+*Major regression: passthrough is not mapping properly inside GOP.
+  * Required changes to the ggee/image and the core behavior inside g_editor.c and g_graph.c
+  * Passthrough mode did not work after an object inside GOP has been grabbed.
+  * x were y are off inside GOP.
+  * Checked the mouseup event.
+*Fixed regression on how the activated objects behave on the right edge and other object resizing logic.  
+  * Added logic for providing nw.js with the activated object's number of nlets, which will help determine whether the object should automatically resize its width based on the text width (objects with more than 2 inlets or outlets will need to remain the same size, so as not to introduce dangling patchcords, since we have no way to update patchcord position until the object has been deactivated).
+  * Fixed regression how the objects did not resize properly due to addition of the pixel-based width for an object to ensure the object with more than 1 in/outlet keeps its width.
+  * Ensured that objects on the right edge do not get activated with more lines than they have deactivated (linked to problems above).
+*Vastly improved performance using the new passthrough mode. Changed how the passthrough mode 3 communicates mouse events.
+*Updated image help file and its dialog to reflect changes in image behavior.
+
+
+
+TWEETER TODO:
+*Make reliable sync when doing copying of loops and patterns (maybe send the sync data back to server?)
+
+*Add ability for the instructor to alter others' settings?
+
+
+
+TWEETER DONE:
+*0.50 requires latest Pd-L2Ork 20211012 or newer due to new features added to the core pd-l2ork
+*Fixed bug where shift+delete deleted twice
+*Added hover mode ability to add notes based on the mouse (as opposed to the time bar) position. 00Made erasing using delete and shift+delete to support the hover mode. Also made insert (shift+` or ~) to support the hover mode.
+*Updated and optimized the left panel to make room for the hover mode option.
+*Updated server to also support the hover mode.
+*Swapped tab and alt key functions to make play button easier to access.
+
+
+
+
+OLD (NEED TO MERGE WITH ABOVE):
 *Check if the defunct image object works.
 
 *Finish gop drawing order work (see if there is something in the branch log to pull as to the status of the work)
@@ -37,20 +121,7 @@ C:
 *add ability to custom name each instance of pd-l2ork (pd~?)
 *shared sends and receives among multiple instances?
 *scalar in a subpatch is visible even if it spills outside GOP (for legacy purposes we will keep this, and will hopefully fix this soon with the implementation of a window on a canvas)
-*improve dialogs IN PROGRESS
-*retrofit all 3rd-party gui objects to support tkpath
-	*Scope~ window name "h16ffd10" already exists in parent (likely resize hook)
-		*Change appearance of the resize hook
-		*change to scope~?
-	*clean-up ggee/gui
-=====================================
-
-Tkpath:
-*Postscript not printing? (will switch to Qt, so not necessary)
-*canvas_move should take into account transformations of children? (see Jonathan's email)
 
 K12:
 
 Help:
-
-Git commit:
