@@ -458,7 +458,7 @@ static void image_motion(t_image *x, t_floatarg dx, t_floatarg dy)
         //x->x_mouse_y = maxi(x->x_mouse_y, x->x_gui.x_obj.te_ypix);
         //x->x_mouse_y = mini(x->x_mouse_y, x->x_gui.x_obj.te_ypix + x->x_gui.x_h);
 
-        SETFLOAT(at, 0.0);
+        SETFLOAT(at, 1.0);
         SETFLOAT(at+1, (t_floatarg)x1);
         SETFLOAT(at+2, (t_floatarg)y1);
         SETFLOAT(at+3, (t_floatarg)x->x_mouse_x);
