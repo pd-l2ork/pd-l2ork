@@ -1,6 +1,4 @@
 PD-L2ORK TODO:
-*update the install README.
-
 *check if the defunct image object works.
 
 *finish and integrate gop drawing order work (see if there is something in the branch log to pull as to the status of the work).
@@ -11,6 +9,8 @@ PD-L2ORK TODO:
 *tooltips.
 
 *K12 menu/mode.
+
+*object autocomplete.
 
 *fix inefficiency of the profuse console output.
 
@@ -74,7 +74,7 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
   * Ensured that objects on the right edge do not get activated with more lines than they have deactivated (linked to problems above).
 *Vastly improved performance using the new passthrough mode. Changed how the passthrough mode 3 communicates mouse events.
 *Updated image help file and its dialog to reflect changes in image behavior.
-
+*Updated the install README.
 
 
 TWEETER TODO:
