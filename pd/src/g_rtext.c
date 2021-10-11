@@ -695,12 +695,23 @@ void rtext_activate(t_rtext *x, int state)
         selstart = -1, selend = -1;
     int xmin, xmax, tmp;
     char *tmpbuf;
+    int ni = 0, no = 0, nlet_width = 0;
+    t_object *ob;
     t_glist *glist = x->x_glist;
     t_canvas *canvas = glist_getcanvas(glist);
     if (state && x->x_active) {
         //post("duplicate rtext_activate");
         return;
     }
+
+    ob = pd_checkobject(&x->x_text->te_pd);
+    if (ob)
+    {
+        no = obj_noutlets(ob);
+        ni = obj_ninlets(ob);
+        //post("rtext_activate ni=%d no=%d", ni, no);
+    }
+
     // the following prevents from selecting all when inside an
     // object that is already being texted for... please *test*
     // "fixes" before committing them
@@ -766,6 +777,12 @@ void rtext_activate(t_rtext *x, int state)
         isgop = 0;
     }
 
+    if (ni > 1 || no > 1)
+    {
+        nlet_width = (ni > no ? ni : no);
+        //post("...nlet_width=%d", nlet_width);
+    }
+
     if(state & (0b1 << 31)) /* arbitray selection */
     {
         selstart = (state >> 16) & 0x7FFF;
@@ -784,7 +801,7 @@ void rtext_activate(t_rtext *x, int state)
     //post("rtext_activate tmpbuf=<%s>", tmpbuf);
     /* in case x_bufsize is 0... */
     tmpbuf[x->x_bufsize] = '\0';
-    gui_vmess("gui_textarea", "xssiiiisiiiiiii",
+    gui_vmess("gui_textarea", "xssiiiisiiiiiiii",
         canvas,
         x->x_tag,
         (pd_class((t_pd *)x->x_text) == message_class ? "msg" :
@@ -801,7 +818,8 @@ void rtext_activate(t_rtext *x, int state)
         isgop,
         state,
         selstart,
-        selend
+        selend,
+        nlet_width
         );
     freebytes(tmpbuf, x->x_bufsize + 1);
 }
