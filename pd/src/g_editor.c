@@ -75,6 +75,7 @@ static void canvas_font(t_canvas *x, t_floatarg font, t_floatarg oldfont,
 void canvas_displaceselection(t_canvas *x, int dx, int dy);
 void canvas_motion(t_canvas *x, t_floatarg xpos, t_floatarg ypos,
     t_floatarg fmod);
+void canvas_passthrough_click(t_canvas *x, t_int xpos, t_int ypos, t_int mousedown);
 /* for updating preset_node locations in case of operations that alter
    glist object locations (tofront/back, cut, delete, undo/redo cut/delete) */
 extern void glob_preset_node_list_check_loc_and_update(void);
@@ -1454,7 +1455,8 @@ static void glist_doreload_ab(t_canvas *x, t_ab_definition *a, t_gobj *e)
 
     for (g = x->gl_list, i = 0; g && i < nobj; i++)
     {
-        remakeit = (g != e && pd_class(&g->g_pd) == canvas_class && canvas_isabstraction((t_canvas *)g)
+        remakeit = (g != e && pd_class(&g->g_pd) == canvas_class && 
+            canvas_isabstraction((t_canvas *)g)
             && ((t_canvas *)g)->gl_isab && ((t_canvas *)g)->gl_absource == a);
 
         remakeit = remakeit || (pd_class(&g->g_pd) == clone_class && clone_matchab(&g->g_pd, a));
@@ -2344,8 +2346,8 @@ static void do_rename_light(t_gobj *z, t_glist *glist, const char *text)
 
 int binbuf_match(t_binbuf *inbuf, t_binbuf *searchbuf, int wholeword);
 
-/* traverses the whole subtree of the given canvas/patch, replacing all subpatches identical to the
-    given one with an abstraction */
+/* traverses the whole subtree of the given canvas/patch, replacing all subpatches
+    identical to the given one with an abstraction */
 static int do_replace_subpatches(t_canvas *x, const char* label, t_binbuf *original)
 {
     t_selection *list = 0;
@@ -3587,7 +3589,8 @@ void canvas_done_popup(t_canvas *x, t_float which, t_float xpos,
         ah->dialog = x;
 
         char buf[MAXPDSTRING];
-        sprintf(buf, "%s/%s.pd", canvas_getdir(canvas_getrootfor(x))->s_name, ((t_canvas *)x)->gl_name->s_name);
+        sprintf(buf, "%s/%s.pd", canvas_getdir(canvas_getrootfor(x))->s_name,
+            ((t_canvas *)x)->gl_name->s_name);
 
         gui_vmess("gui_savepanel", "xss",
             x,
@@ -3815,15 +3818,6 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
     {
         if (x->gl_list)
         {
-            // find out how many objects there are in the gl_list
-            // we use this to allocate an array of pointers, so that
-            // we can distribute clicks in order from topmost to
-            // bottommost (or stop at a non-passthrough object)
-            // see mode 3 for iemgui in m_pd.h and ggee/image
-            for (y = x->gl_list; y; y = y->g_next)
-                numgobj++;
-            t_gobj *ypt[numgobj];
-
             //fprintf(stderr, "runmode && !rightclick\n");
             for (y = x->gl_list; y; y = y->g_next)
             {
@@ -3849,25 +3843,10 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
                         //post("yclick is set to %lx %d <%s>", y,
                         //   ((t_text *)y)->te_iemgui, ob->ob_pd->c_name->s_name);
                     }
-                    if (ob && ((t_text *)y)->te_iemgui == 3)
-                    {
-                        ypt[numptgobj] = y;
-                        numptgobj++;
-                        //post("clicking on a pass-through image %lx", y);
-                    }
-                    //fprintf(stderr,"    MAIN found clickable %d\n",
-                    //    clickreturned);
-
                 }
             }
-            if (numptgobj)
-            {
-                for(i = numptgobj-1; i >= 0; i--)
-                    passthroughclick = gobj_click(ypt[i], x, xpos, ypos,
-                        shiftmod, (altmod && (!x->gl_edit)) || ctrlmod,
-                        0, doit);
-            }
         }
+        canvas_passthrough_click(x, xpos, ypos, doit);
         if (yclick)
         {
                 clickreturned = gobj_click(yclick, x, xpos, ypos,
@@ -5420,6 +5399,82 @@ static void canvas_doregion(t_canvas *x, int xpos, int ypos, int doit)
     }
 }
 
+
+/* ico@vt.edu 2021-10-10: mousedown can be three options
+     1 = mousedown
+     0 = motion (neither click nor release)
+    -1 = mouseup
+*/ 
+void canvas_passthrough_click(t_canvas *x, t_int xpos, t_int ypos, t_int click)
+{
+    //post("canvas_passthrough_click %d", click);
+    // ico@vt.edu 2021-10-08: lastly look for any passthrough objects that should
+    // catch the mouseup event even though they have not grabbed the mouse focus
+    if (x->gl_list)
+    {
+
+        t_gobj *y;
+        t_object *ob;
+        // instantiate total number of gobj in gl_list and a number of
+        // passthrough objects, plus a counting variable
+        int numgobj = 0, numptgobj = 0, i;
+        int x1, x2, y1, y2, passthroughclick;
+
+        // find out how many objects there are in the gl_list
+        // we use this to allocate an array of pointers, so that
+        // we can distribute clicks in order from topmost to
+        // bottommost (or stop at a non-passthrough object)
+        // see mode 3 for iemgui in m_pd.h and ggee/image
+        for (y = x->gl_list; y; y = y->g_next)
+            numgobj++;
+        t_gobj *ypt[numgobj];
+
+        for (y = x->gl_list; y; y = y->g_next)
+        {
+            ob = pd_checkobject(&y->g_pd);
+            // if we are a canvas class with a GOP enabled
+            // do the same function inside it
+            if (ob->ob_pd == canvas_class && ((t_canvas *)ob)->gl_isgraph)
+            {
+                //post("...traversing GOP subpatch...");
+                canvas_passthrough_click((t_canvas *)y, xpos, ypos, click);
+            }
+            /* do not give clicks to comments or cnv during runtime */
+            /* ico@vt.edu 2021-10-08: also do not give clicks to the
+               ggee/image object if it is in click_mode 3 because that
+               one needs to be passed through below it, so we manually
+               acknowledge the click here without interrupting the flow */
+            if (ob && ((t_text *)y)->te_iemgui == 3)
+            {
+                ypt[numptgobj] = y;
+                numptgobj++;
+                //post("clicking on a pass-through image %lx", y);
+            }
+        }
+        if (numptgobj)
+        {
+            for(i = numptgobj-1; i >= 0; i--)
+            {
+                // check if we are above the object and if so send it
+                // a mouseup event by using the dbl = - 1 hack
+                if (canvas_hitbox(x, ypt[i], xpos, ypos, &x1, &y1, &x2, &y2))
+                {
+                    //post("...hitbox click %d", click);
+                    passthroughclick = gobj_click(ypt[i], x, xpos, ypos,
+                        shiftmod, (altmod && (!x->gl_edit)) || ctrlmod,
+                            (click >= 0 ? 0 : -1), (click > 0 ? click : 0));
+                } else if (click == -1) {
+                    //post("...mouseup off-hitbox click %d", click);
+                    // otherwise send them the dbl = -2 mouseup which is
+                    // used to reset internal mousedown variable for the mode 3
+                    passthroughclick = gobj_click(ypt[i], x, xpos, ypos,
+                        shiftmod, (altmod && (!x->gl_edit)) || ctrlmod, -2, 0);
+                }
+            }
+        }
+    }
+}
+
 void canvas_mouseup(t_canvas *x,
     t_floatarg fxpos, t_floatarg fypos, t_floatarg fwhich)
 {
@@ -5429,11 +5484,6 @@ void canvas_mouseup(t_canvas *x,
     //    sys_vgui("pdtk_toggle_xy_tooltip .x%zx %d\n", x, 0);
     //}
     int xpos = fxpos, ypos = fypos, which = fwhich;
-
-    int x1, x2, y1, y2, passthroughclick;
-    // instantiate total number of gobj in gl_list and a number of
-    // passthrough objects, plus a counting variable
-    int numgobj = 0, numptgobj = 0, i;
 
     t_gobj *y;
     t_object *ob;
@@ -5498,8 +5548,13 @@ void canvas_mouseup(t_canvas *x,
 
         x->gl_editor->e_onmotion = MA_NONE;
     }
+
     if (x->gl_editor->e_onmotion == MA_PASSOUT)
     {
+        //post("canvas_mouseup MA_PASSOUT");
+        // first do the mouseup from the topmost, potentially passthrough
+        // objects, then do the release of the grab of an object below
+        canvas_passthrough_click(x, xpos, ypos, -1);
         // here we borrow the double-click flag and make it -1 which signifies
         // mouse up since otherwise doit (the last argument) value of 0 is
         // shared between mouse up and mouse motion, making this unclear
@@ -5513,54 +5568,11 @@ void canvas_mouseup(t_canvas *x,
         else
             glist_grab(x, 0, 0, 0, 0, 0, 0, 0);
         x->gl_editor->e_onmotion = MA_NONE;
-    }
-
-    // ico@vt.edu 2021-10-08: lastly look for any passthrough objects that should
-    // catch the mouseup event even though they have not grabbed the mouse focus
-    if (x->gl_list)
-    {
-        // find out how many objects there are in the gl_list
-        // we use this to allocate an array of pointers, so that
-        // we can distribute clicks in order from topmost to
-        // bottommost (or stop at a non-passthrough object)
-        // see mode 3 for iemgui in m_pd.h and ggee/image
-        for (y = x->gl_list; y; y = y->g_next)
-            numgobj++;
-        t_gobj *ypt[numgobj];
-
-        for (y = x->gl_list; y; y = y->g_next)
-        {
-            ob = pd_checkobject(&y->g_pd);
-            /* do not give clicks to comments or cnv during runtime */
-            /* ico@vt.edu 2021-10-08: also do not give clicks to the
-               ggee/image object if it is in click_mode 3 because that
-               one needs to be passed through below it, so we manually
-               acknowledge the click here without interrupting the flow */
-            if (ob && ((t_text *)y)->te_iemgui == 3)
-            {
-                ypt[numptgobj] = y;
-                numptgobj++;
-                //post("clicking on a pass-through image %lx", y);
-            }
-        }
-        if (numptgobj)
-        {
-            for(i = numptgobj-1; i >= 0; i--)
-            {
-                // check if we are above the object and if so send it
-                // a mouseup event by using the dbl = - 1 hack
-                if (canvas_hitbox(x, ypt[i], xpos, ypos, &x1, &y1, &x2, &y2))
-                {
-                    passthroughclick = gobj_click(ypt[i], x, xpos, ypos,
-                        shiftmod, (altmod && (!x->gl_edit)) || ctrlmod, -1, 0);
-                } else {
-                    // otherwise send them the dbl = -2 mouseup which is
-                    // used to reset internal mousedown variable for the mode 3
-                    passthroughclick = gobj_click(ypt[i], x, xpos, ypos,
-                        shiftmod, (altmod && (!x->gl_edit)) || ctrlmod, -2, 0);
-                }
-            }
-        }
+    } else {
+        // if we are not doing MA_PASSOUT, we still need to inform
+        // passthrough objects of a mouse release to let them update
+        // their internal variables
+        canvas_passthrough_click(x, xpos, ypos, -1);
     }
 
     //fprintf(stderr,"canvas_mouseup -> canvas_doclick %d\n", which);
@@ -5568,7 +5580,7 @@ void canvas_mouseup(t_canvas *x,
        unused within nw.js 2.x implementation and onward. since 
        canvas_last_glist_mod is never set to -1 */
     //if (canvas_last_glist_mod == -1)
-    //    canvas_doclick(x, xpos, ypos, 0, \
+    //    canvas_doclick(x, xpos, ypos, 0,
     //        (glob_shift + glob_ctrl*2 + glob_alt*4), 0);
 
     // now dispatch to any click listeners
@@ -6052,8 +6064,9 @@ void canvas_motion(t_canvas *x, t_floatarg xpos, t_floatarg ypos,
     glist_setlastxymod(x, xpos, ypos, mod);
     if (x->gl_editor->e_onmotion == MA_MOVE)
     {
-        //fprintf(stderr,"x-was=%g y-was=%g xwas=%d ywas=%d x=%g y=%g\n", xpos - x->gl_editor->e_xwas,
-        //    ypos - x->gl_editor->e_ywas, x->gl_editor->e_xwas, x->gl_editor->e_ywas, xpos, ypos);
+        //fprintf(stderr,"x-was=%g y-was=%g xwas=%d ywas=%d x=%g y=%g\n",
+        //    xpos - x->gl_editor->e_xwas, ypos - x->gl_editor->e_ywas,
+        //    x->gl_editor->e_xwas, x->gl_editor->e_ywas, xpos, ypos);
         if (!x->gl_editor->e_clock)
             x->gl_editor->e_clock = clock_new(x, (t_method)delay_move);
         clock_unset(x->gl_editor->e_clock);
@@ -6078,57 +6091,24 @@ void canvas_motion(t_canvas *x, t_floatarg xpos, t_floatarg ypos,
     }
     else if (x->gl_editor->e_onmotion == MA_PASSOUT)
     {
+        //post("canvas_motion HERE");
         if (!x->gl_editor->e_motionfn)
             bug("e_motionfn");
+        // ico@vt.edu 2021-10-08: if we are in passout mode, which
+        // means mouse pointer has been grabbed by an object, thus
+        // preventing other objects from accessing the pointer info,
+        // here we look for any passthrough objects that should
+        // catch the motion event. we do this before sending the
+        // motionfn to a grabbed object since passthrough objects
+        // will be always on top of it (non-passthrough objects
+        // never pass pointer data below them--it always stops
+        // with them)
+        canvas_passthrough_click(x, xpos, ypos, 0);
         (*x->gl_editor->e_motionfn)(&x->gl_editor->e_grab->g_pd,
             xpos - x->gl_editor->e_xwas,
             ypos - x->gl_editor->e_ywas);
         x->gl_editor->e_xwas = xpos;
         x->gl_editor->e_ywas = ypos;
-
-        // ico@vt.edu 2021-10-08: if we are in passout mode, which
-        // means mouse pointer has been grabbed by an object, thus
-        // preventing other objects from accessing the pointer info,
-        // here we look for any passthrough objects that should
-        // catch the motion event
-        t_gobj *y;
-        t_object *ob;
-        int numgobj = 0, numptgobj = 0, i, passthroughclick,
-            x1, x2, y1, y2;
-        if (x->gl_list)
-        {
-            // find out how many objects there are in the gl_list
-            // we use this to allocate an array of pointers, so that
-            // we can distribute clicks in order from topmost to
-            // bottommost (or stop at a non-passthrough object)
-            // see mode 3 for iemgui in m_pd.h and ggee/image
-            for (y = x->gl_list; y; y = y->g_next)
-                numgobj++;
-            t_gobj *ypt[numgobj];
-
-            for (y = x->gl_list; y; y = y->g_next)
-            {
-                ob = pd_checkobject(&y->g_pd);
-                if (ob && ((t_text *)y)->te_iemgui == 3)
-                {
-                    ypt[numptgobj] = y;
-                    numptgobj++;
-                }
-            }
-            if (numptgobj)
-            {
-                for(i = numptgobj-1; i >= 0; i--)
-                {
-                    // check if we are above the object and if so send it
-                    // a mouseup event by using the dbl = - 1 hack
-                    if (canvas_hitbox(x, ypt[i], xpos, ypos, &x1, &y1, &x2, &y2))
-                    {
-                        passthroughclick = gobj_click(ypt[i], x, xpos, ypos,
-                            shiftmod, (altmod && (!x->gl_edit)) || ctrlmod, 0, 0);
-                    }
-                }
-            }
-        }
     }
     else if (x->gl_editor->e_onmotion == MA_RESIZE)
     {
@@ -7119,10 +7099,12 @@ static void canvas_dofancycopy(t_canvas *x, t_binbuf **object, t_binbuf **connec
         /* if outer outlet connection */
         else if(s1 && !s2)
         {
-            /* if we continue in the same outlet, we add the object and inlet number to the list and skip */
+            /* if we continue in the same outlet, we add the object and
+               inlet number to the list and skip */
             if (lastoutlet && lastoutlet->xlh_addr == (void *)t.tr_outlet)
             {
-                binbuf_addv(lastoutlet->xlh_conn, "ii", glist_selectionindex(x, &t.tr_ob2->ob_g, 0), t.tr_inno);
+                binbuf_addv(lastoutlet->xlh_conn, "ii",
+                    glist_selectionindex(x, &t.tr_ob2->ob_g, 0), t.tr_inno);
                 continue;
             }
 
@@ -7135,10 +7117,12 @@ static void canvas_dofancycopy(t_canvas *x, t_binbuf **object, t_binbuf **connec
             newoutlet->xlh_x = t.tr_lx1;
             newoutlet->xlh_y = t.tr_ly1;
             newoutlet->xlh_conn = binbuf_new();
-            binbuf_addv(newoutlet->xlh_conn, "ii", glist_selectionindex(x, &t.tr_ob2->ob_g, 0), t.tr_inno);
+            binbuf_addv(newoutlet->xlh_conn, "ii",
+                glist_selectionindex(x, &t.tr_ob2->ob_g, 0), t.tr_inno);
             /* insert structure regarding its coords */
             t_xletholder *prev = 0, *curr = outlets;
-            while(curr && (t.tr_lx1 > curr->xlh_x || (t.tr_lx1 == curr->xlh_x && t.tr_ly1 > curr->xlh_y)))
+            while(curr && (t.tr_lx1 > curr->xlh_x ||
+                (t.tr_lx1 == curr->xlh_x && t.tr_ly1 > curr->xlh_y)))
             {
                 prev = curr;
                 curr = curr->xlh_next;
@@ -7165,7 +7149,8 @@ static void canvas_dofancycopy(t_canvas *x, t_binbuf **object, t_binbuf **connec
             /* if so, we add the object and outlet number to the list and skip */
             if(alr)
             {
-                binbuf_addv(it->xlh_conn, "ii", glist_selectionindex(x, &t.tr_ob->ob_g, 0), t.tr_outno);
+                binbuf_addv(it->xlh_conn, "ii",
+                    glist_selectionindex(x, &t.tr_ob->ob_g, 0), t.tr_outno);
                 if(it->xlh_type >= 0 && it->xlh_type != type) it->xlh_type = -1;
                 continue;
             }
@@ -7179,10 +7164,12 @@ static void canvas_dofancycopy(t_canvas *x, t_binbuf **object, t_binbuf **connec
             newinlet->xlh_x = t.tr_lx2;
             newinlet->xlh_y = t.tr_ly2;
             newinlet->xlh_conn = binbuf_new();
-            binbuf_addv(newinlet->xlh_conn, "ii", glist_selectionindex(x, &t.tr_ob->ob_g, 0), t.tr_outno);
+            binbuf_addv(newinlet->xlh_conn, "ii",
+                glist_selectionindex(x, &t.tr_ob->ob_g, 0), t.tr_outno);
             /* insert structure regarding its coords */
             t_xletholder *prev = 0, *curr = inlets;
-            while(curr && (t.tr_lx2 > curr->xlh_x || (t.tr_lx2 == curr->xlh_x && t.tr_ly2 > curr->xlh_y)))
+            while(curr && (t.tr_lx2 > curr->xlh_x ||
+                (t.tr_lx2 == curr->xlh_x && t.tr_ly2 > curr->xlh_y)))
             {
                 prev = curr;
                 curr = curr->xlh_next;
@@ -7201,7 +7188,8 @@ static void canvas_dofancycopy(t_canvas *x, t_binbuf **object, t_binbuf **connec
         if(inlets->xlh_type >= 0)
         {
             binbuf_addv(b, "ssiis;", gensym("#X"), gensym("obj"),
-                X_PLAOFF/3 + xplac, Y_PLAOFF/3, (inlets->xlh_type ? gensym("inlet~") : gensym("inlet")));
+                X_PLAOFF/3 + xplac, Y_PLAOFF/3, (inlets->xlh_type ?
+                    gensym("inlet~") : gensym("inlet")));
 
             xplac += (inlets->xlh_type ? 46 : 40) + XLETSGAP; //hardcoded
         }
@@ -7239,7 +7227,8 @@ static void canvas_dofancycopy(t_canvas *x, t_binbuf **object, t_binbuf **connec
     while(outlets)
     {
         binbuf_addv(b, "ssiis;", gensym("#X"), gensym("obj"),
-            X_PLAOFF/3 + xplac, (maxy-miny) + Y_PLAOFF*5/3, (outlets->xlh_type ? gensym("outlet~") : gensym("outlet")));
+            X_PLAOFF/3 + xplac, (maxy-miny) + Y_PLAOFF*5/3, (outlets->xlh_type ?
+                gensym("outlet~") : gensym("outlet")));
 
         xplac += (outlets->xlh_type ? 52 : 46) + XLETSGAP; //hardcoded
 

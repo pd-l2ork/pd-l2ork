@@ -1738,6 +1738,8 @@ static void graph_delete(t_gobj *z, t_glist *glist)
 }
 
 extern t_class *my_canvas_class; // for ignoring runtime clicks
+// found in g_editor.c LATER: add it to g_canvas.h?
+extern void canvas_passthrough_click(t_canvas *x, t_int xpos, t_int ypos, t_int click);
 
 static int graph_click(t_gobj *z, struct _glist *glist,
     int xpix, int ypix, int shift, int alt, int dbl, int doit)
@@ -1752,8 +1754,20 @@ static int graph_click(t_gobj *z, struct _glist *glist,
             xpix, ypix, shift, alt, dbl, doit));
     else if (x->gl_havewindow)
         return (0);
-    else
+    else if (x->gl_list)
     {
+        int numgobj = 0, numptgobj = 0, i;
+        // find out how many objects there are in the gl_list
+        // we use this to allocate an array of pointers, so that
+        // we can distribute clicks in order from topmost to
+        // bottommost (or stop at a non-passthrough object)
+        // see mode 3 for iemgui in m_pd.h and ggee/image
+        for (y = x->gl_list; y; y = y->g_next)
+            numgobj++;
+        t_gobj *ypt[numgobj];
+        int x1, y1, x2, y2, passthroughclick = 0;
+        t_object *ob;
+
         for (y = x->gl_list; y; y = y->g_next)
         {
             if(pd_class(&y->g_pd) == garray_class &&
@@ -1766,20 +1780,34 @@ static int graph_click(t_gobj *z, struct _glist *glist,
             }
             else
             {
-                int x1, y1, x2, y2;
-                t_object *ob;
-                /* check if the object wants to be clicked and pick
-                   the topmost with the exception of the text (comment)*/
+                // check if the object wants to be clicked
+                // (we pick the topmost clickable)
                 if (canvas_hitbox(x, y, xpix, ypix, &x1, &y1, &x2, &y2))
                 {
                     ob = pd_checkobject(&y->g_pd);
                     /* do not give clicks to comments or cnv during runtime */
-                    if (!ob || (ob->te_type != T_TEXT && ob->ob_pd != my_canvas_class)) 
+                    /* ico@vt.edu 2021-10-10: also do not give clicks to the
+                       ggee/image object if it is in click_mode 3 because that
+                       one needs to be passed through below it, so we manually
+                       acknowledge the click here without interrupting the flow */
+                    //if (ob)
+                    //    post("clicking on object with te_iemgui=%d",
+                    //        ((t_text *)y)->te_iemgui);
+                    if (!ob || 
+                         (ob->te_type != T_TEXT && ob->ob_pd != my_canvas_class &&
+                            ((t_text *)y)->te_iemgui != 3)
+                       )
+                    {
                         clickme = y;
-                    //fprintf(stderr,"    found clickable %d\n", clickreturned);
+                        //post("yclick is set to %lx %d <%s>", y,
+                        //   ((t_text *)y)->te_iemgui, ob->ob_pd->c_name->s_name);
+                    }
+                    //fprintf(stderr,"    MAIN found clickable %d\n",
+                    //    clickreturned);
                 }
             }
         }
+        canvas_passthrough_click(x, xpix, ypix, doit);
         if (clickme)
         {
             //fprintf(stderr,"    clicking\n");

@@ -274,6 +274,7 @@ EXTERN void iem_inttosymargs(t_iemgui *x, int n);
 EXTERN int iem_symargstoint(t_iemgui *x);
 EXTERN void iem_inttofstyle(t_iemgui *x, int n);
 EXTERN int iem_fstyletoint(t_iemgui *x);
+EXTERN void iemgui_all_raute2dollar(t_symbol **srlsym);
 
 EXTERN void canvas_apply_setundo(t_canvas *x, t_gobj *y);
 

@@ -446,6 +446,9 @@ static void image_motion(t_image *x, t_floatarg dx, t_floatarg dy)
 {
     if (x->x_click == 2)
     {
+        //post("image_motion stored: %d %d | delta: %d %d", x->x_mouse_x, x->x_mouse_y, dx, dy);
+        int x1, x2, y1, y2;
+        image_getrect((t_gobj *)x, glist_getcanvas(x->x_gui.x_glist), &x1, &y1, &x2, &y2);
         t_atom at[5];
         x->x_mouse_x += dx;
         //x->x_mouse_x = maxi(x->x_mouse_x, x->x_gui.x_obj.te_xpix);
@@ -456,10 +459,10 @@ static void image_motion(t_image *x, t_floatarg dx, t_floatarg dy)
         //x->x_mouse_y = mini(x->x_mouse_y, x->x_gui.x_obj.te_ypix + x->x_gui.x_h);
 
         SETFLOAT(at, 1.0);
-        SETFLOAT(at+1, (t_floatarg)(x->x_gui.x_obj.te_xpix));
-        SETFLOAT(at+2, (t_floatarg)(x->x_gui.x_obj.te_ypix));
-        SETFLOAT(at+3, (t_floatarg)(x->x_mouse_x - x->x_gui.x_obj.te_xpix));
-        SETFLOAT(at+4, (t_floatarg)(x->x_mouse_y - x->x_gui.x_obj.te_ypix));
+        SETFLOAT(at+1, (t_floatarg)x1);
+        SETFLOAT(at+2, (t_floatarg)y1);
+        SETFLOAT(at+3, (t_floatarg)x->x_mouse_x);
+        SETFLOAT(at+4, (t_floatarg)x->x_mouse_y);
         iemgui_out_list(&x->x_gui, 0, 0, &s_list, 5, at);
     }
 }
@@ -469,7 +472,14 @@ static int image_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix,
 {
     t_image *x = (t_image *)z;
     t_atom at[5];
+    int x1, x2, y1, y2;
     //post("image_newclick x->x_click=%d dbl=%d iemgui=%d", x->x_click, dbl, x->x_gui.x_obj.te_iemgui);
+    image_getrect((t_gobj *)x, glist, &x1, &y1, &x2, &y2);
+    /*
+    post("==============\nimage_newclick\n...getrect x1=%d x2=%d \
+        y1=%d y2=%d\nte_xpix=%d te_typix=%d x_mouse_x=%d mouse_y=%d\nxpix=%d ypix=%d\n==============",
+        x1, x2, y1, y2, x->x_gui.x_obj.te_xpix, x->x_gui.x_obj.te_ypix, x->x_mouse_x, x->x_mouse_y, xpix, ypix);
+    */
 
     if (doit && x->x_click && x->x_click < 3)
     {
@@ -479,15 +489,15 @@ static int image_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix,
         }
         else if (x->x_click == 2)
         {
-            x->x_mouse_x = xpix;
-            x->x_mouse_y = ypix;
+            x->x_mouse_x = (xpix - x1);
+            x->x_mouse_y = (ypix - y1);
             glist_grab(x->x_gui.x_glist, &x->x_gui.x_obj.te_g,
                 (t_glistmotionfn)image_motion, 0, 0, (t_floatarg)xpix, (t_floatarg)ypix, 0);
             SETFLOAT(at, 1.0);
-            SETFLOAT(at+1, (t_floatarg)(x->x_gui.x_obj.te_xpix));
-            SETFLOAT(at+2, (t_floatarg)(x->x_gui.x_obj.te_ypix));
-            SETFLOAT(at+3, (t_floatarg)(x->x_mouse_x - x->x_gui.x_obj.te_xpix));
-            SETFLOAT(at+4, (t_floatarg)(x->x_mouse_y - x->x_gui.x_obj.te_ypix));
+            SETFLOAT(at+1, (t_floatarg)x1);
+            SETFLOAT(at+2, (t_floatarg)y1);
+            SETFLOAT(at+3, (t_floatarg)(xpix - x1));
+            SETFLOAT(at+4, (t_floatarg)(ypix - y1));
             iemgui_out_list(&x->x_gui, 0, 0, &s_list, 5, at);
         }
 
@@ -499,10 +509,10 @@ static int image_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix,
     {
         glist_grab(x->x_gui.x_glist, 0, 0, 0, 0, 0, 0, 0);
         SETFLOAT(at, 0.0);
-        SETFLOAT(at+1, (t_floatarg)(x->x_gui.x_obj.te_xpix));
-        SETFLOAT(at+2, (t_floatarg)(x->x_gui.x_obj.te_ypix));
-        SETFLOAT(at+3, (t_floatarg)(xpix - x->x_gui.x_obj.te_xpix));
-        SETFLOAT(at+4, (t_floatarg)(ypix - x->x_gui.x_obj.te_ypix));
+        SETFLOAT(at+1, (t_floatarg)x1);
+        SETFLOAT(at+2, (t_floatarg)y1);
+        SETFLOAT(at+3, (t_floatarg)(xpix - x1));
+        SETFLOAT(at+4, (t_floatarg)(ypix - y1));
         iemgui_out_list(&x->x_gui, 0, 0, &s_list, 5, at);
     }
 
@@ -526,16 +536,17 @@ static int image_newclick(t_gobj *z, struct _glist *glist, int xpix, int ypix,
         else if (dbl < 0) 
         {
             x->x_mode3_click = 0;
+            //post("==image mode3_click=%d", x->x_mode3_click);
             //glist_grab(x->x_gui.x_glist, 0, 0, 0, 0, 0, 0, 0);
         }
 
         if (dbl != -2)
         {
             SETFLOAT(at, (t_floatarg)x->x_mode3_click);
-            SETFLOAT(at+1, (t_floatarg)(x->x_gui.x_obj.te_xpix));
-            SETFLOAT(at+2, (t_floatarg)(x->x_gui.x_obj.te_ypix));
-            SETFLOAT(at+3, (t_floatarg)(xpix - x->x_gui.x_obj.te_xpix));
-            SETFLOAT(at+4, (t_floatarg)(ypix - x->x_gui.x_obj.te_ypix));
+            SETFLOAT(at+1, (t_floatarg)x1);
+            SETFLOAT(at+2, (t_floatarg)y1);
+            SETFLOAT(at+3, (t_floatarg)(xpix - x1));
+            SETFLOAT(at+4, (t_floatarg)(ypix - y1));
             iemgui_out_list(&x->x_gui, 0, 0, &s_list, 5, at);
         }
     }
