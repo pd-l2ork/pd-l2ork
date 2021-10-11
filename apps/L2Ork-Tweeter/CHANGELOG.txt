@@ -20,6 +20,7 @@ CHANGELOG (Date Format: DD-MM-YYYY)
 *Improved version printout for both client and server.
 *Made sure that the timebar is only accessible on your own track, or on all tracks in offline mode.
 *Other small bug-fixes.
+*Added additional template session and 2 more presets.
 
 01-10-2021 0.46
 *Fixed inaccurate positioning of notes when manually adjusting the tracker bar location.
