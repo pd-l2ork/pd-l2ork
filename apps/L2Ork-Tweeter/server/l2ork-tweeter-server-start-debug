@@ -1,0 +1,1 @@
+gdb -ex run -ex bt --args pd-l2ork -nogui -stderr L2Ork-Tweeter-Server.pd &> l2ork-tweeter-server-log-`date +%Y.%m.%d-%T` &
