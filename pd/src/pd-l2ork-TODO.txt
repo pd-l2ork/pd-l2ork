@@ -1,8 +1,12 @@
 PD-L2ORK TODO:
+*highlight number value inside gatom when pressing enter.
+
 *check if the defunct image object works.
 
 *finish and integrate gop drawing order work (see if there is something in the branch log to pull as to the status of the work).
 	*Redrawing entire canvas after tidy will not be necessary anymore.
+
+*save pd-l2ork main window position between restarts.
 
 *deal with array manipulation and data structure drawing location issues.
 
@@ -78,11 +82,11 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 
 
 TWEETER TODO:
-*Make reliable sync when doing copying of loops and patterns (maybe send the sync data back to server?)
+*Server load session for all
 
-*Add ability for the instructor to alter others' settings?
+*Make reliable sync when doing copying of loops and patterns (maybe send the sync data back to server?). Is this even a problem or a matter of user error?
 
-*In offline mode, enable keyboards and other input for multiple tracks
+*In offline mode, enable keyboard and other input for multiple tracks
 
 
 
@@ -95,6 +99,9 @@ TWEETER DONE:
 *Updated server to also support the hover mode.
 *Swapped tab and alt key functions to make play button easier to access.
 
+*Added ability to disable changes to the instrument level/overdrive when changing instruments by holding the Return/Enter key. Upon releasing the Return/Enter key, the level will revert to the one associated with the new instrument.
+*Included username in saving the session.
+*Created a "teacher" patch that adds ability for the instructor to alter others' settings (IN PROGRESS)
 
 
 HELP FILES TODO:

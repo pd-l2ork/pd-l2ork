@@ -1,8 +1,8 @@
-#N canvas 164 6 1545 970 10;
+#N canvas 180 7 1545 970 10;
 #X floatatom 299 100 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 1238 290 text define clients;
-#X floatatom 654 63 5 0 0 0 - - - 0 0 1, f 5;
-#X symbolatom 691 63 16 0 0 0 - - - 0 0 1, f 16;
+#X floatatom 738 63 5 0 0 0 - - - 0 0 1, f 5;
+#X symbolatom 883 78 16 0 0 0 - - - 0 0 1, f 16;
 #X obj 1251 221 list prepend broadcast;
 #X obj 1251 242 list trim;
 #X obj 448 16 r server-out;
@@ -86,7 +86,7 @@ clear the instance.;
 #X text 1170 779 to reset a disconnected client \, server sends all
 others following values for the disconnected client: out-amp 0 \, tracker
 0--this is contained within the client-ping abstraction, f 58;
-#N canvas 20 13 1685 979 filter-remote-admin-messages 0;
+#N canvas 36 0 1831 976 filter-remote-admin-messages 0;
 #X obj 101 30 t l l;
 #X obj 101 8 inlet;
 #X obj 244 633 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
@@ -169,7 +169,7 @@ others following values for the disconnected client: out-amp 0 \, tracker
 #X obj 217 474 t a 2;
 #X obj 217 539 t b b;
 #X obj 324 572 t f f;
-#X obj 432 539 t b b;
+#X obj 432 579 t b b;
 #X obj 540 539 t b b;
 #X obj 647 562 t f f 1;
 #X obj 755 562 t f f;
@@ -267,10 +267,6 @@ to the network socket \$2;
 \, and l2ork-set-password. All messages need to be prepended by the
 server password (formatted as p:password) \, which can be set below.
 , f 53;
-#X obj 217 517 route l2ork-reset-client-list l2ork-debug l2ork-report
-l2ork-sync-all l2ork-disconnect l2ork-free-slot l2ork-guest-chat l2ork-load
-l2ork-save l2ork-set-password l2ork-length-all l2ork-length l2ork-obfuscate
-, f 234;
 #N canvas 0 0 450 300 char-obfuscator 0;
 #X obj 197 54 inlet;
 #X obj 82 463 outlet;
@@ -311,6 +307,18 @@ l2ork-save l2ork-set-password l2ork-length-all l2ork-length l2ork-obfuscate
 #X obj 1528 581 t f f;
 #X msg 1555 717 server requested key obfuscation to be set to \$1,
 f 16;
+#X msg 372 745 server requested report on client \$1;
+#X obj 432 539 route bang;
+#X obj 489 562 t f f;
+#X obj 516 586 s \$0-report-one;
+#X obj 217 517 route l2ork-reset-client-list l2ork-debug l2ork-report
+l2ork-sync-all l2ork-disconnect l2ork-free-slot l2ork-guest-chat l2ork-load
+l2ork-save l2ork-set-password l2ork-length-all l2ork-length l2ork-obfuscate
+l2ork-teach, f 252;
+#X obj 1618 557 list prepend report;
+#X obj 1618 582 list prepend broadcast;
+#X obj 1618 607 list trim;
+#X obj 1618 632 s server-out;
 #X connect 0 0 3 1;
 #X connect 0 1 15 0;
 #X connect 1 0 0 0;
@@ -325,7 +333,7 @@ f 16;
 #X connect 8 1 16 0;
 #X connect 8 2 7 0;
 #X connect 9 0 11 0;
-#X connect 10 0 109 0;
+#X connect 10 0 108 0;
 #X connect 10 1 81 0;
 #X connect 11 0 10 0;
 #X connect 14 0 5 0;
@@ -399,7 +407,7 @@ f 16;
 #X connect 70 0 80 0;
 #X connect 70 1 74 0;
 #X connect 71 0 33 0;
-#X connect 72 0 108 0;
+#X connect 72 0 117 0;
 #X connect 72 1 7 0;
 #X connect 73 0 19 0;
 #X connect 73 1 2 0;
@@ -419,8 +427,8 @@ f 16;
 #X connect 79 1 56 0;
 #X connect 80 0 67 0;
 #X connect 81 0 82 0;
-#X connect 81 1 109 0;
-#X connect 82 0 109 0;
+#X connect 81 1 108 0;
+#X connect 82 0 108 0;
 #X connect 83 0 65 0;
 #X connect 83 1 64 0;
 #X connect 84 0 83 0;
@@ -459,28 +467,37 @@ f 16;
 #X connect 105 0 43 0;
 #X connect 106 0 4 0;
 #X connect 106 0 43 0;
-#X connect 108 0 73 0;
-#X connect 108 2 75 0;
-#X connect 108 3 76 0;
-#X connect 108 4 69 0;
-#X connect 108 5 68 0;
-#X connect 108 6 66 0;
-#X connect 108 7 60 0;
-#X connect 108 8 63 0;
-#X connect 108 9 89 0;
-#X connect 108 10 99 0;
-#X connect 108 11 101 0;
-#X connect 108 12 110 0;
-#X connect 108 13 80 0;
-#X connect 109 0 4 0;
+#X connect 108 0 4 0;
+#X connect 109 0 110 0;
+#X connect 109 1 80 0;
 #X connect 110 0 111 0;
 #X connect 110 1 80 0;
-#X connect 111 0 112 0;
-#X connect 111 1 80 0;
-#X connect 112 0 109 1;
-#X connect 112 1 113 0;
-#X connect 113 0 4 0;
+#X connect 111 0 108 1;
+#X connect 111 1 112 0;
+#X connect 112 0 4 0;
+#X connect 112 0 43 0;
 #X connect 113 0 43 0;
+#X connect 114 0 75 0;
+#X connect 114 1 115 0;
+#X connect 115 0 113 0;
+#X connect 115 1 116 0;
+#X connect 117 0 73 0;
+#X connect 117 2 114 0;
+#X connect 117 3 76 0;
+#X connect 117 4 69 0;
+#X connect 117 5 68 0;
+#X connect 117 6 66 0;
+#X connect 117 7 60 0;
+#X connect 117 8 63 0;
+#X connect 117 9 89 0;
+#X connect 117 10 99 0;
+#X connect 117 11 101 0;
+#X connect 117 12 109 0;
+#X connect 117 13 118 0;
+#X connect 117 14 80 0;
+#X connect 118 0 119 0;
+#X connect 119 0 120 0;
+#X connect 120 0 121 0;
 #X restore 1224 145 pd filter-remote-admin-messages;
 #X obj 1297 314 r \$0-reinit;
 #X obj 63 291 r \$0-report;
@@ -567,7 +584,7 @@ f 16;
 #X connect 4 0 5 0;
 #X restore 622 830 pd start-ping-timer;
 #X obj 448 123 sel 0;
-#X text 523 132 whatismyid with 0 assigns whichever slot may be available
+#X text 525 139 whatismyid with 0 assigns whichever slot may be available
 , f 31;
 #X obj 487 208 sel 0;
 #X floatatom 487 145 5 0 0 0 - - - 0 0 1, f 5;
@@ -707,12 +724,11 @@ pass...;
 #X restore 1164 193 pd silly-chat;
 #X obj 1251 263 s server-out;
 #X obj 830 582 t l -1 0 l;
-#X text 797 23 whatismyid is called by a newly connected client \,
+#X text 899 19 whatismyid is called by a newly connected client \,
 ping is to confirm the client is still connected \, disconnect is explicit
 notification from the client that they are disconnecting (resolved
 inside the client-ping abstraction) \, and everything else is broadcast
 to all \, with some chat messages filtered for admin, f 80;
-#X obj 448 63 route whatismyid ping disconnect;
 #X msg 825 153 \; \$1-client-disconnect bang \;;
 #X obj 786 132 moses 1;
 #X obj 202 875 pack 0 0 0;
@@ -722,10 +738,10 @@ to all \, with some chat messages filtered for admin, f 80;
 #X obj 121 815 print server;
 #X msg 121 792 L2Ork Tweeter Server version \$1;
 #X msg 202 897 send \$1 server server version \$3 \$2;
-#X obj 448 38 netserver 9002, f 41;
+#X obj 448 38 netserver 9002, f 73;
 #X obj 1125 498 client-ping 11;
 #X obj 1125 518 client-ping 12;
-#X obj 214 384 kalashnikov 12;
+#X obj 214 381 kalashnikov 12;
 #X obj 63 403 kalashnikov 12;
 #X obj 1238 379 kalashnikov 12;
 #X text 1240 905 (c) 2020-1 Ivica Ico Bukvic ico.bukvic.net;
@@ -741,16 +757,34 @@ overdrive \, note-dur \, harmonicity \, mod-amp \, ae \, me \, dry-amp
 \, flanger-hz \, flanger-mod-amp \, flanger-ms \, out-amp \, out-pan
 \, inst-name \, username \, hover, f 58;
 #X obj 160 576 kalashnikov 31;
-#X msg 232 741 0.5;
+#X msg 232 741 0.51;
+#N canvas 805 392 303 222 report-one 0;
+#X obj 80 33 r \$0-report-one;
+#X obj 80 83 - 1;
+#X obj 80 108 text get clients 1;
+#X obj 80 58 t f f, f 21;
+#X obj 203 163 outlet;
+#X obj 107 163 outlet;
+#X obj 80 133 sel 0;
+#X connect 0 0 3 0;
+#X connect 1 0 2 0;
+#X connect 2 0 6 0;
+#X connect 3 0 1 0;
+#X connect 3 1 4 0;
+#X connect 6 1 5 0;
+#X restore 40 502 pd report-one;
+#X obj 448 63 route whatismyid ping disconnect report;
+#X text 525 85 we ignore report calls since that would allow for unauthorized
+modifying of other users' settings, f 34;
 #X connect 0 0 76 0;
 #X connect 0 0 115 0;
 #X connect 2 0 141 1;
 #X connect 3 0 141 2;
 #X connect 4 0 5 0;
 #X connect 5 0 152 0;
-#X connect 6 0 165 0;
+#X connect 6 0 164 0;
 #X connect 8 0 10 0;
-#X connect 10 0 170 0;
+#X connect 10 0 169 0;
 #X connect 10 1 7 1;
 #X connect 10 2 11 0;
 #X connect 11 0 9 0;
@@ -803,7 +837,7 @@ overdrive \, note-dur \, harmonicity \, mod-amp \, ae \, me \, dry-amp
 #X connect 63 0 66 0;
 #X connect 63 1 67 1;
 #X connect 64 0 70 0;
-#X connect 65 0 174 0;
+#X connect 65 0 173 0;
 #X connect 65 1 60 1;
 #X connect 66 0 67 0;
 #X connect 66 1 64 1;
@@ -836,8 +870,8 @@ overdrive \, note-dur \, harmonicity \, mod-amp \, ae \, me \, dry-amp
 #X connect 96 0 145 0;
 #X connect 97 0 18 1;
 #X connect 98 0 93 0;
-#X connect 99 0 169 0;
-#X connect 99 1 168 0;
+#X connect 99 0 168 0;
+#X connect 99 1 167 0;
 #X connect 112 0 14 0;
 #X connect 112 1 12 0;
 #X connect 112 2 17 0;
@@ -845,7 +879,7 @@ overdrive \, note-dur \, harmonicity \, mod-amp \, ae \, me \, dry-amp
 #X connect 113 0 120 0;
 #X connect 114 0 117 0;
 #X connect 115 0 116 0;
-#X connect 119 0 160 0;
+#X connect 119 0 159 0;
 #X connect 119 1 89 0;
 #X connect 119 2 15 0;
 #X connect 119 3 17 1;
@@ -890,24 +924,26 @@ overdrive \, note-dur \, harmonicity \, mod-amp \, ae \, me \, dry-amp
 #X connect 153 1 16 1;
 #X connect 153 2 17 0;
 #X connect 153 3 148 0;
-#X connect 155 0 140 0;
-#X connect 155 1 25 0;
-#X connect 155 2 157 0;
-#X connect 155 3 79 0;
-#X connect 157 1 156 0;
-#X connect 158 0 164 0;
-#X connect 159 0 175 0;
-#X connect 160 0 158 0;
-#X connect 161 0 163 0;
-#X connect 161 1 158 2;
-#X connect 163 0 162 0;
-#X connect 164 0 88 0;
-#X connect 165 0 155 0;
-#X connect 165 1 0 0;
-#X connect 165 2 2 0;
-#X connect 165 3 3 0;
-#X connect 168 1 91 0;
-#X connect 169 1 62 0;
-#X connect 170 1 96 0;
-#X connect 174 1 58 0;
-#X connect 175 0 161 0;
+#X connect 156 1 155 0;
+#X connect 157 0 163 0;
+#X connect 158 0 174 0;
+#X connect 159 0 157 0;
+#X connect 160 0 162 0;
+#X connect 160 1 157 2;
+#X connect 162 0 161 0;
+#X connect 163 0 88 0;
+#X connect 164 0 176 0;
+#X connect 164 1 0 0;
+#X connect 164 2 2 0;
+#X connect 164 3 3 0;
+#X connect 167 1 91 0;
+#X connect 168 1 62 0;
+#X connect 169 1 96 0;
+#X connect 173 1 58 0;
+#X connect 174 0 160 0;
+#X connect 175 0 65 0;
+#X connect 175 1 64 1;
+#X connect 176 0 140 0;
+#X connect 176 1 25 0;
+#X connect 176 2 156 0;
+#X connect 176 4 79 0;

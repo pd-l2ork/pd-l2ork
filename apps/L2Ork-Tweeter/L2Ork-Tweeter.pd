@@ -3,7 +3,7 @@
 0;
 #X obj 0 2 cnv 15 1631 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 1 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.50\ by
+#X obj 1 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.51\ by
 4 5 0 10 #6c6c6c #fcfcfc 0;
 #X obj 247 3 cnv 15 125 16 empty empty (c)\ 2020-1\ Released\ under\ the
 4 6 0 10 #6c6c6c #fcfcfc 0;
@@ -191,12 +191,7 @@ f 25;
 #X msg 220 665 -1;
 #X obj 20 61 r myid;
 #X obj 798 296 delay 500;
-#X text 717 426 ignore local changes among broadcast messages \, except
-when message from server calls for a report (to sync other clients)
-;
-#X text 903 499 last option is for all other clients;
-#X obj 717 474 route myclientnum, f 18;
-#X obj 822 499 route report;
+#X obj 852 499 route report;
 #X text 712 12 initiates connection;
 #X obj 313 866 tosymbol;
 #X obj 323 682 sel 1;
@@ -390,152 +385,159 @@ to keep its state in sync with the server (does not work for guests)
 #X obj 693 792 t l l;
 #X msg 720 819 \$2;
 #X obj 720 843 sprintf server v.%.02f;
+#X text 933 492 rightmost option is for all other clients, f 22;
+#X obj 753 474 route myclientnum;
+#X text 753 401 ignore local changes among broadcast messages \, except
+when message from server calls for a report (to sync other clients)
+\, or if a teacher patch uses report to change remoteuser settings
+(report with a bang requests report \, otherwiseit feeds the values)
+, f 61;
 #X connect 0 0 1 0;
-#X connect 1 0 34 1;
+#X connect 1 0 31 1;
 #X connect 2 0 3 0;
 #X connect 3 0 4 0;
 #X connect 4 0 11 0;
 #X connect 5 0 0 0;
-#X connect 6 0 53 0;
-#X connect 6 1 29 0;
-#X connect 6 1 48 0;
-#X connect 6 1 34 0;
+#X connect 6 0 50 0;
+#X connect 6 1 26 0;
+#X connect 6 1 45 0;
+#X connect 6 1 31 0;
 #X connect 7 0 11 1;
 #X connect 9 0 8 0;
 #X connect 9 1 10 0;
-#X connect 9 1 25 1;
+#X connect 9 1 135 1;
 #X connect 11 0 5 0;
 #X connect 12 0 0 0;
 #X connect 13 0 12 1;
 #X connect 18 0 12 0;
 #X connect 19 0 20 0;
 #X connect 20 0 10 0;
-#X connect 21 0 56 0;
-#X connect 22 0 99 0;
-#X connect 25 1 26 0;
-#X connect 26 0 15 0;
-#X connect 26 1 15 0;
-#X connect 28 0 35 0;
-#X connect 29 1 102 0;
-#X connect 30 0 71 1;
-#X connect 31 0 124 0;
-#X connect 32 0 33 0;
-#X connect 33 0 2 0;
-#X connect 34 0 6 0;
-#X connect 37 0 40 0;
-#X connect 40 0 39 0;
-#X connect 40 1 38 0;
-#X connect 42 0 0 0;
-#X connect 43 0 133 0;
-#X connect 44 0 45 0;
-#X connect 46 0 91 0;
-#X connect 49 0 81 0;
-#X connect 51 0 22 0;
-#X connect 51 1 84 0;
-#X connect 51 2 52 0;
-#X connect 53 0 9 0;
-#X connect 53 1 102 0;
-#X connect 53 2 50 0;
-#X connect 53 3 126 0;
-#X connect 53 4 25 0;
-#X connect 55 0 2 0;
-#X connect 56 0 55 0;
-#X connect 57 0 85 0;
-#X connect 57 1 58 0;
-#X connect 58 0 61 0;
-#X connect 58 1 60 0;
-#X connect 59 0 62 0;
-#X connect 60 0 59 1;
-#X connect 60 0 88 1;
-#X connect 61 0 59 1;
-#X connect 61 0 88 1;
-#X connect 62 0 54 0;
-#X connect 64 0 67 1;
-#X connect 65 0 86 0;
-#X connect 65 1 57 0;
-#X connect 65 2 66 0;
-#X connect 66 0 67 0;
-#X connect 66 1 68 1;
-#X connect 67 0 69 0;
-#X connect 68 0 70 0;
-#X connect 69 0 68 0;
-#X connect 70 0 119 0;
-#X connect 71 0 72 0;
-#X connect 72 0 74 0;
-#X connect 72 1 51 0;
-#X connect 72 2 71 0;
-#X connect 73 0 71 0;
-#X connect 74 0 73 0;
-#X connect 76 0 54 0;
-#X connect 77 0 83 0;
-#X connect 79 0 78 0;
-#X connect 80 0 78 0;
-#X connect 81 0 82 0;
-#X connect 82 0 28 0;
-#X connect 83 0 79 0;
-#X connect 83 1 80 0;
-#X connect 84 0 95 0;
-#X connect 85 0 88 0;
-#X connect 85 1 59 0;
-#X connect 86 1 63 0;
-#X connect 88 0 89 0;
-#X connect 89 0 54 0;
-#X connect 90 0 94 0;
-#X connect 91 0 90 1;
-#X connect 92 0 6 0;
-#X connect 93 1 97 1;
-#X connect 94 0 97 0;
-#X connect 94 1 93 0;
-#X connect 95 0 90 0;
-#X connect 95 1 96 0;
-#X connect 96 0 93 0;
-#X connect 97 0 92 0;
-#X connect 98 0 6 0;
-#X connect 99 0 98 0;
-#X connect 100 0 99 1;
-#X connect 102 0 36 0;
-#X connect 102 1 82 0;
-#X connect 102 2 37 0;
-#X connect 103 0 105 0;
-#X connect 103 1 104 0;
-#X connect 104 0 107 0;
-#X connect 104 1 108 0;
-#X connect 105 0 106 0;
-#X connect 106 0 109 0;
-#X connect 107 0 106 1;
-#X connect 108 0 106 1;
-#X connect 109 0 110 0;
-#X connect 110 0 111 0;
-#X connect 113 0 114 1;
-#X connect 113 0 117 1;
+#X connect 21 0 53 0;
+#X connect 22 0 96 0;
+#X connect 23 0 15 0;
+#X connect 23 1 15 0;
+#X connect 25 0 32 0;
+#X connect 26 1 99 0;
+#X connect 27 0 68 1;
+#X connect 28 0 121 0;
+#X connect 29 0 30 0;
+#X connect 30 0 2 0;
+#X connect 31 0 6 0;
+#X connect 34 0 37 0;
+#X connect 37 0 36 0;
+#X connect 37 1 35 0;
+#X connect 39 0 0 0;
+#X connect 40 0 130 0;
+#X connect 41 0 42 0;
+#X connect 43 0 88 0;
+#X connect 46 0 78 0;
+#X connect 48 0 22 0;
+#X connect 48 1 81 0;
+#X connect 48 2 49 0;
+#X connect 50 0 9 0;
+#X connect 50 1 99 0;
+#X connect 50 2 47 0;
+#X connect 50 3 123 0;
+#X connect 50 4 135 0;
+#X connect 52 0 2 0;
+#X connect 53 0 52 0;
+#X connect 54 0 82 0;
+#X connect 54 1 55 0;
+#X connect 55 0 58 0;
+#X connect 55 1 57 0;
+#X connect 56 0 59 0;
+#X connect 57 0 56 1;
+#X connect 57 0 85 1;
+#X connect 58 0 56 1;
+#X connect 58 0 85 1;
+#X connect 59 0 51 0;
+#X connect 61 0 64 1;
+#X connect 62 0 83 0;
+#X connect 62 1 54 0;
+#X connect 62 2 63 0;
+#X connect 63 0 64 0;
+#X connect 63 1 65 1;
+#X connect 64 0 66 0;
+#X connect 65 0 67 0;
+#X connect 66 0 65 0;
+#X connect 67 0 116 0;
+#X connect 68 0 69 0;
+#X connect 69 0 71 0;
+#X connect 69 1 48 0;
+#X connect 69 2 68 0;
+#X connect 70 0 68 0;
+#X connect 71 0 70 0;
+#X connect 73 0 51 0;
+#X connect 74 0 80 0;
+#X connect 76 0 75 0;
+#X connect 77 0 75 0;
+#X connect 78 0 79 0;
+#X connect 79 0 25 0;
+#X connect 80 0 76 0;
+#X connect 80 1 77 0;
+#X connect 81 0 92 0;
+#X connect 82 0 85 0;
+#X connect 82 1 56 0;
+#X connect 83 1 60 0;
+#X connect 85 0 86 0;
+#X connect 86 0 51 0;
+#X connect 87 0 91 0;
+#X connect 88 0 87 1;
+#X connect 89 0 6 0;
+#X connect 90 1 94 1;
+#X connect 91 0 94 0;
+#X connect 91 1 90 0;
+#X connect 92 0 87 0;
+#X connect 92 1 93 0;
+#X connect 93 0 90 0;
+#X connect 94 0 89 0;
+#X connect 95 0 6 0;
+#X connect 96 0 95 0;
+#X connect 97 0 96 1;
+#X connect 99 0 33 0;
+#X connect 99 1 79 0;
+#X connect 99 2 34 0;
+#X connect 100 0 102 0;
+#X connect 100 1 101 0;
+#X connect 101 0 104 0;
+#X connect 101 1 105 0;
+#X connect 102 0 103 0;
+#X connect 103 0 106 0;
+#X connect 104 0 103 1;
+#X connect 105 0 103 1;
+#X connect 106 0 107 0;
+#X connect 107 0 108 0;
+#X connect 110 0 111 1;
+#X connect 110 0 114 1;
+#X connect 111 0 112 0;
+#X connect 112 1 120 0;
+#X connect 113 0 76 0;
 #X connect 114 0 115 0;
-#X connect 115 1 123 0;
-#X connect 116 0 79 0;
+#X connect 115 0 31 1;
 #X connect 117 0 118 0;
-#X connect 118 0 34 1;
-#X connect 120 0 121 0;
-#X connect 121 0 34 1;
-#X connect 124 0 117 0;
-#X connect 124 1 114 0;
-#X connect 125 0 117 0;
-#X connect 126 0 63 0;
-#X connect 126 1 65 0;
-#X connect 126 2 134 0;
-#X connect 126 3 101 0;
-#X connect 126 4 122 0;
-#X connect 126 5 130 1;
-#X connect 126 6 54 0;
-#X connect 127 0 131 0;
+#X connect 118 0 31 1;
+#X connect 121 0 114 0;
+#X connect 121 1 111 0;
+#X connect 122 0 114 0;
+#X connect 123 0 60 0;
+#X connect 123 1 62 0;
+#X connect 123 2 131 0;
+#X connect 123 3 98 0;
+#X connect 123 4 119 0;
+#X connect 123 5 127 1;
+#X connect 123 6 51 0;
+#X connect 124 0 128 0;
+#X connect 125 0 126 0;
+#X connect 127 0 125 0;
 #X connect 128 0 129 0;
-#X connect 130 0 128 0;
-#X connect 131 0 132 0;
-#X connect 131 1 128 1;
-#X connect 132 0 130 0;
-#X connect 133 0 44 0;
-#X connect 134 0 76 0;
-#X connect 134 1 135 0;
-#X connect 135 0 136 0;
-#X connect 136 0 54 0;
+#X connect 128 1 125 1;
+#X connect 129 0 127 0;
+#X connect 130 0 41 0;
+#X connect 131 0 73 0;
+#X connect 131 1 132 0;
+#X connect 132 0 133 0;
+#X connect 133 0 51 0;
+#X connect 135 1 23 0;
 #X restore 221 23 pd network-io;
 #N canvas 353 215 1163 639 preset-logic 0;
 #X obj 100 376 r \$0-store-preset;
@@ -1003,8 +1005,7 @@ stored in the pd network-io, f 24;
 #X obj 485 399 loadbang;
 #X obj 533 443 s session-name-r;
 #X text 533 465 set up the default session name;
-#X obj 473 36 t b b 1 0 b 1;
-#X obj 488 83 s local-report-request;
+#X obj 488 81 s local-report-request;
 #X obj 77 34 r local-report-response;
 #X obj 269 593 r myclientnum;
 #X obj 269 616 t f f;
@@ -1083,6 +1084,7 @@ broadcast via internet (if connected) upon loading a session, f 42
 #X obj 319 265 t b s b;
 #X msg 485 421 symbol;
 #X obj 485 544 kalashnikov 12;
+#X obj 473 36 t b b 1 0 b 1;
 #X connect 0 1 6 0;
 #X connect 1 0 15 1;
 #X connect 2 0 23 0;
@@ -1094,13 +1096,13 @@ broadcast via internet (if connected) upon loading a session, f 42
 #X connect 8 0 0 0;
 #X connect 9 0 12 0;
 #X connect 10 0 1 0;
-#X connect 11 0 38 0;
+#X connect 11 0 37 0;
 #X connect 12 0 18 1;
 #X connect 12 1 8 0;
 #X connect 13 0 14 0;
 #X connect 14 0 15 0;
-#X connect 15 0 54 0;
-#X connect 15 1 64 0;
+#X connect 15 0 53 0;
+#X connect 15 1 63 0;
 #X connect 17 0 24 0;
 #X connect 18 0 19 0;
 #X connect 19 0 25 0;
@@ -1108,68 +1110,68 @@ broadcast via internet (if connected) upon loading a session, f 42
 #X connect 20 0 3 0;
 #X connect 20 1 2 0;
 #X connect 20 2 23 1;
-#X connect 21 0 68 0;
+#X connect 21 0 67 0;
 #X connect 22 0 21 1;
 #X connect 22 0 25 1;
-#X connect 23 0 49 0;
-#X connect 24 0 52 0;
+#X connect 23 0 48 0;
+#X connect 24 0 51 0;
 #X connect 25 0 26 0;
 #X connect 26 0 17 0;
 #X connect 26 1 24 1;
-#X connect 27 0 71 0;
-#X connect 30 0 9 0;
-#X connect 30 1 31 0;
-#X connect 30 2 8 0;
-#X connect 30 3 7 2;
-#X connect 30 4 4 0;
-#X connect 30 5 18 0;
-#X connect 32 0 8 1;
-#X connect 33 0 34 0;
-#X connect 34 0 35 1;
-#X connect 34 1 36 1;
-#X connect 35 0 36 0;
+#X connect 27 0 70 0;
+#X connect 31 0 8 1;
+#X connect 32 0 33 0;
+#X connect 33 0 34 1;
+#X connect 33 1 35 1;
+#X connect 34 0 35 0;
+#X connect 35 0 64 0;
 #X connect 36 0 65 0;
-#X connect 37 0 66 0;
-#X connect 38 0 21 0;
-#X connect 38 1 12 0;
-#X connect 38 2 39 0;
-#X connect 39 0 9 0;
-#X connect 40 0 28 0;
-#X connect 41 0 30 0;
-#X connect 43 0 47 0;
-#X connect 45 0 46 1;
-#X connect 46 0 48 0;
-#X connect 47 0 48 1;
-#X connect 47 1 46 0;
-#X connect 48 0 51 0;
-#X connect 49 0 10 0;
-#X connect 49 1 72 0;
-#X connect 49 2 53 0;
+#X connect 37 0 21 0;
+#X connect 37 1 12 0;
+#X connect 37 2 38 0;
+#X connect 38 0 9 0;
+#X connect 39 0 28 0;
+#X connect 40 0 72 0;
+#X connect 42 0 46 0;
+#X connect 44 0 45 1;
+#X connect 45 0 47 0;
+#X connect 46 0 47 1;
+#X connect 46 1 45 0;
+#X connect 47 0 50 0;
+#X connect 48 0 10 0;
+#X connect 48 1 71 0;
+#X connect 48 2 52 0;
+#X connect 51 0 1 0;
 #X connect 52 0 1 0;
-#X connect 53 0 1 0;
-#X connect 54 0 60 1;
-#X connect 54 1 16 0;
-#X connect 55 0 37 0;
-#X connect 56 0 67 0;
-#X connect 57 0 58 0;
-#X connect 57 1 59 0;
-#X connect 58 0 60 0;
+#X connect 53 0 59 1;
+#X connect 53 1 16 0;
+#X connect 54 0 36 0;
+#X connect 55 0 66 0;
+#X connect 56 0 57 0;
+#X connect 56 1 58 0;
+#X connect 57 0 59 0;
+#X connect 58 0 59 0;
 #X connect 59 0 60 0;
 #X connect 60 0 61 0;
 #X connect 61 0 62 0;
-#X connect 62 0 63 0;
-#X connect 64 0 55 0;
-#X connect 64 1 35 0;
-#X connect 65 0 16 0;
-#X connect 67 0 55 1;
-#X connect 68 0 20 0;
-#X connect 68 1 70 0;
-#X connect 69 0 1 0;
-#X connect 70 0 10 0;
-#X connect 70 1 69 0;
-#X connect 70 2 3 0;
-#X connect 71 0 28 0;
-#X connect 72 1 43 0;
+#X connect 63 0 54 0;
+#X connect 63 1 34 0;
+#X connect 64 0 16 0;
+#X connect 66 0 54 1;
+#X connect 67 0 20 0;
+#X connect 67 1 69 0;
+#X connect 68 0 1 0;
+#X connect 69 0 10 0;
+#X connect 69 1 68 0;
+#X connect 69 2 3 0;
+#X connect 70 0 28 0;
+#X connect 71 1 42 0;
+#X connect 72 0 9 0;
+#X connect 72 1 30 0;
+#X connect 72 2 8 0;
+#X connect 72 3 7 2;
+#X connect 72 4 4 0;
+#X connect 72 5 18 0;
 #X restore 359 52 pd load-save-session;
 #N canvas 245 457 450 346 version 0;
 #X obj 177 51 loadbang;
@@ -1180,17 +1182,17 @@ broadcast via internet (if connected) upon loading a session, f 42
 #X floatatom 138 76 5 0 0 0 - - - 0 0 1, f 5;
 #X msg 177 245 label \$1;
 #X text 99 75 DEBUG;
-#X msg 177 76 0.5;
 #X obj 177 168 sprintf L2Ork Tweeter v.%.02f by;
 #X obj 177 193 tosymbol;
-#X connect 0 0 8 0;
-#X connect 1 0 9 0;
+#X msg 177 76 0.51;
+#X connect 0 0 10 0;
+#X connect 1 0 8 0;
 #X connect 1 1 2 0;
 #X connect 5 0 1 0;
 #X connect 6 0 3 0;
-#X connect 8 0 1 0;
-#X connect 9 0 10 0;
-#X connect 10 0 6 0;
+#X connect 8 0 9 0;
+#X connect 9 0 6 0;
+#X connect 10 0 1 0;
 #X restore 283 52 pd version;
 #N canvas 724 350 589 509 local-copy-logic 0;
 #X obj 22 22 r local-copyfrom-mode;
@@ -1328,16 +1330,16 @@ empty -5 -9 0 10 #80fc80 #008080 #fcfcfc 1;
 #X obj 816 219 core/L2OrkTweet 8;
 #X obj 816 370 core/L2OrkTweet 9;
 #X obj 816 521 core/L2OrkTweet 10;
-#N canvas 705 180 513 585 supplemental-documentation 0;
-#X obj 0 0 cnv 15 512 583 empty empty empty 20 12 0 14 #e0e0e0 #404040
+#N canvas 705 180 513 623 supplemental-documentation 0;
+#X obj 0 0 cnv 15 512 621 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
-#X obj 10 510 cnv 15 65 17 empty empty empty 20 12 0 14 #fcb46c #404040
+#X obj 10 550 cnv 15 65 17 empty empty empty 20 12 0 14 #fcb46c #404040
 0;
-#X obj 10 339 cnv 15 160 17 empty empty empty 20 12 0 14 #fcb46c #404040
+#X obj 10 379 cnv 15 160 17 empty empty empty 20 12 0 14 #fcb46c #404040
 0;
-#X obj 10 289 cnv 15 52 17 empty empty empty 20 12 0 14 #fcb46c #404040
+#X obj 10 329 cnv 15 52 17 empty empty empty 20 12 0 14 #fcb46c #404040
 0;
-#X obj 10 226 cnv 15 112 17 empty empty empty 20 12 0 14 #fcb46c #404040
+#X obj 10 266 cnv 15 112 17 empty empty empty 20 12 0 14 #fcb46c #404040
 0;
 #X obj 10 81 cnv 15 106 17 empty empty empty 20 12 0 14 #fcb46c #404040
 0;
@@ -1345,39 +1347,42 @@ empty -5 -9 0 10 #80fc80 #008080 #fcfcfc 1;
 at:;
 #X obj 9 31 pddp/pddplink http://bit.ly/L2Ork-Tweeter;
 #X text 10 81 Instrument Levels;
-#X text 10 226 Instrument Presets;
-#X text 10 247 Shift+Up/Down: increase/decrease preset instrument number
+#X text 10 266 Instrument Presets;
+#X text 10 287 Shift+Up/Down: increase/decrease preset instrument number
 and immediately apply it., f 82;
-#X text 10 289 Main Mix;
-#X text 10 310 Left/Right: incrementally change the panning of the
+#X text 10 329 Main Mix;
+#X text 10 350 Left/Right: incrementally change the panning of the
 main output., f 82;
-#X text 10 195 Shift+Backslash (or |): set instrument output level
+#X text 10 235 Shift+Backslash (or |): set instrument output level
 to one or 100% (unity)., f 82;
-#X text 10 148 Return or Enter: set instrument output level to the
-last known value (OVR/LVL slider). Repeat press sets it temporarily
-to zero \, while upon release it reverts to the last known value.,
-f 82;
 #X text 10 101 ' (key next to Return): set instrument output level
 to zero (OVR/LVL slider). Repeat press sets it temporarily to the last
 known value \, while upon release it reverts to zero., f 82;
-#X text 10 339 Sharing Loops and Patterns;
-#X text 10 416 single click - copy presetdouble click - copy looptriple
+#X text 10 379 Sharing Loops and Patterns;
+#X text 10 456 single click - copy presetdouble click - copy looptriple
 click - copy preset and loopshift + single click - copy preset \,
 including also main out and pan values shift + double click - copy
 loop \, including time syncshift + triple click - copy everything
 , f 82;
-#X text 10 360 As of 0.46 you can now easily share your patterns and
+#X text 10 400 As of 0.46 you can now easily share your patterns and
 loops with others. To do so \, you will want to click on the user number
 you wish to copy instrument and/or loop from \, using one of the following
 clicking actions that need to be performed within the 500ms of initiating
 the first click:, f 82;
-#X text 11 510 Hover Mode;
-#X text 11 531 When hover mode is enabled \, you can enter notes anywhere
+#X text 11 550 Hover Mode;
+#X text 11 571 When hover mode is enabled \, you can enter notes anywhere
 on the tracker timeline regardless where the timebar is currently located.
 Delete \, shift+delete \, and ~ (insert) also work in this mode.,
 f 82;
 #X text 10 51 Below is a list of additional commands that are not clearly
 annotated elsewhere., f 82;
+#X text 10 148 Return or Enter: set instrument output level to the
+last known value (OVR/LVL slider). Repeat press sets it temporarily
+to zero \, while upon release it reverts to the last known value. When
+holding Return/Enter pressed during changing of instruments (e.g. \,
+using shift+up/down) \, the instrument will remain silent until the
+Return/Enter key is released \, at which point \, the level will revert
+to the new instrument's value., f 82;
 #X restore 1299 3 pd supplemental-documentation (click here);
 #X obj 1144 3 pddp/pddplink http://l2ork.icat.vt.edu;
 #X obj 149 3 pddp/pddplink http://ico.bukvic.net -text Ivica Ico Bukvic
