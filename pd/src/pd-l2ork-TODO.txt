@@ -1,4 +1,8 @@
 PD-L2ORK TODO:
+*Find again in subpatch gives wrong result.
+
+*see net-i.pd abstraction where resizing bottom comment still resizes the one below it.
+
 *highlight number value inside gatom when pressing enter.
 
 *check if the defunct image object works.
@@ -101,7 +105,7 @@ TWEETER DONE:
 
 *Added ability to disable changes to the instrument level/overdrive when changing instruments by holding the Return/Enter key. Upon releasing the Return/Enter key, the level will revert to the one associated with the new instrument.
 *Included username in saving the session.
-*Created a "teacher" patch that adds ability for the instructor to alter others' settings (IN PROGRESS)
+*Created a "teacher" patch that adds ability for the instructor to alter others' settings.
 
 
 HELP FILES TODO:

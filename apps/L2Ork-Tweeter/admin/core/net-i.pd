@@ -1,0 +1,41 @@
+#N canvas 343 330 323 566 10;
+#X obj 165 35 inlet;
+#X obj 177 304 gate 1 1;
+#X obj 165 60 route bang;
+#X obj 114 218 t b 0, f 11;
+#X obj 114 243 delay 500;
+#X msg 114 268 1;
+#X obj 69 155 gate 1 0;
+#X obj 69 132 > 0;
+#X obj 69 109 r \$1-user-num;
+#X obj 114 132 r \$1-\$2-s;
+#X msg 114 420 set \$1;
+#X obj 177 444 s \$1-\$2-r;
+#X obj 114 318 loadbang;
+#X obj 114 343 \$3;
+#X obj 114 368 + 1;
+#X obj 114 393 gate 2 1, f 11;
+#X text 21 463 args:1 - context (typically \$0)2 - variable name
+(also controls s and r)3 - (optional) set value vs set+ output value
+\,;
+#X text 48 515 0=set (default) \, 1=set and output (used only for tracker
+var), f 42;
+#X obj 177 420 change -1;
+#X connect 0 0 2 0;
+#X connect 1 0 15 1;
+#X connect 2 1 1 1;
+#X connect 3 0 4 0;
+#X connect 3 1 1 0;
+#X connect 4 0 5 0;
+#X connect 5 0 1 0;
+#X connect 6 0 3 0;
+#X connect 7 0 6 0;
+#X connect 8 0 7 0;
+#X connect 9 0 6 1;
+#X connect 10 0 11 0;
+#X connect 12 0 13 0;
+#X connect 13 0 14 0;
+#X connect 14 0 15 0;
+#X connect 15 0 10 0;
+#X connect 15 1 18 0;
+#X connect 18 0 11 0;

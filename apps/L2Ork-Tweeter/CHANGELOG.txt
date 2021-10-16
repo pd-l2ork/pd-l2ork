@@ -9,6 +9,12 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+16-10-2021 0.51
+*Added ability to disable changes to the instrument level/overdrive when changing instruments by holding the Return/Enter key. Upon releasing the Return/Enter key, the level will revert to the one associated with the new instrument.
+*Included username in saving the session.
+*Created a "teacher" patch that adds ability for the instructor to alter others' settings.
+*Cleaned up sessions.
+
 11-10-2021 0.50
 *Requires 20211011 build of pd-l2ork or newer.
 *Fixed bug where shift+delete deleted twice.

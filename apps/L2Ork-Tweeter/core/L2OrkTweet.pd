@@ -284,7 +284,7 @@
 #X text 417 48 logic for detecting dsp status on startup;
 #X obj 527 91 delay 10;
 #X obj 341 248 hsl 40 15 0 1.5708 0 1 empty empty empty 12 6 0 10 #fcb46c
-#fc6418 #000000 2500 0 0 1;
+#fc6418 #000000 2624 0 0 1;
 #X obj 13 446 *~;
 #X obj 50 446 *~;
 #X obj 28 408 line~;
@@ -427,7 +427,7 @@
 #X connect 55 0 14 0;
 #X coords 0 -1 1 1 53 106 1 337 161;
 #X restore 763 144 pd OUT;
-#N canvas 698 198 630 474 FLANGER 0;
+#N canvas 698 198 673 420 FLANGER 0;
 #X obj 20 354 *~ 0.5;
 #X obj 160 63 hsl 55 17 0 1 0 1 empty empty LVL 22 6 0 10 #80fc80 #008080
 #000000 1854 1 0 1;
@@ -454,16 +454,16 @@
 #X obj 161 152 t b f;
 #X text 136 87 Hz;
 #X text 136 128 ms;
-#X obj 571 53 r \$0-instance;
-#X obj 541 96 r \$0-instance;
-#X obj 589 139 r \$0-instance;
-#X obj 547 182 r \$0-instance;
+#X obj 509 53 r \$0-instance;
+#X obj 494 96 r \$0-instance;
+#X obj 518 139 r \$0-instance;
+#X obj 500 182 r \$0-instance;
 #X msg 408 33 set \$1;
 #X obj 408 12 r \$0-set-node-context;
-#X obj 270 4 preset_node null;
-#X obj 160 4 preset_node null;
-#X obj 50 4 preset_node null;
-#X obj 270 34 preset_node null;
+#X obj 270 14 preset_node null;
+#X obj 160 14 preset_node null;
+#X obj 50 14 preset_node null;
+#X obj 270 44 preset_node null;
 #X obj 394 118 net-io -1 flanger-hz 0.01 0 preset;
 #X obj 394 75 net-io -1 flanger-amp 0.351852 0 preset;
 #X obj 394 161 net-io -1 flanger-mod-amp 33.3889 0 preset;
@@ -2032,6 +2032,7 @@ empty empty empty 773 25 0 0 10 #000000 0 -8 12.5 12.5 0 1 0;
 #X msg 538 539 click \$1;
 #X msg 546 490 1;
 #X text 1209 620 L2OrkTweet v.0.51;
+#X text 402 142 HARMONICITY;
 #X connect 0 0 193 0;
 #X connect 7 0 86 0;
 #X connect 7 0 101 0;
