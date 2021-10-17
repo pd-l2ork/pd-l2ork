@@ -1298,6 +1298,10 @@ static void gatom_key(void *z, t_floatarg f)
 		*/
 		if (!x->a_shift_clicked)
         	x->a_buf[0] = 0;
+        t_rtext *y = glist_findrtext(x->a_glist, &x->a_text);
+        if (y)
+            gui_vmess("gui_highlight_obj_on_return", "xss",
+                glist_getcanvas(x->a_glist), rtext_gettag(y), "gatom");
         /* We want to keep grabbing the keyboard after hitting "Enter", so
            we're commenting the following out */
         //glist_grab(x->a_glist, 0, 0, 0, 0, 0, 0, 0);

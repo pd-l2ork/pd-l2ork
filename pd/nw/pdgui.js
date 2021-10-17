@@ -8321,7 +8321,7 @@ exports.gui_get_search_origin_canvas = function() {
     return glob_search_origin_canvas;
 }
 
-function  gui_close_find_bar_on_new_window_focus(cid) {
+function gui_close_find_bar_on_new_window_focus(cid) {
     var find_bar = patchwin[cid].window.document.getElementById("canvas_find");
     if (find_bar)
         find_bar.style.setProperty("display", "none");
@@ -8329,3 +8329,30 @@ function  gui_close_find_bar_on_new_window_focus(cid) {
 
 exports.gui_close_find_bar_on_new_window_focus =
     gui_close_find_bar_on_new_window_focus;
+
+// ico@vt.edu 2021-10-17:
+// 1there can be only one since user can only input into one gatom/numbox
+// at a time. so, we only use one var instead of an array.
+var highlight_reset;
+
+function gui_highlight_obj_on_return(cid, tag, type) {
+    if (type === "gatom") {
+        gui(cid).get_elem(tag + "text", function(item) {
+            item.style.setProperty("font-weight", "bold");
+            if (highlight_reset)
+                clearTimeout(highlight_reset);
+            highlight_reset =
+                setTimeout(gui_highlight_obj_on_return_reset, 200, cid, tag, type);
+        });
+    }
+}
+
+function gui_highlight_obj_on_return_reset(cid, tag, type) {
+    if (type === "gatom") {
+        gui(cid).get_elem(tag + "text", function(item) {
+            item.style.setProperty("font-weight", "normal");
+        });
+    }
+}
+
+exports.gui_highlight_obj_on_return = gui_highlight_obj_on_return;
