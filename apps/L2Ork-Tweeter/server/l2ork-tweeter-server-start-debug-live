@@ -1,1 +1,1 @@
-gdb -ex run -ex bt --args pd-l2ork -nogui -stderr L2Ork-Tweeter-Server.pd
+gdb -batch -ex "run" -ex "bt" --args pd-l2ork -nogui -stderr L2Ork-Tweeter-Server.pd
