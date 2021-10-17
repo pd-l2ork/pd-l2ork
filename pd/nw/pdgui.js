@@ -8295,15 +8295,37 @@ exports.gui_is_gobj_grabbed = gui_is_gobj_grabbed;
 
 // ico@vt.edu 2021-10-17: used for find again when original find opens
 // subcanvas whose canvasevents last_search_term has not yet been set
-// (or is set to something else)
-var glob_canvas_search_term = "";
+// (or is set to something else), so, we check against what the backend
+// has and act accordingly.
+var glob_canvas_backend_search_term = "";
 
-exports.gui_set_glob_search_term = function(value) {
+exports.gui_set_backend_search_term = function(value) {
     //post("gui_set_glob_search_term="+value);
-    glob_canvas_search_term = value;
+    glob_canvas_backend_search_term = value;
 }
 
-exports.gui_get_glob_search_term = function() {
-    //post("gui_get_glob_search_term="+glob_canvas_search_term);
-    return glob_canvas_search_term;
+exports.gui_get_backend_search_term = function() {
+    //post("gui_get_glob_search_term="+glob_canvas_backend_search_term);
+    return glob_canvas_backend_search_term;
 }
+
+var glob_search_origin_canvas = "";
+
+exports.gui_set_search_origin_canvas = function(value) {
+    //post("glob_search_origin_canvas="+value);
+    glob_search_origin_canvas = value;
+}
+
+exports.gui_get_search_origin_canvas = function() {
+    //post("glob_search_origin_canvas="+glob_search_origin_canvas);
+    return glob_search_origin_canvas;
+}
+
+function  gui_close_find_bar_on_new_window_focus(cid) {
+    var find_bar = patchwin[cid].window.document.getElementById("canvas_find");
+    if (find_bar)
+        find_bar.style.setProperty("display", "none");
+}
+
+exports.gui_close_find_bar_on_new_window_focus =
+    gui_close_find_bar_on_new_window_focus;

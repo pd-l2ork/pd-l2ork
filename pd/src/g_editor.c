@@ -85,7 +85,8 @@ extern t_class *text_class;
 //extern void iemgui_getrect_mouse(t_gobj *x, int *xp1, int *yp1,
 //    int *xp2, int *yp2);
 
-static int canvas_find_index1, canvas_find_index2, canvas_find_wholeword;
+static int canvas_find_index1, canvas_find_index2, canvas_find_wholeword,
+           canvas_num_found = 0;
 static t_binbuf *canvas_findbuf;
 
 int do_not_redraw = 0;     // used to optimize redrawing
@@ -3814,6 +3815,11 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
        to let go */
     if (doit)
     {
+        // no matter what we do, we should reset the search when we click?
+        // currently disabled
+        //canvas_find_index1 = 0;
+        //canvas_find_index2 = -1;
+        //canvas_num_found = 0;
         //fprintf(stderr,"doit %d\n", x->gl_editor->e_onmotion);
         if (x->gl_editor->e_onmotion == MA_MOVE)
         {        
@@ -4424,8 +4430,10 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
 
             // ico@vt.edu 2021-10-06: reset indices for find back as if we haven't
             // searched yet for anything, effectively restarting the search
+            //post("search reset when there is selection");
             canvas_find_index1 = 0;
             canvas_find_index2 = -1;
+            canvas_num_found = 0;
 
             //buf->u_redo = (t_undo_sel *)canvas_undo_set_selection(x);
             //canvas_undo_add(x, 11, "selection", buf);
@@ -6556,19 +6564,29 @@ static int canvas_dofind(t_canvas *x, int *myindex1p)
                         glist_noselect(x);
                         if (!x->gl_mapped)
                         {
-                            vmess(&x->gl_pd, gensym("menu-open"), "");
                             delayed = 1;
                         }
+                        // this needs to be outside previous if statement
+                        // to ensure that window is always brought to the
+                        // top and refocused
+                        vmess(&x->gl_pd, gensym("menu-open"), "");
                         canvas_editmode(x, 1.);
                         glist_select(x, y);
                         //post("find A delayed=%d", delayed);
                         t_rtext *yrt = glist_findrtext(x, (t_text *)y);
                         if (delayed)
+                        {
                             gui_vmess("gui_canvas_delayed_scroll_to_gobj",
                                 "xsi", x, rtext_gettag(yrt), 1);
+                        }
                         else
+                        {
+                            if (canvas_whichfind != x)
+                                gui_vmess("gui_close_find_bar_on_new_window_focus",
+                                    "x", x);
                             gui_vmess("gui_canvas_scroll_to_gobj", "xsi",
                                 x, rtext_gettag(yrt), 1);
+                        }
                         return (1);
                     }
                 }
@@ -6604,12 +6622,15 @@ static void canvas_find(t_canvas *x, t_symbol *s, t_floatarg wholeword)
     binbuf_text(canvas_findbuf, decodedsym->s_name, strlen(decodedsym->s_name));
     canvas_find_index1 = 0;
     canvas_find_index2 = -1;
+    canvas_num_found = 0;
     canvas_find_wholeword = wholeword;
     canvas_whichfind = x;
     if (!canvas_dofind(x, &myindex1))
     {
         binbuf_print(canvas_findbuf);
         post("... couldn't find");
+    } else {
+        canvas_num_found++;
     }
 }
 
@@ -6622,7 +6643,18 @@ static void canvas_find_again(t_canvas *x)
     if (!canvas_dofind(canvas_whichfind, &myindex1))
     {
         binbuf_print(canvas_findbuf);
-        post("... couldn't find");
+        if (canvas_num_found > 0)
+            post("... couldn't find. will restart on the next find again request.");
+        else
+            post("... couldn't find");
+        // now that we've notified the user that there are no more objects
+        // that have the search term, reset the search, so that the next
+        // find again restarts from the beginning
+        canvas_find_index1 = 0;
+        canvas_find_index2 = -1;
+        canvas_num_found = 0;
+    } else {
+        canvas_num_found++;
     }
 }
 

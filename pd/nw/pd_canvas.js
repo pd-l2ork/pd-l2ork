@@ -632,14 +632,23 @@ var canvas_events = (function() {
                 //pdgui.post("pdcanvas find_click");
                 var t = document.getElementById("canvas_find_text").value;
                 //var w = document.getElementById("canvas_find_whole_word").checked;
-                //pdgui.post("whole="+(w ? "1" : "0"));
+                //pdgui.post("whole="+(w ? "1" : "0"))
+                /*
+                pdgui.post("find_click " + t + " " +
+                    canvas_events.get_last_search_term() + " " +
+                    pdgui.gui_get_backend_search_term());
+                */
+                //pdgui.post("origin="+pdgui.gui_get_search_origin_canvas()+" name="+name);
                 if (t !== "") {
-                    if (t === last_search_term) {
+                    if (pdgui.gui_get_search_origin_canvas() === name &&
+                        t === canvas_events.get_last_search_term() &&
+                        t === pdgui.gui_get_backend_search_term()) {
                         pdgui.pdsend(name, "findagain");
                     } else {
                         pdgui.pdsend(name, "find",
                         pdgui.encode_for_dialog(t),
                         match_words_state ? "1" : "0");
+                        pdgui.gui_set_search_origin_canvas(name);
                     }
                     canvas_events.set_last_search_term(t);
                 }
@@ -651,7 +660,7 @@ var canvas_events = (function() {
                 //evt.preventDefault();
             },
             find_ignore: function(evt) {
-                //pdgui.post("find_ignore");
+                pdgui.post("find_ignore");
                 evt.stopPropagation();
                 // ico@vt.edu 2021-10-06: if we also preventDefault, the
                 // entry box cannot be focused anymore
@@ -671,6 +680,8 @@ var canvas_events = (function() {
                 // ico@vt.edu 2021-10-06: reset find process since we have
                 // changed parameters, so findagain now makes no more sense
                 canvas_events.find_reset();
+                pdgui.gui_set_backend_search_term("");
+                pdgui.gui_set_search_origin_canvas(name);
             },
             scalar_draggable_mousemove: function(evt) {
                 let [new_x, new_y] = evt.type === "touchmove"
@@ -1171,18 +1182,17 @@ var canvas_events = (function() {
         find_reset: function() {
             //pdgui.post("find_reset");
             last_search_term = "";
-            pdgui.gui_set_glob_search_term("");
         },
         get_last_search_term: function() {
             //pdgui.post("get_last_search_term");
             if (last_search_term !== "")
                 return last_search_term;
-            else return pdgui.gui_get_glob_search_term();
+            else return pdgui.gui_get_backend_search_term();
         },
         set_last_search_term: function(value) {
             //pdgui.post("set_last_search_term");
             last_search_term = value;
-            pdgui.gui_set_glob_search_term(value);
+            pdgui.gui_set_backend_search_term(value);
         },
         add_scalar_draggable: function(cid, tag, scalar_sym, drawcommand_sym,
             event_name, array_sym, index) {
@@ -2023,6 +2033,7 @@ function nw_create_patch_window_menus(gui, w, name) {
                 canvas_events.search();
             } else {
                 find_bar.style.setProperty("display", "none");
+                //find_bar_text.value = "";
                 // "normal" seems to be the only viable state for the
                 // canvas atm.  But if there are other states added later,
                 // we might need to fetch the previous state here.
@@ -2036,19 +2047,44 @@ function nw_create_patch_window_menus(gui, w, name) {
     minit(m.edit.findagain, {
         enabled: true,
         click: function() {
-            //pdgui.post("m.edit.findagain <" + canvas_events.get_last_search_term() + ">");
+            var t = document.getElementById("canvas_find_text").value;
+            /*
+            pdgui.post("m.edit.findagain value=<" + 
+                t +
+                "> last_search_term=<" + canvas_events.get_last_search_term() +
+                "> backend=<" + pdgui.gui_get_backend_search_term() + ">");
+            */
             if (canvas_events.get_last_search_term() === "") {
-                //pdgui.post("pd_canvas.js findagain A <" + canvas_events.get_last_search_term() + ">");
-                var t = document.getElementById("canvas_find_text").value;
+                //pdgui.post("...A");
                 if (t !== "") {
                     pdgui.pdsend(name, "find",
                     pdgui.encode_for_dialog(t),
                     canvas_events.get_match_words() ? "1" : "0");
                     canvas_events.set_last_search_term(t);
+                    pdgui.gui_get_search_origin_canvas(name);
                 }
             } else {
-                //pdgui.post("pd_canvas.js findagain B <" + canvas_events.get_last_search_term() + ">");
-                pdgui.pdsend(name, "findagain");
+                var t = document.getElementById("canvas_find_text").value;
+                //pdgui.post("...B");
+                if (t !== "" && t !== pdgui.gui_get_backend_search_term()) {
+                    //pdgui.post("canvas find_again B t is not the same");
+                    t = pdgui.gui_get_backend_search_term();
+                    //canvas_events.set_last_search_term(t);
+                    //pdgui.post("search term=<"+t+">");
+                    //document.getElementById("canvas_find_text").value = t;
+                    if (t === pdgui.gui_get_backend_search_term()) {
+                        pdgui.pdsend(name, "findagain");
+                        pdgui.gui_close_find_bar_on_new_window_focus(name);
+                    } else {
+                        pdgui.pdsend(name, "find",
+                        pdgui.encode_for_dialog(t),
+                        canvas_events.get_match_words() ? "1" : "0");
+                        canvas_events.set_last_search_term(t);
+                        pdgui.gui_get_search_origin_canvas(name);
+                    }
+                } else {
+                    pdgui.pdsend(name, "findagain");
+                }
             }
         }
     });
