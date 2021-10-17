@@ -2666,6 +2666,33 @@ t_gobj *canvas_findhitbox(t_canvas *x, int xpos, int ypos,
     return (rval);
 }
 
+    /* find the last gobj, if any, containing the point that has nlets. 
+       inout is 0 when looking for inlets, and 1 when looking for outlets */
+t_gobj *canvas_findhitbox_w_nlets(t_canvas *x, int xpos, int ypos,
+    int *x1p, int *y1p, int *x2p, int *y2p, int inout)
+{
+    //post("canvas_findhitbox...");
+    t_gobj *y, *rval = 0;
+    t_object *ob;
+    int x1, y1, x2, y2;
+    *x1p = -0x7fffffff;
+    for (y = x->gl_list; y; y = y->g_next)
+    {
+        //post("   next");
+        if (canvas_hitbox(x, y, xpos, ypos, &x1, &y1, &x2, &y2))
+        {
+            ob = pd_checkobject(&y->g_pd);
+            if (ob && (inout == 0 ? obj_ninlets(ob) : obj_noutlets(ob)))
+            //&& (x1 > *x1p))
+            /* commented section looks for whichever is more to the right
+               which is wrong since we are looking for topmost object */
+                *x1p = x1, *y1p = y1, *x2p = x2, *y2p = y2, rval = y;
+                //post("   got it");
+        }
+    }
+    return (rval);
+}
+
 extern t_class *array_define_class;
 extern int scalar_getcanvasfield(t_scalar *x);
 
@@ -5229,7 +5256,7 @@ int canvas_trymulticonnect(t_canvas *x, int xpos, int ypos, int which, int doit)
 
 void canvas_doconnect(t_canvas *x, int xpos, int ypos, int which, int doit)
 {
-    //fprintf(stderr,"canvas_doconnect\n");
+    //post("canvas_doconnect");
     if (doit && x->gl_editor->e_selection &&
         x->gl_editor->e_selection->sel_next)
     {
@@ -5259,8 +5286,8 @@ void canvas_doconnect(t_canvas *x, int xpos, int ypos, int which, int doit)
         //canvas_getscroll(x);
     }
 
-    if ((y1 = canvas_findhitbox(x, xwas, ywas, &x11, &y11, &x12, &y12))
-        && (y2 = canvas_findhitbox(x, xpos, ypos, &x21, &y21, &x22, &y22)))
+    if ((y1 = canvas_findhitbox_w_nlets(x, xwas, ywas, &x11, &y11, &x12, &y12, 1))
+        && (y2 = canvas_findhitbox_w_nlets(x, xpos, ypos, &x21, &y21, &x22, &y22, 0)))
     {
         t_object *ob1 = pd_checkobject(&y1->g_pd);
         t_object *ob2 = pd_checkobject(&y2->g_pd);
@@ -6116,7 +6143,7 @@ void canvas_motion(t_canvas *x, t_floatarg xpos, t_floatarg ypos,
     }
     else if (x->gl_editor->e_onmotion == MA_CONNECT)
     {
-        //fprintf(stderr,"MA_CONNECT\n");
+        //post("MA_CONNECT");
         canvas_doconnect(x, xpos, ypos, 0, 0);
     }
     else if (x->gl_editor->e_onmotion == MA_PASSOUT)
