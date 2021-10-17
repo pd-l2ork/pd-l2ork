@@ -7504,18 +7504,29 @@ function zoom_level_to_chrome_percent(nw_win) {
     return zoom;
 }
 
+// ico@vt.edu 2021-10-17: added delayed version to allow for the
+// new window to open before making the call. 1000ms is an approximation
+// and may not work on slow machines. LATER: think about how to deal
+// with the back-end (or front-end) being unable to know when everything
+// has finished loading... Maybe look for a hook when all of the binbuf
+// objects have been loaded and somehow ensure that the last object
+// reports finishing drawing? What about adding it a unique class just
+// for loading purposes?
+function gui_canvas_delayed_scroll_to_gobj(cid, tag, smooth) {
+    setTimeout(gui_canvas_scroll_to_gobj, 1000, cid, tag, smooth);
+}
+
+exports.gui_canvas_delayed_scroll_to_gobj = gui_canvas_delayed_scroll_to_gobj;
+
 // ico@vt.edu 2021-04-20: used to autoscroll after doing the "find" request
 // on the main patch canvas
 function gui_canvas_scroll_to_gobj(cid, tag, smooth) {
+    //post("\n"+tag+"\ngui_canvas_scroll_to_gobj");
     //post("gui_canvas_scroll_to_gobj " +
     //    (patchwin[cid] == null ? "not yet" : "got it"));
-    if (patchwin[cid] == null) {
-        setTimeout(gui_canvas_scroll_to_gobj, 500, cid, tag, smooth);
-    } else {
+    if (patchwin[cid] !== null) {
         var gobj = get_gobj(cid, tag);
-        if (gobj === null) {
-            setTimeout(gui_canvas_scroll_to_gobj, 500, cid, tag, smooth);
-        } else {
+        if (gobj !== null) {
             //post("gobj="+gobj+" tag="+tag);
             var x1, y1, x2, y2;
             var bbox = gobj.getBBox();
@@ -7523,7 +7534,7 @@ function gui_canvas_scroll_to_gobj(cid, tag, smooth) {
             y1 = gobj.getCTM().f;
             x2 = x1 + bbox.width;
             y2 = y1 + bbox.height;
-            //post("x1="+x1+" y1="+y1+" x2="+x2+" y2="+y2);
+            //post("..."+cid+" BBOX: x1="+x1+" y1="+y1+" x2="+x2+" y2="+y2);
             /*window.scrollBy({
                 top: -100,
                 left: -100,
@@ -7533,10 +7544,12 @@ function gui_canvas_scroll_to_gobj(cid, tag, smooth) {
                 var svg_elem = nw_win.window.document.getElementById("patchsvg");
                 var { x: x, y: y, w: width, h: height,
                     mw: min_width, mh: min_height } = canvas_params(nw_win);
-                //post("x="+x+" y="+y+" w="+width+" h="+height+
-                //  " mw="+min_width+" mh="+min_height);
-                //post("scrollX="+nw_win.window.scrollX+
-                //  " scrollY="+nw_win.window.scrollY);
+                /*
+                post("..."+cid+" x="+x+" y="+y+" w="+width+" h="+height+
+                  " mw="+min_width+" mh="+min_height);
+                post("..."+cid+" scrollX="+nw_win.window.scrollX+
+                  " scrollY="+nw_win.window.scrollY);
+                */
                 var tlx, tly, brx, bry; // top-left x and y, bottom-right x and y
                 var offsetx = 0, offsety = 0; // final offset
 
@@ -7556,7 +7569,7 @@ function gui_canvas_scroll_to_gobj(cid, tag, smooth) {
                 else if (y1 - tly < 0)
                     offsety = y1 - tly - 30;
 
-                //post("final x:"+offsetx+" y:"+offsety);
+                //post("..."+cid+" final scroll x:"+offsetx+" y:"+offsety);
                 nw_win.window.scrollBy({
                     left: offsetx,
                     top: offsety,
@@ -8278,3 +8291,19 @@ function gui_is_gobj_grabbed() {
 }
 
 exports.gui_is_gobj_grabbed = gui_is_gobj_grabbed;
+
+
+// ico@vt.edu 2021-10-17: used for find again when original find opens
+// subcanvas whose canvasevents last_search_term has not yet been set
+// (or is set to something else)
+var glob_canvas_search_term = "";
+
+exports.gui_set_glob_search_term = function(value) {
+    //post("gui_set_glob_search_term="+value);
+    glob_canvas_search_term = value;
+}
+
+exports.gui_get_glob_search_term = function() {
+    //post("gui_get_glob_search_term="+glob_canvas_search_term);
+    return glob_canvas_search_term;
+}

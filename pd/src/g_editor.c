@@ -6528,8 +6528,14 @@ static void canvas_menufont(t_canvas *x, t_floatarg newsize)
     /* find an atom or string of atoms */
 static int canvas_dofind(t_canvas *x, int *myindex1p)
 {
+    // Debugging stuff
+    //char *b;
+    //int i;
+    //binbuf_gettext(canvas_findbuf, &b, &i);
+    //post("canvas_dofind %lx myindex1p=%d canvas_find_index1=%d \
+    //    canvas_findbuf=<%s>", x, *myindex1p, canvas_find_index1, b);
     t_gobj *y;
-    int myindex1 = *myindex1p, myindex2;
+    int myindex1 = *myindex1p, myindex2, delayed=0;
     if (myindex1 >= canvas_find_index1)
     {
         for (y = x->gl_list, myindex2 = 0; y;
@@ -6548,13 +6554,21 @@ static int canvas_dofind(t_canvas *x, int *myindex1p)
                         canvas_find_index1 = myindex1;
                         canvas_find_index2 = myindex2;
                         glist_noselect(x);
-                        vmess(&x->gl_pd, gensym("menu-open"), "");
+                        if (!x->gl_mapped)
+                        {
+                            vmess(&x->gl_pd, gensym("menu-open"), "");
+                            delayed = 1;
+                        }
                         canvas_editmode(x, 1.);
                         glist_select(x, y);
-                        //post("find A");
+                        //post("find A delayed=%d", delayed);
                         t_rtext *yrt = glist_findrtext(x, (t_text *)y);
-                        gui_vmess("gui_canvas_scroll_to_gobj", "xsi",
-                            x, rtext_gettag(yrt), 1);
+                        if (delayed)
+                            gui_vmess("gui_canvas_delayed_scroll_to_gobj",
+                                "xsi", x, rtext_gettag(yrt), 1);
+                        else
+                            gui_vmess("gui_canvas_scroll_to_gobj", "xsi",
+                                x, rtext_gettag(yrt), 1);
                         return (1);
                     }
                 }
@@ -6566,9 +6580,9 @@ static int canvas_dofind(t_canvas *x, int *myindex1p)
         if (pd_class(&y->g_pd) == canvas_class)
         {
             (*myindex1p)++;
+            //post("find B");
             if (canvas_dofind((t_canvas *)y, myindex1p))
             {
-                //post("find B");
                 t_rtext *yrt = glist_findrtext(x, (t_text *)y);
                 gui_vmess("gui_canvas_scroll_to_gobj", "xsi",
                     x, rtext_gettag(yrt), 1);
@@ -6581,8 +6595,10 @@ static int canvas_dofind(t_canvas *x, int *myindex1p)
 
 static void canvas_find(t_canvas *x, t_symbol *s, t_floatarg wholeword)
 {
+    //post("canvas_find");
     int myindex1 = 0;
     t_symbol *decodedsym = sys_decodedialog(s);
+    //post("...decodedsym=<%s>", decodedsym->s_name);
     if (!canvas_findbuf)
         canvas_findbuf = binbuf_new();
     binbuf_text(canvas_findbuf, decodedsym->s_name, strlen(decodedsym->s_name));
@@ -6599,6 +6615,7 @@ static void canvas_find(t_canvas *x, t_symbol *s, t_floatarg wholeword)
 
 static void canvas_find_again(t_canvas *x)
 {
+    //post("canvas_find_again");
     int myindex1 = 0;
     if (!canvas_findbuf || !canvas_whichfind)
         return;
