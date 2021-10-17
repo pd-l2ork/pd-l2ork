@@ -7507,55 +7507,60 @@ function zoom_level_to_chrome_percent(nw_win) {
 // ico@vt.edu 2021-04-20: used to autoscroll after doing the "find" request
 // on the main patch canvas
 function gui_canvas_scroll_to_gobj(cid, tag, smooth) {
-    //post("gui_canvas_scroll_to_gobj");
-    var x1, y1, x2, y2;
-    var gobj = get_gobj(cid, tag);
-    //post("gobj="+gobj+" tag="+tag);
-    var bbox = gobj.getBBox();
-    x1 = gobj.getCTM().e;
-    y1 = gobj.getCTM().f;
-    x2 = x1 + bbox.width;
-    y2 = y1 + bbox.height;
-    //post("x1="+x1+" y1="+y1+" x2="+x2+" y2="+y2);
-    /*window.scrollBy({
-        top: -100,
-        left: -100,
-        behavior: 'smooth'
-    });*/
-    gui(cid).get_nw_window(function(nw_win) {
-        var svg_elem = nw_win.window.document.getElementById("patchsvg");
-        var { x: x, y: y, w: width, h: height,
-            mw: min_width, mh: min_height } = canvas_params(nw_win);
-        //post("x="+x+" y="+y+" w="+width+" h="+height+
-        //  " mw="+min_width+" mh="+min_height);
-        //post("scrollX="+nw_win.window.scrollX+
-        //  " scrollY="+nw_win.window.scrollY);
-        var tlx, tly, brx, bry; // top-left x and y, bottom-right x and y
-        var offsetx = 0, offsety = 0; // final offset
+    //post("gui_canvas_scroll_to_gobj " +
+    //    (patchwin[cid] == null ? "not yet" : "got it"));
+    if (patchwin[cid] == null) {
+        setTimeout(gui_canvas_scroll_to_gobj, 500, cid, tag, smooth);
+    } else {
+        var x1, y1, x2, y2;
+        var gobj = get_gobj(cid, tag);
+        //post("gobj="+gobj+" tag="+tag);
+        var bbox = gobj.getBBox();
+        x1 = gobj.getCTM().e;
+        y1 = gobj.getCTM().f;
+        x2 = x1 + bbox.width;
+        y2 = y1 + bbox.height;
+        //post("x1="+x1+" y1="+y1+" x2="+x2+" y2="+y2);
+        /*window.scrollBy({
+            top: -100,
+            left: -100,
+            behavior: 'smooth'
+        });*/
+        gui(cid).get_nw_window(function(nw_win) {
+            var svg_elem = nw_win.window.document.getElementById("patchsvg");
+            var { x: x, y: y, w: width, h: height,
+                mw: min_width, mh: min_height } = canvas_params(nw_win);
+            //post("x="+x+" y="+y+" w="+width+" h="+height+
+            //  " mw="+min_width+" mh="+min_height);
+            //post("scrollX="+nw_win.window.scrollX+
+            //  " scrollY="+nw_win.window.scrollY);
+            var tlx, tly, brx, bry; // top-left x and y, bottom-right x and y
+            var offsetx = 0, offsety = 0; // final offset
 
-        tlx = x + nw_win.window.scrollX;
-        tly = y + nw_win.window.scrollY;
-        brx = tlx + min_width;
-        bry = tly + min_height;
-        //post("("+tlx+","+tly+") | ("+brx+","+bry+")");
+            tlx = x + nw_win.window.scrollX;
+            tly = y + nw_win.window.scrollY;
+            brx = tlx + min_width;
+            bry = tly + min_height;
+            //post("("+tlx+","+tly+") | ("+brx+","+bry+")");
 
-        if (x2 - brx > 0)
-            offsetx = x2 - brx + 30;
-        else if (x1 - tlx < 0)
-            offsetx = x1 - tlx - 30;
+            if (x2 - brx > 0)
+                offsetx = x2 - brx + 30;
+            else if (x1 - tlx < 0)
+                offsetx = x1 - tlx - 30;
 
-        if (y2 - bry > 0)
-            offsety = y2 - bry + 30;
-        else if (y1 - tly < 0)
-            offsety = y1 - tly - 30;
+            if (y2 - bry > 0)
+                offsety = y2 - bry + 30;
+            else if (y1 - tly < 0)
+                offsety = y1 - tly - 30;
 
-        //post("final x:"+offsetx+" y:"+offsety);
-        nw_win.window.scrollBy({
-            left: offsetx,
-            top: offsety,
-            behavior: (smooth === 1 ? 'smooth' : 'auto')
+            //post("final x:"+offsetx+" y:"+offsety);
+            nw_win.window.scrollBy({
+                left: offsetx,
+                top: offsety,
+                behavior: (smooth === 1 ? 'smooth' : 'auto')
+            });
         });
-    });
+    }
 }
 
 exports.gui_canvas_scroll_to_gobj = gui_canvas_scroll_to_gobj;
