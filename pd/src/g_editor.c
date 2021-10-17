@@ -107,6 +107,7 @@ int glob_alt = 0;
 static t_glist *canvas_last_glist;
 static int canvas_last_glist_x=20, canvas_last_glist_y=20, canvas_last_glist_mod,
     canvas_last_glist_click;
+static t_gobj *resized_gobj;
 
 struct _outlet
 {
@@ -2646,16 +2647,21 @@ int canvas_hitbox(t_canvas *x, t_gobj *y, int xpos, int ypos,
 t_gobj *canvas_findhitbox(t_canvas *x, int xpos, int ypos,
     int *x1p, int *y1p, int *x2p, int *y2p)
 {
+    //post("canvas_findhitbox...");
     t_gobj *y, *rval = 0;
     int x1, y1, x2, y2;
     *x1p = -0x7fffffff;
     for (y = x->gl_list; y; y = y->g_next)
     {
+        //post("   next");
         if (canvas_hitbox(x, y, xpos, ypos, &x1, &y1, &x2, &y2))
+        {
             //&& (x1 > *x1p))
             /* commented section looks for whichever is more to the right
                which is wrong since we are looking for topmost object */
-                *x1p = x1, *y1p = y1, *x2p = x2, *y2p = y2, rval = y; 
+                *x1p = x1, *y1p = y1, *x2p = x2, *y2p = y2, rval = y;
+                //post("   got it");
+        }
     }
     return (rval);
 }
@@ -3738,6 +3744,10 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
     }
 
     tooltip_erase(x);
+
+    // used to debugging whether resized_gobj reverts to NULL
+    // under all circumstances
+    //post("resized_gobj=%lx", resized_gobj);
     
     // read key and mouse button states
     shiftmod = (mod & SHIFTMOD);
@@ -3941,16 +3951,19 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
             // if we are inside a resizing hotspot of a text object...
             if (in_text_resizing_hotspot)
             {
+                //post("in_text_resizing_hotspot...");
                 // ...and we are clicking...
                 if (doit)
                 {
                     // ...select the object
+                    //post("...clicking");
                     if (!glist_isselected(x, y) ||
                         x->gl_editor->e_selection->sel_next)
                     {
                         glist_noselect(x);
                         glist_select(x, y);
                     }
+                    resized_gobj = y;
 
                     x->gl_editor->e_onmotion = MA_RESIZE;
                     x->gl_editor->e_xwas = x1;
@@ -5544,7 +5557,9 @@ void canvas_mouseup(t_canvas *x,
     // or an abstraction
     else if (x->gl_editor->e_onmotion == MA_RESIZE)
     {
-        scrollbar_synchronous_update(x);       
+        //post("mouseup MA_RESIZE");
+        scrollbar_synchronous_update(x);
+        resized_gobj = NULL;   
     }
     
     if ((x->gl_editor->e_onmotion != MA_CONNECT &&
@@ -6127,26 +6142,32 @@ void canvas_motion(t_canvas *x, t_floatarg xpos, t_floatarg ypos,
     }
     else if (x->gl_editor->e_onmotion == MA_RESIZE)
     {
+        //post("MA_RESIZE motion... %d %d", x->gl_editor->e_xwas, x->gl_editor->e_ywas);
         int x11=0, y11=0, x12=0, y12=0; 
-        t_gobj *y1;
-        if (y1 = canvas_findhitbox(x,
+        //t_gobj *y1;
+        /*if (y1 = canvas_findhitbox(x,
             x->gl_editor->e_xwas, x->gl_editor->e_ywas,
-                &x11, &y11, &x12, &y12))
+                &x11, &y11, &x12, &y12))*/
+        if (resized_gobj)
         {
+            canvas_hitbox(x, resized_gobj,
+                x->gl_editor->e_xwas, x->gl_editor->e_ywas,
+                &x11, &y11, &x12, &y12);
             int wantwidth = xpos - x11;
-            t_object *ob = pd_checkobject(&y1->g_pd);
+            t_object *ob = pd_checkobject(&resized_gobj->g_pd);
             if (ob && (ob->te_pd->c_wb == &text_widgetbehavior ||
                        ob->te_type == T_ATOM ||
                        (ob->ob_pd == canvas_class &&
                         !((t_canvas *)ob)->gl_isgraph)))
             {
+                //post("...object");
                 wantwidth = wantwidth / sys_fontwidth(glist_getfont(x));
                 if (wantwidth < 1)
                     wantwidth = 1;
                 ob->te_width = wantwidth;
-                gobj_vis(y1, x, 0);
+                gobj_vis(resized_gobj, x, 0);
                 canvas_fixlinesfor(x, ob);
-                gobj_vis(y1, x, 1);
+                gobj_vis(resized_gobj, x, 1);
                 // object vis function should check if the object is still
                 // selected, so as to draw the outline in the right color
                 // it should also tag all aspects with selected tag
@@ -6155,12 +6176,14 @@ void canvas_motion(t_canvas *x, t_floatarg xpos, t_floatarg ypos,
             }
             else if (ob && ob->ob_pd == canvas_class)
             {
+                //post("...canvas");
                 t_pd *sh = (t_pd *)((t_canvas *)ob)->x_handle;
                 pd_vmess(sh, gensym("_motion"), "ff", (t_float)xpos,
                     (t_float)ypos);
             }
             else if (ob && ob->te_iemgui)
             {
+                //post("...iemgui");
                 t_pd *sh = (t_pd *)((t_iemgui *)ob)->x_handle;
                 pd_vmess(sh, gensym("_motion"), "ff", (t_float)xpos, (t_float)ypos);
                 //pd_vmess(sh, gensym("_click"), "fff", 0, xpos, ypos);
@@ -6168,13 +6191,15 @@ void canvas_motion(t_canvas *x, t_floatarg xpos, t_floatarg ypos,
             else if (ob && (pd_class(&ob->te_pd)->c_name == gensym("Scope~")
                             || pd_class(&ob->te_pd)->c_name == gensym("grid")))
             {
+                //post("...scope/grid");
                 pd_vmess((t_pd *)ob, gensym("_motion_for_resizing"),
                     "ff", (t_float)xpos, (t_float)ypos);
             }
-            else post("not resizable");
+            else post("...not resizable");
         }
         else // resizing a gop rectangle
         {
+            //post("...gop rectangle");
             t_pd *sh = (t_pd *)x->x_handle;
             pd_vmess(sh, gensym("_motion"), "ff", (t_float)xpos, (t_float)ypos);
             //post("moving a gop rect");
