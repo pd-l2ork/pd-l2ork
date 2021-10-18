@@ -1,10 +1,4 @@
 PD-L2ORK TODO:
-*Find again in subpatch gives wrong result.
-
-*see net-i.pd abstraction where resizing bottom comment still resizes the one below it.
-
-*highlight number value inside gatom when pressing enter.
-
 *check if the defunct image object works.
 
 *finish and integrate gop drawing order work (see if there is something in the branch log to pull as to the status of the work).
@@ -23,6 +17,8 @@ PD-L2ORK TODO:
 *fix inefficiency of the profuse console output.
 
 *add ability to custom name each instance of pd-l2ork (pd~?).
+
+*think about a way to deterministically inform both front-end and the back-end that the canvas has indeed loaded. See https://stackoverflow.com/questions/4057236/how-to-add-onload-event-to-a-div-element/55106785#58838457 (Third Attempt (and Definitive Solution))
 
 RARE:
 *Pd-L2Ork sporadic crashes when opening/closing L2OrkTweet.pd and L2Ork-Tweeter.pd.
@@ -83,7 +79,13 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Vastly improved performance using the new passthrough mode. Changed how the passthrough mode 3 communicates mouse events.
 *Updated image help file and its dialog to reflect changes in image behavior.
 *Updated the install README.
-
+*Fixed a long-standing pd bug where resizing a text object whose x1 and y1 overlap with another one above it results in the wrong object being resized.
+*Fixed a long-standing bug where trying to connect an object whose outlet we wish to connect from is partially covered by another object which has no outlets (e.g. comment), even though the connection cord is initially created, it does not want to connect to other objects (inlets are not highlighted and upon releasing the mouse button, the connection never happens). This is because previous logic relied on canvas_findhitbox which is not checking whether objects have nlets, so it returns topmost object, rather than the topmost one with outlets (which is the one we started connecting from).
+*Fixed a bug where scroll_to_gobj (e.g. when using "find" feature) would be called before a new window is properly registered, and, as a result it would trigger a js error. Now, it waits until the window is properly registered.
+*Fixed a bug where calling "find again" in a subpatch that was opened by a "find again" request, gives wrong result. Further refined the previous bug-fix.
+*Reworked the find logic when searched across multiple windows and with multiple search bars open. Whenever search reaches a subpatch with an open search bar, it closes it to minimize confusion. Find again always goes back to the current search scope (toplevel patch) and search word until user clicks on a search button in any find bar (at which point that becomes the toplevel patch with its search text.
+*Added highlight for gatoms when being edited directly by user (when pressing enter).
+*Added highlight for numbox2 when being edited directly by user (when pressing enter).
 
 TWEETER TODO:
 *Server load session for all

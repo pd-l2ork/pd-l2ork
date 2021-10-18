@@ -991,6 +991,8 @@ static void my_numbox_key(void *z, t_floatarg fkey)
             x->x_shiftclick = -1;
         }
         sys_queuegui(x, x->x_gui.x_glist, my_numbox_draw_update);
+        gui_vmess("gui_highlight_obj_on_return", "xxs",
+            glist_getcanvas(x->x_gui.x_glist), x, "numbox2");
     }
 
     // pressing Esc key removes exclusive focus
