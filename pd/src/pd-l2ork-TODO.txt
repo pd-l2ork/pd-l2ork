@@ -1,6 +1,4 @@
 PD-L2ORK TODO:
-*mycanvas dialog says image width instead of just width.
-
 *deal with weird message resizing issue that causes text to scroll.
 
 *check if the defunct image object works.
@@ -91,6 +89,7 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Added highlight for gatoms when being edited directly by user (when pressing enter).
 *Added highlight for numbox2 when being edited directly by user (when pressing enter).
 *It appears on Ubuntu 20.04, large windows get automatically maximized. This adversely affects Tweeter appearance. The only way to fix this is to adjust Ubuntu settings by typing "gsettings set org.gnome.mutter auto-maximize false". Later, we will look into adding "maximizable" and other options from 1.x and beyond to the window management.
+*Fixed a bug where mycanvas dialog says image width instead of rectangle width. Fixed co-dependence of the dialog_image and dialog_iemgui and added missing translation entries for fr and de translations.
 
 TWEETER TODO:
 *Make reliable sync when doing copying of loops and patterns (maybe send the sync data back to server?). Is this even a problem or a matter of user error?
