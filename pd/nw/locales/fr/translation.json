@@ -75,10 +75,20 @@
       "mknob_steps_tt": "Nombre de positions du cadran pour le bouton",
       "mknob_size":    "Taille",
       "mknob_size_tt": "Taille du bouton",
+      "image_visible_width": "Largeur de l'image",
+      "image_visible_width_tt": "largeur d'image spécifiée par l'utilisateur",
+      "image_visible_height": "hauteur de l'image",
+      "image_visible_height_tt": "hauteur d'image spécifiée par l'utilisateur",
+      "image_sel_width":       "largeur de la bordure",
+      "image_sel_width_tt":     "largeur de la zone de sélection en pixels",
+      "image_sel_height":       "hauteur de la bordure",
+      "image_sel_height_tt":    "hauteur de la zone de sélection en pixels",
       "exclusive": "focus clavier exclusif",
       "exclusive_tt": "si l'objet capture toutes les entrées du clavier pendant la mise au point",
       "interactive":    "interactif",
-      "interactive_tt": "si l'utilisateur peut interagir directement avec l'objet (par exemple en cliquant dessus)"
+      "interactive_tt": "si l'utilisateur peut interagir directement avec l'objet (par exemple en cliquant dessus)",
+      "autoupdate":    "mise à jour sur la touche haut/bas",
+      "autoupdate_tt": "sortie automatiquement la valeur à chaque changement à l'aide des touches haut/bas (y compris shift+haut/bas)"
     }
   },
   "gatom": {
@@ -104,9 +114,7 @@
       "limit": "basculer min/max pour les valeurs saisies",
       "limit_tt": "garder les valeurs saisies dans les limites minimum/maximum",
       "interactive":    "interactif",
-      "interactive_tt": "si l'utilisateur peut interagir directement avec l'objet (par exemple en cliquant dessus)",
-      "autoupdate":    "mise à jour sur la touche haut/bas",
-      "autoupdate_tt": "sortie automatiquement la valeur à chaque changement à l'aide des touches haut/bas (y compris shift+haut/bas)"
+      "interactive_tt": "si l'utilisateur peut interagir directement avec l'objet (par exemple en cliquant dessus)"
     }
   },
   "menu": {
