@@ -328,7 +328,7 @@ mark.console_find_highlighted {
 }
 
 p.msg::after {
-    content: "";
+    /* content: ""; this causes weird scrolling of the text when one adds excess spaces at the end of the text at maximum width */
     height: 100%;
     width: 5px;
     /* background-image: url(../msg-box-flag.svg); */
