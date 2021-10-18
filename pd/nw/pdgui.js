@@ -8277,17 +8277,22 @@ exports.restore_apps = restore_apps;
 // ico@vt.edu 2021-08-20: variable to inform the pdgui when the object
 // has been grabbed. We use this to enable pasting of text inside gatoms
 // LATER: consider using this for other purposes, as well
-var gobj_grabbed = 0;
+var gobj_grabbed = {};
 
-function gui_gobj_grabbed(val) {
-    gobj_grabbed = val;
-    //post("gui_gobj_grabbed " + gobj_grabbed);
+function gui_gobj_grabbed(cid, val) {
+    gobj_grabbed[cid] = val;
+    //post("gui_gobj_grabbed " + gobj_grabbed[cid]);
 }
 
 exports.gui_gobj_grabbed = gui_gobj_grabbed;
 
-function gui_is_gobj_grabbed() {
-    return gobj_grabbed;
+function gui_is_gobj_grabbed(cid) {
+    if (gobj_grabbed[cid] == null) {
+        //post("initializing gobj_grabbed");
+        gobj_grabbed[cid] = 0;
+    }
+    //post("gui_is_gobj_grabbed "+ gobj_grabbed[cid]);
+    return gobj_grabbed[cid];
 }
 
 exports.gui_is_gobj_grabbed = gui_is_gobj_grabbed;

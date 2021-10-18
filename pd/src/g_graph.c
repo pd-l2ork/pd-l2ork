@@ -383,12 +383,12 @@ void glist_grab(t_glist *x, t_gobj *y, t_glistmotionfn motionfn, t_glistkeyfn ke
     if (motionfn)
     {
         x2->gl_editor->e_onmotion = MA_PASSOUT;
-        gui_vmess("gui_gobj_grabbed", "i", 1);
+        gui_vmess("gui_gobj_grabbed", "xi", x, 1);
     }
     else
     {
         x2->gl_editor->e_onmotion = 0;
-        gui_vmess("gui_gobj_grabbed", "i", 0);
+        gui_vmess("gui_gobj_grabbed", "xi", x, 0);
     }
     x2->gl_editor->e_grab = y;
     x2->gl_editor->e_motionfn = motionfn;
