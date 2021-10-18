@@ -1,6 +1,4 @@
 PD-L2ORK TODO:
-*deal with weird message resizing issue that causes text to scroll.
-
 *check if the defunct image object works.
 
 *finish and integrate gop drawing order work (see if there is something in the branch log to pull as to the status of the work).
@@ -23,10 +21,8 @@ PD-L2ORK TODO:
 *think about a way to deterministically inform both front-end and the back-end that the canvas has indeed loaded. See https://stackoverflow.com/questions/4057236/how-to-add-onload-event-to-a-div-element/55106785#58838457 (Third Attempt (and Definitive Solution))
 
 RARE:
-*Pd-L2Ork sporadic crashes when opening/closing L2OrkTweet.pd and L2Ork-Tweeter.pd.
-*check for stray bug where bang and other objects stop working and bang objects gets stuck in on mode until the mouse is moved (nw.js bug?).
-*check for stray bug where suddenly copy/paste stops working.
-*Check if passthrough still passes pointer motion to other canvases that are not gop (e.g. tracker).
+*Pd-L2Ork sporadic crashes when opening/closing L2OrkTweet.pd and L2Ork-Tweeter.pd. These are now sparser (suspect something on the nw.js side of things).
+*check for stray/sporadic bug where bang and other objects stop working and bang objects gets stuck in on mode until the mouse is moved (nw.js bug?).
 
 
  
@@ -90,6 +86,9 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Added highlight for numbox2 when being edited directly by user (when pressing enter).
 *It appears on Ubuntu 20.04, large windows get automatically maximized. This adversely affects Tweeter appearance. The only way to fix this is to adjust Ubuntu settings by typing "gsettings set org.gnome.mutter auto-maximize false". Later, we will look into adding "maximizable" and other options from 1.x and beyond to the window management.
 *Fixed a bug where mycanvas dialog says image width instead of rectangle width. Fixed co-dependence of the dialog_image and dialog_iemgui and added missing translation entries for fr and de translations.
+*Fixed weird message resizing issue that causes text inside to be partially invisible and to scroll.
+*Fixed a regression where sometimes copying stops working, triggering the following error: TypeError: Cannot read property 'classlist' of undefined.
+
 
 TWEETER TODO:
 *Make reliable sync when doing copying of loops and patterns (maybe send the sync data back to server?). Is this even a problem or a matter of user error?
