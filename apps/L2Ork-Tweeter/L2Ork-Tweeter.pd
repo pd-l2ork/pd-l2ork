@@ -1,36 +1,145 @@
 #N canvas 142 7 1638 975 10;
-#X obj -4 0 cnv 15 1637 973 empty empty empty 5 7 0 10 #444444 #fcfcfc
+#X obj 0 0 cnv 15 1637 973 empty empty empty 5 7 0 10 #444444 #fcfcfc
 0;
-#X obj 0 2 cnv 15 1631 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
+#X obj 4 2 cnv 15 1630 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 1 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.51\ by
+#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.52\ by
 4 5 0 10 #6c6c6c #fcfcfc 0;
-#X obj 247 3 cnv 15 125 16 empty empty (c)\ 2020-1\ Released\ under\ the
+#X obj 251 3 cnv 15 125 16 empty empty (c)\ 2020-1\ Released\ under\ the
 4 6 0 10 #6c6c6c #fcfcfc 0;
-#X obj 0 24 cnv 15 280 41 empty empty empty 4 5 0 10 #6c6c6c #fcfcfc
+#X obj 4 24 cnv 15 280 41 empty empty empty 4 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 9 28 cnv 8 121 8 empty empty HOSTNAME:PORT -1 5 0 10 #6c6c6c
+#X obj 13 28 cnv 8 121 8 empty empty HOSTNAME:PORT -1 5 0 10 #6c6c6c
 #fcfcfc 0;
-#X symbolatom 8 42 37 0 0 2 - #0-hostname-r #0-hostname-s 1 0 1, f
-37;
-#X obj 395 24 cnv 15 490 41 empty empty empty 4 5 0 10 #6c6c6c #fcfcfc
+#X symbolatom 12 42 37 0 0 2 - #0-hostname-r #0-hostname-s 1 0 1,
+f 37;
+#X obj 399 24 cnv 15 490 41 empty empty empty 4 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 888 24 cnv 15 555 41 empty empty empty 4 5 0 10 #6c6c6c #fcfcfc
+#X obj 892 24 cnv 15 555 41 empty empty empty 4 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 894 28 cnv 8 70 8 empty empty CHAT -1 5 0 10 #6c6c6c #fcfcfc
+#X obj 898 28 cnv 8 70 8 empty empty CHAT -1 5 0 10 #6c6c6c #fcfcfc
 0;
-#X symbolatom 894 42 90 0 0 0 - #0-chat-r #0-chat-s 1 0 1, f 90;
-#X obj 1446 24 cnv 15 184 41 empty empty empty 4 5 0 10 #6c6c6c #fcfcfc
+#X symbolatom 898 42 90 0 0 0 - #0-chat-r #0-chat-s 1 0 1, f 90;
+#X obj 1450 24 cnv 15 184 41 empty empty empty 4 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 1501 28 cnv 8 70 8 empty empty SESSION\ NAME -1 5 0 10 #6c6c6c
+#X obj 1505 28 cnv 8 70 8 empty empty SESSION\ NAME -1 5 0 10 #6c6c6c
 #fcfcfc 0;
-#X symbolatom 1474 42 21 0 0 0 - session-name-r session-name-s 1 0
+#X symbolatom 1478 42 21 0 0 0 - session-name-r session-name-s 1 0
 1, f 21;
-#X obj 1455 42 bng 16 250 50 0 load-session load-session-r LOAD -4
+#X obj 1459 42 bng 16 250 50 0 load-session load-session-r LOAD -4
 -9 0 10 #80fc80 #008080 #fcfcfc 1;
-#X obj 1605 42 bng 16 250 50 0 save-session save-session-r SAVE -5
+#X obj 1609 42 bng 16 250 50 0 save-session save-session-r SAVE -5
 -9 0 10 #fcb46c #fc6418 #fcfcfc 1;
-#N canvas 769 452 503 135 settings 0;
+#X obj 243 42 nbx 2 16 0 12 0 0 \$0-slot-s null-r empty 1 -9 0 12 #fcb46c
+#000000 #000000 0 256 0 1 1 0;
+#X obj 247 28 cnv 8 10 8 empty empty SLOT -1 5 0 10 #6c6c6c #fcfcfc
+0;
+#X obj 287 24 cnv 15 55 41 empty empty empty 4 5 0 10 #6c6c6c #fcfcfc
+0;
+#X obj 306 42 bng 16 250 50 0 reconnect null-r CONNECT -13 -9 0 10
+#fc6418 #000000 #fcfcfc 1;
+#X obj 345 24 cnv 15 51 41 empty empty empty 4 5 0 10 #6c6c6c #fcfcfc
+0;
+#X obj 356 42 cnv 15 30 16 null-s nclients-gui 0 3 6 0 12 #202020 #fcfcfc
+0;
+#X obj 356 28 cnv 8 8 8 empty empty USERS -1 5 0 10 #6c6c6c #fcfcfc
+0;
+#X obj 3 68 core/L2OrkTweet 1;
+#X obj 549 30 nbx 4 15 1 9999 0 0 \$0-store-loop \$0-store-loop-r empty
+-64 5 0 12 #fcb46c #000000 #000000 1 256 0 1 1 0;
+#X obj 549 45 nbx 4 15 1 9999 0 0 \$0-recall-loop \$0-recall-loop-r
+empty -64 5 0 12 #80fc80 #000000 #000000 1 256 0 1 1 0;
+#X obj 414 30 cnv 8 10 8 empty empty STORE\ LOOP\ (shift+1-0) -1 5
+0 10 #6c6c6c #fcfcfc 0;
+#X obj 408 45 cnv 8 10 8 empty empty RECALL\ LOOP\ (shift+q-p) -1 5
+0 10 #6c6c6c #fcfcfc 0;
+#X obj 603 30 bng 15 250 50 0 \$0-store-loop-apply \$0-store-loop-apply-r
+empty -5 -9 0 10 #fcb46c #fc6418 #fcfcfc 1;
+#X obj 603 45 bng 15 250 50 0 \$0-recall-loop-apply \$0-recall-loop-apply-r
+empty -5 -9 0 10 #80fc80 #008080 #fcfcfc 1;
+#X obj 813 30 nbx 4 15 1 9999 0 0 \$0-store-preset \$0-store-preset-r
+empty -64 5 0 12 #fcb46c #000000 #000000 1 256 0 1 1 0;
+#X obj 813 45 nbx 4 15 1 9999 0 0 \$0-recall-preset \$0-recall-preset-r
+empty -64 5 0 12 #80fc80 #000000 #000000 1 256 0 1 1 0;
+#X obj 666 30 cnv 8 10 8 empty empty STORE\ PRESET\ (shift+a-:) -1
+5 0 10 #6c6c6c #fcfcfc 0;
+#X obj 660 45 cnv 8 10 8 empty empty RECALL\ PRESET\ (shift+z-/) -1
+5 0 10 #6c6c6c #fcfcfc 0;
+#X obj 867 30 bng 15 250 50 0 \$0-store-preset-apply \$0-store-preset-apply-r
+empty -5 -9 0 10 #fcb46c #fc6418 #fcfcfc 1;
+#X obj 867 45 bng 15 250 50 0 \$0-recall-preset-apply \$0-recall-preset-apply-r
+empty -5 -9 0 10 #80fc80 #008080 #fcfcfc 1;
+#X obj 3 219 core/L2OrkTweet 2;
+#X obj 3 370 core/L2OrkTweet 3;
+#X obj 3 521 core/L2OrkTweet 4;
+#X obj 3 672 core/L2OrkTweet 5;
+#X obj 3 823 core/L2OrkTweet 6;
+#X obj 820 68 core/L2OrkTweet 7;
+#X obj 820 219 core/L2OrkTweet 8;
+#X obj 820 370 core/L2OrkTweet 9;
+#X obj 820 521 core/L2OrkTweet 10;
+#N canvas 705 180 513 623 supplemental-documentation 0;
+#X obj 0 0 cnv 15 512 621 empty empty empty 20 12 0 14 #e0e0e0 #404040
+0;
+#X obj 10 550 cnv 15 65 17 empty empty empty 20 12 0 14 #fcb46c #404040
+0;
+#X obj 10 379 cnv 15 160 17 empty empty empty 20 12 0 14 #fcb46c #404040
+0;
+#X obj 10 329 cnv 15 52 17 empty empty empty 20 12 0 14 #fcb46c #404040
+0;
+#X obj 10 266 cnv 15 112 17 empty empty empty 20 12 0 14 #fcb46c #404040
+0;
+#X obj 10 81 cnv 15 106 17 empty empty empty 20 12 0 14 #fcb46c #404040
+0;
+#X text 10 11 Please consider viewing the introductory video found
+at:;
+#X obj 9 31 pddp/pddplink http://bit.ly/L2Ork-Tweeter;
+#X text 10 81 Instrument Levels;
+#X text 10 266 Instrument Presets;
+#X text 10 287 Shift+Up/Down: increase/decrease preset instrument number
+and immediately apply it., f 82;
+#X text 10 329 Main Mix;
+#X text 10 350 Left/Right: incrementally change the panning of the
+main output., f 82;
+#X text 10 235 Shift+Backslash (or |): set instrument output level
+to one or 100% (unity)., f 82;
+#X text 10 101 ' (key next to Return): set instrument output level
+to zero (OVR/LVL slider). Repeat press sets it temporarily to the last
+known value \, while upon release it reverts to zero., f 82;
+#X text 10 379 Sharing Loops and Patterns;
+#X text 10 456 single click - copy presetdouble click - copy looptriple
+click - copy preset and loopshift + single click - copy preset \,
+including also main out and pan values shift + double click - copy
+loop \, including time syncshift + triple click - copy everything
+, f 82;
+#X text 10 400 As of 0.46 you can now easily share your patterns and
+loops with others. To do so \, you will want to click on the user number
+you wish to copy instrument and/or loop from \, using one of the following
+clicking actions that need to be performed within the 500ms of initiating
+the first click:, f 82;
+#X text 11 550 Hover Mode;
+#X text 11 571 When hover mode is enabled \, you can enter notes anywhere
+on the tracker timeline regardless where the timebar is currently located.
+Delete \, shift+delete \, and ~ (insert) also work in this mode.,
+f 82;
+#X text 10 51 Below is a list of additional commands that are not clearly
+annotated elsewhere., f 82;
+#X text 10 148 Return or Enter: set instrument output level to the
+last known value (OVR/LVL slider). Repeat press sets it temporarily
+to zero \, while upon release it reverts to the last known value. When
+holding Return/Enter pressed during changing of instruments (e.g. \,
+using shift+up/down) \, the instrument will remain silent until the
+Return/Enter key is released \, at which point \, the level will revert
+to the new instrument's value., f 82;
+#X restore 1326 3 pd supplemental-documentation (click here);
+#X obj 1171 3 pddp/pddplink http://l2ork.icat.vt.edu;
+#X obj 153 3 pddp/pddplink http://ico.bukvic.net -text Ivica Ico Bukvic
+;
+#X obj 434 3 pddp/pddplink https://www.gnu.org/licenses/gpl-3.0.en.html
+-text GPL v3 License;
+#X obj 820 672 core/L2OrkTweet 11;
+#X obj 820 823 core/L2OrkTweet 12;
+#N canvas 769 452 503 135 core 0;
 #N canvas 139 226 861 565 loop-logic 0;
 #X obj 506 413 r myclientnum;
 #X obj 101 566 forward null;
@@ -182,7 +291,7 @@ f 25;
 #X obj 272 245 list prepend;
 #X obj 354 223 r myclientnum;
 #X text 20 41 machine that goes ping!;
-#X obj 891 554 s network-in;
+#X obj 951 528 s network-in;
 #X text 352 245 this adds client num (according to the server), f
 25;
 #X text 84 277 this prepends the send command;
@@ -191,7 +300,6 @@ f 25;
 #X msg 220 665 -1;
 #X obj 20 61 r myid;
 #X obj 798 296 delay 500;
-#X obj 852 499 route report;
 #X text 712 12 initiates connection;
 #X obj 313 866 tosymbol;
 #X obj 323 682 sel 1;
@@ -222,15 +330,15 @@ f 25;
 #X obj 586 903 print SERVER;
 #X obj 20 103 pipe 100;
 #X obj 20 82 > 0;
-#X obj 489 571 unpack 0 0;
-#X obj 572 600 sel 1 0;
-#X obj 564 736 pack 0 s;
-#X msg 591 642 symbol disconnected;
-#X msg 572 621 symbol connected;
-#X msg 564 758 user \$1 \$2;
+#X obj 491 571 unpack 0 0;
+#X obj 574 600 sel 1 0;
+#X obj 566 736 pack 0 s;
+#X msg 593 642 symbol disconnected;
+#X msg 574 621 symbol connected;
+#X msg 566 758 user \$1 \$2;
 #X msg 305 628 \; \$1-remote-user-gui-update \$2;
 #X obj 750 638 r myclientnum;
-#X obj 470 533 t l l l;
+#X obj 472 533 t l l l;
 #X obj 735 616 unpack 0 0;
 #X obj 735 660 ==;
 #X obj 777 715 f;
@@ -303,13 +411,13 @@ server-compatible version of the client available at http://l2ork.music.vt.edu/m
 #000000 #000000 0 256 0 0 1 0;
 #X obj 20 538 sel 0 1;
 #X obj 861 140 delay 250;
-#X obj 489 621 sel -1;
-#X obj 430 571 route -1;
+#X obj 491 621 sel -1;
+#X obj 432 571 route -1;
 #X text 817 664 locally disconnects client if its ping is running late
 to keep its state in sync with the server (does not work for guests)
 , f 23;
-#X obj 489 736 pack 0 s;
-#X msg 489 758 guest \$2;
+#X obj 491 736 pack 0 s;
+#X msg 491 758 guest \$2;
 #X obj 861 206 lister;
 #X obj 901 184 s2l :;
 #X msg 861 296 connect \$1 \$2;
@@ -321,7 +429,7 @@ to keep its state in sync with the server (does not work for guests)
 #X msg 798 371 send whatismyid \$1;
 #X obj 798 350 f 0;
 #X obj 813 329 r \$0-slot-s;
-#X obj 593 532 s disconnect;
+#X obj 599 532 s disconnect;
 #X obj 360 706 t f f f;
 #X obj 277 35 keyname;
 #X obj 316 60 sel ShiftCtrlF12;
@@ -344,37 +452,37 @@ to keep its state in sync with the server (does not work for guests)
 #X obj 376 133 r silent-disconnect;
 #X msg 376 158 disconnect;
 #N canvas 557 284 450 323 session-management 0;
-#X obj 253 39 inlet;
-#X obj 152 39 r myclientnum;
-#X obj 152 64 != -1;
-#X obj 152 89 gate 1 0;
-#X obj 152 114 route load save;
-#X obj 152 139 tosymbol;
-#X obj 152 164 t b s;
-#X obj 212 139 tosymbol;
-#X obj 212 164 t b s;
-#X obj 179 234 s session-name-r;
-#X obj 152 211 s load-session-r;
-#X obj 212 187 s save-session-r;
+#X obj 193 39 inlet;
+#X obj 92 39 r myclientnum;
+#X obj 92 64 != -1;
+#X obj 92 89 gate 1 0;
+#X obj 92 114 route load save;
+#X obj 92 164 t b s;
+#X obj 162 139 tosymbol;
+#X obj 162 164 t b s;
+#X obj 119 234 s session-name-r;
+#X obj 92 211 s load-session-r;
+#X obj 162 187 s save-session-r;
+#X obj 92 139 unpack s f;
+#X obj 149 260 s load-session-delayed-network-sync;
 #X connect 0 0 3 1;
 #X connect 1 0 2 0;
 #X connect 2 0 3 0;
 #X connect 3 0 4 0;
-#X connect 4 0 5 0;
-#X connect 4 1 7 0;
-#X connect 5 0 6 0;
-#X connect 6 0 10 0;
-#X connect 6 1 9 0;
-#X connect 7 0 8 0;
-#X connect 8 0 11 0;
-#X connect 8 1 9 0;
-#X restore 655 554 pd session-management;
+#X connect 4 0 11 0;
+#X connect 4 1 6 0;
+#X connect 5 0 9 0;
+#X connect 5 1 8 0;
+#X connect 6 0 7 0;
+#X connect 7 0 10 0;
+#X connect 7 1 8 0;
+#X connect 11 0 5 0;
+#X connect 11 1 12 0;
+#X restore 663 554 pd session-management;
 #X msg 627 251 \; \$1-override-solo 0 \; \$1-manual-toggle-tracker
 0 \;, f 26;
 #X obj 539 179 t b b;
 #X obj 501 133 r override-disconnect;
-#X obj 409 499 route status connection server disconnect session loop-length
-, f 62;
 #X obj 978 554 r myclientnum;
 #X obj 978 638 pack 0 0, f 15;
 #X msg 978 667 \; \$2-manual-loop-length \$1;
@@ -385,159 +493,162 @@ to keep its state in sync with the server (does not work for guests)
 #X obj 693 792 t l l;
 #X msg 720 819 \$2;
 #X obj 720 843 sprintf server v.%.02f;
-#X text 933 492 rightmost option is for all other clients, f 22;
-#X obj 753 474 route myclientnum;
-#X text 753 401 ignore local changes among broadcast messages \, except
+#X obj 783 474 route myclientnum;
+#X text 653 401 ignore local changes among broadcast messages \, except
 when message from server calls for a report (to sync other clients)
 \, or if a teacher patch uses report to change remoteuser settings
 (report with a bang requests report \, otherwiseit feeds the values)
 , f 61;
+#X text 962 491 rightmost outlet is for all other clients, f 23;
+#X obj 882 499 route report;
+#X obj 409 499 route status connection server disconnect session loop-length
+, f 64;
 #X connect 0 0 1 0;
-#X connect 1 0 31 1;
+#X connect 1 0 30 1;
 #X connect 2 0 3 0;
 #X connect 3 0 4 0;
 #X connect 4 0 11 0;
 #X connect 5 0 0 0;
-#X connect 6 0 50 0;
-#X connect 6 1 26 0;
-#X connect 6 1 45 0;
-#X connect 6 1 31 0;
+#X connect 6 0 49 0;
+#X connect 6 1 25 0;
+#X connect 6 1 44 0;
+#X connect 6 1 30 0;
 #X connect 7 0 11 1;
 #X connect 9 0 8 0;
 #X connect 9 1 10 0;
-#X connect 9 1 135 1;
+#X connect 9 1 132 1;
 #X connect 11 0 5 0;
 #X connect 12 0 0 0;
 #X connect 13 0 12 1;
 #X connect 18 0 12 0;
 #X connect 19 0 20 0;
 #X connect 20 0 10 0;
-#X connect 21 0 53 0;
-#X connect 22 0 96 0;
-#X connect 23 0 15 0;
-#X connect 23 1 15 0;
-#X connect 25 0 32 0;
-#X connect 26 1 99 0;
-#X connect 27 0 68 1;
-#X connect 28 0 121 0;
-#X connect 29 0 30 0;
-#X connect 30 0 2 0;
-#X connect 31 0 6 0;
-#X connect 34 0 37 0;
-#X connect 37 0 36 0;
-#X connect 37 1 35 0;
-#X connect 39 0 0 0;
-#X connect 40 0 130 0;
-#X connect 41 0 42 0;
-#X connect 43 0 88 0;
-#X connect 46 0 78 0;
-#X connect 48 0 22 0;
-#X connect 48 1 81 0;
-#X connect 48 2 49 0;
-#X connect 50 0 9 0;
-#X connect 50 1 99 0;
-#X connect 50 2 47 0;
-#X connect 50 3 123 0;
-#X connect 50 4 135 0;
-#X connect 52 0 2 0;
-#X connect 53 0 52 0;
-#X connect 54 0 82 0;
-#X connect 54 1 55 0;
+#X connect 21 0 52 0;
+#X connect 22 0 95 0;
+#X connect 24 0 31 0;
+#X connect 25 1 98 0;
+#X connect 26 0 67 1;
+#X connect 27 0 120 0;
+#X connect 28 0 29 0;
+#X connect 29 0 2 0;
+#X connect 30 0 6 0;
+#X connect 33 0 36 0;
+#X connect 36 0 35 0;
+#X connect 36 1 34 0;
+#X connect 38 0 0 0;
+#X connect 39 0 128 0;
+#X connect 40 0 41 0;
+#X connect 42 0 87 0;
+#X connect 45 0 77 0;
+#X connect 47 0 22 0;
+#X connect 47 1 80 0;
+#X connect 47 2 48 0;
+#X connect 49 0 9 0;
+#X connect 49 1 98 0;
+#X connect 49 2 46 0;
+#X connect 49 3 136 0;
+#X connect 49 4 132 0;
+#X connect 51 0 2 0;
+#X connect 52 0 51 0;
+#X connect 53 0 81 0;
+#X connect 53 1 54 0;
+#X connect 54 0 57 0;
+#X connect 54 1 56 0;
 #X connect 55 0 58 0;
-#X connect 55 1 57 0;
-#X connect 56 0 59 0;
-#X connect 57 0 56 1;
-#X connect 57 0 85 1;
-#X connect 58 0 56 1;
-#X connect 58 0 85 1;
-#X connect 59 0 51 0;
-#X connect 61 0 64 1;
-#X connect 62 0 83 0;
-#X connect 62 1 54 0;
-#X connect 62 2 63 0;
-#X connect 63 0 64 0;
-#X connect 63 1 65 1;
+#X connect 56 0 55 1;
+#X connect 56 0 84 1;
+#X connect 57 0 55 1;
+#X connect 57 0 84 1;
+#X connect 58 0 50 0;
+#X connect 60 0 63 1;
+#X connect 61 0 82 0;
+#X connect 61 1 53 0;
+#X connect 61 2 62 0;
+#X connect 62 0 63 0;
+#X connect 62 1 64 1;
+#X connect 63 0 65 0;
 #X connect 64 0 66 0;
-#X connect 65 0 67 0;
-#X connect 66 0 65 0;
-#X connect 67 0 116 0;
-#X connect 68 0 69 0;
-#X connect 69 0 71 0;
-#X connect 69 1 48 0;
-#X connect 69 2 68 0;
-#X connect 70 0 68 0;
-#X connect 71 0 70 0;
-#X connect 73 0 51 0;
-#X connect 74 0 80 0;
-#X connect 76 0 75 0;
-#X connect 77 0 75 0;
-#X connect 78 0 79 0;
-#X connect 79 0 25 0;
-#X connect 80 0 76 0;
-#X connect 80 1 77 0;
-#X connect 81 0 92 0;
-#X connect 82 0 85 0;
-#X connect 82 1 56 0;
-#X connect 83 1 60 0;
-#X connect 85 0 86 0;
-#X connect 86 0 51 0;
-#X connect 87 0 91 0;
-#X connect 88 0 87 1;
-#X connect 89 0 6 0;
-#X connect 90 1 94 1;
-#X connect 91 0 94 0;
-#X connect 91 1 90 0;
-#X connect 92 0 87 0;
-#X connect 92 1 93 0;
-#X connect 93 0 90 0;
-#X connect 94 0 89 0;
-#X connect 95 0 6 0;
-#X connect 96 0 95 0;
-#X connect 97 0 96 1;
-#X connect 99 0 33 0;
-#X connect 99 1 79 0;
-#X connect 99 2 34 0;
-#X connect 100 0 102 0;
-#X connect 100 1 101 0;
-#X connect 101 0 104 0;
-#X connect 101 1 105 0;
-#X connect 102 0 103 0;
-#X connect 103 0 106 0;
-#X connect 104 0 103 1;
-#X connect 105 0 103 1;
+#X connect 65 0 64 0;
+#X connect 66 0 115 0;
+#X connect 67 0 68 0;
+#X connect 68 0 70 0;
+#X connect 68 1 47 0;
+#X connect 68 2 67 0;
+#X connect 69 0 67 0;
+#X connect 70 0 69 0;
+#X connect 72 0 50 0;
+#X connect 73 0 79 0;
+#X connect 75 0 74 0;
+#X connect 76 0 74 0;
+#X connect 77 0 78 0;
+#X connect 78 0 24 0;
+#X connect 79 0 75 0;
+#X connect 79 1 76 0;
+#X connect 80 0 91 0;
+#X connect 81 0 84 0;
+#X connect 81 1 55 0;
+#X connect 82 1 59 0;
+#X connect 84 0 85 0;
+#X connect 85 0 50 0;
+#X connect 86 0 90 0;
+#X connect 87 0 86 1;
+#X connect 88 0 6 0;
+#X connect 89 1 93 1;
+#X connect 90 0 93 0;
+#X connect 90 1 89 0;
+#X connect 91 0 86 0;
+#X connect 91 1 92 0;
+#X connect 92 0 89 0;
+#X connect 93 0 88 0;
+#X connect 94 0 6 0;
+#X connect 95 0 94 0;
+#X connect 96 0 95 1;
+#X connect 98 0 32 0;
+#X connect 98 1 78 0;
+#X connect 98 2 33 0;
+#X connect 99 0 101 0;
+#X connect 99 1 100 0;
+#X connect 100 0 103 0;
+#X connect 100 1 104 0;
+#X connect 101 0 102 0;
+#X connect 102 0 105 0;
+#X connect 103 0 102 1;
+#X connect 104 0 102 1;
+#X connect 105 0 106 0;
 #X connect 106 0 107 0;
-#X connect 107 0 108 0;
-#X connect 110 0 111 1;
-#X connect 110 0 114 1;
-#X connect 111 0 112 0;
-#X connect 112 1 120 0;
-#X connect 113 0 76 0;
-#X connect 114 0 115 0;
-#X connect 115 0 31 1;
-#X connect 117 0 118 0;
-#X connect 118 0 31 1;
-#X connect 121 0 114 0;
-#X connect 121 1 111 0;
-#X connect 122 0 114 0;
-#X connect 123 0 60 0;
-#X connect 123 1 62 0;
-#X connect 123 2 131 0;
-#X connect 123 3 98 0;
-#X connect 123 4 119 0;
-#X connect 123 5 127 1;
-#X connect 123 6 51 0;
-#X connect 124 0 128 0;
-#X connect 125 0 126 0;
+#X connect 109 0 110 1;
+#X connect 109 0 113 1;
+#X connect 110 0 111 0;
+#X connect 111 1 119 0;
+#X connect 112 0 75 0;
+#X connect 113 0 114 0;
+#X connect 114 0 30 1;
+#X connect 116 0 117 0;
+#X connect 117 0 30 1;
+#X connect 120 0 113 0;
+#X connect 120 1 110 0;
+#X connect 121 0 113 0;
+#X connect 122 0 126 0;
+#X connect 123 0 124 0;
+#X connect 125 0 123 0;
+#X connect 126 0 127 0;
+#X connect 126 1 123 1;
 #X connect 127 0 125 0;
-#X connect 128 0 129 0;
-#X connect 128 1 125 1;
-#X connect 129 0 127 0;
-#X connect 130 0 41 0;
-#X connect 131 0 73 0;
-#X connect 131 1 132 0;
-#X connect 132 0 133 0;
-#X connect 133 0 51 0;
-#X connect 135 1 23 0;
+#X connect 128 0 40 0;
+#X connect 129 0 72 0;
+#X connect 129 1 130 0;
+#X connect 130 0 131 0;
+#X connect 131 0 50 0;
+#X connect 132 1 135 0;
+#X connect 135 0 15 0;
+#X connect 135 1 15 0;
+#X connect 136 0 59 0;
+#X connect 136 1 61 0;
+#X connect 136 2 129 0;
+#X connect 136 3 97 0;
+#X connect 136 4 118 0;
+#X connect 136 5 125 1;
+#X connect 136 6 50 0;
 #X restore 221 23 pd network-io;
 #N canvas 353 215 1163 639 preset-logic 0;
 #X obj 100 376 r \$0-store-preset;
@@ -973,49 +1084,49 @@ stored in the pd network-io, f 24;
 #X restore 401 23 pd chat-logic;
 #X obj 17 54 loadbang;
 #X msg 17 79 \; pd dsp 1;
-#N canvas 159 6 794 948 load-save-session 0;
+#N canvas 834 22 858 948 load-save-session 0;
 #X obj 32 205 route report;
-#X obj 101 483 coll;
+#X obj 101 423 coll;
 #C restore;
-#X obj 232 294 patch_name;
-#X obj 302 294 s \$0-redraw-gui;
-#X msg 533 59 clear;
-#X obj 101 282 list prepend;
-#X obj 101 229 t l b;
-#X obj 128 251 counter;
+#X obj 265 294 patch_name;
+#X obj 335 294 s \$0-redraw-gui;
+#X msg 563 59 clear;
+#X obj 101 342 list prepend;
+#X obj 101 269 t l b;
+#X obj 128 291 counter;
 #X obj 32 184 gate 1 0;
 #X obj 32 122 delay 3000;
-#X msg 232 361 dump;
-#X obj 235 34 r load-session;
+#X msg 265 361 dump;
+#X obj 265 34 r load-session;
 #X obj 32 145 t b 0;
 #X obj 56 517 r network-status;
 #X obj 56 542 + 1;
 #X obj 56 568 gate 2 1;
 #X obj 167 831 s network-in;
-#X obj 548 302 patch_name;
-#X obj 548 191 gate 1 0;
-#X obj 548 226 t b 0;
-#X obj 232 265 t b b s;
-#X obj 232 221 symbol;
-#X obj 605 191 r session-name-s;
-#X obj 232 316 pack s s;
-#X obj 548 324 pack s s;
-#X obj 548 256 symbol;
-#X obj 548 279 t b s;
+#X obj 578 302 patch_name;
+#X obj 578 191 gate 1 0;
+#X obj 578 226 t b 0;
+#X obj 265 265 t b b s;
+#X obj 265 221 symbol;
+#X obj 635 191 r session-name-s;
+#X obj 265 316 pack s s;
+#X obj 578 324 pack s s;
+#X obj 578 256 symbol;
+#X obj 578 279 t b s;
 #X obj 485 399 loadbang;
 #X obj 533 443 s session-name-r;
 #X text 533 465 set up the default session name;
-#X obj 488 81 s local-report-request;
+#X obj 518 81 s local-report-request;
 #X obj 77 34 r local-report-response;
 #X obj 269 593 r myclientnum;
 #X obj 269 616 t f f;
 #X obj 212 639 route null;
 #X obj 212 661 list prepend null;
 #X obj 207 780 list trim;
-#X obj 235 59 t b b b;
+#X obj 265 59 t b b b;
 #X msg 32 96 stop;
 #X msg 533 421 symbol jamminlicious-002;
-#X obj 473 14 r save-session;
+#X obj 503 14 r save-session;
 #X text 118 543 only allow loading of session for all clients when
 we are not connected to a server. Otherwise apply the session only
 to the current client.;
@@ -1025,13 +1136,13 @@ to the current client.;
 #X obj 552 609 ==;
 #X obj 525 587 t f f;
 #X obj 480 635 gate 1 0;
-#X obj 232 338 t b b l;
+#X obj 265 338 t b b l;
 #X text 496 495 open gate for the local tracker-time to be immediately
 broadcast via internet (if connected) upon loading a session, f 42
 ;
 #X msg 480 657 \; \$1-send-local-tracker-time-report 1 \;;
-#X msg 548 361 write \$1/sessions/\$2-session-coll.txt;
-#X msg 271 361 clear \, read \$1/sessions/\$2-session-coll.txt;
+#X msg 578 361 write \$1/sessions/\$2-session-coll.txt;
+#X msg 304 361 clear \, read \$1/sessions/\$2-session-coll.txt;
 #X obj 56 722 route session-title;
 #X obj 207 758 list prepend;
 #X obj 276 683 r myclientnum;
@@ -1079,14 +1190,65 @@ broadcast via internet (if connected) upon loading a session, f 42
 #X connect 13 0 14 0;
 #X connect 14 0 15 1;
 #X connect 15 0 9 0;
-#X restore 232 243 pd open||browse;
-#X msg 338 326 clear \, read \$1;
-#X obj 319 265 t b s b;
+#X restore 265 243 pd open||browse;
+#X msg 371 326 clear \, read \$1;
+#X obj 352 265 t b s b;
 #X msg 485 421 symbol;
 #X obj 485 544 kalashnikov 12;
-#X obj 473 36 t b b 1 0 b 1;
+#X obj 503 36 t b b 1 0 b 1;
+#X obj 37 290 t 1 b 2;
+#X obj 56 455 gate 2 1;
+#X obj 37 268 delay;
+#X obj 37 246 r load-session-delayed-network-sync;
+#N canvas 450 341 450 554 filter-tracker-time-for-session-network-sync
+0;
+#X obj 170 47 inlet;
+#X obj 170 159 t a a;
+#X msg 197 183 \$2;
+#X obj 227 47 r myclientnum;
+#X obj 227 69 t f f;
+#X obj 170 92 route null;
+#X obj 170 114 list prepend null;
+#X obj 170 136 list trim;
+#X obj 197 208 route tracker-time;
+#X msg 197 233 1;
+#X obj 125 274 gate 1 0;
+#X msg 302 233 0;
+#X obj 152 329 s network-in;
+#X obj 125 299 t b a;
+#X obj 165 377 + 1;
+#X obj 125 356 kalashnikov 12;
+#X obj 165 402 t f f;
+#X obj 105 431 pipe 250;
+#X msg 105 480 \; \$1-reset-gui color #fcb46c #000;
+#X msg 192 431 \; \$1-reset-gui color #fcb46c #fc6418 \; \$1-reset-gui
+bang;
+#X connect 0 0 5 0;
+#X connect 1 0 10 1;
+#X connect 1 1 2 0;
+#X connect 2 0 8 0;
+#X connect 3 0 4 0;
+#X connect 4 0 5 1;
+#X connect 4 1 6 1;
+#X connect 5 0 6 0;
+#X connect 6 0 7 0;
+#X connect 7 0 1 0;
+#X connect 8 0 9 0;
+#X connect 8 1 11 0;
+#X connect 9 0 10 0;
+#X connect 10 0 13 0;
+#X connect 11 0 10 0;
+#X connect 13 0 15 0;
+#X connect 13 1 12 0;
+#X connect 14 0 16 0;
+#X connect 15 1 14 0;
+#X connect 16 0 17 0;
+#X connect 16 1 19 0;
+#X connect 17 0 18 0;
+#X restore 101 479 pd filter-tracker-time-for-session-network-sync
+;
 #X connect 0 1 6 0;
-#X connect 1 0 15 1;
+#X connect 1 0 74 1;
 #X connect 2 0 23 0;
 #X connect 4 0 1 0;
 #X connect 5 0 1 0;
@@ -1172,6 +1334,13 @@ broadcast via internet (if connected) upon loading a session, f 42
 #X connect 72 3 7 2;
 #X connect 72 4 4 0;
 #X connect 72 5 18 0;
+#X connect 73 0 74 0;
+#X connect 73 1 10 0;
+#X connect 73 2 74 0;
+#X connect 74 0 15 1;
+#X connect 74 1 77 0;
+#X connect 75 0 73 0;
+#X connect 76 0 75 0;
 #X restore 359 52 pd load-save-session;
 #N canvas 245 457 450 346 version 0;
 #X obj 177 51 loadbang;
@@ -1184,7 +1353,7 @@ broadcast via internet (if connected) upon loading a session, f 42
 #X text 99 75 DEBUG;
 #X obj 177 168 sprintf L2Ork Tweeter v.%.02f by;
 #X obj 177 193 tosymbol;
-#X msg 177 76 0.51;
+#X msg 177 76 0.52;
 #X connect 0 0 10 0;
 #X connect 1 0 8 0;
 #X connect 1 1 2 0;
@@ -1281,113 +1450,4 @@ click - preset-all+loop-all;
 #X connect 25 3 17 0;
 #X restore 153 52 pd local-copy-logic;
 #X connect 5 0 6 0;
-#X restore 1559 3 pd settings;
-#X obj 239 42 nbx 2 16 0 12 0 0 \$0-slot-s null-r empty 1 -9 0 12 #fcb46c
-#000000 #000000 0 256 0 1 1 0;
-#X obj 243 28 cnv 8 10 8 empty empty SLOT -1 5 0 10 #6c6c6c #fcfcfc
-0;
-#X obj 283 24 cnv 15 55 41 empty empty empty 4 5 0 10 #6c6c6c #fcfcfc
-0;
-#X obj 302 42 bng 16 250 50 0 reconnect null-r CONNECT -13 -9 0 10
-#fc6418 #000000 #fcfcfc 1;
-#X obj 341 24 cnv 15 51 41 empty empty empty 4 5 0 10 #6c6c6c #fcfcfc
-0;
-#X obj 352 42 cnv 15 30 16 null-s nclients-gui 0 3 6 0 12 #202020 #fcfcfc
-0;
-#X obj 352 28 cnv 8 8 8 empty empty USERS -1 5 0 10 #6c6c6c #fcfcfc
-0;
-#X obj -1 68 core/L2OrkTweet 1;
-#X obj 545 30 nbx 4 15 1 9999 0 0 \$0-store-loop \$0-store-loop-r empty
--64 5 0 12 #fcb46c #000000 #000000 1 256 0 1 1 0;
-#X obj 545 45 nbx 4 15 1 9999 0 0 \$0-recall-loop \$0-recall-loop-r
-empty -64 5 0 12 #80fc80 #000000 #000000 1 256 0 1 1 0;
-#X obj 410 30 cnv 8 10 8 empty empty STORE\ LOOP\ (shift+1-0) -1 5
-0 10 #6c6c6c #fcfcfc 0;
-#X obj 404 45 cnv 8 10 8 empty empty RECALL\ LOOP\ (shift+q-p) -1 5
-0 10 #6c6c6c #fcfcfc 0;
-#X obj 599 30 bng 15 250 50 0 \$0-store-loop-apply \$0-store-loop-apply-r
-empty -5 -9 0 10 #fcb46c #fc6418 #fcfcfc 1;
-#X obj 599 45 bng 15 250 50 0 \$0-recall-loop-apply \$0-recall-loop-apply-r
-empty -5 -9 0 10 #80fc80 #008080 #fcfcfc 1;
-#X obj 809 30 nbx 4 15 1 9999 0 0 \$0-store-preset \$0-store-preset-r
-empty -64 5 0 12 #fcb46c #000000 #000000 1 256 0 1 1 0;
-#X obj 809 45 nbx 4 15 1 9999 0 0 \$0-recall-preset \$0-recall-preset-r
-empty -64 5 0 12 #80fc80 #000000 #000000 1 256 0 1 1 0;
-#X obj 662 30 cnv 8 10 8 empty empty STORE\ PRESET\ (shift+a-:) -1
-5 0 10 #6c6c6c #fcfcfc 0;
-#X obj 656 45 cnv 8 10 8 empty empty RECALL\ PRESET\ (shift+z-/) -1
-5 0 10 #6c6c6c #fcfcfc 0;
-#X obj 863 30 bng 15 250 50 0 \$0-store-preset-apply \$0-store-preset-apply-r
-empty -5 -9 0 10 #fcb46c #fc6418 #fcfcfc 1;
-#X obj 863 45 bng 15 250 50 0 \$0-recall-preset-apply \$0-recall-preset-apply-r
-empty -5 -9 0 10 #80fc80 #008080 #fcfcfc 1;
-#X obj -1 219 core/L2OrkTweet 2;
-#X obj -1 370 core/L2OrkTweet 3;
-#X obj -1 521 core/L2OrkTweet 4;
-#X obj -1 672 core/L2OrkTweet 5;
-#X obj -1 823 core/L2OrkTweet 6;
-#X obj 816 68 core/L2OrkTweet 7;
-#X obj 816 219 core/L2OrkTweet 8;
-#X obj 816 370 core/L2OrkTweet 9;
-#X obj 816 521 core/L2OrkTweet 10;
-#N canvas 705 180 513 623 supplemental-documentation 0;
-#X obj 0 0 cnv 15 512 621 empty empty empty 20 12 0 14 #e0e0e0 #404040
-0;
-#X obj 10 550 cnv 15 65 17 empty empty empty 20 12 0 14 #fcb46c #404040
-0;
-#X obj 10 379 cnv 15 160 17 empty empty empty 20 12 0 14 #fcb46c #404040
-0;
-#X obj 10 329 cnv 15 52 17 empty empty empty 20 12 0 14 #fcb46c #404040
-0;
-#X obj 10 266 cnv 15 112 17 empty empty empty 20 12 0 14 #fcb46c #404040
-0;
-#X obj 10 81 cnv 15 106 17 empty empty empty 20 12 0 14 #fcb46c #404040
-0;
-#X text 10 11 Please consider viewing the introductory video found
-at:;
-#X obj 9 31 pddp/pddplink http://bit.ly/L2Ork-Tweeter;
-#X text 10 81 Instrument Levels;
-#X text 10 266 Instrument Presets;
-#X text 10 287 Shift+Up/Down: increase/decrease preset instrument number
-and immediately apply it., f 82;
-#X text 10 329 Main Mix;
-#X text 10 350 Left/Right: incrementally change the panning of the
-main output., f 82;
-#X text 10 235 Shift+Backslash (or |): set instrument output level
-to one or 100% (unity)., f 82;
-#X text 10 101 ' (key next to Return): set instrument output level
-to zero (OVR/LVL slider). Repeat press sets it temporarily to the last
-known value \, while upon release it reverts to zero., f 82;
-#X text 10 379 Sharing Loops and Patterns;
-#X text 10 456 single click - copy presetdouble click - copy looptriple
-click - copy preset and loopshift + single click - copy preset \,
-including also main out and pan values shift + double click - copy
-loop \, including time syncshift + triple click - copy everything
-, f 82;
-#X text 10 400 As of 0.46 you can now easily share your patterns and
-loops with others. To do so \, you will want to click on the user number
-you wish to copy instrument and/or loop from \, using one of the following
-clicking actions that need to be performed within the 500ms of initiating
-the first click:, f 82;
-#X text 11 550 Hover Mode;
-#X text 11 571 When hover mode is enabled \, you can enter notes anywhere
-on the tracker timeline regardless where the timebar is currently located.
-Delete \, shift+delete \, and ~ (insert) also work in this mode.,
-f 82;
-#X text 10 51 Below is a list of additional commands that are not clearly
-annotated elsewhere., f 82;
-#X text 10 148 Return or Enter: set instrument output level to the
-last known value (OVR/LVL slider). Repeat press sets it temporarily
-to zero \, while upon release it reverts to the last known value. When
-holding Return/Enter pressed during changing of instruments (e.g. \,
-using shift+up/down) \, the instrument will remain silent until the
-Return/Enter key is released \, at which point \, the level will revert
-to the new instrument's value., f 82;
-#X restore 1299 3 pd supplemental-documentation (click here);
-#X obj 1144 3 pddp/pddplink http://l2ork.icat.vt.edu;
-#X obj 149 3 pddp/pddplink http://ico.bukvic.net -text Ivica Ico Bukvic
-;
-#X obj 430 3 pddp/pddplink https://www.gnu.org/licenses/gpl-3.0.en.html
--text GPL v3 License;
-#X obj 816 672 core/L2OrkTweet 11;
-#X obj 816 823 core/L2OrkTweet 12;
+#X restore 1586 3 pd core;

@@ -1,9 +1,9 @@
-#N canvas 566 373 821 208 10;
-#X obj 0 0 cnv 15 820 206 empty empty empty 5 7 0 10 #444444 #fcfcfc
+#N canvas 556 368 821 219 10;
+#X obj 0 0 cnv 15 820 217 empty empty empty 5 7 0 10 #444444 #fcfcfc
 0;
 #X obj 3 3 cnv 15 814 28 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 319 10 hradio 15 0 0 13 \$0-set-user-num empty empty 3 6 0 12
+#X obj 305 10 hradio 15 0 0 13 \$0-set-user-num empty empty 3 6 0 12
 #fcb46c #fc6418 #000000 0 1;
 #X obj 11 153 bng 23 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1;
@@ -116,19 +116,41 @@ empty 10 13 0 10 #80fc80 #008080 #000000 0 1 0 1;
 #X text 66 112 LOOP LENGTH(shift+l/r);
 #X obj 12 59 tgl 15 0 \$0-hover-s \$0-hover-r HOVER(space) 17 6 0 10
 #fcb46c #000000 #000000 0 8 1;
-#X text 499 9 12;
-#X text 484 9 11;
-#X text 469 9 10;
-#X text 457 9 9;
-#X text 442 9 8;
-#X text 427 9 7;
-#X text 412 9 6;
-#X text 397 9 5;
-#X text 382 9 4;
-#X text 367 9 3;
-#X text 352 9 2;
-#X text 337 9 1;
-#X text 321 9 0;
+#X text 485 9 12;
+#X text 470 9 11;
+#X text 455 9 10;
+#X text 443 9 9;
+#X text 428 9 8;
+#X text 413 9 7;
+#X text 398 9 6;
+#X text 383 9 5;
+#X text 368 9 4;
+#X text 353 9 3;
+#X text 338 9 2;
+#X text 323 9 1;
+#X text 307 9 0;
+#X text 396 38 HARMONICITY;
+#X symbolatom 666 9 24 0 0 0 - #0-password-r #0-password-s 0 0 1,
+f 24;
+#X symbolatom 87 129 21 0 0 0 - #0-username-r #0-username-s 0 0 1,
+f 21;
+#X obj 8 9 cnv 15 15 15 empty empty L2Ork\ Tweeter\ Teacher\ Widget
+0 6 0 10 #6c6c6c #fcfcfc 0;
+#X obj 234 9 cnv 15 15 15 empty empty SELECT\ USER 0 6 0 10 #6c6c6c
+#fcfcfc 0;
+#X obj 570 9 cnv 15 15 15 empty empty SERVER\ PASSWORD 0 6 0 10 #6c6c6c
+#fcfcfc 0;
+#X obj 3 185 cnv 15 814 28 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
+0;
+#X symbolatom 151 191 24 0 0 0 - #0-session-r #0-session-s 0 0 1,
+f 24;
+#X obj 8 191 cnv 15 15 15 empty empty LOAD\ SESSION/SYNC\ DELAY 0 6
+0 10 #6c6c6c #fcfcfc 0;
+#X floatatom 303 191 8 0 0 0 - #0-session-delay-r #0-session-delay-s
+0 0 1, f 8;
+#X obj 424 191 bng 16 250 50 0 \$0-sync-all-s \$0-sync-all-r SYNC\ ALL
+-52 6 0 10 #fcb46c #fc6418 #ffffff 1;
+#N canvas 959 450 377 95 core 0;
 #N canvas 143 109 702 717 ae-logic 0;
 #X obj 424 236 until;
 #X obj 424 283 f;
@@ -214,7 +236,7 @@ empty 10 13 0 10 #80fc80 #008080 #000000 0 1 0 1;
 #X connect 32 0 14 1;
 #X connect 34 0 23 0;
 #X connect 35 0 15 0;
-#X restore 252 186 pd ae-logic;
+#X restore 266 19 pd ae-logic;
 #N canvas 727 338 560 333 update-user-num 0;
 #X obj 251 220 tosymbol;
 #X msg 251 243 label \$1;
@@ -246,7 +268,7 @@ empty 10 13 0 10 #80fc80 #008080 #000000 0 1 0 1;
 #X connect 11 1 12 0;
 #X connect 12 0 8 0;
 #X connect 13 0 8 0;
-#X restore 58 186 pd update-user-num;
+#X restore 72 19 pd update-user-num;
 #N canvas 143 109 702 717 mod-logic 0;
 #X obj 424 236 until;
 #X obj 424 283 f;
@@ -332,7 +354,7 @@ empty 10 13 0 10 #80fc80 #008080 #000000 0 1 0 1;
 #X connect 32 0 11 0;
 #X connect 33 0 13 0;
 #X connect 34 0 14 0;
-#X restore 325 186 pd mod-logic;
+#X restore 17 39 pd mod-logic;
 #N canvas 727 338 546 300 net-output 0;
 #X obj 199 199 s chat-out;
 #X obj 199 153 list prepend admin;
@@ -351,7 +373,7 @@ empty 10 13 0 10 #80fc80 #008080 #000000 0 1 0 1;
 #X connect 6 0 4 0;
 #X connect 7 0 4 1;
 #X connect 8 0 7 0;
-#X restore 586 186 pd net-output;
+#X restore 278 39 pd net-output;
 #N canvas 54 166 1142 344 net-input 0;
 #X obj 33 27 r network-in;
 #X obj 33 75 route 0;
@@ -430,33 +452,32 @@ username reset, f 164;
 #X connect 33 29 30 0;
 #X connect 33 30 31 0;
 #X connect 33 31 34 0;
-#X restore 173 186 pd net-input;
-#X text 396 38 HARMONICITY;
-#N canvas 727 338 450 213 setup 0;
+#X restore 187 19 pd net-input;
+#N canvas 782 315 450 251 setup 0;
 #X obj 190 39 loadbang;
 #X msg 190 67 names sine saw tri square pink;
 #X obj 65 95 s \$0-password-r;
 #X msg 65 67 symbol l2orklicious;
 #X msg 65 127 symbol Username;
 #X obj 65 155 s \$0-username-r;
-#X msg 175 127 symbol ...;
 #X obj 175 155 s \$0-inst-name-r;
 #X obj 190 95 s \$0-modulator-r;
 #X obj 297 95 s \$0-carrier-r;
+#X obj 285 155 s \$0-session-r;
+#X msg 218 185 set 3000;
+#X msg 175 127 set ...;
 #X connect 0 0 1 0;
 #X connect 0 0 3 0;
 #X connect 0 0 4 0;
-#X connect 0 0 6 0;
+#X connect 0 0 11 0;
+#X connect 0 0 10 0;
+#X connect 1 0 7 0;
 #X connect 1 0 8 0;
-#X connect 1 0 9 0;
 #X connect 3 0 2 0;
 #X connect 4 0 5 0;
-#X connect 6 0 7 0;
-#X restore 3 186 pd setup;
-#X symbolatom 662 9 24 0 0 0 - #0-password-r #0-password-s 0 0 1,
-f 24;
-#X symbolatom 87 129 21 0 0 0 - #0-username-r #0-username-s 0 0 1,
-f 21;
+#X connect 11 0 6 0;
+#X connect 11 0 9 0;
+#X restore 17 19 pd setup;
 #N canvas 272 202 1201 586 val-logic 0;
 #X obj 545 550 s \$0-teacher-commands;
 #X obj 22 18 r \$0-loop-length-s;
@@ -666,7 +687,7 @@ f 21;
 #X connect 86 0 84 0;
 #X connect 87 0 88 0;
 #X connect 88 0 0 0;
-#X restore 404 186 pd val-logic;
+#X restore 96 39 pd val-logic;
 #N canvas 635 7 719 884 tracker-logic 0;
 #X obj 435 557 tosymbol;
 #X obj 332 794 list prepend label;
@@ -811,10 +832,20 @@ f 21;
 #X connect 62 0 61 0;
 #X connect 64 0 13 1;
 #X connect 64 1 63 0;
-#X restore 483 186 pd tracker-logic;
-#X obj 8 9 cnv 15 15 15 empty empty L2Ork\ Tweeter\ Teacher\ Widget
-0 6 0 10 #6c6c6c #fcfcfc 0;
-#X obj 248 9 cnv 15 15 15 empty empty SELECT\ USER 0 6 0 10 #6c6c6c
-#fcfcfc 0;
-#X obj 566 9 cnv 15 15 15 empty empty SERVER\ PASSWORD 0 6 0 10 #6c6c6c
-#fcfcfc 0;
+#X restore 175 39 pd tracker-logic;
+#N canvas 898 458 471 300 server-commands 0;
+#X obj 161 30 r \$0-session-delay-s;
+#X obj 52 30 r \$0-session-s;
+#X obj 332 30 r \$0-sync-all-s;
+#X obj 161 244 s \$0-admin-commands;
+#X msg 52 55 l2ork-load \$1;
+#X msg 332 55 l2ork-sync-all;
+#X msg 161 55 l2ork-load-sync-delay \$1;
+#X connect 0 0 6 0;
+#X connect 1 0 4 0;
+#X connect 2 0 5 0;
+#X connect 4 0 3 0;
+#X connect 5 0 3 0;
+#X connect 6 0 3 0;
+#X restore 17 59 pd server-commands;
+#X restore 766 191 pd core;

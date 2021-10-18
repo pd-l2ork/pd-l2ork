@@ -9,6 +9,13 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+18-10-2021 0.52
+*Update sessions that don't have parts 11 and 12.
+*Improved server-invoked load session to also include sync. Expanded server command vocabulary accordingly, adding l2ork-load-sync-delay.
+*Made insert/reset/clear non-interactive (delete is manually handled using legacy code inside net-io).
+*L2OrkTweet version bump.
+*Updated Teacher widget to allow for convenient loading of sessions and sync-all.
+
 16-10-2021 0.51
 *Added ability to disable changes to the instrument level/overdrive when changing instruments by holding the Return/Enter key. Upon releasing the Return/Enter key, the level will revert to the one associated with the new instrument.
 *Included username in saving the session.

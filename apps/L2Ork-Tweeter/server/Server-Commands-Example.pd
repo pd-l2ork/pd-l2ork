@@ -1,5 +1,5 @@
-#N canvas 22 71 450 503 10;
-#X obj 40 292 s chat-out;
+#N canvas 15 307 490 503 10;
+#X obj 40 452 s chat-out;
 #X msg 52 120 chat admin p:l2orklicious l2ork-sync-all;
 #X msg 40 41 chat admin p:l2orklicious l2ork-length 6000 3000 500 6000
 500 6000 1500 6000 500 3000 \, chat admin p:l2orklicious l2ork-sync-all
@@ -13,6 +13,8 @@
 #X floatatom 99 231 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 99 211 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1;
+#X msg 121 306 chat admin p:l2orklicious l2ork-load jamminlicious-002
+;
 #X connect 1 0 0 0;
 #X connect 2 0 0 0;
 #X connect 5 0 6 0;
@@ -20,3 +22,4 @@
 #X connect 7 0 0 0;
 #X connect 8 0 7 0;
 #X connect 9 0 8 0;
+#X connect 10 0 0 0;
