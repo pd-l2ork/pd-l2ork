@@ -1,4 +1,8 @@
 PD-L2ORK TODO:
+*mycanvas dialog says image width instead of just width.
+
+*deal with weird message resizing issue that causes text to scroll.
+
 *check if the defunct image object works.
 
 *finish and integrate gop drawing order work (see if there is something in the branch log to pull as to the status of the work).
@@ -89,8 +93,6 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *It appears on Ubuntu 20.04, large windows get automatically maximized. This adversely affects Tweeter appearance. The only way to fix this is to adjust Ubuntu settings by typing "gsettings set org.gnome.mutter auto-maximize false". Later, we will look into adding "maximizable" and other options from 1.x and beyond to the window management.
 
 TWEETER TODO:
-*Server load session for all
-
 *Make reliable sync when doing copying of loops and patterns (maybe send the sync data back to server?). Is this even a problem or a matter of user error?
 
 *In offline mode, enable keyboard and other input for multiple tracks
@@ -105,15 +107,18 @@ TWEETER DONE:
 *Updated and optimized the left panel to make room for the hover mode option.
 *Updated server to also support the hover mode.
 *Swapped tab and alt key functions to make play button easier to access.
-
 *Added ability to disable changes to the instrument level/overdrive when changing instruments by holding the Return/Enter key. Upon releasing the Return/Enter key, the level will revert to the one associated with the new instrument.
 *Included username in saving the session.
 *Created a "teacher" patch that adds ability for the instructor to alter others' settings.
 *Update sessions that don't have parts 11 and 12.
+*Improved server-invoked load session to also include sync. Expanded server command vocabulary accordingly, adding l2ork-load-sync-delay.
+*Made insert/reset/clear non-interactive (delete is manually handled using legacy code inside net-io).
+*L2OrkTweet version bump.
+*Updated Teacher widget to allow for convenient loading of sessions and sync-all.
 
 
 HELP FILES TODO:
-
+*Unfinished context help patch dealing with $0, $1, and $2.
 
 
 HELP FILES DONE:
