@@ -1793,7 +1793,7 @@ static int graph_click(t_gobj *z, struct _glist *glist,
                     //if (ob)
                     //    post("clicking on object with te_iemgui=%d",
                     //        ((t_text *)y)->te_iemgui);
-                    if (!ob || 
+                    if (ob && y->g_pd->c_wb->w_clickfn && 
                          (ob->te_type != T_TEXT && ob->ob_pd != my_canvas_class &&
                             ((t_text *)y)->te_iemgui != 3)
                        )

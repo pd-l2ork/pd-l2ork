@@ -1,5 +1,5 @@
-#N canvas 151 149 554 755 10;
-#X obj 0 1808 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
+#N canvas 151 185 554 780 10;
+#X obj 0 1917 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
 14 #dcdcdc #404040 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header ggee/image 3 12
 0 18 #c4dcdc #000000 0;
@@ -21,12 +21,12 @@ y) size(x \, y);
 #X text 10 109 gopspi alpha click color constrain delta gopspill gopspill_size
 label label_font label_pos open pos receive reload reset rotate send
 size visible;
-#X restore 503 1810 pd META;
-#X obj 0 1484 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
+#X restore 503 1919 pd META;
+#X obj 0 1593 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
 13 #dcdcdc #000000 0;
-#X obj 0 1631 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8 12
+#X obj 0 1740 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8 12
 0 13 #dcdcdc #000000 0;
-#X obj 0 1736 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8
+#X obj 0 1845 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8
 12 0 13 #dcdcdc #000000 0;
 #N canvas 254 640 397 157 Related_objects 0;
 #X obj 1 1 cnv 15 395 20 empty \$0-pddp.cnv.subheading empty 3 12 0
@@ -36,17 +36,17 @@ size visible;
 #X text 8 3 [ggee/image] Related Objects;
 #X text 22 45 moonlib/image use is strongly discouraged as the object
 is buggy and included only for legacy purposes.;
-#X restore 102 1810 pd Related_objects;
-#X obj 78 509 cnv 17 3 969 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#X restore 102 1919 pd Related_objects;
+#X obj 78 509 cnv 17 3 1076 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
 #9c9c9c 0;
-#X obj 78 1507 cnv 17 3 113 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#X obj 78 1616 cnv 17 3 113 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
 #9c9c9c 0;
-#X obj 4 1810 pddp/pddplink all_about_help_patches.pd -text Usage Guide
+#X obj 4 1919 pddp/pddplink all_about_help_patches.pd -text Usage Guide
 ;
 #X text 465 12 [ggee/image];
 #X text 11 23 gui-image;
-#X text 97 1645 21;
-#X text 168 1645 - if you create an [image] object without arguments
+#X text 97 1754 21;
+#X text 168 1754 - if you create an [image] object without arguments
 \, default values are chosen for the GUI-properties. See the subpatch
 below to learn how to dynamically instantiate a [image] with custom
 properties:;
@@ -80,7 +80,7 @@ visible alpha;
 12 12 45 1 0.7;
 #X connect 6 0 7 0;
 #X connect 9 0 4 0;
-#X restore 168 1707 pd image-creation-arguments;
+#X restore 168 1816 pd image-creation-arguments;
 #X obj 482 51 pddp/dsp;
 #X obj 227 319 ggee/image vu.png 0 0 287 163 empty empty empty 287
 163 1 0 10 #000000 0 -8 12.5 12.5 0 1 1;
@@ -308,8 +308,8 @@ right you can see a VU dial consisting of three images \, the background
 visibility is toggled when the input level exceeds unity. Enable DSP
 and use microphone or manually alter the value in the topmost number
 box to monitor its behavior.;
-#X text 412 1784 (c) ico@vt.edu 2020/1;
-#N canvas 81 270 383 373 advanced_css_properties 0;
+#X text 412 1893 (c) ico@vt.edu 2020/1;
+#N canvas 81 279 383 373 advanced_css_properties 0;
 #X obj 48 163 ggee/image vu.png 0 0 287 163 empty empty empty 287 163
 1 0 10 #000000 0 -8 12.5 12.5 0 1 1;
 #X msg 48 142 css image transform skew(\$1deg);
@@ -324,7 +324,7 @@ Below is an example of such a manipulation using the transform CSS
 call. For more info on the CSS commands \, visit:, f 61;
 #X connect 1 0 0 0;
 #X connect 2 0 1 0;
-#X restore 168 1776 pd advanced_css_properties;
+#X restore 168 1885 pd advanced_css_properties;
 #X text 14 184 A more advanced set of features can be studied in the
 subpatch below that explores image's newfound ability to monitor for
 toggle action and mouse x and y positions which can be used as a foundation
@@ -441,34 +441,34 @@ dialog. sending label without any arguments \, removes the label.;
 #X text 98 1172 label_pos;
 #X text 168 1172 - set the label location (relative to the object's
 origin).;
-#X text 98 1189 open;
-#X text 168 1189 - open image file. the path can be relative or absolute.
+#X text 98 1258 open;
+#X text 168 1258 - open image file. the path can be relative or absolute.
 you can also use @pd_extra argument to point to the extra folder location.
 if file is not found \, the image will revert to the default image.
 ;
-#X text 98 1245 pos;
-#X text 168 1245 - specify absolute x/y position of the image on the
+#X text 98 1314 pos;
+#X text 168 1314 - specify absolute x/y position of the image on the
 patch canvas.;
-#X text 98 1275 receive;
-#X text 98 1292 reload;
-#X text 168 1292 - reload the currently loaded image (e.g. if it was
+#X text 98 1344 receive;
+#X text 98 1361 reload;
+#X text 168 1361 - reload the currently loaded image (e.g. if it was
 edited after it was already loaded by the image object).;
-#X text 98 1322 reset;
-#X text 168 1322 - reset image size to its default (natural) size \,
+#X text 98 1391 reset;
+#X text 168 1391 - reset image size to its default (natural) size \,
 overriding any constraint settings.;
-#X text 98 1352 rotate;
-#X text 168 1352 - rotate image by sending two different types of messasges:
+#X text 98 1421 rotate;
+#X text 168 1421 - rotate image by sending two different types of messasges:
 1 argument: rotation angle in degrees (around a rotation  center set
 in the object properties 3 arguments: rotation angle in degrees \,
 x and y of the  rotation point;
-#X text 98 1421 send;
-#X text 168 1421 - set iemgui send value.;
-#X text 168 1275 - set iemgui receive value.;
-#X text 98 1438 size;
-#X text 168 1438 - set the image x and y size. the outcome conforms
+#X text 98 1490 send;
+#X text 168 1490 - set iemgui send value.;
+#X text 168 1344 - set iemgui receive value.;
+#X text 98 1537 size;
+#X text 168 1537 - set the image x and y size. the outcome conforms
 to the constraints set by the constrain option.;
-#X text 98 1468 visible;
-#X text 168 1468 - toggle image visibility (1=visible \, 0=invisible).
+#X text 98 1567 visible;
+#X text 168 1567 - toggle image visibility (1=visible \, 0=invisible).
 ;
 #X text 98 944 dialog;
 #X text 168 944 - iemgui message sent from the properties dialog that
@@ -477,17 +477,17 @@ you can also control whether such a change triggers the dirty canvas
 event. for more info \, see the bng help file:;
 #X obj 515 986 bng 11 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000 1;
-#X text 98 1507 bang;
-#X text 168 1507 - outputs bang if the click mode is set to 1;
-#X text 98 1524 list;
-#X text 168 1524 - outputs the following list whne th click mode is
+#X text 98 1616 bang;
+#X text 168 1616 - outputs bang if the click mode is set to 1;
+#X text 98 1633 list;
+#X text 168 1633 - outputs the following list whne th click mode is
 set to 2 \, as follows: 1: mousedown 1/0 2: top-left selection border
 origin x 3: top-left selection border origin y 4: mouse position
 calculated from the origin x 5: mouse position calculated from the
 origin y;
 #N canvas 216 110 446 783 mode_3_example 0;
 #X obj 147 470 hsl 115 76 0 1 0 0 empty hover-slider empty -2 -8 0
-10 #ff1111 #202020 #202020 297 1 0 0;
+10 #ff1111 #202020 #202020 0 1 0 0;
 #X obj 206 663 print mode_3_image_output;
 #X obj 149 630 route size;
 #X obj 149 605 list trim;
@@ -568,7 +568,7 @@ when you wish to have an invisible object above another one to control
 what is happening below it in a different way than the object below
 captures user pointer interaction. see example below for more info.
 ;
-#N canvas 64 91 446 613 changing_GUI_properties 0;
+#N canvas 64 100 446 613 changing_GUI_properties 0;
 #X text 246 152 label;
 #X msg 246 172 label blabla;
 #X text 15 153 change send name;
@@ -777,7 +777,82 @@ empty img_rcv my_img 25 25 0 0 10 #fcfcfc -4 -10 12.5 12.5 0 1 1;
 #X connect 53 0 54 0;
 #X connect 54 0 45 0;
 #X connect 55 0 45 0;
-#X restore 168 1753 pd changing_GUI_properties;
+#X restore 168 1862 pd changing_GUI_properties;
+#N canvas 536 341 766 477 batch_loading 0;
+#X obj 54 250 t f f, f 9;
+#X obj 54 322 pack s s, f 9;
+#X msg 54 345 load \$1 \$2;
+#X msg 54 132 64;
+#X obj 54 192 until;
+#X obj 54 223 float, f 9;
+#X obj 150 223 + 1;
+#X obj 54 275 makefilename d%d;
+#X obj 54 167 t f 0, f 9;
+#X obj 105 299 makefilename @pd_extra/moonlib/examples/d%d.gif;
+#X obj 416 386 ggee/image @pd_extra/ggee/empty_image.png 0 0 62 62
+empty empty empty 62 62 1 0 10 #000000 0 -8 12.5 12.5 0 1 1;
+#X msg 416 268 set \$1;
+#X obj 416 167 hsl 128 15 0 63 0 0 empty empty empty -2 -6 0 8 #fcfcfc
+#000000 #000000 0 1 0 1;
+#X obj 416 194 i;
+#X obj 416 218 change;
+#X obj 416 243 makefilename d%d;
+#X obj 0 0 cnv 15 765 21 empty \$0-pddp.cnv.subheading empty 3 12 0
+14 #c4dcdc #000000 0;
+#X text 6 3 Batch loading images;
+#X obj 576 386 ggee/image @pd_extra/ggee/empty_image.png 0 0 32 62
+empty empty empty 32 62 0 0 10 #000000 0 -8 12.5 12.5 0 1 1;
+#X msg 576 268 set \$1;
+#X obj 576 167 hsl 128 15 0 63 0 0 empty empty empty -2 -6 0 8 #fcfcfc
+#000000 #000000 0 1 0 1;
+#X obj 576 194 i;
+#X obj 576 218 change;
+#X obj 576 243 makefilename d%d;
+#X text 576 132 3: set image symbol forany other ggee/image;
+#X text 416 132 2: set image symbol;
+#X text 86 132 1: batch load image files and assign them symbols (names).
+, f 30;
+#X text 5 27 ggee/image offers full functionality of all other image
+objects \, including tof/bangimage (using mode 1) \, and moonlib/image
+batch loading. Below we first preload all images. Once they are preloaded
+\, any ggee/image can reference them by their assigned image symbol
+or name.Note that these images cannot be saved with the ggee/image
+object and the patch and need to be processed at runtime. Note also
+that the image size adapts to the image settings \, as is the case
+with the right image object., f 125;
+#X connect 0 0 7 0;
+#X connect 0 1 9 0;
+#X connect 1 0 2 0;
+#X connect 2 0 10 0;
+#X connect 3 0 8 0;
+#X connect 4 0 5 0;
+#X connect 5 0 0 0;
+#X connect 5 0 6 0;
+#X connect 6 0 5 1;
+#X connect 7 0 1 0;
+#X connect 8 0 4 0;
+#X connect 8 1 5 1;
+#X connect 9 0 1 1;
+#X connect 11 0 10 0;
+#X connect 12 0 13 0;
+#X connect 13 0 14 0;
+#X connect 14 0 15 0;
+#X connect 15 0 11 0;
+#X connect 19 0 18 0;
+#X connect 20 0 21 0;
+#X connect 21 0 22 0;
+#X connect 22 0 23 0;
+#X connect 23 0 19 0;
+#X restore 334 1862 pd batch_loading;
+#X text 98 1507 set;
+#X text 168 1507 - set new image based on the batch (pre)loaded ones.
+you should reference the image by its assigned symbol.;
+#X text 98 1189 load;
+#X text 168 1189 - load an image and assign it a symbol name you can
+reference using the set message below. syntax is "load key file". key
+should be a name you can reference later \, while file can be either
+relative or absolute. see the more_info section below for additional
+information.;
 #X connect 19 0 20 0;
 #X connect 20 0 25 0;
 #X connect 21 0 23 0;

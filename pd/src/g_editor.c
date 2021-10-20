@@ -3878,7 +3878,7 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
                     //if (ob)
                     //    post("clicking on object with te_iemgui=%d",
                     //        ((t_text *)y)->te_iemgui);
-                    if (!ob || 
+                    if (ob && y->g_pd->c_wb->w_clickfn && 
                          (ob->te_type != T_TEXT && ob->ob_pd != my_canvas_class &&
                             ((t_text *)y)->te_iemgui != 3)
                        )
@@ -6684,6 +6684,44 @@ static void canvas_find_parent(t_canvas *x, t_floatarg f)
         gui_vmess("gui_raise_pd_window", "");
     }
 }
+
+/*
+   ico@vt.edu 2021-10-19:
+   finds a number of instances on canvas of a particular class. this
+   is useful in situations where an object may have loaded bunch of
+   stuff on the GUI side of things (e.g. moonlib/image that can batch
+   load a bunch of images), and once all instances are gone, we will
+   want to dispose of all those loaded images. the same may be also
+   used by the ggee/image. Currently disabled.
+*/
+/*
+int canvas_find_number_of_class_instances(t_canvas *x, void *objclass)
+{
+    int result = 0;
+    t_gobj *y;
+    for(y = x->gl_list; y; y = y->g_next)
+    {
+        if (pd_class(&y->g_pd) == objclass)
+            result++;
+        if (pd_class(&y->g_pd) == canvas_class)
+            result = result + 
+                canvas_find_number_of_class_instances((t_canvas *)y, objclass);
+    }
+    return result;
+}
+
+int find_total_number_of_class_instances(t_canvas *x, void *objclass)
+{
+    int result = 0;
+    // get the root window
+    t_glist *root = x;
+    while (root->gl_owner)
+        root = root->gl_owner;
+    // now navigate all the windows using a subfunction
+    result = canvas_find_number_of_class_instances(root, objclass);
+    post("result=%d", result);
+}
+*/
 
     /* tell the gui to bring a gobj into view, possibly with an animation */
 static void gobj_emphasize(t_glist *g, t_gobj *x)

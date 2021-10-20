@@ -24,17 +24,34 @@ typedef struct _image
     t_symbol *x_key; // key to cache the image on the gui side
     int x_type; //0=file 1=tk_image
     t_int x_localimage; //localimage "img%x" done
+    t_symbol* x_inlet; // for size callback
 } t_image;
+
+/* forward declarations */
+static void image_size(t_image *x, t_floatarg w, t_floatarg h);
+
+static int num_instances = 0;
 
 /* widget helper functions */
 
 static const char *image_get_filename(t_image *x, char *file)
 {
     static char dirresult[MAXPDSTRING];
+    char fname[FILENAME_MAX];
     char *fileresult, *fullpath;
     int fd;
+    // ico@vt.edu 2021-10-19: got to expand the file to fname
+    // otherwise relative path will fail to open the file on js side
+    canvas_makefilename(
+        glist_getcanvas(x->x_glist),
+        file,
+        fname, FILENAME_MAX
+        );
     fd = open_via_path(canvas_getdir(glist_getcanvas(x->x_glist))->s_name,
-        file, "", dirresult, &fileresult, MAXPDSTRING, 1);
+        fname, "", dirresult, &fileresult, MAXPDSTRING, 1);
+    //post("image_get_filename file=%s fname=%s fd=%d dirresult=%s fileresult=%s",
+    //  file, fname, fd, dirresult, fileresult);
+
     if (fd > 0)
     {
         /* dirresult and fileresult are in the same buffer (see comment 
@@ -49,6 +66,10 @@ static const char *image_get_filename(t_image *x, char *file)
     else return 0;
 }
 
+// firsttime == 0, just reposition
+// firsttime == 1, redraw only without loading the image (to avoid
+//                 race condition between front-end and back-end)
+// firsttime == 2, also do a load of the image
 static void image_drawme(t_image *x, t_glist *glist, int firsttime)
 {
     char key[MAXPDSTRING];
@@ -62,7 +83,8 @@ static void image_drawme(t_image *x, t_glist *glist, int firsttime)
             text_xpix(&x->x_obj, glist),
             text_ypix(&x->x_obj, glist),
             glist_istoplevel(glist));
-        if (x->x_image == &s_) // if we have a blank image name, use the included filler
+        const char *fname = image_get_filename(x, x->x_image->s_name);
+        if (x->x_image == &s_ || !fname) // if we have a blank image name, use the included filler
         {
             sprintf(key, "x%zx", (t_uint)pd_class(&x->x_obj.te_pd));
             sprintf(key2, "x%zx", (t_uint)pd_class(&x->x_obj.te_pd));
@@ -71,9 +93,9 @@ static void image_drawme(t_image *x, t_glist *glist, int firsttime)
             //x->x_image = gensym("::moonlib::image::noimage");
             x->x_key = gensym(key);
             x->x_type = 1;
-            pd_error(x, "[image]: no image found");
+            pd_error(x, "[moonlib/image]: no image found");
         }
-        if (x->x_type)
+        if (x->x_type || !fname)
         {
             //sys_vgui(".x%zx.c create image %d %d -tags %xS\n",
             //         glist_getcanvas(glist),
@@ -82,28 +104,29 @@ static void image_drawme(t_image *x, t_glist *glist, int firsttime)
             //         x);
             //sys_vgui(".x%zx.c itemconfigure %xS -image %s\n",
             //         glist_getcanvas(glist), x, x->x_image->s_name);
+            x->x_width = 25;
+            x->x_height = 25;
             gui_vmess("gui_gobj_draw_image", "xxss",
                 glist_getcanvas(glist),
                 x,
                 key,
                 "center");
         }
-        else
+        else if (fname)
         {
             sprintf(key, "x%zx", (t_uint)x);
-            const char *fname = image_get_filename(x, x->x_image->s_name);
             if (!x->x_localimage)
             {
                 //sys_vgui("image create photo img%x\n", x);
                 x->x_localimage = 1;
             }
-            if (fname)
+            if (fname && firsttime == 2)
             {
                 /* associate a filename with the image */
                 //sys_vgui("::moonlib::image::configure .x%zx img%x {%s}\n",
                 //    x, x, fname);
-                gui_vmess("gui_load_image", "xss",
-                    glist_getcanvas(glist), key, fname);
+                gui_vmess("gui_moonlib_load_image", "xsss",
+                    glist_getcanvas(glist), key, fname, x->x_inlet->s_name);
             }
             //sys_vgui(".x%zx.c create image %d %d -image img%x -tags %xS\n",
             //         glist_getcanvas(glist),
@@ -121,13 +144,15 @@ static void image_drawme(t_image *x, t_glist *glist, int firsttime)
           sys_vgui("image_size logo");
         */
         /* Finally, draw a border */
-        gui_vmess("gui_image_draw_border", "xxiiii",
-            glist_getcanvas(glist),
-            x,
-            0,
-            0,
-            x->x_width,
-            x->x_height);
+        if (x->x_glist == glist_getcanvas(x->x_glist))
+            gui_vmess("gui_moonlib_image_draw_border", "xxiiiii",
+                glist_getcanvas(glist),
+                x,
+                0,
+                0,
+                x->x_width,
+                x->x_height,
+                1);
     }
     else
     {
@@ -159,10 +184,11 @@ static void image_getrect(t_gobj *z, t_glist *glist,
 
     width = x->x_width;
     height = x->x_height;
-    *xp1 = text_xpix(&x->x_obj, glist);
-    *yp1 = text_ypix(&x->x_obj, glist);
-    *xp2 = text_xpix(&x->x_obj, glist) + width;
-    *yp2 = text_ypix(&x->x_obj, glist) + height;
+    *xp1 = text_xpix(&x->x_obj, glist) - width/2;
+    *yp1 = text_ypix(&x->x_obj, glist) - height/2;
+    *xp2 = text_xpix(&x->x_obj, glist) + width/2;
+    *yp2 = text_ypix(&x->x_obj, glist) + height/2;
+    //post("moonlib_image_getrect %d %d %d %d", *xp1, *yp1, *xp2, *yp2);
 }
 
 static void image_displace(t_gobj *z, t_glist *glist, int dx, int dy)
@@ -238,7 +264,7 @@ static void image_vis(t_gobj *z, t_glist *glist, int vis)
 {
     t_image *s = (t_image *)z;
     if (vis)
-        image_drawme(s, glist, 1);
+        image_drawme(s, glist, 2);
     else
         image_erase(s, glist);
 }
@@ -254,17 +280,22 @@ static void image_save(t_gobj *z, t_binbuf *b)
                 x->x_obj.te_xpix,
                 x->x_obj.te_ypix,
                 atom_getsymbol(binbuf_getvec(x->x_obj.te_binbuf)),
-                x->x_image,
+                (x->x_image != &s_ ? x->x_image : gensym("null")),
                 x->x_type);
     binbuf_addv(b, ";");
 }
 
 static t_widgetbehavior image_widgetbehavior;
 
+// this is now exclusively used for the callback from the GUI
+// once the image has been loaded
 static void image_size(t_image *x, t_floatarg w, t_floatarg h)
 {
+    //post("moonlib_image_size");
     x->x_width = w;
     x->x_height = h;
+    image_erase(x, x->x_glist);
+    image_drawme(x, x->x_glist, 1);
 }
 
 static void image_color(t_image *x, t_symbol *col)
@@ -297,8 +328,8 @@ static void image_open(t_gobj *z, t_symbol *file)
             //sys_vgui("img%x blank\n", x);
             //sys_vgui("::moonlib::image::configure .x%zx img%x {%s}\n",
             //    x, x, fname);
-            gui_vmess("gui_load_image", "xss",
-                glist_getcanvas(x->x_glist), key, fname);
+            gui_vmess("gui_load_image", "xssi",
+                glist_getcanvas(x->x_glist), key, fname, 2);
             if (oldtype == 0)
             {
                 //sys_vgui(".x%zx.c itemconfigure %xS -image img%x\n",
@@ -312,7 +343,7 @@ static void image_open(t_gobj *z, t_symbol *file)
         }
     }
     else
-        pd_error(x, "[image]: error opening file '%s'", file->s_name);
+        pd_error(x, "[moonlib/image]: error opening file '%s'", file->s_name);
 }
 
 static void image_load(t_gobj *z, t_symbol *image, t_symbol *file)
@@ -321,6 +352,7 @@ static void image_load(t_gobj *z, t_symbol *image, t_symbol *file)
     const char *fname;
     char key[MAXPDSTRING];
     fname = image_get_filename(x, file->s_name);
+    //post("image_load %s %s", file->s_name, fname);
     if (fname)
     {
         //sys_vgui("::moonlib::image::create_photo .x%zx %s {%s}\n",
@@ -329,12 +361,12 @@ static void image_load(t_gobj *z, t_symbol *image, t_symbol *file)
            name with a class pointer. */
         sprintf(key, "x%zx", (t_uint)pd_class(&x->x_obj.te_pd));
         strcat(key, image->s_name);
-        gui_vmess("gui_load_image", "xss",
-            glist_getcanvas(x->x_glist), key, fname);
+        gui_vmess("gui_load_image", "xssi",
+            glist_getcanvas(x->x_glist), key, fname, 2);
     }
     else
     {
-        pd_error(x, "image: can't load %s", image->s_name);
+        pd_error(x, "[moonlib/image]: can't load %s", image->s_name);
     }
 }
 
@@ -378,10 +410,26 @@ static void image_setwidget(void)
     image_widgetbehavior.w_displacefnwtag = image_displace_wtag;
 }
 
+static void image_free(t_image *x)
+{
+    if (x->x_inlet)
+    {
+        pd_unbind(&x->x_obj.ob_pd, x->x_inlet);
+    }
+    num_instances--;
+    //post("moonlib/image num_instances=%d", num_instances);
+    if (!num_instances)
+    {
+        // we just deleted the last moonlib/image object, so we will now free
+        // all of the images created for the moonlib object
+        gui_vmess("gui_image_free_loaded_images", "i", 2);
+    }
+}
+
 static void *image_new(t_symbol *image, t_float type)
 {
-    post("warning: moonlib/image is a defunct, unsupported, and buggy object and is"
-         " included purely for legacy support reasons. Please use ggee/image or simply"
+    post("WARNING: moonlib/image is a defunct, unsupported, and buggy object and is"
+         " included purely for legacy reasons. Please use ggee/image or simply"
          " image instead. It provides all the moonlib/image functionality and more"
          " without the bugs.");
     t_image *x = (t_image *)pd_new(image_class);
@@ -394,7 +442,7 @@ static void *image_new(t_symbol *image, t_float type)
     else
         x->x_type= 0;
     x->x_localimage = 0;
-    if (image != &s_)
+    if (strcmp(image->s_name, "null"))
     {
         if (x->x_type)
         {
@@ -411,18 +459,24 @@ static void *image_new(t_symbol *image, t_float type)
     else
         x->x_image = &s_;
 
+    char buf[MAXPDSTRING];
+    sprintf(buf, "#%zx", (t_uint)x);
+    x->x_inlet = gensym(buf);
+    pd_bind(&x->x_obj.ob_pd, x->x_inlet);
+
     outlet_new(&x->x_obj, &s_float);
+    num_instances++;
     return (x);
 }
 
 void image_setup(void)
 {
-    image_class = class_new(gensym("image"), (t_newmethod)image_new, 0,
-                            sizeof(t_image), 0, A_DEFSYM, A_DEFFLOAT, 0);
+    image_class = class_new(gensym("image"), (t_newmethod)image_new, 
+            (t_method)image_free, sizeof(t_image), 0, A_DEFSYM, A_DEFFLOAT, 0);
+    
+    class_addmethod(image_class, (t_method)image_size, gensym("_imagesize"),
+    	A_FLOAT, A_FLOAT, 0);
     /*
-        class_addmethod(image_class, (t_method)image_size, gensym("size"),
-        	A_FLOAT, A_FLOAT, 0);
-
         class_addmethod(image_class, (t_method)image_color, gensym("color"),
         	A_SYMBOL, 0);
     */

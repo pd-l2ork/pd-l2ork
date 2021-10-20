@@ -8,6 +8,7 @@
 #include "g_canvas.h"
 #include "s_stuff.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <g_all_guis.h>
 
 #ifdef _MSC_VER
@@ -59,6 +60,8 @@ typedef struct _image
     int x_mode3_click;      // keep track of the click for the mode 3 since
                             // mouse up is faked by sending dbl = -1 variable
 } t_image;
+
+static int num_instances = 0;
 
 // x_gui.x_w and x_h are used for the getbox size. This could be either
 // both the image and selection box size (when gop_spill is off), or only
@@ -142,8 +145,8 @@ static void image_drawme(t_image *x, t_glist *glist)
                 // files menu, it fails to locate files with a relative path.
                 char realfname[FILENAME_MAX];
                 realpath(fname->s_name, realfname);
-                gui_vmess("gui_load_image", "xxs",
-                    glist_getcanvas(glist), x, realfname);
+                gui_vmess("gui_load_image", "xxsi",
+                    glist_getcanvas(glist), x, realfname, 1);
             }
             else
             {
@@ -745,8 +748,8 @@ static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
         // files menu, it fails to locate files with a relative path.
         char realfname[FILENAME_MAX];
         realpath(fname->s_name, realfname);
-        gui_vmess("gui_load_image", "xxs",
-            glist_getcanvas(x->x_gui.x_glist), x, realfname);
+        gui_vmess("gui_load_image", "xxsi",
+            glist_getcanvas(x->x_gui.x_glist), x, realfname, 1);
     }
     else
     {
@@ -784,6 +787,81 @@ static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
         x->x_img_loaded = 1;
     //image_vis((t_gobj *)x, x->x_glist, 0);
     //image_vis((t_gobj *)x, x->x_glist, 1);
+}
+
+// batch pre-load images that can be available to any ggee/image (like moonlib/image)
+static void image_load(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
+{
+    //post("image_load...");
+    t_symbol *fname, *image;
+    char expandedfname[FILENAME_MAX];
+    char key[MAXPDSTRING];
+    FILE *file;
+    if (argc > 1)
+    {
+        image = atom_getsymbolarg(0, argc, argv);
+        fname = get_filename(argc-1, argv+1);
+        if (fname != &s_)
+        {
+            //post("...fname is not empty");
+            canvas_makefilename(
+                glist_getcanvas(x->x_gui.x_glist),
+                fname->s_name,
+                expandedfname, FILENAME_MAX
+            );
+            //post("...expanded_fname=%s", expandedfname);
+            // try to open the file, and if so, proceed
+            if ((file = sys_fopen(expandedfname, "r")))
+            {
+                //post("successfuly opened");
+                sys_fclose(file);
+                sprintf(key, "x%zx", (t_uint)pd_class(&x->x_gui.x_obj.te_pd));
+                strcat(key, image->s_name);
+                gui_vmess("gui_load_image", "xssi",
+                    glist_getcanvas(x->x_gui.x_glist), key, expandedfname, 1);
+            }
+            else
+            {
+                pd_error(x, "image batch load: image file %s not found...", expandedfname);
+            }
+        }
+        else
+        {
+            pd_error(x, "image batch load: image key %s not found...", image->s_name);
+        }
+    }
+    else
+    {
+        pd_error(x, "image batch load: insufficient arguments given, need at least 2 (key, file)");
+    }
+}
+
+static void image_set(t_image *x, t_symbol *image)
+{
+    char key[MAXPDSTRING];
+    /* key is the class address followed by the user-supplied string */
+    sprintf(key, "x%zx", (t_uint)pd_class(&x->x_gui.x_obj.te_pd));
+    strcat(key, image->s_name);
+    if (glist_isvisible(glist_getcanvas(x->x_gui.x_glist)))
+    {
+        /*
+        gui_vmess("gui_image_configure", "xxss",
+            glist_getcanvas(x->x_gui.x_glist),
+            x,
+            key,
+            "nw");
+        */
+        gui_vmess("gui_image_configure_preloaded", "xxssiii",
+            glist_getcanvas(x->x_gui.x_glist),
+            x,
+            key,
+            "nw",
+            x->x_adj_img_width,
+            x->x_adj_img_height,
+            x->x_constrain);
+        //gui_vmess("gui_image_size_callback", "xxs",
+        //    glist_getcanvas(x->x_gui.x_glist), x, x->x_inlet->s_name);
+    }
 }
 
 static void image_reload(t_image *x)
@@ -1284,6 +1362,13 @@ static void image_free(t_image *x)
         pd_unbind(&x->x_gui.x_obj.ob_pd,x->x_gui.x_rcv);
     }
     if (x->x_gui.x_handle) scalehandle_free(x->x_gui.x_handle);
+    num_instances--;
+    if (!num_instances)
+    {
+        // we just deleted the last ggee/image object, so we will now free
+        // all of the images created for the moonlib object
+        gui_vmess("gui_image_free_loaded_images", "i", 1);
+    }
 }
 
 static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
@@ -1532,6 +1617,7 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
     x->x_gui.x_color3 = NULL;
     x->x_mode3_click = 0;
 
+    num_instances++;
     return (x);
 }
 
@@ -1546,6 +1632,10 @@ void image_setup(void)
         A_NULL, 0);
     class_addmethod(image_class, (t_method)image_open, gensym("open"),
         A_GIMME, 0);
+    class_addmethod(image_class, (t_method)image_load, gensym("load"),
+        A_GIMME, 0);
+    class_addmethod(image_class, (t_method)image_set, gensym("set"),
+        A_SYMBOL, 0);
     class_addmethod(image_class, (t_method)image_gop_spill, gensym("gopspill"),
         A_DEFFLOAT, 0);
     class_addmethod(image_class, (t_method)image_constrain, gensym("constrain"),

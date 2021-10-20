@@ -1,5 +1,5 @@
 PD-L2ORK TODO:
-*check if the defunct image object works.
+*fix tof/imagebang.
 
 *finish and integrate gop drawing order work (see if there is something in the branch log to pull as to the status of the work).
 	*Redrawing entire canvas after tidy will not be necessary anymore.
@@ -22,7 +22,7 @@ PD-L2ORK TODO:
 
 RARE:
 *Pd-L2Ork sporadic crashes when opening/closing L2OrkTweet.pd and L2Ork-Tweeter.pd. These are now sparser (suspect something on the nw.js side of things).
-*check for stray/sporadic bug where bang and other objects stop working and bang objects gets stuck in on mode until the mouse is moved (nw.js bug?).
+*check for stray/sporadic bug where bang and other objects stop working and bang object gets stuck in on mode until the mouse is moved (nw.js bug?).
 
 
  
@@ -88,7 +88,16 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Fixed a bug where mycanvas dialog says image width instead of rectangle width. Fixed co-dependence of the dialog_image and dialog_iemgui and added missing translation entries for fr and de translations.
 *Fixed weird message resizing issue that causes text inside to be partially invisible and to scroll.
 *Fixed a regression where sometimes copying stops working, triggering the following error: TypeError: Cannot read property 'classlist' of undefined.
-
+*Fixed the defunct moonlib/image external. Marked it as loudly as possible as defunct.
+  *selection rectangle is off.
+  *clicks still register in GOP patches (likely core fix).
+  *border highlights inside GOP patches.
+  *error reopening a patch once it has been saved and closed (works fine on first try--likely path issue).
+  *weird repositioning and visibility issues inside GOP.
+  *size should automatically readjust.
+*Fixed memory leaks with moonlib/image.
+*Implemented batch image loading for ggee/image, so that it can handle image sequence (akin to moonlib/image).
+*Updated ggee/image and moonlib/image help files accordingly.
 
 TWEETER TODO:
 *Make reliable sync when doing copying of loops and patterns (maybe send the sync data back to server?). Is this even a problem or a matter of user error?

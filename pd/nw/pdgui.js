@@ -4888,6 +4888,11 @@ function gui_drawnumber_vis(cid, parent_tag, tag, x, y, scale_x, scale_y,
 // tof/imagebang
 // draw sprite
 // draw image
+
+// ico@vt.edu 2021-10-19: added types, as follows:
+// 0 = uninitialized
+// 1 = ggee/image
+// 2 = moonlib/image
 var pd_cache = (function() {
     var d = {};
     return {
@@ -4907,7 +4912,7 @@ var pd_cache = (function() {
                 return undefined;
             }
         },
-        debug: function() {
+        getAllData: function() {
             return d;
         }
     };
@@ -4985,6 +4990,23 @@ function gui_image_free(obj_tag) {
     /*} else {
         post("image: warning: no image data in cache to free"); */
     }
+}
+
+function gui_image_free_loaded_images(objType) {
+    var key;
+    //var tally = 0;
+    var keys = pd_cache.getAllData();
+    //post("keys="+keys);
+    for (key in keys) {
+        //post("...key:"+key);
+        if (keys.hasOwnProperty(key))
+            //post("has property "+ keys[key].creator);
+            if (keys[key] && keys[key].creator == objType) {
+                gui_image_free(key);
+                //tally++;
+            }
+    }
+    //post("pd_cache length for type " + objType + " " + tally);
 }
 
 // We use this to get the correct height and width for the svg
@@ -5162,13 +5184,35 @@ function gui_load_default_image(dummy_cid, key) {
 }
 
 // Load an image and cache the base64 data
-function gui_load_image(cid, key, filepath) {
+// ico@vt.edu 2021-10-19:
+// objtype is reserved to recognize previously batch-loaded images by
+// different objects, so that when the last of that kind of the object
+// has been deleted, we can dispose of all such images
+function gui_load_image(cid, key, filepath, objtype) {
+    //post("gui_load_image " + filepath);
+    var data = fs.readFileSync(filepath,"base64"),
+        ext = path.extname(filepath);
+    pd_cache.set(key, {
+        type: ext === ".jpeg" ? "jpg" : ext.slice(1),
+        data: data,
+        creator: (objtype ? objtype : 0)
+    });
+}
+
+// Load an image and cache the base64 data then send a callback with its size
+function gui_moonlib_load_image(cid, key, filepath, callback) {
     var data = fs.readFileSync(filepath,"base64"),
         ext = path.extname(filepath);
     pd_cache.set(key, {
         type: ext === ".jpeg" ? "jpg" : ext.slice(1),
         data: data
     });
+    var img = new pd_window.Image(); // create an image in the pd_window context
+    img.onload = function() {
+        pdsend(callback, "_imagesize", this.width, this.height);
+    };
+    img.src = "data:image/" + pd_cache.get(key).type +
+        ";base64," + pd_cache.get(key).data;
 }
 
 // Draw an image in an object-- used for ggee/image, moonlib/image and
@@ -5277,6 +5321,33 @@ function gui_image_draw_border(cid, tag, x, y, w, h/*, imgw, imgh*/, onoff) {
     }
 }
 
+function gui_moonlib_image_draw_border(cid, tag, x, y, w, h, onoff) {
+    //post("gui_moonlib_image_draw_border "+x+" "+y+" "+w+" "+h);
+    if (onoff == 0) {
+        gui(cid).get_gobj(tag)
+        .q("path", function(border) {
+            border.parentNode.removeChild(border);
+        });
+    } else {
+        gui(cid).get_gobj(tag)
+        .append(function(frag) {
+            var b = create_item(cid, "path", {
+                "stroke-width": "1",
+                fill: "none",
+                d: ["m", -w/2, -h/2, w, 0,
+                    "m", 0, 0, 0, h,
+                    "m", 0, 0, -w, 0,
+                    "m", 0, 0, 0, -h
+                   ].join(" "),
+                visibility: "visible",
+                class: "image border"
+            });
+            frag.appendChild(b);
+            return frag;
+        });
+    }
+}
+
 function gui_image_toggle_border(cid, tag, state) {
     gui(cid).get_gobj(tag)
     .q(".border", {
@@ -5312,6 +5383,29 @@ function gui_image_configure(cid, tag, image_key, tk_anchor) {
             post("image: error: can't find image");
         }
     });
+}
+
+// Switch the data for an existing svg image
+function gui_image_configure_preloaded(cid, tag, image_key, tk_anchor, w, h, constrain) {
+    gui(cid).get_elem(tag+"image", function(e) {
+        if (pd_cache.get(image_key)) {
+            e.setAttributeNS("http://www.w3.org/1999/xlink", "href",
+                "data:image/" + pd_cache.get(image_key).type + ";base64," +
+                 pd_cache.get(image_key).data);
+            //img_size_setter(cid, tag+"image", pd_cache.get(image_key).type,
+            //    pd_cache.get(image_key).data, tk_anchor);
+        } else {
+            // need to change this to an actual error
+            post("image: error: can't find image");
+        }
+    });
+    configure_item(get_item(cid, tag+"image"), {
+        preserveAspectRatio: constrain == 1 ? "xMinYMin meet" : "none",
+        width: w,
+        height: h,
+        x: tk_anchor === "center" ? 0 - w/2 : 0,
+        y: tk_anchor === "center" ? 0 - h/2 : 0
+    }); 
 }
 
 // Move an image

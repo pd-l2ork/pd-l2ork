@@ -849,6 +849,9 @@ EXTERN void *canvas_undo_set_font(t_canvas *x, int font);
 
 /* ------------------------------- */
 
+/* -------------- new convenience functions by Ico --------------------- */
+
+//EXTERN int find_total_number_of_class_instances(t_canvas *x, void *class);
 
 /* ---------- other things added by Mathieu (aug.2014) ----------------- */
 
