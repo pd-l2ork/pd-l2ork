@@ -1,4 +1,4 @@
-#N canvas 167 196 694 739 12;
+#N canvas 167 268 694 739 12;
 #X text 16 159 usage: image image_symbol [type];
 #X text 16 180 if type=0 (or absent) \, image_symbol is a file.;
 #X text 16 201 if type=1 \, image_symbol means a pre-loaded image \;
@@ -10,13 +10,13 @@
 0;
 #X obj 415 277 t a;
 #X msg 476 169 open examples/play.gif;
-#X msg 476 190 open examples/playy.gif;
-#X msg 476 211 open examples/rec.gif;
-#X msg 476 232 open examples/pause.gif;
-#X msg 476 253 open examples/sinw.gif;
-#X msg 476 274 open examples/squarew.gif;
-#X msg 476 295 open examples/saww.gif;
-#X obj 422 316 moonlib/image /home/l2orkist/Downloads/pd-l2ork/externals/moonlib/examples/play.gif
+#X msg 476 191 open examples/playy.gif;
+#X msg 476 213 open examples/rec.gif;
+#X msg 476 235 open examples/pause.gif;
+#X msg 476 257 open examples/sinw.gif;
+#X msg 476 279 open examples/squarew.gif;
+#X msg 476 301 open examples/saww.gif;
+#X obj 422 316 moonlib/image /usr/lib/pd-l2ork/extra/moonlib/examples/play.gif
 0;
 #X obj 81 279 moonlib/image examples/rec.gif 0;
 #X obj 99 279 moonlib/image examples/pause.gif 0;
@@ -62,7 +62,7 @@
 #X obj 354 406 hsl 128 15 0 63 0 0 empty empty empty -2 -6 0 8 #fcfcfc
 #000000 #000000 0 1 0 1;
 #X obj 354 432 i;
-#X obj 234 614 moonlib/image /home/l2orkist/Downloads/pd-l2ork/externals/moonlib/examples/rec.gif
+#X obj 234 614 moonlib/image /usr/lib/pd-l2ork/extra/moonlib/examples/rec.gif
 0;
 #X obj 354 456 change;
 #X text 19 336 For animations \, it's beter to preload images:;
@@ -77,7 +77,7 @@
 #X obj 57 498 makefilename d%d;
 #X obj 354 481 makefilename d%d;
 #X obj 117 522 makefilename examples/d%d.gif;
-#N canvas 554 569 397 171 META 0;
+#N canvas 568 690 469 208 META 0;
 #X text 20 41 LICENSE GPL v2;
 #X text 20 111 AUTHOR Antoine Rousseau;
 #X text 20 88 INLET_0 load set open;

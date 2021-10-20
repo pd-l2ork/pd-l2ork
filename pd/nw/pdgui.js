@@ -5278,12 +5278,13 @@ function gui_load_image(cid, key, filepath, objtype) {
 }
 
 // Load an image and cache the base64 data then send a callback with its size
-function gui_moonlib_load_image(cid, key, filepath, callback) {
+function gui_moonlib_load_image(cid, key, filepath, callback, objtype) {
     var data = fs.readFileSync(filepath,"base64"),
         ext = path.extname(filepath);
     pd_cache.set(key, {
         type: ext === ".jpeg" ? "jpg" : ext.slice(1),
-        data: data
+        data: data,
+        creator: (objtype ? objtype : 0)
     });
     var img = new pd_window.Image(); // create an image in the pd_window context
     img.onload = function() {

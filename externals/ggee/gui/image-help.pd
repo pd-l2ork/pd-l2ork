@@ -1,4 +1,4 @@
-#N canvas 151 185 554 780 10;
+#N canvas 151 221 554 780 10;
 #X obj 0 1917 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
 14 #dcdcdc #404040 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header ggee/image 3 12
@@ -778,7 +778,7 @@ empty img_rcv my_img 25 25 0 0 10 #fcfcfc -4 -10 12.5 12.5 0 1 1;
 #X connect 54 0 45 0;
 #X connect 55 0 45 0;
 #X restore 168 1862 pd changing_GUI_properties;
-#N canvas 536 341 766 477 batch_loading 0;
+#N canvas 536 350 766 477 batch_loading 0;
 #X obj 54 250 t f f, f 9;
 #X obj 54 322 pack s s, f 9;
 #X msg 54 345 load \$1 \$2;

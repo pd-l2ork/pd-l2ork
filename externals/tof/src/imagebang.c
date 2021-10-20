@@ -10,9 +10,12 @@
 #endif
 
 /* Append " x " to the following line to show debugging messages */
-#define DEBUG(x)
+//#define DEBUG(x)
 
-
+#ifdef _WIN32
+#include <stdlib.h>
+#define realpath(N,R) _fullpath((R),(N),_MAX_PATH)
+#endif
 
 /* ------------------------ imagebang ----------------------------- */
 
@@ -41,8 +44,8 @@ static void imagebang_bang(t_imagebang *x)
     char image_key[MAXPDSTRING];
     if (x->flashing)
     {
-        sys_vgui(".x%x.c itemconfigure %ximage -image %x_imagebang \n",
-            glist, x,x->image_a);
+        //sys_vgui(".x%x.c itemconfigure %ximage -image %x_imagebang \n",
+        //    glist, x,x->image_a);
         clock_delay(x->clock_brk, 50);
         //x->flashed = 1;
         // key_a:
@@ -55,8 +58,8 @@ static void imagebang_bang(t_imagebang *x)
     }
     else
     {
-        sys_vgui(".x%x.c itemconfigure %ximage -image %x_imagebang \n",
-            glist, x,x->image_b);
+        //sys_vgui(".x%x.c itemconfigure %ximage -image %x_imagebang \n",
+        //    glist, x,x->image_b);
         // key_b:
         sprintf(image_key, "%zx_b", (t_uint)x);
         gui_vmess("gui_image_configure", "xxss",
@@ -108,20 +111,37 @@ static void imagebang_brk_timeout(t_imagebang *x)
 /* widget helper functions */
 
 static const char* imagebang_get_filename(t_imagebang *x,char *file) {
-    static char fname[MAXPDSTRING];
-    char *bufptr;
+    static char dirresult[MAXPDSTRING];
+    char fname[FILENAME_MAX];
+    char *fileresult, *fullpath;
     int fd;
-    
-    fd=open_via_path(canvas_getdir(glist_getcanvas(x->glist))->s_name, 
-        file, "",fname, &bufptr, MAXPDSTRING, 1);
-    if(fd>0){
-          fname[strlen(fname)]='/';
-          DEBUG(post("image file: %s",fname);)
-          close(fd);
-          return fname;
-    } else {
-        return 0;
+    // ico@vt.edu 2021-10-19: got to expand the file to fname
+    // otherwise relative path will fail to open the file on js side
+    canvas_makefilename(
+        glist_getcanvas(x->glist),
+        file,
+        fname, FILENAME_MAX
+        );
+    char realfname[FILENAME_MAX];
+    realpath(fname, realfname);
+    //post("tof/imagebang file=<%s> fname=<%s>", file, realfname);
+    fd = open_via_path(canvas_getdir(glist_getcanvas(x->glist))->s_name,
+        realfname, "", dirresult, &fileresult, MAXPDSTRING, 1);
+    //post("image_get_filename file=%s fname=%s fd=%d dirresult=%s fileresult=%s",
+    //  file, fname, fd, dirresult, fileresult);
+
+    if (fd > 0)
+    {
+        /* dirresult and fileresult are in the same buffer (see comment 
+           for do_open_via_path in s_path.c). This means we can change
+           the null terminator that separates them to a backslash to
+           retrieve the full path... */
+        fullpath = dirresult;
+        fullpath[strlen(fullpath)] = '/';
+        sys_close(fd);
+        return fullpath;
     }
+    else return 0;
 }
 
 static int imagebang_click(t_imagebang *x, struct _glist *glist,
@@ -178,8 +198,8 @@ static void imagebang_drawme(t_imagebang *x, t_glist *glist, int firsttime)
 void imagebang_erase(t_imagebang* x,t_glist* glist)
 {
     int n;
-    sys_vgui(".x%x.c delete %ximage\n",
-        glist_getcanvas(glist), x);
+    //sys_vgui(".x%x.c delete %ximage\n",
+    //    glist_getcanvas(glist), x);
     gui_vmess("gui_gobj_erase", "xx", glist_getcanvas(glist), x);
 }
 
@@ -237,18 +257,32 @@ static void imagebang_select(t_gobj *z, t_glist *glist, int state)
 {
     t_imagebang *x = (t_imagebang *)z;
     if (state) {
-     sys_vgui(".x%x.c create rectangle \
+        /*
+        sys_vgui(".x%x.c create rectangle \
            %d %d %d %d -tags %xSEL -outline $select_color\n",
            glist_getcanvas(glist),
            text_xpix(&x->x_obj, glist), text_ypix(&x->x_obj, glist),
            text_xpix(&x->x_obj, glist) + x->width,
            text_ypix(&x->x_obj, glist) + x->height,
            x);
+        */
+        gui_vmess("gui_image_draw_border", "xxiiiii",
+           glist_getcanvas(glist), x,
+           text_xpix(&x->x_obj, glist), text_ypix(&x->x_obj, glist),
+           x->width, x->height, 1);       
+
         gui_vmess("gui_gobj_select", "xx", glist_getcanvas(glist), x);
     }
     else {
+        /*
         sys_vgui(".x%x.c delete %xSEL\n",
             glist_getcanvas(glist), x);
+        */
+        gui_vmess("gui_image_draw_border", "xxiiiii",
+           glist_getcanvas(glist), x,
+           text_xpix(&x->x_obj, glist), text_ypix(&x->x_obj, glist),
+           x->width, x->height, 0); 
+
         gui_vmess("gui_gobj_deselect", "xx", glist_getcanvas(glist), x);
     }
 }
@@ -282,8 +316,8 @@ static void imagebang_size(t_imagebang* x,t_floatarg w,t_floatarg h) {
 }
 
 static void imagebang_imagesize_callback(t_imagebang *x, t_float w, t_float h) {
-    DEBUG(post("received w %f h %f",w,h);)
-    post("received w %f h %f",w,h);
+    //DEBUG(post("received w %f h %f",w,h);)
+    //post("received w %f h %f",w,h);
     x->width = w;
     x->height = h;
     canvas_fixlinesfor(x->glist,(t_text*) x);
@@ -294,15 +328,16 @@ static void imagebang_free(t_imagebang *x) {
     char key_b[MAXPDSTRING]; 
     // check first if variable has been unset and image is unused
     // then delete image and unset variable
-     DEBUG(sys_vgui("pd [concat DEBUG b in use [image inuse %x_imagebang] \\;]\n",x->image_b);)
-     DEBUG(sys_vgui("pd [concat DEBUG a in use [image inuse %x_imagebang] \\;]\n",x->image_a);)
+    /*
+    DEBUG(sys_vgui("pd [concat DEBUG b in use [image inuse %x_imagebang] \\;]\n",x->image_b);)
+    DEBUG(sys_vgui("pd [concat DEBUG a in use [image inuse %x_imagebang] \\;]\n",x->image_a);)
     
     sys_vgui("if { [info exists %x_imagebang] == 1 && [image inuse %x_imagebang] == 0} { image delete %x_imagebang \n unset %x_imagebang\n} \n",x->image_b,x->image_b,x->image_b,x->image_b);
     sys_vgui("if { [info exists %x_imagebang] == 1 && [image inuse %x_imagebang] == 0} { image delete %x_imagebang \n unset %x_imagebang\n} \n",x->image_a,x->image_a,x->image_a,x->image_a);
     
     DEBUG(sys_vgui("pd [concat DEBUG b exists [info exists %x_imagebang] \\;]\n",x->image_b);)
-     DEBUG(sys_vgui("pd [concat DEBUG a exists [info exists %x_imagebang] \\;]\n",x->image_a);)
-    
+    DEBUG(sys_vgui("pd [concat DEBUG a exists [info exists %x_imagebang] \\;]\n",x->image_a);)
+    */
     sprintf(key_a, "%zx_a", (t_uint)x);
     sprintf(key_b, "%zx_b", (t_uint)x);
     gui_vmess("gui_image_free", "s", key_a);
@@ -356,6 +391,7 @@ static void *imagebang_new(t_symbol *s, int argc, t_atom *argv)
 
         // Get image file path
         fname = imagebang_get_filename(x,image_a->s_name);
+        //post("tof/imagebang fname=<%s>", fname);
         if (fname)
         {
             x->image_a = gensym(fname);

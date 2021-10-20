@@ -10,6 +10,11 @@
 #pragma warning( disable : 4305 )
 #endif
 
+#ifdef _WIN32
+#include <stdlib.h>
+#define realpath(N,R) _fullpath((R),(N),_MAX_PATH)
+#endif
+
 /* ------------------------ image ----------------------------- */
 
 static t_class *image_class;
@@ -47,8 +52,10 @@ static const char *image_get_filename(t_image *x, char *file)
         file,
         fname, FILENAME_MAX
         );
+    char realfname[FILENAME_MAX];
+    realpath(fname, realfname);
     fd = open_via_path(canvas_getdir(glist_getcanvas(x->x_glist))->s_name,
-        fname, "", dirresult, &fileresult, MAXPDSTRING, 1);
+        realfname, "", dirresult, &fileresult, MAXPDSTRING, 1);
     //post("image_get_filename file=%s fname=%s fd=%d dirresult=%s fileresult=%s",
     //  file, fname, fd, dirresult, fileresult);
 
@@ -125,8 +132,8 @@ static void image_drawme(t_image *x, t_glist *glist, int firsttime)
                 /* associate a filename with the image */
                 //sys_vgui("::moonlib::image::configure .x%zx img%x {%s}\n",
                 //    x, x, fname);
-                gui_vmess("gui_moonlib_load_image", "xsss",
-                    glist_getcanvas(glist), key, fname, x->x_inlet->s_name);
+                gui_vmess("gui_moonlib_load_image", "xsssi",
+                    glist_getcanvas(glist), key, fname, x->x_inlet->s_name, 2);
             }
             //sys_vgui(".x%zx.c create image %d %d -image img%x -tags %xS\n",
             //         glist_getcanvas(glist),
@@ -328,18 +335,17 @@ static void image_open(t_gobj *z, t_symbol *file)
             //sys_vgui("img%x blank\n", x);
             //sys_vgui("::moonlib::image::configure .x%zx img%x {%s}\n",
             //    x, x, fname);
-            gui_vmess("gui_load_image", "xssi",
-                glist_getcanvas(x->x_glist), key, fname, 2);
+            gui_vmess("gui_moonlib_load_image", "xsssi",
+                glist_getcanvas(x->x_glist), key, fname, x->x_inlet->s_name, 2);
+            //gui_vmess("gui_load_image", "xssi",
+            //    glist_getcanvas(x->x_glist), key, fname, 2);
+            /*
             if (oldtype == 0)
             {
                 //sys_vgui(".x%zx.c itemconfigure %xS -image img%x\n",
                 //    glist_getcanvas(x->x_glist), x, x);
-                gui_vmess("gui_image_configure", "xxss",
-                    glist_getcanvas(x->x_glist),
-                    x,
-                    key,
-                    "center");
             }
+            */
         }
     }
     else

@@ -1,58 +1,68 @@
-#N canvas 339 97 658 555 10;
-#X obj 45 338 print;
-#X obj 45 152 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
--1;
-#X text 27 49 [imagebang] only works with gifs;
-#X text 314 97 Arguments:;
-#X text 253 277 <- This [imagebang] was created with the following:
+#N canvas 339 124 643 577 12;
+#X obj 46 268 cnv 15 186 56 empty empty empty 20 12 0 14 #47bbf1 #404040
+0;
+#X obj 53 241 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
+#X text 285 133 Arguments:;
+#X text 242 273 <- This [imagebang] was created with the following:
 ;
-#X obj 285 341 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
--1 -1;
-#X obj 285 362 s \$0pandar;
-#X obj 365 333 r \$0pandas;
-#X obj 365 361 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
--1 -1;
-#X obj 42 411 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
--1;
-#X obj 42 502 print;
-#X obj 192 416 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
--1 -1;
-#X obj 192 389 r \$0homes;
-#X obj 123 394 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
--1 -1;
-#X obj 123 416 s \$0homer;
-#X text 112 458 <- This [imagebang] was created with the following:
+#X obj 344 339 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000 1;
+#X obj 437 365 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000 1;
+#X obj 49 421 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
+#X obj 437 445 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000 1;
+#X obj 437 417 r \$0homes;
+#X obj 344 421 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000 1;
+#X obj 344 444 s \$0homer;
+#X text 131 474 <- This [imagebang] was created with the following:
 ;
-#X text 258 299 [tof/imagebang panda.gif pandb.gif \$0pandas \$0pandar]
+#X text 154 494 [tof/imagebang homea.gif homeb.gif \$0homes \$0homer]
 ;
-#X text 118 480 [tof/imagebang homea.gif homeb.gif \$0homes \$0homer]
+#X text 20 193 based on [image] by ggee and moonlib;
+#X obj 49 450 tof/imagebang homea.gif homeb.gif \$0homes \$0homer;
+#X text 20 133 Description: a bang with an image;
+#X text 329 153 1) image for the normal state (required);
+#X text 329 173 2) image for the clicked state (required);
+#X text 20 173 Contact: mrtoftrash@gmail.com;
+#N canvas 685 386 483 260 META 0;
+#X text 26 53 LICENSE GPL v2;
+#X text 26 76 DESCRIPTION GUI bang with an image;
+#X text 26 99 INLET_0 anything;
+#X text 26 122 OUTLET_0 bang;
+#X text 26 29 KEYWORDS control user_input GUI bang_op DEPRECATED;
+#X text 26 184 HELP_PATCH_AUTHORS "pd meta" information added by Jonathan
+Wilkes for Pd version 0.42. Additional improvements by Ivica Ico Bukvic.
 ;
-#X text 28 69 based on [image] by ggee and moonlib;
-#X obj 45 177 tof/imagebang panda.gif pandb.gif \$0pandas \$0pandar
-;
-#X obj 42 435 tof/imagebang homea.gif homeb.gif \$0homes \$0homer;
-#X text 26 3 Description: a bang with an image;
-#X text 27 17 Tags: ui;
-#X text 351 116 1) image for the normal state (required);
-#X text 350 133 2) image for the clicked state (required);
-#X text 27 31 Contact: mrtoftrash@gmail.com;
-#N canvas 227 162 494 344 META 0;
-#X text 12 125 HELP_PATCH_AUTHORS "pd meta" information added by Jonathan
-Wilkes for Pd version 0.42.;
-#X text 12 25 LICENSE GPL v2;
-#X text 12 105 AUTHOR Thomas Ouellet Fredericks;
-#X text 12 5 KEYWORDS control user_input GUI bang_op;
-#X text 12 45 DESCRIPTION GUI bang with an image;
-#X text 12 65 INLET_0 anything;
-#X text 12 85 OUTLET_0 bang;
-#X restore 606 531 pd META;
-#X text 350 149 3) send name (optional);
-#X text 351 165 4) receive name (optional);
-#X connect 1 0 19 0;
-#X connect 5 0 6 0;
-#X connect 7 0 8 0;
-#X connect 9 0 20 0;
-#X connect 12 0 11 0;
-#X connect 13 0 14 0;
-#X connect 19 0 0 0;
-#X connect 20 0 10 0;
+#X text 26 146 AUTHOR Thomas Ouellet Fredericks with improvements by
+Ivica Ico Bukvic;
+#X restore 579 547 pd META;
+#X text 329 193 3) send name (optional);
+#X text 329 213 4) receive name (optional);
+#X obj 53 275 tof/imagebang @pd_extra/K12/icons/edit.png @pd_extra/K12/icons/perform.png
+\$0audios \$0audior;
+#X text 265 292 tof/imagebang @pd_extra/K12/icons/edit.png @pd_extra/K12/icons/perform.png
+\$0audios \$0audior;
+#X obj 437 338 r \$0audios;
+#X obj 344 361 s \$0audior;
+#X text 20 153 Tags: ui DEFUNCT;
+#X obj 0 3 cnv 15 642 26 empty \$0-pddp.cnv.header tof/imagebang\ (DEPRECATED)
+9 10 0 18 #c4dcdc #000000 0;
+#X text 4 87 For images see [ggee/image] (a.k.a. [image]) \, [draw
+image] \, and [draw sprite], f 80;
+#X text 4 35 This object is DEPRECATED. It is kept here for the backwards
+compatibility. Instead of tof/image \, consider using ggee/image that
+supports everything tof/image supports and more., f 90;
+#X obj 49 513 print home;
+#X obj 53 336 print building_button;
+#X connect 1 0 22 0;
+#X connect 4 0 25 0;
+#X connect 6 0 14 0;
+#X connect 8 0 7 0;
+#X connect 9 0 10 0;
+#X connect 14 0 30 0;
+#X connect 22 0 31 0;
+#X connect 24 0 5 0;
