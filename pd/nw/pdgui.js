@@ -2950,6 +2950,8 @@ function gui_canvas_patchcord_scroll(cid, x1, y1, x2, y2) {
         brx = tlx + min_width;
         bry = tly + min_height;
         //post("("+tlx+","+tly+") | ("+brx+","+bry+")");
+        /*
+        // old way
         if (lr == 1) {
             if (x2b - brx > 0)
                 offsetx = x2b - brx;
@@ -2973,6 +2975,55 @@ function gui_canvas_patchcord_scroll(cid, x1, y1, x2, y2) {
             else if (y1b - bry > 0)
                 offsety = y1b - bry;
         }
+        */
+        // ico@vt.edu 2021-10-19: added edge zone where scroll is initiated
+        // before even getting to the edge of the canvas because it appears
+        // the current nw.js version sometimes stops reporting mouse position
+        // when the mouse is rapidly pulled away from the window, which
+        // results in the window not being scrollable anymore until the
+        // mouse button is released and the scroll is reinitialized.
+        var edgezone = 30;
+        
+        if (lr == 1) {
+            if (x2b - (brx-edgezone) > 0) {
+                offsetx = x2b - (brx-edgezone);
+                //post("lr 1 1: " + (x2b - (brx-edgezone)));
+            }
+            else if ((x2b-edgezone) - tlx < 0) {
+                offsetx = (x2b-edgezone) - tlx;
+                //post("lr 1 2: " + ((x2b-edgezone) - tlx));
+            }
+        } else if (lr == -1) {
+            if ((x1b-edgezone) - tlx < 0) {
+                offsetx = (x1b-edgezone) - tlx;
+                //post("lr -1 2: " + ((x1b-edgezone) - tlx));
+            }
+            else if (x1 - (brx-edgezone) > 0) {
+                offsetx = x1b - (brx-edgezone);
+                //post("lr -1 2: " + (x1b - (brx-edgezone)));
+            }
+        }
+
+        if (ud == 1) {
+            if (y2b - (bry-edgezone) > 0) {
+                offsety = y2b - (bry-edgezone);
+                //post("ud 1 1: " + (y2b - (bry-edgezone)));
+            }
+            else if ((y2b-edgezone) - tly < 0) {
+                offsety = (y2b-edgezone) - tly;
+                //post("ud 1 2: " + ((y2b-edgezone) - tly));
+            }
+        } else if (ud == -1) {
+            if ((y1b-edgezone) - tly < 0) {
+                offsety = (y1b-edgezone) - tly;
+                //post("ud -1 1: " + ((y1b-20) - tly));
+            }
+            else if (y1b - (bry-edgezone) > 0) {
+                offsety = y1b - (bry-edgezone);
+                //post("ud -1 2: " + (y1b - (bry-20)));
+            }
+        }
+
 
         var inc = 10; // scroll increment
         if (offsetx > 0) offsetx = inc;
@@ -3612,28 +3663,53 @@ function gui_canvas_move_selection(cid, x1, y1, x2, y2) {
         brx = tlx + min_width;
         bry = tly + min_height;
         //post("("+tlx+","+tly+") | ("+brx+","+bry+")");
+
+        // ico@vt.edu 2021-10-19: added edge zone where scroll is initiated
+        // before even getting to the edge of the canvas because it appears
+        // the current nw.js version sometimes stops reporting mouse position
+        // when the mouse is rapidly pulled away from the window, which
+        // results in the window not being scrollable anymore until the
+        // mouse button is released and the scroll is reinitialized.
+        var edgezone = 30;
+
         if (lr == 1) {
-            if (x2b - brx > 0)
-                offsetx = x2b - brx;
-            else if (x2 - tlx < 0)
-                offsetx = x2b - tlx;
+            if (x2b - (brx-edgezone) > 0) {
+                offsetx = x2b - (brx-edgezone);
+                //post("lr 1 1: " + (x2b - (brx-edgezone)));
+            }
+            else if ((x2b-edgezone) - tlx < 0) {
+                offsetx = (x2b-edgezone) - tlx;
+                //post("lr 1 2: " + ((x2b-edgezone) - tlx));
+            }
         } else if (lr == -1) {
-            if (x1b - tlx < 0)
-                offsetx = x1b - tlx;
-            else if (x1 - brx > 0)
-                offsetx = x1b - brx;
+            if ((x1b-edgezone) - tlx < 0) {
+                offsetx = (x1b-edgezone) - tlx;
+                //post("lr -1 2: " + ((x1b-edgezone) - tlx));
+            }
+            else if (x1 - (brx-edgezone) > 0) {
+                offsetx = x1b - (brx-edgezone);
+                //post("lr -1 2: " + (x1b - (brx-edgezone)));
+            }
         }
 
         if (ud == 1) {
-            if (y2b - bry > 0)
-                offsety = y2b - bry;
-            else if (y2b - tly < 0)
-                offsety = y2b - tly;
+            if (y2b - (bry-edgezone) > 0) {
+                offsety = y2b - (bry-edgezone);
+                //post("ud 1 1: " + (y2b - (bry-edgezone)));
+            }
+            else if ((y2b-edgezone) - tly < 0) {
+                offsety = (y2b-edgezone) - tly;
+                //post("ud 1 2: " + ((y2b-edgezone) - tly));
+            }
         } else if (ud == -1) {
-            if (y1b - tly < 0)
-                offsety = y1b - tly;
-            else if (y1b - bry > 0)
-                offsety = y1b - bry;
+            if ((y1b-edgezone) - tly < 0) {
+                offsety = (y1b-edgezone) - tly;
+                //post("ud -1 1: " + ((y1b-20) - tly));
+            }
+            else if (y1b - (bry-edgezone) > 0) {
+                offsety = y1b - (bry-edgezone);
+                //post("ud -1 2: " + (y1b - (bry-20)));
+            }
         }
 
         var inc = 10; // scroll increment
