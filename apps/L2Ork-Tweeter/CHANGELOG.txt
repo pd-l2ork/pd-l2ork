@@ -9,6 +9,9 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+20-10-2021 0.53
+*Fixed a bug that occurred during changing the instrument while having the levels manually disabled (feature introduced in 0.51) and which resulted in the newly loaded instrument still sounding out.
+
 18-10-2021 0.52
 *Update sessions that don't have parts 11 and 12.
 *Improved server-invoked load session to also include sync. Expanded server command vocabulary accordingly, adding l2ork-load-sync-delay.
