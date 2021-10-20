@@ -1,6 +1,4 @@
 PD-L2ORK TODO:
-*fix tof/imagebang.
-
 *finish and integrate gop drawing order work (see if there is something in the branch log to pull as to the status of the work).
 	*Redrawing entire canvas after tidy will not be necessary anymore.
 
@@ -98,8 +96,13 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Fixed memory leaks with moonlib/image.
 *Implemented batch image loading for ggee/image, so that it can handle image sequence (akin to moonlib/image).
 *Updated ggee/image and moonlib/image help files accordingly.
+*Overhauled tof/imagebang to work in Pd-L2Ork. Updated help file and removed questionable help file content.
+*Updated moonlib/image and tof/imagebang to consistently support both relative and absolute paths of images.
+*Updated moonlib/image to address the bug where opening an image after setting a preloaded one did not immediately update the image. Further refinements to the help file.
 
 TWEETER TODO:
+*Fix the bug where the toggling the sound off (by holding the "'" key) did not stick after updating an instrument via preset or via shift+up/down does not work on OSX (possibly others). May be linked to the online mode.
+
 *Make reliable sync when doing copying of loops and patterns (maybe send the sync data back to server?). Is this even a problem or a matter of user error?
 
 *In offline mode, enable keyboard and other input for multiple tracks
