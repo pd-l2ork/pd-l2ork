@@ -3585,6 +3585,7 @@ function gui_canvas_move_selection(cid, x1, y1, x2, y2) {
         var points_array = [x1 + 0.5, y1 + 0.5, x2 + 0.5, y1 + 0.5,
             x2 + 0.5, y2 + 0.5, x1 + 0.5, y2 + 0.5];
 
+        //post("points_array=" + points_array);
         gui(cid).get_elem("selection_rectangle", {
             points: points_array
         });
@@ -4299,6 +4300,7 @@ exports.toggle_drag_handle_cursors = toggle_drag_handle_cursors;
 
 // Show or hide little handle for dragging around iemgui labels
 function gui_iemgui_label_show_drag_handle(cid, tag, state, x, y, cnv_resize) {
+    //post("gui_iemgui_label_show_drag_handle tag=" + tag + " state=" + state);
     if (state !== 0) {
         gui(cid).get_gobj(tag)
         .append(function(frag, w) {
@@ -4356,18 +4358,18 @@ function gui_iemgui_label_show_drag_handle(cid, tag, state, x, y, cnv_resize) {
             g.classList.add("clickable_resize_handle");
             if (cnv_resize) {
                 top_right = create_item(cid, "rect", {
-                    x:      x-11,
+                    x:      (x-11 >= 0 ? x-11 : 0),
                     y:         0,
                     width:     3,
-                    height:  y-8,
+                    height:  (y-8 >= 0 ? y-8 : 0),
                     fill:   "rgba(0,255,0,0)",
                     stroke: "rgba(0,255,0,0)",
                     class: "constrain_top_right"
                 });
                 bottom_right = create_item(cid, "rect", {
                     x:        0,
-                    y:      y-3,
-                    width: x-16,
+                    y:     (y-3 >= 0 ? y-3 : 0),
+                    width: (x-16 >= 0 ? x-16 : 0),
                     height:   3,
                     fill:   "rgba(0,0,255,0)",
                     stroke: "rgba(0,0,255,0)",
