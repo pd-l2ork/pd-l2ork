@@ -1337,7 +1337,10 @@ var canvas_events = (function() {
             document.addEventListener("copy", function(evt) {
                 // On OSX, this event gets triggered when we're editing
                 // inside an object/message box, inclduing activated objects.
-                if (pdgui.gui_is_gobj_grabbed()) {
+                // ico@vt.edu 2021-10-20: we don't need the search part since
+                // that one for some reason works just fine on OSX (see
+                // m.edit.copy above)
+                if (pdgui.gui_is_gobj_grabbed(name)) {
                     // ico@vt.edu 2021-10-08: copying contents of a grabbed object
                     //pdgui.post("gobj_grabbed copy");
                     var clipboard = nw.Clipboard.get();
@@ -1363,10 +1366,13 @@ var canvas_events = (function() {
             // ico@vt.edu 2021-09-28: This is used by OSX only?, so we
             // redundantly reproduce here the paste when gatom has been grabbed
             document.addEventListener("paste", function(evt) {
+                // ico@vt.edu 2021-10-20: we don't need the search part since
+                // that one for some reason works just fine on OSX (see m.edit.paste
+                // above)
                 if (canvas_events.get_state() !== "normal") {
                     return;
                 }
-                if (pdgui.gui_is_gobj_grabbed()) {
+                if (pdgui.gui_is_gobj_grabbed(name)) {
                     // ico@vt.edu 2021-09-28: pasting inside a grabbed object
                     //pdgui.post("gobj_grabbed paste <" + nw.Clipboard.get().get('text') + ">");
                     var paste_text = nw.Clipboard.get().get('text');
@@ -1833,7 +1839,7 @@ function nw_create_patch_window_menus(gui, w, name) {
                 if (document.getSelection()) {
                     document.execCommand("copy");
                 }
-            } else if (pdgui.gui_is_gobj_grabbed()) {
+            } else if (pdgui.gui_is_gobj_grabbed(name)) {
                 // ico@vt.edu 2021-10-08: copying contents of a grabbed object
                 //pdgui.post("gobj_grabbed copy");
                 var clipboard = nw.Clipboard.get();
@@ -1856,11 +1862,11 @@ function nw_create_patch_window_menus(gui, w, name) {
     minit(m.edit.paste, {
         enabled: true,
         click: function () {
-            //pdgui.post("m.edit.paste " + pdgui.gui_is_gobj_grabbed());
+            //pdgui.post("m.edit.paste " + pdgui.gui_is_gobj_grabbed(name));
             if (canvas_events.get_state() === "search") {
                 // ico@vt.edu 2020-10-30: pasting inside find box
                 document.execCommand("paste");
-            } else if (pdgui.gui_is_gobj_grabbed()) {
+            } else if (pdgui.gui_is_gobj_grabbed(name)) {
                 // ico@vt.edu 2021-08-20: pasting inside a grabbed object
                 //pdgui.post("gobj_grabbed paste <" + nw.Clipboard.get().get('text') + ">");
                 var paste_text = nw.Clipboard.get().get('text');

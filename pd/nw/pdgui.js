@@ -8453,17 +8453,17 @@ var gobj_grabbed = {};
 
 function gui_gobj_grabbed(cid, val) {
     gobj_grabbed[cid] = val;
-    //post("gui_gobj_grabbed " + gobj_grabbed[cid]);
+    //post("gui_gobj_grabbed "+cid+" "+gobj_grabbed[cid]);
 }
 
 exports.gui_gobj_grabbed = gui_gobj_grabbed;
 
 function gui_is_gobj_grabbed(cid) {
     if (gobj_grabbed[cid] == null) {
-        //post("initializing gobj_grabbed");
+        //post("initializing gobj_grabbed "+cid);
         gobj_grabbed[cid] = 0;
     }
-    //post("gui_is_gobj_grabbed "+ gobj_grabbed[cid]);
+    //post("gui_is_gobj_grabbed "+cid+" "+gobj_grabbed[cid]);
     return gobj_grabbed[cid];
 }
 
