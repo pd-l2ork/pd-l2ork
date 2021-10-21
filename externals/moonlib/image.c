@@ -10,10 +10,12 @@
 #pragma warning( disable : 4305 )
 #endif
 
+/*
 #ifdef _WIN32
 #include <stdlib.h>
 #define realpath(N,R) _fullpath((R),(N),_MAX_PATH)
 #endif
+*/
 
 /* ------------------------ image ----------------------------- */
 
@@ -52,12 +54,20 @@ static const char *image_get_filename(t_image *x, char *file)
         file,
         fname, FILENAME_MAX
         );
+#ifndef _WIN32
     char realfname[FILENAME_MAX];
+    //post("got non-windows");
     realpath(fname, realfname);
     fd = open_via_path(canvas_getdir(glist_getcanvas(x->x_glist))->s_name,
         realfname, "", dirresult, &fileresult, MAXPDSTRING, 1);
-    //post("image_get_filename file=%s fname=%s fd=%d dirresult=%s fileresult=%s",
-    //  file, fname, fd, dirresult, fileresult);
+#endif
+#ifdef _WIN32
+    //post("got windows");
+    fd = open_via_path(canvas_getdir(glist_getcanvas(x->x_glist))->s_name,
+        fname, "", dirresult, &fileresult, MAXPDSTRING, 1);
+#endif
+    //post("image_get_filename file=%s fname=%s realfname=%s fd=%d dirresult=%s fileresult=%s",
+    //  file, fname, realfname, fd, dirresult, fileresult);
 
     if (fd > 0)
     {
@@ -113,11 +123,11 @@ static void image_drawme(t_image *x, t_glist *glist, int firsttime)
             //         glist_getcanvas(glist), x, x->x_image->s_name);
             x->x_width = 25;
             x->x_height = 25;
-            gui_vmess("gui_gobj_draw_image", "xxss",
+            gui_vmess("gui_gobj_draw_image", "xxssiiiii",
                 glist_getcanvas(glist),
                 x,
                 key,
-                "center");
+                "center", 0, 0, 0, 1, (glist != glist_getcanvas(glist) ? 1 : 0));
         }
         else if (fname)
         {
@@ -141,11 +151,11 @@ static void image_drawme(t_image *x, t_glist *glist, int firsttime)
             //         text_ypix(&x->x_obj, glist),
             //         x,
             //         x);
-            gui_vmess("gui_gobj_draw_image", "xxss",
+            gui_vmess("gui_gobj_draw_image", "xxssiiiii",
                 glist_getcanvas(glist),
                 x,
                 key,
-                "center");
+                "center", 0, 0, 0, 1, (glist != glist_getcanvas(glist) ? 1 : 0));
         }
         /* TODO callback from gui
           sys_vgui("image_size logo");
@@ -322,7 +332,7 @@ static void image_open(t_gobj *z, t_symbol *file)
     if (fname)
     {
         sprintf(key, "x%zx", (t_uint)x);
-        x->x_image = gensym(fname);
+        x->x_image = file;
         x->x_key = gensym(key);
         x->x_type = 0;
         if (glist_isvisible(x->x_glist))
@@ -434,10 +444,10 @@ static void image_free(t_image *x)
 
 static void *image_new(t_symbol *image, t_float type)
 {
-    post("WARNING: moonlib/image is a defunct, unsupported, and buggy object and is"
+    post("WARNING: moonlib/image is a defunct and unsupported object. It is"
          " included purely for legacy reasons. Please use ggee/image or simply"
          " image instead. It provides all the moonlib/image functionality and more"
-         " without the bugs.");
+         " without the limitations of this object.");
     t_image *x = (t_image *)pd_new(image_class);
     char key[MAXPDSTRING];
     x->x_glist = (t_glist *)canvas_getcurrent();

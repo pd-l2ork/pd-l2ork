@@ -1,104 +1,101 @@
-#N canvas 167 268 694 739 12;
-#X text 16 159 usage: image image_symbol [type];
-#X text 16 180 if type=0 (or absent) \, image_symbol is a file.;
-#X text 16 201 if type=1 \, image_symbol means a pre-loaded image \;
+#N canvas 112 117 600 634 10;
+#X text 14 136 usage: image image_symbol [type];
+#X text 14 154 if type=0 (or absent) \, image_symbol is a file.;
+#X text 14 172 if type=1 \, image_symbol means a pre-loaded image \;
 ;
-#X obj 50 259 cnv 15 80 40 empty empty empty 20 12 0 14 #000000 #404040
+#X obj 43 222 cnv 15 80 40 empty empty empty 20 12 0 14 #000000 #404040
 0;
-#X obj 64 279 moonlib/image examples/play.gif 0;
-#X obj 412 306 cnv 15 20 20 empty empty empty 20 12 0 14 #000000 #404040
+#X obj 60 241 moonlib/image examples/play.gif 0;
+#X obj 353 252 cnv 15 20 20 empty empty empty 20 12 0 14 #000000 #404040
 0;
-#X obj 415 277 t a;
-#X msg 476 169 open examples/play.gif;
-#X msg 476 191 open examples/playy.gif;
-#X msg 476 213 open examples/rec.gif;
-#X msg 476 235 open examples/pause.gif;
-#X msg 476 257 open examples/sinw.gif;
-#X msg 476 279 open examples/squarew.gif;
-#X msg 476 301 open examples/saww.gif;
-#X obj 422 316 moonlib/image /usr/lib/pd-l2ork/extra/moonlib/examples/play.gif
-0;
-#X obj 81 279 moonlib/image examples/rec.gif 0;
-#X obj 99 279 moonlib/image examples/pause.gif 0;
-#X obj 121 264 moonlib/image examples/sinw.gif 0;
-#X obj 121 278 moonlib/image examples/squarew.gif 0;
-#X obj 121 292 moonlib/image examples/saww.gif 0;
+#X obj 357 227 t a;
+#X msg 408 145 open examples/play.gif;
+#X msg 408 164 open examples/playy.gif;
+#X msg 408 183 open examples/rec.gif;
+#X msg 408 201 open examples/pause.gif;
+#X msg 408 220 open examples/sinw.gif;
+#X msg 408 239 open examples/squarew.gif;
+#X msg 408 258 open examples/saww.gif;
+#X obj 363 262 moonlib/image examples/play.gif 0;
+#X obj 74 241 moonlib/image examples/rec.gif 0;
+#X obj 88 241 moonlib/image examples/pause.gif 0;
+#X obj 114 230 moonlib/image examples/sinw.gif 0;
+#X obj 114 242 moonlib/image examples/squarew.gif 0;
+#X obj 114 254 moonlib/image examples/saww.gif 0;
 #N canvas 183 309 386 299 (subpatch) 0;
-#X obj 111 249 t a;
-#X msg 158 158 open examples/sinw.gif;
-#X msg 180 185 open examples/squarew.gif;
-#X msg 202 210 open examples/saww.gif;
-#X obj 9 10 tgl 40 0 empty empty empty 0 -6 0 8 #fcfcfc #000000 #000000
-0 1 1;
+#X obj 10 10 bng 40 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
+#X obj 96 215 t a;
+#X msg 137 137 open examples/sinw.gif;
+#X msg 155 160 open examples/squarew.gif;
+#X msg 174 182 open examples/saww.gif;
 #X obj 10 11 cnv 15 40 40 empty empty empty 20 12 0 14 #000000 #404040
 0;
-#X obj 29 30 moonlib/image /home/l2orkist/Downloads/pd-l2ork/externals/moonlib/examples/saww.gif
-0;
-#X obj 158 108 i;
-#X obj 188 109 + 1;
-#X obj 219 109 mod 3;
-#X obj 158 133 sel 0 1 2;
-#X obj 158 84 b;
-#X connect 0 0 6 0;
-#X connect 1 0 0 0;
-#X connect 2 0 0 0;
-#X connect 3 0 0 0;
-#X connect 4 0 11 0;
+#X obj 29 30 moonlib/image examples/saww.gif 0;
+#X obj 137 94 i;
+#X obj 162 95 + 1;
+#X obj 189 95 mod 3;
+#X obj 137 116 sel 0 1 2;
+#X obj 137 74 b;
+#X connect 0 0 11 0;
+#X connect 1 0 6 0;
+#X connect 2 0 1 0;
+#X connect 3 0 1 0;
+#X connect 4 0 1 0;
 #X connect 7 0 8 0;
 #X connect 7 0 10 0;
 #X connect 8 0 9 0;
 #X connect 9 0 7 1;
-#X connect 10 0 1 0;
-#X connect 10 1 2 0;
-#X connect 10 2 3 0;
+#X connect 10 0 2 0;
+#X connect 10 1 3 0;
+#X connect 10 2 4 0;
 #X connect 11 0 7 0;
 #X coords 0 -1 1 1 41 41 2 9 10;
-#X restore 287 259 pd;
-#X text 284 240 click !;
-#X obj 57 473 t f f, f 9;
-#X obj 57 545 pack s s, f 9;
-#X msg 57 568 load \$1 \$2;
-#X msg 354 506 set \$1;
-#X obj 354 406 hsl 128 15 0 63 0 0 empty empty empty -2 -6 0 8 #fcfcfc
+#X restore 246 222 pd;
+#X text 243 206 click !;
+#X obj 49 405 t f f, f 9;
+#X obj 49 467 pack s s, f 9;
+#X msg 49 487 load \$1 \$2;
+#X msg 303 434 set \$1;
+#X obj 303 348 hsl 128 15 0 63 0 0 empty empty empty -2 -6 0 8 #fcfcfc
 #000000 #000000 0 1 0 1;
-#X obj 354 432 i;
-#X obj 234 614 moonlib/image /usr/lib/pd-l2ork/extra/moonlib/examples/rec.gif
-0;
-#X obj 354 456 change;
-#X text 19 336 For animations \, it's beter to preload images:;
-#X obj 475 517 loadbang;
-#X msg 475 540 open examples/rec.gif;
-#X text 89 365 1: load img_sym file;
-#X text 354 385 2: set img_sym;
-#X msg 57 365 64;
-#X obj 57 415 until;
-#X obj 57 446 float, f 9;
-#X obj 153 446 + 1;
-#X obj 57 498 makefilename d%d;
-#X obj 354 481 makefilename d%d;
-#X obj 117 522 makefilename examples/d%d.gif;
+#X obj 303 370 i;
+#X obj 201 527 moonlib/image examples/rec.gif 0;
+#X obj 303 391 change;
+#X text 16 288 For animations \, it's beter to preload images:;
+#X obj 407 443 loadbang;
+#X msg 407 463 open examples/rec.gif;
+#X text 76 313 1: load img_sym file;
+#X text 303 330 2: set img_sym;
+#X msg 49 313 64;
+#X obj 49 356 until;
+#X obj 49 382 float, f 9;
+#X obj 131 382 + 1;
+#X obj 49 427 makefilename d%d;
+#X obj 303 412 makefilename d%d;
+#X obj 100 447 makefilename examples/d%d.gif;
 #N canvas 568 690 469 208 META 0;
-#X text 20 41 LICENSE GPL v2;
-#X text 20 111 AUTHOR Antoine Rousseau;
-#X text 20 88 INLET_0 load set open;
-#X text 20 64 DESCRIPTION image viewer;
-#X text 20 18 KEYWORDS control GUI deprecated;
-#X text 20 134 HELP_PATCH_AUTHORS Antoine Rousseau. "pd meta" information
+#X text 17 35 LICENSE GPL v2;
+#X text 17 95 AUTHOR Antoine Rousseau;
+#X text 17 75 INLET_0 load set open;
+#X text 17 55 DESCRIPTION image viewer;
+#X text 17 15 KEYWORDS control GUI deprecated;
+#X text 17 115 HELP_PATCH_AUTHORS Antoine Rousseau. "pd meta" information
 added by Jonathan Wilkes for Pd version 0.42. Patch clean-up by Ivica
 Ico Bukvic.;
-#X restore 627 708 pd META;
-#X obj 1 1 cnv 15 691 26 empty \$0-pddp.cnv.header moonlib/image\ (DEPRECATED)
+#X restore 545 608 pd META;
+#X obj 0 0 cnv 15 599 26 empty \$0-pddp.cnv.header moonlib/image\ (DEPRECATED)
 9 10 0 18 #c4dcdc #000000 0;
-#X text 16 221 see "load" and "set" below;
-#X text 327 608 Note when a img_symbol is loaded \, it can be used
+#X text 14 189 see "load" and "set" below;
+#X text 280 521 Note when a img_symbol is loaded \, it can be used
 in any moonlib/image object., f 41;
-#X obj 57 390 t f 0, f 9;
-#X text 16 673 (c) moonix: Antoine Rousseau 2004port to Purr-Data
+#X obj 49 334 t f 0, f 9;
+#X text 14 577 (c) moonix: Antoine Rousseau 2004port to Purr-Data
 by Jonathan WilkesReworked following ggee/image reimplementation for
 Pd-L2Ork Ivica Ico Bukvic, f 76;
-#X text 16 112 For images see [ggee/image] (a.k.a. [image]) \, [draw
+#X text 14 96 For images see [ggee/image] (a.k.a. [image]) \, [draw
 image] \, and [draw sprite], f 80;
-#X text 16 36 This object is DEPRECATED. It is kept here for the backwards
+#X text 14 31 This object is DEPRECATED. It is kept here for the backwards
 compatibility. While the memory leak has been dealt with inside pd-l2ork
 \, the image continues to be anchored in the center which makes it
 at odds with the normal object positioning in Pd. Instead of moonlib/image

@@ -5099,6 +5099,7 @@ function gui_image_free_loaded_images(objType) {
 // assume "nw" (top-left corner) when tk_anchor is undefined, as this matches
 // the svg spec.
 function img_size_setter(cid, svg_image_tag, type, data, tk_anchor) {
+    //post("img_size_setter");
     var img = new pd_window.window.Image(),
         w, h;
     img.onload = function() {
@@ -5108,7 +5109,8 @@ function img_size_setter(cid, svg_image_tag, type, data, tk_anchor) {
             width: w,
             height: h,
             x: tk_anchor === "center" ? 0 - w/2 : 0,
-            y: tk_anchor === "center" ? 0 - h/2 : 0
+            y: tk_anchor === "center" ? 0 - h/2 : 0,
+            display: "block"
         });
     };
     img.src = "data:image/" + type + ";base64," + data;
@@ -5126,7 +5128,8 @@ function img_size_resizable_setter(cid, svg_image_tag, type, data, tk_anchor, w,
             orig_width: imgw,
             orig_height: imgh,
             x: tk_anchor === "center" ? 0 - w/2 : 0,
-            y: tk_anchor === "center" ? 0 - h/2 : 0
+            y: tk_anchor === "center" ? 0 - h/2 : 0,
+            display: "block"
         });
     };
     img.src = "data:image/" + type + ";base64," + data;
@@ -5279,12 +5282,13 @@ function gui_load_image(cid, key, filepath, objtype) {
 
 // Load an image and cache the base64 data then send a callback with its size
 function gui_moonlib_load_image(cid, key, filepath, callback, objtype) {
+    //post("gui_moonlib_load_image " + filepath);
     var data = fs.readFileSync(filepath,"base64"),
         ext = path.extname(filepath);
     pd_cache.set(key, {
         type: ext === ".jpeg" ? "jpg" : ext.slice(1),
         data: data,
-        creator: (objtype ? objtype : 0)
+        creator: (objtype ? objtype : 0) 
     });
     var img = new pd_window.Image(); // create an image in the pd_window context
     img.onload = function() {
@@ -5311,7 +5315,7 @@ function gui_gobj_draw_image(cid, tag, image_key, tk_anchor, w, h, constrain, ty
         var i = create_item(cid, "image", {
             id: tag + "image",
             preserveAspectRatio: constrain ? "xMinYMin meet" : "none",
-            display: (type === 0 && isgop === 1 ? "none" : "block")
+            display: "none"
         });
         i.setAttributeNS("http://www.w3.org/1999/xlink", "href",
             "data:image/" + pd_cache.get(image_key).type + ";base64," +

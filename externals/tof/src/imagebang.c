@@ -122,11 +122,18 @@ static const char* imagebang_get_filename(t_imagebang *x,char *file) {
         file,
         fname, FILENAME_MAX
         );
+#ifndef _WIN32
     char realfname[FILENAME_MAX];
+    //post("got non-windows");
     realpath(fname, realfname);
-    //post("tof/imagebang file=<%s> fname=<%s>", file, realfname);
     fd = open_via_path(canvas_getdir(glist_getcanvas(x->glist))->s_name,
         realfname, "", dirresult, &fileresult, MAXPDSTRING, 1);
+#endif
+#ifdef _WIN32
+    //post("got windows");
+    fd = open_via_path(canvas_getdir(glist_getcanvas(x->glist))->s_name,
+        fname, "", dirresult, &fileresult, MAXPDSTRING, 1);
+#endif
     //post("image_get_filename file=%s fname=%s fd=%d dirresult=%s fileresult=%s",
     //  file, fname, fd, dirresult, fileresult);
 
@@ -174,11 +181,11 @@ static void imagebang_drawme(t_imagebang *x, t_glist *glist, int firsttime)
             text_ypix(&x->x_obj, glist),
             glist_istoplevel(glist));
         sprintf(key_a, "%zx_a", (t_uint)x);
-        gui_vmess("gui_gobj_draw_image", "xxss",
+        gui_vmess("gui_gobj_draw_image", "xxssiiiii",
             glist_getcanvas(glist),
             x,
             key_a,
-            "nw");
+            "nw", 0, 0, 0, 2, (glist != glist_getcanvas(glist) ? 1 : 0));
         gui_vmess("gui_image_size_callback", "xss",
             glist_getcanvas(glist), key_a, x->receive->s_name);
     }
@@ -352,6 +359,10 @@ static void imagebang_free(t_imagebang *x) {
     
 static void *imagebang_new(t_symbol *s, int argc, t_atom *argv)
 {
+    post("WARNING: tof/imagebang is a defunct and unsupported object. It is"
+         " included purely for legacy reasons. Please use ggee/image or simply"
+         " image instead. It provides all the moonlib/image functionality and more"
+         " without the limitations of this object.");
     t_imagebang *x = (t_imagebang *)pd_new(imagebang_class);
     char key_a[MAXPDSTRING];
     char key_b[MAXPDSTRING];
