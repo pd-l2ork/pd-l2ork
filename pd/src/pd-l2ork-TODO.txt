@@ -99,6 +99,9 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Overhauled tof/imagebang to work in Pd-L2Ork. Updated help file and removed questionable help file content.
 *Updated moonlib/image and tof/imagebang to consistently support both relative and absolute paths of images.
 *Updated moonlib/image to address the bug where opening an image after setting a preloaded one did not immediately update the image. Further refinements to the help file.
+*Fixed regressions where images did not display properly (or at all) on Windows. Removed flicker on moonlib/image. Updated help files for tof/imagebang and moonlib/image.
+
+
 
 TWEETER TODO:
 *Fix the bug where the toggling the sound off (by holding the "'" key) did not stick after updating an instrument via preset or via shift+up/down does not work on OSX (possibly others). May be linked to the online mode.
