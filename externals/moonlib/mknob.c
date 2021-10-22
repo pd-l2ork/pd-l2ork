@@ -48,6 +48,8 @@ typedef struct _mknob
 t_widgetbehavior mknob_widgetbehavior;
 static t_class *mknob_class;
 
+
+extern t_int gfxstub_haveproperties(void *key);
 static void mknob_interactive(t_mknob *x, t_floatarg f);
 
 /* widget helper functions */
@@ -104,12 +106,17 @@ static void mknob_draw_config(t_mknob *x,t_glist *glist)
     sprintf(fcol, "#%6.6x", x->x_gui.x_fcol);
     sprintf(lcol, "#%6.6x", x->x_gui.x_lcol);
 
-    gui_vmess("gui_configure_mknob", "xxiss",
+    gui_vmess("gui_configure_mknob", "xxissiii",
         canvas,
         x,
         x->x_gui.x_w,
         bcol,
-        fcol
+        fcol,
+        0,      // we are NOT footils (a.k.a. flatgui) knob
+        2, 1, 0 // this is to comply with the function call
+                // that is shared with flatgui/knob
+                // these are not adjustable on monlib/mknob
+                // since this is a legacy object
     );
     mknob_update_knob(x,glist);
 }
@@ -496,6 +503,7 @@ static void mknob_size(t_mknob *x, t_symbol *s, int ac, t_atom *av)
 
     mknob_check_wh(x, w, h);
     iemgui_size((t_iemgui *)x);
+    mknob_draw(x, x->x_gui.x_glist, IEM_GUI_DRAW_MODE_CONFIG);
 }
 
 static void mknob_delta(t_mknob *x, t_symbol *s, int ac, t_atom *av)
@@ -512,6 +520,12 @@ static void mknob_range(t_mknob *x, t_symbol *s, int ac, t_atom *av)
 {
     mknob_check_minmax(x, (double)atom_getfloatarg(0, ac, av),
                        (double)atom_getfloatarg(1, ac, av));
+    t_int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+    {
+        properties_set_field_int(properties,"minimum_range",x->x_min);
+        properties_set_field_int(properties,"maximum_range",x->x_max);
+    }
 }
 
 static void mknob_color(t_mknob *x, t_symbol *s, int ac, t_atom *av)
@@ -548,22 +562,35 @@ static void mknob_log(t_mknob *x)
 {
     x->x_lin0_log1 = 1;
     mknob_check_minmax(x, x->x_min, x->x_max);
+    t_int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+    {
+        properties_set_field_int(properties,"log_scaling",x->x_lin0_log1);
+    }
 }
 
 static void mknob_lin(t_mknob *x)
 {
     x->x_lin0_log1 = 0;
     x->x_k = (x->x_max - x->x_min)/(double)(x->x_gui.x_w - 1);
+    t_int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+    {
+        properties_set_field_int(properties,"log_scaling",x->x_lin0_log1);
+    }
 }
 
 static void mknob_init(t_mknob *x, t_floatarg f)
 {
-    x->x_gui.x_loadinit = (f==0.0)?0:1;
+    iemgui_init(&x->x_gui, f);
 }
 
 static void mknob_steady(t_mknob *x, t_floatarg f)
 {
     x->x_steady = (f==0.0)?0:1;
+    t_int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+        properties_set_field_int(properties,"steady_on_click",x->x_steady);    
 }
 
 static void mknob_float(t_mknob *x, t_floatarg f)
@@ -678,6 +705,7 @@ static void mknob_interactive(t_mknob *x, t_floatarg f)
     if ((int)f == 0 || (int)f == 1)
     {
         x->x_gui.x_click = (int)f;
+        iemgui_update_properties(&x->x_gui, IEM_GUI_PROP_INTERACTIVE);
     }
 }
 
