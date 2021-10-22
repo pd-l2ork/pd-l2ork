@@ -1,6 +1,4 @@
 PD-L2ORK TODO:
-*add auto-update of interactive/exclusive checkboxes for objects/dialogs that have them.
-
 *finish and integrate gop drawing order work (see if there is something in the branch log to pull as to the status of the work).
 	*Redrawing entire canvas after tidy will not be necessary anymore.
 
@@ -106,6 +104,13 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Improved all dialogs that have dynamic updating of fields to ignore calls while the window is still being created.
 *Refined delayed scroll during find (when a subpatch needs to be opened), so that it checks when the window is ready. Improved scrolling logic for windows whose leftmost and topmost coordinate may be negative.
 *Added dynamic field updating for the gatom dialog for interactive and exclusive options.
+*Added to all the various core iemgui object options ability to autoupdate fields inside their dialogs (if any). Exposed numbox' drawstyle and autoupdate as a patching message. Additions to help files and cosmetic fixes.
+*Fixed size redrawing bug in the moonlib/mknob and ensured that its values also autoupdate when the dialog is open.
+*Minor cosmetic refinements to deprecated objects.
+*Improvements to the flatgui/knob, including width for the dial, off and on segments of the dial circle, automation of the dialog fields (when open), additional translation options for the new fields, and other minor bug-fixes.
+
+
+
 
 TWEETER TODO:
 *Deal with teacher widget messing with other parts when online.
