@@ -1,4 +1,4 @@
-#N canvas 691 141 553 784 10;
+#N canvas 691 150 553 784 10;
 #X obj 0 761 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
 14 #dcdcdc #404040 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header vslider 3 12 0 18
@@ -48,7 +48,7 @@ its appearance.;
 #X text 168 601 - when the slider value is changed by clicking \, dragging
 \, or sending a float to the inlet \, the new slider value is sent
 to the outlet.;
-#N canvas 53 22 464 608 Setting_slider_properties_through_messages
+#N canvas 64 64 464 608 Setting_slider_properties_through_messages
 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
@@ -280,7 +280,7 @@ to the outlet.;
 #X connect 4 0 1 0;
 #X coords 0 -1 1 1 48 42 2 100 100;
 #X restore 348 471 pd flash-time;
-#X floatatom 392 337 5 0 0 0 - - - 0 0 1, f 5;
+#X floatatom 390 336 5 0 0 0 - - - 0 0 1, f 5;
 #X text 11 36 dimensions;
 #X text 267 470 1.x-pos;
 #X text 267 492 2.y-pos;
@@ -297,7 +297,7 @@ to the outlet.;
 #X obj 12 580 s vsl_rcv;
 #X obj 219 566 s vsl_rcv;
 #X obj 319 566 s vsl_rcv;
-#X obj 391 200 vsl 15 128 0 127 0 0 vsl_snd vsl_rcv mySlider -2 -8
+#X obj 389 199 vsl 15 128 0 127 0 0 vsl_snd vsl_rcv mySlider -2 -8
 0 10 #fcfcfc #202020 #202020 0 1 0 1;
 #X text 8 2 [vslider] Set Properties through Messages;
 #X connect 1 0 7 0;

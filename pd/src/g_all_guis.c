@@ -931,30 +931,33 @@ void iemgui_update_properties(t_iemgui *x, int option)
     if (properties)
     {
         switch(option) {
-            case 0:
+            case IEM_GUI_PROP_COLORS:
                 properties_set_field_int(properties,"background_color",0xffffff & x->x_bcol);
                 properties_set_field_int(properties,"foreground_color",0xffffff & x->x_fcol);
                 properties_set_field_int(properties,"label_color",0xffffff & x->x_lcol);
                 break;
-            case 1:
+            case IEM_GUI_PROP_SEND:
                 properties_set_field_symbol(properties,"send_symbol",srl[0]);
                 break;
-            case 2:
+            case IEM_GUI_PROP_RECEIVE:
                 properties_set_field_symbol(properties,"receive_symbol",srl[1]);
                 break;
-            case 3:
+            case IEM_GUI_PROP_LABEL:
                 properties_set_field_symbol(properties,"label",srl[2]);
                 break;
-            case 4:
+            case IEM_GUI_PROP_LABEL_XY:
                 properties_set_field_int(properties,"x_offset",x->x_ldx);
                 properties_set_field_int(properties,"y_offset",x->x_ldy);
                 break;
-            case 5:
+            case IEM_GUI_PROP_FONT:
                 properties_set_field_int(properties,"font_style",x->x_font_style);
                 properties_set_field_int(properties,"font_size",x->x_fontsize);
                 break;
-            case 6:
+            case IEM_GUI_PROP_INTERACTIVE:
                 properties_set_field_int(properties,"interactive",x->x_click);
+                break;
+            case IEM_GUI_PROP_INIT:
+                properties_set_field_int(properties,"init",x->x_loadinit);
                 break;
         }
     }
@@ -1652,7 +1655,11 @@ const char *iemgui_font(t_iemgui *x)
     return buf;
 }
 
-void iemgui_init(t_iemgui *x, t_floatarg f) {x->x_loadinit = f!=0.0;}
+void iemgui_init(t_iemgui *x, t_floatarg f)
+{
+    x->x_loadinit = f!=0.0;
+    iemgui_update_properties(x, IEM_GUI_PROP_INIT);
+}
 
 void iemgui_class_addmethods(t_class *c)
 {

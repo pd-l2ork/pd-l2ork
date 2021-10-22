@@ -40,6 +40,7 @@
 #define IEM_GUI_PROP_LABEL_XY       4
 #define IEM_GUI_PROP_FONT           5
 #define IEM_GUI_PROP_INTERACTIVE    6
+#define IEM_GUI_PROP_INIT           7
 
 typedef void (*t_iemfunptr)(void *x, t_glist *glist, int mode);
 
@@ -269,6 +270,7 @@ EXTERN void iemgui_delete(t_gobj *z, t_glist *glist);
 EXTERN void iemgui_vis(t_gobj *z, t_glist *glist, int vis);
 EXTERN void iemgui_save(t_iemgui *x, t_symbol **srl, t_symbol **bflcol);
 EXTERN void iemgui_properties(t_iemgui *x, t_symbol **srl);
+EXTERN void iemgui_update_properties(t_iemgui *x, int option);
 EXTERN int iemgui_dialog(t_iemgui *x, int argc, t_atom *argv);
 
 EXTERN void iem_inttosymargs(t_iemgui *x, int n);

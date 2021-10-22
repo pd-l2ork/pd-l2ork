@@ -331,7 +331,7 @@ static void my_numbox_draw_config(t_my_numbox* x,t_glist* glist)
     char fg[8], bg[8];
     sprintf(fg, "#%6.6x",  x->x_gui.x_fcol);
     sprintf(bg, "#%6.6x",  x->x_gui.x_bcol);
-    gui_vmess("gui_numbox_update", "xxssisii",
+    gui_vmess("gui_numbox_update", "xxssisiii",
         canvas,
         x,
         fg,
@@ -339,7 +339,7 @@ static void my_numbox_draw_config(t_my_numbox* x,t_glist* glist)
         x->x_num_fontsize,
         iemgui_typeface((t_iemgui *)x),
         x->x_gui.x_fontsize,
-        sys_fontweight);
+        sys_fontweight, x->x_drawstyle);
 }
 
 static void my_numbox_draw_select(t_my_numbox *x, t_glist *glist)
@@ -831,8 +831,28 @@ static void my_numbox_drawstyle(t_my_numbox *x, t_floatarg lh)
     if (lh > 3.0)
         lh = 3.0;
     x->x_drawstyle = (int)lh;
-    my_numbox_draw(x, x->x_gui.x_glist, 4);
-    my_numbox_draw(x, x->x_gui.x_glist, 2);  
+    my_numbox_draw(x, x->x_gui.x_glist, IEM_GUI_DRAW_MODE_CONFIG);
+    //my_numbox_draw(x, x->x_gui.x_glist, 2);
+    
+    t_int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+    {
+        properties_set_field_int(properties,"draw_style",x->x_drawstyle);
+    } 
+}
+
+static void my_numbox_autoupdate(t_my_numbox *x, t_floatarg lh)
+{
+    if(lh < 0.0)
+        lh = 0.0;
+    if (lh > 1.0)
+        lh = 1.0;
+    x->x_autoupdate = (int)lh;  
+    t_int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+    {
+        properties_set_field_int(properties,"autoupdate",x->x_autoupdate);
+    } 
 }
 
 static void my_numbox_float(t_my_numbox *x, t_floatarg f)
@@ -868,6 +888,12 @@ static void my_numbox_range(t_my_numbox *x, t_symbol *s, int ac, t_atom *av)
     {
         x->x_gui.x_changed = 1;
         sys_queuegui(x, x->x_gui.x_glist, my_numbox_draw_update);
+        t_int properties = gfxstub_haveproperties((void *)x);
+        if (properties)
+        {
+            properties_set_field_int(properties,"minimum_range",x->x_min);
+            properties_set_field_int(properties,"maximum_range",x->x_max);
+        }
         /*my_numbox_bang(x);*/
     }
 }
@@ -880,12 +906,22 @@ static void my_numbox_log(t_my_numbox *x)
         x->x_gui.x_changed = 1;
         sys_queuegui(x, x->x_gui.x_glist, my_numbox_draw_update);
         /*my_numbox_bang(x);*/
+        t_int properties = gfxstub_haveproperties((void *)x);
+        if (properties)
+        {
+            properties_set_field_int(properties,"log_scaling",x->x_lin0_log1);
+        }
     }
 }
 
 static void my_numbox_lin(t_my_numbox *x)
 {
     x->x_lin0_log1 = 0;
+    t_int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+    {
+        properties_set_field_int(properties,"log_scaling",x->x_lin0_log1);
+    }
 }
 
 static void my_numbox_loadbang(t_my_numbox *x, t_floatarg action)
@@ -1169,7 +1205,7 @@ static void my_numbox_interactive(t_my_numbox *x, t_floatarg f)
         if ((int)f == 0)
             my_numbox_focus(x, 0);
         x->x_gui.x_click = (int)f;
-        iemgui_update_properties(x->x_gui, IEM_GUI_PROP_INTERACTIVE);
+        iemgui_update_properties(&x->x_gui, IEM_GUI_PROP_INTERACTIVE);
     }
 }
 
@@ -1324,6 +1360,8 @@ void g_numbox_setup(void)
         gensym("log_height"), A_FLOAT, 0);
     class_addmethod(my_numbox_class, (t_method)my_numbox_drawstyle,
         gensym("drawstyle"), A_FLOAT, 0);
+    class_addmethod(my_numbox_class, (t_method)my_numbox_autoupdate,
+        gensym("autoupdate"), A_FLOAT, 0);
     class_addmethod(my_numbox_class, (t_method)my_numbox_exclusive,
         gensym("exclusive"), A_FLOAT, 0);
     class_addmethod(my_numbox_class, (t_method)my_numbox_focus, gensym("focus"),

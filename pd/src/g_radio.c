@@ -446,6 +446,9 @@ static void radio_number(t_radio *x, t_floatarg num)
             x->x_on = x->x_number - 1;
         x->x_on_old = x->x_on;
         iemgui_draw_new(&x->x_gui);
+        t_int properties = gfxstub_haveproperties((void *)x);
+        if (properties)
+            properties_set_field_int(properties,"number",x->x_number);
     }
 }
 
@@ -461,7 +464,7 @@ static void radio_interactive(t_radio *x, t_floatarg f)
     if ((int)f == 0 || (int)f == 1)
     {
         x->x_gui.x_click = (int)f;
-        iemgui_update_properties(x->x_gui, IEM_GUI_PROP_INTERACTIVE);
+        iemgui_update_properties(&x->x_gui, IEM_GUI_PROP_INTERACTIVE);
     }
 }
 

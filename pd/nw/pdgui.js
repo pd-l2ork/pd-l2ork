@@ -3935,10 +3935,16 @@ function gui_numbox_draw_text(cid,tag,text,font_size,color,xpos,ypos,basex,basey
     });
 }
 
-function gui_numbox_update(cid, tag, fcolor, bgcolor, num_font_size, font_name, font_size, font_weight) {
+function gui_numbox_update(cid, tag, fcolor, bgcolor, num_font_size, font_name, font_size, font_weight, drawstyle) {
+    //post("gui_numbox_update "+cid+" "+drawstyle);
     gui(cid)
     .get_elem(tag + "border", {
-        fill: bgcolor
+        fill: bgcolor,
+        "stroke-width": (drawstyle < 2 ? 1 : 0),
+    })
+    .get_elem(tag + "triangle", {
+        fill: bgcolor,
+        "stroke-width": (drawstyle == 0 || drawstyle ==  2 ? 1 : 0),
     })
     .get_elem(tag + "text", {
         fill: fcolor,

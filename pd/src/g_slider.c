@@ -489,12 +489,25 @@ static void slider_range(t_slider *x, t_symbol *s, int ac, t_atom *av)
 {
     slider_check_minmax(x, (double)atom_getfloatarg(0, ac, av),
                          (double)atom_getfloatarg(1, ac, av));
+    t_int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+    {
+        properties_set_field_int(properties,"minimum_range",x->x_min);
+        properties_set_field_int(properties,"maximum_range",x->x_max);
+    }
 }
 
 static void slider_log(t_slider *x)
 {
     x->x_lin0_log1 = 1;
     slider_check_minmax(x, x->x_min, x->x_max);
+    t_int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+    {
+        properties_set_field_int(properties,"log_scaling",x->x_lin0_log1);
+        properties_set_field_int(properties,"minimum_range",x->x_min);
+        properties_set_field_int(properties,"maximum_range",x->x_max);
+    }
 }
 
 static void slider_lin(t_slider *x)
@@ -502,11 +515,17 @@ static void slider_lin(t_slider *x)
     x->x_lin0_log1 = 0;
     int w = x->x_orient ? x->x_gui.x_h : x->x_gui.x_w;
     x->x_k = (x->x_max - x->x_min)/(double)(w-1);
+    t_int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+        properties_set_field_int(properties,"log_scaling",x->x_lin0_log1);
 }
 
 static void slider_steady(t_slider *x, t_floatarg f)
 {
     x->x_steady = (f==0.0)?0:1;
+    t_int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+        properties_set_field_int(properties,"steady_on_click",x->x_steady);
 }
 
 static void slider_loadbang(t_slider *x, t_floatarg action)
@@ -538,7 +557,7 @@ static void slider_interactive(t_slider *x, t_floatarg f)
     if ((int)f == 0 || (int)f == 1)
     {
         x->x_gui.x_click = (int)f;
-        iemgui_update_properties(x->x_gui, IEM_GUI_PROP_INTERACTIVE);
+        iemgui_update_properties(&x->x_gui, IEM_GUI_PROP_INTERACTIVE);
     }
 }
 

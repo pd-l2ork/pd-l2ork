@@ -1,5 +1,5 @@
-#N canvas 702 85 553 930 10;
-#X obj 0 907 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
+#N canvas 274 80 553 930 10;
+#X obj 0 970 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
 14 #dcdcdc #404040 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header nbx 3 12 0 18 #c4dcdc
 #000000 0;
@@ -21,12 +21,12 @@ send receive label label_pos label_font color pos delta;
 to conform to the PDDP template for Pd version 0.42. Cleaned up and
 updated by Ivica Ico Bukvic.;
 #X text 12 215 RELEASE_DATE 2002/2021;
-#X restore 505 909 pd META;
-#X obj 0 730 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
+#X restore 505 972 pd META;
+#X obj 0 793 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
 13 #dcdcdc #000000 0;
-#X obj 0 767 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8 12
+#X obj 0 830 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8 12
 0 13 #dcdcdc #000000 0;
-#X obj 0 852 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
+#X obj 0 915 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 #dcdcdc #000000 0;
 #N canvas 219 507 428 128 Related_objects 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
@@ -37,13 +37,13 @@ updated by Ivica Ico Bukvic.;
 #X obj 106 43 int;
 #X obj 20 90 x_all_guis bng tgl vsl hsl hradio vradio vu cnv nbx;
 #X text 18 66 All iem-gui objects:;
-#X restore 103 909 pd Related_objects;
-#X obj 78 332 cnv 17 3 394 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
+#X restore 103 972 pd Related_objects;
+#X obj 78 332 cnv 17 3 394 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
 #9c9c9c 0;
-#X text 98 468 float;
-#X text 98 610 list;
-#X text 98 738 float;
-#X obj 78 736 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
+#X text 98 539 float;
+#X text 98 681 list;
+#X text 98 801 float;
+#X obj 78 801 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
 #9c9c9c 0;
 #X floatatom 28 175 6 0 0 0 - - - 0 0 1, f 6;
 #X msg 57 94 set \$1;
@@ -82,21 +82,21 @@ updated by Ivica Ico Bukvic.;
 #X obj 28 135 nbx 6 15 -1e+37 1e+37 0 0 foo13_snd foo13_rcv empty 45
 7 0 10 #d8fcfc #004450 #000000 0 256 0 0 1 0;
 #X obj 241 128 nbx 5 18 55 3520 1 0 goo14_snd goo14_rcv log.freq. 10
--10 0 14 #fcc4c4 #9c00fc #583000 55 256 0 0 1 0;
+-10 0 14 #fcc4c4 #9c00fc #583000 55 256 3 0 1 0;
 #X text 363 157 and receive names. Right-;
 #X text 363 172 click and choose;
 #X text 362 141 [nbx] has settable send;
 #X obj 466 48 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
 #fcfcfc #000000 #000000 0 256 0 0 1 0;
-#X text 168 468 - a float to the left inlet will be displayed \, stored
+#X text 168 539 - a float to the left inlet will be displayed \, stored
 \, and sent to the outlet.;
-#X text 168 610 - a list will be truncated to the first item.;
-#X text 98 627 set;
-#X text 168 627 - sending a set message followed by a value (e.g. \,
+#X text 168 681 - a list will be truncated to the first item.;
+#X text 98 698 set;
+#X text 168 698 - sending a set message followed by a value (e.g. \,
 "set 14") will display and store the value without outputting it.;
-#X text 97 662 see the following subpatch for messages that change
+#X text 97 733 see the following subpatch for messages that change
 the gui-properties of [nbx]:;
-#N canvas 49 27 446 599 Changing_GUI_Properties 0;
+#N canvas 64 73 446 760 Changing_GUI_Properties 0;
 #X text 17 152 log height;
 #X text 340 24 no init;
 #X msg 350 94 init 1;
@@ -310,7 +310,7 @@ the gui-properties of [nbx]:;
 #X obj 305 292 cnv 15 90 90 empty empty empty 20 12 0 14 #fce0c4 #404040
 0;
 #X obj 320 330 nbx 5 14 -1e+37 1e+37 0 0 nbx_snd nbx_rcv my_nbx 0 -8
-0 10 #fcfcfc #202020 #202020 0 256 0 0 1 0;
+0 10 #fcfcfc #202020 #202020 2 256 0 0 1 0;
 #X obj 17 412 s nbx_rcv;
 #X obj 139 412 s nbx_rcv;
 #X obj 18 577 s nbx_rcv;
@@ -336,12 +336,25 @@ the gui-properties of [nbx]:;
 #X text 66 66 2.height;
 #X text 14 23 dimensions;
 #X msg 17 94 size \$1 \$2;
-#X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
+#X obj 1 1 cnv 15 444 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
 #X text 8 2 [nbx] Changing GUI Properties through Messages;
 #X msg 356 197 label my_nbx;
 #X text 285 466 1.x-pos;
 #X text 285 488 2.y-pos;
+#X obj 18 664 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1 1;
+#X msg 18 687 autoupdate \$1;
+#X obj 18 712 s nbx_rcv;
+#X text 18 617 whether number outputson each change usingarrow keys
+while activated;
+#X obj 320 352 print;
+#X obj 222 712 s nbx_rcv;
+#X msg 222 687 drawstyle \$1;
+#X obj 222 664 hradio 15 0 0 4 empty empty empty 0 -8 0 10 #fcfcfc
+#000000 #000000 0 1;
+#X text 222 630 select one of the 4 possibledrawing styles (0-3),
+f 29;
 #X connect 2 0 11 0;
 #X connect 3 0 11 0;
 #X connect 4 0 10 0;
@@ -367,10 +380,15 @@ the gui-properties of [nbx]:;
 #X connect 56 0 55 0;
 #X connect 57 0 53 0;
 #X connect 58 0 55 1;
+#X connect 61 0 82 0;
 #X connect 67 0 72 0;
 #X connect 72 0 68 0;
 #X connect 75 0 20 0;
-#X restore 170 696 pd Changing_GUI_Properties;
+#X connect 78 0 79 0;
+#X connect 79 0 80 0;
+#X connect 84 0 83 0;
+#X connect 85 0 84 0;
+#X restore 170 767 pd Changing_GUI_Properties;
 #N canvas 617 306 428 314 nbx-creation-arguments 0;
 #X text 21 171 For example \, click the msg-box to dynamically create
 an nbx:;
@@ -390,19 +408,19 @@ not instantiate correctly.;
 #X msg 22 193 obj 150 280 nbx 5 14 0 127 0 1 send receive Maia 15 -8
 0 13 14 12 23 63 256 0 0 1 0;
 #X connect 7 0 1 0;
-#X restore 170 826 pd nbx-creation-arguments;
-#X text 168 767 - if you create an [nbx] object without arguments \,
+#X restore 170 889 pd nbx-creation-arguments;
+#X text 168 830 - if you create an [nbx] object without arguments \,
 default values are chosen for the GUI-properties. See the subpatch
 below to learn how to dynamically instantiate a [nbx] with custom properties:
 ;
 #X text 362 188 "Properties" to set them.;
 #X text 11 23 gui-number box;
 #X text 419 12 [my_numbox] or [nbx];
-#X obj 4 909 pddp/pddplink all_about_help_patches.pd -text Usage Guide
+#X obj 4 972 pddp/pddplink all_about_help_patches.pd -text Usage Guide
 ;
-#X text 98 334 bang;
-#X text 168 334 - output the current value;
-#X text 308 885 based on numbox2 by musil@iem.kug.ac.at;
+#X text 98 375 bang;
+#X text 168 375 - output the current value;
+#X text 308 948 based on numbox2 by musil@iem.kug.ac.at;
 #N canvas 579 295 467 421 advanced_css_properties 0;
 #X obj 54 -224 cnv 15 103 32 empty empty empty 20 12 0 14 #d5b8ef #404040
 0;
@@ -438,8 +456,8 @@ triangle opacity 0;
 #X connect 8 0 3 0;
 #X connect 9 0 8 0;
 #X connect 13 0 3 0;
-#X restore 103 866 pd advanced_css_properties;
-#X text 98 368 exclusive;
+#X restore 103 929 pd advanced_css_properties;
+#X text 98 439 exclusive;
 #N canvas 599 201 467 468 exclusive_focus 0;
 #X obj 0 -594 cnv 15 466 21 empty \$0-pddp.cnv.subheading empty 3 12
 0 14 #c4dcdc #000000 0;
@@ -452,7 +470,7 @@ triangle opacity 0;
 #X floatatom 156 -254 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 196 -279 keyname;
 #X obj 196 -254 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 0 1 1;
+#000000 1 1 1;
 #X symbolatom 235 -254 10 0 0 0 - - - 0 0 1, f 10;
 #X obj 156 -359 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0
 10 #fcfcfc #000000 #000000 0 256 0 1 1 0;
@@ -470,8 +488,8 @@ or via the message., f 75;
 #X connect 5 0 6 0;
 #X connect 7 0 8 0;
 #X connect 7 1 9 0;
-#X restore 168 438 pd exclusive_focus;
-#X text 168 368 - sets the exclusive keyboard focus on (1) or off (0
+#X restore 168 509 pd exclusive_focus;
+#X text 168 439 - sets the exclusive keyboard focus on (1) or off (0
 \, default). With it set "on" when the user is typing into the number
 \, objects like key and keyname will receive no input until the user
 removes focus from the object by clicking outside of it.;
@@ -480,11 +498,11 @@ to the existing one. Once activated \, you can use up and down (with
 shift for finer decimal adjustment) to change the value and commit
 it with enter. The focus will remain until you either click outside
 the object or do not perform any action for 3 seconds.;
-#X text 98 351 commit;
-#X text 168 351 - simulates pressing return/enter while editing the
+#X text 98 392 commit;
+#X text 168 392 - simulates pressing return/enter while editing the
 value;
-#X text 98 498 focus;
-#X text 168 498 - focuses the nbx value as if one clicked on it \,
+#X text 98 569 focus;
+#X text 168 569 - focuses the nbx value as if one clicked on it \,
 thusenabling editing via keyboard and navigating betweendifferent
 nbx (and gatom) objects (1=focus \, 0=remove focus);
 #N canvas 644 326 467 421 focus_and_commit 0;
@@ -521,7 +539,7 @@ multiple number objects at the same time., f 75;
 #X connect 8 0 9 0;
 #X connect 9 0 3 0;
 #X connect 9 1 6 0;
-#X restore 273 866 pd focus_and_commit;
+#X restore 273 929 pd focus_and_commit;
 #N canvas 644 335 467 421 up/down_update 0;
 #X obj 0 -594 cnv 15 466 21 empty \$0-pddp.cnv.subheading empty 3 12
 0 14 #c4dcdc #000000 0;
@@ -549,13 +567,20 @@ value of 0 Shift+clicking onto the object to activate it will ensure
 that the starting offset will be the last committed value., f 74;
 #X connect 1 0 2 0;
 #X connect 1 0 3 0;
-#X restore 401 866 pd up/down_update;
-#X text 98 541 interactive;
-#X text 168 541 - allows user to specify if the object will respond
+#X restore 401 929 pd up/down_update;
+#X text 98 612 interactive;
+#X text 168 612 - allows user to specify if the object will respond
 to user clicks and key presses (1 or on by default). Disabling it (0)
 will ensure that the number box is strictly there to display value
 that can be only altered via an incoming connnection.;
-#X text 97 774 22;
+#X text 97 837 22;
+#X text 98 332 autoupdate;
+#X text 168 332 - output value on each change using arrow keys (works
+only when the numbox is "activated" by being clicked on or viathe
+focus message below);
+#X text 98 409 drawstyle;
+#X text 168 409 - specifies one of the 4 possible drawing styles (0-3
+\, with0 being default);
 #X connect 13 0 16 0;
 #X connect 14 0 36 0;
 #X connect 15 0 36 0;
