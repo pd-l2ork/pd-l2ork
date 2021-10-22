@@ -919,6 +919,7 @@ extern t_class *my_canvas_class;
    3 = label
    4 = label x y
    5 = label font style and size
+   6 = interactive
 */
 void iemgui_update_properties(t_iemgui *x, int option)
 {
@@ -951,6 +952,9 @@ void iemgui_update_properties(t_iemgui *x, int option)
             case 5:
                 properties_set_field_int(properties,"font_style",x->x_font_style);
                 properties_set_field_int(properties,"font_size",x->x_fontsize);
+                break;
+            case 6:
+                properties_set_field_int(properties,"interactive",x->x_click);
                 break;
         }
     }

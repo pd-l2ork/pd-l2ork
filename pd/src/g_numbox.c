@@ -1111,6 +1111,9 @@ static void my_numbox_exclusive(t_my_numbox *x, t_floatarg f)
         if (gl->gl_editor && gl->gl_editor->e_grab &&
             gl->gl_editor->e_grab == (t_gobj *)x)
                 glist_grab_exclusive(gl, x->x_exclusive);
+        t_int properties = gfxstub_haveproperties((void *)x);
+        if (properties)
+            properties_set_field_int(properties,"exclusive",x->x_exclusive);
     }
 }
 
@@ -1166,6 +1169,7 @@ static void my_numbox_interactive(t_my_numbox *x, t_floatarg f)
         if ((int)f == 0)
             my_numbox_focus(x, 0);
         x->x_gui.x_click = (int)f;
+        iemgui_update_properties(x->x_gui, IEM_GUI_PROP_INTERACTIVE);
     }
 }
 

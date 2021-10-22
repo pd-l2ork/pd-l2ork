@@ -33,12 +33,13 @@
 #define LABELHANDLE_WIDTH   14
 #define LABELHANDLE_HEIGHT  14
 
-#define IEM_GUI_PROP_COLORS   0
-#define IEM_GUI_PROP_SEND     1
-#define IEM_GUI_PROP_RECEIVE  2
-#define IEM_GUI_PROP_LABEL    3
-#define IEM_GUI_PROP_LABEL_XY 4
-#define IEM_GUI_PROP_FONT     5
+#define IEM_GUI_PROP_COLORS         0
+#define IEM_GUI_PROP_SEND           1
+#define IEM_GUI_PROP_RECEIVE        2
+#define IEM_GUI_PROP_LABEL          3
+#define IEM_GUI_PROP_LABEL_XY       4
+#define IEM_GUI_PROP_FONT           5
+#define IEM_GUI_PROP_INTERACTIVE    6
 
 typedef void (*t_iemfunptr)(void *x, t_glist *glist, int mode);
 
