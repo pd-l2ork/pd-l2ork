@@ -1,4 +1,6 @@
 PD-L2ORK TODO:
+*add auto-update of interactive/exclusive checkboxes for objects/dialogs that have them.
+
 *finish and integrate gop drawing order work (see if there is something in the branch log to pull as to the status of the work).
 	*Redrawing entire canvas after tidy will not be necessary anymore.
 
@@ -23,7 +25,7 @@ RARE:
 *check for stray/sporadic bug where bang and other objects stop working and bang object gets stuck in on mode until the mouse is moved (nw.js bug?).
 
 
- 
+
 
 PD-L2ORK DONE:
 *Add focus/commit to numbox2
@@ -100,15 +102,20 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Updated moonlib/image and tof/imagebang to consistently support both relative and absolute paths of images.
 *Updated moonlib/image to address the bug where opening an image after setting a preloaded one did not immediately update the image. Further refinements to the help file.
 *Fixed regressions where images did not display properly (or at all) on Windows. Removed flicker on moonlib/image. Updated help files for tof/imagebang and moonlib/image.
-
-
+*Removed unnecessary error message from the ggee/image.
+*Improved all dialogs that have dynamic updating of fields to ignore calls while the window is still being created.
+*Refined delayed scroll during find (when a subpatch needs to be opened), so that it checks when the window is ready. Improved scrolling logic for windows whose leftmost and topmost coordinate may be negative.
+*Added dynamic field updating for the gatom dialog for interactive and exclusive options.
 
 TWEETER TODO:
-*Fix the bug where the toggling the sound off (by holding the "'" key) did not stick after updating an instrument via preset or via shift+up/down does not work on OSX (possibly others). May be linked to the online mode.
+*Deal with teacher widget messing with other parts when online.
+
+*Check why sometimes recalling a session changes output levels even if user has disabled it by holding return or having pressed single quote.
 
 *Make reliable sync when doing copying of loops and patterns (maybe send the sync data back to server?). Is this even a problem or a matter of user error?
 
 *In offline mode, enable keyboard and other input for multiple tracks
+
 
 
 
@@ -128,16 +135,19 @@ TWEETER DONE:
 *Made insert/reset/clear non-interactive (delete is manually handled using legacy code inside net-io).
 *L2OrkTweet version bump.
 *Updated Teacher widget to allow for convenient loading of sessions and sync-all.
+*Fixed the bug where the toggling the sound off (by holding the "'" key) did not stick after updating an instrument via preset or via shift+up/down does not work.
+
 
 
 HELP FILES TODO:
 *Unfinished context help patch dealing with $0, $1, and $2.
 
 
+
+
 HELP FILES DONE:
 
 
 
+
 K12:
-
-
