@@ -420,7 +420,8 @@ function strip_problem_chars(arg) {
 
 function update_attr(elem, symbol_field) {
     if (!new_attrs.hasOwnProperty(elem.name)) {
-        pdgui.post("warning: new_attrs[" + elem.name + "] doesn't exist");
+        //pdgui.post("warning: new_attrs[" + elem.name + "] doesn't exist");
+        return;
     }
     if (elem.type === "checkbox") {
         new_attrs[elem.name] = elem.checked ? 1 : 0;

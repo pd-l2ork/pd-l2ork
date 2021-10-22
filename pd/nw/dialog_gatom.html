@@ -273,6 +273,11 @@ function gatom_unescape(str) {
 }
 
 function update_attr(elem) {
+    if (!new_attrs.hasOwnProperty(elem.name)) {
+        //pdgui.post("warning: new_attrs[" + elem.name + "] doesn't exist");
+        return;
+    }
+    //pdgui.post("update_attr " + elem);
     if (elem.type === "checkbox") {
         new_attrs[elem.name] = elem.checked ? 1 : 0;
     }

@@ -242,6 +242,10 @@ function gatom_unescape(str) {
 }
 
 function update_attr(elem) {
+    if (!new_attrs.hasOwnProperty(elem.name)) {
+        //pdgui.post("warning: new_attrs[" + elem.name + "] doesn't exist");
+        return;
+    }
     new_attrs[elem.name] = elem.value;
 }
 
