@@ -1,4 +1,5 @@
 PD-L2ORK TODO:
+*refine window heights for various dialogs, so that they always display fully on-screen.
 *finish and integrate gop drawing order work (see if there is something in the branch log to pull as to the status of the work).
 	*Redrawing entire canvas after tidy will not be necessary anymore.
 
