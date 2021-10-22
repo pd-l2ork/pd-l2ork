@@ -1,4 +1,4 @@
-#N canvas 653 408 677 358 10;
+#N canvas 653 417 677 358 10;
 #X floatatom 75 229 5 0 0 0 - - - 0 0 1, f 5;
 #X floatatom 75 128 5 0 0 0 - - - 0 0 1, f 5;
 #X text 132 248 Just an adaptation of musil's slider.;
@@ -28,16 +28,16 @@
 #X msg 427 187 size 25 0;
 #X text 518 209 full angular control;
 #X msg 443 210 size 25 -1;
-#N canvas 929 511 374 216 META 0;
+#N canvas 929 520 374 216 META 0;
 #X text 12 45 LICENSE GPL v2;
 #X text 12 65 DESCRIPTION round gui knob;
-#X text 12 25 KEYWORDS control GUI;
 #X text 12 85 INLET_0 float size;
 #X text 12 105 OUTLET_0 float;
 #X text 12 145 HELP_PATCH_AUTHORS Antoine Rousseau and Ivica Ico Bukvic.
 "pd meta" information added by Jonathan Wilkes for Pd version 0.42.
 ;
 #X text 12 125 AUTHOR Antoine Rousseau and Ivica Ico Bukvic;
+#X text 12 25 KEYWORDS control GUI DEPRECATED;
 #X restore 622 333 pd META;
 #X obj 117 106 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1 1 1;

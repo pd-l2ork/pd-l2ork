@@ -1,4 +1,4 @@
-#N canvas 112 117 600 634 10;
+#N canvas 112 126 600 634 10;
 #X text 14 136 usage: image image_symbol [type];
 #X text 14 154 if type=0 (or absent) \, image_symbol is a file.;
 #X text 14 172 if type=1 \, image_symbol means a pre-loaded image \;
@@ -60,7 +60,8 @@
 #X obj 303 348 hsl 128 15 0 63 0 0 empty empty empty -2 -6 0 8 #fcfcfc
 #000000 #000000 0 1 0 1;
 #X obj 303 370 i;
-#X obj 201 527 moonlib/image examples/rec.gif 0;
+#X obj 201 527 moonlib/image /home/l2orkist/Downloads/pd-l2ork/externals/moonlib/examples/rec.gif
+0;
 #X obj 303 391 change;
 #X text 16 288 For animations \, it's beter to preload images:;
 #X obj 407 443 loadbang;
@@ -74,15 +75,15 @@
 #X obj 49 427 makefilename d%d;
 #X obj 303 412 makefilename d%d;
 #X obj 100 447 makefilename examples/d%d.gif;
-#N canvas 568 690 469 208 META 0;
+#N canvas 568 708 414 188 META 0;
 #X text 17 35 LICENSE GPL v2;
 #X text 17 95 AUTHOR Antoine Rousseau;
 #X text 17 75 INLET_0 load set open;
 #X text 17 55 DESCRIPTION image viewer;
-#X text 17 15 KEYWORDS control GUI deprecated;
 #X text 17 115 HELP_PATCH_AUTHORS Antoine Rousseau. "pd meta" information
 added by Jonathan Wilkes for Pd version 0.42. Patch clean-up by Ivica
 Ico Bukvic.;
+#X text 17 15 KEYWORDS control GUI DEPRECATED;
 #X restore 545 608 pd META;
 #X obj 0 0 cnv 15 599 26 empty \$0-pddp.cnv.header moonlib/image\ (DEPRECATED)
 9 10 0 18 #c4dcdc #000000 0;
