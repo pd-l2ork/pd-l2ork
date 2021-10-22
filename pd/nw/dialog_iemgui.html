@@ -34,6 +34,39 @@
                      onchange="update_attr(this);">
             </td>
           </tr>
+          <tr class="dial_width prop hidden">
+            <td>
+              <label data-i18n="[title]iem.prop.knobdial_tt">
+                <span data-i18n="iem.prop.knobdial"></span>
+              </label>
+            </td>
+            <td data-i18n="[title]iem.prop.knobdial_tt">
+              <input type="number" name="dial_width"
+                     onchange="update_attr(this);">
+            </td>
+          </tr>
+          <tr class="off_circle_width prop hidden">
+            <td>
+              <label data-i18n="[title]iem.prop.knobcircle_tt">
+                <span data-i18n="iem.prop.knobcircle"></span>
+              </label>
+            </td>
+            <td data-i18n="[title]iem.prop.knobcircle_tt">
+              <input type="number" name="off_circle_width"
+                     onchange="update_attr(this);">
+            </td>
+          </tr>
+          <tr class="on_circle_width prop hidden">
+            <td>
+              <label data-i18n="[title]iem.prop.knobfrag_tt">
+                <span data-i18n="iem.prop.knobfrag"></span>
+              </label>
+            </td>
+            <td data-i18n="[title]iem.prop.knobfrag_tt">
+              <input type="number" name="on_circle_width"
+                     onchange="update_attr(this);">
+            </td>
+          </tr>
           <tr class="selection_size prop hidden">
             <td>
               <label data-i18n="[title]iem.prop.select_size_tt">
@@ -548,6 +581,15 @@ function send_params(attrs, create_undo_point) {
     var autoupdate = +attrs["autoupdate"];
     if (isNaN(autoupdate)) { autoupdate = "null"; }
 
+    var dial_width = +attrs["dial_width"];
+    if (isNaN(dial_width)) { dial_width = "null"; }
+
+    var off_circle_width = +attrs["off_circle_width"];
+    if (isNaN(off_circle_width)) { off_circle_width = "null"; }
+
+    var on_circle_width = +attrs["on_circle_width"];
+    if (isNaN(on_circle_width)) { on_circle_width = "null"; }
+
     var slot7 = attrs.log_height;
     if (slot7 === undefined) {
         slot7 = attrs["number"];
@@ -596,7 +638,10 @@ function send_params(attrs, create_undo_point) {
         exclusive,   // exclusive keyboard access
         interactive, // whether the object is interactive
         create_undo_point ? 1 : 0, // whether we set an undo point
-        autoupdate
+        autoupdate,
+        dial_width,  // following three vars are used by mknob only
+        off_circle_width,
+        on_circle_width
     );
 }
 

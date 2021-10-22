@@ -5816,20 +5816,28 @@ function describeArc(x, y, radius, startAngle, endAngle){
 }
 
 function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
-    is_footils_knob) {
+    is_footils_knob, dial_w, circle_w, frag_w) {
+    // non-footils knob uses dial_w = 2 and circle_w = 1
+    // footils uses dial_w = 2 circle_w = 3 and frag_w = 4
+    var xtra_w = 0;
+    if (is_footils_knob) {
+        xtra_w = circle_w - 3;
+        if (frag_w - 4 > xtra_w) xtra_w = frag_w - 4;
+        if (xtra_w < -3) xtra_w = -3;
+    }
     var w = size,
         h = size;
     var g = gui(cid).get_gobj(tag)
     .q(".border", {
-        d: ["M", 0, 0, w, 0,
-            "M", 0, h, w, h,
-            "M", 0, 0, 0, h,
-            "M", w, 0, w, h
+        d: ["M", -xtra_w, -xtra_w, w+xtra_w, -xtra_w,
+            "M", -xtra_w, h+xtra_w, w+xtra_w, h+xtra_w,
+            "M", -xtra_w, -xtra_w, -xtra_w, h+xtra_w,
+            "M", w+xtra_w, -xtra_w, w+xtra_w, h+xtra_w
            ].join(" "),
         fill: "none",
     })
     .q("." + tag + "dial", { // indicator
-        "stroke-width": 2,
+        "stroke-width": dial_w,
         stroke: fg_color
     });
 
@@ -5848,14 +5856,14 @@ function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
         g.q(".circle", {
             stroke: "black",
             fill: "none",
-            "stroke-width": 3,
+            "stroke-width": circle_w,
             "d": describeArc(size/2, size/2, size/2 - 1, 193, 528)
         });
         g.q("." + tag + "dial_frag", {
             "knob_w": size,
             fill: "none",
             stroke: bg_color,
-            "stroke-width": 4,
+            "stroke-width": frag_w,
             "d": describeArc(size/2, size/2, size/2 - 1, 192.9, 528.1),
         });
     }

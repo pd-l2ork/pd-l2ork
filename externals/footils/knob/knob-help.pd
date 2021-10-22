@@ -1,5 +1,5 @@
-#N canvas 186 214 553 674 10;
-#X obj 0 651 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
+#N canvas 186 268 553 680 10;
+#X obj 0 656 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
 14 #dcdcdc #404040 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header knob 3 12 0 18 #c4dcdc
 #000000 0;
@@ -22,7 +22,7 @@ for Pd version 0.42.;
 send label label_pos label_font color pos delta;
 #X text 12 115 OUTLET_0 float;
 #X text 12 195 RELEASE_DATE 1997;
-#X restore 500 653 pd META;
+#X restore 500 658 pd META;
 #X obj 0 492 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
 13 #dcdcdc #000000 0;
 #X obj 0 546 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8 12
@@ -37,7 +37,7 @@ send label label_pos label_font color pos delta;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
 #X text 8 2 [vslider] Related Objects;
-#X restore 100 653 pd Related_objects;
+#X restore 100 658 pd Related_objects;
 #X obj 78 501 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
 #9c9c9c 0;
 #X text 98 314 float;
@@ -50,14 +50,14 @@ its appearance.;
 #X floatatom 104 213 9 0 0 0 - - - 0 0 1, f 9;
 #X floatatom 57 84 9 0 0 0 - - - 0 0 1, f 9;
 #X obj 57 106 mtof;
-#X text 120 177 (0.01 pixels);
-#X text 120 148 shift-click & drag;
-#X text 120 163 for fine-tuning;
-#X text 379 170 names. Right-click and;
+#X text 132 182 (0.01 pixels);
+#X text 132 148 shift-click & drag;
+#X text 132 165 for fine-tuning;
+#X text 379 174 names. Right-click and;
 #X text 379 155 send and receive names.;
-#X text 379 186 choose "Properties" to;
-#X text 379 200 set them \, or change them;
-#X text 379 214 with messages (see below);
+#X text 379 193 choose "Properties" to;
+#X text 379 212 set them \, or change them;
+#X text 379 231 with messages (see below);
 #X floatatom 250 216 4 0 0 0 - - - 0 0 1, f 4;
 #X msg 309 69 set \$1;
 #X floatatom 270 47 4 0 0 0 - - - 0 0 1, f 4;
@@ -88,17 +88,17 @@ its appearance.;
 its properties:;
 #X text 168 314 - a float updates the slider value and is sent to the
 outlet.;
-#X obj 4 653 pddp/pddplink all_about_help_patches.pd -text Usage Guide
+#X obj 4 658 pddp/pddplink all_about_help_patches.pd -text Usage Guide
 ;
 #X text 98 412 list;
 #X text 168 412 - a list is truncated to the first element.;
 #X text 98 339 bang;
 #X text 168 339 - output the current slider value.;
-#X text 379 139 knob has settable;
-#X obj 57 139 flatgui/knob 59 59 55 3520 1 1 empty empty log.freq.
-62 3 0 10 #fce0c0 #fcac44 #583000 201 1 1;
-#X obj 250 132 flatgui/knob 43 43 100 300 0 1 foo3_snd foo3_rcv empty
-62 3 0 10 #c4dcdc #000000 #000000 207 0 1;
+#X text 379 136 knob has settable;
+#X obj 63 139 flatgui/knob 59 59 55 3520 1 1 empty empty log.freq.
+62 3 0 10 #fce0c0 #fcac44 #583000 132.469 1 1 0 9 4;
+#X obj 253 132 flatgui/knob 43 43 100 300 0 1 foo3_snd foo3_rcv empty
+62 3 0 10 #c4dcdc #000000 #000000 211 0 1 2 3 7;
 #X text 453 12 [flatgui/knob];
 #X text 168 501 - when the knob value is changed by clicking \, dragging
 \, or sending a float to the inlet \, the new slider value is sent
@@ -106,7 +106,7 @@ to the outlet.;
 #X text 168 550 - creating a [knob] object without arguments sets default
 values for its gui-properties. See the subpatch below to learn how
 to dynamically instantiate a [bng] object with custom properties:;
-#N canvas 122 192 428 434 knob-creation-arguments 0;
+#N canvas 122 201 428 434 knob-creation-arguments 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
 #X obj 23 290 s pd-knob-creation-arguments;
@@ -130,8 +130,8 @@ fontSize bgColor foregroundColor lblColor knobPosition steadyOnClick
 interactive;
 #X connect 6 0 1 0;
 #X restore 170 607 pd knob-creation-arguments;
-#N canvas 53 19 464 608 Setting_knob_properties_through_messages 0
-;
+#N canvas 215 222 464 720 Setting_knob_properties_through_messages
+0;
 #X obj 1 1 cnv 15 461 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
 #X floatatom 12 189 1 0 1 0 - #0-soc - 0 0 1, f 1;
@@ -152,7 +152,7 @@ interactive;
 #X obj 122 245 s z_rcv;
 #X msg 110 192 receive z_rcv;
 #X msg 122 222 receive hsl_rcv;
-#N canvas 234 255 161 292 init 0;
+#N canvas 234 264 161 292 init 0;
 #X obj 16 11 loadbang;
 #X obj 16 42 f \$0;
 #X msg 16 73 \; \$1-xpos 385 \; \$1-ypos 200 \; \$1-xlabel -2 \; \$1-ylabel
@@ -161,7 +161,7 @@ interactive;
 12;
 #X connect 0 0 1 0;
 #X connect 1 0 2 0;
-#X restore 409 582 pd init;
+#X restore 406 695 pd init;
 #X msg 334 110 init 1;
 #X msg 12 106 size \$1 \$2;
 #X text 61 57 1.width;
@@ -242,7 +242,7 @@ interactive;
 #X connect 4 0 1 0;
 #X coords 0 -1 1 1 48 42 2 100 100;
 #X restore 244 329 pd flash-time;
-#X text 9 449 preset-colors;
+#X text 12 449 preset-colors;
 #X text 105 449 RGB-colors;
 #X msg 12 555 color \$1 \$2 \$3;
 #N canvas 364 205 306 317 flash-time 0;
@@ -363,9 +363,8 @@ interactive;
 #X text 11 36 dimensions;
 #X text 267 470 1.x-pos;
 #X text 267 492 2.y-pos;
-#X text 8 2 [vslider] Set Properties through Messages;
-#X obj 385 200 flatgui/knob 45 45 0 127 0 0 knob_snd knob_rcv myKnob
--2 -8 0 10 #fcfcfc #202020 #202020 0 1 1;
+#X obj 385 200 flatgui/knob 45 45 0 127 0 1 knob_snd knob_rcv myKnob
+-2 -8 0 10 #fcfcfc #202020 #202020 0 1 1 0 5 7;
 #X obj 12 135 s knob_rcv;
 #X obj 124 135 s knob_rcv;
 #X obj 235 135 s knob_rcv;
@@ -382,36 +381,49 @@ interactive;
 #X obj 12 580 s knob_rcv;
 #X obj 219 566 s knob_rcv;
 #X obj 319 566 s knob_rcv;
+#X obj 12 638 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1 1;
+#X msg 12 661 interactive \$1;
+#X obj 12 686 s knob_rcv;
+#X text 3 3 [flatgui/knob] Set Properties through Messages;
+#X text 12 617 toggle interactivity;
+#X obj 162 686 s knob_rcv;
+#X text 162 613 adjust width of the dial \, the 'off' circle segment
+\, and the 'on' circle segment;
+#X msg 162 661 width 0 5 7;
 #X connect 1 0 7 0;
-#X connect 5 0 77 0;
-#X connect 6 0 69 0;
-#X connect 7 0 70 0;
-#X connect 8 0 68 0;
-#X connect 9 0 68 0;
-#X connect 17 0 71 0;
+#X connect 5 0 76 0;
+#X connect 6 0 68 0;
+#X connect 7 0 69 0;
+#X connect 8 0 67 0;
+#X connect 9 0 67 0;
+#X connect 17 0 70 0;
 #X connect 18 0 16 0;
-#X connect 20 0 69 0;
-#X connect 21 0 66 0;
-#X connect 27 0 67 0;
-#X connect 29 0 75 0;
-#X connect 33 0 76 0;
+#X connect 20 0 68 0;
+#X connect 21 0 65 0;
+#X connect 27 0 66 0;
+#X connect 29 0 74 0;
+#X connect 33 0 75 0;
 #X connect 38 0 21 0;
 #X connect 39 0 27 0;
 #X connect 40 0 33 0;
 #X connect 41 0 29 0;
-#X connect 44 0 79 0;
+#X connect 44 0 78 0;
 #X connect 45 0 44 0;
 #X connect 46 0 44 0;
-#X connect 52 0 80 0;
-#X connect 53 0 81 0;
+#X connect 52 0 79 0;
+#X connect 53 0 80 0;
 #X connect 54 0 53 0;
 #X connect 55 0 54 0;
 #X connect 58 0 52 0;
 #X connect 59 0 54 1;
-#X connect 65 0 60 0;
-#X connect 73 0 72 0;
-#X connect 74 0 72 0;
-#X connect 78 0 77 0;
+#X connect 64 0 60 0;
+#X connect 72 0 71 0;
+#X connect 73 0 71 0;
+#X connect 77 0 76 0;
+#X connect 81 0 82 0;
+#X connect 82 0 83 0;
+#X connect 88 0 86 0;
 #X restore 101 462 pd Setting_knob_properties_through_messages;
 #X text 11 21 knob gui-knob;
 #X text 98 550 19;

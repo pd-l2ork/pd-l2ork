@@ -60,6 +60,9 @@ typedef struct _knob            /* taken from Frank's modified g_all_guis.h */
     int       x_steady;
     t_float   x_min;
     t_float   x_max;
+    t_int     x_dial_w;     // dial width (used for stroke-width)
+    t_int     x_circle_w;   // background circle width
+    t_int     x_frag_w;     // "on" fragment width
 } t_knob;
 
 /* ----------------- forward declarations ----------------------- */
@@ -68,7 +71,9 @@ static void knob_list(t_knob *x, t_symbol *s, int ac, t_atom *av);
 static void knob_draw_config(t_knob *x,t_glist *glist);
 static void knob_set(t_knob *x, t_floatarg f);
 static void knob_interactive(t_knob *x, t_floatarg f);
+static void knob_width(t_knob *x, t_symbol *s, int ac, t_atom *av);
 
+extern t_int gfxstub_haveproperties(void *key);
 
 /* ---------------- widget helper functions --------------------- */
 
@@ -130,13 +135,16 @@ static void knob_draw_config(t_knob *x,t_glist *glist)
     sprintf(lcol, "#%6.6x", x->x_gui.x_lcol);
 
     /* reuse mknob interface */
-    gui_vmess("gui_configure_mknob", "xxissi",
+    gui_vmess("gui_configure_mknob", "xxissiiii",
         canvas,
         x,
         x->x_gui.x_h,
         bcol,
         fcol,
-        1 /* flag to tell we are a footils/knob */
+        1, /* flag to tell we are a footils/knob */
+        x->x_dial_w,
+        x->x_circle_w,
+        x->x_frag_w
     );
     knob_draw_update(x, glist);
 }
@@ -144,13 +152,13 @@ static void knob_draw_config(t_knob *x,t_glist *glist)
 static void knob_draw(t_knob *x, t_glist *glist, int mode)
 {
     if(mode == IEM_GUI_DRAW_MODE_UPDATE)
-    knob_draw_update(x, glist);
+        knob_draw_update(x, glist);
     else if(mode == IEM_GUI_DRAW_MODE_MOVE)
-    iemgui_base_draw_move(&x->x_gui);
+        iemgui_base_draw_move(&x->x_gui);
     else if(mode == IEM_GUI_DRAW_MODE_NEW)
-    knob_draw_new(x, glist);
+        knob_draw_new(x, glist);
     else if(mode == IEM_GUI_DRAW_MODE_CONFIG)
-    knob_draw_config(x, glist);
+        knob_draw_config(x, glist);
 }
 
 /* ------------------------ knob widgetbehaviour----------------------------- */
@@ -161,10 +169,14 @@ static void knob_getrect(t_gobj *z, t_glist *glist,
 {
     t_knob* x = (t_knob*)z;
 
-    *xp1 = text_xpix(&x->x_gui.x_obj, glist);
-    *yp1 = text_ypix(&x->x_gui.x_obj, glist) - 2;
-    *xp2 = *xp1 + x->x_gui.x_h;
-    *yp2 = *yp1 + x->x_gui.x_h;
+    int xtra_w = x->x_circle_w - 3;
+    if (x->x_frag_w - 4 > xtra_w) xtra_w = x->x_frag_w - 4;
+    if (xtra_w < -3) xtra_w = -3;
+
+    *xp1 = text_xpix(&x->x_gui.x_obj, glist) - xtra_w;
+    *yp1 = text_ypix(&x->x_gui.x_obj, glist) - 2 - xtra_w;
+    *xp2 = *xp1 + x->x_gui.x_h + xtra_w;
+    *yp2 = *yp1 + x->x_gui.x_h + xtra_w;
 }
 
 static void knob_save(t_gobj *z, t_binbuf *b)
@@ -174,7 +186,7 @@ static void knob_save(t_gobj *z, t_binbuf *b)
     t_symbol *srl[3];
 
     iemgui_save(&x->x_gui, srl, bflcol);
-    binbuf_addv(b, "ssiisiiffiisssiiiisssfii", gensym("#X"),gensym("obj"),
+    binbuf_addv(b, "ssiisiiffiisssiiiisssfiiiii", gensym("#X"),gensym("obj"),
         (t_int)x->x_gui.x_obj.te_xpix, (t_int)x->x_gui.x_obj.te_ypix,
         atom_getsymbol(binbuf_getvec(x->x_gui.x_obj.te_binbuf)),
         x->x_gui.x_h, x->x_gui.x_h,
@@ -184,7 +196,8 @@ static void knob_save(t_gobj *z, t_binbuf *b)
         x->x_gui.x_ldx, x->x_gui.x_ldy,
         iem_fstyletoint(&x->x_gui), x->x_gui.x_fontsize,
         bflcol[0], bflcol[1], bflcol[2],
-        x->x_val, x->x_steady, x->x_gui.x_click);
+        x->x_val, x->x_steady, x->x_gui.x_click,
+        x->x_dial_w, x->x_circle_w, x->x_frag_w);
     binbuf_addv(b, ";");
 }
 
@@ -267,6 +280,9 @@ static void knob_properties(t_gobj *z, t_glist *owner)
     gui_s("foreground_color"); gui_i(0xffffff & x->x_gui.x_fcol);
     gui_s("label_color");      gui_i(0xffffff & x->x_gui.x_lcol);
     gui_s("interactive");      gui_i(x->x_gui.x_click);
+    gui_s("dial_width");       gui_i(x->x_dial_w);
+    gui_s("off_circle_width"); gui_i(x->x_circle_w);
+    gui_s("on_circle_width");  gui_i(x->x_frag_w);
 
     gui_end_array();
     gui_end_vmess();
@@ -287,6 +303,7 @@ static void knob_bang(t_knob *x)
 
 static void knob_dialog(t_knob *x, t_symbol *s, int argc, t_atom *argv)
 {
+    //post("knob_dialog %d args", argc);
     if (atom_getintarg(21, argc, argv))
         canvas_apply_setundo(x->x_gui.x_glist, (t_gobj *)x);
     int w = (int)atom_getintarg(0, argc, argv);
@@ -305,6 +322,16 @@ static void knob_dialog(t_knob *x, t_symbol *s, int argc, t_atom *argv)
        x->x_steady = 0;
     sr_flags = iemgui_dialog(&x->x_gui, argc, argv);
     knob_interactive(x, atom_getintarg(20, argc, argv));
+    if (argc >= 26)
+    {
+        /*
+        post("knob width %d %d %d",
+            atom_getintarg(23, argc, argv),
+            atom_getintarg(24, argc, argv),
+            atom_getintarg(25, argc, argv));
+        */
+        knob_width(x, gensym("width"), 3, argv+23);
+    }
     x->x_gui.x_h = iemgui_clip_size(h);
     knob_check_height(x, h);
     knob_check_minmax(x, min, max);
@@ -560,6 +587,24 @@ static void knob_range(t_knob *x, t_symbol *s, int ac, t_atom *av)
 {
     knob_check_minmax(x, (double)atom_getfloatarg(0, ac, av),
              (double)atom_getfloatarg(1, ac, av));
+    t_int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+    {
+        properties_set_field_int(properties,"minimum_range",x->x_min);
+        properties_set_field_int(properties,"maximum_range",x->x_max);
+    }
+}
+
+static void knob_width(t_knob *x, t_symbol *s, int ac, t_atom *av)
+{
+    if (ac >= 1)
+        x->x_dial_w = atom_getfloatarg(0, ac, av);
+    if (ac >= 2)
+        x->x_circle_w = atom_getfloatarg(1, ac, av);
+    if (ac == 3)
+        x->x_frag_w = atom_getfloatarg(2, ac, av);
+    //post("knob_width updated values %d %d %d", x->x_dial_w, x->x_circle_w, x->x_frag_w);
+    knob_draw(x, x->x_gui.x_glist, IEM_GUI_DRAW_MODE_CONFIG);
 }
 
 static void knob_color(t_knob *x, t_symbol *s, int ac, t_atom *av)
@@ -597,22 +642,37 @@ static void knob_log(t_knob *x)
     x->x_lin0_log1 = 1;
     //error("knob: lin and log commands are not anymore supported. Ignoring...");
     knob_check_minmax(x, x->x_min, x->x_max);
+    //post("knob_log %lx", x->x_gui);
+    t_int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+    {
+        properties_set_field_int(properties,"log_scaling",x->x_lin0_log1);
+    }
 }
 
 static void knob_lin(t_knob *x)
 {
     //error("knob: lin and log commands are not anymore supported. Ignoring...");
     x->x_lin0_log1 = 0;
+    //post("knob_lin %lx", x->x_gui);
+    t_int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+    {
+        properties_set_field_int(properties,"log_scaling",x->x_lin0_log1);
+    }
 }
 
 static void knob_init(t_knob *x, t_floatarg f)
 {
-    x->x_gui.x_loadinit = (f==0.0)?0:1;
+    iemgui_init(&x->x_gui, f);
 }
 
 static void knob_steady(t_knob *x, t_floatarg f)
 {
     x->x_steady = (f==0.0)?0:1;
+    t_int properties = gfxstub_haveproperties((void *)x);
+    if (properties)
+        properties_set_field_int(properties,"steady_on_click",x->x_steady);
 }
 
 #define LB_LOAD 0 /* from g_canvas.h */
@@ -712,7 +772,9 @@ static void knob_interactive(t_knob *x, t_floatarg f)
     if ((int)f == 0 || (int)f == 1)
     {
         x->x_gui.x_click = (int)f;
+        iemgui_update_properties(&x->x_gui, IEM_GUI_PROP_INTERACTIVE);
     }
+
 }
 
 static void *knob_new(t_symbol *s, int argc, t_atom *argv)
@@ -731,6 +793,9 @@ static void *knob_new(t_symbol *s, int argc, t_atom *argv)
     x->x_gui.x_fcol = 0x00;
     x->x_gui.x_lcol = 0x00;
     x->x_gui.x_click = 1;
+    x->x_dial_w = 2;
+    x->x_circle_w = 3;
+    x->x_frag_w = 4;
 
     if((argc >= 17)&&IS_A_FLOAT(argv,0)&&IS_A_FLOAT(argv,1)
        &&IS_A_FLOAT(argv,2)&&IS_A_FLOAT(argv,3)
@@ -761,6 +826,14 @@ static void *knob_new(t_symbol *s, int argc, t_atom *argv)
         steady = (int)atom_getintarg(17, argc, argv);
     if ((argc >= 19)&&IS_A_FLOAT(argv,18))
         x->x_gui.x_click = (int)atom_getintarg(18, argc, argv);
+
+    if ((argc >= 20)&&IS_A_FLOAT(argv,19))
+        x->x_dial_w = (int)atom_getintarg(19, argc, argv);
+    if ((argc >= 21)&&IS_A_FLOAT(argv,20))
+        x->x_circle_w = (int)atom_getintarg(20, argc, argv);
+    if ((argc >= 22)&&IS_A_FLOAT(argv,21))
+        x->x_frag_w = (int)atom_getintarg(21, argc, argv);
+
     x->x_gui.x_draw = (t_iemfunptr)knob_draw;
 /*
     x->x_gui.x_fsf.x_snd_able = 1;
@@ -859,6 +932,7 @@ void knob_setup(void)
     class_addmethod(knob_class, (t_method)knob_init, gensym("init"), A_FLOAT, 0);
     class_addmethod(knob_class, (t_method)knob_steady, gensym("steady"), A_FLOAT, 0);
     class_addmethod(knob_class, (t_method)knob_interactive, gensym("interactive"), A_FLOAT, 0);
+    class_addmethod(knob_class, (t_method)knob_width, gensym("width"), A_GIMME, 0);
     if(!iemgui_key_sym)
     iemgui_key_sym = gensym("#keyname");
     knob_widgetbehavior.w_getrectfn =    knob_getrect;
