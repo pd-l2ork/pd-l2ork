@@ -923,11 +923,18 @@ static t_symbol *gatom_unescapit(t_symbol *s)
     else return (iemgui_raute2dollar(s));
 }
 
+extern t_int gfxstub_haveproperties(void *key);
+
 static void gatom_interactive(t_gatom *x, t_floatarg f)
 {
     if ((int)f == 0 || (int)f == 1)
     {
         x->a_click = (int)f;
+        t_int properties = gfxstub_haveproperties((void *)x);
+        if (properties)
+        {
+            properties_set_field_int(properties,"interactive",x->a_click);
+        }
     }
 }
 
@@ -1462,6 +1469,11 @@ static void gatom_exclusive(t_gatom *x, t_floatarg f)
         if (gl->gl_editor && gl->gl_editor->e_grab &&
             gl->gl_editor->e_grab == (t_gobj *)x)
                 glist_grab_exclusive(gl, x->a_exclusive);
+        t_int properties = gfxstub_haveproperties((void *)x);
+        if (properties)
+        {
+            properties_set_field_int(properties,"exclusive",x->a_exclusive);
+        }
     }
 }
 
