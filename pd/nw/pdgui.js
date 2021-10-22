@@ -6803,11 +6803,27 @@ function gui_image_dialog(did, attr_array) {
 }
 
 function gui_dialog_set_field(did, field_name, value) {
-    var elem = dialogwin[did].window.document.getElementsByName(field_name)[0];
-    // since g_all_guis.c iemgui_update_properties blindly calls all the possible
-    // options that not all objects have, here we check if the requested option is valid
-    if (elem)
+    var elem;
+    //post("gui_dialog_set_field " + did + " " + field_name + " " + value);
+    // ico@vt.edu 2021-10-21: hack-ish solution to an error that
+    // breaks the gui: try to gracefully handle inability to locate
+    // a dialog window.
+    try {
+        var elem = dialogwin[did].window.document.getElementsByName(field_name)[0];
+    } catch(error) {
+        // this usually happens when a dialog is still being created but the backend
+        // already thinks it is ready because it has its own gfxstub created, so
+        // we need to gracefully exit here
+        //post("error: iemgui dialog window id:" + did + " " + field_name +
+        //     ":" + value + " update failed... dialog window not found (" + error + ")");
+    }
+    // ico@vt.edu 2021-10-21: here we not only check that the elem is not null
+    // but also whether the window has fully loaded.
+    if (elem && dialogwin[did].window.document.readyState === "complete")
     {
+        //post ("dialog document state is " + dialogwin[did].window.document.readyState);
+        // since g_all_guis.c iemgui_update_properties blindly calls all the possible
+        // options that not all objects have, here we check if the requested option is valid
         if (elem.type === "checkbox") {
             elem.checked = (value === 1 ? true : false);
         } else if (elem.type === "select-one") {
@@ -7689,8 +7705,25 @@ function zoom_level_to_chrome_percent(nw_win) {
 // objects have been loaded and somehow ensure that the last object
 // reports finishing drawing? What about adding it a unique class just
 // for loading purposes?
+// ico@vt.edu 2021-10-21: perhaps the readyState solves the problem?
+var delayed_scroll = {};
+
 function gui_canvas_delayed_scroll_to_gobj(cid, tag, smooth) {
-    setTimeout(gui_canvas_scroll_to_gobj, 1000, cid, tag, smooth);
+    if (!patchwin[cid] || patchwin[cid].window.document.readyState !== "complete")
+    {
+        if (delayed_scroll[cid] && delayed_tag[cid] != tag) {
+            //post("delayed_scroll_to_gobj cancelling..." + delayed_tag[cid]);
+            clearTimeout(delayed_scroll[cid]);
+            delayed_scroll[cid] = null;
+        }
+        //post("delayed_scroll_to_gobj delaying..." + tag);
+        delayed_scroll[cid] = setTimeout(gui_canvas_delayed_scroll_to_gobj, 1000, cid, tag, smooth);
+    } else {
+        //post("delayed_scroll_to_gobj executing..." + tag);
+        setTimeout(gui_canvas_scroll_to_gobj, 100, cid, tag, smooth);
+        delayed_scroll[cid] = null;
+        //gui_canvas_scroll_to_gobj(cid, tag, smooth);
+    }
 }
 
 exports.gui_canvas_delayed_scroll_to_gobj = gui_canvas_delayed_scroll_to_gobj;
@@ -7698,6 +7731,12 @@ exports.gui_canvas_delayed_scroll_to_gobj = gui_canvas_delayed_scroll_to_gobj;
 // ico@vt.edu 2021-04-20: used to autoscroll after doing the "find" request
 // on the main patch canvas
 function gui_canvas_scroll_to_gobj(cid, tag, smooth) {
+    //post("gui_canvas_scoll_to_gobj " + tag);
+    if (delayed_scroll[cid]) {
+        //post("+++ scroll_to_gobj cancelling..." + delayed_tag[cid]);
+        clearTimeout(delayed_scroll[cid]);
+        delayed_scroll[cid] = null;
+    }
     //post("\n"+tag+"\ngui_canvas_scroll_to_gobj");
     //post("gui_canvas_scroll_to_gobj " +
     //    (patchwin[cid] == null ? "not yet" : "got it"));
@@ -7727,6 +7766,16 @@ function gui_canvas_scroll_to_gobj(cid, tag, smooth) {
                 post("..."+cid+" scrollX="+nw_win.window.scrollX+
                   " scrollY="+nw_win.window.scrollY);
                 */
+                // ico@vt.edu 2021-10-21:
+                // if the left/top edge of the canvas is less than 0 (x or y),
+                // we need to add that from the reported x and y position
+                // from the object's BBOX calculated above. Given the values
+                // for x and y are negative, we will be effectively subtracting.
+                if (x < 0)
+                    x1 = x1 + x;
+                if (y < 0)
+                    y1 = y1 + y;
+
                 var tlx, tly, brx, bry; // top-left x and y, bottom-right x and y
                 var offsetx = 0, offsety = 0; // final offset
 
