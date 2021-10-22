@@ -1099,7 +1099,11 @@ static void image_rotate(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
         }
         else
         {
-            pd_error(x, "rotate: no image loaded yet...");
+            // ico@vt.edu 2021-10-21: no need to report this as an error since it
+            // sometimes happens when the image is still being loaded due to the
+            // canvas just having been opened, while the metro calling the rotation
+            // may be already firing
+            //pd_error(x, "rotate: no image loaded yet...");
         }
     }
 }
