@@ -114,10 +114,6 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 
 
 TWEETER TODO:
-*Deal with teacher widget messing with other parts when online.
-
-*Check why sometimes recalling a session changes output levels even if user has disabled it by holding return or having pressed single quote.
-
 *Make reliable sync when doing copying of loops and patterns (maybe send the sync data back to server?). Is this even a problem or a matter of user error?
 
 *In offline mode, enable keyboard and other input for multiple tracks
@@ -139,9 +135,12 @@ TWEETER DONE:
 *Update sessions that don't have parts 11 and 12.
 *Improved server-invoked load session to also include sync. Expanded server command vocabulary accordingly, adding l2ork-load-sync-delay.
 *Made insert/reset/clear non-interactive (delete is manually handled using legacy code inside net-io).
-*L2OrkTweet version bump.
 *Updated Teacher widget to allow for convenient loading of sessions and sync-all.
 *Fixed the bug where the toggling the sound off (by holding the "'" key) did not stick after updating an instrument via preset or via shift+up/down does not work.
+*Added ability to request your client number to enable greater flexibility in supporting widgets, such as the Teacher widget.
+*Further improvements to the Teacher widget, including fixing the double output by the user monitored through the teacher widget and other out-of-sync issues, refining the session load and adding the save option, preloading delay and other values, toggling the metro off after it has been on when transitioning to a user that does not have tracker on, and visually acknowledging that you cannot control your own part through the teacher widget.
+*Further improvements to the audio level toggles, so that they are not affected by the remote session loading.
+
 
 
 
