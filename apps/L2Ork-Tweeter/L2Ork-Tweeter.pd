@@ -3,9 +3,9 @@
 0;
 #X obj 4 2 cnv 15 1630 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.53\ by
+#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.54\ by
 4 5 0 10 #6c6c6c #fcfcfc 0;
-#X obj 251 3 cnv 15 125 16 empty empty (c)\ 2020-1\ Released\ under\ the
+#X obj 252 3 cnv 15 125 16 empty empty (c)\ 2020-1\ Released\ under\ the
 4 6 0 10 #6c6c6c #fcfcfc 0;
 #X obj 4 24 cnv 15 280 41 empty empty empty 4 5 0 10 #6c6c6c #fcfcfc
 0;
@@ -135,7 +135,7 @@ to the new instrument's value., f 82;
 #X obj 1171 3 pddp/pddplink http://l2ork.icat.vt.edu;
 #X obj 153 3 pddp/pddplink http://ico.bukvic.net -text Ivica Ico Bukvic
 ;
-#X obj 434 3 pddp/pddplink https://www.gnu.org/licenses/gpl-3.0.en.html
+#X obj 437 3 pddp/pddplink https://www.gnu.org/licenses/gpl-3.0.en.html
 -text GPL v3 License;
 #X obj 820 672 core/L2OrkTweet 11;
 #X obj 820 823 core/L2OrkTweet 12;
@@ -296,8 +296,8 @@ f 25;
 25;
 #X text 84 277 this prepends the send command;
 #X obj 272 223 r client-out;
-#X obj 220 643 loadbang;
-#X msg 220 665 -1;
+#X obj 190 625 loadbang;
+#X msg 190 647 -1;
 #X obj 20 61 r myid;
 #X obj 798 296 delay 500;
 #X text 712 12 initiates connection;
@@ -314,7 +314,7 @@ f 25;
 #X obj 497 903 s myclientnum;
 #X obj 452 903 s myid;
 #X obj 452 880 t 0 -1;
-#X text 73 647 make myclientnum initially invalid or -1, f 23;
+#X text 43 629 make myclientnum initially invalid or -1, f 23;
 #X obj 203 223 r chat-out;
 #X obj 20 359 loadbang;
 #X obj 20 401 tosymbol;
@@ -503,6 +503,8 @@ when message from server calls for a report (to sync other clients)
 #X obj 882 499 route report;
 #X obj 409 499 route status connection server disconnect session loop-length
 , f 64;
+#X obj 235 575 r whatismyclientnum;
+#X obj 269 681 f;
 #X connect 0 0 1 0;
 #X connect 1 0 30 1;
 #X connect 2 0 3 0;
@@ -515,14 +517,14 @@ when message from server calls for a report (to sync other clients)
 #X connect 6 1 30 0;
 #X connect 7 0 11 1;
 #X connect 9 0 8 0;
-#X connect 9 1 10 0;
 #X connect 9 1 132 1;
+#X connect 9 1 138 0;
 #X connect 11 0 5 0;
 #X connect 12 0 0 0;
 #X connect 13 0 12 1;
 #X connect 18 0 12 0;
 #X connect 19 0 20 0;
-#X connect 20 0 10 0;
+#X connect 20 0 138 0;
 #X connect 21 0 52 0;
 #X connect 22 0 95 0;
 #X connect 24 0 31 0;
@@ -649,6 +651,8 @@ when message from server calls for a report (to sync other clients)
 #X connect 136 4 118 0;
 #X connect 136 5 125 1;
 #X connect 136 6 50 0;
+#X connect 137 0 138 0;
+#X connect 138 0 10 0;
 #X restore 221 23 pd network-io;
 #N canvas 353 215 1163 639 preset-logic 0;
 #X obj 100 376 r \$0-store-preset;
@@ -1353,7 +1357,7 @@ bang;
 #X text 99 75 DEBUG;
 #X obj 177 168 sprintf L2Ork Tweeter v.%.02f by;
 #X obj 177 193 tosymbol;
-#X msg 177 76 0.53;
+#X msg 177 76 0.54;
 #X connect 0 0 10 0;
 #X connect 1 0 8 0;
 #X connect 1 1 2 0;

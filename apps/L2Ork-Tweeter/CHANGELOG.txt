@@ -9,6 +9,11 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+23-10-2021 0.54
+*Added ability to request your client number to enable greater flexibility in supporting widgets, such as the Teacher widget.
+*Further improvements to the Teacher widget, including fixing the double output by the user monitored through the teacher widget and other out-of-sync issues, refining the session load and adding the save option, preloading delay and other values, toggling the metro off after it has been on when transitioning to a user that does not have tracker on, and visually acknowledging that you cannot control your own part through the teacher widget.
+*Further improvements to the audio level toggles, so that they are not affected by the remote session loading.
+
 20-10-2021 0.53
 *Fixed a bug that occurred during changing the instrument while having the levels manually disabled (feature introduced in 0.51) and which resulted in the newly loaded instrument still sounding out.
 

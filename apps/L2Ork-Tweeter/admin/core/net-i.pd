@@ -21,8 +21,10 @@
 #X text 48 515 0=set (default) \, 1=set and output (used only for tracker
 var), f 42;
 #X obj 177 420 change -1;
+#X obj 191 393 outlet;
 #X connect 0 0 2 0;
 #X connect 1 0 15 1;
+#X connect 1 0 19 0;
 #X connect 2 1 1 1;
 #X connect 3 0 4 0;
 #X connect 3 1 1 0;
