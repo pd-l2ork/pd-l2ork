@@ -118,6 +118,8 @@ TWEETER TODO:
 
 *In offline mode, enable keyboard and other input for multiple tracks
 
+*When trying to load a pattern that does not exist (after having successfully loaded one that does), the main level goes to zero.
+
 
 
 
