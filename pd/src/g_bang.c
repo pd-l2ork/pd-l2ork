@@ -453,7 +453,7 @@ static void bng_interactive(t_bng *x, t_floatarg f)
     if ((int)f == 0 || (int)f == 1)
     {
         x->x_gui.x_click = (int)f;
-        post("x->x_gui = %lx", x->x_gui);
+        //post("x->x_gui = %lx", x->x_gui);
         iemgui_update_properties(&x->x_gui, IEM_GUI_PROP_INTERACTIVE);
     }
 }
