@@ -284,7 +284,7 @@
 #X text 417 48 logic for detecting dsp status on startup;
 #X obj 527 91 delay 10;
 #X obj 341 248 hsl 40 15 0 1.5708 0 1 empty empty empty 12 6 0 10 #fcb46c
-#fc6418 #000000 2003 0 0 1;
+#fc6418 #000000 2500 0 0 1;
 #X obj 13 446 *~;
 #X obj 50 446 *~;
 #X obj 28 408 line~;
@@ -417,8 +417,8 @@
 #X connect 14 0 38 0;
 #X connect 14 0 34 0;
 #X connect 14 0 55 0;
-#X connect 15 0 4 0;
-#X connect 16 0 4 1;
+#X connect 15 0 56 0;
+#X connect 16 0 56 1;
 #X connect 17 0 15 1;
 #X connect 18 0 16 1;
 #X connect 19 0 17 0;
@@ -560,7 +560,7 @@
 #X restore 692 144 pd FLANGER;
 #X obj 429 426 \$1;
 #X obj 18 217 nbx 5 14 500 60000 0 1 null-s \$1-manual-loop-length
-ms 1 5 0 8 #fcb46c #000000 #000000 1650 256 1 0 1 0;
+ms 1 5 0 8 #fcb46c #000000 #000000 1500 256 1 0 1 0;
 #X text 287 231 PCH(u/d);
 #X obj 130 198 tgl 15 0 null-s \$1-delete-gui DELETE(del) 17 6 0 10
 #fcb46c #000000 #000000 0 1 1;
@@ -1586,7 +1586,7 @@ and scrub the timeline (in regular mode)., f 43;
 #X restore 17 68 pd loop-logic \$1;
 #X obj 146 24 +;
 #X obj 235 233 nbx 6 12 -192 192 0 1 null-s null-r empty 0 -7 0 9 #fcb46c
-#000000 #000000 -60 256 0 0 1 1;
+#000000 #000000 -72 256 0 0 1 1;
 #X obj 509 583 s \$1-instance-gui;
 #X msg 509 561 color \$1 0;
 #X obj 502 516 + 12;

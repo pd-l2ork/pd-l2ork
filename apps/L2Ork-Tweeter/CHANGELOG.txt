@@ -9,6 +9,15 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+27-10-2021 0.55
+*Implemented synced session saving where master client sends its literal session to others, to offset for any potential latency-induced inconsistencies.
+*Added ability for the Teacher widget to (re)sync based on the last loaded session.
+*Bunch of small Teacher widget bug-fixes.
+*Fixed obscure bug in the tracker-time logic that prevented perfect sync from happening while online.
+*Refactored the session sync all highlighting logic, so that it appropriately shows up on all clients.
+*Added L2OrkTweet abstraction designed for use in DISIS (L2OrkTweetDISIS.pd found in the core folder).
+*Included DISIS Dante mixer widget (DISIS-Dante-Out-Controls.pd found in the admin folder) since the DISIS Dante system does not have an easy way of adjusting levels.
+
 23-10-2021 0.54
 *Added ability to request your client number to enable greater flexibility in supporting widgets, such as the Teacher widget.
 *Further improvements to the Teacher widget, including fixing the double output by the user monitored through the teacher widget and other out-of-sync issues, refining the session load and adding the save option, preloading delay and other values, toggling the metro off after it has been on when transitioning to a user that does not have tracker on, and visually acknowledging that you cannot control your own part through the teacher widget.

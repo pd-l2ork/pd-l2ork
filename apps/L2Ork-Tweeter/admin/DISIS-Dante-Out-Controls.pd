@@ -1,0 +1,8 @@
+#N canvas 19 353 134 296 10;
+#X obj 0 0 cnv 15 133 294 empty empty empty 20 12 0 14 #a8a8d4 #404040
+0;
+#X obj 15 25 vsl 50 250 0 1 0 1 main-out-dante empty MAIN 13 116 0
+10 #80fc80 #008080 #000000 0 1 0 1;
+#X obj 69 25 vsl 50 250 0 1 0 1 main-sub-out-dante empty SUB 15 116
+0 10 #80fc80 #008080 #000000 0 1 0 1;
+#X text 15 5 DISIS Dante Mixer;
