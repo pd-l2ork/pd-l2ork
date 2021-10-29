@@ -9,6 +9,12 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+28-10-2021 0.56
+*Fixed a bug pertaining to session saving and the session being polluted by superfluous tracker information.
+*Made session saving deterministic.
+*Added a new snare drum preset, accompanying loop, and a session.
+*Expanded server commands example.
+
 27-10-2021 0.55
 *Implemented synced session saving where master client sends its literal session to others, to offset for any potential latency-induced inconsistencies.
 *Added ability for the Teacher widget to (re)sync based on the last loaded session.
