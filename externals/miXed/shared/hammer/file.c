@@ -41,6 +41,8 @@ struct _hammerfile
     t_binbuf            *f_binbuf;
     t_clock             *f_panelclock;
     t_clock             *f_editorclock;
+    t_guiconnect        *b_guiconnect;
+    //char                *f_text;
     struct _hammerfile  *f_savepanel;
     struct _hammerfile  *f_next;
 };
@@ -168,6 +170,37 @@ static void hammereditor_guidefs(void)
 /* null owner defaults to class name, pass "" to supress */
 void hammereditor_open(t_hammerfile *f, char *title, char *owner)
 {
+    //post("===hammereditor_open===");
+    if (f->b_guiconnect)
+    {
+        //sys_vgui("wm deiconify .x%zx\n", x);
+        //sys_vgui("raise .x%zx\n", x);
+        //sys_vgui("focus .x%zx.text\n", x);
+        //post("hammereditor_open f->b_guiconnect");
+        gui_vmess("gui_text_dialog_raise", "x", f);
+    }
+    else
+    {
+        char buf[40];
+        //sys_vgui("pdtk_textwindow_open .x%zx %dx%d {%s: %s} %d\n",
+        //    x, 600, 340, "myname", "text",
+        //         sys_hostfontsize(glist_getfont(x->b_canvas)));//,
+                    //glist_getzoom(x->b_canvas)));
+        sprintf(buf, "x%zx", (t_uint)f);
+        f->b_guiconnect = guiconnect_new(&f->f_pd, gensym(buf));
+        //post("hammereditor_open new");
+        gui_vmess("gui_text_dialog", "xsiiiii",
+            f,
+            title,
+            f->f_canvas->gl_editor ? f->f_canvas->gl_editor->e_xwas : 100,
+            f->f_canvas->gl_editor ? f->f_canvas->gl_editor->e_ywas : 100,
+            480,
+            550,
+            sys_hostfontsize(glist_getfont(f->f_canvas)));
+        gui_vmess("gui_text_dialog_text_init", "x", f);
+        //textbuf_senditup(x);
+    }
+    /*
     if (!owner)
 	owner = class_getname(*f->f_master);
     if (!*owner)
@@ -184,13 +217,18 @@ void hammereditor_open(t_hammerfile *f, char *title, char *owner)
 	sys_vgui("hammereditor_open .%x %dx%d {%s} %d\n",
 		 (int)f, 600, 600, (title ? title : "Untitled"),
 		 (f->f_editorfn != 0));
+    */
 }
 
 static void hammereditor_tick(t_hammerfile *f)
 {
-    // ico@vt.edu 20200923: disabling all legacy commands that keep
-    // spamming the console and otherwise have no effect
     //sys_vgui("hammereditor_close .%x 1\n", (int)f);
+    gui_vmess("gui_text_dialog_close_from_pd", "x", f, 1);
+    if (f->b_guiconnect)
+    {
+        guiconnect_notarget(f->b_guiconnect, 1000);
+        f->b_guiconnect = 0;
+    }
 }
 
 void hammereditor_close(t_hammerfile *f, int ask)
@@ -198,37 +236,55 @@ void hammereditor_close(t_hammerfile *f, int ask)
     if (ask && f->f_editorfn)
 	/* hack: deferring modal dialog creation in order to allow for
 	   a message box redraw to happen -- LATER investigate */
- 	clock_delay(f->f_editorclock, 0);
+ 	//clock_delay(f->f_editorclock, 0);
+        hammereditor_tick(f);
     //else
 	//sys_vgui("hammereditor_close .%x 0\n", (int)f);
 }
 
 void hammereditor_append(t_hammerfile *f, char *contents)
 {
+    //if (f->f_text)
+    //    freebytes(f->f_text);
     if (contents)
     {
-	char *ptr;
-	for (ptr = contents; *ptr; ptr++)
-	{
-	    if (*ptr == '{' || *ptr == '}')
-	    {
-		char c = *ptr;
-		*ptr = 0;
-		sys_vgui("hammereditor_append .%x {%s}\n", (int)f, contents);
-		sys_vgui("hammereditor_append .%x \"%c\"\n", (int)f, c);
-		*ptr = c;
-		contents = ptr + 1;
-	    }
-	}
-	if (*contents)
-	    sys_vgui("hammereditor_append .%x {%s}\n", (int)f, contents);
+        //gui_vmess("gui_text_dialog_clear", "x", f);
+        gui_vmess("gui_text_init_dialog_append", "xs",
+            f, contents);
+/*
+    	char *ptr;
+    	for (ptr = contents; *ptr; ptr++)
+    	{
+    	    if (*ptr == '{' || *ptr == '}')
+    	    {
+    		char c = *ptr;
+    		*ptr = 0;
+            post("hammereditor_append %c <%s>", c, contents);
+    		//sys_vgui("hammereditor_append .%x {%s}\n", (int)f, contents);
+    		//sys_vgui("hammereditor_append .%x \"%c\"\n", (int)f, c);
+    		*ptr = c;
+    		contents = ptr + 1;
+    	    }
+    	}
+    	if (*contents)
+            post("hammereditor_append <%s>", contents);
+	    //sys_vgui("hammereditor_append .%x {%s}\n", (int)f, contents);
+*/
     }
+}
+
+void hammereditor_map(t_hammerfile *f)
+{
+    gui_vmess("gui_text_dialog_clear", "x", f);
+    gui_vmess("gui_text_dialog_map", "x", f);
+    gui_vmess("gui_text_dialog_set_dirty", "xi", f, 0);
 }
 
 void hammereditor_setdirty(t_hammerfile *f, int flag)
 {
     if (f->f_editorfn)
-	sys_vgui("hammereditor_setdirty .%x %d\n", (int)f, flag);
+	//sys_vgui("hammereditor_setdirty .%x %d\n", (int)f, flag);
+        gui_vmess("gui_text_dialog_set_dirty", "xi", f, flag);
 }
 
 static void hammereditor_clear(t_hammerfile *f)
@@ -245,22 +301,30 @@ static void hammereditor_clear(t_hammerfile *f)
 static void hammereditor_addline(t_hammerfile *f,
 				 t_symbol *s, int ac, t_atom *av)
 {
+    //post("hammereditor_addline");
     if (f->f_editorfn)
     {
-	int i;
-	t_atom *ap;
-	for (i = 0, ap = av; i < ac; i++, ap++)
-	{
-	    if (ap->a_type == A_SYMBOL)
-	    {
-		/* LATER rethink semi/comma mapping */
-		if (!strcmp(ap->a_w.w_symbol->s_name, "_semi_"))
-		    SETSEMI(ap);
-		else if (!strcmp(ap->a_w.w_symbol->s_name, "_comma_"))
-		    SETCOMMA(ap);
-	    }
-	}
-	binbuf_add(f->f_binbuf, ac, av);
+    	int i;
+    	t_atom *ap;
+    	for (i = 0, ap = av; i < ac; i++, ap++)
+    	{
+    	    if (ap->a_type == A_SYMBOL)
+    	    {
+                //post("...<%s>", ap->a_w.w_symbol->s_name);
+        		/* LATER rethink semi/comma mapping */
+        		if (!strcmp(ap->a_w.w_symbol->s_name, ";"))
+                {
+        		    SETSEMI(ap);
+                    //post("......SETSEMI");
+                }
+        		else if (!strcmp(ap->a_w.w_symbol->s_name, ","))
+                {
+        		    SETCOMMA(ap);
+                    //post("......SETCOMMA");
+                }
+    	    }
+    	}
+    	binbuf_add(f->f_binbuf, ac, av);
     }
 }
 
@@ -268,9 +332,9 @@ static void hammereditor_end(t_hammerfile *f)
 {
     if (f->f_editorfn)
     {
-	(*f->f_editorfn)(f->f_master, 0, binbuf_getnatom(f->f_binbuf),
-			 binbuf_getvec(f->f_binbuf));
-	binbuf_clear(f->f_binbuf);
+    	(*f->f_editorfn)(f->f_master, 0, binbuf_getnatom(f->f_binbuf),
+    			 binbuf_getvec(f->f_binbuf));
+    	binbuf_clear(f->f_binbuf);
     }
 }
 
@@ -341,11 +405,15 @@ static void hammerpanel_path(t_hammerfile *f, t_symbol *s1, t_symbol *s2)
 static void hammerpanel_tick(t_hammerfile *f)
 {
     if (f->f_savepanel)
-	sys_vgui("hammerpanel_open %s {%s}\n", f->f_bindname->s_name,
-		 f->f_inidir->s_name);
+        gui_vmess("gui_openpanel", "xss",
+            f->f_canvas, f->f_bindname->s_name, f->f_inidir->s_name);
+	    //sys_vgui("hammerpanel_open %s {%s}\n", f->f_bindname->s_name,
+		//  f->f_inidir->s_name);
     else
-	sys_vgui("hammerpanel_save %s {%s} {%s}\n", f->f_bindname->s_name,
-		 f->f_inidir->s_name, f->f_inifile->s_name);
+        gui_vmess("gui_savepanel", "xss",
+            f->f_canvas, f->f_bindname->s_name, f->f_inidir->s_name);
+	    //sys_vgui("hammerpanel_save %s {%s} {%s}\n", f->f_bindname->s_name,
+		//  f->f_inidir->s_name, f->f_inifile->s_name);
 }
 
 /* these are hacks: deferring modal dialog creation in order to allow for
@@ -583,15 +651,28 @@ void hammerfile_setup(t_class *c, int embeddable)
 	hammerfile_class = class_new(gensym("_hammerfile"), 0, 0,
 				     sizeof(t_hammerfile),
 				     CLASS_PD | CLASS_NOINLET, 0);
+
+    // ico@vt.edu 2021-10-31: callback, map, close, and notify added
+    // to make the hammerfile compatible with the pd-l2ork 2.x
+    // dialog_text.html dialog, ideally ensuring that all the cyclone
+    // objects can properly function.
 	class_addsymbol(hammerfile_class, hammerpanel_symbol);
 	class_addmethod(hammerfile_class, (t_method)hammerpanel_path,
 			gensym("path"), A_SYMBOL, A_DEFSYM, 0);
+    class_addmethod(hammerfile_class, (t_method)hammerpanel_path,
+            gensym("callback"), A_SYMBOL, A_DEFSYM, 0);
 	class_addmethod(hammerfile_class, (t_method)hammereditor_clear,
 			gensym("clear"), 0);
 	class_addmethod(hammerfile_class, (t_method)hammereditor_addline,
 			gensym("addline"), A_GIMME, 0);
 	class_addmethod(hammerfile_class, (t_method)hammereditor_end,
 			gensym("end"), 0);
+    class_addmethod(hammerfile_class, (t_method)hammereditor_map,
+            gensym("map"), 0);
+    class_addmethod(hammerfile_class, (t_method)hammereditor_close,
+            gensym("close"), 0);
+    class_addmethod(hammerfile_class, (t_method)hammereditor_end,
+            gensym("notify"), 0);
 	/* LATER find a way of ensuring that these are not defined yet... */
 	hammereditor_guidefs();
 	hammerpanel_guidefs();
