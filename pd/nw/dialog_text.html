@@ -214,13 +214,14 @@ function add_events(name) {
             evt.preventDefault();
         }
         else if (pdgui.nw_os_is_osx && evt.metaKey) {
+            //pdgui.post("onkeypress " + evt.keyCode);
             if (evt.keyCode == 87) {
                 //post("OSX version of cmd+w");
                 evt.preventDefault();
                 cancel();
             }
-            else if (evt.keyCode == 10) {
-                post("OSX version of cmd+Enter");
+            else if (evt.keyCode == 13) {
+                //pdgui.post("OSX version of cmd+Enter");
                 evt.preventDefault();
                 ok();
             }
