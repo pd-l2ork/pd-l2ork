@@ -1,5 +1,4 @@
 PD-L2ORK TODO:
-*fix coll legacy problems and ensure that bang lights up when file loading is complete (works only on file load in threaded mode, not save). Update help file to reflect this.
 *refine window heights for various dialogs, so that they always display fully on-screen.
 *finish and integrate gop drawing order work (see if there is something in the branch log to pull as to the status of the work).
 	*Redrawing entire canvas after tidy will not be necessary anymore.
@@ -110,11 +109,14 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Fixed size redrawing bug in the moonlib/mknob and ensured that its values also autoupdate when the dialog is open.
 *Minor cosmetic refinements to deprecated objects.
 *Improvements to the flatgui/knob, including width for the dial, off and on segments of the dial circle, automation of the dialog fields (when open), additional translation options for the new fields, and other minor bug-fixes.
+Updated miXed/cyclone to support all the file i/o features (e.g. coll object) replacing non-functioning legacy calls. Fixed a bug in coll object where it did not report all load/save calls via its 3rd outlet.
 
 
 
 
 TWEETER TODO:
+*Check if copying loops by clicking on user's number is now accurately synchronous.
+
 *In offline mode, enable keyboard and other input for multiple tracks
 
 *When trying to load a pattern that does not exist (after having successfully loaded one that does), the main level goes to zero.
