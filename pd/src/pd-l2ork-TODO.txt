@@ -109,7 +109,8 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Fixed size redrawing bug in the moonlib/mknob and ensured that its values also autoupdate when the dialog is open.
 *Minor cosmetic refinements to deprecated objects.
 *Improvements to the flatgui/knob, including width for the dial, off and on segments of the dial circle, automation of the dialog fields (when open), additional translation options for the new fields, and other minor bug-fixes.
-Updated miXed/cyclone to support all the file i/o features (e.g. coll object) replacing non-functioning legacy calls. Fixed a bug in coll object where it did not report all load/save calls via its 3rd outlet.
+*Updated miXed/cyclone to support all the file i/o features (e.g. coll object) replacing non-functioning legacy calls. Fixed a bug in coll object where it did not report all load/save calls via its 3rd outlet.
+*Improved keyboard shortcuts for the text editor widget (used by "text define" and various cyclone library objects, such as coll).
 
 
 
