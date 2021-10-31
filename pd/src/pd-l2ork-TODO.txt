@@ -151,6 +151,10 @@ TWEETER DONE:
 *Refactored the session sync all highlighting logic, so that it appropriately shows up on all clients.
 *Added L2OrkTweet abstraction designed for use in DISIS (L2OrkTweetDISIS.pd found in the core folder).
 *Included DISIS Dante mixer widget (DISIS-Dante-Out-Controls.pd found in the admin folder) since the DISIS Dante system does not have an easy way of adjusting levels.
+*Fixed a bug pertaining to session saving and the session being polluted by superfluous tracker information.
+*Made session saving deterministic.
+*Added a new snare drum preset, accompanying loop, and a session.
+*Expanded server commands example.
 
 
 
