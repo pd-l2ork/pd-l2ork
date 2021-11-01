@@ -1,11 +1,14 @@
 PD-L2ORK TODO:
+*deal with array manipulation and data structure drawing location issues.
+
+*Port shell object to Windows.
+
 *refine window heights for various dialogs, so that they always display fully on-screen.
+
 *finish and integrate gop drawing order work (see if there is something in the branch log to pull as to the status of the work).
 	*Redrawing entire canvas after tidy will not be necessary anymore.
 
 *save pd-l2ork main window position between restarts.
-
-*deal with array manipulation and data structure drawing location issues.
 
 *tooltips.
 
@@ -21,7 +24,7 @@ PD-L2ORK TODO:
 
 RARE:
 *Pd-L2Ork sporadic crashes when opening/closing L2OrkTweet.pd and L2Ork-Tweeter.pd. These are now sparser (suspect something on the nw.js side of things).
-*check for stray/sporadic bug where bang and other objects stop working and bang object gets stuck in on mode until the mouse is moved (nw.js bug?).
+*check for stray/sporadic bug where bang and other objects stop working and bang object gets stuck in on mode until the mouse is moved (nw.js bug? UPDATE: it appears at least one of the sources was a bug in the scroll_to_gobj call that was fixed on 2021-11-01).
 
 
 
@@ -111,6 +114,7 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Improvements to the flatgui/knob, including width for the dial, off and on segments of the dial circle, automation of the dialog fields (when open), additional translation options for the new fields, and other minor bug-fixes.
 *Updated miXed/cyclone to support all the file i/o features (e.g. coll object) replacing non-functioning legacy calls. Fixed a bug in coll object where it did not report all load/save calls via its 3rd outlet.
 *Improved keyboard shortcuts for the text editor widget (used by "text define" and various cyclone library objects, such as coll).
+*Fixed regression in scroll_to_gobj that is triggered when doing find/findagain request and which could trigger an error due to window not having been created yet, breaking the UI.
 
 
 
@@ -155,6 +159,7 @@ TWEETER DONE:
 *Made session saving deterministic.
 *Added a new snare drum preset, accompanying loop, and a session.
 *Expanded server commands example.
+*Reworked the local time-synced copying of another client, ensuring that syncing to another client (whether requested locally or remotely) is accurate.
 
 
 
