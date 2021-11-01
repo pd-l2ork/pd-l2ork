@@ -7785,7 +7785,12 @@ function gui_canvas_scroll_to_gobj(cid, tag, smooth) {
     //post("gui_canvas_scroll_to_gobj " +
     //    (patchwin[cid] == null ? "not yet" : "got it"));
     if (patchwin[cid] !== null) {
-        var gobj = get_gobj(cid, tag);
+        var gobj = null;
+        try {
+            gobj = get_gobj(cid, tag);
+        } catch(error) {
+
+        }
         if (gobj !== null) {
             //post("gobj="+gobj+" tag="+tag);
             var x1, y1, x2, y2;
