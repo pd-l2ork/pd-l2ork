@@ -3,7 +3,7 @@
 0;
 #X obj 4 2 cnv 15 1630 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.56\ by
+#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.57\ by
 4 5 0 10 #6c6c6c #fcfcfc 0;
 #X obj 252 3 cnv 15 125 16 empty empty (c)\ 2020-1\ Released\ under\ the
 4 6 0 10 #6c6c6c #fcfcfc 0;
@@ -1407,7 +1407,7 @@ are added later. this allows for deterministic session saving., f
 #X text 99 75 DEBUG;
 #X obj 177 168 sprintf L2Ork Tweeter v.%.02f by;
 #X obj 177 193 tosymbol;
-#X msg 177 76 0.56;
+#X msg 177 76 0.57;
 #X connect 0 0 10 0;
 #X connect 1 0 8 0;
 #X connect 1 1 2 0;
@@ -1417,32 +1417,24 @@ are added later. this allows for deterministic session saving., f
 #X connect 9 0 6 0;
 #X connect 10 0 1 0;
 #X restore 283 52 pd version;
-#N canvas 724 350 589 509 local-copy-logic 0;
+#N canvas 672 297 856 591 local-copy-logic 0;
 #X obj 22 22 r local-copyfrom-mode;
 #X obj 210 22 r local-copyfrom-data;
-#X obj 210 72 route 0;
+#X obj 210 125 route 0;
 #X obj 210 47 list trim;
-#X text 277 47 we first do list trim since trimming is not taken care
-of in net-io abstractions \, as this is a more efficient way of doing
-the same. then \, we check for data that is prepended with 0 such data
-does not have copyfrom context set and therefore we ignore it. see
-net-io abstractions and look for the \$5 argument for more info.,
-f 48;
-#X obj 225 393 list prepend;
-#X obj 294 369 r myclientnum;
-#X obj 225 416 s network-in;
+#X obj 235 383 list prepend;
+#X obj 304 359 r myclientnum;
+#X obj 235 406 s network-in;
 #X floatatom 22 47 5 0 0 0 - - - 0 0 1, f 5;
-#X obj 22 175 gate 6 0;
-#X obj 118 309 route preset;
-#X obj 199 309 route preset-all;
-#X obj 304 309 route loop;
-#X obj 373 309 route loop-all;
+#X obj 118 311 route preset;
+#X obj 199 311 route preset-all;
+#X obj 304 311 route loop;
+#X obj 373 311 route loop-all;
 #X obj 118 289 gate 1 0;
 #X obj 199 289 gate 1 0;
 #X obj 304 289 gate 1 0;
 #X obj 373 289 gate 1 0;
-#X obj 249 146 t b a;
-#X text 17 397 Copyfrom modes: 1 - single click - preset2 - double
+#X text 17 444 Copyfrom modes: 1 - single click - preset2 - double
 click - loop3 - triple click - preset+loop4 - shift + single click
 - preset-all 5 - shift + double click - loop-all6 - shift + triple
 click - preset-all+loop-all;
@@ -1450,58 +1442,87 @@ click - preset-all+loop-all;
 #X obj 85 224 t 0 0 1 0;
 #X obj 148 224 t 1 0 1 0;
 #X obj 211 224 t 1 1 0 0;
-#X obj 274 224 t 0 0 1 1;
-#X obj 337 224 t 1 1 1 1;
-#X connect 0 0 8 0;
+#X obj 357 224 t 1 1 1 1 b;
+#X obj 518 267 r local-copyfrom;
+#X obj 503 289 f;
+#X obj 503 333 s client-out;
+#X text 277 47 we first do list trim since trimming is not taken care
+of inside the net-io abstractions \, as this is a more efficient way
+of doing the same. then \, we check for data that is prepended with
+0 such data does not have copyfrom context set and therefore we ignore
+it. see net-io abstractions and look for the \$5 argument for more
+info., f 48;
+#X obj 22 175 select 1 2 3 4 5 6;
+#X obj 503 418 r network-in;
+#X text 503 356 client number requesting copy will be added in network-io
+subpatch. below \, we handle incoming messages which will be arriving
+only for clients other than our own., f 46;
+#X obj 560 463 route client2client;
+#X obj 560 485 route time-sync;
+#X obj 503 441 zl slice 1;
+#X obj 560 510 pack f f;
+#X msg 503 311 client2client time-sync \$1;
+#X obj 274 224 t 0 0 1 1 b;
+#X msg 560 534 \; \$1-copyfrom-tracker-position \$2;
+#X connect 0 0 7 0;
 #X connect 1 0 3 0;
-#X connect 2 1 18 0;
+#X connect 2 1 15 1;
+#X connect 2 1 14 1;
+#X connect 2 1 13 1;
+#X connect 2 1 12 1;
 #X connect 3 0 2 0;
-#X connect 5 0 7 0;
-#X connect 6 0 5 1;
-#X connect 8 0 9 0;
-#X connect 9 0 20 0;
-#X connect 9 1 21 0;
-#X connect 9 2 22 0;
-#X connect 9 3 23 0;
-#X connect 9 4 24 0;
-#X connect 9 5 25 0;
-#X connect 10 0 5 0;
-#X connect 11 0 5 0;
-#X connect 12 0 5 0;
-#X connect 13 0 5 0;
+#X connect 4 0 6 0;
+#X connect 5 0 4 1;
+#X connect 7 0 26 0;
+#X connect 8 0 4 0;
+#X connect 9 0 4 0;
+#X connect 10 0 4 0;
+#X connect 11 0 4 0;
+#X connect 12 0 8 0;
+#X connect 13 0 9 0;
 #X connect 14 0 10 0;
 #X connect 15 0 11 0;
-#X connect 16 0 12 0;
-#X connect 17 0 13 0;
-#X connect 18 0 9 1;
-#X connect 18 1 17 1;
-#X connect 18 1 16 1;
-#X connect 18 1 15 1;
-#X connect 18 1 14 1;
-#X connect 20 0 14 0;
-#X connect 20 1 15 0;
-#X connect 20 2 16 0;
-#X connect 20 3 17 0;
-#X connect 21 0 14 0;
-#X connect 21 1 15 0;
-#X connect 21 2 16 0;
-#X connect 21 3 17 0;
-#X connect 22 0 14 0;
-#X connect 22 1 15 0;
-#X connect 22 2 16 0;
-#X connect 22 3 17 0;
-#X connect 23 0 14 0;
-#X connect 23 1 15 0;
-#X connect 23 2 16 0;
-#X connect 23 3 17 0;
-#X connect 24 0 14 0;
-#X connect 24 1 15 0;
-#X connect 24 2 16 0;
-#X connect 24 3 17 0;
-#X connect 25 0 14 0;
-#X connect 25 1 15 0;
-#X connect 25 2 16 0;
-#X connect 25 3 17 0;
+#X connect 17 0 12 0;
+#X connect 17 1 13 0;
+#X connect 17 2 14 0;
+#X connect 17 3 15 0;
+#X connect 18 0 12 0;
+#X connect 18 1 13 0;
+#X connect 18 2 14 0;
+#X connect 18 3 15 0;
+#X connect 19 0 12 0;
+#X connect 19 1 13 0;
+#X connect 19 2 14 0;
+#X connect 19 3 15 0;
+#X connect 20 0 12 0;
+#X connect 20 1 13 0;
+#X connect 20 2 14 0;
+#X connect 20 3 15 0;
+#X connect 21 0 12 0;
+#X connect 21 1 13 0;
+#X connect 21 2 14 0;
+#X connect 21 3 15 0;
+#X connect 21 4 23 0;
+#X connect 22 0 23 1;
+#X connect 23 0 33 0;
+#X connect 26 0 17 0;
+#X connect 26 1 18 0;
+#X connect 26 2 19 0;
+#X connect 26 3 20 0;
+#X connect 26 4 34 0;
+#X connect 26 5 21 0;
+#X connect 27 0 31 0;
+#X connect 29 0 30 0;
+#X connect 30 0 32 0;
+#X connect 31 0 32 1;
+#X connect 31 1 29 0;
+#X connect 32 0 35 0;
+#X connect 33 0 24 0;
+#X connect 34 0 12 0;
+#X connect 34 1 13 0;
+#X connect 34 2 14 0;
+#X connect 34 3 15 0;
+#X connect 34 4 23 0;
 #X restore 153 52 pd local-copy-logic;
 #X connect 5 0 6 0;
 #X restore 1586 3 pd core;

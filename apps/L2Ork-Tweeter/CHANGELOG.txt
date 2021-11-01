@@ -9,6 +9,9 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+01-11-2021 0.57
+*Reworked the local time-synced copying of another client, ensuring that syncing to another client (whether requested locally or remotely) is accurate.
+
 28-10-2021 0.56
 *Fixed a bug pertaining to session saving and the session being polluted by superfluous tracker information.
 *Made session saving deterministic.
