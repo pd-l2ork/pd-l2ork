@@ -15,16 +15,15 @@
 #X obj 114 343 \$3;
 #X obj 114 368 + 1;
 #X obj 114 393 gate 2 1, f 11;
-#X text 21 463 args:1 - context (typically \$0)2 - variable name
-(also controls s and r)3 - (optional) set value vs set+ output value
-\,;
-#X text 48 515 0=set (default) \, 1=set and output (used only for tracker
-var), f 42;
 #X obj 177 420 change -1;
 #X obj 191 393 outlet;
+#X text 21 463 args:1 - context (typically \$0)2 - variable name
+(controls s and r)3 - (optional) set value vs set+output value \,
+;
+#X text 48 515 0=set (default) \, 1=set and output, f 42;
 #X connect 0 0 2 0;
 #X connect 1 0 15 1;
-#X connect 1 0 19 0;
+#X connect 1 0 17 0;
 #X connect 2 1 1 1;
 #X connect 3 0 4 0;
 #X connect 3 1 1 0;
@@ -39,5 +38,5 @@ var), f 42;
 #X connect 13 0 14 0;
 #X connect 14 0 15 0;
 #X connect 15 0 10 0;
-#X connect 15 1 18 0;
-#X connect 18 0 11 0;
+#X connect 15 1 16 0;
+#X connect 16 0 11 0;

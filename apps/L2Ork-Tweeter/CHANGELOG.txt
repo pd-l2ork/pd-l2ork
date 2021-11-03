@@ -9,6 +9,14 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+03-11-2021 0.58
+*Made all session loading and sync requests (invoked from the Teacher widget) server secure, requiring a server password.
+*Fixed a bug that prevented proper syncing when copying another client's loop with sync (shift+doubleclick or shift+tripleclick).
+*Implemented filtering of the session sync request server-side to allow messages to pass only for clients that are currently connected.
+*Optimized the way Teaching widget deals with session sync requests by relying on its own iteration of the coll object and ensuring that the session is not redundantly reloaded if the user is looking to sync to the same session. This implementation allows for the user to load one session to all clients and then use sync from another session. This has proved useful when working collaboratively developing a piece and saving sections as distinct sessions. In the process of developing new ideas, it is possible that clients intentionally move away from an earlier session's sync. This way the new material can be preserved (assuming it is not sync-sensitive), while reverting to an earlier session's sync.
+*Cosmetic fixes to the Dante main out controls.
+*Added a couple new work-in-progress sessions and two new presets.
+
 01-11-2021 0.57
 *Reworked the local time-synced copying of another client, ensuring that syncing to another client (whether requested locally or remotely) is accurate.
 

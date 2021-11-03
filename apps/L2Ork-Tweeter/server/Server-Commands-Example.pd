@@ -18,9 +18,9 @@
 #X obj 156 389 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
 #fcfcfc #000000 #000000 2000 256 0 0 1 0;
 #X msg 156 411 chat admin p:l2orklicious l2ork-length-all \$1;
-#X msg 226 339 2000;
-#X msg 156 339 555 30000;
+#X msg 266 339 2000;
 #X obj 156 366 line 100;
+#X msg 156 339 2000 \, 555 30000;
 #X connect 1 0 0 0;
 #X connect 2 0 0 0;
 #X connect 5 0 6 0;
@@ -31,6 +31,6 @@
 #X connect 10 0 0 0;
 #X connect 11 0 12 0;
 #X connect 12 0 0 0;
-#X connect 13 0 15 0;
-#X connect 14 0 15 0;
-#X connect 15 0 11 0;
+#X connect 13 0 14 0;
+#X connect 14 0 11 0;
+#X connect 15 0 14 0;
