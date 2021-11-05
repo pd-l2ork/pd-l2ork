@@ -9,6 +9,11 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+05-11-2021 0.59
+*Reworked local copy logic, replacing original 6 options with 8, with 4 and 8 (quadruple click and shift+quadruple click) being identical (copy everything). The new addition is syncing the tracker position and loop-length only (loop-all variables). Also, made the basic/common elements require fewer clicks. See the supplemental documentation subpatcher in the top-right corner for additional info.
+*Added local main out level control, located in the right corner of the top bar.
+*Added sessions for the "4th Beat" work-in-progress.
+
 03-11-2021 0.58
 *Made all session loading and sync requests (invoked from the Teacher widget) server secure, requiring a server password.
 *Fixed a bug that prevented proper syncing when copying another client's loop with sync (shift+doubleclick or shift+tripleclick).

@@ -1,4 +1,4 @@
-#N canvas 241 150 1330 680 10;
+#N canvas 325 139 1330 680 10;
 #X obj 17 257 bng 23 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1;
 #X obj 9 138 cnv 15 814 148 empty empty empty 20 12 0 14 #8080c0 #404040
@@ -32,7 +32,7 @@
 #X obj 18 199 tgl 15 0 null-s null-r LOOP(alt) 17 6 0 10 #fcb46c #000000
 #000000 0 1 1;
 #X obj 18 145 tgl 15 0 null-s \$1-manual-toggle-keyboard KEYBOARD(ctrl)
-17 6 0 10 #fc6418 #000000 #000000 0 1 1;
+17 6 0 10 #fc6418 #000000 #000000 1 1 1;
 #N canvas 793 437 450 278 REVERB 0;
 #X obj 75 181 freeverb~;
 #N canvas 3 75 470 252 reverb_levels 0;
@@ -252,12 +252,12 @@
 #X connect 6 0 0 0;
 #X connect 6 1 1 1;
 #X restore 17 112 pd keyboard-logic;
-#N canvas 1102 401 684 510 OUT 0;
+#N canvas 1099 172 684 594 OUT 0;
 #X obj 10 126 *~;
 #X obj 10 92 z~ 64;
 #X obj 57 92 limiter~;
 #X msg 69 69 compress 98 88 0.5;
-#X obj 13 478 dac~;
+#X obj 13 558 dac~;
 #N canvas 0 22 271 201 level 0;
 #X obj 49 8 inlet~;
 #X obj 48 156 *~;
@@ -399,7 +399,13 @@
 #X connect 13 0 9 0;
 #X connect 14 0 11 0;
 #X connect 14 0 10 0;
-#X restore 49 478 pd DISIS-dac~;
+#X restore 49 558 pd DISIS-dac~;
+#X obj 375 399 r main-out-multiplier;
+#X obj 375 421 expr ($f1-1)/100;
+#X msg 375 443 \$1 10;
+#X obj 375 465 line~;
+#X obj 13 516 *~;
+#X obj 50 516 *~;
 #X connect 0 0 39 0;
 #X connect 1 0 0 0;
 #X connect 2 0 0 1;
@@ -417,8 +423,8 @@
 #X connect 14 0 38 0;
 #X connect 14 0 34 0;
 #X connect 14 0 55 0;
-#X connect 15 0 56 0;
-#X connect 16 0 56 1;
+#X connect 15 0 61 0;
+#X connect 16 0 62 0;
 #X connect 17 0 15 1;
 #X connect 18 0 16 1;
 #X connect 19 0 17 0;
@@ -462,6 +468,13 @@
 #X connect 53 1 49 0;
 #X connect 54 0 53 0;
 #X connect 55 0 14 0;
+#X connect 57 0 58 0;
+#X connect 58 0 59 0;
+#X connect 59 0 60 0;
+#X connect 60 0 62 1;
+#X connect 60 0 61 1;
+#X connect 61 0 56 0;
+#X connect 62 0 56 1;
 #X coords 0 -1 1 1 53 106 1 337 161;
 #X restore 763 144 pd OUT;
 #N canvas 698 198 673 420 FLANGER 0;
@@ -1997,43 +2010,48 @@ every time they changed a preset, f 32;
 #X symbolatom 93 233 21 0 0 0 - #0-username-r #0-username-s 1 0 1,
 f 21;
 #X text 1059 636 (c) 2020-1 Ivica Ico Bukvic ico.bukvic.net;
-#N canvas 473 235 659 493 local-copy-logic 0;
-#X obj 190 32 inlet;
-#X obj 252 93 r myclientnum;
-#X obj 193 422 s local-copyfrom;
-#X obj 217 93 f \$1;
-#X obj 340 32 keyname;
-#X obj 190 67 t b b;
-#X obj 217 118 !=;
-#X obj 145 151 gate 1 0;
-#X obj 208 212 counter;
-#X obj 193 291 f;
-#X obj 145 212 delay 500;
-#X obj 379 65 sel Shift;
-#X msg 379 90 1;
-#X msg 430 90 0;
-#X obj 340 123 &&;
-#X obj 193 321 +;
-#X floatatom 193 346 5 0 0 0 - - - 0 0 1, f 5;
-#X obj 226 396 s local-copyfrom-mode;
-#X text 86 67 only copy if we are trying to copy from a client other
+#N canvas 41 406 639 460 local-copy-logic 0;
+#X obj 190 20 inlet;
+#X obj 252 81 r myclientnum;
+#X obj 193 410 s local-copyfrom;
+#X obj 217 81 f \$1;
+#X obj 340 20 keyname;
+#X obj 190 55 t b b;
+#X obj 217 106 !=;
+#X obj 145 139 gate 1 0;
+#X obj 208 200 counter;
+#X obj 193 279 f;
+#X obj 145 200 delay 500;
+#X obj 379 53 sel Shift;
+#X msg 379 78 1;
+#X msg 430 78 0;
+#X obj 340 111 &&;
+#X obj 193 309 +;
+#X floatatom 193 334 5 0 0 0 - - - 0 0 1, f 5;
+#X obj 226 384 s local-copyfrom-mode;
+#X text 86 55 only copy if we are trying to copy from a client other
 than ourselves, f 15;
-#X obj 193 396 f \$1;
-#X obj 340 148 * 3;
-#X text 33 329 Copyfrom modes:1 - single click2 - double click3
-- triple click4 - shift + single click5 - shift + double click6
-- shift + triple click;
-#X obj 461 277 f;
-#X obj 145 174 t b b b;
-#X obj 145 237 t 0 b b;
-#X obj 434 340 s \$1-instance-gui;
-#X msg 434 316 color \$1 0;
-#X msg 434 212 10;
-#X obj 476 32 r \$1-instance-gui-color;
-#X obj 193 370 t b f b, f 8;
-#X obj 361 396 f \$1;
-#X obj 361 422 s local-copyfrom-client-num;
+#X obj 193 384 f \$1;
+#X obj 461 265 f;
+#X obj 145 162 t b b b;
+#X obj 145 225 t 0 b b;
+#X obj 434 328 s \$1-instance-gui;
+#X msg 434 304 color \$1 0;
+#X msg 434 200 10;
+#X obj 476 20 r \$1-instance-gui-color;
+#X obj 193 358 t b f b, f 8;
+#X obj 361 384 f \$1;
+#X obj 361 410 s local-copyfrom-client-num;
+#X obj 228 47 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
+#X floatatom 265 49 5 0 0 0 - - - 0 0 1, f 5;
+#X obj 340 136 * 4;
+#X text 15 321 Copyfrom modes:1 - single click2 - double click3
+- triple click4 - quadruple click5 - shift + single click6 - shift
++ double click7 - shift + triple click8 - shift + quadruple click
+;
 #X connect 0 0 5 0;
+#X connect 0 0 30 0;
 #X connect 1 0 6 1;
 #X connect 3 0 6 0;
 #X connect 4 0 14 0;
@@ -2041,33 +2059,34 @@ than ourselves, f 15;
 #X connect 5 0 7 1;
 #X connect 5 1 3 0;
 #X connect 6 0 7 0;
-#X connect 7 0 23 0;
+#X connect 7 0 21 0;
 #X connect 8 0 9 1;
 #X connect 9 0 15 0;
-#X connect 10 0 24 0;
+#X connect 10 0 22 0;
 #X connect 11 0 12 0;
 #X connect 11 1 13 0;
 #X connect 12 0 14 1;
 #X connect 13 0 14 1;
-#X connect 14 0 20 0;
+#X connect 14 0 32 0;
 #X connect 15 0 16 0;
-#X connect 16 0 29 0;
+#X connect 16 0 27 0;
 #X connect 19 0 2 0;
-#X connect 20 0 15 1;
-#X connect 22 0 26 0;
-#X connect 23 0 10 0;
-#X connect 23 1 8 0;
-#X connect 23 2 27 0;
-#X connect 24 0 8 3;
-#X connect 24 1 9 0;
-#X connect 24 2 22 0;
-#X connect 26 0 25 0;
-#X connect 27 0 26 0;
-#X connect 28 0 22 1;
-#X connect 29 0 19 0;
-#X connect 29 1 17 0;
-#X connect 29 2 30 0;
-#X connect 30 0 31 0;
+#X connect 20 0 24 0;
+#X connect 21 0 10 0;
+#X connect 21 1 8 0;
+#X connect 21 2 25 0;
+#X connect 22 0 8 3;
+#X connect 22 1 9 0;
+#X connect 22 2 20 0;
+#X connect 24 0 23 0;
+#X connect 25 0 24 0;
+#X connect 26 0 20 1;
+#X connect 27 0 19 0;
+#X connect 27 1 17 0;
+#X connect 27 2 28 0;
+#X connect 28 0 29 0;
+#X connect 31 0 6 1;
+#X connect 32 0 15 1;
 #X restore 17 294 pd local-copy-logic \$1;
 #X obj 501 539 f;
 #X obj 501 604 s \$1-instance-gui-color;
@@ -2125,7 +2144,7 @@ empty empty empty 773 25 0 0 10 #000000 0 -8 12.5 12.5 0 1 0;
 #X msg 546 490 1;
 #X text 402 142 HARMONICITY;
 #X obj 657 89 t f f;
-#X text 1209 620 L2OrkTweet v.0.58;
+#X text 1209 620 L2OrkTweet v.0.59;
 #X connect 0 0 193 0;
 #X connect 7 0 86 0;
 #X connect 7 0 101 0;

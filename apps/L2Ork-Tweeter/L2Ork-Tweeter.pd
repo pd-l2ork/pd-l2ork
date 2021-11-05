@@ -3,7 +3,7 @@
 0;
 #X obj 4 2 cnv 15 1630 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.58\ by
+#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.59\ by
 4 5 0 10 #6c6c6c #fcfcfc 0;
 #X obj 252 3 cnv 15 125 16 empty empty (c)\ 2020-1\ Released\ under\ the
 4 6 0 10 #6c6c6c #fcfcfc 0;
@@ -78,61 +78,62 @@ empty -5 -9 0 10 #80fc80 #008080 #fcfcfc 1;
 #X obj 820 219 core/L2OrkTweet 8;
 #X obj 820 370 core/L2OrkTweet 9;
 #X obj 820 521 core/L2OrkTweet 10;
-#N canvas 705 180 513 623 supplemental-documentation 0;
-#X obj 0 0 cnv 15 512 621 empty empty empty 20 12 0 14 #e0e0e0 #404040
+#N canvas 656 176 513 653 supplemental-documentation 0;
+#X obj 0 0 cnv 15 512 651 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
-#X obj 10 550 cnv 15 65 17 empty empty empty 20 12 0 14 #fcb46c #404040
+#X obj 8 576 cnv 15 65 17 empty empty empty 20 12 0 14 #fcb46c #404040
 0;
-#X obj 10 379 cnv 15 160 17 empty empty empty 20 12 0 14 #fcb46c #404040
+#X obj 8 379 cnv 15 160 17 empty empty empty 20 12 0 14 #fcb46c #404040
 0;
-#X obj 10 329 cnv 15 52 17 empty empty empty 20 12 0 14 #fcb46c #404040
+#X obj 8 329 cnv 15 52 17 empty empty empty 20 12 0 14 #fcb46c #404040
 0;
-#X obj 10 266 cnv 15 112 17 empty empty empty 20 12 0 14 #fcb46c #404040
+#X obj 8 266 cnv 15 112 17 empty empty empty 20 12 0 14 #fcb46c #404040
 0;
-#X obj 10 81 cnv 15 106 17 empty empty empty 20 12 0 14 #fcb46c #404040
+#X obj 8 81 cnv 15 106 17 empty empty empty 20 12 0 14 #fcb46c #404040
 0;
-#X text 10 11 Please consider viewing the introductory video found
-at:;
-#X obj 9 31 pddp/pddplink http://bit.ly/L2Ork-Tweeter;
-#X text 10 81 Instrument Levels;
-#X text 10 266 Instrument Presets;
-#X text 10 287 Shift+Up/Down: increase/decrease preset instrument number
+#X text 8 11 Please consider viewing the introductory video found at:
+;
+#X obj 7 31 pddp/pddplink http://bit.ly/L2Ork-Tweeter;
+#X text 8 81 Instrument Levels;
+#X text 8 266 Instrument Presets;
+#X text 8 287 Shift+Up/Down: increase/decrease preset instrument number
 and immediately apply it., f 82;
-#X text 10 329 Main Mix;
-#X text 10 350 Left/Right: incrementally change the panning of the
-main output., f 82;
-#X text 10 235 Shift+Backslash (or |): set instrument output level
-to one or 100% (unity)., f 82;
-#X text 10 101 ' (key next to Return): set instrument output level
-to zero (OVR/LVL slider). Repeat press sets it temporarily to the last
+#X text 8 329 Main Mix;
+#X text 8 350 Left/Right: incrementally change the panning of the main
+output., f 82;
+#X text 8 235 Shift+Backslash (or |): set instrument output level to
+one or 100% (unity)., f 82;
+#X text 8 101 ' (key next to Return): set instrument output level to
+zero (OVR/LVL slider). Repeat press sets it temporarily to the last
 known value \, while upon release it reverts to zero., f 82;
-#X text 10 379 Sharing Loops and Patterns;
-#X text 10 456 single click - copy presetdouble click - copy looptriple
-click - copy preset and loopshift + single click - copy preset \,
-including also main out and pan values shift + double click - copy
-loop \, including time syncshift + triple click - copy everything
-, f 82;
-#X text 10 400 As of 0.46 you can now easily share your patterns and
+#X text 8 379 Sharing Loops and Patterns;
+#X text 8 400 As of 0.46 you can now easily share your patterns and
 loops with others. To do so \, you will want to click on the user number
 you wish to copy instrument and/or loop from \, using one of the following
 clicking actions that need to be performed within the 500ms of initiating
 the first click:, f 82;
-#X text 11 550 Hover Mode;
-#X text 11 571 When hover mode is enabled \, you can enter notes anywhere
+#X text 9 576 Hover Mode;
+#X text 9 597 When hover mode is enabled \, you can enter notes anywhere
 on the tracker timeline regardless where the timebar is currently located.
 Delete \, shift+delete \, and ~ (insert) also work in this mode.,
 f 82;
-#X text 10 51 Below is a list of additional commands that are not clearly
+#X text 8 51 Below is a list of additional commands that are not clearly
 annotated elsewhere., f 82;
-#X text 10 148 Return or Enter: set instrument output level to the
-last known value (OVR/LVL slider). Repeat press sets it temporarily
-to zero \, while upon release it reverts to the last known value. When
-holding Return/Enter pressed during changing of instruments (e.g. \,
-using shift+up/down) \, the instrument will remain silent until the
-Return/Enter key is released \, at which point \, the level will revert
-to the new instrument's value., f 82;
+#X text 8 148 Return or Enter: set instrument output level to the last
+known value (OVR/LVL slider). Repeat press sets it temporarily to zero
+\, while upon release it reverts to the last known value. When holding
+Return/Enter pressed during changing of instruments (e.g. \, using
+shift+up/down) \, the instrument will remain silent until the Return/Enter
+key is released \, at which point \, the level will revert to the new
+instrument's value., f 82;
+#X text 8 456 single click - loop sync (time and loop length)double
+click - loop contentstriple click - loop and loop syncquadruple click
+- everything (loop \, loop sync \, preset \, main out \, and pan)shift
++ single click - preset (instrument)shift + double click - main out
+and pan valuesshift + triple click - preset and main out and pan valuesshift
++ quadruple click - everything (loop \, loop sync \, preset \, main
+out \, and pan), f 82;
 #X restore 1326 3 pd supplemental-documentation (click here);
-#X obj 1171 3 pddp/pddplink http://l2ork.icat.vt.edu;
 #X obj 153 3 pddp/pddplink http://ico.bukvic.net -text Ivica Ico Bukvic
 ;
 #X obj 437 3 pddp/pddplink https://www.gnu.org/licenses/gpl-3.0.en.html
@@ -1432,7 +1433,7 @@ are added later. this allows for deterministic session saving., f
 #X text 99 75 DEBUG;
 #X obj 177 168 sprintf L2Ork Tweeter v.%.02f by;
 #X obj 177 193 tosymbol;
-#X msg 177 76 0.58;
+#X msg 177 76 0.59;
 #X connect 0 0 10 0;
 #X connect 1 0 8 0;
 #X connect 1 1 2 0;
@@ -1442,32 +1443,28 @@ are added later. this allows for deterministic session saving., f
 #X connect 9 0 6 0;
 #X connect 10 0 1 0;
 #X restore 283 52 pd version;
-#N canvas 672 297 864 655 local-copy-logic 0;
+#N canvas 876 180 865 655 local-copy-logic 0;
 #X obj 22 22 r local-copyfrom-mode;
 #X obj 210 22 r local-copyfrom-data;
 #X obj 210 125 route 0;
 #X obj 210 47 list trim;
-#X obj 235 383 list prepend;
-#X obj 304 359 r myclientnum;
-#X obj 235 406 s network-in;
+#X obj 235 453 list prepend;
+#X obj 304 429 r myclientnum;
+#X obj 235 476 s network-in;
 #X floatatom 22 47 5 0 0 0 - - - 0 0 1, f 5;
-#X obj 118 311 route preset;
-#X obj 199 311 route preset-all;
-#X obj 304 311 route loop;
-#X obj 373 311 route loop-all;
-#X obj 118 289 gate 1 0;
-#X obj 199 289 gate 1 0;
-#X obj 304 289 gate 1 0;
-#X obj 373 289 gate 1 0;
-#X text 17 444 Copyfrom modes: 1 - single click - preset2 - double
-click - loop3 - triple click - preset+loop4 - shift + single click
-- preset-all 5 - shift + double click - loop-all6 - shift + triple
-click - preset-all+loop-all;
-#X obj 22 224 t 1 0 0 0;
-#X obj 85 224 t 0 0 1 0;
-#X obj 148 224 t 1 0 1 0;
-#X obj 211 224 t 1 1 0 0;
-#X obj 357 224 t 1 1 1 1 b;
+#X obj 118 381 route preset;
+#X obj 199 381 route preset-all;
+#X obj 304 381 route loop;
+#X obj 373 381 route loop-all;
+#X obj 118 359 gate 1 0;
+#X obj 199 359 gate 1 0;
+#X obj 304 359 gate 1 0;
+#X obj 373 359 gate 1 0;
+#X obj 156 220 t 1 0 0 0;
+#X obj 217 220 t 0 0 1 0;
+#X obj 278 220 t 1 0 1 0;
+#X obj 339 220 t 1 1 0 0;
+#X obj 473 220 t 1 1 1 1 b;
 #X obj 503 289 f;
 #X obj 503 333 s client-out;
 #X text 277 47 we first do list trim since trimming is not taken care
@@ -1476,7 +1473,6 @@ of doing the same. then \, we check for data that is prepended with
 0 such data does not have copyfrom context set and therefore we ignore
 it. see net-io abstractions and look for the \$5 argument for more
 info., f 48;
-#X obj 22 175 select 1 2 3 4 5 6;
 #X obj 503 418 r network-in;
 #X text 503 356 client number requesting copy will be added in network-io
 subpatch. below \, we handle incoming messages which will be arriving
@@ -1484,14 +1480,22 @@ only for clients other than our own., f 46;
 #X obj 647 529 route client2client;
 #X obj 647 551 route time-sync;
 #X obj 590 500 zl slice 1;
-#X obj 647 576 pack f f;
+#X obj 647 573 pack f f;
 #X msg 503 311 client2client time-sync \$1;
-#X obj 274 224 t 0 0 1 1 b;
+#X obj 400 220 t 0 0 1 1 b;
 #X msg 647 600 \; \$1-copyfrom-tracker-position \$2;
 #X obj 590 469 t a a;
 #X msg 692 500 \$1;
 #X obj 518 267 r local-copyfrom-client-num;
-#X obj 503 443 route malformed;
+#X obj 503 443 route malformed symbol session-title;
+#X text 22 514 Copyfrom modes: 1 - single click - loop-all only (sync)2
+- double click - loop3 - triple click - loop+loop-all4 - quadruple
+click - everything5 - shift + single click - preset6 - shift + double
+click - preset-all only7 - shift + triple click - preset+preset-all8
+- shift + quadruple click - everything, f 49;
+#X obj 22 145 select 1 2 3 4 5 6 7 8;
+#X obj 95 220 t 0 1 0 0;
+#X obj 22 220 t 0 0 0 1 b;
 #X connect 0 0 7 0;
 #X connect 1 0 3 0;
 #X connect 2 1 15 1;
@@ -1501,7 +1505,7 @@ only for clients other than our own., f 46;
 #X connect 3 0 2 0;
 #X connect 4 0 6 0;
 #X connect 5 0 4 1;
-#X connect 7 0 25 0;
+#X connect 7 0 38 0;
 #X connect 8 0 4 0;
 #X connect 9 0 4 0;
 #X connect 10 0 4 0;
@@ -1510,6 +1514,10 @@ only for clients other than our own., f 46;
 #X connect 13 0 9 0;
 #X connect 14 0 10 0;
 #X connect 15 0 11 0;
+#X connect 16 0 12 0;
+#X connect 16 1 13 0;
+#X connect 16 2 14 0;
+#X connect 16 3 15 0;
 #X connect 17 0 12 0;
 #X connect 17 1 13 0;
 #X connect 17 2 14 0;
@@ -1526,34 +1534,49 @@ only for clients other than our own., f 46;
 #X connect 20 1 13 0;
 #X connect 20 2 14 0;
 #X connect 20 3 15 0;
-#X connect 21 0 12 0;
-#X connect 21 1 13 0;
-#X connect 21 2 14 0;
-#X connect 21 3 15 0;
-#X connect 21 4 22 0;
-#X connect 22 0 32 0;
-#X connect 25 0 17 0;
-#X connect 25 1 18 0;
-#X connect 25 2 19 0;
-#X connect 25 3 20 0;
-#X connect 25 4 33 0;
-#X connect 25 5 21 0;
-#X connect 26 0 38 0;
-#X connect 28 0 29 0;
-#X connect 29 0 31 0;
-#X connect 30 1 28 0;
-#X connect 31 0 34 0;
-#X connect 32 0 23 0;
-#X connect 33 0 12 0;
-#X connect 33 1 13 0;
-#X connect 33 2 14 0;
-#X connect 33 3 15 0;
-#X connect 33 4 22 0;
-#X connect 35 0 30 0;
-#X connect 35 1 36 0;
-#X connect 36 0 31 1;
-#X connect 37 0 22 1;
-#X connect 38 1 35 0;
+#X connect 20 4 21 0;
+#X connect 21 0 30 0;
+#X connect 24 0 36 0;
+#X connect 26 0 27 0;
+#X connect 27 0 29 0;
+#X connect 28 1 26 0;
+#X connect 29 0 32 0;
+#X connect 30 0 22 0;
+#X connect 31 0 12 0;
+#X connect 31 1 13 0;
+#X connect 31 2 14 0;
+#X connect 31 3 15 0;
+#X connect 31 4 21 0;
+#X connect 33 0 28 0;
+#X connect 33 1 34 0;
+#X connect 34 0 29 1;
+#X connect 35 0 21 1;
+#X connect 36 3 33 0;
+#X connect 38 0 40 0;
+#X connect 38 1 17 0;
+#X connect 38 2 31 0;
+#X connect 38 3 20 0;
+#X connect 38 4 16 0;
+#X connect 38 5 39 0;
+#X connect 38 6 19 0;
+#X connect 38 7 20 0;
+#X connect 39 0 12 0;
+#X connect 39 1 13 0;
+#X connect 39 2 14 0;
+#X connect 39 3 15 0;
+#X connect 40 0 12 0;
+#X connect 40 1 13 0;
+#X connect 40 2 14 0;
+#X connect 40 3 15 0;
+#X connect 40 4 21 0;
 #X restore 153 52 pd local-copy-logic;
 #X connect 5 0 6 0;
 #X restore 1586 3 pd core;
+#X obj 1089 3 hsl 229 17 1 101 1 1 main-out-multiplier empty LOCAL\ MAIN\ OUT
+-90 6 0 10 #80fc80 #008000 #ffffff 22800 1 0 1;
+#X obj 751 3 pddp/pddplink https://l2ork.music.vt.edu/main/make-your-own-l2ork/tweeter/
+-text website;
+#X obj 526 3 cnv 15 19 16 empty empty For\ latest\ updates\ visit\ the\ project
+4 6 0 10 #6c6c6c #fcfcfc 0;
+#X text 1091 3 MIN;
+#X text 1300 3 MAX;
