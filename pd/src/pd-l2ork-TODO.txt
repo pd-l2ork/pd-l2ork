@@ -23,7 +23,10 @@ PD-L2ORK TODO:
 *think about a way to deterministically inform both front-end and the back-end that the canvas has indeed loaded. See https://stackoverflow.com/questions/4057236/how-to-add-onload-event-to-a-div-element/55106785#58838457 (Third Attempt (and Definitive Solution))
 
 RARE:
+*occasionally when editing a new object text is not displaying until you click outside it. happened with the modulo object.
+
 *Pd-L2Ork sporadic crashes when opening/closing L2OrkTweet.pd and L2Ork-Tweeter.pd. These are now sparser (suspect something on the nw.js side of things).
+
 *check for stray/sporadic bug where bang and other objects stop working and bang object gets stuck in on mode until the mouse is moved (nw.js bug? UPDATE: it appears at least one of the sources was a bug in the scroll_to_gobj call that was fixed on 2021-11-01).
 
 
@@ -116,7 +119,7 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Improved keyboard shortcuts for the text editor widget (used by "text define" and various cyclone library objects, such as coll).
 *Fixed regression in scroll_to_gobj that is triggered when doing find/findagain request and which could trigger an error due to window not having been created yet, breaking the UI.
 *Vastly improved find/find again behavior that now detects also matches in object's sends and receives.
-*Removed leftover debugging printout message in find_ignore.
+*Removed leftover debugging printout message in find_ignore and legacy warning for the color saving format for the iemgui objects.
 
 
 
@@ -171,6 +174,11 @@ TWEETER DONE:
 *Reworked local copy logic, replacing original 6 options with 8, with 4 and 8 (quadruple click and shift+quadruple click) being identical (copy everything). The new addition is syncing the tracker position and loop-length only (loop-all variables). Also, made the basic/common elements require fewer clicks. See the supplemental documentation subpatcher in the top-right corner for additional info.
 *Added local main out level control, located in the right corner of the top bar.
 *Added sessions for the "4th Beat" work-in-progress.
+*Added l2ork-conduct server message (synonymous with l2ork-teach). This now enables conductor patches to affect every aspect of every instrument remotely and synchronously.
+*Enabled session sync offset to ensure that a saved session can be (re)synced at any given point in time.
+*Disabled sending data to the server from the Teacher widget when using user 0 (which is treated as disabled mode).
+*Reorganized patch locations. Server-Commands-Example was renamed to Conductor-Commands and moved in the admin subfolder. "Into the Abyss" work presets, loops, and score have been moved into a newly created works subfolder. This has also freed-up the creation of new presets past the preset 110.
+*Added documentation on conductor control variables and added overdrive-override that can override user level toggle (e.g. using ' or return keys).
 
 
 
