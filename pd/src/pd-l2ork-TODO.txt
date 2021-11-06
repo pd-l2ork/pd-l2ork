@@ -1,6 +1,4 @@
 PD-L2ORK TODO:
-*find query does not match send and receive symbols of gatoms?
-
 *deal with array manipulation and data structure drawing location issues.
 
 *Port shell object to Windows.
@@ -117,6 +115,8 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Updated miXed/cyclone to support all the file i/o features (e.g. coll object) replacing non-functioning legacy calls. Fixed a bug in coll object where it did not report all load/save calls via its 3rd outlet.
 *Improved keyboard shortcuts for the text editor widget (used by "text define" and various cyclone library objects, such as coll).
 *Fixed regression in scroll_to_gobj that is triggered when doing find/findagain request and which could trigger an error due to window not having been created yet, breaking the UI.
+*Vastly improved find/find again behavior that now detects also matches in object's sends and receives.
+*Removed leftover debugging printout message in find_ignore.
 
 
 
