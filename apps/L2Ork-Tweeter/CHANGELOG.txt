@@ -9,10 +9,18 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+06-11-2021 0.60
+*Added l2ork-conduct server message (synonymous with l2ork-teach). This now enables conductor patches to affect every aspect of every instrument remotely and synchronously.
+*Enabled session sync offset to ensure that a saved session can be (re)synced at any given point in time.
+*Disabled sending data to the server from the Teacher widget when using user 0 (which is treated as disabled mode).
+*Reorganized patch locations. Server-Commands-Example was renamed to Conductor-Commands and moved in the admin subfolder. "Into the Abyss" work presets, loops, and score have been moved into a newly created works subfolder. This has also freed-up the creation of new presets past the preset 110.
+*Added documentation on conductor control variables and added overdrive-override that can override user level toggle (e.g. using ' or return keys).
+
 05-11-2021 0.59
 *Reworked local copy logic, replacing original 6 options with 8, with 4 and 8 (quadruple click and shift+quadruple click) being identical (copy everything). The new addition is syncing the tracker position and loop-length only (loop-all variables). Also, made the basic/common elements require fewer clicks. See the supplemental documentation subpatcher in the top-right corner for additional info.
 *Added local main out level control, located in the right corner of the top bar.
 *Added sessions for the "4th Beat" work-in-progress.
+*Small bug-fix ensuring that the session sync does not trigger a benign error report in the console.
 
 03-11-2021 0.58
 *Made all session loading and sync requests (invoked from the Teacher widget) server secure, requiring a server password.

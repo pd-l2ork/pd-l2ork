@@ -301,39 +301,26 @@ f 16;
 #X obj 432 539 route bang;
 #X obj 489 562 t f f;
 #X obj 516 586 s \$0-report-one;
-#X obj 1618 587 list prepend report;
-#X obj 1618 612 list prepend broadcast;
-#X obj 1618 637 list trim;
-#X obj 1618 662 s server-out;
+#X obj 1618 538 list prepend report;
+#X obj 1618 563 list prepend broadcast;
+#X obj 1618 588 list trim;
+#X obj 1618 613 s server-out;
 #X obj 1112 438 loadbang;
 #X msg 1112 463 3000;
 #X obj 969 618 pack s f;
 #X floatatom 1112 556 9 0 0 0 - - - 0 0 1, f 9;
-#X obj 1742 587 route float;
+#X obj 1651 642 route float;
 #X obj 1067 615 pack s f;
 #X msg 969 676 server requested session \$1 to be loaded on all clients
 with sync being delayed by \$2ms, f 44;
 #X msg 1067 637 server session load \$1 \$2;
-#X obj 1732 538 route bang;
+#X obj 1753 538 route bang;
 #X obj 1562 807 t s s;
 #X obj 1562 785 tosymbol;
 #X msg 1562 866 server requested session \$1 to be saved on all clients
 with sync enabled, f 38;
 #X msg 1589 839 server session sync-save \$1;
 #X obj 1942 538 list prepend server session sync-save-data;
-#X obj 217 497 route l2ork-reset-client-list l2ork-debug l2ork-report
-l2ork-sync-all l2ork-disconnect l2ork-free-slot l2ork-guest-chat l2ork-load
-l2ork-save l2ork-set-password l2ork-length-all l2ork-length l2ork-obfuscate
-l2ork-teach l2ork-load-sync-delay l2ork-sync-save l2ork-sync-save-data
-l2ork-sync-data l2ork-sync-vis, f 342;
-#X text 337 61 remote admin uses chat system. messages include: l2ork-debug
-(disabled \, as it is obsolete) \, l2ork-disconnect \, l2ork-free-slot
-\, l2ork-guest-chat \, l2ork-length \, l2ork-length-all \, l2ork-load
-\, l2ork-load-sync-delay \, l2ork-obfuscate \, l2ork-report \, l2ork-reset-client-list
-\, l2ork-save \, l2ork-sync-data \, l2ork-sync-save-data \, l2ork-sync-vis
-\, l2ork-set-password \, l2ork-sync-all \, and l2ork-teach. All messages
-need to be prepended by the server password (formatted as p:password)
-\, which can be set below.;
 #X msg 2158 585 server session sync-vis;
 #N canvas 727 338 319 285 send-sync-save-data-to-online-users-only
 0;
@@ -356,6 +343,19 @@ need to be prepended by the server password (formatted as p:password)
 #X connect 7 1 4 0;
 #X connect 8 0 2 0;
 #X restore 2050 562 pd send-sync-save-data-to-online-users-only;
+#X text 337 61 remote admin uses chat system. messages include: l2ork-conduct
+\, l2ork-debug (disabled \, as it is obsolete) \, l2ork-disconnect
+\, l2ork-free-slot \, l2ork-guest-chat \, l2ork-length \, l2ork-length-all
+\, l2ork-load \, l2ork-load-sync-delay \, l2ork-obfuscate \, l2ork-report
+\, l2ork-reset-client-list \, l2ork-save \, l2ork-sync-data \, l2ork-sync-save-data
+\, l2ork-sync-vis \, l2ork-set-password \, l2ork-sync-all \, and l2ork-teach.
+All messages need to be prepended by the server password (formatted
+as p:password) \, which can be set below.;
+#X obj 217 497 route l2ork-reset-client-list l2ork-debug l2ork-report
+l2ork-sync-all l2ork-disconnect l2ork-free-slot l2ork-guest-chat l2ork-load
+l2ork-save l2ork-set-password l2ork-length-all l2ork-length l2ork-obfuscate
+l2ork-teach l2ork-load-sync-delay l2ork-sync-save l2ork-sync-save-data
+l2ork-sync-data l2ork-sync-vis l2ork-conduct, f 342;
 #X connect 0 0 3 1;
 #X connect 0 1 15 0;
 #X connect 1 0 0 0;
@@ -442,7 +442,7 @@ need to be prepended by the server password (formatted as p:password)
 #X connect 68 0 78 0;
 #X connect 68 1 72 0;
 #X connect 69 0 33 0;
-#X connect 70 0 132 0;
+#X connect 70 0 135 0;
 #X connect 70 1 7 0;
 #X connect 71 0 19 0;
 #X connect 71 1 2 0;
@@ -537,27 +537,28 @@ need to be prepended by the server password (formatted as p:password)
 #X connect 129 0 43 0;
 #X connect 130 0 4 0;
 #X connect 131 0 4 0;
-#X connect 132 0 71 0;
-#X connect 132 2 111 0;
-#X connect 132 3 74 0;
-#X connect 132 4 67 0;
-#X connect 132 5 66 0;
-#X connect 132 6 64 0;
-#X connect 132 7 60 0;
-#X connect 132 8 61 0;
-#X connect 132 9 87 0;
-#X connect 132 10 97 0;
-#X connect 132 11 99 0;
-#X connect 132 12 106 0;
-#X connect 132 13 114 0;
-#X connect 132 14 122 0;
-#X connect 132 15 126 0;
-#X connect 132 16 131 0;
-#X connect 132 17 135 0;
-#X connect 132 18 134 0;
-#X connect 132 19 78 0;
-#X connect 134 0 4 0;
-#X connect 135 0 4 0;
+#X connect 132 0 4 0;
+#X connect 133 0 4 0;
+#X connect 135 0 71 0;
+#X connect 135 2 111 0;
+#X connect 135 3 74 0;
+#X connect 135 4 67 0;
+#X connect 135 5 66 0;
+#X connect 135 6 64 0;
+#X connect 135 7 60 0;
+#X connect 135 8 61 0;
+#X connect 135 9 87 0;
+#X connect 135 10 97 0;
+#X connect 135 11 99 0;
+#X connect 135 12 106 0;
+#X connect 135 13 114 0;
+#X connect 135 14 122 0;
+#X connect 135 15 126 0;
+#X connect 135 16 131 0;
+#X connect 135 17 133 0;
+#X connect 135 18 132 0;
+#X connect 135 19 114 0;
+#X connect 135 20 78 0;
 #X restore 1224 145 pd filter-remote-admin-messages;
 #X obj 1297 314 r \$0-reinit;
 #X obj 63 291 r \$0-report;
@@ -835,7 +836,7 @@ overdrive \, note-dur \, harmonicity \, mod-amp \, ae \, me \, dry-amp
 #X obj 448 63 route whatismyid ping disconnect report;
 #X text 525 85 we ignore report calls since that would allow for unauthorized
 modifying of other users' settings, f 34;
-#X msg 232 741 0.59;
+#X msg 232 741 0.6;
 #X connect 0 0 76 0;
 #X connect 0 0 115 0;
 #X connect 2 0 141 1;
