@@ -660,7 +660,7 @@ var canvas_events = (function() {
                 //evt.preventDefault();
             },
             find_ignore: function(evt) {
-                pdgui.post("find_ignore");
+                //pdgui.post("find_ignore");
                 evt.stopPropagation();
                 // ico@vt.edu 2021-10-06: if we also preventDefault, the
                 // entry box cannot be focused anymore

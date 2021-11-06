@@ -6542,6 +6542,8 @@ static int canvas_dofind(t_canvas *x, int *myindex1p)
     //binbuf_gettext(canvas_findbuf, &b, &i);
     //post("canvas_dofind %lx myindex1p=%d canvas_find_index1=%d \
     //    canvas_findbuf=<%s>", x, *myindex1p, canvas_find_index1, b);
+    t_binbuf *b = binbuf_new();
+
     t_gobj *y;
     int myindex1 = *myindex1p, myindex2, delayed=0;
     if (myindex1 >= canvas_find_index1)
@@ -6552,7 +6554,22 @@ static int canvas_dofind(t_canvas *x, int *myindex1p)
             t_object *ob = 0;
             if (ob = pd_checkobject(&y->g_pd))
             {
-                if (binbuf_match(ob->ob_binbuf, canvas_findbuf,
+                //binbuf_print(ob->ob_binbuf);
+                gobj_save(y, b);
+                //binbuf_print(b);
+                /* 2021-11-06 ico@vt.edu: before b was ob->ob_binbuf
+                   however, this caused 2 problems:
+                   1) newly created objects that had their sends/receives
+                      changed, did not have their binbuf reflect anything
+                      other than what was entered at creation (e.g.
+                      numbox2 only had nbx). the find of a matching send
+                      or receive in the newly created and edited object
+                      would not work until the patch was saved, closed,
+                      .and reopened.
+                   2) some objects, like gatom, whose sends and receives
+                      may match the search phrase, would never work.
+                */
+                if (binbuf_match(b, canvas_findbuf,
                     canvas_find_wholeword))
                 {
                     if (myindex1 > canvas_find_index1 ||
@@ -6587,9 +6604,14 @@ static int canvas_dofind(t_canvas *x, int *myindex1p)
                             gui_vmess("gui_canvas_scroll_to_gobj", "xsi",
                                 x, rtext_gettag(yrt), 1);
                         }
+                        binbuf_free(b);
                         return (1);
                     }
                 }
+                // we clear the binbuf to prevent false positives on
+                // the next search due to binbuf_save simply appending
+                // to the existing content
+                binbuf_clear(b);
             }
         }
     }
@@ -6604,10 +6626,12 @@ static int canvas_dofind(t_canvas *x, int *myindex1p)
                 t_rtext *yrt = glist_findrtext(x, (t_text *)y);
                 gui_vmess("gui_canvas_scroll_to_gobj", "xsi",
                     x, rtext_gettag(yrt), 1);
+                binbuf_free(b);
                 return (1);
             }
         }
     }
+    binbuf_free(b);
     return (0);
 }
 
