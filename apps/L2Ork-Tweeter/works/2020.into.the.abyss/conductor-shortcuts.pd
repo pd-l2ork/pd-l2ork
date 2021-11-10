@@ -1,0 +1,10 @@
+#N canvas 727 338 435 207 10;
+#X obj 31 159 s chat-out;
+#X msg 43 124 chat admin p:l2orklicious l2ork-sync-all;
+#X msg 31 45 chat admin p:l2orklicious l2ork-length 6000 3000 500 6000
+500 6000 1500 6000 500 3000 \, chat admin p:l2orklicious l2ork-sync-all
+;
+#X text 31 26 Pre-Drop;
+#X text 43 104 Sync;
+#X connect 1 0 0 0;
+#X connect 2 0 0 0;

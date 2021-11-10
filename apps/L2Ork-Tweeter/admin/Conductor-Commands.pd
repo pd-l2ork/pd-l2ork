@@ -1,40 +1,30 @@
 #N canvas 40 151 788 656 10;
-#X obj 25 622 s chat-out;
-#X msg 37 120 chat admin p:l2orklicious l2ork-sync-all;
-#X msg 25 41 chat admin p:l2orklicious l2ork-length 6000 3000 500 6000
+#X obj 22 619 s chat-out;
+#X msg 34 117 chat admin p:l2orklicious l2ork-sync-all;
+#X msg 22 38 chat admin p:l2orklicious l2ork-length 6000 3000 500 6000
 500 6000 1500 6000 500 3000 \, chat admin p:l2orklicious l2ork-sync-all
 ;
-#X text 25 22 Pre-Drop;
-#X text 37 100 Sync;
-#X obj 61 151 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X text 22 19 Pre-Drop;
+#X text 34 97 Sync;
+#X obj 58 148 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 0 1 1;
-#X msg 61 172 chat admin p:l2orklicious l2ork-obfuscate \$1;
-#X msg 84 253 chat admin p:l2orklicious l2ork-report \$1;
-#X floatatom 84 231 5 0 0 0 - - - 0 0 1, f 5;
-#X obj 84 211 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X msg 58 169 chat admin p:l2orklicious l2ork-obfuscate \$1;
+#X msg 81 250 chat admin p:l2orklicious l2ork-report \$1;
+#X floatatom 81 228 5 0 0 0 - - - 0 0 1, f 5;
+#X obj 81 208 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1;
-#X msg 80 401 chat admin p:l2orklicious l2ork-load jamminlicious-002
+#X msg 77 398 chat admin p:l2orklicious l2ork-load jamminlicious-002
 ;
-#X obj 111 339 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
+#X obj 108 336 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
 #fcfcfc #000000 #000000 0 256 0 0 1 0;
-#X msg 111 361 chat admin p:l2orklicious l2ork-length-all \$1;
-#X msg 221 289 2000;
-#X obj 111 316 line 100;
-#X msg 111 289 2000 \, 555 30000;
-#X msg 80 424 chat admin p:l2orklicious l2ork-load 4th-beat-final-5
-;
-#X msg 80 447 chat admin p:l2orklicious l2ork-load 4th-beat-droplets-4
-;
-#X obj 463 560 s load-session-network-sync;
-#X msg 463 536 4th-beat-final-5;
-#X msg 572 536 4th-beat-droplets-4;
-#X msg 463 433 chat admin p:l2orklicious l2ork-teach 1 overdrive-override
+#X msg 108 358 chat admin p:l2orklicious l2ork-length-all \$1;
+#X msg 218 286 2000;
+#X obj 108 313 line 100;
+#X msg 108 286 2000 \, 555 30000;
+#X obj 466 517 s load-session-network-sync;
+#X msg 141 511 chat admin p:l2orklicious l2ork-teach 1 overdrive-override
 1, f 32;
-#X text 463 504 special case commands that are broadcast fromthe local
-client engine:;
-#X msg 463 596 \; session-sync-offset -39 \; load-session-network-sync
-4th-beat-final-5;
-#X text 463 23 possible l2ork-conduct commands:carrier (0-4)echo-amp
+#X text 460 20 possible l2ork-conduct commands:carrier (0-4)echo-amp
 (0-1)echo-fb (0-0.999)echo-ms (0.001-9999)flanger-amp (0-1)flanger-hz
 (0.001-100)flanger-mod-amp (0-100)flanger-ms (0.001-50)harmonicity
 (0-99999)hover (0/1)inst-name <symbol>keyboard (0/1)loop (0/1)loop-length
@@ -43,6 +33,20 @@ client engine:;
 (0.1-10)overdrive-override (0.1-10) *overrides user togglereverb-amp
 (0-1)reverb-type (0-3)tracker (0/1)tracker-time (beat(0-63) \, offset
 (ms) \, play(0/1))solo (0/1)username <symbol>;
+#X msg 466 576 \; session-sync-offset -1 \; load-session-network-sync
+4th-beat-final-7;
+#X msg 77 421 chat admin p:l2orklicious l2ork-load 4th-beat-final-7
+;
+#X text 154 479 overrides the output level of the client 1 to 1 (unity)
+, f 28;
+#X msg 77 444 chat admin p:l2orklicious l2ork-load 4th-beat-droplets-5
+;
+#X msg 466 493 4th-beat-final-7;
+#X msg 575 493 4th-beat-droplets-5;
+#X msg 466 540 \; load-session-network-sync 4th-beat-droplets-5;
+#X text 460 442 special case commands that are broadcast fromthe local
+client engine and require theL2Ork-Tweeter-Teacher patch to be open:
+;
 #X connect 1 0 0 0;
 #X connect 2 0 0 0;
 #X connect 5 0 6 0;
@@ -56,8 +60,8 @@ client engine:;
 #X connect 13 0 14 0;
 #X connect 14 0 11 0;
 #X connect 15 0 14 0;
-#X connect 16 0 0 0;
 #X connect 17 0 0 0;
-#X connect 19 0 18 0;
-#X connect 20 0 18 0;
-#X connect 21 0 0 0;
+#X connect 20 0 0 0;
+#X connect 22 0 0 0;
+#X connect 23 0 16 0;
+#X connect 24 0 16 0;
