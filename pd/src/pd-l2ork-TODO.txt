@@ -1,5 +1,11 @@
 PD-L2ORK TODO:
 *deal with array manipulation and data structure drawing location issues.
+  *toplevel window with an array should not have any scrollbars. DONE
+  *array_joc does not get updated when invoked from the toplevel window array properties. DONE
+  *scalar subpatch does not update appearance when the patch window is resized. DONE
+
+  *scalar selection box in a subpatch (see disis_wiimote-help.pd subpatch with 4 blobs) is inacurate and larger on the left side as you move the scalar further to the right.
+  *array_new should automatically increment the array number.
 
 *Port shell object to Windows.
 

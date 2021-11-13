@@ -819,7 +819,7 @@ void array_redraw(t_array *a, t_glist *glist)
 
     /* routine to get screen coordinates of a point in an array */
     /* glist_topixels parameter was added because of t_scalar
-       and t_draw caching mechanism. For scalers, we're only
+       and t_draw caching mechanism. For scalars, we're only
        converting to pixels in scalar_getrect. So in plot_getrect
        we need to get the coordinate without regard to the x/y
        offset (and scaling factor) of a gop window */
@@ -885,6 +885,7 @@ void array_getcoordinate(t_glist *glist,
         if (wpix < 8) wpix = 8;
     }
     *wp = wpix;
+    //post("array_getcoordinate x1=%f x2=%f", *xp1, *xp2);
 }
 
 extern int array_joc; /* from g_canvas.h */
@@ -915,7 +916,7 @@ static void array_motion(void *z, t_floatarg dx, t_floatarg dy)
 {
     array_motion_xcumulative += dx * array_motion_xperpix;
     array_motion_ycumulative += dy * array_motion_yperpix;
-    //fprintf(stderr,"array_motion %f %f %f %f\n", array_motion_xcumulative, array_motion_ycumulative, dx, dy);
+    //post("array_motion %f %f %f %f", array_motion_xcumulative, array_motion_ycumulative, dx, dy);
 
     // used to set up boundaries and update sends accordingly
     t_glist *graph = NULL;
@@ -1029,7 +1030,7 @@ static int array_doclick_element(t_array *array, t_glist *glist,
     t_fielddesc *xfield, t_fielddesc *yfield, t_fielddesc *wfield,
     int xpix, int ypix, int shift, int alt, int dbl, int doit)
 {
-    //fprintf(stderr,"array_doclick_element linewidth%f xloc%f xinc%f yloc%f xpix%d ypix%d doit%d\n", linewidth, xloc, xinc, yloc, xpix, ypix, doit);
+    //post("array_doclick_element linewidth=%f xloc=%f xinc=%f yloc=%f xpix=%d ypix=%d doit=%d", linewidth, xloc, xinc, yloc, xpix, ypix, doit);
     t_canvas *elemtemplatecanvas;
     t_template *elemtemplate;
     int elemsize, yonset, wonset, xonset, i, incr, hit;
@@ -1073,7 +1074,7 @@ int array_doclick(t_array *array, t_glist *glist, t_scalar *sc, t_array *ap,
     t_fielddesc *xfield, t_fielddesc *yfield, t_fielddesc *wfield,
     int xpix, int ypix, int shift, int alt, int dbl, int doit)
 {
-    //fprintf(stderr,"array_doclick linewidth%f xloc%f xinc%f yloc%f xpix%d ypix%d doit%d\n", linewidth, xloc, xinc, yloc, xpix, ypix, doit);
+    //post("array_doclick linewidth=%f xloc=%f xinc=%f yloc=%f xpix=%d ypix=%d doit=%d", linewidth, xloc, xinc, yloc, xpix, ypix, doit);
     t_canvas *elemtemplatecanvas;
     t_template *elemtemplate;
     int elemsize, yonset, wonset, xonset, i;
@@ -1107,7 +1108,7 @@ int array_doclick(t_array *array, t_glist *glist, t_scalar *sc, t_array *ap,
                 break;
             }
         }
-        //fprintf(stderr,"    best = %f\n", best);
+        //post("best=%f", best);
         /* this is the arbitrary radius away from the actual object's
            center, originally 8 */
         if (best == -1 && (array_joc == 0))
@@ -1275,8 +1276,12 @@ int array_doclick(t_array *array, t_glist *glist, t_scalar *sc, t_array *ap,
         {
             return (CURSOR_RUNMODE_ADDPOINT);
         }
-        else return (array_motion_fatten ?
-            CURSOR_RUNMODE_THICKEN : CURSOR_RUNMODE_CLICKME);
+        else
+        {
+            //post("...last %d %d %d", array_motion_fatten, CURSOR_RUNMODE_THICKEN : CURSOR_RUNMODE_CLICKME);
+            return (array_motion_fatten ?
+                CURSOR_RUNMODE_THICKEN : CURSOR_RUNMODE_CLICKME);
+        }
     }
     return (0);
 }
@@ -1285,7 +1290,7 @@ int array_doclick(t_array *array, t_glist *glist, t_scalar *sc, t_array *ap,
 static void array_getrect(t_array *array, t_glist *glist,
     int *xp1, int *yp1, int *xp2, int *yp2)
 {
-    //fprintf(stderr,"array getrect %d %d\n", glist_istoplevel(glist), (array_joc != 0 ? 1 : 0));
+    post("array getrect %d %d", glist_istoplevel(glist), (array_joc != 0 ? 1 : 0));
     t_float x1 = 0x7fffffff, y1 = 0x7fffffff, x2 = -0x7fffffff, y2 = -0x7fffffff;
     t_canvas *elemtemplatecanvas;
     t_template *elemtemplate;

@@ -616,6 +616,7 @@ EXTERN t_gobj *canvas_findhitbox(t_canvas *x, int xpos, int ypos,
     int *x1p, int *y1p, int *x2p, int *y2p);
 EXTERN int canvas_setdeleting(t_canvas *x, int flag);
 EXTERN int canvas_hasarray(t_canvas *x);
+EXTERN int canvas_hastoplevelscalar(t_canvas *x);
 EXTERN int canvas_has_scalars_only(t_canvas *x);
 
 EXTERN void canvas_warning(t_canvas *x, int warid);

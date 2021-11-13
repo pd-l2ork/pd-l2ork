@@ -196,10 +196,39 @@ int canvas_hasarray(t_canvas *x)
     int hasarray = 0;
     while (g)
     {
-        if (pd_class(&g->g_pd) == garray_class) hasarray = 1;
+        if (pd_class(&g->g_pd) == garray_class) 
+        {
+            hasarray = 1;
+            break;
+        }
         g = g->g_next;
     }
     return(hasarray);
+}
+
+    /* ico@vt.edu 2021-11-12:
+       heck if canvas has a toplevel scalar that requires resizing upon
+       resizing of the window and return 2, otherwise return 0. we use this
+       to inform front-end via gui_canvas_new if instead of updating
+       scrollbars on resize, it needs to redraw canvas to properly scale
+       all resizable scalars */
+int canvas_hastoplevelscalar(t_canvas *x)
+{
+    t_gobj *g = x->gl_list;
+    int hastoplevelscalar = 0;
+    if (g->g_pd != garray_class)
+    {
+        while (g)
+        {
+            if (pd_class(&g->g_pd) == scalar_class)
+            {
+                hastoplevelscalar = 2;
+                break;
+            }
+            g = g->g_next;
+        }
+    }
+    return(hastoplevelscalar);
 }
 
 /* JMZ: emit a closebang message */
@@ -858,13 +887,19 @@ t_float glist_xtopixels(t_glist *x, t_float xval)
         return ((xval - x->gl_x1) / (x->gl_x2 - x->gl_x1));
     else if (x->gl_isgraph && x->gl_havewindow)
     {
+        /*
+           TODO LATER: cycle through all garray classes in case there are multiple
+           garrays inside the same array object? is this necessary?
+        */
+        /*
         if (g != NULL && g->g_pd == garray_class)
         {
             t_garray *g_a = (t_garray *)g;
             if (garray_get_style(g_a) == PLOTSTYLE_BARS)
                 plot_offset = 10;
         }
-        //fprintf(stderr, "xtopixels xval=%f gl_x1=%f gl_x2=%f screenx1=%d screenx2=%d\n",
+        */
+        //post("xtopixels xval=%f gl_x1=%f gl_x2=%f screenx1=%d screenx2=%d",
         //    xval, x->gl_x1, x->gl_x2, x->gl_screenx1, x->gl_screenx2);
         return (x->gl_screenx2 - x->gl_screenx1) *
             (xval - x->gl_x1 - plot_offset) / (x->gl_x2 - x->gl_x1);
@@ -872,7 +907,10 @@ t_float glist_xtopixels(t_glist *x, t_float xval)
     else
     {
         /* ico@vt.edu: some really stupid code to compensate for the fact
-           that the svg stroke featue adds unaccounted width to the bars */
+           that the svg stroke feature adds unaccounted width to the bars
+           TODO LATER: cycle through all garray classes in case there are multiple
+           garrays inside the same array object? is this necessary?
+        */
         if (g != NULL && g->g_pd == garray_class)
         {
             if (garray_get_style((t_garray *)g) == PLOTSTYLE_BARS)
@@ -900,6 +938,11 @@ t_float glist_ytopixels(t_glist *x, t_float yval)
             /*t_garray *g_a = (t_garray *)g;
             if (garray_get_style((t_garray *)g) == PLOTSTYLE_POLY ||
                     garray_get_style((t_garray *)g) == PLOTSTYLE_BEZ)*/
+
+            /*
+            ico@vt.edu 2021-11-12: disabled this because it was causing
+            stuff to be redrawn taller upon first modification. it was
+            also causing the grabbing area to be lower than the value top.
             switch (garray_get_style((t_garray *)g))
             {
             case PLOTSTYLE_POINTS:
@@ -914,7 +957,7 @@ t_float glist_ytopixels(t_glist *x, t_float yval)
             case PLOTSTYLE_BARS:
                 plot_offset = 2;
                 break;
-            }
+            }*/
         }
         return (x->gl_screeny2 - x->gl_screeny1 - plot_offset) *
             (yval - x->gl_y1) / (x->gl_y2 - x->gl_y1);
@@ -1744,9 +1787,9 @@ extern void canvas_passthrough_click(t_canvas *x, t_int xpos, t_int ypos, t_int 
 static int graph_click(t_gobj *z, struct _glist *glist,
     int xpix, int ypix, int shift, int alt, int dbl, int doit)
 {
-    //post("graph_click %d\n", doit);
+    //post("graph_click %d", doit);
     t_glist *x = (t_glist *)z;
-    t_gobj *y, *clickme = NULL;
+    t_gobj *y, *clickme = NULL, *got_garray = NULL;
     int clickreturned = 0;
     //int tmpclickreturned = 0;
     if (!x->gl_isgraph)
@@ -1770,6 +1813,16 @@ static int graph_click(t_gobj *z, struct _glist *glist,
 
         for (y = x->gl_list; y; y = y->g_next)
         {
+            /*
+            ico@vt.edu 2021-11-12: this aspect deals with trying to grab
+            points of a graph when they are drawn as a GOP on a parent
+            patch. for handling points on a toplevel window, see g_editor.c
+            canvas_doclick. we also use this to update the
+            array_joc global variable. we can do this outside the
+            passthrough call since pd-l2ork does not allow mixing
+            of arrays and canvas objects.
+
+            //Original implementation:
             if(pd_class(&y->g_pd) == garray_class &&
                !y->g_next &&
                (array_joc = garray_joc((t_garray *)y)) &&
@@ -1778,8 +1831,23 @@ static int graph_click(t_gobj *z, struct _glist *glist,
             {
                 break;
             }
+            */
+            if(canvas_hasarray(x))
+            {
+                // here we assign array_joc global variable, so that the
+                // array_doclick can be computed properly. we, however,
+                // use doit = 0, just to see if we are within the hitbox
+                // then we act on the topmost garray below after the
+                // passthrough call.
+                array_joc = garray_joc((t_garray *)y);
+                if (gobj_click(y, x, xpix, ypix, shift, alt, 0, 0))
+                {
+                    clickme = y;
+                }
+            }
             else
             {
+                //post("!clickreturned");
                 // check if the object wants to be clicked
                 // (we pick the topmost clickable)
                 if (canvas_hitbox(x, y, xpix, ypix, &x1, &y1, &x2, &y2))
@@ -1789,13 +1857,15 @@ static int graph_click(t_gobj *z, struct _glist *glist,
                     /* ico@vt.edu 2021-10-10: also do not give clicks to the
                        ggee/image object if it is in click_mode 3 because that
                        one needs to be passed through below it, so we manually
-                       acknowledge the click here without interrupting the flow */
+                       acknowledge the click here without interrupting the flow.
+                    */
                     //if (ob)
                     //    post("clicking on object with te_iemgui=%d",
                     //        ((t_text *)y)->te_iemgui);
-                    if (ob && y->g_pd->c_wb->w_clickfn && 
-                         (ob->te_type != T_TEXT && ob->ob_pd != my_canvas_class &&
-                            ((t_text *)y)->te_iemgui != 3)
+                    if (!ob ||
+                            (ob && y->g_pd->c_wb->w_clickfn && 
+                            (ob->te_type != T_TEXT && ob->ob_pd != my_canvas_class &&
+                            ((t_text *)y)->te_iemgui != 3))
                        )
                     {
                         clickme = y;
@@ -1810,22 +1880,23 @@ static int graph_click(t_gobj *z, struct _glist *glist,
         canvas_passthrough_click(x, xpix, ypix, doit);
         if (clickme)
         {
-            //fprintf(stderr,"    clicking\n");
             clickreturned = gobj_click(clickme, x, xpix, ypix,
                     shift, alt, 0, doit);
+            if (canvas_hasarray(x) && clickreturned)
+                clickreturned = CURSOR_EDITMODE_RESIZE_Y;
+            //post("clickme %d", clickreturned);
         }
         if (!doit)
         {
-            //fprintf(stderr,"    not clicking %zx %d\n",
-            //    (t_int)clickme, clickreturned);
-            if (clickme != NULL)
+            //post("...!doit clickreturned=%d", clickreturned);
+            if (clickme != NULL || clickreturned)
             {
-                //fprintf(stderr,"    cursor %d\n", clickreturned);
+                //post("...clickme");
                 canvas_setcursor(glist_getcanvas(x), clickreturned);
             }
             else if (!array_joc)
             {
-                //fprintf(stderr,"    cursor 0\n");
+                //post("...!array_joc");
                 canvas_setcursor(glist_getcanvas(x), CURSOR_RUNMODE_NOTHING);
             }
         }

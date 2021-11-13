@@ -5802,7 +5802,7 @@ static void plot_getrect(t_gobj *z, t_glist *glist,
     t_word *data, t_template *template, t_float basex, t_float basey,
     int *xp1, int *yp1, int *xp2, int *yp2)
 {
-    //fprintf(stderr,"plot_getrect\n");
+    //post("plot_getrect %lx", z);
     t_plot *x = (t_plot *)z;
     t_float mtx1[3][3], mtx2[3][3];
 
@@ -5940,8 +5940,7 @@ static void plot_getrect(t_gobj *z, t_glist *glist,
             //    x1, y1, x2, y2);
         }
     }
-    //fprintf(stderr,"FINAL plot_getrect %d %d %d %d\n", x1, y1, x2, y2);
-    //fprintf(stderr,"basex %g basey %g\n", basex, basey);
+    //post("FINAL plot_getrect %d %d %d %d | basex %g basey %g", x1, y1, x2, y2, basex, basey);
     *xp1 = x1;
     *yp1 = y1;
     *xp2 = x2;
@@ -6542,7 +6541,7 @@ static int plot_click(t_gobj *z, t_glist *glist,
     t_float basex, t_float basey,
     int xpix, int ypix, int shift, int alt, int dbl, int doit)
 {
-    //fprintf(stderr,"plot_click %zx %zx %f %f %d %d\n",
+    //post("plot_click %zx %zx %f %f %d %d",
     //    (t_int)z, (t_int)glist, basex, basey, xpix, ypix);
     t_plot *x = (t_plot *)z;
     t_symbol *elemtemplatesym;

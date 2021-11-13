@@ -1056,11 +1056,11 @@ void canvas_scalar_event(t_canvas *x, t_symbol *s, int argc, t_atom *argv)
         draw_notify(x, s, argc, argv);
 }
 
-void canvas_show_scrollbars(t_canvas *x, t_floatarg f)
+void canvas_hide_scrollbars(t_canvas *x, t_floatarg f)
 {
     x->gl_noscroll = (int)f;
     if (x->gl_mapped)
-        gui_vmess("gui_canvas_set_scrollbars", "xi", x, (int)f);
+        gui_vmess("gui_canvas_hide_scrollbars", "xi", x, (int)f);
 }
 
 void canvas_show_menu(t_canvas *x, t_floatarg f)
@@ -1161,7 +1161,11 @@ void canvas_map(t_canvas *x, t_floatarg f)
             canvas_drawlines(x);
             if (x->gl_isgraph && x->gl_goprect)
                 canvas_drawredrect(x, 1);
+            // ico@vt.edu 2021-11-12: if we are subpatch with
+            // an array, delete scrollbars
             scrollbar_update(x);
+            if (canvas_hasarray(x) && glist_istoplevel(x))
+                canvas_hide_scrollbars(x, 1);
         }
     }
     else
@@ -1189,10 +1193,10 @@ void canvas_map(t_canvas *x, t_floatarg f)
 void canvas_redraw(t_canvas *x)
 {
     if (do_not_redraw) return;
-    //fprintf(stderr,"canvas_redraw %zx\n", (t_uint)x);
+    //post("canvas_redraw %zx", (t_uint)x);
     if (glist_isvisible(x))
     {
-        //fprintf(stderr,"canvas_redraw glist_isvisible=true\n");
+        //post("...glist_isvisible");
         canvas_map(x, 0);
         canvas_map(x, 1);
 
@@ -3596,12 +3600,14 @@ void g_canvas_setup(void)
 
     class_addmethod(canvas_class, (t_method)canvas_scalar_event,
         gensym("scalar_event"), A_GIMME, 0);
-    class_addmethod(canvas_class, (t_method)canvas_show_scrollbars,
+    class_addmethod(canvas_class, (t_method)canvas_hide_scrollbars,
         gensym("scroll"), A_FLOAT, 0);
     class_addmethod(canvas_class, (t_method)canvas_show_menu,
         gensym("menu"), A_FLOAT, 0);
     class_addmethod(canvas_class, (t_method)canvas_active_height,
         gensym("cah"), A_FLOAT, 0);
+    class_addmethod(canvas_class, (t_method)canvas_redraw,
+        gensym("redraw"), A_NULL);
 
 /* ---------------------- list handling ------------------------ */
     class_addmethod(canvas_class, (t_method)glist_clear, gensym("clear"),

@@ -1493,6 +1493,7 @@ function gui_canvas_set_cordinspector(cid, state) {
 }
 
 function canvas_set_scrollbars(cid, scroll) {
+    //post("canvas_set_scrollbars " + scroll);
     patchwin[cid].window.document.body.style.
         overflow = scroll ? "visible" : "hidden";
     gui_update_scrollbars(cid);
@@ -1501,7 +1502,7 @@ function canvas_set_scrollbars(cid, scroll) {
 
 exports.canvas_set_scrollbars = canvas_set_scrollbars;
 
-function gui_canvas_set_scrollbars(cid, no_scrollbars) {
+function gui_canvas_hide_scrollbars(cid, no_scrollbars) {
     canvas_set_scrollbars(cid, no_scrollbars === 0);
 }
 
@@ -1801,6 +1802,7 @@ exports.last_loaded = function () {
 // close a canvas window
 
 function gui_canvas_cursor(cid, pd_event_type) {
+    //post("gui_canvas_cursor " + pd_event_type);
     gui(cid).get_elem("patchsvg", function(patch) {
         // A quick mapping of events to pointers-- these can
         // be revised later
@@ -1943,6 +1945,10 @@ function gui_canvas_new(cid, width, height, geometry, grid, zoom, editmode, name
     // ico@vt.edu: added has_toplevel_scalars, which is primarily
     // being used for detecting toplevel garrays but may need to be
     // expanded to also deal with scalars
+    // 2021-11-12: has_toplevel_scalars now supports:
+    //     1 = garray
+    //     2 = non-array scalars that need to be scaled on resize
+    //post("gui_canvas_new has_topleve_scalars=" + has_toplevel_scalars);
 
     // local vars for window-specific behavior
     // visibility of menu and scrollbars, plus canvas background
@@ -4610,6 +4616,7 @@ function gui_mycanvas_coords(cid, tag, vis_width, vis_height, select_width, sele
 /* this creates a group immediately below the patchsvg object */
 function gui_scalar_new(cid, tag, isselected, t1, t2, t3, t4, t5, t6,
     is_toplevel, plot_style) {
+    //post("gui_scalar_new plot_style=" + plot_style);
     var g;
     // we should probably use gui_gobj_new here, but we"re doing some initial
     // scaling that normal gobjs don't need...
@@ -4664,7 +4671,11 @@ function gui_scalar_new(cid, tag, isselected, t1, t2, t3, t4, t5, t6,
                     //post("transform_string = " + transform_string);
                     break;
                 default:
-                    // we are a non-plot scalar
+                    // we are a top-level non-plot scalar
+                    // this includes things like subpatches with scalars only
+                    // that need to be resized based on the window size and/or
+                    // scalar arrays (see all_about_arrays.pd help patch),which
+                    // should not be scaled. how to distinguish between the two?
                     matrix = [t1,t2,t3,t4,t5,t6];
                     break;        
             }
@@ -4707,6 +4718,17 @@ function gui_scalar_new(cid, tag, isselected, t1, t2, t3, t4, t5, t6,
         if (is_toplevel === 0) {
             g.classList.add("gop");
         }
+        /*
+        //currently unused because we use toplevel_scalars instead
+        else if (plot_style === -1) //else implies is_toplevel is true
+        {
+            // this means this scalar is not a part of an array
+            // and if it is in a toplevel window, every time
+            // window is resized, we need to redraw it to ensure
+            // it is scaled accordingly
+            redraw_on_resize = 1;
+        }
+        */
         // Let's make a selection rect...
         selection_rect = create_item(cid, "rect", {
             class: "border",
@@ -8080,7 +8102,7 @@ function gui_canvas_get_scroll(cid) {
     //post("win=" + cid);
     //win_width = win.style.width;
     //win_height = win.style.height;
-    if (toplevel_scalars[cid]) {
+    if (toplevel_scalars[cid] === 1) {
         // we have scalars, so let's override the previous call
         // because this will be a cpu intensive redraw, so we
         // should do it only when the action that requested it
@@ -8100,6 +8122,32 @@ function gui_canvas_get_scroll(cid) {
 }
 
 exports.gui_canvas_get_scroll = gui_canvas_get_scroll;
+
+function gui_canvas_get_scroll_on_resize(cid) {
+    //post("gui_canvas_get_scroll_on_resize " + toplevel_scalars[cid]);
+    if (toplevel_scalars[cid] === 2) {
+        // ico@vt.edu 2021-11-12: if we have toplevel scalars
+        // that require scaling on window resize, we deal with that
+        // here
+        if (getscroll_var[cid]) {
+            clearTimeout(getscroll_var[cid]);
+            getscroll_var[cid] = null;
+        };
+        if (!getscroll_var[cid]) {
+            getscroll_var[cid] = setTimeout(function() {  
+                //post("...requesting redraw");            
+                do_getscroll(cid, 1);
+                //pdsend(cid, "redraw");
+                getscroll_var[cid] = null;
+            }, 50);
+        }        
+    } else {
+        gui_canvas_get_scroll(cid);
+    }
+}
+
+exports.gui_canvas_get_scroll_on_resize = gui_canvas_get_scroll_on_resize;
+
 
 /* ico@vt.edu: here is one alternative getscroll call, it focuses on
    overriding the previous call, so the getscroll is more delayed. This

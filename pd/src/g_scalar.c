@@ -457,7 +457,7 @@ static void scalar_getgrouprect(t_glist *owner, t_glist *groupcanvas,
 static void scalar_getrect(t_gobj *z, t_glist *owner,
     int *xp1, int *yp1, int *xp2, int *yp2)
 {
-    //fprintf(stderr,"scalar_getrect %d\n", array_joc);
+    post("scalar_getrect joc=%d", array_joc);
     t_scalar *x = (t_scalar *)z;
 
     t_template *template = template_findbyname(x->sc_template);
@@ -511,16 +511,23 @@ static void scalar_getrect(t_gobj *z, t_glist *owner,
             }
             x1 = y1 = 0x7fffffff;
             x2 = y2 = -0x7fffffff;
+            //post("...scalar_getrect pre %d %d %d %d", x1, y1, x2, y2);
             scalar_getgrouprect(owner, templatecanvas, x->sc_vec, template,
                 basex, basey, &x1, &x2, &y1, &y2);
             if (x2 < x1 || y2 < y1)
                 x1 = y1 = x2 = y2 = 0;
+            //post("...scalar_getrect post %d %d %d %d", x1, y1, x2, y2);
         }
     }
+    //post("xtopixels x->gl_screenx2=%d x->gl_screenx1=%d xval=%d x->gl_x1=%d x->gl_x2=%d",
+    //    owner->gl_screenx2, owner->gl_screenx1, x1, owner->gl_x1, owner->gl_x2);
+
     screenx1 = glist_xtopixels(owner, x1);
     screeny1 = glist_ytopixels(owner, y1);
     screenx2 = glist_xtopixels(owner, x2);
     screeny2 = glist_ytopixels(owner, y2);
+
+    //post("...screen %g %g %g %g", screenx1, screeny1, screenx2, screeny2);
 
     // Values for screen bounding box
     *xp1 = (int)(screenx1 < screenx2 ? screenx1 : screenx2);
@@ -534,12 +541,14 @@ static void scalar_getrect(t_gobj *z, t_glist *owner,
     x->sc_y1 = y1;
     x->sc_y2 = y2;
 
-    //fprintf(stderr,"COMPUTED FINAL scalar_getrect "
-    //    "x1 %g y1 %g x2 %g y2 %g\n",
-    //    screenx1,
-    //    screeny1,
-    //    screenx2,
-    //    screeny2);
+    /*
+    post("COMPUTED FINAL scalar_getrect "
+        "x1 %g y1 %g x2 %g y2 %g\n",
+        screenx1,
+        screeny1,
+        screenx2,
+        screeny2);
+    */
 
     x->sc_bboxcache = 1; // We now have cached values for the next call
 }

@@ -2621,13 +2621,14 @@ void canvas_setcursor(t_canvas *x, unsigned int cursornum)
 int canvas_hitbox(t_canvas *x, t_gobj *y, int xpos, int ypos,
     int *x1p, int *y1p, int *x2p, int *y2p)
 {
+    //post("canvas_hitbox %lx", y);
     int x1, y1, x2, y2;
     if (!gobj_shouldvis(y, x))
         return (0);
     gobj_getrect(y, x, &x1, &y1, &x2, &y2);
     //if (((t_text *)y)->te_iemgui)
     //    iemgui_getrect_mouse(y, &x1, &y1, &x2, &y2);
-   
+    //post("...canvas_hitbox xpos=%d ypos-%d | x1=%d y1=%d x2=%d y2=%d", xpos, ypos, x1, y1, x2, y2);
     // we also add a check that width is greater than 0 because we use this
     // to return value from objects that are designed to ignore clicks and
     // pass them below, e.g. pd-l2ork's version of ggee/image which uses this
@@ -2952,7 +2953,7 @@ void canvas_vis(t_canvas *x, t_floatarg f)
                     : (x->gl_dirties ? !x->gl_dirty : 0)),
                 x->gl_noscroll,
                 x->gl_nomenu,
-                canvas_hasarray(x),
+                canvas_hasarray(x) + canvas_hastoplevelscalar(x),
                 argsbuf);
 
             /* It looks like this font size call is no longer needed,
@@ -3862,14 +3863,42 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
     {
         if (x->gl_list)
         {
-            //fprintf(stderr, "runmode && !rightclick\n");
+            //post("...runmode && !rightclick");
             for (y = x->gl_list; y; y = y->g_next)
             {
-                // check if the object wants to be clicked
-                // (we pick the topmost clickable)
-                if (canvas_hitbox(x, y, xpos, ypos, &x1, &y1, &x2, &y2))
+                // ico@vt.edu 2021-11-12: here we need to check for
+                // garray class since otherwise we are unable to click on
+                // array points on a toplevel window (when opening the gop
+                // it holds the array). this is because those points do
+                // not return a valid ob. we also use this to update the
+                // array_joc global variable. we can do this outside the
+                // passthrough call since pd-l2ork does not allow mixing
+                // of arrays and canvas objects.
+                if(canvas_hasarray(x))
                 {
+                    // here we assign array_joc global variable, so that the
+                    // array_doclick can be computed properly. we, however,
+                    // use doit = 0, just to see if we are within the hitbox
+                    // then we act on the topmost garray below after the
+                    // passthrough call.
+                    array_joc = garray_joc((t_garray *)y);
+                    if (gobj_click(y, x, xpos, ypos, shiftmod,
+                        (altmod && (!x->gl_edit)) || ctrlmod, 0, 0))
+                    {
+                        yclick = y;
+                    }
+                }
+                else if (canvas_hitbox(x, y, xpos, ypos, &x1, &y1, &x2, &y2))
+                {
+                    // check if the object wants to be clicked
+                    // (we pick the topmost clickable)
                     ob = pd_checkobject(&y->g_pd);
+                    /*
+                    post("...got hitbox ob?%d w_clickfn?%d iemgui=%d",
+                        (ob ? 1 : 0), (y->g_pd->c_wb->w_clickfn ? 1 : 0),
+                        ((t_text *)y)->te_iemgui
+                    );
+                    */
                     /* do not give clicks to comments or cnv during runtime */
                     /* ico@vt.edu 2021-10-08: also do not give clicks to the
                        ggee/image object if it is in click_mode 3 because that
@@ -3878,13 +3907,14 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
                     //if (ob)
                     //    post("clicking on object with te_iemgui=%d",
                     //        ((t_text *)y)->te_iemgui);
-                    if (ob && y->g_pd->c_wb->w_clickfn && 
-                         (ob->te_type != T_TEXT && ob->ob_pd != my_canvas_class &&
-                            ((t_text *)y)->te_iemgui != 3)
+                    if (!ob ||
+                            (ob && y->g_pd->c_wb->w_clickfn && 
+                            (ob->te_type != T_TEXT && ob->ob_pd != my_canvas_class &&
+                            ((t_text *)y)->te_iemgui != 3))
                        )
                     {
                         yclick = y;
-                        //post("yclick is set to %lx %d <%s>", y,
+                        //post("...yclick is set to %lx %d <%s>", y,
                         //   ((t_text *)y)->te_iemgui, ob->ob_pd->c_name->s_name);
                     }
                 }
@@ -3896,6 +3926,8 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
                 clickreturned = gobj_click(yclick, x, xpos, ypos,
                     shiftmod, (altmod && (!x->gl_edit)) || ctrlmod,
                     0, doit);
+                if (canvas_hasarray(x) && clickreturned)
+                    clickreturned = CURSOR_EDITMODE_RESIZE_Y;
                 //post("MAIN clicking %lx", yclick);
                 //fprintf(stderr, "    MAIN clicking\n");
         }
@@ -3903,7 +3935,7 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
         if (!doit)
         {
             //fprintf(stderr, "    MAIN not clicking\n");
-            if (yclick)
+            if (yclick || clickreturned)
             {
                 //fprintf(stderr, "    MAIN cursor %d\n", clickreturned);
                 canvas_setcursor(x, clickreturned);
