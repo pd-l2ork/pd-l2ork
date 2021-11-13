@@ -1825,7 +1825,7 @@ function gui_canvas_cursor(cid, pd_event_type) {
                 c = "default";
                 break;
             case "cursor_runmode_thicken":
-                c = "inherit";
+                c = "crosshair";
                 break;
             case "cursor_runmode_addpoint":
                 c = "cell";

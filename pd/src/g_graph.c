@@ -1887,7 +1887,7 @@ static int graph_click(t_gobj *z, struct _glist *glist,
             clickreturned = gobj_click(clickme, x, xpix, ypix,
                     shift, alt, 0, doit);
             if (canvas_hasarray(x) && clickreturned)
-                clickreturned = CURSOR_EDITMODE_RESIZE_Y;
+                clickreturned = CURSOR_RUNMODE_THICKEN; //CURSOR_EDITMODE_RESIZE_Y;
             //post("clickme %d", clickreturned);
         }
         if (!doit)

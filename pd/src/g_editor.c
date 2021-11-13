@@ -3927,7 +3927,7 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
                     shiftmod, (altmod && (!x->gl_edit)) || ctrlmod,
                     0, doit);
                 if (canvas_hasarray(x) && clickreturned)
-                    clickreturned = CURSOR_EDITMODE_RESIZE_Y;
+                    clickreturned = CURSOR_RUNMODE_THICKEN; //CURSOR_EDITMODE_RESIZE_Y;
                 //post("MAIN clicking %lx", yclick);
                 //fprintf(stderr, "    MAIN clicking\n");
         }
