@@ -9,6 +9,10 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+13-11-2021 0.61
+*Further refinement of the "4th beat" work sessions, conductor-shortcuts patch, and presets.
+*Minor bug-fixes to the L2OrkTweet and the L2Ork-Tweeter-Server.
+
 06-11-2021 0.60
 *Added l2ork-conduct server message (synonymous with l2ork-teach). This now enables conductor patches to affect every aspect of every instrument remotely and synchronously.
 *Enabled session sync offset to ensure that a saved session can be (re)synced at any given point in time.

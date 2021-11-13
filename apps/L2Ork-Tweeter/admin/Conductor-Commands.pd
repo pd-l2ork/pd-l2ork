@@ -1,4 +1,4 @@
-#N canvas 40 151 788 656 10;
+#N canvas 48 110 1265 655 10;
 #X obj 22 619 s chat-out;
 #X msg 34 117 chat admin p:l2orklicious l2ork-sync-all;
 #X msg 22 38 chat admin p:l2orklicious l2ork-length 6000 3000 500 6000
@@ -47,6 +47,26 @@
 #X text 460 442 special case commands that are broadcast fromthe local
 client engine and require theL2Ork-Tweeter-Teacher patch to be open:
 ;
+#X text 773 20 remote admin uses chat system. see left for examples.
+possible admin commands: l2ork-conduct (see the possible command
+list on the left)l2ork-disconnect (user_num) l2ork-free-slot (user_num
+\, bumps them into audience) l2ork-guest-chat (1=default/0 \, toggles
+audience chat) l2ork-length (list of ms values for each user) l2ork-length-all
+(ms for all users) l2ork-load (session-name \, without the -session-coll.txt
+suffix) l2ork-load-sync-delay (ms \, sets sync delay after l2ork-load)
+l2ork-obfuscate (1/0=default \, obfuscates note letters to avoid misuse)
+l2ork-report (user_num \, requests their state report) l2ork-reset-client-list
+(resets all clients and reassigns them) l2ork-save (session_name \,
+distributes locally saved version to all) l2ork-set-password (new_password
+\, change the admin password) l2ork-sync-all (syncs all clients over
+network using the reset command) l2ork-teach (same as l2ork-conduct)
+, f 78;
+#X text 773 256 l2ork-sync-data and l2ork-sync-save-data admin commands
+are reserved for broadcasting locally saved session data \, while l2ork-sync-vis
+triggers visual sync with red color (using the reset button) \, signalling
+the global sync based on the session data. they are not meant to be
+used directly \, but only as part of the l2ork-load and l2ork-save
+commands., f 78;
 #X connect 1 0 0 0;
 #X connect 2 0 0 0;
 #X connect 5 0 6 0;

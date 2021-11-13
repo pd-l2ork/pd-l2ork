@@ -1,4 +1,4 @@
-#N canvas 185 4 1545 970 10;
+#N canvas 185 4 1545 995 10;
 #X floatatom 299 100 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 1238 290 text define clients;
 #X floatatom 738 63 5 0 0 0 - - - 0 0 1, f 5;
@@ -153,9 +153,9 @@ others following values for the disconnected client: out-amp 0 \, tracker
 #X obj 140 642 list trim;
 #X obj 140 663 route chat;
 #X obj 971 538 route bang;
-#X obj 1025 713 route bang;
-#X msg 1109 789 server session save \$1;
-#X msg 1082 813 server requested session \$1 to be saved on all clients
+#X obj 1036 713 route bang;
+#X msg 1120 789 server session save \$1;
+#X msg 1093 813 server requested session \$1 to be saved on all clients
 ;
 #X obj 863 538 route bang;
 #X msg 588 803 malformed server request;
@@ -174,8 +174,8 @@ others following values for the disconnected client: out-amp 0 \, tracker
 #X obj 588 633 t b;
 #X obj 56 743 route 1;
 #X obj 56 766 list prepend 2;
-#X obj 1082 757 t s s;
-#X obj 1082 735 tosymbol;
+#X obj 1093 757 t s s;
+#X obj 1093 735 tosymbol;
 #X obj 1028 561 tosymbol;
 #X obj 1028 583 t s b s;
 #X obj 985 649 s \$0-report;
@@ -185,7 +185,7 @@ others following values for the disconnected client: out-amp 0 \, tracker
 #X text 67 710 right outlet for the debugging mode, f 18;
 #X obj 166 150 t l l l;
 #X obj 1243 603 t s s b;
-#N canvas 0 0 450 300 parse-useradmin-socket 0;
+#N canvas 727 338 450 300 parse-useradmin-socket 0;
 #X obj 150 35 inlet;
 #X obj 273 35 inlet;
 #X obj 150 61 lister;
@@ -229,28 +229,28 @@ to the network socket \$2;
 #X obj 267 455 outlet;
 #X obj 169 265 text get clients 1;
 #X obj 213 46 t l 0;
-#X obj 267 175 < 10;
 #X obj 169 288 moses 1;
 #X obj 213 96 t f b;
 #X msg 151 335 send \$2 server loop-length \$1;
+#X obj 267 175 < 12;
 #X connect 0 0 10 0;
-#X connect 1 0 13 0;
+#X connect 1 0 12 0;
 #X connect 2 0 3 0;
 #X connect 3 0 9 0;
-#X connect 3 1 11 0;
+#X connect 3 1 14 0;
 #X connect 4 0 8 0;
 #X connect 5 0 7 0;
 #X connect 5 1 6 0;
-#X connect 7 0 14 0;
-#X connect 9 0 12 0;
+#X connect 7 0 13 0;
+#X connect 9 0 11 0;
 #X connect 10 0 1 0;
 #X connect 10 1 2 2;
 #X connect 11 0 4 0;
-#X connect 12 0 4 0;
-#X connect 12 1 7 1;
-#X connect 13 0 5 0;
-#X connect 13 1 2 0;
-#X connect 14 0 4 1;
+#X connect 11 1 7 1;
+#X connect 12 0 5 0;
+#X connect 12 1 2 0;
+#X connect 13 0 4 1;
+#X connect 14 0 4 0;
 #X restore 1459 609 pd map-lengths-to-clients;
 #X obj 1459 585 t l b;
 #X msg 1486 635 server requested user-specific loop length sync, f
@@ -320,8 +320,8 @@ with sync being delayed by \$2ms, f 44;
 #X msg 1562 866 server requested session \$1 to be saved on all clients
 with sync enabled, f 38;
 #X msg 1589 839 server session sync-save \$1;
-#X obj 1942 538 list prepend server session sync-save-data;
-#X msg 2158 585 server session sync-vis;
+#X obj 1856 538 list prepend server session sync-save-data;
+#X msg 2061 585 server session sync-vis;
 #N canvas 727 338 319 285 send-sync-save-data-to-online-users-only
 0;
 #X obj 96 30 inlet;
@@ -342,7 +342,7 @@ with sync enabled, f 38;
 #X connect 7 0 5 1;
 #X connect 7 1 4 0;
 #X connect 8 0 2 0;
-#X restore 2050 562 pd send-sync-save-data-to-online-users-only;
+#X restore 1958 562 pd send-sync-save-data-to-online-users-only;
 #X text 337 61 remote admin uses chat system. messages include: l2ork-conduct
 \, l2ork-debug (disabled \, as it is obsolete) \, l2ork-disconnect
 \, l2ork-free-slot \, l2ork-guest-chat \, l2ork-length \, l2ork-length-all
@@ -356,6 +356,8 @@ l2ork-sync-all l2ork-disconnect l2ork-free-slot l2ork-guest-chat l2ork-load
 l2ork-save l2ork-set-password l2ork-length-all l2ork-length l2ork-obfuscate
 l2ork-teach l2ork-load-sync-delay l2ork-sync-save l2ork-sync-save-data
 l2ork-sync-data l2ork-sync-vis l2ork-conduct, f 342;
+#X obj 1651 667 t f f;
+#X msg 1651 692 server session load sync delay set to \$1;
 #X connect 0 0 3 1;
 #X connect 0 1 15 0;
 #X connect 1 0 0 0;
@@ -524,7 +526,7 @@ l2ork-sync-data l2ork-sync-vis l2ork-conduct, f 342;
 #X connect 120 0 124 0;
 #X connect 121 0 120 1;
 #X connect 121 0 123 1;
-#X connect 122 0 121 0;
+#X connect 122 0 136 0;
 #X connect 122 1 78 0;
 #X connect 123 0 125 0;
 #X connect 124 0 43 0;
@@ -559,6 +561,9 @@ l2ork-sync-data l2ork-sync-vis l2ork-conduct, f 342;
 #X connect 135 18 132 0;
 #X connect 135 19 114 0;
 #X connect 135 20 78 0;
+#X connect 136 0 137 0;
+#X connect 136 1 121 0;
+#X connect 137 0 43 0;
 #X restore 1224 145 pd filter-remote-admin-messages;
 #X obj 1297 314 r \$0-reinit;
 #X obj 63 291 r \$0-report;

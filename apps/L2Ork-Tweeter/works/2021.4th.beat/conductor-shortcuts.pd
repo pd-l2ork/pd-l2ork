@@ -1,27 +1,30 @@
-#N canvas 129 331 415 352 10;
-#X obj 17 189 s chat-out;
+#N canvas 744 309 415 358 10;
+#X obj 17 219 s chat-out;
 #X obj 17 66 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
 #fcfcfc #000000 #000000 0 256 0 0 1 0;
 #X msg 17 88 chat admin p:l2orklicious l2ork-length-all \$1;
 #X msg 127 16 2000;
 #X obj 17 43 line 100;
 #X msg 17 16 2000 \, 555 30000;
-#X msg 17 226 \; session-sync-offset -1 \; load-session-network-sync
-4th-beat-final-7;
-#X msg 55 138 chat admin p:l2orklicious l2ork-load 4th-beat-final-7
-;
-#X msg 55 161 chat admin p:l2orklicious l2ork-load 4th-beat-droplets-5
-;
-#X msg 17 274 \; session-sync-offset 0 \; load-session-network-sync
-4th-beat-droplets-5;
 #X text 191 16 REMINDER: open the teacher patch!;
-#X text 99 206 sync controls;
+#X text 99 236 sync controls;
 #X text 156 118 loading sessions;
 #X text 76 43 tempo;
+#X msg 55 193 chat admin p:l2orklicious l2ork-load-sync-delay 3000
+;
+#X msg 55 159 chat admin p:l2orklicious l2ork-load 4th-beat-droplets-6
+;
+#X msg 55 138 chat admin p:l2orklicious l2ork-load 4th-beat-final-10
+;
+#X msg 17 256 \; session-sync-offset -1 \; load-session-network-sync
+4th-beat-final-10;
+#X msg 17 304 \; session-sync-offset 0 \; load-session-network-sync
+4th-beat-droplets-6;
 #X connect 1 0 2 0;
 #X connect 2 0 0 0;
 #X connect 3 0 4 0;
 #X connect 4 0 1 0;
 #X connect 5 0 4 0;
-#X connect 7 0 0 0;
-#X connect 8 0 0 0;
+#X connect 10 0 0 0;
+#X connect 11 0 0 0;
+#X connect 12 0 0 0;
