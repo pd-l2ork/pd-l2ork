@@ -1,4 +1,6 @@
 PD-L2ORK TODO:
+*gui_canvas_scroll_to_gobj should only scroll to an object if doing so improves situation (e.g. if the object is wider than the screen, then scrolling won't fix anything)?
+
 *refine window heights for various dialogs, so that they always display fully on-screen.
 
 *port shell object to Windows.
@@ -128,6 +130,7 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
   *scalar subpatch does not update appearance when the patch window is resized.
   *scalar selection box in a subpatch (see disis_wiimote-help.pd subpatch with 4 blobs) is inacurate and larger on the left side as you move the scalar further to the right.
 *when opening a GOP-enabled patch whose gop rectangle should not be drawn because subpatch has only scalars, you can still resize the parent GOP size (cursor changes to resize arrows).
+*fixed a bug where comments exceeding 1024 characters got malformed when being sent to the engine.
 
 
 

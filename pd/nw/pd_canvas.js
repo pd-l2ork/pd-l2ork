@@ -241,10 +241,12 @@ var canvas_events = (function() {
                 max_pd_string = 1000,
                 left,
                 in_array = [],
+                nargs = [],
                 out_array = [];
             if (msg.length <= chunk_max) {
                 out_array.push([msg]);
             } else {
+                /*
                 in_array = msg.split(/[\s\n]/); // split on newlines or spaces
                 while (in_array.length) {
                     left = in_array.slice(); // make a copy of in_array
@@ -263,13 +265,37 @@ var canvas_events = (function() {
                             }
                         }
                     }
+
                     // might need a check here for max_pd_string to warn
                     // user if a string is going to get truncated. (That's
                     // what max_pd_string is for above.)
                     out_array.push(left);
                     in_array = in_array.splice(left.length);
                 }
+                */
+                // ico@vt.edu 2021-11-13: replacing buggy implementation
+                // above that caused problems when a comment had more than
+                // 1024 characters, which resulted in endlines being removed
+                // TODO: Still need to warn the user if the number of
+                // arguments exceeds that of pd's 1000.
+                nargs = msg.split(' ');
+                //pdgui.post("nargs="+nargs.length);
+                if (nargs.length > max_pd_string)
+                    pdgui.post("warning: message exceeds pd-l2ork's " +
+                         "allowed maximum of 1000 arguments. excess " +
+                         "arguments will be truncated...");
+                in_array = msg.match(/.{1,50}(\ |$)/g);
+                in_array.forEach(function(entry) {
+                    //pdgui.post(entry);
+                    if (entry !== "")
+                        out_array.push(entry);
+                });
             }
+            /*
+            var i;
+            for (i = 0; i < out_array.length; i++)
+                pdgui.post("..."+out_array[i]+"\n================\n");
+            */
             return out_array;
         },
         might_be_a_pd_file = function(stuff_from_clipboard) {
@@ -1012,7 +1038,8 @@ var canvas_events = (function() {
                     fudi_array = string_to_array_of_chunks(fudi_msg),
                     i;
                 for (i = 0; i < fudi_array.length; i++) {
-                    pdgui.pdsend(name, "obj_addtobuf", fudi_array[i].join(" "));
+                    //pdgui.post("adding: " + fudi_array[i]);
+                    pdgui.pdsend(name, "obj_addtobuf", fudi_array[i]);
                 }
                 pdgui.pdsend(name, "obj_buftotext");
             }
