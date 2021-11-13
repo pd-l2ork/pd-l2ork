@@ -119,20 +119,24 @@ int canvas_has_scalars_only(t_canvas *x)
 */
 void glist_update_redrect(t_glist *x)
 {
+    //post("glist_update_redrect");
     t_gobj *y = x->gl_list;
     while(y->g_next) y = y->g_next;
 
     if (x->gl_editor && x->gl_isgraph && !x->gl_goprect
         && pd_checkobject(&y->g_pd) && !canvas_has_scalars_only(x))
     {
-        //post("glist_add drawredrect %d", canvas_has_scalars_only(x));
+        //post("...draw %d", canvas_has_scalars_only(x));
         x->gl_goprect = 1;
         canvas_drawredrect(x, 1);
+        canvas_draw_gop_resize_hooks(x);
     }
     else if (canvas_has_scalars_only(x) && x->gl_goprect)
     {
+        //post("...erase");
         x->gl_goprect = 0;
-        canvas_drawredrect(x, 0);       
+        canvas_drawredrect(x, 0);
+        canvas_draw_gop_resize_hooks(x);    
     }
 }
 
@@ -206,17 +210,17 @@ int canvas_hasarray(t_canvas *x)
     return(hasarray);
 }
 
-    /* ico@vt.edu 2021-11-12:
-       heck if canvas has a toplevel scalar that requires resizing upon
-       resizing of the window and return 2, otherwise return 0. we use this
-       to inform front-end via gui_canvas_new if instead of updating
-       scrollbars on resize, it needs to redraw canvas to properly scale
-       all resizable scalars */
+/* ico@vt.edu 2021-11-12:
+   check if canvas has a toplevel scalar that requires resizing upon
+   resizing of the window and return 2, otherwise return 0. we use this
+   to inform front-end via gui_canvas_new if instead of updating
+   scrollbars on resize, it needs to redraw canvas to properly scale
+   all resizable scalars */
 int canvas_hastoplevelscalar(t_canvas *x)
 {
-    t_gobj *g = x->gl_list;
     int hastoplevelscalar = 0;
-    if (g->g_pd != garray_class)
+    t_gobj *g = x->gl_list;
+    if (g && g->g_pd != garray_class)
     {
         while (g)
         {

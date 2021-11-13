@@ -3963,10 +3963,18 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
     }
     else
     {
-        in_text_resizing_hotspot = text_resizing_hotspot(x, &x->gl_obj,
-            xpos, ypos, x->gl_xmargin, x->gl_ymargin,
-            x->gl_xmargin + x->gl_pixwidth,
-            x->gl_ymargin + x->gl_pixheight, &default_type);
+        // ico@vt.edu 2021-11-13:
+        // for testing for gop rect resize hotspots, we need to first
+        // confirm that the redrect is drawn on the canvas we are currently
+        // on. this is because if we are toplevel and the canvas only has
+        // an array or scalars, there should be no redrect and therefore
+        // no redrect visible to resize.
+        if (x->gl_goprect)
+            in_text_resizing_hotspot = text_resizing_hotspot(x, &x->gl_obj,
+                xpos, ypos, x->gl_xmargin, x->gl_ymargin,
+                x->gl_xmargin + x->gl_pixwidth,
+                x->gl_ymargin + x->gl_pixheight, &default_type);
+        else in_text_resizing_hotspot = 0;
     }
 
     // if we have located an object under the mouse

@@ -457,7 +457,7 @@ static void scalar_getgrouprect(t_glist *owner, t_glist *groupcanvas,
 static void scalar_getrect(t_gobj *z, t_glist *owner,
     int *xp1, int *yp1, int *xp2, int *yp2)
 {
-    post("scalar_getrect joc=%d", array_joc);
+    //post("scalar_getrect joc=%d", array_joc);
     t_scalar *x = (t_scalar *)z;
 
     t_template *template = template_findbyname(x->sc_template);
@@ -522,8 +522,9 @@ static void scalar_getrect(t_gobj *z, t_glist *owner,
     //post("xtopixels x->gl_screenx2=%d x->gl_screenx1=%d xval=%d x->gl_x1=%d x->gl_x2=%d",
     //    owner->gl_screenx2, owner->gl_screenx1, x1, owner->gl_x1, owner->gl_x2);
 
-    screenx1 = glist_xtopixels(owner, x1);
-    screeny1 = glist_ytopixels(owner, y1);
+    // ico@vt.edu 2021-11-13: changed x1 and y1 because otherwise the selection boxes
+    screenx1 = x1; //glist_xtopixels(owner, x1);
+    screeny1 = y1; //glist_ytopixels(owner, y1);
     screenx2 = glist_xtopixels(owner, x2);
     screeny2 = glist_ytopixels(owner, y2);
 

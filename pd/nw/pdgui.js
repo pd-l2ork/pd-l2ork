@@ -4386,7 +4386,8 @@ function toggle_drag_handle_cursors(e, is_label, state) {
 
 exports.toggle_drag_handle_cursors = toggle_drag_handle_cursors;
 
-// Show or hide little handle for dragging around iemgui labels
+// Show or hide little handle for dragging around
+// iemgui labels, cnv resize hooks, or gop resize/move hooks
 function gui_iemgui_label_show_drag_handle(cid, tag, state, x, y, cnv_resize) {
     //post("gui_iemgui_label_show_drag_handle tag=" + tag + " state=" + state);
     if (state !== 0) {

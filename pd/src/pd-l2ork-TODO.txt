@@ -1,12 +1,4 @@
 PD-L2ORK TODO:
-*deal with array manipulation and data structure drawing location issues.
-  *toplevel window with an array should not have any scrollbars. DONE
-  *array_joc does not get updated when invoked from the toplevel window array properties. DONE
-  *scalar subpatch does not update appearance when the patch window is resized. DONE
-
-  *scalar selection box in a subpatch (see disis_wiimote-help.pd subpatch with 4 blobs) is inacurate and larger on the left side as you move the scalar further to the right.
-  *array_new should automatically increment the array number.
-
 *Port shell object to Windows.
 
 *refine window heights for various dialogs, so that they always display fully on-screen.
@@ -15,6 +7,8 @@ PD-L2ORK TODO:
 	*Redrawing entire canvas after tidy will not be necessary anymore.
 
 *save pd-l2ork main window position between restarts.
+
+*add bezier curve drawing ability to the arrays (currently displaying them as polygons).
 
 *tooltips.
 
@@ -126,6 +120,14 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Fixed regression in scroll_to_gobj that is triggered when doing find/findagain request and which could trigger an error due to window not having been created yet, breaking the UI.
 *Vastly improved find/find again behavior that now detects also matches in object's sends and receives.
 *Removed leftover debugging printout message in find_ignore and legacy warning for the color saving format for the iemgui objects.
+*deal with array manipulation and data structure drawing location issues.
+  *fixed being unable to click on arrays both within GOP and toplevel, including having multiple arrays and the ability to click either of them. Note that when an array has jump-on-click (joc) enabled, it will override any clickable array since it takes entire size of the array window.
+  *changed the cursor appearance when manipulating arrays.
+  *toplevel window with an array should not have any scrollbars.
+  *fixed a bug where array_joc did not get updated when invoked from the toplevel window array properties.
+  *scalar subpatch does not update appearance when the patch window is resized.
+  *scalar selection box in a subpatch (see disis_wiimote-help.pd subpatch with 4 blobs) is inacurate and larger on the left side as you move the scalar further to the right.
+*when opening a GOP-enabled patch whose gop rectangle should not be drawn because subpatch has only scalars, you can still resize the parent GOP size (cursor changes to resize arrows).
 
 
 

@@ -179,8 +179,8 @@ void garray_init( void)
     binbuf_free(b);
 }
 
-/* create a new scalar attached to a symbol.  Used to make floating-point
-arrays (the scalar will be of type "_float_array").  Currently this is
+/* create a new scalar attached to a symbol. Used to make floating-point
+arrays (the scalar will be of type "_float_array"). Currently this is
 always called by graph_array() below; but when we make a more general way
 to save and create arrays this might get called more directly. */
 

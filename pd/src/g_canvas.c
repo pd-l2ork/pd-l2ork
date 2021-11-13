@@ -1075,14 +1075,14 @@ void canvas_draw_gop_resize_hooks(t_canvas* x)
 {
     t_scalehandle *sh = (t_scalehandle *)(x->x_handle);
     t_scalehandle *mh = (t_scalehandle *)(x->x_mhandle);
-    //fprintf(stderr,"draw_gop_resize_hooks START\n");
+    //post("canvas_draw_gop_resize_hooks");
     //in case we are an array which does not initialize its hooks
     if (!sh || !mh) return;
     if(x->gl_edit && glist_isvisible(x) && glist_istoplevel(x) &&
         x->gl_goprect && !x->gl_editor->e_selection)
     {
         //Drawing and Binding Resize_Blob for GOP
-        //fprintf(stderr,"draw_gop_resize_hooks DRAW %zx %zx\n", (t_uint)x, (t_uint)glist_getcanvas(x));
+        //post("...DRAW %zx %zx", (t_uint)x, (t_uint)glist_getcanvas(x));
         sprintf(sh->h_pathname, ".x%zx.h%zx", (t_uint)x, (t_uint)sh);
         sprintf(mh->h_pathname, ".x%zx.h%zx", (t_uint)x, (t_uint)mh);
 
@@ -1102,7 +1102,7 @@ void canvas_draw_gop_resize_hooks(t_canvas* x)
     }
     else
     {
-        //fprintf(stderr,"draw_gop_resize_hooks ERASE\n");
+        //post("...ERASE %d %d", sh->h_vis, mh->h_vis);
         scalehandle_draw_erase(sh);
         scalehandle_draw_erase(mh);
     }
@@ -1112,6 +1112,7 @@ void canvas_draw_gop_resize_hooks(t_canvas* x)
 
 void canvas_drawredrect(t_canvas *x, int doit)
 {
+    //post("canvas_drawredrect %d", doit);
     if (doit)
     {
         int x1=x->gl_xmargin, y1=x->gl_ymargin + sys_legacy;
@@ -1127,6 +1128,10 @@ void canvas_drawredrect(t_canvas *x, int doit)
     {
         gui_vmess("gui_canvas_deleteredrect", "x",
             glist_getcanvas(x));
+        // ico 2021-11-13:
+        // the following is not needed since hooks are children
+        // of the gobj that will be deleted on the front-end
+        //canvas_draw_gop_resize_hooks(x);
     }
 }
 
