@@ -84,6 +84,8 @@ extern t_class *text_class;
 // for iemgui objects' wonky click area
 //extern void iemgui_getrect_mouse(t_gobj *x, int *xp1, int *yp1,
 //    int *xp2, int *yp2);
+// ico 2021-11-16: from s_file.c
+extern int sys_curved_cords;
 
 static int canvas_find_index1, canvas_find_index2, canvas_find_wholeword,
            canvas_num_found = 0;
@@ -4125,10 +4127,11 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
                         x->gl_editor->e_xwas = hotspot + IOWIDTH / 2;
                         x->gl_editor->e_ywas = y2 - 2;
                         /* This repetition of args needs to be pruned below */
-                        gui_vmess("gui_canvas_line", "xssiiiiiiiiiii",
+                        gui_vmess("gui_canvas_line", "xssiiiiiiiiiiii",
                             x,
                             "newcord",
                             (issignal ? "signal" : "control"),
+                            sys_curved_cords,
                             hotspot + IOWIDTH / 2,
                             y2 - 2,
                             hotspot + IOWIDTH / 2,
@@ -4635,10 +4638,11 @@ void canvas_drawconnection(t_canvas *x, int lx1, int ly1, int lx2, int ly2,
     }
     if (yoff > ymax) yoff = ymax;
     sprintf(tagbuf, "l%zx", (t_int)tag);
-    gui_vmess("gui_canvas_line", "xssiiiiiiiiiii",
+    gui_vmess("gui_canvas_line", "xssiiiiiiiiiiii",
         x,
         tagbuf,
         (issignal ? "signal" : "control"),
+        sys_curved_cords,
         lx1,
         ly1,
         lx1,
@@ -4688,9 +4692,10 @@ void canvas_updateconnection(t_canvas *x, int lx1, int ly1, int lx2, int ly2,
             // e.g. when moving an object which requries
             // visually updating of its existing connections
             sprintf(cord_tag, "l%zx", (t_int)tag);
-            gui_vmess("gui_canvas_update_line", "xsiiiii",
+            gui_vmess("gui_canvas_update_line", "xsiiiiii",
                 x,
                 cord_tag,
+                sys_curved_cords,
                 lx1,
                 ly1,
                 lx2,
@@ -4700,9 +4705,10 @@ void canvas_updateconnection(t_canvas *x, int lx1, int ly1, int lx2, int ly2,
         else
         {
             // this is used for new user-drawn connections
-            gui_vmess("gui_canvas_update_line", "xsiiiii",
+            gui_vmess("gui_canvas_update_line", "xsiiiiii",
                 x,
                 "newcord",
+                sys_curved_cords,
                 lx1,
                 ly1,
                 lx2,

@@ -459,6 +459,10 @@
         "c64": "C64",
         "footgun": "Fusspistole"
       },
+      "cords": {
+        "curved_cords": "gebogene Schnüre",
+        "curved_cords_tt": "Patchkabel als Kurven oder gerade Linien zeichnen"
+      },
       "grid": {
         "show_grid": "Gitter-Hintergrund im Edit-Modus",
         "show_grid_tt": "Gitter-Hintergrund im Edit-Modus anzeigen"

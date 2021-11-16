@@ -1473,19 +1473,28 @@ function update_grid(grid) {
     // option in the gui prefs changes.
     var bg = grid != 0 ? gui_editmode_svg_background : "none";
     for (var cid in patchwin) {
-	gui(cid).get_elem("patchsvg", function(patchsvg, w) {
+    	gui(cid).get_elem("patchsvg", function(patchsvg, w) {
             var editmode = patchsvg.classList.contains("editmode");
             if (editmode) {
                 patchwin[cid].window.document.body.style.setProperty
                 ("background-image", bg);
             }
-	});
+    	});
     }
     // Also update the showgrid flags.
     set_showgrid(grid);
 }
 
 exports.update_grid = update_grid;
+
+function redraw_all_visible_canvases() {
+    // redraw all canvases to reflect the preference setting
+    for (var cid in patchwin) {
+        pdsend(cid, "redraw");
+    }
+}
+
+exports.redraw_all_visible_canvases = redraw_all_visible_canvases;
 
 // requires nw.js API (Menuitem)
 function gui_canvas_set_cordinspector(cid, state) {
@@ -2784,7 +2793,7 @@ function gui_atom_redraw_border(cid, tag, type, width, height) {
 // draw a patch cord
 // ico@vt.edu: p11 added to provide different color for when the cord is
 // being created vs when it is being finished
-function gui_canvas_line(cid,tag,type,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11) {
+function gui_canvas_line(cid,tag,type,curved,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11) {
     gui(cid).get_elem("patchsvg")
     .append(function(frag) {
         var svg = get_item(cid, "patchsvg"),
@@ -2794,9 +2803,13 @@ function gui_canvas_line(cid,tag,type,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11) {
         // the stroke to the pixel grid.
         // Signal cords are 2 px wide = 1px on each side-- no need for x-offset.
             xoff = type === 'signal' ? 0 : 0.5,
-            d_array = ["M", p1 + xoff, p2 + xoff,
-                       "Q", p3 + xoff, p4 + xoff, p5 + xoff, p6 + xoff,
-                       "Q", p7 + xoff, p8 + xoff, p9 + xoff, p10 + xoff],
+            d_array = (curved ?
+                        ["M", p1 + xoff, p2 + xoff,
+                        "Q", p3 + xoff, p4 + xoff, p5 + xoff, p6 + xoff,
+                        "Q", p7 + xoff, p8 + xoff, p9 + xoff, p10 + xoff]
+                        :
+                        ["M", p1, p2, "L", p9, p10]
+                      ),
             path;
         path = create_item(cid, "path", {
             d: d_array.join(" "),
@@ -3061,7 +3074,7 @@ function gui_canvas_patchcord_scroll(cid, x1, y1, x2, y2) {
     });
 }
 
-function gui_canvas_update_line(cid, tag, x1, y1, x2, y2, yoff) {
+function gui_canvas_update_line(cid, tag, curved, x1, y1, x2, y2, yoff) {
     // We have to check for existence here for the special case of
     // preset_node which hides a wire that feeds back from the downstream
     // object to its inlet. Pd refrains from drawing this hidden wire at all.
@@ -3073,9 +3086,14 @@ function gui_canvas_update_line(cid, tag, x1, y1, x2, y2, yoff) {
             xoff, // see comment in gui_canvas_line about xoff
             d_array;
         xoff = e.classList.contains("signal") ? 0: 0.5;
-        d_array = ["M",x1+xoff,y1+xoff,
-                   "Q",x1+xoff,y1+yoff+xoff,x1+halfx+xoff,y1+halfy+xoff,
-                   "Q",x2+xoff,y2-yoff+xoff,x2+xoff,y2+xoff];
+        
+        d_array = (curved ?
+                    ["M",x1+xoff,y1+xoff,
+                    "Q",x1+xoff,y1+yoff+xoff,x1+halfx+xoff,y1+halfy+xoff,
+                    "Q",x2+xoff,y2-yoff+xoff,x2+xoff,y2+xoff]
+                    :
+                    ["M", x1, y1, "L", x2, y2]
+                  );
         // ico@vt.edu 2021-05-03:
         // if we are a new cord created by a user, we will have a tag
         // "newcord", as reflected in g_editor.c, so we need to check
@@ -7195,10 +7213,10 @@ function gui_midi_properties(gfxstub, sys_indevs, sys_outdevs,
 }
 
 function gui_gui_properties(dummy, name, show_grid, save_zoom, browser_doc, browser_path,
-    browser_init, autopatch_yoffset) {
+    browser_init, autopatch_yoffset, curved_cords) {
     if (dialogwin["prefs"] !== null) {
         dialogwin["prefs"].window.gui_prefs_callback(name, show_grid, save_zoom,
-            browser_doc, browser_path, browser_init, autopatch_yoffset);
+            browser_doc, browser_path, browser_init, autopatch_yoffset, curved_cords);
     }
 }
 

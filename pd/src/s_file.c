@@ -43,7 +43,7 @@
 #endif
 
 int sys_defeatrt, sys_autopatch_yoffset, sys_grid = 1, sys_zoom, sys_browser_doc = 1,
-    sys_browser_path, sys_browser_init;
+    sys_browser_path, sys_browser_init, sys_curved_cords = 1;
 t_symbol *sys_flags = &s_;
 void sys_doflags( void);
 
@@ -693,6 +693,10 @@ void sys_loadpreferences( void)
         if (strcmp(prefbuf, "."))
             sys_flags = gensym(prefbuf);
     }
+    if (sys_getpreference("curved_cords", prefbuf, MAXPDSTRING))
+    {
+        sscanf(prefbuf, "%d", &sys_curved_cords);
+    }
     sys_doneloadpreferences();
     sys_doflags();
 
@@ -834,6 +838,8 @@ void glob_savepreferences(t_pd *dummy)
     sys_putpreference("guipreset", sys_gui_preset->s_name);
     sys_putpreference("flags", 
         (sys_flags ? sys_flags->s_name : ""));
+    sprintf(buf1, "%d", sys_curved_cords);
+    sys_putpreference("curved_cords", buf1);
     sys_donesavepreferences();
     
 }

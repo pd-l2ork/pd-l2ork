@@ -432,6 +432,11 @@ select {
               <span data-i18n="prefs.gui.zoom.save_zoom"></span>
             </label>
             <br/>
+            <label data-i18n="[title]prefs.gui.cords.curved_cords_tt">
+              <input type="checkbox" id="curved_cords" name="curved_cords">
+              <span data-i18n="prefs.gui.cords.curved_cords"></span>
+            </label>
+            <br/>
             <label data-i18n="[title]prefs.gui.autopatch_yoffset_checkbox_tt">
               <input type="checkbox" id="autopatch_yoffset"
                      name="autopatch_yoffset"
@@ -807,6 +812,7 @@ function apply(save_prefs) {
         get_gui_preset(),
         get_bool_elem("show_grid"),
         get_bool_elem("save_zoom"),
+        get_bool_elem("curved_cords"),
         get_bool_elem("browser_doc"),
         get_bool_elem("browser_path"),
         get_bool_elem("browser_init"),
@@ -820,6 +826,9 @@ function apply(save_prefs) {
     );
     // Update the grid on all open windows.
     pdgui.update_grid(get_bool_elem("show_grid"));
+
+    // Update the cords on all open windows by redrawing them.
+    pdgui.redraw_all_visible_canvases();
 
     // Send the startup config data to Pd
     pdgui.pdsend.apply(null, ["pd path-dialog", startup_use_stdpath, startup_verbose].concat(get_path_array()));
@@ -1064,7 +1073,7 @@ function autopatch_yoffset_toggle(checked) {
 }
 
 function gui_prefs_callback(name, show_grid, save_zoom, browser_doc, browser_path,
-    browser_init, autopatch_yoffset) {
+    browser_init, autopatch_yoffset, curved_cords) {
     var s = document.getElementById("gui_preset");
 
     // ag: scan the css subdir for user-defined styles
@@ -1095,6 +1104,7 @@ function gui_prefs_callback(name, show_grid, save_zoom, browser_doc, browser_pat
     }
     document.getElementById("show_grid").checked = !!show_grid;
     document.getElementById("save_zoom").checked = !!save_zoom;
+    document.getElementById("curved_cords").checked = !!curved_cords;
     document.getElementById("browser_doc").checked = !!browser_doc;
     document.getElementById("browser_path").checked = !!browser_path;
     document.getElementById("browser_init").checked = !!browser_init;

@@ -459,6 +459,10 @@
         "c64":       "C64",
         "footgun":   "Footgun"
       },
+      "cords": {
+        "curved_cords": "cordons courbés",
+        "curved_cords_tt": "Dessinez des cordons de raccordement sous forme de courbes ou de lignes droites"
+      },
       "grid": {
         "show_grid": "Fond de grille en mode Édition",
         "show_grid_tt": "Afficher l'arrière-plan de la grille en mode Édition"
