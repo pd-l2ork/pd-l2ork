@@ -287,7 +287,7 @@ void binbuf_gettext(t_binbuf *x, char **bufp, int *lengthp)
     }
     if (length && buf[length-1] == ' ')
     {
-        if (newbuf = t_resizebytes(buf, length, length-1))
+        if (newbuf = t_resizebytes(buf, length, length))
         {
             buf = newbuf;
             length--;
