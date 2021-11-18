@@ -157,6 +157,7 @@ static void pddplink_vis(t_gobj *z, t_glist *glist, int vis)
 
 static void pddplink_activate(t_gobj *z, t_glist *glist, int state)
 {
+    //post("pddplink_activate %d", state);
     t_pddplink *x = (t_pddplink *)z;
     t_rtext *y = glist_findrtext(glist, (t_text *)x);
     rtext_activate(y, state);
@@ -164,8 +165,10 @@ static void pddplink_activate(t_gobj *z, t_glist *glist, int state)
     // 2020-11-11 ico@vt.edu: the following is needed when clicking on
     // another object to activate, while this one is still activated
     if (!state) {
-        pddplink_vis(z, glist, 0);
-        pddplink_vis(z, glist, 1);
+        gui_vmess("gui_text_set", "xss",
+            glist_getcanvas(glist),
+            rtext_gettag(y),
+            x->x_vistext);
     }
 }
 

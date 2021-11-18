@@ -120,6 +120,12 @@ static void helplink_activate(t_gobj *z, t_glist *glist, int state)
         t_binbuf *old = x->x_ob.te_binbuf;
         x->x_ob.te_binbuf = b;
         binbuf_free(old);
+        // 2021-11-18 ico@vt.edu: the following is needed when clicking on
+        // another object to activate, while this one is still activated
+        gui_vmess("gui_text_set", "xss",
+            glist_getcanvas(glist),
+            rtext_gettag(y),
+            x->x_vistext);
     }
 }
 
