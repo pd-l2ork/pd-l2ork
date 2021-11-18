@@ -51,7 +51,7 @@
 #define SOCKET_ERROR -1
 #endif
 
-#define MAX_CONNECT  128	 /* maximum number of connections */
+#define MAX_CONNECT  256	 /* maximum number of connections */
 #define INBUFSIZE    4096   /* size of receiving data buffer */
 
 /* message levels from syslog.h */
@@ -72,7 +72,7 @@
 #endif
 
 static char *version = 
-   "netserver v0.3 :: bidirectional communication for Pd\n"
+   "netserver v0.4 :: bidirectional communication for Pd\n"
    "             written by Olaf Matthes <olaf.matthes@gmx.de>\n"
    "             syslogging by Hans-Christoph Steiner <hans@eds.org>\n"
    "             stability and functional improvements by Ivica Ico Bukvic <ico@vt.edu>";
@@ -413,6 +413,32 @@ static void netserver_client_send(t_netserver *x, t_symbol *s, int argc, t_atom 
 	  post("netserver: not a valid socket number (%d)", sockfd);
 }
 
+// ico@vt.edu 2021-11-18:
+// disconnect client connected on the provided socket number 
+static void netserver_disconnect(t_netserver *x, t_symbol *s, t_floatarg f)
+{
+   int client, i, found = 0, sock = f;
+   if(x->x_nconnections <= 0)
+   {
+	  if (x->x_log_pri >= LOG_WARNING)
+		 post("netserver: no clients connected");
+	  return;
+   }
+   for(i = 0; i < x->x_nconnections; i++)
+   {
+	  if(x->x_fd[i] == sock)
+	  {
+	  		//post("disconnect client:%d socket:%d found", i, sock);
+	  		/* rudely close the connection */
+			sys_rmpollfn(sock);
+			sys_closesocket(sock);
+			found = 1;
+		}
+	}
+   if (!found)
+	  post("netserver: not a valid socket number (%d)", sock);
+}
+
 /* broadcasts a message to all connected clients */
 static void netserver_broadcast(t_netserver *x, t_symbol *s, int argc, t_atom *argv)
 {
@@ -678,6 +704,7 @@ void netserver_setup(void)
    class_addmethod(netserver_class, (t_method)netserver_send, gensym("send"), A_GIMME, 0);
    class_addmethod(netserver_class, (t_method)netserver_client_send, gensym("client"), A_GIMME, 0);
    class_addmethod(netserver_class, (t_method)netserver_broadcast, gensym("broadcast"), A_GIMME, 0);
+   class_addmethod(netserver_class, (t_method)netserver_disconnect, gensym("disconnect"), A_FLOAT, 0);
 /* syslog log level messages */
    class_addmethod(netserver_class, (t_method)netserver_emerg, gensym("emerg"), 0);
    class_addmethod(netserver_class, (t_method)netserver_emerg, gensym("emergency"), 0);

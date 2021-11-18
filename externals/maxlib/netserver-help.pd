@@ -1,18 +1,18 @@
-#N canvas 588 255 727 466 12;
-#X floatatom 41 371 5 0 0 0 - - - 0 0 1, f 5;
-#X floatatom 79 346 5 0 0 0 - - - 0 0 1, f 5;
-#X symbolatom 156 299 10 0 0 0 - - - 0 0 1, f 10;
-#X text 94 370 received data;
-#X text 132 346 number of connections;
+#N canvas 588 282 727 527 12;
+#X floatatom 41 431 5 0 0 0 - - - 0 0 1, f 5;
+#X floatatom 79 406 5 0 0 0 - - - 0 0 1, f 5;
+#X symbolatom 156 359 10 0 0 0 - - - 0 0 1, f 10;
+#X text 94 430 received data;
+#X text 132 406 number of connections;
 #X msg 41 72 print;
-#X floatatom 117 320 5 0 0 0 - - - 0 0 1, f 5;
-#X text 175 324 socket number;
+#X floatatom 117 380 5 0 0 0 - - - 0 0 1, f 5;
+#X text 175 384 socket number;
 #X msg 95 197 broadcast hallo world!;
-#X text 280 197 send to all clients;
+#X text 270 197 send to all clients;
 #X text 130 33 written by Olaf Matthes <olaf.matthes@gmx.de>;
-#X obj 41 271 netserver 3000;
+#X obj 41 331 netserver 3000;
 #X text 129 138 send message to client no. 1;
-#X text 248 299 client's IP address;
+#X text 248 359 client's IP address;
 #X obj 469 207 netclient;
 #X msg 490 134 connect localhost 3000;
 #X msg 503 161 disconnect;
@@ -27,23 +27,24 @@
 #X text 196 109 "send <socketnumber> <data>";
 #X text 102 88 send message on specified socket;
 #X text 192 161 "client <clientnumber> <data>";
-#X text 38 15 netclient :: simple client that connects to netserver
-;
-#N canvas 808 479 439 233 META 0;
+#N canvas 844 482 439 268 META 0;
 #X text 14 32 LICENSE GPL v2;
 #X text 14 12 KEYWORDS control network;
 #X text 14 112 OUTLET_1 float;
 #X text 14 52 DESCRIPTION simple client that connects to netserver
 ;
-#X text 14 72 INLET_0 send connect disconnect;
 #X text 14 92 OUTLET_0 list;
-#X text 14 132 AUTHOR Olaf Matthes <olaf.matthes@gmx.de> and Ivica
+#X text 14 172 AUTHOR Olaf Matthes <olaf.matthes@gmx.de> and Ivica
 Ico Bukvic <ico@vt.edu>;
-#X text 14 168 HELP_PATCH_AUTHORS "pd meta" information added by Jonathan
+#X text 14 208 HELP_PATCH_AUTHORS "pd meta" information added by Jonathan
 Wilkes for Pd version 0.42. Help file updated by Ivica Ico Bukvic 2021
 ;
-#X restore 665 438 pd META;
-#N canvas 673 280 626 393 info_and_debugging 0;
+#X text 14 132 OUTLET_2 float;
+#X text 14 152 OUTLET_3 symbol;
+#X text 14 72 INLET_0 broadcast client connect disconnect print send
+;
+#X restore 665 498 pd META;
+#N canvas 673 289 626 393 info_and_debugging 0;
 #X obj 36 350 outlet;
 #X text 261 254 outputs current netserver status into console;
 #X msg 56 104 alert;
@@ -67,12 +68,17 @@ quiet., f 79;
 #X connect 7 0 0 0;
 #X connect 8 0 0 0;
 #X connect 11 0 0 0;
-#X restore 114 237 pd info_and_debugging;
-#X text 12 404 This example demonstrates how to set up a client/server
+#X restore 115 237 pd info_and_debugging;
+#X text 12 464 This example demonstrates how to set up a client/server
 connection. Data sent by the client gets received and displayed by
 the server imediately. Or just try it the other way round..., f 85
 ;
-#X text 130 53 improvements by Ivica Ico Bukvic <ico@vt.edu>;
+#X text 130 51 improvements by Ivica Ico Bukvic <ico@vt.edu>;
+#X floatatom 122 270 5 0 0 0 - - - 0 0 1, f 5;
+#X msg 122 298 disconnect \$1;
+#X text 167 270 disconnect client using socket number;
+#X text 38 15 netserver :: simple client that connects to netserver
+;
 #X connect 5 0 11 0;
 #X connect 8 0 11 0;
 #X connect 11 0 0 0;
@@ -89,4 +95,6 @@ the server imediately. Or just try it the other way round..., f 85
 #X connect 23 1 22 0;
 #X connect 23 2 21 0;
 #X connect 24 0 11 0;
-#X connect 30 0 11 0;
+#X connect 29 0 11 0;
+#X connect 32 0 33 0;
+#X connect 33 0 11 0;
