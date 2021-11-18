@@ -1,5 +1,11 @@
 PD-L2ORK TODO:
-*gui_canvas_scroll_to_gobj should only scroll to an object if doing so improves situation (e.g. if the object is wider than the screen, then scrolling won't fix anything)?
+*large boxes with line break on a hyphen spill over (see filter-remote-admin-messages in the L2Ork-Tweeter-Server).
+
+*netserver should be able to disconnect clients.
+
+*receive is now reconfigurable, just like the send object when the scope is empty (or equal to &s_). update supporting help file.
+
+*pddp_link does not re-instantiate when exiting editing it without having it changed.
 
 *refine window heights for various dialogs, so that they always display fully on-screen.
 
@@ -30,6 +36,9 @@ RARE:
 *Pd-L2Ork sporadic crashes when opening/closing L2OrkTweet.pd and L2Ork-Tweeter.pd. These are now sparser (suspect something on the nw.js side of things).
 
 *check for stray/sporadic bug where bang and other objects stop working and bang object gets stuck in on mode until the mouse is moved (nw.js bug? UPDATE: it appears at least one of the sources was a bug in the scroll_to_gobj call that was fixed on 2021-11-01).
+
+MAYBE:
+*gui_canvas_scroll_to_gobj should only scroll to an object if doing so improves situation (e.g. if the object is wider than the screen, then scrolling won't fix anything)?
 
 
 
@@ -195,7 +204,7 @@ TWEETER DONE:
 
 
 HELP FILES TODO:
-*Unfinished context help patch dealing with $0, $1, and $2.
+*Unfinished context help patch dealing with $0, $1, and $2 (all_about_scope_locality.pd).
 
 
 
