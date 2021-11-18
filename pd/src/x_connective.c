@@ -371,11 +371,21 @@ static void receive_anything(t_receive *x, t_symbol *s, int argc, t_atom *argv)
     outlet_anything(x->x_obj.ob_outlet, s, argc, argv);
 }
 
+static void receive_set2(t_receive *x, t_symbol *s)
+{
+    pd_unbind(&x->x_obj.ob_pd, x->x_sym);
+    x->x_sym = s;
+    pd_bind(&x->x_obj.ob_pd, s);
+}
+
 static void *receive_new(t_symbol *s)
 {
     t_receive *x = (t_receive *)pd_new(receive_class);
     x->x_sym = s;
     pd_bind(&x->x_obj.ob_pd, s);
+    if (s == &s_)
+        inlet_new(&x->x_obj, &x->x_obj.ob_pd,
+            gensym("set"), gensym("set2"));
     outlet_new(&x->x_obj, 0);
     return (x);
 }
@@ -388,7 +398,7 @@ static void receive_free(t_receive *x)
 static void receive_setup(void)
 {
     receive_class = class_new(gensym("receive"), (t_newmethod)receive_new, 
-        (t_method)receive_free, sizeof(t_receive), CLASS_NOINLET, A_DEFSYM, 0);
+        (t_method)receive_free, sizeof(t_receive), 0, A_DEFSYM, 0);
     class_addcreator((t_newmethod)receive_new, gensym("r"), A_DEFSYM, 0);
     class_addbang(receive_class, receive_bang);
     class_addfloat(receive_class, (t_method)receive_float);
@@ -396,6 +406,8 @@ static void receive_setup(void)
     class_addpointer(receive_class, receive_pointer);
     class_addlist(receive_class, receive_list);
     class_addanything(receive_class, receive_anything);
+    class_addmethod(receive_class, (t_method)receive_set2,
+        gensym("set2"), A_SYMBOL, 0);
 }
 
 /* -------------------------- select ------------------------------ */
