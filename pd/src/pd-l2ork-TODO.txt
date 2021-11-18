@@ -136,6 +136,7 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Receive is now reconfigurable, just like the send object, when its scope is empty (or equal to &s_). updated supporting help file.
 *Fixed a bug where large text boxes with line break on a hyphen spilled over the box boundaries (originally detected in the filter-remote-admin-messages in the L2Ork-Tweeter-Server).
 *Added ability for the netserver object to disconnect clients based on their socket number, updated and improved both netserver and netclient help files.
+*Fixed bug where objects that received canvas_f call as a separate line (e.g. #X f <number>) did not work, whereas those that had a ", <number>;" after their object creation and its arguments did.
 
 
 
