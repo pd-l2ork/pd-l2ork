@@ -300,7 +300,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
                     // since HTML line breaks also allow for those to happen
                     // at a point where the hyphen is.
                     foundit_bv =
-                        lastone(x->x_buf + inindex_b, '-', maxindex_b + 1);
+                        lastone(x->x_buf + inindex_b, '-', maxindex_b);
                     // if '-' is chosen for the linebreak, we add one to the string
                     // size and we make eatchar 0 to ensure '-' is not dropped
                     if (foundit_bv > foundit_b) {
