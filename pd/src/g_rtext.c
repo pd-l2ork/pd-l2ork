@@ -230,6 +230,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
         int reportedindex = 0;
         t_canvas *canvas = glist_getcanvas(x->x_glist);
         int widthspec_c = x->x_text->te_width; // width if any specified
+        //post("widthspec_c=%d", widthspec_c);
         // width limit in chars
         int widthlimit_c = (widthspec_c ? widthspec_c : BOXWIDTH);
         int inindex_b = 0; // index location in the buffer
@@ -288,6 +289,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
             {
                 //post("no n or v found %d", foundit_b);
                 /* too much text to fit in one line? */
+                //post("inchars_c=%d widthlimit_c=%d", inchars_c, widthlimit_c);
                 if (inchars_c > widthlimit_c)
                 {
                     /* is there a space to break the line at?  OK if it's even

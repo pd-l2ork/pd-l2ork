@@ -3097,6 +3097,13 @@ extern t_pd *last_typedmess_pd; // same as above
 
 static void canvas_f(t_canvas *x, t_symbol *s, int argc, t_atom *argv)
 {
+    /*
+    post("canvas_f arg=%d gl_list?=%d canvas=%lx getcurrent=%lx",
+        (t_int)atom_getfloatarg(0, argc, argv),
+        (x->gl_list ? 1 : 0),
+        x,
+        canvas_getcurrent());
+    */
     static int warned_future_version;
     static int warned_old_syntax;
     //fprintf(stderr,"canvas_f %zx %d current=%zx %s\n",
@@ -3112,8 +3119,10 @@ static void canvas_f(t_canvas *x, t_symbol *s, int argc, t_atom *argv)
     }
     // if we are part of a restore message
     // of a subpatch in the form "#X restore..., f 123456789+;"
-    if (!x->gl_list || !strcmp(last_typedmess->s_name, "restore"))
+    if (!x->gl_list && !strcmp(last_typedmess->s_name, "restore"))
     {
+        //post("...x=%lx gl_owner=%lx isgraph=%d width=%d",
+        //  x, x->gl_owner, x->gl_isgraph, x->gl_obj.te_width);
         if (x->gl_owner && !x->gl_isgraph)
         {
             // this means that we are a canvas that
@@ -3127,21 +3136,27 @@ static void canvas_f(t_canvas *x, t_symbol *s, int argc, t_atom *argv)
             }
             xp = x->gl_owner;
             g = &x->gl_gobj;
+            //post("...A");
         }
-        else return;
+        else
+        {
+            //post("...B");
+            return;
+        }
     }
     else
     {
-        for (g = x->gl_list; g2 = g->g_next; g = g2)
+        for (g = x->gl_list; g && g->g_next; g = g->g_next)
             ;
-        //fprintf(stderr,"same canvas .x%zx .x%zx\n", (t_uint)g, (t_uint)x);
+        //post("...same canvas .x%zx .x%zx\n", (t_uint)g, (t_uint)x);
     }
-    if ((ob = pd_checkobject(&g->g_pd)) || pd_class(&g->g_pd) == canvas_class)
+    if (g && ((ob = pd_checkobject(&g->g_pd)) || pd_class(&g->g_pd) == canvas_class))
     {
-        //fprintf(stderr,"f received\n");
         ob->te_width = atom_getfloatarg(0, argc, argv);
+        //post("...f received %d", (t_int)ob->te_width);
         if (glist_isvisible(xp))
         {
+            //post("...isvisible");
             gobj_vis(g, xp, 0);
             gobj_vis(g, xp, 1);
         }
