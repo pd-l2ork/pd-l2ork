@@ -287,7 +287,7 @@ void binbuf_gettext(t_binbuf *x, char **bufp, int *lengthp)
     }
     if (length && buf[length-1] == ' ')
     {
-        // 2021-11-18 ico@vt.edu: here the new length is equal to
+        // 2021-11-18 ico@vt.edu: here the new length (3rd arg) is equal to
         // length and not length-1 because realloc in resizebytes
         // adds a terminating character
         if (newbuf = t_resizebytes(buf, length, length))
@@ -339,7 +339,10 @@ void binbuf_getrawtext(t_binbuf *x, char **bufp, int *lengthp)
     }
     if (length && buf[length-1] == ' ')
     {
-        if (newbuf = t_resizebytes(buf, length, length-1))
+        // 2021-11-18 ico@vt.edu: here the new length (3rd arg) is equal to
+        // length and not length-1 because realloc in resizebytes
+        // adds a terminating character
+        if (newbuf = t_resizebytes(buf, length, length))
         {
             buf = newbuf;
             length--;
