@@ -1272,10 +1272,20 @@ var canvas_events = (function() {
             lines = clipboard_data.split("\n");
             for (i = 0; i < lines.length; i++) {
                 line = lines[i];
+                //pdgui.post("copyfromexternalbuffer " + lines.length + " <" + line + ">" +
+                //    " -3=<" + line.slice(-3, -2) + "> -2=<" + line.slice(-2, -1) + ">");
                 // process pd_message if it ends with a semicolon that
                 // isn't preceded by a backslash
-                if (line.slice(-1) === ";" &&
-                    (line.length < 2 || line.slice(-2, -1) !== "\\")) {
+                // ico 2021-11-18: differentiate between windows and *nix
+                // string length and adjust slice values accordingly. it appears
+                // only the first line is affected on windows...
+                if (
+                    (pdgui.nw_os_is_windows && line.slice(-2, -1) === ';' &&
+                    (line.length < 2 || line.slice(-3, -2) !== '\\'))
+                    ||
+                    (line.slice(-1) === ";" &&
+                    (line.length < 2 || line.slice(-2, -1) !== "\\"))
+                   ) {
                     if (pd_message === "") {
                         pd_message = line;
                     } else {
@@ -1305,6 +1315,7 @@ var canvas_events = (function() {
                 } else {
                     pd_message = pd_message + " " + line;
                     pd_message = pd_message.replace(/\n/g, "");
+                    //pdgui.post("else <" + pd_message + ">");
                 }
             }
             // This signals to the engine that we're done filling the external

@@ -23,6 +23,8 @@ PD-L2ORK TODO:
 *think about a way to deterministically inform both front-end and the back-end that the canvas has indeed loaded. See https://stackoverflow.com/questions/4057236/how-to-add-onload-event-to-a-div-element/55106785#58838457 (Third Attempt (and Definitive Solution))
 
 RARE:
+*sometimes closing a newly created window before it has posted or possibly creating two windows by quickly double clicking on a subpatch irreversibly breaks the front-end. Need the better checks'n'balances.
+
 *occasionally when editing a new object text is not displaying until you click outside it. happened with the modulo object.
 
 *Pd-L2Ork sporadic crashes when opening/closing L2OrkTweet.pd and L2Ork-Tweeter.pd. These are now sparser (suspect something on the nw.js side of things).
@@ -136,7 +138,9 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Receive is now reconfigurable, just like the send object, when its scope is empty (or equal to &s_). updated supporting help file.
 *Fixed a bug where large text boxes with line break on a hyphen spilled over the box boundaries (originally detected in the filter-remote-admin-messages in the L2Ork-Tweeter-Server).
 *Added ability for the netserver object to disconnect clients based on their socket number, updated and improved both netserver and netclient help files.
-*Reworked pasting of patch content (copytextfromclipboard) directly into the patch to ensure that optional width info (provided as , f <width>;) is reformatted as a new line #X f <width>; and previous line terminated by a ;.
+*Reworked pasting of patch content (copyfromexternalbuffer) directly into the patch to ensure that optional width info (provided as , f <width>;) is reformatted as a new line #X f <width>; and previous line terminated by a ;.
+*Further adjustments to the copyfromexternalbuffer to address idiosyncrasies of Windows.
+
 
 
 
@@ -195,7 +199,11 @@ TWEETER DONE:
 *Disabled sending data to the server from the Teacher widget when using user 0 (which is treated as disabled mode).
 *Reorganized patch locations. Server-Commands-Example was renamed to Conductor-Commands and moved in the admin subfolder. "Into the Abyss" work presets, loops, and score have been moved into a newly created works subfolder. This has also freed-up the creation of new presets past the preset 110.
 *Added documentation on conductor control variables and added overdrive-override that can override user level toggle (e.g. using ' or return keys).
-
+(in-progress)
+*Initialized load preset value to 11 to avoid having to cycle by default through empty presets.
+*Refactored admin commands to make them easier to edit and expand.
+*Added l2ork-inst-level-at l2ork-inst-level-all-at admin commands to the Server and Tweeter client. Expanded the L2OrkTweet to accommodate new functionality.
+*Updated Conductor-Commands documentation, adding new server commands.
 
 
 
