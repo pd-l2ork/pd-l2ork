@@ -1248,7 +1248,7 @@ var canvas_events = (function() {
             document.getElementById("save_before_quit").close();
         },
         paste_from_pd_file: function(name, clipboard_data) {
-            var line, lines, i, pd_message;
+            var line, lines, i, j, pd_message, pd_submessages;
             // This lets the user copy some Pd source file from another
             // application and paste the code directly into a canvas window
             // (empty or otherwise). It does a quick check to make sure the OS
@@ -1281,8 +1281,27 @@ var canvas_events = (function() {
                     } else {
                         pd_message = pd_message + " " + line;
                     }
-                    pdgui.pdsend(name, "copyfromexternalbuffer", pd_message);
+                    // ico 2021-11-18: convert the defunct format:
+                    //   object args, f <num> \;
+                    // to
+                    //   object args \;
+                    //   #X f <num> \;
+                    //pd_message = pd_message.replace(/(?<!\\),/g, ';\n#X');
+                    pd_submessages = pd_message.match(/(?:\\,|[^,])+/g);
+                    if (pd_submessages.length == 2) {
+                        pd_submessages[0] = pd_submessages[0] + ";";
+                        pd_submessages[1] = "#X" + pd_submessages[1];
+                    }
+                    for (j = 0; j < pd_submessages.length; j++) {
+                        //pdgui.post("...{" + pd_submessages[j] + "}");
+                        pdgui.pdsend(name, "copyfromexternalbuffer", pd_submessages[j]);
+                    }
+                    //pd_message = pd_message.replace(/;/g, "\\;");
+
+                    //pdgui.post("sending to backend line <"+ pd_message +">");
+                    //pdgui.pdsend(name, "copyfromexternalbuffer", pd_message);
                     pd_message = "";
+                    pd_submessages = null;
                 } else {
                     pd_message = pd_message + " " + line;
                     pd_message = pd_message.replace(/\n/g, "");

@@ -3110,7 +3110,7 @@ static void canvas_f(t_canvas *x, t_symbol *s, int argc, t_atom *argv)
     //    (t_int)x, argc, canvas_getcurrent(),
     //    last_typedmess != NULL ? last_typedmess->s_name : "none");
     t_canvas *xp = x; //parent window for a special case dealing with subpatches
-    t_gobj *g, *g2;
+    t_gobj *g;
     t_object *ob;
     if (argc > 1 && !warned_future_version)
     {
@@ -3147,16 +3147,17 @@ static void canvas_f(t_canvas *x, t_symbol *s, int argc, t_atom *argv)
     else
     {
         for (g = x->gl_list; g && g->g_next; g = g->g_next)
-            ;
-        //post("...same canvas .x%zx .x%zx\n", (t_uint)g, (t_uint)x);
+            ; //post("...searching %lx", g);
+        //if (g)
+        //    post("...C g=%zx g->g_pd=%lx x=%zx\n", (t_uint)g, (t_int)g->g_pd, (t_uint)x);
     }
     if (g && ((ob = pd_checkobject(&g->g_pd)) || pd_class(&g->g_pd) == canvas_class))
     {
         ob->te_width = atom_getfloatarg(0, argc, argv);
-        //post("...f received %d", (t_int)ob->te_width);
+        //post("...D f received %d", (t_int)ob->te_width);
         if (glist_isvisible(xp))
         {
-            //post("...isvisible");
+            //post("...unvising and vising");
             gobj_vis(g, xp, 0);
             gobj_vis(g, xp, 1);
         }
