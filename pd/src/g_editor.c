@@ -7800,7 +7800,7 @@ static void canvas_paste(t_canvas *x)
             /* simulate keystrokes as if the copy buffer were typed in. */
 //#if defined(MSW) || defined(__APPLE__)
             /* for Mac or Windows,  ask the GUI to send the clipboard down */
-        sys_gui("pdtk_pastetext\n");
+        //sys_gui("pdtk_pastetext\n");
 //#else
             /* in X windows we kept the text in our own copy buffer */
 /*        int i;
