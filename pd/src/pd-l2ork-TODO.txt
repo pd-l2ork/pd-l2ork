@@ -14,11 +14,9 @@ PD-L2ORK TODO:
 
 *K12 menu/mode.
 
-*object autocomplete.
+*add text object name autocomplete options.
 
 *fix inefficiency of the profuse console output.
-
-*add ability to custom name each instance of pd-l2ork (pd~?).
 
 *think about a way to deterministically inform both front-end and the back-end that the canvas has indeed loaded. See https://stackoverflow.com/questions/4057236/how-to-add-onload-event-to-a-div-element/55106785#58838457 (Third Attempt (and Definitive Solution))
 
@@ -33,6 +31,8 @@ RARE:
 
 MAYBE:
 *gui_canvas_scroll_to_gobj should only scroll to an object if doing so improves situation (e.g. if the object is wider than the screen, then scrolling won't fix anything)?
+
+*add ability to custom name each instance of pd-l2ork (pd~?).
 
 
 
@@ -140,6 +140,7 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Added ability for the netserver object to disconnect clients based on their socket number, updated and improved both netserver and netclient help files.
 *Reworked pasting of patch content (copyfromexternalbuffer) directly into the patch to ensure that optional width info (provided as , f <width>;) is reformatted as a new line #X f <width>; and previous line terminated by a ;.
 *Further adjustments to the copyfromexternalbuffer to address idiosyncrasies of Windows.
+*Revised and finished context help patch dealing with $0, $1, and $2 (all_about_scope_and_locality.pd).
 
 
 
@@ -199,16 +200,17 @@ TWEETER DONE:
 *Disabled sending data to the server from the Teacher widget when using user 0 (which is treated as disabled mode).
 *Reorganized patch locations. Server-Commands-Example was renamed to Conductor-Commands and moved in the admin subfolder. "Into the Abyss" work presets, loops, and score have been moved into a newly created works subfolder. This has also freed-up the creation of new presets past the preset 110.
 *Added documentation on conductor control variables and added overdrive-override that can override user level toggle (e.g. using ' or return keys).
-(in-progress)
 *Initialized load preset value to 11 to avoid having to cycle by default through empty presets.
 *Refactored admin commands to make them easier to edit and expand.
 *Added l2ork-inst-level-at l2ork-inst-level-all-at admin commands to the Server and Tweeter client. Expanded the L2OrkTweet to accommodate new functionality.
 *Updated Conductor-Commands documentation, adding new server commands.
+*Added loadbang to (re)send main out levels to every instantiated L2OrkTweet.pd abstraction to prevent no volume issue.
+*Reworked the overdrive-override logic to prevent some of the buggy behavior between the keyboard shortcuts and the levels sent by the server.
+
 
 
 
 HELP FILES TODO:
-*Unfinished context help patch dealing with $0, $1, and $2 (all_about_scope_locality.pd).
 
 
 

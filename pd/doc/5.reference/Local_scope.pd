@@ -1,0 +1,133 @@
+#N canvas 146 22 400 897 10;
+#X text 17 67 There are many cases where you may want messages to be
+sent within a single patch. For example \, you might have designed
+many modules with a receive object called [r number] but you want that
+'number' to be passed to only the objects within a single module so
+that they don't effect the performance of the other modules.;
+#X obj 67 235 r \$1;
+#X obj 22 259 s \$1;
+#X floatatom 22 235 5 0 0 0 - - - 0 0 1, f 5;
+#X floatatom 67 259 5 0 0 0 - - - 0 0 1, f 5;
+#X floatatom 112 235 5 0 0 0 - - - 0 0 1, f 5;
+#X floatatom 171 259 5 0 0 0 - - - 0 0 1, f 5;
+#X obj 171 235 r \$1-foo;
+#X obj 112 259 s \$1-foo;
+#X floatatom 235 235 5 0 0 0 - - - 0 0 1, f 5;
+#X floatatom 304 259 5 0 0 0 - - - 0 0 1, f 5;
+#X obj 304 235 r \$2-dave;
+#X obj 235 259 s \$2-dave;
+#X text 16 158 In these cases \, you should use "local variables" ...as
+in [r \$0-number] to name your send and receive objects. Local variables
+are assigned using dollar signs and numbers. There is more documentation
+about this in 2.control.examples/locality.pd;
+#X text 14 287 In the examples above we have used a variable (\$1)
+to name these [send] and [receive] objects. The value of this variable
+is assigned according to the first argument passed to this subpatch
+(in this case 2). See below for a way to print such information out.
+;
+#X obj 17 394 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
+#X obj 17 419 \$0;
+#X obj 43 394 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
+#X obj 43 446 print;
+#X text 15 505 If you would like Pd to assign a unique value to your
+local variable \, use \$0. This will ensure that your local variables
+will always be 'local' and won't ever correspond with variables in
+other open patches or abstractions. Please note \, however \, as described
+above \, that this unique identifier will be shared by all non-abstraction
+subpatches \, as they are seen as being a part of the same parent
+patch.;
+#X obj 43 419 symbol \$1;
+#X text 17 614 If you want to define the value of the local variables
+\, you can use 'arguments' when you create the abstraction or a subpatch
+and then refer to those arguments by using \$1 (for the first agrument)
+or \$2 (for the second) and so on. Notice in the 'title' of this patch
+\, you should see:;
+#X text 106 687 Local_scope (and inheritance);
+#X text 179 362 Note that \$0 refers to the unique identifier the top
+(root) patch is assigned by pd-l2ork when opened. subpatches inherit
+this value \, but abstractions do not (they get their own value). \$1
+object is implicitly a float \, so for arguments 1 and 2 we need to
+use symbol instead. If we do not \, the object will fail to create.
+, f 33;
+#X obj 106 394 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000 1;
+#X obj 106 419 symbol \$2;
+#X text 18 709 The words "and" and "inheritance" are arguments that
+we used when we created the abstraction called "Local_scope". These
+two agruments are now available in this patch by using \$1 or \$2 variables.
+There's more information about this in the section called 'Inheritance'.
+Note that while subpatches can also receive arguments \, they are not
+reflected in the subpatch title. They also share the same \$0 value
+as their parent patch since they are considered a part of the parent
+patch. See below for an example. Note that non-dollar arguments do
+not get passed onto the subpatches \, like they do with abstractions.
+;
+#N canvas 145 31 390 548 Inheritance 0;
+#X text 20 18 The word "Inherit" means to "receive a characteristic
+from one's parent".;
+#X text 19 59 In Pd \, all abstracions and subpatches have 'parents'
+-- the parent is the main patch which created the instance of the abstraction
+or subpatch.;
+#X obj 119 301 symbol \$1;
+#X symbolatom 119 330 0 0 0 0 - - - 0 0 1;
+#X obj 119 277 bng 15 250 50 0 empty empty click\ here -18 -9 0 10
+#fcfcfc #000000 #000000 1;
+#X symbolatom 216 330 0 0 0 0 - - - 0 0 1;
+#X obj 216 301 symbol \$2;
+#X text 24 388 So \, if a [send] object is named "\$1-foo" or "\$2-foo"
+inside this abstraction \, Pd identifies that [send] object as "and-foo"
+or "inheritance-foo"., f 57;
+#X obj 25 466 s and-foo;
+#X obj 25 516 s \$1-foo;
+#X obj 25 445 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fcfcfc #000000
+#000000 1;
+#X obj 25 493 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fcfcfc #000000
+#000000 1;
+#X obj 90 493 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fcfcfc #000000
+#000000 1;
+#X obj 90 466 r and-foo;
+#X obj 154 445 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fcfcfc #000000
+#000000 1;
+#X obj 154 493 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fcfcfc #000000
+#000000 1;
+#X obj 267 493 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fcfcfc #000000
+#000000 1;
+#X obj 154 466 s inheritance-foo;
+#X obj 267 466 r inheritance-foo;
+#X obj 154 516 s \$2-foo;
+#X text 18 117 We can use 'arguments' when creating an abstraction
+in a patch to send values to those 'children'. For example \, this
+help document contains a number of different subpatches and abstractions.
+One abstraction is called "Local_scope" -- you are currently reading
+a subpatch in that abstraction. When I created that abstraction in
+the parent patch \, I defined two arguments: "and" and "inheritance".
+So \, those two values are now available throughout this abstraction
+and all of its subpatches!;
+#X connect 2 0 3 0;
+#X connect 4 0 2 0;
+#X connect 4 0 6 0;
+#X connect 6 0 5 0;
+#X connect 10 0 8 0;
+#X connect 11 0 9 0;
+#X connect 13 0 12 0;
+#X connect 14 0 17 0;
+#X connect 15 0 19 0;
+#X connect 18 0 16 0;
+#X restore 18 863 pd Inheritance;
+#X text 18 15 LOCAL SCOPE -send and receive messages within a SINGLE
+PATCHTHIS PATCH SHOULD NOT BE OPENED DIRECTLY BUT THROUGH THE all_about_scope_and_locality.pd
+PATCH.;
+#X connect 1 0 4 0;
+#X connect 3 0 2 0;
+#X connect 5 0 8 0;
+#X connect 7 0 6 0;
+#X connect 9 0 12 0;
+#X connect 11 0 10 0;
+#X connect 15 0 16 0;
+#X connect 16 0 18 0;
+#X connect 17 0 20 0;
+#X connect 20 0 18 0;
+#X connect 24 0 25 0;
+#X connect 25 0 18 0;
