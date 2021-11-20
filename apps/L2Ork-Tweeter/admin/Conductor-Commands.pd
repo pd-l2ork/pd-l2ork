@@ -1,4 +1,4 @@
-#N canvas 48 110 1265 655 10;
+#N canvas 48 110 1296 655 10;
 #X obj 22 619 s chat-out;
 #X msg 34 117 chat admin p:l2orklicious l2ork-sync-all;
 #X msg 22 38 chat admin p:l2orklicious l2ork-length 6000 3000 500 6000
@@ -24,15 +24,6 @@
 #X obj 466 517 s load-session-network-sync;
 #X msg 141 511 chat admin p:l2orklicious l2ork-teach 1 overdrive-override
 1, f 32;
-#X text 460 20 possible l2ork-conduct commands:carrier (0-4)echo-amp
-(0-1)echo-fb (0-0.999)echo-ms (0.001-9999)flanger-amp (0-1)flanger-hz
-(0.001-100)flanger-mod-amp (0-100)flanger-ms (0.001-50)harmonicity
-(0-99999)hover (0/1)inst-name <symbol>keyboard (0/1)loop (0/1)loop-length
-(500-60000)mod-amp (1-9999)modulator (0-4)note-dur (1-???)octave
-(-192-192) *this is transpositionout-amp (0-100)out-pan (0-1.5708)overdrive
-(0.1-10)overdrive-override (0.1-10) *overrides user togglereverb-amp
-(0-1)reverb-type (0-3)tracker (0/1)tracker-time (beat(0-63) \, offset
-(ms) \, play(0/1))solo (0/1)username <symbol>;
 #X msg 466 576 \; session-sync-offset -1 \; load-session-network-sync
 4th-beat-final-7;
 #X msg 77 421 chat admin p:l2orklicious l2ork-load 4th-beat-final-7
@@ -47,12 +38,14 @@
 #X text 460 442 special case commands that are broadcast fromthe local
 client engine and require theL2Ork-Tweeter-Teacher patch to be open:
 ;
-#X text 773 20 remote admin uses chat system. see left for examples.
+#X text 803 20 remote admin uses chat system. see left for examples.
 possible admin commands: l2ork-conduct (see the possible command
 list on the left)l2ork-disconnect (user_num) l2ork-free-slot (user_num
 \, bumps them into audience) l2ork-guest-chat (1=default/0 \, toggles
-audience chat) l2ork-length (list of ms values for each user) l2ork-length-all
-(ms for all users) l2ork-load (session-name \, without the -session-coll.txt
+audience chat) l2ork-inst-level-at (user_num \, target_time \, target_level
+0.1-10)l2ork-inst-level-all-at (user_num \, target_time \, target_level
+l2ork-length (list of ms values for each user) l2ork-length-all (ms
+for all users) l2ork-load (session-name \, without the -session-coll.txt
 suffix) l2ork-load-sync-delay (ms \, sets sync delay after l2ork-load)
 l2ork-obfuscate (1/0=default \, obfuscates note letters to avoid misuse)
 l2ork-report (user_num \, requests their state report) l2ork-reset-client-list
@@ -61,12 +54,31 @@ distributes locally saved version to all) l2ork-set-password (new_password
 \, change the admin password) l2ork-sync-all (syncs all clients over
 network using the reset command) l2ork-teach (same as l2ork-conduct)
 , f 78;
-#X text 773 256 l2ork-sync-data and l2ork-sync-save-data admin commands
-are reserved for broadcasting locally saved session data \, while l2ork-sync-vis
-triggers visual sync with red color (using the reset button) \, signalling
-the global sync based on the session data. they are not meant to be
-used directly \, but only as part of the l2ork-load and l2ork-save
-commands., f 78;
+#X text 803 283 l2ork-inst-level and l2ork-inst-level-all-at allow
+for anticipating future events that need to be synchronized with a
+particular user's time on their timebar and which then triggers change
+in either their or entire ensemble's instrument level \, as denoted
+by the message's third argument. Note that due to logarithmic nature
+of the instrument level \, the lowest value is 0.1 \, not 0 also note
+that sending user_num 0 will disable last pending request and the monitoring
+system that remains active until the request is fulfilled. only one
+request per client is possible and any subsequent requests will override
+the previous one. requests remain active until fulfilled or disabled.l2ork-sync-data
+and l2ork-sync-save-data admin commands are reserved for broadcasting
+locally saved session data \, while l2ork-sync-vis triggers visual
+sync with red color (using the reset button) \, signalling the global
+sync based on the session data. they are not meant to be used directly
+\, but only as part of the l2ork-load and l2ork-save commands., f
+78;
+#X text 460 20 possible l2ork-conduct commands:carrier (0-4)echo-amp
+(0-1)echo-fb (0-0.999)echo-ms (0.001-9999)flanger-amp (0-1)flanger-hz
+(0.001-100)flanger-mod-amp (0-100)flanger-ms (0.001-50)harmonicity
+(0-99999)hover (0/1)inst-name <symbol>keyboard (0/1)loop (0/1)loop-length
+(500-60000)mod-amp (1-9999)modulator (0-4)note-dur (1-???)octave
+(-192-192) *this is transpositionout-amp (0-100)out-pan (0-1.5708)overdrive
+(0.1-10)overdrive-override (0.1-10) *overrides user inst. levelreverb-amp
+(0-1)reverb-type (0-3)tracker (0/1)tracker-time (beat(0-63) \, offset
+(ms) \, play(0/1))solo (0/1)username <symbol>;
 #X connect 1 0 0 0;
 #X connect 2 0 0 0;
 #X connect 5 0 6 0;
@@ -81,7 +93,7 @@ commands., f 78;
 #X connect 14 0 11 0;
 #X connect 15 0 14 0;
 #X connect 17 0 0 0;
-#X connect 20 0 0 0;
-#X connect 22 0 0 0;
+#X connect 19 0 0 0;
+#X connect 21 0 0 0;
+#X connect 22 0 16 0;
 #X connect 23 0 16 0;
-#X connect 24 0 16 0;

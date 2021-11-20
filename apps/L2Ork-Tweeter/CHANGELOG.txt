@@ -9,7 +9,16 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+19-11-2021 0.62
+*Initialized load preset value to 11 to avoid having to cycle by default through empty presets.
+*Refactored admin commands to make them easier to edit and expand.
+*Added l2ork-inst-level-at l2ork-inst-level-all-at admin commands to the Server and Tweeter client. Expanded the L2OrkTweet to accommodate new functionality.
+*Updated Conductor-Commands documentation, adding new server commands.
+*Added loadbang to (re)send main out levels to every instantiated L2OrkTweet.pd abstraction to prevent no volume issue.
+*Reworked the overdrive-override logic to prevent some of the buggy behavior between the keyboard shortcuts and the levels sent by the server.
+
 13-11-2021 0.61
+*Expanded documentation for the Conductor-Commands patch.
 *Further refinement of the "4th beat" work sessions, conductor-shortcuts patch, and presets.
 *Minor bug-fixes to the L2OrkTweet and the L2Ork-Tweeter-Server.
 
