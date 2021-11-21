@@ -2776,6 +2776,9 @@ static void canvas_rightclick(t_canvas *x, int xpos, int ypos, t_gobj *y_sel)
         canopen,
         cansaveas,
         isobject);
+    // ico 2021-11-21: revert cursor to default in case we are above
+    // an object (e.g. array) that has changed the cursor appearance
+    canvas_setcursor(x, CURSOR_RUNMODE_NOTHING);
 }
 
 /* ----  editors -- perhaps this and "vis" should go to g_editor.c ------- */
