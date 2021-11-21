@@ -11,7 +11,10 @@ CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
 19-11-2021 0.62
 *Initialized load preset value to 11 to avoid having to cycle by default through empty presets.
-*Refactored admin commands to make them easier to edit and expand.
+*Refactored admin commands to make them easier to edit and expand. Re-tested each of the admin messages and addressed bugs for obfuscation, loading/saving error messages, proper socket detection for the password change, filtering of messages that get printed out, and disabling of ping timeout for a user who got bumped to an audience/guest status via server command.
+*Improved handling of title-less sessions and announcing of user session loading when online.
+*Refactored select init calls to make them easier to locate inside the L2Ork-Tweeter.pd patch.
+*Added brute force disconnection when disconnection occurs to address the issue of potential stale sockets.
 *Added l2ork-inst-level-at l2ork-inst-level-all-at admin commands to the Server and Tweeter client. Expanded the L2OrkTweet to accommodate new functionality.
 *Updated Conductor-Commands documentation, adding new server commands.
 *Added loadbang to (re)send main out levels to every instantiated L2OrkTweet.pd abstraction to prevent no volume issue.
