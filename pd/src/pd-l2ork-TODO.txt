@@ -1,6 +1,4 @@
 PD-L2ORK TODO:
-*array editing cursor should revert to regular cursor upon right-click (and revert afterwards)
-
 *refine window heights for various dialogs, so that they always display fully on-screen.
 
 *port shell object to Windows.
@@ -143,6 +141,7 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Reworked pasting of patch content (copyfromexternalbuffer) directly into the patch to ensure that optional width info (provided as , f <width>;) is reformatted as a new line #X f <width>; and previous line terminated by a ;.
 *Further adjustments to the copyfromexternalbuffer to address idiosyncrasies of Windows.
 *Revised and finished context help patch dealing with $0, $1, and $2 (all_about_scope_and_locality.pd).
+*Array editing cursor should revert to regular cursor upon right-click (and revert afterwards).
 
 
 
