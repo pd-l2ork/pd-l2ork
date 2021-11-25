@@ -1,10 +1,8 @@
 ## Pd-L2Ork
 
-maintainers:
+maintainer:
 
 * Ivica Ico Bukvic <ico@vt.edu>
-* Albert Graef <aggraef@gmail.com>
-* Jonathan Wilkes <jancsika@yahoo.com>
 
 [Mailing List](http://disis.music.vt.edu/cgi-bin/mailman/listinfo/l2ork-dev)
 
