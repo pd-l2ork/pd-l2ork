@@ -305,9 +305,10 @@ then
 			# ico 2021-11-29: fix libdl issue with msys2 that makes Gem fail to build on Windows, the brute way
 			# LATER: think of a way that makes this more universal. will the statement always end with an DLL'?
 			if [[ $os == "win" || $os == "win64" ]]; then
-				sed -i 's/lt_cv_deplibs_check_method=.*DLL'\''/lt_cv_deplibs_check_method=pass_all/g' aclocal.m4
+				cp -f ../l2ork_addons/libtool.m4 m4/
 			fi
-		./autogen.sh
+			./autogen.sh
+			exit 0
 		fi
 		export INCREMENTAL=""
 	else
