@@ -142,6 +142,7 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Further adjustments to the copyfromexternalbuffer to address idiosyncrasies of Windows.
 *Revised and finished context help patch dealing with $0, $1, and $2 (all_about_scope_and_locality.pd).
 *Array editing cursor should revert to regular cursor upon right-click (and revert afterwards).
+*Fixed Gem not building properly on newer msys2 installs.
 
 
 
