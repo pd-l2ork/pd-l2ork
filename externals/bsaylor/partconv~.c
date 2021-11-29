@@ -374,7 +374,7 @@ static void *partconv_new(t_symbol *s, int argc, t_atom *argv)
                 argc = 2;
                 argv = sane_defaults;
                 pd_error(x, "partconv~: no arguments given. Setting some "
-			"sane defaults to keep Purr Data from crashing.");
+			"sane defaults to keep Pd-L2Ork from crashing.");
             }
             else
             {
