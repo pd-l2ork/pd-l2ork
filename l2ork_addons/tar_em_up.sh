@@ -34,7 +34,7 @@ then
 	echo "   The incremental options bypass Gem compilation. This saves"
 	echo "   (lots of) time, but the generated package will lack Gem"
 	echo "   unless it has already been built previously. NOTE: Building"
-	echo "   Gem is NOT supported on OSX right now."
+	echo "   Gem on OSX currently lacks proper GPU acceleration."
 	echo
 	echo "   The -k (keep) option doesn't clean before compilation,"
 	echo "   preserving the build products from a previous run. This"
@@ -285,23 +285,28 @@ then
 		# that things are set up properly in preparation of the build.
 		if [ ! -f Gem/configure ]; then clean=1; fi
 		if [ $clean -eq 0 ]; then
-		cd externals
+			cd externals
 		else
-		# clean files that may remain stuck even after doing global make clean (if any)
-		test $os == "osx" && make -C packages/darwin_app clean || true
-		cd externals/miXed
-		make clean || true # this may fail on 1st attempt
-		cd ../
-		make gem_clean || true # this may fail on 1st attempt
-		cd ../Gem/src/
-		make distclean || true # this may fail on 1st attempt
-		rm -rf ./.libs
-		rm -rf ./*/.libs
-		cd ../
-		make distclean || true # this may fail on 1st attempt
-		rm -f gemglutwindow.pd_linux
-		rm -f Gem.pd_linux
-		aclocal
+			# clean files that may remain stuck even after doing global make clean (if any)
+			test $os == "osx" && make -C packages/darwin_app clean || true
+			cd externals/miXed
+			make clean || true # this may fail on 1st attempt
+			cd ../
+			make gem_clean || true # this may fail on 1st attempt
+			cd ../Gem/src/
+			make distclean || true # this may fail on 1st attempt
+			rm -rf ./.libs
+			rm -rf ./*/.libs
+			cd ../
+			make distclean || true # this may fail on 1st attempt
+			rm -f gemglutwindow.pd_linux
+			rm -f Gem.pd_linux
+			aclocal
+			# ico 2021-11-29: fix libdl issue with msys2 that makes Gem fail to build on Windows, the brute way
+			# LATER: think of a way that makes this more universal. will the statement always end with an DLL'?
+			if [[ $os == "win" || $os == "win64" ]]; then
+				sed -i 's/lt_cv_deplibs_check_method=.*DLL'\''/lt_cv_deplibs_check_method=pass_all/g' aclocal.m4
+			fi
 		./autogen.sh
 		fi
 		export INCREMENTAL=""
