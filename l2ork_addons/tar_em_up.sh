@@ -308,7 +308,6 @@ then
 				cp -f ../l2ork_addons/libtool.m4 m4/
 			fi
 			./autogen.sh
-			exit 0
 		fi
 		export INCREMENTAL=""
 	else
