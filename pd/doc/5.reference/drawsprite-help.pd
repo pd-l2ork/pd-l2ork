@@ -120,7 +120,7 @@ for more information about them.;
 #X text 81 500 1) directory;
 #X text 91 570 Images may be: png \, jpg \, gif \, or svg;
 #X text 171 500 - directory in which a sequence of images may be found.
-Purr Data will load the images files found there in alphabetical order.
+Pd-L2Ork will load the images files found there in alphabetical order.
 Relative paths are relative to the patch.;
 #X obj 179 327 pddp/pddplink http://millionthvector.blogspot.com/p/free-sprites_12.html
 ;

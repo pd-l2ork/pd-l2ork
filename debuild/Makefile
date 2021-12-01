@@ -38,8 +38,8 @@ debversion = $(shell grep PD_L2ORK_VERSION ../pd/src/m_pd.h | sed 's|^.define *P
 # Debian revision number of the package.
 debrevision = 1
 # Source tarball and folder.
-debsrc = purr-data_$(debversion).orig.tar.gz
-debdist = purr-data-$(debversion)
+debsrc = pd-l2ork_$(debversion).orig.tar.gz
+debdist = pd-l2ork-$(debversion)
 
 # nw.js sdk
 # NOTE: arm packages need some special-casing, since they are released
@@ -72,7 +72,7 @@ debchange:
 
 debclean:
 	rm -rf $(debdist)
-	rm -f purr-data_*+git* purr-data-dbgsym_*+git*
+	rm -f pd-l2ork_*+git* pd-l2ork-dbgsym_*+git*
 
 deb: $(debsrc) $(addprefix debian/nwjs/, $(nwjs))
 # Unpack the source into our temporary build directory.

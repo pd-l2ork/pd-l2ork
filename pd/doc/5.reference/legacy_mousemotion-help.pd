@@ -51,7 +51,7 @@ methods to [draw] with data structures for a better mouse event interface.
 #X floatatom 161 230 5 0 0 0 y_pos - -, f 5;
 #X text 205 193 These coordinates are relative to the canvas window
 ;
-#X text 205 213 With the current Purr Data GUI there isn't an easy
+#X text 205 213 With the current Pd-L2Ork GUI there isn't an easy
 ;
 #X text 205 229 way to get the screen coordinates. But for legacy;
 #X text 205 244 externals this should be good enough.;

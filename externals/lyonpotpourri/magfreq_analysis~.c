@@ -299,7 +299,7 @@ void *magfreq_analysis_new(t_symbol *s, int argc, t_atom *argv)
             x->overlap = 1;
             pd_error(x, OBJECT_NAME
                 ": this object's default overlap of zero is incorrect. "
-                "Purr Data will change it to an overlap factor of 1 to "
+                "Pd-L2Ork will change it to an overlap factor of 1 to "
                 "prevent DSP errors. "
                 "For compatibility with Pd Vanilla please set the "
                 "arguments manually so that the overlap (third argument) "
@@ -314,7 +314,7 @@ void *magfreq_analysis_new(t_symbol *s, int argc, t_atom *argv)
             x->winfac = 1;
             pd_error(x, OBJECT_NAME
                 ": this object's default window factor of zero is "
-                "incorrect. Purr Data will change it to 1 to prevent "
+                "incorrect. Pd-L2Ork will change it to 1 to prevent "
                 "DSP errors. For compatibility with Pd Vanilla please "
                 "set the arguments manually so that the window factor "
                 "(fourth argument) is nonzero.");

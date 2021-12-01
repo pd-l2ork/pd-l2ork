@@ -745,7 +745,7 @@ static double zoom_hack(int x, int zoom)
   // even notice the extra data, the same patch can still be loaded by any
   // other Pd version without any problems.
 
-  // Encoding of the zoom level: Purr Data's zoom levels go from -7 to 8 so
+  // Encoding of the zoom level: Pd-L2Ork's zoom levels go from -7 to 8 so
   // that we can encode them as 4 bit numbers in two's complement. However, it
   // makes sense to leave 1 extra bit for future extensions, so our encoding
   // actually uses nonnegative 5 bit integer multiples of 2^-5 = 0.03125 in a

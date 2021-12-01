@@ -12,7 +12,7 @@
 with comma syntax;
 #X text 176 23 Pd originally used the "#X restore etc. \, f 12" syntax
 to set manual width. Now it uses an "#X f 12" on a separate line. We
-support both in Purr Data and check here for regressions.;
+support both in Pd-L2Ork and check here for regressions.;
 #X connect 0 0 5 0;
 #X connect 1 0 3 0;
 #X connect 2 0 1 0;

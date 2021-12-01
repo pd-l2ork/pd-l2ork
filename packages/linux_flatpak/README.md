@@ -1,8 +1,8 @@
-# Purr Data packaged for Flatpak
+# Pd-L2Ork packaged for Flatpak
 
-This is a Flatpak for [Purr Data](https://www.purrdata.net/).
+This is a Flatpak for [Pd-L2Ork](http://l2ork.music.vt.edu/main/make-your-own-l2ork/software/).
 
-Purr Data is a popular fork of the [Pure Data](http://puredata.info/), an open
+Pd-L2Ork is a popular fork of the [Pure Data](http://puredata.info/), an open
 source visual programming language for multimedia.
 
 ## How to build
@@ -14,10 +14,10 @@ tool to build.
 You can run a command like the following to build the package from this repo
 and install it in your 'user' Flatpak installation:
 
-    flatpak-builder --install ./build net.purrdata.PurrData.yml --force-clean --user
+    flatpak-builder --install ./build net.pdl2ork.PdL2Ork.yml --force-clean --user
 
 During development you can also run a build without installing it, like this:
 
-    flatpak-builder --run build net.purrdata.PurrData.yml pd-l2ork
+    flatpak-builder --run build net.pdl2ork.PdL2Ork.yml pd-l2ork
 
 See the [Flatpak manual](http://docs.flatpak.org/en/latest/) for more information.

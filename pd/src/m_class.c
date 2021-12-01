@@ -942,7 +942,7 @@ extern t_pd *pd_mess_from_responder(t_pd *x);
    ensures that the #X is bound to the correct canvas. But that means it fails
    for the old syntax, and there are patches in the wild that use it.
 
-   So we support _both_ of these styles in Purr Data by doing the following:
+   So we support _both_ of these styles in Pd-L2Ork by doing the following:
    1. Checking if the last typedmess was "restore" selector.
    2. Checking if the last t_pd was a canvas that matches the current one.
       If so, we're dealing with the old "#X..., f 12;" syntax. If not, it's

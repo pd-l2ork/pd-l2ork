@@ -40,7 +40,7 @@
 #X obj 41 41 route runmode_nothing runmode_clickme runmode_thicken
 runmode_addpoint editmode_nothing editmode_connect editmode_disconnect
 ;
-#X msg 41 121 custom cursors not currently supported in Purr Data;
+#X msg 41 121 custom cursors not currently supported in Pd-L2Ork;
 #X obj 41 149 print cursor;
 #X connect 0 0 1 0;
 #X connect 1 0 2 0;

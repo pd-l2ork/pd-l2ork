@@ -99,8 +99,8 @@ static int libdir_loader_legacy(t_canvas *canvas, char *classname)
     /* post("libdir_loader loaded fullclassname: '%s'\n", fullclassname); */
 #if 0
     // AG: This is from https://github.com/pure-data/libdir/commit/2f7b873e.
-    // Seems overly verbose, though, disasbled for now since Purr Data won't
-    // filter console messages according to their verbosity level.
+    // Seems overly verbose, though, disabled for now since Purr Data/Pd-L2Ork
+    // don't filter console messages according to their verbosity level.
     logpost(NULL, 14, "Loaded libdir '%s' from '%s'", classname, dirbuf);
 #endif
 

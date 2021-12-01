@@ -1,6 +1,6 @@
 #!/bin/sh
 
-prefix=/Users/mbarb/build/purr-data/pd
+prefix=/Users/mbarb/build/pd-l2ork/pd
 version=0.12.7
 
 usage="\

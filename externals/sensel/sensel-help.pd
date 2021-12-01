@@ -175,7 +175,7 @@ rate)., f 27;
 #X obj 730 258 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
 #X text 747 257 Toggle console output;
-#X text 705 176 WARNING! Copious and prolonged console output in purr-data
+#X text 705 176 WARNING! Copious and prolonged console output in pd-l2ork
 only can over time adversely affect the overall performance., f 26
 ;
 #X text 200 556 IMPORTANT! On Linux \, to be able to connect to the

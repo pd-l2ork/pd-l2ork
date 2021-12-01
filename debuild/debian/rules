@@ -20,11 +20,11 @@ arch = ia32
 endif
 
 # Installation prefix. This must be something other than /usr if you want to
-# install Purr Data alongside Pd-L2Ork. Note that some items such as desktop
-# files and icons will still be installed under /usr so that the system finds
-# them, but they will be renamed to prevent name clashes with files from the
-# pd-l2ork package.
-prefix = /opt/purr-data
+# install it alongside another Pd-L2Ork install. Note that some items, such as
+# desktop files and icons will still be installed under /usr so that the system
+# finds them, but they will be renamed to prevent name clashes with files from
+# the existing install of pd-l2ork.
+prefix = /opt/pd-l2ork
 
 %:
 	dh $@
@@ -39,44 +39,44 @@ override_dh_auto_clean:
 override_dh_auto_test:
 
 override_dh_auto_build:
-# Copy the nw.js sources to where purr-data wants them.
+# Copy the nw.js sources to where pd-l2ork wants them.
 	@echo "DEB_HOST_ARCH = $(shell dpkg-architecture -qDEB_HOST_ARCH)"
 	tar -xf debian/nwjs/$(nwjspkg)-$(arch).tar.gz && rm -rf pd/nw/nw && mv $(nwjspkg)-$(arch) pd/nw/nw
 	cd l2ork_addons && (export V=0 inst_dir=$(prefix); ./tar_em_up.sh -Bn)
 	make check prefix=$(prefix)
 
 override_dh_auto_install:
-	mkdir -p debian/purr-data && mv packages/linux_make/build/* debian/purr-data
+	mkdir -p debian/pd-l2ork && mv packages/linux_make/build/* debian/pd-l2ork
 # Create a link to the executable.
-	mkdir -p debian/purr-data/usr/bin && ln -sf $(prefix)/bin/pd-l2ork debian/purr-data/usr/bin/purr-data
+	mkdir -p debian/pd-l2ork/usr/bin && ln -sf $(prefix)/bin/pd-l2ork debian/pd-l2ork/usr/bin/pd-l2ork
 # Create links to the include and lib directories.
-	mkdir -p debian/purr-data/usr/include && ln -sf $(prefix)/include/pd-l2ork debian/purr-data/usr/include/purr-data
-	mkdir -p debian/purr-data/usr/lib && ln -sf $(prefix)/lib/pd-l2ork debian/purr-data/usr/lib/purr-data
+	mkdir -p debian/pd-l2ork/usr/include && ln -sf $(prefix)/include/pd-l2ork debian/pd-l2ork/usr/include/pd-l2ork
+	mkdir -p debian/pd-l2ork/usr/lib && ln -sf $(prefix)/lib/pd-l2ork debian/pd-l2ork/usr/lib/pd-l2ork
 # Remove some unneeded files.
-	cd debian/purr-data/ && rm -rf Makefile README.txt etc usr/share/emacs
-	cd debian/purr-data$(prefix)/lib/pd-l2ork/extra && rm -rf */*.pd_linux_o */*.la
+	cd debian/pd-l2ork/ && rm -rf Makefile README.txt etc usr/share/emacs
+	cd debian/pd-l2ork$(prefix)/lib/pd-l2ork/extra && rm -rf */*.pd_linux_o */*.la
 ifeq ($(arch),ia32)
 # This causes trouble in 32 bit builds (64 bit executable in the 32 bit nw.js distribution?), remove it.
-	cd debian/purr-data$(prefix)/lib/pd-l2ork && rm -rf bin/nw/minidump_stackwalk
+	cd debian/pd-l2ork$(prefix)/lib/pd-l2ork && rm -rf bin/nw/minidump_stackwalk
 endif
 # Add the bash completion file again, and edit it accordingly.
-	mkdir -p debian/purr-data/etc/bash_completion.d
-	sed -e 's/pd-l2ork/purr-data/g' < scripts/bash_completion/pd-l2ork > debian/purr-data/etc/bash_completion.d/purr-data
+	mkdir -p debian/pd-l2ork/etc/bash_completion.d
+	sed -e 's/pd-l2ork/pd-l2ork/g' < scripts/bash_completion/pd-l2ork > debian/pd-l2ork/etc/bash_completion.d/pd-l2ork
 # Edit the library paths in the default user.settings file.
-	cd debian/purr-data$(prefix)/lib/pd-l2ork && sed -e "s!/usr/lib/pd-l2ork!$(prefix)/lib/pd-l2ork!g" -i default.settings
-# Replace the pd-l2ork desktop/mime files and icons with purr-data ones.
-	cd debian/purr-data/usr/share/applications && (sed -e 's/pd-l2ork/purr-data/g' -e 's/Pd-L2Ork/Purr-Data/g' < pd-l2ork.desktop > purr-data.desktop) && (sed -e 's/pd-l2ork/purr-data/g' -e 's/Pd-L2Ork/Purr-Data/g' < pd-l2ork-debug.desktop > purr-data-debug.desktop) && rm -f pd-l2ork*.desktop
-	cd debian/purr-data/usr/share/mime/packages && (sed -e 's/pd-l2ork/purr-data/g' < pd-l2ork.xml > purr-data.xml) && rm -f pd-l2ork.xml
-	cd debian/purr-data/usr/share/icons/hicolor/128x128/apps/ && rm -f pd-l2ork-k12*.png && mv pd-l2ork.png purr-data.png && mv pd-l2ork-red.png purr-data-red.png
-	cd debian/purr-data/usr/share/icons/hicolor/128x128/mimetypes/ && mv text-x-pd-l2ork.png text-x-purr-data.png
+	cd debian/pd-l2ork$(prefix)/lib/pd-l2ork && sed -e "s!/usr/lib/pd-l2ork!$(prefix)/lib/pd-l2ork!g" -i default.settings
+# Replace the pd-l2ork desktop/mime files and icons with pd-l2ork ones.
+	cd debian/pd-l2ork/usr/share/applications && (sed -e 's/pd-l2ork/pd-l2ork/g' -e 's/Pd-L2Ork/Purr-Data/g' < pd-l2ork.desktop > pd-l2ork.desktop) && (sed -e 's/pd-l2ork/pd-l2ork/g' -e 's/Pd-L2Ork/Purr-Data/g' < pd-l2ork-debug.desktop > pd-l2ork-debug.desktop)
+	cd debian/pd-l2ork/usr/share/mime/packages && (sed -e 's/pd-l2ork/pd-l2ork/g' < pd-l2ork.xml > pd-l2ork.xml)
+	cd debian/pd-l2ork/usr/share/icons/hicolor/128x128/apps/ && rm -f pd-l2ork-k12*.png && mv pd-l2ork.png pd-l2ork.png && mv pd-l2ork-red.png pd-l2ork-red.png
+	cd debian/pd-l2ork/usr/share/icons/hicolor/128x128/mimetypes/ && mv text-x-pd-l2ork.png text-x-pd-l2ork.png
 # Sanitize permissions.
-	cd debian/purr-data && chmod -R go-w * && chmod -R a+r * && chmod a-x .$(prefix)/lib/pd-l2ork/default.settings
-	find debian/purr-data$(prefix)/lib/pd-l2ork/bin/nw -executable -not -type d | xargs chmod a+x
-	find debian/purr-data -executable -name '*.pd_linux' | xargs chmod a-x
-	find debian/purr-data -executable -name '*.pd' | xargs chmod a-x
-	find debian/purr-data -executable -name '*.txt' | xargs chmod a-x
-	find debian/purr-data -executable -name '*.aif*' | xargs chmod a-x
-	find debian/purr-data -type d | xargs chmod a+x
+	cd debian/pd-l2ork && chmod -R go-w * && chmod -R a+r * && chmod a-x .$(prefix)/lib/pd-l2ork/default.settings
+	find debian/pd-l2ork$(prefix)/lib/pd-l2ork/bin/nw -executable -not -type d | xargs chmod a+x
+	find debian/pd-l2ork -executable -name '*.pd_linux' | xargs chmod a-x
+	find debian/pd-l2ork -executable -name '*.pd' | xargs chmod a-x
+	find debian/pd-l2ork -executable -name '*.txt' | xargs chmod a-x
+	find debian/pd-l2ork -executable -name '*.aif*' | xargs chmod a-x
+	find debian/pd-l2ork -type d | xargs chmod a+x
 
 # NOTE: Older systems use dh_pysupport instead of dh_python2. See
 # http://deb.li/dhs2p.

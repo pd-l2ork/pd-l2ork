@@ -1,6 +1,6 @@
 # DISIS/L2Ork Sensel 
 
-[Purr-Data](https://agraef.github.io/purr-data/) and [Pure-Data](http://msp.ucsd.edu/software.html) external for interfacing with the [Sensel Morph](http://sensel.com/morph)
+[Pd-L2Ork](https://l2ork.music.vt.edu/main/make-your-own-l2ork/software/) and [Pure-Data](http://msp.ucsd.edu/software.html) external for interfacing with the [Sensel Morph](http://sensel.com/morph)
 
 by [Rachel Hachem](https://github.com/rachelhachem) and Ivica Ico Bukvic <ico@vt.edu>
 
@@ -21,11 +21,11 @@ Here's what this looks like on a Mac after selecting a package to install in the
 
 # BUILD INSTRUCTIONS
 
-To build for Purr-Data (pd-vanilla setup may be similar with some subtle changes in the include paths and likely does not require MSYS environment, so on Windows changes may be more significant):
+To build for Pd-L2Ork (pd-vanilla setup may be similar with some subtle changes in the include paths and likely does not require MSYS environment, so on Windows changes may be more significant):
 
 1. Set up a build environment:
 
-  * On Windows follow instructions on setting up the MSYS2 environment for Purr-Data (make sure it matches your OS in terms of 32-bit vs 64-bit--most modern iterations of Windows are 64-bit). Info on how to do this can be found in the [purr-data repository.](https://github.com/agraef/purr-data/blob/master/README.md#windows-32-bit-using-msys2)
+  * On Windows follow instructions on setting up the MSYS2 environment for Pd-L2Ork (make sure it matches your OS in terms of 32-bit vs 64-bit--most modern iterations of Windows are 64-bit). Info on how to do this can be found in the [pd-l2ork repository.](https://github.com/pd-l2ork/pd-l2ork/blob/master/README.md#windows-32-bit-using-msys2)
 
   * On Linux and OSX make sure you have your build gcc environment all set up (consult the OS documentation)
 
@@ -37,16 +37,18 @@ To build for Purr-Data (pd-vanilla setup may be similar with some subtle changes
 
   * OSX: `make pdincludepath=/Applications/Pd-l2ork.app/Contents/Resources/app.nw/include/pd-l2ork/`
 
-  * Windows: `make pdincludepath=/c/Program\ Files\ \(x86\)/Purr\ Data/include/pdl2ork pdbinpath=/c/Program\ Files\ \(x86\)/Purr\ Data/bin/`
+  * Windows: `make pdincludepath=/c/Program\ Files\ \(x86\)/Pd-L2Ork/include/pdl2ork pdbinpath=/c/Program\ Files\ \(x86\)/Pd-L2Ork/bin/`
 
-4. If everything compiles correctly, you should be able to run Purr-Data or Pure Data Vanilla and open the `sensel-help.pd` to test it out.
+4. If everything compiles correctly, you should be able to run Pd-L2Ork or Pure Data Vanilla and open the `sensel-help.pd` to test it out.
 
 # INSTALLATION
 Future installations will be mediated by the [deken](https://github.com/pure-data/deken) package manager. If you need to install from this repository, use the following directions.
 
 ## macOS
 
-### Purr Data
+### Pd-L2Ork
+
+sensel object comes preinstalled with Pd-L2Ork.
 
 ### Vanilla PD
 
@@ -60,7 +62,9 @@ files from this repo to your `~/Documents/Pd` folder. You may want to make a "se
 
 ## Windows
 
-### Purr Data
+### Pd-L2Ork
+
+sensel object comes preinstalled with Pd-L2Ork.
 
 ### Vanilla PD
 
@@ -79,7 +83,9 @@ files from this repo to your user `Documents/Pd` folder. You may want to make a 
 
 ## Linux
 
-### Purr Data
+### Pd-L2Ork
+
+sensel object comes preinstalled with Pd-L2Ork.
 
 ### Vanilla PD
 

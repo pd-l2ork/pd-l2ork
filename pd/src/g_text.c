@@ -2967,7 +2967,7 @@ void text_drawborder(t_text *x, t_glist *glist,
         /* for comments a dotted rectangle is drawn in edit mode. Currently
         this is probably inefficient because Pd assumes it must send GUI
         updates for all comments when edit mode is toggled (due to the
-        "commentbar" sizing line in Pd Vanilla). However in Purr Data, we
+        "commentbar" sizing line in Pd Vanilla). However in Pd-L2Ork, we
         let CSS do all that and thus don't require that inefficiency.
         Also,
         we do not draw these unless the comments in question are being drawn

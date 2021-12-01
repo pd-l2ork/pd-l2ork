@@ -16,15 +16,15 @@ void bendinfix_float(t_bendinfix *x, t_floatarg f)
   // vanilla default:
   t_float g = 8192;
   // exported symbols by the different Pd flavors:
-  // nw_gui_vmess => purr-data only
-  // legacy => pd-l2ork and purr-data
-  // legacy_bendin => purr-data with revised bendin implementation
+  // nw_gui_vmess => pd-l2ork only
+  // legacy => pd-l2ork and pd-l2ork
+  // legacy_bendin => pd-l2ork with revised bendin implementation
   if (legacy_bendin)
     // signed bendin unless legacy_bendin is set
     g = *legacy_bendin?8192:0;
   else if (legacy)
     // we always have a signed bendin with classic pd-l2ork (!nw_gui_vmess),
-    // whereas for purr-data without the revised bendin implementation
+    // whereas for pd-l2ork without the revised bendin implementation
     // (!legacy_bendin) bendin is signed, unless legacy is set
     g = !nw_gui_vmess?0:*legacy?8192:0;
   outlet_float(x->x_obj.ob_outlet, f-g);

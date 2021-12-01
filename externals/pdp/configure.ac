@@ -68,7 +68,7 @@ fi
 
 if test $prefix == NONE;
 then
-	prefix=/Users/mbarb/build/purr-data/pd
+	prefix=/Users/mbarb/build/pd-l2ork/pd
 fi
 
 

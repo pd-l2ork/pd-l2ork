@@ -1,4 +1,4 @@
-id: net.purrdata.PurrData
+id: net.pdl2ork.PdL2Ork
 runtime: org.freedesktop.Platform
 runtime-version: '19.08'
 sdk: org.freedesktop.Sdk
@@ -15,13 +15,13 @@ finish-args: [
     '--device=all'
 ]
 modules:
-- name: purr-data
+- name: pd-l2ork
   buildsystem: autotools
   subdir: pd/src
   config-opts: [ '--disable-portaudio', '--enable-alsa', '--enable-oss' ]
   sources:
   - type: git
-    url: https://github.com/agraef/purr-data/
+    url: https://github.com/pd-l2ork/pd-l2ork/
     tag: 2.10.0
     commit: 7cf93e5e32009f033430b8bc9c7276adb272853c
   - type: patch
@@ -55,7 +55,7 @@ modules:
          pan_install pdcontainer_install pddp_install pdogg_install \
          plugin_install pmpd_install rjlib_install sigpack_install smlib_install \
          tof_install unauthorized_install vbap_install windowing_install
-  # The following externals from the purr-data repo are not built:
+  # The following externals from the pd-l2ork repo are not built:
   #
   #   bsaylor  -- needs fftw
   #   dsis -- segfault during configure !?
@@ -67,7 +67,7 @@ modules:
   #   zexy -- fails to configure
   sources:
   - type: git
-    url: https://github.com/agraef/purr-data/
+    url: https://github.com/pd-l2ork/pd-l2ork/
     tag: 2.10.0
     commit: 7cf93e5e32009f033430b8bc9c7276adb272853c
 
@@ -78,11 +78,11 @@ modules:
   - make -j $(FLATPAK_BUILDER_N_JOBS) DESTDIR=/ prefix=/app install
   sources:
   - type: git
-    url: https://github.com/agraef/purr-data/
+    url: https://github.com/pd-l2ork/pd-l2ork/
     tag: 2.10.0
     commit: 7cf93e5e32009f033430b8bc9c7276adb272853c
 
-- name: purr-data-integration
+- name: pd-l2ork-integration
   buildsystem: simple
   build-commands:
   # These commands run in the 'subdir' that we set, but the sources appear at
@@ -93,19 +93,19 @@ modules:
   - install -m 755 pd-wrapper.sh /app/bin
   # .desktop file (so we appear in list of applications)
   - install -d /app/share/applications/
-  - install -m 644 net.purrdata.PurrData.desktop /app/share/applications/
+  - install -m 644 net.pdl2ork.PdL2Ork.desktop /app/share/applications/
   # AppStream metadata (for app store / package manager)
   - install -d /app/share/metainfo/
-  - install -m 644 net.purrdata.PurrData.metainfo.xml /app/share/metainfo
+  - install -m 644 net.pdl2ork.PdL2Ork.metainfo.xml /app/share/metainfo
   # icon (for everyone)
   - install -d /app/share/icons/hicolor/scalable/apps
-  - install -m 644 net.purrdata.PurrData.svg /app/share/icons/hicolor/scalable/apps/
+  - install -m 644 net.pdl2ork.PdL2Ork.svg /app/share/icons/hicolor/scalable/apps/
   # add mime type to .pd files
   - install -d /app/share/mime/packages/
-  - install -m 644 packages/linux_make/pd-l2ork.xml /app/share/mime/packages/net.purrdata.PurrData.xml
+  - install -m 644 packages/linux_make/pd-l2ork.xml /app/share/mime/packages/net.pdl2ork.PdL2Ork.xml
   sources:
   - type: git
-    url: https://github.com/agraef/purr-data/
+    url: https://github.com/pd-l2ork/pd-l2ork/
     tag: 2.10.0
     commit: 7cf93e5e32009f033430b8bc9c7276adb272853c
   - type: file
@@ -118,8 +118,8 @@ modules:
   - type: file
     path: ./pd-wrapper.sh
   - type: file
-    path: net.purrdata.PurrData.desktop
+    path: net.pdl2ork.PdL2Ork.desktop
   - type: file
-    path: net.purrdata.PurrData.metainfo.xml
+    path: net.pdl2ork.PdL2Ork.metainfo.xml
   - type: file
-    path: net.purrdata.PurrData.svg
+    path: net.pdl2ork.PdL2Ork.svg

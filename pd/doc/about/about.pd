@@ -1,5 +1,5 @@
 #N struct cat float x float y;
-#N canvas 337 210 527 457 12;
+#N canvas 337 210 527 466 12;
 #N canvas 634 205 452 371 version 0;
 #X msg 61 51 l2ork_version;
 #X obj 61 76 pdinfo;
@@ -35,7 +35,7 @@
 #X connect 15 0 18 0;
 #X connect 16 0 13 0;
 #X connect 17 0 15 0;
-#X restore 18 416 pd version;
+#X restore 18 426 pd version;
 #X text 18 87 A real-time graphical programming environment for live
 interactive computer music \, Pd-l2ork works on Linux \, Macintosh
 OSX \, and Microsoft Windows.;
@@ -48,20 +48,20 @@ for the purpose of improving editor functionality and stability. It
 is distributed under the same license as Pd. For additional info see:
 ;
 #X obj 18 276 pddp/pddplink http://l2ork.music.vt.edu/main/;
-#X text 18 351 Reference documentation for Pd lives in:;
-#X obj 18 369 pddp/pddplink @pd_help/../1.manual/index.htm -text doc/1.manual/index.htm
+#X text 18 381 Reference documentation for Pd lives in:;
+#X obj 18 399 pddp/pddplink @pd_help/../1.manual/index.htm -text doc/1.manual/index.htm
 ;
-#X obj 18 32 cnv 15 482 33 empty \$0-about_text Pd-l2ork-2.16.0\ 20210619-rev.925661b2
+#X obj 18 32 cnv 15 482 33 empty \$0-about_text Pd-l2ork-2.16.0\ 20211129-rev.b5f194e7
 67 12 0 18 #ff9f71 #000000 0;
 #N canvas 430 372 450 323 cat 0;
 #X obj 16 180 draw sprite ./cat;
 #X obj 16 21 struct cat float x float y;
 #X obj 16 80 tgl 15 1 empty empty empty 17 7 0 10 #fcfcfc #000000 #000000
-1 1;
+1 1 1;
 #X obj 70 125 + 1;
 #X obj 16 125 f;
 #X obj 70 150 mod 30;
-#X floatatom 16 150 5 0 0 0 - - - 0 0, f 5;
+#X floatatom 16 150 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 16 100 metro 50;
 #X connect 2 0 7 0;
 #X connect 3 0 5 0;
@@ -70,14 +70,15 @@ is distributed under the same license as Pd. For additional info see:
 #X connect 5 0 4 1;
 #X connect 6 0 0 0;
 #X connect 7 0 4 0;
-#X restore 454 416 pd cat;
+#X restore 454 426 pd cat;
 #X scalar cat 411 75 \;;
 #X obj 407 58 cnv 15 93 20 empty \$0-vanilla_text Pd-0.48.0 10 6 0
 14 #d0d0d0 #000000 0;
-#X obj 393 388 cnv 15 31 20 empty \$0-precision_text 32 10 6 0 14 #fcfcfc
+#X obj 393 398 cnv 15 31 20 empty \$0-precision_text 32 10 6 0 14 #fcfcfc
 #000000 0;
-#X text 427 386 bit floats;
+#X text 427 396 bit floats;
 #X text 18 304 Pd-L2Ork 2.x integrates elements of Purr-Data and merges
-it with the milestones achieved in the Pd-L2Ork 1.x branch.;
+it with the milestones achieved in the Pd-L2Ork 1.x and Pure-Data.
+It further introduces an array of new and unique features.;
 #X obj 9 9 ggee/image pd-l2ork-k12.png 0 0 78 78 empty empty empty
 78 78 1 0 10 #000000 0 -8 12.5 12.5 0 1 1;

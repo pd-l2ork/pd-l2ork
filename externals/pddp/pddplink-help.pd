@@ -21,8 +21,8 @@
 #X obj 50 99 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
 #X text 71 96 <-- bang to open the link;
-#X text 50 410 purr-data only: pass the file name or URL as a symbol
-to inlet #1 (a dummy filename argument is still needed), f 47;
+#X text 50 410 pd-l2ork/purr-data only: pass the file name or URL as
+a symbol to inlet #1 (a dummy filename argument is still needed), f 47;
 #X msg 50 470 symbol http://puredata.info;
 #X obj 250 450 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;

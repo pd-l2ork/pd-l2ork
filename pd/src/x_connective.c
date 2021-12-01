@@ -1686,7 +1686,7 @@ static const char* makefilename_doscanformat(const char *str, t_printtype *typ,
                 return str;
             }
 
-            /* a pointer. We don't suppor this in Purr Data because of the
+            /* a pointer. We don't support this in Pd-L2Ork because of the
                possibility of both undefined and implementation-specific
                behavior. */
             if (*str && strchr("p", *str) != 0)

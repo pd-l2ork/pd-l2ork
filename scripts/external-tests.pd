@@ -24,7 +24,7 @@
 #X text 304 45 \$0-libdir - directory containing doc and extra;
 #N canvas 46 220 956 472 list_of_libdirs 0;
 #X obj 24 9 inlet;
-#X text 70 128 libraries that are loaded at startup in Purr Data;
+#X text 70 128 libraries that are loaded at startup in Pd-L2Ork;
 #X text 49 267 Gem is currently excluded because it doesn't run on
 all platforms;
 #X obj 24 408 outlet;

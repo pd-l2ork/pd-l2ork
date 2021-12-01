@@ -415,7 +415,7 @@ static int calculate_zoom(t_float zoom_hack)
   // This is a 5 bit number in 2's complement, so we need to extend the sign.
   zoom = zoom << 27 >> 27;
   // To be on the safe side, we finally clamp the result to the range -7..8
-  // which are the zoom levels supported by Purr Data right now.
+  // which are the zoom levels supported by Pd-L2Ork right now.
   if (zoom < -7) zoom = -7;
   if (zoom > 8) zoom = 8;
   //post("read zoom level: %d", zoom);

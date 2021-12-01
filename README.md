@@ -11,7 +11,7 @@ maintainer:
 * [Three Paragraph Overview](#three-paragraph-overview)
 * [Goals](#goals)
 * [User Guide](#user-guide)
-* [Relationship of Pd-L2Ork to Pure Data](#relationship-of-purr-data-to-pure-data)
+* [Relationship of Pd-L2Ork to Pure Data](#relationship-of-pd-l2ork-to-pure-data)
 * [Build Guide](#build-guide)
   * [Gnu/Linux](#linux)
   * [OSX](#osx-64-bit-using-homebrew)

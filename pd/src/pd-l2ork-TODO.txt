@@ -1,9 +1,7 @@
 PD-L2ORK TODO:
-*Finish renaming updates (see github issue tracker).
-
-*Sometimes editing message resizes the object size without erasing text. Is this a nw.js bug?
-
 *Find $1-overdrive inside L2OrkTweet.pd highlights subpatch, but does not open it.
+
+*cursor abstraction does not report right mouse up events due to it triggering the pop-up menu.
 
 *refine window heights for various dialogs, so that they always display fully on-screen.
 
@@ -34,6 +32,8 @@ RARE:
 *Pd-L2Ork sporadic crashes when opening/closing L2OrkTweet.pd and L2Ork-Tweeter.pd. These are now sparser (suspect something on the nw.js side of things).
 
 *check for stray/sporadic bug where bang and other objects stop working and bang object gets stuck in on mode until the mouse is moved (nw.js bug? UPDATE: it appears at least one of the sources was a bug in the scroll_to_gobj call that was fixed on 2021-11-01).
+
+*Sometimes editing message resizes the object size without erasing text. Is this a nw.js bug?
 
 MAYBE:
 *gui_canvas_scroll_to_gobj should only scroll to an object if doing so improves situation (e.g. if the object is wider than the screen, then scrolling won't fix anything)?
@@ -149,14 +149,15 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Revised and finished context help patch dealing with $0, $1, and $2 (all_about_scope_and_locality.pd).
 *Array editing cursor should revert to regular cursor upon right-click (and revert afterwards).
 *Fixed Gem not building properly on newer msys2 installs.
+*Finished renaming the remaining instances of purr-data to minimize confusion between the two releases.
 
 
 
 
 TWEETER TODO:
-*Check if copying loops by clicking on user's number is now accurately synchronous.
+*Update 4th Beat score YouTube video link once we have a better studio take.
 
-*In offline mode, enable keyboard and other input for multiple tracks
+*In offline mode, enable keyboard and other input for multiple tracks. Consider using the mouse focus by utilizing invisible ggee/image to make focus switching easier.
 
 *When trying to load a pattern that does not exist (after having successfully loaded one that does), the main level goes to zero.
 
@@ -222,6 +223,7 @@ TWEETER DONE:
 *Updated Conductor-Commands.pd patch, documenting the new command.
 *Updated the conductor-shortcuts.pd patch for the "4th beat" composition.
 *Added supporting files for the "4th beat" composition.
+*Refactored "Into the Abyss" to match the new formatting for the purpose of future automatic retrieval.
 
 
 
