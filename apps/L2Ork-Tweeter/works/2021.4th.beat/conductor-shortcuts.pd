@@ -1,5 +1,5 @@
-#N canvas 31 531 459 410 10;
-#X obj 17 265 s chat-out;
+#N canvas 5 389 471 582 10;
+#X obj 17 450 s chat-out;
 #X obj 17 66 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
 #fcfcfc #000000 #000000 0 256 0 0 1 0;
 #X msg 17 88 chat admin p:l2orklicious l2ork-length-all \$1;
@@ -7,23 +7,36 @@
 #X obj 17 43 line 100;
 #X msg 17 16 2000 \, 555 30000;
 #X text 191 16 REMINDER: open the teacher patch!;
-#X text 99 282 sync controls;
+#X text 99 454 sync controls;
 #X text 156 118 loading sessions;
 #X text 76 43 tempo;
 #X msg 55 159 chat admin p:l2orklicious l2ork-load 4th-beat-droplets-6
 ;
 #X msg 55 138 chat admin p:l2orklicious l2ork-load 4th-beat-final-10
 ;
-#X msg 17 302 \; session-sync-offset -1 \; load-session-network-sync
+#X msg 17 474 \; session-sync-offset -1 \; load-session-network-sync
 4th-beat-final-10;
-#X msg 17 350 \; session-sync-offset 0 \; load-session-network-sync
+#X msg 17 522 \; session-sync-offset 0 \; load-session-network-sync
 4th-beat-droplets-6;
 #X msg 55 199 chat admin p:l2orklicious l2ork-load-sync-delay 2000
 ;
-#X msg 55 239 chat admin p:l2orklicious l2ork-inst-level-all-at 9 2
-0.1;
 #X text 190 219 drop;
 #X text 74 179 backup (not needed as 2000 is the new default);
+#X obj 414 214 key;
+#X obj 414 239 sel 61;
+#X text 439 214 =;
+#X msg 55 239 chat admin p:l2orklicious l2ork-inst-level-all-at 9 4
+0.1;
+#X msg 89 292 chat admin p:l2orklicious l2ork-inst-level-all-at 9 63
+1 \, chat admin p:l2orklicious l2ork-inst-level-at 3 0 10 \, chat admin
+p:l2orklicious l2ork-inst-level-at 9 0 10 \, chat admin p:l2orklicious
+l2ork-inst-level-at 10 0 10;
+#X msg 89 350 chat admin p:l2orklicious l2ork-inst-level-at 9 63 10
+;
+#X msg 89 369 chat admin p:l2orklicious l2ork-inst-level-at 9 63 0.1
+;
+#X msg 89 260 chat admin p:l2orklicious l2ork-inst-level-list-at 9
+63 3 1 10 1 1 1 3 0.1 10 10 0.1 1;
 #X connect 1 0 2 0;
 #X connect 2 0 0 0;
 #X connect 3 0 4 0;
@@ -32,4 +45,10 @@
 #X connect 10 0 0 0;
 #X connect 11 0 0 0;
 #X connect 14 0 0 0;
-#X connect 15 0 0 0;
+#X connect 17 0 18 0;
+#X connect 18 0 24 0;
+#X connect 20 0 0 0;
+#X connect 21 0 0 0;
+#X connect 22 0 0 0;
+#X connect 23 0 0 0;
+#X connect 24 0 0 0;

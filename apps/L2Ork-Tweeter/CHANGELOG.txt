@@ -9,6 +9,13 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+30-11-2021 0.63
+*Fixed a bug where inst-level-all-at and inst-level-at server messages did not work under certain circumstances.
+*Added a l2ork-inst-level-list-at message that allows for levels for each instrument individually provided as a list.
+*Updated Conductor-Commands.pd patch, documenting the new command.
+*Updated the conductor-shortcuts.pd patch for the "4th beat" composition.
+*Added supporting files for the "4th beat" composition.
+
 19-11-2021 0.62
 *Initialized load preset value to 11 to avoid having to cycle by default through empty presets.
 *Refactored admin commands to make them easier to edit and expand. Re-tested each of the admin messages and addressed bugs for obfuscation, loading/saving error messages, proper socket detection for the password change, filtering of messages that get printed out, and disabling of ping timeout for a user who got bumped to an audience/guest status via server command.

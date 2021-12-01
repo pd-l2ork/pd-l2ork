@@ -1,4 +1,10 @@
 PD-L2ORK TODO:
+*Finish renaming updates (see github issue tracker).
+
+*Sometimes editing message resizes the object size without erasing text. Is this a nw.js bug?
+
+*Find $1-overdrive inside L2OrkTweet.pd highlights subpatch, but does not open it.
+
 *refine window heights for various dialogs, so that they always display fully on-screen.
 
 *port shell object to Windows.
@@ -211,6 +217,11 @@ TWEETER DONE:
 *Updated Conductor-Commands documentation, adding new server commands.
 *Added loadbang to (re)send main out levels to every instantiated L2OrkTweet.pd abstraction to prevent no volume issue.
 *Reworked the overdrive-override logic to prevent some of the buggy behavior between the keyboard shortcuts and the levels sent by the server.
+*Fixed a bug where inst-level-all-at and inst-level-at server messages did not work under certain circumstances.
+*Added a l2ork-inst-level-list-at message that allows for levels for each instrument individually provided as a list.
+*Updated Conductor-Commands.pd patch, documenting the new command.
+*Updated the conductor-shortcuts.pd patch for the "4th beat" composition.
+*Added supporting files for the "4th beat" composition.
 
 
 

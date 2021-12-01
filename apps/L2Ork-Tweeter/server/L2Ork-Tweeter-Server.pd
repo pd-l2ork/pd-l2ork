@@ -1,4 +1,4 @@
-#N canvas 179 0 1544 975 10;
+#N canvas 180 0 1544 975 10;
 #X floatatom 300 90 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 1238 290 text define clients;
 #X floatatom 738 74 5 0 0 0 - - - 0 0 1, f 5;
@@ -86,7 +86,7 @@ clear the instance.;
 #X text 1170 779 to reset a disconnected client \, server sends all
 others following values for the disconnected client: out-amp 0 \, tracker
 0--this is contained within the client-ping abstraction, f 58;
-#N canvas 522 8 872 964 filter-remote-admin-messages 0;
+#N canvas 522 8 879 964 filter-remote-admin-messages 0;
 #X obj 63 34 t l l;
 #X obj 63 12 inlet;
 #X obj 18 129 gate 2 1;
@@ -599,46 +599,54 @@ l2ork-sync-vis, f 73;
 #X restore 430 591 pd l2ork-sync-save l2ork-sync-save-data l2ork-sync-data
 l2ork-sync-vis;
 #X f 70;
-#N canvas 1105 290 542 481 l2ork-inst-level-at 0;
+#X obj 199 478 t a 2;
+#X obj 168 154 t l l;
+#N canvas 1105 290 568 481 l2ork-inst-level-at 0;
 #X obj 21 125 r admin-messages;
-#X obj 166 400 s admin-main-outlet;
+#X obj 168 400 s admin-main-outlet;
 #X obj 320 400 s print-server;
 #X obj 436 400 s server-out;
 #X obj 21 400 s malformed-request;
-#X obj 21 149 route l2ork-inst-level-at l2ork-inst-level-all-at;
 #X text 21 422 reports malformed messages, f 17;
-#X text 166 422 passes messages through silly-chat and broadcasts to
+#X text 168 422 passes messages through silly-chat and broadcasts to
 all, f 21;
 #X text 321 422 prints locally for logging purposes, f 14;
 #X text 436 422 sends directly to the netserver, f 14;
+#X obj 21 173 list prepend server at inst-level;
+#X obj 168 197 list prepend server at inst-level-all;
 #X text 21 26 a oneshot instrument level change based on timebar location.
 can affect either one instrument or all based on a reference timebar
 part.l2ork-inst-level-at <slot> <time> <level>l2ork-inst-level-all-at
-<reference-slot> <time> <level-all>, f 82;
-#X obj 21 173 list prepend server at inst-level;
-#X obj 166 197 list prepend server at inst-level-all;
-#X connect 0 0 5 0;
-#X connect 5 0 11 0;
-#X connect 5 1 12 0;
-#X connect 11 0 1 0;
-#X connect 12 0 1 0;
-#X restore 430 612 pd l2ork-inst-level-at l2ork-inst-level-all-at;
+<reference-slot> <time> <level-all>l2ork-inst-level-list-at <reference-slot>
+<time> <list of levels for clients 1-12>, f 87;
+#X obj 21 149 route l2ork-inst-level-at l2ork-inst-level-all-at l2ork-inst-level-list-at
+, f 74;
+#X obj 315 222 list prepend server at inst-level-list;
+#X connect 0 0 12 0;
+#X connect 9 0 1 0;
+#X connect 10 0 1 0;
+#X connect 12 0 9 0;
+#X connect 12 1 10 0;
+#X connect 12 2 13 0;
+#X connect 13 0 1 0;
+#X restore 430 633 pd l2ork-inst-level-at l2ork-inst-level-all-at l2ork-inst-level-list-at
+;
+#X f 71;
 #X text 317 229 remote admin uses chat system. messages include: l2ork-conduct
 \, l2ork-disconnect \, l2ork-free-slot \, l2ork-guest-chat \, l2ork-inst-level-at
-\, l2ork-inst-level-all-at \, l2ork-length \, l2ork-length-all \, l2ork-load
-\, l2ork-load-sync-delay \, l2ork-obfuscate \, l2ork-report \, l2ork-reset-client-list
-\, l2ork-save \, l2ork-sync-data \, l2ork-sync-save-data \, l2ork-sync-vis
-\, l2ork-set-password \, l2ork-sync-all \, and l2ork-teach. All messages
-need to be prepended by the server password (formatted as p:password)
-\, which can be set below., f 67;
-#X text 714 612 has documentation;
-#X obj 199 478 t a 2;
-#X obj 168 154 t l l;
+\, l2ork-inst-level-all-at \, l2ork-inst-level-list-at \, l2ork-length
+\, l2ork-length-all \, l2ork-load \, l2ork-load-sync-delay \, l2ork-obfuscate
+\, l2ork-report \, l2ork-reset-client-list \, l2ork-save \, l2ork-sync-data
+\, l2ork-sync-save-data \, l2ork-sync-vis \, l2ork-set-password \,
+l2ork-sync-all \, and l2ork-teach. All messages need to be prepended
+by the server password (formatted as p:password) \, which can be set
+below., f 67;
+#X text 430 612 subpatch below has documentation;
 #X connect 0 0 2 1;
 #X connect 0 1 9 0;
 #X connect 1 0 0 0;
 #X connect 2 0 33 0;
-#X connect 2 1 58 0;
+#X connect 2 1 55 0;
 #X connect 4 0 2 0;
 #X connect 5 0 2 0;
 #X connect 6 0 27 0;
@@ -651,7 +659,7 @@ need to be prepended by the server password (formatted as p:password)
 #X connect 9 0 8 0;
 #X connect 10 1 12 0;
 #X connect 11 0 30 0;
-#X connect 12 0 57 0;
+#X connect 12 0 54 0;
 #X connect 12 1 33 0;
 #X connect 13 0 12 1;
 #X connect 17 0 18 0;
@@ -679,10 +687,10 @@ need to be prepended by the server password (formatted as p:password)
 #X connect 41 0 31 0;
 #X connect 44 0 24 0;
 #X connect 48 0 32 0;
-#X connect 57 0 34 0;
-#X connect 57 1 6 0;
-#X connect 58 0 24 1;
-#X connect 58 1 17 0;
+#X connect 54 0 34 0;
+#X connect 54 1 6 0;
+#X connect 55 0 24 1;
+#X connect 55 1 17 0;
 #X restore 1224 145 pd filter-remote-admin-messages;
 #X obj 1297 314 r \$0-reinit;
 #X obj 63 291 r \$0-report;
@@ -960,12 +968,12 @@ overdrive \, note-dur \, harmonicity \, mod-amp \, ae \, me \, dry-amp
 #X obj 448 74 route whatismyid ping disconnect report;
 #X text 525 96 we ignore report calls since that would allow for unauthorized
 modifying of other users' settings, f 34;
-#X msg 232 741 0.62;
 #X obj 765 121 s incoming-packet-socket;
 #X obj 738 98 t f f;
+#X msg 232 741 0.63;
 #X connect 0 0 76 0;
 #X connect 0 0 115 0;
-#X connect 2 0 179 0;
+#X connect 2 0 178 0;
 #X connect 3 0 141 2;
 #X connect 4 0 5 0;
 #X connect 5 0 152 0;
@@ -1113,7 +1121,7 @@ modifying of other users' settings, f 34;
 #X connect 153 3 148 0;
 #X connect 156 1 155 0;
 #X connect 157 0 163 0;
-#X connect 158 0 177 0;
+#X connect 158 0 179 0;
 #X connect 159 0 157 0;
 #X connect 160 0 162 0;
 #X connect 160 1 157 2;
@@ -1133,6 +1141,6 @@ modifying of other users' settings, f 34;
 #X connect 175 1 25 0;
 #X connect 175 2 156 0;
 #X connect 175 4 79 0;
-#X connect 177 0 160 0;
-#X connect 179 0 141 1;
-#X connect 179 1 178 0;
+#X connect 178 0 141 1;
+#X connect 178 1 177 0;
+#X connect 179 0 160 0;

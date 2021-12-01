@@ -1,53 +1,37 @@
-#N canvas 236 184 1327 661 10;
-#X obj 815 11 cnv 15 496 629 empty empty empty 20 12 0 14 #d7fbd8 #404040
+#N canvas 236 184 1321 667 10;
+#X obj 815 11 cnv 15 496 649 empty empty empty 20 12 0 14 #d7fbd8 #404040
 0;
-#X obj 451 11 cnv 15 352 629 empty empty empty 20 12 0 14 #d7fbd8 #404040
+#X obj 451 11 cnv 15 352 649 empty empty empty 20 12 0 14 #d7fbd8 #404040
 0;
-#X obj 823 408 cnv 15 480 225 empty empty empty 20 12 0 14 #ffd5bf
+#X obj 823 428 cnv 15 480 225 empty empty empty 20 12 0 14 #ffd5bf
 #404040 0;
-#X obj 460 435 cnv 15 335 198 empty empty empty 20 12 0 14 #ffd5bf
+#X obj 460 455 cnv 15 335 198 empty empty empty 20 12 0 14 #ffd5bf
 #404040 0;
-#X obj 22 619 s chat-out;
-#X msg 34 117 chat admin p:l2orklicious l2ork-sync-all;
-#X msg 22 38 chat admin p:l2orklicious l2ork-length 6000 3000 500 6000
+#X obj 12 643 s chat-out;
+#X msg 24 117 chat admin p:l2orklicious l2ork-sync-all;
+#X msg 12 38 chat admin p:l2orklicious l2ork-length 6000 3000 500 6000
 500 6000 1500 6000 500 3000 \, chat admin p:l2orklicious l2ork-sync-all
 ;
-#X text 22 19 Pre-Drop;
-#X text 34 97 Sync;
-#X obj 58 148 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X text 12 19 Pre-Drop;
+#X text 24 97 Sync;
+#X obj 48 148 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 0 1 1;
-#X msg 58 169 chat admin p:l2orklicious l2ork-obfuscate \$1;
-#X msg 81 250 chat admin p:l2orklicious l2ork-report \$1;
-#X floatatom 81 228 5 0 0 0 - - - 0 0 1, f 5;
-#X obj 81 208 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X msg 48 169 chat admin p:l2orklicious l2ork-obfuscate \$1;
+#X msg 71 250 chat admin p:l2orklicious l2ork-report \$1;
+#X floatatom 71 228 5 0 0 0 - - - 0 0 1, f 5;
+#X obj 71 208 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1;
-#X msg 77 398 chat admin p:l2orklicious l2ork-load jamminlicious-002
+#X msg 67 398 chat admin p:l2orklicious l2ork-load jamminlicious-002
 ;
-#X obj 108 336 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
+#X obj 98 336 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
 #fcfcfc #000000 #000000 0 256 0 0 1 0;
-#X msg 108 358 chat admin p:l2orklicious l2ork-length-all \$1;
-#X msg 218 286 2000;
-#X obj 108 313 line 100;
-#X msg 108 286 2000 \, 555 30000;
-#X obj 491 519 s load-session-network-sync;
-#X msg 141 511 chat admin p:l2orklicious l2ork-teach 1 overdrive-override
+#X msg 98 358 chat admin p:l2orklicious l2ork-length-all \$1;
+#X msg 208 286 2000;
+#X obj 98 313 line 100;
+#X msg 98 286 2000 \, 555 30000;
+#X obj 491 539 s load-session-network-sync;
+#X msg 131 511 chat admin p:l2orklicious l2ork-teach 1 overdrive-override
 1, f 32;
-#X text 823 20 remote admin uses chat system. see left for examples.
-possible admin commands: l2ork-conduct (see the possible command
-list on the left)l2ork-disconnect (user_num) l2ork-free-slot (user_num
-\, bumps them into audience) l2ork-guest-chat (1=default/0 \, toggles
-audience chat) l2ork-inst-level-at (user_num \, target_time \, target_level
-0.1-10)l2ork-inst-level-all-at (user_num \, target_time \, target_level
-l2ork-length (list of ms values for each user) l2ork-length-all (ms
-for all users) l2ork-load (session-name \, without the -session-coll.txt
-suffix) l2ork-load-sync-delay (ms \, sets sync delay after l2ork-load)
-l2ork-obfuscate (1/0=default \, obfuscates note letters to avoid misuse)
-l2ork-report (user_num \, requests their state report) l2ork-reset-client-list
-(resets all clients and reassigns them) l2ork-save (session_name \,
-distributes locally saved version to all) l2ork-set-password (new_password
-\, change the admin password) l2ork-sync-all (syncs all clients over
-network using the reset command) l2ork-teach (same as l2ork-conduct)
-, f 78;
 #X text 460 20 possible l2ork-conduct commands:carrier (0-4)echo-amp
 (0-1)echo-fb (0-0.999)echo-ms (0.001-9999)flanger-amp (0-1)flanger-hz
 (0.001-100)flanger-mod-amp (0-100)flanger-ms (0.001-50)harmonicity
@@ -57,16 +41,16 @@ network using the reset command) l2ork-teach (same as l2ork-conduct)
 (0.1-10)overdrive-override (0.1-10) *overrides user inst. levelreverb-amp
 (0-1)reverb-type (0-3)tracker (0/1)tracker-time (beat(0-63) \, offset
 (ms) \, play(0/1))solo (0/1)username <symbol>;
-#X msg 77 421 chat admin p:l2orklicious l2ork-load 4th-beat-final-10
+#X msg 67 421 chat admin p:l2orklicious l2ork-load 4th-beat-final-10
 ;
-#X msg 77 444 chat admin p:l2orklicious l2ork-load 4th-beat-droplets-6
+#X msg 67 444 chat admin p:l2orklicious l2ork-load 4th-beat-droplets-6
 ;
-#X msg 491 495 4th-beat-final-10;
-#X msg 607 495 4th-beat-droplets-6;
-#X msg 491 542 \; load-session-network-sync 4th-beat-droplets-6;
-#X msg 491 578 \; session-sync-offset -1 \; load-session-network-sync
+#X msg 491 515 4th-beat-final-10;
+#X msg 607 515 4th-beat-droplets-6;
+#X msg 491 562 \; load-session-network-sync 4th-beat-droplets-6;
+#X msg 491 598 \; session-sync-offset -1 \; load-session-network-sync
 4th-beat-final-10;
-#X text 823 278 l2ork-inst-level and l2ork-inst-level-all-at allow
+#X text 823 295 l2ork-inst-level and l2ork-inst-level-all-at allow
 for anticipating future events that need to be synchronized with a
 particular user's time on their timebar and which then triggers change
 in either their or entire ensemble's instrument level \, as denoted
@@ -77,7 +61,7 @@ system that remains active until the request is fulfilled. only one
 request per client is possible and any subsequent requests will override
 the previous one. requests remain active until fulfilled or disabled.
 , f 78;
-#X text 824 408 In addition to commands described above \, Tweeter
+#X text 824 428 In addition to commands described above \, Tweeter
 Server also recognizes l2ork-sync-save \, l2ork-sync-save-data \, l2ork-sync-data
 \, and l2ork-sync-vis. These are INTERNAL RESERVED ADMIN COMMANDS for
 broadcasting locally saved session data which is generated via L2Ork-Tweeter-Teacher
@@ -96,11 +80,28 @@ visual sync with red color (using the reset button) \, signalling the
 global sync based on the session data. NONE OF THESE RESERVED COMMANDS
 ARE NOT MEANT TO BE USED DIRECTLY and will not work as designed without
 the L2Ork-Tweeter-Teacher widget being open., f 79;
-#X text 470 444 special case commands that are broadcast from the local
+#X text 470 464 special case commands that are broadcast from the local
 client engine and require theL2Ork-Tweeter-Teacher patch to be open:
 , f 52;
-#X text 121 479 overrides the output level of the client 1 to 1 (unity
+#X text 111 479 overrides the output level of the client 1 to 1 (unity
 \, possible range is 0.1 to 10), f 42;
+#X text 823 20 remote admin uses chat system. see left for examples.
+possible admin commands: l2ork-conduct (see the possible command
+list on the left)l2ork-disconnect (user_num) l2ork-free-slot (user_num
+\, bumps them into audience) l2ork-guest-chat (1=default/0 \, toggles
+audience chat) l2ork-inst-level-at (user_num \, target_time \, target_level
+0.1-10)l2ork-inst-level-all-at (user_num \, target_time \, target_levell2ork-inst-level-list-at
+(user_num \, target_time \, list_of_target_levels) l2ork-length (list
+of ms values for each user) l2ork-length-all (ms for all users) l2ork-load
+(session-name \, without the -session-coll.txt suffix) l2ork-load-sync-delay
+(ms \, sets sync delay after l2ork-load) l2ork-obfuscate (1/0=default
+\, obfuscates note letters to avoid misuse) l2ork-report (user_num
+\, requests their state report) l2ork-reset-client-list (resets all
+clients and reassigns them) l2ork-save (session_name \, distributes
+locally saved version to all) l2ork-set-password (new_password \,
+change the admin password) l2ork-sync-all (syncs all clients over
+network using the reset command) l2ork-teach (same as l2ork-conduct)
+, f 78;
 #X connect 5 0 4 0;
 #X connect 6 0 4 0;
 #X connect 9 0 10 0;
@@ -115,7 +116,7 @@ client engine and require theL2Ork-Tweeter-Teacher patch to be open:
 #X connect 18 0 15 0;
 #X connect 19 0 18 0;
 #X connect 21 0 4 0;
+#X connect 23 0 4 0;
 #X connect 24 0 4 0;
-#X connect 25 0 4 0;
+#X connect 25 0 20 0;
 #X connect 26 0 20 0;
-#X connect 27 0 20 0;
