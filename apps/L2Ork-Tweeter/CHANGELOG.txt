@@ -9,12 +9,13 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
-30-11-2021 0.63
+01-12-2021 0.63
 *Fixed a bug where inst-level-all-at and inst-level-at server messages did not work under certain circumstances.
 *Added a l2ork-inst-level-list-at message that allows for levels for each instrument individually provided as a list.
 *Updated Conductor-Commands.pd patch, documenting the new command.
 *Updated the conductor-shortcuts.pd patch for the "4th beat" composition.
 *Added supporting files for the "4th beat" composition.
+*Refactored "Into the Abyss" to match the new formatting for the purpose of future automatic retrieval.
 
 19-11-2021 0.62
 *Initialized load preset value to 11 to avoid having to cycle by default through empty presets.
@@ -139,7 +140,7 @@ CHANGELOG (Date Format: DD-MM-YYYY)
 *Bunch of small bug fixes and cosmetic tweaks.
 
 22-09-2020 0.36
-*Requires Purr-Data 2.15 or newer.
+*Requires Pd-L2Ork 2.15 or newer.
 *Changed carrier and modulator to use dropdown option which will allow for addition of new waveforms.
 *Added square wave and pink noise as the fourth and fifth available waveforms for both carrier and modulator.
 *Added ability to open sessions via file browser.
@@ -154,8 +155,8 @@ CHANGELOG (Date Format: DD-MM-YYYY)
 
 16-05-2020 0.35
 *Added link info in the server response as to where to download the latest version in case the client has an outdated version.
-*Updated nlr abstraction to make it compatible with Purr-Data 2.11 or newer.
-*Fixed regression/incompatibility with the Purr-Data 2.11 where the output level does not come up when activating instrument for the first time.
+*Updated nlr abstraction to make it compatible with Pd-L2Ork 2.11 or newer.
+*Fixed regression/incompatibility with the Pd-L2Ork 2.11 where the output level does not come up when activating instrument for the first time.
 *Small typo fix in the comment.
 
 15-05-2020 0.34
