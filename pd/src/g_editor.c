@@ -6592,6 +6592,7 @@ static int canvas_dofind(t_canvas *x, int *myindex1p)
     //post("canvas_dofind %lx myindex1p=%d canvas_find_index1=%d \
     //    canvas_findbuf=<%s>", x, *myindex1p, canvas_find_index1, b);
     t_binbuf *b = binbuf_new();
+    int iscanvas = 0;
 
     t_gobj *y;
     int myindex1 = *myindex1p, myindex2, delayed=0;
@@ -6604,6 +6605,8 @@ static int canvas_dofind(t_canvas *x, int *myindex1p)
             if (ob = pd_checkobject(&y->g_pd))
             {
                 //binbuf_print(ob->ob_binbuf);
+                if (pd_class(&y->g_pd) == canvas_class)
+                    iscanvas = 1;
                 gobj_save(y, b);
                 //binbuf_print(b);
                 /* 2021-11-06 ico@vt.edu: before b was ob->ob_binbuf
@@ -6617,8 +6620,13 @@ static int canvas_dofind(t_canvas *x, int *myindex1p)
                       .and reopened.
                    2) some objects, like gatom, whose sends and receives
                       may match the search phrase, would never work.
+                   2021-12-01 ico@vt.edu update: it appears for canvas
+                   objects we do want the ob->ob_binbuf approach. otherwise
+                   b contains all its objects inside it, resulting in a
+                   false positive (highlighting the canvas containing an
+                   object).
                 */
-                if (binbuf_match(b, canvas_findbuf,
+                if (binbuf_match((iscanvas ? ob->ob_binbuf : b), canvas_findbuf,
                     canvas_find_wholeword))
                 {
                     if (myindex1 > canvas_find_index1 ||
