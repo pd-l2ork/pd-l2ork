@@ -154,7 +154,7 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 
 
 TWEETER TODO:
-*Update 4th Beat score YouTube video link once we have a better studio take. Also update the transition into third section that now changes to different preset before it mutes everyone.
+*Update 4th Beat score YouTube video link once we have a final studio take.
 
 *In offline mode, enable keyboard and other input for multiple tracks. Consider using the mouse focus by utilizing invisible ggee/image to make focus switching easier.
 
@@ -227,6 +227,7 @@ TWEETER DONE:
 *Fixed server bug where l2ork-sync-* messages did not get passed to the guest users.
 *Updated Tweeter 4th Beat's conductor shortcuts patch.
 *Cleaned up L2OrkTweet.pd abstraction to minimize redundant maintenance of the version it is associated with.
+*Updated "4th Beat" score.
 
 
 
