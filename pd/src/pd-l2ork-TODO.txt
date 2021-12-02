@@ -223,6 +223,7 @@ TWEETER DONE:
 *Updated the conductor-shortcuts.pd patch for the "4th beat" composition.
 *Added supporting files for the "4th beat" composition.
 *Refactored "Into the Abyss" to match the new formatting for the purpose of future automatic retrieval.
+*Bug fixes reenabling Tweeter's chat admin messages and fixing the l2ork-free-slot server command.
 
 
 

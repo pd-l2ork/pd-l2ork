@@ -16,6 +16,7 @@ CHANGELOG (Date Format: DD-MM-YYYY)
 *Updated the conductor-shortcuts.pd patch for the "4th beat" composition.
 *Added supporting files for the "4th beat" composition.
 *Refactored "Into the Abyss" to match the new formatting for the purpose of future automatic retrieval.
+*Bug fixes reenabling Tweeter's chat admin messages and fixing the l2ork-free-slot server command.
 
 19-11-2021 0.62
 *Initialized load preset value to 11 to avoid having to cycle by default through empty presets.
