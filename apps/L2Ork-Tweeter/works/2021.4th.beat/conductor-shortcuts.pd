@@ -37,6 +37,8 @@ l2ork-inst-level-at 10 0 10;
 ;
 #X msg 89 260 chat admin p:l2orklicious l2ork-inst-level-list-at 9
 63 3 1 10 1 1 1 3 0.1 10 10 0.1 1;
+#X floatatom 89 401 5 0 0 0 - - - 0 0 1, f 5;
+#X msg 89 419 chat admin p:l2orklicious l2ork-free-slot \$1;
 #X connect 1 0 2 0;
 #X connect 2 0 0 0;
 #X connect 3 0 4 0;
@@ -52,3 +54,5 @@ l2ork-inst-level-at 10 0 10;
 #X connect 22 0 0 0;
 #X connect 23 0 0 0;
 #X connect 24 0 0 0;
+#X connect 25 0 26 0;
+#X connect 26 0 0 0;
