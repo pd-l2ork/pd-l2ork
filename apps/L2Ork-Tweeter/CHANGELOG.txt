@@ -9,6 +9,11 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+02-12-2021 0.64
+*Fixed server bug where l2ork-sync-* messages did not get passed to the guest users.
+*Updated Tweeter 4th Beat's conductor shortcuts patch.
+*Cleaned up L2OrkTweet.pd abstraction to minimize redundant maintenance of the version it is associated with.
+
 01-12-2021 0.63
 *Fixed a bug where inst-level-all-at and inst-level-at server messages did not work under certain circumstances.
 *Added a l2ork-inst-level-list-at message that allows for levels for each instrument individually provided as a list.

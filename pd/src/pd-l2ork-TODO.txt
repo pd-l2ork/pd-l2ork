@@ -224,6 +224,9 @@ TWEETER DONE:
 *Added supporting files for the "4th beat" composition.
 *Refactored "Into the Abyss" to match the new formatting for the purpose of future automatic retrieval.
 *Bug fixes reenabling Tweeter's chat admin messages and fixing the l2ork-free-slot server command.
+*Fixed server bug where l2ork-sync-* messages did not get passed to the guest users.
+*Updated Tweeter 4th Beat's conductor shortcuts patch.
+*Cleaned up L2OrkTweet.pd abstraction to minimize redundant maintenance of the version it is associated with.
 
 
 
