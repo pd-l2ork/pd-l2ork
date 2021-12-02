@@ -65,7 +65,7 @@ endif
 # Edit the library paths in the default user.settings file.
 	cd debian/pd-l2ork$(prefix)/lib/pd-l2ork && sed -e "s!/usr/lib/pd-l2ork!$(prefix)/lib/pd-l2ork!g" -i default.settings
 # Replace the pd-l2ork desktop/mime files and icons with pd-l2ork ones.
-	cd debian/pd-l2ork/usr/share/applications && (sed -e 's/pd-l2ork/pd-l2ork/g' -e 's/Pd-L2Ork/Purr-Data/g' < pd-l2ork.desktop > pd-l2ork.desktop) && (sed -e 's/pd-l2ork/pd-l2ork/g' -e 's/Pd-L2Ork/Purr-Data/g' < pd-l2ork-debug.desktop > pd-l2ork-debug.desktop)
+	cd debian/pd-l2ork/usr/share/applications && (sed -e 's/pd-l2ork/pd-l2ork/g' -e 's/Pd-L2Ork/Pd-L2Ork/g' < pd-l2ork.desktop > pd-l2ork.desktop) && (sed -e 's/pd-l2ork/pd-l2ork/g' -e 's/Pd-L2Ork/Pd-L2Ork/g' < pd-l2ork-debug.desktop > pd-l2ork-debug.desktop)
 	cd debian/pd-l2ork/usr/share/mime/packages && (sed -e 's/pd-l2ork/pd-l2ork/g' < pd-l2ork.xml > pd-l2ork.xml)
 	cd debian/pd-l2ork/usr/share/icons/hicolor/128x128/apps/ && rm -f pd-l2ork-k12*.png && mv pd-l2ork.png pd-l2ork.png && mv pd-l2ork-red.png pd-l2ork-red.png
 	cd debian/pd-l2ork/usr/share/icons/hicolor/128x128/mimetypes/ && mv text-x-pd-l2ork.png text-x-pd-l2ork.png
