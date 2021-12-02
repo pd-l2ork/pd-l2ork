@@ -1,7 +1,5 @@
 PD-L2ORK TODO:
-*Find $1-overdrive inside L2OrkTweet.pd highlights subpatch, but does not open it.
-
-*cursor abstraction does not report right mouse up events due to it triggering the pop-up menu.
+*cursor abstraction does not report right mouse up events due to it triggering the pop-up menu. This may be a nw.js limitation?
 
 *refine window heights for various dialogs, so that they always display fully on-screen.
 
@@ -150,6 +148,7 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Array editing cursor should revert to regular cursor upon right-click (and revert afterwards).
 *Fixed Gem not building properly on newer msys2 installs.
 *Finished renaming the remaining instances of purr-data to minimize confusion between the two releases.
+*Fixed a bug where searching for an expression also incorrectly highlighted a canvas containing such an object even if the canvas did not have the expression in its name (e.g. searching for $1-overdrive inside L2OrkTweet.pd version 0.63 incorrectly highlights subpatch containing the expression).
 
 
 

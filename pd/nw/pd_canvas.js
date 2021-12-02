@@ -1376,8 +1376,8 @@ var canvas_events = (function() {
             // For now, however, we just turn off its default behavior and
             // control it with a bunch of complicated callbacks.
             document.addEventListener("contextmenu", function(evt) {
-                console.log("got a context menu evt...");
-                evt.stopPropagation()
+                //console.log("got a context menu evt...");
+                evt.stopPropagation();
                 evt.preventDefault();
             });
 

@@ -4500,6 +4500,7 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
 void canvas_dispatch_mouseclick(t_float down, t_float xpos, t_float ypos,
     t_float which)
 {
+    //post("canvas_dispatch_mouseclick which=%d down=%d", (t_int)which, (t_int)down);
     t_symbol *mouseclicksym = gensym("#legacy_mouseclick");
     if (mouseclicksym->s_thing)
     {
