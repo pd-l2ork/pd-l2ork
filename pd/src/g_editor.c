@@ -2601,16 +2601,17 @@ void canvas_setcursor(t_canvas *x, unsigned int cursornum)
 {
     if (x->gl_havewindow)
     {
-        //fprintf(stderr,"canvas_setcursor %d\n", cursornum);
+        //post("canvas_setcursor %d", cursornum);
         static t_canvas *xwas;
         static unsigned int cursorwas;
         if (cursornum >= sizeof(cursorlist)/sizeof *cursorlist)
         {
-        bug("canvas_setcursor");
-            return;
+            bug("canvas_setcursor");
+                return;
         }
         if (xwas != x || cursorwas != cursornum)
         {
+            //post("...requesting cursor change", cursornum);
             gui_vmess("gui_canvas_cursor", "xs", x,
                 cursorlist[cursornum]);
             xwas = x;
@@ -5438,7 +5439,8 @@ void canvas_doconnect(t_canvas *x, int xpos, int ypos, int which, int doit)
         magicGlass_hide(x->gl_editor->gl_magic_glass);
     }
     // end jsarlo
-    canvas_setcursor(x, CURSOR_EDITMODE_NOTHING);
+    if (x->gl_editor->e_onmotion != MA_CONNECT)
+        canvas_setcursor(x, CURSOR_EDITMODE_NOTHING);
 }
 
 void canvas_selectinrect(t_canvas *x, int lox, int loy, int hix, int hiy)
@@ -5612,8 +5614,10 @@ void canvas_mouseup(t_canvas *x,
     canvas_upy = ypos;
     glob_lmclick = 0;
 
-    if (x->gl_editor->e_onmotion == MA_CONNECT)
+    if (x->gl_editor->e_onmotion == MA_CONNECT) {
         canvas_doconnect(x, xpos, ypos, which, 1);
+        canvas_setcursor(x, CURSOR_EDITMODE_NOTHING);
+    }
     else if (x->gl_editor->e_onmotion == MA_REGION)
         canvas_doregion(x, xpos, ypos, 1);
     else if (x->gl_editor->e_onmotion == MA_MOVE)
