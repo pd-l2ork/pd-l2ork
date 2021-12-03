@@ -1490,7 +1490,10 @@ exports.update_grid = update_grid;
 function redraw_all_visible_canvases() {
     // redraw all canvases to reflect the preference setting
     for (var cid in patchwin) {
-        pdsend(cid, "redraw");
+        if (gui(cid) && gui(cid).get_elem("patchsvg"))
+        {
+            pdsend(cid, "redraw");
+        }
     }
 }
 

@@ -558,6 +558,8 @@ var pd_object_callback;
 var pd_audio_attrs;
 var pd_midi_attrs;
 
+var last_curved_cords = 1;
+
 function restore_apps() {
   pdgui.restore_apps(1); // argument is 0 = do not force overwrite, or 1 = force overwrite
 }
@@ -828,7 +830,11 @@ function apply(save_prefs) {
     pdgui.update_grid(get_bool_elem("show_grid"));
 
     // Update the cords on all open windows by redrawing them.
-    pdgui.redraw_all_visible_canvases();
+    //pdgui.post("redrawing all canvases? last=" + last_curved_cords + " current=" + get_bool_elem("curved_cords"));
+    if (last_curved_cords != get_bool_elem("curved_cords")) {
+      pdgui.redraw_all_visible_canvases();
+      //pdgui.post("redrawing...");
+    }
 
     // Send the startup config data to Pd
     pdgui.pdsend.apply(null, ["pd path-dialog", startup_use_stdpath, startup_verbose].concat(get_path_array()));
@@ -1108,6 +1114,9 @@ function gui_prefs_callback(name, show_grid, save_zoom, browser_doc, browser_pat
     document.getElementById("browser_doc").checked = !!browser_doc;
     document.getElementById("browser_path").checked = !!browser_path;
     document.getElementById("browser_init").checked = !!browser_init;
+
+    last_curved_cords = curved_cords;
+    //pdgui.post("last_curved_cords=" + last_curved_cords);
 
     if (+autopatch_yoffset !== 0) {
         document.getElementById("autopatch_yoffset_value").value =
