@@ -156,7 +156,7 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 
 
 TWEETER TODO:
-*Update 4th Beat score YouTube video link once we have a final studio take.
+*When having guests, server running on a Linux machine fails to output an accurate number of users? May be a netserver bug.
 
 *In offline mode, enable keyboard and other input for multiple tracks. Consider using the mouse focus by utilizing invisible ggee/image to make focus switching easier.
 

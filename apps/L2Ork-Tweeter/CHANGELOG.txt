@@ -9,6 +9,11 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+07-12-2021 0.65
+*Fixed a bug where a user who connects after all the slots have been taken is immediately made into a guest but whose id is erroneously set to -1, resulting in user's inability to receive select server messages.
+*Updated documentation in the server patch.
+*Updated 4th Beat score.
+
 02-12-2021 0.64
 *Fixed server bug where l2ork-sync-* messages did not get passed to the guest users.
 *Updated Tweeter 4th Beat's conductor shortcuts patch.
