@@ -230,6 +230,10 @@ TWEETER DONE:
 *Updated Tweeter 4th Beat's conductor shortcuts patch.
 *Cleaned up L2OrkTweet.pd abstraction to minimize redundant maintenance of the version it is associated with.
 *Updated "4th Beat" score.
+*Fixed a bug where a user who connects after all the slots have been taken is immediately made into a guest but whose id is erroneously set to -1, resulting in user's inability to receive select server messages.
+*Fixed a server bug dealing with the sequence of disconnecting clients, simplifying the flow.
+*Updated documentation in the server patch.
+*Updated 4th Beat score.
 
 
 

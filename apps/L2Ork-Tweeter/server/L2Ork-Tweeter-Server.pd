@@ -29,7 +29,7 @@
 #X floatatom 995 350 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 995 370 text get clients 0;
 #X floatatom 995 391 5 0 0 0 - - - 0 0 1, f 5;
-#X obj 995 329 t f f;
+#X obj 995 329 t f f, f 8;
 #X obj 995 411 pack 0 0;
 #X obj 448 268 t b b;
 #X text 513 316 check if the user is not already in the client list
@@ -261,30 +261,30 @@ others following values for the disconnected client: out-amp 0 \, tracker
 #X connect 10 2 8 0;
 #X restore 199 591 pd l2ork-disconnect;
 #X obj 189 830 r malformed-request;
-#N canvas 41 91 534 484 l2ork-free-slot 0;
+#N canvas 41 91 559 515 l2ork-free-slot 0;
 #X obj 49 41 r admin-messages;
-#X obj 179 426 s admin-main-outlet;
-#X obj 308 426 s print-server;
-#X obj 407 426 s server-out;
-#X obj 49 426 s malformed-request;
+#X obj 179 456 s admin-main-outlet;
+#X obj 308 456 s print-server;
+#X obj 407 456 s server-out;
+#X obj 49 456 s malformed-request;
 #X obj 106 138 - 1;
 #X obj 106 161 text get clients 1;
 #X obj 106 184 sel 0;
-#X msg 206 288 \$1 0;
-#X obj 206 311 text set clients;
+#X msg 233 288 \$1 0;
+#X obj 233 311 text set clients;
 #X obj 179 231 f;
-#X msg 179 395 server slot \$1 freed and user \$1 made guest;
+#X msg 179 425 server slot \$1 freed and user \$1 made guest;
 #X obj 49 90 route bang;
 #X obj 106 114 t f f;
 #X obj 49 66 route l2ork-free-slot;
-#X msg 316 311 \; \$1-client-free bang;
+#X msg 206 341 \; \$1-client-free bang;
 #X obj 179 254 t f f f f, f 14;
-#X obj 244 288 - 1;
+#X obj 271 288 - 1;
 #X obj 133 207 t b f b;
 #X obj 80 288 s \$0-report-leds;
 #X obj 80 254 delay 500;
-#X msg 152 347 send \$1 myid \$1 0;
-#X text 264 347 guests are given an id of 0 \, so that they can still
+#X msg 152 377 send \$1 myid \$1 0;
+#X text 264 377 guests are given an id of 0 \, so that they can still
 receive l2ork-sync-* commands (disconnected users have an id of -1).
 , f 41;
 #X connect 0 0 14 0;
@@ -301,9 +301,9 @@ receive l2ork-sync-* commands (disconnected users have an id of -1).
 #X connect 13 1 10 1;
 #X connect 14 0 12 0;
 #X connect 16 0 11 0;
-#X connect 16 1 8 0;
-#X connect 16 2 17 0;
-#X connect 16 3 15 0;
+#X connect 16 1 15 0;
+#X connect 16 2 8 0;
+#X connect 16 3 17 0;
 #X connect 17 0 9 1;
 #X connect 18 0 20 0;
 #X connect 18 1 21 0;

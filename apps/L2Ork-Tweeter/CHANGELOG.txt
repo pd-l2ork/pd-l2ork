@@ -11,6 +11,7 @@ CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
 07-12-2021 0.65
 *Fixed a bug where a user who connects after all the slots have been taken is immediately made into a guest but whose id is erroneously set to -1, resulting in user's inability to receive select server messages.
+*Fixed a server bug dealing with the sequence of disconnecting clients, simplifying the flow.
 *Updated documentation in the server patch.
 *Updated 4th Beat score.
 
