@@ -94,6 +94,7 @@ typedef struct _netserver
 	  t_outlet *x_connectionip;
 	  t_symbol *x_host[MAX_CONNECT];
 	  t_int    x_fd[MAX_CONNECT];
+	  t_int	  x_fd_error[MAX_CONNECT];
 	  t_int    x_sock_fd;
 	  t_int    x_connectsocket;
 	  t_int    x_nconnections;
@@ -110,6 +111,10 @@ typedef struct _netserver_socketreceiver
 	  t_netserver_socketnotifier sr_notifier;
 	  t_netserver_socketreceivefn sr_socketreceivefn;
 } t_netserver_socketreceiver;
+
+/* forward declarations */
+static void netserver_disconnect(t_netserver *x, t_symbol *s, t_floatarg f);
+static void netserver_notify(t_netserver *x);
 
 static t_netserver_socketreceiver *netserver_socketreceiver_new(void *owner, t_netserver_socketnotifier notifier,
 																t_netserver_socketreceivefn socketreceivefn)
@@ -312,12 +317,19 @@ static void netserver_send(t_netserver *x, t_symbol *s, int argc, t_atom *argv)
 			//sys_sockerror("netserver");
 			if (x->x_log_pri >= LOG_ERR) 
 			   post("netserver: could not send data to the client");
+			x->x_fd_error[client]++;
+			if (x->x_fd_error[client] >= 4)
+			{
+				post("netserver: disconnecting client on the socket %d due to repeatedly failing to send packets", x->x_fd[i]);
+				netserver_disconnect(x, gensym("disconnect"), (t_floatarg)x->x_fd[i]);
+			}
 			break;
 		 }
 		 else
 		 {
 			sent += res;
 			bp += res;
+			x->x_fd_error[client] = 0;
 		 }
 	  }
 	  t_freebytes(buf, length);
@@ -398,12 +410,19 @@ static void netserver_client_send(t_netserver *x, t_symbol *s, int argc, t_atom 
 			//sys_sockerror("netserver");
 			if (x->x_log_pri >= LOG_ERR)
 			   post("netserver: could not send data to the client");
+			x->x_fd_error[client - 1]++;
+			if (x->x_fd_error[client - 1] >= 4)
+			{
+				post("netserver: disconnecting client on the socket %d due to repeatedly failing to send packets", x->x_fd[client - 1]);
+				netserver_disconnect(x, gensym("disconnect"), (t_floatarg)x->x_fd[client - 1]);
+			}
 			break;
 		 }
 		 else
 		 {
 			sent += res;
 			bp += res;
+			x->x_fd_error[client - 1] = 0;
 		 }
 	  }
 	  t_freebytes(buf, length);
@@ -417,26 +436,29 @@ static void netserver_client_send(t_netserver *x, t_symbol *s, int argc, t_atom 
 // disconnect client connected on the provided socket number 
 static void netserver_disconnect(t_netserver *x, t_symbol *s, t_floatarg f)
 {
-   int client, i, found = 0, sock = f;
+   int client, i, sock = f;
    if(x->x_nconnections <= 0)
    {
 	  if (x->x_log_pri >= LOG_WARNING)
-		 post("netserver: no clients connected");
+		 post("netserver: disconnect request ignored--no clients connected");
 	  return;
    }
+   x->x_sock_fd = (t_int)f;
+   netserver_notify(x);
+   /*
    for(i = 0; i < x->x_nconnections; i++)
    {
 	  if(x->x_fd[i] == sock)
 	  {
 	  		//post("disconnect client:%d socket:%d found", i, sock);
-	  		/* rudely close the connection */
+	  		// rudely close the connection
 			sys_rmpollfn(sock);
 			sys_closesocket(sock);
 			found = 1;
 		}
-	}
-   if (!found)
-	  post("netserver: not a valid socket number (%d)", sock);
+	}*/
+   //if (!found)
+	//  post("netserver: not a valid socket number (%d)", sock);
 }
 
 /* broadcasts a message to all connected clients */
@@ -476,11 +498,13 @@ static void netserver_notify(t_netserver *x)
 			post("netserver: \"%s\" removed from list of clients", x->x_host[i]->s_name);
 		 x->x_host[i] = NULL;	/* delete entry */
 		 x->x_fd[i] = -1;
+		 x->x_fd_error[i] = 0;
 		 /* rearrange list now: move entries to close the gap */
 		 for(k = i; k < x->x_nconnections; k++)
 		 {
 			x->x_host[k] = x->x_host[k + 1];
 			x->x_fd[k] = x->x_fd[k + 1];
+			x->x_fd_error[k] = x->x_fd_error[k + 1];
 		 }
 	  }
    }
@@ -552,6 +576,7 @@ static void netserver_connectpoll(t_netserver *x)
 	  x->x_nconnections++;
 	  x->x_host[x->x_nconnections - 1] = gensym(inet_ntoa(incomer_address.sin_addr));
 	  x->x_fd[x->x_nconnections - 1] = fd;
+	  x->x_fd_error[x->x_nconnections - 1] = 0;
 
 	  if (x->x_log_pri >= LOG_NOTICE) 
 		 post("netserver: ** accepted connection from %s on socket %d", 
@@ -674,7 +699,10 @@ static void *netserver_new(t_floatarg fportno)
    }
    x->x_connectsocket = sockfd;
    x->x_nconnections = 0;
-   for(i = 0; i < MAX_CONNECT; i++)x->x_fd[i] = -1;
+   for(i = 0; i < MAX_CONNECT; i++) {
+   	x->x_fd[i] = -1;
+   	x->x_fd_error[i] = 0;
+   }
 
    return (x);
 }
