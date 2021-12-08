@@ -80,7 +80,7 @@ static char *version =
 /* ----------------------------- netserver ------------------------- */
 
 static t_class *netserver_class;
-static t_binbuf *inbinbuf;
+//static t_binbuf *inbinbuf;
 
 typedef void (*t_netserver_socketnotifier)(void *x);
 typedef void (*t_netserver_socketreceivefn)(void *x, t_binbuf *b);
@@ -94,7 +94,15 @@ typedef struct _netserver
 	  t_outlet *x_connectionip;
 	  t_symbol *x_host[MAX_CONNECT];
 	  t_int    x_fd[MAX_CONNECT];
-	  t_int	  x_fd_error[MAX_CONNECT];
+
+	  t_int	  x_fd_error[MAX_CONNECT];	/* ico 2021-12-03:
+	  													used to keep track of how many failed sends in a row there are
+	  													which may result in a client being disconnected. threshold is
+	  													set using the x_fd_error_threshold. */
+	  t_int	  x_fd_error_threshold;
+
+	  t_binbuf *x_inbinbuf;
+
 	  t_int    x_sock_fd;
 	  t_int    x_connectsocket;
 	  t_int    x_nconnections;
@@ -157,6 +165,7 @@ static int netserver_socketreceiver_doread(t_netserver_socketreceiver *x)
    int inhead = x->sr_inhead;
    int intail = x->sr_intail;
    char *inbuf = x->sr_inbuf;
+   t_netserver *y = x->sr_owner;
    if (intail == inhead) return (0);
    for (indx = intail; indx != inhead; indx = (indx+1)&(INBUFSIZE-1))
    {
@@ -164,7 +173,7 @@ static int netserver_socketreceiver_doread(t_netserver_socketreceiver *x)
 	  if (c == ';' && (!indx || inbuf[indx-1] != '\\'))
 	  {
 		 intail = (indx+1)&(INBUFSIZE-1);
-		 binbuf_text(inbinbuf, messbuf, bp - messbuf);
+		 binbuf_text(y->x_inbinbuf, messbuf, bp - messbuf);
 		 x->sr_inhead = inhead;
 		 x->sr_intail = intail;
 		 return (1);
@@ -218,8 +227,8 @@ static void netserver_socketreceiver_read(t_netserver_socketreceiver *x, int fd)
 		 {
 			outlet_setstacklim();
 			if (x->sr_socketreceivefn)
-			   (*x->sr_socketreceivefn)(x->sr_owner, inbinbuf);
-			else binbuf_eval(inbinbuf, 0, 0, 0);
+			   (*x->sr_socketreceivefn)(x->sr_owner, y->x_inbinbuf);
+			else binbuf_eval(y->x_inbinbuf, 0, 0, 0);
 		 }
 	  }
    }
@@ -318,9 +327,9 @@ static void netserver_send(t_netserver *x, t_symbol *s, int argc, t_atom *argv)
 			if (x->x_log_pri >= LOG_ERR) 
 			   post("netserver: could not send data to the client");
 			x->x_fd_error[client]++;
-			if (x->x_fd_error[client] >= 4)
+			if (x->x_fd_error[client] >= x->x_fd_error_threshold)
 			{
-				post("netserver: disconnecting client on the socket %d due to repeatedly failing to send packets", x->x_fd[i]);
+				post("netserver: disconnecting client on the socket %d due to %d failed attempts to send packets", x->x_fd[i], x->x_fd_error_threshold);
 				netserver_disconnect(x, gensym("disconnect"), (t_floatarg)x->x_fd[i]);
 			}
 			break;
@@ -411,9 +420,9 @@ static void netserver_client_send(t_netserver *x, t_symbol *s, int argc, t_atom 
 			if (x->x_log_pri >= LOG_ERR)
 			   post("netserver: could not send data to the client");
 			x->x_fd_error[client - 1]++;
-			if (x->x_fd_error[client - 1] >= 4)
+			if (x->x_fd_error[client - 1] >= x->x_fd_error_threshold)
 			{
-				post("netserver: disconnecting client on the socket %d due to repeatedly failing to send packets", x->x_fd[client - 1]);
+				post("netserver: disconnecting client on the socket %d due to %d failed attempts to send packets", x->x_fd[client - 1], x->x_fd_error_threshold);
 				netserver_disconnect(x, gensym("disconnect"), (t_floatarg)x->x_fd[client - 1]);
 			}
 			break;
@@ -480,6 +489,19 @@ static void netserver_broadcast(t_netserver *x, t_symbol *s, int argc, t_atom *a
           netserver_client_send(x, s, argc, at);
        }
    }
+}
+
+/* ico@vt.edu 2021-12-03: added to adjust the threshold before disconnecting */
+static void netserver_retry(t_netserver *x, t_symbol *s, t_floatarg f)
+{
+	t_int retry =  (t_int)f;
+	if (retry > 0)
+	{
+		x->x_fd_error_threshold = retry;
+		if (x->x_log_pri >= LOG_NOTICE) 
+			post("netserver: setting number of failures to send the network packet before disconnecting to %d", 
+				x->x_fd_error_threshold);
+	}
 }
 
 
@@ -695,10 +717,11 @@ static void *netserver_new(t_floatarg fportno)
 	  x->x_connectout = outlet_new(&x->x_obj, &s_float);
 	  x->x_clientno = outlet_new(&x->x_obj, &s_float);
 	  x->x_connectionip = outlet_new(&x->x_obj, &s_symbol);
-	  inbinbuf = binbuf_new();
+	  x->x_inbinbuf = binbuf_new();
    }
    x->x_connectsocket = sockfd;
    x->x_nconnections = 0;
+   x->x_fd_error_threshold = 4; // default value
    for(i = 0; i < MAX_CONNECT; i++) {
    	x->x_fd[i] = -1;
    	x->x_fd_error[i] = 0;
@@ -720,7 +743,7 @@ static void netserver_free(t_netserver *x)
 	  sys_rmpollfn(x->x_connectsocket);
 	  sys_closesocket(x->x_connectsocket);
    }
-   binbuf_free(inbinbuf);
+   binbuf_free(x->x_inbinbuf);
 }
 
 #ifndef MAXLIB
@@ -733,6 +756,7 @@ void netserver_setup(void)
    class_addmethod(netserver_class, (t_method)netserver_client_send, gensym("client"), A_GIMME, 0);
    class_addmethod(netserver_class, (t_method)netserver_broadcast, gensym("broadcast"), A_GIMME, 0);
    class_addmethod(netserver_class, (t_method)netserver_disconnect, gensym("disconnect"), A_FLOAT, 0);
+   class_addmethod(netserver_class, (t_method)netserver_retry, gensym("retry"), A_FLOAT, 0);
 /* syslog log level messages */
    class_addmethod(netserver_class, (t_method)netserver_emerg, gensym("emerg"), 0);
    class_addmethod(netserver_class, (t_method)netserver_emerg, gensym("emergency"), 0);

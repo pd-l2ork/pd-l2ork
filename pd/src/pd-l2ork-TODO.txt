@@ -151,13 +151,14 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Fixed a bug where searching for an expression also incorrectly highlighted a canvas containing such an object even if the canvas did not have the expression in its name (e.g. searching for $1-overdrive inside L2OrkTweet.pd version 0.63 incorrectly highlights subpatch containing the expression).
 *Made redrawing of canvases after changing option for curved cords more robust, avoiding redundant redraws. Fixes errors printed to the console.
 *Fixed a bug where the hand grabbing cursor during connecting reverted back to cursor_editmode_nothing as soon as the mouse moved after initiating the connecting action by clicking on the outlet.
+*Fixed a bug where netserver was not correctly freeing disconnected clients and updating the number of clients.
+*Added option for netserver to adjust the threshold for the number of failed packets sends before disconnecting the user server-side. This is typically used when a client disconnects in a way that does not give the netserver opportunity to receive disconnection notice.
+*Fixed a crasher with netserver due to static use of inbinbuf which causes netserver to crash when running two instances with no creation argument. By default implicit port of 0 successfully instantiates the object. However, the object is not functional.
 
 
 
 
 TWEETER TODO:
-*When having guests, server running on a Linux machine fails to output an accurate number of users? May be a netserver bug.
-
 *In offline mode, enable keyboard and other input for multiple tracks. Consider using the mouse focus by utilizing invisible ggee/image to make focus switching easier.
 
 *When trying to load a pattern that does not exist (after having successfully loaded one that does), the main level goes to zero.
