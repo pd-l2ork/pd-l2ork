@@ -118,7 +118,7 @@ Hard drive space required: *roughly 2.5 GB*
              swh-plugins mcp-plugins cmt blop omins rev-plugins \
              dssi-utils vco-plugins wah-plugins fil-plugins \
              mda-lv2 libmp3lame-dev libspeex-dev libgsl0-dev \
-             portaudio19-dev liblua5.3-dev python-dev libsmpeg0 libjpeg62-turbo \
+             portaudio19-dev liblua5.3-dev python-dev libsmpeg0 libjpeg62-dev \
              flite1-dev libgsm1-dev libgtk2.0-dev git libstk0-dev \
              libfluidsynth-dev fluid-soundfont-gm byacc cmake ninja-build
 
