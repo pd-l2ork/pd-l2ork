@@ -30,6 +30,8 @@ CHANGELOG
   further improved the help file by Ivica Ico Bukvic
   <ico@vt.edu>
 
+2021-12-28 v.1.2.1
+  Improved build script to support raspbian <ico@vt.edu>
 
 
 BUILD INSTRUCTIONS

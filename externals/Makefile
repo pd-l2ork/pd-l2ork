@@ -70,6 +70,7 @@ ifeq ($(OS_NAME),linux)
   LIBS += -lc
   DYLIB_LDFLAGS = $(LDFLAGS)
   STRIP = strip --strip-unneeded -R .note -R .comment
+  CPU = $(findstring arm, $(shell uname -m))
 endif
 ifeq ($(OS_NAME),windows)
   BUILDSRC_OS_NAME = win
@@ -1784,6 +1785,15 @@ rtcmix_clean:
 # Sensel
 
 sensel:
+ifeq ($(OS_NAME),linux)
+ifeq ($(CPU),arm)
+	cd $(externals_src)/sensel \
+		&& cp linux-arm-x86/* ./
+else
+	cd $(externals_src)/sensel \
+		&& cp linux-x64/* ./
+endif
+endif
 	cd $(externals_src)/sensel \
 		&& make
 ifeq ($(OS_NAME),darwin)
