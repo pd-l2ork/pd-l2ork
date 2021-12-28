@@ -1464,10 +1464,18 @@ ifeq ($(OS_NAME),darwin)
 endif
 ifeq ($(OS_NAME),linux)
 	cd $(externals_src)/pdjs/v8 && unzip -u lib.zip
+ifeq ($(CPU),arm)
+	cd $(externals_src)/pdjs/v8/lib && ln -s arm-linux $(shell uname -m)-linux
+	cd $(externals_src)/pdjs \
+		&& cmake -G Ninja -DVERSION=1.0 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=native-arm-linux.cmake \
+			-B out/build/x64-linux-Debug/ -S . \
+		&& cmake --build out/build/x64-linux-Debug -- -v
+else
 	cd $(externals_src)/pdjs \
 		&& cmake -G Ninja -DVERSION=1.0 -DCMAKE_BUILD_TYPE=Debug \
 			-B out/build/x64-linux-Debug/ -S . \
 		&& cmake --build out/build/x64-linux-Debug -- -v
+endif
 endif
 
 pdjs_install:
