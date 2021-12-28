@@ -1497,12 +1497,21 @@ ifeq ($(OS_NAME),darwin)
 		$(DESTDIR)/$(objectsdir)/js
 endif
 ifeq ($(OS_NAME),linux)
+ifeq ($(CPU),arm)
+	install -p $(externals_src)/pdjs/binaries/arm*-linux/js.$(EXTENSION) \
+		$(DESTDIR)/$(objectsdir)/js
+	install -p $(externals_src)/pdjs/binaries/arm*-linux/*.pd \
+		$(DESTDIR)/$(objectsdir)/js
+	install -p $(externals_src)/pdjs/binaries/arm*-linux/*.js \
+		$(DESTDIR)/$(objectsdir)/js
+else
 	install -p $(externals_src)/pdjs/binaries/x64-linux/js.$(EXTENSION) \
 		$(DESTDIR)/$(objectsdir)/js
 	install -p $(externals_src)/pdjs/binaries/x64-linux/*.pd \
 		$(DESTDIR)/$(objectsdir)/js
 	install -p $(externals_src)/pdjs/binaries/x64-linux/*.js \
 		$(DESTDIR)/$(objectsdir)/js
+endif
 endif
 
 pdjs_clean:
