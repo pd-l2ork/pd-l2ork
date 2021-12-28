@@ -161,3 +161,7 @@ Added SimpleSenselSynth example by [Peter Nyboer](https://github.com/nyboer).
 ### 2020-05-22 v.1.2.0
 
 Introduced ability to change LED brightness and further improved the help file by Ivica Ico Bukvic.
+
+### 2021-12-28 v.1.2.1
+
+Improved build script to support raspbian and improved start-up messaging and pathfinding of the required dynamically linked libraries <ico@vt.edu>

@@ -106,7 +106,7 @@ Hard drive space required: *roughly 2.5 GB*
 
 1. Install the dependencies (please note that the packages may be named
    slightly differently for different Linux distributions; the given names are
-   for Debian/Ubuntu)
+   for Debian/Ubuntu).
 
         sudo apt-get install bison flex automake libasound2-dev \
              libjack-jackd2-dev libtool libbluetooth-dev libgl1-mesa-dev \
@@ -120,22 +120,20 @@ Hard drive space required: *roughly 2.5 GB*
              mda-lv2 libmp3lame-dev libspeex-dev libgsl0-dev \
              portaudio19-dev liblua5.3-dev python-dev libsmpeg0 libjpeg-dev \
              flite1-dev libgsm1-dev libgtk2.0-dev git libstk0-dev \
-             libfluidsynth-dev fluid-soundfont-gm byacc cmake ninja-build
+             libfluidsynth-dev fluid-soundfont-gm byacc cmake ninja-build \
+             patchelf gconf2 libnss3
 
-2. The gui toolkit may require installing the following extra dependencies
-        sudo apt-get install gconf2 libnss3
-
-3. Clone the Pd-L2Ork repository *(2 to 10 minutes)*
+2. Clone the Pd-L2Ork repository *(2 to 10 minutes)*
 
         git clone https://github.com/pd-l2ork/pd-l2ork.git
 
-4. Compile the code *(5 minutes [light] to 1.5 hours [full])*
+3. Compile the code *(5 minutes [light] to 1.5 hours [full])*
 
    * to build only the core: `make light` *(5 minutes)*
    * to build the core and all externals: `make all` *(20 minutes to 1.5 hours)*
    * to build everything *except* Gem: `make incremental` *(10 to 20 minutes)*
 
-5. If you're using an apt-based Linux distribution and you have the necessary
+4. If you're using an apt-based Linux distribution and you have the necessary
    Debian packaging tools installed, there should now be an installer file in
    the main source directory, which can be installed as usual. Otherwise, run
    `make install` to install the software, and `make uninstall` to remove it

@@ -1810,6 +1810,8 @@ else
 	cd $(externals_src)/sensel \
 		&& cp linux-x64/* ./
 endif
+	cd $(externals_src)/sensel \
+		&& patchelf --force-rpath --set-rpath '$$ORIGIN/' libsensel.so
 endif
 	cd $(externals_src)/sensel \
 		&& make

@@ -576,9 +576,7 @@ static void sensel_poll(t_sensel *x)
 */
 static void *sensel_new()
 {
-	post("L2Ork Sensel Morph v.1.2.0\nIf this object fails to create,"
-		" you have probably forgotten to install the SenselLib available"
-		" at https://github.com/sensel/sensel-api/tree/master/sensel-install");
+	post("L2Ork Sensel Morph v.1.2");
 
 	t_sensel *x = (t_sensel *)pd_new(sensel_class);
 
