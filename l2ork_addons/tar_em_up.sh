@@ -199,11 +199,11 @@ if [ ! -d "../pd/nw/nw" ]; then
 		# We need the lts version to be able to run on legacy systems.
 		nwjs_version="v0.14.7"
 	else
-		# temporary kluge for rpi-- only 0.15.1 is available atm
+		# or rpi-- only 0.28.4 is available atm
 		if [ $arch == "armv7l" ]; then
-			nwjs_version="v0.17.6"
+			nwjs_version="v0.28.4"
 		else
-			nwjs_version="v0.28.1"
+			nwjs_version="v0.28.3"
 		fi
 	fi
 
@@ -216,6 +216,12 @@ if [ ! -d "../pd/nw/nw" ]; then
 	nwjs_filename=${nwjs_dirname}.${ext}
 	nwjs_url=https://git.purrdata.net/jwilkes/nwjs-binaries/raw/master
 	nwjs_url=${nwjs_url}/$nwjs_filename
+	# 2021-12-28 ico@vt.edu: override RPi settings with a newer nw.js
+	if [ $arch == "armv7l" ]; then
+		nwjs_url=https://github.com/LeonardLaszlo/nw.js-armv7-binaries/releases/download/v0.28.4/nwjs-sdk-v0.28.4-linux-arm.tar.gz
+		nwjs_filename=nwjs-sdk-v0.28.4-linux-arm.tar.gz
+		nwjs_dirname=nwjs-sdk-v0.28.4-linux-arm
+	fi
 	echo "Fetching the nwjs binary from"
 	echo "$nwjs_url"
 	if ! wget -nv $nwjs_url; then
@@ -224,6 +230,7 @@ if [ ! -d "../pd/nw/nw" ]; then
 		echo "$nwjs_url"
 		wget -nv $nwjs_url
 	fi
+	echo "Unpacking..."
 	if [[ $os == "win" || $os == "win64" || $os == "osx" ]]; then
 		unzip $nwjs_filename
 	else
