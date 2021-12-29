@@ -1844,7 +1844,7 @@ ifeq ($(OS_NAME),windows)
 	echo "installing windows sensel libraries..."
 	cp -f $(externals_src)/sensel/*dll \
 		$(DESTDIR)/$(objectsdir)/sensel
-	cp -f $(externals_src)/sensel/*lib \
+	cp -f $(externals_src)/sensel/win-x86/* \
 		$(DESTDIR)/$(objectsdir)/sensel
 endif
 
