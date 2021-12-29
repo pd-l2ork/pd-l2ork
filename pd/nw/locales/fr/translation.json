@@ -423,7 +423,9 @@
       "audio":    "Audio",
       "audio_tt": "Configurer les dispositifs Audio",
       "midi":    "MIDI",
-      "midi_tt": "Configurer les dispositifs MIDI"
+      "midi_tt": "Configurer les dispositifs MIDI",
+      "general": "Général",
+      "general_tt": "configurer les paramètres généraux"
     },
     "startup": {
       "flags":    "Indicateurs de démarrage",

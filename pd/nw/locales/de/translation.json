@@ -423,7 +423,9 @@
       "audio": "Audio",
       "audio_tt": "konfiguriere die Audio-Geräte",
       "midi": "MIDI",
-      "midi_tt": "konfiguriere die MIDI-Geräte"
+      "midi_tt": "konfiguriere die MIDI-Geräte",
+      "general": "Allgemeines",
+      "general_tt": "Allgemeine Einstellungen konfigurieren"
     },
     "startup": {
       "flags": "Startup-Flags",
