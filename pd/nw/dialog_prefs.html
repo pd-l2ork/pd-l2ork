@@ -833,6 +833,7 @@ function apply(save_prefs) {
     //pdgui.post("redrawing all canvases? last=" + last_curved_cords + " current=" + get_bool_elem("curved_cords"));
     if (last_curved_cords != get_bool_elem("curved_cords")) {
       pdgui.redraw_all_visible_canvases();
+      last_curved_cords = get_bool_elem("curved_cords");
       //pdgui.post("redrawing...");
     }
 
