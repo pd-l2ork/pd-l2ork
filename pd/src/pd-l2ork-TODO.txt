@@ -160,6 +160,7 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Cosmetic fixes to the sensel external and its README.md.
 *Updated Linux deb prerequisites.
 *Fixed a bug where Windows sensel external did not work out-of-box.
+*Fixed a bug where curved_cords option could not be re-applied until the preferences were reopened.
 
 
 
