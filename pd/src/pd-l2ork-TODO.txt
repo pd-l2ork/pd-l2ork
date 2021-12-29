@@ -155,6 +155,11 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Added option for netserver to adjust the threshold for the number of failed packets sends before disconnecting the user server-side. This is typically used when a client disconnects in a way that does not give the netserver opportunity to receive disconnection notice.
 *Fixed a crasher with netserver due to static use of inbinbuf which causes netserver to crash when running two instances with no creation argument. By default implicit port of 0 successfully instantiates the object. However, the object is not functional.
 *Removed the threshold option on the netserver as it resulted in a faulty number of clients reported and unintentional disconnections.
+*Updated the build script for sensel and pdjs externals, so that they also work on arm processors (e.g. RPi).
+*Updated nw.js on all platforms to 0.28.
+*Cosmetic fixes to the sensel external and its README.md.
+*Updated Linux deb prerequisites.
+*Fixed a bug where Windows sensel external did not work out-of-box.
 
 
 
