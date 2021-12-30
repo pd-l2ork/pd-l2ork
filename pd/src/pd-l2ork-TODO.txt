@@ -161,6 +161,8 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Updated Linux deb prerequisites.
 *Fixed a bug where Windows sensel external did not work out-of-box.
 *Fixed a bug where curved_cords option could not be re-applied until the preferences were reopened.
+*Added missing translations for german and french for the General tab in the Preferences window.
+*Updated fluid~ external to safeguard against loading files other than sf2, updated its documentation to reflect this, added default soundfont to ensure K12/midi_synth can always have a soundfont available, and updated K12/midi_synth accordingly.
 
 
 
