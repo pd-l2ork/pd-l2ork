@@ -271,6 +271,13 @@ static void fluid_load(t_fluid_tilde *x, t_symbol *s, int argc, t_atom *argv)
     {
         const char* filename = atom_getsymbolarg(0, argc, argv)->s_name;
         const char* ext = strrchr(filename, '.');
+        // 2021-12-30 ico@vt.edu: somewhat brittle safeguard for not opening files other than sf2, as
+        // the fluidsynth~ has no way of safeguarding against those and will otherwise crash pd-l2ork
+        if (ext && strcmp(ext, ".sf2"))
+        {
+            pd_error(x, "fluid~: load request failed, only files with the .sf2 extension are supported...");
+            return;
+        }
         if (ext && !strchr(ext, '/'))
           // extension already supplied, no default extension
           ext = "";

@@ -656,6 +656,7 @@ fluid:
 fluid_install:
 	make -C $(externals_src)/fluid~ DESTDIR="$(DESTDIR)" \
 		objectsdir="$(objectsdir)" install
+	cd $(externals_src)/fluid~ && cp -rf soundfonts $(DESTDIR)/$(objectsdir)/
 
 fluid_clean:
 	make -C $(externals_src)/fluid~ clean
