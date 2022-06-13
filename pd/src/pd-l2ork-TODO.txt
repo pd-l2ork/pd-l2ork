@@ -1,4 +1,8 @@
 PD-L2ORK TODO:
+*explore issue with poke~ and the following error warning: extern using garray_getfloatarray() won't work in 64-bit version
+
+*disable edit mode checkmark and cord inspector if edit mode is not allowed (e.g. window is an array)
+
 *cursor abstraction does not report right mouse up events due to it triggering the pop-up menu. This may be a nw.js limitation?
 
 *refine window heights for various dialogs, so that they always display fully on-screen.
@@ -163,6 +167,11 @@ ct because of nw.js' inability to handle relative paths provided by the pd-l2ork
 *Fixed a bug where curved_cords option could not be re-applied until the preferences were reopened.
 *Added missing translations for german and french for the General tab in the Preferences window.
 *Updated fluid~ external to safeguard against loading files other than sf2, updated its documentation to reflect this, added default soundfont to ensure K12/midi_synth can always have a soundfont available, and updated K12/midi_synth accordingly.
+*Fixed bug with array define if one clicks to view the array. This would trigger following errors:
+error: array: no method for 'query-editmode'
+error: array: no method for 'updatemenu'
+error: array: no method for 'mouseup_fake'
+error: array: no method for 'magicglass'
 
 
 
