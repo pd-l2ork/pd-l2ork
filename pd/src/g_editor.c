@@ -2877,6 +2877,11 @@ void canvas_init_menu(t_canvas *x)
     gui_vmess("gui_menu_font_set_initial_size", "xi", x, x->gl_font);
 }
 
+// ico@vt.edu 2022-06-18: exposing class from the x_array.c
+// for the canvas_click below, so that we can toggle off
+// edit and inspector options on the gui side.
+extern t_class *array_define_class;
+
 void canvas_vis(t_canvas *x, t_floatarg f)
 {
     //fprintf(stderr,"canvas_vis .x%zx %f\n", (t_int)x, f);
@@ -2959,7 +2964,8 @@ void canvas_vis(t_canvas *x, t_floatarg f)
                     : (x->gl_dirties ? !x->gl_dirty : 0)),
                 x->gl_noscroll,
                 x->gl_nomenu,
-                canvas_hasarray(x) + canvas_hastoplevelscalar(x),
+                canvas_hasarray(x) + canvas_hastoplevelscalar(x) +
+                    (x->gl_obj.ob_pd == array_define_class ? 1 : 0),
                 argsbuf);
 
             /* It looks like this font size call is no longer needed,

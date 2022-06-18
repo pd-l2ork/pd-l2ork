@@ -1804,6 +1804,10 @@ exports.remove_dialogwin = function(name) {
     dialogwin[name] = null;
 }
 
+exports.get_toplevel_scalars = function(name) {
+    return toplevel_scalars[name];
+}
+
 // stopgap...
 pd_colors["canvas_color"] = "white";
 
@@ -1960,7 +1964,7 @@ function gui_canvas_new(cid, width, height, geometry, grid, zoom, editmode, name
     // 2021-11-12: has_toplevel_scalars now supports:
     //     1 = garray
     //     2 = non-array scalars that need to be scaled on resize
-    //post("gui_canvas_new has_topleve_scalars=" + has_toplevel_scalars);
+    //post("gui_canvas_new has_toplevel_scalars=" + has_toplevel_scalars);
 
     // local vars for window-specific behavior
     // visibility of menu and scrollbars, plus canvas background
@@ -1998,7 +2002,7 @@ function gui_canvas_new(cid, width, height, geometry, grid, zoom, editmode, name
         menu_flag = false;
     }
     last_loaded = cid;
-    // Not sure why resize and topmost are here-- but we'll pass them on for
+    // Not sure why resize and topmost are here--but we'll pass them on for
     // the time being...
     // ico@vt.edu 2020-08-24: this is because in 1.x we can change these window
     // properties via scripting. We should add this to 2.x soon...

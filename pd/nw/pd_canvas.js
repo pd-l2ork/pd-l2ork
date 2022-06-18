@@ -1087,7 +1087,7 @@ var canvas_events = (function() {
             document.addEventListener("mouseup", events.mouseup, false);
             document.addEventListener("touchend", events.mouseup, false);
             state = "normal";
-            set_edit_menu_modals(true);
+            set_edit_menu_modals(name, true);
         },
         scalar_drag: function() {
             // This scalar_drag is a prototype for moving more of the editing
@@ -1142,7 +1142,7 @@ var canvas_events = (function() {
             document.addEventListener("mousedown", events.text_mousedown, false);
             document.addEventListener("mouseup", events.text_mouseup, false);
             state = "text";
-            set_edit_menu_modals(false);
+            set_edit_menu_modals(name, false);
         },
         floating_text: function() {
             canvas_events.none();
@@ -1155,7 +1155,7 @@ var canvas_events = (function() {
             document.addEventListener("keypress", events.floating_text_keypress, false);
             document.addEventListener("mousemove", events.mousemove, false);
             state = "floating_text";
-            set_edit_menu_modals(false);
+            set_edit_menu_modals(name, false);
         },
         dropdown_menu: function() {
             canvas_events.none();
@@ -1730,18 +1730,37 @@ function instantiate_live_box() {
 
 var canvas_menu = {};
 
-function set_edit_menu_modals(state) {
+function set_edit_menu_modals(window, state) {
+    // ico@vt.edu 2022-06-18: added context_state for patches that should
+    // have select options disabled because the patch in question should
+    // not be editable.
+    //pdgui.post("set_edit_menu_modals window=" + window);
+    var context_state = state;
     // OSX needs to keep these enabled, otherwise the events won't trigger
     if (process.platform === "darwin") {
         state = true;
     }
-    canvas_menu.edit.undo.enabled = state;
-    canvas_menu.edit.redo.enabled = state;
-    canvas_menu.edit.cut.enabled = state;
-    canvas_menu.edit.copy.enabled = state;
-    canvas_menu.edit.paste.enabled = state;
-    canvas_menu.edit.selectall.enabled = state;
-    canvas_menu.edit.font.enabled = state;
+    if (pdgui.get_toplevel_scalars(window)) {
+        //pdgui.post("set_edit_menu_modals has scalars");
+        context_state = false;
+    }
+    canvas_menu.edit.undo.enabled = context_state;
+    canvas_menu.edit.redo.enabled = context_state;
+    canvas_menu.edit.cut.enabled = context_state;
+    canvas_menu.edit.copy.enabled = context_state;
+    canvas_menu.edit.paste.enabled = context_state;
+
+    canvas_menu.edit.selectall.enabled = context_state;
+    canvas_menu.edit.font.enabled = context_state;
+    canvas_menu.edit.encapsulate.enabled = context_state;
+    canvas_menu.edit.tidyup.enabled = context_state;
+
+    canvas_menu.edit.editmode.enabled = context_state;
+    canvas_menu.edit.cordinspector.enabled = context_state;
+
+    canvas_menu.edit.paste_clipboard.enabled = context_state;
+    canvas_menu.edit.duplicate.enabled = context_state;
+    canvas_menu.edit.reselect.enabled = context_state;
 }
 
 function get_editmode_checkbox() {
@@ -1786,6 +1805,7 @@ var m  = null;
 function nw_create_patch_window_menus(gui, w, name) {
     // if we're on GNU/Linux or Windows, create the menus:
     m = canvas_menu = pd_menus.create_menu(gui);
+    //pdgui.post("nw_create_patch_window_menus");
 
     // File sub-entries
     // We explicitly enable these menu items because on OSX
@@ -2481,6 +2501,34 @@ function nw_create_patch_window_menus(gui, w, name) {
             gui.Window.get().showDevTools();
         }
     });
+
+    // ico@vt.edu 2022-06-18: here we disable edit and inspector options
+    // if the patch is not editable (e.g. has only an array inside it).
+    // this prevents users from clicking on the edit and cord inspector,
+    // or using keyboard shortcuts to create check boxes in the edit menu
+    // when the patch should disallow this. this is a good place to do so
+    // because it takes place after the menu has been created...
+    //pdgui.post("nw_create_patch_window_menus " + pdgui.get_toplevel_scalars(name));
+    if (pdgui.get_toplevel_scalars(name)) {
+        m.edit.editmode.checked = false;
+        m.edit.editmode.enabled = false;
+        m.edit.cordinspector.checked = false;
+        m.edit.cordinspector.enabled = false;
+        m.edit.cut.enabled = false;
+        m.edit.copy.enabled = false;
+        m.edit.paste.enabled = false;
+        m.edit.undo.enabled = false;
+        m.edit.redo.enabled = false;
+        m.edit.undo.enabled = false;
+        m.edit.redo.enabled = false;
+        m.edit.selectall.enabled = false;
+        m.edit.font.enabled = false;
+        m.edit.encapsulate.enabled = false;
+        m.edit.tidyup.enabled = false;
+        m.edit.paste_clipboard.enabled = false;
+        m.edit.duplicate.enabled = false;
+        m.edit.reselect.enabled = false;
+    }
 }
 
 function init_menu_font_size(size) {
