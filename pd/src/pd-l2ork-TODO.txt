@@ -1,9 +1,7 @@
 PD-L2ORK TODO:
-*explore issue with poke~ and the following error warning: extern using garray_getfloatarray() won't work in 64-bit version
-
 *cursor abstraction does not report right mouse up events due to it triggering the pop-up menu. This may be a nw.js limitation?
 
-*refine window heights for various dialogs, so that they always display fully on-screen.
+*refine window heights for various dialogs, so that they always display fully on-screen. UPDATE: check if this has been fixed using latest nw.js (affects only Windows).
 
 *port shell object to Windows?
 
@@ -172,7 +170,7 @@ error: array: no method for 'mouseup_fake'
 error: array: no method for 'magicglass'
 *Adjusted vertical position of the X axis labels on the arrays (on by default using array define), so they don't overlap with the array's border.
 *Made edit menu automatically toggle options that are applicable to a particular patch. Useful for patches that are not editable (e.g. array window or the "array define" canvas).
-
+*Explored issue with poke~ and the following error warning: extern using garray_getfloatarray() won't work in 64-bit version. UPDATE: This is not an issue but only a warning. It appears not to affect poke~ object. The poke~ documentation has been updated to include information about the bang signal that is meant to request array redraw since the object does not do so manually (as doing so would result in redraw requests on per-sample change and therefore unreasonable CPU overhead).
 
 
 
