@@ -1,4 +1,4 @@
-#N canvas 427 34 558 581 10;
+#N canvas 427 64 558 581 10;
 #X obj -1 782 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
 14 #e0e0e0 #202020 0;
 #X obj -1 451 cnv 3 550 3 empty \$0-pddp.cnv.inlets inlets 8 12 0 13
@@ -37,24 +37,24 @@ index;
 #c4dcdc #000000 0;
 #X obj 502 9 poke~;
 #X text 11 23 Write into a table using a signal sample index;
-#X msg 156 216 0;
-#X floatatom 231 215 0 0 0 0 - - - 0 0 1;
-#X obj 89 246 sig~ -1;
-#X obj 50 62 cycle~ 440;
-#X text 155 196 a source of an increasing index \, also consider fft~
+#X msg 136 263 0;
+#X floatatom 211 262 0 0 0 0 - - - 0 0 1;
+#X obj 68 293 sig~ -1;
+#X obj 30 66 cycle~ 440;
+#X text 135 243 a source of an increasing index \, also consider fft~
 ;
-#X obj 442 390 table foo 1000;
-#X obj 50 356 poke~ foo;
-#X obj 76 311 multiplex~ 0 1;
-#X msg 86 170 0;
-#X msg 76 147 1;
-#X text 107 148 start writing;
-#X text 112 169 stop writing by sending -1 signal;
-#X floatatom 174 293 5 0 0 0 - - - 0 0 1, f 5;
-#X obj 156 238 count~ 0 2048;
-#X obj 174 267 Snapshot~ 100;
-#X obj 442 416 table bar 1000;
-#X msg 58 88 set bar;
+#X obj 449 390 table foo 1000;
+#X obj 30 403 poke~ foo;
+#X obj 55 358 multiplex~ 0 1;
+#X msg 65 217 0;
+#X msg 55 194 1;
+#X text 86 195 start writing;
+#X text 91 216 stop writing by sending -1 signal;
+#X floatatom 154 340 5 0 0 0 - - - 0 0 1, f 5;
+#X obj 136 285 count~ 0 2048;
+#X obj 154 314 Snapshot~ 100;
+#X obj 449 416 table bar 1000;
+#X msg 38 92 set bar;
 #X text 102 459 signal;
 #X text 186 459 - signal to sample;
 #X text 102 501 set x;
@@ -65,10 +65,10 @@ index;
 #X text 186 626 - buffer to write to (required);
 #X text 84 645 2) float;
 #X text 186 645 - initial channel (optional \, default 1);
-#X obj 477 49 pddp/dsp;
-#X text 115 346 arguments are name of table (required) and initial
+#X obj 477 57 pddp/dsp;
+#X text 95 395 arguments are name of table (required) and initial
 channel to write (optional \, default 1);
-#X text 253 215 count maximum sets the number of samples recorded
+#X text 233 262 count maximum sets the number of samples recorded
 (think of it as the loop size);
 #X obj 78 543 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 9 0 16 #dcdcdc
 #9c9c9c 0;
@@ -77,12 +77,12 @@ channel to write (optional \, default 1);
 #X text 102 586 remotely sent to table;
 #X obj 12 783 pddp/pddplink @pd_help/all_about_help_patches.pd -text
 Usage Guide;
-#X obj 67 114 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X obj 47 161 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1;
-#X text 85 113 bang issues array redraw request. this is not automatic
+#X text 65 160 bang issues array redraw request. this is not automatic
 because redrawing per each sample change could be very CPU intensive.
 , f 66;
-#X text 110 88 change the array (note the two arrays on the bottom-right)
+#X text 90 92 change the array (note the two arrays on the bottom-right)
 ;
 #X text 102 480 bang;
 #X text 186 480 - request array redraw (does not redraw automatically)
@@ -93,6 +93,9 @@ signal will increase in value by 1 with each sample to write successive
 values into successive samples (like record~). If the index signal
 is negative or larger than the size of the array \, no data is recorded.
 ;
+#X obj 47 117 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1 1;
+#X obj 47 138 metro 500;
 #X connect 12 0 25 0;
 #X connect 13 0 25 1;
 #X connect 14 0 19 0;
@@ -105,3 +108,5 @@ is negative or larger than the size of the array \, no data is recorded.
 #X connect 26 0 24 0;
 #X connect 28 0 18 0;
 #X connect 47 0 18 0;
+#X connect 53 0 54 0;
+#X connect 54 0 47 0;
