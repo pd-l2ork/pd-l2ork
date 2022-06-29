@@ -171,6 +171,8 @@ error: array: no method for 'magicglass'
 *Adjusted vertical position of the X axis labels on the arrays (on by default using array define), so they don't overlap with the array's border.
 *Made edit menu automatically toggle options that are applicable to a particular patch. Useful for patches that are not editable (e.g. array window or the "array define" canvas).
 *Explored issue with poke~ and the following error warning: extern using garray_getfloatarray() won't work in 64-bit version. UPDATE: This is not an issue but only a warning. It appears not to affect poke~ object. The poke~ documentation has been updated to include information about the bang signal that is meant to request array redraw since the object does not do so manually (as doing so would result in redraw requests on per-sample change and therefore unreasonable CPU overhead).
+*Implemened snap to grid option and reworked how the editmode is visually altered when holding the ALT button.
+*Updated links to Pd-L2Ork apps to point to the user folder instances, so that they are immediately modifiable, as needed.
 
 
 
