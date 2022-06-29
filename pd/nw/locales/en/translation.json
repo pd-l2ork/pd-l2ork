@@ -493,11 +493,11 @@
         "curved_cords_tt": "Draw patch cords as curves or straight lines"
       },
       "grid": {
-        "show_grid": "grid background in edit mode",
-        "show_grid_tt": "Show the grid background in edit mode"
+        "show_grid": "snap to grid",
+        "show_grid_tt": "Snap to the grid in edit mode"
       },
       "zoom": {
-        "save_zoom": "save/load zoom level with patch",
+        "save_zoom": "save/load patch zoom level",
         "save_zoom_tt": "Save the current zoom level with the patch and restore it when reloading the patch"
       }
     },
