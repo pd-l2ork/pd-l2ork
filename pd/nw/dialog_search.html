@@ -155,12 +155,18 @@ var toc = [
         title: "Apps"
     },
     {
-        id: "apps/L2Ork-Tweeter",
+        id: (pdgui.nw_os_is_windows ?
+            process.env.HOMEPATH + '\\Documents\\Pd-L2Ork\\apps\\L2Ork-Tweeter'
+            : process.env.HOME + '/Pd-L2Ork/apps/L2Ork-Tweeter'),
+            //"apps/L2Ork-Tweeter",
         title: "L2Ork Tweeter",
         description: "network-enabled multiuser tracker/daw"
     },
     {
-        id: "apps/Audio-Chat",
+        id: (pdgui.nw_os_is_windows ?
+            process.env.HOMEPATH + '\\Documents\\Pd-L2Ork\\apps\\Audio-Chat'
+            : process.env.HOME + '/Pd-L2Ork/apps/Audio-Chat'),
+            //"apps/Audio-Chat",
         title: "Audio Chat",
         description: "template patches for a simple lossless monaural audio chat for up to 10 users"
     },
