@@ -1,6 +1,16 @@
 PD-L2ORK TODO:
 *cursor abstraction does not report right mouse up events due to it triggering the pop-up menu. This may be a nw.js limitation?
 
+
+Autocomplete:
+*Delete search.index and search.stamps, if found, as they prevent the proper indexing.
+
+*Do not index object that failed to create.
+
+*Update autocomplete box appearance and wording inside the preferences.
+
+
+
 *refine window heights for various dialogs, so that they always display fully on-screen. UPDATE: check if this has been fixed using latest nw.js (affects only Windows).
 
 *port shell object to Windows?
@@ -173,6 +183,8 @@ error: array: no method for 'magicglass'
 *Explored issue with poke~ and the following error warning: extern using garray_getfloatarray() won't work in 64-bit version. UPDATE: This is not an issue but only a warning. It appears not to affect poke~ object. The poke~ documentation has been updated to include information about the bang signal that is meant to request array redraw since the object does not do so manually (as doing so would result in redraw requests on per-sample change and therefore unreasonable CPU overhead).
 *Implemened snap to grid option and reworked how the editmode is visually altered when holding the ALT button.
 *Updated links to Pd-L2Ork apps to point to the user folder instances, so that they are immediately modifiable, as needed.
+*Minor fixes to the Audio-Chat app.
+*Initial port of the autocomplete feature (next TODO commit will highlightchanges that still need to be addressed).
 
 
 
