@@ -2,6 +2,11 @@ PD-L2ORK TODO:
 *cursor abstraction does not report right mouse up events due to it triggering the pop-up menu. This may be a nw.js limitation?
 
 
+*js object does not open editor when there is no file associated.
+
+*js object does not open editor on RPi.
+
+
 Autocomplete:
 *Delete search.index and search.stamps, if found, as they prevent the proper indexing.
 
