@@ -7494,13 +7494,6 @@ function gui_canvas_dialog(did, attr_arrays) {
                 console.log("array: prop is " + prop);
             }
         }
-
-        // GB: Autocomplete dropdown -- if the paragraph element of "new_object_textentry" is deleted,
-        //     the dropdown of autocompletion shall be deleted also
-        let autocomplete_dropdown = patchwin[cid].window.document.getElementById("autocomplete_dropdown");
-        if (autocomplete_dropdown !== null) {
-            autocomplete_dropdown.parentNode.removeChild(autocomplete_dropdown);
-        }
     }
     var has_array = (attr_arrays.length > 1 ? 1 : 0);
     /*
