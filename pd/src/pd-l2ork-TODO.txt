@@ -15,7 +15,6 @@ Autocomplete:
 *Update autocomplete box appearance and wording inside the preferences.
 
 
-
 *refine window heights for various dialogs, so that they always display fully on-screen. UPDATE: check if this has been fixed using latest nw.js (affects only Windows).
 
 *port shell object to Windows?
@@ -192,7 +191,7 @@ error: array: no method for 'magicglass'
 *Initial port of the autocomplete feature (next TODO commit will highlightchanges that still need to be addressed).
 *Fixed regression with the merging of the autocomplete patches (canvas properties could not open due to an error).
 *Improved dac~ and adc~ help symbols, so that they are properly shown in the autocoplete (was adc~_dac~).
-
+*When closing a gop subwindow, the parent patch should be redrawn to honor ordering of the objects. This is a temporary fix until the proper GOP drawing is implemented.
 
 
 

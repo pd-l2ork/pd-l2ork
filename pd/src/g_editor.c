@@ -3051,6 +3051,12 @@ void canvas_vis(t_canvas *x, t_floatarg f)
             x->gl_havewindow = 0;
             if (glist_isvisible(gl2))
                 gobj_vis(&x->gl_gobj, gl2, 1);
+            // ico@vt.edu 2022-08-07: redraw parent window to honor correct
+            // ordering of objects. Otherwise the redrawn GOP will be shown
+            // in front of other objects.
+            // TODO: his can be removed later when we implement correct
+            // GOP drawing.
+            glist_redraw(gl2);
         }
         else x->gl_havewindow = 0;
         canvas_updatewindowlist();
