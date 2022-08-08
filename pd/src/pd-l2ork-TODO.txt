@@ -1,10 +1,12 @@
 PD-L2ORK TODO:
 *cursor abstraction does not report right mouse up events due to it triggering the pop-up menu. This may be a nw.js limitation?
 
-
 *js object does not open editor when there is no file associated.
 
 *js object does not open editor on RPi.
+
+
+*Error closing a new window because there is no "width" property (e.g. a subpatch has been created)
 
 
 Autocomplete:
@@ -13,6 +15,9 @@ Autocomplete:
 *Do not index object that failed to create.
 
 *Update autocomplete box appearance and wording inside the preferences.
+
+
+*Objects keep redrawing/flickering when using tabwrite and redrawing the array inside the same patch. This is particularly apparent with the K12 objects. Has to likely do with the whole canvas redrawing to preserve order. This should be hopefully fixed when the proper GOP drawing is implemented.
 
 
 *refine window heights for various dialogs, so that they always display fully on-screen. UPDATE: check if this has been fixed using latest nw.js (affects only Windows).
@@ -46,6 +51,8 @@ RARE:
 *check for stray/sporadic bug where bang and other objects stop working and bang object gets stuck in on mode until the mouse is moved (nw.js bug? UPDATE: it appears at least one of the sources was a bug in the scroll_to_gobj call that was fixed on 2021-11-01).
 
 *Sometimes editing message resizes the object size without erasing text. Is this a nw.js bug?
+
+*Textbox still sometimes loses all its text (get a console error resizebytes being out of memory).
 
 MAYBE:
 *gui_canvas_scroll_to_gobj should only scroll to an object if doing so improves situation (e.g. if the object is wider than the screen, then scrolling won't fix anything)?
