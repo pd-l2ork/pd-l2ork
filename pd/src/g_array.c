@@ -1496,6 +1496,7 @@ static void garray_doredraw(t_gobj *client, t_glist *glist)
 {
     //fprintf(stderr,"garray_doredraw\n");
     t_garray *x = (t_garray *)client;
+
     if (glist_isvisible(x->x_glist))
     {
         garray_vis(&x->x_gobj, x->x_glist, 0);
@@ -1504,8 +1505,18 @@ static void garray_doredraw(t_gobj *client, t_glist *glist)
         /* we do this to reposition objects back where they belong */
         if (!glist_istoplevel(glist))
         {
+            // ico@vt.edu 2022-08-11: changed third argument from 0
+            // to garray tag because the old behavior made the selected
+            // object flicker (any object). This is particularly visible
+            // on the K12/* objects that use ggee/image which asynchronously
+            // loads images after being (re)instantiatedy
+            // TODO: remoe this when the GOP grouping implementation is
+            // finished and merged
+            char tagbuf[MAXPDSTRING];
+            t_scalar *sc = x->x_scalar;
+            sprintf(tagbuf, "scalar%zx", (t_int)sc->sc_vec);
             canvas_restore_original_position(glist_getcanvas(glist),
-                (t_gobj *)glist, 0, -1);
+                (t_gobj *)glist, tagbuf, -1);
         }
         //fprintf(stderr,"check if we need to reselect %zx %zx %zx\n",
         //    glist_getcanvas(glist), (t_gobj *)glist, glist->gl_owner);
@@ -1535,10 +1546,10 @@ static void garray_doredraw(t_gobj *client, t_glist *glist)
             // a giant kludge-- we really just need gop items
             // to be children of their gop <group>
             t_scalar *sc = x->x_scalar;
-            char tagbuf[MAXPDSTRING];
-            sprintf(tagbuf, "scalar%zx", (t_int)sc->sc_vec);
+            char tagbuf2[MAXPDSTRING];
+            sprintf(tagbuf2, "scalar%zx", (t_int)sc->sc_vec);
             gui_vmess("gui_gobj_select", "xs",
-                glist_getcanvas(glist), tagbuf);
+                glist_getcanvas(glist), tagbuf2);
         }
     }
 }

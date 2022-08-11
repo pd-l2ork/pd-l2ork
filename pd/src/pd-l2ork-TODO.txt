@@ -16,8 +16,7 @@ Autocomplete:
 
 *Update autocomplete box appearance and wording inside the preferences.
 
-
-*Objects keep redrawing/flickering when using tabwrite and redrawing the array inside the same patch. This is particularly apparent with the K12 objects. Has to likely do with the whole canvas redrawing to preserve order. This should be hopefully fixed when the proper GOP drawing is implemented.
+*Consider adding tiled version of an image inside ggee/image.
 
 
 *refine window heights for various dialogs, so that they always display fully on-screen. UPDATE: check if this has been fixed using latest nw.js (affects only Windows).
@@ -199,6 +198,8 @@ error: array: no method for 'magicglass'
 *Fixed regression with the merging of the autocomplete patches (canvas properties could not open due to an error).
 *Improved dac~ and adc~ help symbols, so that they are properly shown in the autocoplete (was adc~_dac~).
 *When closing a gop subwindow, the parent patch should be redrawn to honor ordering of the objects. This is a temporary fix until the proper GOP drawing is implemented.
+*A temporary fix for the issue where objects keep redrawing/flickering when using tabwrite and repositioning the GOP array that is visible inside the same patch while in edit mode and with another GOP object being selected (notably K12 object). Up until now, the repositioning was erroneously done on the selected object, rather than the array. Now, the repositioning request uses the tag of the array object and repositions it correctly. This workaround will be removed when the proper GOP drawing is implemented.
+
 
 
 
