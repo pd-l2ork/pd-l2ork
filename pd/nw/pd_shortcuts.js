@@ -44,11 +44,15 @@ exports.menu = {
   "fullscreen": { key: (process.platform === "darwin") ? "f" : "F11",
     modifiers: (process.platform === "darwin") ? "cmd+ctrl" : null },
 
-  "object": { key: "1", modifiers: cmd_or_ctrl },
-  "msgbox": { key: "2", modifiers: cmd_or_ctrl },
-  "number": { key: "3", modifiers: cmd_or_ctrl },
-  "symbol": { key: "4", modifiers: cmd_or_ctrl },
-  "comment": { key: "5", modifiers: cmd_or_ctrl },
+  // ico@vt.edu 2022-08-11: replaced cmd with ctrl for shortcuts
+  // using numbers 1-5 (also valid for 6-9) on OSX only, because
+  // newer nw.js for an unknown upstream reason does not recognise
+  // cmd+1 - cmd+9 keys
+  "object": { key: "1", modifiers: "ctrl" },
+  "msgbox": { key: "2", modifiers: "ctrl" },
+  "number": { key: "3", modifiers: "ctrl" },
+  "symbol": { key: "4", modifiers: "ctrl" },
+  "comment": { key: "5", modifiers: "ctrl" },
   "dropdown": { key: "m", modifiers: cmd_or_ctrl + "+shift" },
   "bang": { key: "b", modifiers: cmd_or_ctrl + "+shift" },
   "toggle": { key: "t", modifiers: cmd_or_ctrl + "+shift" },
