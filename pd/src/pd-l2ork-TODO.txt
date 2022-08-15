@@ -1,10 +1,6 @@
 PD-L2ORK TODO:
 *cursor abstraction does not report right mouse up events due to it triggering the pop-up menu. This may be a nw.js limitation?
 
-*js object does not open editor when there is no file associated.
-
-*js object does not open editor on RPi.
-
 
 *Error closing a new window because there is no "width" property (e.g. a subpatch has been created). Only affects RPi version of nw.js? Consider bumping the RPi nw.js version...
 
@@ -199,7 +195,7 @@ error: array: no method for 'magicglass'
 *Improved dac~ and adc~ help symbols, so that they are properly shown in the autocoplete (was adc~_dac~).
 *When closing a gop subwindow, the parent patch should be redrawn to honor ordering of the objects. This is a temporary fix until the proper GOP drawing is implemented.
 *A temporary fix for the issue where objects keep redrawing/flickering when using tabwrite and repositioning the GOP array that is visible inside the same patch while in edit mode and with another GOP object being selected (notably K12 object). Up until now, the repositioning was erroneously done on the selected object, rather than the array. Now, the repositioning request uses the tag of the array object and repositions it correctly. This workaround will be removed when the proper GOP drawing is implemented.
-
+*Added external editor to js object for Linux and OSX. Updated js object help file to reflect changes.
 
 
 

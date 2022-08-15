@@ -1,28 +1,27 @@
-#N canvas 655 508 675 324 12;
-#X obj 302 33 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000;
-#X msg 320 60 compile;
-#X obj 244 243 print js;
-#X text 412 201 Load JavaScript file js-help.js;
-#X text 412 221 args are available through;
-#X text 412 241 property jsarguments in JS;
-#X obj 244 202 js js-help.js arg1 arg2;
-#X text 377 59 recompile source;
-#X floatatom 324 92 5 0 0 0 - - - 0 0, f 5;
-#X msg 336 125 1 2 3;
-#X text 321 31 call function bang;
-#X text 367 89 call function msg_float;
-#X text 389 125 call function list;
-#X msg 142 81 setprop name test;
-#X msg 143 107 getprop name;
-#X text 25 79 set JS property;
-#X text 26 108 get JS property;
-#X msg 352 157 test x y z;
-#X text 439 157 call function test;
+#N canvas 139 104 847 324 12;
+#X obj 357 29 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
+#X msg 390 90 compile;
+#X obj 244 273 print js;
+#X text 412 231 Load JavaScript file js-help.js;
+#X text 412 251 args are available through;
+#X text 412 271 property jsarguments in JS;
+#X obj 244 232 js js-help.js arg1 arg2;
+#X text 452 90 recompile source;
+#X floatatom 394 122 5 0 0 0 - - - 0 0 1, f 5;
+#X msg 406 155 1 2 3;
+#X text 376 27 call function bang;
+#X text 437 119 call function msg_float;
+#X text 459 155 call function list;
+#X msg 142 111 setprop name test;
+#X msg 143 137 getprop name;
+#X text 25 109 set JS property;
+#X text 26 138 get JS property;
+#X msg 422 187 test x y z;
+#X text 509 187 call function test;
 #X text 41 28 https://github.com/mganss/pdjs;
 #X text 11 9 js: Build Pd Objects Using JavaScript;
-#N canvas 908 551 396 220 META 0;
-#X text 12 65 INLET_0 anything;
+#N canvas 821 588 456 197 META 0;
 #X text 12 5 KEYWORDS javascript;
 #X text 12 45 DESCRIPTION build pd objects using javascript;
 #X text 12 85 LIBRARY external;
@@ -30,9 +29,16 @@
 #X text 12 125 WEBSITE http://github.com/mganss/pdjs;
 #X text 12 145 RELEASE_DATE 2021;
 #X text 12 165 HELP_PATCH_AUTHORS Michael Ganss. Edited by Ivica Ico
-Bukvic.;
+Bukvic., f 61;
 #X text 12 25 LICENSE BSD 3-Clause License;
-#X restore 611 294 pd META;
+#X text 12 65 INLET_0 bang \, compile \, float \, getprop list \, open
+\, setprop;
+#X restore 781 294 pd META;
+#X msg 377 59 open;
+#X text 417 59 open the source in external editor (editor is OS-specific)
+;
+#X text 40 47 Improvements by Ivica Ico Bukvic;
+#X text 40 66 https://github.com/pd-l2ork/pd-l2ork;
 #X connect 0 0 6 0;
 #X connect 1 0 6 0;
 #X connect 6 0 2 0;
@@ -41,3 +47,4 @@ Bukvic.;
 #X connect 13 0 6 0;
 #X connect 14 0 6 0;
 #X connect 17 0 6 0;
+#X connect 22 0 6 0;

@@ -808,11 +808,12 @@ static void js_free(t_js* x)
     x->~t_js();
 }
 
-#if WIN32
 static void js_menu_open(t_js* x)
 {
     if (!x->path.empty())
     {
+#if WIN32
+        // Windows    
         ShellExecute(0, 0, x->path.c_str(), 0, 0, SW_SHOW);
         auto error = GetLastError();
 
@@ -822,9 +823,22 @@ static void js_menu_open(t_js* x)
             LPCTSTR errorText = error.ErrorMessage();
             pd_error(&x->x_obj, "%s: %s", x->path.c_str(), errorText);
         }
+#else
+        // Linux or OSX
+#include <sys/syscall.h>
+        char result[MAXPDSTRING];
+        result[0] = '\0';
+#ifdef __APPLE__
+        strcat(result, "open -e ");
+#else
+        strcat(result, "geany ");
+#endif
+        strcat(result, x->path.c_str());
+        strcat(result, " &");
+        system(result);
+#endif
     }
 }
-#endif
 
 static void js_anything(t_js_inlet* inlet, const t_symbol* s, int argc, const t_atom* argv)
 {
@@ -897,12 +911,10 @@ static void js_anything(t_js_inlet* inlet, const t_symbol* s, int argc, const t_
             && !context->Global()->Delete(context, v8::Local<v8::Name>::Cast(propName)).IsNothing())
                 return;
     }
-#if WIN32
     else if (msgname == "open")
     {
         js_menu_open(x);
     }
-#endif
     else
     {
         v8::Local<v8::String> funcName;
@@ -1052,9 +1064,7 @@ void js_setup(void)
 
     c = class_new(gensym("js"), (t_newmethod)js_new, (t_method)js_free, sizeof(t_js), CLASS_NOINLET, A_GIMME, 0);
     class_addmethod(c, (t_method)js_loadbang, gensym("loadbang"), A_DEFFLOAT, 0);
-#if WIN32
     class_addmethod(c, (t_method)js_menu_open, gensym("menu-open"), A_NULL);
-#endif
 
     js_class = c;
 
