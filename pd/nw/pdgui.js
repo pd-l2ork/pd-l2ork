@@ -1366,7 +1366,7 @@ exports.check_nw_version = check_nw_version;
 // ico@vt.edu 2020-08-11: this appears to have to be 25 at all times
 // we will leave this here for later if we encounter issues with inconsistencies
 // across different nw.js versions...
-var nw_menu_offset = check_nw_version("0.46") ? 25 : 25;
+var nw_menu_offset = check_nw_version("0.46") ? 22 : 22;
 
 exports.nw_menu_offset = nw_menu_offset;
 
@@ -1389,17 +1389,20 @@ function gui_canvas_change_geometry(cid, w, h, x, y) {
 // a cpu hog, check out pdtk_canvas_checkgeometry in the old
 // pd.tk
 function canvas_check_geometry(cid) {
+    //post("canvas_check_geomtery\n...OLD height=" +
+    //  patchwin[cid].height + " innerHeight=" + patchwin[cid].window.innerHeight);
     var win_w = patchwin[cid].width,
         // "23" is a kludge to account for the menubar size.  See comment
         // in nw_create_window of index.js
         // ico@vt.edu in 0.46.2 this is now 25 pixels, so I guess
         // it is now officially kludge^2
-        win_h = patchwin[cid].height - 
-            (nw_menu_offset * !nw_os_is_osx),
+        win_h = patchwin[cid].height - nw_menu_offset,
         win_x = patchwin[cid].x,
         win_y = patchwin[cid].y,
         cnv_width = patchwin[cid].window.innerWidth,
         cnv_height = patchwin[cid].window.innerHeight;
+    //post("...NEW height=" +
+    //  patchwin[cid].height + " innerHeight=" + patchwin[cid].window.innerHeight);
     //post("canvas_check_geometry w=" + win_w + " h=" + win_h +
     //    " x=" + win_x + " y=" + win_y + " cnv_w=" + cnv_width + " cnv_h=" + cnv_height);
 
