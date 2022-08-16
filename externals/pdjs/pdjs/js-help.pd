@@ -1,7 +1,7 @@
-#N canvas 139 104 845 369 12;
+#N canvas 139 104 893 327 12;
 #X obj 357 29 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1;
-#X msg 390 98 compile;
+#X msg 390 108 compile;
 #X obj 244 296 print js;
 #X text 412 254 Load JavaScript file js-help.js;
 #X text 412 274 args are available through;
@@ -32,14 +32,15 @@ Bukvic., f 61;
 #X text 12 25 LICENSE BSD 3-Clause License;
 #X text 12 65 INLET_0 bang \, compile \, float \, getprop list \, open
 \, setprop;
-#X restore 781 321 pd META;
-#X msg 377 59 open;
-#X text 417 59 open the source in external editor (editor is OS-specific)
-;
+#X restore 826 296 pd META;
+#X msg 377 69 open;
 #X text 40 47 Improvements by Ivica Ico Bukvic;
 #X text 40 66 https://github.com/pd-l2ork/pd-l2ork;
-#X text 452 90 recompile source (useful when you change the file using
+#X text 452 100 recompile source (useful when you change the file using
 the external editor), f 47;
+#X text 417 59 open the source in external editor (editor is OS-specific
+\, Linux uses Geany \, OSX TextEdit \, and Windows Notepad or Notepad2)
+, f 65;
 #X connect 0 0 6 0;
 #X connect 1 0 6 0;
 #X connect 6 0 2 0;
