@@ -123,7 +123,10 @@ ifneq ($(LIGHT),yes)
 	#install -p $(bin_src)/pthreadGC2.dll     $(DESTDIR)$(bindir)/
 	#install -p $(bin_src)/libdl.dll     $(DESTDIR)$(bindir)/
 	install -p $(bin_src)/libportaudio*.dll     $(DESTDIR)$(bindir)/
-	install -p $(bin_src)/libFLAC-8.dll     $(DESTDIR)$(bindir)/
+	# ico@vt.edu 2022-08-17: added both versions of libFLAC because
+	# libFLAC version 1.3.4-2 does not have "-8" appended to the dll
+	-install -p $(bin_src)/libFLAC-8.dll     $(DESTDIR)$(bindir)/
+	-install -p $(bin_src)/libFLAC.dll     $(DESTDIR)$(bindir)/
 	install -p $(bin_src)/libspeex-1.dll     $(DESTDIR)$(bindir)/
         # These are for Gem
 	install -p $(bin_src)/libftgl-2.dll $(DESTDIR)$(bindir)/
