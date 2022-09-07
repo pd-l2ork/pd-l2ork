@@ -1,10 +1,10 @@
-#N canvas 297 24 553 664 10;
+#N canvas 162 64 553 664 10;
 #X obj 0 641 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
-14 -228856 -66577 0;
+14 #dcdcdc #404040 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header disis_netsend 3
-12 0 18 -204280 -1 0;
+12 0 18 #c4dcdc #000000 0;
 #X obj 0 348 cnv 3 550 3 empty \$0-pddp.cnv.inlets inlets 8 12 0 13
--228856 -1 0;
+#dcdcdc #000000 0;
 #N canvas 46 242 494 344 META 0;
 #X text 12 105 LIBRARY internal;
 #X text 12 25 LICENSE SIBSD;
@@ -19,35 +19,35 @@ by Ivica Ico Bukvic to conform to the PDDP template for Pd-L2Ork.;
 #X text 12 125 AUTHOR Ivica Ico Bukvic;
 #X restore 500 643 pd META;
 #X obj 0 524 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
-13 -228856 -1 0;
+13 #dcdcdc #000000 0;
 #X obj 0 561 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8 12
-0 13 -228856 -1 0;
+0 13 #dcdcdc #000000 0;
 #X obj 0 604 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
-0 13 -228856 -1 0;
+0 13 #dcdcdc #000000 0;
 #N canvas 54 478 428 109 Related_objects 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
-14 -204280 -1 0;
+14 #c4dcdc #000000 0;
 #X obj 173 34 netreceive;
 #X obj 15 34 disis_netreceive;
 #X obj 121 34 netsend;
 #X text 8 2 [disis_netsend] Related Objects;
 #X restore 102 644 pd Related_objects;
-#X obj 78 357 cnv 17 3 160 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 357 cnv 17 3 160 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
+#9c9c9c 0;
 #X text 98 532 float;
-#X obj 78 533 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 533 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
+#9c9c9c 0;
 #X text 9 21 send Pd messages over a network;
 #X msg 15 79 connect localhost 3000;
 #X msg 23 213 send foo \$1;
-#X floatatom 23 186 0 0 0 0 - - -;
+#X floatatom 23 186 0 0 0 0 - - - 0 0 1;
 #X msg 15 160 disconnect;
 #X msg 176 213 send foo \$1;
-#X floatatom 176 186 0 0 0 0 - - -;
+#X floatatom 176 186 0 0 0 0 - - - 0 0 1;
 #X msg 168 160 disconnect;
 #X msg 168 79 connect localhost 3001;
-#X floatatom 15 265 0 0 0 0 - - -;
-#X floatatom 168 265 0 0 0 0 - - -;
+#X floatatom 15 265 0 0 0 0 - - - 0 0 1;
+#X floatatom 168 265 0 0 0 0 - - - 0 0 1;
 #X text 66 58 TCP;
 #X text 243 55 UDP;
 #X text 315 79 Connect to "localhost" port 3000/3001;
@@ -84,7 +84,7 @@ pdpedia: disis_netsend;
 #X obj 15 238 disis_netsend;
 #N canvas 55 339 428 233 About_disis_netsend 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
-14 -204280 -1 0;
+14 #c4dcdc #000000 0;
 #X text 20 160 The Linux version of Pd comes with "pdsend" and "pdreceive"
 standalone programs. These haven't been tested in Windows yet (but
 the source is included in the Pd distribution).;

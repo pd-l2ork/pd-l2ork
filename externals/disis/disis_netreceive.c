@@ -499,6 +499,7 @@ static void disis_socketreceiver_getudp(t_socketreceiver *x, int fd)
 	        if (semi) 
 	            *semi = 0;
 	        binbuf_text(inbinbuf, msginbuf, strlen(msginbuf));
+            rec->x_end->msg_binbuf = binbuf_duplicate(inbinbuf);
 	        //outlet_setstacklim();
 	        if (x->sr_socketreceivefn)
 	            (*x->sr_socketreceivefn)(x->sr_owner, inbinbuf);

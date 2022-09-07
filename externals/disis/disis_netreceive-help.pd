@@ -1,10 +1,10 @@
-#N canvas 374 24 552 683 10;
+#N canvas 976 64 552 683 10;
 #X obj 0 661 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
-14 -228856 -66577 0;
+14 #dcdcdc #404040 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header disis_netreceive
-3 12 0 18 -204280 -1 0;
+3 12 0 18 #c4dcdc #000000 0;
 #X obj 0 311 cnv 3 550 3 empty \$0-pddp.cnv.inlets inlets 8 12 0 13
--228856 -1 0;
+#dcdcdc #000000 0;
 #N canvas 46 242 494 344 META 0;
 #X text 12 125 LIBRARY internal;
 #X text 12 25 LICENSE SIBSD;
@@ -21,23 +21,23 @@
 by Ivica Ico Bukvic to conform to the PDDP template for Pd-L2Ork.;
 #X restore 500 663 pd META;
 #X obj 0 368 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
-13 -228856 -1 0;
+13 #dcdcdc #000000 0;
 #X obj 0 490 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8 12
-0 13 -228856 -1 0;
+0 13 #dcdcdc #000000 0;
 #X obj 0 629 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
-0 13 -228856 -1 0;
+0 13 #dcdcdc #000000 0;
 #N canvas 54 478 428 109 Related_objects 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
-14 -204280 -1 0;
+14 #c4dcdc #000000 0;
 #X obj 103 35 netsend;
 #X obj 13 35 disis_netsend;
 #X obj 157 35 netreceive;
 #X text 8 2 [disis_netreceive] Related Objects;
 #X restore 102 664 pd Related_objects;
-#X obj 78 377 cnv 17 3 25 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 377 cnv 17 3 25 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
+#9c9c9c 0;
 #X text 80 510 1) float;
-#X floatatom 262 82 0 0 0 0 - - -;
+#X floatatom 262 82 0 0 0 0 - - - 0 0 1;
 #X obj 139 82 print tcp;
 #X obj 139 166 print udp;
 #X text 8 21 listen for incoming messages from a network;
@@ -47,8 +47,8 @@ is TCP.);
 #X text 80 525 2) float;
 #X text 80 540 3) symbol atom;
 #X text 98 376 anything;
-#X obj 78 413 cnv 17 3 25 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 413 cnv 17 3 25 empty \$0-pddp.cnv.let.0 1 5 9 0 16 #dcdcdc
+#9c9c9c 0;
 #X text 98 412 float;
 #X text 274 60 <- TCP \, port 3000;
 #X text 284 144 <- UDP \, port 3001;
@@ -61,7 +61,7 @@ is TCP.);
 #X obj 139 145 disis_netreceive 3001 1;
 #N canvas 102 334 426 289 About_disis_netreceive 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
-14 -204280 -1 0;
+14 #c4dcdc #000000 0;
 #X text 18 228 SECURITY ALERT: the port that netreceive opens has no
 access restrictions \, so anyone can connect to it and send messages.
 ;
@@ -89,17 +89,17 @@ be VERY INSECURE since it gives someone full access to your computer
 in the help patch for [disis_netsend].;
 #X msg 139 124 port 4000;
 #X text 203 123 Change port after creation;
-#X obj 78 321 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 321 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
+#9c9c9c 0;
 #X text 168 376 - any message received by this [disis_netreceive] object
 will be sent to the left outlet.;
 #X text 98 320 port;
 #X text 168 320 - change incoming port number after creation.;
-#X floatatom 274 189 3 0 0 0 - - -;
-#X floatatom 301 189 3 0 0 0 - - -;
-#X floatatom 328 189 3 0 0 0 - - -;
-#X floatatom 355 189 3 0 0 0 - - -;
-#X floatatom 383 189 5 0 0 0 - - -;
+#X floatatom 274 189 3 0 0 0 - - - 0 0 1, f 3;
+#X floatatom 301 189 3 0 0 0 - - - 0 0 1, f 3;
+#X floatatom 328 189 3 0 0 0 - - - 0 0 1, f 3;
+#X floatatom 355 189 3 0 0 0 - - - 0 0 1, f 3;
+#X floatatom 383 189 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 274 166 unpack 0 0 0 0 0;
 #X text 145 187 packet received from;
 #X text 168 412 - when using TCP \, the [disis_netreceive] object has
