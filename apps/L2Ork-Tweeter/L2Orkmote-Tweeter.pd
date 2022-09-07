@@ -1,4 +1,4 @@
-#N canvas 135 2 1638 974 10;
+#N canvas 134 76 1639 974 10;
 #X obj 0 0 cnv 15 1637 973 empty empty empty 5 7 0 10 #444444 #fcfcfc
 0;
 #X obj 4 2 cnv 15 1630 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
@@ -24,7 +24,7 @@ f 37;
 0;
 #X obj 1505 28 cnv 8 70 8 empty empty SESSION\ NAME -1 5 0 10 #6c6c6c
 #fcfcfc 0;
-#X 5symbolatom 1478 42 21 0 0 0 - session-name-r session-name-s 1 0
+#X symbolatom 1478 42 21 0 0 0 - session-name-r session-name-s 1 0
 1, f 21;
 #X obj 1459 42 bng 16 250 50 0 load-session load-session-r LOAD -4
 -9 0 10 #80fc80 #008080 #fcfcfc 1;
@@ -44,7 +44,6 @@ f 37;
 0;
 #X obj 356 28 cnv 8 8 8 empty empty USERS -1 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 3 68 core/L2OrkTweet 1;
 #X obj 549 30 nbx 4 15 1 9999 0 0 \$0-store-loop \$0-store-loop-r empty
 -64 5 0 12 #fcb46c #000000 #000000 1 256 0 1 1 0;
 #X obj 549 45 nbx 4 15 1 9999 0 0 \$0-recall-loop \$0-recall-loop-r
@@ -69,15 +68,6 @@ empty -64 5 0 12 #80fc80 #000000 #000000 11 256 0 1 1 0;
 empty -5 -9 0 10 #fcb46c #fc6418 #fcfcfc 1;
 #X obj 867 45 bng 15 250 50 0 \$0-recall-preset-apply \$0-recall-preset-apply-r
 empty -5 -9 0 10 #80fc80 #008080 #fcfcfc 1;
-#X obj 3 219 core/L2OrkTweet 2;
-#X obj 3 370 core/L2OrkTweet 3;
-#X obj 3 521 core/L2OrkTweet 4;
-#X obj 3 672 core/L2OrkTweet 5;
-#X obj 3 823 core/L2OrkTweet 6;
-#X obj 820 68 core/L2OrkTweet 7;
-#X obj 820 219 core/L2OrkTweet 8;
-#X obj 820 370 core/L2OrkTweet 9;
-#X obj 820 521 core/L2OrkTweet 10;
 #N canvas 656 176 513 653 supplemental-documentation 0;
 #X obj 0 0 cnv 15 512 651 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
@@ -138,9 +128,7 @@ first click:, f 82;
 ;
 #X obj 437 3 pddp/pddplink https://www.gnu.org/licenses/gpl-3.0.en.html
 -text GPL v3 License;
-#X obj 820 672 core/L2OrkTweet 11;
-#X obj 820 823 core/L2OrkTweet 12;
-#N canvas 769 452 502 134 core 0;
+#N canvas 769 476 502 134 core 0;
 #N canvas 139 226 861 565 loop-logic 0;
 #X obj 506 413 r myclientnum;
 #X obj 101 566 forward null;
@@ -1530,7 +1518,7 @@ are added later. this allows for deterministic session saving., f
 #X connect 78 0 34 0;
 #X connect 79 0 78 0;
 #X restore 359 52 pd load-save-session;
-#N canvas 245 457 450 346 version 0;
+#N canvas 245 469 450 346 version 0;
 #X obj 177 51 loadbang;
 #X obj 177 101 t f f;
 #X obj 204 125 s version;
@@ -1707,6 +1695,22 @@ Chat will appear in the console., f 32;
 #X connect 7 0 4 0;
 #X connect 8 0 5 0;
 #X restore 437 81 pd init;
+#N canvas 553 426 450 165 l2orkmote-recall-routing 0;
+#X obj 41 36 r recall-loop-r;
+#X obj 251 36 r recall-preset-r;
+#X obj 41 61 t b f;
+#X obj 251 61 t b f;
+#X obj 278 84 s \$0-recall-preset-r;
+#X obj 251 106 s \$0-recall-preset-apply-r;
+#X obj 68 84 s \$0-recall-loop-r;
+#X obj 41 106 s \$0-recall-loop-apply-r;
+#X connect 0 0 2 0;
+#X connect 1 0 3 0;
+#X connect 2 0 7 0;
+#X connect 2 1 6 0;
+#X connect 3 0 5 0;
+#X connect 3 1 4 0;
+#X restore 258 81 pd l2orkmote-recall-routing;
 #X connect 5 0 6 0;
 #X restore 1586 3 pd core;
 #X obj 1089 3 hsl 229 17 1 101 1 1 main-out-multiplier empty LOCAL\ MAIN\ OUT
@@ -1717,3 +1721,15 @@ Chat will appear in the console., f 32;
 4 6 0 10 #6c6c6c #fcfcfc 0;
 #X text 1091 3 MIN;
 #X text 1300 3 MAX;
+#X obj 3 68 core/L2OrkTweet-L2Orkmote 1;
+#X obj 3 219 core/L2OrkTweet-L2Orkmote 2;
+#X obj 3 370 core/L2OrkTweet-L2Orkmote 3;
+#X obj 3 521 core/L2OrkTweet-L2Orkmote 4;
+#X obj 3 672 core/L2OrkTweet-L2Orkmote 5;
+#X obj 3 823 core/L2OrkTweet-L2Orkmote 6;
+#X obj 820 68 core/L2OrkTweet-L2Orkmote 7;
+#X obj 820 219 core/L2OrkTweet-L2Orkmote 8;
+#X obj 820 370 core/L2OrkTweet-L2Orkmote 9;
+#X obj 820 521 core/L2OrkTweet-L2Orkmote 10;
+#X obj 820 672 core/L2OrkTweet-L2Orkmote 11;
+#X obj 820 823 core/L2OrkTweet-L2Orkmote 12;
