@@ -4,6 +4,10 @@ PD-L2ORK TODO:
 
 *Error closing a new window because there is no "width" property (e.g. a subpatch has been created). Only affects RPi version of nw.js? Consider bumping the RPi nw.js version...
 
+*Opening and closing window via a script does not reopen the window in the same place nor with the same size.
+
+*Pasting complex GOP patch sometimes prevents movement of some of its contents (see disis_spectrogram~).
+
 
 Autocomplete:
 *Delete search.index and search.stamps, if found, as they prevent the proper indexing.
