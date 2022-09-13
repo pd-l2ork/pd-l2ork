@@ -1,11 +1,11 @@
-#N canvas 433 81 448 607 10;
+#N canvas 433 93 448 607 10;
 #N canvas 0 22 450 300 (subpatch) 0;
 #X array array99 100 float 0 black black;
 #X coords 0 1 99 -1 150 100 1;
 #X restore 277 479 graph;
 #X msg 149 237 \; array99 resize \$1;
-#X floatatom 149 214 0 0 0 0 - - -;
-#X floatatom 21 190 0 0 0 0 - - -;
+#X floatatom 149 214 0 0 0 0 - - - 0 0 1;
+#X floatatom 21 190 0 0 0 0 - - - 0 0 1;
 #X obj 21 214 / 100;
 #X msg 21 237 \; array99 const \$1;
 #X text 18 167 You can send messages to an array object:;
@@ -36,22 +36,22 @@ than one array--however \, graphs containing more than one array won't
 know how to readjust themselves automatically when the arrays are resized.
 ;
 #X msg 21 398 \; array99 read 15.file.txt;
-#X obj 21 469 bng 15 250 50 0 empty empty empty 0 -6 0 8 -262144 -1
--1;
+#X obj 21 469 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fcfcfc #000000
+#000000 1;
 #X obj 21 487 savepanel;
 #X msg 21 520 \; array99 write \$1;
-#X obj 145 468 bng 15 250 50 0 empty empty empty 0 -6 0 8 -262144 -1
--1;
+#X obj 145 468 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fcfcfc #000000
+#000000 1;
 #X obj 145 487 savepanel;
 #X obj 145 533 soundfiler;
 #X msg 145 510 write \$1 array99;
 #X obj 1 1 cnv 15 445 20 empty \$0-pddp.cnv.header arrays 20 10 1 18
--261139 -33289 0;
+#fcc048 #202020 0;
 #X obj 407 2 pddp/pddplink http://puredata.info/dev/pddp -text pddp
 ;
 #X obj 1 585 cnv 15 445 20 empty \$0-pddp.cnv.footer empty 20 12 0
-14 -233017 -33289 0;
-#N canvas 422 155 494 284 META 1;
+14 #e0e0e0 #202020 0;
+#N canvas 422 167 494 284 META 0;
 #X text 12 105 WEBSITE http://crca.ucsd.edu/~msp/;
 #X text 12 85 AUTHOR Miller Puckette;
 #X text 12 45 LICENSE SIBSD;
@@ -63,7 +63,7 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X restore 382 587 pd META;
 #N canvas 13 366 428 212 References 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
-14 -261139 -33289 0;
+14 #fcc048 #202020 0;
 #X text 7 2 Arrays- Related Help Documents;
 #X obj 39 111 table;
 #X text 36 79 If you want to use arrays without needing to view them
