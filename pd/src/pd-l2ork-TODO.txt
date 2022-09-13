@@ -4,9 +4,11 @@ PD-L2ORK TODO:
 
 *Error closing a new window because there is no "width" property (e.g. a subpatch has been created). Only affects RPi version of nw.js? Consider bumping the RPi nw.js version...
 
+*Color properties for arrays is embedded inside the properties window and is therefore getting truncated.
+
 *Opening and closing window via a script does not reopen the window in the same place nor with the same size.
 
-*Pasting complex GOP patch sometimes prevents movement of some of its contents (see disis_spectrogram~).
+*Select All should not automatically enter the edit mode? Or, provide a way to restrict edit mode.
 
 
 Autocomplete:
@@ -25,6 +27,8 @@ Autocomplete:
 
 *finish and integrate gop drawing order work (see if there is something in the branch log to pull as to the status of the work).
 	*Redrawing entire canvas after tidy will not be necessary anymore.
+  *Pasting complex GOP patch sometimes prevents movement of some of its contents (see disis_spectrogram~). To be solved with the GOP rewrite below.
+
 
 *save pd-l2ork main window position between restarts.
 

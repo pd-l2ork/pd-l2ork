@@ -106,7 +106,13 @@ Hard drive space required: *roughly 2.5 GB*
 
 1. Install the dependencies (please note that the packages may be named
    slightly differently for different Linux distributions; the given names are
-   for Debian/Ubuntu).
+   for Debian/Ubuntu). If the command is successful, you will get a printout
+   on the terminal where command was invoked showing bunch of packages being
+   downloaded from the internet and then installed.
+
+   IMPORTANT! If any of the libraries below are tagged as unavailable, note
+   that none of them will be installed until you specify correct replacement
+   library or remove the missing libraries from this list.
 
         sudo apt-get install bison flex automake libasound2-dev \
              libjack-jackd2-dev libtool libbluetooth-dev libgl1-mesa-dev \
