@@ -7482,7 +7482,7 @@ function gui_array_new(did, count) {
         array_in_existing_graph: 0
     }];
     dialogwin[did] = create_window(did, "canvas",
-        240 + (5 * nw_os_is_linux) - (30 * nw_os_is_osx), 268-25, 20, 20,
+        280 + (5 * nw_os_is_linux) - (30 * nw_os_is_osx), 268-25, 20, 20,
         attr_array);
 }
 
@@ -7510,8 +7510,8 @@ function gui_canvas_dialog(did, attr_arrays) {
         // 1 for regular canvas and 2 for a canvas with 1 array,
         // 3 for canvas with 2 arrays, etc.
         // We also substract here 5 for the smaller top bar...
-        238 + (8 * has_array),
-        (attr_arrays.length > 1 ? 535-25 : 392-25),
+        268 + (8 * has_array),
+        (attr_arrays.length > 1 ? 575-25 : 432-25),
         popup_coords[2], popup_coords[3],
         attr_arrays);
 }
