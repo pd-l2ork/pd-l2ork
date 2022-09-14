@@ -4,11 +4,9 @@ PD-L2ORK TODO:
 
 *Error closing a new window because there is no "width" property (e.g. a subpatch has been created). Only affects RPi version of nw.js? Consider bumping the RPi nw.js version...
 
-*Color properties for arrays is embedded inside the properties window and is therefore getting truncated.
-
 *Opening and closing window via a script does not reopen the window in the same place nor with the same size.
 
-*Select All should not automatically enter the edit mode? Or, provide a way to restrict edit mode.
+*Select All should not automatically enter the edit mode? OR, provide a way to restrict edit mode AND other options.
 
 
 Autocomplete:
@@ -204,6 +202,17 @@ error: array: no method for 'magicglass'
 *When closing a gop subwindow, the parent patch should be redrawn to honor ordering of the objects. This is a temporary fix until the proper GOP drawing is implemented.
 *A temporary fix for the issue where objects keep redrawing/flickering when using tabwrite and repositioning the GOP array that is visible inside the same patch while in edit mode and with another GOP object being selected (notably K12 object). Up until now, the repositioning was erroneously done on the selected object, rather than the array. Now, the repositioning request uses the tag of the array object and repositions it correctly. This workaround will be removed when the proper GOP drawing is implemented.
 *Added external editor to js object for Linux and OSX. Updated js object help file to reflect changes.
+*Fixed array put and canvas properties dialogs to accomodate child color picker window.
+*Updated js help file to provide additional clarification regarding the compile message.
+*Fixed regression on OSX where reopening saved patch resulted in 22px taller patch window than what it was when saved. Bumped installer for non-RPi OSs to 67.1.
+*Further refined the js-help.pd file.
+*Updated libFLAC linking in the Makefile for the Windows platform due to changed library name.
+*Fixed regression where UDP packets were not being sent. This is a legacy object and likely not to be developed further. Small cosmetic changes to the supporting help files.
+*Fixed slight visual regression on the Raspberry Pi externals in the K12 library. On image was being drawn over all other GUI elements.
+*Cosmetic fix to a documentation patch.
+*Improved compiling from source instructions for Linux platform.
+*Fixed array put and canvas properties dialogs to accomodate child color picker window.
+
 
 
 
@@ -284,6 +293,8 @@ TWEETER DONE:
 *Fixed a server bug dealing with the sequence of disconnecting clients, simplifying the flow.
 *Updated documentation in the server patch.
 *Updated 4th Beat score.
+*0.66 New version of L2Ork Tweeter with the L2Orkmote interface.
+*Minor refinements to the L2Orkmote-Interface (part of Tweeter).
 
 
 
