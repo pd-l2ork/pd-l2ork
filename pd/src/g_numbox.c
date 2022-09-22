@@ -269,8 +269,10 @@ static void my_numbox_draw_new(t_my_numbox *x, t_glist *glist)
     int x1=text_xpix(&x->x_gui.x_obj, glist), x2=x1+x->x_numwidth;
     int y1=text_ypix(&x->x_gui.x_obj, glist), y2=y1+x->x_gui.x_h;
 
-    gui_vmess("gui_numbox_new", "xxsiiiiii",
+    gui_vmess("gui_numbox_new", "xxxxsiiiiii",
         canvas,
+        x->x_gui.x_glist,
+        x->x_gui.x_glist->gl_owner,
         x,
         cbuf,
         x1,
@@ -282,13 +284,15 @@ static void my_numbox_draw_new(t_my_numbox *x, t_glist *glist)
 
     my_numbox_ftoa(x, 0);
     sprintf(cbuf, "#%6.6x", x->x_gui.x_fcol);
-    gui_vmess("gui_numbox_draw_text", "xxsisiiiii",
+    gui_vmess("gui_numbox_draw_text", "xxsisiiiiii",
         canvas,
         x,
         x->x_buf,
         x->x_num_fontsize,
         cbuf,
-        x1+half+2, y1+half+d, x1, y1, x->x_gui.x_h - x->x_num_fontsize);
+        x1+half+2, y1+half+d, x1, y1,
+        x->x_gui.x_h - x->x_num_fontsize,
+        glist_istoplevel(x->x_gui.x_glist));
 }
 
 /* Not sure that this is needed anymore */

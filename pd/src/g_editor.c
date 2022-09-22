@@ -253,8 +253,14 @@ int gobj_shouldvis(t_gobj *x, struct _glist *glist)
         //fprintf(stderr,
         //    "gobj_shouldvis gop: %d %d %d %d || object %d %d %d %d\n",
         //    x1, x2, y1, y2, gx1, gx2, gy1, gy2);
-        if (gx1 < x1 || gx1 > x2 || gx2 < x1 || gx2 > x2 ||
-            gy1 < y1 || gy1 > y2 || gy2 < y1 || gy2 > y2)
+
+        // ico@vt.edu 20200914: replacing the original crude on/off calculation
+        // that is commented out below, with the new one that returns 1 on any
+        // object that is even partially visible, e.g. inside a GOP graph on
+        // the parent canvas
+        //if (gx1 < x1 || gx1 > x2 || gx2 < x1 || gx2 > x2 ||
+        //    gy1 < y1 || gy1 > y2 || gy2 < y1 || gy2 > y2)
+        if (gx1 > x2 || gx2 < x1 || gy2 < y1 || gy1 > y2)
         {
                 //fprintf(stderr,"does not fit within boundaries\n");
                 return (0);
@@ -5610,6 +5616,8 @@ void canvas_passthrough_click(t_canvas *x, t_int xpos, t_int ypos, t_int click)
         }
     }
 }
+
+//void gobj_activate_after_scroll() TODO
 
 void canvas_mouseup(t_canvas *x,
     t_floatarg fxpos, t_floatarg fypos, t_floatarg fwhich)

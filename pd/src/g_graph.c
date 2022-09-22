@@ -1020,7 +1020,7 @@ t_float glist_dpixtody(t_glist *x, t_float dypix)
     proportional-style GOP.  In this case we do a coordinate transformation. */
 int text_xpix(t_text *x, t_glist *glist)
 {
-    int xpix = 0; 
+    int xpix = 0;
     if (glist->gl_havewindow || !glist->gl_isgraph)
         xpix = x->te_xpix; 
     else if (glist->gl_goprect)
@@ -1111,6 +1111,7 @@ t_symbol *garray_getlabelcolor(t_garray *x);
     graph decorations in toplevels... */
 static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
 {
+    post("graph_vis");
     t_glist *x = (t_glist *)gr;
     //fprintf(stderr,"graph vis canvas=%zx gobj=%zx %d\n",
     //    (t_int)parent_glist, (t_int)gr, vis);
@@ -1153,8 +1154,10 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
         int xpix, ypix;
         xpix = text_xpix(&x->gl_obj, parent_glist);
         ypix = text_ypix(&x->gl_obj, parent_glist);
-        gui_vmess("gui_gobj_new", "xssiiii",
+        gui_vmess("gui_gobj_new", "xxxssiiii",
             glist_getcanvas(x->gl_owner),
+            x,
+            x->gl_owner,
             tag, "graph", xpix, ypix,
             parent_glist == glist_getcanvas(x->gl_owner) ? 1 : 0, 0);
         if (canvas_showtext(x))
@@ -1186,13 +1189,14 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
     {
         if (vis && gobj_shouldvis(gr, parent_glist))
         {
-            gui_vmess("gui_text_draw_border", "xssiii",
+            gui_vmess("gui_text_draw_border", "xssiiii",
                 glist_getcanvas(x->gl_owner),
                 tag,
                 "none",
                 0,
                 x2 - x1,
-                y2 - y1);
+                y2 - y1,
+                1);
             glist_noselect(x->gl_owner);
             gui_vmess("gui_graph_fill_border", "xsi",
                 glist_getcanvas(x->gl_owner),
@@ -1228,25 +1232,27 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
             (x->gl_ylabelx > 0.5*(x->gl_x1 + x->gl_x2) ? "w" : "e");
         char *xlabelanchor =
             (x->gl_xlabely > 0.5*(x->gl_y1 + x->gl_y2) ? "s" : "n");
-        gui_vmess("gui_text_draw_border", "xssiii",
+        gui_vmess("gui_text_draw_border", "xssiiii",
             glist_getcanvas(x->gl_owner),
             tag,
             "none",
             0,
             x2 - x1,
-            y2 - y1);
+            y2 - y1,
+            (glist_getcanvas(x->gl_owner) == x->gl_owner ? 1 : 0));
             /* write garrays' names along the top. Since we can have multiple
                arrays inside a single graph, we want to send all the fun
                label data to the GUI in one message. That way the GUI can do
                fun stuff like selectively displaying a color key if we have
                multiple arrays with different colors. */
-        gui_start_vmess("gui_graph_label", "xsiiii",
+        gui_start_vmess("gui_graph_label", "xsiiiii",
             glist_getcanvas(x),
             tag,
             sys_hostfontsize(glist_getfont(x)),
             sys_fontheight(glist_getfont(x)),
             glist_isselected(x, gr),
-            sys_legacy
+            sys_legacy,
+            (glist_getcanvas(x->gl_owner) == x->gl_owner ? 1 : 0)
         );
 
             /* Now start an array to hold each array of label info */
@@ -1392,6 +1398,7 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
         {
             gop_redraw = 1;
             //fprintf(stderr,"drawing gop objects\n");
+            post("graph_vis drawing %lx...", g);
             gobj_vis(g, x, 1);
             //fprintf(stderr,"done\n");
             gop_redraw = 0;
@@ -1726,7 +1733,9 @@ static void graph_select(t_gobj *z, t_glist *glist, int state)
                     canvas, rtext_gettag(y));
         }
 
-        t_gobj *g;
+        // ico@vt.edu 20200914: Not needed anymore for the new
+        // implementation of GOP gobjects being drawn inside the GOP group
+        /*t_gobj *g;
         //fprintf(stderr,"graph_select\n");
         if (x->gl_list && !glist_istoplevel(x))
         {
@@ -1741,6 +1750,7 @@ static void graph_select(t_gobj *z, t_glist *glist, int state)
                 }
             }
         }
+        */
         // Don't yet understand the purpose of this call, so not deleting
         // it just yet...
         //sys_vgui("pdtk_select_all_gop_widgets .x%zx %s %d\n",

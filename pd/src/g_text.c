@@ -226,6 +226,7 @@ static void canvas_objtext(t_glist *gl, int xpix, int ypix,
 
     x->te_xpix = xpix;
     x->te_ypix = ypix;
+    post("textobj x=%d y=%d", xpix, ypix);
     x->te_width = width;
     x->te_type = T_OBJECT;
     /* 
@@ -1648,7 +1649,7 @@ static void gatom_vis(t_gobj *z, t_glist *glist, int vis)
             int x1, y1;
             t_rtext *y = glist_findrtext(x->a_glist, &x->a_text);
             gatom_getwherelabel(x, glist, &x1, &y1);
-            gui_vmess("gui_text_new", "xssiiisii",
+            gui_vmess("gui_text_new", "xssiiisiii",
                 glist_getcanvas(glist),
                 rtext_gettag(y),
                 "gatom",
@@ -1657,7 +1658,8 @@ static void gatom_vis(t_gobj *z, t_glist *glist, int vis)
                 y1, // top margin
                 canvas_realizedollar(x->a_glist, x->a_label)->s_name,
                 sys_hostfontsize(glist_getfont(x->a_glist)),
-                sys_fontwidth(glist_getfont(x->a_glist))
+                sys_fontwidth(glist_getfont(x->a_glist)),
+                glist_istoplevel(glist)
             );
         }
         else
@@ -2124,7 +2126,7 @@ static void dropdown_vis(t_gobj *z, t_glist *glist, int vis)
             int x1, y1;
             t_rtext *y = glist_findrtext(x->a_glist, &x->a_text);
             dropdown_getwherelabel(x, glist, &x1, &y1);
-            gui_vmess("gui_text_new", "xssiiisii",
+            gui_vmess("gui_text_new", "xssiiisiii",
                 glist_getcanvas(glist),
                 rtext_gettag(y),
                 "dropdown",
@@ -2133,7 +2135,8 @@ static void dropdown_vis(t_gobj *z, t_glist *glist, int vis)
                 y1, // top margin
                 canvas_realizedollar(x->a_glist, x->a_label)->s_name,
                 sys_hostfontsize(glist_getfont(glist)),
-                sys_fontwidth(glist_getfont(glist))
+                sys_fontwidth(glist_getfont(glist)),
+                glist_istoplevel(glist)
             );
         }
         else
@@ -2520,14 +2523,19 @@ static void text_vis(t_gobj *z, t_glist *glist, int vis)
                 t_rtext *y = glist_findrtext(glist, x);
                 // make a group
                 text_getrect(&x->te_g, glist, &x1, &y1, &x2, &y2);
-                gui_vmess("gui_gobj_new", "xssiiii",
+                gui_vmess("gui_gobj_new", "xxxssiiii",
                     glist_getcanvas(glist),
+                    // if it is not toplevel and glist_getcanvas is not gl_owner
+                    // this means we are drawn 2nd or deeper level down
+                    glist,
+                    glist->gl_owner,
                     rtext_gettag(y),
                     type,
                     x1,
                     y1,
                     glist_istoplevel(glist),
-                    pd_class(&x->te_pd) == canvas_class);
+                    pd_class(&x->te_pd) == canvas_class
+                );
                 if (x->te_type == T_ATOM)
                     glist_retext(glist, x);
                 text_drawborder(x, glist, rtext_gettag(y),
@@ -2900,13 +2908,14 @@ void text_drawborder(t_text *x, t_glist *glist,
         broken = (pd_class(&x->te_pd) == text_class) ? 1 : 0;
         if (firsttime)
         {
-            gui_vmess("gui_text_draw_border", "xssiii",
+            gui_vmess("gui_text_draw_border", "xssiiii",
                 glist_getcanvas(glist),
                 tag,
                 "none",
                 broken,
                 x2 - x1,
-                y2 - y1);
+                y2 - y1,
+                glist_istoplevel(glist));
         }
         else
         {
@@ -2978,13 +2987,14 @@ void text_drawborder(t_text *x, t_glist *glist,
     {
         if (firsttime)
         {
-            gui_vmess("gui_text_draw_border", "xssiii",
+            gui_vmess("gui_text_draw_border", "xssiiii",
                 glist_getcanvas(glist),
                 tag,
                 "none",
                 0,
                 x2 - x1,
-                y2 - y1);
+                y2 - y1,
+                glist_istoplevel(glist));
         }
         else
         {

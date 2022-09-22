@@ -961,8 +961,8 @@ void scalehandle_draw_select(t_scalehandle *h, int px, int py)
     scalehandle_draw_erase(h);
 
     if (!h->h_vis) {
-        gui_vmess("gui_iemgui_label_show_drag_handle", "xxiiii",
-            canvas, x, 1, px - sx, py - sy, h->h_scale);
+        gui_vmess("gui_iemgui_label_show_drag_handle", "xxiiiii",
+            canvas, x, 1, px - sx, py - sy, h->h_scale, glist_istoplevel(h->h_glist));
         h->h_vis = 1;
     }
 }
@@ -1000,13 +1000,14 @@ void scalehandle_draw_erase(t_scalehandle *h)
 {
     //t_canvas *canvas = glist_getcanvas(h->h_glist);
     if (!h->h_vis) return;
-    gui_vmess("gui_iemgui_label_show_drag_handle", "xxiiii",
+    gui_vmess("gui_iemgui_label_show_drag_handle", "xxiiiii",
         h->h_glist,
         h->h_master,
         0,
         0,
         0,
-        h->h_scale);
+        h->h_scale,
+        glist_istoplevel(h->h_glist));
     h->h_vis = 0;
 }
 
@@ -1510,15 +1511,17 @@ void iemgui_base_draw_new(t_iemgui *x)
     gop_redraw = gr;
     char colorbuf[MAXPDSTRING];
     sprintf(colorbuf, "#%6.6x", x->x_bcol);
-    gui_vmess("gui_gobj_new", "xxsiiii", canvas, x,
-        "iemgui", x1, y1, glist_istoplevel(x->x_glist), 0);
-    gui_vmess("gui_text_draw_border", "xxsiii",
+    gui_vmess("gui_gobj_new", "xxxxsiiii", canvas, x->x_glist,
+        x->x_glist->gl_owner, x, "iemgui", x1, y1,
+        glist_istoplevel(x->x_glist), 0);
+    gui_vmess("gui_text_draw_border", "xxsiiii",
         canvas,
         x,
         colorbuf,
         0,
         x2 - x1,
-        y2 - y1);
+        y2 - y1,
+        glist_istoplevel(x->x_glist));
     sprintf(colorbuf, "#%6.6x", x->x_bcol);
     gui_vmess("gui_iemgui_base_color", "xxs",
         canvas, x, colorbuf);

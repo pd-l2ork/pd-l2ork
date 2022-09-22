@@ -23,10 +23,67 @@ Autocomplete:
 
 *port shell object to Windows?
 
+=== === === === === ===
+
 *finish and integrate gop drawing order work (see if there is something in the branch log to pull as to the status of the work).
 	*Redrawing entire canvas after tidy will not be necessary anymore.
   *Pasting complex GOP patch sometimes prevents movement of some of its contents (see disis_spectrogram~). To be solved with the GOP rewrite below.
 
+knob (flatgui/knob):
+
+/usr/lib/pd-l2ork/bin/pdgui.js:3126
+                    draw_xpos -= tgt[0].getCTM().e;
+                                        ^
+
+TypeError: Cannot read property 'getCTM' of undefined
+    at /usr/lib/pd-l2ork/bin/pdgui.js:3126:41
+    at get (/usr/lib/pd-l2ork/bin/pdgui.js:2968:21)
+    at Object.get_elem (/usr/lib/pd-l2ork/bin/pdgui.js:2984:24)
+    at gui_gobj_new (/usr/lib/pd-l2ork/bin/pdgui.js:3118:18)
+    at /usr/lib/pd-l2ork/bin/pdgui.js:6483:9
+    at get (/usr/lib/pd-l2ork/bin/pdgui.js:2968:21)
+    at Object.get_elem (/usr/lib/pd-l2ork/bin/pdgui.js:2984:24)
+    at gui_mknob_new (/usr/lib/pd-l2ork/bin/pdgui.js:6482:14)
+    at eval (eval at perfect_parser (/usr/lib/pd-l2ork/bin/pdgui.js:2788:21), <anonymous>:1:1)
+    at perfect_parser (/usr/lib/pd-l2ork/bin/pdgui.js:2788:21)
+
+image (ggee/image) AND pddplink:
+
+/usr/lib/pd-l2ork/bin/pdgui.js:2977
+                last_thing.appendChild(frag);
+                           ^
+
+TypeError: Cannot read property 'appendChild' of null
+    at Object.append (/usr/lib/pd-l2ork/bin/pdgui.js:2977:28)
+    at gui_gobj_draw_image (/usr/lib/pd-l2ork/bin/pdgui.js:6036:6)
+    at eval (eval at perfect_parser (/usr/lib/pd-l2ork/bin/pdgui.js:2788:21), <anonymous>:1:1)
+    at perfect_parser (/usr/lib/pd-l2ork/bin/pdgui.js:2788:21)
+    at Socket.<anonymous> (/usr/lib/pd-l2ork/bin/pdgui.js:2806:9)
+    at Socket.emit (events.js:160:13)
+    at addChunk (_stream_readable.js:269:12)
+    at readableAddChunk (_stream_readable.js:256:11)
+    at Socket.Readable.push (_stream_readable.js:213:10)
+    at TCP.onread (net.js:602:20)
+/usr/lib/pd-l2ork/bin/pdgui.js:2903
+                item.setAttributeNS(null, attr, attributes[attr]);
+                     ^
+
+TypeError: Cannot read property 'setAttributeNS' of null
+    at configure_item (/usr/lib/pd-l2ork/bin/pdgui.js:2903:22)
+    at Image.img.onload (/usr/lib/pd-l2ork/bin/pdgui.js:5848:9)
+
+Scope~
+moonlib/mknob
+moonlib/image
+unauthorized/pianoroll
+unauthorized/grid
+room_sim
+
+array!!!
+  *Does not draw the graph within the group.
+  *Scalars?
+
+=== === === === === ===
 
 *save pd-l2ork main window position between restarts.
 
