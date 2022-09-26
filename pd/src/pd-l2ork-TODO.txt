@@ -43,7 +43,26 @@ function gui_mknob_new(cid, ownercid, parentcid, tag, x, y, is_toplevel, show_in
 function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
     is_footils_knob, dial_w, circle_w, frag_w) {
 
-Scope~
+Scope~ (selection not highlighting)
+
+/usr/lib/pd-l2ork/bin/pdgui.js:4091
+        border.classList.remove("dirty");
+               ^
+
+TypeError: Cannot read property 'classList' of null
+    at /usr/lib/pd-l2ork/bin/pdgui.js:4091:16
+    at get (/usr/lib/pd-l2ork/bin/pdgui.js:2968:21)
+    at Object.get_gobj (/usr/lib/pd-l2ork/bin/pdgui.js:2981:24)
+    at gui_gobj_dirty (/usr/lib/pd-l2ork/bin/pdgui.js:4089:14)
+    at eval (eval at perfect_parser (/usr/lib/pd-l2ork/bin/pdgui.js:2788:21), <anonymous>:1:1)
+    at perfect_parser (/usr/lib/pd-l2ork/bin/pdgui.js:2788:21)
+    at Socket.<anonymous> (/usr/lib/pd-l2ork/bin/pdgui.js:2806:9)
+    at Socket.emit (events.js:160:13)
+    at addChunk (_stream_readable.js:269:12)
+    at readableAddChunk (_stream_readable.js:256:11)
+/usr/lib/pd-l2ork/bin/pdgui.js:4091
+        border.classList.remove("dirty");
+
 unauthorized/pianoroll
 unauthorized/grid
 room_sim
@@ -250,6 +269,8 @@ error: array: no method for 'magicglass'
   *Initial commit that enables all iemgui, gatom, comment, and dropdown, as well as gop canvas objects to be drawn as children of the GOP patch they belong to.
   *Fixed ggee/image and flatgui/knob to work with the new GOP drawing approach.
   *Ported pddplink to the new GOP drawing logic. Enabled GOP visiblity of the pddplink (thus forgoing the documentation of the currently undocumented -gop flag, while maintaining backwards compatibility), and fixed two bugs associated with the pddplink drawing.
+  *Fixed moonlib mknob and image objects to support new GOP drawing order.
+  *Updated Scope~ to work with the new GOP drawing order.
 
 
 
