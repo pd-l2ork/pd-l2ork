@@ -44,6 +44,7 @@ function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
     is_footils_knob, dial_w, circle_w, frag_w) {
 
 
+CRITICAL! Creating an object inside an embedded GOP-enabled abstraction results in the following error:
 
 /usr/lib/pd-l2ork/bin/pdgui.js:4091
         border.classList.remove("dirty");
@@ -63,10 +64,12 @@ TypeError: Cannot read property 'classList' of null
 /usr/lib/pd-l2ork/bin/pdgui.js:4091
         border.classList.remove("dirty");
 
-unauthorized/pianoroll
+Got some NAN matrices associated with the pianoroll
+
 unauthorized/grid
-room_sim
-miXed/comment
+  Still need to figure out why it is not being drawn as a subpatch
+iemgui/room_sim_2D
+iemgui/room_sim_3D
 
 array!!!
   *Does not draw the graph within the group.
@@ -79,7 +82,8 @@ DONE:
   pddplink
   moonlib/mknob
   moonlib/image
-  Scope~ (selection not highlighting)
+  Scope~ (including highlighting)
+  unauthorized/pianoroll
 
 === === === === === ===
 
@@ -96,6 +100,8 @@ DONE:
 *fix inefficiency of the profuse console output.
 
 *think about a way to deterministically inform both front-end and the back-end that the canvas has indeed loaded. See https://stackoverflow.com/questions/4057236/how-to-add-onload-event-to-a-div-element/55106785#58838457 (Third Attempt (and Definitive Solution))
+
+*port miXed (cyclone) comment?
 
 RARE:
 *sometimes closing a newly created window before it has posted or possibly creating two windows by quickly double clicking on a subpatch irreversibly breaks the front-end. Need the better checks'n'balances.
@@ -274,6 +280,9 @@ error: array: no method for 'magicglass'
   *Fixed moonlib mknob and image objects to support new GOP drawing order.
   *Updated Scope~ to work with the new GOP drawing order.
   *Fixed inconsistency inside graph_vis. Needs to be further tested.
+  *Fixed Scope~ object not highlighting properly when selected (and not highlighting inside a GOP subpatch even when the GOP is selected, as it should).
+  *Updated pianoroll to work with the new GOP drawing. Updated the external dialog to better accommodate its parameters.
+  *Pianoroll now gets properly highlighted when selected (only when toplevel)
 
 
 
