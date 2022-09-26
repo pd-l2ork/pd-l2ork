@@ -897,13 +897,17 @@ static void scope_vis(t_gobj *z, t_glist *glist, int vis)
     {
         int x1, y1, x2, y2;
 	scope_getrect(z, glist, &x1, &y1, &x2, &y2);
-        gui_vmess("gui_gobj_new", "xxsiii",
+        gui_vmess("gui_gobj_new", "xxxxsiiii",
             glist_getcanvas(glist),
+            x->x_glist,
+            x->x_glist->gl_owner,
             x,
             "obj",
             x1,
             y1,
-            glist_istoplevel(glist));
+            glist_istoplevel(glist),
+            0
+        );
 	t_scopehandle *sh = (t_scopehandle *)x->x_handle;
 #if FORKY_VERSION < 37
 	rtext_new(glist, t, glist->gl_editor->e_rtext, 0);
