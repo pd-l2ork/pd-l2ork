@@ -6249,7 +6249,8 @@ function gui_image_coords(cid, ownercid, parentcid, tag, x, y, is_toplevel) {
 }
 
 // Scope~
-function gui_scope_draw_bg(cid, tag, fg_color, bg_color, w, h, grid_width, dx, dy) {
+function gui_scope_draw_bg(cid, tag, fg_color, bg_color, w, h, grid_width, dx, dy, is_toplevel) {
+    //post("gui_scope_draw_bg istoplevel=" + is_toplevel);
     gui(cid)
     .get_gobj(tag)
     .append(function(frag) {
@@ -6257,7 +6258,7 @@ function gui_scope_draw_bg(cid, tag, fg_color, bg_color, w, h, grid_width, dx, d
             width: w,
             height: h,
             fill: bg_color,
-            class: "bg",
+            class: "bg " + (!!is_toplevel ? "toplevel " : "") + "border",
             stroke: "black",
             "stroke-width": grid_width
         }),

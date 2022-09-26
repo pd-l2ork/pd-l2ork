@@ -784,7 +784,7 @@ static void scope_drawbg(t_scope *x, t_canvas *cv,
        data in scope_drawfgxy, etc. This should be cheaper than
        creating and destroying a bunch of DOM objects on every
        redraw. */
-    gui_vmess("gui_scope_draw_bg", "xxssiifff",
+    gui_vmess("gui_scope_draw_bg", "xxssiifffi",
         glist_getcanvas(cv),
         x,
         fgcolor,
@@ -793,7 +793,9 @@ static void scope_drawbg(t_scope *x, t_canvas *cv,
         y2 - y1,
         SCOPE_GRIDWIDTH,
         dx,
-        dy);
+        dy,
+        glist_istoplevel(x->x_glist)
+    );
 }
 
 static void scope_redrawmono(t_scope *x, t_canvas *cv)
@@ -902,7 +904,7 @@ static void scope_vis(t_gobj *z, t_glist *glist, int vis)
             x->x_glist,
             x->x_glist->gl_owner,
             x,
-            "obj",
+            "scope",
             x1,
             y1,
             glist_istoplevel(glist),

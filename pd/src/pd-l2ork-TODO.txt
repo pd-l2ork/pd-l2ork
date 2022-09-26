@@ -43,7 +43,7 @@ function gui_mknob_new(cid, ownercid, parentcid, tag, x, y, is_toplevel, show_in
 function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
     is_footils_knob, dial_w, circle_w, frag_w) {
 
-Scope~ (selection not highlighting)
+
 
 /usr/lib/pd-l2ork/bin/pdgui.js:4091
         border.classList.remove("dirty");
@@ -66,6 +66,7 @@ TypeError: Cannot read property 'classList' of null
 unauthorized/pianoroll
 unauthorized/grid
 room_sim
+miXed/comment
 
 array!!!
   *Does not draw the graph within the group.
@@ -78,6 +79,7 @@ DONE:
   pddplink
   moonlib/mknob
   moonlib/image
+  Scope~ (selection not highlighting)
 
 === === === === === ===
 
@@ -271,6 +273,7 @@ error: array: no method for 'magicglass'
   *Ported pddplink to the new GOP drawing logic. Enabled GOP visiblity of the pddplink (thus forgoing the documentation of the currently undocumented -gop flag, while maintaining backwards compatibility), and fixed two bugs associated with the pddplink drawing.
   *Fixed moonlib mknob and image objects to support new GOP drawing order.
   *Updated Scope~ to work with the new GOP drawing order.
+  *Fixed inconsistency inside graph_vis. Needs to be further tested.
 
 
 
