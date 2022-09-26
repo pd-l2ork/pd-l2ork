@@ -146,7 +146,7 @@ static void pianoroll_draw_innards(t_pianoroll *x, t_glist *glist)
         x->x_glist,
         x->x_glist->gl_owner,
         x,
-        "obj",
+        "obj transparent",
         text_xpix(&x->x_obj, glist),
         text_ypix(&x->x_obj, glist),
         glist_istoplevel(glist),
@@ -159,16 +159,6 @@ static void pianoroll_draw_innards(t_pianoroll *x, t_glist *glist)
     x->x_width = (int)((x->x_nbsteps)*xgstep);
     x->x_height = (int)((x->x_nbgrades)*ygstep);
 
-    // leverage the text border routine to draw a border
-    gui_vmess("gui_text_draw_border", "xxsiii",
-        canvas,
-        x,
-        "",
-        0,
-        x->x_width,
-        x->x_height,
-        glist_istoplevel(glist)
-    );
     // draw the grid
     {
         int gi, gj;
@@ -215,6 +205,16 @@ static void pianoroll_draw_innards(t_pianoroll *x, t_glist *glist)
             }
         }
     }
+    // leverage the text border routine to draw a border
+    gui_vmess("gui_text_draw_border", "xxsiiii",
+        canvas,
+        x,
+        "",
+        0,
+        x->x_width,
+        x->x_height,
+        glist_istoplevel(glist)
+    );
     gui_vmess("gui_gobj_draw_io", "xxxiiiiiisiii",
         canvas,
         x,

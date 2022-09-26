@@ -442,6 +442,10 @@ text.activated {
     background-color: #c3c3c3;
 }
 
+.obj.transparent .border {
+    fill: #00000000;
+    stroke: #ccc;
+}
 .obj .border {
     fill: #f6f8f8;
     stroke: #ccc;
