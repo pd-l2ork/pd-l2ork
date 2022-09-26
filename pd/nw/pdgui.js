@@ -3069,14 +3069,14 @@ exports.gui = gui;
                  whose selection border should be highlighted when they are selected.
 */
 function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplevel, is_canvas_obj) {
-    post("gui_gobj_new drawon=" + cid + " ownercid=" + ownercid +
+    post("===\ngui_gobj_new drawon=" + cid + " ownercid=" + ownercid +
         " parentcid=" + parentcid + " tag=" + tag + " type=" + type +
         " xpos=" + xpos + " ypos=" + ypos + " is_toplevel=" + is_toplevel);
     var g, sm, draw_xpos, draw_ypos;
     draw_xpos = xpos;
     draw_ypos = ypos;
     if (type === "graph") { // graph object
-        post("... GOP svg_elem=" + (is_toplevel === 1 ? "patchsvg" : 
+        post("...GOP svg_elem=" + (is_toplevel === 1 ? "patchsvg" : 
             (parentcid === cid ? "[ownercid]" + ownercid + "svg" :
                 "[parentcid]" + parentcid + "svg")));
         gui(cid).get_elem("patchsvg", function(svg_elem, w) {
@@ -3091,7 +3091,7 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
                     draw_xpos -= nested_gop[0].getAttribute("orig_xpos");
                     draw_ypos -= nested_gop[0].getAttribute("orig_ypos");
                 }
-                post("... offset x=" + draw_xpos + " y=" + draw_ypos);
+                post("......offset x=" + draw_xpos + " y=" + draw_ypos);
             } else {
                 draw_xpos += 0.5;
                 draw_ypos += 0.5;
@@ -3115,21 +3115,24 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
             g.appendChild(s);
        });
    } else { // non-graph object (can be inside a GOP, tested with is_toplevel)
+        post("...OBJECT classname=" + ownercid + "svg");
         gui(cid).get_elem("patchsvg", function(svg_elem, w) {
-            post("... classname=" + ownercid + "svg");
             var transform_string;
             if (is_toplevel === 0) {
                 var tgt = w.document.getElementsByClassName(ownercid + "svg");
                 if (parentcid === cid) {
+                    post("......parentcid==drawcid parentGOPx=" +
+                        tgt[0].getCTM().e + " parentGOPy=" + tgt[0].getCTM().f);
                     draw_xpos += 0.5;
                     draw_ypos += 0.5;
                     draw_xpos -= tgt[0].getCTM().e;
                     draw_ypos -= tgt[0].getCTM().f;
                 } else {
+                    post("......parentcid != drawcid");
                     draw_xpos -= tgt[0].getAttribute("orig_xpos");
                     draw_ypos -= tgt[0].getAttribute("orig_ypos");
                 }
-                post("... offset x=" + draw_xpos + " y=" + draw_ypos);
+                post("......offset x=" + draw_xpos + " y=" + draw_ypos);
             } else {
                 draw_xpos += 0.5;
                 draw_ypos += 0.5;              
@@ -3155,7 +3158,7 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
 }
 
 function gui_text_draw_border(cid, tag, bgcolor, isbroken, width, height, is_toplevel) {
-    post("===gui_text_draw_border is_toplevel=" + is_toplevel);
+    post("===\ngui_text_draw_border is_toplevel=" + is_toplevel);
     var isgop = 0;
     gui(cid).get_gobj(tag, function(e) {
         if(e.classList.contains("graph")) {

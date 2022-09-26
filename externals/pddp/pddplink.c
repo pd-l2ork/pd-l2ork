@@ -42,20 +42,24 @@ static void pddplink_getrect(t_gobj *z, t_glist *glist,
     float x1, y1, x2, y2;
     if (glist->gl_editor && glist->gl_editor->e_rtext)
     {
-	if (x->x_rtextactive)
-	{
-	    t_rtext *y = glist_findrtext(glist, (t_text *)x);
-	    width = rtext_width(y);
-	    height = rtext_height(y) - 2;
-	}
-	else
-	{
-	    int font = glist_getfont(glist);
-	    width = x->x_vislength * sys_fontwidth(font) + 2;
-	    height = sys_fontheight(font) + 2;
-	}
+    	if (x->x_rtextactive)
+    	{
+    	    t_rtext *y = glist_findrtext(glist, (t_text *)x);
+    	    width = rtext_width(y);
+    	    height = rtext_height(y) - 2;
+    	}
     }
-    else width = height = 10;
+
+    // ico@vt.edu 2022-09-26: reworked width calculation
+    // since now we allow partially visible objects inside GOP
+    int font = glist_getfont(glist);
+    width = x->x_vislength * sys_fontwidth(font) + 2;
+    height = sys_fontheight(font) + 2;
+
+    // safety fallback
+    if (width < 10) width = 10;
+    if (height < 10) height = 10;
+
     x1 = text_xpix((t_text *)x, glist);
     y1 = text_ypix((t_text *)x, glist);
     x2 = x1 + width;
@@ -119,13 +123,17 @@ static void pddplink_vis(t_gobj *z, t_glist *glist, int vis)
         if ((glist->gl_havewindow || x->x_isgopvisible)
             && (y = glist_findrtext(glist, (t_text *)x)))
         {
-            gui_vmess("gui_gobj_new", "xssiii",
+            gui_vmess("gui_gobj_new", "xxxssiiii",
                 glist_getcanvas(glist),
+                x->x_glist,
+                x->x_glist->gl_owner,
                 rtext_gettag(y),
                 "pd_link",
-                text_xpix(&x->x_ob, glist_getcanvas(glist)),
-                text_ypix(&x->x_ob, glist_getcanvas(glist)),
-                glist_istoplevel(glist));
+                text_xpix(&x->x_ob, glist),
+                text_ypix(&x->x_ob, glist),
+                glist_istoplevel(glist),
+                0
+            );
             /* This is a bit screwy... first we do rtext_draw
                which sends the wrong box text (at least when we're
                not in "-box" mode). Then we call the GUI with the
@@ -343,7 +351,10 @@ static void *pddplink_new(t_symbol *s, int ac, t_atom *av)
     t_pddplink xgen, *x;
     int skip;
     xgen.x_isboxed = 0;
-    xgen.x_isgopvisible = 0;
+    // ico@vt.edu 2022-09-26: made GOP visible on by default
+    // there is no reason for this to be off. if one does not
+    // want it visible inside GOP, simply don't put it there.
+    xgen.x_isgopvisible = 1;
     xgen.x_vistext = 0;
     xgen.x_vissize = 0;
     if ((xgen.x_ulink = pddplink_nextsymbol(ac, av, 0, &skip)))
