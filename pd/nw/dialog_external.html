@@ -25,15 +25,15 @@
 }
 
 input[type=checkbox] {
-    margin: 2px 0px 8px 0px;
+    margin: 2px 5px 13px 0px;
 }
 
 input[type="text"] {
-    margin-bottom: 3px;
+    margin-bottom: 8px;
 }
 
 label {
-	margin-left: 5px;
+	margin-left: 0px;
 }
   </style>
   <body class="dialog_body" style="overflow: hidden;">
@@ -242,8 +242,14 @@ function build_form(external_name, array_of_objects) {
             }
         }
         label.textContent = elem.label;
-        fieldset.appendChild(input_elem);       
-        fieldset.appendChild(label); 
+        if (input_elem.type !== "checkbox") {
+            input_elem.style.width = "90%";
+            fieldset.appendChild(label);
+            fieldset.appendChild(input_elem);
+        } else {
+            fieldset.appendChild(input_elem);
+            fieldset.appendChild(label);           
+        }
         // stop-gap until we make this prettier through css: insert a break
         fieldset.appendChild(document.createElement("br"));
     });

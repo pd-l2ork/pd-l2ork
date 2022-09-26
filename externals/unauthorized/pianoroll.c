@@ -141,13 +141,16 @@ static void pianoroll_draw_innards(t_pianoroll *x, t_glist *glist)
     t_canvas *canvas=glist_getcanvas(glist);
 
     // create a gobj container in the GUI
-    gui_vmess("gui_gobj_new", "xxsiii",
+    gui_vmess("gui_gobj_new", "xxxxsiiii",
         canvas,
+        x->x_glist,
+        x->x_glist->gl_owner,
         x,
         "obj",
         text_xpix(&x->x_obj, glist),
         text_ypix(&x->x_obj, glist),
-        glist_istoplevel(glist)
+        glist_istoplevel(glist),
+        0
     );
 
     t_float xgstep = x->x_width/x->x_nbsteps;
@@ -163,7 +166,8 @@ static void pianoroll_draw_innards(t_pianoroll *x, t_glist *glist)
         "",
         0,
         x->x_width,
-        x->x_height
+        x->x_height,
+        glist_istoplevel(glist)
     );
     // draw the grid
     {
