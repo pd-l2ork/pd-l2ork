@@ -93,13 +93,17 @@ static void image_drawme(t_image *x, t_glist *glist, int firsttime)
     char key2[MAXPDSTRING];
     if (firsttime)
     {
-        gui_vmess("gui_gobj_new", "xxsiii",
+        gui_vmess("gui_gobj_new", "xxxxsiiii",
             glist_getcanvas(glist),
+            x->x_glist,
+            x->x_glist->gl_owner,
             x,
             "obj",
             text_xpix(&x->x_obj, glist),
             text_ypix(&x->x_obj, glist),
-            glist_istoplevel(glist));
+            glist_istoplevel(glist),
+            0
+        );
         const char *fname = image_get_filename(x, x->x_image->s_name);
         if (x->x_image == &s_ || !fname) // if we have a blank image name, use the included filler
         {
@@ -176,11 +180,15 @@ static void image_drawme(t_image *x, t_glist *glist, int firsttime)
         //sys_vgui(".x%zx.c coords %xS %d %d\n",
         //         glist_getcanvas(glist), x,
         //         text_xpix(&x->x_obj, glist), text_ypix(&x->x_obj, glist));
-        gui_vmess("gui_image_coords", "xxii",
+        gui_vmess("gui_image_coords", "xxxxiii",
             glist_getcanvas(glist),
+            x->x_glist,
+            x->x_glist->gl_owner,
             x,
             text_xpix(&x->x_obj, glist),
-            text_ypix(&x->x_obj, glist));
+            text_ypix(&x->x_obj, glist),
+            glist_istoplevel(glist)
+        );
     }
 }
 

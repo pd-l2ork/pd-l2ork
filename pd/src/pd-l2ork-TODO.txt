@@ -4,7 +4,7 @@ PD-L2ORK TODO:
 
 *Error closing a new window because there is no "width" property (e.g. a subpatch has been created). Only affects RPi version of nw.js? Consider bumping the RPi nw.js version...
 
-*Opening and closing window via a script does not reopen the window in the same place nor with the same size.
+*Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
 
 *Select All should not automatically enter the edit mode? OR, provide a way to restrict edit mode AND other options.
 
@@ -43,36 +43,7 @@ function gui_mknob_new(cid, ownercid, parentcid, tag, x, y, is_toplevel, show_in
 function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
     is_footils_knob, dial_w, circle_w, frag_w) {
 
-
-
-pddplink:
-
-/usr/lib/pd-l2ork/bin/pdgui.js:2977
-                last_thing.appendChild(frag);
-                           ^
-
-TypeError: Cannot read property 'appendChild' of null
-    at Object.append (/usr/lib/pd-l2ork/bin/pdgui.js:2977:28)
-    at gui_gobj_draw_image (/usr/lib/pd-l2ork/bin/pdgui.js:6036:6)
-    at eval (eval at perfect_parser (/usr/lib/pd-l2ork/bin/pdgui.js:2788:21), <anonymous>:1:1)
-    at perfect_parser (/usr/lib/pd-l2ork/bin/pdgui.js:2788:21)
-    at Socket.<anonymous> (/usr/lib/pd-l2ork/bin/pdgui.js:2806:9)
-    at Socket.emit (events.js:160:13)
-    at addChunk (_stream_readable.js:269:12)
-    at readableAddChunk (_stream_readable.js:256:11)
-    at Socket.Readable.push (_stream_readable.js:213:10)
-    at TCP.onread (net.js:602:20)
-/usr/lib/pd-l2ork/bin/pdgui.js:2903
-                item.setAttributeNS(null, attr, attributes[attr]);
-                     ^
-
-TypeError: Cannot read property 'setAttributeNS' of null
-    at configure_item (/usr/lib/pd-l2ork/bin/pdgui.js:2903:22)
-    at Image.img.onload (/usr/lib/pd-l2ork/bin/pdgui.js:5848:9)
-
 Scope~
-moonlib/mknob
-moonlib/image
 unauthorized/pianoroll
 unauthorized/grid
 room_sim
@@ -82,7 +53,12 @@ array!!!
   *Scalars?
 
 DONE:
+  iemgui objects
   image (ggee/image)
+  flatgui/knob
+  pddplink
+  moonlib/mknob
+  moonlib/image
 
 === === === === === ===
 
@@ -270,6 +246,10 @@ error: array: no method for 'magicglass'
 *Cosmetic fix to a documentation patch.
 *Improved compiling from source instructions for Linux platform.
 *Fixed array put and canvas properties dialogs to accomodate child color picker window.
+*Reworking GOP drawing order to allow for partial visibility.
+  *Initial commit that enables all iemgui, gatom, comment, and dropdown, as well as gop canvas objects to be drawn as children of the GOP patch they belong to.
+  *Fixed ggee/image and flatgui/knob to work with the new GOP drawing approach.
+  *Ported pddplink to the new GOP drawing logic. Enabled GOP visiblity of the pddplink (thus forgoing the documentation of the currently undocumented -gop flag, while maintaining backwards compatibility), and fixed two bugs associated with the pddplink drawing.
 
 
 

@@ -81,13 +81,15 @@ static void mknob_update_knob(t_mknob *x, t_glist *glist)
     xpc = miniradius * cos(angle - M_PI / 2.0);
     ypc = miniradius * sin(angle - M_PI / 2.0);
 
-    gui_vmess("gui_turn_mknob", "xxffff",
+    gui_vmess("gui_turn_mknob", "xxffffii",
         canvas,
         x,
         xp,
         yp,
         xc,
-        yc
+        yc,
+        0, // it is not footils (a.k.a. flatgui)
+        0  // dummy value only used by flatgui/knob
     );
 }
 
@@ -106,7 +108,7 @@ static void mknob_draw_config(t_mknob *x,t_glist *glist)
     sprintf(fcol, "#%6.6x", x->x_gui.x_fcol);
     sprintf(lcol, "#%6.6x", x->x_gui.x_lcol);
 
-    gui_vmess("gui_configure_mknob", "xxissiii",
+    gui_vmess("gui_configure_mknob", "xxissiiii",
         canvas,
         x,
         x->x_gui.x_w,
@@ -127,8 +129,10 @@ static void mknob_draw_new(t_mknob *x, t_glist *glist)
     int ypos = text_ypix(&x->x_gui.x_obj, glist);
     t_canvas *canvas = glist_getcanvas(glist);
 
-    gui_vmess("gui_mknob_new", "xxiiiii",
+    gui_vmess("gui_mknob_new", "xxxxiiiii",
         canvas,
+        x->x_gui.x_glist,
+        x->x_gui.x_glist->gl_owner,
         x,
         xpos,
         ypos,
@@ -267,7 +271,7 @@ static void mknob_properties(t_gobj *z, t_glist *owner)
     gui_s("maximum_range");    gui_f(x->x_max);
     gui_s("log_scaling");      gui_i(x->x_lin0_log1);
     gui_s("init");             gui_i(x->x_gui.x_loadinit);
-    gui_s("steady_on_click");   gui_i(x->x_steady);
+    //gui_s("steady_on_click");  gui_i(x->x_steady);
     gui_s("send_symbol");      gui_s(srl[0]->s_name);
     gui_s("receive_symbol");   gui_s(srl[1]->s_name);
     gui_s("label");            gui_s(srl[2]->s_name);
@@ -341,10 +345,14 @@ static void mknob_dialog(t_mknob *x, t_symbol *s, int argc, t_atom *argv)
 
     if (lilo != 0) lilo = 1;
     x->x_lin0_log1 = lilo;
-    if (steady)
-        x->x_steady = 1;
-    else
-        x->x_steady = 0;
+    
+    // ico@vt.edu 2022-09-26: disabled editing and altering of the steady
+    // variable since it has no effect and since this is a legacy object.
+    // so, this is done solely to avoid confusing users.
+    //if (steady)
+    x->x_steady = 1;
+    //else
+    //    x->x_steady = 0;
     sr_flags = iemgui_dialog(&x->x_gui, argc, argv);
     mknob_interactive(x, atom_getintarg(20, argc, argv));
     //x->x_gui.x_h = iemgui_clip_size(h);
@@ -585,13 +593,13 @@ static void mknob_init(t_mknob *x, t_floatarg f)
     iemgui_init(&x->x_gui, f);
 }
 
-static void mknob_steady(t_mknob *x, t_floatarg f)
+/*static void mknob_steady(t_mknob *x, t_floatarg f)
 {
     x->x_steady = (f==0.0)?0:1;
     t_int properties = gfxstub_haveproperties((void *)x);
     if (properties)
         properties_set_field_int(properties,"steady_on_click",x->x_steady);    
-}
+}*/
 
 static void mknob_float(t_mknob *x, t_floatarg f)
 {
@@ -850,7 +858,7 @@ void mknob_setup(void)
     class_addmethod(mknob_class, (t_method)mknob_log, gensym("log"), 0);
     class_addmethod(mknob_class, (t_method)mknob_lin, gensym("lin"), 0);
     class_addmethod(mknob_class, (t_method)mknob_init, gensym("init"), A_FLOAT, 0);
-    class_addmethod(mknob_class, (t_method)mknob_steady, gensym("steady"), A_FLOAT, 0);
+    //class_addmethod(mknob_class, (t_method)mknob_steady, gensym("steady"), A_FLOAT, 0);
     class_addmethod(mknob_class, (t_method)mknob_interactive, gensym("interactive"), A_FLOAT, 0);
     /*if(!iemgui_key_sym)
     iemgui_key_sym = gensym("#keyname");*/
