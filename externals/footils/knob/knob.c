@@ -93,7 +93,7 @@ static void knob_draw_update(t_knob *x, t_glist *glist)
     int x2 = radius + radius * sin(-angle); 
         int y2 = radius + radius * cos(angle);
 
-    gui_vmess("gui_turn_mknob", "xxiiiiifi",
+    gui_vmess("gui_turn_mknob", "xxiiiiif",
         glist_getcanvas(glist),
         x,
         x1,
@@ -112,8 +112,10 @@ static void knob_draw_new(t_knob *x, t_glist *glist)
     t_canvas *canvas=glist_getcanvas(glist);
     
     /* reuse mknob drawing routine */
-    gui_vmess("gui_mknob_new", "xxiiiiii",
+    gui_vmess("gui_mknob_new", "xxxxiiiiii",
         canvas,
+        x->x_gui.x_glist,
+        x->x_gui.x_glist->gl_owner,
         x,
         xpos,
         ypos - 2,

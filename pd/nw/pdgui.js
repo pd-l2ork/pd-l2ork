@@ -6215,12 +6215,33 @@ function gui_image_configure_preloaded(cid, tag, image_key, tk_anchor, w, h, con
 }
 
 // Move an image
-function gui_image_coords(cid, tag, x, y) {
+function gui_image_coords(cid, ownercid, parentcid, tag, x, y, is_toplevel) {
     // ggee/image accepts a message that can trigger this, meaning
     // [loadbang] can end up calling this before the patchwindow exists.
     // So we have to check for existence below
+    var draw_xpos, draw_ypos;
+    draw_xpos = x;
+    draw_ypos = y;
+    if (is_toplevel === 0) {
+        gui(cid).get_elem("patchsvg", function(svg_elem, w) {
+            var tgt = w.document.getElementsByClassName(ownercid + "svg");
+            if (parentcid === cid) {
+                draw_xpos += 0.5;
+                draw_ypos += 0.5;
+                draw_xpos -= tgt[0].getCTM().e;
+                draw_ypos -= tgt[0].getCTM().f;
+            } else {
+                draw_xpos -= tgt[0].getAttribute("orig_xpos");
+                draw_ypos -= tgt[0].getAttribute("orig_ypos");
+            }
+        });
+        //post("... gui_image_coords offset x=" + draw_xpos + " y=" + draw_ypos);
+    } else {
+        draw_xpos += 0.5;
+        draw_ypos += 0.5;              
+    }
     gui(cid).get_gobj(tag, function(e) {
-        elem_move(e, x, y);
+        elem_move(e, draw_xpos, draw_ypos);
     });
 }
 
@@ -6477,10 +6498,10 @@ function gui_pianoroll_erase_innards(cid, tag) {
 }
 
 // mknob from moonlib
-function gui_mknob_new(cid, tag, x, y, is_toplevel, show_in, show_out,
+function gui_mknob_new(cid, ownercid, parentcid, tag, x, y, is_toplevel, show_in, show_out,
     is_footils_knob) {
     gui(cid).get_elem("patchsvg", function(svg_elem) {
-        gui_gobj_new(cid, cid, cid, tag, "obj", x, y, is_toplevel);
+        gui_gobj_new(cid, ownercid, parentcid, tag, "obj", x, y, is_toplevel, 0);
     });
     gui(cid).get_gobj(tag)
     .append(function(frag) {

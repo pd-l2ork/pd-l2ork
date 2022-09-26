@@ -119,13 +119,17 @@ static void image_drawme(t_image *x, t_glist *glist)
         if (x->x_draw_firstime)
         {
             t_symbol *fname = image_trytoopen(x);
-            gui_vmess("gui_gobj_new", "xxsiii",
+            gui_vmess("gui_gobj_new", "xxxxsiiii",
                 glist_getcanvas(glist),
+                x->x_gui.x_glist,
+                x->x_gui.x_glist->gl_owner,
                 x,
                 "obj",
                 text_xpix(&x->x_gui.x_obj, glist),
                 text_ypix(&x->x_gui.x_obj, glist),
-                glist_istoplevel(glist));
+                glist_istoplevel(glist),
+                0
+            );
             if (fname) {
                 // if we are using gop_spill, reloading may cause flicker
                 // because the image may need to be repositioned after
@@ -192,11 +196,14 @@ static void image_drawme(t_image *x, t_glist *glist)
             image_visible(x, x->x_visible);
             image_alpha(x, x->x_alpha);
             // move the gobj
-            gui_vmess("gui_image_coords", "xxii",
+            gui_vmess("gui_image_coords", "xxxxiii",
                 glist_getcanvas(glist),
+                x->x_gui.x_glist,
+                x->x_gui.x_glist->gl_owner,
                 x,
                 text_xpix(&x->x_gui.x_obj, glist),
-                text_ypix(&x->x_gui.x_obj, glist)
+                text_ypix(&x->x_gui.x_obj, glist),
+                glist_istoplevel(glist)
             );
             if (x->x_img_loaded)
             {
