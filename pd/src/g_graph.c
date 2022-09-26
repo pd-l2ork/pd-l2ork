@@ -1159,7 +1159,9 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
             x,
             x->gl_owner,
             tag, "graph", xpix, ypix,
-            parent_glist == glist_getcanvas(x->gl_owner) ? 1 : 0, 0);
+            // ico@vt.edu 2022-09-26: changed last argument to 1
+            // since this is a canvas object after all (need to test)
+            parent_glist == glist_getcanvas(x->gl_owner) ? 1 : 0, 1);
         if (canvas_showtext(x))
             rtext_draw(glist_findrtext(parent_glist, &x->gl_obj));
     }
@@ -1196,7 +1198,8 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
                 0,
                 x2 - x1,
                 y2 - y1,
-                1);
+                1
+            );
             glist_noselect(x->gl_owner);
             gui_vmess("gui_graph_fill_border", "xsi",
                 glist_getcanvas(x->gl_owner),
