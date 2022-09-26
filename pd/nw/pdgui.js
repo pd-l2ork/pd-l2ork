@@ -5446,14 +5446,14 @@ function gui_scalar_erase(cid, tag) {
     });
 }
 
-// This is unnecessarily complex-- the select rect is a child of the parent
+// This is unnecessarily complex--the select rect is a child of the parent
 // scalar group, but in the initial Tkpath API the rect was free-standing.
 // This means all the coordinate parameters are in the screen position. But
-// we need the coords relative to the scalar's x/y-- hence we subtract the
+// we need the coords relative to the scalar's x/y--hence we subtract the
 // scalar's basex/basey from the coords below.
 
-// Additionally, this function is a misnomer-- we're not actually drawing
-// the rect here.  It's drawn as part of the scalar_vis function.  We're
+// Additionally, this function is a misnomer--we're not actually drawing
+// the rect here. It's drawn as part of the scalar_vis function. We're
 // merely changing its coords and size.
 
 // Finally, we have this awful display attribute toggling in css
