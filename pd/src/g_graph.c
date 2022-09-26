@@ -1022,7 +1022,7 @@ int text_xpix(t_text *x, t_glist *glist)
 {
     int xpix = 0;
     if (glist->gl_havewindow || !glist->gl_isgraph)
-        xpix = x->te_xpix; 
+        xpix = x->te_xpix;
     else if (glist->gl_goprect)
         xpix = glist_xtopixels(glist, glist->gl_x1) +
             x->te_xpix - glist->gl_xmargin;
