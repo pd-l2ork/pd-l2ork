@@ -262,7 +262,12 @@ int gobj_shouldvis(t_gobj *x, struct _glist *glist)
         //    gy1 < y1 || gy1 > y2 || gy2 < y1 || gy2 > y2)
         if (gx1 > x2 || gx2 < x1 || gy2 < y1 || gy1 > y2)
         {
-                //fprintf(stderr,"does not fit within boundaries\n");
+                /*
+                post("gobj_shouldvis: does not fit within boundaries\n"
+                       "gx1:%d gx2:%d gy1:%d gy2:%d\n"
+                       "x1:%d x2:%d y1:%d y2:%d",
+                       gx1, gx2, gy1, gy2, x1, x2, y1, y2);
+                */
                 return (0);
         }
         if (glist==glist_getcanvas(glist))
