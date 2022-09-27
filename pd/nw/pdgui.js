@@ -6417,7 +6417,7 @@ function gui_configure_grid(cid, tag, w, h, bg_color, has_grid, x_l, y_l) {
 
 function gui_grid_new(cid, ownercid, parentcid, tag, x, y, is_toplevel) {
     gui(cid).get_elem("patchsvg", function(svg_elem) {
-        gui_gobj_new(cid, ownercid, parentcid, tag, "obj", x, y, is_toplevel, 0);
+        gui_gobj_new(cid, ownercid, parentcid, tag, "obj wide-select-border", x, y, is_toplevel, 0);
     });
     gui(cid).get_gobj(tag)
     .append(function(frag) {
