@@ -146,7 +146,7 @@ static void pianoroll_draw_innards(t_pianoroll *x, t_glist *glist)
         x->x_glist,
         x->x_glist->gl_owner,
         x,
-        "obj transparent",
+        "obj transparent wide-select-border",
         text_xpix(&x->x_obj, glist),
         text_ypix(&x->x_obj, glist),
         glist_istoplevel(glist),
@@ -283,7 +283,11 @@ static void pianoroll_draw_new(t_pianoroll *x, t_glist *glist)
     t_canvas *canvas=glist_getcanvas(glist);
 
     // create a gobj container in the GUI
-    gui_vmess("gui_gobj_new", "xxxxsiiii",
+    // ico@vt.edu 2022-09-27: this appears to be superfluous since
+    // all the other elements are already drawn as part of
+    // pianoroll_draw_innards below. Further, with the new GOP
+    // drawing it results in stale objects being left behind.
+    /*gui_vmess("gui_gobj_new", "xxxxsiiii",
         canvas,
         x->x_glist,
         x->x_glist->gl_owner,
@@ -293,7 +297,7 @@ static void pianoroll_draw_new(t_pianoroll *x, t_glist *glist)
         text_ypix(&x->x_obj, glist),
         glist_istoplevel(glist),
         0
-    );
+    );*/
 
     // now draw the rectangles inside it
     pianoroll_draw_innards(x, glist);

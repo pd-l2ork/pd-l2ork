@@ -446,6 +446,11 @@ text.activated {
     fill: #00000000;
     stroke: #ccc;
 }
+
+.wide-select-border.selected .border {
+    stroke-width: 2px;
+}
+
 .obj .border {
     fill: #f6f8f8;
     stroke: #ccc;
