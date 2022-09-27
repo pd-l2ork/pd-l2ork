@@ -226,7 +226,7 @@ static void canvas_objtext(t_glist *gl, int xpix, int ypix,
 
     x->te_xpix = xpix;
     x->te_ypix = ypix;
-    post("textobj x=%d y=%d", xpix, ypix);
+    //post("textobj x=%d y=%d", xpix, ypix);
     x->te_width = width;
     x->te_type = T_OBJECT;
     /* 
