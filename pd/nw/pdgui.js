@@ -5873,7 +5873,7 @@ function gui_ggee_image_toggle_visible(cid, svg_image_tag, visible) {
     if (patchwin[cid])
     {
         configure_item(get_item(cid, svg_image_tag+"image"), {
-            visibility: (visible ? "visible" : "hidden")
+            visibility: (visible ? "inherit" : "hidden")
         });
     }    
 }
