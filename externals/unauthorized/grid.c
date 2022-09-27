@@ -152,7 +152,10 @@ static void grid_draw_configure(t_grid *x, t_glist *glist)
     //        ycount++;
     //    }
     //}
+    t_float pointnewxpos, pointnewypos;
 
+    //pointnewxpos = text_xpix(&x->x_obj, x->x_glist) + ((x->x_current - x->x_min)/(x->x_max - x->x_min) * x->x_width);
+    //pointnewxpos = text_ypix(&x->x_obj, x->x_glist) + ((x->y_current - x->y_min)/(x->y_max - x->y_min) * x->x_height);
     // gui_gobj_new, "xx type text_xpix text_ypix istoplevel"
     gui_vmess("gui_configure_grid", "xxiisiii",
         canvas,
@@ -162,7 +165,9 @@ static void grid_draw_configure(t_grid *x, t_glist *glist)
         x->x_bgcolor,
         x->x_grid,
         x->x_xlines,
-        x->x_ylines);
+        x->x_ylines
+    );
+    grid_draw_update(x, canvas);
     if (glist_isselected(glist, &x->x_obj))
         grid_draw_select(x, glist);
     canvas_fixlinesfor( canvas, (t_text*)x );
@@ -171,12 +176,15 @@ static void grid_draw_configure(t_grid *x, t_glist *glist)
 static void grid_draw_new(t_grid *x, t_glist *glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
-    gui_vmess("gui_grid_new", "xxiii",
+    gui_vmess("gui_grid_new", "xxxxiii",
         canvas,
+        x->x_glist,
+        x->x_glist->gl_owner,
         x,
         text_xpix(&x->x_obj, glist),
         text_ypix(&x->x_obj, glist),
-        glist_istoplevel(glist));
+        glist_istoplevel(glist)
+    );
     grid_draw_configure(x, glist);
 }
 
@@ -322,14 +330,15 @@ static void grid_save(t_gobj *z, t_binbuf *b)
 
     // post( "saving grid : %s", x->x_name->s_name );
     binbuf_addv(b, "ssiissiffiffiffiiff", gensym("#X"),gensym("obj"),
-    (t_int)x->x_obj.te_xpix, (t_int)x->x_obj.te_ypix,
+        (t_int)x->x_obj.te_xpix, (t_int)x->x_obj.te_ypix,
         atom_getsymbol(binbuf_getvec(x->x_obj.te_binbuf)),
         x->x_name, x->x_width, x->x_min,
         x->x_max, x->x_height,
         x->y_min, x->y_max,
         x->x_grid, x->x_xstep, 
         x->x_ystep, x->x_xlines, x->x_ylines, 
-        x->x_current, x->y_current );
+        x->x_current, x->y_current
+    );
     binbuf_addv(b, ";");
 }
 
@@ -505,8 +514,8 @@ static int grid_click(t_gobj *z, struct _glist *glist,
     // post( "grid_click doit=%d x=%d y=%d", doit, xpix, ypix );
     if ( doit) 
     {
-        x->x_current = xpix;
-        x->y_current = ypix;
+        x->x_current = xpix-4;
+        x->y_current = ypix-4;
         grid_output_current(x);
         grid_draw_update(x, glist);
         glist_grab(glist, &x->x_obj.te_g, (t_glistmotionfn)grid_motion,
@@ -724,8 +733,22 @@ static void grid__motionhook(t_scalehandle *sh,
         (int)mouse_y - text_ypix(&x->x_obj, x->x_glist) - sh->h_adjust_y;
     int minw = MIN_GRID_WIDTH,
         minh = MIN_GRID_HEIGHT;
-    x->x_width = width < minw ? minw : width;
-    x->x_height = height < minh ? minh : height;
+
+    // ico@vt.edu 2022-09-27: ensured that the "point" also gets
+    // its location updated.
+    if (width < minw) width = minw;
+    if (height < minh) height = minh;
+    //post("PRE:  xy %f %f oldw:%d neww:%d wratio:%f", x->x_current, x->y_current, x->x_width, width, (t_float)width/(t_float)x->x_width);
+    x->x_current = (((t_float)width/(t_float)x->x_width) *
+        (x->x_current-text_xpix(&x->x_obj, x->x_glist))) +
+        text_xpix(&x->x_obj, x->x_glist);
+    x->y_current = (((t_float)height/(t_float)x->x_height) *
+        (x->y_current-text_ypix(&x->x_obj, x->x_glist))) +
+        text_ypix(&x->x_obj, x->x_glist);
+    //post("POST: xy %f %f\n", x->x_current, x->y_current);
+    x->x_width = width;
+    x->x_height = height;
+
     if (glist_isvisible(x->x_glist))
     {
         grid_draw_configure(x, x->x_glist);

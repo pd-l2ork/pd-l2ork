@@ -64,8 +64,6 @@ TypeError: Cannot read property 'classList' of null
 /usr/lib/pd-l2ork/bin/pdgui.js:4091
         border.classList.remove("dirty");
 
-unauthorized/grid
-  Still need to figure out why it is not being drawn as a subpatch
 iemgui/room_sim_2D
 iemgui/room_sim_3D
 
@@ -82,6 +80,7 @@ DONE:
   moonlib/image
   Scope~ (including highlighting)
   unauthorized/pianoroll
+  unauthorized/grid
 
 === === === === === ===
 
@@ -282,7 +281,9 @@ error: array: no method for 'magicglass'
   *Updated pianoroll to work with the new GOP drawing. Updated the external dialog to better accommodate its parameters.
   *Pianoroll now gets properly highlighted when selected (only when toplevel)
   *Additional fix for pianoroll (forgot annother gui_gobj_new call)
-
+  *Fixed the way pianoroll is drawn (removed redundant border), made its selection box wider to make it easier to spot.
+  *Fixed image object showing through GOP window when the GOP patch is selected and when all inside objects should not be visible.
+  *Updated grid object, correcting a number of bugs, including point being visible when the GOP is selected, and autoupdating of the point location when the grid is resized.
 
 
 

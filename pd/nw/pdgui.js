@@ -6415,9 +6415,9 @@ function gui_configure_grid(cid, tag, w, h, bg_color, has_grid, x_l, y_l) {
     });
 }
 
-function gui_grid_new(cid, tag, x, y, is_toplevel) {
+function gui_grid_new(cid, ownercid, parentcid, tag, x, y, is_toplevel) {
     gui(cid).get_elem("patchsvg", function(svg_elem) {
-        gui_gobj_new(cid, cid, cid, tag, "obj", x, y, is_toplevel);
+        gui_gobj_new(cid, ownercid, parentcid, tag, "obj", x, y, is_toplevel, 0);
     });
     gui(cid).get_gobj(tag)
     .append(function(frag) {
@@ -6425,7 +6425,7 @@ function gui_grid_new(cid, tag, x, y, is_toplevel) {
             class: "bg"
         }),
         border = create_item(cid, "path", {
-            class: "border" // now we can inherit the css border styles
+            class: (!!is_toplevel ? "toplevel " : "") + "border" // now we can inherit the css border styles
         }),
         out_0 = create_item(cid, "rect", {
             class: "out_0",
@@ -6456,7 +6456,7 @@ function gui_grid_point(cid, tag, x, y) {
     .q(".point", {
         x: x,
         y: y,
-        style: "visibility: visible;"
+        style: "visibility: inherit;"
     });
 }
 
