@@ -206,8 +206,10 @@ void room_sim_3d_draw_new(t_room_sim_3d *x, t_glist *glist)
   int fsi, fs=x->x_fontsize;
   t_canvas *canvas=glist_getcanvas(glist);
   
-  gui_vmess("gui_room_sim_new", "xxiiiii",
+  gui_vmess("gui_room_sim_new", "xxxxiiiii",
     canvas,
+    x->x_gui.x_glist,
+    x->x_gui.x_glist->gl_owner,
     x,
     xpos,
     ypos,

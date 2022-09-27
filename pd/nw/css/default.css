@@ -448,6 +448,7 @@ text.activated {
 }
 
 .wide-select-border.selected .border {
+    stroke: #e87216;
     stroke-width: 2px;
 }
 

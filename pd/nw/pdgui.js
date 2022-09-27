@@ -6640,9 +6640,10 @@ function gui_turn_mknob(cid, tag, x1, y1, x2, y2, is_footils_knob, val) {
 }
 
 // room_sim_2d and room_sim_3d objects from iemlib
-function gui_room_sim_new(cid, tag, x, y, w, h, is_toplevel) {
+function gui_room_sim_new(cid, ownercid, parentcid, tag, x, y, w, h, is_toplevel) {
     gui(cid).get_elem("patchsvg", function(svg_elem) {
-        gui_gobj_new(cid, cid, cid, tag, "obj", x, y, is_toplevel);
+        gui_gobj_new(cid, ownercid, parentcid, tag,
+            "obj wide-select-border", x, y, is_toplevel, 0);
     });
     gui(cid).get_gobj(tag)
     .append(function(frag) {
@@ -6651,8 +6652,8 @@ function gui_room_sim_new(cid, tag, x, y, w, h, is_toplevel) {
     });
 }
 
-function gui_room_sim_map(cid, tag, w, h, rad, head, xpix, ypix, fontsize,
-    fcol, bcol, src_array, r3d) {
+function gui_room_sim_map(cid, tag, w, h, rad, head,
+    xpix, ypix, fontsize, fcol, bcol, src_array, r3d) {
     gui(cid).get_gobj(tag, function(e) {
         gui_text_draw_border(cid, tag, 0, 0, w, h, 0);
         // Set the style for the background directly... otherwise the
