@@ -1806,7 +1806,8 @@ function set_edit_menu_modals(window, state) {
     if (process.platform === "darwin") {
         state = true;
     }
-    if (pdgui.get_toplevel_scalars(window)) {
+    // ico@vt.edu 2022-09-28: only patches with arrays should not be editable
+    if (pdgui.get_toplevel_scalars(window) === 1) {
         //pdgui.post("set_edit_menu_modals has scalars");
         context_state = false;
     }
