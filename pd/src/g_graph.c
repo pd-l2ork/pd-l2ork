@@ -1407,9 +1407,12 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
             //fprintf(stderr,"done\n");
             gop_redraw = 0;
         }
-        /* reselect it upon redrawing if it was selected before */
         glist_drawiofor(parent_glist, &x->gl_obj, 1,
             tag, x1, y1, x2, y2);
+        // ico@vt.edu 2022-09-28: reattach labels dirty and subdirty
+        // upon redrawing, so that the GOP border is colored accordingly.
+        canvas_dirtyclimb(x, x->gl_dirty);
+        /* reselect it upon redrawing if it was selected before */
         if (glist_isselected(parent_glist, gr))
             gobj_select(gr, parent_glist, 1);
         // here we check for changes in scrollbar because of legacy

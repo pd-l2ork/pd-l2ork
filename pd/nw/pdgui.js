@@ -4086,12 +4086,28 @@ function gui_gobj_deselect(cid, tag) {
 }
 
 function gui_gobj_dirty(cid, tag, state) {
+    post("gui_gobj_dirty " + state);
     gui(cid).get_gobj(tag, function(e) {
+        // ico@vt.edu 2022-09-28: we add two conditions, one
+        // for border classes (canvas with GOP disabled) used
+        // by non-GOP abstractions, and another, gopborder,
+        // for GOP-enabled abstractions
         var border = e.querySelector(".border");
-        border.classList.remove("dirty");
-        border.classList.remove("subdirty");
-        if(state === 1) border.classList.add("dirty");
-        else if(state === 2) border.classList.add("subdirty");
+        if (border) {
+            post("...got border");
+            border.classList.remove("dirty");
+            border.classList.remove("subdirty");
+            if(state === 1) border.classList.add("dirty");
+            else if(state === 2) border.classList.add("subdirty");
+        }
+        border = e.querySelector(".gopborder");
+        if (border) {
+            post("...got gopborder");
+            border.classList.remove("dirty");
+            border.classList.remove("subdirty");
+            if(state === 1) border.classList.add("dirty");
+            else if(state === 2) border.classList.add("subdirty");
+        }
     });
 }
 

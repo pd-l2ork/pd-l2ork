@@ -457,11 +457,13 @@ text.activated {
     stroke: #ccc;
 }
 
-.obj .border.dirty {
+.obj .border.dirty,
+.canvasobj .gopborder.dirty {
     stroke: #ff0000;
 }
 
-.obj .border.subdirty {
+.obj .border.subdirty,
+.canvasobj .gopborder.subdirty {
     stroke: #ff8800;
 }
 
