@@ -44,15 +44,12 @@ function gui_mknob_new(cid, ownercid, parentcid, tag, x, y, is_toplevel, show_in
 function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
     is_footils_knob, dial_w, circle_w, frag_w) {
 
-
 TODO:
-
-Scalars (data structures)
-  *Scalars are only visible toplevel and not inside GOP.
-  *Check data structure patches (both old and new).
+  Scalars (data structures)
+  *Scalars are not properly positioned inside GOP (toplevel is fine, but see caveats below).
   *Nunchuk cursor has a weird selection offset (the more it goes down and right, the further is selection above and to the left).
-  *Sometimes Nunchuk box (textbox?) has no size and often it is off.
-  *Editmode for patches with scalars only should be still allowed (unlike arrays).
+  *Sometimes Nunchuk box (textbox?) has no size and often it is off. Is this its textbox or something else?
+  *Check data structure patches (both old and new).
   *Explore potential for further optimization (see TODOs at the top of this section).
 
 DONE:
@@ -277,6 +274,7 @@ error: array: no method for 'magicglass'
   *Added support for arrays (inside GOP or toplevel). Additional debugging commands (while working on other types of scalars).
   *Bugfix for GOP array drawing, accounting for issues associated with creation, and for changing of array properties. This one should be universal and much better than previous approaches.
   *Reenabled proper coloring of dirty abstractions (GOP and non-GOP).
+  *Fixed a bug where patches with non-array scalars were not editable.
 
 
 
