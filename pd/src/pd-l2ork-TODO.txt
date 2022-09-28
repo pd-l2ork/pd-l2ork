@@ -293,6 +293,9 @@ error: array: no method for 'magicglass'
   *Refined selection box for the grid object.
   *Ported room_sim_2d and room_sim_3d to the new GOP drawing method. Made selection outline properly colored and more easily visible.
   *Added support for arrays (inside GOP or toplevel). Additional debugging commands (while working on other types of scalars).
+  *Bugfix for GOP array drawing, accounting for issues associated with creation, and for changing of array properties. This one should be universal and much better than previous approaches.
+
+
 
 
 TWEETER TODO:
