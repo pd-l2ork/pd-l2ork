@@ -69,8 +69,9 @@ TypeError: Cannot read property 'classList' of null
 /usr/lib/pd-l2ork/bin/pdgui.js:4091
         border.classList.remove("dirty");
 
-Arrays and scalars
-  *Scalars are not drawn within the group.
+Scalars (data structures)
+  *Scalars are only visible toplevel and not inside GOP.
+  *Check data structure patches (both old and new).
   *Explore potential for further optimization (see TODOs at the top of this section)
 
 DONE:
@@ -85,6 +86,7 @@ DONE:
   unauthorized/grid
   iemgui/room_sim_2D
   iemgui/room_sim_3D
+  arrays
 
 === === === === === ===
 
@@ -290,6 +292,7 @@ error: array: no method for 'magicglass'
   *Updated grid object, correcting a number of bugs, including point being visible when the GOP is selected, and autoupdating of the point location when the grid is resized.
   *Refined selection box for the grid object.
   *Ported room_sim_2d and room_sim_3d to the new GOP drawing method. Made selection outline properly colored and more easily visible.
+  *Added support for arrays (inside GOP or toplevel). Additional debugging commands (while working on other types of scalars).
 
 
 TWEETER TODO:
