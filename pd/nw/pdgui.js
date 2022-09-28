@@ -3072,7 +3072,7 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
     post("===\ngui_gobj_new drawon=" + cid + " ownercid=" + ownercid +
         " parentcid=" + parentcid + " tag=" + tag + " type=" + type +
         " xpos=" + xpos + " ypos=" + ypos + " is_toplevel=" + is_toplevel);
-    var g, sm, draw_xpos, draw_ypos;
+    var g, draw_xpos, draw_ypos;
     draw_xpos = xpos;
     draw_ypos = ypos;
     if (type === "graph") { // graph object
@@ -5312,135 +5312,202 @@ function gui_mycanvas_coords(cid, tag, vis_width, vis_height, select_width, sele
 }
 
 /* this creates a group immediately below the patchsvg object */
-function gui_scalar_new(cid, tag, isselected, t1, t2, t3, t4, t5, t6,
+function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t4, t5, t6,
     is_toplevel, plot_style) {
-    //post("gui_scalar_new plot_style=" + plot_style);
-    var g;
-    // we should probably use gui_gobj_new here, but we"re doing some initial
-    // scaling that normal gobjs don't need...
-    //post("gui_scalar_new " + t1 + " " + t2 +
-    //    " " + t3 + " " + t4 + " " + t5 + " " + t6);
-        
-    /* ico@vt.edu HACKTASCTIC: calculating scrollbars is throwing 0.997 for
-       plots drawn inside the subpatch and it is a result of the -1 in the 
-       (min_width - 1) / width call inside canvas_params. Yet, if we don't
-       call this, we don't have nice flush scrollbars with the regular edges.
-       This is why here we make a hacklicious hack and simply hide hscrollbar
-       since the scroll is not doing anything anyhow.
-       
-       After further testing, it seems that the aforesaid margin is a hit'n'miss
-       depending on the patch, so we will disable this and make the aforesaid
-       canvas_params equation min_width / width.
-
-    if (is_toplevel === 1) {
-        gui(cid).get_elem("hscroll", function(elem) {
-            elem.style.setProperty("display", "none");
-        });
-        gui(cid).get_elem("vscroll", function(elem) {
-            elem.style.setProperty("display", "none");
-        });
-    }*/
-      
-    gui(cid).get_elem("patchsvg", function(svg_elem) {
-        var matrix, transform_string, selection_rect;
-        if (is_toplevel === 1) {
-            // here we deal with weird scrollbar offsets and
-            // inconsistencies for the various plot styles.
-            // the matrix format is xscale, 0, 0, yscale, width, height
-            // we don't use the matrix for the bar graph since it is
-            // difficult to get the right ratio, so we do the manual
-            // translate and scale instead.
-            // cases are: 0=points, 1=plot, 2=bezier, 3=bars
-            switch (plot_style) {
-                case 0:
-                    matrix = [t1,t2,t3,t4,t5,t6+0.5];
-                    break;
-                case 1:
-                    matrix = [t1,t2,t3,t4,t5,t6+1.5];
-                    break;
-                case 2:
-                    matrix = [t1,t2,t3,t4,t5,t6+1.5];
-                    break;
-                case 3:
-                    //matrix = [t1*.995,t2,t3,t4+1,t5+0.5,t6-2];
-                    matrix = 0;
-                    transform_string = "translate(" + 0 +
-                        "," + (t6+1) + ") scale(" + t1 + "," + t4 + ")";
-                    //post("transform_string = " + transform_string);
-                    break;
-                default:
-                    // we are a top-level non-plot scalar
-                    // this includes things like subpatches with scalars only
-                    // that need to be resized based on the window size and/or
-                    // scalar arrays (see all_about_arrays.pd help patch),which
-                    // should not be scaled. how to distinguish between the two?
-                    matrix = [t1,t2,t3,t4,t5,t6];
-                    break;        
+    post("===\ngui_scalar_new drawon=" + cid + " ownercid=" + ownercid +
+    " parentcid=" + parentcid + " tag=" + tag + " plot_style=" + plot_style +
+    " xpos=" + t5 + " ypos=" + t6 + " is_toplevel=" + is_toplevel);
+    var g, draw_xpos, draw_ypos;
+    draw_xpos = t5;
+    draw_ypos = t6;
+    post("...SCALAR classname=" + ownercid + "svg");
+    gui(cid).get_elem("patchsvg", function(svg_elem, w) {
+        var transform_string;
+        if (is_toplevel === 0) {
+            var tgt = w.document.getElementsByClassName(ownercid + "svg");
+            if (parentcid === cid) {
+                post("......parentcid==drawcid parentGOPx=" +
+                    tgt[0].getCTM().e + " parentGOPy=" + tgt[0].getCTM().f);
+                //draw_xpos += 0.5;
+                //draw_ypos += 0.5;
+                draw_xpos -= tgt[0].getCTM().e;
+                draw_ypos -= tgt[0].getCTM().f;
+            } else {
+                post("......parentcid != drawcid");
+                draw_xpos -= tgt[0].getAttribute("orig_xpos");
+                draw_ypos -= tgt[0].getAttribute("orig_ypos");
             }
-        }        
-        else {
-            switch (plot_style) {
-                case 0:
-                    matrix = [t1,t2,t3,t4,t5,t6+0.5];
-                    break;
-                case 1:
-                    matrix = [t1,t2,t3,t4,t5,t6+1.5];
-                    break;
-                case 2:
-                    matrix = [t1,t2,t3,t4,t5,t6+1.5];
-                    break;
-                case 3:
-                    //matrix = [t1,t2,t3,t4+1,t5+0.5,t6+0.5];
-                    matrix = 0;
-                    transform_string = "translate(" + (t5+(t1 < 1 ? 0.5 : 1.5)) +
-                        "," + (t6+1.5) + ") scale(" + t1 + "," + t4 + ")";
-                    //post("transform_string = " + transform_string);
-                    break;
-                default:
-                    // we are a non-plot scalar
-                    matrix = [t1,t2,t3,t4,t5,t6];
-                    break; 
-            }
+            post("......offset x=" + draw_xpos + " y=" + draw_ypos);
+        } else {
+            //draw_xpos += 0.5;
+            //draw_ypos += 0.5;              
         }
-        
-        if (matrix !== 0) {
-            transform_string = "matrix(" + matrix.join() + ")";
-        }
+        /*
+        transform_string = "matrix(1,0,0,1," + draw_xpos + ", " + draw_ypos + ")";  
         g = create_item(cid, "g", {
             id: tag + "gobj",
             transform: transform_string,
+            class: type,
+            orig_xpos: xpos,
+            orig_ypos: ypos
         });
-        if (isselected !== 0) {
-            g.classList.add("selected");
-        }
         if (is_toplevel === 0) {
-            g.classList.add("gop");
-        }
-        /*
-        //currently unused because we use toplevel_scalars instead
-        else if (plot_style === -1) //else implies is_toplevel is true
-        {
-            // this means this scalar is not a part of an array
-            // and if it is in a toplevel window, every time
-            // window is resized, we need to redraw it to ensure
-            // it is scaled accordingly
-            redraw_on_resize = 1;
+            post("GOP appendChild")
+            tgt[0].appendChild(g);
+        } else {
+            post("add_gop_to_svg");
+            add_gobj_to_svg(svg_elem, g);
         }
         */
-        // Let's make a selection rect...
-        selection_rect = create_item(cid, "rect", {
-            class: "border",
-            display: "none",
-            fill: "none",
-            "pointer-events": "none"
+        // we should probably use gui_gobj_new here, but we"re doing some initial
+        // scaling that normal gobjs don't need...
+        //post("gui_scalar_new " + t1 + " " + t2 +
+        //    " " + t3 + " " + t4 + " " + t5 + " " + t6);
+
+        /* ico@vt.edu HACKTASCTIC: calculating scrollbars is throwing 0.997 for
+           plots drawn inside the subpatch and it is a result of the -1 in the
+           (min_width - 1) / width call inside canvas_params. Yet, if we don't
+           call this, we don't have nice flush scrollbars with the regular edges.
+           This is why here we make a hacklicious hack and simply hide hscrollbar
+           since the scroll is not doing anything anyhow.
+
+           After further testing, it seems that the aforesaid margin is a hit'n'miss
+           depending on the patch, so we will disable this and make the aforesaid
+           canvas_params equation min_width / width.
+
+        if (is_toplevel === 1) {
+            gui(cid).get_elem("hscroll", function(elem) {
+                elem.style.setProperty("display", "none");
+            });
+            gui(cid).get_elem("vscroll", function(elem) {
+                elem.style.setProperty("display", "none");
+            });
+        }*/
+        /*transform_string = "matrix(1,0,0,1," + draw_xpos + ", " + draw_ypos + ")";
+        g = create_item(cid, "g", {
+            id: tag + "gobj",
+            transform: transform_string,
+            class: type,
+            orig_xpos: xpos,
+            orig_ypos: ypos
         });
-        g.appendChild(selection_rect);
-        add_gobj_to_svg(svg_elem, g);
+        if (is_toplevel === 0) {
+            post("GOP appendChild")
+            tgt[0].appendChild(g);
+        } else {
+            post("add_gop_to_svg");
+            add_gobj_to_svg(svg_elem, g);
+        }*/
+        gui(cid).get_elem("patchsvg", function(svg_elem) {
+            var matrix, transform_string, selection_rect;
+            if (is_toplevel === 1) {
+                // here we deal with weird scrollbar offsets and
+                // inconsistencies for the various plot styles.
+                // the matrix format is xscale, 0, 0, yscale, width, height
+                // we don't use the matrix for the bar graph since it is
+                // difficult to get the right ratio, so we do the manual
+                // translate and scale instead.
+                // cases are: 0=points, 1=plot, 2=bezier, 3=bars
+                switch (plot_style) {
+                    case 0:
+                        matrix = [t1,t2,t3,t4,draw_xpos,draw_ypos+0.5];
+                        break;
+                    case 1:
+                        matrix = [t1,t2,t3,t4,draw_xpos,draw_ypos+1.5];
+                        break;
+                    case 2:
+                        matrix = [t1,t2,t3,t4,draw_xpos,draw_ypos+1.5];
+                        break;
+                    case 3:
+                        //matrix = [t1*.995,t2,t3,t4+1,t5+0.5,t6-2];
+                        matrix = 0;
+                        transform_string = "translate(" + 0 +
+                            "," + (draw_ypos+1) + ") scale(" + t1 + "," + t4 + ")";
+                        //post("transform_string = " + transform_string);
+                        break;
+                    default:
+                        // we are a top-level non-plot scalar
+                        // this includes things like subpatches with scalars only
+                        // that need to be resized based on the window size and/or
+                        // scalar arrays (see all_about_arrays.pd help patch),which
+                        // should not be scaled. how to distinguish between the two?
+                        matrix = [t1,t2,t3,t4,draw_xpos,draw_ypos];
+                        break;
+                }
+            }
+            else {
+                draw_xpos = 0;
+                switch (plot_style) {
+                    case 0:
+                        matrix = [t1,t2,t3,t4,draw_xpos,draw_ypos+0.5];
+                        break;
+                    case 1:
+                        matrix = [t1,t2,t3,t4,draw_xpos,draw_ypos+1.5];
+                        break;
+                    case 2:
+                        matrix = [t1,t2,t3,t4,draw_xpos,draw_ypos+1.5];
+                        break;
+                    case 3:
+                        //matrix = [t1,t2,t3,t4+1,t5+0.5,t6+0.5];
+                        matrix = 0;
+                        transform_string = "translate(" + (draw_xpos+(t1 < 1 ? 0.5 : 1.5)) +
+                            "," + (draw_ypos+1.5) + ") scale(" + t1 + "," + t4 + ")";
+                        //post("transform_string = " + transform_string);
+                        break;
+                    default:
+                        // we are a non-plot scalar
+                        matrix = [t1,t2,t3,t4,t5,t6];
+                        break;
+                }
+            }
+
+            if (matrix !== 0) {
+                transform_string = "matrix(" + matrix.join() + ")";
+            }
+            g = create_item(cid, "g", {
+                id: tag + "gobj",
+                transform: transform_string,
+            });
+            if (isselected !== 0) {
+                g.classList.add("selected");
+            }
+            if (is_toplevel === 0) {
+                g.classList.add("gop");
+            }
+            /*
+            //currently unused because we use toplevel_scalars instead
+            else if (plot_style === -1) //else implies is_toplevel is true
+            {
+                // this means this scalar is not a part of an array
+                // and if it is in a toplevel window, every time
+                // window is resized, we need to redraw it to ensure
+                // it is scaled accordingly
+                redraw_on_resize = 1;
+            }
+            */
+            // Let's make a selection rect...
+            selection_rect = create_item(cid, "rect", {
+                class: "border",
+                display: "none",
+                fill: "none",
+                "pointer-events": "none"
+            });
+            g.appendChild(selection_rect);
+            //add_gobj_to_svg(svg_elem, g);
+            if (is_toplevel === 0) {
+                post("...GOP appendChild tgt=" + ownercid + "svg");
+                tgt[0].appendChild(g);
+            } else {
+                post("...add_gop_to_svg");
+                add_gobj_to_svg(svg_elem, g);
+            }
+        });
     });
     return g;
 }
 
 function gui_scalar_erase(cid, tag) {
+    post("gui_scalar_erase owner=" + cid + " object=" + tag);
     gui(cid).get_gobj(tag, function(e) {
         e.parentNode.removeChild(e);
     });

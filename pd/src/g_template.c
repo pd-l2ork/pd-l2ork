@@ -6020,6 +6020,7 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
     t_scalar *sc, t_word *data, t_template *template,
     t_float basex, t_float basey, t_array *parentarray, int tovis)
 {
+    post("plot_vis %d %zx", tovis, (t_uint)z);
     t_plot *x = (t_plot *)z;
     int elemsize, yonset, wonset, xonset, i;
     t_canvas *elemtemplatecanvas;

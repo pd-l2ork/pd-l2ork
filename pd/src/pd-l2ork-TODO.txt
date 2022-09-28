@@ -1,6 +1,9 @@
 PD-L2ORK TODO:
 *cursor abstraction does not report right mouse up events due to it triggering the pop-up menu. This may be a nw.js limitation?
 
+*Fix RPi K12 externals and RPi library.
+
+*Nunchuk scalar-only patch should not show a rectangle (possibly a regression due to the GOP patch merge).
 
 *Error closing a new window because there is no "width" property (e.g. a subpatch has been created). Only affects RPi version of nw.js? Consider bumping the RPi nw.js version...
 
@@ -44,6 +47,8 @@ function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
     is_footils_knob, dial_w, circle_w, frag_w) {
 
 
+TODO:
+
 CRITICAL! Creating an object inside an embedded GOP-enabled abstraction results in the following error:
 
 /usr/lib/pd-l2ork/bin/pdgui.js:4091
@@ -64,12 +69,9 @@ TypeError: Cannot read property 'classList' of null
 /usr/lib/pd-l2ork/bin/pdgui.js:4091
         border.classList.remove("dirty");
 
-iemgui/room_sim_2D
-iemgui/room_sim_3D
-
-array!!!
-  *Does not draw the graph within the group.
-  *Scalars?
+Arrays and scalars
+  *Scalars are not drawn within the group.
+  *Explore potential for further optimization (see TODOs at the top of this section)
 
 DONE:
   iemgui objects
@@ -81,6 +83,8 @@ DONE:
   Scope~ (including highlighting)
   unauthorized/pianoroll
   unauthorized/grid
+  iemgui/room_sim_2D
+  iemgui/room_sim_3D
 
 === === === === === ===
 
@@ -284,7 +288,8 @@ error: array: no method for 'magicglass'
   *Fixed the way pianoroll is drawn (removed redundant border), made its selection box wider to make it easier to spot.
   *Fixed image object showing through GOP window when the GOP patch is selected and when all inside objects should not be visible.
   *Updated grid object, correcting a number of bugs, including point being visible when the GOP is selected, and autoupdating of the point location when the grid is resized.
-
+  *Refined selection box for the grid object.
+  *Ported room_sim_2d and room_sim_3d to the new GOP drawing method. Made selection outline properly colored and more easily visible.
 
 
 TWEETER TODO:

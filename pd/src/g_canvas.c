@@ -1199,6 +1199,7 @@ void canvas_redraw(t_canvas *x)
 {
     if (do_not_redraw) return;
     //post("canvas_redraw %zx", (t_uint)x);
+    post("canvas_redraw %zx", (t_uint)x);
     if (glist_isvisible(x))
     {
         //post("...glist_isvisible");

@@ -762,6 +762,10 @@ void garray_arraydialog(t_garray *x, t_symbol *s, int argc, t_atom *argv)
         x->x_style = style;
         if (size != a->a_n)
         {
+            /*
+            post("garray_arraydialog calls glist_redraw and "
+                 "garray_resize_long because size changed");
+            */
             glist_redraw(x->x_glist);
             garray_resize_long(x, size);
         }
@@ -785,8 +789,21 @@ void garray_arraydialog(t_garray *x, t_symbol *s, int argc, t_atom *argv)
                Until the Pd codebase handles redrawing in a sane fashion,
                without depending on a vast array of side-effects, there's
                simply no way to effectively maintain it. */
+            /*
+            post("garray_arraydialog calls glist_redraw,"
+                 " then garray_redraw due to array name change");
+            */
             glist_redraw(x->x_glist);
-            garray_redraw(x);
+            // ico@vt.edu 2022-09-28: disabled garray_redraw here because
+            // with the new GOP-nested drawing this results in the array
+            // being incorrectly positioned. This is because (I think)
+            // of the socket-based communication that results in
+            // out-of-sequence creation of the array with its parent,
+            // resulting in it being attached to the patchsvg instead of
+            // the parent. Thus the array is drawn in the top-left corner
+            // of the patch, rather than inside the GOP window, as it should.
+            // the array name is getting updated just fine.
+            //garray_redraw(x);
         }
 
         //fprintf(stderr,"garray_arraydialog garray_redraw done\n");

@@ -936,6 +936,7 @@ void array_configure(t_scalar *x, t_glist *owner, t_array *a, t_word *data)
 static void scalar_groupvis(t_scalar *x, t_glist *owner, t_template *template,
     t_glist *gl, t_glist *parent, int vis)
 {
+    post("scalar_groupvis %d %zx", vis, (t_uint)x);
     t_gobj *y;
     if (vis)
     {
@@ -998,7 +999,7 @@ static void scalar_groupvis(t_scalar *x, t_glist *owner, t_template *template,
 */
 static void scalar_vis(t_gobj *z, t_glist *owner, int vis)
 {
-    //fprintf(stderr,"scalar_vis %d %zx\n", vis, (t_uint)z);
+    post("scalar_vis %d %zx", vis, (t_uint)z);
     t_scalar *x = (t_scalar *)z;
     char buf[50];
     sprintf(buf, "x%zx", (t_uint)x);
@@ -1065,8 +1066,10 @@ static void scalar_vis(t_gobj *z, t_glist *owner, int vis)
            understand "None"-- instead we must send an empty symbol.) */
         char tagbuf[MAXPDSTRING];
         sprintf(tagbuf, "scalar%zx", (t_uint)x->sc_vec);
-        gui_vmess("gui_scalar_new", "xsiffffffii",
+        gui_vmess("gui_scalar_new", "xxxsiffffffii",
             glist_getcanvas(owner),
+            owner,
+            owner->gl_owner,
             tagbuf,
             glist_isselected(owner, &x->sc_gobj),
             xscale, 0.0, 0.0, yscale,
