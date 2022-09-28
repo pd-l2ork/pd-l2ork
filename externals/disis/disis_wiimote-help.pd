@@ -2,7 +2,7 @@
 #N struct IR-blobs float x float y symbol s;
 #N struct CL-L-stick float x float y;
 #N struct CL-R-stick float x float y;
-#N canvas 262 76 872 653 10;
+#N canvas 262 88 872 653 10;
 #X msg 6 388 disconnect;
 #X msg 27 87 discover;
 #X obj 187 186 tgl 25 0 empty empty empty 17 7 0 10 #fcfcfc #000000
@@ -199,7 +199,7 @@ f 7;
 -2 -8 0 10 #d8fcd8 #000000 #000000 0 1 0 1;
 #X obj 612 108 hsl 128 14 -1 1 0 0 \$0-wii-accZ \$0-wii-accZ-set empty
 -2 -8 0 10 #d8fcd8 #000000 #000000 0 1 0 1;
-#N canvas 506 140 481 416 IR-data 0;
+#N canvas 506 152 481 416 IR-data 0;
 #X scalar IR-blobs 262.603 259.077 blob1 \;;
 #X scalar IR-blobs 383.441 388.308 blob2 \;;
 #X scalar IR-blobs 623.665 511.615 blob3 \;;
@@ -235,9 +235,9 @@ empty -2 -8 0 10 #d8fcfc #000000 #000000 0 1 0 1;
 #X connect 1 1 3 0;
 #X restore 21 506 pd \$0-button-stuff;
 #X text 783 5 Buttons:;
-#N canvas 776 351 481 416 NC-data 0;
+#N canvas 776 363 481 416 NC-data 0;
 #X scalar NC-stick 24 223 \;;
-#X coords 0 256 256 0 80 80 1 0 0;
+#X coords 0 256 256 0 80 80 1;
 #X restore 768 468 pd NC-data;
 #X obj -9 623 print;
 #X obj 15 203 tgl 25 0 empty empty empty 17 7 0 10 #fcfcfc #000000
