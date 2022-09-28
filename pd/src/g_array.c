@@ -647,8 +647,17 @@ void glist_arraydialog(t_glist *parent, t_symbol *s, int argc, t_atom *argv)
     // since things are still being created and the object has not yet
     // been associated with glist
     // sys_queuegui((t_gobj *)gl, glist_getcanvas(gl), graph_redraw);
-    //fprintf(stderr,"glist_arraydialog done\n");
+    //fprintf(stderr,"glist_arraydialog done\n"); 
+    // ico@vt.edu 2022-09-28: originally, below we had glist_redraw only
+    // which was necessary to dispplay the array name. with the new GOP
+    // drawing method, we now also have to call garray_redraw, so that
+    // the name is properly updated... LATER: figure out how to just
+    // draw the array name, so that we don't have to do all this
+    // redundant redrawing. Similar will need to be adjusted in the
+    // garray_arraydialog below (see the bottom of the function with
+    // a comment dated the same as this one).
     glist_redraw(gl);
+    //garray_redraw(a);
     canvas_getscroll(glist_getcanvas(parent));
     canvas_dirty(parent, 1);
 }
@@ -1511,7 +1520,7 @@ void garray_usedindsp(t_garray *x)
 
 static void garray_doredraw(t_gobj *client, t_glist *glist)
 {
-    //fprintf(stderr,"garray_doredraw\n");
+    post("garray_doredraw");
     t_garray *x = (t_garray *)client;
 
     if (glist_isvisible(x->x_glist))
@@ -1573,7 +1582,7 @@ static void garray_doredraw(t_gobj *client, t_glist *glist)
 
 void garray_redraw(t_garray *x)
 {
-    //fprintf(stderr,"garray_redraw\n");
+    post("garray_redraw");
     if (glist_isvisible(x->x_glist))
         /* enqueueing redraw ensures that the array is drawn after its values
            have been instantiated
@@ -1584,13 +1593,24 @@ void garray_redraw(t_garray *x)
            example available from:
            http://disis.music.vt.edu/pipermail/l2ork-dev/2015-January/000676.htm
         */
-        sys_queuegui(&x->x_gobj, x->x_glist, garray_doredraw);
+        //sys_queuegui(&x->x_gobj, x->x_glist, garray_doredraw);
 
         /* 1-24-2015 Ico: the approach below, however causes painfully slow and
            inefficient redraw when we use tabwrite which writes one point per
            array and requests redraw after each point is changed. Thus it is
            deprecated in favor of the approach above */
-        //garray_doredraw(&x->x_gobj, x->x_glist);
+
+        /* ico@vt.edu 2022-09-28: reverting to this and disabling queue gui
+           because resolving the queue in an indeterminate fashion caused
+           front-end to be broken by not being able to assign the child
+           to the proper parent (in this case an array to GOP) because the
+           parent may not exist at the point of drawing (even though the
+           pointer to parent is found during the function calculation).
+           the redrawing is also a lot more efficient (one command, rather
+           than a command per point), and this function is not involved
+           anymore. 
+        */
+        garray_doredraw(&x->x_gobj, x->x_glist);
 }
 
    /* This function gets the template of an array; if we can't figure
