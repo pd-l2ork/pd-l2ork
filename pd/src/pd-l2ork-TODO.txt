@@ -3,8 +3,6 @@ PD-L2ORK TODO:
 
 *Fix RPi K12 externals and RPi library.
 
-*Nunchuk scalar-only patch should not show a rectangle (possibly a regression due to the GOP patch merge).
-
 *Error closing a new window because there is no "width" property (e.g. a subpatch has been created). Only affects RPi version of nw.js? Consider bumping the RPi nw.js version...
 
 *Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
@@ -49,30 +47,13 @@ function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
 
 TODO:
 
-CRITICAL! Creating an object inside an embedded GOP-enabled abstraction results in the following error:
-
-/usr/lib/pd-l2ork/bin/pdgui.js:4091
-        border.classList.remove("dirty");
-               ^
-
-TypeError: Cannot read property 'classList' of null
-    at /usr/lib/pd-l2ork/bin/pdgui.js:4091:16
-    at get (/usr/lib/pd-l2ork/bin/pdgui.js:2968:21)
-    at Object.get_gobj (/usr/lib/pd-l2ork/bin/pdgui.js:2981:24)
-    at gui_gobj_dirty (/usr/lib/pd-l2ork/bin/pdgui.js:4089:14)
-    at eval (eval at perfect_parser (/usr/lib/pd-l2ork/bin/pdgui.js:2788:21), <anonymous>:1:1)
-    at perfect_parser (/usr/lib/pd-l2ork/bin/pdgui.js:2788:21)
-    at Socket.<anonymous> (/usr/lib/pd-l2ork/bin/pdgui.js:2806:9)
-    at Socket.emit (events.js:160:13)
-    at addChunk (_stream_readable.js:269:12)
-    at readableAddChunk (_stream_readable.js:256:11)
-/usr/lib/pd-l2ork/bin/pdgui.js:4091
-        border.classList.remove("dirty");
-
 Scalars (data structures)
   *Scalars are only visible toplevel and not inside GOP.
   *Check data structure patches (both old and new).
-  *Explore potential for further optimization (see TODOs at the top of this section)
+  *Nunchuk cursor has a weird selection offset (the more it goes down and right, the further is selection above and to the left).
+  *Sometimes Nunchuk box (textbox?) has no size and often it is off.
+  *Editmode for patches with scalars only should be still allowed (unlike arrays).
+  *Explore potential for further optimization (see TODOs at the top of this section).
 
 DONE:
   iemgui objects
@@ -87,6 +68,7 @@ DONE:
   iemgui/room_sim_2D
   iemgui/room_sim_3D
   arrays
+  fixed marking of abstractions on parent canvas dirty
 
 === === === === === ===
 
@@ -294,6 +276,7 @@ error: array: no method for 'magicglass'
   *Ported room_sim_2d and room_sim_3d to the new GOP drawing method. Made selection outline properly colored and more easily visible.
   *Added support for arrays (inside GOP or toplevel). Additional debugging commands (while working on other types of scalars).
   *Bugfix for GOP array drawing, accounting for issues associated with creation, and for changing of array properties. This one should be universal and much better than previous approaches.
+  *Reenabled proper coloring of dirty abstractions (GOP and non-GOP).
 
 
 
