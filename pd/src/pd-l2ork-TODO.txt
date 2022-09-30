@@ -46,11 +46,12 @@ function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
 
 TODO:
   Scalars (data structures)
-  *Scalars are not properly positioned inside GOP (toplevel is fine, but see caveats below).
   *Nunchuk cursor has a weird selection offset (the more it goes down and right, the further is selection above and to the left).
   *Sometimes Nunchuk box (textbox?) has no size and often it is off. Is this its textbox or something else?
   *Check data structure patches (both old and new).
   *Explore potential for further optimization (see TODOs at the top of this section).
+
+  Remove debugging stuff
 
 DONE:
   iemgui objects
@@ -66,6 +67,7 @@ DONE:
   iemgui/room_sim_3D
   arrays
   fixed marking of abstractions on parent canvas dirty
+  scalars
 
 === === === === === ===
 
@@ -275,6 +277,8 @@ error: array: no method for 'magicglass'
   *Bugfix for GOP array drawing, accounting for issues associated with creation, and for changing of array properties. This one should be universal and much better than previous approaches.
   *Reenabled proper coloring of dirty abstractions (GOP and non-GOP).
   *Fixed a bug where patches with non-array scalars were not editable.
+  *Fixed non-array scalars being displayed incorrectly both on toplevel and inside a GOP subpatch.
+  *Made sure that subpatches are not marked dirty when displayed or manipulated, only the abstractins.
 
 
 

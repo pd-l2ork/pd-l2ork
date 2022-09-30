@@ -843,7 +843,7 @@ void canvas_dirtyclimb(t_canvas *x, int n)
         x = x->gl_owner;
         while(x->gl_owner)
         {
-            x->gl_subdirties += ((unsigned)n ? 1 : -1);
+            x->gl_subdirties += ((unsigned)n ? 1 : x->gl_subdirties > 0 ? -1 : 0);
             if(!x->gl_dirty)
                 gobj_dirty(&x->gl_gobj, x->gl_owner, (x->gl_subdirties ? 2 : 0));
             x = x->gl_owner;
@@ -1874,7 +1874,7 @@ static void *table_new(t_symbol *s, t_floatarg f)
 }
 
     /* return true if the "canvas" object is an abstraction (so we don't
-    save its contents, fogr example.)  */
+    save its contents, for example.)  */
 int canvas_isabstraction(t_canvas *x)
 {
     return (x->gl_env != 0);

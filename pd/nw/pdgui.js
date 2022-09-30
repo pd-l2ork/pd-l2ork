@@ -5332,7 +5332,8 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
     is_toplevel, plot_style) {
     post("===\ngui_scalar_new drawon=" + cid + " ownercid=" + ownercid +
     " parentcid=" + parentcid + " tag=" + tag + " plot_style=" + plot_style +
-    " xpos=" + t5 + " ypos=" + t6 + " is_toplevel=" + is_toplevel);
+    " t1=" + t1 + " t2=" + t2 + " t3=" + t3 + " t4=" + t4 +
+    " xpos(t5)=" + t5 + " ypos(t6)=" + t6 + " is_toplevel=" + is_toplevel);
     var g, draw_xpos, draw_ypos;
     draw_xpos = t5;
     draw_ypos = t6;
@@ -5346,8 +5347,20 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
                     tgt[0].getCTM().e + " parentGOPy=" + tgt[0].getCTM().f);
                 //draw_xpos += 0.5;
                 //draw_ypos += 0.5;
-                draw_xpos -= tgt[0].getCTM().e;
-                draw_ypos -= tgt[0].getCTM().f;
+                post("******draw_xpos=" + draw_xpos + " t1=" + t1 + " getCTM().e=" + tgt[0].getCTM().e);
+                post("******draw_ypos=" + draw_ypos + " t4=" + t4 + " getCTM().f=" + tgt[0].getCTM().f);
+                //if (plot_style != -1) {
+                    // we're drawing an array GOP object
+                    draw_xpos -= tgt[0].getCTM().e;
+                    draw_ypos -= tgt[0].getCTM().f;
+                /*} else {
+                    // we're drawing other types of scalars inside GOP
+                    // which means we also need to scale them according
+                    // to the GOP data size versus the actual GOP
+                    // object size.
+                    draw_xpos = (draw_xpos * t1);
+                    draw_ypos = (draw_ypos * t4);
+                }*/
             } else {
                 post("......parentcid != drawcid");
                 draw_xpos -= tgt[0].getAttribute("orig_xpos");
@@ -5447,12 +5460,17 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
                         // that need to be resized based on the window size and/or
                         // scalar arrays (see all_about_arrays.pd help patch),which
                         // should not be scaled. how to distinguish between the two?
+                        post("......non-plot toplevel scalar");
                         matrix = [t1,t2,t3,t4,draw_xpos,draw_ypos];
                         break;
                 }
             }
             else {
-                draw_xpos = 0;
+                // ico@vt.edu 2022-09-29: here we squash the x offset if we are
+                // drawing an array inside a GOP since it always starts flush with
+                // the left side
+                if (plot_style > -1)
+                    draw_xpos = 0;
                 switch (plot_style) {
                     case 0:
                         matrix = [t1,t2,t3,t4,draw_xpos,draw_ypos+0.5];
@@ -5472,7 +5490,8 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
                         break;
                     default:
                         // we are a non-plot scalar
-                        matrix = [t1,t2,t3,t4,t5,t6];
+                        post("......non-plot GOP scalar");
+                        matrix = [t1,t2,t3,t4,draw_xpos,draw_ypos];
                         break;
                 }
             }
@@ -5483,6 +5502,10 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
             g = create_item(cid, "g", {
                 id: tag + "gobj",
                 transform: transform_string,
+                // ico@vt.edu 2022-09-29: we use this to reference
+                // GOP canvas (in case we are not top level, in which
+                // case the object will also belong to the gop class)
+                drawon: ownercid
             });
             if (isselected !== 0) {
                 g.classList.add("selected");
@@ -5566,6 +5589,7 @@ function gui_scalar_draw_group(cid, tag, parent_tag, type, attr_array) {
 }
 
 function gui_scalar_configure_gobj(cid, tag, isselected, t1, t2, t3, t4, t5, t6) {
+    post("gui_scalar_configure_gobj tag=" + tag + " t1=" + t1 + " t2=" + t2 + " t3=" + t3 + " t4=" + t4 + " t5=" + t5 + " t6=" + t6);
     var matrix = [t1,t2,t3,t4,t5,t6],
         transform_string = "matrix(" + matrix.join() + ")";
     gui(cid).get_gobj(tag, {

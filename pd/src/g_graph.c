@@ -883,6 +883,7 @@ extern int garray_get_style(t_garray *x);
     /* convert an x coordinate value to an x pixel location in window */
 t_float glist_xtopixels(t_glist *x, t_float xval)
 {
+    //post("glist_Xtopixels %zx %f isgraph=%d", (t_uint)x, xval, x->gl_isgraph);
     // ico@vt.edu: used to deal with the bar graph
     t_float plot_offset = 0;
     t_gobj *g = x->gl_list;
@@ -930,6 +931,7 @@ t_float glist_xtopixels(t_glist *x, t_float xval)
 
 t_float glist_ytopixels(t_glist *x, t_float yval)
 {
+    //post("glist_Ytopixels %zx %f isgraph=%d", (t_uint)x, yval, x->gl_isgraph);
     t_float plot_offset = 0;
     t_gobj *g = x->gl_list;
 
@@ -1411,6 +1413,7 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
             tag, x1, y1, x2, y2);
         // ico@vt.edu 2022-09-28: reattach labels dirty and subdirty
         // upon redrawing, so that the GOP border is colored accordingly.
+        post("===========is gop dirty? %d", x->gl_dirty);
         canvas_dirtyclimb(x, x->gl_dirty);
         /* reselect it upon redrawing if it was selected before */
         if (glist_isselected(parent_glist, gr))

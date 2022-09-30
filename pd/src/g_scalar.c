@@ -829,6 +829,10 @@ static void scalar_group_configure(t_scalar *x, t_glist *owner,
 
 void scalar_doconfigure(t_gobj *xgobj, t_glist *owner)
 {
+    post("scalar_configure owner-is-graph=%d owner-is-toplevel=%d x1=%d y1=%d", 
+        owner->gl_isgraph, glist_istoplevel(owner),
+        text_xpix(&owner->gl_obj, owner->gl_owner),
+        text_ypix(&owner->gl_obj, owner->gl_owner));
     t_scalar *x = (t_scalar *)xgobj;
     int vis = glist_isvisible(owner);
     if (vis)
@@ -843,6 +847,17 @@ void scalar_doconfigure(t_gobj *xgobj, t_glist *owner)
         scalar_getbasexy(x, &basex, &basey);
             /* if we don't know how to draw it, make a small rectangle */
 
+        // ico@vt.edu 2022-09-29: HACK, this should really be inside
+        // glist_xtoxpixels and glist_ytopixels, but since I don't know
+        // what other regressions that will cause, this is a quick fix
+        int xpos = (int)glist_xtopixels(owner, basex);
+        int ypos = (int)glist_ytopixels(owner, basey);
+        if (owner->gl_isgraph && !glist_istoplevel(owner))
+        {
+            xpos -= text_xpix(&owner->gl_obj, owner->gl_owner);
+            ypos -= text_ypix(&owner->gl_obj, owner->gl_owner);
+        }
+
         t_float xscale = glist_xtopixels(owner, 1) - glist_xtopixels(owner, 0);
         t_float yscale = glist_ytopixels(owner, 1) - glist_ytopixels(owner, 0);
 
@@ -853,8 +868,9 @@ void scalar_doconfigure(t_gobj *xgobj, t_glist *owner)
             tagbuf,
             glist_isselected(owner, &x->sc_gobj),
             xscale, 0.0, 0.0, yscale,
-            (int)glist_xtopixels(owner, basex),
-            (int)glist_ytopixels(owner, basey));
+            xpos,
+            ypos
+        );
 
         for (y = templatecanvas->gl_list; y; y = y->g_next)
         {
