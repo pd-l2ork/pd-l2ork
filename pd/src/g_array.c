@@ -816,7 +816,8 @@ void garray_arraydialog(t_garray *x, t_symbol *s, int argc, t_atom *argv)
         }
 
         //fprintf(stderr,"garray_arraydialog garray_redraw done\n");
-        garray_select((t_gobj *)x,glist_getcanvas(x->x_glist),1);
+        if (!glist_istoplevel(x->x_glist))
+            garray_select((t_gobj *)x,glist_getcanvas(x->x_glist),1);
         canvas_dirty(x->x_glist, 1);
     }
 }
