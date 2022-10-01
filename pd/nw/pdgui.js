@@ -3101,7 +3101,8 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
             g = create_item(cid, "g", {
                 id: tag + "gobj",
                 transform: transform_string,
-                class: type + (is_toplevel === 0 ? "" : " gop") + 
+                class: (type !== "obj" ? "obj " + type : type) + 
+                    (is_toplevel === 0 ? "" : " gop") + 
                     (type == "graph" ? " " + ownercid : "") +
                     (is_canvas_obj === 0 ? "" : " canvasobj")
             });
@@ -3141,7 +3142,7 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
             g = create_item(cid, "g", {
                 id: tag + "gobj",
                 transform: transform_string,
-                class: type,
+                class: (type !== "obj" ? "obj " + type : type),
                 orig_xpos: xpos,
                 orig_ypos: ypos
             });
