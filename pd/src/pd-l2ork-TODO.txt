@@ -50,8 +50,9 @@ function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
 
 TODO:
   Scalars (data structures)
-    *Check data structure patches (both old and new).
-    *Explore potential for further optimization (see TODOs at the top of this section).
+    New data structures (ds-demos) segfault. Tried easing and omgponies.
+
+  Update under construction patch (has weird extra line breaks).
 
   Remove debugging stuff
 
