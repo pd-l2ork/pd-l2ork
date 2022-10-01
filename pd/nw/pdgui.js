@@ -5439,21 +5439,24 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
                 // cases are: 0=points, 1=plot, 2=bezier, 3=bars
                 switch (plot_style) {
                     case 0:
-                        matrix = [t1,t2,t3,t4,draw_xpos,draw_ypos+0.5];
+                        matrix = [t1,t2,t3,t4,draw_xpos,draw_ypos];
                         break;
                     case 1:
-                        matrix = [t1,t2,t3,t4,draw_xpos,draw_ypos+1.5];
+                        matrix = [t1,t2,t3,t4,draw_xpos,draw_ypos];
                         break;
                     case 2:
-                        matrix = [t1,t2,t3,t4,draw_xpos,draw_ypos+1.5];
+                        matrix = [t1,t2,t3,t4,draw_xpos,draw_ypos];
                         break;
                     case 3:
+                        matrix = [t1,t2,t3,t4,draw_xpos,draw_ypos];
+                        break;
+                    /*case 3:
                         //matrix = [t1*.995,t2,t3,t4+1,t5+0.5,t6-2];
                         matrix = 0;
                         transform_string = "translate(" + 0 +
                             "," + (draw_ypos+1) + ") scale(" + t1 + "," + t4 + ")";
                         //post("transform_string = " + transform_string);
-                        break;
+                        break;*/
                     default:
                         // we are a top-level non-plot scalar
                         // this includes things like subpatches with scalars only

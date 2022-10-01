@@ -931,7 +931,10 @@ t_float glist_xtopixels(t_glist *x, t_float xval)
 
 t_float glist_ytopixels(t_glist *x, t_float yval)
 {
-    //post("glist_Ytopixels %zx %f isgraph=%d", (t_uint)x, yval, x->gl_isgraph);
+    // ico@vt.edu 2022-10-01: debugging in this function should be done
+    // using fprintf, as otherwise post command could corrupt a mid-point
+    // array message output, which will break the front-end
+    //fprintf(stderr,"glist_Ytopixels %zx %f isgraph=%d", (t_uint)x, yval, x->gl_isgraph);
     t_float plot_offset = 0;
     t_gobj *g = x->gl_list;
 
@@ -939,60 +942,12 @@ t_float glist_ytopixels(t_glist *x, t_float yval)
         return ((yval - x->gl_y1) / (x->gl_y2 - x->gl_y1));
     else if (x->gl_isgraph && x->gl_havewindow)
     {
-        if (g != NULL && g->g_pd == garray_class)
-        {
-            /*t_garray *g_a = (t_garray *)g;
-            if (garray_get_style((t_garray *)g) == PLOTSTYLE_POLY ||
-                    garray_get_style((t_garray *)g) == PLOTSTYLE_BEZ)*/
-
-            /*
-            ico@vt.edu 2021-11-12: disabled this because it was causing
-            stuff to be redrawn taller upon first modification. it was
-            also causing the grabbing area to be lower than the value top.
-            switch (garray_get_style((t_garray *)g))
-            {
-            case PLOTSTYLE_POINTS:
-                plot_offset = 2;
-                break;
-            case PLOTSTYLE_POLY:
-                plot_offset = 2;
-                break;
-            case PLOTSTYLE_BEZ:
-                plot_offset = 2;
-                break;
-            case PLOTSTYLE_BARS:
-                plot_offset = 2;
-                break;
-            }*/
-        }
+        //fprintf(stderr, "glist_ytopixels toplevel graph\n");
         return (x->gl_screeny2 - x->gl_screeny1 - plot_offset) *
             (yval - x->gl_y1) / (x->gl_y2 - x->gl_y1);
     }
     else 
     {
-        /* ico@vt.edu: some really stupid code to compensate for the fact
-           that the poly and bezier tend to overlap the GOP edges */
-        if (g != NULL && g->g_pd == garray_class)
-        {
-            /*t_garray *g_a = (t_garray *)g;
-            if (garray_get_style((t_garray *)g) == PLOTSTYLE_POLY ||
-                    garray_get_style((t_garray *)g) == PLOTSTYLE_BEZ)*/
-            switch (garray_get_style((t_garray *)g))
-            {
-                case PLOTSTYLE_POINTS:
-                    plot_offset = 2;
-                    break;
-                case PLOTSTYLE_POLY:
-                    plot_offset = 2;
-                    break;
-                case PLOTSTYLE_BEZ:
-                    plot_offset = 2;
-                    break;
-                case PLOTSTYLE_BARS:
-                    plot_offset = 2;
-                    break;
-            }
-        }
         int x1, y1, x2, y2;
         if (!x->gl_owner)
             bug("glist_pixelstoy");

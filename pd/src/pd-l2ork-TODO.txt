@@ -44,14 +44,19 @@ function gui_mknob_new(cid, ownercid, parentcid, tag, x, y, is_toplevel, show_in
 function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
     is_footils_knob, dial_w, circle_w, frag_w) {
 
+
+
 TODO:
   Scalars (data structures)
     *Check data structure patches (both old and new).
     *Explore potential for further optimization (see TODOs at the top of this section).
 
   GOP still is drawn on the scalars-only subpatch, but only when opened for the first time.
+    set_edit_menu_modals has scalars
 
   Abstractions with hidden text do not have it hidden anymore.
+
+  Session filename atom symbol not visible in the top right corner of the Tweeter (accidentally deleted or moved?).
 
   Remove debugging stuff
 
@@ -282,7 +287,8 @@ error: array: no method for 'magicglass'
   *Fixed non-array scalars being displayed incorrectly both on toplevel and inside a GOP subpatch.
   *Made sure that subpatches are not marked dirty when displayed or manipulated, only the abstractions.
   *Ported scalars to work with the new GOP drawing approach. Fixed a long-standing bug with scalars not having correct selection box.
-
+  *Removed redundant selection inside a toplevel array after applying new properties. This should not happen because the array window should not be editable.
+  *Fixed a bug where array is slightly offset downwards inside a toplevel window after applying new properties.
 
 
 
