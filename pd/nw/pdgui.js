@@ -3102,7 +3102,7 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
             g = create_item(cid, "g", {
                 id: tag + "gobj",
                 transform: transform_string,
-                class: (type !== "obj" ? "obj " + type : type) + 
+                class: type + 
                     (is_toplevel === 0 ? "" : " gop") + 
                     (type == "graph" ? " " + ownercid : "") +
                     (is_canvas_obj === 0 ? "" : " canvasobj")
@@ -3143,7 +3143,7 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
             g = create_item(cid, "g", {
                 id: tag + "gobj",
                 transform: transform_string,
-                class: (type !== "obj" ? "obj " + type : type) +
+                class: type +
                        (is_canvas_obj === 0 ? "" : " canvasobj"),
                 orig_xpos: xpos,
                 orig_ypos: ypos
@@ -3966,6 +3966,9 @@ function gui_text_new(cid, tag, type, isselected, left_margin,
             //yoff = 1;
         }
     });
+
+/*
+    // TODO: eElement.insertBefore(newFirstElement, eElement.firstChild);
     gui(cid).get_gobj(tag)
     .append(function(frag) {
         var svg_text = create_item(cid, "text", {
@@ -4008,6 +4011,52 @@ function gui_text_new(cid, tag, type, isselected, left_margin,
             gui_gobj_select(cid, tag);
         }
         return frag;
+    });
+*/
+
+    gui(cid).get_gobj(tag, function(parent) {
+        var svg_text = create_item(cid, "text", {
+            // Maybe it's just me, but the svg spec's explanation of how
+            // text x/y and tspan x/y interact is difficult to understand.
+            // So here we just translate by the right amount for the
+            // left-margin, guaranteeing all tspan children will line up where
+            // they should be.
+
+            // Another anomaly-- we add 0.5 to the translation so that the font
+            // hinting works correctly. This effectively cancels out the 0.5
+            // pixel alignment done in the gobj, so it might be better to
+            // specify the offset in whatever is calling this function.
+
+            // I don't know how svg text grid alignment relates to other svg
+            // shapes, and I haven't yet found any documentation for it. All I
+            // know is an integer offset results in blurry text, and the 0.5
+            // offset doesn't.
+            transform: "translate(" + (left_margin - xoff) + "," + yoff + ")",
+            y: font_height - 0.5 + gobj_font_y_kludge(font),
+            // Turns out we can't do 'hanging' baseline
+            // because it's borked when scaled. Bummer, because that's how Pd's
+            // text is handled under tk...
+            // 'dominant-baseline': 'hanging',
+            "shape-rendering": "crispEdges",
+            "font-width": font_width,
+            "font-size": pd_fontsize_to_gui_fontsize(font) + "px",
+            "font-weight": "normal",
+            id: tag + "text",
+            "class": classname
+        });
+        // trim off any extraneous leading/trailing whitespace. Because of
+        // the way binbuf_gettext works we almost always have a trailing
+        // whitespace.
+        text = text.trim();
+        // fill svg_text with tspan content by splitting on '\n'
+        text_to_tspans(cid, svg_text, text);
+        if (is_toplevel && parent.classList.contains("gop"))
+            parent.prepend(svg_text);
+        else
+            parent.appendChild(svg_text);
+        if (isselected) {
+            gui_gobj_select(cid, tag);
+        }
     });
 }
 
