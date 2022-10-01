@@ -1117,9 +1117,12 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
             x,
             x->gl_owner,
             tag, "graph", xpix, ypix,
+            (parent_glist == glist_getcanvas(x->gl_owner) ? 1 : 0),
             // ico@vt.edu 2022-09-26: changed last argument to 1
-            // since this is a canvas object after all (need to test)
-            parent_glist == glist_getcanvas(x->gl_owner) ? 1 : 0, 1);
+            // since this is a canvas object after all
+            // need to test further, so far it checks out
+            1
+        );
         if (canvas_showtext(x))
             rtext_draw(glist_findrtext(parent_glist, &x->gl_obj));
     }

@@ -3071,7 +3071,8 @@ exports.gui = gui;
 function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplevel, is_canvas_obj) {
     post("===\ngui_gobj_new drawon=" + cid + " ownercid=" + ownercid +
         " parentcid=" + parentcid + " tag=" + tag + " type=" + type +
-        " xpos=" + xpos + " ypos=" + ypos + " is_toplevel=" + is_toplevel);
+        " xpos=" + xpos + " ypos=" + ypos + " is_toplevel=" + is_toplevel +
+        " is_canvas_obj=" + is_canvas_obj);
     var g, draw_xpos, draw_ypos;
     draw_xpos = xpos;
     draw_ypos = ypos;
@@ -3142,7 +3143,8 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
             g = create_item(cid, "g", {
                 id: tag + "gobj",
                 transform: transform_string,
-                class: (type !== "obj" ? "obj " + type : type),
+                class: (type !== "obj" ? "obj " + type : type) +
+                       (is_canvas_obj === 0 ? "" : " canvasobj"),
                 orig_xpos: xpos,
                 orig_ypos: ypos
             });

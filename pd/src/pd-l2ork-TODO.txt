@@ -51,9 +51,9 @@ TODO:
     *Check data structure patches (both old and new).
     *Explore potential for further optimization (see TODOs at the top of this section).
 
-  Abstractions with hidden text do not have it hidden anymore. 
-  GOP still is drawn on the scalars-only subpatch, but only when opened for the first time.
-    set_edit_menu_modals has scalars
+  Abstractions with hidden text do not have it hidden anymore.
+
+  fake click release is currently broken when clicking on non-gop canvases.
 
   Remove debugging stuff
 

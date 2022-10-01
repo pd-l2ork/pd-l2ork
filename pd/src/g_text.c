@@ -2519,7 +2519,7 @@ static void text_vis(t_gobj *z, t_glist *glist, int vis)
         {
             if (gobj_shouldvis(&x->te_g, glist))
             {
-                //post("text_vis drawit");
+                post("text_vis drawit canvas_class=%d", (pd_class(&x->te_pd) == canvas_class ? 1 : 0));
                 t_rtext *y = glist_findrtext(glist, x);
                 // make a group
                 text_getrect(&x->te_g, glist, &x1, &y1, &x2, &y2);
@@ -2534,7 +2534,7 @@ static void text_vis(t_gobj *z, t_glist *glist, int vis)
                     x1,
                     y1,
                     glist_istoplevel(glist),
-                    pd_class(&x->te_pd) == canvas_class
+                    (pd_class(&x->te_pd) == canvas_class ? 1 : 0)
                 );
                 if (x->te_type == T_ATOM)
                     glist_retext(glist, x);
