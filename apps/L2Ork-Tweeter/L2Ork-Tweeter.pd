@@ -1,4 +1,4 @@
-#N canvas 135 2 1638 974 10;
+#N canvas 135 64 1638 974 10;
 #X obj 0 0 cnv 15 1637 973 empty empty empty 5 7 0 10 #444444 #fcfcfc
 0;
 #X obj 4 2 cnv 15 1630 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
@@ -24,8 +24,6 @@ f 37;
 0;
 #X obj 1505 28 cnv 8 70 8 empty empty SESSION\ NAME -1 5 0 10 #6c6c6c
 #fcfcfc 0;
-#X 5symbolatom 1478 42 21 0 0 0 - session-name-r session-name-s 1 0
-1, f 21;
 #X obj 1459 42 bng 16 250 50 0 load-session load-session-r LOAD -4
 -9 0 10 #80fc80 #008080 #fcfcfc 1;
 #X obj 1609 42 bng 16 250 50 0 save-session save-session-r SAVE -5
@@ -1717,3 +1715,5 @@ Chat will appear in the console., f 32;
 4 6 0 10 #6c6c6c #fcfcfc 0;
 #X text 1091 3 MIN;
 #X text 1300 3 MAX;
+#X symbolatom 1478 42 21 0 0 0 - session-name-r session-name-s 1 0
+1, f 21;
