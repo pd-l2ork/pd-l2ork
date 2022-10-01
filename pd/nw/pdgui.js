@@ -5502,10 +5502,7 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
             g = create_item(cid, "g", {
                 id: tag + "gobj",
                 transform: transform_string,
-                // ico@vt.edu 2022-09-29: we use this to reference
-                // GOP canvas (in case we are not top level, in which
-                // case the object will also belong to the gop class)
-                drawon: ownercid
+                class: "scalar"
             });
             if (isselected !== 0) {
                 g.classList.add("selected");
@@ -5527,8 +5524,6 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
             // Let's make a selection rect...
             selection_rect = create_item(cid, "rect", {
                 class: "border",
-                display: "none",
-                fill: "none",
                 "pointer-events": "none"
             });
             g.appendChild(selection_rect);
@@ -5566,6 +5561,9 @@ function gui_scalar_erase(cid, tag) {
 // for selected borders because somehow calling properties on a graph
 // triggers this function.  I have no idea why it does that.
 function gui_scalar_draw_select_rect(cid, tag, state, x1, y1, x2, y2, basex, basey) {
+    post("gui_scalar_draw_select_rect x1=" + x1 +
+         " x2=" + x2 + " y1=" +y1 + " y2=" + y2 +
+         " basex=" + basex + " basey=" + basey);
     gui(cid).get_gobj(tag)
     .q(".border", {
         x: (x1 - basex) + 0.5,

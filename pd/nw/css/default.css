@@ -467,6 +467,17 @@ text.activated {
     stroke: #ff8800;
 }
 
+.scalar .border {
+    stroke-width: 1px;
+    display: none;
+    fill: none;
+}
+
+.scalar.selected .border {
+    display: inherit;
+    stroke: #e87216;
+}
+
 .comment .border {
     fill: none;
 }

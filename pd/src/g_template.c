@@ -7189,6 +7189,10 @@ static void drawsymbol_getrect(t_gobj *z, t_glist *glist,
     int *xp1, int *yp1, int *xp2, int *yp2)
 {
     t_drawsymbol *x = (t_drawsymbol *)z;
+    post("!!!drawsymbol_getrect basex=%f basey=%f fielddescx=%f fielddescy=%f", basex, basey,
+        fielddesc_getcoord(&x->x_xloc, template, data, 0),
+        fielddesc_getcoord(&x->x_yloc, template, data, 0)
+    );
     t_atom at;
     int xloc, yloc, font, fontwidth, fontheight, width, height;
     char buf[DRAWSYMBOL_BUFSIZE], *startline, *newline;
@@ -7202,11 +7206,6 @@ static void drawsymbol_getrect(t_gobj *z, t_glist *glist,
     /* hack to keep the font scaling with the gop */
     t_float xscale = glist_xtopixels(glist, 1) - glist_xtopixels(glist, 0);
     t_float yscale = glist_ytopixels(glist, 1) - glist_ytopixels(glist, 0);
-
-    xloc = glist_xtopixels(glist,
-        basex + fielddesc_getcoord(&x->x_xloc, template, data, 0));
-    yloc = glist_ytopixels(glist,
-        basey + fielddesc_getcoord(&x->x_yloc, template, data, 0));
 
     font = fielddesc_getfloat(&x->x_fontsize, template, data, 0);
     if (!font) font = glist_getfont(glist);
@@ -7224,14 +7223,23 @@ static void drawsymbol_getrect(t_gobj *z, t_glist *glist,
     }
     if (strlen(startline) > (unsigned)width)
         width = (int)strlen(startline);
+
+    // ico@vt.edu 2022-09-30: this was before GOP drawing rework,
+    // although it was also buggy before it, so the new one should
+    // fix incorrect selection boxes around the drawsymbol_scalar
+    /*
+    xloc = glist_xtopixels(glist,
+        basex + fielddesc_getcoord(&x->x_xloc, template, data, 0));
+    yloc = glist_ytopixels(glist,
+        basey + fielddesc_getcoord(&x->x_yloc, template, data, 0));
+    */
+    xloc = basex + fielddesc_getcoord(&x->x_xloc, template, data, 0);
+    yloc = basey + fielddesc_getcoord(&x->x_yloc, template, data, 0);
+
     *xp1 = xloc;
     *yp1 = yloc;
-    // Ico 20140830: another regression from the 20140731 where getrect is not accurate
-    // this, in addition to the vis call fix makes things work right again
-    // namely, this fixes the getrect inconsistency, while the one in the vis
-    // function fixes sizing problems
-    *xp2 = xloc + (fontwidth * width * xscale);
-    *yp2 = yloc + (fontheight * height * yscale);
+    *xp2 = xloc + (fontwidth * width);
+    *yp2 = yloc + (fontheight * height);
     //*xp2 = xloc + (fontwidth * strlen(buf));
     //*yp2 = yloc + (fontheight);
 }

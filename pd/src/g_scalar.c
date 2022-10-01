@@ -490,6 +490,7 @@ static void scalar_getrect(t_gobj *z, t_glist *owner,
             /* todo: bad flow with internal return here. make it cleaner */
             if (x->sc_bboxcache && 0)
             {
+                post("...x->sc_bboxcache");
                 screenx1 = glist_xtopixels(owner, x->sc_x1);
                 screeny1 = glist_ytopixels(owner, x->sc_y1);
                 screenx2 = glist_xtopixels(owner, x->sc_x2);
@@ -511,20 +512,24 @@ static void scalar_getrect(t_gobj *z, t_glist *owner,
             }
             x1 = y1 = 0x7fffffff;
             x2 = y2 = -0x7fffffff;
-            //post("...scalar_getrect pre %d %d %d %d", x1, y1, x2, y2);
+            post("...scalar_getrect PRE getgrouprect %d %d %d %d", x1, y1, x2, y2);
             scalar_getgrouprect(owner, templatecanvas, x->sc_vec, template,
                 basex, basey, &x1, &x2, &y1, &y2);
             if (x2 < x1 || y2 < y1)
                 x1 = y1 = x2 = y2 = 0;
-            //post("...scalar_getrect post %d %d %d %d", x1, y1, x2, y2);
+            post("...scalar_getrect POST getgrouprect %d %d %d %d", x1, y1, x2, y2);
         }
     }
     //post("xtopixels x->gl_screenx2=%d x->gl_screenx1=%d xval=%d x->gl_x1=%d x->gl_x2=%d",
     //    owner->gl_screenx2, owner->gl_screenx1, x1, owner->gl_x1, owner->gl_x2);
 
     // ico@vt.edu 2021-11-13: changed x1 and y1 because otherwise the selection boxes
-    screenx1 = x1; //glist_xtopixels(owner, x1);
-    screeny1 = y1; //glist_ytopixels(owner, y1);
+    // in nunchuk IR subpatch are off. curiously the other works for the nunchuk pointer
+    // For scalars with text, it looks like top-left corner is off, while textless are fine.
+    //screenx1 = x1;
+    //screeny1 = y1;
+    screenx1 = glist_xtopixels(owner, x1);
+    screeny1 = glist_ytopixels(owner, y1);
     screenx2 = glist_xtopixels(owner, x2);
     screeny2 = glist_ytopixels(owner, y2);
 
@@ -579,6 +584,8 @@ void scalar_drawselectrect(t_scalar *x, t_glist *glist, int state)
             t_float v1 = (y1 - yorig) / yscale;
             t_float u2 = (x2 - xorig) / xscale;
             t_float v2 = (y2 - yorig) / yscale;
+            post("+++++++\nxorig=%f yorig=%f xscale=%f yscale=%f\nx1=%d x2=%d y1=%d y2=%d\n+++++++",
+                xorig, yorig, xscale, yscale, x1, x2, y1, y2);
             // make sure that these are in the right order,
             // gui_scalar_draw_select_rect expects them that way
             if (u2 < u1) {

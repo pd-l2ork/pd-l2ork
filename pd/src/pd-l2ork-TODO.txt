@@ -46,10 +46,12 @@ function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
 
 TODO:
   Scalars (data structures)
-  *Nunchuk cursor has a weird selection offset (the more it goes down and right, the further is selection above and to the left).
-  *Sometimes Nunchuk box (textbox?) has no size and often it is off. Is this its textbox or something else?
-  *Check data structure patches (both old and new).
-  *Explore potential for further optimization (see TODOs at the top of this section).
+    *Check data structure patches (both old and new).
+    *Explore potential for further optimization (see TODOs at the top of this section).
+
+  GOP still is drawn on the scalars-only subpatch, but only when opened for the first time.
+
+  Abstractions with hidden text do not have it hidden anymore.
 
   Remove debugging stuff
 
@@ -278,7 +280,8 @@ error: array: no method for 'magicglass'
   *Reenabled proper coloring of dirty abstractions (GOP and non-GOP).
   *Fixed a bug where patches with non-array scalars were not editable.
   *Fixed non-array scalars being displayed incorrectly both on toplevel and inside a GOP subpatch.
-  *Made sure that subpatches are not marked dirty when displayed or manipulated, only the abstractins.
+  *Made sure that subpatches are not marked dirty when displayed or manipulated, only the abstractions.
+  *Ported scalars to work with the new GOP drawing approach. Fixed a long-standing bug with scalars not having correct selection box.
 
 
 
