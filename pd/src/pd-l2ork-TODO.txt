@@ -51,12 +51,9 @@ TODO:
     *Check data structure patches (both old and new).
     *Explore potential for further optimization (see TODOs at the top of this section).
 
+  Abstractions with hidden text do not have it hidden anymore. 
   GOP still is drawn on the scalars-only subpatch, but only when opened for the first time.
     set_edit_menu_modals has scalars
-
-  Abstractions with hidden text do not have it hidden anymore.
-
-  Session filename atom symbol not visible in the top right corner of the Tweeter (accidentally deleted or moved?).
 
   Remove debugging stuff
 
@@ -289,6 +286,8 @@ error: array: no method for 'magicglass'
   *Ported scalars to work with the new GOP drawing approach. Fixed a long-standing bug with scalars not having correct selection box.
   *Removed redundant selection inside a toplevel array after applying new properties. This should not happen because the array window should not be editable.
   *Fixed a bug where array is slightly offset downwards inside a toplevel window after applying new properties.
+  *Fixed regression where fake keyup was not registered anymore on canvasobj (see pd_canvas.js' target_is_canvasobj).
+
 
 
 
@@ -372,6 +371,7 @@ TWEETER DONE:
 *0.66 New version of L2Ork Tweeter with the L2Orkmote interface.
 *Minor refinements to the L2Orkmote-Interface (part of Tweeter).
 *Bug-fixes to the L2Orkmote implementation. Added missing file.
+*Fixed missing session filename entry textbox after last update.
 
 
 
