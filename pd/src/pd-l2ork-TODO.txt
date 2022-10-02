@@ -1,4 +1,6 @@
 PD-L2ORK TODO:
+*Test Win and OSX builds for potential regressions.
+
 *Fix RPi K12 externals and RPi library.
 
 *Check if moving data structure on a toplevel canvas (e.g. nunchuk joystick
@@ -9,6 +11,8 @@ crosshair) appropriately moves it on the gop canvas (looks like it moves it less
 *Check that all array contents are visible when GOP spill is allowed.
 
 *Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
+
+*save pd-l2ork main window position between restarts.
 
 *Add canvas options for noscroll, nomenu, background color, GOP spill, draw border, and ontop (if it works in nw.js).
 
@@ -32,40 +36,15 @@ Autocomplete:
 
 *Consider adding tiled version of an image inside ggee/image.
 
-
 *refine window heights for various dialogs, so that they always display fully on-screen. UPDATE: check if this has been fixed using latest nw.js (affects only Windows).
 
 *port shell object to Windows?
-
-=== === === === === ===
-
-*finish and integrate gop drawing order work (see if there is something in the branch log to pull as to the status of the work).
-	*Redrawing entire canvas after tidy will not be necessary anymore.
-  *Pasting complex GOP patch sometimes prevents movement of some of its contents (see disis_spectrogram~). To be solved with the GOP rewrite below.
-
-*changed functions:
-
-function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplevel, is_canvas_obj) {
-
-function gui_text_draw_border(cid, tag, bgcolor, isbroken, width, height, is_toplevel) {
-
-function gui_image_coords(cid, ownercid, parentcid, tag, x, y, is_toplevel) {
-
-function gui_mknob_new(cid, ownercid, parentcid, tag, x, y, is_toplevel, show_in, show_out,
-    is_footils_knob) {
-
-function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
-    is_footils_knob, dial_w, circle_w, frag_w) {
-
-*save pd-l2ork main window position between restarts.
 
 *add bezier curve drawing ability to the arrays (currently displaying them as polygons).
 
 *tooltips.
 
 *K12 menu/mode.
-
-*add text object name autocomplete options.
 
 *fix inefficiency of the profuse console output.
 
