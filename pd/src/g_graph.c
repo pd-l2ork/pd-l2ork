@@ -1015,7 +1015,7 @@ extern void canvas_updateconnection(t_canvas *x, int lx1, int ly1, int lx2, int 
     rectangle on the parent, you shouldn't have to redraw the window!  */
 void glist_redraw(t_glist *x)
 {
-    post("glist_redraw %zx", (t_uint)x);
+    //post("glist_redraw %zx", (t_uint)x);
     if (glist_isvisible(x))
     {
             /* LATER fix the graph_vis() code to handle both cases */
@@ -1069,7 +1069,7 @@ t_symbol *garray_getlabelcolor(t_garray *x);
     graph decorations in toplevels... */
 static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
 {
-    post("graph_vis %d %zx", vis, (t_uint)gr);
+    //post("graph_vis %d %zx", vis, (t_uint)gr);
     t_glist *x = (t_glist *)gr;
     //fprintf(stderr,"graph vis canvas=%zx gobj=%zx %d\n",
     //    (t_int)parent_glist, (t_int)gr, vis);
@@ -1362,7 +1362,7 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
         {
             gop_redraw = 1;
             //fprintf(stderr,"drawing gop objects\n");
-            post("graph_vis drawing object %lx...", g);
+            //post("graph_vis drawing object %lx...", g);
             gobj_vis(g, x, 1);
             //fprintf(stderr,"done\n");
             gop_redraw = 0;
@@ -1371,7 +1371,7 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
             tag, x1, y1, x2, y2);
         // ico@vt.edu 2022-09-28: reattach labels dirty and subdirty
         // upon redrawing, so that the GOP border is colored accordingly.
-        post("===========is gop dirty? %d", x->gl_dirty);
+        //post("===========is gop dirty? %d", x->gl_dirty);
         canvas_dirtyclimb(x, x->gl_dirty);
         /* reselect it upon redrawing if it was selected before */
         if (glist_isselected(parent_glist, gr))

@@ -490,7 +490,7 @@ static void scalar_getrect(t_gobj *z, t_glist *owner,
             /* todo: bad flow with internal return here. make it cleaner */
             if (x->sc_bboxcache && 0)
             {
-                post("...x->sc_bboxcache");
+                //post("...x->sc_bboxcache");
                 screenx1 = glist_xtopixels(owner, x->sc_x1);
                 screeny1 = glist_ytopixels(owner, x->sc_y1);
                 screenx2 = glist_xtopixels(owner, x->sc_x2);
@@ -512,12 +512,12 @@ static void scalar_getrect(t_gobj *z, t_glist *owner,
             }
             x1 = y1 = 0x7fffffff;
             x2 = y2 = -0x7fffffff;
-            post("...scalar_getrect PRE getgrouprect %d %d %d %d", x1, y1, x2, y2);
+            //post("...scalar_getrect PRE getgrouprect %d %d %d %d", x1, y1, x2, y2);
             scalar_getgrouprect(owner, templatecanvas, x->sc_vec, template,
                 basex, basey, &x1, &x2, &y1, &y2);
             if (x2 < x1 || y2 < y1)
                 x1 = y1 = x2 = y2 = 0;
-            post("...scalar_getrect POST getgrouprect %d %d %d %d", x1, y1, x2, y2);
+            //post("...scalar_getrect POST getgrouprect %d %d %d %d", x1, y1, x2, y2);
         }
     }
     //post("xtopixels x->gl_screenx2=%d x->gl_screenx1=%d xval=%d x->gl_x1=%d x->gl_x2=%d",
@@ -584,8 +584,11 @@ void scalar_drawselectrect(t_scalar *x, t_glist *glist, int state)
             t_float v1 = (y1 - yorig) / yscale;
             t_float u2 = (x2 - xorig) / xscale;
             t_float v2 = (y2 - yorig) / yscale;
-            post("+++++++\nxorig=%f yorig=%f xscale=%f yscale=%f\nx1=%d x2=%d y1=%d y2=%d\n+++++++",
+            /*
+            post("+++++++\nxorig=%f yorig=%f xscale=%f yscale=%f\n"
+                "x1=%d x2=%d y1=%d y2=%d\n+++++++",
                 xorig, yorig, xscale, yscale, x1, x2, y1, y2);
+            */
             // make sure that these are in the right order,
             // gui_scalar_draw_select_rect expects them that way
             if (u2 < u1) {
@@ -836,10 +839,14 @@ static void scalar_group_configure(t_scalar *x, t_glist *owner,
 
 void scalar_doconfigure(t_gobj *xgobj, t_glist *owner)
 {
+    /*
+    // the following debugging message may crash pd-l2ork under certain
+    // circumstances, use with care
     post("scalar_configure owner-is-graph=%d owner-is-toplevel=%d x1=%d y1=%d", 
         owner->gl_isgraph, glist_istoplevel(owner),
         text_xpix(&owner->gl_obj, owner->gl_owner),
         text_ypix(&owner->gl_obj, owner->gl_owner));
+    */
     t_scalar *x = (t_scalar *)xgobj;
     int vis = glist_isvisible(owner);
     if (vis)
@@ -959,7 +966,7 @@ void array_configure(t_scalar *x, t_glist *owner, t_array *a, t_word *data)
 static void scalar_groupvis(t_scalar *x, t_glist *owner, t_template *template,
     t_glist *gl, t_glist *parent, int vis)
 {
-    post("scalar_groupvis %d %zx", vis, (t_uint)x);
+    //post("scalar_groupvis %d %zx", vis, (t_uint)x);
     t_gobj *y;
     if (vis)
     {
@@ -1022,7 +1029,7 @@ static void scalar_groupvis(t_scalar *x, t_glist *owner, t_template *template,
 */
 static void scalar_vis(t_gobj *z, t_glist *owner, int vis)
 {
-    post("scalar_vis %d %zx", vis, (t_uint)z);
+    //post("scalar_vis %d %zx", vis, (t_uint)z);
     t_scalar *x = (t_scalar *)z;
     char buf[50];
     sprintf(buf, "x%zx", (t_uint)x);

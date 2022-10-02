@@ -3069,17 +3069,21 @@ exports.gui = gui;
                  whose selection border should be highlighted when they are selected.
 */
 function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplevel, is_canvas_obj) {
+    /*
     post("===\ngui_gobj_new drawon=" + cid + " ownercid=" + ownercid +
         " parentcid=" + parentcid + " tag=" + tag + " type=" + type +
         " xpos=" + xpos + " ypos=" + ypos + " is_toplevel=" + is_toplevel +
         " is_canvas_obj=" + is_canvas_obj);
+    */
     var g, draw_xpos, draw_ypos;
     draw_xpos = xpos;
     draw_ypos = ypos;
     if (type === "graph") { // graph object
+        /*
         post("...GOP svg_elem=" + (is_toplevel === 1 ? "patchsvg" : 
             (parentcid === cid ? "[ownercid]" + ownercid + "svg" :
                 "[parentcid]" + parentcid + "svg")));
+        */
         gui(cid).get_elem("patchsvg", function(svg_elem, w) {
             var nested_gop;
             if (is_toplevel === 0) {
@@ -3092,7 +3096,7 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
                     draw_xpos -= nested_gop[0].getAttribute("orig_xpos");
                     draw_ypos -= nested_gop[0].getAttribute("orig_ypos");
                 }
-                post("......offset x=" + draw_xpos + " y=" + draw_ypos);
+                //post("......offset x=" + draw_xpos + " y=" + draw_ypos);
             } else {
                 draw_xpos += 0.5;
                 draw_ypos += 0.5;
@@ -3117,24 +3121,26 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
             g.appendChild(s);
        });
    } else { // non-graph object (can be inside a GOP, tested with is_toplevel)
-        post("...OBJECT classname=" + ownercid + "svg");
+        //post("...OBJECT classname=" + ownercid + "svg");
         gui(cid).get_elem("patchsvg", function(svg_elem, w) {
             var transform_string;
             if (is_toplevel === 0) {
                 var tgt = w.document.getElementsByClassName(ownercid + "svg");
                 if (parentcid === cid) {
+                    /*
                     post("......parentcid==drawcid parentGOPx=" +
                         tgt[0].getCTM().e + " parentGOPy=" + tgt[0].getCTM().f);
+                    */
                     draw_xpos += 0.5;
                     draw_ypos += 0.5;
                     draw_xpos -= tgt[0].getCTM().e;
                     draw_ypos -= tgt[0].getCTM().f;
                 } else {
-                    post("......parentcid != drawcid");
+                    //post("......parentcid != drawcid");
                     draw_xpos -= tgt[0].getAttribute("orig_xpos");
                     draw_ypos -= tgt[0].getAttribute("orig_ypos");
                 }
-                post("......offset x=" + draw_xpos + " y=" + draw_ypos);
+                //post("......offset x=" + draw_xpos + " y=" + draw_ypos);
             } else {
                 draw_xpos += 0.5;
                 draw_ypos += 0.5;              
@@ -3149,10 +3155,10 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
                 orig_ypos: ypos
             });
             if (is_toplevel === 0) {
-                post("GOP appendChild")
+                //post("GOP appendChild")
                 tgt[0].appendChild(g);
             } else {
-                post("add_gop_to_svg");
+                //post("add_gop_to_svg");
                 add_gobj_to_svg(svg_elem, g);
             }
         });
@@ -3161,7 +3167,7 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
 }
 
 function gui_text_draw_border(cid, tag, bgcolor, isbroken, width, height, is_toplevel) {
-    post("===\ngui_text_draw_border is_toplevel=" + is_toplevel);
+    //post("===\ngui_text_draw_border is_toplevel=" + is_toplevel);
     var isgop = 0;
     gui(cid).get_gobj(tag, function(e) {
         if(e.classList.contains("graph")) {
@@ -4138,7 +4144,7 @@ function gui_gobj_deselect(cid, tag) {
 }
 
 function gui_gobj_dirty(cid, tag, state) {
-    post("gui_gobj_dirty " + state);
+    //post("gui_gobj_dirty " + state);
     gui(cid).get_gobj(tag, function(e) {
         // ico@vt.edu 2022-09-28: we add two conditions, one
         // for border classes (canvas with GOP disabled) used
@@ -4146,7 +4152,7 @@ function gui_gobj_dirty(cid, tag, state) {
         // for GOP-enabled abstractions
         var border = e.querySelector(".border");
         if (border) {
-            post("...got border");
+            //post("...got border");
             border.classList.remove("dirty");
             border.classList.remove("subdirty");
             if(state === 1) border.classList.add("dirty");
@@ -4154,7 +4160,7 @@ function gui_gobj_dirty(cid, tag, state) {
         }
         border = e.querySelector(".gopborder");
         if (border) {
-            post("...got gopborder");
+            //post("...got gopborder");
             border.classList.remove("dirty");
             border.classList.remove("subdirty");
             if(state === 1) border.classList.add("dirty");
@@ -4674,7 +4680,7 @@ function gui_numbox_draw_text(cid, tag, text, font_size, color, xpos,
     ypos, basex, basey, fontmargin, is_toplevel) {
     // kludge alert -- I'm not sure why I need to add half to the ypos
     // below. But it works for most font sizes.
-    post("font_size=" + font_size);
+    //post("font_size=" + font_size);
     gui(cid).get_gobj(tag)
     .append(function(frag, w) {
         var trans_y = 0;
@@ -5382,25 +5388,29 @@ function gui_mycanvas_coords(cid, tag, vis_width, vis_height, select_width, sele
 /* this creates a group immediately below the patchsvg object */
 function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t4, t5, t6,
     is_toplevel, plot_style) {
+    /*
     post("===\ngui_scalar_new drawon=" + cid + " ownercid=" + ownercid +
     " parentcid=" + parentcid + " tag=" + tag + " plot_style=" + plot_style +
     " t1=" + t1 + " t2=" + t2 + " t3=" + t3 + " t4=" + t4 +
     " xpos(t5)=" + t5 + " ypos(t6)=" + t6 + " is_toplevel=" + is_toplevel);
+    */
     var g, draw_xpos, draw_ypos;
     draw_xpos = t5;
     draw_ypos = t6;
-    post("...SCALAR classname=" + ownercid + "svg");
+    //post("...SCALAR classname=" + ownercid + "svg");
     gui(cid).get_elem("patchsvg", function(svg_elem, w) {
         var transform_string;
         if (is_toplevel === 0) {
             var tgt = w.document.getElementsByClassName(ownercid + "svg");
             if (parentcid === cid) {
-                post("......parentcid==drawcid parentGOPx=" +
-                    tgt[0].getCTM().e + " parentGOPy=" + tgt[0].getCTM().f);
+                //post("......parentcid==drawcid parentGOPx=" +
+                //    tgt[0].getCTM().e + " parentGOPy=" + tgt[0].getCTM().f);
                 //draw_xpos += 0.5;
                 //draw_ypos += 0.5;
-                post("******draw_xpos=" + draw_xpos + " t1=" + t1 + " getCTM().e=" + tgt[0].getCTM().e);
-                post("******draw_ypos=" + draw_ypos + " t4=" + t4 + " getCTM().f=" + tgt[0].getCTM().f);
+                //post("******draw_xpos=" + draw_xpos + " t1=" +
+                //    t1 + " getCTM().e=" + tgt[0].getCTM().e);
+                //post("******draw_ypos=" + draw_ypos + " t4=" +
+                //    t4 + " getCTM().f=" + tgt[0].getCTM().f);
                 //if (plot_style != -1) {
                     // we're drawing an array GOP object
                     draw_xpos -= tgt[0].getCTM().e;
@@ -5414,36 +5424,15 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
                     draw_ypos = (draw_ypos * t4);
                 }*/
             } else {
-                post("......parentcid != drawcid");
+                //post("......parentcid != drawcid");
                 draw_xpos -= tgt[0].getAttribute("orig_xpos");
                 draw_ypos -= tgt[0].getAttribute("orig_ypos");
             }
-            post("......offset x=" + draw_xpos + " y=" + draw_ypos);
+            //post("......offset x=" + draw_xpos + " y=" + draw_ypos);
         } else {
             //draw_xpos += 0.5;
             //draw_ypos += 0.5;              
         }
-        /*
-        transform_string = "matrix(1,0,0,1," + draw_xpos + ", " + draw_ypos + ")";  
-        g = create_item(cid, "g", {
-            id: tag + "gobj",
-            transform: transform_string,
-            class: type,
-            orig_xpos: xpos,
-            orig_ypos: ypos
-        });
-        if (is_toplevel === 0) {
-            post("GOP appendChild")
-            tgt[0].appendChild(g);
-        } else {
-            post("add_gop_to_svg");
-            add_gobj_to_svg(svg_elem, g);
-        }
-        */
-        // we should probably use gui_gobj_new here, but we"re doing some initial
-        // scaling that normal gobjs don't need...
-        //post("gui_scalar_new " + t1 + " " + t2 +
-        //    " " + t3 + " " + t4 + " " + t5 + " " + t6);
 
         /* ico@vt.edu HACKTASCTIC: calculating scrollbars is throwing 0.997 for
            plots drawn inside the subpatch and it is a result of the -1 in the
@@ -5464,21 +5453,7 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
                 elem.style.setProperty("display", "none");
             });
         }*/
-        /*transform_string = "matrix(1,0,0,1," + draw_xpos + ", " + draw_ypos + ")";
-        g = create_item(cid, "g", {
-            id: tag + "gobj",
-            transform: transform_string,
-            class: type,
-            orig_xpos: xpos,
-            orig_ypos: ypos
-        });
-        if (is_toplevel === 0) {
-            post("GOP appendChild")
-            tgt[0].appendChild(g);
-        } else {
-            post("add_gop_to_svg");
-            add_gobj_to_svg(svg_elem, g);
-        }*/
+
         gui(cid).get_elem("patchsvg", function(svg_elem) {
             var matrix, transform_string, selection_rect;
             if (is_toplevel === 1) {
@@ -5515,7 +5490,7 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
                         // that need to be resized based on the window size and/or
                         // scalar arrays (see all_about_arrays.pd help patch),which
                         // should not be scaled. how to distinguish between the two?
-                        post("......non-plot toplevel scalar");
+                        //post("......non-plot toplevel scalar");
                         matrix = [t1,t2,t3,t4,draw_xpos,draw_ypos];
                         break;
                 }
@@ -5545,7 +5520,7 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
                         break;
                     default:
                         // we are a non-plot scalar
-                        post("......non-plot GOP scalar");
+                        //post("......non-plot GOP scalar");
                         matrix = [t1,t2,t3,t4,draw_xpos,draw_ypos];
                         break;
                 }
@@ -5584,10 +5559,10 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
             g.appendChild(selection_rect);
             //add_gobj_to_svg(svg_elem, g);
             if (is_toplevel === 0) {
-                post("...GOP appendChild tgt=" + ownercid + "svg");
+                //post("...GOP appendChild tgt=" + ownercid + "svg");
                 tgt[0].appendChild(g);
             } else {
-                post("...add_gop_to_svg");
+                //post("...add_gop_to_svg");
                 add_gobj_to_svg(svg_elem, g);
             }
         });
@@ -5596,7 +5571,7 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
 }
 
 function gui_scalar_erase(cid, tag) {
-    post("gui_scalar_erase owner=" + cid + " object=" + tag);
+    //post("gui_scalar_erase owner=" + cid + " object=" + tag);
     gui(cid).get_gobj(tag, function(e) {
         e.parentNode.removeChild(e);
     });
@@ -5616,9 +5591,11 @@ function gui_scalar_erase(cid, tag) {
 // for selected borders because somehow calling properties on a graph
 // triggers this function.  I have no idea why it does that.
 function gui_scalar_draw_select_rect(cid, tag, state, x1, y1, x2, y2, basex, basey) {
+    /*
     post("gui_scalar_draw_select_rect x1=" + x1 +
          " x2=" + x2 + " y1=" +y1 + " y2=" + y2 +
          " basex=" + basex + " basey=" + basey);
+    */
     gui(cid).get_gobj(tag)
     .q(".border", {
         x: (x1 - basex) + 0.5,
@@ -5642,7 +5619,10 @@ function gui_scalar_draw_group(cid, tag, parent_tag, type, attr_array) {
 }
 
 function gui_scalar_configure_gobj(cid, tag, isselected, t1, t2, t3, t4, t5, t6) {
-    post("gui_scalar_configure_gobj tag=" + tag + " t1=" + t1 + " t2=" + t2 + " t3=" + t3 + " t4=" + t4 + " t5=" + t5 + " t6=" + t6);
+    /*
+    post("gui_scalar_configure_gobj tag=" + tag + " t1=" +
+        t1 + " t2=" + t2 + " t3=" + t3 + " t4=" + t4 + " t5=" + t5 + " t6=" + t6);
+    */
     var matrix = [t1,t2,t3,t4,t5,t6],
         transform_string = "matrix(" + matrix.join() + ")";
     gui(cid).get_gobj(tag, {
@@ -7701,7 +7681,7 @@ function gui_dropdown_activate(cid, obj_tag, tag, current_index, font_size, stat
             select_elem.style.setProperty("min-width", g.getBBox().width + "px");
             w.canvas_events.dropdown_menu();
         } else {
-            post("deactivating dropdown menu");
+            //post("deactivating dropdown menu");
             // Probably want to send this
             pdsend(cid, "key 0 Control 0 1 0");
         }

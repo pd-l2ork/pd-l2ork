@@ -3,11 +3,16 @@ PD-L2ORK TODO:
 
 *Fix RPi K12 externals and RPi library.
 
+*Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
+
+*Add canvas options for noscroll, nomenu, background color, and ontop.
+
 *Consider adding ability to display array name that is other than the internal name (e.g. so that we don't have to use $0, $1, _ etc. in the name)
 
-*Error closing a new window because there is no "width" property (e.g. a subpatch has been created). Only affects RPi version of nw.js? Consider bumping the RPi nw.js version...
+*Check if moving data structure on a toplevel canvas (e.g. nunchuk joystick
+crosshair) appropriately moves it on the gop canvas (looks like it moves it less).
 
-*Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
+*Error closing a new window because there is no "width" property (e.g. a subpatch has been created). Only affects RPi version of nw.js? Consider bumping the RPi nw.js version...
 
 *Select All should not automatically enter the edit mode? OR, provide a way to restrict edit mode AND other options.
 
@@ -45,34 +50,6 @@ function gui_mknob_new(cid, ownercid, parentcid, tag, x, y, is_toplevel, show_in
 
 function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
     is_footils_knob, dial_w, circle_w, frag_w) {
-
-
-
-TODO:
-  Scalars (data structures)
-    New data structures (ds-demos) segfault. Tried easing and omgponies.
-
-  Update under construction patch (has weird extra line breaks).
-
-  Remove debugging stuff
-
-DONE:
-  iemgui objects
-  image (ggee/image)
-  flatgui/knob
-  pddplink
-  moonlib/mknob
-  moonlib/image
-  Scope~ (including highlighting)
-  unauthorized/pianoroll
-  unauthorized/grid
-  iemgui/room_sim_2D
-  iemgui/room_sim_3D
-  arrays
-  fixed marking of abstractions on parent canvas dirty
-  scalars
-
-=== === === === === ===
 
 *save pd-l2ork main window position between restarts.
 

@@ -101,10 +101,12 @@ var canvas_events = (function() {
         },
         target_is_canvasobj = function(evt) {
             function is_canvas_obj(target) {
+                /*
                 pdgui.post("1:" + target.classList.contains("obj") +
                            " 2:" + target.classList.contains("canvasobj") +
                            " 3:" + !target.classList.contains("graph") +
                            " classlist:" + target.classList);
+                */
                 return target.classList.contains("obj") &&
                     target.classList.contains("canvasobj") &&
                     !target.classList.contains("graph");
@@ -427,7 +429,8 @@ var canvas_events = (function() {
                 );
             },
             mousedown: function(evt) {
-                pdgui.post("pdcanvas mousedown evt.Altkey=" + evt.altKey + " tgt_is_canvas=" + target_is_canvasobj(evt));
+                //pdgui.post("pdcanvas mousedown evt.Altkey=" +
+                //    evt.altKey + " tgt_is_canvas=" + target_is_canvasobj(evt));
                 // ico@vt.edu capture middle click for a different type of scroll
                 // currently disabled due to problem with scrollBy and zoom
                 /*if (evt.which == 2)
@@ -529,7 +532,7 @@ var canvas_events = (function() {
                 // If Alt is pressed on a box_text, fake a keyup to prevent
                 // dangling temp runmode in case the click opens a subpatch.
                 if (evt.altKey && target_is_canvasobj(evt)) {
-                    pdgui.post("BOOOOO");
+                    //pdgui.post("generating fake mouse up...");
                     pdgui.canvas_sendkey(name, 0, evt, "Alt", 0);
                 }
                 //evt.stopPropagation();

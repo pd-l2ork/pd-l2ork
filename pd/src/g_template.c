@@ -2261,7 +2261,7 @@ void svg_update_args(t_svg *x, t_symbol *s, int argc, t_atom *argv)
     if (atom_getsymbolarg(0, argc, argv) == gensym("svg"))
     {
         argc--, argv++;
-        if (argc) svg_setattr(x, gensym("width"), argc--, argv++), post("did width");
+        if (argc) svg_setattr(x, gensym("width"), argc--, argv++);
         if (argc) svg_setattr(x, gensym("height"), argc--, argv++);
         if (argc) svg_setattr(x, gensym("x"), argc--, argv++);
         if (argc) svg_setattr(x, gensym("y"), argc--, argv++);
@@ -6020,7 +6020,7 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
     t_scalar *sc, t_word *data, t_template *template,
     t_float basex, t_float basey, t_array *parentarray, int tovis)
 {
-    post("plot_vis %d %zx", tovis, (t_uint)z);
+    //post("plot_vis %d %zx", tovis, (t_uint)z);
     t_plot *x = (t_plot *)z;
     int elemsize, yonset, wonset, xonset, i;
     t_canvas *elemtemplatecanvas;
@@ -7189,10 +7189,12 @@ static void drawsymbol_getrect(t_gobj *z, t_glist *glist,
     int *xp1, int *yp1, int *xp2, int *yp2)
 {
     t_drawsymbol *x = (t_drawsymbol *)z;
-    post("!!!drawsymbol_getrect basex=%f basey=%f fielddescx=%f fielddescy=%f", basex, basey,
-        fielddesc_getcoord(&x->x_xloc, template, data, 0),
+    /*
+    post("!!!drawsymbol_getrect basex=%f basey=%f fielddescx=%f fielddescy=%f",
+        basex, basey, fielddesc_getcoord(&x->x_xloc, template, data, 0),
         fielddesc_getcoord(&x->x_yloc, template, data, 0)
     );
+    */
     t_atom at;
     int xloc, yloc, font, fontwidth, fontheight, width, height;
     char buf[DRAWSYMBOL_BUFSIZE], *startline, *newline;
