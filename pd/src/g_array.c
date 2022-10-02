@@ -1521,7 +1521,7 @@ void garray_usedindsp(t_garray *x)
 
 static void garray_doredraw(t_gobj *client, t_glist *glist)
 {
-    post("garray_doredraw");
+    //post("garray_doredraw");
     t_garray *x = (t_garray *)client;
 
     if (glist_isvisible(x->x_glist))
@@ -1583,7 +1583,7 @@ static void garray_doredraw(t_gobj *client, t_glist *glist)
 
 void garray_redraw(t_garray *x)
 {
-    post("garray_redraw");
+    //post("garray_redraw");
     if (glist_isvisible(x->x_glist))
         /* enqueueing redraw ensures that the array is drawn after its values
            have been instantiated
