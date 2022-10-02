@@ -285,6 +285,8 @@ then
 		git submodule update --init
 	fi
 
+	# copy changes to the wiringPi library
+	cp -f l2ork_addons/raspberry_pi/wiringPi.c l2ork_addons/raspberry_pi/disis_gpio/wiringPi/wiringPi/
 
 	if [ $full -eq 2 -o $deb -eq 2 -o $inno -eq 2 -o $dmg -eq 2 ]
 	then
