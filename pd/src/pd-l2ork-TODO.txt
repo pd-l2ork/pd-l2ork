@@ -1,21 +1,27 @@
 PD-L2ORK TODO:
-*cursor abstraction does not report right mouse up events due to it triggering the pop-up menu. This may be a nw.js limitation?
-
 *Fix RPi K12 externals and RPi library.
-
-*Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
-
-*Add canvas options for noscroll, nomenu, background color, and ontop.
-
-*Consider adding ability to display array name that is other than the internal name (e.g. so that we don't have to use $0, $1, _ etc. in the name)
 
 *Check if moving data structure on a toplevel canvas (e.g. nunchuk joystick
 crosshair) appropriately moves it on the gop canvas (looks like it moves it less).
 
+*Make data structure without a template have a visible square.
+
+*Check that all array contents are visible when GOP spill is allowed.
+
+*Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
+
+*Add canvas options for noscroll, nomenu, background color, GOP spill, draw border, and ontop (if it works in nw.js).
+
+Add global "editable" flag. Figure out how to embed this into the patch that is not easily disabled.
+  *Right click should also not work in non-editable patch.
+  *Should be only toplevel patch.
+  *Select All should not automatically enter the edit mode? OR, provide a way to restrict edit mode AND other options.
+
+*cursor abstraction does not report right mouse up events due to it triggering the pop-up menu. This may be a nw.js limitation?
+
+*Consider adding ability to display array name that is other than the internal name (e.g. so that we don't have to use $0, $1, _ etc. in the name).
+
 *Error closing a new window because there is no "width" property (e.g. a subpatch has been created). Only affects RPi version of nw.js? Consider bumping the RPi nw.js version...
-
-*Select All should not automatically enter the edit mode? OR, provide a way to restrict edit mode AND other options.
-
 
 Autocomplete:
 *Delete search.index and search.stamps, if found, as they prevent the proper indexing.
