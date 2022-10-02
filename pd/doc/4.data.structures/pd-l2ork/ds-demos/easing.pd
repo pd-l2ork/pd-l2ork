@@ -1,8 +1,8 @@
 #N struct targets float x float y;
 #N struct movers float x float y float x1 float y1 float style float
 opacity float r float g float b float sw;
-#N canvas 1 25 668 654 10;
-#N canvas 651 83 645 479 targets 1;
+#N canvas 662 252 668 685 10;
+#N canvas 651 95 645 479 targets 0;
 #X obj 119 13 struct targets float x float y;
 #X obj 119 60 loadbang;
 #X msg 323 157 fill #333333;
@@ -47,7 +47,7 @@ opacity float r float g float b float sw;
 #X text 450 349 backout;
 #X text 450 399 elastic;
 #X text 450 449 bounce;
-#X text 33 1021 Click a "mover" ^;
+#X text 33 511 Click a "mover" ^;
 #X text 33 531 Easing;
 #X text 33 531 ______;
 #X text 33 551 Here are a few animation styles taken from Raphael.js.
@@ -127,10 +127,11 @@ problem here.;
 #X obj 321 283 trigger anything anything;
 #X obj 130 441 +;
 #X obj 130 462 + 0.5;
-#X obj 130 483 expr (1 - $f1) * 3 * $f1 * $f1 + $f1 * $f1 * $f1;
-#X floatatom 52 549 12 0 0 0 - - -, f 12;
-#X floatatom 75 194 5 0 0 0 - - -, f 5;
-#X floatatom 188 345 5 0 0 0 - - -, f 5;
+#X obj 130 483 expr (1 - \\$f1) * 3 * \\$f1 * \\$f1 + \\$f1 * \\$f1
+* \\$f1;
+#X floatatom 52 549 12 0 0 0 - - - 0 0 1, f 12;
+#X floatatom 75 194 5 0 0 0 - - - 0 0 1, f 5;
+#X floatatom 188 345 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 130 283 t a b;
 #X obj 321 312 t a b;
 #X connect 0 0 2 0;

@@ -1,5 +1,5 @@
 #N struct working-man-scalar float x float y;
-#N canvas 1 25 836 618 10;
+#N canvas 578 282 836 618 10;
 #N canvas 195 124 671 300 template 0;
 #X obj 121 -2492 struct working-man-scalar float x float y;
 #N canvas 725 143 450 300 init 0;
@@ -220,8 +220,8 @@ L 258.192 372.204 L 254.304 371.484 z;
 #X connect 22 0 1 0;
 #X restore 121 -2430 draw g;
 #X connect 1 0 2 0;
-#X restore 443 6 pd template;
-#X scalar working-man-scalar -169 309 \;;
+#X restore 153 580 pd template;
+#X scalar working-man-scalar -105 278 \;;
 #X text 103 10 Still under heavy development!;
 #X text 429 450 Wish I could figure out a better way to do them:;
 #X text 429 470 * fill-rule \, stroke-linejoin \, stroke-linecap. The
@@ -230,7 +230,7 @@ but with data structures a symbolic argument represents a variable
 field. So I just use a float argument. I could use quotes around a
 symbol to specify a constant string \, but that would be obscure and
 at odds with the rest of Pd.;
-#X text 70 413 * [draw text] for scalable svg text.;
+#X text 84 382 * [draw text] for scalable svg text.;
 #X text 429 355 Stable group handling:;
 #X text 429 260 * [draw [shape-name]] pattern \, [draw sprite] \, and
 [draw image] names. I don't particularly like the two word naming scheme
@@ -242,7 +242,7 @@ just a subpatch with an inlet to control svg attributes of the drawing
 commands it conatins. It might also be handy to search abstractions
 for drawing instructions \, but that isn't supported at the moment.
 ;
-#X text 70 393 Needed:;
+#X text 84 362 Needed:;
 #N canvas 290 275 450 300 META 0;
 #X text 16 6 KEYWORDS tutorial data_structure draw;
 #X text 16 26 LICENSE SIBSD;
@@ -251,40 +251,32 @@ commands;
 #X text 16 76 AUTHOR Jonathan Wilkes;
 #X text 16 96 HELP_PATCH_AUTHORS Jonathan Wilkes;
 #X restore 731 580 pd META;
-#X text 491 31 Unstable methods;
-#X text 491 31 ________________;
+#X text 429 31 Unstable methods;
+#X text 429 31 ________________;
 #X text 25 31 Stable methods;
 #X text 25 31 ______________;
-#X text 25 51 cx - circle center x coordinate \; cy
-- circle center y coordinate \; d - path
-data \; fill-opacity - opacity for inner
-color of shape or path \; height - rect height
-\; opacity - shape or group opacity \; points
-- polygon/polylin coordinate data \; r - circle
-radius \; rx - ellipse horizontal radius or
-rect corner horiz smoothing \; ry - ellipse
-vertical radius or rect corner vert smoothing \; stroke-dasharray
-- dash pattern for stroke \; stroke-opacity
-- opacity for stroke \; stroke-dashoffset -
-offset for the beginning of the dash pattern \; stroke-width
-- width of the stroke \; transform - affine transformation
-message for shape or group \; width - width of
-rect \; x - rect x coordinate (user) \; x1
-- line x coordinate for beginning of line \; x2
-- line x coordinate for end of line \; y - rect
-y coordinate (user) \; y1 - line y coordinate
-for beginning of line \; y2 - line y coordinate
-for end of line \; , f 63;
-#X text 454 51 bbox - don't calculate bounding box in Pd \; drag
-- set event for mouse dragging \; fill-rule - rule for
-overlapping shape coords \; mousedown - set event for
-depressing the mouse button \; mousemove - set event for
-mouse motion \; mouseover - set event for mouse moving
-into a shape \; mouseout - set event for mouse moving
-out of a shape \; mouseup - set event for mouse button
-release \; pointer-events - which parts of a shape trigger
-events \; stroke-linecap - style for end of stroke \; stroke-linejoin
-- style stroke corner \; stroke-miterlimit - limit on sharp
-angle extent \; vis - visibility of shape or path \; fill
-- inner color for shape or path \; stroke - shape or path stroke
-color \; ;
+#X text 429 51 bbox - don't calculate bounding box in Pd \; drag -
+set event for mouse dragging \; fill-rule - rule for overlapping shape
+coords \; mousedown - set event for depressing the mouse button \;
+mousemove - set event for mouse motion \; mouseover - set event for
+mouse moving into a shape \; mouseout - set event for mouse moving
+out of a shape \; mouseup - set event for mouse button release \;
+pointer-events - which parts of a shape trigger events \; stroke-linecap
+- style for end of stroke \; stroke-linejoin - style stroke corner
+\; stroke-miterlimit - limit on sharp angle extent \; vis - visibility
+of shape or path \; fill - inner color for shape or path \; stroke
+- shape or path stroke color \;;
+#X text 25 51 cx - circle center x coordinate \; cy - circle center
+y coordinate \; d - path data \; fill-opacity - opacity for inner
+color of shape or path \; height - rect height \; opacity - shape
+or group opacity \; points - polygon/polylin coordinate data \; r
+- circle radius \; rx - ellipse horizontal radius or rect corner horiz
+smoothing \; ry - ellipse vertical radius or rect corner vert smoothing
+\; stroke-dasharray - dash pattern for stroke \; stroke-opacity -
+opacity for stroke \; stroke-dashoffset - offset for the beginning
+of the dash pattern \; stroke-width - width of the stroke \; transform
+- affine transformation message for shape or group \; width - width
+of rect \; x - rect x coordinate (user) \; x1 - line x coordinate
+for beginning of line \; x2 - line x coordinate for end of line \;
+y - rect y coordinate (user) \; y1 - line y coordinate for beginning
+of line \; y2 - line y coordinate for end of line \;, f 63;
