@@ -1,5 +1,5 @@
 #N struct working-man-scalar float x float y;
-#N canvas 578 282 836 618 10;
+#N canvas 578 294 836 618 10;
 #N canvas 195 124 671 300 template 0;
 #X obj 121 -2492 struct working-man-scalar float x float y;
 #N canvas 725 143 450 300 init 0;
