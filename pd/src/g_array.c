@@ -550,6 +550,14 @@ void canvas_menuarray(t_glist *canvas)
     //gfxstub_new(&x->gl_pd, x, cmdbuf);
 }
 
+/* ico@vt.edu 2022-10-02: HACK! using local variable to control whether
+   the redraw should be immediate (necessary for the put Array menu
+   and after changing properties via Array dialog), or queued
+   (everything else, so that we don't spam both the front-end and
+   the back-end with unnecessary redraw requests).
+*/
+static int redraw_immediately = 0;
+
     /* called from canvas_dialog to return array properties for the gui */
 int garray_properties(t_garray *x, t_symbol **gfxstubp, t_symbol **namep,
     int *sizep, int *flagsp, t_symbol **fillp, t_symbol **outlinep)
@@ -600,6 +608,7 @@ int garray_properties(t_garray *x, t_symbol **gfxstubp, t_symbol **namep,
 void glist_arraydialog(t_glist *parent, t_symbol *s, int argc, t_atom *argv)
 //t_floatarg size, t_floatarg fflags, t_floatarg otherflag, float xdraw, float ydraw)
 {
+    redraw_immediately = 1;
     t_atom at[6];
     if (argc !=8) {pd_error(parent,
         "arraydialog: wrong number of args"); return;}
@@ -660,6 +669,7 @@ void glist_arraydialog(t_glist *parent, t_symbol *s, int argc, t_atom *argv)
     //garray_redraw(a);
     canvas_getscroll(glist_getcanvas(parent));
     canvas_dirty(parent, 1);
+    redraw_immediately = 0;
 }
 
 extern void canvas_apply_setundo(t_canvas *x, t_gobj *y);
@@ -1594,7 +1604,11 @@ void garray_redraw(t_garray *x)
            example available from:
            http://disis.music.vt.edu/pipermail/l2ork-dev/2015-January/000676.htm
         */
-        //sys_queuegui(&x->x_gobj, x->x_glist, garray_doredraw);
+        if (!redraw_immediately)
+        {
+            //post("...queue");
+            sys_queuegui(&x->x_gobj, x->x_glist, garray_doredraw);
+        }
 
         /* 1-24-2015 Ico: the approach below, however causes painfully slow and
            inefficient redraw when we use tabwrite which writes one point per
@@ -1611,7 +1625,10 @@ void garray_redraw(t_garray *x)
            than a command per point), and this function is not involved
            anymore. 
         */
-        garray_doredraw(&x->x_gobj, x->x_glist);
+        else {
+            //post("...immediately");
+            garray_doredraw(&x->x_gobj, x->x_glist);
+        }
 }
 
    /* This function gets the template of an array; if we can't figure
