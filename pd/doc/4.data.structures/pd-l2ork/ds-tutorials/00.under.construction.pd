@@ -1,19 +1,19 @@
 #N struct working-man-scalar float x float y;
-#N canvas 578 294 836 618 10;
-#N canvas 195 124 671 300 template 0;
-#X obj 121 -2492 struct working-man-scalar float x float y;
-#N canvas 725 143 450 300 init 0;
-#X obj 88 67 line;
-#X obj 88 -19 loadbang;
-#X msg 88 135 transform matrix -1 0 0 1 510.336 0 translate 200 200
+#N canvas 578 306 836 618 10;
+#N canvas 602 738 348 139 template 0;
+#X obj 35 22 struct working-man-scalar float x float y;
+#N canvas 725 155 481 299 init 0;
+#X obj 78 153 line;
+#X obj 78 31 loadbang;
+#X msg 78 205 transform matrix -1 0 0 1 510.336 0 translate 200 200
 scale \$1 translate -200 -200;
-#X obj 88 112 pow 3;
-#X msg 186 41 0.7 400;
-#X obj 88 169 outlet;
-#X obj 186 20 del 750;
-#X msg 88 23 0.2 \, 0.9 750;
-#X obj 88 2 del 750;
-#X msg 41 68 0.4;
+#X obj 78 182 pow 3;
+#X msg 176 129 0.7 400;
+#X obj 78 239 outlet;
+#X obj 176 103 del 750;
+#X msg 78 103 0.2 \, 0.9 750;
+#X obj 78 72 del 750;
+#X msg 31 103 0.4;
 #X connect 0 0 3 0;
 #X connect 1 0 9 0;
 #X connect 1 0 8 0;
@@ -25,8 +25,8 @@ scale \$1 translate -200 -200;
 #X connect 8 0 7 0;
 #X connect 8 0 6 0;
 #X connect 9 0 3 0;
-#X restore 121 -2454 pd init;
-#N canvas 548 143 450 559 (subpatch) 0;
+#X restore 35 60 pd init;
+#N canvas 548 155 521 894 (subpatch) 0;
 #X obj 76 44 loadbang;
 #X obj 76 86 draw path M 41.184 453.06 C 18.504 453.06 0 434.556 0
 411.804 C 0 404.532 1.872 397.476 5.544 391.212 L 219.528 20.628 C
@@ -218,7 +218,7 @@ L 258.192 372.204 L 254.304 371.484 z;
 #X connect 19 0 20 0;
 #X connect 21 0 5 0;
 #X connect 22 0 1 0;
-#X restore 121 -2430 draw g;
+#X restore 35 84 draw g;
 #X connect 1 0 2 0;
 #X restore 153 580 pd template;
 #X scalar working-man-scalar -105 278 \;;
@@ -243,13 +243,15 @@ commands it conatins. It might also be handy to search abstractions
 for drawing instructions \, but that isn't supported at the moment.
 ;
 #X text 84 362 Needed:;
-#N canvas 290 275 450 300 META 0;
-#X text 16 6 KEYWORDS tutorial data_structure draw;
-#X text 16 26 LICENSE SIBSD;
-#X text 16 46 DESCRIPTION overview of svg-based data structure drawing
+#N canvas 290 299 376 166 META 0;
+#X text 16 16 KEYWORDS tutorial data_structure draw;
+#X text 16 36 LICENSE SIBSD;
+#X text 16 56 DESCRIPTION overview of svg-based data structure drawing
 commands;
-#X text 16 76 AUTHOR Jonathan Wilkes;
-#X text 16 96 HELP_PATCH_AUTHORS Jonathan Wilkes;
+#X text 16 122 HELP_PATCH_AUTHORS Jonathan Wilkes and Ivica Ico Bukvic
+;
+#X text 16 89 AUTHOR Jonathan Wilkes. Port to new GOP drawing by Ivica
+Ico Bukvic., f 50;
 #X restore 731 580 pd META;
 #X text 429 31 Unstable methods;
 #X text 429 31 ________________;
