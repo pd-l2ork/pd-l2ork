@@ -399,11 +399,16 @@ static void disis_gpio_free(t_disis_gpio *x) {
 static void *disis_gpio_new(t_floatarg f)
 {
     if (!disis_gpio_isvalidpin((int)f)) return(NULL);
+    /*
+    // ico@vt.edu 2022-10-03: this is not necessary anymore
+    // because newer Raspbian now provides proper permissions
+    // not to require sudo to access the GPIOs
     if (geteuid () != 0)
     {
         post("error: disis_gpio external requires pd-l2ork to be run with root privileges. You can achieve this by doing 'sudo pd-l2ork'. Alternately, if running pd-l2ork remotely via ssh use 'sudo -E pd-l2ork' to preserve the enviroment.") ;
         return(NULL);
     }
+    */
     //char buf[FILENAME_MAX];
     //canvas_makefilename(glist_getcanvas((t_glist*)canvas_getcurrent()), "@pd_extra/disis_gpio/chown_gpio&", buf, FILENAME_MAX);
     //if (system(buf) < 0) { // first to adjust permissions for /sys/class/gpio so that we can export
