@@ -163,11 +163,13 @@ Hard drive space required: *roughly 2 GB*
         brew install python
         brew install lua
         brew install fluidsynth
+        brew install faac
         brew install lame
         brew install libvorbis
         brew install speex
         brew install gsl
         brew install libquicktime
+        brew install sdl2
         brew install pkg-config
         brew install gettext
         brew install freetype2

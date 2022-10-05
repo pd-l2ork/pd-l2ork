@@ -26,6 +26,8 @@
 #include "unstable/forky.h"
 #include "hammer/file.h"
 
+EXTERN int sys_hostfontsize(int fontsize);
+
 struct _hammerfile
 {
     t_pd                 f_pd;

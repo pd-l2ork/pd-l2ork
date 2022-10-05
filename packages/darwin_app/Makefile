@@ -68,14 +68,9 @@ darwin_app: darwin_app_core extended_install darwin_app_embed_libs
 NWFILES = $(foreach file,$(wildcard $(cvs_root_dir)/pd/nw/*),$(DESTDIR)/bin/$(notdir $(file)))
 
 extended_install:
-# on Mac OS X 10.6/Snow Leopard don't build Gem since it needs Carbon
+# We now build Gem regardless the version. LATER clean this if statement.
 ifeq ($(shell uname -r | sed 's|10\.[0-9][0-9]*\.[0-9][0-9]*|10|'),10)
-	$(MAKE) -C $(packages_src) $(DEST_PATHS) abstractions_install
-	$(MAKE) -C $(packages_src) $(DEST_PATHS) externals_install
-	$(MAKE) -C $(packages_src) $(DEST_PATHS) readme_install
-	$(MAKE) -C $(packages_src) $(DEST_PATHS) welcome_install
-	$(MAKE) -C $(packages_src) $(DEST_PATHS) license_install
-	$(MAKE) -C $(packages_src) $(DEST_PATHS) noncvs_install
+	$(MAKE) -C $(packages_src) $(DEST_PATHS) extended_install
 else
 	$(MAKE) -C $(packages_src) $(DEST_PATHS) extended_install
 endif
@@ -153,8 +148,6 @@ rez_install:
 
 darwin_app_embed_libs:
 # embed libquicktime plugins
-	#install -d $(PD_APP_CONTENTS)/lib/libquicktime1
-	#install -p /sw/lib/libquicktime1/*.so $(PD_APP_CONTENTS)/lib/libquicktime1
 	./embed-MacOSX-dependencies.sh $(PD_APP_CONTENTS)
 
 # shortcut to install the readme on non-Extended builds
@@ -310,8 +303,6 @@ test_locations:
 	@echo "HELPDIR  $(helpdir)"
 	@echo "MANUALSDIR  $(manualsdir)"
 	@echo "EXAMPLESDIR  $(examplesdir)"
-	@echo --------------------------------------------------
-	sw_vers
 	@echo --------------------------------------------------
 	autoconf --version
 	@echo --------------------------------------------------

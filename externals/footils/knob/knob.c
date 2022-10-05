@@ -31,7 +31,11 @@
 #include "g_canvas.h"
 
 #include "g_all_guis.h"
+/* This really should be part of g_all_guis.h... */
+EXTERN t_int gfxstub_haveproperties(void *key);
+
 #include <math.h>
+
 
 #ifdef WIN32
 #include <io.h>
@@ -72,8 +76,6 @@ static void knob_draw_config(t_knob *x,t_glist *glist);
 static void knob_set(t_knob *x, t_floatarg f);
 static void knob_interactive(t_knob *x, t_floatarg f);
 static void knob_width(t_knob *x, t_symbol *s, int ac, t_atom *av);
-
-extern t_int gfxstub_haveproperties(void *key);
 
 /* ---------------- widget helper functions --------------------- */
 

@@ -86,6 +86,7 @@ extern t_class *text_class;
 //    int *xp2, int *yp2);
 // ico 2021-11-16: from s_file.c
 extern int sys_curved_cords;
+extern int garray_joc(t_garray *x);
 
 static int canvas_find_index1, canvas_find_index2, canvas_find_wholeword,
            canvas_num_found = 0;

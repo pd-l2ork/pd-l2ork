@@ -9,6 +9,10 @@
 #pragma warning( disable : 4305 )
 #endif
 
+#ifndef _WIN32
+#include <stdlib.h>
+#endif
+
 /* Append " x " to the following line to show debugging messages */
 //#define DEBUG(x)
 

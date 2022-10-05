@@ -52,6 +52,10 @@
 #include <windows.h>    /* for Sleep() */
 #endif
 
+#ifdef __APPLE__
+#include <fcntl.h>
+#endif
+
 /* define this to enable thread signaling instead of polling */
 /* #define THREADSIGNAL */
 

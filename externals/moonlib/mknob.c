@@ -23,6 +23,7 @@
 #include <unistd.h>
 #endif
 
+EXTERN t_int gfxstub_haveproperties(void *key);
 
 #define MKNOB_TANGLE 100
 #define MKNOB_DEFAULTH 100
@@ -48,8 +49,6 @@ typedef struct _mknob
 t_widgetbehavior mknob_widgetbehavior;
 static t_class *mknob_class;
 
-
-extern t_int gfxstub_haveproperties(void *key);
 static void mknob_interactive(t_mknob *x, t_floatarg f);
 
 /* widget helper functions */

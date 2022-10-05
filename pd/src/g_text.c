@@ -51,6 +51,9 @@ extern int glob_autopatch_connectme;
 extern t_gobj *glist_nth(t_glist *x, int n);
 extern int glist_getindex(t_glist *x, t_gobj *y);
 
+extern void properties_set_field_int(t_int props, const char *gui_field, int value);
+extern void scrollbar_synchronous_update(t_glist *glist);
+
 /* ----------------- the "text" object.  ------------------ */
 
     /* add a "text" object (comment) to a glist.  While this one goes for any

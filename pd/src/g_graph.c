@@ -117,6 +117,8 @@ int canvas_has_scalars_only(t_canvas *x)
    yet to be typed into, as this is one way how one can instantiate new
    scalar inside a subpatch)
 */
+extern void canvas_draw_gop_resize_hooks(t_canvas* x);
+
 void glist_update_redrect(t_glist *x)
 {
     //post("glist_update_redrect");

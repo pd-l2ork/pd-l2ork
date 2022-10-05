@@ -10,6 +10,10 @@
 #pragma warning( disable : 4305 )
 #endif
 
+#ifndef _WIN32
+#include <stdlib.h>
+#endif
+
 /*
 #ifdef _WIN32
 #include <stdlib.h>
