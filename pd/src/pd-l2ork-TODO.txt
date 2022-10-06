@@ -1,4 +1,8 @@
 PD-L2ORK TODO:
+*Tweeter
+  *bug with the dropdown (not drawn in the right column but always on the left one?).
+  *Exclusive focus for modulator and how to autoupdate every time arrow is pressed up or down inside number2 after shift+click.
+
 *Upload latest Tweeter and update server.
 
 *Add reset preferences to default option in the settings and check if the default settings are correct (OSX is ok, as is Linux).
