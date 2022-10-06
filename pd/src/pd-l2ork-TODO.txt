@@ -1,5 +1,9 @@
 PD-L2ORK TODO:
-*Fix OSX build on Xcode 14.
+*Upload latest Tweeter and update server.
+
+*Add reset preferences to default option in the settings and check if the default settings are correct (OSX is ok, as is Linux).
+
+*Enable reindexing without restart?
 
 *Submit patch to js external github.
 
@@ -252,6 +256,8 @@ error: array: no method for 'magicglass'
   *Fixed regression where fake keyup was not registered anymore on canvasobj (see pd_canvas.js' target_is_canvasobj).
   *Fixed GOP subpatch/abstraction titles to be located under the objects for legacy purposes. This only affects GOP enabled patches on their parent canvases. Other text (including arrays) is always on top, which makes more sense for readabaility purposes. LATER consider making this a legacy flag option. The benefit of keeping it this way is so one can continue to use such patches without hide text which should be reserved for K12 objects, for instance, to prevent their editability and potential new user confusion with the complex object appearance and its potential breakage due to a typo/insertion/deletion. On the other hand, keeping text visible, yet covered by another object, enables its visibility when a user wants to edit things (e.g. L2Ork-Tweeter parts). Otherwise, it is invisible.
 *Fixed disis_gpio external and updated build script to accommodate changes.
+*Fix OSX build on Xcode 14.
+*Add new accelerated version of Gem to OSX.
 
 
 
