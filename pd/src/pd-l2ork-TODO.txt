@@ -6,6 +6,8 @@ PD-L2ORK TODO:
 
 *Update Linux and Windows build to use latest nw.js. Check the RPi build for the same.
 
+*HDMI audio output support (RPi).
+
 *Upload latest Tweeter and update server.
 
 *Add reset preferences to default option in the settings and check if the default settings are correct (OSX is ok, as is Linux).
