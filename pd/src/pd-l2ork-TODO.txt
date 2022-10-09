@@ -3,12 +3,12 @@ PD-L2ORK TODO:
   *bug with the dropdown (not drawn in the right column but always on the left one?).
   *Exclusive focus for modulator and how to autoupdate every time arrow is pressed up or down inside number2 after shift+click.
   *bug with insert and delete over network (seems to add double over the internet).
+  *Update Tweeter version.
+  *Upload latest Tweeter and update server.
 
 *Update Linux and Windows build to use latest nw.js. Check the RPi build for the same.
 
 *HDMI audio output support (RPi).
-
-*Upload latest Tweeter and update server.
 
 *Add reset preferences to default option in the settings and check if the default settings are correct (OSX is ok, as is Linux).
 
@@ -267,6 +267,7 @@ error: array: no method for 'magicglass'
 *Fixed disis_gpio external and updated build script to accommodate changes.
 *Fix OSX build on Xcode 14.
 *Add new accelerated version of Gem to OSX.
+*Fixed OSX code signing and mic and camera permissions on Catalina and newer.
 
 
 

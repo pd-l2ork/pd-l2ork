@@ -172,7 +172,7 @@ darwin_app_core: darwin_app_wrapper
 	cd "$(PD_APP_CONTENTS)" && ln -s Resources/app.nw/extra Plugins
 	install -p -m0644 org.puredata.pd-l2ork.$(default).plist "$(PD_APP_CONTENTS)/Resources/org.puredata.pd-l2ork.default.plist"
 # since Pd-vanilla on Mac OS X doesn't have an 'include/pd' folder,
-# Pd-extended will mimic Pd-vanilla's include/pd until Pd-vanilla gets one
+# Pd-L2Ork will mimic Pd-vanilla's include/pd until Pd-vanilla gets one
 	ln -s pd-l2ork "$(PD_APP_CONTENTS)/Resources/app.nw/include/pd"
 	ln -s pd/m_pd.h "$(PD_APP_CONTENTS)/Resources/app.nw/include/m_pd.h"
 
@@ -187,6 +187,9 @@ package: dmg
 
 VOLUME_NAME = Pd-L2Ork
 dmg:
+# ico@vt.edu 2022-10-10: sign the app, so that we can get the mic/camera
+# permission prompts
+	codesign --deep --sign "-" --entitlements "$(CWD)/pd-l2ork.entitlements" "$(BUILD_BASE)/Pd-L2Ork.app"
 	rm -f build.dmg
 	hdiutil create -format UDRW -fs HFS+ -srcfolder "$(BUILD_BASE)" \
 		-volname $(VOLUME_NAME) build.dmg
