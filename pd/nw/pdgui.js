@@ -7617,7 +7617,8 @@ function dropdown_populate(w, label_array, current_index) {
     });
 }
 
-function gui_dropdown_activate(cid, obj_tag, tag, current_index, font_size, state, label_array) {
+function gui_dropdown_activate(cid, obj_tag, tag, current_index,
+    font_size, state, label_array) {
     var g, select_elem, svg_view, g_bbox,
         doc_height,    // document height, excluding the scrollbar
         menu_height, // height of the list of elements inside the div
@@ -7625,6 +7626,7 @@ function gui_dropdown_activate(cid, obj_tag, tag, current_index, font_size, stat
         div_max,     // max height of the div
         scroll_y,
         offset_anchor; // top or bottom
+
     // Annoying: obj_tag is just the "x"-prepended hex value for the object,
     // and tag is the one from rtext_gettag that is used as our gobj id
     gui(cid).get_elem("patchsvg", function(svg_elem, w) {
@@ -7670,7 +7672,7 @@ function gui_dropdown_activate(cid, obj_tag, tag, current_index, font_size, stat
             // set a max-height to force scrollbar if needed
             select_elem.style.setProperty("max-height", div_max + "px");
             select_elem.style.setProperty("left",
-                (elem_get_coords(g).x - svg_view.x) + "px");
+                g_bbox.left + "px");
             // Remove "top" and "bottom" props to keep state clean
             select_elem.style.removeProperty("top");
             select_elem.style.removeProperty("bottom");
