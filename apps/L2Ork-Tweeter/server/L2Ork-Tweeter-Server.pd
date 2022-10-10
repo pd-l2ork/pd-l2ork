@@ -1,4 +1,4 @@
-#N canvas 180 0 1544 975 10;
+#N canvas 180 25 1544 953 10;
 #X floatatom 300 90 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 1238 290 text define clients;
 #X floatatom 738 74 5 0 0 0 - - - 0 0 1, f 5;
@@ -86,7 +86,7 @@ clear the instance.;
 #X text 1170 779 to reset a disconnected client \, server sends all
 others following values for the disconnected client: out-amp 0 \, tracker
 0--this is contained within the client-ping abstraction, f 58;
-#N canvas 522 8 879 964 filter-remote-admin-messages 0;
+#N canvas 522 22 879 964 filter-remote-admin-messages 0;
 #X obj 63 34 t l l;
 #X obj 63 12 inlet;
 #X obj 18 129 gate 2 1;
@@ -987,7 +987,6 @@ modifying of other users' settings, f 34;
 #X obj 765 121 s incoming-packet-socket;
 #X obj 738 98 t f f;
 #X obj 217 340 r \$0-report-leds;
-#X msg 232 741 0.66;
 #X obj 830 582 t l 0 0 l;
 #X obj 569 557 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000 1;
@@ -995,6 +994,7 @@ modifying of other users' settings, f 34;
 slot \, 3 adds it to the requested slot \, and 4 connects user as a
 guest because either the slot is already occupied \, or all slots are
 taken, f 67;
+#X msg 232 741 0.67;
 #X connect 0 0 76 0;
 #X connect 0 0 115 0;
 #X connect 2 0 176 0;
@@ -1120,7 +1120,7 @@ taken, f 67;
 #X connect 134 0 51 0;
 #X connect 134 1 112 0;
 #X connect 134 2 142 0;
-#X connect 134 3 179 0;
+#X connect 134 3 178 0;
 #X connect 135 0 32 0;
 #X connect 135 1 132 1;
 #X connect 137 0 32 0;
@@ -1141,7 +1141,7 @@ taken, f 67;
 #X connect 150 0 4 0;
 #X connect 154 1 153 0;
 #X connect 155 0 161 0;
-#X connect 156 0 178 0;
+#X connect 156 0 181 0;
 #X connect 157 0 155 0;
 #X connect 158 0 160 0;
 #X connect 158 1 155 2;
@@ -1164,9 +1164,9 @@ taken, f 67;
 #X connect 176 0 140 1;
 #X connect 176 1 175 0;
 #X connect 177 0 165 0;
-#X connect 178 0 158 0;
-#X connect 179 0 14 0;
-#X connect 179 1 16 1;
-#X connect 179 2 17 0;
-#X connect 179 3 147 0;
-#X connect 180 0 112 0;
+#X connect 178 0 14 0;
+#X connect 178 1 16 1;
+#X connect 178 2 17 0;
+#X connect 178 3 147 0;
+#X connect 179 0 112 0;
+#X connect 181 0 158 0;

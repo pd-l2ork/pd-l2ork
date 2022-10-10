@@ -1,4 +1,4 @@
-#N canvas 325 139 1330 680 10;
+#N canvas 364 384 1330 658 10;
 #X obj 17 257 bng 23 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1;
 #X obj 9 138 cnv 15 814 148 empty empty empty 20 12 0 14 #8080c0 #404040
@@ -24,9 +24,9 @@
 #X obj 349 157 nbx 5 14 1 1e+37 0 1 null-s null-r ms 0 6 0 8 #fcb46c
 #000000 #000000 2000 256 1 0 1 0;
 #X obj 409 157 nbx 5 14 0 99999 0 1 null-s null-r empty 0 -7 0 12 #fcb46c
-#000000 #000000 40 256 0 0 1 0;
+#000000 #000000 40 256 0 0 1 1;
 #X obj 469 157 nbx 5 14 1 9999 0 1 null-s null-r empty 0 -7 0 12 #fcb46c
-#000000 #000000 1000 256 0 0 1 0;
+#000000 #000000 1000 256 0 0 1 1;
 #X obj 18 234 tgl 15 0 null-s \$1-manual-toggle-tracker PLAY(tab) 17
 6 0 10 #fcb46c #000000 #000000 0 1 1;
 #X obj 18 199 tgl 15 0 null-s null-r LOOP(alt) 17 6 0 10 #fcb46c #000000
@@ -284,7 +284,7 @@
 #X text 417 48 logic for detecting dsp status on startup;
 #X obj 527 91 delay 10;
 #X obj 341 248 hsl 40 15 0 1.5708 0 1 empty empty empty 12 6 0 10 #fcb46c
-#fc6418 #000000 2748 0 0 1;
+#fc6418 #000000 2500 0 0 1;
 #X obj 13 446 *~;
 #X obj 50 446 *~;
 #X obj 28 408 line~;
@@ -597,7 +597,7 @@ ms 1 5 0 8 #fcb46c #000000 #000000 1500 256 1 0 1 0;
 #X msg 327 46 set \$1;
 #X obj 669 596 tosymbol;
 #X obj 468 649 s \$0-toggle-local;
-#N canvas 635 7 1264 961 tracker 0;
+#N canvas 635 25 1264 917 tracker 0;
 #X obj 115 261 coll key-diatonic-coll.txt;
 #C restore;
 #X obj 761 655 tosymbol;
@@ -618,15 +618,15 @@ ms 1 5 0 8 #fcb46c #000000 #000000 1500 256 1 0 1 0;
 #X obj 913 198 - 2;
 #X floatatom 913 220 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 446 785 sel 0;
-#X msg 889 454 \$1 0;
-#X obj 889 432 t f f, f 7;
+#X msg 888 454 \$1 0;
+#X obj 888 432 t f f, f 7;
 #X obj 691 818 sprintf %s%s;
-#X msg 928 514 \$1 \$2;
-#X msg 973 410 160;
-#X obj 973 432 sprintf %c;
-#X obj 928 490 pack 0 s;
-#X obj 973 454 tosymbol;
-#X obj 973 388 loadbang;
+#X msg 927 514 \$1 \$2;
+#X msg 972 410 160;
+#X obj 972 432 sprintf %c;
+#X obj 927 490 pack 0 s;
+#X obj 972 454 tosymbol;
+#X obj 972 388 loadbang;
 #X obj 205 160 key 1;
 #X msg 761 716 <;
 #X obj 574 241 metro 36;
@@ -995,6 +995,8 @@ become rather cpu intensive.;
 #X msg 862 771 1;
 #X obj 439 422 t f f;
 #X obj 439 497 s \$1-tracker-sync;
+#X obj 868 160 gate 1 0;
+#X obj 788 56 r \$0-toggle-local;
 #X connect 0 0 194 0;
 #X connect 1 0 196 0;
 #X connect 2 0 3 0;
@@ -1063,7 +1065,7 @@ become rather cpu intensive.;
 #X connect 54 0 14 0;
 #X connect 55 0 107 0;
 #X connect 56 0 123 0;
-#X connect 57 0 15 0;
+#X connect 57 0 215 1;
 #X connect 57 1 56 0;
 #X connect 58 0 64 0;
 #X connect 59 0 61 0;
@@ -1292,6 +1294,8 @@ become rather cpu intensive.;
 #X connect 212 0 211 0;
 #X connect 213 0 214 0;
 #X connect 213 1 135 0;
+#X connect 215 0 15 0;
+#X connect 216 0 215 0;
 #X restore 13 380 pd tracker \$1;
 #N canvas 597 97 1084 910 instrument 0;
 #X obj 357 669 osc~;
@@ -1458,7 +1462,7 @@ preset;
 #X text 1203 652 l2ork.music.vt.edu;
 #X text 220 598 toggle keyboard input and network output;
 #X obj 491 392 r override-myid;
-#N canvas 723 345 535 432 delete-logic 0;
+#N canvas 723 345 535 410 delete-logic 0;
 #X obj 153 275 gate 1 0;
 #X obj 70 243 r \$0-toggle-local;
 #X msg 464 95 0;
