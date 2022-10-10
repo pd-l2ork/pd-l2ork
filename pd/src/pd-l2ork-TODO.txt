@@ -1,9 +1,10 @@
 PD-L2ORK TODO:
 *Tweeter
-  *bug with the dropdown (not drawn in the right column but always on the left one?).
   *Upload latest Tweeter and update server.
 
-*On OSX and 0.67.1 nwjs changing toplevel menu to respond to editable vs. non-editable patches is not working always and there are sporadic crashes. May have to do with code signing?
+*On Linux update dependencies file to also include libg
+
+*On OSX and 0.67.1 nwjs changing toplevel menu to respond to editable vs. non-editable patches is not working always and there are sporadic crashes. May have to do with code signing? 0.62.1, 0.62.2, and 0.69.1 are slow. Trying 0.63.1...
 
 *Update Linux and Windows build to use latest nw.js. Check the RPi build for the same.
 
@@ -269,6 +270,8 @@ error: array: no method for 'magicglass'
 *Fix OSX build on Xcode 14.
 *Add new accelerated version of Gem to OSX.
 *Fixed OSX code signing and mic and camera permissions on Catalina and newer.
+*Improved deb dependencies.
+*Fixed dropdown menu offset due to new GOP drawing implementation (only affected menu belonging to a dropdown two or more levels deep).
 
 
 
