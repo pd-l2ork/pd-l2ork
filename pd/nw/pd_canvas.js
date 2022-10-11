@@ -1603,9 +1603,12 @@ var canvas_events = (function() {
             // We need to separate these into nw_window events and html5 DOM
             // events closing the Window this isn't actually closing the window
             // yet
-            gui.Window.get().on("close", function() {
+            gui.Window.get().on("close", function(arg) {
                 pdgui.canvas_check_geometry(name);
                 pdgui.pdsend(name, "menuclose 0");
+                if (arg === "quit") {
+                    pdgui.menu_quit();
+                }
             });
             // update viewport size when window size changes
             gui.Window.get().on("maximize", function() {

@@ -2,15 +2,6 @@ PD-L2ORK TODO:
 *Tweeter
   *Upload latest Tweeter and update server.
 
-*Debug menus option enabling/disabling sometimes not getting updated in OSX (toggling of options depending on the context). This one is a real mess when opening complex patches.
-
-*On OSX quit button inside a patch only closes that patch???
-
-*Update for new GOP drawing methods:
-  ggee/gui/envgen.c
-  pddp/helplink.c
-  tof/src/imagebang.c
-
 *Pick the best nw.js:
   0.28.1 is fast but (need to test on OSX).
   0.40.2 is fast but crashes occasionally.
@@ -26,6 +17,12 @@ PD-L2ORK TODO:
   0.63.1 crashes on Linux.
   0.67.1 is slow and crashes on OSX (need to test on OSX).
   0.69.1 is slow.
+
+
+*Update for new GOP drawing methods:
+  ggee/gui/envgen.c
+  pddp/helplink.c
+  tof/src/imagebang.c
 
 *Update Linux and Windows build to use latest nw.js. Check the RPi build for the same.
 
