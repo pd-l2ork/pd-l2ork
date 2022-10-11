@@ -2,7 +2,10 @@ PD-L2ORK TODO:
 *Tweeter
   *Upload latest Tweeter and update server.
 
-*On Linux update dependencies file to also include libg
+*Update for new GOP drawing methods:
+  ggee/gui/envgen.c
+  pddp/helplink.c
+  tof/src/imagebang.c
 
 *On OSX and 0.67.1 nwjs changing toplevel menu to respond to editable vs. non-editable patches is not working always and there are sporadic crashes. May have to do with code signing? 0.62.1, 0.62.2, and 0.69.1 are slow. Trying 0.63.1...
 

@@ -3069,16 +3069,17 @@ exports.gui = gui;
                  whose selection border should be highlighted when they are selected.
 */
 function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplevel, is_canvas_obj) {
-    /*
-    post("===\ngui_gobj_new drawon=" + cid + " ownercid=" + ownercid +
-        " parentcid=" + parentcid + " tag=" + tag + " type=" + type +
-        " xpos=" + xpos + " ypos=" + ypos + " is_toplevel=" + is_toplevel +
-        " is_canvas_obj=" + is_canvas_obj);
-    */
     var g, draw_xpos, draw_ypos;
     draw_xpos = xpos;
     draw_ypos = ypos;
     if (type === "graph") { // graph object
+        /*
+        post("===\ngui_gobj_new GRAPH drawon=" + cid + " ownercid=" + ownercid +
+            " parentcid=" + parentcid + " tag=" + tag + " type=" + type +
+            " xpos=" + xpos + " ypos=" + ypos + " is_toplevel=" + is_toplevel +
+            " is_canvas_obj=" + is_canvas_obj);
+        */
+
         /*
         post("...GOP svg_elem=" + (is_toplevel === 1 ? "patchsvg" : 
             (parentcid === cid ? "[ownercid]" + ownercid + "svg" :
@@ -3122,19 +3123,33 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
        });
    } else { // non-graph object (can be inside a GOP, tested with is_toplevel)
         //post("...OBJECT classname=" + ownercid + "svg");
+        /*
+        post("===\ngui_gobj_new OBJECT drawon=" + cid + " ownercid=" + ownercid +
+            " parentcid=" + parentcid + " tag=" + tag + " type=" + type +
+            " xpos=" + xpos + " ypos=" + ypos + " is_toplevel=" + is_toplevel +
+            " is_canvas_obj=" + is_canvas_obj);
+        */
         gui(cid).get_elem("patchsvg", function(svg_elem, w) {
             var transform_string;
             if (is_toplevel === 0) {
                 var tgt = w.document.getElementsByClassName(ownercid + "svg");
                 if (parentcid === cid) {
                     /*
-                    post("......parentcid==drawcid parentGOPx=" +
-                        tgt[0].getCTM().e + " parentGOPy=" + tgt[0].getCTM().f);
+                    post("......parentcid==drawcid parentcid=" + parentcid +
+                        " (" + tgt[0].getCTM().a + 
+                        " " + tgt[0].getCTM().b +
+                        " " + tgt[0].getCTM().c +
+                        " " + tgt[0].getCTM().d +
+                        " " + tgt[0].getCTM().e +
+                        " " + tgt[0].getCTM().f + ")"
+                    );
                     */
+                    var svg_view_box = svg_elem.getAttribute("viewBox").split(" ");
+                    
                     draw_xpos += 0.5;
                     draw_ypos += 0.5;
-                    draw_xpos -= tgt[0].getCTM().e;
-                    draw_ypos -= tgt[0].getCTM().f;
+                    draw_xpos = draw_xpos - tgt[0].getCTM().e - svg_view_box[0];
+                    draw_ypos = draw_ypos - tgt[0].getCTM().f - svg_view_box[1];
                 } else {
                     //post("......parentcid != drawcid");
                     draw_xpos -= tgt[0].getAttribute("orig_xpos");
@@ -4650,7 +4665,7 @@ function gui_numbox_new(cid, ownercid, parentcid, tag, color, x, y, w, h, drawst
     // so we must create its gobj manually
     //gui(cid).get_elem("patchsvg", function() {
     //    var g = gui_gobj_new(cid, tag, "iemgui", x, y, is_toplevel);
-    var g = gui_gobj_new(cid, ownercid, parentcid, tag, "iemgui", x, y, is_toplevel);
+    var g = gui_gobj_new(cid, ownercid, parentcid, tag, "iemgui", x, y, is_toplevel, 0);
     var border = create_item(cid, "path", {
         d: numbox_data_string_frame(w, h),
         fill: color,
@@ -6373,10 +6388,11 @@ function gui_image_coords(cid, ownercid, parentcid, tag, x, y, is_toplevel) {
         gui(cid).get_elem("patchsvg", function(svg_elem, w) {
             var tgt = w.document.getElementsByClassName(ownercid + "svg");
             if (parentcid === cid) {
+                var svg_view_box = svg_elem.getAttribute("viewBox").split(" ");
                 draw_xpos += 0.5;
                 draw_ypos += 0.5;
-                draw_xpos -= tgt[0].getCTM().e;
-                draw_ypos -= tgt[0].getCTM().f;
+                draw_xpos = draw_xpos - tgt[0].getCTM().e - svg_view_box[0];
+                draw_ypos = draw_ypos - tgt[0].getCTM().f - svg_view_box[1];
             } else {
                 draw_xpos -= tgt[0].getAttribute("orig_xpos");
                 draw_ypos -= tgt[0].getAttribute("orig_ypos");
@@ -7318,7 +7334,7 @@ function gui_graph_tick_label(cid, tag, x, y, text, font, font_size, font_weight
 
 function gui_canvas_drawredrect(cid, x1, y1, x2, y2) {
     gui(cid).get_elem("patchsvg", function(svg_elem) {
-        var g = gui_gobj_new(cid, cid, cid, cid, "gop_rect", x1, y1, 1);
+        var g = gui_gobj_new(cid, cid, cid, cid, "gop_rect", x1, y1, 1, 0);
         var r = create_item(cid, "rect", {
             width: x2 - x1,
             height: y2 - y1,
