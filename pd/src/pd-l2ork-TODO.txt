@@ -293,6 +293,10 @@ error: array: no method for 'magicglass'
 *Fixed OSX code signing and mic and camera permissions on Catalina and newer.
 *Improved deb dependencies.
 *Fixed dropdown menu offset due to new GOP drawing implementation (only affected menu belonging to a dropdown two or more levels deep).
+*Fixed regression where deselect single GOP patch deselected all of them.
+*Fixed highlighting of message and number2 objects using newly implemented GOP drawing approach.
+*Fixed incorrect drawing of GOP objects when placed in a negative X or Y location on canvas.
+*Improvements in handling OSX menu bar.
 
 
 
