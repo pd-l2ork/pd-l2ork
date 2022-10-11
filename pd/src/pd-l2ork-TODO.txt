@@ -3,15 +3,21 @@ PD-L2ORK TODO:
   *Upload latest Tweeter and update server.
 
 *Pick the best nw.js:
-  0.28.1 is fast but (need to test on OSX).
-  0.40.2 is fast but crashes occasionally.
-  0.41.3 is fast but crashes occasionally. On OSX and parent window option does not work.
+  0.28.1 is fast but crashes occasionally. parent window and next/prev option does not work.
+  0.40.2 is fast but crashes occasionally. parent window and next/prev option does not work.
+  0.41.3 is fast but crashes occasionally. parent window and next/prev option does not work.
+  0.42.3 parent window and next/prev option does not work.
+  0.42.4 register_window_id not found error. does not display anything. everything from here has CMD+(1-9) broken on OSX.
   0.42.5 register_window_id not found error.
   0.42.6 register_window_id not found error.
+  0.43.5 segfauls on Linux when opening dev tools.
+  0.43.6 segfauls on Linux when opening dev tools.
+  0.44.6 is slow. everything from here works with next/prev window and Pd window options.
   0.54.0 is slow.
   0.56.0 is slow.
   0.58.0 is slow.
-  0.60.0 is slow. Everything form here below also has incorrectly placed windows.
+  0.59.1 is slow.
+  0.60.0 is slow. everything form here below also has incorrectly placed windows.
   0.62.1 is slow.
   0.62.2 is slow.
   0.63.1 crashes on Linux.
