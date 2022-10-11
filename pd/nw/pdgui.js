@@ -3352,7 +3352,9 @@ function gui_message_draw_border(cid, tag, width, height) {
             points: message_border_points(width, height),
             fill: "none",
             stroke: "black",
-            class: "border"
+            // message is not visible inside GOP, so we don't have to worry about
+            // whether it is toplevel object. we should never get here if it is not.
+            class: "toplevel border"
             //id: tag + "border"
         });
         frag.appendChild(polygon);
@@ -4655,7 +4657,7 @@ function gui_numbox_new(cid, ownercid, parentcid, tag, color, x, y, w, h, drawst
         stroke: "black",
         "stroke-width": (drawstyle < 2 ? 1 : 0),
         id: (tag + "border"),
-        "class": "border"
+        "class": (is_toplevel === 1 ? "toplevel " : "") + "border"
     });
     g.appendChild(border);
     var triangle = create_item(cid, "path", {
