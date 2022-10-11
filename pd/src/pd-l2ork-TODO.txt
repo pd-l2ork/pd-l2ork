@@ -2,28 +2,33 @@ PD-L2ORK TODO:
 *Tweeter
   *Upload latest Tweeter and update server.
 
-*Pick the best nw.js:
-  0.28.1 is fast but crashes occasionally. parent window and next/prev option does not work.
-  0.40.2 is fast but crashes occasionally. parent window and next/prev option does not work.
-  0.41.3 is fast but crashes occasionally. parent window and next/prev option does not work.
-  0.42.3 parent window and next/prev option does not work.
-  0.42.4 register_window_id not found error. does not display anything. everything from here has CMD+(1-9) broken on OSX.
-  0.42.5 register_window_id not found error.
-  0.42.6 register_window_id not found error.
-  0.43.5 segfauls on Linux when opening dev tools.
-  0.43.6 segfauls on Linux when opening dev tools.
-  0.44.6 is slow. everything from here works with next/prev window and Pd window options.
-  0.54.0 is slow.
-  0.56.0 is slow.
-  0.58.0 is slow.
-  0.59.1 is slow.
-  0.60.0 is slow. everything form here below also has incorrectly placed windows.
-  0.62.1 is slow.
-  0.62.2 is slow.
-  0.63.1 crashes on Linux.
-  0.67.1 is slow and crashes on OSX (need to test on OSX).
-  0.69.1 is slow.
+*Check if moving data structure on a toplevel canvas (e.g. nunchuk joystick
+crosshair) appropriately moves it on the gop canvas (looks like it moves it less).
+  *Update, this is still broken and needs to be revisited (likely similar to gui_gobj_new).
 
+*Pick the best nw.js
+  *Ocassional crashes may be caused by pd-l2ork, rather than nw.js. perhaps dynamic menu updating on OSX?
+  *Current status:
+    0.28.1 is fast but crashes occasionally. parent window and next/prev option does not work.
+    0.40.2 is fast but crashes occasionally. parent window and next/prev option does not work.
+    0.41.3 is fast but crashes occasionally. parent window and next/prev option does not work.
+    0.42.3 parent window and next/prev option does not work.
+    0.42.4 register_window_id not found error. does not display anything. everything from here has CMD+(1-9) broken on OSX.
+    0.42.5 register_window_id not found error.
+    0.42.6 register_window_id not found error.
+    0.43.5 segfauls on Linux when opening dev tools.
+    0.43.6 segfauls on Linux when opening dev tools.
+    0.44.6 is slow. everything from here works with next/prev window and Pd window options.
+    0.54.0 is slow.
+    0.56.0 is slow.
+    0.58.0 is slow.
+    0.59.1 is slow.
+    0.60.0 is slow. everything form here below also has incorrectly placed windows.
+    0.62.1 is slow.
+    0.62.2 is slow.
+    0.63.1 crashes on Linux.
+    0.67.1 is slow and ocassionally crashes on OSX (need to test on OSX).
+    0.69.1 is slow.
 
 *Update for new GOP drawing methods:
   ggee/gui/envgen.c
@@ -39,9 +44,6 @@ PD-L2ORK TODO:
 *Enable reindexing without restart?
 
 *Submit patch to js external github.
-
-*Check if moving data structure on a toplevel canvas (e.g. nunchuk joystick
-crosshair) appropriately moves it on the gop canvas (looks like it moves it less).
 
 *Make data structure without a template have a visible square.
 
