@@ -7447,9 +7447,12 @@ function gui_raise_window(cid) {
 // Unfortunately DOM window.focus doesn't actually focus the window, so we
 // have to use the chrome API
 function gui_raise_pd_window() {
+    pd_window.window.focus();
+    /*
     chrome.windows.getAll(function (w_array) {
         chrome.windows.update(w_array[0].id, { focused: true });
     });
+    */
 }
 
 // Using the chrome app API, because nw.js doesn't seem

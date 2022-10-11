@@ -566,6 +566,7 @@ function create_menu(gui, type) {
     }
     // Win sub-entries
     m.win = {};
+    /*
     winman_menu.append(m.win.nextwin = new gui.MenuItem({
         label: l("menu.nextwin"),
         key: shortcuts.menu.nextwin.key,
@@ -578,6 +579,7 @@ function create_menu(gui, type) {
         modifiers: shortcuts.menu.prevwin.modifiers,
         tooltip: l("menu.prevwin_tt")
     }));
+    */
     if (canvas_menu) {
         winman_menu.append(new gui.MenuItem({ type: "separator" }));
         winman_menu.append(m.win.parentwin = new gui.MenuItem({

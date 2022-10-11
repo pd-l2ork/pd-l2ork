@@ -202,7 +202,7 @@ if [ ! -d "../pd/nw/nw" ]; then
 		if [ $arch == "armv7l" ]; then
 			nwjs_version="v0.40.3"
 		else
-			nwjs_version="v0.59.1"
+			nwjs_version="v0.42.3"
 		fi
 	fi
 
