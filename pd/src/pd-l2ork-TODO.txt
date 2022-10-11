@@ -2,12 +2,30 @@ PD-L2ORK TODO:
 *Tweeter
   *Upload latest Tweeter and update server.
 
+*Debug menus option enabling/disabling sometimes not getting updated in OSX (toggling of options depending on the context). This one is a real mess when opening complex patches.
+
+*On OSX quit button inside a patch only closes that patch???
+
 *Update for new GOP drawing methods:
   ggee/gui/envgen.c
   pddp/helplink.c
   tof/src/imagebang.c
 
-*On OSX and 0.67.1 nwjs changing toplevel menu to respond to editable vs. non-editable patches is not working always and there are sporadic crashes. May have to do with code signing? 0.62.1, 0.62.2, and 0.69.1 are slow. Trying 0.63.1...
+*Pick the best nw.js:
+  0.28.1 is fast but (need to test on OSX).
+  0.40.2 is fast but crashes occasionally.
+  0.41.3 is fast but crashes occasionally. On OSX and parent window option does not work.
+  0.42.5 register_window_id not found error.
+  0.42.6 register_window_id not found error.
+  0.54.0 is slow.
+  0.56.0 is slow.
+  0.58.0 is slow.
+  0.60.0 is slow. Everything form here below also has incorrectly placed windows.
+  0.62.1 is slow.
+  0.62.2 is slow.
+  0.63.1 crashes on Linux.
+  0.67.1 is slow and crashes on OSX (need to test on OSX).
+  0.69.1 is slow.
 
 *Update Linux and Windows build to use latest nw.js. Check the RPi build for the same.
 

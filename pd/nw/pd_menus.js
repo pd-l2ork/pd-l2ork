@@ -7,6 +7,7 @@ var recent_files_submenu = null;
 var shortcuts = require("./pd_shortcuts.js");
 
 function create_menu(gui, type) {
+    //pdgui.post("create_menu type=" + type);
     // On OSX we create a menu only once, and then enable/disable menuitems
     // and switch out functions as needed.
 
@@ -37,41 +38,6 @@ function create_menu(gui, type) {
         // either case.
         pdgui.populate_recent_files(recent_files_submenu);
     }
-
-    // File sub-entries
-    m.font = {};
-    font_submenu = new gui.Menu();
-
-    font_submenu.append(m.font.s8 = new gui.MenuItem({
-        label: 8,
-        tooltip: 8,
-        type: "checkbox"
-    }));
-    font_submenu.append(m.font.s10 = new gui.MenuItem({
-        label: 10,
-        tooltip: 10,
-        type: "checkbox"
-    }));
-    font_submenu.append(m.font.s12 = new gui.MenuItem({
-        label: 12,
-        tooltip: 12,
-        type: "checkbox"
-    }));
-    font_submenu.append(m.font.s16 = new gui.MenuItem({
-        label: 16,
-        tooltip: 16,
-        type: "checkbox"
-    }));
-    font_submenu.append(m.font.s24 = new gui.MenuItem({
-        label: 24,
-        tooltip: 24,
-        type: "checkbox"
-    }));
-    font_submenu.append(m.font.s36 = new gui.MenuItem({
-        label: 36,
-        tooltip: 36,
-        type: "checkbox"
-    }));
 
     // OSX just spawns a single canvas menu and then enables/disables
     // the various menu items as needed.
@@ -162,10 +128,47 @@ function create_menu(gui, type) {
             tooltip: l("menu.close_tt")
         }));
     }
-    file_menu.append(m.file.quit = new gui.MenuItem({
-        label: l("menu.quit"),
-        key: shortcuts.menu.quit.key,
-        modifiers: shortcuts.menu.quit.modifiers 
+    if (process.platform !== "darwin") {
+        file_menu.append(m.file.quit = new gui.MenuItem({
+            label: l("menu.quit"),
+            key: shortcuts.menu.quit.key,
+            modifiers: shortcuts.menu.quit.modifiers 
+        }));
+    }
+
+    // Edit sub-entries
+    m.font = {};
+    font_submenu = new gui.Menu();
+
+    font_submenu.append(m.font.s8 = new gui.MenuItem({
+        label: 8,
+        tooltip: 8,
+        type: "checkbox"
+    }));
+    font_submenu.append(m.font.s10 = new gui.MenuItem({
+        label: 10,
+        tooltip: 10,
+        type: "checkbox"
+    }));
+    font_submenu.append(m.font.s12 = new gui.MenuItem({
+        label: 12,
+        tooltip: 12,
+        type: "checkbox"
+    }));
+    font_submenu.append(m.font.s16 = new gui.MenuItem({
+        label: 16,
+        tooltip: 16,
+        type: "checkbox"
+    }));
+    font_submenu.append(m.font.s24 = new gui.MenuItem({
+        label: 24,
+        tooltip: 24,
+        type: "checkbox"
+    }));
+    font_submenu.append(m.font.s36 = new gui.MenuItem({
+        label: 36,
+        tooltip: 36,
+        type: "checkbox"
     }));
 
     // Edit menu

@@ -388,7 +388,7 @@ var canvas_events = (function() {
                         // all, so bail out immediately and let the default
                         // handlers take over.
                         return;
-                    } else if (canvas_menu.edit.editmode.checked &&
+                    } else if (m.edit.editmode.checked &&
                                !pdgui.cmd_or_ctrl_key(evt)) {
                         // ag: Disable touch scrolling while we're doing a
                         // selection-drag, for the same reasons we're
@@ -1162,7 +1162,7 @@ var canvas_events = (function() {
             document.addEventListener("mouseup", events.mouseup, false);
             document.addEventListener("touchend", events.mouseup, false);
             state = "normal";
-            set_edit_menu_modals(name, true);
+            set_menu_modals(name, true);
         },
         scalar_drag: function() {
             // This scalar_drag is a prototype for moving more of the editing
@@ -1217,7 +1217,7 @@ var canvas_events = (function() {
             document.addEventListener("mousedown", events.text_mousedown, false);
             document.addEventListener("mouseup", events.text_mouseup, false);
             state = "text";
-            set_edit_menu_modals(name, false);
+            set_menu_modals(name, false);
         },
         floating_text: function() {
             canvas_events.none();
@@ -1230,7 +1230,7 @@ var canvas_events = (function() {
             document.addEventListener("keypress", events.floating_text_keypress, false);
             document.addEventListener("mousemove", events.mousemove, false);
             state = "floating_text";
-            set_edit_menu_modals(name, false);
+            set_menu_modals(name, false);
         },
         dropdown_menu: function() {
             canvas_events.none();
@@ -1620,6 +1620,7 @@ var canvas_events = (function() {
                 pdgui.gui_canvas_get_scroll_on_resize(name);
             });
             gui.Window.get().on("focus", function() {
+                //pdgui.post("focus: patch");
                 nw_window_focus_callback(name);
             });            
             gui.Window.get().on("blur", function() {
@@ -1765,16 +1766,16 @@ function nw_undo_menu(undo_text, redo_text) {
     // otherwise it would turn off text-editing
     // undo/redo.
     if (process.platform !== "darwin" && undo_text === "no") {
-        canvas_menu.edit.undo.enabled = false;
+        m.edit.undo.enabled = false;
     } else {
-        canvas_menu.edit.undo.enabled = true;
-        canvas_menu.edit.undo.label = l("menu.undo") + " " + undo_text;
+        m.edit.undo.enabled = true;
+        m.edit.undo.label = l("menu.undo") + " " + undo_text;
     }
     if (process.platform !== "darwin" && redo_text === "no") {
-        canvas_menu.edit.redo.enabled = false;
+        m.edit.redo.enabled = false;
     } else {
-        canvas_menu.edit.redo.enabled = true;
-        canvas_menu.edit.redo.label = l("menu.redo") + " " + redo_text;
+        m.edit.redo.enabled = true;
+        m.edit.redo.label = l("menu.redo") + " " + redo_text;
     }
 }
 
@@ -1801,54 +1802,83 @@ function instantiate_live_box() {
     }
 }
 
-// Menus for the Patch window
-
-var canvas_menu = {};
-
-function set_edit_menu_modals(window, state) {
+function set_menu_modals(window, state) {
     // ico@vt.edu 2022-06-18: added context_state for patches that should
     // have select options disabled because the patch in question should
     // not be editable.
-    //pdgui.post("set_edit_menu_modals window=" + window);
+    //pdgui.post("set_menu_modals window=" + window);
     var context_state = state;
     // OSX needs to keep these enabled, otherwise the events won't trigger
     if (process.platform === "darwin") {
-        state = true;
+        context_state = true;
     }
     // ico@vt.edu 2022-09-28: only patches with arrays should not be editable
     if (pdgui.get_toplevel_scalars(window) === 1) {
-        //pdgui.post("set_edit_menu_modals has scalars");
+        //pdgui.post("...has scalars");
         context_state = false;
     }
-    canvas_menu.edit.undo.enabled = context_state;
-    canvas_menu.edit.redo.enabled = context_state;
-    canvas_menu.edit.cut.enabled = context_state;
-    canvas_menu.edit.copy.enabled = context_state;
-    canvas_menu.edit.paste.enabled = context_state;
+    //pdgui.post("final state=" + context_state);
+    m.file.save.enabled = context_state;
+    m.file.saveas.enabled = context_state;    
+    m.file.close.enabled = context_state;
 
-    canvas_menu.edit.selectall.enabled = context_state;
-    canvas_menu.edit.font.enabled = context_state;
-    canvas_menu.edit.encapsulate.enabled = context_state;
-    canvas_menu.edit.tidyup.enabled = context_state;
+    m.edit.undo.enabled = context_state;
+    m.edit.redo.enabled = context_state;
+    m.edit.cut.enabled = context_state;
+    m.edit.copy.enabled = context_state;
+    m.edit.paste.enabled = context_state;
 
-    canvas_menu.edit.editmode.enabled = context_state;
-    canvas_menu.edit.cordinspector.enabled = context_state;
+    m.edit.selectall.enabled = context_state;
+    m.edit.font.enabled = context_state;
+    m.edit.encapsulate.enabled = context_state;
+    m.edit.tidyup.enabled = context_state;
 
-    canvas_menu.edit.paste_clipboard.enabled = context_state;
-    canvas_menu.edit.duplicate.enabled = context_state;
-    canvas_menu.edit.reselect.enabled = context_state;
+    m.edit.editmode.enabled = context_state;
+    m.edit.cordinspector.enabled = context_state;
+
+    m.edit.find.enabled = context_state;
+    m.edit.findagain.enabled = context_state;   
+    m.edit.finderror.enabled = context_state; 
+
+    m.edit.paste_clipboard.enabled = context_state;
+    m.edit.duplicate.enabled = context_state;
+    m.edit.reselect.enabled = context_state;
+
+    m.put.object.enabled = context_state;
+    m.put.message.enabled = context_state;
+    m.put.number.enabled = context_state;
+    m.put.symbol.enabled = context_state;
+    m.put.comment.enabled = context_state;
+    m.put.dropdown.enabled = context_state;
+    m.put.bang.enabled = context_state;
+    m.put.toggle.enabled = context_state;
+    m.put.number2.enabled = context_state;
+    m.put.vslider.enabled = context_state;
+    m.put.hslider.enabled = context_state;
+    m.put.knob.enabled = context_state;
+    m.put.vradio.enabled = context_state;
+    m.put.hradio.enabled = context_state;
+    m.put.vu.enabled = context_state;
+    m.put.cnv.enabled = context_state;
+    m.put.image.enabled = context_state;
+    //m.put.graph.enabled = context_state;
+    m.put.array.enabled = context_state;
+
+    m.win.parentwin.enabled = context_state;
+    m.win.visible_ancestor.enabled = context_state;
+    m.win.pdwin.enabled = context_state;
 }
 
 function get_editmode_checkbox() {
-    return canvas_menu.edit.editmode.checked;
+    return m.edit.editmode.checked;
 }
 
 function set_editmode_checkbox(state) {
-    canvas_menu.edit.editmode.checked = state;
+    m.edit.editmode.checked = state;
 }
 
 function set_cord_inspector_checkbox(state) {
-    canvas_menu.edit.cordinspector.checked = state;
+    m.edit.cordinspector.checked = state;
 }
 
 // stop-gap
@@ -1880,7 +1910,7 @@ var m  = null;
 
 function nw_create_patch_window_menus(gui, w, name) {
     // if we're on GNU/Linux or Windows, create the menus:
-    m = canvas_menu = pd_menus.create_menu(gui);
+    m = pd_menus.create_menu(gui, "canvas");
     //pdgui.post("nw_create_patch_window_menus");
 
     // File sub-entries
@@ -1949,9 +1979,11 @@ function nw_create_patch_window_menus(gui, w, name) {
             pdgui.menu_close(name);
         }
     });
-    minit(m.file.quit, {
-        click: pdgui.menu_quit
-    });
+    if (process.platform !== "darwin") {
+        minit(m.file.quit, {
+            click: pdgui.menu_quit
+        });
+    }
 
     // Edit menu
     minit(m.edit.undo, {
@@ -2584,7 +2616,7 @@ function nw_create_patch_window_menus(gui, w, name) {
     // or using keyboard shortcuts to create check boxes in the edit menu
     // when the patch should disallow this. this is a good place to do so
     // because it takes place after the menu has been created...
-    //pdgui.post("nw_create_patch_window_menus " + pdgui.get_toplevel_scalars(name));
+    //pdgui.post("...has scalars? " + pdgui.get_toplevel_scalars(name));
     if (pdgui.get_toplevel_scalars(name)) {
         m.edit.editmode.checked = false;
         m.edit.editmode.enabled = false;
@@ -2604,6 +2636,26 @@ function nw_create_patch_window_menus(gui, w, name) {
         m.edit.paste_clipboard.enabled = false;
         m.edit.duplicate.enabled = false;
         m.edit.reselect.enabled = false;
+
+        m.put.object.enabled = false;
+        m.put.message.enabled = false;
+        m.put.number.enabled = false;
+        m.put.symbol.enabled = false;
+        m.put.comment.enabled = false;
+        m.put.dropdown.enabled = false;
+        m.put.bang.enabled = false;
+        m.put.toggle.enabled = false;
+        m.put.number2.enabled = false;
+        m.put.vslider.enabled = false;
+        m.put.hslider.enabled = false;
+        m.put.knob.enabled = false;
+        m.put.vradio.enabled = false;
+        m.put.hradio.enabled = false;
+        m.put.vu.enabled = false;
+        m.put.cnv.enabled = false;
+        m.put.image.enabled = false;
+        //m.put.graph.enabled = false;
+        m.put.array.enabled = false;
     }
 }
 
@@ -2642,6 +2694,12 @@ function init_menu_font_size(size) {
 // ico@vt.edu 2020-08-24: this is called when the window is finally
 // loaded and then asks libpd to tell us what is the font state
 // LATER: we can use this to also update the undo state appropriately
+// ico@vt.edu 2022-10-10: this is super hack-ish, since we have no
+// way of telling if the window has actually displayed, particularly
+// for more complex patches...
 function update_menu_items(cid) {
-    pdgui.pdsend(cid, "updatemenu");
+    //pdgui.post("update_menu_items...");
+    setTimeout(function() {
+        pdgui.pdsend(cid, "updatemenu");
+    }, 1000);
 }

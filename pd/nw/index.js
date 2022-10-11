@@ -391,6 +391,7 @@ function add_events() {
     });
     // Focus callback for OSX
     gui.Window.get().on("focus", function () {
+        //pdgui.post("focus: console");
         nw_window_focus_callback();
     });
     // Pd Window zooming with mousewheel
@@ -588,16 +589,23 @@ function minit(menu_item, options) {
     }
 }
 
+// used, so that we can reference menu later
+var pd_m  = null;
+
 function nw_create_pd_window_menus(gui, w) {
-    var m = pd_menus.create_menu(gui, "console");
+    //pdgui.post("nw_create_pd_window_menus");
+    if (process.platform !== "darwin" || pd_m === null) {
+        //pdgui.post("nw_create_pd_window_menus first time");
+        pd_m = pd_menus.create_menu(gui, "console");
+    }
 
     // On OSX we have menu items for canvas operations-- we need to disable
     // them when the console gets focus.
     var osx = process.platform === "darwin";
 
     // File sub-entries
-    minit(m.file.new_file, { click: pdgui.menu_new });
-    minit(m.file.open, {
+    minit(pd_m.file.new_file, { click: pdgui.menu_new });
+    minit(pd_m.file.open, {
         click: function (){
             var input, chooser,
                 span = w.document.querySelector("#fileDialogSpan");
@@ -626,36 +634,38 @@ function nw_create_pd_window_menus(gui, w) {
         }
     });
     if (pdgui.k12_mode == 1) {
-        minit(m.file.k12, { click: pdgui.menu_k12_open_demos });
+        minit(pd_m.file.k12, { click: pdgui.menu_k12_open_demos });
     }
     // Note: this must be different for the main Pd window
     if (osx) {
-        minit(m.file.save, { enabled: false });
-        minit(m.file.saveas, { enabled: false });
+        minit(pd_m.file.save, { enabled: false });
+        minit(pd_m.file.saveas, { enabled: false });
     }
-    minit(m.file.message, { click: pdgui.menu_send });
+    minit(pd_m.file.message, { click: pdgui.menu_send });
     if (osx) {
-        minit(m.file.close, { enabled: false });
+        minit(pd_m.file.close, { enabled: false });
     }
-    minit(m.file.quit, { click: pdgui.menu_quit });
+    if (!osx) {
+        minit(pd_m.file.quit, { click: pdgui.menu_quit });
+    }
 
     // Edit sub-entries
     if (osx) {
-        minit(m.edit.undo, { enabled: false });
-        minit(m.edit.redo, { enabled: false });
-        minit(m.edit.cut, { enabled: false });
+        minit(pd_m.edit.undo, { enabled: false });
+        minit(pd_m.edit.redo, { enabled: false });
+        minit(pd_m.edit.cut, { enabled: false });
     }
-    minit(m.edit.copy, { enabled: true,
+    minit(pd_m.edit.copy, { enabled: true,
         click: function() {
             w.document.execCommand("copy");
         }
     });
     if (osx) {
-        minit(m.edit.paste, { enabled: false });
-        minit(m.edit.paste_clipboard, { enabled: false });
-        minit(m.edit.duplicate, { enabled: false });
+        minit(pd_m.edit.paste, { enabled: false });
+        minit(pd_m.edit.paste_clipboard, { enabled: false });
+        minit(pd_m.edit.duplicate, { enabled: false });
     }
-    minit(m.edit.selectall, {
+    minit(pd_m.edit.selectall, {
         enabled: true,
         click: function () {
             var container_id = "p1", range;
@@ -683,20 +693,20 @@ function nw_create_pd_window_menus(gui, w) {
             }
         }
     });
-    minit(m.edit.clear_console, {
+    minit(pd_m.edit.clear_console, {
         enabled: true,
         click: pdgui.clear_console
     });
     if (osx) {
-        minit(m.edit.reselect, { enabled: false });
+        minit(pd_m.edit.reselect, { enabled: false });
     }
     if (osx) {
-        minit(m.edit.encapsulate, { enabled: false });
-        minit(m.edit.tidyup, { enabled: false });
-        minit(m.edit.font, { enabled: false });
-        minit(m.edit.cordinspector, { enabled: false });
+        minit(pd_m.edit.encapsulate, { enabled: false });
+        minit(pd_m.edit.tidyup, { enabled: false });
+        minit(pd_m.edit.font, { enabled: false });
+        minit(pd_m.edit.cordinspector, { enabled: false });
     }
-    minit(m.edit.find, {
+    minit(pd_m.edit.find, {
         click: function () {
             var find_bar = w.document.getElementById("console_find"),
                 find_bar_text = w.document.getElementById("console_find_text"),
@@ -722,32 +732,32 @@ function nw_create_pd_window_menus(gui, w) {
         }
     });
     if (osx) {
-        minit(m.edit.findagain, { enabled: false });
-        minit(m.edit.finderror, { enabled: false });
-        minit(m.edit.autotips, { enabled: false });
-        minit(m.edit.editmode, { enabled: false });
+        minit(pd_m.edit.findagain, { enabled: false });
+        minit(pd_m.edit.finderror, { enabled: false });
+        minit(pd_m.edit.autotips, { enabled: false });
+        minit(pd_m.edit.editmode, { enabled: false });
     }
-    minit(m.edit.preferences, {
+    minit(pd_m.edit.preferences, {
         click: pdgui.open_prefs
     });
 
     // View menu
-    minit(m.view.zoomin, {
+    minit(pd_m.view.zoomin, {
         click: function () {
             nw_window_zoom(+1);
         }
     });
-    minit(m.view.zoomout, {
+    minit(pd_m.view.zoomout, {
         click: function () {
             nw_window_zoom(-1);
         }
     });
-    minit(m.view.zoomreset, {
+    minit(pd_m.view.zoomreset, {
         click: function () {
             gui.Window.get().zoomLevel = 0;
         }
     });
-    minit(m.view.fullscreen, {
+    minit(pd_m.view.fullscreen, {
         click: function() {
             var win = gui.Window.get();
             win.toggleFullscreen();
@@ -756,106 +766,106 @@ function nw_create_pd_window_menus(gui, w) {
 
     // Put menu
     if (osx) {
-        minit(m.put.object, { enabled: false });
-        minit(m.put.message, { enabled: false });
-        minit(m.put.number, { enabled: false });
-        minit(m.put.symbol, { enabled: false });
-        minit(m.put.comment, { enabled: false });
-        minit(m.put.dropdown, { enabled: false });
-        minit(m.put.bang, { enabled: false });
-        minit(m.put.toggle, { enabled: false });
-        minit(m.put.number2, { enabled: false });
-        minit(m.put.vslider, { enabled: false });
-        minit(m.put.hslider, { enabled: false });
-        minit(m.put.knob, { enabled: false });
-        minit(m.put.vradio, { enabled: false });
-        minit(m.put.hradio, { enabled: false });
-        minit(m.put.vu, { enabled: false });
-        minit(m.put.cnv, { enabled: false });
-        minit(m.put.image, { enabled: false });
-        //minit(m.put.graph, { enabled: false });
-        minit(m.put.array, { enabled: false });
+        minit(pd_m.put.object, { enabled: false });
+        minit(pd_m.put.message, { enabled: false });
+        minit(pd_m.put.number, { enabled: false });
+        minit(pd_m.put.symbol, { enabled: false });
+        minit(pd_m.put.comment, { enabled: false });
+        minit(pd_m.put.dropdown, { enabled: false });
+        minit(pd_m.put.bang, { enabled: false });
+        minit(pd_m.put.toggle, { enabled: false });
+        minit(pd_m.put.number2, { enabled: false });
+        minit(pd_m.put.vslider, { enabled: false });
+        minit(pd_m.put.hslider, { enabled: false });
+        minit(pd_m.put.knob, { enabled: false });
+        minit(pd_m.put.vradio, { enabled: false });
+        minit(pd_m.put.hradio, { enabled: false });
+        minit(pd_m.put.vu, { enabled: false });
+        minit(pd_m.put.cnv, { enabled: false });
+        minit(pd_m.put.image, { enabled: false });
+        //minit(pd_m.put.graph, { enabled: false });
+        minit(pd_m.put.array, { enabled: false });
     }
 
     // Winman sub-entries
-    minit(m.win.nextwin, {
+    minit(pd_m.win.nextwin, {
         click: function() {
             pdgui.raise_next("pd_window");
         }
     });
-    minit(m.win.prevwin, {
+    minit(pd_m.win.prevwin, {
         click: function() {
             pdgui.raise_prev("pd_window");
         }
     });
     if (osx) {
-        minit(m.win.parentwin, { enabled: false });
-        minit(m.win.visible_ancestor, { enabled: false });
-        minit(m.win.pdwin, { enabled: false });
+        minit(pd_m.win.parentwin, { enabled: false });
+        minit(pd_m.win.visible_ancestor, { enabled: false });
+        minit(pd_m.win.pdwin, { enabled: false });
     }
 
     // Media sub-entries
-    minit(m.media.audio_on, {
+    minit(pd_m.media.audio_on, {
         click: function() {
             pdgui.pdsend("pd dsp 1");
         }
     });
-    minit(m.media.audio_off, {
+    minit(pd_m.media.audio_off, {
         click: function() {
             pdgui.pdsend("pd dsp 0");
         }
     });
-    minit(m.media.test, {
+    minit(pd_m.media.test, {
         click: function() {
             pdgui.pd_doc_open("doc/7.stuff/tools", "testtone.pd");
         }
     });
-    minit(m.media.loadmeter, {
+    minit(pd_m.media.loadmeter, {
         click: function() {
             pdgui.pd_doc_open("doc/7.stuff/tools", "load-meter.pd");
         }
     });
 
     // Help sub-entries
-    minit(m.help.about, {
+    minit(pd_m.help.about, {
         click: function() {
             pdgui.pd_doc_open("doc/about", "about.pd");
         }
     });
-    minit(m.help.manual, {
+    minit(pd_m.help.manual, {
         click: function() {
             pdgui.pd_doc_open("doc/1.manual", "index.htm");
         }
     });
-    minit(m.help.browser, {
+    minit(pd_m.help.browser, {
         click: pdgui.open_search
     });
-    minit(m.help.intro, {
+    minit(pd_m.help.intro, {
         click: function() {
             pdgui.pd_doc_open("doc/5.reference", "help-intro.pd");
         }
     });
-    minit(m.help.l2ork_list, {
+    minit(pd_m.help.l2ork_list, {
         click: function() {
             pdgui.external_doc_open("http://disis.music.vt.edu/listinfo/l2ork-dev");
         }
     });
-    minit(m.help.pd_list, {
+    minit(pd_m.help.pd_list, {
         click: function() {
             pdgui.external_doc_open("http://puredata.info/community/lists");
         }
     });
-    minit(m.help.forums, {
+    minit(pd_m.help.forums, {
         click: function() {
             pdgui.external_doc_open("http://forum.pdpatchrepo.info/");
         }
     });
-    minit(m.help.irc, {
+    minit(pd_m.help.irc, {
         click: function() {
             pdgui.external_doc_open("http://puredata.info/community/IRC");
         }
     });
-    minit(m.help.devtools, {
+    minit(pd_m.help.devtools, {
         click: function () {
             gui.Window.get().showDevTools();
         }

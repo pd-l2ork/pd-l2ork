@@ -7799,6 +7799,10 @@ function gui_menu_font_set_initial_size(cid, size) {
 	//post("gui_menu_font_set_initial_size " + cid + " " + size);
 	gui(cid).get_nw_window(function(nw_win) {
 		if (cid !== "nobody") {
+            if (nw_os_is_osx) {
+                nw_win.window.set_menu_modals(cid, true);
+                //nw_win.window.focus();
+            }
     		nw_win.window.init_menu_font_size(size);
     		//post("this should work");
     	}
