@@ -4127,6 +4127,7 @@ function gui_gobj_select(cid, tag) {
 
 function gui_gobj_deselect(cid, tag) {
     gui(cid).get_gobj(tag, function(e, w) {
+        /*
         var i, all_elems; // all GOP elements retrievable by the shared class name
         if (e.classList.contains("graph") && e.classList.length > 1) {
            all_elems = w.document.getElementsByClassName(e.classList[1]);
@@ -4134,8 +4135,9 @@ function gui_gobj_deselect(cid, tag) {
                 all_elems[i].classList.remove("selected");
             }
         } else {
-            e.classList.remove("selected");
-        }
+        */
+        e.classList.remove("selected");
+        //}
         // ico@vt.edu: check for scroll in case the handle disappears
         // during deselect. LATER: make handles always fit inside the
         // object, so this won't be necessary
