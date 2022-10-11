@@ -213,8 +213,7 @@ if [ ! -d "../pd/nw/nw" ]; then
 		nwjs_dirname=${nwjs}-${nwjs_version}-${os}-${arch}
 	fi
 	nwjs_filename=${nwjs_dirname}.${ext}
-	nwjs_url=https://git.purrdata.net/jwilkes/nwjs-binaries/raw/master
-	nwjs_url=${nwjs_url}/$nwjs_filename
+	nwjs_url=https://dl.nwjs.io/${nwjs_version}/$nwjs_filename
 	# 2021-12-28 ico@vt.edu: override RPi settings with a newer nw.js
 	if [ $arch == "armv7l" ]; then
 		nwjs_url=https://github.com/LeonardLaszlo/nw.js-armv7-binaries/releases/download/v0.28.4/nwjs-sdk-v0.28.4-linux-arm.tar.gz
@@ -224,10 +223,8 @@ if [ ! -d "../pd/nw/nw" ]; then
 	echo "Fetching the nwjs binary from"
 	echo "$nwjs_url"
 	if ! wget -nv $nwjs_url; then
-		nwjs_url=https://dl.nwjs.io/${nwjs_version}/$nwjs_filename
-		echo "Fetching the nwjs binary from"
-		echo "$nwjs_url"
-		wget -nv $nwjs_url
+		echo "FATAL: Unable to download nw.js. please make sure you are connected to the internet. Exiting..."
+		exit 0
 	fi
 	echo "Unpacking..."
 	if [[ $os == "win" || $os == "win64" || $os == "osx" ]]; then
