@@ -1,8 +1,21 @@
 PD-L2ORK TODO:
-*Check if moving data structure on a toplevel canvas (e.g. nunchuk joystick
-crosshair) appropriately moves it on the gop canvas (looks like it moves it less).
-  *Update, this is still broken and needs to be revisited (likely similar to gui_gobj_new).
-  *Also check how resizing GOP affects objects.
+*Dropdown for autocomplete is incorrectly positioned when using negative coordinates (replicate dropdown logic, if possible).
+
+*Make data structure without a template have a visible square.
+
+*Dirty L2OrkTweet abstraction colors its $1-amp-envelope red, instead of its outer frame.
+
+*Add canvas options for GOP spill, noscroll, nomenu, background color, draw border, and ontop (if it works in nw.js).
+  *Check that all array contents are visible when GOP spill is allowed.
+
+Add global "editable" flag. Figure out how to embed this into the patch that is not easily disabled.
+  *Right click should also not work in non-editable patch.
+  *Should be only toplevel patch.
+  *Select All should not automatically enter the edit mode? OR, provide a way to restrict edit mode AND other options.
+
+*save pd-l2ork main window position between restarts.
+
+*Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
 
 *Space in path (e.g. username) makes installing apps in the user folder fail.
   *Tested and cannot reproduce. Looks like a permissions issue, perhaps?
@@ -33,8 +46,6 @@ crosshair) appropriately moves it on the gop canvas (looks like it moves it less
 
 *Reimplement next/prev window without using obsolete chrome API.
 
-*Dirty L2OrkTweet abstraction colors its $1-amp-envelope red, instead of its outer frame.
-
 *Update for new GOP drawing methods:
   ggee/gui/envgen.c
   pddp/helplink.c
@@ -49,21 +60,6 @@ crosshair) appropriately moves it on the gop canvas (looks like it moves it less
 *Enable reindexing without restart?
 
 *Submit patch to js external github.
-
-*Make data structure without a template have a visible square.
-
-*Check that all array contents are visible when GOP spill is allowed.
-
-*Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
-
-*save pd-l2ork main window position between restarts.
-
-*Add canvas options for noscroll, nomenu, background color, GOP spill, draw border, and ontop (if it works in nw.js).
-
-Add global "editable" flag. Figure out how to embed this into the patch that is not easily disabled.
-  *Right click should also not work in non-editable patch.
-  *Should be only toplevel patch.
-  *Select All should not automatically enter the edit mode? OR, provide a way to restrict edit mode AND other options.
 
 *cursor abstraction does not report right mouse up events due to it triggering the pop-up menu. This may be a nw.js limitation?
 
@@ -307,6 +303,7 @@ error: array: no method for 'magicglass'
 *Fixed highlighting of message and number2 objects using newly implemented GOP drawing approach.
 *Fixed incorrect drawing of GOP objects when placed in a negative X or Y location on canvas.
 *Improvements in handling OSX menu bar.
+*Fixed positioning of the data structures inside a GOP (e.g. nunchuk joystick crosshair inside disis_wiimote-help.pd). Ensured that scalars properly adjust position and drawing aspect ratio based on the GOP window resizing and how they are drawn 2 levels deep inside a GOP (GOP inside a GOP).
 
 
 

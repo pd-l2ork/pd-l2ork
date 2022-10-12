@@ -5424,33 +5424,19 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
             if (parentcid === cid) {
                 //post("......parentcid==drawcid parentGOPx=" +
                 //    tgt[0].getCTM().e + " parentGOPy=" + tgt[0].getCTM().f);
-                //draw_xpos += 0.5;
-                //draw_ypos += 0.5;
-                //post("******draw_xpos=" + draw_xpos + " t1=" +
-                //    t1 + " getCTM().e=" + tgt[0].getCTM().e);
-                //post("******draw_ypos=" + draw_ypos + " t4=" +
-                //    t4 + " getCTM().f=" + tgt[0].getCTM().f);
-                //if (plot_style != -1) {
-                    // we're drawing an array GOP object
-                    draw_xpos -= tgt[0].getCTM().e;
-                    draw_ypos -= tgt[0].getCTM().f;
-                /*} else {
-                    // we're drawing other types of scalars inside GOP
-                    // which means we also need to scale them according
-                    // to the GOP data size versus the actual GOP
-                    // object size.
-                    draw_xpos = (draw_xpos * t1);
-                    draw_ypos = (draw_ypos * t4);
-                }*/
+
+                var svg_view_box = svg_elem.getAttribute("viewBox").split(" ");
+                
+                draw_xpos += 0.5;
+                draw_ypos += 0.5;
+                draw_xpos = draw_xpos - tgt[0].getCTM().e - svg_view_box[0];
+                draw_ypos = draw_ypos - tgt[0].getCTM().f - svg_view_box[1];
             } else {
                 //post("......parentcid != drawcid");
                 draw_xpos -= tgt[0].getAttribute("orig_xpos");
                 draw_ypos -= tgt[0].getAttribute("orig_ypos");
             }
             //post("......offset x=" + draw_xpos + " y=" + draw_ypos);
-        } else {
-            //draw_xpos += 0.5;
-            //draw_ypos += 0.5;              
         }
 
         /* ico@vt.edu HACKTASCTIC: calculating scrollbars is throwing 0.997 for
