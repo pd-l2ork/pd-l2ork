@@ -2,6 +2,7 @@ PD-L2ORK TODO:
 *Check if moving data structure on a toplevel canvas (e.g. nunchuk joystick
 crosshair) appropriately moves it on the gop canvas (looks like it moves it less).
   *Update, this is still broken and needs to be revisited (likely similar to gui_gobj_new).
+  *Also check how resizing GOP affects objects.
 
 *Space in path (e.g. username) makes installing apps in the user folder fail.
   *Tested and cannot reproduce. Looks like a permissions issue, perhaps?
