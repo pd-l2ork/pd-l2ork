@@ -3,6 +3,9 @@ PD-L2ORK TODO:
 crosshair) appropriately moves it on the gop canvas (looks like it moves it less).
   *Update, this is still broken and needs to be revisited (likely similar to gui_gobj_new).
 
+*Space in path (e.g. username) makes installing apps in the user folder fail.
+  *Tested and cannot reproduce. Looks like a permissions issue, perhaps?
+
 *Pick the best nw.js
   *Ocassional crashes may be caused by pd-l2ork, rather than nw.js. perhaps dynamic menu updating on OSX?
   *Current status:
@@ -26,6 +29,10 @@ crosshair) appropriately moves it on the gop canvas (looks like it moves it less
     0.63.1 crashes on Linux.
     0.67.1 is slow and ocassionally crashes on OSX (need to test on OSX).
     0.69.1 is slow.
+
+*Reimplement next/prev window without using obsolete chrome API.
+
+*Dirty L2OrkTweet abstraction colors its $1-amp-envelope red, instead of its outer frame.
 
 *Update for new GOP drawing methods:
   ggee/gui/envgen.c
