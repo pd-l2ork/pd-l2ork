@@ -1,7 +1,7 @@
 PD-L2ORK TODO:
-*Make data structure without a template have a visible square.
-
 *Dirty L2OrkTweet abstraction colors its $1-amp-envelope red, instead of its outer frame.
+
+*Make data structure without a template have a visible square.
 
 *Add canvas options for GOP spill, noscroll, nomenu, background color, draw border, and ontop (if it works in nw.js).
   *Check that all array contents are visible when GOP spill is allowed.
