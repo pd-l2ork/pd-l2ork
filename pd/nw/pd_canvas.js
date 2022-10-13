@@ -663,7 +663,7 @@ var canvas_events = (function() {
                             let obj_class = document.getElementById(textbox().getAttribute("tag")+"gobj")
                                 .getAttribute("class").toString().split(" ").slice(0,1).toString();
                             if (obj_class === "obj") { // autocomplete only works for objects
-                                pdgui.create_autocomplete_dd(document, ac_dropdown(), textbox());
+                                pdgui.create_autocomplete_dd(name, document, ac_dropdown(), textbox());
                                 if (ac_dropdown().getAttribute("searched_text") !== textbox().innerText) {
                                     // finding the class from obj: find obj throwout tag of textbox, get obj class and remove from the class the word "selected".
                                     //                             this has to be done because in textbox obj and comment have class: 'obj'

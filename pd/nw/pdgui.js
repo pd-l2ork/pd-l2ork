@@ -693,7 +693,14 @@ function repopulate_autocomplete_dd(doc, ac_dropdown, obj_class, text) {
 }
 
 // GB: create autocomplete dropdown based on the properties of the textbox for new_obj_element
-function create_autocomplete_dd (doc, ac_dropdown, new_obj_element) {
+function create_autocomplete_dd (cid, doc, ac_dropdown, new_obj_element) {
+    /*
+    var xoffset, yoffset;
+    gui(cid).get_nw_window(function(nw_win) {
+        xoffset = nw_win.window.scrollX;
+        yoffset = nw_win.window.scrollY;
+    });
+    */
     if(ac_dropdown === null) {
         let font_width = new_obj_element.getAttribute("font_width");
         let font_height = new_obj_element.getAttribute("font_height");
@@ -702,9 +709,11 @@ function create_autocomplete_dd (doc, ac_dropdown, new_obj_element) {
         font_size = parseFloat(font_size.slice(0,font_size.length-2));
         let line_height = style.getPropertyValue("line-height").toString();
         let zoom = parseFloat(line_height.slice(0,line_height.length-1))/100;
-        let offset_y = zoom*font_size + 4;
+        let offset_y = zoom*font_size + 5;
         let top = style.getPropertyValue("top").toString();
         top = parseFloat(top.slice(0, top.length-2)) + offset_y;
+        let left = style.getPropertyValue("left").toString();
+        left = parseFloat(left.slice(0, left.length-2)) - 1;
 
         var dd = doc.createElement("div");
         configure_item(dd, {
@@ -712,9 +721,21 @@ function create_autocomplete_dd (doc, ac_dropdown, new_obj_element) {
             font_width: font_width,
             font_height: font_height
         });
-        dd.style.setProperty("position", "fixed");
-        dd.style.setProperty("left", style.getPropertyValue("left"));
-        dd.style.setProperty("top", top.toString() + "px");
+
+        /*
+        var viewBox = doc.getElementById("patchsvg").getAttribute("viewBox").split( " ");
+        post("create_autocomplete_dd left=" + parseFloat(style.getPropertyValue("left")) +
+            " xoffset=" + xoffset +
+            " top=" + top +
+            " yoffset=" + yoffset +
+            " parentX=" + doc.getElementById("new_object_textentry") +
+            " viewBox=" + viewBox
+        );
+        */
+
+        dd.style.setProperty("position", "absolute");
+        dd.style.setProperty("left", (left).toString() + "px");
+        dd.style.setProperty("top", (top).toString() + "px");
         dd.style.setProperty("font-size", style.getPropertyValue("font-size"));
         dd.style.setProperty("line-height", line_height);
         dd.style.setProperty("transform", style.getPropertyValue("transform"));
@@ -723,7 +744,9 @@ function create_autocomplete_dd (doc, ac_dropdown, new_obj_element) {
         dd.style.setProperty("min-width", style.getPropertyValue("min-width"));
         dd.setAttribute("selected_item", "-1");
         dd.setAttribute("searched_text", "");
-        doc.body.appendChild(dd);
+        // ico@vt.edu 2022-10-12: insert this below the dialogs and scrollbars
+        var ref = doc.getElementById("canvas_find");
+        ref.parentNode.insertBefore(dd, ref);
     }
 }
 
@@ -8518,7 +8541,11 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         text = text.trim();
         p.textContent = text;
         // append to doc body
-        patchwin[cid].window.document.body.appendChild(p);
+        //patchwin[cid].window.document.body.appendChild(p);
+        // ico@vt.edu 2022-10-12: instead of putting it at the very top,
+        // insert this below the dialogs and scrollbars
+        var ref = patchwin[cid].window.document.getElementById("canvas_find");
+        ref.parentNode.insertBefore(p, ref);
         if (type === "msg")
         {
             // ico@vt.edu 2020-09-30: New approach to drawing
@@ -8705,14 +8732,7 @@ function gui_canvas_scroll_to_gobj(cid, tag, smooth) {
             var bbox = gobj.getBBox();
             x1 = gobj.getCTM().e;
             y1 = gobj.getCTM().f;
-            x2 = x1 + bbox.width;
-            y2 = y1 + bbox.height;
             //post("..."+cid+" BBOX: x1="+x1+" y1="+y1+" x2="+x2+" y2="+y2);
-            /*window.scrollBy({
-                top: -100,
-                left: -100,
-                behavior: 'smooth'
-            });*/
             gui(cid).get_nw_window(function(nw_win) {
                 var svg_elem = nw_win.window.document.getElementById("patchsvg");
                 var { x: x, y: y, w: width, h: height,
@@ -8732,7 +8752,9 @@ function gui_canvas_scroll_to_gobj(cid, tag, smooth) {
                     x1 = x1 + x;
                 if (y < 0)
                     y1 = y1 + y;
-
+                x2 = x1 + bbox.width;
+                y2 = y1 + bbox.height;
+                //post("..."+cid+" adjusted BBOX: x1="+x1+" y1="+y1+" x2="+x2+" y2="+y2);
                 var tlx, tly, brx, bry; // top-left x and y, bottom-right x and y
                 var offsetx = 0, offsety = 0; // final offset
 
@@ -8752,7 +8774,8 @@ function gui_canvas_scroll_to_gobj(cid, tag, smooth) {
                 else if (y1 - tly < 0)
                     offsety = y1 - tly - 30;
 
-                //post("..."+cid+" final scroll x:"+offsetx+" y:"+offsety);
+                //post("..."+cid+" final scroll x:"+offsetx+" y:"+offsety + " | zoom=" + patchwin[cid].zoomLevel);
+                var zoom = patchwin[cid].zoomLevel;
                 nw_win.window.scrollBy({
                     left: offsetx,
                     top: offsety,

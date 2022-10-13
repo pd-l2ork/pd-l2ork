@@ -1,5 +1,5 @@
 PD-L2ORK TODO:
-*Dropdown for autocomplete is incorrectly positioned when using negative coordinates (replicate dropdown logic, if possible).
+*Autocomplete should be above the object if it does not fit into the window (like dropdown).
 
 *Make data structure without a template have a visible square.
 
@@ -16,6 +16,8 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *save pd-l2ork main window position between restarts.
 
 *Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
+
+*When closing the patch, make sure that the dialog is always centered?
 
 *Space in path (e.g. username) makes installing apps in the user folder fail.
   *Tested and cannot reproduce. Looks like a permissions issue, perhaps?
@@ -304,6 +306,7 @@ error: array: no method for 'magicglass'
 *Fixed incorrect drawing of GOP objects when placed in a negative X or Y location on canvas.
 *Improvements in handling OSX menu bar.
 *Fixed positioning of the data structures inside a GOP (e.g. nunchuk joystick crosshair inside disis_wiimote-help.pd). Ensured that scalars properly adjust position and drawing aspect ratio based on the GOP window resizing and how they are drawn 2 levels deep inside a GOP (GOP inside a GOP).
+*Fixed positioning of the dropdown for autocomplete in a patch that has top-left corner with negative coordinates. Made the autocomplete scrollable (rather than fixed to the position relative to the viewport). Both new_obj_textarea and autocomplete are placed below the scrollbars.
 
 
 
