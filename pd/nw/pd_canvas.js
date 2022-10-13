@@ -620,10 +620,25 @@ var canvas_events = (function() {
                 return false;
             },
             text_keydown: function(evt) {
+                //pdgui.post("keydown");
                 evt.stopPropagation();
                 setTimeout(function() {
                     pdgui.gui_message_update_textarea_border(name, textbox(), 1);
                 }, 0);
+
+                // ico@vt.edu 2022-10-13: moved autocomplete to keydown to allow
+                // for autorepeat
+                let ac_dropdown = function() {
+                    return document.getElementById("autocomplete_dropdown")
+                }
+                switch (evt.keyCode) {
+                    case 40: // arrowdown
+                        pdgui.update_autocomplete_dd_arrowdown(ac_dropdown())
+                        break;
+                    case 38: // arrowup
+                        pdgui.update_autocomplete_dd_arrowup(ac_dropdown())
+                        break;    
+                }            
                 //evt.preventDefault();
                 return false;
             },
@@ -635,12 +650,6 @@ var canvas_events = (function() {
                     return document.getElementById("autocomplete_dropdown")
                 }
                 switch (evt.keyCode) {
-                    case 40: // arrowdown
-                        pdgui.update_autocomplete_dd_arrowdown(ac_dropdown())
-                        break;
-                    case 38: // arrowup
-                        pdgui.update_autocomplete_dd_arrowup(ac_dropdown())
-                        break;
                     case 13: // enter
                         // if there is no item selected on autocomplete dropdown, enter make the obj box bigger
                         if(ac_dropdown() === null || ac_dropdown().getAttribute("selected_item") === "-1") {
@@ -668,7 +677,7 @@ var canvas_events = (function() {
                                     // finding the class from obj: find obj throwout tag of textbox, get obj class and remove from the class the word "selected".
                                     //                             this has to be done because in textbox obj and comment have class: 'obj'
                                     //                             and it's import here to differentiate them
-                                    pdgui.repopulate_autocomplete_dd(document, ac_dropdown, obj_class, textbox().innerText);
+                                    pdgui.repopulate_autocomplete_dd(name, document, ac_dropdown, obj_class, textbox());
                                 }
                             }
                         }

@@ -623,15 +623,37 @@ function update_autocomplete_selected(ac_dropdown, sel, new_sel) {
 
 function update_autocomplete_dd_arrowdown(ac_dropdown) {
     if (ac_dropdown !== null) {
+        let above = ac_dropdown.getAttribute("above");
         let sel = ac_dropdown.getAttribute("selected_item");
-        update_autocomplete_selected(ac_dropdown, sel, parseInt(sel) + 1);
+        if (above == 0) {
+            if (sel < ac_dropdown.children.length - 1) {
+                update_autocomplete_selected(ac_dropdown, sel, parseInt(sel) + 1);
+            }
+        } else if (sel != -1) {
+            var outcome = parseInt(sel) + 1;
+            if (sel == ac_dropdown.children.length - 1) {
+                outcome = -1;
+            }
+            update_autocomplete_selected(ac_dropdown, sel, outcome);           
+        }
     }
 }
 
 function update_autocomplete_dd_arrowup(ac_dropdown) {
     if (ac_dropdown !== null) {
+        let above = ac_dropdown.getAttribute("above");
         let sel = ac_dropdown.getAttribute("selected_item");
-        update_autocomplete_selected(ac_dropdown, sel, parseInt(sel) - 1);
+        if (above == 0) {
+            update_autocomplete_selected(ac_dropdown, sel, parseInt(sel) -
+                (above == 0 ? 1 : -1)
+            );
+        } else {
+            if (sel == -1) {
+                update_autocomplete_selected(ac_dropdown, sel, ac_dropdown.children.length - 1);
+            } else if (sel > 0) {
+                update_autocomplete_selected(ac_dropdown, sel, parseInt(sel) - 1);
+            }
+        }
     }
 }
 
@@ -648,7 +670,8 @@ function select_result_autocomplete_dd(textbox, ac_dropdown) {
 }
 
 // GB: update autocomplete dropdown with new results
-function repopulate_autocomplete_dd(doc, ac_dropdown, obj_class, text) {
+function repopulate_autocomplete_dd(cid, doc, ac_dropdown, obj_class, new_obj_element) {
+    var text = new_obj_element.innerText;
     ac_dropdown().setAttribute("searched_text", text);
     let title, arg;
     if (obj_class === "obj") {
@@ -687,6 +710,49 @@ function repopulate_autocomplete_dd(doc, ac_dropdown, obj_class, text) {
             ac_dropdown().appendChild(r);
         })
         ac_dropdown().setAttribute("selected_item", "-1");
+
+        // ico@vt.edu 2022-10-13: make sure that the autocomplete popup can fit
+        // below. otherwise, move it above, unless there is not enough room
+        // above either.
+        var y = ac_dropdown().getBoundingClientRect().y;
+        var height = ac_dropdown().offsetHeight;
+        var nw_win;
+        gui(cid).get_nw_window(function(win) {
+            nw_win = win;
+        });
+        let yoffset = nw_win.window.scrollY;
+        let min_y_coord = Number((nw_win.window.document.
+            getElementById("patchsvg").getAttribute("viewBox").split(" "))[1]);
+        let style = new_obj_element.style;
+        let top = parseFloat(style.getPropertyValue("top"));
+        /*
+        post("y=" + y + " height=" + height + " min_y_coord=" + min_y_coord + 
+            " yoffset=" + yoffset + " innerheight=" + nw_win.window.innerHeight);
+        post("autocomplete_bottom=" + (y + min_y_coord + height) + " win_bottom=" + 
+            (min_y_coord + yoffset + nw_win.window.innerHeight + 3));
+        post("obj_top=" + top + "autocomplete_on_top=" + 
+            (min_y_coord + yoffset + top - height - 3) + " win_top=" + (min_y_coord));
+        post("==> ac_top=" + (top - height - 3 + yoffset));
+        */
+        if ((y + min_y_coord + height) > 
+            (min_y_coord + yoffset + nw_win.window.innerHeight + 3) &&
+            (top - height - 3) > 0) {
+            //post("does not fit");
+            ac_dropdown().style.setProperty("top", (top - height - 3) + "px");
+            //post("...final=" + (y - height - 3));
+            ac_dropdown().setAttribute("above", "1");
+        } else {
+            //post("fits");
+            // check if the contents have changed to now overlap with the object
+            // (in case they were above to begin with)
+            if (ac_dropdown().getAttribute("above") == 1) {
+                //post("obj_top="+ top + " autocomplete_bottom=" + (y + height));
+                ac_dropdown().style.setProperty("top", (y - (y + height + 3 - top)) + "px");
+            }
+            
+        }
+        //post("ac_dropdown size=" + ac_dropdown().offsetHeight + 
+        //    " x=" + ac_dropdown().getBoundingClientRect().x);
     } else { // if there is no suggestion candidate, the autocompletion dropdown should disappear
         delete_autocomplete_dd (ac_dropdown());
     }
@@ -723,7 +789,7 @@ function create_autocomplete_dd (cid, doc, ac_dropdown, new_obj_element) {
         });
 
         /*
-        var viewBox = doc.getElementById("patchsvg").getAttribute("viewBox").split( " ");
+        var viewBox = doc.getElementById("patchsvg").getAttribute("viewBox").split(" ");
         post("create_autocomplete_dd left=" + parseFloat(style.getPropertyValue("left")) +
             " xoffset=" + xoffset +
             " top=" + top +
@@ -744,6 +810,9 @@ function create_autocomplete_dd (cid, doc, ac_dropdown, new_obj_element) {
         dd.style.setProperty("min-width", style.getPropertyValue("min-width"));
         dd.setAttribute("selected_item", "-1");
         dd.setAttribute("searched_text", "");
+        // ico@vt.edu 2022-10-13:
+        // help determine which side of the object we are on
+        dd.setAttribute("above", "0");
         // ico@vt.edu 2022-10-12: insert this below the dialogs and scrollbars
         var ref = doc.getElementById("canvas_find");
         ref.parentNode.insertBefore(dd, ref);
