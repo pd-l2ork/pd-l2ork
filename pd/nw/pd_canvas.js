@@ -1216,6 +1216,7 @@ var canvas_events = (function() {
             document.addEventListener("mousemove", events.vscroll_mousemove, false);
         },
         text: function() {
+            //pdgui.post("text");
             canvas_events.none();
 
             document.addEventListener("mousemove", events.text_mousemove, false);
@@ -1226,9 +1227,10 @@ var canvas_events = (function() {
             document.addEventListener("mousedown", events.text_mousedown, false);
             document.addEventListener("mouseup", events.text_mouseup, false);
             state = "text";
-            set_menu_modals(name, false);
+            //set_menu_modals(name, false);
         },
         floating_text: function() {
+            //pdgui.post("floating_text");
             canvas_events.none();
             canvas_events.text();
             document.removeEventListener("mousedown", events.text_mousedown, false);
@@ -1239,7 +1241,7 @@ var canvas_events = (function() {
             document.addEventListener("keypress", events.floating_text_keypress, false);
             document.addEventListener("mousemove", events.mousemove, false);
             state = "floating_text";
-            set_menu_modals(name, false);
+            //set_menu_modals(name, false);
         },
         dropdown_menu: function() {
             canvas_events.none();
