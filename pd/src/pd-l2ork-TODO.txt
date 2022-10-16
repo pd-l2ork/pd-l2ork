@@ -1,6 +1,4 @@
 PD-L2ORK TODO:
-*Activating autocomplete (while popup is on) disables autopatching. Need to reenable autopatching shortcuts (e.g. ctrl+1, etc.).
-
 *Make data structure without a template have a visible square.
 
 *Add canvas options for GOP spill, noscroll, nomenu, background color, draw border, and ontop (if it works in nw.js).
@@ -307,6 +305,7 @@ error: array: no method for 'magicglass'
 *Fixed positioning of the dropdown for autocomplete in a patch that has top-left corner with negative coordinates. Made the autocomplete scrollable (rather than fixed to the position relative to the viewport). Both new_obj_textarea and autocomplete are placed below the scrollbars.
 *Made autocomplete switch above the object if it does not fit into the window (like dropdown), but only if it can fit above. Otherwise, we leave it below.
 *Fixed buggy coloring of the abstraction outline when dirty (or subdirty).
+*Reenabled autopatching while typing an object name.
 
 
 
