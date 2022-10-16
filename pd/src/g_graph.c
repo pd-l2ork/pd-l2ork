@@ -261,15 +261,15 @@ void glist_delete(t_glist *x, t_gobj *y)
 
         if (pd_class(&y->g_pd) == canvas_class)
         {
-          /* JMZ: send a closebang to the canvas */
-          canvas_closebang((t_canvas *)y);
-          /* and this little hack so drawing commands can tell
+            /* JMZ: send a closebang to the canvas */
+            canvas_closebang((t_canvas *)y);
+            /* and this little hack so drawing commands can tell
              if a [group] is deleting them (and thus suppress
              their own redraws) */
-          ((t_canvas *)y)->gl_unloading = 1;
-          /* if we are a group, let's call ourselves a drawcommand */
-          if (((t_canvas *)y)->gl_svg)
-              drawcommand = 1;
+            ((t_canvas *)y)->gl_unloading = 1;
+            /* if we are a group, let's call ourselves a drawcommand */
+            if (((t_canvas *)y)->gl_svg)
+                drawcommand = 1;
 
             if(((t_canvas *)y)->gl_dirty)
                 canvas_dirtyclimb((t_canvas *)y, 0);
@@ -1373,7 +1373,7 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
             tag, x1, y1, x2, y2);
         // ico@vt.edu 2022-09-28: reattach labels dirty and subdirty
         // upon redrawing, so that the GOP border is colored accordingly.
-        //post("===========is gop dirty? %d", x->gl_dirty);
+        //post("===========is gop dirty? %zx %d", x, x->gl_dirty);
         canvas_dirtyclimb(x, x->gl_dirty);
         /* reselect it upon redrawing if it was selected before */
         if (glist_isselected(parent_glist, gr))

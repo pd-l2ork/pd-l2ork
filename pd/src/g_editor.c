@@ -6917,7 +6917,7 @@ static void gobj_emphasize(t_glist *g, t_gobj *x)
 void gobj_dirty(t_gobj *x, t_glist *g, int state)
 {
     t_rtext *y = glist_findrtext(g, (t_text *)x);
-    gui_vmess("gui_gobj_dirty", "xsi", g, rtext_gettag(y), state);
+    gui_vmess("gui_gobj_dirty", "xsi", glist_getcanvas(g), rtext_gettag(y), state);
 }
 
     /* tell the gui to display a specific message in the

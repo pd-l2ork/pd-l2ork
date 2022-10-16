@@ -260,7 +260,7 @@ struct _glist
     t_gpointer gl_gp;            /* parent for "canvas" data type */
 
     int gl_subdirties;     /* number of descending dirty abstractions */
-    int gl_dirties;        /* number of diry instances, for multiple dirty warning */
+    int gl_dirties;        /* number of dirty instances, for the multiple dirty warning */
 
     unsigned int gl_isab:1;         /* is an ab instance */
     t_ab_definition *gl_absource;   /* ab definition pointer,

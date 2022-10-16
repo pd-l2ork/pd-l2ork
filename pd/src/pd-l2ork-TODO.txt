@@ -1,5 +1,5 @@
 PD-L2ORK TODO:
-*Dirty L2OrkTweet abstraction colors its $1-amp-envelope red, instead of its outer frame.
+*Activating autocomplete (while popup is on) disables autopatching. Need to reenable autopatching shortcuts (e.g. ctrl+1, etc.).
 
 *Make data structure without a template have a visible square.
 
@@ -306,6 +306,7 @@ error: array: no method for 'magicglass'
 *Fixed positioning of the data structures inside a GOP (e.g. nunchuk joystick crosshair inside disis_wiimote-help.pd). Ensured that scalars properly adjust position and drawing aspect ratio based on the GOP window resizing and how they are drawn 2 levels deep inside a GOP (GOP inside a GOP).
 *Fixed positioning of the dropdown for autocomplete in a patch that has top-left corner with negative coordinates. Made the autocomplete scrollable (rather than fixed to the position relative to the viewport). Both new_obj_textarea and autocomplete are placed below the scrollbars.
 *Made autocomplete switch above the object if it does not fit into the window (like dropdown), but only if it can fit above. Otherwise, we leave it below.
+*Fixed buggy coloring of the abstraction outline when dirty (or subdirty).
 
 
 
