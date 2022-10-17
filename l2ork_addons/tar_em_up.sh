@@ -214,11 +214,11 @@ if [ ! -d "../pd/nw/nw" ]; then
 	fi
 	nwjs_filename=${nwjs_dirname}.${ext}
 	nwjs_url=https://dl.nwjs.io/${nwjs_version}/$nwjs_filename
-	# 2021-12-28 ico@vt.edu: override RPi settings with a newer nw.js
+	# 2022-10-17 ico@vt.edu: override RPi settings with a newer nw.js
 	if [ $arch == "armv7l" ]; then
-		nwjs_url=https://github.com/LeonardLaszlo/nw.js-armv7-binaries/releases/download/v0.28.4/nwjs-sdk-v0.28.4-linux-arm.tar.gz
-		nwjs_filename=nwjs-sdk-v0.28.4-linux-arm.tar.gz
-		nwjs_dirname=nwjs-sdk-v0.28.4-linux-arm
+		nwjs_url=https://l2ork.music.vt.edu/data/pd-l2ork/nwjs-sdk-v0.40.3-linux-arm.tar.gz
+		nwjs_filename=nwjs-sdk-v0.40.3-linux-arm.tar.gz
+		nwjs_dirname=nwjs-sdk-v0.40.3-linux-arm
 	fi
 	echo "Fetching the nwjs binary from"
 	echo "$nwjs_url"

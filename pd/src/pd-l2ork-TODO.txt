@@ -1,6 +1,11 @@
 PD-L2ORK TODO:
 *Make data structure without a template have a visible square.
 
+*Update for new GOP drawing methods:
+  ggee/gui/envgen.c
+  pddp/helplink.c
+  tof/src/imagebang.c
+
 *Add canvas options for GOP spill, noscroll, nomenu, background color, draw border, and ontop (if it works in nw.js).
   *Check that all array contents are visible when GOP spill is allowed.
 
@@ -44,12 +49,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 
 *Reimplement next/prev window without using obsolete chrome API.
 
-*Update for new GOP drawing methods:
-  ggee/gui/envgen.c
-  pddp/helplink.c
-  tof/src/imagebang.c
-
-*Update Linux and Windows build to use latest nw.js. Check the RPi build for the same.
+*Ubuntu 22.04 build: investigate iem16 build issues and gmerlin library support. 20.04 uses 1.16 automake and 2.69 autoconf. 22.04 uses 2.71 autoconf and ??? automake.
 
 *HDMI audio output support (RPi).
 
@@ -306,6 +306,9 @@ error: array: no method for 'magicglass'
 *Made autocomplete switch above the object if it does not fit into the window (like dropdown), but only if it can fit above. Otherwise, we leave it below.
 *Fixed buggy coloring of the abstraction outline when dirty (or subdirty).
 *Reenabled autopatching while typing an object name.
+*Reworked dependencies for Linux to support Ubuntu 22.04.
+*Updated Linux and Windows build to use latest nw.js.
+*Updated the RPi build to use the closest version to that of the desktop (0.40.3 for RPi and 0.42.3 for desktop).
 
 
 
