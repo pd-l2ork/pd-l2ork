@@ -473,6 +473,13 @@ text.activated {
     fill: none;
 }
 
+.scalar .border.empty {
+    stroke-width: 1px;
+    stroke: #aaa;
+    display: inherit;
+    fill: none;
+}
+
 .scalar.selected .border {
     display: inherit;
     stroke: #e87216;

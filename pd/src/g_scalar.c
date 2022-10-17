@@ -422,12 +422,15 @@ static void scalar_getgrouprect(t_glist *owner, t_glist *groupcanvas,
     t_word *data, t_template *template, int basex, int basey,
     int *x1, int *x2, int *y1, int *y2)
 {
+    //post("scalar_getgrouprect");
     t_gobj *y;
     for (y = groupcanvas->gl_list; y; y = y->g_next)
     {
+        //post("...for");
         if (pd_class(&y->g_pd) == canvas_class &&
             ((t_canvas *)y)->gl_svg)
         {
+            //post("......canvas_class &&gl_svg");
             /* todo: accumulate basex and basey for correct offset */
             if (group_gettype((t_canvas *)y) == gensym("g"))
                 scalar_getgrouprect(owner, (t_glist *)y, data, template,
@@ -438,6 +441,7 @@ static void scalar_getgrouprect(t_glist *owner, t_glist *groupcanvas,
         }
         else
         {
+            //post("......else");
             t_parentwidgetbehavior *wb = pd_getparentwidget(&y->g_pd);
             int nx1, ny1, nx2, ny2;
             if (!wb) continue;
@@ -448,8 +452,7 @@ static void scalar_getgrouprect(t_glist *owner, t_glist *groupcanvas,
             if (ny1 < *y1) *y1 = ny1;
             if (nx2 > *x2) *x2 = nx2;
             if (ny2 > *y2) *y2 = ny2;
-            //fprintf(stderr,"====scalar_getrect x1 %d y1 %d x2 %d y2 %d\n",
-            //    x1, y1, x2, y2);
+            //post("scalar_getgrouprect x1 %d y1 %d x2 %d y2 %d", *x1, *y1, *x2, *y2);
         }
     }
 }
@@ -479,11 +482,19 @@ static void scalar_getrect(t_gobj *z, t_glist *owner,
     {
         scalar_getbasexy(x, &basex, &basey);
             /* if someone deleted the template canvas, we're just a point */
+        //post("basex=%g basey=%g", basex, basey);
         if (!templatecanvas)
         {
-            //fprintf(stderr,"...point\n");
-            x1 = x2 = glist_xtopixels(owner, basex);
-            y1 = y2 = glist_ytopixels(owner, basey);
+            //post("...no template canvas");
+            // ico@vt.edu 2022-10-17: like below, instead of zeroing out the
+            // scalar size, here we leave at least 5px, so that the user is
+            // able to select empty scalar.
+            //x1 = x2 = glist_xtopixels(owner, basex);
+            //y1 = y2 = glist_ytopixels(owner, basey);
+            x1 = glist_xtopixels(owner, basex);
+            x2 = x1 + 5;
+            y1 = glist_xtopixels(owner, basey);
+            y2 = y1 + 5;
         }
         else
         {
@@ -515,25 +526,34 @@ static void scalar_getrect(t_gobj *z, t_glist *owner,
             //post("...scalar_getrect PRE getgrouprect %d %d %d %d", x1, y1, x2, y2);
             scalar_getgrouprect(owner, templatecanvas, x->sc_vec, template,
                 basex, basey, &x1, &x2, &y1, &y2);
-            if (x2 < x1 || y2 < y1)
-                x1 = y1 = x2 = y2 = 0;
+            if (x2 < x1 || y2 < y1) {
+                // ico@vt.edu 2022-10-17: it appears that if there is nothing inside
+                // the drawgroup or there is no template, the original, now commented
+                // out code, would zero everything out. this would prevent keeping
+                // empty data structures visible and therefore editable/deletable.
+                // instead, we here use basex and basey which keep the coords regardless
+                // whether there is a template or a drawing command (although here we
+                // can only arrive if we have a template but no drawing commands),
+                // and then add 5px each way to ensure there is something to select.
+                //x1 = y1 = x2 = y2 = 0;
+                x1 = glist_xtopixels(owner, basex);
+                x2 = x1 + 5;
+                y1 = glist_xtopixels(owner, basey);
+                y2 = y1 + 5;
+            }
             //post("...scalar_getrect POST getgrouprect %d %d %d %d", x1, y1, x2, y2);
         }
     }
     //post("xtopixels x->gl_screenx2=%d x->gl_screenx1=%d xval=%d x->gl_x1=%d x->gl_x2=%d",
     //    owner->gl_screenx2, owner->gl_screenx1, x1, owner->gl_x1, owner->gl_x2);
 
-    // ico@vt.edu 2021-11-13: changed x1 and y1 because otherwise the selection boxes
-    // in nunchuk IR subpatch are off. curiously the other works for the nunchuk pointer
-    // For scalars with text, it looks like top-left corner is off, while textless are fine.
-    //screenx1 = x1;
-    //screeny1 = y1;
     screenx1 = glist_xtopixels(owner, x1);
     screeny1 = glist_ytopixels(owner, y1);
     screenx2 = glist_xtopixels(owner, x2);
     screeny2 = glist_ytopixels(owner, y2);
 
     //post("...screen %g %g %g %g", screenx1, screeny1, screenx2, screeny2);
+    //post("...cached %g %g %g %g", x->sc_x1, x->sc_y1, x->sc_x2, x->sc_y2);
 
     // Values for screen bounding box
     *xp1 = (int)(screenx1 < screenx2 ? screenx1 : screenx2);
@@ -1035,6 +1055,9 @@ static void scalar_vis(t_gobj *z, t_glist *owner, int vis)
     sprintf(buf, "x%zx", (t_uint)x);
 
     x->sc_bboxcache = 0;
+    int plot_style = -1;
+    char tagbuf[MAXPDSTRING];
+    char groupbuf[MAXPDSTRING];
 
     t_template *template = template_findbyname(x->sc_template);
     t_canvas *templatecanvas = template_findcanvas(template);
@@ -1048,21 +1071,43 @@ static void scalar_vis(t_gobj *z, t_glist *owner, int vis)
         {
             //int x1 = glist_xtopixels(owner, basex);
             //int y1 = glist_ytopixels(owner, basey);
-            /* Let's just not create anything to visualize scalars that
-               don't have a template. Pd Vanilla draws a single pixel to 
-               represent them, so later we might want to do a simple
-               shape for them... */
-            //sys_vgui(".x%zx.c create prect %d %d %d %d "
-            //         "-tags {blankscalar%zx %s}\n",
-            //    glist_getcanvas(owner), x1-1, y1-1, x1+1, y1+1, x,
-            //    (glist_isselected(owner, &x->sc_gobj) ?
-            //        "scalar_selected" : ""));
+            t_float xscale = ((glist_xtopixels(owner, 1) - glist_xtopixels(owner, 0)));
+            t_float yscale = glist_ytopixels(owner, 1) - glist_ytopixels(owner, 0);
+            // ico@vt.edu 2022-10-17: reenabling drawing of empty scalars
+            // we will use plot_style == -2 to communicate to front-end
+            // that we are an empty scalar, so that its border gets visible
+            // even when it is not selected
+            plot_style = -2;
+            sprintf(tagbuf, "scalar%zx", (t_uint)x->sc_vec);
+            gui_vmess("gui_scalar_new", "xxxsiffffffii",
+                glist_getcanvas(owner),
+                owner,
+                owner->gl_owner,
+                tagbuf,
+                glist_isselected(owner, &x->sc_gobj),
+                xscale, 0.0, 0.0, yscale,
+                glist_xtopixels(owner, basex),
+                glist_ytopixels(owner, basey),
+                glist_istoplevel(owner),
+                plot_style);
+            // Quick hack to make gui_scalar_draw_group more general (so we
+            // don't have to tack on "gobj" manually)
+            sprintf(tagbuf, "scalar%zxgobj", (t_uint)x->sc_vec);
+            sprintf(groupbuf, "dgroup%zx.%zx", (t_uint)templatecanvas,
+                (t_int)x->sc_vec);
+            gui_vmess("gui_scalar_draw_group", "xsss",
+                glist_getcanvas(owner), groupbuf, tagbuf, "g");
         }
         else
         {
             /* No need to delete if we don't draw anything... */
             //sys_vgui(".x%zx.c delete blankscalar%zx\n",
             //    glist_getcanvas(owner), x);
+            sprintf(tagbuf, "scalar%zx", (t_uint)x->sc_vec);
+            gui_vmess("gui_scalar_erase", "xs",
+                glist_getcanvas(owner), tagbuf);
+            if (gensym(buf)->s_thing)
+                pd_unbind(&x->sc_gobj.g_pd, gensym(buf));
         }
         return;
     }
@@ -1071,12 +1116,7 @@ static void scalar_vis(t_gobj *z, t_glist *owner, int vis)
 
     if (vis)
     {
-        /* ico@vt.edu:
-            Check if we are a bar graph and add to it a bit of left padding.
-            This is done inside pdgui.js gui_scalar_new */
-        int plot_style = -1;
         t_gobj *g = owner->gl_list;
-
         if (g != NULL && g->g_pd == garray_class)
         {
             t_garray *g_a = (t_garray *)g;
@@ -1091,10 +1131,24 @@ static void scalar_vis(t_gobj *z, t_glist *owner, int vis)
              * the default stroke is supposed to be "none"
              * default fill is supposed to be black.
              * stroke-linejoin should be "miter", not "round"
-           To fix these, we set the correct fill/stroke/strokelinjoin options
+           To fix these, we set the correct fill/stroke/strokelinejoin options
            here on the .scalar%zx group. (Notice also that tkpath doesn't
            understand "None"-- instead we must send an empty symbol.) */
-        char tagbuf[MAXPDSTRING];
+
+        // ico@vt.edu 2022-10-17: test if the template is empty and if so,
+        // change plot_style to -2
+        if (plot_style == -1)
+        {
+            int x1, x2, y1, y2;
+            x1 = y1 = 0x7fffffff;
+            x2 = y2 = -0x7fffffff;
+            scalar_getgrouprect(owner, templatecanvas, x->sc_vec, template,
+                basex, basey, &x1, &x2, &y1, &y2);
+            if (x2 < x1 || y2 < y1) {
+                plot_style = -2;
+            }
+        }
+
         sprintf(tagbuf, "scalar%zx", (t_uint)x->sc_vec);
         gui_vmess("gui_scalar_new", "xxxsiffffffii",
             glist_getcanvas(owner),
@@ -1107,7 +1161,6 @@ static void scalar_vis(t_gobj *z, t_glist *owner, int vis)
             glist_ytopixels(owner, basey),
             glist_istoplevel(owner),
             plot_style);
-        char groupbuf[MAXPDSTRING];
         // Quick hack to make gui_scalar_draw_group more general (so we
         // don't have to tack on "gobj" manually)
         sprintf(tagbuf, "scalar%zxgobj", (t_uint)x->sc_vec);
@@ -1118,7 +1171,7 @@ static void scalar_vis(t_gobj *z, t_glist *owner, int vis)
         pd_bind(&x->sc_gobj.g_pd, gensym(buf));
     }
 
-    /* warning: don't need--- have recursive func. */
+    /* warning: don't need--have recursive func. */
     for (y = templatecanvas->gl_list; y; y = y->g_next)
     {
         t_parentwidgetbehavior *wb = pd_getparentwidget(&y->g_pd);
@@ -1205,6 +1258,7 @@ int scalar_groupclick(struct _glist *groupcanvas,
     int shift, int alt, int dbl, int doit, t_float basex, t_float basey,
     t_gobj *obj)
 {
+    post("scalar_groupclick");
     int hit = 0;
     t_gobj *nextobj = obj->g_next;
     /* let's skip over any objects that aren't drawing instructions

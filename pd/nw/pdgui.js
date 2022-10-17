@@ -5496,11 +5496,13 @@ function gui_mycanvas_coords(cid, tag, vis_width, vis_height, select_width, sele
     });
 }
 
-/* this creates a group immediately below the patchsvg object */
+/* this creates a group immediately below the patchsvg object.
+   this does not have the dimensions, just the x and y info.
+*/
 function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t4, t5, t6,
     is_toplevel, plot_style) {
     /*
-    post("===\ngui_scalar_new drawon=" + cid + " ownercid=" + ownercid +
+    post("gui_scalar_new drawon=" + cid + " ownercid=" + ownercid +
     " parentcid=" + parentcid + " tag=" + tag + " plot_style=" + plot_style +
     " t1=" + t1 + " t2=" + t2 + " t3=" + t3 + " t4=" + t4 +
     " xpos(t5)=" + t5 + " ypos(t6)=" + t6 + " is_toplevel=" + is_toplevel);
@@ -5596,8 +5598,8 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
                 // ico@vt.edu 2022-09-29: here we squash the x offset if we are
                 // drawing an array inside a GOP since it always starts flush with
                 // the left side
-                if (plot_style > -1)
-                    draw_xpos = 0;
+                //if (plot_style > -1)
+                //    draw_xpos = 0;
                 switch (plot_style) {
                     case 0:
                         matrix = [t1,t2,t3,t4,draw_xpos,draw_ypos+0.5];
@@ -5650,13 +5652,20 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
             */
             // Let's make a selection rect...
             selection_rect = create_item(cid, "rect", {
-                class: "border",
-                "pointer-events": "none"
+                class: "border" + (plot_style == -2 ? " empty" : ""),
+                "pointer-events": "none",
+                // ico@vt.edu 2022-10-17: set default size in case
+                // we don't have a template.
+                width: 5,
+                height: 5,
+                x: 0.5,
+                y: 0.5,
+                "plot_style" : plot_style
             });
             g.appendChild(selection_rect);
             //add_gobj_to_svg(svg_elem, g);
             if (is_toplevel === 0) {
-                //post("...GOP appendChild tgt=" + ownercid + "svg");
+                //post("...GOP appendChild cid=" + cid + " tgt=" + ownercid + "svg");
                 tgt[0].appendChild(g);
             } else {
                 //post("...add_gop_to_svg");
@@ -5689,20 +5698,27 @@ function gui_scalar_erase(cid, tag) {
 // triggers this function.  I have no idea why it does that.
 function gui_scalar_draw_select_rect(cid, tag, state, x1, y1, x2, y2, basex, basey) {
     /*
-    post("gui_scalar_draw_select_rect x1=" + x1 +
+    post("gui_scalar_draw_select_rect tag=" + tag + " x1=" + x1 +
          " x2=" + x2 + " y1=" +y1 + " y2=" + y2 +
          " basex=" + basex + " basey=" + basey);
     */
+    var plot_style;
+    gui(cid).get_gobj(tag)
+    .q(".border", function(b) {
+        plot_style = b.getAttribute("plot_style");
+    });
+
     gui(cid).get_gobj(tag)
     .q(".border", {
         x: (x1 - basex) + 0.5,
         y: (y1 - basey) + 0.5,
-        width: x2 - x1,
-        height: y2 - y1
+        width: (plot_style < 0 && state == 0 ? 5 : x2 - x1),
+        height: (plot_style < 0 && state == 0 ? 5 : y2 - y1)
     });
 }
 
 function gui_scalar_draw_group(cid, tag, parent_tag, type, attr_array) {
+    //post("gui_scalar_draw_group type=" + type + " attr_array=" + attr_array);
     gui(cid).get_elem(parent_tag)
     .append(function(frag) {
         if (!attr_array) {
@@ -5728,6 +5744,7 @@ function gui_scalar_configure_gobj(cid, tag, isselected, t1, t2, t3, t4, t5, t6)
 }
 
 function gui_draw_vis(cid, type, attr_array, tag_array) {
+    //post("gui_draw_vis attr_array=" + attr_array + " tag_array=" + tag_array);
     gui(cid).get_elem(tag_array[0])
     .append(function(frag) {
         var item;
