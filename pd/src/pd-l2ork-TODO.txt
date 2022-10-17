@@ -1,8 +1,6 @@
 PD-L2ORK TODO:
 *Make data structure without a template have a visible square.
 
-*Arrays are still drawn in an incorrect position when toplevel (see the Greedo-and-WallE patch and open the subpatch).
-
 *Update for new GOP drawing methods:
   ggee/gui/envgen.c
   pddp/helplink.c
@@ -312,6 +310,7 @@ error: array: no method for 'magicglass'
 *Updated Linux and Windows build to use latest nw.js.
 *Updated the RPi build to use the closest version to that of the desktop (0.40.3 for RPi and 0.42.3 for desktop).
 *Fixed regression where cut/copy/paste/select all did not work inside edited text boxes.
+*Fixed the regression where array on a parent patch that was also a GOP subpatch did not get displayed properly. Turns out legacy repositioning code that wasn't removed was the culprit. This also vastly simplifies the garray drawing.
 
 
 
