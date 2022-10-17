@@ -629,7 +629,7 @@ var canvas_events = (function() {
                 // ico@vt.edu 2022-10-13: moved autocomplete to keydown to allow
                 // for autorepeat
                 let ac_dropdown = function() {
-                    return document.getElementById("autocomplete_dropdown")
+                    return document.getElementById("autocomplete_dropdown");
                 }
                 switch (evt.keyCode) {
                     case 40: // arrowdown
@@ -647,7 +647,7 @@ var canvas_events = (function() {
 
                 // GB: Autocomplete feature
                 let ac_dropdown = function() {
-                    return document.getElementById("autocomplete_dropdown")
+                    return document.getElementById("autocomplete_dropdown");
                 }
                 switch (evt.keyCode) {
                     case 13: // enter
@@ -1159,6 +1159,7 @@ var canvas_events = (function() {
             }
         },
         normal: function() {
+            //pdgui.post("normal");
             canvas_events.none();
 
             document.addEventListener("mousemove", events.mousemove, false);
@@ -1227,7 +1228,7 @@ var canvas_events = (function() {
             document.addEventListener("mousedown", events.text_mousedown, false);
             document.addEventListener("mouseup", events.text_mouseup, false);
             state = "text";
-            //set_menu_modals(name, false);
+            set_edit_menu_modals(name, false);
         },
         floating_text: function() {
             //pdgui.post("floating_text");
@@ -1241,7 +1242,7 @@ var canvas_events = (function() {
             document.addEventListener("keypress", events.floating_text_keypress, false);
             document.addEventListener("mousemove", events.mousemove, false);
             state = "floating_text";
-            //set_menu_modals(name, false);
+            set_edit_menu_modals(name, false);
         },
         dropdown_menu: function() {
             canvas_events.none();
@@ -1479,7 +1480,7 @@ var canvas_events = (function() {
             // Copy event
             document.addEventListener("copy", function(evt) {
                 // On OSX, this event gets triggered when we're editing
-                // inside an object/message box, inclduing activated objects.
+                // inside an object/message box, including activated objects.
                 // ico@vt.edu 2021-10-20: we don't need the search part since
                 // that one for some reason works just fine on OSX (see
                 // m.edit.copy above)
@@ -1816,7 +1817,28 @@ function instantiate_live_box() {
     }
 }
 
+function set_edit_menu_modals(window, state) {
+    //pdgui.post("set_edit_menu_modals state=" + state);
+    // if we have toplevel scalars disable editing
+    if (pdgui.get_toplevel_scalars(window) === 1) {
+        //pdgui.post("...has scalars");
+        state = false;
+    }
+    // OSX needs to keep these enabled, otherwise the events won't trigger
+    if (process.platform === "darwin") {
+        state = true;
+    }
+    m.edit.undo.enabled = state;
+    m.edit.redo.enabled = state;
+    m.edit.cut.enabled = state;
+    m.edit.copy.enabled = state;
+    m.edit.paste.enabled = state;
+    m.edit.selectall.enabled = state;
+    m.edit.font.enabled = state;
+}
+
 function set_menu_modals(window, state) {
+    //pdgui.post("set_menu_modals window=" + window + " state=" + state);
     // ico@vt.edu 2022-06-18: added context_state for patches that should
     // have select options disabled because the patch in question should
     // not be editable.
@@ -2037,6 +2059,7 @@ function nw_create_patch_window_menus(gui, w, name) {
         click: function () {
             // ico@vt.edu 2020-10-30 if we are copying inside find box
             if (canvas_events.get_state() === "search") {
+                //pdgui.post("m.edit.copy text");
                 if (document.getSelection()) {
                     document.execCommand("copy");
                 }
@@ -2063,8 +2086,10 @@ function nw_create_patch_window_menus(gui, w, name) {
     minit(m.edit.paste, {
         enabled: true,
         click: function () {
-            //pdgui.post("m.edit.paste " + pdgui.gui_is_gobj_grabbed(name));
+            //pdgui.post("m.edit.paste grabbed=" + pdgui.gui_is_gobj_grabbed(name)
+            //+ " state=" + canvas_events.get_state());
             if (canvas_events.get_state() === "search") {
+                //pdgui.post("pasting inside a box...");
                 // ico@vt.edu 2020-10-30: pasting inside find box
                 document.execCommand("paste");
             } else if (pdgui.gui_is_gobj_grabbed(name)) {
