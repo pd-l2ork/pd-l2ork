@@ -1081,3 +1081,9 @@ input[type="color"] {
 #autocomplete_dropdown p.selected {
     background-color: #cfcfd0;
 }
+
+.envgenpoint {
+    fill: white;
+    stroke: black;
+    stroke-width: 1px;
+}

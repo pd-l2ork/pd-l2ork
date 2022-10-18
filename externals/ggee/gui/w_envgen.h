@@ -7,7 +7,7 @@
 #define abs fabs
 #endif
 
-#define BACKGROUNDCOLOR "grey"
+#define BACKGROUNDCOLOR "lightgrey"
 #define BORDER 2
 
 
@@ -272,12 +272,17 @@ static void envgen_create(t_envgen *x, t_glist *glist)
     ypos = (int)text_ypix(&x->x_obj, glist);
     x->w.numclock = clock_new(x, (t_method)envgen_delnum);
 
-    gui_vmess("gui_gobj_new", "xxsiii",
+    gui_vmess("gui_gobj_new", "xxxxsiiii",
         glist_getcanvas(glist),
+        glist,
+        glist->gl_owner,
         x,
         "obj",
         xpos,
-        ypos);
+        ypos,
+        glist_istoplevel(glist),
+        0
+    );
 
     //sys_vgui(".x%x.c create rectangle "
     //         "%d %d %d %d -tags %xS -fill "BACKGROUNDCOLOR"\n",
@@ -285,12 +290,14 @@ static void envgen_create(t_envgen *x, t_glist *glist)
     //    xpos-BORDER, ypos-BORDER,
     //    xpos + x->w.width+2*BORDER, ypos + x->w.height+2*BORDER,
     //    x);
-    gui_start_vmess("gui_envgen_draw_bg", "xxsii",
+    gui_start_vmess("gui_envgen_draw_bg", "xxsiii",
         glist_getcanvas(glist),
         x,
         BACKGROUNDCOLOR,
         x->w.width + 2 * BORDER,
-        x->w.height + 2 * BORDER);
+        x->w.height + 2 * BORDER,
+        glist_istoplevel(glist)
+    );
 
     xscale = x->w.width / x->duration[x->last_state];
     yscale = x->w.height;
@@ -410,7 +417,7 @@ static void envgen_displace(t_gobj *z, t_glist *glist, int dx, int dy)
     x->x_obj.te_ypix += dy;
 
     //envgen_drawme(x, glist, 0);
-    //canvas_fixlinesfor(glist,(t_text*) x);
+    canvas_fixlinesfor(glist,(t_text*) x);
 }
 
 static void envgen_displace_withtag(t_gobj *z, t_glist *glist, int dx, int dy)
@@ -418,6 +425,8 @@ static void envgen_displace_withtag(t_gobj *z, t_glist *glist, int dx, int dy)
     t_envgen *x = (t_envgen *)z;
     x->x_obj.te_xpix += dx;
     x->x_obj.te_ypix += dy;
+    // ico@vt.edu 2022-10-17: update patch cords when dragging the object
+    canvas_fixlinesfor(glist,(t_text*) x);
 }
 
 static void envgen_select(t_gobj *z, t_glist *glist, int state)
@@ -453,7 +462,7 @@ static void envgen_vis(t_gobj *z, t_glist *glist, int vis)
     if (vis)
         envgen_drawme(s, glist, 1);
     else
-        envgen_erase(s,glist);
+        envgen_erase(s, glist);
 }
 
 /* can we use the normal text save function ?? */

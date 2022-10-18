@@ -7050,7 +7050,7 @@ function add_popup(cid, popup) {
 }
 
 // envgen
-function gui_envgen_draw_bg(cid, tag, bg_color, w, h, points_array) {
+function gui_envgen_draw_bg(cid, tag, bg_color, w, h, is_toplevel, points_array) {
     gui(cid).get_gobj(tag)
     .append(function(frag) {
         var bg, border, pline;
@@ -7071,7 +7071,7 @@ function gui_envgen_draw_bg(cid, tag, bg_color, w, h, points_array) {
                 "M", w+1, 0, w+1, h+1,
                 "M", w+1, h+1, 0, h+1,
                 "M", 0, h+1, 0, 0].join(" "),
-            "class": "border",
+            "class": (is_toplevel ? "toplevel border" : "border")
         });
         pline = create_item(cid, "polyline", {
             stroke: "black",
@@ -7092,7 +7092,8 @@ function gui_envgen_draw_doodle(cid, tag, cx, cy) {
         var d = create_item(cid, "circle", {
             r: "2",
             cx: cx + 2,
-            cy: cy + 2
+            cy: cy + 2,
+            class: "envgenpoint"
         });
         frag.appendChild(d);
         return frag;
