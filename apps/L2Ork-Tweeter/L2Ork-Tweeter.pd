@@ -1,4 +1,4 @@
-#N canvas 137 6 1638 982 10;
+#N canvas 137 76 1638 982 10;
 #X obj 0 0 cnv 15 1637 973 empty empty empty 5 7 0 10 #444444 #fcfcfc
 0;
 #X obj 4 2 cnv 15 1630 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
@@ -76,7 +76,7 @@ empty -5 -9 0 10 #80fc80 #008080 #fcfcfc 1;
 #X obj 820 219 core/L2OrkTweet 8;
 #X obj 820 370 core/L2OrkTweet 9;
 #X obj 820 521 core/L2OrkTweet 10;
-#N canvas 656 176 513 653 supplemental-documentation 0;
+#N canvas 686 218 513 656 supplemental-documentation 0;
 #X obj 0 0 cnv 15 512 651 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
 #X obj 8 576 cnv 15 65 17 empty empty empty 20 12 0 14 #fcb46c #404040
@@ -119,18 +119,18 @@ Return/Enter pressed during changing of instruments (e.g. \, using
 shift+up/down) \, the instrument will remain silent until the Return/Enter
 key is released \, at which point \, the level will revert to the new
 instrument's value., f 82;
-#X text 8 456 single click - loop sync (time and loop length)double
-click - loop contentstriple click - loop and loop syncquadruple click
-- everything (loop \, loop sync \, preset \, main out \, and pan)shift
-+ single click - preset (instrument)shift + double click - main out
-and pan valuesshift + triple click - preset and main out and pan valuesshift
-+ quadruple click - everything (loop \, loop sync \, preset \, main
-out \, and pan), f 82;
 #X text 8 400 You can easily share your patterns and loops with others.
 To do so \, you will want to click on the user number you wish to copy
 instrument and/or loop from \, using one of the following clicking
 actions that need to be performed within the 500ms of initiating the
 first click:, f 82;
+#X text 8 456 single click - loop sync (play on/off and time bar location)double
+click - loop contents and lengthtriple click - loop sync and contents
+and lengthquadruple click - everything (loop \, loop sync \, preset
+\, main out \, and pan)shift + single click - preset (instrument)shift
++ double click - main out and pan valuesshift + triple click - preset
+and main out and pan valuesshift + quadruple click - everything (loop
+\, loop sync \, preset \, main out \, and pan), f 82;
 #X restore 1326 3 pd supplemental-documentation (click here);
 #X obj 153 3 pddp/pddplink http://ico.bukvic.net -text Ivica Ico Bukvic
 ;
@@ -138,7 +138,7 @@ first click:, f 82;
 -text GPL v3 License;
 #X obj 820 672 core/L2OrkTweet 11;
 #X obj 820 823 core/L2OrkTweet 12;
-#N canvas 769 452 502 112 core 0;
+#N canvas 769 476 502 129 core 0;
 #N canvas 139 226 861 565 loop-logic 0;
 #X obj 506 413 r myclientnum;
 #X obj 101 566 forward null;
@@ -1528,7 +1528,7 @@ are added later. this allows for deterministic session saving., f
 #X connect 78 0 34 0;
 #X connect 79 0 78 0;
 #X restore 359 52 pd load-save-session;
-#N canvas 245 457 450 324 version 0;
+#N canvas 245 481 450 324 version 0;
 #X obj 177 51 loadbang;
 #X obj 177 101 t f f;
 #X obj 204 125 s version;
@@ -1549,7 +1549,7 @@ are added later. this allows for deterministic session saving., f
 #X connect 9 0 6 0;
 #X connect 10 0 1 0;
 #X restore 283 52 pd version;
-#N canvas 876 180 894 714 local-copy-logic 0;
+#N canvas 876 192 894 714 local-copy-logic 0;
 #X obj 22 22 r local-copyfrom-mode;
 #X obj 210 22 r local-copyfrom-data;
 #X obj 210 125 route 0;

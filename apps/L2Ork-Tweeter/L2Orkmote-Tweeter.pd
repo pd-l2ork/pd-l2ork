@@ -1,4 +1,4 @@
-#N canvas 137 6 1638 982 10;
+#N canvas 137 64 1638 982 10;
 #X obj 0 0 cnv 15 1637 973 empty empty empty 5 7 0 10 #444444 #fcfcfc
 0;
 #X obj 4 2 cnv 15 1630 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
@@ -68,7 +68,7 @@ empty -64 5 0 12 #80fc80 #000000 #000000 11 256 0 1 1 0;
 empty -5 -9 0 10 #fcb46c #fc6418 #fcfcfc 1;
 #X obj 867 45 bng 15 250 50 0 \$0-recall-preset-apply \$0-recall-preset-apply-r
 empty -5 -9 0 10 #80fc80 #008080 #fcfcfc 1;
-#N canvas 656 176 513 653 supplemental-documentation 0;
+#N canvas 656 200 513 657 supplemental-documentation 0;
 #X obj 0 0 cnv 15 512 651 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
 #X obj 8 576 cnv 15 65 17 empty empty empty 20 12 0 14 #fcb46c #404040
@@ -111,24 +111,24 @@ Return/Enter pressed during changing of instruments (e.g. \, using
 shift+up/down) \, the instrument will remain silent until the Return/Enter
 key is released \, at which point \, the level will revert to the new
 instrument's value., f 82;
-#X text 8 456 single click - loop sync (time and loop length)double
-click - loop contentstriple click - loop and loop syncquadruple click
-- everything (loop \, loop sync \, preset \, main out \, and pan)shift
-+ single click - preset (instrument)shift + double click - main out
-and pan valuesshift + triple click - preset and main out and pan valuesshift
-+ quadruple click - everything (loop \, loop sync \, preset \, main
-out \, and pan), f 82;
 #X text 8 400 You can easily share your patterns and loops with others.
 To do so \, you will want to click on the user number you wish to copy
 instrument and/or loop from \, using one of the following clicking
 actions that need to be performed within the 500ms of initiating the
 first click:, f 82;
+#X text 8 456 single click - loop sync (play on/off and time bar location)double
+click - loop contents and lengthtriple click - loop sync and contents
+and lengthquadruple click - everything (loop \, loop sync \, preset
+\, main out \, and pan)shift + single click - preset (instrument)shift
++ double click - main out and pan valuesshift + triple click - preset
+and main out and pan valuesshift + quadruple click - everything (loop
+\, loop sync \, preset \, main out \, and pan), f 82;
 #X restore 1326 3 pd supplemental-documentation (click here);
 #X obj 153 3 pddp/pddplink http://ico.bukvic.net -text Ivica Ico Bukvic
 ;
 #X obj 437 3 pddp/pddplink https://www.gnu.org/licenses/gpl-3.0.en.html
 -text GPL v3 License;
-#N canvas 769 476 502 112 core 0;
+#N canvas 769 488 502 125 core 0;
 #N canvas 139 226 861 565 loop-logic 0;
 #X obj 506 413 r myclientnum;
 #X obj 101 566 forward null;

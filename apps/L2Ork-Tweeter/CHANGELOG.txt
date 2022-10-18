@@ -9,6 +9,9 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+10-18-2022 0.67 (minor revision, no version bump)
+*Improved wording on the description of various multi-click sync options.
+
 10-11-2022 0.67
 *Fixed double delete bug when networked.
 *Added Harmonicity and Mod Amp auto-update when using arrows up and down to change values.
