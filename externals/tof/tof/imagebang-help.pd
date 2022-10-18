@@ -1,4 +1,4 @@
-#N canvas 339 124 570 496 10;
+#N canvas 339 136 570 496 10;
 #X obj 29 230 cnv 15 186 56 empty empty empty 20 12 0 14 #47bbf1 #404040
 0;
 #X obj 35 207 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
@@ -47,7 +47,7 @@ Ivica Ico Bukvic;
 #X text 247 250 tof/imagebang @pd_extra/K12/icons/edit.png @pd_extra/K12/icons/perform.png
 \$0audios \$0audior;
 #X obj 375 288 r \$0audios;
-#X obj 295 307 s \$0audior;
+#X obj 295 310 s \$0audior;
 #X text 13 131 Tags: ui DEFUNCT;
 #X obj 0 0 cnv 15 569 26 empty \$0-pddp.cnv.header tof/imagebang\ (DEPRECATED)
 9 10 0 18 #c4dcdc #000000 0;

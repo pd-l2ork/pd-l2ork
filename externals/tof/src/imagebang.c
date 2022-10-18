@@ -202,11 +202,15 @@ static void imagebang_drawme(t_imagebang *x, t_glist *glist, int firsttime)
         //sys_vgui(".x%x.c coords %ximage %d %d\n",
         //    glist_getcanvas(glist), x,
         //    text_xpix(&x->x_obj, glist), text_ypix(&x->x_obj, glist));
-        gui_vmess("gui_image_coords", "xxii",
+        gui_vmess("gui_image_coords", "xxxxiii",
             glist_getcanvas(glist),
+            glist,
+            glist->gl_owner,
             x,
             text_xpix(&x->x_obj, glist),
-            text_ypix(&x->x_obj, glist));
+            text_ypix(&x->x_obj, glist),
+            glist_istoplevel(glist)
+        );
     }
 }
 
