@@ -177,13 +177,17 @@ static void imagebang_drawme(t_imagebang *x, t_glist *glist, int firsttime)
 
         //sys_vgui("pd [concat %s _imagesize [image width %x_imagebang] [image height %x_imagebang] \\;]\n",x->receive->s_name,x->image_a,x->image_a);
 
-        gui_vmess("gui_gobj_new", "xxsiii",
+        gui_vmess("gui_gobj_new", "xxxxsiiii",
             glist_getcanvas(glist),
+            glist,
+            glist->gl_owner,
             x,
             "obj",
             text_xpix(&x->x_obj, glist),
             text_ypix(&x->x_obj, glist),
-            glist_istoplevel(glist));
+            glist_istoplevel(glist),
+            0
+        );
         sprintf(key_a, "%zx_a", (t_uint)x);
         gui_vmess("gui_gobj_draw_image", "xxssiiiii",
             glist_getcanvas(glist),
