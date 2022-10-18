@@ -1,4 +1,4 @@
-#N canvas 779 364 433 500 10;
+#N canvas 775 333 433 500 10;
 #X obj 101 232 envgen 203 123 1 0  ;
 #X text 21 6 envgen:;
 #X text 22 27 Envelope generator. This external delivers value for
@@ -49,7 +49,7 @@ the corresponding value of the envelope;
 #000000 1 1 1;
 #X obj 170 369 hsl 128 15 100 1000 0 0 empty empty empty -2 -6 0 8
 #fcfcfc #000000 #000000 0 1 0 1;
-#N canvas 95 30 517 478 all 0;
+#N canvas 95 76 619 460 all 0;
 #X obj 43 276 envgen 203 123 1 0  ;
 #X msg 83 169 motion 4 4;
 #X msg 57 74 duration 5000;
@@ -61,18 +61,24 @@ the corresponding value of the envelope;
 #X text 149 74 set the duration in milliseconds (ms);
 #X obj 165 220 hsl 128 15 0 1 0 0 empty empty empty -2 -6 0 10 #fcfcfc
 #000000 #000000 0 1 0 1;
-#X msg 68 102 sustain 5000;
 #X obj 41 414 print ENVGEN_TIMED_OUTPUT;
 #X text 155 169 move selected point (values are x and y amounts in
 pixels);
-#X connect 0 0 11 0;
+#X msg 68 102 sustain 2;
+#X msg 138 102 sustain 0;
+#X text 208 102 select point to hold (first point is 1 \, 0 disables
+sustain);
+#X text 138 128 releases sustain hold by going back to 0 using duration
+of the next segment;
+#X connect 0 0 10 0;
 #X connect 1 0 0 0;
 #X connect 2 0 0 0;
 #X connect 3 0 0 0;
 #X connect 4 0 0 0;
 #X connect 5 0 0 0;
 #X connect 9 0 0 0;
-#X connect 10 0 0 0;
+#X connect 12 0 0 0;
+#X connect 13 0 0 0;
 #X restore 145 453 pd all messages;
 #X text 45 453 For more info:;
 #N canvas 122 39 527 491 saving 0;
@@ -100,7 +106,7 @@ it back to [envgen];
 #X connect 5 0 0 0;
 #X connect 11 0 0 0;
 #X restore 258 453 pd saving state;
-#N canvas 794 627 404 201 META 0;
+#N canvas 793 634 404 189 META 0;
 #X text 12 145 HELP_PATCH_AUTHORS "pd meta" information added by Jonathan
 Wilkes for Pd version 0.42.;
 #X text 12 25 LICENSE Tcl/Tk;

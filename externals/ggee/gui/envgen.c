@@ -148,7 +148,7 @@ void envgen_float(t_envgen *x, t_floatarg f)
      int state = 0;
      float val;
 
-     while (x->duration[state] < f && state <  x->last_state) state++;
+     while (x->duration[state] < f && state < x->last_state) state++;
 
      if (state == 0 || f >= x->duration[x->last_state]) {
           val = x->finalvalues[state]*(x->max-x->min);
@@ -194,24 +194,24 @@ void envgen_bang(t_envgen *x)
 
 void envgen_release(t_envgen* x) {
     DEBUG(post("envgen_release"););
-     t_atom a[2];
-     float del = x->duration[x->x_state] - x->duration[x->x_state-1];
-     if (x->x_state <= x->sustain_state) {
-	x->x_state = x->sustain_state+1; /* skip sustain state */
-     	clock_delay(x->x_clock,del);
+    t_atom a[2];
+    float del = x->duration[x->x_state] - x->duration[x->x_state-1];
+    if (x->x_state <= x->sustain_state) {
+        x->x_state = x->sustain_state+1; /* skip sustain state */
+        clock_delay(x->x_clock,del);
         SETFLOAT(a,x->finalvalues[x->x_state]*(x->max-x->min));
         SETFLOAT(a+1,del);
         OUT_LIST(x,2,a);
-     }
+    }
 }
 
 static void envgen_sustain(t_envgen *x, t_floatarg f)
 {
     DEBUG(post("envgen_sustain"););
-     if (f > 0 && f < x->last_state) 
+     if (f >= 0 && f <= x->last_state)
         x->sustain_state = f;
      else
-		 pd_error(x,"sustain value not betweem 0 and %f, ignoring message", x->last_state);
+		 pd_error(x,"sustain value not betweem 0 and %d, ignoring message", x->last_state);
 }
 
 
