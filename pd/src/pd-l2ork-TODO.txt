@@ -1,4 +1,9 @@
 PD-L2ORK TODO:
+Autocomplete:
+*Delete search.index and search.stamps, if found, as they prevent the proper indexing.
+*Do not index object that failed to create.
+*Update autocomplete box appearance and wording inside the preferences (more space above, remove experimental).
+
 *Add canvas options for GOP spill, noscroll, nomenu, background color, draw border, and ontop (if it works in nw.js).
   *Check that all array contents are visible when GOP spill is allowed.
 
@@ -59,15 +64,6 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Error closing a new window because there is no "width" property (e.g. a subpatch has been created). Only affects RPi version of nw.js? Consider bumping the RPi nw.js version...
 
 *Repair light build on OSX. Test it on other platforms.
-
-
-Autocomplete:
-*Delete search.index and search.stamps, if found, as they prevent the proper indexing.
-
-*Do not index object that failed to create.
-
-*Update autocomplete box appearance and wording inside the preferences.
-
 
 *Consider adding tiled version of an image inside ggee/image.
 
