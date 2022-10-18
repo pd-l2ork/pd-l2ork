@@ -1258,7 +1258,7 @@ int scalar_groupclick(struct _glist *groupcanvas,
     int shift, int alt, int dbl, int doit, t_float basex, t_float basey,
     t_gobj *obj)
 {
-    post("scalar_groupclick");
+    //post("scalar_groupclick");
     int hit = 0;
     t_gobj *nextobj = obj->g_next;
     /* let's skip over any objects that aren't drawing instructions
