@@ -138,13 +138,17 @@ static void helplink_vis(t_gobj *z, t_glist *glist, int vis)
         if ((glist->gl_havewindow || x->x_isgopvisible)
             && (y = glist_findrtext(glist, (t_text *)x)))
         {
-            gui_vmess("gui_gobj_new", "xssiii",
+            gui_vmess("gui_gobj_new", "xxxssiiii",
                 glist_getcanvas(glist),
+                x->x_glist,
+                x->x_glist->gl_owner,
                 rtext_gettag(y),
                 "pd_link",
                 text_xpix(&x->x_ob, glist_getcanvas(glist)),
                 text_ypix(&x->x_ob, glist_getcanvas(glist)),
-                glist_istoplevel(glist));
+                glist_istoplevel(glist),
+                0
+            );
             rtext_draw(y);
             gui_vmess("gui_text_set", "xss",
                 glist_getcanvas(glist),

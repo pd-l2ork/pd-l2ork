@@ -1,8 +1,4 @@
 PD-L2ORK TODO:
-*Update for new GOP drawing methods:
-  pddp/helplink.c
-  tof/src/imagebang.c
-
 *Add canvas options for GOP spill, noscroll, nomenu, background color, draw border, and ontop (if it works in nw.js).
   *Check that all array contents are visible when GOP spill is allowed.
 
@@ -15,7 +11,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 
 *Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
 
-*When closing the patch, make sure that the dialog is always centered? This is low priority.
+*When closing the patch, make sure that the dialog is always centered? This is a low priority item.
 
 *Space in path (e.g. username) makes installing apps in the user folder fail.
   *Tested and cannot reproduce. Looks like a permissions issue, perhaps?
@@ -311,7 +307,8 @@ error: array: no method for 'magicglass'
 *Made scalars without a template a visible/selectable/movabel/deletable square, as is the case with vanilla.
 *Ported and improved ggee/envgen external. This one is marked legacy and is currently not being developed further. May revisit this later by enabling visual resizing and deleting of objects.
 *More envgen improvements to the envgen documentation and a bugfix in sustain/release implementation.
-
+*Ported imagebang to the new drawing logic.
+*Ported helplink to the new drawing logic.
 
 
 
