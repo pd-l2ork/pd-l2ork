@@ -305,16 +305,24 @@ static void image_getrect(t_gobj *z, t_glist *glist,
 static void image_displace(t_gobj *z, t_glist *glist,
     int dx, int dy)
 {
-    //post("image_displace");
     t_image *x = (t_image *)z;
+    /*
+    post("image_displace x=%d y=%d xpix=%d ypix=%d", dx, dy,
+        text_xpix(&x->x_gui.x_obj,
+        glist),text_ypix(&x->x_gui.x_obj, glist)
+    );
+    */
     x->x_gui.x_obj.te_xpix += dx;
     x->x_gui.x_obj.te_ypix += dy;
     x->x_draw_firstime = 0;
-    gui_vmess("gui_image_coords", "xxii",
+    gui_vmess("gui_image_coords", "xxxxiii",
         glist_getcanvas(glist),
+        x->x_gui.x_glist,
+        x->x_gui.x_glist->gl_owner,
         x,
         text_xpix(&x->x_gui.x_obj, glist),
-        text_ypix(&x->x_gui.x_obj, glist)
+        text_ypix(&x->x_gui.x_obj, glist),
+        glist_istoplevel(glist)
     );
     canvas_fixlinesfor(glist,(t_text*) x);
 }

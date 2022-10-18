@@ -6473,6 +6473,7 @@ function gui_image_configure_preloaded(cid, tag, image_key, tk_anchor, w, h, con
 
 // Move an image
 function gui_image_coords(cid, ownercid, parentcid, tag, x, y, is_toplevel) {
+    //post("gui_image_coords x=" + x + " y=" + y + " is_toplevel=" + is_toplevel);
     // ggee/image accepts a message that can trigger this, meaning
     // [loadbang] can end up calling this before the patchwindow exists.
     // So we have to check for existence below
@@ -6493,11 +6494,11 @@ function gui_image_coords(cid, ownercid, parentcid, tag, x, y, is_toplevel) {
                 draw_ypos -= tgt[0].getAttribute("orig_ypos");
             }
         });
-        //post("... gui_image_coords offset x=" + draw_xpos + " y=" + draw_ypos);
     } else {
         draw_xpos += 0.5;
         draw_ypos += 0.5;              
     }
+    //post("...gui_image_coords offset x=" + draw_xpos + " y=" + draw_ypos);
     gui(cid).get_gobj(tag, function(e) {
         elem_move(e, draw_xpos, draw_ypos);
     });
