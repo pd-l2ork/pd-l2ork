@@ -539,6 +539,13 @@ select {
               <span data-i18n="prefs.general.browser.browser_init"></span>
             </label>
             <br/><br/>
+            <span data-i18n="prefs.general.nwjs.nwjs_title"></span>
+            <br/>
+            <button type="button" onClick="reset_nwjs_user_settings_folder()"
+                data-i18n="[title]prefs.general.nwjs.nwjs_settings_tt">
+              <span data-i18n="prefs.general.nwjs.nwjs_settings"></span>
+            </button>
+            <br/><br/>
             <span data-i18n="prefs.general.apps.apps_title"></span>
             <br/>
             <button type="button" onClick="restore_apps()"
@@ -565,6 +572,10 @@ select {
 "use strict";
 var gui = require("nw.gui");
 var pdgui = require("./pdgui.js");
+
+// for deleting old settings folder (see reset_user_settings_folder below)
+var fs = require('fs');
+var path = require('path');
 
 // For translations
 var l = pdgui.get_local_string;
@@ -1126,7 +1137,6 @@ function gui_prefs_callback(name, show_grid, grid_size, save_zoom,
           "footgun.css", "inverted.css", "solarized.css",
           "solarized_inverted.css", "strongbad.css", "subdued.css",
           "vanilla.css", "vanilla_inverted.css"];
-    var fs = require('fs');
     var base = process.platform === "darwin" ? pdgui.get_lib_dir() : ".";
     var files = fs.readdirSync(base + "/css/");
     files.forEach(file => {
@@ -1470,6 +1480,50 @@ function add_events(name) {
         //cancel();
     });
     pdgui.dialog_bindings(name);
+}
+
+var rmdir = function(dir) {
+    var list = fs.readdirSync(dir);
+    for(var i = 0; i < list.length; i++) {
+        var filename = path.join(dir, list[i]);
+        var stat = fs.statSync(filename);
+
+        if(filename == "." || filename == "..") {
+            // pass these files
+        } else if(stat.isDirectory()) {
+            // rmdir recursively
+            rmdir(filename);
+        } else {
+            // rm fiilename
+            fs.unlinkSync(filename);
+        }
+    }
+    fs.rmdirSync(dir);
+};
+
+function reset_nwjs_user_settings_folder() {
+    var os = require('os').platform();
+    var targetdir;
+    if (pdgui.nw_os_is_linux) {
+      // Linux
+        targetdir = path.resolve(require('os').homedir() + "/.config/pd-l2ork");
+    } else if (pdgui.os_is_osx) {
+      // OSX
+        targetdir = path.resolve(require('os').homedir() + "/.config/pd-l2ork");
+    } else {
+      // Windows
+        targetdir = "%LOCALAPPDATA%/.config/pd-l2ork";
+    }
+    //console.log("targetdir=" + targetdir);
+    if (fs.existsSync(targetdir)) {
+        setTimeout(function () {
+          pdgui.menu_quit();
+        }, 1000);
+        //console.log("nwjs user settings folder exists, deleting...");
+        pdgui.post("Your nwjs application folder has been deleted. Please restart pd-l2ork...");
+        rmdir(targetdir);
+        fs.mkdirSync(targetdir);
+    }
 }
 
   </script>

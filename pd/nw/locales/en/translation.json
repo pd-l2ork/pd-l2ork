@@ -518,6 +518,11 @@
         "browser_init": "prepare the help index at application start",
         "browser_init_tt": "If checked, prepare the index for the help browser already when the application starts"
       },
+      "nwjs": {
+        "nwjs_title": "nw.js User Settings",
+        "nwjs_settings": "Reset nw.js User Settings and Quit",
+        "nwjs_settings_tt": "Use this if you encounter an error at start-up due to use of an older version of nw.js--this will automatically quit pd-l2ork"
+      },
       "apps": {
         "apps_title": "Pd-L2Ork Apps",
         "restore": "Restore User Apps Folder",
