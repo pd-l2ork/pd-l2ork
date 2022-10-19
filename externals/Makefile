@@ -712,8 +712,7 @@ $(gem_src)/Gem.dll: $(gem_src)/configure
 		--with-vfw32 \
 		--prefix=$(prefix) \
 		--libdir=$(objectsdir) \
-		--with-pd=$(DESTDIR) \
-		--with_DeckLink="no"
+		--with-pd=$(DESTDIR)
 	$(MAKE) $(GEM_MAKEFLAGS) -C $(gem_src)
 
 $(gem_src)/Gem.pd_linux: $(gem_src)/configure
@@ -721,8 +720,7 @@ $(gem_src)/Gem.pd_linux: $(gem_src)/configure
 		cd $(gem_src) && ./configure \
 			CXXFLAGS="-DHAVE_S_STUFF_H $(CFLAGS_ADD)" \
 			--prefix=$(prefix) \
-			--with-pd=$(pd_src)\
-			--with_DeckLink="no"
+			--with-pd=$(pd_src)
 	$(MAKE) $(GEM_MAKEFLAGS) -C $(gem_src)
 
 # Mac: This is still a bit experimental. At present, many of the window
