@@ -200,9 +200,9 @@ if [ ! -d "../pd/nw/nw" ]; then
 	else
 		# or rpi-- only 0.28.4 is available atm
 		if [ $arch == "armv7l" ]; then
-			nwjs_version="v0.40.3"
+			nwjs_version="v0.28.4"
 		else
-			nwjs_version="v0.42.3"
+			nwjs_version="v0.28.3"
 		fi
 	fi
 
