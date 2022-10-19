@@ -688,6 +688,8 @@ freeverb_clean:
 GEM_NAME = Gem
 $(gem_src)/configure:
 	cd $(gem_src) && ./autogen.sh
+	cd $(gem_src) && sed 's/Pure\ Data/Pd-L2Ork/g' configure > tmp && mv tmp configure && chmod 755 configure
+#	cd $(gem_src)/plugins && sed 's/DECKLINK\ //g' Makefile > tmp && mv tmp Makefile
 
 ifeq ($(MSYSTEM),MINGW32)
 msys_prefix = /mingw32
@@ -710,7 +712,8 @@ $(gem_src)/Gem.dll: $(gem_src)/configure
 		--with-vfw32 \
 		--prefix=$(prefix) \
 		--libdir=$(objectsdir) \
-		--with-pd=$(DESTDIR)
+		--with-pd=$(DESTDIR) \
+		--with_DeckLink="no"
 	$(MAKE) $(GEM_MAKEFLAGS) -C $(gem_src)
 
 $(gem_src)/Gem.pd_linux: $(gem_src)/configure
@@ -718,7 +721,8 @@ $(gem_src)/Gem.pd_linux: $(gem_src)/configure
 		cd $(gem_src) && ./configure \
 			CXXFLAGS="-DHAVE_S_STUFF_H $(CFLAGS_ADD)" \
 			--prefix=$(prefix) \
-			--with-pd=$(pd_src)
+			--with-pd=$(pd_src)\
+			--with_DeckLink="no"
 	$(MAKE) $(GEM_MAKEFLAGS) -C $(gem_src)
 
 # Mac: This is still a bit experimental. At present, many of the window
@@ -761,7 +765,7 @@ $(gem_src)/Gem.pd_darwin: $(gem_src)/configure
 		--with-jpeg --with-jpeg-LIBS="-L$(usrlocal)/lib -ljpeg" \
 		$(gem_quicktime) $(gem_magick) \
 		$(gem_window) \
-		--without-ndi --without-DeckLink \
+		--without-ndi --with-DeckLink-CFLAGS="-I./plugins/DECKLINK/SDK" \
 		--with-pd=$(pd_src)
 	$(MAKE) $(GEM_MAKEFLAGS) -C $(gem_src)
 
