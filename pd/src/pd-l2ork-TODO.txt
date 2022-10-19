@@ -1,4 +1,11 @@
 PD-L2ORK TODO:
+*Get GEM working on Windows.
+
+*Since we are downgrading nw.js back to 0.28.3, clean the nw.js preferences on startup. This is different for each OS.
+  Linux:
+  OSX:
+  Windows:
+
 Autocomplete:
 *Delete search.index and search.stamps, if found, as they prevent the proper indexing.
 *Do not index object that failed to create.
@@ -24,10 +31,11 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Pick the best nw.js
   *Ocassional crashes may be caused by pd-l2ork, rather than nw.js. perhaps dynamic menu updating on OSX?
   *Current status:
-    0.28.1 is fast but crashes occasionally. parent window and next/prev option does not work.
-    0.40.2 is fast but crashes occasionally. parent window and next/prev option does not work.
-    0.41.3 is fast but crashes occasionally. parent window and next/prev option does not work.
-    0.42.3 parent window and next/prev option does not work.
+    0.28.1 is fast but crashes occasionally. next/prev option does not work.
+==> 0.28.3 is fast. next/prev option does not work.
+    0.40.2 is fast but crashes occasionally. next/prev option does not work.
+    0.41.3 is fast but crashes occasionally. next/prev option does not work.
+    0.42.3 next/prev option does not work. on a dark theme in Linux menu items are not visible.
     0.42.4 register_window_id not found error. does not display anything. everything from here has CMD+(1-9) broken on OSX.
     0.42.5 register_window_id not found error.
     0.42.6 register_window_id not found error.
