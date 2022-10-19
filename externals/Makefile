@@ -700,6 +700,10 @@ msys_prefix = /usr
 endif
 
 $(gem_src)/Gem.dll: $(gem_src)/configure
+	cd $(gem_src)/plugins && sed 's/SUBDIRS\ +=\ AVT//g' Makefile.am > tmp && mv tmp Makefile.am
+	cd $(gem_src)/plugins && sed 's/SUBDIRS\ +=\ HALCON//g' Makefile.am > tmp && mv tmp Makefile.am
+	cd $(gem_src)/plugins && sed 's/SUBDIRS\ +=\ NDI//g' Makefile.am > tmp && mv tmp Makefile.am
+	cd $(gem_src)/plugins && sed 's/SUBDIRS\ +=\ PYLON//g' Makefile.am > tmp && mv tmp Makefile.am
 	cd $(gem_src) && ./configure \
 		CXXFLAGS="-DHAVE_S_STUFF_H $(CFLAGS_ADD)" \
 		--without-ALL \
