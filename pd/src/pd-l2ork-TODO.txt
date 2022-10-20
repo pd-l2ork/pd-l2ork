@@ -308,6 +308,7 @@ error: array: no method for 'magicglass'
 *Ported helplink to the new drawing logic.
 *Added main Gem library git submodule with latest updates and updated build scripts for OSX and Windows and tested that it works on Linux, as well.
 *Added option on the general preferences tab for when nw.js is downgraded to delete the nw.js user data folder.
+*Updated K12 Rpi GPIO abstractions to avoid unnecessary console output and potential errors opening GPIOs due to bad timing.
 
 
 
