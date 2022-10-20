@@ -491,6 +491,11 @@
         "browser_init": "Erstelle den Hilfe-Index beim Programmstart",
         "browser_init_tt": "Falls aktiviert, erstelle den Index für den Hilfe-Browser bereits beim Programmstart"
       },
+      "nwjs": {
+        "nwjs_title": "nw.js-Benutzereinstellungen",
+        "nwjs_settings": "nw.js-Benutzereinstellungen zurücksetzen und beenden",
+        "nwjs_settings_tt": "Verwenden Sie dies, wenn beim Start aufgrund der Verwendung einer älteren Version von nw.js ein Fehler auftritt – unter Linux und OSX wird diese Aktion automatisch pd-l2ork beenden, während Sie unter Windows den Ordner selbst löschen müssen – -Weitere Informationen finden Sie in der Pd-L2Ork-Konsole"
+      },
       "apps": {
         "apps_title": "Pd-L2Ork Apps",
         "restore": "Wiederherstellen des Benutzer-App-Ordners",

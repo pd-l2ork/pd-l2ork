@@ -521,7 +521,7 @@
       "nwjs": {
         "nwjs_title": "nw.js User Settings",
         "nwjs_settings": "Reset nw.js User Settings and Quit",
-        "nwjs_settings_tt": "Use this if you encounter an error at start-up due to use of an older version of nw.js--this will automatically quit pd-l2ork"
+        "nwjs_settings_tt": "Use this if you encounter an error at start-up due to use of an older version of nw.js--on Linux and OSX this action will automatically quit pd-l2ork, while on Windows you will need to delete the folder by yourself--see the Pd-L2Ork console for additional information"
       },
       "apps": {
         "apps_title": "Pd-L2Ork Apps",

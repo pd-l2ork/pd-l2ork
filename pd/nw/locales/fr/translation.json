@@ -491,6 +491,11 @@
         "browser_init":    "Préparer l'index de l'Aide au démarrage de l'application",
         "browser_init_tt": "Si cette case est cochée, préparez l'index pour le navigateur d'Aide dès le démarrage de l'application"
       },
+      "nwjs": {
+        "nwjs_title": "Paramètres utilisateur nw.js",
+        "nwjs_settings": "Réinitialiser les paramètres utilisateur nw.js et quitter",
+        "nwjs_settings_tt": "Utilisez ceci si vous rencontrez une erreur au démarrage en raison de l'utilisation d'une ancienne version de nw.js - sous Linux et OSX, cette action quittera automatiquement pd-l2ork, tandis que sous Windows, vous devrez supprimer le dossier par vous-même- -voir la console Pd-L2Ork pour plus d'informations"
+      },
       "apps": {
         "apps_title": "Pd-L2Ork Apps",
         "restore": "Restaurer le dossier des applications utilisateur",
