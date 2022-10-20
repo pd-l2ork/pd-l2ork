@@ -21,11 +21,11 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Space in path (e.g. username) makes installing apps in the user folder fail.
   *Tested and cannot reproduce. Looks like a permissions issue, perhaps?
 
-*Pick the best nw.js
+*Pick the best nw.js (==> denotes the current choice)
   *Ocassional crashes may be caused by pd-l2ork, rather than nw.js. perhaps dynamic menu updating on OSX?
   *Current status:
     0.28.1 is fast but crashes occasionally. next/prev option does not work.
-==> 0.28.3 is fast. next/prev option does not work.
+==> 0.28.3 is fast. next/prev option does not work. may need to monitor for crashes. RPi uses 0.28.4.
     0.40.2 is fast but crashes occasionally. next/prev option does not work.
     0.41.3 is fast but crashes occasionally. next/prev option does not work.
     0.42.3 next/prev option does not work. on a dark theme in Linux menu items are not visible.
