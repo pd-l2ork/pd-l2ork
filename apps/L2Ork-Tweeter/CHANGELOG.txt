@@ -11,6 +11,7 @@ CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
 10-18-2022 0.67 (minor revision, no version bump)
 *Improved wording on the description of various multi-click sync options.
+*Added 6 instrument presets to L2Ork Tweeter.
 
 10-11-2022 0.67
 *Fixed double delete bug when networked.
