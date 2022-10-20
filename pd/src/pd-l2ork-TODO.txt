@@ -1,6 +1,4 @@
 PD-L2ORK TODO:
-*Added option on the general preferences tab for when nw.js is downgraded to delete the nw.js user data folder. Need to test OSX and Windows versions and add german and french translations before final commit.
-
 Autocomplete:
 *Delete search.index and search.stamps, if found, as they prevent the proper indexing.
 *Do not index object that failed to create.
@@ -309,7 +307,7 @@ error: array: no method for 'magicglass'
 *Ported imagebang to the new drawing logic.
 *Ported helplink to the new drawing logic.
 *Added main Gem library git submodule with latest updates and updated build scripts for OSX and Windows and tested that it works on Linux, as well.
-*Added option on the general preferences tab for when nw.js is downgraded to delete the nw.js user data folder. Tested Linux implementation.
+*Added option on the general preferences tab for when nw.js is downgraded to delete the nw.js user data folder.
 
 
 
@@ -398,6 +396,7 @@ TWEETER DONE:
 *0.67 fixed double delete bug when networked.
 *Added Harmonicity and Mod Amp auto-update when using arrows up and down to change values.
 *Improved wording on the description of various multi-click sync options.
+*Added 6 new instrument presets.
 
 
 
