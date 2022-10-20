@@ -9,8 +9,8 @@ Autocomplete:
 
 Add global "editable" flag. Figure out how to embed this into the patch that is not easily disabled.
   *Right click should also not work in non-editable patch.
-  *Should be only toplevel patch.
-  *Select All should not automatically enter the edit mode? OR, provide a way to restrict edit mode AND other options.
+  *Should be only toplevel patch?
+  *Select All should not automatically enter the edit mode.
 
 *save pd-l2ork main window position between restarts.
 
