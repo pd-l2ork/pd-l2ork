@@ -1507,9 +1507,9 @@ function reset_nwjs_user_settings_folder() {
     if (pdgui.nw_os_is_linux) {
         // Linux
         targetdir = path.resolve(require('os').homedir() + "/.config/pd-l2ork");
-    } else if (pdgui.os_is_osx) {
+    } else if (pdgui.nw_os_is_osx) {
         // OSX
-        targetdir = path.resolve(require('os').homedir() + "/Library/Application Support/pd-l2ork");
+        targetdir = path.resolve(require('os').homedir() + "/Library/Application Support/Pd-L2Ork");
     } else {
         // Windows
         targetdir = path.resolve(process.env.LOCALAPPDATA);
