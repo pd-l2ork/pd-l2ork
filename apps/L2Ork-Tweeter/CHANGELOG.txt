@@ -9,13 +9,11 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
-10-18-2022 0.67 (minor revision, no version bump)
-*Improved wording on the description of various multi-click sync options.
-*Added 6 instrument presets to L2Ork Tweeter.
-
-10-11-2022 0.67
+10-18-2022 0.67
 *Fixed double delete bug when networked.
 *Added Harmonicity and Mod Amp auto-update when using arrows up and down to change values.
+*Improved wording on the description of various multi-click sync options.
+*Added 6 instrument presets to L2Ork Tweeter.
 
 07-09-2022 0.66
 *Introduced initial implementation of the L2Orkmote L2Ork Tweeter interface.
