@@ -707,6 +707,7 @@ $(gem_src)/Gem.dll: $(gem_src)/configure
 	cd $(gem_src) && ./configure \
 		CXXFLAGS="-DHAVE_S_STUFF_H $(CFLAGS_ADD)" \
 		--without-ALL \
+		--with-glfw3 \
 		--with-jpeg \
 		--with-jpeg-cflags="-I$(msys_prefix)/include" \
 		--with-jpeg-libs="-L$(msys_prefix)/lib -ljpeg" \
@@ -761,6 +762,7 @@ $(gem_src)/Gem.pd_darwin: $(gem_src)/configure
 		--prefix=$(prefix) \
 		--libdir=$(objectsdir) \
 		--without-ALL \
+		--with-glfw3 \
 		--without-QuickTime-framework --without-Carbon-framework \
 		--with-ftgl --with-ftgl-LIBS="-L$(usrlocal)/lib -lftgl" \
 		--with-tiff --with-tiff-LIBS="-L$(usrlocal)/lib -ltiff" \
