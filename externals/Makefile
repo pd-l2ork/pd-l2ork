@@ -754,7 +754,7 @@ endif
 
 # Adjust this as needed/wanted. If you comment this out, you'll get the
 # default gemmacoswindow which doesn't work for me, YMMV.
-gem_window = --with-sdl2 --with-sdl2-LIBS="-L$(usrlocal)/lib -lSDL2" --with-defaultwindow=gemsdl2window
+gem_window = --with-sdl2 --with-sdl2-LIBS="-L$(usrlocal)/lib -lSDL2" --with-defaultwindow=gemglfw3window
 
 $(gem_src)/Gem.pd_darwin: $(gem_src)/configure
 	cd $(gem_src) && autoreconf -vim && ./configure \
