@@ -1,6 +1,7 @@
 PD-L2ORK TODO:
 Autocomplete:
 *Delete search.index and search.stamps, if found, as they prevent the proper indexing.
+  Update: adding a rebuild index button on the general preferences tab may be the best solution here.
 *Do not index object that failed to create.
 *Update autocomplete box appearance and wording inside the preferences (more space above, remove experimental).
 
