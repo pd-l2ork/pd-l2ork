@@ -2890,6 +2890,7 @@ function create_window(cid, type, width, height, xpos, ypos, attr_array) {
 function gui_canvas_new(cid, width, height, geometry, grid, grid_size_value,
     zoom, editmode, name, dir, dirty_flag, warid, hide_scroll, hide_menu,
     has_toplevel_scalars, cargs) {
+    //post("gui_canvas_new geometry=" + geometry + " w=" + width + " h=" + height);
     // hack for buggy tcl popups... should go away for node-webkit
     //reset_ctrl_on_popup_window
     
@@ -2929,6 +2930,15 @@ function gui_canvas_new(cid, width, height, geometry, grid, grid_size_value,
     // Keep patches on the visible screen
     var xpos = Math.min(Number(geometry[0]), window.screen.width - width);
     var ypos = Math.min(Number(geometry[1]), window.screen.height - height);
+    // ico@vt.edu 2022-11-04: for MacOS on nw.js 0.28.3 for some reason
+    // the window is not centered vertically against its parent window
+    // (Pd-L2Ork console), so here we center it manually. LATER: check
+    // if this is necessary for future versions of nw.js and adjust
+    // accordingly. Once we implement saving the Pd-L2Ork console location
+    // we will want to do this for both xpos and ypos on all OSs.
+    if (nw_os_is_osx && xpos === 0 && ypos === 22) {
+        ypos = window.screen.height/2 - height/2;
+    }
     xpos = Math.max(xpos, 0);
     ypos = Math.max(ypos, 0);
     var menu_flag;
