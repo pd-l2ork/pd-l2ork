@@ -1,9 +1,8 @@
 PD-L2ORK TODO:
-*Investigate why on OSX y position of a new window is at the top of the screen instead of the middle.
-
 Autocomplete:
 *Delete search.index and search.stamps, if found, as they prevent the proper indexing.
-  Update: adding a rebuild index button on the general preferences tab may be the best solution here.
+  Update #1: adding a rebuild index button on the general preferences tab may be the best solution here.
+  Update #2: looks like this is already done for autocomplete, so perhaps we just do it every time?
 *Do not index object that failed to create.
 *Update autocomplete box appearance and wording inside the preferences (more space above, remove experimental).
 
@@ -312,6 +311,8 @@ error: array: no method for 'magicglass'
 *Added main Gem library git submodule with latest updates and updated build scripts for OSX and Windows and tested that it works on Linux, as well.
 *Added option on the general preferences tab for when nw.js is downgraded to delete the nw.js user data folder.
 *Updated K12 Rpi GPIO abstractions to avoid unnecessary console output and potential errors opening GPIOs due to bad timing.
+*Merged latest autcomplete improvements in Purr-Data with additional bug-fixes.
+*Fixed OSX having inconsistent positioning of the new patches (file->new) likely due to a bug in nw.js 0.28.3. See comment in the code on how to handle this later with future nw.js upgrades and the introduction of the saving of the Pd-L2Ork console position and size.
 
 
 
