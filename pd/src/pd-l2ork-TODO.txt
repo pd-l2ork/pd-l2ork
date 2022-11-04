@@ -1,4 +1,6 @@
 PD-L2ORK TODO:
+*Investigate why on OSX y position of a new window is at the top of the screen instead of the middle.
+
 Autocomplete:
 *Delete search.index and search.stamps, if found, as they prevent the proper indexing.
   Update: adding a rebuild index button on the general preferences tab may be the best solution here.
