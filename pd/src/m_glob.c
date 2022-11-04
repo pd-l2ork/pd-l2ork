@@ -80,7 +80,7 @@ static void glob_perf(t_pd *dummy, float f)
 }
 
 extern int sys_snaptogrid, sys_gridsize, sys_zoom,
-    sys_autocomplete, sys_autocomplete_prefix,
+    sys_autocomplete, sys_autocomplete_prefix, sys_autocomplete_relevance,
     sys_browser_doc, sys_browser_path, sys_browser_init,
     sys_autopatch_yoffset, sys_curved_cords;
 extern t_symbol *sys_gui_preset;
@@ -93,6 +93,7 @@ static void glob_gui_prefs(t_pd *dummy, t_symbol *s, int argc, t_atom *argv)
     sys_zoom = !!atom_getintarg(0, argc--, argv++);
     sys_autocomplete = !!atom_getintarg(0, argc--, argv++);
     sys_autocomplete_prefix = !!atom_getintarg(0, argc--, argv++);
+    sys_autocomplete_relevance = !!atom_getintarg(0, argc--, argv++);
     sys_curved_cords = !!atom_getintarg(0, argc--, argv++);
     sys_browser_doc = !!atom_getintarg(0, argc--, argv++);
     sys_browser_path = !!atom_getintarg(0, argc--, argv++);
@@ -103,7 +104,7 @@ static void glob_gui_prefs(t_pd *dummy, t_symbol *s, int argc, t_atom *argv)
 /* just the gui-preset, the save-zoom toggle and various help browser options for now */
 static void glob_gui_properties(t_pd *dummy)
 {
-    gui_vmess("gui_gui_properties", "xsiiiiiiiiii",
+    gui_vmess("gui_gui_properties", "xsiiiiiiiiiii",
         dummy,
         sys_gui_preset->s_name,
         sys_snaptogrid,
@@ -111,6 +112,7 @@ static void glob_gui_properties(t_pd *dummy)
         sys_zoom,
         sys_autocomplete,
         sys_autocomplete_prefix,
+        sys_autocomplete_relevance,
         sys_browser_doc,
         sys_browser_path,
         sys_browser_init,

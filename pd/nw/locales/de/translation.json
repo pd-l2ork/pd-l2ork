@@ -94,8 +94,9 @@
       "interactive":    "interaktiv",
       "interactive_tt": "ob der Nutzer direkt mit dem Objekt interagieren kann (z.B. durch Anklicken)",
       "autoupdate":    "Update auf Auf-/Ab-Taste",
-      "autoupdate_tt": "automatische Ausgabe des Wertes bei jeder Änderung mit Auf-/Ab-Tasten (einschließlich Umschalt+Auf/Ab)"
-    }
+      "autocomplete_prefix_tt": "Vervollständigung nur per Objektnamens-Präfix (statt Übereinstimmung irgendwo im Objektnamen)",
+      "autocomplete_relevance": "Sortiere Vervollständigungen nach Relevanz",
+      "autocomplete_relevance_tt": "Zeigt die relevantesten Vervollständigungen zuerst (basierend auf der Nutzungshäufigkeit)"    }
   },
   "gatom": {
     "prop": {
