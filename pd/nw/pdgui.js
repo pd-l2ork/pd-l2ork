@@ -9901,7 +9901,7 @@ function restore_apps(force) {
     }
 
     if (nw_os_is_windows) {
-        dir = homedir + '\\Documents\\Pd-L2Ork';
+        dir = homedir + '\\Pd-L2Ork';
     } else {
         dir = homedir + '/Pd-L2Ork';
     }
