@@ -82,6 +82,8 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 
 *fix inefficiency of the profuse console output.
 
+*Make incremental on a Mac results in a broken build that does not include Gem.
+
 *think about a way to deterministically inform both front-end and the back-end that the canvas has indeed loaded. See https://stackoverflow.com/questions/4057236/how-to-add-onload-event-to-a-div-element/55106785#58838457 (Third Attempt (and Definitive Solution))
 
 *port miXed (cyclone) comment?
