@@ -1810,7 +1810,7 @@ function translate_form() {
 }
 
 // This gets called from the nw_create_window function in index.html
-// It provides us with our canvas id from the C side.  Once we have it
+// It provides us with our canvas id from the C side. Once we have it
 // we can create the menu and register event callbacks
 function register_window_id(cid, attr_array) {
     var kludge_title;
