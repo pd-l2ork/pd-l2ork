@@ -446,6 +446,16 @@ function nw_close_window(window) {
 // actual minimum required version for this.
 var null_pos = pdgui.check_nw_version("0.46") ? "null" : "center";
 
+var PD_L2ORK_NW_DEBUG = 0;
+
+function pd_l2ork_debug_sleep(milliseconds) {
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < milliseconds);
+}
+
 function nw_create_window(cid, type, width, height, xpos, ypos, attr_array) {
     // todo: make a separate way to format the title for OSX
     var my_title;
@@ -528,6 +538,15 @@ function nw_create_window(cid, type, width, height, xpos, ypos, attr_array) {
         frame: win_frame,
         transparent: win_transparent
     }, function (new_win) {
+
+        // ico@vt.edu 2022-11-06: let's open dev tools and give time to
+        // start recording data before we start loading the patch
+        if (PD_L2ORK_NW_DEBUG === 1)
+        {
+            new_win.showDevTools();
+            pd_l2ork_debug_sleep(3000);
+        }
+
         if (type === "pd_canvas") {
             pdgui.set_patchwin(cid, new_win);
         } else {
