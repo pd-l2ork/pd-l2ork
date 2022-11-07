@@ -795,7 +795,7 @@ function update_autocomplete_dd_arrowup(ac_dropdown) {
 }
 
 function select_result_autocomplete_dd(textbox, ac_dropdown, last, offs, res, dir) {
-    //ost("textbox=" + textbox + " dropdown=" + ac_dropdown + 
+    //post("textbox=" + textbox + " dropdown=" + ac_dropdown + 
     //    " last=" + last + " offs=" + offs + " res=" + res + " dir=" + dir);
     if (ac_dropdown !== null) {
         let sel = ac_dropdown.getAttribute("selected_item");
