@@ -27,15 +27,23 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
   *Ocassional crashes may be caused by pd-l2ork, rather than nw.js. perhaps dynamic menu updating on OSX?
   *Current status:
     0.28.1 is fast but crashes occasionally. next/prev option does not work.
-==> 0.28.3 is fast. next/prev option does not work. may need to monitor for crashes. RPi uses 0.28.4.
+==> 0.28.3 is fast. next/prev option does not work. crashes due to lack of a fix introduced in 0.60.1??? RPi uses 0.28.4.
     0.40.2 is fast but crashes occasionally. next/prev option does not work.
     0.41.3 is fast but crashes occasionally. next/prev option does not work.
     0.42.3 next/prev option does not work. on a dark theme in Linux menu items are not visible.
     0.42.4 register_window_id not found error. does not display anything. everything from here has CMD+(1-9) broken on OSX.
     0.42.5 register_window_id not found error.
     0.42.6 register_window_id not found error.
-    0.43.5 segfauls on Linux when opening dev tools.
-    0.43.6 segfauls on Linux when opening dev tools.
+    0.43.0 beta 1 is fast.
+    0.43.0 register_window_id not found error.
+    0.43.1 register_window_id not found error.
+    0.43.2 register_window_id not found error.
+    0.43.3 register_window_id not found error.
+    0.43.4 register_window_id not found error.
+    0.43.5 is slow. segfaults on Linux when opening dev tools.
+    0.43.6 is slow. segfaults on Linux when opening dev tools.
+    0.44.0 beta 1 register_window_id not found error.
+    0.44.0 is slow.
     0.44.6 is slow. everything from here works with next/prev window and Pd window options.
     0.54.0 is slow.
     0.56.0 is slow.
