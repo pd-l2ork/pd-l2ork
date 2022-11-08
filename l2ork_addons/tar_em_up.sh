@@ -202,9 +202,9 @@ if [ ! -d "../pd/nw/nw" ]; then
 		if [ $arch == "armv7l" ]; then
 			nwjs_version="v0.28.4"
 		elif [ $os == "osx" ]; then
-			nwjs_version="v0.70.1"
+			nwjs_version="v0.67.1"
 		else
-			nwjs_version="v0.28.3"
+			nwjs_version="v0.67.1"
 		fi
 	fi
 
