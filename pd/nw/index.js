@@ -3,6 +3,12 @@ var gui = require("nw.gui");
 var pdgui = require("./pdgui.js");
 var pd_menus = require("./pd_menus.js");
 
+// ico@vt.edu 2022-11-08: make this 1 if you wish to provide a 3-second delay
+// before a newly opened patch window should proceed. dev tools will also
+// automatically open to allow to use performance analysis tool to seek
+// potential performance bottlenecks. leave this 0 to make it run normally.
+var PD_L2ORK_NW_DEBUG = 0;
+
 // We're using the following pwd variable as the default dir in which various
 // file dialogs open, so we need to initialize it in some way. The following
 // provides a reasonable default (use the PWD if it's available, otherwise
@@ -445,8 +451,6 @@ function nw_close_window(window) {
 // 0.46+ seems to be required for "null" to work. TODO: Bisect to get the
 // actual minimum required version for this.
 var null_pos = pdgui.check_nw_version("0.46") ? "null" : "center";
-
-var PD_L2ORK_NW_DEBUG = 0;
 
 function pd_l2ork_debug_sleep(milliseconds) {
   const date = Date.now();
