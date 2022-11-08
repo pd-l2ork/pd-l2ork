@@ -1,4 +1,11 @@
 PD-L2ORK TODO:
+*Update Windows to nw.js 0.70.1.
+  *Test for regressions:
+    *Console positioning on start-up.
+    *Patch window positioning on start-up, loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
+
+*Reimplement next/prev window, if possible.
+
 Autocomplete:
 *Delete search.index and search.stamps, if found, as they prevent the proper indexing.
   Update #1: adding a rebuild index button on the general preferences tab may be the best solution here.
