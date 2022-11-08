@@ -198,7 +198,7 @@ if [ ! -d "../pd/nw/nw" ]; then
 		# We need the lts version to be able to run on legacy systems.
 		nwjs_version="v0.14.7"
 	else
-		# or rpi-- only 0.28.4 is available atm
+		# or rpi (TODO: bump the RPi version)
 		if [ $arch == "armv7l" ]; then
 			nwjs_version="v0.28.4"
 		elif [ $os == "osx" ]; then
