@@ -34,7 +34,8 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
   *Ocassional crashes may be caused by pd-l2ork, rather than nw.js. perhaps dynamic menu updating on OSX?
   *Current status:
     0.28.1 is fast but crashes occasionally. next/prev option does not work.
-==> 0.28.3 is fast. next/prev option does not work. crashes due to lack of a fix introduced in 0.60.1??? RPi uses 0.28.4.
+    0.28.3 is fast. next/prev option does not work. crashes due to lack of a fix introduced in 0.60.1???
+RPI 0.28.4 current RPi version.
     0.40.2 is fast but crashes occasionally. next/prev option does not work.
     0.41.3 is fast but crashes occasionally. next/prev option does not work.
     0.42.3 next/prev option does not work. on a dark theme in Linux menu items are not visible.
@@ -47,21 +48,23 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
     0.43.2 register_window_id not found error.
     0.43.3 register_window_id not found error.
     0.43.4 register_window_id not found error.
-    0.43.5 is slow. segfaults on Linux when opening dev tools.
-    0.43.6 is slow. segfaults on Linux when opening dev tools.
+    0.43.5 segfaults on Linux when opening dev tools.
+    0.43.6 segfaults on Linux when opening dev tools.
     0.44.0 beta 1 register_window_id not found error.
-    0.44.0 is slow.
-    0.44.6 is slow. everything from here works with next/prev window and Pd window options.
-    0.54.0 is slow.
-    0.56.0 is slow.
-    0.58.0 is slow.
-    0.59.1 is slow.
-    0.60.0 is slow. everything form here below also has incorrectly placed windows.
-    0.62.1 is slow.
-    0.62.2 is slow.
+    0.44.0 is ok.
+    0.44.6 everything from here works with next/prev window and Pd window options.
+    0.54.0
+    0.56.0
+    0.58.0
+    0.59.1
+    0.60.0 everything form here below also has incorrectly placed windows.
+    0.62.1
+    0.62.2
     0.63.1 crashes on Linux.
-    0.67.1 is slow and ocassionally crashes on OSX (need to test on OSX).
-    0.69.1 is slow.
+==> 0.67.1 
+    0.68.0 window close nw1 bug (see #7981 nwjs bug report).
+    0.69.1 window close nw1 bug (see #7981 nwjs bug report).
+    0.70.1 window close nw1 bug (see #7981 nwjs bug report).
 
 *Reimplement next/prev window without using obsolete chrome API.
 
