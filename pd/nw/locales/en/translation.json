@@ -385,7 +385,7 @@
       "no_scroll": "hide scrollbars",
       "no_scroll_tt": "hide window scrollbars",
       "no_menu": "hide menu",
-      "no_menu_tt": "hide window menu",
+      "no_menu_tt": "hide window menu (Linux and Windows only)",
       "gop": "graph on parent",
       "gop_tt": "show the inner contents of this canvas in a rectangle on the containing canvas",
       "hide_name": "hide name and arguments",
@@ -504,7 +504,7 @@
       },
       "autocomplete": {
         "autocomplete_title": "Auto-completion settings",
-        "autocomplete": "auto-complete object names and arguments (experimental)",
+        "autocomplete": "auto-complete object names and arguments",
         "autocomplete_tt": "Offers completions for object names and arguments as you type",
         "autocomplete_prefix": "match completions by object name prefix",
         "autocomplete_prefix_tt": "Only list completions whose prefix matches (rather than matches anywhere in object names)",
