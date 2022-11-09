@@ -877,6 +877,8 @@ static void canvas_saveto(t_canvas *x, t_binbuf *b)
         /* same for menu */
     if (x->gl_nomenu)
         binbuf_addv(b, "ssi;", gensym("#X"), gensym("menu"), x->gl_nomenu);
+    if (x->gl_gopspill)
+        binbuf_addv(b, "ssi;", gensym("#X"), gensym("gopspill"), x->gl_gopspill);
 }
 
 /* yuck, wish I didn't have to do this... */

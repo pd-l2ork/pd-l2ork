@@ -1369,6 +1369,16 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
             //fprintf(stderr,"done\n");
             gop_redraw = 0;
         }
+        // ico@vt.edu 2022-11-09: if we have gopspill option enabled
+        // allow for object to be drawn outside the boundaries
+        // here we lower the border line, so that it does not cover
+        // spilled objects. this is achieved by adding the
+        // "overflow: visible" css option
+        gui_vmess("gui_graph_gopspill", "xsi",
+            glist_getcanvas(x->gl_owner),
+            tag,
+            x->gl_gopspill
+        );
         glist_drawiofor(parent_glist, &x->gl_obj, 1,
             tag, x1, y1, x2, y2);
         // ico@vt.edu 2022-09-28: reattach labels dirty and subdirty
@@ -1396,6 +1406,31 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
         // here we check for changes in scrollbar because of legacy
         // objects that can fall outside gop window, e.g. scalars
         canvas_getscroll(glist_getcanvas(x->gl_owner));
+    }
+}
+
+void graph_gopspill(t_canvas *x, t_floatarg f)
+{
+    x->gl_gopspill = (int)f;
+
+    if (x->gl_mapped && x->gl_isgraph && !glist_getcanvas(x) != x)
+    {
+        char tag[50];
+        t_rtext *rtext;
+
+        rtext = glist_findrtext(x->gl_owner, &x->gl_obj);
+        if (!rtext)
+        {
+            bug("canvas_gopspill");
+            return;
+        }
+        sprintf(tag, "%s", rtext_gettag(rtext));
+
+        gui_vmess("gui_graph_gopspill", "xsi",
+            glist_getcanvas(x),
+            tag,
+            x->gl_gopspill
+        );
     }
 }
 
@@ -1932,6 +1967,8 @@ void g_graph_setup(void)
         A_GIMME, 0);
     class_addmethod(canvas_class, (t_method)graph_array, gensym("array"),
         A_GIMME, A_NULL);
+    class_addmethod(canvas_class, (t_method)graph_gopspill,
+        gensym("gopspill"), A_FLOAT, 0);
     class_addmethod(canvas_class, (t_method)canvas_menuarray,
         gensym("menuarray"), A_NULL);
     class_addmethod(canvas_class, (t_method)glist_sort,

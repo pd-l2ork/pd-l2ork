@@ -363,6 +363,8 @@
       "gop_tt": "Afficher le contenu intérieur de ce canevas dans un rectangle sur le canevas conteneur",
       "hide_name":    "Masquer le nom et les arguments de l'objet",
       "hide_name_tt": "Masquer le texte qui apparaît dans la boîte d'objets",
+      "gopspill": "Débordement du Graphique sur le Parent (GOP)",
+      "gopspill_tt": "Permettre aux Objets de se Répandre en Dehors du Cadre du Graphique sur le Parent (GOP)",
       "gop_0": "Objet",
       "gop_1": "Fenêtre",
       "gop_2": "Fenêtre (pas de texte)",

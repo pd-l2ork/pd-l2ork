@@ -3604,15 +3604,46 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
     return g;
 }
 
+// ico@vt.edu 2022-11-09: implementation for the gopspill feature used by the K12 mode
+function gui_graph_gopspill(cid, tag, state) {
+    //post("gui_graph_gopspill cid=" + cid + " tag=" + tag + " state=" + state);
+    gui(cid).get_elem(tag + "svg", function(graph_svg) {
+        graph_svg.style.setProperty("overflow", state ? "visible" : "hidden");
+    });
+    gui(cid).get_elem(tag + "gobj", function(graph_gobj) {
+        var border = graph_gobj.querySelector(".gopborder");
+        /*
+        post("graph_gobj=" + graph_gobj + " border=" + border +
+             " prev=" + border.previousElementSibling +
+             " last=" + graph_gobj.lastChild);
+        */
+        // now, if we have gopspill enabled, push border immediately below the maing <g>
+        // and above the <svg> element, so that the border is behind spilled objects.
+        // if we have gopspill disabled, push it back below the <svg> element, so that
+        // it is over any edge objects. Note that DOM objects further down the file are
+        // drawn visually above those who are above them in the file, e.g:
+        // <body>
+        // ...
+        // <g>
+        //   <svg>
+        //   <rect> <-- this one is drawn above the <svg>
+        // etc.
+        if (state)
+        {
+            graph_gobj.insertBefore(border, border.previousElementSibling);
+        } else {
+            // for some reason nextElementSibling or nextSibling returns null
+            // so we go by the lastChild which are the nlets
+            graph_gobj.insertBefore(border, graph_gobj.lastChild);
+        }
+    });
+}
+
 function gui_text_draw_border(cid, tag, bgcolor, isbroken, width, height, is_toplevel) {
     //post("===\ngui_text_draw_border is_toplevel=" + is_toplevel);
     var isgop = 0;
     gui(cid).get_gobj(tag, function(e) {
         if(e.classList.contains("graph")) {
-            // ico@vt.edu 20200916:
-            // disable this for GOP drawing debugging purposes as this will 
-            // disable the svg clipping to allow for locating objects that
-            // may be erroneously drawn outside the boundaries...
             isgop = 1;
         }
     });

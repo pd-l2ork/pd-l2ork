@@ -390,6 +390,8 @@
       "gop_tt": "show the inner contents of this canvas in a rectangle on the containing canvas",
       "hide_name": "hide name and arguments",
       "hide_name_tt": "hide the text that appears in the object box",
+      "gopspill": "graph on parent spill",
+      "gopspill_tt": "allow objects to spill outside the graph on parent frame",
       "gop_0": "Object",
       "gop_1": "Window",
       "gop_2": "Window (no text)",

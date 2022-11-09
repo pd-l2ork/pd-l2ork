@@ -246,6 +246,7 @@ struct _glist
     unsigned int gl_gop_initialized:1;     /* used for tagged moving of gop-ed objects to avoid redundant reinit */
     unsigned int gl_noscroll:1;     /* don't show window scrollbars */
     unsigned int gl_nomenu:1;       /* don't show the window menu */
+    unsigned int gl_gopspill:1;     /* toggle spilling of the objects inside the gop outside the gop boundaries */
     //global preset array pointer
     t_preset_hub *gl_phub;
     //infinite undo goodies (have to stay here rather than the editor to prevent its obliteration when editor is deleted)

@@ -3188,6 +3188,7 @@ void canvas_properties(t_gobj *z, t_glist *dummy)
         gui_s("y_margin"); gui_i((int)x->gl_ymargin);
         gui_s("no_scroll");   gui_i(x->gl_noscroll);
         gui_s("no_menu");     gui_i(x->gl_nomenu);
+        gui_s("gopspill");     gui_i(x->gl_gopspill);
     }
     else
     {
@@ -3211,6 +3212,7 @@ void canvas_properties(t_gobj *z, t_glist *dummy)
         gui_s("y_margin"); gui_i((int)x->gl_ymargin);
         gui_s("no_scroll");   gui_i(x->gl_noscroll);
         gui_s("no_menu");     gui_i(x->gl_nomenu);
+        gui_s("gopspill");     gui_i(x->gl_gopspill);
     }
     //gfxstub_new(&x->gl_pd, x, graphbuf);
 
@@ -3269,6 +3271,7 @@ static void canvas_donecanvasdialog(t_glist *x,
     pd_vmess(&x->gl_pd, gensym("scroll"), "f",
         atom_getfloatarg(11, argc, argv));
     x->gl_nomenu = atom_getintarg(12, argc, argv);
+    x->gl_gopspill = atom_getintarg(13, argc, argv);
 
     /* parent windows are treated differently than applies to
        individual objects */

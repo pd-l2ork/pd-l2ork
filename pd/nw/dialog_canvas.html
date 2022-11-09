@@ -102,6 +102,16 @@
               </label>
             </td>
           </tr>
+          <tr class="display_flags prop gopspill_row">
+            <td>
+            </td>
+            <td>
+              <label class="gop_opt" data-i18n="[title]canvas.prop.gopspill_tt">
+                <input class="gop_opt" type="checkbox" name="gopspill" value="on">
+                <span data-i18n="canvas.prop.gopspill"></span>
+              </label>
+            </td>
+          </tr>
         </table>
       </fieldset> 
 
@@ -511,6 +521,8 @@ function show_sane_defaults() {
 function show_gop_name_and_args_checkbutton(flag) {
     var row = document.getElementsByClassName("hide_name_row")[0];
     row.style.setProperty("visibility", flag ? "visible" : "hidden");
+    row = document.getElementsByClassName("gopspill_row")[0];
+    row.style.setProperty("visibility", flag ? "visible" : "hidden");
 }
 
 function set_gop(state) {
@@ -581,7 +593,8 @@ function apply() {
             +get_input("x_margin"),
             +get_input("y_margin"),
             +get_input("no_scroll"),
-            +get_input("no_menu")
+            +get_input("no_menu"),
+            +get_input("gopspill")
         );
     }
 

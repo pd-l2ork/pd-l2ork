@@ -364,6 +364,8 @@
       "gop_tt": "Zeige den Inhalt dieses Patches in einem Rechteck im übergeordneten Patch",
       "hide_name": "Namen und Argumente verbergen",
       "hide_name_tt": "verberge den Text in der Objekt-Box im übergeordneten Patch",
+      "gopspill": "Diagramm zur Verschüttung von Eltern",
+      "gopspill_tt": "Lassen Sie zu, dass Objekte über die Anzeigeränder im übergeordneten Patch hinausragen",
       "gop_0": "Objekt",
       "gop_1": "Fenster",
       "gop_2": "Fenster (kein Text)",
