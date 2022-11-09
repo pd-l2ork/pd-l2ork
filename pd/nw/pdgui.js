@@ -528,7 +528,9 @@ function make_index() {
     } catch (err) {
         //console.log(err);
     }
-    if (idx && manif && check_timestamps(manif)) {
+    // ico@vt.edu 2022-11-09: force rebuilding of index if
+    // browser_init option is set in the general preferences tab
+    if (idx && manif && check_timestamps(manif) && !browser_init) {
         // index cache is present and up-to-date, load it
         post("loading cached help index from " + cache_name);
         idx = idx.split('\n');
