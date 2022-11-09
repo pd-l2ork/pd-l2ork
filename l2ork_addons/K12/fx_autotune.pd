@@ -181,3 +181,4 @@ lforate 5 \, mix 1 \, correct 1;
 #X connect 12 0 9 0;
 #X connect 13 0 3 0;
 #X coords 0 -1 1 1 90 90 2 98 140;
+#X gopspill 1;

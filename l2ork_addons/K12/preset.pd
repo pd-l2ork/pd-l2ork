@@ -33,3 +33,4 @@ empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X connect 10 0 4 0;
 #X connect 11 0 1 0;
 #X coords 0 -1 1 1 90 90 2 100 87;
+#X gopspill 1;

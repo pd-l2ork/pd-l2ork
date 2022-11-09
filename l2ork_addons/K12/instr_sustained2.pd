@@ -53,3 +53,4 @@
 #X connect 23 0 24 0;
 #X connect 24 0 21 0;
 #X coords 0 -1 1 1 90 90 2 398 77;
+#X gopspill 1;

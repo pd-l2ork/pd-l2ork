@@ -66,3 +66,4 @@ empty 0 -8 0 10 #fcfcfc #000000 #000000 0;
 #X connect 25 1 21 0;
 #X connect 25 2 22 0;
 #X coords 0 -1 1 1 90 90 2 546 61;
+#X gopspill 1;

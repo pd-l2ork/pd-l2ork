@@ -135,3 +135,4 @@
 #X connect 46 0 42 0;
 #X connect 47 0 1 0;
 #X coords 0 -1 1 1 90 90 2 144 156;
+#X gopspill 1;

@@ -41,3 +41,4 @@ counters and other things get their values first, f 36;
 #X connect 17 0 13 0;
 #X connect 18 0 7 0;
 #X coords 0 -1 1 1 90 90 2 116 187;
+#X gopspill 1;
