@@ -522,7 +522,10 @@ function show_gop_name_and_args_checkbutton(flag) {
     var row = document.getElementsByClassName("hide_name_row")[0];
     row.style.setProperty("visibility", flag ? "visible" : "hidden");
     row = document.getElementsByClassName("gopspill_row")[0];
-    row.style.setProperty("visibility", flag ? "visible" : "hidden");
+    //pdgui.post("gopspill has array? " + pd_garray_attrs.length);
+    row.style.setProperty("visibility",
+      flag && pd_garray_attrs.length === 0 ? 
+      "visible" : "hidden");
 }
 
 function set_gop(state) {
