@@ -1070,12 +1070,14 @@ input[type="color"] {
 #autocomplete_dropdown {
     background-color: #ebebec;
     border: 1px solid;
-    padding: 1px;
+    padding: 0px;
+    border-color: #c3c3c3;
+    box-shadow: 5px 0 5px -5px #aaa, 0 5px 5px -5px #aaa, -5px 0 5px -5px #aaa;
 }
 
 #autocomplete_dropdown p {
     padding: 2px;
-    margin: 1px;
+    margin: 0px;
 }
 
 #autocomplete_dropdown p.selected {
