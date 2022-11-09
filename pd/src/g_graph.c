@@ -27,6 +27,7 @@ static void graph_getrect(t_gobj *z, t_glist *glist,
     int *xp1, int *yp1, int *xp2, int *yp2);
 void graph_checkgop_rect(t_gobj *z, t_glist *glist,
     int *xp1, int *yp1, int *xp2, int *yp2);
+void graph_gopspill(t_canvas *x, t_floatarg f);
 
 extern t_template *template_findbydrawcommand(t_gobj *g);
 
@@ -1374,6 +1375,12 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
         // here we lower the border line, so that it does not cover
         // spilled objects. this is achieved by adding the
         // "overflow: visible" css option
+        //post("graph_vis gopspill as float %f", (t_floatarg)x->gl_gopspill);
+        // this currently does not work because the object is not
+        // mapped yet, which is a prerequisite for the graph_gopspill
+        // function below, so we have to issue a draw command here
+        // directly
+        //graph_gopspill(x, (t_floatarg)x->gl_gopspill);
         gui_vmess("gui_graph_gopspill", "xsi",
             glist_getcanvas(x->gl_owner),
             tag,
@@ -1411,6 +1418,12 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
 
 void graph_gopspill(t_canvas *x, t_floatarg f)
 {
+    // don't allow this for graph canvases that have arrays in them
+    if (canvas_hasarray(x))
+        return;
+
+    //post("graph_gopspill %f", f);
+
     x->gl_gopspill = (int)f;
 
     if (x->gl_mapped && x->gl_isgraph && !glist_getcanvas(x) != x)

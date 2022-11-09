@@ -1,5 +1,5 @@
 PD-L2ORK TODO:
-*Update Windows to nw.js 0.70.1.
+*Update Windows to nw.js 0.67.1.
   *Test for regressions:
     *Console positioning on start-up.
     *Patch window positioning on start-up, loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
@@ -7,14 +7,9 @@ PD-L2ORK TODO:
 *Reimplement next/prev window, if possible.
 
 Autocomplete:
-*Delete search.index and search.stamps, if found, as they prevent the proper indexing.
-  Update #1: adding a rebuild index button on the general preferences tab may be the best solution here.
-  Update #2: looks like this is already done for autocomplete, so perhaps we just do it every time?
 *Do not index object that failed to create.
-*Update autocomplete box appearance and wording inside the preferences (more space above, remove experimental).
 
-*Add canvas options for GOP spill, noscroll, nomenu, background color, draw border, and ontop (if it works in nw.js).
-  *Check that all array contents are visible when GOP spill is allowed.
+*Add canvas options for nomenu, background color, draw border, and ontop (if it works in nw.js). Test noscroll option.
 
 Add global "editable" flag. Figure out how to embed this into the patch that is not easily disabled.
   *Right click should also not work in non-editable patch.
@@ -31,18 +26,16 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
   *Tested and cannot reproduce. Looks like a permissions issue, perhaps?
 
 *Pick the best nw.js (==> denotes the current choice)
-  *Ocassional crashes may be caused by pd-l2ork, rather than nw.js. perhaps dynamic menu updating on OSX?
   *Current status:
-    0.28.1 is fast but crashes occasionally. next/prev option does not work.
-    0.28.3 is fast. next/prev option does not work. crashes due to lack of a fix introduced in 0.60.1???
+    0.28.1 next/prev option does not work.
+    0.28.3 ext/prev option does not work.
 RPI 0.28.4 current RPi version.
-    0.40.2 is fast but crashes occasionally. next/prev option does not work.
-    0.41.3 is fast but crashes occasionally. next/prev option does not work.
+    0.40.2 next/prev option does not work.
+    0.41.3 next/prev option does not work.
     0.42.3 next/prev option does not work. on a dark theme in Linux menu items are not visible.
-    0.42.4 register_window_id not found error. does not display anything. everything from here has CMD+(1-9) broken on OSX.
+    0.42.4 register_window_id not found error. does not display anything. everything from here has CMD+(1-9) broken on OSX when keeping the nw2 option enabled.
     0.42.5 register_window_id not found error.
     0.42.6 register_window_id not found error.
-    0.43.0 beta 1 is fast.
     0.43.0 register_window_id not found error.
     0.43.1 register_window_id not found error.
     0.43.2 register_window_id not found error.
@@ -50,14 +43,14 @@ RPI 0.28.4 current RPi version.
     0.43.4 register_window_id not found error.
     0.43.5 segfaults on Linux when opening dev tools.
     0.43.6 segfaults on Linux when opening dev tools.
-    0.44.0 beta 1 register_window_id not found error.
-    0.44.0 is ok.
+    0.44.0
     0.44.6 everything from here works with next/prev window and Pd window options.
     0.54.0
     0.56.0
     0.58.0
     0.59.1
-    0.60.0 everything form here below also has incorrectly placed windows.
+    0.60.0 everything form here below also has incorrectly placed windows when using nw2 option.
+    0.60.1 everything above this ocassionally crashes on OSX due to lack of a fix introduced in 0.60.1
     0.62.1
     0.62.2
     0.63.1 crashes on Linux.
@@ -333,6 +326,12 @@ error: array: no method for 'magicglass'
 *Updated K12 Rpi GPIO abstractions to avoid unnecessary console output and potential errors opening GPIOs due to bad timing.
 *Merged latest autcomplete improvements in Purr-Data with additional bug-fixes.
 *Fixed OSX having inconsistent positioning of the new patches (file->new) likely due to a bug in nw.js 0.28.3. See comment in the code on how to handle this later with future nw.js upgrades and the introduction of the saving of the Pd-L2Ork console position and size.
+*Implement gopspill option for the canvases.
+*Fix the major slowdown with nw.js versions newer than 0.42.3.
+*Update K12 objects to use gopspill option, so that the icons are not truncated.
+*Update autocomplete box appearance and wording inside the preferences (more space above, remove "experimental" wording).
+*Enabled rebuilding of the index on every startup if build_index option is set in the preferences. LATER: investigate how the timestamp feature works...
+*Ensured that the gopspill option does not work for arrays (via dialog or scripting).
 
 
 

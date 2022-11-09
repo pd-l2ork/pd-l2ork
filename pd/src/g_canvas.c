@@ -549,6 +549,11 @@ t_canvas *canvas_new(void *dummy, t_symbol *sel, int argc, t_atom *argv)
     x->gl_edit_save = 0;
     x->gl_font = sys_nearestfontsize(font);
     x->gl_zoom = zoom;
+
+    x->gl_noscroll = 0;
+    x->gl_nomenu = 0;
+    x->gl_gopspill = 0;
+
     pd_pushsym(&x->gl_pd);
 
     x->u_queue = canvas_undo_init(x);
