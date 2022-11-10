@@ -25,12 +25,12 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Pick the best nw.js (==> denotes the current choice)
   *Current status:
     0.28.1 next/prev option does not work.
-    0.28.3 ext/prev option does not work.
+    0.28.3 next/prev option does not work.
 RPI 0.28.4 current RPi version.
     0.40.2 next/prev option does not work.
     0.41.3 next/prev option does not work.
     0.42.3 next/prev option does not work. on a dark theme in Linux menu items are not visible.
-    0.42.4 register_window_id not found error. does not display anything. everything from here has CMD+(1-9) broken on OSX when keeping the nw2 option enabled.
+    0.42.4 register_window_id not found error. does not display anything. everything from here below has CMD+(1-9) broken on OSX when keeping the nw2 option enabled.
     0.42.5 register_window_id not found error.
     0.42.6 register_window_id not found error.
     0.43.0 register_window_id not found error.
@@ -329,7 +329,7 @@ error: array: no method for 'magicglass'
 *Update autocomplete box appearance and wording inside the preferences (more space above, remove "experimental" wording).
 *Enabled rebuilding of the index on every startup if build_index option is set in the preferences. LATER: investigate how the timestamp feature works...
 *Ensured that the gopspill option does not work for arrays (via dialog or scripting).
-*A number of improvements to the autocomplete.
+*A number of improvements to the autocomplete:
   *Do not index (for autocomplete purposes) object name and/or args that failed to create.
   *Improved mechanism for autocompletion text removal (using ctrl+y). If a text is highlighted in the autocomplete list, then the command will try to remove that text. Otherwise it will try to remove text that is currently entered inside the edited object.
   *Fixed indexing issue when the popup is above the object, in which case removal threw out an error.
