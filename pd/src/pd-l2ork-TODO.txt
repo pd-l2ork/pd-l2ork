@@ -17,9 +17,6 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 
 *When closing the patch, make sure that the dialog is always centered? This is a low priority item.
 
-*Space in path (e.g. username) makes installing apps in the user folder fail.
-  *Tested and cannot reproduce. Looks like a permissions issue, perhaps?
-
 *Pick the best nw.js (==> denotes the current choice)
   *Current status:
     0.28.1 next/prev option does not work.
@@ -94,6 +91,7 @@ RPI 0.28.4 current RPi version.
 
 *port miXed (cyclone) comment?
 
+
 RARE:
 *sometimes closing a newly created window before it has posted or possibly creating two windows by quickly double clicking on a subpatch irreversibly breaks the front-end. Need the better checks'n'balances.
 
@@ -106,6 +104,10 @@ RARE:
 *Sometimes editing message resizes the object size without erasing text. Is this a nw.js bug?
 
 *Textbox still sometimes loses all its text (get a console error resizebytes being out of memory).
+
+*Space in path (e.g. username) makes installing apps in the user folder fail.
+  *Tested and cannot reproduce. Looks like a permissions issue, perhaps?
+
 
 MAYBE:
 *gui_canvas_scroll_to_gobj should only scroll to an object if doing so improves situation (e.g. if the object is wider than the screen, then scrolling won't fix anything)?
