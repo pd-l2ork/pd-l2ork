@@ -1,6 +1,6 @@
 PD-L2ORK TODO:
-*Update Windows to nw.js 0.67.1.
-  *Test for regressions:
+*Update all releases (where possible) to nw.js 0.67.1.
+  *Test nwjs 0.67.1 for regressions:
     *Console positioning on start-up.
     *Patch window positioning on start-up, loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
 
