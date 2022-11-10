@@ -3,7 +3,7 @@
 0;
 #X obj 4 2 cnv 15 1630 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.67\ by
+#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.68\ by
 4 5 0 10 #6c6c6c #fcfcfc 0;
 #X obj 252 3 cnv 15 125 16 empty empty (c)\ 2020-2\ Released\ under\ the
 4 6 0 10 #6c6c6c #fcfcfc 0;
@@ -138,7 +138,7 @@ and main out and pan valuesshift + quadruple click - everything (loop
 -text GPL v3 License;
 #X obj 820 672 core/L2OrkTweet 11;
 #X obj 820 823 core/L2OrkTweet 12;
-#N canvas 769 476 502 129 core 0;
+#N canvas 769 488 502 129 core 0;
 #N canvas 139 226 861 565 loop-logic 0;
 #X obj 506 413 r myclientnum;
 #X obj 101 566 forward null;
@@ -1528,7 +1528,7 @@ are added later. this allows for deterministic session saving., f
 #X connect 78 0 34 0;
 #X connect 79 0 78 0;
 #X restore 359 52 pd load-save-session;
-#N canvas 245 481 450 324 version 0;
+#N canvas 245 493 450 324 version 0;
 #X obj 177 51 loadbang;
 #X obj 177 101 t f f;
 #X obj 204 125 s version;
@@ -1539,7 +1539,7 @@ are added later. this allows for deterministic session saving., f
 #X text 99 75 DEBUG;
 #X obj 177 168 sprintf L2Ork Tweeter v.%.02f by;
 #X obj 177 193 tosymbol;
-#X msg 177 76 0.67;
+#X msg 177 76 0.68;
 #X connect 0 0 10 0;
 #X connect 1 0 8 0;
 #X connect 1 1 2 0;

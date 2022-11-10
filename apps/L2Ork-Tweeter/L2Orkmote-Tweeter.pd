@@ -1,9 +1,9 @@
-#N canvas 137 64 1638 982 10;
+#N canvas 174 74 1637 977 10;
 #X obj 0 0 cnv 15 1637 973 empty empty empty 5 7 0 10 #444444 #fcfcfc
 0;
 #X obj 4 2 cnv 15 1630 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.67\ by
+#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.68\ by
 4 5 0 10 #6c6c6c #fcfcfc 0;
 #X obj 252 3 cnv 15 125 16 empty empty (c)\ 2020-1\ Released\ under\ the
 4 6 0 10 #6c6c6c #fcfcfc 0;
@@ -47,7 +47,7 @@ f 37;
 #X obj 549 30 nbx 4 15 1 9999 0 0 \$0-store-loop \$0-store-loop-r empty
 -64 5 0 12 #fcb46c #000000 #000000 1 256 0 1 1 0;
 #X obj 549 45 nbx 4 15 1 9999 0 0 \$0-recall-loop \$0-recall-loop-r
-empty -64 5 0 12 #80fc80 #000000 #000000 1 256 0 1 1 0;
+empty -64 5 0 12 #80fc80 #000000 #000000 10 256 0 1 1 0;
 #X obj 414 30 cnv 8 10 8 empty empty STORE\ LOOP\ (shift+1-0) -1 5
 0 10 #6c6c6c #fcfcfc 0;
 #X obj 408 45 cnv 8 10 8 empty empty RECALL\ LOOP\ (shift+q-p) -1 5
@@ -59,7 +59,7 @@ empty -5 -9 0 10 #80fc80 #008080 #fcfcfc 1;
 #X obj 813 30 nbx 4 15 1 9999 0 0 \$0-store-preset \$0-store-preset-r
 empty -64 5 0 12 #fcb46c #000000 #000000 1 256 0 1 1 0;
 #X obj 813 45 nbx 4 15 1 9999 0 1 \$0-recall-preset \$0-recall-preset-r
-empty -64 5 0 12 #80fc80 #000000 #000000 11 256 0 1 1 0;
+empty -64 5 0 12 #80fc80 #000000 #000000 23 256 0 1 1 0;
 #X obj 666 30 cnv 8 10 8 empty empty STORE\ PRESET\ (shift+a-:) -1
 5 0 10 #6c6c6c #fcfcfc 0;
 #X obj 660 45 cnv 8 10 8 empty empty RECALL\ PRESET\ (shift+z-/) -1
@@ -128,8 +128,8 @@ and main out and pan valuesshift + quadruple click - everything (loop
 ;
 #X obj 437 3 pddp/pddplink https://www.gnu.org/licenses/gpl-3.0.en.html
 -text GPL v3 License;
-#N canvas 769 488 502 125 core 0;
-#N canvas 139 226 861 565 loop-logic 0;
+#N canvas 769 548 502 125 core 0;
+#N canvas 139 262 861 614 loop-logic 0;
 #X obj 506 413 r myclientnum;
 #X obj 101 566 forward null;
 #X obj 479 566 forward null;
@@ -1518,7 +1518,7 @@ are added later. this allows for deterministic session saving., f
 #X connect 78 0 34 0;
 #X connect 79 0 78 0;
 #X restore 359 52 pd load-save-session;
-#N canvas 245 469 450 324 version 0;
+#N canvas 245 481 450 324 version 0;
 #X obj 177 51 loadbang;
 #X obj 177 101 t f f;
 #X obj 204 125 s version;
@@ -1529,7 +1529,7 @@ are added later. this allows for deterministic session saving., f
 #X text 99 75 DEBUG;
 #X obj 177 168 sprintf L2Ork Tweeter v.%.02f by;
 #X obj 177 193 tosymbol;
-#X msg 177 76 0.67;
+#X msg 177 76 0.68;
 #X connect 0 0 10 0;
 #X connect 1 0 8 0;
 #X connect 1 1 2 0;
@@ -1695,21 +1695,25 @@ Chat will appear in the console., f 32;
 #X connect 7 0 4 0;
 #X connect 8 0 5 0;
 #X restore 437 81 pd init;
-#N canvas 553 426 450 165 l2orkmote-recall-routing 0;
+#N canvas 553 462 604 165 l2orkmote-recall-routing 0;
 #X obj 41 36 r recall-loop-r;
-#X obj 251 36 r recall-preset-r;
 #X obj 41 61 t b f;
-#X obj 251 61 t b f;
-#X obj 278 84 s \$0-recall-preset-r;
-#X obj 251 106 s \$0-recall-preset-apply-r;
-#X obj 68 84 s \$0-recall-loop-r;
-#X obj 41 106 s \$0-recall-loop-apply-r;
-#X connect 0 0 2 0;
-#X connect 1 0 3 0;
-#X connect 2 0 7 0;
-#X connect 2 1 6 0;
-#X connect 3 0 5 0;
-#X connect 3 1 4 0;
+#X obj 301 61 t b f;
+#X obj 328 94 s \$0-recall-preset-r;
+#X obj 301 116 s \$0-recall-preset-apply-r;
+#X obj 68 94 s \$0-recall-loop-r;
+#X obj 41 116 s \$0-recall-loop-apply-r;
+#X obj 147 36 r recall-loop-preview;
+#X obj 420 36 r recall-preset-preview;
+#X obj 301 36 r recall-preset-r;
+#X connect 0 0 1 0;
+#X connect 1 0 6 0;
+#X connect 1 1 5 0;
+#X connect 2 0 4 0;
+#X connect 2 1 3 0;
+#X connect 7 0 5 0;
+#X connect 8 0 3 0;
+#X connect 9 0 2 0;
 #X restore 258 81 pd l2orkmote-recall-routing;
 #X connect 5 0 6 0;
 #X restore 1586 3 pd core;

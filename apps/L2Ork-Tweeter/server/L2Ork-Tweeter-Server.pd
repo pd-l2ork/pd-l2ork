@@ -1,4 +1,4 @@
-#N canvas 180 25 1544 953 10;
+#N canvas 224 103 1544 953 10;
 #X floatatom 300 90 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 1238 290 text define clients;
 #X floatatom 738 74 5 0 0 0 - - - 0 0 1, f 5;
@@ -994,7 +994,7 @@ modifying of other users' settings, f 34;
 slot \, 3 adds it to the requested slot \, and 4 connects user as a
 guest because either the slot is already occupied \, or all slots are
 taken, f 67;
-#X msg 232 741 0.67;
+#X msg 232 741 0.68;
 #X connect 0 0 76 0;
 #X connect 0 0 115 0;
 #X connect 2 0 176 0;
