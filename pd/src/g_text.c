@@ -198,6 +198,7 @@ static void canvas_objtext(t_glist *gl, int xpix, int ypix,
             buf = t_resizebytes(buf, bufsize, bufsize+1);
             buf[bufsize] = 0;
             pd_error(x, "couldn't create \"%s\"", buf);
+            gui_vmess("remove_completion", "ss", buf, "console.log");
             t_freebytes(buf, bufsize + 1);
         }
     }

@@ -425,12 +425,23 @@ var canvas_events = (function() {
                 .getElementById(textbox().getAttribute("tag")+"gobj")
                 .getAttribute("class").toString()
                 .split(" ").slice(0,1).toString();
+            //pdgui.post("ac_repopulate... class=" + obj_class);
             if (obj_class === "obj") { // autocomplete only works for objects
+                //pdgui.post("...got object");
                 pdgui.create_autocomplete_dd(name, document, ac_dropdown(), textbox());
-                if (ac_dropdown().getAttribute("searched_text") !== textbox().innerText) {
-                    last_results = pdgui.repopulate_autocomplete_dd(name, document, ac_dropdown, obj_class, textbox());
-                    last_offset = 0;
-                }
+                /*
+                pdgui.post("...searched_text=<" +
+                    ac_dropdown().getAttribute("searched_text") +
+                    "> innerText=<" + textbox().innerText + ">");
+                */
+                // ico@vt.edu 2022-11-09: the following if statement prevents
+                // repopulating values if the innerText is the same as the one
+                // being removed
+                //if (ac_dropdown().getAttribute("searched_text") !== textbox().innerText) {
+                //pdgui.post("ac_repopulate calling repopulate_autocomplete_dd");
+                last_results = pdgui.repopulate_autocomplete_dd(name, document, ac_dropdown, obj_class, textbox());
+                last_offset = 0;
+                //}
             }
         },
         events = {
@@ -757,8 +768,16 @@ var canvas_events = (function() {
                         }
                         last_yanked = "";
                         break;
-           case 89:
+                    case 89:
                         if (evt.ctrlKey) { // ctrl-y
+                            let sel = ac_dropdown().getAttribute("selected_item");
+                            var text_to_remove;
+                            if (sel > -1) {
+                                text_to_remove = ac_dropdown().children.item(sel).innerText;
+                            } else {
+                                text_to_remove = textbox().innerText;
+                            }
+                            //pdgui.post("autocomplete ctrl-y text_to_remove=" + text_to_remove);
                             // AG: Note that this key is usually bound to the
                             // Tidy Up operation in the Edit menu, but this
                             // presumably won't interfere with our use here,
@@ -769,22 +788,22 @@ var canvas_events = (function() {
                             if (textbox().innerText === "") {
                                 pdgui.delete_autocomplete_dd(ac_dropdown());
                                 last_yanked = "";
-                            } else if (textbox().innerText === last_yanked) {
+                            } else if (text_to_remove === last_yanked) {
                                 // confirmed, really yank now
-                                if (pdgui.remove_completion(textbox().innerText, console.log)) {
-                                    pdgui.post("Removed completion: "+textbox().innerText);
+                                if (pdgui.remove_completion(text_to_remove, console.log)) {
+                                    pdgui.post("Removed completion: " + text_to_remove);
                                     ac_repopulate();
                                     last_results = [];
                                     last_completed = last_offset = -1;
-                               }
+                                }
                                 last_yanked = "";
-                            } else if (pdgui.check_completion(textbox().innerText)) {
+                            } else if (pdgui.check_completion(text_to_remove)) {
                                 // for some safety, ask the user to confirm with another ctrl+y
-                                pdgui.post("Really remove completion "+textbox().innerText+"?");
+                                pdgui.post("Really remove completion " + text_to_remove + "?");
                                 pdgui.post("Press ctrl+y again to confirm (Esc to abort).");
-                                last_yanked = textbox().innerText;
+                                last_yanked = text_to_remove;
                             } else {
-                                pdgui.post("No completion "+textbox().innerText);
+                                pdgui.post("No completion " + text_to_remove);
                             }
                         }
                         break;

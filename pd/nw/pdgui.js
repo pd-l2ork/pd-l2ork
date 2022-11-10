@@ -851,6 +851,7 @@ function repopulate_autocomplete_dd(cid, doc, ac_dropdown, obj_class, new_obj_el
         have_arg = arg.length !== 0;
         arg = (arg.length !== 0) ? arg.toString().replace(/\,/g, " ") : "";
     } else { // the autocomplete feature doesn't work with messages and comments
+        post("repopulate_autocomplete_dd failed");
         return;
     }
 
@@ -1103,7 +1104,9 @@ function check_completion(text)
 
 function remove_completion(text, log)
 {
+    //post("remove_completion <" + text+ ">");
     if (!autocomplete) return false;
+    //post("...got autocomplete");
     // Check to see whether we're removing an object or just its arguments
     // from the index.
     let text_array = text.split(" ");

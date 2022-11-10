@@ -6,9 +6,6 @@ PD-L2ORK TODO:
 
 *Reimplement next/prev window, if possible.
 
-Autocomplete:
-*Do not index object that failed to create.
-
 *Add canvas options for nomenu, background color, draw border, and ontop (if it works in nw.js). Test noscroll option.
 
 Add global "editable" flag. Figure out how to embed this into the patch that is not easily disabled.
@@ -332,6 +329,10 @@ error: array: no method for 'magicglass'
 *Update autocomplete box appearance and wording inside the preferences (more space above, remove "experimental" wording).
 *Enabled rebuilding of the index on every startup if build_index option is set in the preferences. LATER: investigate how the timestamp feature works...
 *Ensured that the gopspill option does not work for arrays (via dialog or scripting).
+*A number of improvements to the autocomplete.
+  *Do not index (for autocomplete purposes) object name and/or args that failed to create.
+  *Improved mechanism for autocompletion text removal (using ctrl+y). If a text is highlighted in the autocomplete list, then the command will try to remove that text. Otherwise it will try to remove text that is currently entered inside the edited object.
+  *Fixed indexing issue when the popup is above the object, in which case removal threw out an error.
 
 
 
