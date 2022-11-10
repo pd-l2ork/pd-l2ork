@@ -4,8 +4,6 @@ PD-L2ORK TODO:
     *Console positioning on start-up.
     *Patch window positioning on start-up, loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
 
-*Reimplement next/prev window, if possible.
-
 *Add canvas options for nomenu, background color, draw border, and ontop (if it works in nw.js). Test noscroll option.
 
 Add global "editable" flag. Figure out how to embed this into the patch that is not easily disabled.
@@ -333,6 +331,7 @@ error: array: no method for 'magicglass'
   *Do not index (for autocomplete purposes) object name and/or args that failed to create.
   *Improved mechanism for autocompletion text removal (using ctrl+y). If a text is highlighted in the autocomplete list, then the command will try to remove that text. Otherwise it will try to remove text that is currently entered inside the edited object.
   *Fixed indexing issue when the popup is above the object, in which case removal threw out an error.
+*Reimplemented next/prev patch window feature to make it work with newer nw.js. Should also work with older ones.
 
 
 
