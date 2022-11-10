@@ -1381,11 +1381,12 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
         // function below, so we have to issue a draw command here
         // directly
         //graph_gopspill(x, (t_floatarg)x->gl_gopspill);
-        gui_vmess("gui_graph_gopspill", "xsi",
-            glist_getcanvas(x->gl_owner),
-            tag,
-            x->gl_gopspill
-        );
+        if (x->gl_gopspill)
+            gui_vmess("gui_graph_gopspill", "xsi",
+                glist_getcanvas(x->gl_owner),
+                tag,
+                x->gl_gopspill
+            );
         glist_drawiofor(parent_glist, &x->gl_obj, 1,
             tag, x1, y1, x2, y2);
         // ico@vt.edu 2022-09-28: reattach labels dirty and subdirty
