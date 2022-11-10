@@ -2702,7 +2702,6 @@ function nw_create_patch_window_menus(gui, w, name) {
     });
 
     // Window
-    /*
     minit(m.win.nextwin, {
         click: function() {
             pdgui.raise_next(name);
@@ -2713,7 +2712,6 @@ function nw_create_patch_window_menus(gui, w, name) {
             pdgui.raise_prev(name);
         }
     });
-    */
     minit(m.win.parentwin, {
         enabled: true,
         click: function() {
