@@ -1,9 +1,9 @@
-#N canvas 262 169 320 473 10;
+#N canvas 262 181 320 473 10;
 #X obj 76 143 ggee/image @pd_extra/K12/objects/raspberrypi_3008_analog_in_off.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
 #X obj 76 143 ggee/image @pd_extra/K12/objects/raspberrypi_3008_analog_in_on.png
-1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
+1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 0 1
 ;
 #X obj 124 430 outlet;
 #X obj 101 161 nbx 2 14 -1 7 0 0 empty empty channel: -48 8 0 11 #fcfcfc
