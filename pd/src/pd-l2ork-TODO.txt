@@ -336,6 +336,8 @@ error: array: no method for 'magicglass'
 *Reimplemented next/prev patch window feature to make it work with newer nw.js. Should also work with older ones.
 *Fixed regression with the graph_gopspill that caused first sub-GOP patch border to be drawn incorrectly.
 *Added safety checks for graph_gopspill to prevent from scripting messing things up.
+*Fixed visual appearance of a K12 object (raspberrypi_analog_in was erroneously instantiated with the "on" icon).
+*Added dummy disis_gpio object to be used on non-RPi platforms because disis_gpio's reliance on wiringPi makes it prone to crashing when a platform is not recognized.
 
 
 
