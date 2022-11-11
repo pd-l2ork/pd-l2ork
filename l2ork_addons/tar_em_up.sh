@@ -415,12 +415,21 @@ then
 	if [ $inno -eq 0 -a $dmg -eq 0 -a $light -eq 0 ]; then
 		cd raspberry_pi
 		./makeall.sh
-		# these don't seem to be built on some newer ARM architectures
-		# for some reason, so check to make sure that we actually have
-		# them before trying to install
-		if [ -f disis_gpio/disis_gpio.pd_linux ]; then
-		cp -f disis_gpio/disis_gpio.pd_linux ../../packages/linux_make/build$inst_dir/lib/pd-l2ork/extra
-		cp -f disis_gpio/disis_gpio-help.pd ../../packages/linux_make/build$inst_dir/lib/pd-l2ork/extra
+		# ico@vt.edu 2022-11-11: only install disis_gpio for the RPi/arm platform
+		# because wiringPi is ridden with things that crash the whole
+		# application if the platform is not recognized. this will result
+		# in objects like disis_spi and disis_gpio to fail to create,
+		# but at least they will not crash.
+		if [ $arch == "armv7l" ]; then
+			if [ -f disis_gpio/disis_gpio.pd_linux ]; then
+			cp -f disis_gpio/disis_gpio.pd_linux ../../packages/linux_make/build$inst_dir/lib/pd-l2ork/extra
+			cp -f disis_gpio/disis_gpio-help.pd ../../packages/linux_make/build$inst_dir/lib/pd-l2ork/extra
+			fi
+		else
+			if [ -f disis_gpio_dummy/disis_gpio.pd_linux ]; then
+			cp -f disis_gpio_dummy/disis_gpio.pd_linux ../../packages/linux_make/build$inst_dir/lib/pd-l2ork/extra
+			cp -f disis_gpio/disis_gpio-help.pd ../../packages/linux_make/build$inst_dir/lib/pd-l2ork/extra
+			fi
 		fi
 		if [ -f disis_spi/disis_spi.pd_linux ]; then
 		cp -f disis_spi/disis_spi.pd_linux ../../packages/linux_make/build$inst_dir/lib/pd-l2ork/extra

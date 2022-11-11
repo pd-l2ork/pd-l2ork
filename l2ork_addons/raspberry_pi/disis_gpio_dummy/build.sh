@@ -1,0 +1,2 @@
+make
+exit 0
