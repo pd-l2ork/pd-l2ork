@@ -335,6 +335,7 @@ error: array: no method for 'magicglass'
   *Fixed indexing issue when the popup is above the object, in which case removal threw out an error.
 *Reimplemented next/prev patch window feature to make it work with newer nw.js. Should also work with older ones.
 *Fixed regression with the graph_gopspill that caused first sub-GOP patch border to be drawn incorrectly.
+*Added safety checks for graph_gopspill to prevent from scripting messing things up.
 
 
 
