@@ -242,9 +242,18 @@ if [ ! -d "../pd/nw/nw" ]; then
         mv $nwjs_dirname ../pd/nw/nw
 	# make sure the nw binary is executable on GNU/Linux
 	if [[ $os != "win" && $dmg == 0 ]]; then
+		pwd
 		chmod 755 ../pd/nw/nw/nw
 	fi
 	rm $nwjs_filename
+fi
+
+# ico@vt.edu 2022-11-10: ugly hack for the nwjs 0.67.1 that has wrong permissions set for Linux
+if [[ $os != "win" && $dmg == 0 ]]; then
+	cd ../pd/nw/nw/
+	chmod 755 chrome* minidump_stackwalk nacl* nw nwjc payload
+	cd ../../../l2ork_addons
+	echo PWD=`pwd`
 fi
 
 # For Windows, fetch the ASIO SDK if we don't have it already
