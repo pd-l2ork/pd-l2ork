@@ -1424,6 +1424,8 @@ void graph_gopspill(t_canvas *x, t_floatarg f)
         return;
 
     //post("graph_gopspill %f", f);
+    if (x->gl_gopspill == (int)f || ((int)f != 0 && (int)f != 1))
+        return;
 
     x->gl_gopspill = (int)f;
 
