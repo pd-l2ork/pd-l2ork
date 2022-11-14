@@ -1,8 +1,9 @@
 PD-L2ORK TODO:
 *Update all releases (where possible) to nw.js 0.67.1.
   *Test nwjs 0.67.1 for regressions:
-    *Console positioning on start-up.
     *Patch window positioning on start-up, loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
+
+*Test on RPi if it also saves main console window position and size.
 
 *Add canvas options for nomenu, background color, draw border, and ontop (if it works in nw.js). Test noscroll option.
 
@@ -11,9 +12,8 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
   *Should be only toplevel patch?
   *Select All should not automatically enter the edit mode.
 
-*save pd-l2ork main window position between restarts.
-
 *Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
+  *Investigate index.js' nw_create_window, and the pdgui.js' canvas_check_geometry.
 
 *When closing the patch, make sure that the dialog is always centered? This is a low priority item.
 
@@ -338,6 +338,7 @@ error: array: no method for 'magicglass'
 *Added safety checks for graph_gopspill to prevent from scripting messing things up.
 *Fixed visual appearance of a K12 object (raspberrypi_analog_in was erroneously instantiated with the "on" icon).
 *Added dummy disis_gpio object to be used on non-RPi platforms because disis_gpio's reliance on wiringPi makes it prone to crashing when a platform is not recognized.
+*Pd-l2ork main window now saves its position and size between restarts.
 
 
 
