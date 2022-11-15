@@ -917,6 +917,15 @@ function gui_init(win) {
     nw_create_pd_window_menus(gui, win);
     // Set up the Pd Window
     gui.Window.get().setMinimumSize(350, 250);
+    var yoffset = 0;
+    if (pdgui.nw_os_is_linux)
+        yoffset = -37; // Ubuntu title bar (this is extremely brittle since nw1
+                       // mode is not providing accurate window innerHeight and
+                       // will look different on other Linux OS and Desktop
+                       // Window Manager variants) TODO: revisit this once we
+                       // migrate to nw2 AND check Windows and OSX offsets
+    if (yoffset)
+        gui.Window.get().moveBy(0, yoffset);
     post_startup_messages();
     // Now we create a connection from the GUI to Pd, in one of two ways:
     // 1) If the GUI was started by Pd, then we create a tcp client and

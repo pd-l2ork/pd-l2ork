@@ -494,6 +494,21 @@ void canvasinfo_editmode(t_canvasinfo *x, t_symbol *s, int argc, t_atom *argv)
     info_out((t_text *)x, s, 1, at);
 }
 
+void canvasinfo_editable(t_canvasinfo *x, t_symbol *s, int argc, t_atom *argv)
+{
+    t_canvas *c = canvas_climb(x->x_canvas, x->x_depth);
+    t_atom at[1];
+    SETFLOAT(at, c->gl_editable);
+    info_out((t_text *)x, s, 1, at);
+}
+
+void canvasinfo_disableruntimepopup(t_canvasinfo *x, t_symbol *s, int argc, t_atom *argv)
+{
+    t_atom at[1];
+    SETFLOAT(at, x->x_canvas->gl_disableruntimepopup);
+    info_out((t_text *)x, s, 1, at);
+}
+
 void canvasinfo_filename(t_canvasinfo *x, t_symbol *s, int argc, t_atom *argv)
 {
     t_canvas *c = canvas_climb(x->x_canvas, x->x_depth);
@@ -681,10 +696,14 @@ void canvasinfo_setup(void)
         gensym("dir"), A_GIMME, 0);
     class_addmethod(canvasinfo_class, (t_method)canvasinfo_dirty,
         gensym("dirty"), A_GIMME, 0);
+    class_addmethod(canvasinfo_class, (t_method)canvasinfo_disableruntimepopup,
+        gensym("disable-popup"), A_GIMME, 0);
     class_addmethod(canvasinfo_class, (t_method)canvasinfo_dollarzero,
         gensym("dollarzero"), A_GIMME, 0);
     class_addmethod(canvasinfo_class, (t_method)canvasinfo_editmode,
         gensym("editmode"), A_GIMME, 0);
+    class_addmethod(canvasinfo_class, (t_method)canvasinfo_editable,
+        gensym("editable"), A_GIMME, 0);
     class_addmethod(canvasinfo_class, (t_method)canvasinfo_filename,
         gensym("filename"), A_GIMME, 0);
     class_addmethod(canvasinfo_class, (t_method)canvasinfo_find,
@@ -706,8 +725,8 @@ void canvasinfo_setup(void)
     class_addmethod(canvasinfo_class, (t_method)canvasinfo_print,
         gensym("print"), 0);
 
-    post("canvasinfo: v0.1");
-    post("stable canvasinfo methods: args dir dirty editmode vis");
+    post("canvasinfo: v0.2");
+    post("stable canvasinfo methods: args dir dirty editmode vis editable");
 
 }
 

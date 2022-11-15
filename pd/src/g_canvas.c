@@ -553,6 +553,8 @@ t_canvas *canvas_new(void *dummy, t_symbol *sel, int argc, t_atom *argv)
     x->gl_noscroll = 0;
     x->gl_nomenu = 0;
     x->gl_gopspill = 0;
+    x->gl_editable = 1; // by default patches are editable
+    x->gl_disableruntimepopup = 0; // by default patches have popups enabled in runtime
 
     pd_pushsym(&x->gl_pd);
 
@@ -1071,6 +1073,119 @@ void canvas_hide_scrollbars(t_canvas *x, t_floatarg f)
 void canvas_show_menu(t_canvas *x, t_floatarg f)
 {
     x->gl_nomenu = (int)f;
+}
+
+/* ico@vt.edu 2022-11-15: following three functions deal with
+   the new "editable" option that is only scriptable at this point
+   in time. this can be issued by creating a message:
+
+   ;
+   pd-<patch-name>.pd editable 0/1
+
+   OR (for subpatches)
+
+   ;
+   pd-<subpatch-name> editable 0/1
+
+   editability optiona affects all children canvases, but does not
+   remove dirty status, thus ensuring that the edited work prior
+   to disabling the editable option is not lost.
+
+   reenabling editable can be done either by having a premade
+   way of triggering the same message (e.g. a toggle right above it
+   and the message using $1 instead of 0/1), or by removing the
+   #X editable 0; line in the saved pd file.
+
+   this complexity is intentional to discourage editing in patches
+   meant (e.g.) for beginners who are not meant to edit the patch,
+   but only interact with the premade content. at the same time,
+   it is not meant to be a draconian lock-out method, so it is
+   relatively easy to reenable.
+*/
+void canvas_disable_editmode_this_and_children_canvases(t_canvas *x)
+{
+    t_gobj *g = x->gl_list;
+    while (g)
+    {
+        // if an object is a canvas
+        if (pd_class(&g->g_pd) == canvas_class)
+        {
+            canvas_disable_editmode_this_and_children_canvases((t_canvas *)g);
+        }
+        g = g->g_next;
+    }
+    if (x->gl_edit)
+        canvas_editmode(x, 0.);
+}
+
+void canvas_update_edit_menu_this_and_all_children_canvases(t_canvas *x, int editable)
+{
+    t_gobj *g = x->gl_list;
+    while(g)
+    {
+        // if an object is a canvas and has a window open
+        if (pd_class(&g->g_pd) == canvas_class)
+        {
+            canvas_update_edit_menu_this_and_all_children_canvases((t_canvas *)g, editable);
+        }
+        g = g->g_next;
+    }
+    gui_vmess("canvas_menu_set_editable", "xi", x, editable);
+}
+
+extern void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av);
+
+void canvas_set_editable(t_canvas *x, t_floatarg f)
+{
+    if ((int)f != 0 && (int)f != 1 || (int)f == x->gl_editable)
+        return;
+
+    // fake alt key up in case we have clicked on a message while
+    // in temporarily being out of the edit mode by holding the
+    // alt key
+    t_atom a[5];
+    SETFLOAT(a+0, 0.0);
+    SETSYMBOL(a+1, gensym("Alt"));
+    SETFLOAT(a+2, 0.0);
+    SETFLOAT(a+3, 1.0);
+    SETFLOAT(a+4, 0.0);
+    canvas_key(x, gensym("key"), 5, a);
+    // we also need to send this key relase to the front-end
+    // since it now keeps track of its own alt key state for
+    // the purpose of updating the background accordingly
+    // (sparse vs. dense grid)
+    gui_vmess("canvas_fake_alt_key_release", "x", x);
+
+    t_canvas *root = x;
+    while (root->gl_owner)
+        root = root->gl_owner; 
+
+    if ((int)f == 0)
+    {
+        // disable editing mode in all subpatches (and abstractions)
+        canvas_disable_editmode_this_and_children_canvases(root);
+    }
+    x->gl_editable = (int)f;
+    if (!x->gl_editable)
+    {
+        // raise the window to bring it to user's attention
+        canvas_vis(x, 1.0);
+        post("Warning: the focused patch window has disabled the edit mode "
+             "(editable flag). It and all its subpatches (incuding abstractions)"
+             " will not be editable until this option is reenabled.");
+    }
+    // update edit menu for open windows
+    // (should be done regardless of the editable value)
+    canvas_update_edit_menu_this_and_all_children_canvases(root, x->gl_editable);
+
+}
+
+void canvas_set_disableruntimepopup(t_canvas *x, t_floatarg f)
+{
+    if ((int)f != 0 && (int)f != 1 || (int)f == x->gl_disableruntimepopup)
+        return;
+
+    x->gl_disableruntimepopup = (int)f;
 }
 
 extern void canvas_check_nlet_highlights(t_canvas *x);
@@ -3634,6 +3749,10 @@ void g_canvas_setup(void)
         gensym("cah"), A_FLOAT, 0);
     class_addmethod(canvas_class, (t_method)canvas_redraw,
         gensym("redraw"), A_NULL);
+    class_addmethod(canvas_class, (t_method)canvas_set_editable,
+        gensym("editable"), A_FLOAT, 0);
+    class_addmethod(canvas_class, (t_method)canvas_set_disableruntimepopup,
+        gensym("disable-popup"), A_FLOAT, 0);
 
 /* ---------------------- list handling ------------------------ */
     class_addmethod(canvas_class, (t_method)glist_clear, gensym("clear"),

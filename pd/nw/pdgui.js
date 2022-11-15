@@ -2032,6 +2032,7 @@ function gui_window_close(cid) {
     // remove reference to the window from patchwin object
     set_patchwin(cid, null);
     loading[cid] = null;
+    editable[cid] = null;
 }
 
 function menu_k12_open_demos () {
@@ -2060,6 +2061,18 @@ function menu_close(name) {
 }
 
 exports.menu_close = menu_close;
+
+function canvas_menu_set_editable(cid, val) {
+    //post("canvas_menu_set_editable " + val);
+    editable[cid] = val;
+    // update menu if this window is visible
+    gui(cid).get_nw_window(function(nw_win) {
+        //post("...found window");
+        nw_win.window.set_menu_modals(cid, val);
+    });
+}
+
+exports.canvas_menu_set_editable = canvas_menu_set_editable;
 
 function canvas_menuclose_callback(cid_for_dialog, cid, force) {
     // Hacky-- this should really be dir/filename here instead of
@@ -2369,6 +2382,12 @@ function update_svg_background(cid, svg_elem) {
         set_editmode_bg(cid, svg_elem, 1);
     }
 }
+
+function canvas_fake_alt_key_release(cid) {
+    alt_key = 0;
+}
+
+exports.canvas_fake_alt_key_release = canvas_fake_alt_key_release;
 
 // requires nw.js API (Menuitem)
 function canvas_set_editmode(cid, state) {
@@ -2704,7 +2723,8 @@ var scroll = {},
     loading = {},
     title_queue= {}, // ugly kluge to work around an ugly race condition
     popup_menu = {},
-    toplevel_scalars = {};
+    toplevel_scalars = {},
+    editable = {}; // for allowing developer to lock the patch to beginners
 
     var patchwin = {}; // object filled with cid: [Window object] pairs
     var dialogwin = {}; // object filled with did: [Window object] pairs
@@ -2888,6 +2908,10 @@ function create_window(cid, type, width, height, xpos, ypos, attr_array) {
     nw_create_window(cid, type, width, height, xpos, ypos, attr_array);
     // initialize variable to reflect that this window has been opened
     loading[cid] = true;
+    // ico@vt.edu 2022-11-15: by default enable editable until informed
+    // otherwise (this message is procesed later via parsing the saved
+    // patch or via a message, see g_canvas.c for more info)
+    editable[cid] = 1;
     // we call set_patchwin from the callback in pd_canvas
 }
 
@@ -7570,7 +7594,7 @@ function gui_canvas_popup(cid, xpos, ypos, canprop, canopen, cansaveas, isobject
             svg_view_box = nw_win.window.document.getElementById("patchsvg")
                 .getAttribute("viewBox").split(" "); // need top-left svg origin
 
-        // Check nw.js version-- if its lts then we need the zoom_kludge...
+        // Check nw.js version-- if it's lts then we need the zoom_kludge...
         zfactor = process.versions.nw === "0.14.7" ? zoom_kludge(zoom_level) : 1;
         // Set the global popup x/y so they can be retrieved by the relevant
         // document's event handler
@@ -7614,7 +7638,7 @@ exports.popup_action = popup_action;
 
 // Graphs and Arrays
 
-// Doesn't look like we needs this
+// Doesn't look like we need this
 
 //function gui_graph_drawborder(cid, tag, x1, y1, x2, y2) {
 //    var g = get_gobj(cid, tag);

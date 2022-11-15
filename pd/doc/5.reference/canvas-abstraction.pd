@@ -1,0 +1,7 @@
+#N canvas 657 330 450 300 12;
+#X obj 164 70 loadbang;
+#X obj 164 99 \$1;
+#X obj 164 128 nbx 1 103 -1e+37 1e+37 0 0 empty empty empty 0 -8 0
+10 #fcfcfc #000000 #000000 0 256 0 0 1 0;
+#X connect 0 0 1 0;
+#X connect 1 0 2 0;

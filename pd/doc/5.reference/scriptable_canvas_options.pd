@@ -1,0 +1,77 @@
+#N canvas 430 83 445 790 10;
+#X obj 0 0 cnv 15 445 20 empty \$0-pddp.cnv.header scriptable\ canvas\ options
+20 10 1 18 #fcbcc4 #202020 0;
+#X obj 406 1 pddp/pddplink http://puredata.info/dev/pddp -text pddp
+;
+#X obj 1 766 cnv 15 445 20 empty \$0-pddp.cnv.footer empty 20 12 0
+14 #e0e0e0 #202020 0;
+#N canvas 499 347 369 120 META 0;
+#X text 12 75 LIBRARY PDDP;
+#X text 12 92 HELP_PATCH_AUTHORS Ivica Ico Bukvic <ico@vt.edu>;
+#X text 12 15 KEYWORDS GUI disable-popup editable scriptable options
+canvas;
+#X text 12 45 DESCRIPTION advanced scriptable settings for the canvas
+\, including disable-popup and editable;
+#X restore 392 768 pd META;
+#N canvas 439 352 428 114 Related_objects 0;
+#X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
+14 #fcbcc4 #202020 0;
+#X text 7 2 Scriptable Canvas Options - Related Objects;
+#X obj 14 34 canvasinfo;
+#X restore 103 768 pd Related_objects;
+#X obj 6 768 pddp/pddplink all_about.pd -text All About Pd;
+#X obj 14 533 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1 1;
+#X msg 14 556 \; pd-scriptable_canvas_options.pd disable-popup \$1
+;
+#X obj 14 368 canvasinfo;
+#X text 14 293 Following less commonly used options are also available
+in Pd-L2Ork only. They are canvas-specific and get saved with the patch.
+You can query them using the canvasinfo object., f 68;
+#X obj 14 393 print;
+#X msg 14 343 disable-popup;
+#X msg 110 343 editable;
+#X obj 15 698 tgl 15 1 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1 1 1;
+#X msg 15 721 \; pd-scriptable_canvas_options.pd editable \$1;
+#X text 14 416 "disable-popup" controls whether the right-click popup
+(a.k.a. context menu) will work. It only affects the referenced canvas.
+This is useful when working wtih the cursor abstraction to track mouse
+position and button presses. When the popup is enabled (default behavior)
+\, the right click mouse up event gets "stolen" by the popup menu.
+This solves that problem by effectively making a patch a canvas for
+capturing mouse motion. Note that even when the popup is disabled in
+runtime \, it still works just fine in the edit mode., f 68;
+#X text 15 595 "editable" option determines whether the referenced
+patch is editable or not. If it is not \, its edit mode is immediately
+disabled \, as is the editability of any subpatches and abstractions.
+This also prevents the creation of the popup and a bunch of other edit
+and put menu functions. It can be useful when working with beginners
+who are meant to only interact with the runtime aspects of a patch.
+You can also consider it a runtime mode of sorts., f 68;
+#N canvas 510 273 450 300 foo 0;
+#X restore 14 167 pd foo;
+#X obj 69 167 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1 1;
+#X msg 69 190 \; pd-foo vis \$1;
+#X obj 69 228 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1 1;
+#X msg 69 251 \; pd-canvas-abstraction.pd vis \$1;
+#X obj 273 195 canvas-abstraction 1;
+#X obj 273 218 canvas-abstraction 2;
+#X text 14 37 Referencing the canvas is possible via messages. Top-level
+patches should be referenced by pd-<patchname> (e.g. in the case of
+this patch \, this would be pd-scriptable_canvas_options.pd). Subpatches
+can be addressed simply by their name (e.g. subpatch below can be addressed
+by pd-foo). Note \, however \, when referencing multiple instances
+of abstractions (like the two canvas-abstraction.pd on the right) \,
+sending a message using this method will affect both of them \, making
+them both visible. To address them individually \, you will want to
+explore the \$0 argument and send/receive objects., f 68;
+#X connect 6 0 7 0;
+#X connect 8 0 10 0;
+#X connect 11 0 8 0;
+#X connect 12 0 8 0;
+#X connect 13 0 14 0;
+#X connect 18 0 19 0;
+#X connect 20 0 21 0;

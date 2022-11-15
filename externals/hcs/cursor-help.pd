@@ -1,4 +1,4 @@
-#N canvas 226 35 659 617 10;
+#N canvas 226 136 623 735 10;
 #X msg 441 164 dot;
 #X msg 518 164 gumby;
 #X msg 561 164 gobbler;
@@ -52,8 +52,7 @@
 #000000 0 1 1;
 #X obj 206 550 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 0 1 1;
-#X text 227 549 <-- mouse buttons;
-#X text 86 446 or bang to get the current mouse position;
+#X text 86 447 or bang to get the current mouse position;
 #X msg 328 164 clock;
 #X msg 288 164 arrow;
 #N canvas 413 246 494 344 META 0;
@@ -67,14 +66,14 @@ runmode_addpoint editmode_nothing editmode_connect editmode_disconnect
 ;
 #X text 12 115 OUTLET_0;
 #X text 12 5 KEYWORDS control canvas-op user_input;
-#X restore 600 588 pd META;
+#X restore 562 703 pd META;
 #X text 18 8 Note: this is a Pd-L2Ork convenience abstraction to support
 the mouse events [cursor] provides. Currently custom cursors don't
 work in Pd-L2Ork.;
-#X text 77 398 Pd-L2Ork Note: the [cursor] convenience abstraction
+#X text 77 400 Pd-L2Ork Note: the [cursor] convenience abstraction
 still receives mouse motion data even when the toggle is off. It just
 doesn't forward it to the outlet.;
-#X text 250 492 Pd-L2Ork note: motion x/y coordinates are not screen
+#X text 238 482 Pd-L2Ork note: motion x/y coordinates are not screen
 coordinates but the coordinates of the mouse on the current canvas.
 You can get something close to screen coordinates by displaying the
 current canvas in full screen mode.;
@@ -82,6 +81,17 @@ current canvas in full screen mode.;
 ;
 #X text 273 316 Here's a complete list of the available HTML cursors:
 ;
+#X msg 245 688 \; pd-cursor-help.pd disable-popup \$1;
+#X obj 245 666 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1 1;
+#X text 237 549 <-- mouse buttons. note that right click is tricky
+because it also invokes a context menu (a popup) that steals mouse
+focus \, so the right click can get stuck in the on position because
+it never gets the mouseup event (which takes place inside the popup
+menu). therefore \, if you want full control of your mouse input \,
+make sure to disable popup menu during runtime mode by clicking on
+the toggle below. note that some other object may also steal focus
+\, such as dropdown.;
 #X connect 0 0 6 1;
 #X connect 1 0 6 1;
 #X connect 2 0 6 1;
@@ -107,5 +117,6 @@ current canvas in full screen mode.;
 #X connect 28 0 29 0;
 #X connect 28 1 30 0;
 #X connect 28 2 31 0;
+#X connect 33 0 6 1;
 #X connect 34 0 6 1;
-#X connect 35 0 6 1;
+#X connect 42 0 41 0;

@@ -76,28 +76,32 @@ static void canvas_undo_doit(t_canvas *x, t_undo_action *udo, int action)
 {
     switch(udo->type)
     {
-    case UNDO_CONNECT:      canvas_undo_connect(x, udo->data, action); break;     //connect
-    case UNDO_DISCONNECT:   canvas_undo_disconnect(x, udo->data, action); break;  //disconnect
-    case UNDO_CUT:          canvas_undo_cut(x, udo->data, action); break;         //cut
-    case UNDO_MOTION:       canvas_undo_move(x, udo->data, action); break;        //move
-    case UNDO_PASTE:        canvas_undo_paste(x, udo->data, action); break;       //paste
-    case UNDO_APPLY:        canvas_undo_apply(x, udo->data, action); break;       //apply
-    case UNDO_ARRANGE:      canvas_undo_arrange(x, udo->data, action); break;     //arrange
-    case UNDO_CANVAS_APPLY: canvas_undo_canvas_apply(x, udo->data, action); break;//canvas apply
-    case UNDO_CREATE:       canvas_undo_create(x, udo->data, action); break;      //create
-    case UNDO_RECREATE:     canvas_undo_recreate(x, udo->data, action); break;    //recreate
-    case UNDO_FONT:         canvas_undo_font(x, udo->data, action); break;        //font
-            /* undo sequences are handled in canvas_undo_undo resp canvas_undo_redo */
-    case UNDO_SEQUENCE_START: break;                                            //start undo sequence
-    case UNDO_SEQUENCE_END: break;                                              //end undo sequence
-    case UNDO_INIT: /* catch whether is called with a non FREE action */ break; //init
-    default:
-        error("canvas_undo: unsupported command %d", udo->type);
+        case UNDO_CONNECT:      canvas_undo_connect(x, udo->data, action); break;     //connect
+        case UNDO_DISCONNECT:   canvas_undo_disconnect(x, udo->data, action); break;  //disconnect
+        case UNDO_CUT:          canvas_undo_cut(x, udo->data, action); break;         //cut
+        case UNDO_MOTION:       canvas_undo_move(x, udo->data, action); break;        //move
+        case UNDO_PASTE:        canvas_undo_paste(x, udo->data, action); break;       //paste
+        case UNDO_APPLY:        canvas_undo_apply(x, udo->data, action); break;       //apply
+        case UNDO_ARRANGE:      canvas_undo_arrange(x, udo->data, action); break;     //arrange
+        case UNDO_CANVAS_APPLY: canvas_undo_canvas_apply(x, udo->data, action); break;//canvas apply
+        case UNDO_CREATE:       canvas_undo_create(x, udo->data, action); break;      //create
+        case UNDO_RECREATE:     canvas_undo_recreate(x, udo->data, action); break;    //recreate
+        case UNDO_FONT:         canvas_undo_font(x, udo->data, action); break;        //font
+                /* undo sequences are handled in canvas_undo_undo resp canvas_undo_redo */
+        case UNDO_SEQUENCE_START: break;                                              //start undo sequence
+        case UNDO_SEQUENCE_END: break;                                                //end undo sequence
+        case UNDO_INIT: /* catch whether is called with a non FREE action */ break;   //init
+        default:
+            error("canvas_undo: unsupported command %d", udo->type);
     }
 }
 
 void canvas_undo_undo(t_canvas *x)
 {
+    // ico@vt.edu 2022-11-14: check if we are editable, otherwise bail
+    if (!canvas_is_editable(x))
+        return;
+
     int dspwas = canvas_suspend_dsp();
     if (x->u_queue && x->u_last != x->u_queue)
     {
@@ -165,6 +169,10 @@ void canvas_undo_undo(t_canvas *x)
 
 void canvas_undo_redo(t_canvas *x)
 {
+    // ico@vt.edu 2022-11-14: check if we are editable, otherwise bail
+    if (!canvas_is_editable(x))
+        return;
+
     int dspwas = canvas_suspend_dsp();
     if (x->u_queue && x->u_last->next)
     {

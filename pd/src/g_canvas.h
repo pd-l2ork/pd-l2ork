@@ -247,6 +247,10 @@ struct _glist
     unsigned int gl_noscroll:1;     /* don't show window scrollbars */
     unsigned int gl_nomenu:1;       /* don't show the window menu */
     unsigned int gl_gopspill:1;     /* toggle spilling of the objects inside the gop outside the gop boundaries */
+    unsigned int gl_editable:1;     /* whether the patch is editable, settable only via script */
+    unsigned int gl_disableruntimepopup:1;  /* whether the popup (right-click context menu) should be available at runtime 
+                                               this is useful for catching right-click mouse up that otherwise gets "stolen" 
+                                               by the popup menu */
     //global preset array pointer
     t_preset_hub *gl_phub;
     //infinite undo goodies (have to stay here rather than the editor to prevent its obliteration when editor is deleted)
@@ -603,6 +607,7 @@ EXTERN void canvas_resortoutlets(t_canvas *x);
 EXTERN void canvas_free(t_canvas *x);
 EXTERN void canvas_updatewindowlist( void);
 EXTERN void canvas_editmode(t_canvas *x, t_floatarg yesplease);
+EXTERN int canvas_is_editable(t_canvas *x);
 EXTERN void canvas_query_editmode(t_canvas *x);
 EXTERN int canvas_isabstraction(t_canvas *x);
 EXTERN int canvas_istable(t_canvas *x);

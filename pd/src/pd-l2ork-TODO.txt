@@ -1,16 +1,29 @@
 PD-L2ORK TODO:
 *Update all releases (where possible) to nw.js 0.67.1.
   *Test nwjs 0.67.1 for regressions:
-    *Patch window positioning on start-up, loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
-
-*Test on RPi if it also saves main console window position and size.
-
-*Add canvas options for nomenu, background color, draw border, and ontop (if it works in nw.js). Test noscroll option.
+    *Patch window positioning on start-up (it keeps getting offset downwards), loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
 
 Add global "editable" flag. Figure out how to embed this into the patch that is not easily disabled.
-  *Right click should also not work in non-editable patch.
-  *Should be only toplevel patch?
-  *Select All should not automatically enter the edit mode.
+  *Right click should also not work in non-editable patch. OK
+  *Should be only toplevel patch? No. Any patch and by extension any subpatches. OK
+  *"Select All" should not automatically enter the edit mode. OK
+  *Check if text copy can still work. OK
+  *Check if this properly navigates all subpatches and disables them, as well. OK
+  *Deal with the alt key press and clicking on the message that disables editable option. OK
+  *Rework canvas_disable_editmode_in_this_and_children_canvases to support both enabling and disabling and migrate GUI aspects to pdgui.js. OK
+  *Disable put menu (see m.put.object etc. in the pd_canvas.js). MORE TESTING NEEDED
+  *Add the code in pdgui to update (and keep track of) the edit menu items. MORE TESTING NEEDED
+    *Use editable[cid] dictionary
+    *edit, inspector, select all, find, find again, copy, paste, duplicate, cut, undo, redo, tidy
+  *Add a warning in the menu as to why one cannot enable edit mode. OK
+
+  This may also partially address the following existing limitation:
+  *cursor abstraction does not report right mouse up events due to it triggering the pop-up menu.
+    *This is solved when the edit mode is not working OR by using the new disable-popup option.
+
+*Scripted resizing of patch windows keeps recreating the window and, when done fast, can result in stale windows. See 1497602807047-pd-msg/pd-msg/1.msg_and_patch/6.relocate_windows.pd.
+
+*Add canvas options for nomenu, background color, draw border, and ontop (if it works in nw.js). Test noscroll option.
 
 *Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
   *Investigate index.js' nw_create_window, and the pdgui.js' canvas_check_geometry.
@@ -62,8 +75,6 @@ RPI 0.28.4 current RPi version.
 *Enable reindexing without restart?
 
 *Submit patch to js external github.
-
-*cursor abstraction does not report right mouse up events due to it triggering the pop-up menu. This may be a nw.js limitation?
 
 *Consider adding ability to display array name that is other than the internal name (e.g. so that we don't have to use $0, $1, _ etc. in the name).
 

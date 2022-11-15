@@ -2713,11 +2713,32 @@ t_gobj *canvas_findhitbox_w_nlets(t_canvas *x, int xpos, int ypos,
 extern t_class *array_define_class;
 extern int scalar_getcanvasfield(t_scalar *x);
 
+// ico@vt.edu 2022-11-14: check if any of the parent canvases has
+// the editable option disabled, and if so, ignore the right click
+int canvas_is_editable(t_canvas *x)
+{
+    t_canvas *root = x;
+    while (root->gl_owner)
+    {
+        if (!root->gl_editable)
+            return(0);
+        root = root->gl_owner;
+    }
+    return (root->gl_editable);
+}
+
     /* right-clicking on a canvas object pops up a menu. */
 static void canvas_rightclick(t_canvas *x, int xpos, int ypos, t_gobj *y_sel)
 {
     //fprintf(stderr,"e_onmotion=%d\n",x->gl_editor->e_onmotion);
     if (x->gl_editor->e_onmotion != MA_NONE) return;
+
+    if (!canvas_is_editable(x))
+        return;
+
+    if(x->gl_disableruntimepopup)
+        return;
+
     int canprop, canopen, isobject, cansaveas;
     t_gobj *y = NULL;
     int x1, y1, x2, y2, scalar_has_canvas = 0;
@@ -5868,9 +5889,15 @@ void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av)
     int keynum, down, shift, focus = 1, autorepeat = 0;
 
     tooltip_erase(x);
+    //post("canvas_key ac=%d", ac);
     
     if (ac < 5)
         return;
+    /*
+    post ("... %f %s %f %f %f",
+        atom_getfloat(av), atom_getsymbol(av+1)->s_name,
+        atom_getfloat(av+2), atom_getfloat(av+3), atom_getfloat(av+4));
+    */
     canvas_undo_already_set_move = 0;
     down = (atom_getfloat(av) != 0);  /* nonzero if it's a key down */
     shift = (atom_getfloat(av+2) != 0);  /* nonzero if shift-ed */
@@ -6145,6 +6172,7 @@ void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av)
                 CURSOR_RUNMODE_NOTHING : CURSOR_EDITMODE_NOTHING);
             x->gl_edit = down ? 0 : 1;
             x->gl_edit_save = !x->gl_edit;
+            //post("canvas_key... %d", x->gl_edit);
             gui_vmess("gui_canvas_set_editmode", "xi",
                 x,
                 x->gl_edit);
@@ -7334,6 +7362,10 @@ restore:
 
 static void canvas_cut(t_canvas *x)
 {
+    // ico@vt.edu 2022-11-14: check if we are editable, otherwise bail
+    if (!canvas_is_editable(x))
+        return;
+
     if (x->gl_editor && x->gl_editor->e_selectedline)
         canvas_clearline(x);
     /* if we are cutting text */
@@ -7739,6 +7771,10 @@ extern int we_are_undoing;
 
 static void canvas_dopaste(t_canvas *x, t_binbuf *b)
 {
+    // ico@vt.edu 2022-11-14: check if we are editable, otherwise bail
+    if (!canvas_is_editable(x))
+        return;
+
     //fprintf(stderr,"start dopaste\n");
     // ico@vt.edu: paste is enabled at startup (GUI-end problem),
     // so until we figure out why that is so, here we double-check the
@@ -7908,6 +7944,11 @@ static void canvas_paste(t_canvas *x)
 {
     if (!x->gl_editor)
         return;
+
+    // ico@vt.edu 2022-11-14: check if we are editable, otherwise bail
+    if (!canvas_is_editable(x))
+        return;
+
     // ico@vt.edu: prevent pasting in a toplevel garray window
     if (x->gl_list && glist_istoplevel(x) && canvas_hasarray(x))
         return;
@@ -7946,6 +7987,10 @@ static void canvas_paste(t_canvas *x)
 
 static void canvas_duplicate(t_canvas *x)
 {
+    // ico@vt.edu 2022-11-14: check if we are editable, otherwise bail
+    if (!canvas_is_editable(x))
+        return;
+
     //if (x->gl_editor->e_onmotion == MA_NONE && x->gl_editor->e_selection)
     if (x->gl_editor->e_onmotion == MA_NONE && c_selection &&
         c_selection->gl_editor->e_selection)
@@ -8031,6 +8076,10 @@ static void canvas_duplicate(t_canvas *x)
 
 static void canvas_selectall(t_canvas *x)
 {
+    // ico@vt.edu 2022-11-14: check if we are editable, otherwise bail
+    if (!canvas_is_editable(x))
+        return;
+    
     t_gobj *y;
     if (!x->gl_edit)
         canvas_editmode(x, 1);
@@ -8269,6 +8318,10 @@ static int canvas_tidy_gobj_height(t_canvas *x, t_gobj *y)
 
 static void canvas_tidy(t_canvas *x)
 {
+    // ico@vt.edu 2022-11-14: check if we are editable, otherwise bail
+    if (!canvas_is_editable(x))
+        return;
+
     // if we have no editor, no selection, or only one object selected, return
     if (!x->gl_editor || !x->gl_editor->e_selection || !x->gl_editor->e_selection->sel_next) return;
 
@@ -8757,7 +8810,13 @@ void canvas_editmode(t_canvas *x, t_floatarg fyesplease)
 {
     //post("canvas_editmode %f", fyesplease);
 
-    /* first check if this is a canvas hosting an array and if so
+    // ico@vt.edu 2022-11-14: first check if we have a parent
+    // canvas that is not editable (in which case we are not
+    // editable either, and therefore bail)
+    if (!canvas_is_editable(x))
+        return;
+
+    /* now, check if this is a canvas hosting an array and if so,
        refuse to add any further objects. we allow edit mode on the
        subpatches that have only scalars, as that allows for their
        repositioning/deletion/etc.
@@ -8778,7 +8837,7 @@ void canvas_editmode(t_canvas *x, t_floatarg fyesplease)
     x->gl_edit = !x->gl_edit;
     // make sure to exit temporary run mode here
     x->gl_edit_save = 0;
-    if (x->gl_edit && glist_isvisible(x) && glist_istoplevel(x)){
+    if (x->gl_edit && glist_isvisible(x) && glist_istoplevel(x)) {
         //dpsaha@vt.edu add the resize blobs on GOP
         t_gobj *g;
         t_object *ob;
@@ -8827,6 +8886,7 @@ void canvas_editmode(t_canvas *x, t_floatarg fyesplease)
     }
     if (glist_isvisible(x))
     {
+        //post("canvas_editmode... %d", x->gl_edit);
         int edit = /*!glob_ctrl && */x->gl_edit;
         gui_vmess("gui_canvas_set_editmode", "xi",
             glist_getcanvas(x),
@@ -8836,15 +8896,20 @@ void canvas_editmode(t_canvas *x, t_floatarg fyesplease)
 
 void canvas_query_editmode(t_canvas *x)
 {
-  int edit = /*!glob_ctrl && */x->gl_edit;
-  gui_vmess("gui_canvas_set_editmode", "xi",
-            glist_getcanvas(x),
-            edit);
+    //post("canvas_query_editmode... %d", x->gl_edit);
+    int edit = /*!glob_ctrl && */x->gl_edit;
+    gui_vmess("gui_canvas_set_editmode", "xi",
+        glist_getcanvas(x),
+        edit);
 }
 
 // jsarlo
 void canvas_magicglass(t_canvas *x, t_floatarg fyesplease)
 {
+    // ico@vt.edu 2022-11-14: check if we are editable, otherwise bail
+    if (!canvas_is_editable(x))
+        return;
+
     int yesplease = fyesplease;
     if (yesplease && x->gl_editor &&
         magicGlass_isOn(x->gl_editor->gl_magic_glass))

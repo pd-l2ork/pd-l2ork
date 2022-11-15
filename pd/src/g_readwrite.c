@@ -879,6 +879,10 @@ static void canvas_saveto(t_canvas *x, t_binbuf *b)
         binbuf_addv(b, "ssi;", gensym("#X"), gensym("menu"), x->gl_nomenu);
     if (x->gl_gopspill)
         binbuf_addv(b, "ssi;", gensym("#X"), gensym("gopspill"), x->gl_gopspill);
+    if (!x->gl_editable)
+        binbuf_addv(b, "ssi;", gensym("#X"), gensym("editable"), 0);
+    if (x->gl_disableruntimepopup)
+        binbuf_addv(b, "ssi;", gensym("#X"), gensym("disable-popup"), 1);
 }
 
 /* yuck, wish I didn't have to do this... */
