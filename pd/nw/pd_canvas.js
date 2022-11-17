@@ -1257,6 +1257,24 @@ var canvas_events = (function() {
                 // standard in Pd-Vanilla, Pd-l2ork uses and preserves
                 // them inside comments
                 var iscomment = textbox().getAttribute("type");
+
+                // ico@vt.edu 2022-11-17: fix issue of erroneous
+                // addition of lines (only for comments) because
+                // <div><br></div> is interpreted as two lines
+                // by the innerText. So, we change it to
+                // <div> </div> by replacing <br> with " ".
+                // an example of this issue is visible if you
+                // create a comment with the following:
+                //
+                // abc\n
+                // \n
+                // def
+                //
+                // this will create one extra erroneous empty line
+                if (iscomment)
+                    textbox().innerHTML = textbox().innerHTML.replace(/<br>/g, " ");
+
+                //pdgui.post("===========\ntextbox=<" + textbox().innerHTML + ">");
                 var fudi_msg = text_to_fudi(textbox().innerText,
                         (iscomment === "comment" ? 1 : 0)),
                     fudi_array = string_to_array_of_chunks(fudi_msg),
