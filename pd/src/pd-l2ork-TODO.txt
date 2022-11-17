@@ -48,8 +48,6 @@ RPI 0.28.4 current RPi version.
     0.69.1 window close nw1 bug (see #7981 nwjs bug report).
     0.70.1 window close nw1 bug (see #7981 nwjs bug report).
 
-*Reimplement next/prev window without using obsolete chrome API.
-
 *Ubuntu 22.04 build: investigate iem16 build issues and gmerlin library support. 20.04 uses 1.16 automake and 2.69 autoconf. 22.04 uses 2.71 autoconf and ??? automake.
 
 *HDMI audio output support (RPi).
@@ -347,11 +345,11 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
     *Use editable[cid] dictionary
     *edit, inspector, select all, find, find again, copy, paste, duplicate, cut, undo, redo, tidy
   *Add a warning in the menu as to why one cannot enable edit mode. OK
-
   *This may also partially address the following existing limitation:
     *cursor abstraction does not report right mouse up events due to it triggering the pop-up menu.
       *This is solved when the edit mode is not working OR by using the new disable-popup option (see below).
 *Added disable-popup per-canvas option. Updated documentation for hcs/cursor and canvasinfo, and added additional documentation regarding scriptable events for canvases (referenced in the canvas-help.pd).
+*Fixed issue where extra lines were added to a comment object (see pd_canvas.js line 1261 for additional info.
 
 
 
