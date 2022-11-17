@@ -47,6 +47,26 @@ RPI 0.28.4 current RPi version.
     0.68.0 window close nw1 bug (see #7981 nwjs bug report).
     0.69.1 window close nw1 bug (see #7981 nwjs bug report).
     0.70.1 window close nw1 bug (see #7981 nwjs bug report).
+  *Need to figure out what is slowing down nw2 on versions 0.42.3, so that we can get away from all the weird idiosyncrasies with window positioning and other issues.
+
+*Port:
+  *cyclone
+    *mousestate
+    *mousefilter
+    *active
+  *tof
+    *breakpoints
+    *breakpoints~
+    *folderpanel
+    *menubutton
+    *pmenu
+  *vanilla
+    *openpanel?
+    *new patch offset (Every "new" window is a bit shifted so it does not appear perfectly superimposed)
+    *listbox gatom
+    *file
+    *garrays to set colors, line width, visibility, display style and disable mouse editing
+    *force close pd instance to ensure there are no stray ones left? (sounds potentially counterproductive given we also have -unique flag)
 
 *Ubuntu 22.04 build: investigate iem16 build issues and gmerlin library support. 20.04 uses 1.16 automake and 2.69 autoconf. 22.04 uses 2.71 autoconf and ??? automake.
 
@@ -62,8 +82,6 @@ RPI 0.28.4 current RPi version.
 
 *Error closing a new window because there is no "width" property (e.g. a subpatch has been created). Only affects RPi version of nw.js? Consider bumping the RPi nw.js version...
 
-*Repair light build on OSX. Test it on other platforms.
-
 *Consider adding tiled version of an image inside ggee/image.
 
 *refine window heights for various dialogs, so that they always display fully on-screen. UPDATE: check if this has been fixed using latest nw.js (affects only Windows).
@@ -78,7 +96,9 @@ RPI 0.28.4 current RPi version.
 
 *fix inefficiency of the profuse console output.
 
-*Make incremental on a Mac results in a broken build that does not include Gem.
+*Fix build system inconsistencies.
+  *Make incremental on a Mac results in a broken build that does not include Gem.
+  *Repair light build on OSX. Test it on other platforms.
 
 *think about a way to deterministically inform both front-end and the back-end that the canvas has indeed loaded. See https://stackoverflow.com/questions/4057236/how-to-add-onload-event-to-a-div-element/55106785#58838457 (Third Attempt (and Definitive Solution))
 
