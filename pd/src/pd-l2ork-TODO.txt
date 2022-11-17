@@ -54,6 +54,7 @@ RPI 0.28.4 current RPi version.
     *mousestate
     *mousefilter
     *active
+    *comment
   *tof
     *breakpoints
     *breakpoints~
@@ -74,7 +75,9 @@ RPI 0.28.4 current RPi version.
 
 *Add reset preferences to default option in the settings and check if the default settings are correct (OSX is ok, as is Linux).
 
-*Enable reindexing without restart?
+*Enable reindexing without restart
+  *Add a button in preferences
+  *Make sure indexing also covers the extra folder, as well as the user folder.
 
 *Submit patch to js external github.
 
@@ -102,15 +105,11 @@ RPI 0.28.4 current RPi version.
 
 *think about a way to deterministically inform both front-end and the back-end that the canvas has indeed loaded. See https://stackoverflow.com/questions/4057236/how-to-add-onload-event-to-a-div-element/55106785#58838457 (Third Attempt (and Definitive Solution))
 
-*port miXed (cyclone) comment?
-
 
 RARE:
 *sometimes closing a newly created window before it has posted or possibly creating two windows by quickly double clicking on a subpatch irreversibly breaks the front-end. Need the better checks'n'balances.
 
 *occasionally when editing a new object text is not displaying until you click outside it. happened with the modulo object.
-
-*Pd-L2Ork sporadic crashes when opening/closing L2OrkTweet.pd and L2Ork-Tweeter.pd. These are now sparser (suspect something on the nw.js side of things).
 
 *check for stray/sporadic bug where bang and other objects stop working and bang object gets stuck in on mode until the mouse is moved (nw.js bug? UPDATE: it appears at least one of the sources was a bug in the scroll_to_gobj call that was fixed on 2021-11-01).
 
