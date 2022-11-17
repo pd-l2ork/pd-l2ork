@@ -1,12 +1,11 @@
 PD-L2ORK TODO:
 *Update all releases (where possible) to nw.js 0.67.1.
   *Test nwjs 0.67.1 for regressions:
-    *Patch window positioning on start-up (it keeps getting offset downwards), loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
+    *Patch window positioning on start-up (it keeps getting offset downwards, but only on Linux), loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
 
 *Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
   *Investigate index.js' nw_create_window, and the pdgui.js' canvas_check_geometry.
   *Also use index.js console positioning aspect, if necessary.
-  *Test on all OSs, including RPi's different version of nw.js.
 
 *Scripted resizing of patch windows keeps recreating the window and, when done fast, can result in stale windows. See 1497602807047-pd-msg/pd-msg/1.msg_and_patch/6.relocate_windows.pd.
 
