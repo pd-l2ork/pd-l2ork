@@ -46,7 +46,7 @@ RPI 0.28.4 current RPi version.
     0.68.0 window close nw1 bug (see #7981 nwjs bug report).
     0.69.1 window close nw1 bug (see #7981 nwjs bug report).
     0.70.1 window close nw1 bug (see #7981 nwjs bug report).
-  *Need to figure out what is slowing down nw2 on versions 0.42.3, so that we can get away from all the weird idiosyncrasies with window positioning and other issues.
+  *Need to figure out what is slowing down nw2 on versions 0.42.3 and onward, so that we can get away from all the weird idiosyncrasies with window positioning and other issues.
 
 *Port:
   *cyclone
