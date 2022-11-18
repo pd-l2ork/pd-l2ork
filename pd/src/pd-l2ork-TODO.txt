@@ -1,7 +1,7 @@
 PD-L2ORK TODO:
 *Update all releases (where possible) to nw.js 0.67.1.
   *Test nwjs 0.67.1 for regressions:
-    *Patch window positioning on start-up (it keeps getting offset downwards, but only on Linux), loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
+    *Patch window positioning: loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
 
 *Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
   *Investigate index.js' nw_create_window, and the pdgui.js' canvas_check_geometry.
@@ -368,6 +368,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
       *This is solved when the edit mode is not working OR by using the new disable-popup option (see below).
 *Added disable-popup per-canvas option. Updated documentation for hcs/cursor and canvasinfo, and added additional documentation regarding scriptable events for canvases (referenced in the canvas-help.pd).
 *Fixed issue where extra lines were added to a comment object (see pd_canvas.js line 1261 for additional info.
+*Better fix for the inaccurate positioning of the Pd Console on Linux (necessary due to upstream nw.js bug). Affects Linux only.
 
 
 
