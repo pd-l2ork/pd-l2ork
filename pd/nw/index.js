@@ -911,47 +911,9 @@ function post_startup_messages() {
     }
 }
 
-/* ico@vt.edu 2022-11-17: horrible, horrible, horrible hack to compensate
-   for nw.js' inability to provide accurate top-left y position on Linux.
-   it provides top-left corner xy for the content part of the window, but
-   when it goes to save it, it uses the one that includes the window frame.
-   this results in the pd window constantly shifting downwards by the
-   height of the window frame (mostly titlebar). sooooo, if we detect
-   Linux, we create a small temporary window, reposition it, and note
-   this discrepancy and store it as titlebar height and use it in the 
-   gui_init function below to fix the saved position (made possible by
-   the use of the id inside package.json file). NOTE that this bug affects
-   only Linux. OSX and Windows are unaffected, so for them, we continue
-   to rely on the built-in package.json's id feature. */
-function get_linux_titlebar_height() {
-    gui.Window.open("empty.html", {
-        width: 100,
-        height: 100,
-        x: 100,
-        y: 100,
-        show: true,
-        frame: true
-    }, function (new_win) {
-        gui.Window.get(new_win.window).on("move", function() {
-            var linux_titlebar_height = 100 - gui.Window.get(new_win.window).y;
-            localStorage.lastlayout = JSON.stringify({
-                "titlebar_height": linux_titlebar_height
-            });
-            new_win.close(true);
-        });
-        new_win.on("loaded", function() {
-            new_win.window.moveTo(100,100);
-        });
-    });
-}
+var linux_titlebar_offset_kludge = false;
 
 function gui_init(win) {
-    if (pdgui.nw_os_is_linux) {
-        //localStorage.clear();
-        var data = (localStorage.lastlayout ? JSON.parse(localStorage.lastlayout) : null);
-        if (!data || !data.titlebar_height)
-            get_linux_titlebar_height();
-    }
     set_vars(win);
     add_events();
     nw_create_pd_window_menus(gui, win);
@@ -967,9 +929,19 @@ function gui_init(win) {
     // those arguments aren't present then we assume we need to start Pd.
     connect();
     pdgui.restore_apps(0);
-    if (pdgui.nw_os_is_linux && localStorage.lastlayout)
-    {
-        gui.Window.get().moveBy(0, data.titlebar_height);
+    if (pdgui.nw_os_is_linux) {
+        pdgui.post("window position " + gui.Window.get().x + " " + gui.Window.get().y);
+        var pre_titlebar_y = gui.Window.get().y;
+        gui.Window.get().moveTo(gui.Window.get().x, gui.Window.get().y);
+        // ico@vt.edu 2022-11-19: this for some reason does not work with
+        // the addEventListener approach so, we need to use the kludge global variable
+        gui.Window.get().on("move", function() {
+            if (!linux_titlebar_offset_kludge) {
+                pdgui.post("titlebar offset=" + (pre_titlebar_y - gui.Window.get().y));
+                gui.Window.get().moveBy(0, ((pre_titlebar_y - gui.Window.get().y)) * 2);
+                linux_titlebar_offset_kludge = true;
+            }
+        });
     }
 }
 

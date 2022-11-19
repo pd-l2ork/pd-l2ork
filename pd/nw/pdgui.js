@@ -2195,14 +2195,20 @@ function gui_quit_dialog() {
     }
 }
 
-// send a message to Pd
+// send a message to Pd or nwjs (by prepending the message with "nwjs:)
 function menu_send(name) {
     var message,
         win = name ? patchwin[name] : pd_window;
     message = win.window.prompt("Type a message to send to Pd", name);
     if (message != undefined && message.length) {
-        post("Sending message to Pd: " + message + ";");
-        pdsend(message);
+        var semi = (message.endsWith(";") ? "" : ";");
+        if (message.startsWith("nwjs:")) {
+            post("Sending message to nwjs: " + message.replace("nwjs:", "") + semi);
+            eval(message.replace("nwjs:", "") + ";");
+        } else {
+            post("Sending message to Pd: " + message + semi);
+            pdsend(message);
+        }
     }
 }
 
