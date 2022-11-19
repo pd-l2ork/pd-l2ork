@@ -7,8 +7,6 @@ PD-L2ORK TODO:
   *Investigate index.js' nw_create_window, and the pdgui.js' canvas_check_geometry.
   *Also use index.js console positioning aspect, if necessary.
 
-*Scripted resizing of patch windows keeps recreating the window and, when done fast, can result in stale windows. See 1497602807047-pd-msg/pd-msg/1.msg_and_patch/6.relocate_windows.pd.
-
 *Add canvas options for nomenu, background color, draw border, and ontop (if it works in nw.js). Test noscroll option.
 
 *When closing the patch, make sure that the dialog is always centered? This is a low priority item.
@@ -369,6 +367,9 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Added disable-popup per-canvas option. Updated documentation for hcs/cursor and canvasinfo, and added additional documentation regarding scriptable events for canvases (referenced in the canvas-help.pd).
 *Fixed issue where extra lines were added to a comment object (see pd_canvas.js line 1261 for additional info.
 *Better fix for the inaccurate positioning of the Pd Console on Linux (necessary due to upstream nw.js bug). Affects Linux only.
+*Cleaner (best?) approach to dealing with the Linux titlebar offset that does not require creation of a dummy window.
+*Added ability to message both nwjs and pd using the "send message" option from the file menu. By prepending the message with "nwjs:", it will be sent to the nwjs side of things instead of the Pd. Also, the message now autodetects the presence of ";" at the end of it and adds it, as needed.
+*Scripted resizing of patch windows keeps recreating the window and, when done fast, can result in stale windows. See 1497602807047-pd-msg/pd-msg/1.msg_and_patch/6.relocate_windows.pd. UPDATE: this is a buggy help patch that has multiple instances of the my_subpatch. Hence, it shows three windows instead of one. In addition, consistency_check is warranted because sending window height of 0 will trigger consistency check since it is an invalid window height.
 
 
 
