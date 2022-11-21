@@ -6,6 +6,7 @@ PD-L2ORK TODO:
 *Duplicating array opens subpatch (it shouldn't).
   *After this, the original patch is treated as if it is array-only, thus making further edits impossible.
 *Selected array when moved dislocates array contents incorrectly.
+*When loading a large array, array data is not stretched to the full default width of an array.
 
 *Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
   *Investigate index.js' nw_create_window, and the pdgui.js' canvas_check_geometry.
