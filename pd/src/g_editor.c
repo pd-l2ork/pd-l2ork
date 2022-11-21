@@ -2713,8 +2713,8 @@ t_gobj *canvas_findhitbox_w_nlets(t_canvas *x, int xpos, int ypos,
 extern t_class *array_define_class;
 extern int scalar_getcanvasfield(t_scalar *x);
 
-// ico@vt.edu 2022-11-14: check if any of the parent canvases has
-// the editable option disabled, and if so, ignore the right click
+// ico@vt.edu 2022-11-14: check if this or any of the parent canvases
+// have the editable option disabled, and if so, ignore the right click
 int canvas_is_editable(t_canvas *x)
 {
     t_canvas *root = x;
@@ -2989,7 +2989,7 @@ void canvas_vis(t_canvas *x, t_floatarg f)
                 (int)(x->gl_screeny2 - x->gl_screeny1),
                 geobuf,
                 sys_snaptogrid,
-		sys_gridsize,
+		        sys_gridsize,
                 x->gl_zoom,
                 x->gl_edit,
                 x->gl_name->s_name,

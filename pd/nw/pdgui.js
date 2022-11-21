@@ -2063,7 +2063,7 @@ function menu_close(name) {
 exports.menu_close = menu_close;
 
 function canvas_menu_set_editable(cid, val) {
-    //post("canvas_menu_set_editable " + val);
+    //post("canvas_menu_set_editable cid=" + cid + " val=" + val);
     editable[cid] = val;
     // update menu if this window is visible
     gui(cid).get_nw_window(function(nw_win) {
@@ -2914,10 +2914,6 @@ function create_window(cid, type, width, height, xpos, ypos, attr_array) {
     nw_create_window(cid, type, width, height, xpos, ypos, attr_array);
     // initialize variable to reflect that this window has been opened
     loading[cid] = true;
-    // ico@vt.edu 2022-11-15: by default enable editable until informed
-    // otherwise (this message is procesed later via parsing the saved
-    // patch or via a message, see g_canvas.c for more info)
-    editable[cid] = 1;
     // we call set_patchwin from the callback in pd_canvas
 }
 
@@ -2926,6 +2922,7 @@ function gui_canvas_new(cid, width, height, geometry, grid, grid_size_value,
     zoom, editmode, name, dir, dirty_flag, warid, hide_scroll, hide_menu,
     has_toplevel_scalars, cargs) {
     //post("gui_canvas_new geometry=" + geometry + " w=" + width + " h=" + height);
+    //post("gui_canvas_new cid=" + cid + " has_top_level_scalars=" + has_toplevel_scalars);
     // hack for buggy tcl popups... should go away for node-webkit
     //reset_ctrl_on_popup_window
     
@@ -2959,6 +2956,10 @@ function gui_canvas_new(cid, width, height, geometry, grid, grid_size_value,
     showgrid[cid] = grid != 0;
     gridsize[cid] = grid_size_value;
     toplevel_scalars[cid] = has_toplevel_scalars;
+    // ico@vt.edu 2022-11-15: by default enable editable until informed
+    // otherwise (this message is procesed later via parsing the saved
+    // patch or via a message, see g_canvas.c for more info)
+    editable[cid] = 1;
     // geometry is just the x/y screen offset "+xoff+yoff"
     geometry = geometry.slice(1);   // remove the leading "+"
     geometry = geometry.split("+"); // x/y screen offset (in pixels)

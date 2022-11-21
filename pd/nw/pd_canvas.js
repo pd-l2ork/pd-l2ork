@@ -2029,7 +2029,7 @@ function set_menu_modals(window, state) {
     //pdgui.post("final state=" + context_state);
     m.file.save.enabled = context_state;
     m.file.saveas.enabled = context_state;    
-    m.file.close.enabled = context_state;
+    m.file.close.enabled = true;
 
     m.edit.undo.enabled = context_state;
     m.edit.redo.enabled = context_state;

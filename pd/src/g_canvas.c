@@ -1137,6 +1137,7 @@ extern void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av);
 
 void canvas_set_editable(t_canvas *x, t_floatarg f)
 {
+    //post("canvas_set_editable %lx %f", x, f);
     if ((int)f != 0 && (int)f != 1 || (int)f == x->gl_editable)
         return;
 
@@ -1156,9 +1157,16 @@ void canvas_set_editable(t_canvas *x, t_floatarg f)
     // (sparse vs. dense grid)
     gui_vmess("canvas_fake_alt_key_release", "x", x);
 
+    // ico@vt.edu 2022-11-21:
+    // why are we navigating to the root canvas? this is wrong.
+    // disabling until I remember why I had this here in the
+    // first place. leaving root, to prevent having to change
+    // downstream code in case I need to test this further.
     t_canvas *root = x;
+    /*
     while (root->gl_owner)
-        root = root->gl_owner; 
+        root = root->gl_owner;
+    */ 
 
     if ((int)f == 0)
     {
@@ -1169,10 +1177,18 @@ void canvas_set_editable(t_canvas *x, t_floatarg f)
     if (!x->gl_editable)
     {
         // raise the window to bring it to user's attention
-        canvas_vis(x, 1.0);
-        post("Warning: the focused patch window has disabled the edit mode "
-             "(editable flag). It and all its subpatches (incuding abstractions)"
-             " will not be editable until this option is reenabled.");
+
+        // ico@vt.edu 2022-11-21: this is problematic on many levels,
+        // including loading of a new patch where this may take place
+        // before the parent patch has been created, resulting in
+        // incorrect patch being opened. instead, we need to reference
+        // the correct patch in the console, and not make anything visible.
+        // disabling canvas_vis and updating the post message...
+        //canvas_vis(x, 1.0);
+        post("Warning: %s \"%s\" has disabled edit mode (editable flag). "
+             "It and all its subpatches (incuding abstractions)"
+             " will not be editable until this option is reenabled.",
+             (x->gl_env ? "patch or abstraction" : "subpatch"), x->gl_name->s_name);
     }
     // update edit menu for open windows
     // (should be done regardless of the editable value)

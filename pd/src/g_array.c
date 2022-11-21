@@ -624,6 +624,11 @@ void glist_arraydialog(t_glist *parent, t_symbol *s, int argc, t_atom *argv)
             (size > 1 ? size-1 : size), -1, xdraw+30, ydraw+30,
             xdraw+30+GLIST_DEFGRAPHWIDTH, ydraw+30+GLIST_DEFGRAPHHEIGHT);
         gl->gl_hidetext = 1;
+        // ico@vt.edu 2022-11-21: this is where we should also set
+        // any other flags to maintain sanity. since disabling editable
+        // flag will force that window into focus, we maintain editable
+        // flag even for this window and prevent editing elsewhere.
+        gl->gl_editable = 1;
     }
     //a = graph_array(gl, sharptodollar(name), &s_float, size, flags);
     SETSYMBOL(at, sharptodollar(name));
