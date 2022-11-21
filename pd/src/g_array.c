@@ -1381,15 +1381,20 @@ static void garray_displace(t_gobj *z, t_glist *glist, int dx, int dy)
 
 static void garray_select(t_gobj *z, t_glist *glist, int state)
 {
+    // ico@vt.edu 2022-11-21: now that array is truly embedded inside
+    // canvas, this entire function is unnecessary, including selection
+    // of the scalars. doing so, leaves a stale selection, so when a
+    // new object is created, insides of the array continue to move
+    // with a newly created (and therefore selected) object.
     //fprintf(stderr,">>>>>>>>>>>>garray_select %d\n", state);
-    t_garray *x = (t_garray *)z;
+    //t_garray *x = (t_garray *)z;
     /* There's no replacement for the following command in the
        new GUI, but it looks like it's not needed anymore. */
     //sys_vgui("pdtk_select_all_gop_widgets .x%zx %zx %d\n",
     //    glist_getcanvas(glist), x->x_glist, state);
 
-    extern void scalar_select(t_gobj *z, t_glist *owner, int state);
-    scalar_select((t_gobj *)x->x_scalar, glist, state);
+    //extern void scalar_select(t_gobj *z, t_glist *owner, int state);
+    //scalar_select((t_gobj *)x->x_scalar, glist, state);
 }
 
 static void garray_activate(t_gobj *z, t_glist *glist, int state)
@@ -1442,8 +1447,19 @@ void garray_savecontentsto(t_garray *x, t_binbuf *b)
     {
         t_array *array = garray_getarray(x);
         int n = array->a_n, n2 = 0;
-        if (n > 200000)
-            post("warning: I'm saving an array with %d points!\n", n);
+        if (n > 200000) {
+            // ico@vt.edu 2022-11-21: it appears embedding audio
+            // files that are larger tahn 200000 points freezes
+            // pd-l2ork, so we will need to investigate why this
+            // is. for the time being, we prevent saving of files
+            // larger than 200k points.
+            post("warning: I'm saving an array with %d points!", n);
+            /*error("unable to save array contents due to excessive size."
+                  " only array sizes up to 200k points are embedabble "
+                  "inside the patch. your array has %d points. please "
+                  "load large files at runtime instead.", n);
+            return;*/
+        }
         while (n2 < n)
         {
             int chunk = n - n2, i;
