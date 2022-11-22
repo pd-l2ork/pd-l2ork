@@ -1439,7 +1439,7 @@ static int garray_click(t_gobj *z, t_glist *glist,
         xpix, ypix, shift, alt, dbl, doit));
 }
 
-#define ARRAYWRITECHUNKSIZE 1000
+//#define ARRAYWRITECHUNKSIZE 1000
 
 void garray_savecontentsto(t_garray *x, t_binbuf *b)
 {
@@ -1448,29 +1448,20 @@ void garray_savecontentsto(t_garray *x, t_binbuf *b)
         t_array *array = garray_getarray(x);
         int n = array->a_n, n2 = 0;
         if (n > 200000) {
-            // ico@vt.edu 2022-11-21: it appears embedding audio
-            // files that are larger tahn 200000 points freezes
-            // pd-l2ork, so we will need to investigate why this
-            // is. for the time being, we prevent saving of files
-            // larger than 200k points.
             post("warning: I'm saving an array with %d points!", n);
-            /*error("unable to save array contents due to excessive size."
-                  " only array sizes up to 200k points are embedabble "
-                  "inside the patch. your array has %d points. please "
-                  "load large files at runtime instead.", n);
-            return;*/
         }
-        while (n2 < n)
-        {
-            int chunk = n - n2, i;
-            if (chunk > ARRAYWRITECHUNKSIZE)
-                chunk = ARRAYWRITECHUNKSIZE;
+        //while (n2 < n)
+        //{
+        //    int chunk = n - n2, i;
+        //    if (chunk > ARRAYWRITECHUNKSIZE)
+        //        chunk = ARRAYWRITECHUNKSIZE;
             binbuf_addv(b, "si", gensym("#A"), n2);
-            for (i = 0; i < chunk; i++)
-                binbuf_addv(b, "f", ((t_word *)(array->a_vec))[n2+i].w_float);
-            binbuf_addv(b, ";");
-            n2 += chunk;
-        }
+            //for (i = 0; i < chunk; i++)
+                //binbuf_addv(b, "f", ((t_word *)(array->a_vec))[n2+i].w_float);
+            binbuf_addarray(b, n + 1, "f", ((t_word *)(array->a_vec)));
+            //binbuf_addv(b, ";");
+            //n2 += chunk;
+        //}
     }
 }
 
@@ -1502,23 +1493,7 @@ void garray_save(t_gobj *z, t_binbuf *b)
         x->x_name, array->a_n, &s_float,
         x->x_saveit + 2 * filestyle + 8*x->x_hidename +
         16 * x->x_joc, x->x_fillcolor, x->x_outlinecolor);
-    if (x->x_saveit)
-    {
-        int n = array->a_n, n2 = 0;
-        if (n > 200000)
-            post("warning: I'm saving an array with %d points!\n", n);
-        while (n2 < n)
-        {
-            int chunk = n - n2, i;
-            if (chunk > ARRAYWRITECHUNKSIZE)
-                chunk = ARRAYWRITECHUNKSIZE;
-            binbuf_addv(b, "si", gensym("#A"), n2);
-            for (i = 0; i < chunk; i++)
-                binbuf_addv(b, "f", ((t_word *)(array->a_vec))[n2+i].w_float);
-            binbuf_addv(b, ";");
-            n2 += chunk;
-        }
-    }
+    garray_savecontentsto(x, b);
 }
 
 t_widgetbehavior garray_widgetbehavior =

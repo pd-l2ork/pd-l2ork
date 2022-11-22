@@ -239,6 +239,8 @@ void binbuf_text(t_binbuf *x, char *text, size_t size)
         natom++;
         if (natom == nalloc)
         {
+            //fprintf(stderr,"binbuf_text resizing from %d to %d",
+            //    nalloc * sizeof(*x->b_vec), nalloc * (2*sizeof(*x->b_vec)));
             x->b_vec = t_resizebytes(x->b_vec, nalloc * sizeof(*x->b_vec),
                 nalloc * (2*sizeof(*x->b_vec)));
             nalloc = nalloc * 2;
@@ -431,6 +433,46 @@ done:
     va_end(ap);
     //fprintf(stderr,"done binbuf_addv\n");
     binbuf_add(x, nargs, arg);
+}
+
+/* ico@vt.edu 2022-11-22: a function that can process
+   large amounts of data (e.g. saving array contents)
+   at a fraction of time. this is necessary for Windows
+   where regualr binbuf_addv for a ~3-minute wav file
+   saved with the array requires over an hour to save
+   takes 5 seconds to do so using this method. TODO:
+   figure out how to read those same files without
+   running out of memory.
+*/
+void binbuf_addarray(t_binbuf *x, int length, char *fmt, t_word *wordarray)
+{
+    //fprintf(stderr,"binbuf_addarray started\n");
+    t_atom *arg = (t_atom *)t_getbytes(length * sizeof(*arg));
+    t_atom *at = arg;
+    char *fp = fmt;
+    int i;
+
+    for (i = 0; i < length; i++)
+    {
+        switch(*fp)
+        {
+            case 'i': SETFLOAT(at, wordarray[i].w_float);
+                        //fprintf(stderr, "i = %f\n", at->a_w.w_float);
+                        break;
+            case 'f': SETFLOAT(at, wordarray[i].w_float);
+                        //fprintf(stderr, "f = %f\n", at->a_w.w_float);
+                        break;
+            case 's': SETSYMBOL(at, wordarray[i].w_symbol);
+                        //fprintf(stderr, "s = %s\n", at->a_w.w_symbol->s_name);
+                        break;
+        }
+        at++;
+    }
+    SETSEMI(at);
+
+    //fprintf(stderr,"done binbuf_addarray\n");
+    binbuf_add(x, length, arg);
+    t_freebytes(arg, length * sizeof(t_atom));
 }
 
 /* add a binbuf to another one for saving.  Semicolons and commas go to
