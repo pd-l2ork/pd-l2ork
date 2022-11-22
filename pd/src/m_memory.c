@@ -65,7 +65,9 @@ void *resizebytes(void *old, size_t oldsize, size_t newsize)
     totalmem += (newsize - oldsize);
 #endif
     if (!ret)
-        post("pd: resizebytes() failed -- out of memory");
+        post("pd: resizebytes() failed -- out of memory."
+             " requested memory allocation size: %d."
+             " old size %d.", newsize, oldsize);
     return (ret);
 }
 
