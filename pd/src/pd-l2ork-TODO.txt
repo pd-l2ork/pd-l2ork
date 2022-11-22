@@ -4,12 +4,12 @@ PD-L2ORK TODO:
     *Patch window positioning: loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
 
 *When loading a large array, array data is not stretched to the full default width of an array.
-  *Possibly because it stops at 2000 or 3000 points (as per g_template.c)
-
-*Saving patch with large arrays (e.g. 3-minute wave file) effectively freezes pd on Windows.
-  *This is fixed, but now loading those same patches fails due to same resize limitations.
+  *Appears to be dependent on the location of the GOP window, so this is clearly a bug.
+  *Should also draw half as many points than it currently draws.
 
 *Resizing array GOP (or toplevel window) should not redraw it until the resize action is finished.
+
+*Large arrays should not be editable because redrawing is woefully inefficient.
 
 *Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
   *Investigate index.js' nw_create_window, and the pdgui.js' canvas_check_geometry.
@@ -381,7 +381,20 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Scripted resizing of patch windows keeps recreating the window and, when done fast, can result in stale windows. See 1497602807047-pd-msg/pd-msg/1.msg_and_patch/6.relocate_windows.pd. UPDATE: this is a buggy help patch that has multiple instances of the my_subpatch. Hence, it shows three windows instead of one. In addition, consistency_check is warranted because sending window height of 0 will trigger consistency check since it is an invalid window height.
 *Fixed a GOP group drawing regression where an object after applying properties to an array makes array's inside contents (scalars) move with the selected object.
 *Cleaned up array save contents. Enabled significantly faster saving of large amounts of audio data on Windows that may be embedded inside arrays. 3-minute file saving went from near indefinite (e.g. over an hour) to 5 seconds.
+  *This is fixed, but now loading those same patches fails due to same resize limitations.
+  *Capped the size on Windows up to 1,000,000 points per array. Otherwise, because Windows is currently 32-bit, upon trying to load, pd-l2ork runs out of memory.
+    *Pd-L2Ork now provides a warning to a Windows user and bails.
+  *Besides, saving these with the patch is woefully inefficient. One ~3-minute file balloons the patch size from a couple of KB to 150MB (!). Hence, users should be discouraged from embedding large files.
 *Updated editable notifications, so that they don't redundantly spam notification for every subpatch with an array.
+*Fixed a number of regressions that have resulted from the introduction of the editable option.
+  *Duplicating array opens subpatch (it shouldn't). This is due to the old editable flag triggering mandatory opening of the patch that has disabled editable option. Now, it is reported only in the console.
+  *After this, the original patch is treated as if it is array-only, thus making further edits impossible. This was due to erroneous seeking of the root parent patch inside canvas_set_editable function.
+  *Selected array when moved dislocates array contents incorrectly. This was another side-effect of the aforesaid bug.
+*Fixed a bug where toplevel array canvas and other patches that are not editable did not have the option to close window enabled.
+*Array size text box inside array dialog should be wider.
+*Added more verbose out of memory message.
+*Fixed a segfault bug present in the new binbuf_addarray function.
+*Added better way of handling saving contents of large arrays, including preventing their saving on Windows because there we are still stuck in 32-bit land, which can cause all kinds of problems. See the commit for more info.
 
 
 
@@ -480,11 +493,6 @@ TWEETER DONE:
   *Transposition now works (both octaves via buttons and the fine adjustment using joystick).
   *Made joystick-based transposition microtonal.
   *Fixed a bug where dry out did not adjust using the joystick (in the appropriate mode).
-*Fixed a number of regressions that have resulted from the introduction of the editable option.
-  *Duplicating array opens subpatch (it shouldn't). This is due to the old editable flag triggering mandatory opening of the patch that has disabled editable option. Now, it is reported only in the console.
-  *After this, the original patch is treated as if it is array-only, thus making further edits impossible. This was due to erroneous seeking of the root parent patch inside canvas_set_editable function.
-  *Selected array when moved dislocates array contents incorrectly. This was another side-effect of the aforesaid bug.
-*Fixed a bug where toplevel array canvas and other patches that are not editable did not have the option to close window enabled.
 
 
 
