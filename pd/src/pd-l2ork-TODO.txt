@@ -3,9 +3,13 @@ PD-L2ORK TODO:
   *Test nwjs 0.67.1 for regressions:
     *Patch window positioning: loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
 
-*When loading a large array, array data is not stretched to the full default width of an array. NEEDS TO BE TESTED
+*When loading a large array, array data is not stretched to the full default width of an array.
+  *Possibly because it stops at 2000 or 3000 points (as per g_template.c)
 
-*Saving patch with large arrays (e.g. 3-minute wave file) effectively freezes pd. So far affects Windows. NEEDS TO BE TESTED
+*Saving patch with large arrays (e.g. 3-minute wave file) effectively freezes pd on Windows.
+  *This is fixed, but now loading those same patches fails due to same resize limitations.
+
+*Resizing array GOP (or toplevel window) should not redraw it until the resize action is finished.
 
 *Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
   *Investigate index.js' nw_create_window, and the pdgui.js' canvas_check_geometry.
@@ -376,6 +380,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Added ability to message both nwjs and pd using the "send message" option from the file menu. By prepending the message with "nwjs:", it will be sent to the nwjs side of things instead of the Pd. Also, the message now autodetects the presence of ";" at the end of it and adds it, as needed.
 *Scripted resizing of patch windows keeps recreating the window and, when done fast, can result in stale windows. See 1497602807047-pd-msg/pd-msg/1.msg_and_patch/6.relocate_windows.pd. UPDATE: this is a buggy help patch that has multiple instances of the my_subpatch. Hence, it shows three windows instead of one. In addition, consistency_check is warranted because sending window height of 0 will trigger consistency check since it is an invalid window height.
 *Fixed a GOP group drawing regression where an object after applying properties to an array makes array's inside contents (scalars) move with the selected object.
+*Updated editable notifications, so that they don't redundantly spam notification for every subpatch with an array.
 
 
 

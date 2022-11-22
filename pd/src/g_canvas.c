@@ -1174,7 +1174,10 @@ void canvas_set_editable(t_canvas *x, t_floatarg f)
         canvas_disable_editmode_this_and_children_canvases(root);
     }
     x->gl_editable = (int)f;
-    if (!x->gl_editable)
+    // ico@vt.edu 2022-11-22: only if canvas is not editable
+    // and does not have an array (meaning it is typically a
+    // subpatch of a GOP array)
+    if (!x->gl_editable && !canvas_hasarray(x))
     {
         // raise the window to bring it to user's attention
 
@@ -1185,7 +1188,7 @@ void canvas_set_editable(t_canvas *x, t_floatarg f)
         // the correct patch in the console, and not make anything visible.
         // disabling canvas_vis and updating the post message...
         //canvas_vis(x, 1.0);
-        post("Warning: %s \"%s\" has disabled edit mode (editable flag). "
+        post("warning: %s \"%s\" has disabled edit mode (editable flag). "
              "It and all its subpatches (incuding abstractions)"
              " will not be editable until this option is reenabled.",
              (x->gl_env ? "patch or abstraction" : "subpatch"), x->gl_name->s_name);
@@ -3379,9 +3382,9 @@ void canvasgop_checksize(t_canvas *x)
 
         if (dirty)
         {
-            post("Warning: "
-                 "Adjusting canvas graph-on-parent area to accomodate "
-                 "its name. If you want to have a smaller graph-on-parent "
+            post("warning: "
+                 "adjusting canvas graph-on-parent area to accomodate "
+                 "its name. if you want to have a smaller graph-on-parent "
                  "window, please hide graph text.");
             canvas_dirty(x, 1);
             canvasgop_draw_move(x,1);
