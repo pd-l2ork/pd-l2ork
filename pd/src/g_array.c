@@ -527,10 +527,10 @@ t_garray *graph_array(t_glist *gl, t_symbol *s, int argc, t_atom *argv)
 
     garray_redraw(x);
 
-/* todo: need to test to see if this is necessary
-   doesn't seem like it is...
-    garray_fittograph(x, n, 1);
-*/
+    // todo: need to test to see if this is necessary
+    // doesn't seem like it is...
+    //garray_fittograph(x, n, 1);
+
     return (x);
 }
 
@@ -1447,8 +1447,31 @@ void garray_savecontentsto(t_garray *x, t_binbuf *b)
     {
         t_array *array = garray_getarray(x);
         int n = array->a_n, n2 = 0;
+        t_symbol *arrayname;
+        garray_getname(x, &arrayname);
+#ifdef _WIN32
+        if (n > 1000000) {
+            post("warning: unable to save arrays larger than "
+                 "1 million points and the array %s you have "
+                 "trying to save has %d points. "
+                 "this is because windows version of pd-l2ork "
+                 "is currently 32bit only and attempting to load "
+                 "anything larger will result in pd-l2ork running "
+                 "out of memory. instead, you should "
+                 "consider dynamically loading large files into "
+                 "array at runtime. doing so will save a lot of "
+                 "disk space, and speed-up loading the patch.",
+                 arrayname->s_name, n);
+            return;
+        }
+#endif
         if (n > 200000) {
-            post("warning: I'm saving an array with %d points!", n);
+            post("warning: I'm saving %s array with %d points! "
+                 "this may take a while. you should consider "
+                 "dynamically loading large files into array "
+                 "at runtime. doing so will save a lot of "
+                 "disk space, and speed-up loading the patch.",
+                 arrayname->s_name, n);
         }
         //while (n2 < n)
         //{
