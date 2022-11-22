@@ -452,7 +452,7 @@ void binbuf_addarray(t_binbuf *x, int length, char *fmt, t_word *wordarray)
     char *fp = fmt;
     int i;
 
-    for (i = 0; i < length; i++)
+    for (i = 0; i < length - 1; i++)
     {
         switch(*fp)
         {
