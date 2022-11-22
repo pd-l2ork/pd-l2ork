@@ -1450,10 +1450,10 @@ void garray_savecontentsto(t_garray *x, t_binbuf *b)
         t_symbol *arrayname;
         garray_getname(x, &arrayname);
 #ifdef _WIN32
-        if (n > 1000000) {
+        if (n > 2880000) {
             post("warning: unable to save arrays larger than "
-                 "1 million points and the array %s you have "
-                 "trying to save has %d points. "
+                 "2880000 points (or 60 seconds at 48KHz) and "
+                 "the array %s you have trying to save has %d points. "
                  "this is because windows version of pd-l2ork "
                  "is currently 32bit only and attempting to load "
                  "anything larger will result in pd-l2ork running "
