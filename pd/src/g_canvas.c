@@ -3406,6 +3406,46 @@ void canvasgop__clickhook(t_scalehandle *sh, int newstate)
     if (sh->h_scale != 1)
         canvas_undo_add(x, 8, "apply", canvas_undo_set_canvas(x));
 
+    // ico@vt.edu 2022-11-22: here we disable redrawing of canvas'
+    // contents if it has an array, as that can be rather CPU intense
+    // for large arrays. we reenable this in g_editor.c inside
+    // canvas_mouseup event.
+    if (x->gl_isgraph && canvas_hasarray(x) && !glist_istoplevel(x))
+    {
+        // ico@vt.edu 2022-11-24: do not redraw GOP canvases with
+        // arrays that cumulatively have more than 200k points
+        // while resizing the GOP canvas (we blank them instead)
+        // this is useful on not only slower computers, but also
+        // current ones due to profuse network socket traffic
+        // between c and nwjs.
+        t_gobj *g;
+        t_garray *ga;
+        t_array *a;
+        int num_elem = 0;
+        for (g = x->gl_list; g; g = g->g_next)
+        {
+            //fprintf(stderr, "searching\n");
+            //post("searching");
+            //for subpatch garrays
+            if (pd_class(&g->g_pd) == garray_class)
+            {
+                //fprintf(stderr,"found ya\n");
+                //post("found ya");
+                ga = (t_garray *)g;
+                if (ga)
+                {
+                    a = garray_getarray(ga);
+                    num_elem += a->a_n;
+                }
+            }
+        }
+        if (num_elem > 200000)
+        {
+            //post("canvasgop__clickhook disablecontentredraw=1");
+            x->gl_disablecontentredraw = 1;
+        }
+    }
+
     /* We're abusing h_scale to differentiate between clicking gop red
        rectangle and clicking the corner of a subcanvas on the parent */
     if (sh->h_scale == 1) /* clicking corner of gop subcanvas on parent */

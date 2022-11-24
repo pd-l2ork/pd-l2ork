@@ -1361,14 +1361,17 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
         }
 
             /* draw contents of graph as glist */
-        for (g = x->gl_list; g; g = g->g_next)
+        if (!x->gl_disablecontentredraw)
         {
-            gop_redraw = 1;
-            //fprintf(stderr,"drawing gop objects\n");
-            //post("graph_vis drawing object %lx...", g);
-            gobj_vis(g, x, 1);
-            //fprintf(stderr,"done\n");
-            gop_redraw = 0;
+            for (g = x->gl_list; g; g = g->g_next)
+            {
+                gop_redraw = 1;
+                //fprintf(stderr,"drawing gop objects\n");
+                //post("graph_vis drawing object %lx...", g);
+                gobj_vis(g, x, 1);
+                //fprintf(stderr,"done\n");
+                gop_redraw = 0;
+            }
         }
         // ico@vt.edu 2022-11-09: if we have gopspill option enabled
         // allow for object to be drawn outside the boundaries
@@ -1404,8 +1407,11 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
     else
     {
         glist_eraseiofor(parent_glist, &x->gl_obj, tag);
-        for (g = x->gl_list; g; g = g->g_next)
-            gobj_vis(g, x, 0);
+        if (!x->gl_disablecontentredraw)
+        {
+            for (g = x->gl_list; g; g = g->g_next)
+                gobj_vis(g, x, 0);
+        }
 
         gui_vmess("gui_gobj_erase", "xs",
             glist_getcanvas(x->gl_owner),

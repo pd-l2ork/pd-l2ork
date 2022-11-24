@@ -251,6 +251,7 @@ struct _glist
     unsigned int gl_disableruntimepopup:1;  /* whether the popup (right-click context menu) should be available at runtime 
                                                this is useful for catching right-click mouse up that otherwise gets "stolen" 
                                                by the popup menu */
+    unsigned int gl_disablecontentredraw:1; /* used to disable redrawing of an array-only graph */
     //global preset array pointer
     t_preset_hub *gl_phub;
     //infinite undo goodies (have to stay here rather than the editor to prevent its obliteration when editor is deleted)

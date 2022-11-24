@@ -4081,7 +4081,7 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
                    where the visual dimensions usually (i.e., by default)
                    extends well past the bounds of the bbox. For that reason
                    we have a virtual waterfall of conditionals flowing all
-                   the way to the GUI just handle resizing a stupid rectangle.
+                   the way to the GUI just to handle resizing a rectangle.
                 */
 
             // if we are inside a resizing hotspot of a text object...
@@ -5706,6 +5706,21 @@ void canvas_mouseup(t_canvas *x,
     else if (x->gl_editor->e_onmotion == MA_RESIZE)
     {
         //post("mouseup MA_RESIZE");
+        // check if we are letting go of canvas resize handle
+        // and report to it mouse up, so that if it has an array
+        // inside it (which is expensive to redraw, so we don't
+        // redraw it with each mouse drag update), we can
+        // inform the graph to redraw its contents.
+        if (pd_class(&resized_gobj->g_pd) == canvas_class &&
+            canvas_hasarray((t_canvas *)resized_gobj))
+        {
+            t_canvas *c = (t_canvas *)resized_gobj;
+            c->gl_disablecontentredraw = 0;
+            //post("mouseup MA_RESIZE detected canvas (graph)...");
+            // this redraws both the redrect in the canvas itself
+            // (if that window is open), and the canvas on its parent
+            glist_redraw(c);
+        }
         scrollbar_synchronous_update(x);
         resized_gobj = NULL;   
     }

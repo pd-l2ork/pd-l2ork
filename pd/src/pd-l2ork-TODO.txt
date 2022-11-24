@@ -3,13 +3,8 @@ PD-L2ORK TODO:
   *Test nwjs 0.67.1 for regressions:
     *Patch window positioning: loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
 
-*When loading a large array, array data is not stretched to the full default width of an array.
-  *Appears to be dependent on the location of the GOP window, so this is clearly a bug.
-  *Should also draw half as many points than it currently draws.
-
-*Resizing array GOP (or toplevel window) should not redraw it until the resize action is finished.
-
-*Large arrays should not be editable because redrawing is woefully inefficient.
+*Browser does not find subfolder stuff, like the sprite game or pd-l2ork data structures.
+  *Possibly a side-effect of the recent upgrades to the indexing engine?
 
 *Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
   *Investigate index.js' nw_create_window, and the pdgui.js' canvas_check_geometry.
@@ -395,6 +390,18 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Added more verbose out of memory message.
 *Fixed a segfault bug present in the new binbuf_addarray function.
 *Added better way of handling saving contents of large arrays, including preventing their saving on Windows because there we are still stuck in 32-bit land, which can cause all kinds of problems. See the commit for more info.
+*Upped the maximum array size on Windows to 2880000 (or 60 seconds worth of audio at 48KHz). Even at this size, each such array will take up 27MB, so clearly dynamic loading from HD should be used instead.
+*Fixed implicit function compile error on non-Windows OSs.
+*EXPERIMENTAL: enable enqueuing instead of outright drawing. doing so fixes major slowdown when trying to alter an array data by clicking and dragging (drawing using mouse), which results in a large queue of redundant redraws. TODO: check for regressions.
+*Investigated a bug that occurred when loading a large array, array data is not stretched to the full default width of an array.
+  *Appears to be dependent on the location of the GOP window, so this is clearly a bug.
+    *It is affected with too large of an array. When keeping the size limited (as we do now by limiting embedding only up to 2880000 points), this has not manifested yet.
+  *LATER: Consider drawing half as many points than it currently draws.
+*Resizing GOP having one (or more) arrays that cumulatively have more than 200k points, should not redraw the GOP until the resize action is finished. So, instead we go with blanking the GOP contents if the GOP has more than 200k points cumulatively (e.g. 2 garrays inside a single canvas with 120k points each would result in blanking the canvas during resize, just like one garray with 200,001 point would). Arrays with less points (cumulatively) continue to be redrawn using enqueued operation.
+*Resize triggers saving operation, which results in the verbose warning for large arrays. Therefore, disabled the warning, particularly now since it is not necessary anymore given that there is a hard limit on the array size.
+*Redrawing array on nwjs side, while possible, is currently rather convoluted and not that useful. Doing so requires rethinking how the array is stored and then reattaching the contents and doing recalculation of the bbox, which can get really messy. Hence, the aforesaid implementation.
+*Large arrays are very inefficient when redrawn due to array change using mouse click and drag. Chose to queue scalar redraws. This fixes the major slowdown with arrays. However, need to investigate for potential regressions.
+  *Sprite game works OK.
 
 
 

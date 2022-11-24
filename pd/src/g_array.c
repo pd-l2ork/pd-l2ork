@@ -1039,9 +1039,15 @@ static void array_motion(void *z, t_floatarg dx, t_floatarg dy)
     //fprintf(stderr, "%f %f\n", graph->gl_y1, graph->gl_y2);
 
     if (array_motion_scalar)
+    {
+        post("array_motion scalar_redraw");
         scalar_redraw(array_motion_scalar, array_motion_glist);
+    }
     if (array_motion_array)
+    {
+        post("array_motion array_redraw");
         array_redraw(array_motion_array, array_motion_glist);
+    }
 
     /* send a bang to the associated send to reflect the change
        via mouse click/drag */
@@ -1449,22 +1455,21 @@ void garray_savecontentsto(t_garray *x, t_binbuf *b)
         int n = array->a_n, n2 = 0;
         t_symbol *arrayname;
         garray_getname(x, &arrayname);
-#ifdef _WIN32
+//#ifdef _WIN32
         if (n > 2880000) {
             post("warning: unable to save arrays larger than "
                  "2880000 points (or 60 seconds at 48KHz) and "
                  "the array %s you have trying to save has %d points. "
-                 "this is because windows version of pd-l2ork "
-                 "is currently 32bit only and attempting to load "
-                 "anything larger will result in pd-l2ork running "
-                 "out of memory. instead, you should "
-                 "consider dynamically loading large files into "
-                 "array at runtime. doing so will save a lot of "
-                 "disk space, and speed-up loading the patch.",
-                 arrayname->s_name, n);
+                 "trying to do so makes patch unnecessarily huge "
+                 "and may even make the OS run out of memory. "
+                 "instead, you should consider dynamically loading "
+                 "large files into array at runtime. doing so will "
+                 "save a lot of disk space, and speed-up loading "
+                 "the patch.", arrayname->s_name, n);
             return;
         }
-#endif
+//#endif
+/*
         if (n > 200000) {
             post("warning: I'm saving %s array with %d points! "
                  "this may take a while. you should consider "
@@ -1473,6 +1478,7 @@ void garray_savecontentsto(t_garray *x, t_binbuf *b)
                  "disk space, and speed-up loading the patch.",
                  arrayname->s_name, n);
         }
+*/
         //while (n2 < n)
         //{
         //    int chunk = n - n2, i;
