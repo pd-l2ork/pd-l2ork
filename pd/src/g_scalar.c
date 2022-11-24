@@ -1232,8 +1232,14 @@ static void scalar_doredraw(t_gobj *client, t_glist *glist)
 void scalar_redraw(t_scalar *x, t_glist *glist)
 {
     if (glist_isvisible(glist))
-        scalar_doredraw((t_gobj *)x, glist);
-        //sys_queuegui(x, glist, scalar_doredraw);
+        //scalar_doredraw((t_gobj *)x, glist);
+        // ico@vt.edu 2022-11-24:
+        // EXPERIMENTAL: enable queue gui instead of outright drawing.
+        // doing so fixes major slowdown when trying to alter an array
+        // data by clicking and dragging (drawing using mouse), which
+        // results in a large queue of redundant redraws. TODO: check
+        // for regressions.
+        sys_queuegui((t_gobj *)x, glist, scalar_doredraw);
 }
 
 /* here we call the parentclickfns for drawing commands.
