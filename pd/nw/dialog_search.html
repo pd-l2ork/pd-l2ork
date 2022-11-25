@@ -185,10 +185,10 @@ function toc_add_bookmarks()
 function toc_bookmarks()
 {
     for (var i = 0, len = toc.length; i < len; i++) {
-	if (!toc[i].id && !toc[i].description &&
-	    toc[i].title == "Bookmarks") {
-	    return i;
-	}
+    	if (!toc[i].id && !toc[i].description &&
+    	    toc[i].title == "Bookmarks") {
+    	    return i;
+    	}
     }
     return -1;
 }
