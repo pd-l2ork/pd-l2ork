@@ -63,7 +63,7 @@ char *sys_guicmd;
 t_symbol *sys_gui_preset; /* name of gui theme to be used */
 t_symbol *sys_libdir;
 t_symbol *sys_guidir;
-static t_namelist *sys_openlist;
+t_namelist *sys_openlist;
 static t_namelist *sys_messagelist;
 static int sys_version;
 int sys_oldtclversion;      /* hack to warn g_rtext.c about old text sel */
@@ -308,6 +308,7 @@ static void pd_makeversion(void)
    instance of Pd. */
 void glob_forward_files_from_secondary_instance(void)
 {
+    fprintf(stderr, "glob_forward_files_from_secondary_instance\n");
         /* check if we are unique, otherwise, just focus existing
            instance, and if necessary open file inside it. This doesn't
            yet work with the new GUI because we need to set it up to
@@ -323,6 +324,7 @@ void glob_forward_files_from_secondary_instance(void)
         for (nl = sys_openlist; nl; nl = nl->nl_next)
         {
             gui_s(nl->nl_string);
+            fprintf(stderr, "file: %s\n", nl->nl_string);
         }
     }
     gui_end_array();

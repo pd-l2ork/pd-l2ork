@@ -3121,7 +3121,7 @@ function connect_as_client_to_secondary_instance(host, port, pd_engine_id) {
             next_command: ""
     };
     client.setNoDelay(true);
-    client.connect(+port, host, function() {
+    client.connect(port, host, function() {
         console.log("CONNECTED TO: " + host + ":" + port);
         secondary_pd_engines[pd_engine_id] = {
             socket: client

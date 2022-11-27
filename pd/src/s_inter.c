@@ -1290,6 +1290,11 @@ static void set_datadir(char *buf, int new_gui_instance, int portno)
 }
 
 extern int sys_unique;
+// TODO-EXISTING: this is currently unused. should
+// revisit later to see if we can do opening of 
+// new files in a more graceful fashion. For more
+// info, see TODO-EXISTING prompts below.
+extern t_namelist *sys_openlist;
 
 int sys_startgui(const char *guidir)
 {
@@ -1530,6 +1535,7 @@ int sys_startgui(const char *guidir)
                use that dir to find the nw binary. */
             if (strcmp(GUIDIR, ""))
                 strcpy(guidir2, "\"" GUIDIR "\"");
+
             //strcpy(guidir2, "\"/home/user/pd-l2ork/pd/nw\"");
             sprintf(cmdbuf,
                 "%s/nw/nw %s %s "
@@ -1541,6 +1547,18 @@ int sys_startgui(const char *guidir)
                 (sys_k12_mode ? "pd-l2ork-k12" : "pd-l2ork"),
                 guidir2,
                 (t_uint)pd_this);
+            // TODO-EXISTING: consider adding files here, see
+            // comments below where Windows version is invoked.
+            /*
+            if (sys_openlist)
+            {
+                t_namelist *nl;
+                sprintf(strchr(cmdbuf, '\0'), " <patches> ");
+                for (nl = sys_openlist; nl; nl = nl->nl_next)
+                    sprintf(strchr(cmdbuf, '\0'), "%s ", nl->nl_string);
+            }
+            fprintf(stderr,"final command: %s\n", cmdbuf);
+            */
 #endif
             sys_guicmd = cmdbuf;
         }
@@ -1615,14 +1633,30 @@ int sys_startgui(const char *guidir)
         sys_bashfilename(wishbuf, wishbuf);
 
         char data_dir_flag[MAXPDSTRING];
+        // at this point we do not know if there is another instance
+        // running and sys_unique can only tell us if the user wants
+        // to spawn a new instance.
         set_datadir(data_dir_flag, sys_unique, portno);
+        fprintf(stderr,"sys_startgui calling spawnret port=%d\n", portno);
         spawnret = _spawnl(P_NOWAIT, wishbuf, "pd-nw",
             data_dir_flag,
             scriptbuf,
             portbuf,
             "localhost",
             (sys_k12_mode ? "pd-l2ork-k12" : "pd-l2ork"),
-            scriptbuf, pd_this_string, NULL);
+            scriptbuf, pd_this_string,
+            // TODO-EXISTING: consider appending files, as shown
+            // in the line below. openpatches serves as delineator.
+            // then, need to figure out a robust way of parsing files
+            // possibly by surrounding them with a special character?
+            // this is important because files can have spaces, so.
+            // the usual parsing methods will not cut it.
+            // THEN: do the same for Linux/OSX above (look for the
+            // TODO-EXISTING comment). 2.pd is listed as a hardcoded
+            // example that should be replaced with the code provided
+            // in the TODO-EXISTING prompt above this one.
+            //"openpatches", "2.pd",
+            NULL);
         if (spawnret < 0)
         {
             perror("spawnl");

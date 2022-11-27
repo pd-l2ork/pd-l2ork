@@ -349,8 +349,9 @@ function add_events() {
             pdgui.pdsend("pd dsp", dsp_state);
         }
     );
-    // Opening another file
+    // Opening another nwjs pd-l2ork instance
     nw.App.on("open", function(argv_string) {
+        //pdgui.post("nw.App.on... " + argv_string);
         var port,
             host,
             pd_engine_id,
@@ -366,29 +367,75 @@ function add_events() {
                 // have to parse them.
                 pdgui.menu_open(decodeURI(argv_string.slice(7)));
         } else {
-                // Otherwise we assume that the Pd process tried to
-                // open the GUI, supplying us with a port number and
-                // an instance id. In this case, we need to create a
-                // socket connection and fetch the file-list...
-                pd_engine_id = argv_string.split(" ").slice(-1).join();
-                argv_string = argv_string.slice(0, -pd_engine_id.length).trim();
-                // strip off the gui dir
-                argv_string = argv_string.slice(0,
-                    -nw.App.argv[4].length).trim();
-                if (process.platform === "win32") {
-                    // windows quotes this string, so let's remove the two
-                    // quotation marks
-                    argv_string = argv_string.slice(0, -2).trim();
+                if (argv_string.includes("pd-l2ork-k12")) {
+                    // since this is calling a separate instance, only
+                    // command line option would trigger K12 mode, yet
+                    // we have arrived here because of the second instance
+                    // calling opening of new files without the unique flag.
+                    // if so, we should really keep the first instance
+                    // in whatever mode it was already in. therefore, here
+                    // we only reformat pd-l2ork-k12, so that it does not
+                    // cause problems during parsing below.
+                    //pdgui.post("...second instance has k12 mode enabled");
+                    //pdgui.k12_mode = 1;
+                    argv_string = argv_string.replace("pd-l2ork-k12", "pd-l2ork");
                 }
-                // now strip off the k12 string, which is guaranteed not
-                // to have any spaces in it
-                argv_string = argv_string.slice(0,
-                        -argv_string.split(" ").slice(-1).join().length).trim();
-                // now get the host string and the port
-                host = argv_string.split(" ").slice(-1).join();
-                port = +argv_string.split(" ").slice(-2, -1).join();
-                pdgui.connect_as_client_to_secondary_instance(host, port,
-                    pd_engine_id);
+                if (pdgui.nw_os_is_windows) {
+                    //pdgui.post("...we are running on windows...");
+                    // Otherwise we assume that the Pd process tried to
+                    // open the GUI, supplying us with a port number and
+                    // an instance id. On windows we try to harvest files
+                    // directly off the arguments. They are found at the
+                    // end, following the openpatches argument, which serves
+                    // as a point of delineation.
+                    // CURRENTLY we are still relying on the old approach,
+                    // which is rather messy, so we may revisit this later
+                    //var win_args = new Array();
+                    var win_args = argv_string.split(" pd-l2ork ");
+
+                    // Windows refuses to connect to pd-l2ork engine unless
+                    // you indicate IP of 0.0.0.0. (localhost or 127.0.0.1
+                    // results in connection refused inside the
+                    // connect_as_client_to_secondary_instance function)
+                    //host = win_args[0].split(" ").slice(-1).join();
+                    host = "0.0.0.0";
+                    port = win_args[0].split(" ").slice(-2, -1).join();
+                    //pdgui.post("...argv_string final: host=" + host + " port=" + port + " engine=" + pd_engine_id);
+
+                    // LATER: consider taking this approach instead,
+                    // as it may end-up being a lot cleaner
+                    //win_args = argv_string.split("openpatches");
+                    //pdgui.menu_open(win_args[1].trim());
+
+                    pdgui.connect_as_client_to_secondary_instance(host, port,
+                        pd_engine_id);
+                } else {
+                    // Otherwise we assume that the Pd process tried to
+                    // open the GUI, supplying us with a port number and
+                    // an instance id. In this case, we need to create a
+                    // socket connection and fetch the file-list...
+                    pd_engine_id = argv_string.split(" ").slice(-1).join();
+                    argv_string = argv_string.slice(0, -pd_engine_id.length).trim();
+                    // strip off the gui dir
+                    argv_string = argv_string.slice(0,
+                        -nw.App.argv[4].length).trim();
+                    if (process.platform === "win32") {
+                        // windows quotes this string, so let's remove the two
+                        // quotation marks
+                        argv_string = argv_string.slice(0, -2).trim();
+                    }
+                    // now strip off the k12 string, which is guaranteed not
+                    // to have any spaces in it
+                    argv_string = argv_string.slice(0,
+                            -argv_string.split(" ").slice(-1).join().length).trim();
+                    // now get the host string and the port
+                    host = argv_string.split(" ").slice(-1).join();
+                    port = +argv_string.split(" ").slice(-2, -1).join();
+                    //pdgui.post("...argv_string final: host=" +
+                    //    host + " port=" + port + " engine=" + pd_engine_id);
+                    pdgui.connect_as_client_to_secondary_instance(host, port,
+                        pd_engine_id);
+                }
         }
     });
     // Browser Window Close
@@ -435,7 +482,7 @@ function add_events() {
         }, false
     );
 
-    // disable drag and drop for the time being
+    // disable drag and drop for the time being (TODO!)
     window.addEventListener("dragover", function (evt) {
         evt.preventDefault();
     }, false);

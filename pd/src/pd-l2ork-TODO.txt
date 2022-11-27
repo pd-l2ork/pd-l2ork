@@ -3,8 +3,6 @@ PD-L2ORK TODO:
   *Test nwjs 0.67.1 for regressions:
     *Patch window positioning: loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
 
-*Double-clicking on a pd patch while pd-l2ork is open does not open it inside pd-l2ork. Affects Windows only?
-
 *Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
   *Investigate index.js' nw_create_window, and the pdgui.js' canvas_check_geometry.
   *Also use index.js console positioning aspect, if necessary.
@@ -402,6 +400,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *An array of improvements to the search browser, including ability to show folder contents and, by clicking on displayed folders, to show subfolders. Added a button that reinitializes the search index.
 *When closing the patch, made sure that the dialog is always centered. This is a regression due to nw.js upgrade.
 *Refined data dialog width to make it look better on Windows.
+*Fixed windows not opening patches requested by a second instance of pd-l2ork that is not unique or does not have a nogui flag. The same also works now for double-clicking on any file while pd-l2ork is already running.
 
 
 
@@ -524,3 +523,24 @@ NOTES:
 gui_canvas_new has_toplevel_scalars=0
 nw_create_patch_window_menus
 pd_canvas.js init x55e86dd973c0 0
+
+
+*order of execution for the pd start
+s_main.c:   sys_main
+            sys_argparse (sets sys_openlist or files to be open)
+            sys_fakefromgui (if nogui flag is used)
+                glob_initfromgui... (fast-forward below ---)
+s_inter.c:  sys_startgui (if starting with gui)
+                -->HERE WE CAN PASS FILES TO THE FRONT-END
+                set_datadir (deals with sys_unique, and if it is not unique does not pass a port number, which makes nw.js not spawn a new instance)
+from GUI:   "init" message calls glob_initfromgui... (fast-forward below ---)
+---------------------------------
+s_main.c:   glob_initfromgui CLEARS sys_openlist (and tries to open files)
+                openit
+s_path.c:           open_via_path
+
+Use for starting master instance:
+killall pd-l2ork || true && make && sudo cp ../bin/pd-l2ork /usr/bin/ && sudo cp ../nw/*js /usr/lib/pd-l2ork/bin/ && pd-l2ork ~/Desktop/b.pd &
+
+Use for starting second instance:
+pd-l2ork -stderr ~/Desktop/c.pd
