@@ -2635,7 +2635,7 @@ function gui_set_cwd(dummy, cwd) {
     }
 }
 
-// This doesn't work at the moment.  Not sure how to feed the command line
+// This doesn't work at the moment. Not sure how to feed the command line
 // filelist to a single instance of node-webkit.
 function gui_open_via_unique (secondary_pd_engine_id, unique, file_array) {
     var startup_dir = pwd,
@@ -8368,7 +8368,7 @@ function gui_canvas_dialog(did, attr_arrays) {
 }
 
 function gui_data_dialog(did, data_string) {
-    dialogwin[did] = create_window(did, "data", 195, 323 + (22 * nw_os_is_osx),
+    dialogwin[did] = create_window(did, "data", 205, 323 + (22 * nw_os_is_osx),
         popup_coords[2], popup_coords[3],
         data_string);
 }
