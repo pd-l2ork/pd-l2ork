@@ -2053,7 +2053,9 @@ function menu_k12_open_demos () {
 
 exports.menu_k12_open_demos = menu_k12_open_demos;
 
-
+// LATER: rethink how files are separated since
+// semicolon can be embedded inside a filename
+// this will require rethinking menu_open globally
 function menu_open (filenames_string) {
     var file_array = filenames_string.split(";"),
         length = file_array.length,

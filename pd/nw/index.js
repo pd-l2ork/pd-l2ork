@@ -487,6 +487,14 @@ function add_events() {
         evt.preventDefault();
     }, false);
     window.addEventListener("drop", function (evt) {
+        var num_files = evt.dataTransfer.files.length;
+        var i, file_array = "";
+        for (i = 0; i < num_files; i++) {
+            // LATER: rethink how files are separated since
+            // semicolon can be embedded inside a filename
+            file_array += evt.dataTransfer.files[i].path + ";";
+        }
+        pdgui.menu_open(file_array);
         evt.preventDefault();
     }, false);
 }
