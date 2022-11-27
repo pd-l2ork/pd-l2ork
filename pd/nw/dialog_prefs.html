@@ -454,7 +454,7 @@ select {
                    id="autopatch_yoffset_value"
                    name="autopatch_yoffset_value"
                    data-i18n="[title]prefs.gui.autopatch_yoffset_tt">
-            <br/>
+            <br/><br/>
             <span data-i18n="prefs.gui.autocomplete.autocomplete_title"></span>
             <br/>
             <label data-i18n="[title]prefs.gui.autocomplete.autocomplete_tt">
@@ -538,6 +538,11 @@ select {
               <input type="checkbox" id="browser_init" name="browser_init">
               <span data-i18n="prefs.general.browser.browser_init"></span>
             </label>
+            <br/>
+            <button type="button" onClick="remake_index()"
+                data-i18n="[title]prefs.general.browser.make_index_tt">
+              <span data-i18n="prefs.general.browser.make_index"></span>
+            </button>
             <br/>
             <label data-i18n="[title]prefs.gui.autocomplete.autocomplete_relevance_tt">
               <input type="checkbox" id="autocomplete_relevance" name="autocomplete_relevance">
@@ -861,13 +866,22 @@ function apply(save_prefs) {
     );
     // Also send the browser config to the GUI, so that it will update the
     // help browser accordingly.
+    //pdgui.post(get_bool_elem("browser_doc") + " " + old_browser_doc + " | "
+    //     + get_bool_elem("browser_path") + " " + old_browser_path);
+
     pdgui.update_browser(
         get_bool_elem("browser_doc"),
         get_bool_elem("browser_path"),
         get_bool_elem("autocomplete"),
         get_bool_elem("autocomplete_prefix"),
-        get_bool_elem("autocomplete_relevance")
+        get_bool_elem("autocomplete_relevance"),
+        ((get_bool_elem("browser_doc") !== old_browser_doc ||
+         get_bool_elem("browser_path") !== old_browser_path) ? 1 : "")
     );
+
+    old_browser_doc = get_bool_elem("browser_doc");
+    old_browser_path = get_bool_elem("browser_path");
+
     // Update the grid on all open windows.
     pdgui.update_grid(get_bool_elem("show_grid"),
         document.getElementById("grid_size").value);
@@ -1133,9 +1147,13 @@ function autopatch_yoffset_toggle(checked) {
     document.getElementById("autopatch_yoffset").checked = checked;
 }
 
+var old_browser_doc;
+var old_browser_path;
+
 function gui_prefs_callback(name, show_grid, grid_size, save_zoom,
     autocomplete, autocomplete_prefix, autocomplete_relevance,
     browser_doc, browser_path, browser_init, autopatch_yoffset, curved_cords) {
+    //pdgui.post("gui_prefs_callback");
     var s = document.getElementById("gui_preset");
 
     // ag: scan the css subdir for user-defined styles
@@ -1174,6 +1192,8 @@ function gui_prefs_callback(name, show_grid, grid_size, save_zoom,
     document.getElementById("browser_doc").checked = !!browser_doc;
     document.getElementById("browser_path").checked = !!browser_path;
     document.getElementById("browser_init").checked = !!browser_init;
+    old_browser_doc = browser_doc;
+    old_browser_path = browser_path;
 
     last_curved_cords = curved_cords;
     //pdgui.post("last_curved_cords=" + last_curved_cords);
@@ -1508,6 +1528,22 @@ var rmdir = function(dir) {
     }
     fs.rmdirSync(dir);
 };
+
+function remake_index() {
+    // only force making of the index if
+    // apply does not already take care of it
+    var makeit = true;
+    if (get_bool_elem("browser_doc") !== old_browser_doc ||
+        get_bool_elem("browser_path") !== old_browser_path) {
+        makeit = false;
+    }
+    apply(true);
+    //pdgui.post("remake_index makeit=" + makeit);
+    if (makeit)
+        pdgui.rebuild_index(1);
+    old_browser_doc = get_bool_elem("browser_doc");
+    old_browser_path = get_bool_elem("browser_path");
+}
 
 function reset_nwjs_user_settings_folder() {
     var os = require('os').platform();

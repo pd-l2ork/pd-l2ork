@@ -508,19 +508,21 @@
         "autocomplete_tt": "Offers completions for object names and arguments as you type",
         "autocomplete_prefix": "match completions by object name prefix",
         "autocomplete_prefix_tt": "Only list completions whose prefix matches (rather than matches anywhere in object names)",
-        "autocomplete_relevance": "sort completions by relevance",
+        "autocomplete_relevance": "sort possible autocompletions by relevance",
         "autocomplete_relevance_tt": "List most relevant completions first (based on how frequently they are used)"
       }
     },
     "general": {
       "browser": {
-        "browser_title": "Help browser settings (WARNING: changing these may affect startup times!)",
-        "browser_doc": "help browser only searches the doc folder",
-        "browser_doc_tt": "Only scan help patches in the doc folder for searchable keywords (faster)",
+        "browser_title": "Help browser settings",
+        "browser_doc": "help browser searches only the doc folder",
+        "browser_doc_tt": "scan help patches only in the doc folder for searchable keywords",
         "browser_path": "help browser also searches the help path",
-        "browser_path_tt": "Also scan help patches in the user-defined help path for searchable keywords (slower)",
+        "browser_path_tt": "also scan help patches in the user help path for searchable keywords (may take a minute or longer to build the index)",
         "browser_init": "prepare the help index at application start",
-        "browser_init_tt": "If checked, prepare the index for the help browser already when the application starts"
+        "browser_init_tt": "if checked, prepare the index for the help browser when pd-l2ork starts (may significantly impact start-up times)",
+        "make_index": "Rebuild Index",
+        "make_index_tt": "apply all settings and immediately rebuild index (may take some time)"
       },
       "nwjs": {
         "nwjs_title": "nw.js User Settings",

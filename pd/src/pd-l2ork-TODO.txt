@@ -3,8 +3,7 @@ PD-L2ORK TODO:
   *Test nwjs 0.67.1 for regressions:
     *Patch window positioning: loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
 
-*Browser does not find subfolder stuff, like the sprite game or pd-l2ork data structures.
-  *Possibly a side-effect of the recent upgrades to the indexing engine?
+*Double-clicking on a pd patch while pd-l2ork is open does not open it inside pd-l2ork. Affects Windows only?
 
 *Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
   *Investigate index.js' nw_create_window, and the pdgui.js' canvas_check_geometry.
@@ -402,6 +401,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Redrawing array on nwjs side, while possible, is currently rather convoluted and not that useful. Doing so requires rethinking how the array is stored and then reattaching the contents and doing recalculation of the bbox, which can get really messy. Hence, the aforesaid implementation.
 *Large arrays are very inefficient when redrawn due to array change using mouse click and drag. Chose to queue scalar redraws. This fixes the major slowdown with arrays. However, need to investigate for potential regressions.
   *Sprite game works OK.
+*An array of improvements to the search browser, including ability to show folder contents and, by clicking on displayed folders, to show subfolders. Added a button that reinitializes the search index.
 
 
 

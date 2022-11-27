@@ -445,13 +445,14 @@ int sys_main(int argc, char **argv)
         sys_reopen_midi();
         sys_reopen_audio();
 
-        // ag: no longer needed (cruft from the pd-l2ork1 days)
+        // ag: no longer needed
         //if (sys_console) sys_vgui("pdtk_toggle_console 1\n");
         if (sys_k12_mode)
         {
             t_namelist *path = pd_extrapath;
             while (path->nl_next)
                 path = path->nl_next;
+            //TODO!: update this
             sys_vgui("pdtk_enable_k12_mode %s\n", path->nl_string);
         }
          /* run scheduler until it quits */

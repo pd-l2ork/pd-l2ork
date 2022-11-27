@@ -487,13 +487,15 @@
     },
     "general": {
       "browser": {
-        "browser_title": "Paramètres du navigateur d'Aide (AVERTISSEMENT: les modifier peut affecter les temps de démarrage!)",
-        "browser_doc":    "Le navigateur d'Aide recherche uniquement dans le dossier 'doc'",
-        "browser_doc_tt": "Analyser uniquement les Patches d'aide dans le dossier 'doc' pour les mots clés consultables (plus rapide)",
-        "browser_path":    "Le navigateur d'Aide recherche également dans le chemin de l'Aide",
-        "browser_path_tt": "Analyser également les Patches d'Aide dans le chemin d'Aide défini par l'utilisateur pour rechercher des mots clés consultables (plus lent)",
+        "browser_title": "Paramètres du navigateur d'Aide",
+        "browser_doc":    "Le navigateur d'aide recherche uniquement le dossier 'doc'",
+        "browser_doc_tt": "Analyser les correctifs d'aide uniquement dans le dossier doc pour les mots-clés interrogeables",
+        "browser_path":    "Le navigateur d'aide recherche également le chemin de l'aide",
+        "browser_path_tt": "Analyse également les correctifs d'aide dans le chemin d'aide de l'utilisateur pour rechercher des mots-clés (peut prendre une minute ou plus pour créer l'index)",
         "browser_init":    "Préparer l'index de l'Aide au démarrage de l'application",
-        "browser_init_tt": "Si cette case est cochée, préparez l'index pour le navigateur d'Aide dès le démarrage de l'application"
+        "browser_init_tt": "Si coché, prépare l'index pour le navigateur d'aide au démarrage de pd-l2ork (peut avoir un impact significatif sur les temps de démarrage)",
+        "make_index": "Reconstruire l'index",
+        "make_index_tt": "Alle Einstellungen übernehmen und Index sofort neu erstellen (kann einige Zeit dauern)"
       },
       "nwjs": {
         "nwjs_title": "Paramètres utilisateur nw.js",

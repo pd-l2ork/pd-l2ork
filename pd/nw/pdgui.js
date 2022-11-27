@@ -383,7 +383,7 @@ function add_doc_to_index(err, filename, stat) {
                     });
                 }
             } catch (read_err) {
-                post("err: " + read_err);
+                post("add_doc_to_index err: " + read_err);
             }
         }
     } else {
@@ -473,7 +473,7 @@ function check_timestamps(manif)
 // AG: This is normally executed only once, after lib_dir has been set.
 // Note that dive() traverses lib_dir asynchronously, so we report back in
 // finish_index() when this is done.
-function make_index() {
+function make_index(force) {
     var doc_path = browser_doc?path.join(lib_dir, "doc"):lib_dir;
     var i = 0;
     var l = help_path.length;
@@ -489,7 +489,7 @@ function make_index() {
                 data = fs.readFileSync(filename, { encoding: "utf8", flag: "r" });
                 add_doc_details_to_index(filename, data);
             } catch (read_err) {
-                post("err: " + read_err);
+                post("make_index err: " + read_err);
             }
         });
         finish_index();
@@ -502,7 +502,7 @@ function make_index() {
             var full_path = expand_tilde(doc_path);
             fs.lstat(full_path, function(err, stat) {
                 if (!err) {
-                    post("scanning help patches in " + doc_path);
+                    post("scanning help patches in " + full_path);
                     dive(full_path, add_doc_to_index, make_index_cont);
                 } else {
                     make_index_cont();
@@ -530,7 +530,9 @@ function make_index() {
     }
     // ico@vt.edu 2022-11-09: force rebuilding of index if
     // browser_init option is set in the general preferences tab
-    if (idx && manif && check_timestamps(manif) && !browser_init) {
+    // OR (2022-11-26) if we are passing a "force" flag (used by
+    // the preferences "Rebuild Index" button)
+    if (!force && idx && manif && check_timestamps(manif) && !browser_init) {
         // index cache is present and up-to-date, load it
         post("loading cached help index from " + cache_name);
         idx = idx.split('\n');
@@ -589,44 +591,54 @@ exports.build_index = build_index;
 
 // normally, this doesn't actually rebuild the index, it just clears it, so
 // that it will be rebuilt the next time the help browser is opened
-function rebuild_index()
+function rebuild_index(force)
 {
+    //post("rebuild_index force=" + force);
     index = init_elasticlunr();
+    index_cache = new Array();
+    index_manif = new Set();
     index_started = index_done = false;
     try {
-	fs.unlink(expand_tilde(cache_name));
-	fs.unlink(expand_tilde(stamps_name));
+    	fs.unlink(expand_tilde(cache_name));
+    	fs.unlink(expand_tilde(stamps_name));
     } catch (err) {
-	//console.log(err);
+	    //console.log(err);
     }
-    if (browser_init == 1 || autocomplete == 1) {
+    if (browser_init == 1 || autocomplete == 1 || force) {
         // if autocomplete is enabled, we *have* to rebuild the index now
-        make_index();
+        //post("rebuild_index calling make_index force=" + force);
+        make_index(force);
     } else {
         // we can defer rebuilding of the index until the browser is reopened
         post("clearing help index (reopen the browser to rebuild!)");
     }
 }
 
-// this is called from the gui tab of the prefs dialog
-function update_browser(doc_flag, path_flag, ac_flag, ac_prefix_flag, ac_relevance_flag)
+exports.rebuild_index = rebuild_index;
+
+// this is called from the gui and general tabs of the prefs dialog
+function update_browser(doc_flag, path_flag, ac_flag, ac_prefix_flag, ac_relevance_flag, force)
 {
+    //post("update_browser force=" + force);
     var changed = ac_flag == 1 && autocomplete == 0;
     autocomplete = ac_flag;
     autocomplete_prefix = ac_prefix_flag;
     autocomplete_relevance = ac_relevance_flag;
-    doc_flag = doc_flag?1:0;
-    path_flag = path_flag?1:0;
+    doc_flag = doc_flag? 1 : 0;
+    path_flag = path_flag? 1 : 0;
     if (browser_doc !== doc_flag) {
-	browser_doc = doc_flag;
-	changed = true;
+	   browser_doc = doc_flag;
+	   changed = true;
     }
     if (browser_path !== path_flag) {
-	browser_path = path_flag;
-	changed = true;
+	   browser_path = path_flag;
+	   changed = true;
     }
-    if (changed) {
-	rebuild_index();
+    if (changed || force) {
+        if (force)
+	        rebuild_index(force);
+        else
+            rebuild_index();
     }
 }
 
@@ -745,7 +757,7 @@ function write_completion_index() {
     try { // create the file
         fs.writeFileSync(expand_tilde(compl_name), JSON.stringify(completion_index._docs), {mode: 0o644});
     } catch (err) {
-        post("err: " + err);
+        post("write_completion_index err: " + err);
     }
 }
 

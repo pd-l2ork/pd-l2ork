@@ -486,13 +486,15 @@
     },
     "general": {
       "browser": {
-        "browser_title": "Hilfe-Browser-Einstellungen (WARNUNG: Änderungen können Startup-Zeiten beeinflussen!)",
+        "browser_title": "Hilfe-Browser-Einstellungen",
         "browser_doc": "Hilfe-Browser durchsucht nur den doc-Ordner",
-        "browser_doc_tt": "Der Hilfe-Browser durchkämmt nur Hilfe-Patches im doc-Ordner nach Suchbegriffen (schneller)",
+        "browser_doc_tt": "Der Hilfe-Browser durchkämmt nur Hilfe-Patches im doc-Ordner nach Suchbegriffen",
         "browser_path": "Hilfe-Browser durchsucht auch den Hilfe-Pfad",
-        "browser_path_tt": "Der Hilfe-Browser durchkämmt auch Hilfe-Patches im benutzerdefinierten Hilfe-Pfad nach Suchbegriffen (langsamer)",
+        "browser_path_tt": "Der Hilfe-Browser durchkämmt auch Hilfe-Patches im benutzerdefinierten Hilfe-Pfad nach Suchbegriffen (kann eine Minute oder länger dauern, um den Index zu erstellen)",
         "browser_init": "Erstelle den Hilfe-Index beim Programmstart",
-        "browser_init_tt": "Falls aktiviert, erstelle den Index für den Hilfe-Browser bereits beim Programmstart"
+        "browser_init_tt": "Falls aktiviert, erstelle den Index für den Hilfe-Browser bereits beim Programmstart (kann Startzeiten erheblich beeinflussen)",
+        "make_index": "Index neu erstellen",
+        "make_index_tt": "Alle Einstellungen übernehmen und Index sofort neu erstellen (kann einige Zeit dauern)"
       },
       "nwjs": {
         "nwjs_title": "nw.js-Benutzereinstellungen",

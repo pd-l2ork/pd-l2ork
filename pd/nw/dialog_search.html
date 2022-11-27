@@ -18,6 +18,11 @@ pdgui.skin.apply(window);
 
 var filetypes = [".pd", ".txt", ".htm", ".html", ".pdf"];
 
+var folders_that_list_folders = [
+    "doc/4.data.structures/pd-l2ork",
+    "extra/Gem/examples"
+];
+
 // Table of Contents to start with
 /* NOTE: A section title is indicated by an entry consisting just of the title
    field. All other entries *must* also contain the directory (relative to the
@@ -78,7 +83,7 @@ var toc = [
 */
     // Pd-L2Ork extras
     {
-        id: "doc/4.data.structures/pd-l2ork/ds-tutorials",
+        id: "doc/4.data.structures/pd-l2ork",
         title: "Pd-L2Ork Data Structures",
         description: "new and improved data structure visualizations"
     },
@@ -96,11 +101,13 @@ var toc = [
         title: "Sound",
         description: "Pd sound examples"
     },
+    /*
+    // disabling this due to erroneous documentation that needs updating
     {
         id: "doc/manuals/2.Image",
         title: "Image",
         description: "3D graphics with GEM"
-    },
+    },*/
     {
         id: "doc/manuals/3.Networking",
         title: "Networking",
@@ -127,6 +134,11 @@ var toc = [
         id: "extra/Gem",
         title: "GEM",
         description: "Graphics Environment for Multimedia"
+    },
+    {
+        id: "extra/Gem/examples",
+        title: "Examples",
+        subheader: "true"
     },
     {
         id: "extra/lyon",
@@ -353,8 +365,20 @@ function translate_form() {
     }
 }
 
+function should_i_show_folders(dir) {
+    var file = dir;
+    if (file == null)
+        file = document.getElementById("search_text").value;
+    if (file.endsWith('/')) {
+        file = file.slice(0, -1);
+    }
+    return (folders_that_list_folders.indexOf(file) !== -1 ? 1 : 0);
+}
+
 function click_toc(dir) {
     document.getElementById("search_text").value = dir;
+    //pdgui.post("click_toc dir=" + dir +
+    //    " show_folders=" + should_i_show_folders());
     doc_search();
 }
 
@@ -413,33 +437,37 @@ function display_toc() {
     toc.forEach(function(doc, i, a) {
 	if (doc.id) {
 	    try {
-		fs.accessSync(check_dir(doc.id), fs.F_OK);
-		a = document.createElement("a");
-		// We need to properly stringify click_toc's argument here.
-		a.href = "javascript: click_toc(" + JSON.stringify(doc.id) + ");";
-		a.textContent = doc.title;
-		// set title to path for tooltip
-		a.title = doc.id;
-		header = document.createElement("h3");
-		header.appendChild(a);
-		div.appendChild(header);
-		if (doc.description) {
-		    text_node = document.createTextNode(doc.description);
-		    div.appendChild(text_node);
-		}
+    		fs.accessSync(check_dir(doc.id), fs.F_OK);
+    		a = document.createElement("a");
+    		// We need to properly stringify click_toc's argument here.
+    		a.href = "javascript: click_toc(" + JSON.stringify(doc.id) + ");";
+    		a.textContent = doc.title;
+    		// set title to path for tooltip
+    		a.title = doc.id;
+    		header = document.createElement((doc.subheader ? "h4" : "h3"));
+            if (doc.subheader) {
+                header.appendChild(
+                    document.createTextNode("\u00A0\u00A0\u00A0\u2022\u00A0"));
+            }
+    		header.appendChild(a);
+    		div.appendChild(header);
+    		if (doc.description) {
+    		    text_node = document.createTextNode(doc.description);
+    		    div.appendChild(text_node);
+    		}
 	    } catch (e) {
 		// entry doesn't exist, ignore it
 	    }
 	} else {
 	    // make a session title
-            header = document.createElement("h2");
-            text_node = document.createTextNode(doc.title);
-            header.appendChild(text_node);
-            div.appendChild(header);
+        header = document.createElement("h2");
+        text_node = document.createTextNode(doc.title);
+        header.appendChild(text_node);
+        div.appendChild(header);
 	}
-	if (div.hasChildNodes()) {
-            results_elem.appendChild(div);
-	}
+    	if (div.hasChildNodes()) {
+                results_elem.appendChild(div);
+    	}
     });
 }
 
@@ -460,14 +488,26 @@ function display_directory_callback(err, files) {
     if (err) {
         pdgui.post("Search Engine: " + err);
     } else {
+        //pdgui.post("display_directory_callback " + files);
         files.forEach(function (f, i, a) {
-            if (filetypes.indexOf(path.extname(f)) !== -1) {
-                doc_path = path.join(current_dir, f);
+            doc_path = path.join(current_dir, f);
+            /*
+            pdgui.post("...doc_path=" + doc_path +
+                " ext=" + filetypes.indexOf(path.extname(f)) +
+                " isdir=" + (fs.lstatSync(doc_path).isDirectory() ? 1 : 0) +
+                " sisf=" + should_i_show_folders()
+            );
+            */
+            if (filetypes.indexOf(path.extname(f)) !== -1 ||
+                (should_i_show_folders() &&
+                fs.lstatSync(doc_path).isDirectory())) {
                 doc = index.documentStore.getDoc(doc_path) || {
                     id: doc_path,
-                    title: path.basename(f, ".pd"),
+                    title: (f.endsWith(".pd") ?
+                            path.basename(f, ".pd") : path.basename(f)),
                     description: null
                 };
+                //pdgui.post("......doc id=" + doc.id + " title=" + doc.title);
                 display_doc(doc);
             }
         });
@@ -475,6 +515,7 @@ function display_directory_callback(err, files) {
 }
 
 function display_directory(dir) {
+    //pdgui.post("display_directory " + dir);
     current_dir = dir;
     var is_doc = current_dir === path.join(pdgui.get_lib_dir(), "doc");
     clear_results();
@@ -917,13 +958,20 @@ function display_no_results() {
 }
 
 function display_doc(doc) {
+    // we get here only if we know we should be displaying something...
+    //pdgui.post("display doc " + doc.id);
     var div = document.createElement("div"),
         a = document.createElement("a"),
         results_elem = document.getElementById("results"),
         header;
-    a.href = "javascript: pdgui.doc_open('" +
-         pdgui.defunkify_windows_path(path.dirname(doc.id)) + "', '" +
-         pdgui.defunkify_windows_path(path.basename(doc.id)) + "');"
+    if (fs.lstatSync(doc.id).isDirectory()) {
+        a.href = "javascript: display_directory('" +
+            pdgui.defunkify_windows_path(doc.id) + "');";
+    } else {
+        a.href = "javascript: pdgui.doc_open('" +
+            pdgui.defunkify_windows_path(path.dirname(doc.id)) + "', '" +
+            pdgui.defunkify_windows_path(path.basename(doc.id)) + "');"
+    }
     a.textContent = doc.title;
     // set title to path for tooltip
     a.title = doc.id;
