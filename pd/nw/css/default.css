@@ -691,9 +691,14 @@ text.activated {
     /* margin: 12px; */
     /*box-shadow: 7px 7px 5px grey;*/
     width: 70%;
+    /*
+    this is not necessary for nw.js 0.67.1
+    in fact, it messes things up and makes
+    dialog off-center
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    */
     animation: fadedialog 0.5s 1 linear paused both;
 }
 

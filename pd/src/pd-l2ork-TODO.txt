@@ -12,8 +12,6 @@ PD-L2ORK TODO:
 
 *Add canvas options for nomenu, background color, draw border, and ontop (if it works in nw.js). Test noscroll option.
 
-*When closing the patch, make sure that the dialog is always centered? This is a low priority item.
-
 *Pick the best nw.js (==> denotes the current choice)
   *Current status:
     0.28.1 next/prev option does not work.
@@ -402,6 +400,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Large arrays are very inefficient when redrawn due to array change using mouse click and drag. Chose to queue scalar redraws. This fixes the major slowdown with arrays. However, need to investigate for potential regressions.
   *Sprite game works OK.
 *An array of improvements to the search browser, including ability to show folder contents and, by clicking on displayed folders, to show subfolders. Added a button that reinitializes the search index.
+*When closing the patch, made sure that the dialog is always centered. This is a regression due to nw.js upgrade.
 
 
 
