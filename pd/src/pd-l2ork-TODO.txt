@@ -401,6 +401,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
   *Sprite game works OK.
 *An array of improvements to the search browser, including ability to show folder contents and, by clicking on displayed folders, to show subfolders. Added a button that reinitializes the search index.
 *When closing the patch, made sure that the dialog is always centered. This is a regression due to nw.js upgrade.
+*Refined data dialog width to make it look better on Windows.
 
 
 
