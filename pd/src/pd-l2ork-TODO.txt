@@ -401,6 +401,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *When closing the patch, made sure that the dialog is always centered. This is a regression due to nw.js upgrade.
 *Refined data dialog width to make it look better on Windows.
 *Fixed windows not opening patches requested by a second instance of pd-l2ork that is not unique or does not have a nogui flag. The same also works now for double-clicking on any file while pd-l2ork is already running.
+*Added ability to drag and drop .pd files onto the Pd-L2Ork console.
 
 
 
