@@ -497,7 +497,7 @@ void pd_init(void)
 {
     if (!pd_this)
         pd_this = pdinstance_donew(0);
-    fprintf(stderr,"pd_this=%lx\n", pd_this);
+    //fprintf(stderr,"pd_this=%lx\n", pd_this);
     mess_init();
     obj_init();
     conf_init();
