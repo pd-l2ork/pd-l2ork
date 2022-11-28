@@ -1,4 +1,4 @@
-#N canvas 236 184 1321 667 10;
+#N canvas 367 223 1321 667 10;
 #X obj 815 11 cnv 15 496 649 empty empty empty 20 12 0 14 #d7fbd8 #404040
 0;
 #X obj 451 11 cnv 15 352 649 empty empty empty 20 12 0 14 #d7fbd8 #404040
@@ -50,17 +50,6 @@
 #X msg 491 562 \; load-session-network-sync 4th-beat-droplets-6;
 #X msg 491 598 \; session-sync-offset -1 \; load-session-network-sync
 4th-beat-final-10;
-#X text 823 295 l2ork-inst-level and l2ork-inst-level-all-at allow
-for anticipating future events that need to be synchronized with a
-particular user's time on their timebar and which then triggers change
-in either their or entire ensemble's instrument level \, as denoted
-by the message's third argument. Note that due to logarithmic nature
-of the instrument level \, the lowest value is 0.1 \, not 0 also note
-that sending user_num 0 will disable last pending request and the monitoring
-system that remains active until the request is fulfilled. only one
-request per client is possible and any subsequent requests will override
-the previous one. requests remain active until fulfilled or disabled.
-, f 78;
 #X text 824 428 In addition to commands described above \, Tweeter
 Server also recognizes l2ork-sync-save \, l2ork-sync-save-data \, l2ork-sync-data
 \, and l2ork-sync-vis. These are INTERNAL RESERVED ADMIN COMMANDS for
@@ -102,6 +91,16 @@ locally saved version to all) l2ork-set-password (new_password \,
 change the admin password) l2ork-sync-all (syncs all clients over
 network using the reset command) l2ork-teach (same as l2ork-conduct)
 , f 78;
+#X text 823 295 l2ork-inst-level-* commands allow for anticipating
+future events that need to be synchronized with a particular user's
+time on their timebar and which then triggers change in either their
+or entire ensemble's instrument level \, as denoted by the message's
+third argument. Note that due to logarithmic nature of the instrument
+level \, the lowest value is 0.1 \, not 0 also note that sending user_num
+0 will disable last pending request and the monitoring system that
+remains active until the request is fulfilled. only one request per
+client is possible and any subsequent requests will override the previous
+one. requests remain active until fulfilled or disabled., f 78;
 #X connect 5 0 4 0;
 #X connect 6 0 4 0;
 #X connect 9 0 10 0;

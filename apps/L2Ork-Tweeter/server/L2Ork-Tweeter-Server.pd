@@ -1,4 +1,4 @@
-#N canvas 224 103 1544 953 10;
+#N canvas 224 105 1544 953 10;
 #X floatatom 300 90 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 1238 290 text define clients;
 #X floatatom 738 74 5 0 0 0 - - - 0 0 1, f 5;
@@ -86,7 +86,7 @@ clear the instance.;
 #X text 1170 779 to reset a disconnected client \, server sends all
 others following values for the disconnected client: out-amp 0 \, tracker
 0--this is contained within the client-ping abstraction, f 58;
-#N canvas 522 22 879 964 filter-remote-admin-messages 0;
+#N canvas 522 76 879 964 filter-remote-admin-messages 0;
 #X obj 63 34 t l l;
 #X obj 63 12 inlet;
 #X obj 18 129 gate 2 1;
@@ -179,7 +179,7 @@ others following values for the disconnected client: out-amp 0 \, tracker
 #X connect 24 0 14 0;
 #X restore 18 761 pd char-obfuscator;
 #X obj 199 507 s admin-messages;
-#N canvas 1207 269 376 275 l2ork-reset-client-list 0;
+#N canvas 1207 281 376 275 l2ork-reset-client-list 0;
 #X obj 115 37 r admin-messages;
 #X obj 115 62 route l2ork-reset-client-list;
 #X obj 142 110 s \$0-reinit;
@@ -638,19 +638,10 @@ part.l2ork-inst-level-at <slot> <time> <level>l2ork-inst-level-all-at
 #X connect 12 1 10 0;
 #X connect 12 2 13 0;
 #X connect 13 0 1 0;
-#X restore 430 633 pd l2ork-inst-level-at l2ork-inst-level-all-at l2ork-inst-level-list-at
+#X restore 430 674 pd l2ork-inst-level-at l2ork-inst-level-all-at l2ork-inst-level-list-at
 ;
 #X f 71;
-#X text 377 229 remote admin uses chat system. messages include: l2ork-conduct
-\, l2ork-disconnect \, l2ork-free-slot \, l2ork-guest-chat \, l2ork-inst-level-at
-\, l2ork-inst-level-all-at \, l2ork-inst-level-list-at \, l2ork-length
-\, l2ork-length-all \, l2ork-load \, l2ork-load-sync-delay \, l2ork-obfuscate
-\, l2ork-report \, l2ork-reset-client-list \, l2ork-save \, l2ork-sync-data
-\, l2ork-sync-save-data \, l2ork-sync-vis \, l2ork-set-password \,
-l2ork-sync-all \, and l2ork-teach. All messages need to be prepended
-by the server password (formatted as p:password) \, which can be set
-below., f 67;
-#X text 430 612 subpatch below has documentation;
+#X text 430 653 subpatch below has documentation;
 #X obj 220 292 sel U admin GUE;
 #X text 47 315 left is for all chat, f 11;
 #X obj 199 429 route admin;
@@ -659,6 +650,26 @@ messages that come from the chat window (because those are added USER(socket)
 or GUEST(socket) argument) by removing the admin argument \, whereas
 those that don't have admin argument will be passed through the right
 outlet., f 82;
+#N canvas 1207 305 376 275 l2ork-custom 0;
+#X obj 115 37 r admin-messages;
+#X obj 115 217 s admin-main-outlet;
+#X obj 115 62 route l2ork-custom;
+#X obj 115 112 list trim;
+#X obj 115 87 list prepend server l2ork-custom;
+#X connect 0 0 2 0;
+#X connect 2 0 4 0;
+#X connect 3 0 1 0;
+#X connect 4 0 3 0;
+#X restore 429 612 pd l2ork-custom;
+#X text 377 229 remote admin uses chat system. messages include: l2ork-conduct
+\, l2ork-custom \, l2ork-disconnect \, l2ork-free-slot \, l2ork-guest-chat
+\, l2ork-inst-level-at \, l2ork-inst-level-all-at \, l2ork-inst-level-list-at
+\, l2ork-length \, l2ork-length-all \, l2ork-load \, l2ork-load-sync-delay
+\, l2ork-obfuscate \, l2ork-report \, l2ork-reset-client-list \, l2ork-save
+\, l2ork-sync-data \, l2ork-sync-save-data \, l2ork-sync-vis \, l2ork-set-password
+\, l2ork-sync-all \, and l2ork-teach. All messages need to be prepended
+by the server password (formatted as p:password) \, which can be set
+below., f 67;
 #X connect 0 0 2 1;
 #X connect 0 1 9 0;
 #X connect 1 0 0 0;
@@ -674,7 +685,7 @@ outlet., f 82;
 #X connect 8 0 4 0;
 #X connect 8 1 5 0;
 #X connect 9 0 8 0;
-#X connect 10 1 60 0;
+#X connect 10 1 59 0;
 #X connect 11 0 29 0;
 #X connect 12 0 53 0;
 #X connect 12 1 32 0;
@@ -688,7 +699,7 @@ outlet., f 82;
 #X connect 23 0 7 0;
 #X connect 23 1 24 1;
 #X connect 24 0 7 0;
-#X connect 25 0 58 0;
+#X connect 25 0 57 0;
 #X connect 26 0 27 0;
 #X connect 27 0 16 0;
 #X connect 28 0 3 0;
@@ -706,11 +717,11 @@ outlet., f 82;
 #X connect 53 1 6 0;
 #X connect 54 0 23 1;
 #X connect 54 1 17 0;
-#X connect 58 0 21 0;
-#X connect 58 1 21 0;
-#X connect 58 2 22 0;
-#X connect 60 0 12 0;
-#X connect 60 1 12 0;
+#X connect 57 0 21 0;
+#X connect 57 1 21 0;
+#X connect 57 2 22 0;
+#X connect 59 0 12 0;
+#X connect 59 1 12 0;
 #X restore 1224 145 pd filter-remote-admin-messages;
 #X obj 1297 314 r \$0-reinit;
 #X obj 63 291 r \$0-report;
@@ -994,7 +1005,7 @@ modifying of other users' settings, f 34;
 slot \, 3 adds it to the requested slot \, and 4 connects user as a
 guest because either the slot is already occupied \, or all slots are
 taken, f 67;
-#X msg 232 741 0.68;
+#X msg 232 741 0.69;
 #X connect 0 0 76 0;
 #X connect 0 0 115 0;
 #X connect 2 0 176 0;

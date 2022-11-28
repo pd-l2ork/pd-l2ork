@@ -1,0 +1,13 @@
+#N canvas 771 429 346 185 10;
+#X obj 42 38 r l2ork-custom;
+#X msg 42 97 \; main-out-multiplier-r \$1;
+#X obj 42 62 route main-out-multiplier-r intro;
+#X obj 202 97 sel 0 1;
+#X obj 202 143 s intro-stop;
+#X obj 221 120 s intro-start;
+#X text 124 10 transcontinental grapevine (c) 2022;
+#X connect 0 0 2 0;
+#X connect 2 0 1 0;
+#X connect 2 1 3 0;
+#X connect 3 0 4 0;
+#X connect 3 1 5 0;
