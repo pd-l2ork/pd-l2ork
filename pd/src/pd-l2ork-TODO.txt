@@ -3,6 +3,9 @@ PD-L2ORK TODO:
   *Test nwjs 0.67.1 for regressions:
     *Patch window positioning: loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
 
+*Some arrays are still not correctly stretched when drawn. See grapevine-conductor-controls.pd.
+  *Looks like some kind of margin of error when calculating points inside the array's GOP window.
+
 *Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
   *Investigate index.js' nw_create_window, and the pdgui.js' canvas_check_geometry.
   *Also use index.js console positioning aspect, if necessary.
@@ -491,7 +494,7 @@ TWEETER DONE:
 *Added Harmonicity and Mod Amp auto-update when using arrows up and down to change values.
 *Improved wording on the description of various multi-click sync options.
 *Added 6 new instrument presets.
-*0.68 *Fixed bugs in the L2Orkmote-Interface.pd, L2OrkTweet-L2Orkmote.pd, and L2Orkmote-Tweeter.pd:
+*0.68 fixed bugs in the L2Orkmote-Interface.pd, L2OrkTweet-L2Orkmote.pd, and L2Orkmote-Tweeter.pd:
   *Loop number updates on the main window when the user is using joystick
   *Preset number updates on the main window when the user is using joystick
   *Fixed clearing of the loop not working when the joystick is centered.
@@ -500,6 +503,13 @@ TWEETER DONE:
   *Transposition now works (both octaves via buttons and the fine adjustment using joystick).
   *Made joystick-based transposition microtonal.
   *Fixed a bug where dry out did not adjust using the joystick (in the appropriate mode).
+*0.69:
+  *Added Transatlantic Grapevine (WIP) with supporting patches.
+  *Added l2ork-custom server command for customizing various aspects of the Tweeter.
+  *Enabled automation on the main output multiplier slider (found in the top-right corner).
+  *Added new Transatlantic Grapevine sessions.
+  *Documentation fix to the Conductor-Commands.pd.
+  *Code clean-up.
 
 
 
