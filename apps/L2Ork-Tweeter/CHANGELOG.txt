@@ -9,6 +9,14 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+28-11-2022 0.69
+*Added Transatlantic Grapevine (WIP) with supporting patches.
+*Added l2ork-custom server command for customizing various aspects of the Tweeter.
+*Enabled automation on the main output multiplier slider (found in the top-right corner).
+*Added new Transatlantic Grapevine sessions.
+*Documentation fix to the Conductor-Commands.pd.
+*Code clean-up.
+
 09-11-2022 0.68
 *Fixed bugs in the L2Orkmote-Interface.pd, L2OrkTweet-L2Orkmote.pd, and L2Orkmote-Tweeter.pd:
   *Loop number updates on the main window when the user is using joystick
