@@ -5,6 +5,7 @@ PD-L2ORK TODO:
 
 *Some arrays are still not correctly stretched when drawn. See grapevine-conductor-controls.pd.
   *Looks like some kind of margin of error when calculating points inside the array's GOP window.
+  *Appears to depend on the window location (more to the left, less of a missed margin it has)--try to move, cut, and undo, to see variation in the array redraw.
 
 *Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
   *Investigate index.js' nw_create_window, and the pdgui.js' canvas_check_geometry.
