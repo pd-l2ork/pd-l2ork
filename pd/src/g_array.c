@@ -1040,12 +1040,12 @@ static void array_motion(void *z, t_floatarg dx, t_floatarg dy)
 
     if (array_motion_scalar)
     {
-        post("array_motion scalar_redraw");
+        //post("array_motion scalar_redraw");
         scalar_redraw(array_motion_scalar, array_motion_glist);
     }
     if (array_motion_array)
     {
-        post("array_motion array_redraw");
+        //post("array_motion array_redraw");
         array_redraw(array_motion_array, array_motion_glist);
     }
 
