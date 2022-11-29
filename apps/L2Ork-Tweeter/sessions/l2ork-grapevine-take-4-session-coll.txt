@@ -4,7 +4,7 @@
 3, 12 username Ico;
 4, 12 inst-name Totally\ Hi-Hat;
 5, 12 overdrive 11;
-6, 12 loop-length 7760;
+6, 12 loop-length 7804;
 7, 12 octave 89;
 8, 12 modulator 4;
 9, 12 mod-amp 5000;
@@ -348,7 +348,7 @@
 319, 10 username Ico;
 320, 10 inst-name Synth\ Bass;
 321, 10 overdrive 9.09907;
-322, 10 loop-length 7760;
+322, 10 loop-length 7804;
 323, 10 octave 0;
 324, 10 modulator 0;
 325, 10 mod-amp 313;
@@ -1034,7 +1034,7 @@
 951, 6 username Username;
 952, 6 inst-name Clarinet-ish\ echo\ pad;
 953, 6 overdrive 1;
-954, 6 loop-length 7760;
+954, 6 loop-length 7804;
 955, 6 octave 12;
 956, 6 modulator 0;
 957, 6 mod-amp 9999;
@@ -1215,7 +1215,7 @@
 1109, 5 username Andrew;
 1110, 5 inst-name Fuzzy\ 808;
 1111, 5 overdrive 7.83241;
-1112, 5 loop-length 7760;
+1112, 5 loop-length 7804;
 1113, 5 octave -12;
 1114, 5 modulator 3;
 1115, 5 mod-amp 252;
@@ -1388,7 +1388,7 @@
 1269, 4 username Jacob;
 1270, 4 inst-name Clarinet-ish\ echo\ pad;
 1271, 4 overdrive 1;
-1272, 4 loop-length 7760;
+1272, 4 loop-length 7804;
 1273, 4 octave 12;
 1274, 4 modulator 0;
 1275, 4 mod-amp 9999;
@@ -1741,7 +1741,7 @@
 1585, 2 username Zai;
 1586, 2 inst-name Woodenfish\ by\ Kai\ Lin;
 1587, 2 overdrive 2.19107;
-1588, 2 loop-length 7760;
+1588, 2 loop-length 7804;
 1589, 2 octave 96;
 1590, 2 modulator 1;
 1591, 2 mod-amp 500;
@@ -1908,7 +1908,7 @@
 1743, 1 username Sean;
 1744, 1 inst-name Synth\ Bass;
 1745, 1 overdrive 1.85606;
-1746, 1 loop-length 7760;
+1746, 1 loop-length 7804;
 1747, 1 octave 0;
 1748, 1 modulator 0;
 1749, 1 mod-amp 1;
