@@ -3,10 +3,6 @@ PD-L2ORK TODO:
   *Test nwjs 0.67.1 for regressions:
     *Patch window positioning: loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
 
-*Some arrays are still not correctly stretched when drawn. See grapevine-conductor-controls.pd.
-  *Looks like some kind of margin of error when calculating points inside the array's GOP window.
-  *Appears to depend on the window location (more to the left, less of a missed margin it has)--try to move, cut, and undo, to see variation in the array redraw.
-
 *Implement editable in Tweeter.
 
 *Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
@@ -408,6 +404,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Refined data dialog width to make it look better on Windows.
 *Fixed windows not opening patches requested by a second instance of pd-l2ork that is not unique or does not have a nogui flag. The same also works now for double-clicking on any file while pd-l2ork is already running.
 *Added ability to drag and drop .pd files onto the Pd-L2Ork console.
+*Fixed the issue where some arrays were still not correctly stretched when drawn. It was the margin of error that crept in when utilizing the existing glist_xtopixel call, which includes the x offset and thus lowers the decimal accuracy of a float value. Thus, depending on the array location, the problem would manifest more or less. To test, move an array, cut it, and then undo.
 
 
 

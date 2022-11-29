@@ -1047,6 +1047,7 @@ static void scalar_groupvis(t_scalar *x, t_glist *owner, t_template *template,
    The tag "blankscalar" is for scalars that don't have a visual
    representation, but maybe this can just be merged with "scalar"
 */
+
 static void scalar_vis(t_gobj *z, t_glist *owner, int vis)
 {
     //post("scalar_vis %d %zx", vis, (t_uint)z);
@@ -1071,8 +1072,10 @@ static void scalar_vis(t_gobj *z, t_glist *owner, int vis)
         {
             //int x1 = glist_xtopixels(owner, basex);
             //int y1 = glist_ytopixels(owner, basey);
-            t_float xscale = ((glist_xtopixels(owner, 1) - glist_xtopixels(owner, 0)));
-            t_float yscale = glist_ytopixels(owner, 1) - glist_ytopixels(owner, 0);
+            t_float xscale = (glist_norm_x_per_scalar(owner, 1) - 
+                glist_norm_x_per_scalar(owner, 0));
+            t_float yscale = (glist_norm_y_per_scalar(owner, 1) - 
+                glist_norm_y_per_scalar(owner, 0));
             // ico@vt.edu 2022-10-17: reenabling drawing of empty scalars
             // we will use plot_style == -2 to communicate to front-end
             // that we are an empty scalar, so that its border gets visible
@@ -1122,8 +1125,10 @@ static void scalar_vis(t_gobj *z, t_glist *owner, int vis)
             t_garray *g_a = (t_garray *)g;
             plot_style = garray_get_style(g_a);
         }
-        t_float xscale = ((glist_xtopixels(owner, 1) - glist_xtopixels(owner, 0)));
-        t_float yscale = glist_ytopixels(owner, 1) - glist_ytopixels(owner, 0);
+        t_float xscale = (glist_norm_x_per_scalar(owner, 1) -
+            glist_norm_x_per_scalar(owner, 0));
+        t_float yscale = (glist_norm_y_per_scalar(owner, 0) -
+            glist_norm_y_per_scalar(owner, 1));
         /* we translate the .scalar%zx group to displace it on the tk side.
            This is the outermost group for the scalar, something like a
            poor man's viewport.
