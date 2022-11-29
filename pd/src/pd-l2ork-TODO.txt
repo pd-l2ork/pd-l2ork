@@ -1,14 +1,14 @@
 PD-L2ORK TODO:
-*Update all releases (where possible) to nw.js 0.67.1.
-  *Test nwjs 0.67.1 for regressions:
-    *Patch window positioning: loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
+*Seek RPi version of nw.js 0.67.1. IN PROGRESS
+
+*Test nwjs 0.67.1 for regressions:
+  *Patch window positioning: loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
+  *Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
+    *Investigate index.js' nw_create_window, and the pdgui.js' canvas_check_geometry.
+    *Also use index.js console positioning aspect, if necessary.
+    *UPDATE: scripted repetitive vis/unvis window in pitch_relationships patch makes the window open further down (but not always) and makes the window bigger.
 
 *Implement editable in Tweeter.
-
-*Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
-  *Investigate index.js' nw_create_window, and the pdgui.js' canvas_check_geometry.
-  *Also use index.js console positioning aspect, if necessary.
-  *UPDATE: scripted repetitive vis/unvis window in pitch_relationships patch makes the window open further down (but not always) and makes the window bigger.
 
 *Add canvas options for nomenu, background color, draw border, and ontop (if it works in nw.js). Test noscroll option.
 
