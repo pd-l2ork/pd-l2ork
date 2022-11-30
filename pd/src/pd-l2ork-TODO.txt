@@ -7,7 +7,6 @@ PD-L2ORK TODO:
     *Investigate index.js' nw_create_window, and the pdgui.js' canvas_check_geometry.
     *Also use index.js console positioning aspect, if necessary.
     *UPDATE: scripted repetitive vis/unvis window in pitch_relationships patch makes the window open further down (but not always) and makes the window bigger.
-  *Menu does not update when toggling editable option (even though options like editable are disabled).
 
 *Add canvas options for nomenu, background color, draw border, and ontop (if it works in nw.js). Test noscroll option.
 
@@ -408,6 +407,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Fixed regression where arrays were not properly shown due to inverted y norm value.
 *Added debugging messages for easier debugging.
 *Fixed a series of bugs where resizing red rect in an GOP-enabled abstraction does not trigger dirty (either when done on parent or the patch itself), or does so incorrectly (e.g. on the parent canvas instead of the abstraction itself). Checked also the subpatch dirty mechanism, as well as repositioning the red rect inside the GOP-enabled subpatch or an abstraction.
+*Implemented auto-updating of canvas menu at creation time, based on the editable flag.
 
 
 
