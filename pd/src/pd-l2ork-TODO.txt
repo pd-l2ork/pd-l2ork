@@ -7,8 +7,7 @@ PD-L2ORK TODO:
     *Investigate index.js' nw_create_window, and the pdgui.js' canvas_check_geometry.
     *Also use index.js console positioning aspect, if necessary.
     *UPDATE: scripted repetitive vis/unvis window in pitch_relationships patch makes the window open further down (but not always) and makes the window bigger.
-
-*Implement editable in Tweeter.
+  *Menu does not update when toggling editable option (even though options like editable are disabled).
 
 *Add canvas options for nomenu, background color, draw border, and ontop (if it works in nw.js). Test noscroll option.
 
