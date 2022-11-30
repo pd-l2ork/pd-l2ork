@@ -3,7 +3,7 @@
 0;
 #X obj 4 2 cnv 15 1630 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.69\ by
+#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.70\ by
 4 5 0 10 #6c6c6c #fcfcfc 0;
 #X obj 252 3 cnv 15 125 16 empty empty (c)\ 2020-1\ Released\ under\ the
 4 6 0 10 #6c6c6c #fcfcfc 0;
@@ -128,7 +128,7 @@ and main out and pan valuesshift + quadruple click - everything (loop
 ;
 #X obj 437 3 pddp/pddplink https://www.gnu.org/licenses/gpl-3.0.en.html
 -text GPL v3 License;
-#N canvas 769 572 502 125 core 0;
+#N canvas 769 596 502 142 core 0;
 #N canvas 139 262 861 614 loop-logic 0;
 #X obj 506 413 r myclientnum;
 #X obj 101 566 forward null;
@@ -1520,7 +1520,7 @@ are added later. this allows for deterministic session saving., f
 #X connect 78 0 34 0;
 #X connect 79 0 78 0;
 #X restore 359 52 pd load-save-session;
-#N canvas 245 493 450 324 version 0;
+#N canvas 245 505 450 324 version 0;
 #X obj 177 51 loadbang;
 #X obj 177 101 t f f;
 #X obj 204 125 s version;
@@ -1531,7 +1531,7 @@ are added later. this allows for deterministic session saving., f
 #X text 99 75 DEBUG;
 #X obj 177 168 sprintf L2Ork Tweeter v.%.02f by;
 #X obj 177 193 tosymbol;
-#X msg 177 76 0.69;
+#X msg 177 76 0.7;
 #X connect 0 0 10 0;
 #X connect 1 0 8 0;
 #X connect 1 1 2 0;
@@ -1716,12 +1716,16 @@ Chat will appear in the console., f 32;
 #X connect 7 0 5 0;
 #X connect 8 0 3 0;
 #X connect 9 0 2 0;
-#X restore 159 81 pd l2orkmote-recall-routing;
+#X restore 317 110 pd l2orkmote-recall-routing;
 #N canvas 771 465 357 223 guest-stuff 0;
 #X obj 92 56 r 0-remote-user-gui-update;
 #X text 92 84 dummy receive to intercept guest data request and prevent
 unnecessary error being printed into the console, f 27;
 #X restore 337 81 pd guest-stuff;
+#N canvas 808 546 356 238 editable 0;
+#X msg 85 65 \; pd-L2Ork-Tweeter.pd editable 0;
+#X msg 85 105 \; pd-L2Ork-Tweeter.pd editable 1;
+#X restore 256 81 pd editable;
 #X connect 5 0 6 0;
 #X restore 1586 3 pd core;
 #X obj 1089 3 hsl 229 17 1 101 1 1 main-out-multiplier main-out-multiplier-r

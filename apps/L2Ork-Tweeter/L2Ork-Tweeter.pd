@@ -3,7 +3,7 @@
 0;
 #X obj 4 2 cnv 15 1630 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.69\ by
+#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.70\ by
 4 5 0 10 #6c6c6c #fcfcfc 0;
 #X obj 252 3 cnv 15 125 16 empty empty (c)\ 2020-2\ Released\ under\ the
 4 6 0 10 #6c6c6c #fcfcfc 0;
@@ -138,7 +138,7 @@ and main out and pan valuesshift + quadruple click - everything (loop
 -text GPL v3 License;
 #X obj 820 672 core/L2OrkTweet 11;
 #X obj 820 823 core/L2OrkTweet 12;
-#N canvas 769 536 502 129 core 0;
+#N canvas 769 560 502 131 core 0;
 #N canvas 139 226 861 565 loop-logic 0;
 #X obj 506 413 r myclientnum;
 #X obj 101 566 forward null;
@@ -1312,8 +1312,8 @@ stored in the pd network-io, f 24;
 #X connect 32 2 33 1;
 #X connect 33 0 31 0;
 #X restore 401 23 pd chat-logic;
-#X obj 17 54 loadbang;
-#X msg 17 79 \; pd dsp 1;
+#X obj 17 52 loadbang;
+#X msg 17 77 \; pd dsp 1;
 #N canvas 511 22 884 959 load-save-session 0;
 #X obj 27 205 route report;
 #X obj 96 523 coll;
@@ -1530,7 +1530,7 @@ are added later. this allows for deterministic session saving., f
 #X connect 78 0 34 0;
 #X connect 79 0 78 0;
 #X restore 359 52 pd load-save-session;
-#N canvas 245 517 450 324 version 0;
+#N canvas 245 529 450 324 version 0;
 #X obj 177 51 loadbang;
 #X obj 177 101 t f f;
 #X obj 204 125 s version;
@@ -1541,7 +1541,7 @@ are added later. this allows for deterministic session saving., f
 #X text 99 75 DEBUG;
 #X obj 177 168 sprintf L2Ork Tweeter v.%.02f by;
 #X obj 177 193 tosymbol;
-#X msg 177 76 0.69;
+#X msg 177 76 0.7;
 #X connect 0 0 10 0;
 #X connect 1 0 8 0;
 #X connect 1 1 2 0;
@@ -1712,6 +1712,10 @@ Chat will appear in the console., f 32;
 #X text 92 84 dummy receive to intercept guest data request and prevent
 unnecessary error being printed into the console, f 27;
 #X restore 336 81 pd guest-stuff;
+#N canvas 808 498 356 216 editable 0;
+#X msg 85 65 \; pd-L2Ork-Tweeter.pd editable 0;
+#X msg 85 105 \; pd-L2Ork-Tweeter.pd editable 1;
+#X restore 253 81 pd editable;
 #X connect 5 0 6 0;
 #X restore 1586 3 pd core;
 #X obj 1089 3 hsl 229 17 1 101 1 1 main-out-multiplier main-out-multiplier-r
@@ -1724,3 +1728,4 @@ LOCAL\ MAIN\ OUT -90 6 0 10 #80fc80 #008000 #ffffff 22800 1 0 1;
 #X text 1300 3 MAX;
 #X symbolatom 1478 42 21 0 0 0 - session-name-r session-name-s 1 0
 1, f 21;
+#X editable 0;

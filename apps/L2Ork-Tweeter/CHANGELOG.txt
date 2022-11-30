@@ -9,6 +9,10 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+30-11-2022 0.70
+*Implemented editable option to prevent accidental edit mode.
+*Refinements to the Grapevine patches.
+
 28-11-2022 0.69
 *Added Transatlantic Grapevine (WIP) with supporting patches.
 *Added l2ork-custom server command for customizing various aspects of the Tweeter.
