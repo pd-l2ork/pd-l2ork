@@ -2909,9 +2909,12 @@ function init_menu_font_size(size) {
 // ico@vt.edu 2022-10-10: this is super hack-ish, since we have no
 // way of telling if the window has actually displayed, particularly
 // for more complex patches...
+// ico@vt.edu 2022-11-30: we expand this now to also deal with the
+// editable option. Shortened delay to 0 which seems to work fine with
+// nwjs 0.67.1.
 function update_menu_items(cid) {
     //pdgui.post("update_menu_items...");
     setTimeout(function() {
         pdgui.pdsend(cid, "updatemenu");
-    }, 1000);
+    }, 0);
 }

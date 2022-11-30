@@ -2744,7 +2744,7 @@ var scroll = {},
     title_queue= {}, // ugly kluge to work around an ugly race condition
     popup_menu = {},
     toplevel_scalars = {},
-    editable = {}; // for allowing developer to lock the patch to beginners
+    editable = {}; // for allowing developer to lock the patch (e.g.) to beginners
 
     var patchwin = {}; // object filled with cid: [Window object] pairs
     var dialogwin = {}; // object filled with did: [Window object] pairs
@@ -2932,6 +2932,7 @@ function create_window(cid, type, width, height, xpos, ypos, attr_array) {
 }
 
 // create a new canvas
+// cargs need to be last since they are variable in size
 function gui_canvas_new(cid, width, height, geometry, grid, grid_size_value,
     zoom, editmode, name, dir, dirty_flag, warid, hide_scroll, hide_menu,
     has_toplevel_scalars, cargs) {

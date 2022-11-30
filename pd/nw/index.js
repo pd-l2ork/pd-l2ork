@@ -637,6 +637,7 @@ function nw_create_window(cid, type, width, height, xpos, ypos, attr_array) {
                 new_win.eval(null, eval_string);
                 // flag the window as loaded. We may want to wait until the
                 // DOM window has finished loading for this.
+                //pdgui.post("window finished loading...");
                 pdgui.set_window_finished_loading(cid);
             } else {
                 // If the window is no longer loading, we need to go ahead
@@ -968,6 +969,7 @@ function post_startup_messages() {
 
 var linux_titlebar_offset_kludge = false;
 
+// this is invoked only by the main pd window
 function gui_init(win) {
     set_vars(win);
     add_events();

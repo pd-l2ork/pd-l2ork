@@ -2908,6 +2908,20 @@ void canvas_init_menu(t_canvas *x)
     //post("g_editor.c canvas_init_menu %d", x->gl_font);
     // ico@vt.edu 2020-08-24: we now need this to init the menu font size
     gui_vmess("gui_menu_font_set_initial_size", "xi", x, x->gl_font);
+    // ico@vt.edu 2022-11-30: check if this or a parent canvas
+    // is not editable (parents' editability affects children
+    // canvases) and store the value in the editable variable
+    int editable = x->gl_editable;
+    t_canvas *parent = x->gl_owner;
+    while (parent) {
+        if (!parent->gl_editable)
+        {
+            editable = 0;
+            break;
+        }
+        parent = parent->gl_owner;
+    }
+    gui_vmess("canvas_menu_set_editable", "xi", x, editable);
 }
 
 // ico@vt.edu 2022-06-18: exposing class from the x_array.c
