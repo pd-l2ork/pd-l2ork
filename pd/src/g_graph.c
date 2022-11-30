@@ -939,11 +939,16 @@ t_float glist_xtopixels(t_glist *x, t_float xval)
    the parent canvas */
 t_float glist_norm_x_per_scalar(t_glist *x, t_float xval)
 {
-    //post("glist_norm_x_per_scalar %zx %f isgraph=%d", (t_uint)x, xval, x->gl_isgraph);
+    /*
+    post("glist_norm_x_per_scalar "
+        "canvas=%zx xval=%f isgraph=%d haswindow=%d istoplevel=%d",
+        (t_uint)x, xval, x->gl_isgraph, x->gl_havewindow, glist_istoplevel(x));
+    */
     // we use this function only for scalars drawn inside GOP on a parent canvas
     // for other cases, we revert to the glist_xtopixels above.
     if (!x->gl_isgraph || x->gl_havewindow)
         return glist_xtopixels(x, xval);
+    //post("...using norm for x");
 
     // ico@vt.edu: used to deal with the bar graph
     t_float plot_offset = 0;
@@ -1015,6 +1020,7 @@ t_float glist_norm_y_per_scalar(t_glist *x, t_float yval)
         return glist_ytopixels(x, yval);
     else 
     {
+        //post("...using norm for y");
         int x1, y1, x2, y2;
         if (!x->gl_owner)
             bug("glist_norm_y_per_scalar");
