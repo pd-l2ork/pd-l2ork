@@ -1127,8 +1127,8 @@ static void scalar_vis(t_gobj *z, t_glist *owner, int vis)
         }
         t_float xscale = (glist_norm_x_per_scalar(owner, 1) -
             glist_norm_x_per_scalar(owner, 0));
-        t_float yscale = (glist_norm_y_per_scalar(owner, 0) -
-            glist_norm_y_per_scalar(owner, 1));
+        t_float yscale = (glist_norm_y_per_scalar(owner, 1) -
+            glist_norm_y_per_scalar(owner, 0));
         /* we translate the .scalar%zx group to displace it on the tk side.
            This is the outermost group for the scalar, something like a
            poor man's viewport.
