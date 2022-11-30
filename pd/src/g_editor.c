@@ -5711,7 +5711,8 @@ void canvas_mouseup(t_canvas *x,
         // inside it (which is expensive to redraw, so we don't
         // redraw it with each mouse drag update), we can
         // inform the graph to redraw its contents.
-        if (pd_class(&resized_gobj->g_pd) == canvas_class &&
+        if (resized_gobj && 
+            pd_class(&resized_gobj->g_pd) == canvas_class &&
             canvas_hasarray((t_canvas *)resized_gobj))
         {
             t_canvas *c = (t_canvas *)resized_gobj;
