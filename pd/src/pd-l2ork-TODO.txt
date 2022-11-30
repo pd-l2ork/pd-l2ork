@@ -514,7 +514,9 @@ TWEETER DONE:
   *Added new Transatlantic Grapevine sessions.
   *Documentation fix to the Conductor-Commands.pd.
   *Code clean-up.
-*Updated Grapevine files and sessions.
+*0.70:
+  *Implemented editable option to prevent accidental edit mode.
+  *Refinements to the Grapevine patches.
 
 
 
