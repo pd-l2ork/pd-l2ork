@@ -985,14 +985,14 @@ function gui_init(win) {
     connect();
     pdgui.restore_apps(0);
     if (pdgui.nw_os_is_linux) {
-        pdgui.post("window position " + gui.Window.get().x + " " + gui.Window.get().y);
+        //pdgui.post("window position " + gui.Window.get().x + " " + gui.Window.get().y);
         var pre_titlebar_y = gui.Window.get().y;
         gui.Window.get().moveTo(gui.Window.get().x, gui.Window.get().y);
         // ico@vt.edu 2022-11-19: this for some reason does not work with
         // the addEventListener approach so, we need to use the kludge global variable
         gui.Window.get().on("move", function() {
             if (!linux_titlebar_offset_kludge) {
-                pdgui.post("titlebar offset=" + (pre_titlebar_y - gui.Window.get().y));
+                //pdgui.post("titlebar offset=" + (pre_titlebar_y - gui.Window.get().y));
                 gui.Window.get().moveBy(0, ((pre_titlebar_y - gui.Window.get().y)) * 2);
                 linux_titlebar_offset_kludge = true;
             }
