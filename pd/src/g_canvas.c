@@ -3554,7 +3554,12 @@ void canvasgop__motionhook(t_scalehandle *sh, t_floatarg mouse_x,
         //canvas_fixlinesfor(owner, (t_text *)x);
         canvas_fixlinesfor(glist_getcanvas(x->gl_owner), (t_text *)x);
         gobj_vis((t_gobj *)x, x->gl_owner, 1);
-        canvas_dirty(owner, 1);
+        // ico@vt.edu 2022-11-29: if we are not an abstraction,
+        // dirty parent canvas. otherwise dirty the abstraction.
+        if (!owner->gl_env)
+            canvas_dirty(owner, 1);
+        else
+            canvas_dirty(x, 1);
 
         /* ico@vt.edu 2020-08-26: if we are changing the gop size
            on the parent window with our own window open, updated the 
@@ -3613,6 +3618,15 @@ void canvasgop__motionhook(t_scalehandle *sh, t_floatarg mouse_x,
             // on the parent window here
             canvas_fixlinesfor(glist_getcanvas(x->gl_owner), (t_text *)x);
         }
+        // ico@vt.edu 2022-11-29:
+        // dirty parent canvas or ourselves, depending whether
+        // we are an abstraction (gl_env == 1) or not. we get
+        // here only if we are changing GOP red rect inside
+        // the GOP-enabled patch itself.
+        if (!x->gl_env)
+            canvas_dirty(glist_getcanvas(x), 1);
+        else
+            canvas_dirty(x, 1);
     }
     else /* move_gop hook */
     {
@@ -3637,6 +3651,15 @@ void canvasgop__motionhook(t_scalehandle *sh, t_floatarg mouse_x,
             x, x1, y1, x2, y2);
         sh->h_dragx = dx;
         sh->h_dragy = dy;
+        // ico@vt.edu 2022-11-29: 
+        // dirty parent canvas or ourselves, depending whether
+        // we are an abstraction (gl_env == 1) or not. we get
+        // here only if we are changing GOP red rect inside
+        // the GOP-enabled patch itself.
+        if (!x->gl_env)
+            canvas_dirty(glist_getcanvas(x), 1);
+        else
+            canvas_dirty(x, 1);
         // ico@vt.edu 2021-08-09: this is an overriding scroll
         // request that, if sent continuously, will override
         // the previous call and thus save the precious CPU cycles.

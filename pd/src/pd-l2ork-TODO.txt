@@ -405,6 +405,10 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Fixed windows not opening patches requested by a second instance of pd-l2ork that is not unique or does not have a nogui flag. The same also works now for double-clicking on any file while pd-l2ork is already running.
 *Added ability to drag and drop .pd files onto the Pd-L2Ork console.
 *Fixed the issue where some arrays were still not correctly stretched when drawn. It was the margin of error that crept in when utilizing the existing glist_xtopixel call, which includes the x offset and thus lowers the decimal accuracy of a float value. Thus, depending on the array location, the problem would manifest more or less. To test, move an array, cut it, and then undo.
+*Fixed segfault when resizing red rect (due to mouse up event that should be triggered only if there is resized object).
+*Fixed regression where arrays were not properly shown due to inverted y norm value.
+*Added debugging messages for easier debugging.
+*Fixed a series of bugs where resizing red rect in an GOP-enabled abstraction does not trigger dirty (either when done on parent or the patch itself), or does so incorrectly (e.g. on the parent canvas instead of the abstraction itself). Checked also the subpatch dirty mechanism, as well as repositioning the red rect inside the GOP-enabled subpatch or an abstraction.
 
 
 
@@ -510,6 +514,7 @@ TWEETER DONE:
   *Added new Transatlantic Grapevine sessions.
   *Documentation fix to the Conductor-Commands.pd.
   *Code clean-up.
+*Updated Grapevine files and sessions.
 
 
 
