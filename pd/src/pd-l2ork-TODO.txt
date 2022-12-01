@@ -409,6 +409,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Fixed a series of bugs where resizing red rect in an GOP-enabled abstraction does not trigger dirty (either when done on parent or the patch itself), or does so incorrectly (e.g. on the parent canvas instead of the abstraction itself). Checked also the subpatch dirty mechanism, as well as repositioning the red rect inside the GOP-enabled subpatch or an abstraction.
 *Implemented auto-updating of canvas menu at creation time, based on the editable flag.
 *Fixed a bug where auto-updating did not work on OSX. TODO: check if this may cause any unwanted regressions, as well as whether we need timeout at the bottom of pd_canvas.js in update_menu_items function.
+*Fixed regression with gop spill drawing on objects like K12/logic_sequencer that have GOP within GOP and where generic .gopborder query would fail identifying wrong border to be manipulated.
 
 
 
