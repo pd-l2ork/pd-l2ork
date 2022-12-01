@@ -3662,13 +3662,17 @@ function gui_graph_gopspill(cid, tag, state) {
         graph_svg.style.setProperty("overflow", state ? "visible" : "hidden");
     });
     gui(cid).get_elem(tag + "gobj", function(graph_gobj) {
-        var border = graph_gobj.querySelector(".gopborder");
+        // here we have to reference specifically object that has both
+        // toplevel and gopborder classes (in that order), as toplevel
+        // distinguishes it from gopborders of potential GOP objects
+        // inside this GOP object.
+        var border = graph_gobj.querySelector(".toplevel.gopborder");
         /*
         post("graph_gobj=" + graph_gobj + " border=" + border +
              " prev=" + border.previousElementSibling +
              " last=" + graph_gobj.lastChild);
         */
-        // now, if we have gopspill enabled, push border immediately below the maing <g>
+        // now, if we have gopspill enabled, push border immediately below the main <g>
         // and above the <svg> element, so that the border is behind spilled objects.
         // if we have gopspill disabled, push it back below the <svg> element, so that
         // it is over any edge objects. Note that DOM objects further down the file are
