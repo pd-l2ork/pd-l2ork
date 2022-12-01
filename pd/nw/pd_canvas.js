@@ -1997,10 +1997,16 @@ function set_edit_menu_modals(window, state) {
         //pdgui.post("...has scalars");
         state = false;
     }
+    // ico@vt.edu 2022-11-30: the following disables
+    // proper handling of the edit menu updates when
+    // editable is toggled. Leaving here to see if there
+    // are any regressions...
+    /*
     // OSX needs to keep these enabled, otherwise the events won't trigger
     if (process.platform === "darwin") {
         state = true;
     }
+    */
     m.edit.undo.enabled = state;
     m.edit.redo.enabled = state;
     m.edit.cut.enabled = state;
@@ -2017,10 +2023,16 @@ function set_menu_modals(window, state) {
     // not be editable.
     //pdgui.post("set_menu_modals window=" + window);
     var context_state = state;
+    // ico@vt.edu 2022-11-30: the following disables
+    // proper handling of the edit menu updates when
+    // editable is toggled. Leaving here to see if there
+    // are any regressions...
+    /*
     // OSX needs to keep these enabled, otherwise the events won't trigger
     if (process.platform === "darwin") {
         context_state = true;
     }
+    */
     // ico@vt.edu 2022-09-28: only patches with arrays should not be editable
     if (pdgui.get_toplevel_scalars(window) === 1) {
         //pdgui.post("...has scalars");
