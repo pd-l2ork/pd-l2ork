@@ -7,6 +7,7 @@ PD-L2ORK TODO:
     *Investigate index.js' nw_create_window, and the pdgui.js' canvas_check_geometry.
     *Also use index.js console positioning aspect, if necessary.
     *UPDATE: scripted repetitive vis/unvis window in pitch_relationships patch makes the window open further down (but not always) and makes the window bigger.
+    *Clean-up all the other offsets found throughout the code (e.g. window_offset, which does not appear to affect the setbounds call).
 
 *Add canvas options for nomenu, background color, draw border, and ontop (if it works in nw.js). Test noscroll option.
 
@@ -410,6 +411,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Implemented auto-updating of canvas menu at creation time, based on the editable flag.
 *Fixed a bug where auto-updating did not work on OSX. TODO: check if this may cause any unwanted regressions, as well as whether we need timeout at the bottom of pd_canvas.js in update_menu_items function.
 *Fixed regression with gop spill drawing on objects like K12/logic_sequencer that have GOP within GOP and where generic .gopborder query would fail identifying wrong border to be manipulated.
+*Fixed offset in the array window that results in the whole array changing location downwards after a first click. On OSX and Windows, one has to move the window first to trigger setbounds call via pd_canvas.js.
 
 
 

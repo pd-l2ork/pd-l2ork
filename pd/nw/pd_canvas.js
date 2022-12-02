@@ -1816,8 +1816,15 @@ var canvas_events = (function() {
             });
             gui.Window.get().on("move", function(x, y) {
                 var w = gui.Window.get();
+                // ico@vt.edu 2022-12-02:
+                // here we subtract 22 since somehow window size
+                // grows on subsequent checks. it is not the menu
+                // since it also affects osx, and it should not
+                // be the titlebar since it is different on
+                // different OSs. Affects 0.67.1, although I seem
+                // to recall seeing it before, as well.
                 pdgui.pdsend(name, "setbounds", x, y,
-                    x + w.width, y + w.height);
+                    x + w.width, y + w.height - 22);
             });
             
             // map onscroll event
