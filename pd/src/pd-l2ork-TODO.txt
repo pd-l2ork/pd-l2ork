@@ -1,6 +1,8 @@
 PD-L2ORK TODO:
 *Seek RPi version of nw.js 0.67.1. IN PROGRESS
 
+*I01.Fourier.Analysis.pd patch arrays when selected are getting dislocated. Why? Perhaps because they have been generated which does not position them correctly on DOM?
+
 *Test nwjs 0.67.1 for regressions:
   *Patch window positioning: loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
   *Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
@@ -412,6 +414,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Fixed a bug where auto-updating did not work on OSX. TODO: check if this may cause any unwanted regressions, as well as whether we need timeout at the bottom of pd_canvas.js in update_menu_items function.
 *Fixed regression with gop spill drawing on objects like K12/logic_sequencer that have GOP within GOP and where generic .gopborder query would fail identifying wrong border to be manipulated.
 *Fixed offset in the array window that results in the whole array changing location downwards after a first click. On OSX and Windows, one has to move the window first to trigger setbounds call via pd_canvas.js.
+*Fixed regression of queueing garray_redraws, which caused redraws to stop under certain circumstances (either too fast, e.g. 10ms, or too slow, e.g. 500ms).
 
 
 

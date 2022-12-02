@@ -1594,11 +1594,15 @@ void garray_redraw(t_garray *x)
 {
     //post("garray_redraw");
     if (glist_isvisible(x->x_glist))
-        sys_queuegui(&x->x_gobj, x->x_glist, garray_doredraw);
+        // ico@vt.edu 2022-12-02: looks like queuing draws here
+        // prevents redraws from happening under certain circumstances
+        // (either too slow, e.g. 500ms, or too fast, e.g. 10ms)
+        // so, we haveto redraw stuff here immediately
+        //sys_queuegui(&x->x_gobj, x->x_glist, garray_doredraw);
         // LATER: figure out how the queueing can retain the data
         // points, because otherwise waveform at times looks broken
         // (effectively a VSYNC issue)
-        //garray_doredraw(&x->x_gobj, x->x_glist);
+        garray_doredraw(&x->x_gobj, x->x_glist);
 }
 
    /* This function gets the template of an array; if we can't figure
