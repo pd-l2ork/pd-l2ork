@@ -1554,12 +1554,15 @@ static void garray_doredraw(t_gobj *client, t_glist *glist)
         garray_vis(&x->x_gobj, x->x_glist, 0);
         garray_vis(&x->x_gobj, x->x_glist, 1);
 
+        // ico@vt.edu 2022-12-02: we don't need any of this anymore since
+        // now arrays are a part of the gop <group>. Leaving it all for
+        // a little while, and if there are no regressions, will delete it.
         //fprintf(stderr,"check if we need to reselect %zx %zx %zx\n",
         //    glist_getcanvas(glist), (t_gobj *)glist, glist->gl_owner);
-        int selected = 0;
+        //int selected = 0;
         /* Unfortunately I forget to comment this. I can't remember why I
            use glist instead of glist->gl_owner (quick bugfix maybe?) */
-        //t_glist *sel = glist->gl_owner;
+        /*t_glist *sel = glist->gl_owner;
         t_glist *sel = glist;
         while (sel && sel != glist_getcanvas(glist))
         {
@@ -1572,6 +1575,7 @@ static void garray_doredraw(t_gobj *client, t_glist *glist)
         }
         if (selected)
         {
+        */
             //fprintf(stderr,"garray_doredraw isselected\n");
             /* I haven't found a case where this is actually needed...
                perhaps with nested GOPs or something? Anyhow if there's
@@ -1581,12 +1585,14 @@ static void garray_doredraw(t_gobj *client, t_glist *glist)
             //    glist_getcanvas(glist), glist, 1);
             // a giant kludge-- we really just need gop items
             // to be children of their gop <group>
+            /*
             t_scalar *sc = x->x_scalar;
             char tagbuf2[MAXPDSTRING];
             sprintf(tagbuf2, "scalar%zx", (t_int)sc->sc_vec);
             gui_vmess("gui_gobj_select", "xs",
                 glist_getcanvas(glist), tagbuf2);
-        }
+            */
+        //}
     }
 }
 
@@ -1599,9 +1605,6 @@ void garray_redraw(t_garray *x)
         // (either too slow, e.g. 500ms, or too fast, e.g. 10ms)
         // so, we haveto redraw stuff here immediately
         //sys_queuegui(&x->x_gobj, x->x_glist, garray_doredraw);
-        // LATER: figure out how the queueing can retain the data
-        // points, because otherwise waveform at times looks broken
-        // (effectively a VSYNC issue)
         garray_doredraw(&x->x_gobj, x->x_glist);
 }
 

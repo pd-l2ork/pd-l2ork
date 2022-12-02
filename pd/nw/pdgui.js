@@ -4638,6 +4638,7 @@ function gui_text_redraw_border(cid, tag, width, height) {
 }
 
 function gui_gobj_select(cid, tag) {
+    //post("gui_gobj_select tag=" + tag);
     gui(cid).get_gobj(tag, function(e, w) {
         //var i, all_elems; // all GOP elements retrievable by the shared class name
         /*if (e.classList.contains("graph") && e.classList.length > 1) {
@@ -5920,8 +5921,8 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
     is_toplevel, plot_style) {
     /*
     post("gui_scalar_new drawon=" + cid + " ownercid=" + ownercid +
-    " parentcid=" + parentcid + " tag=" + tag + " plot_style=" + plot_style +
-    " t1=" + t1 + " t2=" + t2 + " t3=" + t3 + " t4=" + t4 +
+    " parentcid=" + parentcid + " tag=" + tag + " isselected=" + isselected +
+    " plot_style=" + plot_style + " t1=" + t1 + " t2=" + t2 + " t3=" + t3 + "t4=" + t4 +
     " xpos(t5)=" + t5 + " ypos(t6)=" + t6 + " is_toplevel=" + is_toplevel);
     */
     var g, draw_xpos, draw_ypos;
