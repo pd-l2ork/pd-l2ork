@@ -9794,8 +9794,21 @@ exports.dialog_bindings = function(did) {
     dwin.document.onkeydown = function(evt) {
         //post("onkeydown=" + evt.keyCode + " ctrl=" +
         //    evt.ctrlKey + " meta=" + evt.metaKey);
-        if (evt.keyCode === 13) { // enter
+        if (!nw_os_is_osx && evt.keyCode == 13 && evt.ctrlKey ||
+             nw_os_is_osx && evt.keyCode == 13 && evt.metaKey) {
+            // cmd/ctrl+enter/return
+            // ico@vt.edu 2022-12-03:
+            // activate ok only if we use ctrl + enter
+            // this is because if we are inside a
+            // dropdown menu nwjs may crash
+            // because it is trying to create a
+            // dropdown at a time the window is closing.
+            //var element = dwin.document.activeElement;
+            //var tagName = element.tagName.toLowerCase();
+            //post("dialog detected enter keypress on element id " + tagName);
+            //if (tagName !== 'select') {
             dwin.ok();
+            //}
         } else if (evt.keyCode === 27) { // escape
             dwin.cancel();
         } else if (!nw_os_is_osx && evt.keyCode == 65 && evt.ctrlKey ||
