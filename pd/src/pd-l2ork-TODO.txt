@@ -3,6 +3,9 @@ PD-L2ORK TODO:
 
 *Merge K12 menu patch and clean-up.
 
+*An error in OSX preferences when working with GUI dropdown (or something along those lines).
+  *Figure out how to reproduce.
+
 *Port vanilla garray set colors, line width, visibility, display style, and disable mouse editing (disabling mouse editing is URGENT for the forgotten planet module).
   *Make sure that if an array is not editable, that is passes along its mouse interaction to objects below.
 
