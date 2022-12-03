@@ -2302,6 +2302,21 @@ function create_svg_lock(cid) {
     ].join(" "));
 }
 
+// background image color helper function
+function get_css_svg_color(cid, which) {
+    var getvar = 0;
+    switch(which) {
+        case 0: getvar = '--bg_large_grid'; break;
+        case 1: getvar = '--bg_small_grid'; break;
+        case 2: getvar = '--default_array_fill'; break;
+        case 3: getvar = '--default_array_outline'; break;
+    }
+    var ret = getComputedStyle(patchwin[cid].window.document.documentElement).
+                getPropertyValue(getvar);
+    //post("get_css_svg_color which=" + which + " value=" + ret);
+    return ret;
+}
+
 // Background for edit mode. Currently, we use a grid if snap-to-grid
 // functionality is turned on in the GUI preferences. If not, we just use
 // the same grid with a lower opacity. That way the edit mode is always
@@ -2323,14 +2338,14 @@ var create_editmode_bg = function(cid, svg_elem) {
               '<defs>',
                 '<pattern id="cell" patternUnits="userSpaceOnUse" ',
                          'width="', size, '" height="', size, '">',
-                  '<path fill="none" stroke="#ddd" stroke-width="1" ',
-                        'd=', cell_data_str,'/>',
+                  '<path fill="none" stroke="', get_css_svg_color(cid, 1),
+                        '" stroke-width="1" d=', cell_data_str,'/>',
                 '</pattern>',
                 '<pattern id="grid" patternUnits="userSpaceOnUse" ',
                     'width="100" height="100" x="', pos.x, '" y="', pos.y, '">',
                   '<rect width="500" height="500" fill="url(#cell)" />',
-                  '<path fill="none" stroke="#bbb" stroke-width="1" ',
-                        'd="M 500 0 L 0 0 0 500"/>',
+                  '<path fill="none" stroke="', get_css_svg_color(cid, 0),
+                        '" stroke-width="1" d="M 500 0 L 0 0 0 500"/>',
                 '</pattern>',
               '</defs>',
               '<rect width="1000" height="1000" fill="url(#grid)" />',
@@ -2358,8 +2373,8 @@ var create_editmode_key_runmode_bg = function(cid, svg_elem) {
                 '<pattern id="grid" patternUnits="userSpaceOnUse" ',
                     'width="100" height="100" x="', pos.x, '" y="', pos.y, '">',
                   '<rect width="500" height="500" fill="url(#cell)" />',
-                  '<path fill="none" stroke="#bbb" stroke-width="1" ',
-                        'd="M 500 0 L 0 0 0 500"/>',
+                  '<path fill="none" stroke="', get_css_svg_color(cid, 0),
+                        '" stroke-width="1" d="M 500 0 L 0 0 0 500"/>',
                 '</pattern>',
               '</defs>',
               '<rect width="1000" height="1000" fill="url(#grid)" />',
@@ -4486,7 +4501,7 @@ function gui_text_new(cid, tag, type, isselected, left_margin,
         //text = text.replace(/\\;/g,";");
     }
 
-    var classname = "box_text";
+    var classname = (type === "broken" ? "broken " : "") + "box_text";
     if (type === "atom") {
         classname = "box_text data atom";
     }
@@ -8332,13 +8347,14 @@ function gui_menu_font_set_initial_size(cid, size) {
 }
 
 function gui_array_new(did, count) {
+    //post("gui_array_new last_focused=" + last_focused);
     var attr_array = [{
         array_gfxstub: did,
         array_name: "array" + count,
         array_size: 100,
         array_flags: 3,
-        array_fill: "black",
-        array_outline: "black",
+        array_fill: get_css_svg_color(last_focused, 2),
+        array_outline: get_css_svg_color(last_focused, 3),
         array_in_existing_graph: 0
     }];
     dialogwin[did] = create_window(did, "canvas",

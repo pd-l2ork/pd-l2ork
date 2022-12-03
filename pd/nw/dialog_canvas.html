@@ -441,6 +441,33 @@ function update_array_attr(elem) {
     }
 }
 
+function new_array_init() {
+    var name, value, elem, array_attr = pd_garray_attrs[0];
+    for (name in array_attr) {
+        if (array_attr.hasOwnProperty(name)) {
+            pdgui.post("...");
+            value = array_attr[name];
+            switch (name) {
+                case "array_fill":
+                    elem = document.getElementsByName(name)[0];
+                    elem.value = value.trim();
+                    //pdgui.post("array_outline value=" +
+                    //    value + " elem=" + elem);
+                    break;
+                case "array_outline":
+                    elem = document.getElementsByName(name)[0];
+                    elem.value = value.trim();
+                    //pdgui.post("array_outline value=" +
+                    //    value + " elem=" + elem);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    pdgui.post("done");
+}
+
 function array_choose(array_index) {
     var i, name, value, elem, style_index, style_opts,
         array_attr = pd_garray_attrs[array_index];
@@ -711,6 +738,19 @@ function register_window_id(gfxstub, attr_objects) {
         for (i = 0; i < canvas_fieldsets.length; i++) {
             canvas_fieldsets[i].classList.add("hidden");
         }
+
+        /*
+        document.getElementsByName("array_fill")[0].value =
+            attr_objects[0]["array_fill"].trim();
+        pdgui.post("fill color=" + attr_objects[0]["array_fill"].trim());
+
+        document.getElementsByName("array_outline")[0].value =
+            attr_objects[0]["array_outline"].trim();
+        pdgui.post("outline color=" + attr_objects[0]["array_fill"].trim());
+        */
+        // need to delay init here to ensure elements are created
+        setTimeout(function() { new_array_init(); }, 0);
+
         // Hide the "Apply" button, as it doesn't make sense for
         // creating a new array
         document.getElementById("apply_button").style.setProperty("display",

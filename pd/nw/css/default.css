@@ -15,6 +15,14 @@
 }
 */
 
+/* various SVG modifiable colors */
+:root {
+  --bg_large_grid: #bbb;
+  --bg_small_grid: #ddd;
+  --default_array_fill: black;
+  --default_array_outline: black;
+}
+
 body {
     margin: 0px;
     font-family: "DejaVu Sans Mono";

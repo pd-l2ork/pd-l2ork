@@ -220,9 +220,14 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
     if (x)
     {
         int iscomment = 0;
-        if (pd_class(&x->x_text->te_pd) == text_class &&
-                x->x_text->te_type == T_TEXT)
-            iscomment = 1;
+        int isbroken = 0;
+        if (pd_class(&x->x_text->te_pd) == text_class)
+        {
+            if (x->x_text->te_type == T_TEXT)
+                iscomment = 1;
+            else
+                isbroken = 1;
+        }
         //post("iscomment=%d <%s>", iscomment, x->x_buf);
         char smallbuf[200] = { '\0' }, *tempbuf;
         int outchars_b = 0, nlines = 0, ncolumns = 0,
@@ -476,8 +481,11 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
         {
             //post("send_first <%s>", tempbuf);
             gui_vmess("gui_text_new", "xssiiisiii",
-                canvas, x->x_tag, rtext_gettype(x)->s_name,
-                glist_isselected(x->x_glist, ((t_gobj*)x->x_text)),
+                canvas,
+                x->x_tag,
+                (isbroken ? "broken" : rtext_gettype(x)->s_name),
+                glist_isselected(x->x_glist,
+                ((t_gobj*)x->x_text)),
                 LMARGIN,
                 fontheight,
                 tempbuf,
