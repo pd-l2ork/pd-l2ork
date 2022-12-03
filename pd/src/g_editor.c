@@ -8873,13 +8873,18 @@ void canvas_editmode(t_canvas *x, t_floatarg fyesplease)
         t_object *ob;
         if (x->gl_goprect)    canvas_draw_gop_resize_hooks(x);
         canvas_setcursor(x, CURSOR_EDITMODE_NOTHING);
-        for (g = x->gl_list; g; g = g->g_next)
+        // ico@vt.edu 2022-12-03: disabled drawing of the comment
+        // border in edit mode, as that is unnecessary and results
+        // in redundant borders being drawn every time we (re)enter
+        // the edit mode. instead we draw them once at vis time,
+        // and then handle visibility inside the css file. 
+        /*for (g = x->gl_list; g; g = g->g_next)
             if ((ob = pd_checkobject(&g->g_pd)) && ob->te_type == T_TEXT)
         {
             t_rtext *y = glist_findrtext(x, ob);
             text_drawborder(ob, x,
                 rtext_gettag(y), rtext_width(y), rtext_height(y), 1);
-        }
+        }*/
     }
     else
     {

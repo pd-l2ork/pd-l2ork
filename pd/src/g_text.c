@@ -2985,10 +2985,10 @@ void text_drawborder(t_text *x, t_glist *glist,
         let CSS do all that and thus don't require that inefficiency.
         Also,
         we do not draw these unless the comments in question are being drawn
-        on top level--this avoids bugggy behavior where comment rectangles are
+        on top level--this avoids buggy behavior where comment rectangles are
         drawn inside a GOP on another toplevel glist when the GOP subpatch is
         in edit mode */
-    else if (x->te_type == T_TEXT && glist->gl_edit && glist_istoplevel(glist))
+    else if (x->te_type == T_TEXT && glist_istoplevel(glist))
     {
         if (firsttime)
         {
