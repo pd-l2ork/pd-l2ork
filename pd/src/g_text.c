@@ -2497,7 +2497,7 @@ static void text_get_typestring(int type, char *buf)
 
 static void text_vis(t_gobj *z, t_glist *glist, int vis)
 {
-    //post("text_vis %d", vis);
+    post("text_vis %d", vis);
     t_text *x = (t_text *)z;
     int x1, y1, x2, y2;
     char type[8];
@@ -2506,14 +2506,23 @@ static void text_vis(t_gobj *z, t_glist *glist, int vis)
     //if we are in k12 mode and this is hub with level 1 (global)
     //don't draw it and make its width/height 0
     int exception = 0;
-    if (pd_class(&x->te_pd) == preset_hub_class && sys_k12_mode)
+    //post("...exception=%d k12=%d", exception, sys_k12_mode);
+    // ico@vt.edu 2022-12-05: we now embed one preset_hub in every
+    // new toplevel patch. this is because k12 mode is not togglable
+    // at runtime, and not doing so could confuse new users because
+    // they may have created a patch in non-k12 mode and are now
+    // wondering why their patch is not working. this will add some
+    // potentially unnecessary memory use, but not much more than
+    // thata. hence, commenting out the sys_k12_mode check below.
+    if (pd_class(&x->te_pd) == preset_hub_class) // && sys_k12_mode)
     {
-        //fprintf(stderr,"text_vis reports preset_hub_class detected\n");
+        post("text_vis reports preset_hub_class detected in k12 mode");
         t_preset_hub *h = (t_preset_hub *)z;
         if (h->ph_invis)
         {
             exception = 1;
             x->te_width = 0;
+            post("...exception");
         }
     }
     if (!exception)

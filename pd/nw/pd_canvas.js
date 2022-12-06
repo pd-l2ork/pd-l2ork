@@ -11,11 +11,16 @@ pdgui.skin.apply(window);
 
 var l = pdgui.get_local_string;
 
+function update_menu() {
+    //pdgui.post("pd_canvas.js update_menu");
+    nw_create_patch_window_menus(gui, canvas_events.get_id());
+}
+
 function nw_window_focus_callback(name) {
     pdgui.set_focused_patchwin(name);
     // on OSX, update the menu on focus
     if (process.platform === "darwin") {
-        nw_create_patch_window_menus(gui, window, canvas_events.get_id());
+        nw_create_patch_window_menus(gui, canvas_events.get_id());
     }
 }
 
@@ -30,8 +35,15 @@ function nw_window_zoom(name, delta) {
     var z = gui.Window.get().zoomLevel;
     z += delta;
     if (z < 8 && z > -8) {
+        pdgui.post("nw_window_zoom");
         gui.Window.get().zoomLevel = z;
         pdgui.pdsend(name, "zoom", z);
+        // ico@vt.edu 2022-12-05: super ugly since we have
+        // no way of knowing when the zoom call has finished,
+        // so that we can get accurate window dimensions
+        // apparently, 0 does the trick
+        // TODO!: need to test Win/OSX)
+        setTimeout(function () { update_k12_menu(); }, 0);
         pdgui.gui_canvas_get_scroll(name);
     }
 }
@@ -1347,6 +1359,25 @@ var canvas_events = (function() {
             state = "normal";
             set_menu_modals(name, true);
         },
+        // hlkwok@vt.edu: 2022-11-24: Disallow clicking objects through menu
+        k12menu: function() {
+            //pdgui.post("k12menu activated");
+            canvas_events.none();
+            // ico@vt.edu: we don't want updating of the menu here as that
+            // will unnecessarily bog down the CPU. instead, we handle these
+            // during specific events.
+            //update_k12_menu();
+            //document.body.style.overflow = 'hidden';
+            //evt.stopPropagation();
+            //evt.preventDefault();
+        },
+        k12menu_out: function() {
+            //pdgui.post("k12menu_out activated");
+            //document.body.style.overflow = 'visible';
+            canvas_events.normal();
+            //evt.stopPropagation();
+            //evt.preventDefault();
+        },
         scalar_drag: function() {
             // This scalar_drag is a prototype for moving more of the editing
             // environment directly to the GUI.  At the moment we're leaving
@@ -1705,6 +1736,7 @@ var canvas_events = (function() {
 
             // MouseWheel event for zooming
             document.addEventListener("wheel", function(evt) {
+            
                 var d = { deltaX: 0, deltaY: 0, deltaZ: 0 };
                 Object.keys(d).forEach(function(key) {
                     if (evt[key] < 0) {
@@ -1798,14 +1830,22 @@ var canvas_events = (function() {
             // update viewport size when window size changes
             gui.Window.get().on("maximize", function() {
                 pdgui.gui_canvas_get_scroll(name);
+                update_k12_menu();
             });
             gui.Window.get().on("restore", function() {
                 pdgui.gui_canvas_get_scroll(name);
+                update_k12_menu();
             });
             gui.Window.get().on("resize", function() {
-                //pdgui.post("window resize");
+                pdgui.post("window resize");
                 //pdgui.gui_canvas_get_scroll(name);
                 pdgui.gui_canvas_get_scroll_on_resize(name);
+                // hlkwok@vt.edu 2022-11-8: update k12 menu when
+                // window resizes
+                // ico@vt.edu 2022-12-05: add a delay, so that
+                // when switching to full screen, we are sure
+                // we got the right size TODO!: test on Win/OSX
+                setTimeout(function() { update_k12_menu() }, 0);
             });
             gui.Window.get().on("focus", function() {
                 //pdgui.post("focus: patch");
@@ -1867,7 +1907,7 @@ function register_window_id(cid, attr_array) {
     // For OSX, we have a single menu and just track which window has the
     // focus.
     if (process.platform !== "darwin") {
-        nw_create_patch_window_menus(gui, window, cid);
+        nw_create_patch_window_menus(gui, cid);
     }
     create_popup_menu(cid);
     canvas_events.register(cid);
@@ -1912,7 +1952,27 @@ function create_popup_menu(name) {
     // The right-click popup menu
     var popup_menu = new gui.Menu();
     pdgui.add_popup(name, popup_menu);
-
+    // hlkwok@vt.edu 2022-11-13: if in k12 mode, only show help option
+    if (pdgui.get_k12_mode()) {
+    // For some reason, menu must have at least 3 elements
+    // or else it won't display
+        popup_menu.append(new gui.MenuItem({
+            type: "separator",
+        }));
+        popup_menu.append(new gui.MenuItem({
+            type: "separator",
+        }));
+        popup_menu.append(new gui.MenuItem({
+            type: "separator",
+        }));
+        popup_menu.append(new gui.MenuItem({
+            label: l("canvas.menu.help"),
+            click: function() {
+                pdgui.popup_action(name, 2);
+            }
+        }));
+        return;
+    }
     popup_menu.append(new gui.MenuItem({
         label: l("canvas.menu.props"),
         click: function() {
@@ -2020,7 +2080,10 @@ function set_edit_menu_modals(window, state) {
     m.edit.copy.enabled = state;
     m.edit.paste.enabled = state;
     m.edit.selectall.enabled = state;
-    m.edit.font.enabled = state;
+    if (m.edit.font)
+        m.edit.font.enabled = state;
+
+    //TODO!: K12 check if we need to add anything else here?
 }
 
 function set_menu_modals(window, state) {
@@ -2057,44 +2120,57 @@ function set_menu_modals(window, state) {
     m.edit.paste.enabled = context_state;
 
     m.edit.selectall.enabled = context_state;
-    m.edit.font.enabled = context_state;
-    m.edit.encapsulate.enabled = context_state;
-    m.edit.tidyup.enabled = context_state;
+    if (m.edit.font)
+        m.edit.font.enabled = context_state;
+    if (m.edit.encapsulate)
+        m.edit.encapsulate.enabled = context_state;
+    if (m.edit.tidyup)
+        m.edit.tidyup.enabled = context_state;
 
     m.edit.editmode.enabled = context_state;
-    m.edit.cordinspector.enabled = context_state;
+    if (m.edit.cordinspector)
+        m.edit.cordinspector.enabled = context_state;
+    if (m.edit.find)
+        m.edit.find.enabled = context_state;
+    if (m.edit.findagain)
+        m.edit.findagain.enabled = context_state;   
+    if (m.edit.finderror)
+        m.edit.finderror.enabled = context_state; 
 
-    m.edit.find.enabled = context_state;
-    m.edit.findagain.enabled = context_state;   
-    m.edit.finderror.enabled = context_state; 
+    if (m.edit.paste_clipboard)
+        m.edit.paste_clipboard.enabled = context_state;
+    if (m.edit.duplicate)
+        m.edit.duplicate.enabled = context_state;
+    if (m.edit.reselect)
+        m.edit.reselect.enabled = context_state;
 
-    m.edit.paste_clipboard.enabled = context_state;
-    m.edit.duplicate.enabled = context_state;
-    m.edit.reselect.enabled = context_state;
+    if (m.put) {
+        m.put.object.enabled = context_state;
+        m.put.message.enabled = context_state;
+        m.put.number.enabled = context_state;
+        m.put.symbol.enabled = context_state;
+        m.put.comment.enabled = context_state;
+        m.put.dropdown.enabled = context_state;
+        m.put.bang.enabled = context_state;
+        m.put.toggle.enabled = context_state;
+        m.put.number2.enabled = context_state;
+        m.put.vslider.enabled = context_state;
+        m.put.hslider.enabled = context_state;
+        m.put.knob.enabled = context_state;
+        m.put.vradio.enabled = context_state;
+        m.put.hradio.enabled = context_state;
+        m.put.vu.enabled = context_state;
+        m.put.cnv.enabled = context_state;
+        m.put.image.enabled = context_state;
+        //m.put.graph.enabled = context_state;
+        m.put.array.enabled = context_state;
+    }
 
-    m.put.object.enabled = context_state;
-    m.put.message.enabled = context_state;
-    m.put.number.enabled = context_state;
-    m.put.symbol.enabled = context_state;
-    m.put.comment.enabled = context_state;
-    m.put.dropdown.enabled = context_state;
-    m.put.bang.enabled = context_state;
-    m.put.toggle.enabled = context_state;
-    m.put.number2.enabled = context_state;
-    m.put.vslider.enabled = context_state;
-    m.put.hslider.enabled = context_state;
-    m.put.knob.enabled = context_state;
-    m.put.vradio.enabled = context_state;
-    m.put.hradio.enabled = context_state;
-    m.put.vu.enabled = context_state;
-    m.put.cnv.enabled = context_state;
-    m.put.image.enabled = context_state;
-    //m.put.graph.enabled = context_state;
-    m.put.array.enabled = context_state;
-
-    m.win.parentwin.enabled = context_state;
-    m.win.visible_ancestor.enabled = context_state;
-    m.win.pdwin.enabled = context_state;
+    if (m.win) {
+        m.win.parentwin.enabled = context_state;
+        m.win.visible_ancestor.enabled = context_state;
+        m.win.pdwin.enabled = context_state;
+    }
 }
 
 function get_editmode_checkbox() {
@@ -2107,6 +2183,11 @@ function set_editmode_checkbox(state) {
 
 function set_cord_inspector_checkbox(state) {
     m.edit.cordinspector.checked = state;
+}
+
+// hlkwok@vt.edu 2022-11-24: set the checkbox of the k12 menu
+function set_k12_checkbox(state) {
+    m.put.k12_menu.checked = state;
 }
 
 // stop-gap
@@ -2136,10 +2217,24 @@ function minit(menu_item, options) {
 // used, so that we can reference menu later
 var m  = null;
 
-function nw_create_patch_window_menus(gui, w, name) {
+function nw_create_patch_window_menus(gui, name) {
     // if we're on GNU/Linux or Windows, create the menus:
     m = pd_menus.create_menu(gui, "canvas");
     //pdgui.post("nw_create_patch_window_menus");
+
+    // hlkwok@vt.edu 2022-10-23: Show/hide K12 menu when creating menus
+    if (pdgui.get_k12_mode() == 0 && document.getElementById("k12_menu").style.display == "none") {
+        document.getElementById("k12_menu").style.display = "none";
+        set_k12_checkbox(false);
+    }
+    else {
+        document.getElementById("k12_menu").style.display = "block";
+        set_k12_checkbox(true);
+    }
+    // ico@vt.edu 2022-12-05: this has moved down to update_menu_items
+    // call that is called on load
+    //update_k12_menu();
+    //pdgui.post("nw_create_patch_window_menus " + pdgui.get_k12_mode());
 
     // File sub-entries
     // We explicitly enable these menu items because on OSX
@@ -2174,7 +2269,7 @@ function nw_create_patch_window_menus(gui, w, name) {
         }
     });
     if (pdgui.k12_mode == 1) {
-        minit(m.file.k12, { click: pdgui.menu_k12_open_demos });
+        minit(m.file.k12_demos, { click: pdgui.menu_k12_open_demos });
     }
     minit(m.file.save, {
         enabled: true,
@@ -2190,16 +2285,24 @@ function nw_create_patch_window_menus(gui, w, name) {
             pdgui.menu_saveas(name);
         }
     });
-    minit(m.file.print, {
-        enabled: true,
-        click: function (){
-            pdgui.canvas_check_geometry(name);
-            pdgui.menu_print(name);
-        }
+    // hlkwok@vt.edu 2022-11-15: disable print and message when in k12 mode
+    if (pdgui.get_k12_mode() == 0) {
+        minit(m.file.print, {
+            enabled: true,
+            click: function (){
+                pdgui.canvas_check_geometry(name);
+                pdgui.menu_print(name);
+            }
+        });
+        minit(m.file.message, {
+            click: function() { pdgui.menu_send(name); }
+        });
+    }
+    // hlkwok@vt.edu: functionality for k12 mode switch
+    minit(m.file.k12_mode, { 
+            click: function() { switch_k12_mode(); } 
     });
-    minit(m.file.message, {
-        click: function() { pdgui.menu_send(name); }
-    });
+
     minit(m.file.close, {
         enabled: true,
         click: function() {
@@ -2297,15 +2400,19 @@ function nw_create_patch_window_menus(gui, w, name) {
             }
         }
     });
-    minit(m.edit.paste_clipboard, {
-        enabled: true,
-        click: function () {
-	    var clipboard = nw.Clipboard.get();
-	    var text = clipboard.get('text');
-	    //pdgui.post("** paste from clipboard: "+text);
-	    canvas_events.paste_from_pd_file(name, text);
-	}
-    });
+    // hlkwok@vt.edu 2022-11-24: remove paste_clipboard and reselect from
+    // k12 menu
+    if (pdgui.get_k12_mode() == 0) {
+        minit(m.edit.paste_clipboard, {
+            enabled: true,
+            click: function () {
+	        var clipboard = nw.Clipboard.get();
+	        var text = clipboard.get('text');
+	        //pdgui.post("** paste from clipboard: "+text);
+	        canvas_events.paste_from_pd_file(name, text);
+	    }
+        });
+    }
     minit(m.edit.duplicate, {
         enabled: true,
         click: function () { pdgui.pdsend(name, "duplicate"); }
@@ -2327,179 +2434,168 @@ function nw_create_patch_window_menus(gui, w, name) {
             }
         }
     });
-    minit(m.edit.clear_console, {
-        enabled: true,
-        click: pdgui.clear_console
-    });
-    minit(m.edit.reselect, {
-        enabled: true,
-        click: function() {
-            // This is a bit complicated... menu item shortcuts receive
-            // key events before the DOM, so we have to make sure to
-            // filter out <ctrl-or-cmd-Enter> in the DOM eventhandler
-            // in the "normal" keypress callback.
-            // We also have to make sure to send the text ahead to Pd
-            // to make sure it has it in the before before attempting
-            // to "reselect".
-            // As we move the editing functionality from the c code to
-            // the GUI, this will get less complex.
-            if (canvas_events.get_state() === "floating_text" ||
-                canvas_events.get_state() === "text") {
-                canvas_events.text(); // anchor the object
-                canvas_events.create_obj();
+    if (pdgui.get_k12_mode() == 0) {
+        minit(m.edit.reselect, {
+            enabled: true,
+            click: function() {
+                // This is a bit complicated... menu item shortcuts receive
+                // key events before the DOM, so we have to make sure to
+                // filter out <ctrl-or-cmd-Enter> in the DOM eventhandler
+                // in the "normal" keypress callback.
+                // We also have to make sure to send the text ahead to Pd
+                // to make sure it has it in the before before attempting
+                // to "reselect".
+                // As we move the editing functionality from the c code to
+                // the GUI, this will get less complex.
+                if (canvas_events.get_state() === "floating_text" ||
+                    canvas_events.get_state() === "text") {
+                    canvas_events.text(); // anchor the object
+                    canvas_events.create_obj();
+                }
+                pdgui.pdsend(name, "reselect");
             }
-            pdgui.pdsend(name, "reselect");
-        }
-    });
-    minit(m.edit.encapsulate, {
-        enabled: true,
-        click: function() { pdgui.pdsend(name, "encapsulate"); }
-    });
+        });
+    }
+    // hlkwok@vt.edu 2022-11-15: disable certain buttons in edit menu in k12 mode
+    if (pdgui.get_k12_mode() == 0) {
+        minit(m.edit.clear_console, {
+            enabled: true,
+            click: pdgui.clear_console
+        });
+        minit(m.edit.encapsulate, {
+            enabled: true,
+            click: function() { pdgui.pdsend(name, "encapsulate"); }
+        });
+    }
     minit(m.edit.tidyup, {
         enabled: true,
         click: function() { pdgui.pdsend(name, "tidy"); }
     });
-    minit(m.edit.font, {
-        enabled: true,
-        /*click: function () { pdgui.pdsend(name, "menufont"); } */
-    });
-    minit(m.font.s8, {
-        enabled: true,
-        click: function () {
-            m.font.s8.checked = true;
-            m.font.s10.checked = false;
-            m.font.s12.checked = false;
-            m.font.s16.checked = false;
-            m.font.s24.checked = false;
-            m.font.s36.checked = false;
-            pdgui.gui_menu_font_change_size(name, 8);
-        }
-    });
-    minit(m.font.s10, {
-        enabled: true,
-        click: function () {
-            m.font.s8.checked = false;
-            m.font.s10.checked = true;
-            m.font.s12.checked = false;
-            m.font.s16.checked = false;
-            m.font.s24.checked = false;
-            m.font.s36.checked = false;
-            pdgui.gui_menu_font_change_size(name, 10);
-        }
-    });
-    minit(m.font.s12, {
-        enabled: true,
-        click: function () {
-            m.font.s8.checked = false;
-            m.font.s10.checked = false;
-            m.font.s12.checked = true;
-            m.font.s16.checked = false;
-            m.font.s24.checked = false;
-            m.font.s36.checked = false;
-            pdgui.gui_menu_font_change_size(name, 12);
-        }
-    });
-    minit(m.font.s16, {
-        enabled: true,
-        click: function () {
-            m.font.s8.checked = false;
-            m.font.s10.checked = false;
-            m.font.s12.checked = false;
-            m.font.s16.checked = true;
-            m.font.s24.checked = false;
-            m.font.s36.checked = false;
-            pdgui.gui_menu_font_change_size(name, 16);
-        }
-    });
-    minit(m.font.s24, {
-        enabled: true,
-        click: function () {
-            m.font.s8.checked = false;
-            m.font.s10.checked = false;
-            m.font.s12.checked = false;
-            m.font.s16.checked = false;
-            m.font.s24.checked = false;
-            m.font.s36.checked = false;
-            pdgui.gui_menu_font_change_size(name, 24);
-        }
-    });
-    minit(m.font.s36, {
-        enabled: true,
-        click: function () {
-            m.font.s8.checked = false;
-            m.font.s10.checked = false;
-            m.font.s12.checked = false;
-            m.font.s16.checked = false;
-            m.font.s24.checked = false;
-            m.font.s36.checked = true;
-            pdgui.gui_menu_font_change_size(name, 36);
-        }
-    });
+    if (pdgui.get_k12_mode() == 0) {
+        minit(m.edit.font, {
+            enabled: true,
+            /*click: function () { pdgui.pdsend(name, "menufont"); } */
+        });
+        minit(m.font.s8, {
+            enabled: true,
+            click: function () {
+                m.font.s8.checked = true;
+                m.font.s10.checked = false;
+                m.font.s12.checked = false;
+                m.font.s16.checked = false;
+                m.font.s24.checked = false;
+                m.font.s36.checked = false;
+                pdgui.gui_menu_font_change_size(name, 8);
+            }
+        });
+        minit(m.font.s10, {
+            enabled: true,
+            click: function () {
+                m.font.s8.checked = false;
+                m.font.s10.checked = true;
+                m.font.s12.checked = false;
+                m.font.s16.checked = false;
+                m.font.s24.checked = false;
+                m.font.s36.checked = false;
+                pdgui.gui_menu_font_change_size(name, 10);
+            }
+        });
+        minit(m.font.s12, {
+            enabled: true,
+            click: function () {
+                m.font.s8.checked = false;
+                m.font.s10.checked = false;
+                m.font.s12.checked = true;
+                m.font.s16.checked = false;
+                m.font.s24.checked = false;
+                m.font.s36.checked = false;
+                pdgui.gui_menu_font_change_size(name, 12);
+            }
+        });
+        minit(m.font.s16, {
+            enabled: true,
+            click: function () {
+                m.font.s8.checked = false;
+                m.font.s10.checked = false;
+                m.font.s12.checked = false;
+                m.font.s16.checked = true;
+                m.font.s24.checked = false;
+                m.font.s36.checked = false;
+                pdgui.gui_menu_font_change_size(name, 16);
+            }
+        });
+        minit(m.font.s24, {
+            enabled: true,
+            click: function () {
+                m.font.s8.checked = false;
+                m.font.s10.checked = false;
+                m.font.s12.checked = false;
+                m.font.s16.checked = false;
+                m.font.s24.checked = false;
+                m.font.s36.checked = false;
+                pdgui.gui_menu_font_change_size(name, 24);
+            }
+        });
+        minit(m.font.s36, {
+            enabled: true,
+            click: function () {
+                m.font.s8.checked = false;
+                m.font.s10.checked = false;
+                m.font.s12.checked = false;
+                m.font.s16.checked = false;
+                m.font.s24.checked = false;
+                m.font.s36.checked = true;
+                pdgui.gui_menu_font_change_size(name, 36);
+            }
+        });
+    }
     minit(m.edit.cordinspector, {
         enabled: true,
         click: function() { pdgui.pdsend(name, "magicglass 0"); }
     });
-    minit(m.edit.find, {
-        click: function () {
-            var find_bar = w.document.getElementById("canvas_find"),
-                find_bar_text = w.document.getElementById("canvas_find_text"),
-                state = find_bar.style.getPropertyValue("display");
-            // if there's a box being edited, try to instantiate it in Pd
-            instantiate_live_box();
-            if (state === "none") {
-                //pdgui.post("m.edit.find state=none");
-                // ico@vt.edu 2021-10-06: send fake mouse up in case we were doing
-                // a selection box, so that the selection does not get stuck 
-                pdgui.pdsend(name, "mouseup_fake");
-                find_bar.style.setProperty("display", "inline");
-                find_bar_text.focus();
-                find_bar_text.select();
-                canvas_events.search();
-            } else {
-                find_bar.style.setProperty("display", "none");
-                //find_bar_text.value = "";
-                // "normal" seems to be the only viable state for the
-                // canvas atm.  But if there are other states added later,
-                // we might need to fetch the previous state here.
-                canvas_events.normal();
-                // this resets the last search term so that the next search
-                // starts from the beginning again
-                canvas_events.find_reset();
-            }
-        }
-    });
-    minit(m.edit.findagain, {
-        enabled: true,
-        click: function() {
-            var t = document.getElementById("canvas_find_text").value;
-            /*
-            pdgui.post("m.edit.findagain value=<" + 
-                t +
-                "> last_search_term=<" + canvas_events.get_last_search_term() +
-                "> backend=<" + pdgui.gui_get_backend_search_term() + ">");
-            */
-            if (canvas_events.get_last_search_term() === "") {
-                //pdgui.post("...A");
-                if (t !== "") {
-                    pdgui.pdsend(name, "find",
-                    pdgui.encode_for_dialog(t),
-                    canvas_events.get_match_words() ? "1" : "0");
-                    canvas_events.set_last_search_term(t);
-                    pdgui.gui_get_search_origin_canvas(name);
+    if (pdgui.get_k12_mode() == 0) {
+        minit(m.edit.find, {
+            click: function () {
+                var find_bar = w.document.getElementById("canvas_find"),
+                    find_bar_text = w.document.getElementById("canvas_find_text"),
+                    state = find_bar.style.getPropertyValue("display");
+                // if there's a box being edited, try to instantiate it in Pd
+                instantiate_live_box();
+                if (state === "none") {
+                    //pdgui.post("m.edit.find state=none");
+                    // ico@vt.edu 2021-10-06: send fake mouse up in case we were doing
+                    // a selection box, so that the selection does not get stuck 
+                    pdgui.pdsend(name, "mouseup_fake");
+                    find_bar.style.setProperty("display", "inline");
+                    find_bar_text.focus();
+                    find_bar_text.select();
+                    canvas_events.search();
+                } else {
+                    find_bar.style.setProperty("display", "none");
+                    //find_bar_text.value = "";
+                    // "normal" seems to be the only viable state for the
+                    // canvas atm.  But if there are other states added later,
+                    // we might need to fetch the previous state here.
+                    canvas_events.normal();
+                    // this resets the last search term so that the next search
+                    // starts from the beginning again
+                    canvas_events.find_reset();
                 }
-            } else {
+            }
+        });
+        minit(m.edit.findagain, {
+            enabled: true,
+            click: function() {
                 var t = document.getElementById("canvas_find_text").value;
-                //pdgui.post("...B");
-                if (t !== "" && t !== pdgui.gui_get_backend_search_term()) {
-                    //pdgui.post("canvas find_again B t is not the same");
-                    t = pdgui.gui_get_backend_search_term();
-                    //canvas_events.set_last_search_term(t);
-                    //pdgui.post("search term=<"+t+">");
-                    //document.getElementById("canvas_find_text").value = t;
-                    if (t === pdgui.gui_get_backend_search_term()) {
-                        pdgui.pdsend(name, "findagain");
-                        pdgui.gui_close_find_bar_on_new_window_focus(name);
-                    } else {
+                /*
+                pdgui.post("m.edit.findagain value=<" + 
+                    t +
+                    "> last_search_term=<" + canvas_events.get_last_search_term() +
+                    "> backend=<" + pdgui.gui_get_backend_search_term() + ">");
+                */
+                if (canvas_events.get_last_search_term() === "") {
+                    //pdgui.post("...A");
+                    if (t !== "") {
                         pdgui.pdsend(name, "find",
                         pdgui.encode_for_dialog(t),
                         canvas_events.get_match_words() ? "1" : "0");
@@ -2507,26 +2603,45 @@ function nw_create_patch_window_menus(gui, w, name) {
                         pdgui.gui_get_search_origin_canvas(name);
                     }
                 } else {
-                    pdgui.pdsend(name, "findagain");
+                    var t = document.getElementById("canvas_find_text").value;
+                    //pdgui.post("...B");
+                    if (t !== "" && t !== pdgui.gui_get_backend_search_term()) {
+                        //pdgui.post("canvas find_again B t is not the same");
+                        t = pdgui.gui_get_backend_search_term();
+                        //canvas_events.set_last_search_term(t);
+                        //pdgui.post("search term=<"+t+">");
+                        //document.getElementById("canvas_find_text").value = t;
+                        if (t === pdgui.gui_get_backend_search_term()) {
+                            pdgui.pdsend(name, "findagain");
+                            pdgui.gui_close_find_bar_on_new_window_focus(name);
+                        } else {
+                            pdgui.pdsend(name, "find",
+                            pdgui.encode_for_dialog(t),
+                            canvas_events.get_match_words() ? "1" : "0");
+                            canvas_events.set_last_search_term(t);
+                            pdgui.gui_get_search_origin_canvas(name);
+                        }
+                    } else {
+                        pdgui.pdsend(name, "findagain");
+                    }
                 }
             }
-        }
-    });
-    minit(m.edit.finderror, {
-        enabled: true,
-        click: function() {
-            pdgui.pdsend("pd finderror");
-        }
-    });
-    minit(m.edit.autotips, {
-        enabled: true,
-        click: menu_generic
-    });
+        });
+        minit(m.edit.finderror, {
+            enabled: true,
+            click: function() {
+                pdgui.pdsend("pd finderror");
+            }
+        });
+        minit(m.edit.autotips, {
+            enabled: true,
+            click: menu_generic
+        });
+    }
     minit(m.edit.editmode, {
         enabled: true,
         click: function() {
-            update_live_box();
-            pdgui.pdsend(name, "editmode 0");
+            toggle_edit();
         }
     });
     minit(m.edit.preferences, {
@@ -2729,6 +2844,10 @@ function nw_create_patch_window_menus(gui, w, name) {
     //        pdgui.pdsend(name, "graph NULL 0 0 0 0 30 30 0 30");
     //    },
     //});
+    // hlkwok@vt.edu: 2022-11-15: functionality for toggling k12 menu visibility
+    minit(m.put.k12_menu, { 
+            click: function() { toggle_k12_menu_visibility(); } 
+    });
     minit(m.put.array, {
         enabled: true,
         click: function() {
@@ -2861,32 +2980,40 @@ function nw_create_patch_window_menus(gui, w, name) {
         m.edit.undo.enabled = false;
         m.edit.redo.enabled = false;
         m.edit.selectall.enabled = false;
-        m.edit.font.enabled = false;
-        m.edit.encapsulate.enabled = false;
-        m.edit.tidyup.enabled = false;
-        m.edit.paste_clipboard.enabled = false;
-        m.edit.duplicate.enabled = false;
-        m.edit.reselect.enabled = false;
+        if (m.edit.font)
+            m.edit.font.enabled = false;
+        if (m.edit.encapsulate)
+            m.edit.encapsulate.enabled = false;
+        if (m.edit.tidyup)
+            m.edit.tidyup.enabled = false;
+        if (m.edit.paste_clipboard)
+            m.edit.paste_clipboard.enabled = false;
+        if (m.edit.duplicate)
+            m.edit.duplicate.enabled = false;
+        if (m.edit.reselect)
+            m.edit.reselect.enabled = false;
 
-        m.put.object.enabled = false;
-        m.put.message.enabled = false;
-        m.put.number.enabled = false;
-        m.put.symbol.enabled = false;
-        m.put.comment.enabled = false;
-        m.put.dropdown.enabled = false;
-        m.put.bang.enabled = false;
-        m.put.toggle.enabled = false;
-        m.put.number2.enabled = false;
-        m.put.vslider.enabled = false;
-        m.put.hslider.enabled = false;
-        m.put.knob.enabled = false;
-        m.put.vradio.enabled = false;
-        m.put.hradio.enabled = false;
-        m.put.vu.enabled = false;
-        m.put.cnv.enabled = false;
-        m.put.image.enabled = false;
-        //m.put.graph.enabled = false;
-        m.put.array.enabled = false;
+        if (m.put) {
+            m.put.object.enabled = false;
+            m.put.message.enabled = false;
+            m.put.number.enabled = false;
+            m.put.symbol.enabled = false;
+            m.put.comment.enabled = false;
+            m.put.dropdown.enabled = false;
+            m.put.bang.enabled = false;
+            m.put.toggle.enabled = false;
+            m.put.number2.enabled = false;
+            m.put.vslider.enabled = false;
+            m.put.hslider.enabled = false;
+            m.put.knob.enabled = false;
+            m.put.vradio.enabled = false;
+            m.put.hradio.enabled = false;
+            m.put.vu.enabled = false;
+            m.put.cnv.enabled = false;
+            m.put.image.enabled = false;
+            //m.put.graph.enabled = false;
+            m.put.array.enabled = false;
+        }
     }
 }
 
@@ -2935,5 +3062,119 @@ function update_menu_items(cid) {
     //pdgui.post("update_menu_items...");
     setTimeout(function() {
         pdgui.pdsend(cid, "updatemenu");
+        update_k12_menu();
     }, 0);
+}
+
+// hlkwok@vt.edu 2022-10-12: switches between k12_mode and normal mode
+function switch_k12_mode() {
+    pdgui.set_k12_mode(Number(m.file.k12_mode.checked));
+    /*
+    pdgui.post("switch_modes k12_mode=" + pdgui.get_k12_mode());
+    //pdgui.post("pdgui.k12_mode is " + pdgui.k12_mode);
+    nw_create_patch_window_menus(gui, canvas_events.get_id());
+    update_k12_menu();
+    create_popup_menu(canvas_events.get_id());
+    */
+}
+
+// hlkwok@vt.edu 2022-10-24: functionality for k12 tabs
+function toggle_tab(tab_id) {
+    pdgui.toggle_tab(canvas_events.get_id(), tab_id);
+    /*
+    if (document.getElementById(tab_id).style.display == "none") {
+        document.getElementById(tab_id).style.display = "block";
+    }
+    else {
+        document.getElementById(tab_id).style.display = "none";
+    }*/
+}
+
+// hlkwok@vt.edu 2022-11-1: function for placing K12 objects
+function place_K12_object(object) {
+    var cid = canvas_events.get_id();
+    var object_path = "K12/" + object;
+    pdgui.pdsend(cid, "dirty 1");
+    pdgui.pdsend(cid, "obj_abstraction " + object_path + " 0 0");
+    document.getElementById("building").style.display = "inline-block";
+    document.getElementById("playing").style.display = "none";
+}
+
+// hlkwok@vt.edu 2022-11-3: toggles edit mode in both edit menu and k12 menu
+function toggle_edit() {
+    update_live_box();
+    pdgui.toggle_edit(canvas_events.get_id());
+    /*
+    var cid = canvas_events.get_id();
+    pdgui.pdsend(cid, "editmode 0");
+    // Update button in k12 menu
+    var edit_button = document.getElementById("building");
+    var perform_button = document.getElementById("playing");
+    if (edit_button.style.display == "none") {
+        edit_button.style.display = "inline-block";
+        perform_button.style.display = "none";
+    }
+    else {
+        edit_button.style.display = "none";
+        perform_button.style.display = "inline-block";
+    }
+    */
+}
+
+// hlkwok@vt.edu 2022-11-8: updates k12 menu height, which will adjust
+// k12 menu scrollbar
+function update_k12_menu() {
+    pdgui.update_k12_menu(canvas_events.get_id());
+    /*
+    pdgui.post("update_k12_menu");
+    var k12_menu = document.getElementById("k12_menu");
+    var tab_menu = document.getElementById("tab_menu");
+    // edit div
+    var edit_div = document.getElementById("edit_div");
+    var edit_height = document.getElementById("edit_div").offsetHeight;
+    // toggle k12 visibility button
+    var k12_toggle = document.getElementById("k12_toggle");
+    var toggle_height = document.getElementById("show_k12_menu").offsetHeight / 2;
+    // space from bottom
+    var space = 15;
+    // heights for k12 menu and tab menu
+    var k12_height = window.innerHeight - space + 15;
+    var tab_height = window.innerHeight - edit_div.offsetHeight - space;
+    // set heights
+    k12_menu.style.setProperty("height", k12_height + "px");
+    tab_menu.style.setProperty("height", tab_height + "px");
+    k12_toggle.style.setProperty("top", (window.innerHeight / 2 - edit_height - toggle_height) + "px");
+    */
+}
+
+// hlkwok@vt.edu 2022-11-13: toggles k12 menu position (for side arrow button)
+function toggle_k12_menu() {
+    pdgui.toggle_k12_menu(canvas_events.get_id());
+    /*
+    var k12_menu = document.getElementById("k12_menu");
+    if (k12_menu.style.left == "-170px") {
+        k12_menu.style.left = "0px";
+        document.getElementById("show_k12_menu").style.transform = "rotate(0)";
+    }
+    else {
+        k12_menu.style.left = "-170px";
+        document.getElementById("show_k12_menu").style.transform = "rotate(-180deg)";
+    }
+    */
+}
+
+// hlkwok@vt.edu 2022-11-15: toggles k12 menu visibility (for k12 menu option
+// in the put menu
+function toggle_k12_menu_visibility() {
+    pdgui.toggle_k12_menu_visibility(canvas_events.get_id());
+    /*
+    var k12_menu = document.getElementById("k12_menu");
+    if (k12_menu.style.display == "none") {
+        k12_menu.style.display = "block";
+    }
+    else {
+        k12_menu.style.display = "none";
+    }
+    update_k12_menu();
+    */
 }

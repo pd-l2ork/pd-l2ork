@@ -59,6 +59,7 @@ function set_vars(win) {
     pdgui.set_pd_engine_id(pd_engine_id);
     pdgui.set_pwd(pwd);
     pdgui.set_pd_window(win);
+    pdgui.set_nw_gui(gui);
     font_engine_sanity = pdgui.set_font_engine_sanity(win);
     pdgui.set_app_quitfn(app_quit);
     pdgui.set_open_html_fn(open_html);
@@ -712,13 +713,16 @@ function nw_create_pd_window_menus(gui, w) {
             chooser.click();
         }
     });
-    if (pdgui.k12_mode == 1) {
-        minit(pd_m.file.k12, { click: pdgui.menu_k12_open_demos });
+    if (pdgui.get_k12_mode() == 1) {
+        minit(pd_m.file.k12_demos, { click: pdgui.menu_k12_open_demos });
     }
     // Note: this must be different for the main Pd window
     if (osx) {
         minit(pd_m.file.save, { enabled: false });
         minit(pd_m.file.saveas, { enabled: false });
+    }
+    if (pdgui.get_k12_mode() == 1) {
+        minit(pd_m.file.k12_mode, { click: pdgui.switch_k12_mode });
     }
     minit(pd_m.file.message, { click: pdgui.menu_send });
     if (osx) {

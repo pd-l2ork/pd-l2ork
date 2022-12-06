@@ -6,6 +6,7 @@ var help_path, browser_doc, browser_path, browser_init;
 var autocomplete, autocomplete_prefix, autocomplete_relevance;
 var pd_engine_id;
 
+
 exports.autocomplete_enabled = function() {
     return autocomplete;
 }
@@ -66,6 +67,7 @@ function gui_set_browser_config(doc_flag, path_flag, init_flag,
 }
 
 function gui_set_lib_dir(dir) {
+    post("lib_dir=" + dir);
     lib_dir = dir;
 }
 
@@ -2018,16 +2020,23 @@ function menu_new () {
     pdsend("pd filename",
            "Untitled-" + untitled_number,
            enquote(defunkify_windows_path(untitled_directory)));
-    // I don't think k12_mode works yet. Need to test this.
+    // ico@vt.edu 2022-12-05: made invisible preset_hub with
+    // k12 scope mandatory for all new patches due to the
+    // ability to now change k12 mode at runtime.
+    //if (k12_mode == 1) {
+
+    //TODO!: still need to implement this
     if (k12_mode == 1) {
         k12_saveas_on_new = 1;
-        pdsend("#N canvas");
-        pdsend("#X obj -30 -30 preset_hub k12 1 %hidden%");
-        pdsend("#X pop 1");
-    } else {
-        pdsend("#N canvas");
-        pdsend("#X pop 1");
     }
+
+    pdsend("#N canvas");
+    pdsend("#X obj -30 -30 preset_hub k12 1 %hidden%");
+    pdsend("#X pop 1");
+    /*} else {
+        pdsend("#N canvas");
+        pdsend("#X pop 1");
+    }*/
     untitled_number++;
 }
 
@@ -2048,7 +2057,8 @@ function gui_window_close(cid) {
 }
 
 function menu_k12_open_demos () {
-
+    post("menu_k12_open_demos " + defunkify_windows_path(lib_dir + "/extra/K12/demos"));
+    menu_open(defunkify_windows_path(lib_dir + "/extra/K12/demos"));
 }
 
 exports.menu_k12_open_demos = menu_k12_open_demos;
@@ -2446,6 +2456,14 @@ exports.canvas_set_editmode = canvas_set_editmode;
 
 function gui_canvas_set_editmode(cid, state) {
     canvas_set_editmode(cid, state);
+    //post("gui_canvas_set_editmode " + state);
+    if (k12_mode === 1) {
+        var k12_menu = patchwin[cid].window.document.
+            getElementById("k12_menu");
+        if (k12_menu.style.left == "-170px") {
+            toggle_k12_menu(cid);
+        }
+    }
 }
 
 // ask the engine about the current edit mode
@@ -10168,3 +10186,177 @@ function gui_highlight_obj_on_return_reset(cid, tag, type) {
 }
 
 exports.gui_highlight_obj_on_return = gui_highlight_obj_on_return;
+
+
+
+
+
+
+
+
+
+// K12 Stuff
+
+// ico@vt.edu 2022-12-05: this is the only way I was able
+// to "extract" the gui variable used by index.js to create
+// main window menu. LATER: check if we can use 
+// nw_create_pd_window_menus instead, as is the case with
+// index.js callback on focus. the question is how to deal
+// with the OSX menu since we should not try to recreate
+// console menu unless we are focused onto it.
+
+// this is not used anymore
+
+// TODO!: get rid of the nw_gui stuff and its call in index.js
+var nw_gui;
+
+function set_nw_gui(gui) {
+    nw_gui = gui;
+}
+
+exports.set_nw_gui = set_nw_gui;
+
+function get_k12_mode() {
+    //post("get_k12_mode " + k12_mode);
+    return k12_mode;
+}
+
+exports.get_k12_mode = get_k12_mode;
+
+// ico@vt.edu 2022-12-05: moving all this from pd_canvas.js to pdgui.js,
+// so that index.js can benefit from it, as well (responsible for the
+// console window).
+
+// hlkwok@vt.edu 2022-10-12: switches between k12_mode and normal mode
+function set_k12_mode(val) {
+    k12_mode = val;
+    //post("set_k12_mode " + k12_mode);
+
+    // redundantly send this back to the pd engine in case this was
+    // invoked via GUI
+    pdsend("pd set-k12-mode " + k12_mode);
+    //post("done...");
+
+    // copied from next window logic
+    var i, next, match = -1;
+    var win_array_length = Object.keys(patchwin).length;
+    for (i = 0; i < win_array_length; i++) {
+        // ico@vt.edu 2022-12-05: a rather hack-ish approach to
+        // being able to access nw_create_patch_window_menus, which
+        // should really belong only to pd_canvas.js. we create a
+        // hidden variable whose sole purpose is to expose its
+        // onchange function call. at this point we don't even
+        // bother providing any data into it.
+        patchwin[Object.keys(patchwin)[i]].window.document
+            .getElementById("k12_mode").onchange();
+        //nw_create_patch_window_menus(nw_gui, Object.keys(patchwin)[i]);
+        update_k12_menu(Object.keys(patchwin)[i]);
+    }
+    /*
+    if (match !== -1) {
+        next = (((match + offset) % win_array_length) // modulo...
+                + win_array_length) % win_array_length; // handle negatives
+        gui_raise_window(Object.keys(patchwin)[next]);
+    */
+
+    // this needs to be done on all windows, including console,
+    // not just the current one
+    /*
+    nw_create_patch_window_menus(gui, canvas_events.get_id());
+    update_k12_menu();
+    create_popup_menu(canvas_events.get_id());
+    */
+}
+
+exports.set_k12_mode = set_k12_mode;
+
+// hlkwok@vt.edu 2022-10-24: functionality for k12 tabs
+function toggle_tab(cid, tab_id) {
+    //post("toggle_tab window=" + patchwin[cid].window.document);
+    if (patchwin[cid].window.document.getElementById(tab_id).style.display == "none") {
+        patchwin[cid].window.document.getElementById(tab_id).style.display = "block";
+    }
+    else {
+        patchwin[cid].window.document.getElementById(tab_id).style.display = "none";
+    }
+}
+
+exports.toggle_tab = toggle_tab;
+
+// hlkwok@vt.edu 2022-11-3: toggles edit mode in both edit menu and k12 menu
+function toggle_edit(cid) {
+    pdsend(cid, "editmode 0");
+    // Update button in k12 menu
+    var edit_button = patchwin[cid].window.document.getElementById("building");
+    var perform_button = patchwin[cid].window.document.getElementById("playing");
+    if (edit_button.style.display == "none") {
+        edit_button.style.display = "inline-block";
+        perform_button.style.display = "none";
+    }
+    else {
+        edit_button.style.display = "none";
+        perform_button.style.display = "inline-block";
+    }
+}
+
+exports.toggle_edit = toggle_edit;
+
+// hlkwok@vt.edu 2022-11-8: updates k12 menu height, which will adjust
+// k12 menu scrollbar
+function update_k12_menu(cid) {
+    //post("update_k12_menu");
+    var k12_menu = patchwin[cid].window.document.getElementById("k12_menu");
+    var tab_menu = patchwin[cid].window.document.getElementById("tab_menu");
+    // edit div
+    var edit_div = patchwin[cid].window.document.getElementById("edit_div");
+    var edit_height = patchwin[cid].window.document.
+        getElementById("edit_div").offsetHeight;
+    // toggle k12 visibility button
+    var k12_toggle = patchwin[cid].window.document.getElementById("k12_toggle");
+    var toggle_height = patchwin[cid].window.document.
+        getElementById("show_k12_menu").offsetHeight / 2;
+    // space from bottom
+    var space = 15;
+    // heights for k12 menu and tab menu
+    var k12_height = patchwin[cid].window.innerHeight - space + 15;
+    var tab_height = patchwin[cid].window.innerHeight - edit_div.offsetHeight - space;
+    // set heights
+    k12_menu.style.setProperty("height", k12_height + "px");
+    tab_menu.style.setProperty("height", tab_height + "px");
+    k12_toggle.style.setProperty("top", (
+        patchwin[cid].window.innerHeight / 2 - edit_height - toggle_height) + "px");
+}
+
+exports.update_k12_menu = update_k12_menu;
+
+// hlkwok@vt.edu 2022-11-13: toggles k12 menu position (for side arrow button)
+function toggle_k12_menu(cid) {
+    var k12_menu = patchwin[cid].window.document.getElementById("k12_menu");
+    if (k12_menu.style.left == "-170px") {
+        k12_menu.style.left = "0px";
+        patchwin[cid].window.document.
+            getElementById("show_k12_menu").style.transform = "rotate(0)";
+    }
+    else {
+        k12_menu.style.left = "-170px";
+        patchwin[cid].window.document.
+            getElementById("show_k12_menu").style.transform = "rotate(-180deg)";
+    }
+}
+
+exports.toggle_k12_menu = toggle_k12_menu;
+
+// hlkwok@vt.edu 2022-11-15: toggles k12 menu visibility (for k12 menu option
+// in the put menu
+function toggle_k12_menu_visibility(cid) {
+    var k12_menu = patchwin[cid].window.document.getElementById("k12_menu");
+    if (k12_menu.style.display == "none") {
+        k12_menu.style.display = "block";
+        update_k12_menu(cid);
+    }
+    else {
+        k12_menu.style.display = "none";
+    }
+}
+
+exports.toggle_k12_menu_visibility = toggle_k12_menu_visibility;

@@ -2,6 +2,39 @@ PD-L2ORK TODO:
 *Seek RPi version of nw.js 0.67.1. IN PROGRESS
 
 *Merge K12 menu patch and clean-up.
+  *Check if patch opens ok when creating new menu with K12 mode enabled. OK
+    *There is no K12 menu option in the main pd console window.
+  *Fix the hide button. OK
+  *Process -k12 flag correctly. OK NEEDS TO BE TESTED
+  *Horizontal break is too thick. OK
+  *Improve width. OK
+  *Hide help menu in K12 mode. OK
+  *Background behind top button should be the same level of transparency as the bottom part. OK
+  *Fix the scrollbar position. OK
+  *Improve group button colors. OK
+  *Refine menu and scrollbar spacing. Extend height to the bottom. OK
+  *Right-click help is not working. OK
+  *Menu is too translucent. OK
+  *Put K12 menu option should be at the bottom. OK
+  *Adjust K12 menu on zoom. OK
+  *Extraneous triggering of update_k12_menu? OK
+  *File K12 mode should be a separate item (with a break before and after). OK
+  *Finish migrating K12 calls from pd_canvas.js to pdgui.js. OK
+    *Need to figure out how to run menu update located in pd_canvas.js from pdgui.js... OK
+
+  *Implement changing of the main Pd-L2Ork window menu. IN PROGRESS
+    *Instead of renaming the K12 item, just have a checkbox next to it OK
+  *Menu should be hidden on help files, and only unfold on new/empty patches when the edit mode is enabled using K12 mode.
+    *If K12 put menu option is enabled, open it in the new canvas the same way it was opened in the last one, or always open it unfolded. OR, it should be per-canvas option with the default being unfolded (once activated).
+    *Check the logic between show menu and K12 mode.
+    
+  *Zoom should work even when invoked over the menu.
+  *Keyboard shortcuts should work on top of the menu, as well.
+  *Implement saveas on creating new patch.
+  *Copy CSS stuff to other themes (:root and K12).
+    *Make a common css that is loaded before theme which then supersedes things, as needed? Should have both of the aforesaid elements.
+  *Should clear console be available in K12 mode?
+    *Submenus are not transitioning their height. NOT SURE IF THIS IS EVEN POSSIBLE -- REVISIT LATER
 
 *An error in OSX preferences when working with GUI dropdown (or something along those lines).
   *Figure out how to reproduce.

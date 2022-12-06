@@ -1,9 +1,11 @@
-#N canvas 76 51 553 653 10;
+#N canvas 76 64 553 758 10;
+#X obj 171 1096 cnv 15 365 82 empty empty empty 20 12 0 14 #fcc4c4
+#404040 0;
 #X obj 109 282 cnv 15 60 37 empty empty empty 20 12 0 14 #fcc4c4 #404040
 0;
 #X obj 183 294 cnv 15 44 27 empty empty empty 20 12 0 14 #c4dcdc #404040
 0;
-#X obj 0 1624 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
+#X obj 0 1714 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
 14 #dcdcdc #404040 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header preset_hub 3 12
 0 18 #c4dcdc #000000 0;
@@ -18,12 +20,12 @@ to conform to the PDDP template for Pd version 0.42.;
 #X text 12 85 OUTLET_0 anything;
 #X text 12 105 AUTHOR Ivica Ico Bukvic (c) 2012 <ico@vt.edu>;
 #X text 12 65 INLET_0 clear purge recall reset store;
-#X restore 500 1626 pd META;
+#X restore 500 1716 pd META;
 #X obj 0 795 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
 13 #dcdcdc #000000 0;
 #X obj 0 930 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8 12
 0 13 #dcdcdc #000000 0;
-#X obj 0 1100 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8
+#X obj 0 1190 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8
 12 0 13 #dcdcdc #000000 0;
 #X obj 71 357 cnv 17 3 432 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
 #9c9c9c 0;
@@ -33,17 +35,17 @@ to conform to the PDDP template for Pd version 0.42.;
 #X obj 22 36 preset_node;
 #X text 7 1 [preset_hub] Related Objects;
 #X obj 98 36 preset_node_array;
-#X restore 101 1626 pd Related_objects;
+#X restore 101 1716 pd Related_objects;
 #X obj 71 804 cnv 17 3 120 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
 #9c9c9c 0;
-#X obj 4 1626 pddp/pddplink all_about_help_patches.pd -text Usage Guide
+#X obj 4 1716 pddp/pddplink all_about_help_patches.pd -text Usage Guide
 ;
 #X text 11 20 universal preset system for pd-l2ork;
-#X obj 20 202 preset_hub test %hidden% %node% 2 31 1 %preset% 1 problems
-%preset% 2 skidoo %preset% 3 nights %preset% 0 stooges %node% 1 33
+#X obj 20 202 preset_hub test %hidden% %node% 2 32 1 %preset% 1 problems
+%preset% 2 skidoo %preset% 3 nights %preset% 0 stooges %node% 1 34
 %preset% 0 aaa 32 1 %preset% 1 2.24 nlah 1 %preset% 2 1 2 3 4 %preset%
-3 1 2 3 4 %node% 2 39 0 %preset% 0 1 %preset% 1 5 %preset% 2 9 %preset%
-3 1337 %node% 1 58 %preset% 0 999 %preset% 1 777 %preset% 2 555 %preset%
+3 1 2 3 4 %node% 2 40 0 %preset% 0 1 %preset% 1 5 %preset% 2 9 %preset%
+3 1337 %node% 1 59 %preset% 0 999 %preset% 1 777 %preset% 2 555 %preset%
 3 333;
 #X msg 80 125 store \$1;
 #X msg 80 74 recall \$1;
@@ -55,13 +57,13 @@ to conform to the PDDP template for Pd version 0.42.;
 0;
 #X msg 447 139 store \$1;
 #X msg 455 80 recall \$1;
-#X floatatom 447 115 5 0 0 0 - - -, f 5;
+#X floatatom 447 115 5 0 0 0 - - - 0 0 1, f 5;
 #X msg 395 79 purge;
 #X msg 386 57 reset;
 #X msg 447 190 clear \$1;
-#X floatatom 447 166 5 0 0 0 - - -, f 5;
-#X obj 386 217 preset_hub another %hidden% %node% 1 32 %preset% 0 99
-%preset% 1 65 %preset% 2 123 %preset% 3 0 %node% 2 39 2 %preset% 0
+#X floatatom 447 166 5 0 0 0 - - - 0 0 1, f 5;
+#X obj 386 217 preset_hub another %hidden% %node% 1 33 %preset% 0 99
+%preset% 1 65 %preset% 2 123 %preset% 3 0 %node% 2 40 2 %preset% 0
 19 %preset% 1 0.23 %preset% 2 999 %preset% 3 0.01;
 #X obj 386 244 print hub_another_says;
 #X obj 20 268 hub_node_abs;
@@ -74,9 +76,9 @@ to conform to the PDDP template for Pd version 0.42.;
 #X msg 241 111 list 1 2 3 4;
 #N canvas 778 51 404 229 sub 0;
 #X obj 237 69 preset_node test;
-#X floatatom 237 92 5 0 0 0 - - -, f 5;
+#X floatatom 237 92 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 113 69 preset_node another;
-#X floatatom 113 91 5 0 0 0 - - -, f 5;
+#X floatatom 113 91 5 0 0 0 - - - 0 0 1, f 5;
 #X text 111 41 a preset in a subpatch;
 #X connect 0 0 1 0;
 #X connect 2 0 3 0;
@@ -88,27 +90,27 @@ to conform to the PDDP template for Pd version 0.42.;
 #X text 91 515 store;
 #X obj 381 305 cnv 15 44 27 empty empty empty 20 12 0 14 #c4dcdc #404040
 0;
-#X floatatom 386 310 5 0 0 0 - - -, f 5;
+#X floatatom 386 310 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 80 52 hradio 15 1 0 4 empty empty empty 0 -8 0 10 #fcfcfc #000000
-#000000 0;
-#X floatatom 80 102 5 0 0 0 - - -, f 5;
-#X floatatom 80 151 5 0 0 0 - - -, f 5;
+#000000 0 1;
+#X floatatom 80 102 5 0 0 0 - - - 0 0 1, f 5;
+#X floatatom 80 151 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 455 58 hradio 15 1 0 4 empty empty empty 0 -8 0 10 #fcfcfc #000000
-#000000 0;
-#X obj 98 1168 pddp/pddplink preset_node-help.pd;
+#000000 0 1;
+#X obj 98 1258 pddp/pddplink preset_node-help.pd;
 #X text 178 515 - store the current state at index n;
-#X text 98 1140 Scope- [preset_hub foo] is local to its patch and all
+#X text 98 1230 Scope- [preset_hub foo] is local to its patch and all
 of that patch's children (i.e. \, subpatches and abstractions).;
 #X text 178 455 - purge all orphaned/unused nodes;
 #X text 91 356 clear;
 #X text 178 356 - clears preset n for all nodes;
-#X obj 483 4 preset_hub %hidden% %node% 2 10 1 %node% 3 10 3 36;
+#X obj 483 4 preset_hub %hidden% %node% 2 11 1 %node% 3 11 3 36;
 #X obj 189 271 preset_node test;
-#X floatatom 189 299 5 0 0 0 - - -, f 5;
+#X floatatom 189 299 5 0 0 0 - - - 0 0 1, f 5;
 #X msg 198 211 purge;
 #X msg 189 189 reset;
 #X msg 249 210 clearall \$1;
-#X floatatom 249 189 5 0 0 0 - - -, f 5;
+#X floatatom 249 189 5 0 0 0 - - - 0 0 1, f 5;
 #X msg 232 244 set another;
 #X msg 311 244 set test;
 #X text 171 947 - OPTIONAL scope for this preset (defaults to null
@@ -117,13 +119,6 @@ or "");
 #X text 91 640 read;
 #X text 81 967 2) symbol file;
 #X text 81 1057 3) float;
-#X text 171 967 - OPTIONAL literal "file" argument instructs hub not
-to embed its preset data into the patch but rather assumes that the
-user will save this data into an external file (see read \, write \,
-readpreset \, and writepreset message above)--this also means that
-changes to the preset will not trigger "patch dirty" message;
-#X text 171 1057 - OPTIONAL argument used exclusively in the K12 mode
-that renders preset_hub invisible to GUI operations;
 #X text 91 706 write;
 #X text 91 726 readpreset;
 #X text 178 726 - read one preset (optional 3rd argumemnt \, otherwise
@@ -151,19 +146,19 @@ same canvas as the abstraction:;
 #X text 168 205 inside it.;
 #X text 40 171 [preset_hub foo] <-- this won't apply to [bar] because
 ;
-#X restore 466 1140 pd More_info;
+#X restore 466 1230 pd More_info;
 #N canvas 33 29 755 637 More_info 0;
 #X obj -9 -1 cnv 15 755 20 empty \$0-pddp.cnv.subheading empty 3 12
 0 14 #c4dcdc #000000 0;
 #X text -3 1 [preset_hub] More info on reading/writing operations;
 #X obj 19 159 hradio 15 1 0 4 empty empty empty 0 -8 0 10 #fcfcfc #000000
-#000000 2;
+#000000 0 1;
 #X msg 19 179 recall \$1;
 #X obj 85 159 hradio 15 1 0 4 empty empty empty 0 -8 0 10 #fcfcfc #000000
-#000000 2;
+#000000 0 1;
 #X msg 85 179 store \$1;
-#X floatatom 10 390 5 0 0 0 - - -, f 5;
-#X symbolatom 10 433 10 0 0 0 - - -, f 10;
+#X floatatom 10 390 5 0 0 0 - - - 0 0 1, f 5;
+#X symbolatom 10 433 10 0 0 0 - - - 0 0 1, f 10;
 #X msg 151 179 reset;
 #X text 303 509 Loading a preset into a hub that already has data will
 automatically result in a merge. As you experiment with mixing and
@@ -237,13 +232,13 @@ preset 1 has any data., f 71;
 #X connect 19 0 12 0;
 #X connect 20 0 6 0;
 #X connect 21 0 7 0;
-#X restore 466 1285 pd More_info;
-#X text 98 1561 Presets with Arrays- arrays cannot be accessed directly
+#X restore 466 1375 pd More_info;
+#X text 98 1651 Presets with Arrays- arrays cannot be accessed directly
 as they have no direct inlets and outlets. For this reason we use preset_node_array
 abstraction to read/write to/from arrays. For additional info see;
-#X obj 290 1600 pddp/pddplink preset_node_array-help.pd;
+#X obj 290 1690 pddp/pddplink preset_node_array-help.pd;
 #X text 81 947 1) symbol/float;
-#X text 98 1186 Modular Scope- arguments starting with $ (e.g. \$1
+#X text 98 1276 Modular Scope- arguments starting with \\$ (e.g. \$1
 or \$2blah) allow modular creation of preset_hub and node's scopes
 inside embedded abstractions. As long as both hub and node share the
 same scope \, they will see each other regardless of what scope is
@@ -258,10 +253,10 @@ to 0).;
 1 444 %preset% 2 333 %preset% 3 222 %preset% 4 111 %preset% 5 0;
 #X msg 39 63 store \$1;
 #X msg 106 63 recall \$1;
-#X floatatom 39 42 5 0 0 0 - - -, f 5;
-#X floatatom 106 41 5 0 0 0 - - -, f 5;
+#X floatatom 39 42 5 0 0 0 - - - 0 0 1, f 5;
+#X floatatom 106 41 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 38 135 preset_node \$1;
-#X floatatom 38 157 5 0 0 0 - - -, f 5;
+#X floatatom 38 157 5 0 0 0 - - - 0 0 1, f 5;
 #X text 142 39 <-- recall presets 0-5;
 #X text 73 155 <-- note how the value changes with each recall;
 #X text 34 191 Notice how the hub and node are paired even though no
@@ -276,13 +271,13 @@ patcher before looking one level up.;
 #X connect 5 0 3 0;
 #X connect 6 0 4 0;
 #X connect 7 0 8 0;
-#X restore 466 1186 pd More_info;
+#X restore 466 1276 pd More_info;
 #X text 178 475 - recall the values stored at index n (n must be >=
 0);
-#X text 98 1514 Default values- depending on the expected data format
+#X text 98 1604 Default values- depending on the expected data format
 messages when supplied no argument default to null (empty string) or
 0;
-#X text 98 1106 Preset names- only values 0 or greater are valid. No
+#X text 98 1196 Preset names- only values 0 or greater are valid. No
 negative preset numbers are possible.;
 #X text 91 535 sort;
 #X text 178 535 - sort all presets chronologically and assign them
@@ -317,7 +312,7 @@ only--see the arguments and more_info sections below);
 #X text 178 409 - initializes all node locations to be equal to their
 current locations (used for saving presets to a file only--see the
 arguments and more_info sections below);
-#X text 98 1285 Writing to and reading from a file- preset_hub can
+#X text 98 1375 Writing to and reading from a file- preset_hub can
 also write to an external file and read from it. More so \, the optional
 2nd creation argument (literal symbol "file") prevents preset_hub from
 trying to save itself into the patch. Hub can read/write all preset
@@ -332,35 +327,48 @@ essential to ensuring that as the patch continues to be edited and
 node locations potentially changed \, the preset(s) saved into file(s)
 prior to these changes will be still able to locate their nodes. See
 subpatch to the right for more info.;
-#X connect 14 0 20 0;
-#X connect 15 0 14 0;
-#X connect 16 0 14 0;
-#X connect 17 0 14 0;
-#X connect 18 0 14 0;
-#X connect 19 0 14 0;
-#X connect 22 0 29 0;
-#X connect 23 0 29 0;
-#X connect 24 0 22 0;
-#X connect 25 0 29 0;
-#X connect 26 0 29 0;
-#X connect 27 0 29 0;
-#X connect 28 0 27 0;
-#X connect 29 0 30 0;
-#X connect 32 0 46 0;
-#X connect 33 0 34 0;
-#X connect 34 0 37 0;
-#X connect 35 0 34 0;
-#X connect 36 0 34 0;
-#X connect 38 0 34 0;
-#X connect 47 0 16 0;
-#X connect 48 0 15 0;
-#X connect 49 0 19 0;
-#X connect 50 0 23 0;
-#X connect 58 0 59 0;
-#X connect 60 0 58 0;
-#X connect 61 0 58 0;
-#X connect 62 0 58 0;
-#X connect 63 0 62 0;
-#X connect 64 0 58 0;
-#X connect 65 0 58 0;
-#X connect 95 0 29 0;
+#X text 171 967 - OPTIONAL literal "file" argument instructs hub not
+to embed its preset data into the patch but rather assumes that the
+user will save this data into an external file (see read \, write \,
+readpreset \, and writepreset messages above)--this also means that
+changes to the preset will not trigger "patch dirty" message;
+#X text 171 1057 - OPTIONAL argument used exclusively in the K12 mode
+that renders preset_hub invisible to GUI operations.;
+#X text 171 1096 IMPORTANT! Since December 2022 \, all pd-l2ork patches
+now have an invisible preset_hub with the k12 scope that is instantiated
+at creation time. This is because K12 mode is now togglable at runtime.
+This also means that the k12 scope (note the lowercase 'k' in k12)
+is now reserved for internal use and should not be used for other purposes.
+;
+#X connect 15 0 21 0;
+#X connect 16 0 15 0;
+#X connect 17 0 15 0;
+#X connect 18 0 15 0;
+#X connect 19 0 15 0;
+#X connect 20 0 15 0;
+#X connect 23 0 30 0;
+#X connect 24 0 30 0;
+#X connect 25 0 23 0;
+#X connect 26 0 30 0;
+#X connect 27 0 30 0;
+#X connect 28 0 30 0;
+#X connect 29 0 28 0;
+#X connect 30 0 31 0;
+#X connect 33 0 47 0;
+#X connect 34 0 35 0;
+#X connect 35 0 38 0;
+#X connect 36 0 35 0;
+#X connect 37 0 35 0;
+#X connect 39 0 35 0;
+#X connect 48 0 17 0;
+#X connect 49 0 16 0;
+#X connect 50 0 20 0;
+#X connect 51 0 24 0;
+#X connect 59 0 60 0;
+#X connect 61 0 59 0;
+#X connect 62 0 59 0;
+#X connect 63 0 59 0;
+#X connect 64 0 63 0;
+#X connect 65 0 59 0;
+#X connect 66 0 59 0;
+#X connect 94 0 30 0;

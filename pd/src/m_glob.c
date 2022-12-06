@@ -4,6 +4,7 @@
 
 #include "m_pd.h"
 #include "m_imp.h"
+#include "s_stuff.h"
 
 t_class *glob_pdobject;
 static t_class *maxclass;
@@ -143,6 +144,19 @@ void max_default(t_pd *x, t_symbol *s, int argc, t_atom *argv)
     endpost();
 }
 
+// if the k12 flag is set from the GUI
+// requires <s_stuff.h> to be able to
+// access sys_k12_mode
+
+void glob_set_k12_mode(void *dummy, t_float f)
+{
+    //post("glob_set_k12_mode %f", f);
+    if ((int)f != 0 && (int)f != 1)
+        return;
+    sys_k12_mode = (int)f;
+    //fprintf(stderr, "k12_mode=%d", sys_k12_mode);
+}
+
 void glob_init(void)
 {
     maxclass = class_new(gensym("max"), 0, 0, sizeof(t_pd),
@@ -220,8 +234,10 @@ void glob_init(void)
         gensym("add-recent-file"), A_SYMBOL, 0);
     class_addmethod(glob_pdobject, (t_method)glob_clear_recent_files,
         gensym("clear-recent-files"), 0);
-    class_addmethod(glob_pdobject, (t_method)glob_gui_busy, gensym("gui-busy"),
-        A_DEFFLOAT, 0);
+    class_addmethod(glob_pdobject, (t_method)glob_gui_busy,
+        gensym("gui-busy"), A_DEFFLOAT, 0);
+    class_addmethod(glob_pdobject, (t_method)glob_set_k12_mode,
+        gensym("set-k12-mode"), A_DEFFLOAT, 0);
 #ifdef UNIX
     class_addmethod(glob_pdobject, (t_method)glob_watchdog,
         gensym("watchdog"), 0);

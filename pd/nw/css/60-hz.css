@@ -1120,3 +1120,77 @@ input[type="color"] {
     stroke: black;
     stroke-width: 1px;
 }
+
+/* hlkwok@vt.edu 2022-10-28: K12 buttons style */
+.k12_tab, .k12_buttons {
+    width: 155px;
+    position: relative;
+    left: 5px;
+}
+
+.k12_tab button:hover, .trapezoid button:hover {
+    opacity: 0.65;
+}
+
+.k12_tab_button {
+    background-color: inherit;
+    border: 1px solid;
+    padding: 5px;
+    width: 155px;
+    text-align: left;
+    font-size: 24px;
+}
+
+.k12_object {
+    background-color: inherit;
+    border: none;
+    position: relative;
+    left: -5px;
+    top: 2px;
+    padding: 0px;
+}
+
+.k12_icon {
+    width: 29px;
+    height: 29px;
+}
+
+/* hlkwok@vt.edu 2022-11-8: K12 scrollbar */
+
+#tab_menu::-webkit-scrollbar {
+    width: 5px;
+}
+
+#tab_menu::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+
+#tab_menu::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: rgba(180,180,180,0.8);
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}
+
+/* hlkwok@vt.edu 2022-11-13: K12 menu toggle button */
+.trapezoid {
+   border-left: 20px solid rgba(180, 180, 180, 0.5);
+   border-top: 5px solid transparent;
+   border-bottom: 5px solid transparent;
+   height: 50px;
+   width: 0;
+}
+
+/* hlkwok@vt.edu 2022-11-16: K12 tab spacing */
+.custom_break {
+    height: 15px;
+}
+
+/* hlkwok@vt.edu 2022-11-16: Have the K12 menu elements unselectable */
+.unselectable {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}

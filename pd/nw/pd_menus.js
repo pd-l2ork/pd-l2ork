@@ -7,7 +7,7 @@ var recent_files_submenu = null;
 var shortcuts = require("./pd_shortcuts.js");
 
 function create_menu(gui, type) {
-    //pdgui.post("create_menu type=" + type);
+    //pdgui.post("create_menu gui=" + gui + " type=" + type);
     // On OSX we create a menu only once, and then enable/disable menuitems
     // and switch out functions as needed.
 
@@ -16,6 +16,10 @@ function create_menu(gui, type) {
     // nw.js won't create an event listener unless you make the
     // shortcut immediately when creating the menu item. (It also
     // won't let you update the keyboard shortcut binding later.)
+    
+    //pdgui.post("create_menu...");
+    //pdgui.post("create_menu k12_mode is " + pdgui.get_k12_mode());
+    
     var m = {},
         osx = process.platform === "darwin",
         canvas_menu, // menu for canvas = true,  menu for Pd console = false
@@ -81,8 +85,8 @@ function create_menu(gui, type) {
         submenu: recent_files_submenu,
         tooltip: l("menu.recent_files_tt")
     }));
-    if (pdgui.k12_mode == 1) {
-        file_menu.append(m.file.k12 = new gui.MenuItem({
+    if (pdgui.get_k12_mode() == 1) {
+        file_menu.append(m.file.k12_demos = new gui.MenuItem({
             label: l("menu.k12_demos"),
             tooltip: l("menu.k12_demos_tt")
         }));
@@ -101,25 +105,37 @@ function create_menu(gui, type) {
             modifiers: shortcuts.menu.saveas.modifiers,
             tooltip: l("menu.saveas_tt")
         }));
-        file_menu.append(m.file.print = new gui.MenuItem({
-            label: l("menu.print"),
-            key: shortcuts.menu.print.key,
-            modifiers: shortcuts.menu.print.modifiers,
-            tooltip: l("menu.print_tt")
+        // hlkwok@vt.edu: 2022-11-15: hide print and message options in k12 mode
+        if (pdgui.get_k12_mode() == 0) {
+            file_menu.append(m.file.print = new gui.MenuItem({
+                label: l("menu.print"),
+                key: shortcuts.menu.print.key,
+                modifiers: shortcuts.menu.print.modifiers,
+                tooltip: l("menu.print_tt")
+            }));
+        }
+    }
+    if (pdgui.get_k12_mode() == 0) {
+        file_menu.append(new gui.MenuItem({ type: "separator" }));
+        
+        file_menu.append(m.file.message = new gui.MenuItem({
+            label: l("menu.message"),
+            key: shortcuts.menu.message.key,
+            modifiers: shortcuts.menu.message.modifiers,
+            tooltip: l("menu.message_tt")
         }));
     }
-    if (pdgui.k12_mode == 0) {
-        file_menu.append(new gui.MenuItem({ type: "separator" }));
-    }
-    file_menu.append(m.file.message = new gui.MenuItem({
-        label: l("menu.message"),
-        key: shortcuts.menu.message.key,
-        modifiers: shortcuts.menu.message.modifiers,
-        tooltip: l("menu.message_tt")
+    file_menu.append(new gui.MenuItem({ type: "separator" }));
+    // ico@vt.edu 2020-12-05: checkbox to switch between k12 mode
+    // based on hlkwok@vt.edu
+    file_menu.append(m.file.k12_mode = new gui.MenuItem({
+            type: "checkbox",
+            label: l("menu.k12_mode"),
+            tooltip: l("menu.k12_mode_tt")
     }));
-    if (pdgui.k12_mode == 0) {
-        file_menu.append(new gui.MenuItem({ type: "separator" }));
-    }
+    m.file.k12_mode.checked = pdgui.get_k12_mode();
+
+    file_menu.append(new gui.MenuItem({ type: "separator" }));
     if (canvas_menu) {
         file_menu.append(m.file.close = new gui.MenuItem({
             label: l("menu.close"),
@@ -271,13 +287,17 @@ function create_menu(gui, type) {
     // We need "duplicate" for canvas_menu and for OSX, where it's not
     // part of the builtin Edit menu...
 
+    // hlkwok@vt.edu 2022-11-24: remove paste_clipboard and reselect from
+    // k12 menu
     if (canvas_menu) {
-        edit_menu.append(m.edit.paste_clipboard = new gui.MenuItem({
-            label: l("menu.paste_clipboard"),
-            key: shortcuts.menu.paste_clipboard.key,
-            modifiers: shortcuts.menu.paste_clipboard.modifiers,
-            tooltip: l("menu.paste_clipboard_tt")
-        }));
+        if (pdgui.get_k12_mode() == 0) {
+            edit_menu.append(m.edit.paste_clipboard = new gui.MenuItem({
+                label: l("menu.paste_clipboard"),
+                key: shortcuts.menu.paste_clipboard.key,
+                modifiers: shortcuts.menu.paste_clipboard.modifiers,
+                tooltip: l("menu.paste_clipboard_tt")
+            }));
+        }
         edit_menu.append(m.edit.duplicate = new gui.MenuItem({
             label: l("menu.duplicate"),
             key: shortcuts.menu.duplicate.key,
@@ -296,7 +316,7 @@ function create_menu(gui, type) {
         }));
     }
 
-    if (canvas_menu) {
+    if (canvas_menu && pdgui.get_k12_mode() == 0) {
         // Unfortunately nw.js doesn't allow
         // key: "Return" or key: "Enter", so we
         // can't bind to ctrl-Enter here. (Even
@@ -308,35 +328,41 @@ function create_menu(gui, type) {
             tooltip: l("menu.reselect_tt")
         }));
     }
-    edit_menu.append(new gui.MenuItem({ type: "separator" }));
-    edit_menu.append(m.edit.clear_console = new gui.MenuItem({
-        label: l("menu.clear_console"),
-        tooltip: l("menu.clear_console"),
-        key: shortcuts.menu.clear_console.key,
-        modifiers: shortcuts.menu.clear_console.modifiers
-    }));
+    // hlkwok@vt.edu 2022-11-15: hide edit options in k12 mode
+    if (pdgui.get_k12_mode() == 0 || !canvas_menu) {
         edit_menu.append(new gui.MenuItem({ type: "separator" }));
-    if (canvas_menu) {
-        edit_menu.append(m.edit.encapsulate = new gui.MenuItem({
-            label: l("menu.encapsulate"),
-            key: shortcuts.menu.encapsulate.key,
-            modifiers: shortcuts.menu.encapsulate.modifiers,
-            tooltip: l("menu.encapsulate_tt")
+        edit_menu.append(m.edit.clear_console = new gui.MenuItem({
+            label: l("menu.clear_console"),
+            tooltip: l("menu.clear_console"),
+            key: shortcuts.menu.clear_console.key,
+            modifiers: shortcuts.menu.clear_console.modifiers
         }));
+        edit_menu.append(new gui.MenuItem({ type: "separator" }));
+        if (canvas_menu) {
+            edit_menu.append(m.edit.encapsulate = new gui.MenuItem({
+                label: l("menu.encapsulate"),
+                key: shortcuts.menu.encapsulate.key,
+                modifiers: shortcuts.menu.encapsulate.modifiers,
+                tooltip: l("menu.encapsulate_tt")
+            }));
+        }
+    }
+    if (canvas_menu) {
         edit_menu.append(m.edit.tidyup = new gui.MenuItem({
             label: l("menu.tidyup"),
             key: shortcuts.menu.tidyup.key,
             modifiers: shortcuts.menu.tidyup.modifiers,
             tooltip: l("menu.tidyup_tt")
         }));
-
+    }
+    if (pdgui.get_k12_mode() == 0 && canvas_menu) {
         edit_menu.append(m.edit.font = new gui.MenuItem({
             label: l("menu.font"),
             tooltip: l("menu.font_tt"),
             submenu: font_submenu
         }));
-
-
+    }
+    if (canvas_menu) {
         edit_menu.append(m.edit.cordinspector = new gui.MenuItem({
             type: "checkbox",
             label: l("menu.cordinspector"),
@@ -346,28 +372,33 @@ function create_menu(gui, type) {
         }));
         edit_menu.append(new gui.MenuItem({ type: "separator" }));
     }
-    edit_menu.append(m.edit.find = new gui.MenuItem({
-        label: l("menu.find"),
-        key: shortcuts.menu.find.key,
-        modifiers: shortcuts.menu.find.modifiers,
-        tooltip: l("menu.find_tt")
-    }));
+    if (pdgui.get_k12_mode() == 0 || !canvas_menu) {
+        edit_menu.append(m.edit.find = new gui.MenuItem({
+            label: l("menu.find"),
+            key: shortcuts.menu.find.key,
+            modifiers: shortcuts.menu.find.modifiers,
+            tooltip: l("menu.find_tt")
+        }));
+        if (canvas_menu) {
+            edit_menu.append(m.edit.findagain = new gui.MenuItem({
+                label: l("menu.findagain"),
+                key: shortcuts.menu.findagain.key,
+                modifiers: shortcuts.menu.findagain.modifiers,
+                tooltip: l("menu.findagain")
+            }));
+            edit_menu.append(m.edit.finderror = new gui.MenuItem({
+                label: l("menu.finderror"),
+                tooltip: l("menu.finderror_tt")
+            }));
+            edit_menu.append(new gui.MenuItem({ type: "separator" }));
+            m.edit.autotips = new gui.MenuItem({
+                label: l("menu.autotips"),
+                tooltip: l("menu.autotips_tt")
+            });
+            
+        }
+    }
     if (canvas_menu) {
-        edit_menu.append(m.edit.findagain = new gui.MenuItem({
-            label: l("menu.findagain"),
-            key: shortcuts.menu.findagain.key,
-            modifiers: shortcuts.menu.findagain.modifiers,
-            tooltip: l("menu.findagain")
-        }));
-        edit_menu.append(m.edit.finderror = new gui.MenuItem({
-            label: l("menu.finderror"),
-            tooltip: l("menu.finderror_tt")
-        }));
-        edit_menu.append(new gui.MenuItem({ type: "separator" }));
-        m.edit.autotips = new gui.MenuItem({
-            label: l("menu.autotips"),
-            tooltip: l("menu.autotips_tt")
-        });
         // commented out because it doesn't work yet -ag
         //edit_menu.append(m.edit.autotips);
         edit_menu.append(m.edit.editmode = new gui.MenuItem({
@@ -554,6 +585,13 @@ function create_menu(gui, type) {
             label: l("menu.array"),
             tooltip: l("menu.array_tt")
         }));
+        put_menu.append(new gui.MenuItem({ type: "separator" }));
+        // hlkwok@vt.edu 2022-11-15: Button to toggle k12 menu visibility
+        put_menu.append(m.put.k12_menu = new gui.MenuItem({
+                type: "checkbox",
+                label: 'K12 menu',
+                tooltip: l("menu.k12_menu")
+        }));
     }
 
     // Windows menu... call it "winman" (i.e., window management)
@@ -712,24 +750,27 @@ function create_menu(gui, type) {
             label: l("menu.view"),
             submenu: view_menu
         }));
-        if (canvas_menu) {
+        // hlkwok@vt.edu 2020-11-3: only show file and edit menus in k12 mode
+        if (pdgui.get_k12_mode() == 0 || !canvas_menu) {
+            if (canvas_menu) {
+                window_menu.append(new gui.MenuItem({
+                    label: l("menu.put"),
+                    submenu: put_menu
+                }));
+            }
             window_menu.append(new gui.MenuItem({
-                label: l("menu.put"),
-                submenu: put_menu
+                label: l("menu.media"),
+                submenu: media_menu
+            }));
+            window_menu.append(new gui.MenuItem({
+                label: l("menu.windows"),
+                submenu: winman_menu
+            }));
+            window_menu.append(new gui.MenuItem({
+                label: l("menu.help"),
+                submenu: help_menu
             }));
         }
-        window_menu.append(new gui.MenuItem({
-            label: l("menu.media"),
-            submenu: media_menu
-        }));
-        window_menu.append(new gui.MenuItem({
-            label: l("menu.windows"),
-            submenu: winman_menu
-        }));
-        window_menu.append(new gui.MenuItem({
-            label: l("menu.help"),
-            submenu: help_menu
-        }));
     }
 
     // Assign to window
