@@ -24,9 +24,10 @@ PD-L2ORK TODO:
 
   *Implement changing of the main Pd-L2Ork window menu. IN PROGRESS
     *Instead of renaming the K12 item, just have a checkbox next to it OK
-  *Menu should be hidden on help files, and only unfold on new/empty patches when the edit mode is enabled using K12 mode.
-    *If K12 put menu option is enabled, open it in the new canvas the same way it was opened in the last one, or always open it unfolded. OR, it should be per-canvas option with the default being unfolded (once activated).
+  *Menu should be hidden on help files, and only unfold on new/empty patches when the edit mode is enabled using K12 mode. IN PROGRESS
+    *If K12 put menu option is enabled, it should be per-canvas option with the default being unfolded (once activated).
     *Check the logic between show menu and K12 mode.
+    *Integrate toggle_edit, gui_canvas_set_editmode, and canvas_set_editmode
     
   *Zoom should work even when invoked over the menu.
   *Keyboard shortcuts should work on top of the menu, as well.
