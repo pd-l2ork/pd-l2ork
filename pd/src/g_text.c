@@ -2497,7 +2497,7 @@ static void text_get_typestring(int type, char *buf)
 
 static void text_vis(t_gobj *z, t_glist *glist, int vis)
 {
-    post("text_vis %d", vis);
+    //post("text_vis %d", vis);
     t_text *x = (t_text *)z;
     int x1, y1, x2, y2;
     char type[8];
@@ -2516,13 +2516,13 @@ static void text_vis(t_gobj *z, t_glist *glist, int vis)
     // thata. hence, commenting out the sys_k12_mode check below.
     if (pd_class(&x->te_pd) == preset_hub_class) // && sys_k12_mode)
     {
-        post("text_vis reports preset_hub_class detected in k12 mode");
+        //post("text_vis reports preset_hub_class detected in k12 mode");
         t_preset_hub *h = (t_preset_hub *)z;
         if (h->ph_invis)
         {
             exception = 1;
             x->te_width = 0;
-            post("...exception");
+            //post("...exception");
         }
     }
     if (!exception)
