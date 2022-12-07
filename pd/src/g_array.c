@@ -53,6 +53,7 @@ t_array *array_new(t_symbol *templatesym, t_gpointer *parent)
     x->a_n = 1;
     x->a_elemsize = sizeof(t_word) * template->t_n;
     x->a_vec = (char *)getbytes(x->a_elemsize);
+    x->a_draw_vec = (char *)getbytes(x->a_elemsize);
         /* note here we blithely copy a gpointer instead of "setting" a
         new one; this gpointer isn't accounted for and needn't be since
         we'll be deleted before the thing pointed to gets deleted anyway;
@@ -74,6 +75,7 @@ void array_resize(t_array *x, int n)
     elemsize = sizeof(t_word) * template->t_n;
 
     x->a_vec = (char *)resizebytes(x->a_vec, oldn * elemsize, n * elemsize);
+    x->a_draw_vec = (char *)resizebytes(x->a_draw_vec, oldn * elemsize, n * elemsize);
     x->a_n = n;
     if (n > oldn)
     {
@@ -115,6 +117,7 @@ void array_free(t_array *x)
         word_free(wp, scalartemplate);
     }
     freebytes(x->a_vec, x->a_elemsize * x->a_n);
+    freebytes(x->a_draw_vec, x->a_elemsize * x->a_n);
     freebytes(x, sizeof *x);
 }
 
@@ -1552,7 +1555,18 @@ static void garray_doredraw(t_gobj *client, t_glist *glist)
     if (glist_isvisible(x->x_glist))
     {
         garray_vis(&x->x_gobj, x->x_glist, 0);
+
+        char *data_vec;
+        int yonset, elemsize;
+        t_array *array = garray_getarray_floatonly(x, &yonset, &elemsize);
+        if (array)
+        {
+            data_vec = array->a_vec;
+            array->a_vec = array->a_draw_vec;
+        }
         garray_vis(&x->x_gobj, x->x_glist, 1);
+        if (array)
+            array->a_vec = data_vec;
 
         // ico@vt.edu 2022-12-02: we don't need any of this anymore since
         // now arrays are a part of the gop <group>. Leaving it all for
@@ -1600,12 +1614,26 @@ void garray_redraw(t_garray *x)
 {
     //post("garray_redraw");
     if (glist_isvisible(x->x_glist))
-        // ico@vt.edu 2022-12-02: looks like queuing draws here
-        // prevents redraws from happening under certain circumstances
-        // (either too slow, e.g. 500ms, or too fast, e.g. 10ms)
-        // so, we haveto redraw stuff here immediately
-        //sys_queuegui(&x->x_gobj, x->x_glist, garray_doredraw);
-        garray_doredraw(&x->x_gobj, x->x_glist);
+    {
+        // ico@vt.edu 2022-12-07: save latest contents into our
+        // temporary array. We will reference these when we are
+        // redrawing...
+
+        int yonset, i, n, elemsize;
+        t_array *array = garray_getarray_floatonly(x, &yonset, &elemsize);
+        if (array)
+            memcpy((void *)array->a_draw_vec, (void *)array->a_vec,
+                (elemsize * array->a_n) + yonset);
+
+        // 2022-12-06: the array redraws fine until you
+        // reach 1ms rate which is unreasonably fast
+        // OTOH Tweeter, for instance, drops a sample every time a
+        // redraw occurs, likely because each update generates
+        // a large number of requests (since it is possible that
+        // each point change produces one update request)
+        sys_queuegui(&x->x_gobj, x->x_glist, garray_doredraw);
+        //garray_doredraw(&x->x_gobj, x->x_glist);
+    }
 }
 
    /* This function gets the template of an array; if we can't figure
