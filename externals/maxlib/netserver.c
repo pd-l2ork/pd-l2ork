@@ -518,6 +518,7 @@ static void netserver_retry(t_netserver *x, t_symbol *s, t_floatarg f)
 
 static void netserver_notify(t_netserver *x)
 {
+	//fprintf(stderr,"netserver notify");
    int i, k;
    /* remove connection from list */
    for(i = 0; i < x->x_nconnections; i++)
@@ -527,6 +528,10 @@ static void netserver_notify(t_netserver *x)
 		 x->x_nconnections--;
 		 if (x->x_log_pri >= LOG_NOTICE)
 			post("netserver: \"%s\" removed from list of clients", x->x_host[i]->s_name);
+		 // ico@vt.edu 2022-12-07: make sure to remove the poll function and
+		 // close the socket...
+		 sys_rmpollfn(x->x_fd[i]);
+	  	 sys_closesocket(x->x_fd[i]);
 		 x->x_host[i] = NULL;	/* delete entry */
 		 x->x_fd[i] = -1;
 		 //x->x_fd_error[i] = 0;
