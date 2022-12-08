@@ -3697,12 +3697,16 @@ function gui_graph_gopspill(cid, tag, state) {
     gui(cid).get_elem(tag + "svg", function(graph_svg) {
         graph_svg.style.setProperty("overflow", state ? "visible" : "hidden");
     });
+    //gui(cid).get_nw_window(function(nw_win) {
+    //    var svg_elem = nw_win.window.document.getElementById("patchsvg");
     gui(cid).get_elem(tag + "gobj", function(graph_gobj) {
-        // here we have to reference specifically object that has both
-        // toplevel and gopborder classes (in that order), as toplevel
-        // distinguishes it from gopborders of potential GOP objects
-        // inside this GOP object.
-        var border = graph_gobj.querySelector(".gopborder");
+        // here we have to reference specifically object that is direct
+        // child of the graph object. this is because in situations where
+        // we draw gop inside gop and look just for .gopborder, we will
+        // get the first one which is not our own, but that of our child gop.
+        // see below for a visual representation of this.
+        var border = graph_gobj.querySelectorAll(":scope > .gopborder");
+        //post("border=" + border[0]);
         /*
         post("graph_gobj=" + graph_gobj + " border=" + border +
              " prev=" + border.previousElementSibling +
@@ -3721,7 +3725,7 @@ function gui_graph_gopspill(cid, tag, state) {
         // etc.
         if (state)
         {
-            graph_gobj.insertBefore(border, border.previousElementSibling);
+            graph_gobj.insertBefore(border[0], border[0].previousElementSibling);
         } else {
             // for some reason nextElementSibling or nextSibling returns null
             // so we go by the lastChild which are the nlets
