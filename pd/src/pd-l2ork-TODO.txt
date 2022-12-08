@@ -1,41 +1,30 @@
 PD-L2ORK TODO:
 *Seek RPi version of nw.js 0.67.1. IN PROGRESS
 
+
+
 *Merge K12 menu patch and clean-up.
-  *Check if patch opens ok when creating new menu with K12 mode enabled. OK
-    *There is no K12 menu option in the main pd console window.
-  *Fix the hide button. OK
-  *Process -k12 flag correctly. OK NEEDS TO BE TESTED
-  *Horizontal break is too thick. OK
-  *Improve width. OK
-  *Hide help menu in K12 mode. OK
-  *Background behind top button should be the same level of transparency as the bottom part. OK
-  *Fix the scrollbar position. OK
-  *Improve group button colors. OK
-  *Refine menu and scrollbar spacing. Extend height to the bottom. OK
-  *Right-click help is not working. OK
-  *Menu is too translucent. OK
-  *Put K12 menu option should be at the bottom. OK
-  *Adjust K12 menu on zoom. OK
-  *Extraneous triggering of update_k12_menu? OK
-  *File K12 mode should be a separate item (with a break before and after). OK
-  *Finish migrating K12 calls from pd_canvas.js to pdgui.js. OK
-    *Need to figure out how to run menu update located in pd_canvas.js from pdgui.js... OK
+
+  *Make canvas left side wider once K12 menu is unfolded.
+    *Currently, the problem is opposite. Right side is wider when the menu is hidden. OK
+
+  *Implement K12 demos menu option.
 
   *Implement changing of the main Pd-L2Ork window menu. IN PROGRESS
     *Instead of renaming the K12 item, just have a checkbox next to it OK
-  *Menu should be hidden on help files, and only unfold on new/empty patches when the edit mode is enabled using K12 mode. IN PROGRESS
-    *If K12 put menu option is enabled, it should be per-canvas option with the default being unfolded (once activated).
-    *Check the logic between show menu and K12 mode.
-    *Integrate toggle_edit, gui_canvas_set_editmode, and canvas_set_editmode
-    
-  *Zoom should work even when invoked over the menu.
-  *Keyboard shortcuts should work on top of the menu, as well.
+
+  *Check the logic between show k12 menu and K12 mode.
+  *Integrate toggle_edit, gui_canvas_set_editmode, and canvas_set_editmode?
+
   *Implement saveas on creating new patch.
-  *Copy CSS stuff to other themes (:root and K12).
-    *Make a common css that is loaded before theme which then supersedes things, as needed? Should have both of the aforesaid elements.
-  *Should clear console be available in K12 mode?
-    *Submenus are not transitioning their height. NOT SURE IF THIS IS EVEN POSSIBLE -- REVISIT LATER
+
+  *Refine K12 object sizes to make images fit better.
+    *No need for K12 object gopspill image margins around nlets anymore.
+    *Multibuttons is gop spill within gop spill and currently throws an error.
+
+  *Update installer to include lock icon and K12 menu images in the bin folder.
+
+
 
 *An error in OSX preferences when working with GUI dropdown (or something along those lines).
   *Figure out how to reproduce.
@@ -459,6 +448,44 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *As a redundant safety precaution, now that I understand the syntax, reverted the port value to +port which ensures that this is always a numerical value.
 *Added 60-hz theme and added ability to customize SVG and editmode background color (large and small tiles separately) and default array colors via CSS variables. Enabled assigning of custom text color to objects, and broken objects. All of these are used by the new 60-hz theme. Also included default SVG colors inside default.css.
 *Changed default OK keyboard shortcuts in dialogs to ctrl/cmd+enter/return, as leaving it as only enter, can crash nwjs if the user's focus was on a dropdown (a.k.a. select) object, which triggers request to render a dropdown at the same time that the window is being closed.
+*Fixed bug where dropdown popup was off to the left when the screen has been scrolled to the right.
+*Merge K12 menu patch and clean-up.
+  *Check if patch opens ok when creating new menu with K12 mode enabled. OK
+    *There is no K12 menu option in the main pd console window.
+  *Fix the hide button. OK
+  *Process -k12 flag correctly. OK
+  *Horizontal break is too thick. OK
+  *Improve width. OK
+  *Hide help menu in K12 mode. OK
+  *Background behind top button should be the same level of transparency as the bottom part. OK
+  *Fix the scrollbar position. OK
+  *Improve group button colors. OK
+  *Refine menu and scrollbar spacing. Extend height to the bottom. OK
+  *Right-click help is not working. OK
+  *Menu is too translucent. OK
+  *Put K12 menu option should be at the bottom. OK
+  *Adjust K12 menu on zoom. OK
+  *Extraneous triggering of update_k12_menu? OK
+  *File K12 mode should be a separate item (with a break before and after). OK
+  *Finish migrating K12 calls from pd_canvas.js to pdgui.js. OK
+    *Need to figure out how to run menu update located in pd_canvas.js from pdgui.js... OK
+  *Copy CSS stuff to other themes (:root and K12). OK
+    *Make a common css that is loaded before theme which then supersedes things. Should have both of the aforesaid elements. OK
+  *Should clear console be available in K12 mode? YES, but only on the main window. OK
+  *Disabling K-12 mode does not revert the popup to the original one. OK
+  *Dragging hscroll over K12 menu gets the hscroll grab stuck. OK
+  *New window in K12 mode should be bigger since menu takes a lot of space. OK
+  *Scrollbar is off now that the edit button has been removed. OK (slight margin below due to miscalculation of the svg element--a long-standing problem that currently has no explanation).
+  *Toggle position is off now that the edit button has been removed. OK
+  *Fix regression in file open and find (w.document should've been just document--perhaps a typo that is a result of some earlier change?) OK
+  *Submenus are not transitioning/animating their height. NOT SURE IF THIS IS EVEN POSSIBLE, it is also not necessary. may revisit later.
+  *K12 menu does not want to unfold when not in k12 mode. OK
+  *Menu should be hidden on help files, and only unfold on new/empty patches when the edit mode is enabled using K12 mode. Similarly, hide the menu when the edit mode is off in K12 mode. OK
+    *Solution, remove edit button from the k12 menu and make the tab triangle the locking icon and unfolding of the menu synonymous with the edit mode. OK
+    *If K12 put menu option is enabled, it should be per-canvas option with the default being unfolded (once activated)? NO it should be exclusively driven by the editmode on/off state. OK
+  *Make vscroll and hscroll grab event keep the cursor the same and afterwards revert to the appropriate cursor. OK (was problem even before the K12 menu, apparently)
+  *Zoom should work even when invoked over the menu. OK
+  *Keyboard shortcuts should work on top of the menu, as well. OK
 
 
 

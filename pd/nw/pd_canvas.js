@@ -14,6 +14,7 @@ var l = pdgui.get_local_string;
 function update_menu() {
     //pdgui.post("pd_canvas.js update_menu");
     nw_create_patch_window_menus(gui, canvas_events.get_id());
+    create_popup_menu(canvas_events.get_id());
 }
 
 function nw_window_focus_callback(name) {
@@ -35,7 +36,7 @@ function nw_window_zoom(name, delta) {
     var z = gui.Window.get().zoomLevel;
     z += delta;
     if (z < 8 && z > -8) {
-        pdgui.post("nw_window_zoom");
+        //pdgui.post("nw_window_zoom");
         gui.Window.get().zoomLevel = z;
         pdgui.pdsend(name, "zoom", z);
         // ico@vt.edu 2022-12-05: super ugly since we have
@@ -66,6 +67,7 @@ var canvas_events = (function() {
         last_completed = -1, // last Tab completion (autocomplete)
         last_offset = -1, // offset of last Tab completion (autocomplete)
         last_yanked = "", // last yanked completion (to confirm deletion)
+        dragging_scrollbar = 0,
         textbox = function () {
             return document.getElementById("new_object_textentry");
         },
@@ -1046,11 +1048,14 @@ var canvas_events = (function() {
                 canvas_events[canvas_events.get_previous_state()]();
             },
             hscroll_mouseup: function(evt) {
+                //pdgui.post("hscroll_mouseup");
                 document.getElementById("hscroll").style.setProperty("background-color", "rgba(0, 0, 0, 0.267)");
-                document.getElementById("patchsvg").style.cursor = "default";
+                document.getElementById("scroll_overlay").style.visibility = "hidden";
                 canvas_events[canvas_events.get_previous_state()]();
+                dragging_scrollbar = 0;
             },
             hscroll_mousemove: function(evt) {
+                //pdgui.post("hscroll_mousemove");
                 if (evt.movementX != 0) {
                     //console.log("move: " + e.movementX);
                     
@@ -1078,8 +1083,9 @@ var canvas_events = (function() {
             },
             vscroll_mouseup: function(evt) {
                 document.getElementById("vscroll").style.setProperty("background-color", "rgba(0, 0, 0, 0.267)");
-                document.getElementById("patchsvg").style.cursor = "default";
+                document.getElementById("scroll_overlay").style.visibility = "hidden";
                 canvas_events[canvas_events.get_previous_state()]();
+                dragging_scrollbar = 0;
             },
             vscroll_mousemove: function(evt) {
                 if (evt.movementY != 0) {
@@ -1361,8 +1367,16 @@ var canvas_events = (function() {
         },
         // hlkwok@vt.edu: 2022-11-24: Disallow clicking objects through menu
         k12menu: function() {
-            //pdgui.post("k12menu activated");
+            // ico@vt.edu 2022-12-07: make sure to prioritize scrollbar if
+            // it overlaps the menu
+            if (dragging_scrollbar == 1)
+                return;
+            /*pdgui.post("k12menu activated");
             canvas_events.none();
+
+            document.addEventListener("keydown", events.keydown, false);
+            document.addEventListener("keypress", events.keypress, false);
+            document.addEventListener("keyup", events.keyup, false);*/
             // ico@vt.edu: we don't want updating of the menu here as that
             // will unnecessarily bog down the CPU. instead, we handle these
             // during specific events.
@@ -1407,16 +1421,19 @@ var canvas_events = (function() {
                 events.iemgui_label_mouseup, false);
         },
         hscroll_drag: function() {
+            //pdgui.post("hscroll_drag");
             canvas_events.none();
+            dragging_scrollbar = 1;
             document.getElementById("hscroll").style.cssText += "background-color: rgba(0, 0, 0, 0.5) !important";
-            document.getElementById("patchsvg").style.cursor = "-webkit-grabbing";
+            document.getElementById("scroll_overlay").style.visibility = "visible";
             document.addEventListener("mouseup", events.hscroll_mouseup, false);
             document.addEventListener("mousemove", events.hscroll_mousemove, false);
         },
         vscroll_drag: function() {
             canvas_events.none();
+            dragging_scrollbar = 1;
             document.getElementById("vscroll").style.cssText += "background-color: rgba(0, 0, 0, 0.5) !important";
-            document.getElementById("patchsvg").style.cursor = "-webkit-grabbing";
+            document.getElementById("scroll_overlay").style.visibility = "visible";
             document.addEventListener("mouseup", events.vscroll_mouseup, false);
             document.addEventListener("mousemove", events.vscroll_mousemove, false);
         },
@@ -1797,6 +1814,15 @@ var canvas_events = (function() {
             );
 
             // disable drag and drop for the time being
+            // ico@vt.edu 2022-12-07: added dragstart and drop to the mix
+            // which appears to solve occasional hscroll and vscroll drag
+            // and results in multidimensional scroll... nw.js 0.67.1
+            window.addEventListener("dragstart", function (evt) {
+                evt.preventDefault();
+            }, false);
+            window.addEventListener("drop", function (evt) {
+                evt.preventDefault();
+            }, false);
             window.addEventListener("dragover", function (evt) {
                 evt.preventDefault();
             }, false);
@@ -1837,7 +1863,7 @@ var canvas_events = (function() {
                 update_k12_menu();
             });
             gui.Window.get().on("resize", function() {
-                pdgui.post("window resize");
+                //pdgui.post("window resize");
                 //pdgui.gui_canvas_get_scroll(name);
                 pdgui.gui_canvas_get_scroll_on_resize(name);
                 // hlkwok@vt.edu 2022-11-8: update k12 menu when
@@ -2241,9 +2267,9 @@ function nw_create_patch_window_menus(gui, name) {
     // the console menu disables them. (Same for Edit and Put menu)
     minit(m.file.new_file, { click: pdgui.menu_new });
     minit(m.file.open, {
-        click: function() {
+        click: function(w) {
             var input, chooser,
-                span = w.document.querySelector("#fileDialogSpan");
+                span = document.querySelector("#fileDialogSpan");
             // Complicated workaround-- see comment in build_file_dialog_string
             input = pdgui.build_file_dialog_string({
                 style: "display: none;",
@@ -2255,7 +2281,7 @@ function nw_create_patch_window_menus(gui, name) {
                 accept: ".pd,.pat,.mxt,.mxb,.help"
             });
             span.innerHTML = input;
-            chooser = w.document.querySelector("#fileDialog");
+            chooser = document.querySelector("#fileDialog");
             // Hack-- we have to set the event listener here because we
             // changed out the innerHTML above
             chooser.onchange = function() {
@@ -2556,8 +2582,8 @@ function nw_create_patch_window_menus(gui, name) {
     if (pdgui.get_k12_mode() == 0) {
         minit(m.edit.find, {
             click: function () {
-                var find_bar = w.document.getElementById("canvas_find"),
-                    find_bar_text = w.document.getElementById("canvas_find_text"),
+                var find_bar = document.getElementById("canvas_find"),
+                    find_bar_text = document.getElementById("canvas_find_text"),
                     state = find_bar.style.getPropertyValue("display");
                 // if there's a box being edited, try to instantiate it in Pd
                 instantiate_live_box();
@@ -3069,25 +3095,11 @@ function update_menu_items(cid) {
 // hlkwok@vt.edu 2022-10-12: switches between k12_mode and normal mode
 function switch_k12_mode() {
     pdgui.set_k12_mode(Number(m.file.k12_mode.checked));
-    /*
-    pdgui.post("switch_modes k12_mode=" + pdgui.get_k12_mode());
-    //pdgui.post("pdgui.k12_mode is " + pdgui.k12_mode);
-    nw_create_patch_window_menus(gui, canvas_events.get_id());
-    update_k12_menu();
-    create_popup_menu(canvas_events.get_id());
-    */
 }
 
 // hlkwok@vt.edu 2022-10-24: functionality for k12 tabs
 function toggle_tab(tab_id) {
     pdgui.toggle_tab(canvas_events.get_id(), tab_id);
-    /*
-    if (document.getElementById(tab_id).style.display == "none") {
-        document.getElementById(tab_id).style.display = "block";
-    }
-    else {
-        document.getElementById(tab_id).style.display = "none";
-    }*/
 }
 
 // hlkwok@vt.edu 2022-11-1: function for placing K12 objects
@@ -3096,85 +3108,27 @@ function place_K12_object(object) {
     var object_path = "K12/" + object;
     pdgui.pdsend(cid, "dirty 1");
     pdgui.pdsend(cid, "obj_abstraction " + object_path + " 0 0");
-    document.getElementById("building").style.display = "inline-block";
-    document.getElementById("playing").style.display = "none";
 }
 
 // hlkwok@vt.edu 2022-11-3: toggles edit mode in both edit menu and k12 menu
 function toggle_edit() {
     update_live_box();
     pdgui.toggle_edit(canvas_events.get_id());
-    /*
-    var cid = canvas_events.get_id();
-    pdgui.pdsend(cid, "editmode 0");
-    // Update button in k12 menu
-    var edit_button = document.getElementById("building");
-    var perform_button = document.getElementById("playing");
-    if (edit_button.style.display == "none") {
-        edit_button.style.display = "inline-block";
-        perform_button.style.display = "none";
-    }
-    else {
-        edit_button.style.display = "none";
-        perform_button.style.display = "inline-block";
-    }
-    */
 }
 
 // hlkwok@vt.edu 2022-11-8: updates k12 menu height, which will adjust
 // k12 menu scrollbar
 function update_k12_menu() {
     pdgui.update_k12_menu(canvas_events.get_id());
-    /*
-    pdgui.post("update_k12_menu");
-    var k12_menu = document.getElementById("k12_menu");
-    var tab_menu = document.getElementById("tab_menu");
-    // edit div
-    var edit_div = document.getElementById("edit_div");
-    var edit_height = document.getElementById("edit_div").offsetHeight;
-    // toggle k12 visibility button
-    var k12_toggle = document.getElementById("k12_toggle");
-    var toggle_height = document.getElementById("show_k12_menu").offsetHeight / 2;
-    // space from bottom
-    var space = 15;
-    // heights for k12 menu and tab menu
-    var k12_height = window.innerHeight - space + 15;
-    var tab_height = window.innerHeight - edit_div.offsetHeight - space;
-    // set heights
-    k12_menu.style.setProperty("height", k12_height + "px");
-    tab_menu.style.setProperty("height", tab_height + "px");
-    k12_toggle.style.setProperty("top", (window.innerHeight / 2 - edit_height - toggle_height) + "px");
-    */
 }
 
 // hlkwok@vt.edu 2022-11-13: toggles k12 menu position (for side arrow button)
-function toggle_k12_menu() {
-    pdgui.toggle_k12_menu(canvas_events.get_id());
-    /*
-    var k12_menu = document.getElementById("k12_menu");
-    if (k12_menu.style.left == "-170px") {
-        k12_menu.style.left = "0px";
-        document.getElementById("show_k12_menu").style.transform = "rotate(0)";
-    }
-    else {
-        k12_menu.style.left = "-170px";
-        document.getElementById("show_k12_menu").style.transform = "rotate(-180deg)";
-    }
-    */
+function toggle_k12_menu_and_set_editmode(evt) {
+    pdgui.pdsend(canvas_events.get_id(), "editmode 0");
 }
 
 // hlkwok@vt.edu 2022-11-15: toggles k12 menu visibility (for k12 menu option
 // in the put menu
 function toggle_k12_menu_visibility() {
     pdgui.toggle_k12_menu_visibility(canvas_events.get_id());
-    /*
-    var k12_menu = document.getElementById("k12_menu");
-    if (k12_menu.style.display == "none") {
-        k12_menu.style.display = "block";
-    }
-    else {
-        k12_menu.style.display = "none";
-    }
-    update_k12_menu();
-    */
 }

@@ -102,9 +102,10 @@
       </div>
     </dialog>
     <!-- hlkwok@vt.edu: k12 menu -->
-    <div id="k12_menu" class="unselectable" style="position: fixed; left: -170px; top: 0px; height: 100%; width: 170px; background-color:rgba(220, 220, 220, 0.95); display: none; transition: left 0.7s" onmouseover="canvas_events.k12menu()" onmouseout="canvas_events.k12menu_out()">
-        <div style="width: 190px"> <!-- Container div -->
+    <div id="k12_menu" class="unselectable" style="position: fixed; left: -155px; top: 0px; height: 100%; width: 155px; background-color:rgba(220, 220, 220, 0.95); display: none; transition: left 0.7s" onmouseover="canvas_events.k12menu()" onmouseout="canvas_events.k12menu_out()">
+        <div style="width: 155px"> <!-- Container div -->
             <!-- Top part of k12 menu (Edit div) -->
+            <!--
             <div id="edit_div" style="height: 62px; width: 170px">
                 <div style="position: relative; text-align: center; margin: 5px; padding: 0px;">
                     <button id="building" style="display: block; width: 160px; padding: 0px;" onclick="toggle_edit()">
@@ -115,9 +116,9 @@
                     </button>
                     <hr style="height: 1px; width: 155px; position: relative; top: 0px; left: -2px; border: 0; background: #333; background-image: linear-gradient(to right, #ccc, #333, #ccc);">
                 </div>
-            </div> <!-- end Edit div -->
+            </div> --><!-- end Edit div -->
             <!-- k12 menu tabs -->
-            <div id="tab_menu" style="position: relative; display: block; padding: 0px; margin-left: 1px; padding-top: 10px; float: left; height: 80%; width: 169px; overflow-y: scroll; overflow-x: hidden">
+            <div id="tab_menu" style="position: relative; display: block; padding: 0px; margin-left: 1px; padding-top: 6px; float: left; height: 100%; width: 154px; overflow-y: scroll; overflow-x: hidden">
                 <!-- RPI tab -->
                 <div class="k12_tab" style="background-color:rgba(204, 0, 0, 0.3)">  
                     <button id="rpi_button" class="k12_tab_button" onclick="toggle_tab('rpi_div')">
@@ -402,11 +403,13 @@
                     </div>
                 </div> <!-- end FX tab -->
                 <div class="custom_break"></div>
+                <div class="custom_break"></div>
             </div>
-            <div id="k12_toggle" style="display: block; position: relative; float: left; left: 0px; top: 0px; width: 20px; margin-left: 0px;">
+            <div id="k12_toggle" style="display: block; position: relative; float: left; left: 155px; top: 0px; width: 20px; margin-left: 0px;">
                 <div class="trapezoid" onmouseover="canvas_events.k12menu()" onmouseout="canvas_events.normal()">
-                    <button id="show_k12_menu" style="background-color: inherit; border: none; position: relative; left: -20px; top: -5px; padding: 0px; width: 18px; height: 60px; transition: 0.7s; transform: rotate(-180deg);" onclick="toggle_k12_menu()">
-                    <strong>◄</strong>
+                    <button id="show_k12_menu" style="background-color: inherit; border: none; position: relative; left: -20px; top: -5px; padding: 0px; width: 18px; height: 60px; transition: 0.7s;" onclick="toggle_k12_menu_and_set_editmode(event)">
+                    <!--<strong>◄</strong>-->
+                    <img id="k12_toggle_icon" src="K12-icons/lock-runtime.png" width="10px;" style="opacity: 0.5; margin-left: 1px;"></img>
                     </button>
                 </div>
             </div>
@@ -416,6 +419,7 @@
     <div style="position: fixed; right: 2%; top: 2%; ">
       <strong id="canvas_warning" style="display: none; text-align: right; -webkit-user-select: none; cursor: pointer;">!</strong>
     </div>
+    <div id="scroll_overlay" style="position: fixed; left: 0px; top: 0px; background-color: rgba(255, 100, 100, 0.); width: 100%; height: 100%; visibility: hidden; cursor: -webkit-grabbing;"></div>
 	<div id="hscroll" style="position: fixed; left: 0px; bottom: 0px; border-radius: 0px; width: 10px; height: 5px; visibility: hidden;"></div>
 	<div id="vscroll" style="position: fixed; right: 0px; top: 0px; border-radius: 0px; width: 5px; height: 10px; visibility: hidden;"></div>
     <input id="k12_mode" type="text" value="" style="display: none;" onchange="update_menu()"/>

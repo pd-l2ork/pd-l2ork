@@ -2997,7 +2997,18 @@ void canvas_vis(t_canvas *x, t_floatarg f)
                We may need to expand this to include scalars, as well. */
             canvas_create_editor(x);
             canvas_args_to_string(argsbuf, x);
-            gui_vmess("gui_canvas_new", "xiisiiiissiiiiis",
+            /* ico@vt.edu 2022-12-07: added check for whether the canvas is
+               blank, which we use to resize window as needed for the k12 mode
+            */
+            int isblank = 0;
+            //post("k12=%d glist?=%d glist_g_next=%d",
+            //    sys_k12_mode, (x->gl_list ? 1 : 0),
+            //(x->gl_list && x->gl_list->g_next ? 1 : 0));
+            if (!sys_k12_mode && !x->gl_list)
+                isblank = 1;
+            if (sys_k12_mode && x->gl_list && !x->gl_list->g_next)
+                isblank = 1;
+            gui_vmess("gui_canvas_new", "xiisiiiissiiiiiis",
                 x,
                 (int)(x->gl_screenx2 - x->gl_screenx1),
                 (int)(x->gl_screeny2 - x->gl_screeny1),
@@ -3016,6 +3027,7 @@ void canvas_vis(t_canvas *x, t_floatarg f)
                 x->gl_nomenu,
                 canvas_hasarray(x) + canvas_hastoplevelscalar(x) +
                     (x->gl_obj.ob_pd == array_define_class ? 1 : 0),
+                isblank, // is this a blank canvas?
                 argsbuf);
 
             /* It looks like this font size call is no longer needed,

@@ -445,7 +445,7 @@ function new_array_init() {
     var name, value, elem, array_attr = pd_garray_attrs[0];
     for (name in array_attr) {
         if (array_attr.hasOwnProperty(name)) {
-            pdgui.post("...");
+            //pdgui.post("...");
             value = array_attr[name];
             switch (name) {
                 case "array_fill":
@@ -465,7 +465,7 @@ function new_array_init() {
             }
         }
     }
-    pdgui.post("done");
+    //pdgui.post("done");
 }
 
 function array_choose(array_index) {

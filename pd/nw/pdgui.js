@@ -2457,10 +2457,11 @@ exports.canvas_set_editmode = canvas_set_editmode;
 function gui_canvas_set_editmode(cid, state) {
     canvas_set_editmode(cid, state);
     //post("gui_canvas_set_editmode " + state);
-    if (k12_mode === 1) {
-        var k12_menu = patchwin[cid].window.document.
-            getElementById("k12_menu");
-        if (k12_menu.style.left == "-170px") {
+    var k12_menu = patchwin[cid].window.document.
+        getElementById("k12_menu");
+    if (k12_menu) {
+        if (k12_menu.style.left == "-155px" && state ||
+            k12_menu.style.left == "0px" && !state ) {
             toggle_k12_menu(cid);
         }
     }
@@ -2968,7 +2969,7 @@ function create_window(cid, type, width, height, xpos, ypos, attr_array) {
 // cargs need to be last since they are variable in size
 function gui_canvas_new(cid, width, height, geometry, grid, grid_size_value,
     zoom, editmode, name, dir, dirty_flag, warid, hide_scroll, hide_menu,
-    has_toplevel_scalars, cargs) {
+    has_toplevel_scalars, isblank, cargs) {
     //post("gui_canvas_new geometry=" + geometry + " w=" + width + " h=" + height);
     //post("gui_canvas_new cid=" + cid + " has_top_level_scalars=" + has_toplevel_scalars);
     // hack for buggy tcl popups... should go away for node-webkit
@@ -3020,6 +3021,7 @@ function gui_canvas_new(cid, width, height, geometry, grid, grid_size_value,
     // if this is necessary for future versions of nw.js and adjust
     // accordingly. Once we implement saving the Pd-L2Ork console location
     // we will want to do this for both xpos and ypos on all OSs.
+    // TODO!: do we still need this?
     if (nw_os_is_osx && xpos === 0 && ypos === 22) {
         ypos = window.screen.height/2 - height/2;
     }
@@ -3036,8 +3038,8 @@ function gui_canvas_new(cid, width, height, geometry, grid, grid_size_value,
     // the time being...
     // ico@vt.edu 2020-08-24: this is because in 1.x we can change these window
     // properties via scripting. We should add this to 2.x soon...
-    create_window(cid, "pd_canvas", width, height,
-        xpos, ypos, {
+    create_window(cid, "pd_canvas", width + (170 * k12_mode * isblank),
+        height + (100 * k12_mode * isblank), xpos, ypos, {
             menu_flag: menu_flag,
             resize: resize[cid],
             topmost: topmost[cid],
@@ -3700,7 +3702,7 @@ function gui_graph_gopspill(cid, tag, state) {
         // toplevel and gopborder classes (in that order), as toplevel
         // distinguishes it from gopborders of potential GOP objects
         // inside this GOP object.
-        var border = graph_gobj.querySelector(".toplevel.gopborder");
+        var border = graph_gobj.querySelector(".gopborder");
         /*
         post("graph_gobj=" + graph_gobj + " border=" + border +
              " prev=" + border.previousElementSibling +
@@ -9359,7 +9361,6 @@ function canvas_params(nw_win)
             gop_svgs[i].style.display = "none";
         }
     }
-
     // ...now get bbox...
     bbox = svg_elem.getBBox();
     // ... now make it back visible
@@ -10187,14 +10188,6 @@ function gui_highlight_obj_on_return_reset(cid, tag, type) {
 
 exports.gui_highlight_obj_on_return = gui_highlight_obj_on_return;
 
-
-
-
-
-
-
-
-
 // K12 Stuff
 
 // ico@vt.edu 2022-12-05: this is the only way I was able
@@ -10287,6 +10280,7 @@ exports.toggle_tab = toggle_tab;
 function toggle_edit(cid) {
     pdsend(cid, "editmode 0");
     // Update button in k12 menu
+    /*
     var edit_button = patchwin[cid].window.document.getElementById("building");
     var perform_button = patchwin[cid].window.document.getElementById("playing");
     if (edit_button.style.display == "none") {
@@ -10297,6 +10291,7 @@ function toggle_edit(cid) {
         edit_button.style.display = "none";
         perform_button.style.display = "inline-block";
     }
+    */
 }
 
 exports.toggle_edit = toggle_edit;
@@ -10308,39 +10303,48 @@ function update_k12_menu(cid) {
     var k12_menu = patchwin[cid].window.document.getElementById("k12_menu");
     var tab_menu = patchwin[cid].window.document.getElementById("tab_menu");
     // edit div
-    var edit_div = patchwin[cid].window.document.getElementById("edit_div");
-    var edit_height = patchwin[cid].window.document.
-        getElementById("edit_div").offsetHeight;
+    //var edit_div = patchwin[cid].window.document.getElementById("edit_div");
+    //var edit_height = patchwin[cid].window.document.
+    //    getElementById("edit_div").offsetHeight;
     // toggle k12 visibility button
     var k12_toggle = patchwin[cid].window.document.getElementById("k12_toggle");
     var toggle_height = patchwin[cid].window.document.
-        getElementById("show_k12_menu").offsetHeight / 2;
-    // space from bottom
-    var space = 15;
+        getElementById("show_k12_menu").offsetHeight * 2 / 3;
     // heights for k12 menu and tab menu
-    var k12_height = patchwin[cid].window.innerHeight - space + 15;
-    var tab_height = patchwin[cid].window.innerHeight - edit_div.offsetHeight - space;
+    var k12_height = patchwin[cid].window.innerHeight;
+    var tab_height = patchwin[cid].window.innerHeight /*- edit_div.offsetHeight - space*/;
     // set heights
     k12_menu.style.setProperty("height", k12_height + "px");
     tab_menu.style.setProperty("height", tab_height + "px");
+    //post("ih=" + patchwin[cid].window.innerHeight + " th=" + toggle_height);
     k12_toggle.style.setProperty("top", (
-        patchwin[cid].window.innerHeight / 2 - edit_height - toggle_height) + "px");
+        -patchwin[cid].window.innerHeight / 2 /*- edit_height*/ - toggle_height) + "px");
 }
 
 exports.update_k12_menu = update_k12_menu;
 
+var lock_editmode = new Image();
+lock_editmode.src = "K12-icons/lock-editmode.png";
+
+var lock_runtime = new Image();
+lock_runtime.src = "K12-icons/lock-runtime.png";
+
 // hlkwok@vt.edu 2022-11-13: toggles k12 menu position (for side arrow button)
 function toggle_k12_menu(cid) {
     var k12_menu = patchwin[cid].window.document.getElementById("k12_menu");
-    if (k12_menu.style.left == "-170px") {
+    if (k12_menu.style.left == "-155px") {
         k12_menu.style.left = "0px";
         patchwin[cid].window.document.
-            getElementById("show_k12_menu").style.transform = "rotate(0)";
+            getElementById("k12_toggle_icon").src= lock_editmode.src;
+        //patchwin[cid].window.document.
+        //    getElementById("show_k12_menu").style.transform = "rotate(0)";
     }
     else {
-        k12_menu.style.left = "-170px";
+        k12_menu.style.left = "-155px";
         patchwin[cid].window.document.
-            getElementById("show_k12_menu").style.transform = "rotate(-180deg)";
+            getElementById("k12_toggle_icon").src= lock_runtime.src;
+        //patchwin[cid].window.document.
+        //    getElementById("show_k12_menu").style.transform = "rotate(-180deg)";
     }
 }
 
