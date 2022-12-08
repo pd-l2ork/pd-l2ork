@@ -8247,7 +8247,7 @@ function gui_dropdown_activate(cid, obj_tag, tag, current_index,
             // set a max-height to force scrollbar if needed
             select_elem.style.setProperty("max-height", div_max + "px");
             select_elem.style.setProperty("left",
-                g_bbox.left + "px");
+                (g_bbox.left + w.scrollX) + "px");
             // Remove "top" and "bottom" props to keep state clean
             select_elem.style.removeProperty("top");
             select_elem.style.removeProperty("bottom");
