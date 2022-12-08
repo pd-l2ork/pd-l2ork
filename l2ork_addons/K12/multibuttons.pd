@@ -1,20 +1,20 @@
-#N canvas 146 243 606 489 10;
+#N canvas 146 279 606 489 10;
 #X obj 114 216 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#000000 #000000;
+#000000 #000000 1;
 #X obj 126 230 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#000000 #000000;
-#X obj 114 246 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#000000 #000000;
+#000000 #000000 1;
+#X obj 113 244 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000 1;
 #X obj 101 231 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#000000 #000000;
+#000000 #000000 1;
 #X obj 110 272 bng 21 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#000000 #000000;
+#000000 #000000 1;
 #X obj 141 273 bng 19 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#000000 #000000;
+#000000 #000000 1;
 #X obj 115 305 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#000000 #000000;
+#000000 #000000 1;
 #X obj 115 321 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#000000 #000000;
+#000000 #000000 1;
 #X msg 10 386 1;
 #X msg 68 386 3;
 #X msg 98 386 4;
@@ -23,36 +23,36 @@
 #X msg 190 386 7;
 #X msg 39 386 2;
 #X msg 220 386 8;
-#X obj 110 245 ggee/image @pd_extra/K12/objects/wii_button_inactive.png
+#X obj 109 243 ggee/image @pd_extra/K12/objects/wii_button_inactive.png
 1 0 25 25 empty empty empty 110 217 1 0 10 #000000 0 -8 55 109 0 1
 1;
 #X obj 272 442 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
-#fcfcfc #000000 #000000 6 256 0 0;
+#fcfcfc #000000 #000000 0 256 0 0 1 0;
 #X obj 272 462 outlet;
 #X obj 272 418 preset_node k12;
 #X obj 178 27 select 1 2 3 4 5 6 7 8;
-#X obj 110 245 ggee/image @pd_extra/K12/objects/wii_button_a.png 1
+#X obj 109 243 ggee/image @pd_extra/K12/objects/wii_button_a.png 1
 0 25 25 empty empty empty 110 217 1 0 10 #000000 0 -8 55 109 0 0 1
 ;
-#X obj 110 245 ggee/image @pd_extra/K12/objects/wii_button_b.png 1
+#X obj 109 243 ggee/image @pd_extra/K12/objects/wii_button_b.png 1
 0 25 25 empty empty empty 110 217 1 0 10 #000000 0 -8 55 109 0 0 1
 ;
-#X obj 110 245 ggee/image @pd_extra/K12/objects/wii_button_up.png 1
+#X obj 109 243 ggee/image @pd_extra/K12/objects/wii_button_up.png 1
 0 25 25 empty empty empty 110 217 1 0 10 #000000 0 -8 55 109 0 0 1
 ;
-#X obj 110 245 ggee/image @pd_extra/K12/objects/wii_button_down.png
+#X obj 109 243 ggee/image @pd_extra/K12/objects/wii_button_down.png
 1 0 25 25 empty empty empty 110 217 1 0 10 #000000 0 -8 55 109 0 0
 1;
-#X obj 110 245 ggee/image @pd_extra/K12/objects/wii_button_right.png
+#X obj 109 243 ggee/image @pd_extra/K12/objects/wii_button_right.png
 1 0 25 25 empty empty empty 110 217 1 0 10 #000000 0 -8 55 109 0 0
 1;
-#X obj 110 245 ggee/image @pd_extra/K12/objects/wii_button_left.png
+#X obj 109 243 ggee/image @pd_extra/K12/objects/wii_button_left.png
 1 0 25 25 empty empty empty 110 217 1 0 10 #000000 0 -8 55 109 0 0
 1;
-#X obj 110 245 ggee/image @pd_extra/K12/objects/wii_button_1.png 1
+#X obj 109 243 ggee/image @pd_extra/K12/objects/wii_button_1.png 1
 0 25 25 empty empty empty 110 217 1 0 10 #000000 0 -8 55 109 0 0 1
 ;
-#X obj 110 245 ggee/image @pd_extra/K12/objects/wii_button_2.png 1
+#X obj 109 243 ggee/image @pd_extra/K12/objects/wii_button_2.png 1
 0 25 25 empty empty empty 110 217 1 0 10 #000000 0 -8 55 109 0 0 1
 ;
 #X msg 42 117 visible \$1;
@@ -180,4 +180,5 @@
 #X connect 45 1 31 0;
 #X connect 45 1 30 0;
 #X connect 45 1 29 0;
-#X coords 0 -1 1 1 89 180 2 77 180;
+#X coords 0 -1 1 1 89 177 2 77 180;
+#X gopspill 1;
