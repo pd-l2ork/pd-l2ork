@@ -2056,9 +2056,36 @@ function gui_window_close(cid) {
     editable[cid] = null;
 }
 
-function menu_k12_open_demos () {
-    post("menu_k12_open_demos " + defunkify_windows_path(lib_dir + "/extra/K12/demos"));
-    menu_open(defunkify_windows_path(lib_dir + "/extra/K12/demos"));
+function menu_k12_open_demos(cid) {
+    //post("menu_k12_open_demos " +
+    //    defunkify_windows_path(lib_dir + "/extra/K12/demos"));
+    gui(cid).get_nw_window(function(nw_win) {
+        //post("...found window");
+        var input, chooser,
+        span = nw_win.window.document.querySelector("#fileDialogSpan");
+        // Complicated workaround-- see comment in build_file_dialog_string
+        input = build_file_dialog_string({
+            style: "display: none;",
+            type: "file",
+            id: "fileDialog",
+            nwworkingdir: defunkify_windows_path(lib_dir + "/extra/K12/demos"),
+            multiple: null,
+            // These are copied from pd_filetypes in pdgui.js
+            accept: ".pd,.pat,.mxt,.mxb,.help"
+        });
+        span.innerHTML = input;
+        chooser = nw_win.window.document.querySelector("#fileDialog");
+        // Hack-- we have to set the event listener here because we
+        // changed out the innerHTML above
+        chooser.onchange = function() {
+            var file_array = this.value;
+            // reset value so that we can open the same file twice
+            this.value = null;
+            menu_open(file_array);
+            //console.log("tried to open the k12 demos folder");
+        };
+        chooser.click();
+    });
 }
 
 exports.menu_k12_open_demos = menu_k12_open_demos;

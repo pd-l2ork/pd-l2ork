@@ -67,7 +67,6 @@ var canvas_events = (function() {
         last_completed = -1, // last Tab completion (autocomplete)
         last_offset = -1, // offset of last Tab completion (autocomplete)
         last_yanked = "", // last yanked completion (to confirm deletion)
-        dragging_scrollbar = 0,
         textbox = function () {
             return document.getElementById("new_object_textentry");
         },
@@ -1052,7 +1051,10 @@ var canvas_events = (function() {
                 document.getElementById("hscroll").style.setProperty("background-color", "rgba(0, 0, 0, 0.267)");
                 document.getElementById("scroll_overlay").style.visibility = "hidden";
                 canvas_events[canvas_events.get_previous_state()]();
-                dragging_scrollbar = 0;
+                // hack-ish restoring of the cursor, since we don't know
+                // what we're over until the mouse moves again, we select
+                // default cursor, just to let the user know the drag is over
+                document.body.style.cursor = "default";
             },
             hscroll_mousemove: function(evt) {
                 //pdgui.post("hscroll_mousemove");
@@ -1085,7 +1087,10 @@ var canvas_events = (function() {
                 document.getElementById("vscroll").style.setProperty("background-color", "rgba(0, 0, 0, 0.267)");
                 document.getElementById("scroll_overlay").style.visibility = "hidden";
                 canvas_events[canvas_events.get_previous_state()]();
-                dragging_scrollbar = 0;
+                // hack-ish restoring of the cursor, since we don't know
+                // what we're over until the mouse moves again, we select
+                // default cursor, just to let the user know the drag is over
+                document.body.style.cursor = "default";
             },
             vscroll_mousemove: function(evt) {
                 if (evt.movementY != 0) {
@@ -1367,30 +1372,27 @@ var canvas_events = (function() {
         },
         // hlkwok@vt.edu: 2022-11-24: Disallow clicking objects through menu
         k12menu: function() {
-            // ico@vt.edu 2022-12-07: make sure to prioritize scrollbar if
-            // it overlaps the menu
-            if (dragging_scrollbar == 1)
-                return;
-            /*pdgui.post("k12menu activated");
+            // ico@vt.edu 2022-12-08: have to approach this in a hybrid fashion
+            // we disable all events, then enable select ones, and then make
+            // our state "normal". otherwise events from the normal: state
+            // will not work.
             canvas_events.none();
-
             document.addEventListener("keydown", events.keydown, false);
             document.addEventListener("keypress", events.keypress, false);
-            document.addEventListener("keyup", events.keyup, false);*/
-            // ico@vt.edu: we don't want updating of the menu here as that
-            // will unnecessarily bog down the CPU. instead, we handle these
-            // during specific events.
-            //update_k12_menu();
-            //document.body.style.overflow = 'hidden';
-            //evt.stopPropagation();
-            //evt.preventDefault();
+            document.addEventListener("keyup", events.keyup, false);
+            state = "normal";
+            // ico@vt.edu 2022-12-08: we do this to prevent scroll from
+            // "leaking" onto the patchsvg below the k12 menu
+            document.body.style.overflow = 'hidden';
+            //pdgui.post("k12menu activated");
         },
         k12menu_out: function() {
             //pdgui.post("k12menu_out activated");
             //document.body.style.overflow = 'visible';
+            // ico@vt.edu 2022-12-08: we do this to reenable patchsvg
+            // scrolling
+            document.body.style.overflow = 'visible';
             canvas_events.normal();
-            //evt.stopPropagation();
-            //evt.preventDefault();
         },
         scalar_drag: function() {
             // This scalar_drag is a prototype for moving more of the editing
@@ -1423,7 +1425,6 @@ var canvas_events = (function() {
         hscroll_drag: function() {
             //pdgui.post("hscroll_drag");
             canvas_events.none();
-            dragging_scrollbar = 1;
             document.getElementById("hscroll").style.cssText += "background-color: rgba(0, 0, 0, 0.5) !important";
             document.getElementById("scroll_overlay").style.visibility = "visible";
             document.addEventListener("mouseup", events.hscroll_mouseup, false);
@@ -1431,7 +1432,6 @@ var canvas_events = (function() {
         },
         vscroll_drag: function() {
             canvas_events.none();
-            dragging_scrollbar = 1;
             document.getElementById("vscroll").style.cssText += "background-color: rgba(0, 0, 0, 0.5) !important";
             document.getElementById("scroll_overlay").style.visibility = "visible";
             document.addEventListener("mouseup", events.vscroll_mouseup, false);
@@ -1753,7 +1753,6 @@ var canvas_events = (function() {
 
             // MouseWheel event for zooming
             document.addEventListener("wheel", function(evt) {
-            
                 var d = { deltaX: 0, deltaY: 0, deltaZ: 0 };
                 Object.keys(d).forEach(function(key) {
                     if (evt[key] < 0) {
@@ -2294,8 +2293,12 @@ function nw_create_patch_window_menus(gui, name) {
             chooser.click();
         }
     });
-    if (pdgui.k12_mode == 1) {
-        minit(m.file.k12_demos, { click: pdgui.menu_k12_open_demos });
+    if (pdgui.get_k12_mode() == 1) {
+        minit(m.file.k12_demos, {
+            click: function() {
+                pdgui.menu_k12_open_demos(name);
+            }
+        });
     }
     minit(m.file.save, {
         enabled: true,

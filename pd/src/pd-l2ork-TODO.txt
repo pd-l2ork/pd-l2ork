@@ -5,14 +5,15 @@ PD-L2ORK TODO:
 
 *Merge K12 menu patch and clean-up.
 
-  *Implement K12 demos menu option.
-
-  *Implement saveas on creating new patch.
+  *Implement saveas on creating new K12 patch.
 
   *Check the logic between show k12 menu and K12 mode.
 
   *Implement changing of the main Pd-L2Ork window menu. IN PROGRESS
     *Instead of renaming the K12 item, just have a checkbox next to it OK
+    *Make sure the K12 Demos and K12 mode elements work.
+    *Automate addition and removal of the K12 Demos and toggling of the K12 mode and make sure that the newly created elements work.
+      *Consider keeping K12 demos in there at all times?
 
   *Integrate toggle_edit, gui_canvas_set_editmode, and canvas_set_editmode?
 
@@ -449,7 +450,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Added 60-hz theme and added ability to customize SVG and editmode background color (large and small tiles separately) and default array colors via CSS variables. Enabled assigning of custom text color to objects, and broken objects. All of these are used by the new 60-hz theme. Also included default SVG colors inside default.css.
 *Changed default OK keyboard shortcuts in dialogs to ctrl/cmd+enter/return, as leaving it as only enter, can crash nwjs if the user's focus was on a dropdown (a.k.a. select) object, which triggers request to render a dropdown at the same time that the window is being closed.
 *Fixed bug where dropdown popup was off to the left when the screen has been scrolled to the right.
-*Merge K12 menu patch and clean-up.
+*Merge K12 menu patch and clean-up (WIP)
   *Check if patch opens ok when creating new menu with K12 mode enabled. OK
     *There is no K12 menu option in the main pd console window.
   *Fix the hide button. OK
@@ -487,6 +488,10 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
   *Zoom should work even when invoked over the menu. OK
   *Keyboard shortcuts should work on top of the menu, as well. OK
 *Fixed issue where relocating border (rect) of a GOP object when vis-ed due to gop_spill option, if the same object has other embedded GOP-enabled objects also with gop_spill option (e.g. K12/wii_buttons.pd and K12/logic_sequencer.pd), this would result in an error due to previous implementation selecting child GOP border, rather than that of its own.
+*Merge K12 menu patch and clean-up (WIP)
+  *Implement K12 demos menu option. OK
+  *Make end of the hscroll/vscroll drag reflect new mouse cursor. OK
+  *Separate scrolling of the k12 menu from the patch. OK
 
 
 
