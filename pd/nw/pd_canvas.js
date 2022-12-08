@@ -1922,6 +1922,7 @@ function translate_form() {
 // It provides us with our canvas id from the C side. Once we have it
 // we can create the menu and register event callbacks
 function register_window_id(cid, attr_array) {
+    //pdgui.post("register_window_id isblank=" + attr_array.isblank);
     var kludge_title;
     // We create the window menus and popup menu before doing anything else
     // to ensure that we don't try to set the svg size before these are done.
@@ -1970,7 +1971,7 @@ function register_window_id(cid, attr_array) {
         nw.Window.get().title = kludge_title;
     }
     pdgui.free_title_queue(cid);
-    document.body.addEventListener("load", update_menu_items(cid), false);
+    document.body.addEventListener("load", update_menu_items(cid, attr_array.isblank), false);
 }
 
 function create_popup_menu(name) {
@@ -3087,18 +3088,17 @@ function init_menu_font_size(size) {
 // ico@vt.edu 2022-11-30: we expand this now to also deal with the
 // editable option. Shortened delay to 0 which seems to work fine with
 // nwjs 0.67.1.
-function update_menu_items(cid) {
+function update_menu_items(cid, isblank) {
     //pdgui.post("update_menu_items...");
     setTimeout(function() {
         pdgui.pdsend(cid, "updatemenu");
         update_k12_menu();
-        if (pdgui.get_k12_saveas_on_new() == 1)
+        if (pdgui.get_k12_mode() == 1 && isblank)
         {
             pdgui.canvas_check_geometry(cid);
             setTimeout(function() {
                 pdgui.menu_saveas(cid);
             }, 750);
-            pdgui.set_k12_saveas_on_new(0);
         }
     }, 0);
 }

@@ -1297,7 +1297,6 @@ var pd_myversion,    // Pd version string
     global_clipboard, //
     global_selection, //
     k12_mode = 0,          // should be set from argv ("0" is just a stopgap)
-    k12_saveas_on_new = 0, // disabled by default unless we encounter a new patch
     autotips,          // tooltips
     magicglass,        // cord inspector
     window_prefs,      //retaining window-specific preferences
@@ -1318,7 +1317,6 @@ var pd_myversion,    // Pd version string
                          ".help":"Max Help Files"
                        };
 
-    exports.k12_saveas_on_new = k12_saveas_on_new;
     exports.pd_filetypes = pd_filetypes;
 
     popup_coords = [0,0];
@@ -2020,10 +2018,6 @@ function menu_new () {
     pdsend("pd filename",
            "Untitled-" + untitled_number,
            enquote(defunkify_windows_path(untitled_directory)));
-
-    if (k12_mode == 1) {
-        k12_saveas_on_new = 1;
-    }
 
     // ico@vt.edu 2022-12-05: made invisible preset_hub with
     // k12 scope mandatory for all new patches due to the
@@ -2994,6 +2988,7 @@ function create_window(cid, type, width, height, xpos, ypos, attr_array) {
 
 // create a new canvas
 // cargs need to be last since they are variable in size
+// (these are the patch args, if any)
 function gui_canvas_new(cid, width, height, geometry, grid, grid_size_value,
     zoom, editmode, name, dir, dirty_flag, warid, hide_scroll, hide_menu,
     has_toplevel_scalars, isblank, cargs) {
@@ -3065,6 +3060,7 @@ function gui_canvas_new(cid, width, height, geometry, grid, grid_size_value,
     // the time being...
     // ico@vt.edu 2020-08-24: this is because in 1.x we can change these window
     // properties via scripting. We should add this to 2.x soon...
+    //post("gui_canvas_new cargs=" + cargs);
     create_window(cid, "pd_canvas", width + (170 * k12_mode * isblank),
         height + (100 * k12_mode * isblank), xpos, ypos, {
             menu_flag: menu_flag,
@@ -3078,7 +3074,8 @@ function gui_canvas_new(cid, width, height, geometry, grid, grid_size_value,
             args: cargs,
             zoom: zoom,
             editmode: editmode,
-            hide_scroll: hide_scroll
+            hide_scroll: hide_scroll,
+            isblank: isblank
     });
 }
 
@@ -10281,18 +10278,6 @@ function set_k12_mode(val) {
 }
 
 exports.set_k12_mode = set_k12_mode;
-
-function get_k12_saveas_on_new() {
-    return k12_saveas_on_new;
-}
-
-exports.get_k12_saveas_on_new = get_k12_saveas_on_new;
-
-function set_k12_saveas_on_new(value) {
-    k12_saveas_on_new = value;
-}
-
-exports.set_k12_saveas_on_new = set_k12_saveas_on_new;
 
 // hlkwok@vt.edu 2022-10-24: functionality for k12 tabs
 function toggle_tab(cid, tab_id) {

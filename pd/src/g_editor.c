@@ -3004,9 +3004,7 @@ void canvas_vis(t_canvas *x, t_floatarg f)
             //post("k12=%d glist?=%d glist_g_next=%d",
             //    sys_k12_mode, (x->gl_list ? 1 : 0),
             //(x->gl_list && x->gl_list->g_next ? 1 : 0));
-            if (!sys_k12_mode && !x->gl_list)
-                isblank = 1;
-            if (sys_k12_mode && x->gl_list && !x->gl_list->g_next)
+            if (x->gl_list && !x->gl_list->g_next)
                 isblank = 1;
             gui_vmess("gui_canvas_new", "xiisiiiissiiiiiis",
                 x,
