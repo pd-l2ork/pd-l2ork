@@ -15,8 +15,6 @@ PD-L2ORK TODO:
     *Automate addition and removal of the K12 Demos and toggling of the K12 mode and make sure that the newly created elements work.
       *Consider keeping K12 demos in there at all times?
 
-  *Integrate toggle_edit, gui_canvas_set_editmode, and canvas_set_editmode?
-
   *Update installer to include lock icon and K12 menu images in the bin folder.
 
   *Make canvas left side wider once K12 menu is unfolded.
@@ -492,6 +490,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
   *Implement K12 demos menu option. OK
   *Make end of the hscroll/vscroll drag reflect new mouse cursor. OK
   *Separate scrolling of the k12 menu from the patch. OK
+*Simplifying of the toggle_edit, gui_canvas_set_editmode, and canvas_set_editmode across pdgui.js and pd_canvas.js
 
 
 

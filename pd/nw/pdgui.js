@@ -2462,6 +2462,7 @@ function canvas_fake_alt_key_release(cid) {
 exports.canvas_fake_alt_key_release = canvas_fake_alt_key_release;
 
 // requires nw.js API (Menuitem)
+// this is called from nwjs
 function canvas_set_editmode(cid, state) {
     //post("canvas_set_editmode " + cid + " " + state);
     gui(cid).get_elem("patchsvg", function(patchsvg, w) {
@@ -2481,6 +2482,7 @@ function canvas_set_editmode(cid, state) {
 
 exports.canvas_set_editmode = canvas_set_editmode;
 
+// this is called exclusively from c
 function gui_canvas_set_editmode(cid, state) {
     canvas_set_editmode(cid, state);
     //post("gui_canvas_set_editmode " + state);
@@ -10306,26 +10308,6 @@ function toggle_tab(cid, tab_id) {
 }
 
 exports.toggle_tab = toggle_tab;
-
-// hlkwok@vt.edu 2022-11-3: toggles edit mode in both edit menu and k12 menu
-function toggle_edit(cid) {
-    pdsend(cid, "editmode 0");
-    // Update button in k12 menu
-    /*
-    var edit_button = patchwin[cid].window.document.getElementById("building");
-    var perform_button = patchwin[cid].window.document.getElementById("playing");
-    if (edit_button.style.display == "none") {
-        edit_button.style.display = "inline-block";
-        perform_button.style.display = "none";
-    }
-    else {
-        edit_button.style.display = "none";
-        perform_button.style.display = "inline-block";
-    }
-    */
-}
-
-exports.toggle_edit = toggle_edit;
 
 // hlkwok@vt.edu 2022-11-8: updates k12 menu height, which will adjust
 // k12 menu scrollbar
