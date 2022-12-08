@@ -3092,6 +3092,14 @@ function update_menu_items(cid) {
     setTimeout(function() {
         pdgui.pdsend(cid, "updatemenu");
         update_k12_menu();
+        if (pdgui.get_k12_saveas_on_new() == 1)
+        {
+            pdgui.canvas_check_geometry(cid);
+            setTimeout(function() {
+                pdgui.menu_saveas(cid);
+            }, 750);
+            pdgui.set_k12_saveas_on_new(0);
+        }
     }, 0);
 }
 

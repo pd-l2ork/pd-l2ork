@@ -1296,8 +1296,8 @@ var pd_myversion,    // Pd version string
     colors,          //
     global_clipboard, //
     global_selection, //
-    k12_mode = 0,         // should be set from argv ("0" is just a stopgap)
-    k12_saveas_on_new, //
+    k12_mode = 0,          // should be set from argv ("0" is just a stopgap)
+    k12_saveas_on_new = 0, // disabled by default unless we encounter a new patch
     autotips,          // tooltips
     magicglass,        // cord inspector
     window_prefs,      //retaining window-specific preferences
@@ -1318,7 +1318,7 @@ var pd_myversion,    // Pd version string
                          ".help":"Max Help Files"
                        };
 
-    exports.k12_mode = k12_mode;
+    exports.k12_saveas_on_new = k12_saveas_on_new;
     exports.pd_filetypes = pd_filetypes;
 
     popup_coords = [0,0];
@@ -2020,16 +2020,14 @@ function menu_new () {
     pdsend("pd filename",
            "Untitled-" + untitled_number,
            enquote(defunkify_windows_path(untitled_directory)));
-    // ico@vt.edu 2022-12-05: made invisible preset_hub with
-    // k12 scope mandatory for all new patches due to the
-    // ability to now change k12 mode at runtime.
-    //if (k12_mode == 1) {
 
-    //TODO!: still need to implement this
     if (k12_mode == 1) {
         k12_saveas_on_new = 1;
     }
 
+    // ico@vt.edu 2022-12-05: made invisible preset_hub with
+    // k12 scope mandatory for all new patches due to the
+    // ability to now change k12 mode at runtime.
     pdsend("#N canvas");
     pdsend("#X obj -30 -30 preset_hub k12 1 %hidden%");
     pdsend("#X pop 1");
@@ -10249,6 +10247,8 @@ function get_k12_mode() {
 
 exports.get_k12_mode = get_k12_mode;
 
+
+
 // ico@vt.edu 2022-12-05: moving all this from pd_canvas.js to pdgui.js,
 // so that index.js can benefit from it, as well (responsible for the
 // console window).
@@ -10278,23 +10278,21 @@ function set_k12_mode(val) {
         //nw_create_patch_window_menus(nw_gui, Object.keys(patchwin)[i]);
         update_k12_menu(Object.keys(patchwin)[i]);
     }
-    /*
-    if (match !== -1) {
-        next = (((match + offset) % win_array_length) // modulo...
-                + win_array_length) % win_array_length; // handle negatives
-        gui_raise_window(Object.keys(patchwin)[next]);
-    */
-
-    // this needs to be done on all windows, including console,
-    // not just the current one
-    /*
-    nw_create_patch_window_menus(gui, canvas_events.get_id());
-    update_k12_menu();
-    create_popup_menu(canvas_events.get_id());
-    */
 }
 
 exports.set_k12_mode = set_k12_mode;
+
+function get_k12_saveas_on_new() {
+    return k12_saveas_on_new;
+}
+
+exports.get_k12_saveas_on_new = get_k12_saveas_on_new;
+
+function set_k12_saveas_on_new(value) {
+    k12_saveas_on_new = value;
+}
+
+exports.set_k12_saveas_on_new = set_k12_saveas_on_new;
 
 // hlkwok@vt.edu 2022-10-24: functionality for k12 tabs
 function toggle_tab(cid, tab_id) {

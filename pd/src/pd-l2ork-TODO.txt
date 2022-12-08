@@ -5,8 +5,6 @@ PD-L2ORK TODO:
 
 *Merge K12 menu patch and clean-up.
 
-  *Implement saveas on creating new K12 patch.
-
   *Check the logic between show k12 menu and K12 mode.
 
   *Implement changing of the main Pd-L2Ork window menu. IN PROGRESS
@@ -491,6 +489,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
   *Make end of the hscroll/vscroll drag reflect new mouse cursor. OK
   *Separate scrolling of the k12 menu from the patch. OK
 *Simplifying of the toggle_edit, gui_canvas_set_editmode, and canvas_set_editmode across pdgui.js and pd_canvas.js
+*Implemented saveas on creating new K12 patch.
 
 
 
