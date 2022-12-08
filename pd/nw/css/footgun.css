@@ -17,6 +17,8 @@
 
 /* This is just a copy of default.css with cords and xlets hidden. */
 
+@import "common.css";
+
 .cord, .xlet_control, .xlet_signal, .xlet_iemgui {
     display: none;
 }

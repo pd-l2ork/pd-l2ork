@@ -9,13 +9,13 @@
 
 /* hlkwok@vt.edu 2022-10-28: K12 buttons style */
 .k12_tab {
-    width: 155px;
+    width: 140px;
     position: relative;
     left: 5px;
 }
 
 .k12_buttons {
-    width: 155px;
+    width: 140px;
     position: relative;
     left: 5px;
 /* ico@vt.edu animate individual k12 tabs */
@@ -26,21 +26,11 @@
     opacity: 0.65;
 }
 
-.k12_edit {
-    opacity: 1;
-    filter: brightness(100%);
-}
-
-.k12_edit:hover {
-    opacity: 1;
-    filter: brightness(100%);
-}
-
 .k12_tab_button {
     background-color: inherit;
     border: 0px solid;
     padding: 5px;
-    width: 155px;
+    width: 140px;
     text-align: left;
     font-size: 14px;
 }
@@ -52,6 +42,7 @@
     left: -5px;
     top: 2px;
     padding: 0px;
+    width: 24px;
 }
 
 .k12_icon {
@@ -83,11 +74,12 @@
    border-bottom: 5px solid transparent;
    height: 50px;
    width: 0;
+   -webkit-box-shadow: 5px 0px 10px -8px #888;
 }
 
 /* hlkwok@vt.edu 2022-11-16: K12 tab spacing */
 .custom_break {
-    height: 10px;
+    height: 5px;
 }
 
 /* hlkwok@vt.edu 2022-11-16: Have the K12 menu elements unselectable */
