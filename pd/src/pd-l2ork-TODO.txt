@@ -5,24 +5,24 @@ PD-L2ORK TODO:
 
 *Merge K12 menu patch and clean-up.
 
-  *Make canvas left side wider once K12 menu is unfolded.
-    *Currently, the problem is opposite. Right side is wider when the menu is hidden. OK
-
   *Implement K12 demos menu option.
+
+  *Implement saveas on creating new patch.
+
+  *Check the logic between show k12 menu and K12 mode.
 
   *Implement changing of the main Pd-L2Ork window menu. IN PROGRESS
     *Instead of renaming the K12 item, just have a checkbox next to it OK
 
-  *Check the logic between show k12 menu and K12 mode.
   *Integrate toggle_edit, gui_canvas_set_editmode, and canvas_set_editmode?
 
-  *Implement saveas on creating new patch.
+  *Update installer to include lock icon and K12 menu images in the bin folder.
+
+  *Make canvas left side wider once K12 menu is unfolded.
+    *Currently, the problem is opposite. Right side is wider when the menu is hidden. OK
 
   *Refine K12 object sizes to make images fit better.
     *No need for K12 object gopspill image margins around nlets anymore.
-    *Multibuttons is gop spill within gop spill and currently throws an error.
-
-  *Update installer to include lock icon and K12 menu images in the bin folder.
 
 
 
@@ -486,6 +486,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
   *Make vscroll and hscroll grab event keep the cursor the same and afterwards revert to the appropriate cursor. OK (was problem even before the K12 menu, apparently)
   *Zoom should work even when invoked over the menu. OK
   *Keyboard shortcuts should work on top of the menu, as well. OK
+*Fixed issue where relocating border (rect) of a GOP object when vis-ed due to gop_spill option, if the same object has other embedded GOP-enabled objects also with gop_spill option (e.g. K12/wii_buttons.pd and K12/logic_sequencer.pd), this would result in an error due to previous implementation selecting child GOP border, rather than that of its own.
 
 
 
