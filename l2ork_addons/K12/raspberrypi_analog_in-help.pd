@@ -1,4 +1,4 @@
-#N canvas 289 39 502 597 10;
+#N canvas 289 64 500 597 10;
 #X obj 245 -29 preset_hub k12 %hidden% %node% 2 7 4 %node% 2 6 6;
 #X obj 4 38 cnv 15 478 292 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
@@ -20,7 +20,7 @@ converter. Specify channel (0-7) to connect. Use channel -1 to disconnect.
 #X obj 14 47 K12/raspberrypi_analog_in;
 #X obj 115 337 ggee/image @pd_extra/K12/images/lop_board.png 0 0 250
 168 empty empty empty 250 168 1 0 10 #000000 0 -8 125 84 0 1 1;
-#X obj 19 497 pddplink http://moderndevice.com/product/lots-of-pots-lop-board-for-raspberry-pi/
+#X obj 19 513 pddplink http://moderndevice.com/product/lots-of-pots-lop-board-for-raspberry-pi/
 ;
 #X text 110 44 The Raspberry Pi Analog Input object allows for receiving
 analog data. It achieves this by leveraging Modern Device Lots of Pots'
