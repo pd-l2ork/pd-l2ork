@@ -2252,10 +2252,12 @@ function nw_create_patch_window_menus(gui, name) {
     if (pdgui.get_k12_mode() == 0 && document.getElementById("k12_menu").style.display == "none") {
         document.getElementById("k12_menu").style.display = "none";
         set_k12_checkbox(false);
+        pdgui.gui_canvas_get_immediate_scroll(name);
     }
     else {
         document.getElementById("k12_menu").style.display = "block";
         set_k12_checkbox(true);
+        pdgui.gui_canvas_get_immediate_scroll(name);
     }
     // ico@vt.edu 2022-12-05: this has moved down to update_menu_items
     // call that is called on load
@@ -3142,5 +3144,6 @@ function toggle_k12_menu_and_set_editmode(evt) {
 // hlkwok@vt.edu 2022-11-15: toggles k12 menu visibility (for k12 menu option
 // in the put menu
 function toggle_k12_menu_visibility() {
+    //pdgui.post("toggle_k12_menu_visibility");
     pdgui.toggle_k12_menu_visibility(canvas_events.get_id());
 }

@@ -15,9 +15,6 @@ PD-L2ORK TODO:
 
   *Update installer to include lock icon and K12 menu images in the bin folder.
 
-  *Make canvas left side wider once K12 menu is unfolded.
-    *Currently, the problem is opposite. Right side is wider when the menu is hidden. OK
-
   *Refine K12 object sizes to make images fit better.
     *No need for K12 object gopspill image margins around nlets anymore.
 
@@ -490,6 +487,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
   *Separate scrolling of the k12 menu from the patch. OK
 *Simplifying of the toggle_edit, gui_canvas_set_editmode, and canvas_set_editmode across pdgui.js and pd_canvas.js
 *Implemented saveas on creating new K12 patch.
+*Make canvas' left side wider once the K12 menu is unfolded.
 
 
 
@@ -649,3 +647,12 @@ TOOLTIPS:
     var ttt = index.search("print", {fields: {title: {}}});
     var yyy = index.documentStore.getDoc(ttt[0].ref);
     post("search result: title=" + yyy.title + " description=" + yyy.description);
+
+
+Tracking place to increase bbox due to K12 menu:
+g_editor.c mouseup MA_MOVE calls scrollbar_synchronous_update
+g_all_guis.c scrollbar_synchronous_update calls gui_canvas_get_immediate_scroll
+pdgui.js gui_canvas_get_immediate_scroll calls do_getscroll (check_geom = 0)
+         do_getscroll calls canvas_params (which calculates bbox)
+
+pd_canvas.js in nw_create_patch_window_menus toggles visibility of the K12 menu if the mode is toggled from the file menu

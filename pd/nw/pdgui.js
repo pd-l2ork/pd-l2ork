@@ -9391,7 +9391,7 @@ function canvas_params(nw_win)
     }
     // ...now get bbox...
     bbox = svg_elem.getBBox();
-    // ... now make it back visible
+    // ... now make invised objects visible
     if(selbox)
         selbox.style.display = "block";
     if(patchcord)
@@ -9403,14 +9403,20 @@ function canvas_params(nw_win)
             gop_svgs[i].style.display = "block";
         }
     }
-    //post("canvas_params calculated bbox: " + bbox.width + " " + bbox.height);
+    //post("canvas_params calculated bbox: x=" + bbox.x + " w=" + bbox.width);
+    if (k12_menu_state == 1) {
+        //post("canvas params--expanding the window size");
+        bbox.width += 175;
+        bbox.x -= 175;
+    }
+    //post("...post k12 menu canvas_params calculated bbox: x=" + bbox.x + " w=" + bbox.width);
     // We try to do Pd-extended style canvas origins. That is, coord (0, 0)
     // should be in the top-left corner unless there are objects with a
     // negative x or y.
     // To implement the Pd-l2ork behavior, the top-left of the canvas should
     // always be the topmost, leftmost object.
     width = bbox.x > 0 ? bbox.x + bbox.width : bbox.width;
-    // ico@vt.edu 2020-08-12: we add 1 due to an unknown nw.js discrapancy,
+    // ico@vt.edu 2020-08-12: we add 1 due to an unknown nw.js discrepancy,
     // perhaps because of rounding taking place further below?
     height = bbox.y > 0 ? bbox.y + bbox.height + 1 : bbox.height + 1;
     x = bbox.x > 0 ? 0 : bbox.x,
@@ -10244,7 +10250,7 @@ function get_k12_mode() {
 
 exports.get_k12_mode = get_k12_mode;
 
-
+var k12_menu_state = -1;
 
 // ico@vt.edu 2022-12-05: moving all this from pd_canvas.js to pdgui.js,
 // so that index.js can benefit from it, as well (responsible for the
@@ -10327,13 +10333,19 @@ lock_runtime.src = "K12-icons/lock-runtime.png";
 
 // hlkwok@vt.edu 2022-11-13: toggles k12 menu position (for side arrow button)
 function toggle_k12_menu(cid) {
+    //post("toggle_k12_menu");
     var k12_menu = patchwin[cid].window.document.getElementById("k12_menu");
+    if (k12_menu.style.display == "none") {
+        //post("...not visible");
+        return;
+    }
     if (k12_menu.style.left == "-155px") {
         k12_menu.style.left = "0px";
         patchwin[cid].window.document.
             getElementById("k12_toggle_icon").src= lock_editmode.src;
         //patchwin[cid].window.document.
         //    getElementById("show_k12_menu").style.transform = "rotate(0)";
+        k12_menu_state = 1;
     }
     else {
         k12_menu.style.left = "-155px";
@@ -10341,7 +10353,9 @@ function toggle_k12_menu(cid) {
             getElementById("k12_toggle_icon").src= lock_runtime.src;
         //patchwin[cid].window.document.
         //    getElementById("show_k12_menu").style.transform = "rotate(-180deg)";
+        k12_menu_state = 0;
     }
+    gui_canvas_get_immediate_scroll(cid);
 }
 
 exports.toggle_k12_menu = toggle_k12_menu;
@@ -10353,10 +10367,29 @@ function toggle_k12_menu_visibility(cid) {
     if (k12_menu.style.display == "none") {
         k12_menu.style.display = "block";
         update_k12_menu(cid);
+        if (k12_menustyle.left == "0px")
+            k12_menu_state = 1;
+        else
+            k12_menu_state = 0;
     }
     else {
         k12_menu.style.display = "none";
+        k12_menu_state = -1;
     }
+    //post("toggle_k12_menu_visibility k12_menu_state=" + k12_menu_state);
+    gui_canvas_get_immediate_scroll(cid);
 }
 
 exports.toggle_k12_menu_visibility = toggle_k12_menu_visibility;
+
+
+/* returns:
+    -1 if menu does not exist
+     0 if it is folded
+     1 if it is unfolded (visible)
+*/
+function get_k12_menu_state() {
+    return k12_menu_state;
+}
+
+exports.get_k12_menu_state = get_k12_menu_state;
