@@ -5,7 +5,7 @@ PD-L2ORK TODO:
 
 *Merge K12 menu patch and clean-up.
 
-  *Check the logic between show k12 menu and K12 mode.
+  *Fix the logic between show k12 menu and K12 mode.
 
   *Implement changing of the main Pd-L2Ork window menu. IN PROGRESS
     *Instead of renaming the K12 item, just have a checkbox next to it OK

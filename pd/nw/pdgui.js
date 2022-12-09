@@ -2480,11 +2480,15 @@ function gui_canvas_set_editmode(cid, state) {
     //post("gui_canvas_set_editmode " + state);
     var k12_menu = patchwin[cid].window.document.
         getElementById("k12_menu");
-    if (k12_menu) {
-        if (k12_menu.style.left == "-155px" && state ||
-            k12_menu.style.left == "0px" && !state ) {
+    if (k12_menu.style.display == "block") {
+        if ((k12_menu.style.left == "-155px" && state) ||
+            (k12_menu.style.left == "0px" && !state)) {
             toggle_k12_menu(cid);
         }
+    } else {
+        k12_mode_menu_state = -1;
+        if (k12_menu_state[cid] == -1)
+            k12_menu.style.display == "none";
     }
 }
 
@@ -2799,7 +2803,8 @@ var scroll = {},
     title_queue= {}, // ugly kluge to work around an ugly race condition
     popup_menu = {},
     toplevel_scalars = {},
-    editable = {}; // for allowing developer to lock the patch (e.g.) to beginners
+    editable = {}, // for allowing developer to lock the patch (e.g.) to beginners
+    k12_menu_state = {}; // for per canvas state of the non-k12-mode k12 menu
 
     var patchwin = {}; // object filled with cid: [Window object] pairs
     var dialogwin = {}; // object filled with did: [Window object] pairs
@@ -3056,6 +3061,10 @@ function gui_canvas_new(cid, width, height, geometry, grid, grid_size_value,
         menu_flag = false;
     }
     last_loaded = cid;
+
+    // we will resolve this variable later at runtime
+    k12_menu_state[cid] = -1;
+
     // Not sure why resize and topmost are here--but we'll pass them on for
     // the time being...
     // ico@vt.edu 2020-08-24: this is because in 1.x we can change these window
@@ -4127,7 +4136,7 @@ function gui_canvas_patchcord_scroll(cid, x1, y1, x2, y2) {
     gui(cid).get_nw_window(function(nw_win) {
         var svg_elem = nw_win.window.document.getElementById("patchsvg");
         var { x: x, y: y, w: width, h: height,
-            mw: min_width, mh: min_height } = canvas_params(nw_win);
+            mw: min_width, mh: min_height } = canvas_params(nw_win, cid);
         //post("mw="+min_width+" mh="+min_height+" w="+width+" h="+height);
         // if there is nothing on the canvas, or the contents are only
         // using a subset of the canvas, we need to use window boundaries
@@ -4944,7 +4953,7 @@ function gui_canvas_move_selection(cid, x1, y1, x2, y2) {
     gui(cid).get_nw_window(function(nw_win) {
         var svg_elem = nw_win.window.document.getElementById("patchsvg");
         var { x: x, y: y, w: width, h: height,
-            mw: min_width, mh: min_height } = canvas_params(nw_win);
+            mw: min_width, mh: min_height } = canvas_params(nw_win, cid);
         //post("mw="+min_width+" mh="+min_height+" w="+width+" h="+height);
         // if there is nothing on the canvas, or the contents are only
         // using a subset of the canvas, we need to use window boundaries
@@ -9310,7 +9319,7 @@ function gui_canvas_scroll_to_gobj(cid, tag, smooth) {
             gui(cid).get_nw_window(function(nw_win) {
                 var svg_elem = nw_win.window.document.getElementById("patchsvg");
                 var { x: x, y: y, w: width, h: height,
-                    mw: min_width, mh: min_height } = canvas_params(nw_win);
+                    mw: min_width, mh: min_height } = canvas_params(nw_win, cid);
                 /*
                 post("..."+cid+" x="+x+" y="+y+" w="+width+" h="+height+
                   " mw="+min_width+" mh="+min_height);
@@ -9364,7 +9373,9 @@ exports.gui_canvas_scroll_to_gobj = gui_canvas_scroll_to_gobj;
 
 
 // leverages the get_nw_window method in the callers...
-function canvas_params(nw_win)
+// we need to pass both nw_win and cid because the two
+// are not the same
+function canvas_params(nw_win, cid)
 {
     // calculate the canvas parameters (svg bounding box and window geometry)
     // for do_getscroll and do_optimalzoom
@@ -9404,10 +9415,10 @@ function canvas_params(nw_win)
         }
     }
     //post("canvas_params calculated bbox: x=" + bbox.x + " w=" + bbox.width);
-    if (k12_menu_state == 1) {
+    if (k12_mode_menu_state == 1 || k12_menu_state[cid] == 1) {
         //post("canvas params--expanding the window size");
-        bbox.width += 175;
-        bbox.x -= 175;
+        bbox.width += 155;
+        bbox.x -= 155;
     }
     //post("...post k12 menu canvas_params calculated bbox: x=" + bbox.x + " w=" + bbox.width);
     // We try to do Pd-extended style canvas origins. That is, coord (0, 0)
@@ -9560,7 +9571,7 @@ function do_getscroll(cid, checkgeom) {
     gui(cid).get_nw_window(function(nw_win) {
         var svg_elem = nw_win.window.document.getElementById("patchsvg");
         var { x: x, y: y, w: width, h: height,
-            mw: min_width, mh: min_height } = canvas_params(nw_win);
+            mw: min_width, mh: min_height } = canvas_params(nw_win, cid);
 
         //post("nw_version_bbox_offset=" + nw_version_bbox_offset +
         //  " min_height=" + min_height);
@@ -9703,7 +9714,7 @@ function do_optimalzoom(cid, hflag, vflag) {
     // the window
     gui(cid).get_nw_window(function(nw_win) {
         var { x: x, y: y, w: width, h: height, mw: min_width, mh: min_height } =
-            canvas_params(nw_win);
+            canvas_params(nw_win, cid);
         // Calculate the optimal horizontal and vertical zoom values,
         // using floor to always round down to the nearest integer. Note
         // that these may well be negative, if the viewport is too small
@@ -10250,7 +10261,7 @@ function get_k12_mode() {
 
 exports.get_k12_mode = get_k12_mode;
 
-var k12_menu_state = -1;
+var k12_mode_menu_state = -1;
 
 // ico@vt.edu 2022-12-05: moving all this from pd_canvas.js to pdgui.js,
 // so that index.js can benefit from it, as well (responsible for the
@@ -10331,12 +10342,14 @@ lock_editmode.src = "K12-icons/lock-editmode.png";
 var lock_runtime = new Image();
 lock_runtime.src = "K12-icons/lock-runtime.png";
 
-// hlkwok@vt.edu 2022-11-13: toggles k12 menu position (for side arrow button)
+// ico@vt.edu 2022-12-08:
+// toggle lock flap sends its request to c (pd_canvas.js) and this is
+// then invoked from gui_canvas_set_editmode above
 function toggle_k12_menu(cid) {
     //post("toggle_k12_menu");
     var k12_menu = patchwin[cid].window.document.getElementById("k12_menu");
     if (k12_menu.style.display == "none") {
-        //post("...not visible");
+        post("bug toggle_k12_menu");
         return;
     }
     if (k12_menu.style.left == "-155px") {
@@ -10345,7 +10358,10 @@ function toggle_k12_menu(cid) {
             getElementById("k12_toggle_icon").src= lock_editmode.src;
         //patchwin[cid].window.document.
         //    getElementById("show_k12_menu").style.transform = "rotate(0)";
-        k12_menu_state = 1;
+        if (k12_mode)
+            k12_mode_menu_state = 1;
+        else
+            k12_menu_state[cid] = 1;
     }
     else {
         k12_menu.style.left = "-155px";
@@ -10353,30 +10369,37 @@ function toggle_k12_menu(cid) {
             getElementById("k12_toggle_icon").src= lock_runtime.src;
         //patchwin[cid].window.document.
         //    getElementById("show_k12_menu").style.transform = "rotate(-180deg)";
-        k12_menu_state = 0;
+        if (k12_mode)
+            k12_mode_menu_state = 0;
+        else
+            k12_menu_state[cid] = 0;
     }
     gui_canvas_get_immediate_scroll(cid);
 }
 
 exports.toggle_k12_menu = toggle_k12_menu;
 
-// hlkwok@vt.edu 2022-11-15: toggles k12 menu visibility (for k12 menu option
-// in the put menu
-function toggle_k12_menu_visibility(cid) {
+// ico@vt.edu 2022-12-08: toggles k12 menu visibility (for k12 menu option
+// in the put menu). unlike global k12_mode_menu_state variable that is bound
+// solely to the k12_mode, here we use per-canvas k12_menu_state[cid].
+// this is only accessible and has effect if the K12 mode is off, because
+// it is tied to the put menu's K12 menu option.
+function toggle_k12_menu_visibility(cid, state) {
+    return;
     var k12_menu = patchwin[cid].window.document.getElementById("k12_menu");
-    if (k12_menu.style.display == "none") {
+    if (state) {
         k12_menu.style.display = "block";
         update_k12_menu(cid);
-        if (k12_menustyle.left == "0px")
-            k12_menu_state = 1;
+        if (k12_menu.style.left == "0px")
+            k12_menu_state[cid] = 1;
         else
-            k12_menu_state = 0;
+            k12_menu_state[cid] = 0;
     }
     else {
         k12_menu.style.display = "none";
-        k12_menu_state = -1;
+        k12_menu_state[cid] = -1;
     }
-    //post("toggle_k12_menu_visibility k12_menu_state=" + k12_menu_state);
+    post("toggle_k12_menu_visibility k12_mode_menu_state=" + k12_menu_state[cid] + " cid=" + cid);
     gui_canvas_get_immediate_scroll(cid);
 }
 
@@ -10385,11 +10408,17 @@ exports.toggle_k12_menu_visibility = toggle_k12_menu_visibility;
 
 /* returns:
     -1 if menu does not exist
-     0 if it is folded
+     0 if it is folded (just the lock tab is visible)
      1 if it is unfolded (visible)
 */
-function get_k12_menu_state() {
-    return k12_menu_state;
+function get_k12_menu_state(cid) {
+    return k12_menu_state[cid];
 }
 
 exports.get_k12_menu_state = get_k12_menu_state;
+
+function get_k12_mode_menu_state() {
+    return k12_mode_menu_state;
+}
+
+exports.get_k12_mode_menu_state = get_k12_mode_menu_state;

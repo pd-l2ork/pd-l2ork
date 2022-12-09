@@ -469,7 +469,7 @@ function create_menu(gui, type) {
         tooltip: l("menu.fullscreen_tt")
     }));
 
-    if (canvas_menu) {
+    if (canvas_menu && pdgui.get_k12_mode() == 0) {
         // Put menu
         put_menu = new gui.Menu();
 

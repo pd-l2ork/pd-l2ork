@@ -15,6 +15,21 @@ function update_menu() {
     //pdgui.post("pd_canvas.js update_menu");
     nw_create_patch_window_menus(gui, canvas_events.get_id());
     create_popup_menu(canvas_events.get_id());
+    /*
+    pdgui.post("pd_canvas.js update_menu...mode=" +
+        pdgui.get_k12_mode_menu_state() + " put=" + pdgui.get_k12_menu_state(canvas_events.get_id()));
+    // if we are not in k12_mode and k12_menu_state is not invisible (-1)
+    if (m.put && pdgui.get_k12_menu_state(canvas_events.get_id()) > -1) {
+        pdgui.post("get_k12_menu_state=" + pdgui.get_k12_menu_state(canvas_events.get_id()));
+        m.put.k12_menu.checked = 1;
+        toggle_k12_menu_visibility(canvas_events.get_id(), 1);
+    } else {
+        // if our k12_mode menu state is invisible (-1)
+        if (pdgui.get_k12_mode_menu_state() == -1) {
+            toggle_k12_menu_visibility(canvas_events.get_id(), 0);
+        }
+    }
+    */
 }
 
 function nw_window_focus_callback(name) {
@@ -2211,11 +2226,6 @@ function set_cord_inspector_checkbox(state) {
     m.edit.cordinspector.checked = state;
 }
 
-// hlkwok@vt.edu 2022-11-24: set the checkbox of the k12 menu
-function set_k12_checkbox(state) {
-    m.put.k12_menu.checked = state;
-}
-
 // stop-gap
 function menu_generic () {
     alert("Please implement this");
@@ -2251,12 +2261,16 @@ function nw_create_patch_window_menus(gui, name) {
     // hlkwok@vt.edu 2022-10-23: Show/hide K12 menu when creating menus
     if (pdgui.get_k12_mode() == 0 && document.getElementById("k12_menu").style.display == "none") {
         document.getElementById("k12_menu").style.display = "none";
-        set_k12_checkbox(false);
+        // toggling the put menu is a manual operation and independent
+        // of the K12 mode, and only has effect if we are not in K12 mode
+        //set_k12_checkbox(false);
         pdgui.gui_canvas_get_immediate_scroll(name);
     }
     else {
         document.getElementById("k12_menu").style.display = "block";
-        set_k12_checkbox(true);
+        // toggling the put menu is a manual operation and independent
+        // of the K12 mode, and only has effect if we are not in K12 mode
+        //set_k12_checkbox(true);
         pdgui.gui_canvas_get_immediate_scroll(name);
     }
     // ico@vt.edu 2022-12-05: this has moved down to update_menu_items
@@ -2730,164 +2744,169 @@ function nw_create_patch_window_menus(gui, name) {
         }
     });
 
-    // Put menu
-    minit(m.put.object, {
-        enabled: true,
-        click: function() {
-            update_live_box();
-            pdgui.pdsend(name, "dirty 1");
-            pdgui.pdsend(name, "obj 0");
-        }
-    });
-    minit(m.put.message, {
-        enabled: true,
-        click: function() {
-            update_live_box();
-            pdgui.pdsend(name, "dirty 1");
-            pdgui.pdsend(name, "msg 0");
-        }
-    });
-    minit(m.put.number, {
-        enabled: true,
-        click: function() {
-            update_live_box();
-            pdgui.pdsend(name, "dirty 1");
-            pdgui.pdsend(name, "floatatom 0");
-        }
-    });
-    minit(m.put.symbol, {
-        enabled: true,
-        click: function() {
-            update_live_box();
-            pdgui.pdsend(name, "dirty 1");
-            pdgui.pdsend(name, "symbolatom 0");
-        }
-    });
-    minit(m.put.comment, {
-        enabled: true,
-        click: function() {
-            update_live_box();
-            pdgui.pdsend(name, "dirty 1");
-            pdgui.pdsend(name, "text 0");
-        }
-    });
-    minit(m.put.dropdown, {
-        enabled: true,
-        click: function() {
-            update_live_box();
-            pdgui.pdsend(name, "dirty 1");
-            pdgui.pdsend(name, "dropdown 0");
-        }
-    });
-    minit(m.put.bang, {
-        enabled: true,
-        click: function(e) {
-            update_live_box();
-            pdgui.pdsend(name, "dirty 1");
-            pdgui.pdsend(name, "bng 0");
-        }
-    });
-    minit(m.put.toggle, {
-        enabled: true,
-        click: function() {
-            update_live_box();
-            pdgui.pdsend(name, "dirty 1");
-            pdgui.pdsend(name, "toggle 0");
-        }
-    });
-    minit(m.put.number2, {
-        enabled: true,
-        click: function() {
-            update_live_box();
-            pdgui.pdsend(name, "dirty 1");
-            pdgui.pdsend(name, "numbox 0");
-        }
-    });
-    minit(m.put.vslider, {
-        enabled: true,
-        click: function() {
-            update_live_box();
-            pdgui.pdsend(name, "dirty 1");
-            pdgui.pdsend(name, "vslider 0");
-        }
-    });
-    minit(m.put.hslider, {
-        enabled: true,
-        click: function() {
-            update_live_box();
-            pdgui.pdsend(name, "dirty 1");
-            pdgui.pdsend(name, "hslider 0");
-        }
-    });
-    minit(m.put.knob, {
-        enabled: true,
-        click: function() {
-            update_live_box();
-            pdgui.pdsend(name, "dirty 1");
-            pdgui.pdsend(name, "obj_abstraction flatgui/knob -16 -16");
-        }
-    });
-    minit(m.put.vradio, {
-        enabled: true,
-        click: function() {
-            update_live_box();
-            pdgui.pdsend(name, "dirty 1");
-            pdgui.pdsend(name, "vradio 0");
-        }
-    });
-    minit(m.put.hradio, {
-        enabled: true,
-        click: function() {
-            update_live_box();
-            pdgui.pdsend(name, "dirty 1");
-            pdgui.pdsend(name, "hradio 0");
-        }
-    });
-    minit(m.put.vu, {
-        enabled: true,
-        click: function() {
-            update_live_box();
-            pdgui.pdsend(name, "dirty 1");
-            pdgui.pdsend(name, "vumeter 0");
-        }
-    });
-    minit(m.put.cnv, {
-        enabled: true,
-        click: function() {
-            update_live_box();
-            pdgui.pdsend(name, "dirty 1");
-            pdgui.pdsend(name, "mycnv 0");
-        }
-    });
-    minit(m.put.image, {
-        enabled: true,
-        click: function() {
-            update_live_box();
-            pdgui.pdsend(name, "dirty 1");
-            pdgui.pdsend(name, "obj_abstraction ggee/image 0 0");
-        }
-    });
-    //minit(m.put.graph, {
-    //    enabled: true,
-    //    click: function() {
-    //        update_live_box();
-    //        pdgui.pdsend(name, "dirty 1");
-    //        // leaving out some placement logic... see pd.tk menu_graph
-    //        pdgui.pdsend(name, "graph NULL 0 0 0 0 30 30 0 30");
-    //    },
-    //});
-    // hlkwok@vt.edu: 2022-11-15: functionality for toggling k12 menu visibility
-    minit(m.put.k12_menu, { 
-            click: function() { toggle_k12_menu_visibility(); } 
-    });
-    minit(m.put.array, {
-        enabled: true,
-        click: function() {
+    if (pdgui.get_k12_mode() == 0)
+    {
+        // Put menu
+        minit(m.put.object, {
+            enabled: true,
+            click: function() {
                 update_live_box();
                 pdgui.pdsend(name, "dirty 1");
-                pdgui.pdsend(name, "menuarray");
+                pdgui.pdsend(name, "obj 0");
             }
-    });
+        });
+        minit(m.put.message, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "msg 0");
+            }
+        });
+        minit(m.put.number, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "floatatom 0");
+            }
+        });
+        minit(m.put.symbol, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "symbolatom 0");
+            }
+        });
+        minit(m.put.comment, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "text 0");
+            }
+        });
+        minit(m.put.dropdown, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "dropdown 0");
+            }
+        });
+        minit(m.put.bang, {
+            enabled: true,
+            click: function(e) {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "bng 0");
+            }
+        });
+        minit(m.put.toggle, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "toggle 0");
+            }
+        });
+        minit(m.put.number2, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "numbox 0");
+            }
+        });
+        minit(m.put.vslider, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "vslider 0");
+            }
+        });
+        minit(m.put.hslider, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "hslider 0");
+            }
+        });
+        minit(m.put.knob, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "obj_abstraction flatgui/knob -16 -16");
+            }
+        });
+        minit(m.put.vradio, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "vradio 0");
+            }
+        });
+        minit(m.put.hradio, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "hradio 0");
+            }
+        });
+        minit(m.put.vu, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "vumeter 0");
+            }
+        });
+        minit(m.put.cnv, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "mycnv 0");
+            }
+        });
+        minit(m.put.image, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "obj_abstraction ggee/image 0 0");
+            }
+        });
+        //minit(m.put.graph, {
+        //    enabled: true,
+        //    click: function() {
+        //        update_live_box();
+        //        pdgui.pdsend(name, "dirty 1");
+        //        // leaving out some placement logic... see pd.tk menu_graph
+        //        pdgui.pdsend(name, "graph NULL 0 0 0 0 30 30 0 30");
+        //    },
+        //});
+
+        minit(m.put.array, {
+            enabled: true,
+            click: function() {
+                    update_live_box();
+                    pdgui.pdsend(name, "dirty 1");
+                    pdgui.pdsend(name, "menuarray");
+                }
+        });
+
+        // hlkwok@vt.edu: 2022-11-15: functionality for toggling k12 menu visibility
+        minit(m.put.k12_menu, { 
+                click: function() { toggle_k12_menu_visibility(name, m.put.k12_menu.checked); } 
+        });
+    }
 
     // Window
     minit(m.win.nextwin, {
@@ -3093,7 +3112,18 @@ function init_menu_font_size(size) {
 function update_menu_items(cid, isblank) {
     //pdgui.post("update_menu_items...");
     setTimeout(function() {
-        pdgui.pdsend(cid, "updatemenu");
+        pdgui.pdsend(cid, "updatemenu"); //fonts and editable from c
+        pdgui.post("pd_canvas.js update_menu_items...mode=" +
+            pdgui.get_k12_mode_menu_state() + " put=" + pdgui.get_k12_menu_state(name));
+        if (m.put && pdgui.get_k12_menu_state(name) > -1) {
+            pdgui.post("get_k12_menu_state=" + pdgui.get_k12_menu_state(name));
+            m.put.k12_menu.checked = 1;
+            toggle_k12_menu_visibility(name, 1);
+        } else {
+            if (pdgui.get_k12_mode_menu_state() == -1) {
+                toggle_k12_menu_visibility(name, 0);
+            }
+        }
         update_k12_menu();
         if (pdgui.get_k12_mode() == 1 && isblank)
         {
@@ -3144,6 +3174,6 @@ function toggle_k12_menu_and_set_editmode(evt) {
 // hlkwok@vt.edu 2022-11-15: toggles k12 menu visibility (for k12 menu option
 // in the put menu
 function toggle_k12_menu_visibility() {
-    //pdgui.post("toggle_k12_menu_visibility");
-    pdgui.toggle_k12_menu_visibility(canvas_events.get_id());
+    pdgui.post("toggle_k12_menu_visibility checked=" + m.put.k12_menu.checked);
+    pdgui.toggle_k12_menu_visibility(canvas_events.get_id(), m.put.k12_menu.checked);
 }
