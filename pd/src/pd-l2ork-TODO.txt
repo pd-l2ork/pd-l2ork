@@ -7,6 +7,76 @@ PD-L2ORK TODO:
 
   *Fix the logic between show k12 menu and K12 mode.
 
+  k12_mode_menu_status and k12_menu_status should be 0 or 1
+  k12_menu should be for all patches
+    no need for cid for canvas_params anymore
+
+  entrypoints:
+    set the k12_mode
+    click on k12_menu_vis (ONLY IF NOT IN k12_mode)
+    new window created
+    toggling edit mode
+
+  file->k12_mode
+    set_k12_mode
+      set the k12_mode variable
+      1:
+        do this on all open canvases
+          update menu to reflect k12_mode
+          set checkmark for the file->k12_mode
+          make k12_menu visible
+          editmode ? k12_menu is unfolded or not
+          update_scrollbars (so that the offset is enabled or disabled depending on whether menu is unfolded or not)
+      0:
+        do this on all open canvases
+          update all menus to reflect regular mode
+          set checkmark for the file->k12_mode
+          check what is the state of the k12 menu, and if:
+            1:
+              make sure the k12_menu is visible and if not, make it visible with -155px left offset
+              editmode ? k12_menu is unfolded or not
+            0:
+              hide k12_menu
+              make k12_menu left property -155px
+          update_scrollbars (so that the offset is enabled or disabled depending on whether menu is unfolded or not)
+
+    click on the k12_menu_vis option (ONLY IF NOT IN K12 MODE, since otherwise this option is not visible)
+      toggle_k12_menu
+      set the variable
+      1:
+        do this on all open canvases
+          set checkmark for the put->k12_menu
+          make k12_menu visible with left offset -155px
+          editmode ? k12_menu is unfolded or not
+          update_scrollbars (so that the offset is enabled or disabled depending on whether menu is unfolded or not)
+      0:
+        do this on all open canvases
+          set checkmark for the put->k12_menu
+          hide k12_menu (no need to check for K12_mode since we already know we are not in it since this option is visible)
+          make k12_menu left property -155px
+          update_scrollbars (so that the offset is enabled or disabled depending on whether menu is unfolded or not)
+
+  new window created
+    during menu creation, check for k12_mode (DONE, I think), BUT do not vis/unvis or set checkboxes yet
+    update_menu_items (onload, after register_window_id)
+    if (k12_mode || k12_menu)
+      set checkmark on the file->k12_mode || put->k12_menu
+      make k12_menu visible with -155px left offset
+      editmode ? k12_menu is unfolded or not
+      update_scrollbars (so that the offset is enabled or disabled depending on whether menu is unfolded or not)
+
+  toggling edit mode
+    send pd edit message from pd_canvas.js before we get to common stuff inside pdgui.js
+    editmode ?
+      1:
+        if k12_mode or k12_menu_vis
+          unfold the k12_menu
+      0:
+        if k12_mode or k_12_menu_vis
+          fold the k12_menu
+
+  *Move K12 menu to the View tab? NO, since all view options are per-canvas.
+
   *Implement changing of the main Pd-L2Ork window menu. IN PROGRESS
     *Instead of renaming the K12 item, just have a checkbox next to it OK
     *Make sure the K12 Demos and K12 mode elements work.

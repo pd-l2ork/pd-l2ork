@@ -11,27 +11,6 @@ pdgui.skin.apply(window);
 
 var l = pdgui.get_local_string;
 
-function update_menu() {
-    //pdgui.post("pd_canvas.js update_menu");
-    nw_create_patch_window_menus(gui, canvas_events.get_id());
-    create_popup_menu(canvas_events.get_id());
-    /*
-    pdgui.post("pd_canvas.js update_menu...mode=" +
-        pdgui.get_k12_mode_menu_state() + " put=" + pdgui.get_k12_menu_state(canvas_events.get_id()));
-    // if we are not in k12_mode and k12_menu_state is not invisible (-1)
-    if (m.put && pdgui.get_k12_menu_state(canvas_events.get_id()) > -1) {
-        pdgui.post("get_k12_menu_state=" + pdgui.get_k12_menu_state(canvas_events.get_id()));
-        m.put.k12_menu.checked = 1;
-        toggle_k12_menu_visibility(canvas_events.get_id(), 1);
-    } else {
-        // if our k12_mode menu state is invisible (-1)
-        if (pdgui.get_k12_mode_menu_state() == -1) {
-            toggle_k12_menu_visibility(canvas_events.get_id(), 0);
-        }
-    }
-    */
-}
-
 function nw_window_focus_callback(name) {
     pdgui.set_focused_patchwin(name);
     // on OSX, update the menu on focus
@@ -2258,26 +2237,6 @@ function nw_create_patch_window_menus(gui, name) {
     m = pd_menus.create_menu(gui, "canvas");
     //pdgui.post("nw_create_patch_window_menus");
 
-    // hlkwok@vt.edu 2022-10-23: Show/hide K12 menu when creating menus
-    if (pdgui.get_k12_mode() == 0 && document.getElementById("k12_menu").style.display == "none") {
-        document.getElementById("k12_menu").style.display = "none";
-        // toggling the put menu is a manual operation and independent
-        // of the K12 mode, and only has effect if we are not in K12 mode
-        //set_k12_checkbox(false);
-        pdgui.gui_canvas_get_immediate_scroll(name);
-    }
-    else {
-        document.getElementById("k12_menu").style.display = "block";
-        // toggling the put menu is a manual operation and independent
-        // of the K12 mode, and only has effect if we are not in K12 mode
-        //set_k12_checkbox(true);
-        pdgui.gui_canvas_get_immediate_scroll(name);
-    }
-    // ico@vt.edu 2022-12-05: this has moved down to update_menu_items
-    // call that is called on load
-    //update_k12_menu();
-    //pdgui.post("nw_create_patch_window_menus " + pdgui.get_k12_mode());
-
     // File sub-entries
     // We explicitly enable these menu items because on OSX
     // the console menu disables them. (Same for Edit and Put menu)
@@ -3112,19 +3071,35 @@ function init_menu_font_size(size) {
 function update_menu_items(cid, isblank) {
     //pdgui.post("update_menu_items...");
     setTimeout(function() {
-        pdgui.pdsend(cid, "updatemenu"); //fonts and editable from c
-        pdgui.post("pd_canvas.js update_menu_items...mode=" +
-            pdgui.get_k12_mode_menu_state() + " put=" + pdgui.get_k12_menu_state(name));
-        if (m.put && pdgui.get_k12_menu_state(name) > -1) {
-            pdgui.post("get_k12_menu_state=" + pdgui.get_k12_menu_state(name));
-            m.put.k12_menu.checked = 1;
-            toggle_k12_menu_visibility(name, 1);
-        } else {
-            if (pdgui.get_k12_mode_menu_state() == -1) {
-                toggle_k12_menu_visibility(name, 0);
+        pdgui.pdsend(cid, "updatemenu"); //fonts and editable option from c
+
+        if (pdgui.get_k12_mode() || pdgui.get_k12_menu_vis())
+        {
+            if (pdgui.get_k12_mode()) {
+                m.file.k12_mode.checked = 1;
+            } else {
+                m.file.k12_mode.checked = 0;
+                if (pdgui.get_k12_menu_vis()) {
+                    m.put.k12_menu.checked = 1;
+                } else {
+                    m.put.k12_menu.checked = 0;
+                }
+            }
+            var k12m = document.getElementById("k12_menu");
+            if (k12m.style.display == "none") {
+                k12m.style.left == "-155px";
+                k12m.style.display == "block";
+                if (m.edit.editmode.checked)
+                    pdgui.toggle_k12_menu(canvas_events.get_id());
+                pdgui.gui_canvas_get_immediate_scroll(canvas_events.get_id());
             }
         }
+        // no need to check if the k12_mode or k12_menu
+        // are disabled, because we are just initializing
+        // new window, so those would not have been drawn
+        // at this point, anyhow.
         update_k12_menu();
+
         if (pdgui.get_k12_mode() == 1 && isblank)
         {
             pdgui.canvas_check_geometry(cid);
@@ -3176,4 +3151,44 @@ function toggle_k12_menu_and_set_editmode(evt) {
 function toggle_k12_menu_visibility() {
     pdgui.post("toggle_k12_menu_visibility checked=" + m.put.k12_menu.checked);
     pdgui.toggle_k12_menu_visibility(canvas_events.get_id(), m.put.k12_menu.checked);
+}
+
+// ico@vt.edu 2022-12-09: invoked via onchange() call from pdgui's
+// set_k12_mode using invisible element with id=k12_mode.
+// we do this, so that pdgui can trigger updates on all open
+// canvases.
+function update_menu() {
+    // pdgui.post("pd_canvas.js update_menu");
+    nw_create_patch_window_menus(gui, canvas_events.get_id());
+    if (pdgui.get_k12_mode()) {
+        m.file.k12_mode.checked = 1;
+    } else {
+        m.file.k12_mode.checked = 0;
+        if (pdgui.get_k12_menu_vis()) {
+            m.put.k12_menu.checked = 1;
+        } else {
+            m.put.k12_menu.checked = 0;
+        }
+    }
+    var k12m = document.getElementById("k12_menu");
+    if ((pdgui.get_k12_mode() || pdgui.get_k12_menu_vis()) &&
+        k12m.style.display == "none") {
+        k12m.style.left == "-155px";
+        k12m.style.display == "block";
+        if (m.edit.editmode.checked) {
+            // visually adjust the menu (stretch the vertical size, etc.)
+            update_k12_menu(canvas_events.get_id());
+            pdgui.toggle_k12_menu(canvas_events.get_id());
+        }
+        // no need to tcall this, since it is already called
+        // inside update_k12_menu
+        //pdgui.gui_canvas_get_immediate_scroll(canvas_events.get_id());
+    } else if ((!pdgui.get_k12_mode() && !pdgui.get_k12_menu_vis()) &&
+        k12m.style.display == "block") {
+        k12m.style.display == "none";
+        k12m.style.left = "-155px";
+        pdgui.gui_canvas_get_immediate_scroll(canvas_events.get_id());
+    }
+
+    create_popup_menu(canvas_events.get_id());
 }

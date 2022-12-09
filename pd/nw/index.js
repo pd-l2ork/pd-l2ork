@@ -59,7 +59,6 @@ function set_vars(win) {
     pdgui.set_pd_engine_id(pd_engine_id);
     pdgui.set_pwd(pwd);
     pdgui.set_pd_window(win);
-    pdgui.set_nw_gui(gui);
     font_engine_sanity = pdgui.set_font_engine_sanity(win);
     pdgui.set_app_quitfn(app_quit);
     pdgui.set_open_html_fn(open_html);
