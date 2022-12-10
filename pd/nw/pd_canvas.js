@@ -2980,8 +2980,10 @@ function nw_create_patch_window_menus(gui, name) {
     // update checkboxes
     if (pdgui.get_k12_mode()) {
         m.file.k12_mode.checked = 1;
+        document.getElementById("patchsvg").classList.add("k12_mode");
     } else {
         m.file.k12_mode.checked = 0;
+        document.getElementById("patchsvg").classList.remove("k12_mode");
         if (pdgui.get_k12_menu_vis()) {
             m.put.k12_menu.checked = 1;
         } else {
@@ -3100,11 +3102,10 @@ function update_menu_items(cid, isblank) {
             if (k12m.style.display == "none") {
                 // this resets the menu position to default folded
                 // and updates the icon
-                pdgui.toggle_k12_menu(canvas_events.get_id(), 0);
                 k12m.style.display = "block";
+                pdgui.toggle_k12_menu(canvas_events.get_id(), 0);
                 if (m.edit.editmode.checked)
                     pdgui.toggle_k12_menu(canvas_events.get_id(), 1);
-                pdgui.gui_canvas_get_immediate_scroll(canvas_events.get_id());
             }
         }
         // no need to check if the k12_mode or k12_menu
@@ -3177,37 +3178,36 @@ function toggle_k12_menu_visibility() {
 // we do this, so that pdgui can trigger updates on all open
 // canvases.
 function update_menu() {
-    //console.log("pd_canvas.js update_menu");
+    //pdgui.post("pd_canvas.js update_menu");
     nw_create_patch_window_menus(gui, canvas_events.get_id());
     var k12m = document.getElementById("k12_menu");
-    //console.log("...k12_mode=" + pdgui.get_k12_mode() + " k12_menu=" +
-    //  pdgui.get_k12_menu_vis() + " display=" + k12m.style.display);
     if ((pdgui.get_k12_mode() || pdgui.get_k12_menu_vis()) &&
         k12m.style.display == "none") {
-        //console.log("...enabling");
         // this resets the menu position to default folded
         // and updates the icon
-        pdgui.toggle_k12_menu(canvas_events.get_id(), 0);
         k12m.style.display = "block";
-        //console.log("...display=" + k12m.style.display);
         update_k12_menu(canvas_events.get_id());
         if (m.edit.editmode.checked) {
-            //console.log("...calling pdgui.toggle_k12_menu");
             // visually adjust the menu (stretch the vertical size, etc.)
             pdgui.toggle_k12_menu(canvas_events.get_id(), 1);
             //console.log("...done with pdgui.toggle_k12_menu");
+        } else {
+            pdgui.toggle_k12_menu(canvas_events.get_id(), 0);
         }
         // no need to tcall this, since it is already called
         // inside update_k12_menu
         //pdgui.gui_canvas_get_immediate_scroll(canvas_events.get_id());
     } else if ((!pdgui.get_k12_mode() && !pdgui.get_k12_menu_vis()) &&
         k12m.style.display == "block") {
-        //console.log("...disabling");
-        k12m.style.display = "none";
-        // this resets the menu position to default folded
-        // and updates the icon
-        pdgui.toggle_k12_menu(canvas_events.get_id(), 0);
-        pdgui.gui_canvas_get_immediate_scroll(canvas_events.get_id());
+        // here we only ensure that the position is correct, since
+        // user may still be in edit menu, so we don't want to use
+        // pdgui.toggle_k12_menu, as that will erroneously set the
+        // edit icon to runtime mode.
+        pdgui.toggle_k12_menu(canvas_events.get_id(), -1);
+        // we delay hiding, to let the animation play out first
+        setTimeout(function() {
+            k12m.style.display = "none";
+        }, 700);
     }
 
     create_popup_menu(canvas_events.get_id());

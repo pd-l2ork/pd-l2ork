@@ -1,4 +1,4 @@
-#N canvas 167 68 582 614 10;
+#N canvas 167 104 591 865 10;
 #X obj 14 -253 preset_hub k12 1 %hidden% %node% 2 5 14 %preset% 0 100
 %node% 2 9 5 %preset% 0 48 %node% 2 9 11 %preset% 0 72 %node% 2 9 16
 %preset% 0 67 %node% 2 9 21 %preset% 0 70 %node% 2 9 26 %preset% 0
@@ -13,20 +13,20 @@
 0 1 %node% 2 8 7 %node% 2 11 2 %preset% 0 1 %node% 2 11 18 %preset%
 0 16 %node% 2 12 6 %preset% 0 305.616 %node% 2 12 13 %preset% 0 678.082
 ;
-#X obj 168 47 K12/math_number 0;
-#X obj 86 121 K12/instr_sustained2 0;
-#X obj 37 25 K12/math_number 0;
-#X obj 86 354 K12/fx_reverb 0;
-#X obj 86 468 K12/output 0;
-#X obj 86 235 K12/signal_envelope 0;
-#X obj 188 163 K12/math_number 0;
-#X obj 17 -420 K12/preset 0;
-#X obj 168 -194 K12/logic_sequencer 0;
-#X obj 168 -420 K12/logic_metronome 0;
-#X obj 168 -306 K12/logic_counter 0;
-#X obj -12 354 K12/fx_multitap 0;
-#X text 14 -328 recall preset #0to begin;
-#X text 14 -291 by Ivica Ico Bukvic<ico@vt.edu> 2014-21;
+#X obj 271 493 K12/math_number 0;
+#X obj 188 567 K12/instr_sustained2 0;
+#X obj 140 471 K12/math_number 0;
+#X obj 188 800 K12/fx_reverb 0;
+#X obj 188 914 K12/output 0;
+#X obj 188 681 K12/signal_envelope 0;
+#X obj 290 609 K12/math_number 0;
+#X obj 120 26 K12/preset 0;
+#X obj 271 252 K12/logic_sequencer 0;
+#X obj 271 26 K12/logic_metronome 0;
+#X obj 271 140 K12/logic_counter 0;
+#X obj 90 800 K12/fx_multitap 0;
+#X text 117 118 recall preset #0to begin;
+#X text 117 155 by Ivica Ico Bukvic<ico@vt.edu> 2014-21;
 #X connect 1 0 2 1;
 #X connect 1 0 7 1;
 #X connect 2 0 6 0;

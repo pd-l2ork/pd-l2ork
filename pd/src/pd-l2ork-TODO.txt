@@ -3,21 +3,17 @@ PD-L2ORK TODO:
 
 *Merge K12 menu patch and clean-up.
 
-  *Implement changing of the main Pd-L2Ork window menu. IN PROGRESS
-    *Instead of renaming the K12 item, just have a checkbox next to it OK
-    *Make sure the K12 Demos and K12 mode elements work.
-    *Automate addition and removal of the K12 Demos and toggling of the K12 mode and make sure that the newly created elements work.
-      *Consider keeping K12 demos in there at all times?
-
   *Update installer to include lock icon and K12 menu images in the bin folder.
 
-  *Refine K12 object sizes to make images fit better.
+  *Refine K12 object sizes to make images fit better. JUSTIN
     *No need for K12 object gopspill image margins around nlets anymore.
 
 
 
 *An error in OSX preferences when working with GUI dropdown (or something along those lines).
   *Figure out how to reproduce.
+
+*Investigate if patchwin array is kept properly up-to-date. Got window error when one creates a window, toggles its k12_menu, then creates another one and closes the original one and tries again. Suspect that going through the array trips up across the previously closed window. Currently, have a stopgap check if patchwin is not null before invoking its pd_canvas.js onchange.
 
 *Port vanilla garray set colors, line width, visibility, display style, and disable mouse editing (disabling mouse editing is URGENT for the forgotten planet module).
   *Make sure that if an array is not editable, that is passes along its mouse interaction to objects below.
@@ -548,7 +544,11 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
         if k12_mode or k_12_menu_vis
           fold the k12_menu
   *Move K12 menu to the View tab? NO, since all view options are per-canvas.
-
+*Implement updating of the main Pd-L2Ork window menu based on K12 mode. OK
+  *Instead of renaming the K12 item, just have a checkbox next to it OK
+  *Make sure the K12 Demos and K12 mode elements work. OK
+  *Automate addition and removal of the K12 Demos and toggling of the K12 mode and make sure that the newly created elements work. NO (see below)
+    *Consider keeping K12 demos in there at all times? NEED TO since there is no graceful way I found (yet) to insert and remove items from the main app menu without breaking things...
 
 
 

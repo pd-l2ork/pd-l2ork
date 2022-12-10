@@ -102,7 +102,7 @@
       </div>
     </dialog>
     <!-- hlkwok@vt.edu: k12 menu -->
-    <div id="k12_menu" class="unselectable" style="position: fixed; left: -155px; top: 0px; height: 100%; width: 155px; background-color:rgba(220, 220, 220, 0.95); display: none; transition: left 0.7s" onmouseover="canvas_events.k12menu()" onmouseout="canvas_events.k12menu_out()">
+    <div id="k12_menu" class="unselectable" style="position: fixed; left: -175px; top: 0px; height: 100%; width: 155px; background-color:rgba(220, 220, 220, 0.95); display: none; transition: left 0.7s" onmouseover="canvas_events.k12menu()" onmouseout="canvas_events.k12menu_out()">
         <div style="width: 155px"> <!-- Container div -->
             <!-- Top part of k12 menu (Edit div) -->
             <!--
@@ -380,7 +380,7 @@
                 </div> <!-- end Midi tab -->
                 <div class="custom_break"></div>
                 <!-- FX tab -->
-                <div class="k12_tab" style="background-color:rgba(230, 230, 40, 0.3)">
+                <div class="k12_tab" style="background-color:rgba(240, 240, 80, 0.4)">
                     <button id="fx_button" class="k12_tab_button" onclick="toggle_tab('fx_div')">
                         Audio Effects
                     </button>
@@ -422,7 +422,6 @@
     <div id="scroll_overlay" style="position: fixed; left: 0px; top: 0px; background-color: rgba(255, 100, 100, 0.); width: 100%; height: 100%; visibility: hidden; cursor: -webkit-grabbing;"></div>
 	<div id="hscroll" style="position: fixed; left: 0px; bottom: 0px; border-radius: 0px; width: 10px; height: 5px; visibility: hidden;"></div>
 	<div id="vscroll" style="position: fixed; right: 0px; top: 0px; border-radius: 0px; width: 5px; height: 10px; visibility: hidden;"></div>
-    <input id="k12_mode" type="text" value="" style="display: none;" onchange="update_menu()"/>
     <script type="text/javascript" src="./pd_canvas.js"></script>
   </body>
 </html>

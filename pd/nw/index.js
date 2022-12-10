@@ -712,17 +712,45 @@ function nw_create_pd_window_menus(gui, w) {
             chooser.click();
         }
     });
-    if (pdgui.get_k12_mode() == 1) {
-        minit(pd_m.file.k12_demos, { click: pdgui.menu_k12_open_demos });
-    }
+
     // Note: this must be different for the main Pd window
     if (osx) {
         minit(pd_m.file.save, { enabled: false });
         minit(pd_m.file.saveas, { enabled: false });
     }
-    if (pdgui.get_k12_mode() == 1) {
-        minit(pd_m.file.k12_mode, { click: pdgui.switch_k12_mode });
-    }
+
+    minit(pd_m.file.k12_demos, {
+        click: function (){
+            var input, chooser,
+                span = w.document.querySelector("#fileDialogSpan");
+            // Complicated workaround-- see comment in build_file_dialog_string
+            input = pdgui.build_file_dialog_string({
+                style: "display: none;",
+                type: "file",
+                id: "fileDialog",
+                nwworkingdir: pdgui.defunkify_windows_path(
+                                pdgui.get_lib_dir() + "/extra/K12/demos"),
+                multiple: null,
+                // These are copied from pd_filetypes in pdgui.js
+                accept: ".pd,.pat,.mxt,.mxb,.help"
+            });
+            span.innerHTML = input;
+            chooser = w.document.querySelector("#fileDialog");
+            // Hack-- we have to set the event listener here because we
+            // changed out the innerHTML above
+            chooser.onchange = function() {
+                var file_array = chooser.value;
+                // reset value so that we can open the same file twice
+                chooser.value = null;
+                pdgui.menu_open(file_array);
+                console.log("tried to open something");
+            };
+            chooser.click();
+        }
+    });
+
+    minit(pd_m.file.k12_mode, { click: set_k12_mode });
+
     minit(pd_m.file.message, { click: pdgui.menu_send });
     if (osx) {
         minit(pd_m.file.close, { enabled: false });
@@ -1008,3 +1036,25 @@ function gui_init(win) {
 window.onload = function() {
     gui_init(window);       
 };
+
+function set_k12_mode() {
+    pdgui.set_k12_mode(Number(pd_m.file.k12_mode.checked));
+}
+
+var k12_demos_item = new gui.MenuItem({
+    label: l("menu.k12_demos"),
+    tooltip: l("menu.k12_demos_tt"),
+    click: pdgui.menu_k12_open_demos
+});
+
+function set_k12_mode_checkbox() {
+    pd_m.file.k12_mode.checked = pdgui.get_k12_mode();
+    /*
+    this for some reason does not work
+    if (pdgui.get_k12_mode()) {
+        pd_m.file.insert(k12_demos_item, 4);
+    } else {
+        pd_m.file.remove(k12_demos_item);
+    }
+    */
+}

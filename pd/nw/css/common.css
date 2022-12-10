@@ -90,3 +90,16 @@
     -o-user-select: none;
     user-select: none;
 }
+
+/* singal cord for k12 mode */
+.k12_mode .cord.signal {
+    stroke-width: 3;
+    stroke: #46d5cf;
+}
+
+/* signal inlet */
+.k12_mode .xlet_signal {
+    stroke: #46d5cf;
+    fill: #46d5cf;
+    stroke-width: 1;
+}

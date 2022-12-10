@@ -1189,7 +1189,9 @@ var lang = require("./pdlang.js");
 exports.get_local_string = lang.get_local_string;
 
 var pd_window;
-exports.pd_window;
+// ico@vt.edu 2022-12-10: disabled this
+// TODO!: check for regressions
+//exports.pd_window;
 
 // Turns out I messed this up. pd_window should really be an
 // "nw window", so that you can use it to access all the
@@ -10265,15 +10267,11 @@ function set_k12_mode(val) {
     var i;
     var win_array_length = Object.keys(patchwin).length;
     for (i = 0; i < win_array_length; i++) {
-        // ico@vt.edu 2022-12-05: a rather hack-ish approach to
-        // being able to access nw_create_patch_window_menus, which
-        // should really belong only to pd_canvas.js. we create a
-        // hidden variable whose sole purpose is to expose its
-        // onchange function call. at this point we don't even
-        // bother providing any data into it.
-        patchwin[Object.keys(patchwin)[i]].window.document
-            .getElementById("k12_mode").onchange();
+        if(patchwin[Object.keys(patchwin)[i]])
+            patchwin[Object.keys(patchwin)[i]].window.update_menu();
     }
+    // now set the main window menu
+    pd_window.set_k12_mode_checkbox();
 }
 
 exports.set_k12_mode = set_k12_mode;
@@ -10322,21 +10320,28 @@ lock_runtime.src = "K12-icons/lock-runtime.png";
 // ico@vt.edu 2022-12-08:
 // toggle lock flap sends its request to c (pd_canvas.js) and this is
 // then invoked from gui_canvas_set_editmode above
+// states:
+//      1: unfolded
+//      0: folded
+//     -1: folded without changing the icon (used to animate disabling
+//         of the k12_menu or k12_mode)
 function toggle_k12_menu(cid, state) {
     //console.log("toggle_k12_menu");
     var k12m = patchwin[cid].window.document.getElementById("k12_menu");
-    if (k12m.style.left == "-155px" && state) {
+    if (k12m.style.left != "0px" && state == 1) {
         k12m.style.left = "0px";
         patchwin[cid].window.document.
             getElementById("k12_toggle_icon").src= lock_editmode.src;
     }
-    else if (!state) {
+    else if (state == 0) {
         k12m.style.left = "-155px";
         patchwin[cid].window.document.
             getElementById("k12_toggle_icon").src= lock_runtime.src;
     }
-    if (k12m.style.display == "block")
-        gui_canvas_get_immediate_scroll(cid);
+    else if (state == -1) {
+        k12m.style.left = "-175px";
+    }
+    gui_canvas_get_immediate_scroll(cid);
 }
 
 exports.toggle_k12_menu = toggle_k12_menu;
@@ -10351,8 +10356,8 @@ function toggle_k12_menu_visibility(cid, state) {
     for (i = 0; i < win_array_length; i++) {
         // TODO see if we need a separate version of this
         // for k12_menu
-        patchwin[Object.keys(patchwin)[i]].window.document
-            .getElementById("k12_mode").onchange();
+        if(patchwin[Object.keys(patchwin)[i]])
+            patchwin[Object.keys(patchwin)[i]].window.update_menu();
     }
 }
 

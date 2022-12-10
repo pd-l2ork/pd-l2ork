@@ -85,7 +85,7 @@ function create_menu(gui, type) {
         submenu: recent_files_submenu,
         tooltip: l("menu.recent_files_tt")
     }));
-    if (pdgui.get_k12_mode() == 1) {
+    if (pdgui.get_k12_mode() == 1 || type == "console") {
         file_menu.append(m.file.k12_demos = new gui.MenuItem({
             label: l("menu.k12_demos"),
             tooltip: l("menu.k12_demos_tt")
