@@ -2,13 +2,8 @@ PD-L2ORK TODO:
 *Seek RPi version of nw.js 0.67.1. IN PROGRESS
 
 *Merge K12 menu patch and clean-up.
-
-  *Update installer to include lock icon and K12 menu images in the bin folder.
-
   *Refine K12 object sizes to make images fit better. JUSTIN
     *No need for K12 object gopspill image margins around nlets anymore.
-
-
 
 *An error in OSX preferences when working with GUI dropdown (or something along those lines).
   *Figure out how to reproduce.
@@ -549,6 +544,10 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
   *Make sure the K12 Demos and K12 mode elements work. OK
   *Automate addition and removal of the K12 Demos and toggling of the K12 mode and make sure that the newly created elements work. NO (see below)
     *Consider keeping K12 demos in there at all times? NEED TO since there is no graceful way I found (yet) to insert and remove items from the main app menu without breaking things...
+*Update installer to include lock icon and K12 menu images in the bin folder.
+  *K12-icons has lock-editmode.png, lock-runtime.png, and l2ork_addons/K12/icons-large/*
+  *Given the K12 mode uses 3rd-party externals, having this now disables light builds, which is ok, since that was never our focus anyhow...
+  
 
 
 

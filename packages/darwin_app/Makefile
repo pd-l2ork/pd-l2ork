@@ -79,6 +79,9 @@ ifneq ($(LIGHT),yes)
 	cp -rf $(cvs_root_dir)/apps $(DESTDIR)/
 	@echo "Adding K12 abstractions..."
 	cp -rf $(cvs_root_dir)/l2ork_addons/K12 $(DESTDIR)/extra/
+	@echo "Adding K12 menu icons..."
+	install -d $(DESTDIR)/bin/K12-icons/
+	cp -rf $(cvs_root_dir)/l2ork_addons/K12/icons-large/ $(DESTDIR)/bin/K12-icons/
 endif
 	# Huge kludge to move all the nw.js files in $DESTDIR/bin to
 	# $DESTDIR. We need to do this because the nw.js app expects

@@ -94,6 +94,9 @@ ifneq ($(LIGHT),yes)
 	cp -rf ../../apps $(DESTDIR)$(libpddir)/	
 	@echo "Adding K12 abstractions..."
 	cp -rf ../../l2ork_addons/K12/ $(DESTDIR)$(libpddir)/extra/
+	@echo "Adding K12 menu icons..."
+	install -d $(DESTDIR)$(libpddir)/K12-icons/
+	cp -rf ../../l2ork_addons/K12/icons-large/ $(DESTDIR)$(libpddir)/bin/K12-icons/
 # add arduino library
 	cp -rf ../../externals/hardware/arduino $(DESTDIR)$(libpddir)/extra/
 endif
