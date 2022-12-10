@@ -2193,11 +2193,8 @@ function set_menu_modals(window, state) {
     }
 }
 
-function get_editmode_checkbox() {
-    return m.edit.editmode.checked;
-}
-
 function set_editmode_checkbox(state) {
+    //console.log("pd_canvas.js set_editmode_checkbox state=" + state);
     m.edit.editmode.checked = state;
 }
 
@@ -2227,6 +2224,16 @@ function minit(menu_item, options) {
             };
         }
     }
+}
+
+// returns edit mode for this particular window based on
+// whether patchsvg belongs to editmode class. used for
+// the menu when it is being recreated.
+function get_editmode() {
+    var result = document.getElementById("patchsvg").
+        classList.contains("editmode");
+    //console.log("pd_canvas.js get_editmode result=" + result);
+    return result;
 }
 
 // used, so that we can reference menu later
@@ -2970,6 +2977,20 @@ function nw_create_patch_window_menus(gui, name) {
         }
     });
 
+    // update checkboxes
+    if (pdgui.get_k12_mode()) {
+        m.file.k12_mode.checked = 1;
+    } else {
+        m.file.k12_mode.checked = 0;
+        if (pdgui.get_k12_menu_vis()) {
+            m.put.k12_menu.checked = 1;
+        } else {
+            m.put.k12_menu.checked = 0;
+        }
+    }
+    //console.log("nw_create_patch_window_menus get_editmode=" + get_editmode());
+    m.edit.editmode.checked = get_editmode();
+
     // ico@vt.edu 2022-06-18: here we disable edit and inspector options
     // if the patch is not editable (e.g. has only an array inside it).
     // this prevents users from clicking on the edit and cord inspector,
@@ -3069,28 +3090,20 @@ function init_menu_font_size(size) {
 // editable option. Shortened delay to 0 which seems to work fine with
 // nwjs 0.67.1.
 function update_menu_items(cid, isblank) {
-    //pdgui.post("update_menu_items...");
+    //console.log("pd_canvas.js update_menu_items");
     setTimeout(function() {
         pdgui.pdsend(cid, "updatemenu"); //fonts and editable option from c
 
         if (pdgui.get_k12_mode() || pdgui.get_k12_menu_vis())
         {
-            if (pdgui.get_k12_mode()) {
-                m.file.k12_mode.checked = 1;
-            } else {
-                m.file.k12_mode.checked = 0;
-                if (pdgui.get_k12_menu_vis()) {
-                    m.put.k12_menu.checked = 1;
-                } else {
-                    m.put.k12_menu.checked = 0;
-                }
-            }
             var k12m = document.getElementById("k12_menu");
             if (k12m.style.display == "none") {
-                k12m.style.left == "-155px";
-                k12m.style.display == "block";
+                // this resets the menu position to default folded
+                // and updates the icon
+                pdgui.toggle_k12_menu(canvas_events.get_id(), 0);
+                k12m.style.display = "block";
                 if (m.edit.editmode.checked)
-                    pdgui.toggle_k12_menu(canvas_events.get_id());
+                    pdgui.toggle_k12_menu(canvas_events.get_id(), 1);
                 pdgui.gui_canvas_get_immediate_scroll(canvas_events.get_id());
             }
         }
@@ -3112,16 +3125,19 @@ function update_menu_items(cid, isblank) {
 
 // hlkwok@vt.edu 2022-10-12: switches between k12_mode and normal mode
 function switch_k12_mode() {
+    //console.log("pd_canvas.js switch_k12_mode");
     pdgui.set_k12_mode(Number(m.file.k12_mode.checked));
 }
 
 // hlkwok@vt.edu 2022-10-24: functionality for k12 tabs
 function toggle_tab(tab_id) {
+    //console.log("pd_canvas.js toggle_tab");
     pdgui.toggle_tab(canvas_events.get_id(), tab_id);
 }
 
 // hlkwok@vt.edu 2022-11-1: function for placing K12 objects
 function place_K12_object(object) {
+    //console.log("pd_canvas.js place_k12_object");
     var cid = canvas_events.get_id();
     var object_path = "K12/" + object;
     pdgui.pdsend(cid, "dirty 1");
@@ -3131,6 +3147,7 @@ function place_K12_object(object) {
 // hlkwok@vt.edu 2022-11-3: toggles edit mode in both edit menu and k12 menu
 // ico@vt.edu 2022-12-08: reworked to simplify edit functions inside pdgui.js
 function toggle_edit() {
+    //console.log("pd_canvas.js toggle_edit");
     update_live_box();
     pdgui.pdsend(canvas_events.get_id(), "editmode 0");
 }
@@ -3138,18 +3155,20 @@ function toggle_edit() {
 // hlkwok@vt.edu 2022-11-8: updates k12 menu height, which will adjust
 // k12 menu scrollbar
 function update_k12_menu() {
+    //console.log("pd_canvas.js update_k12_menu");
     pdgui.update_k12_menu(canvas_events.get_id());
 }
 
 // hlkwok@vt.edu 2022-11-13: toggles k12 menu position (for side arrow button)
 function toggle_k12_menu_and_set_editmode(evt) {
+    //console.log("pd_canvas.js toggle_k12_menu_and_set_editmode");
     pdgui.pdsend(canvas_events.get_id(), "editmode 0");
 }
 
 // hlkwok@vt.edu 2022-11-15: toggles k12 menu visibility (for k12 menu option
 // in the put menu
 function toggle_k12_menu_visibility() {
-    pdgui.post("toggle_k12_menu_visibility checked=" + m.put.k12_menu.checked);
+    //console.log("pd_canvas.js toggle_k12_menu_visibility checked=" + m.put.k12_menu.checked);
     pdgui.toggle_k12_menu_visibility(canvas_events.get_id(), m.put.k12_menu.checked);
 }
 
@@ -3158,37 +3177,39 @@ function toggle_k12_menu_visibility() {
 // we do this, so that pdgui can trigger updates on all open
 // canvases.
 function update_menu() {
-    // pdgui.post("pd_canvas.js update_menu");
+    //console.log("pd_canvas.js update_menu");
     nw_create_patch_window_menus(gui, canvas_events.get_id());
-    if (pdgui.get_k12_mode()) {
-        m.file.k12_mode.checked = 1;
-    } else {
-        m.file.k12_mode.checked = 0;
-        if (pdgui.get_k12_menu_vis()) {
-            m.put.k12_menu.checked = 1;
-        } else {
-            m.put.k12_menu.checked = 0;
-        }
-    }
     var k12m = document.getElementById("k12_menu");
+    //console.log("...k12_mode=" + pdgui.get_k12_mode() + " k12_menu=" +
+    //  pdgui.get_k12_menu_vis() + " display=" + k12m.style.display);
     if ((pdgui.get_k12_mode() || pdgui.get_k12_menu_vis()) &&
         k12m.style.display == "none") {
-        k12m.style.left == "-155px";
-        k12m.style.display == "block";
+        //console.log("...enabling");
+        // this resets the menu position to default folded
+        // and updates the icon
+        pdgui.toggle_k12_menu(canvas_events.get_id(), 0);
+        k12m.style.display = "block";
+        //console.log("...display=" + k12m.style.display);
+        update_k12_menu(canvas_events.get_id());
         if (m.edit.editmode.checked) {
+            //console.log("...calling pdgui.toggle_k12_menu");
             // visually adjust the menu (stretch the vertical size, etc.)
-            update_k12_menu(canvas_events.get_id());
-            pdgui.toggle_k12_menu(canvas_events.get_id());
+            pdgui.toggle_k12_menu(canvas_events.get_id(), 1);
+            //console.log("...done with pdgui.toggle_k12_menu");
         }
         // no need to tcall this, since it is already called
         // inside update_k12_menu
         //pdgui.gui_canvas_get_immediate_scroll(canvas_events.get_id());
     } else if ((!pdgui.get_k12_mode() && !pdgui.get_k12_menu_vis()) &&
         k12m.style.display == "block") {
-        k12m.style.display == "none";
-        k12m.style.left = "-155px";
+        //console.log("...disabling");
+        k12m.style.display = "none";
+        // this resets the menu position to default folded
+        // and updates the icon
+        pdgui.toggle_k12_menu(canvas_events.get_id(), 0);
         pdgui.gui_canvas_get_immediate_scroll(canvas_events.get_id());
     }
 
     create_popup_menu(canvas_events.get_id());
+    //console.log("...done");
 }

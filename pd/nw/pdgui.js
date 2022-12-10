@@ -1297,6 +1297,7 @@ var pd_myversion,    // Pd version string
     global_clipboard, //
     global_selection, //
     k12_mode = 0,          // should be set from argv ("0" is just a stopgap)
+    k12_menu_vis = 0,  // whether the k12_menu is enabled outside k12 mode
     autotips,          // tooltips
     magicglass,        // cord inspector
     window_prefs,      //retaining window-specific preferences
@@ -2796,7 +2797,7 @@ var scroll = {},
     title_queue= {}, // ugly kluge to work around an ugly race condition
     popup_menu = {},
     toplevel_scalars = {},
-    editable = {}, // for allowing developer to lock the patch (e.g.) to beginners
+    editable = {}; // for allowing developer to lock the patch (e.g.) to beginners
 
     var patchwin = {}; // object filled with cid: [Window object] pairs
     var dialogwin = {}; // object filled with did: [Window object] pairs
@@ -9404,7 +9405,8 @@ function canvas_params(nw_win)
         }
     }
     //post("canvas_params calculated bbox: x=" + bbox.x + " w=" + bbox.width);
-    if (k12_mode == 1 || k12_menu == 1) {
+    if ((k12_mode == 1 || k12_menu_vis == 1) &&
+        svg_elem.classList.contains("editmode")) {
         //post("canvas params--expanding the window size");
         bbox.width += 155;
         bbox.x -= 155;
@@ -10321,27 +10323,20 @@ lock_runtime.src = "K12-icons/lock-runtime.png";
 // toggle lock flap sends its request to c (pd_canvas.js) and this is
 // then invoked from gui_canvas_set_editmode above
 function toggle_k12_menu(cid, state) {
-    //post("toggle_k12_menu");
+    //console.log("toggle_k12_menu");
     var k12m = patchwin[cid].window.document.getElementById("k12_menu");
-    if (k12m.style.display == "none") {
-        post("bug toggle_k12_menu");
-        return;
-    }
     if (k12m.style.left == "-155px" && state) {
         k12m.style.left = "0px";
         patchwin[cid].window.document.
             getElementById("k12_toggle_icon").src= lock_editmode.src;
-        //patchwin[cid].window.document.
-        //    getElementById("show_k12_menu").style.transform = "rotate(0)";
     }
     else if (!state) {
         k12m.style.left = "-155px";
         patchwin[cid].window.document.
             getElementById("k12_toggle_icon").src= lock_runtime.src;
-        //patchwin[cid].window.document.
-        //    getElementById("show_k12_menu").style.transform = "rotate(-180deg)";
     }
-    gui_canvas_get_immediate_scroll(cid);
+    if (k12m.style.display == "block")
+        gui_canvas_get_immediate_scroll(cid);
 }
 
 exports.toggle_k12_menu = toggle_k12_menu;
@@ -10357,9 +10352,8 @@ function toggle_k12_menu_visibility(cid, state) {
         // TODO see if we need a separate version of this
         // for k12_menu
         patchwin[Object.keys(patchwin)[i]].window.document
-            .getElementById("k12_menu").onchange();
+            .getElementById("k12_mode").onchange();
     }
-    post("toggle_k12_menu_visibility k12_menu=" + k12_menu_vis + " cid=" + cid);
 }
 
 exports.toggle_k12_menu_visibility = toggle_k12_menu_visibility;
