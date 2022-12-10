@@ -108,10 +108,10 @@
             <!--
             <div id="edit_div" style="height: 62px; width: 170px">
                 <div style="position: relative; text-align: center; margin: 5px; padding: 0px;">
-                    <button id="building" style="display: block; width: 160px; padding: 0px;" onclick="toggle_edit()">
+                    <button tabindex="-1" id="building" style="display: block; width: 160px; padding: 0px;" onclick="toggle_edit()">
                         <img src="K12-icons/edit.png" alt="Edit button" class="k12_edit">
                     </button>
-                    <button id="playing" style="display: none; width: 160px; padding: 0px;" onclick="toggle_edit()">
+                    <button tabindex="-1" id="playing" style="display: none; width: 160px; padding: 0px;" onclick="toggle_edit()">
                         <img src="K12-icons/perform.png" alt="Perform button" class="k12_edit">
                     </button>
                     <hr style="height: 1px; width: 155px; position: relative; top: 0px; left: -2px; border: 0; background: #333; background-image: linear-gradient(to right, #ccc, #333, #ccc);">
@@ -121,17 +121,17 @@
             <div id="tab_menu" style="position: relative; display: block; padding: 0px; margin-left: 1px; padding-top: 6px; float: left; height: 100%; width: 154px; overflow-y: scroll; overflow-x: hidden">
                 <!-- RPI tab -->
                 <div class="k12_tab" style="background-color:rgba(204, 0, 0, 0.3)">  
-                    <button id="rpi_button" class="k12_tab_button" onclick="toggle_tab('rpi_div')">
+                    <button tabindex="-1" id="rpi_button" class="k12_tab_button" onclick="toggle_tab('rpi_div')">
                         Raspberry Pi
                     </button>
                     <div id="rpi_div" class="k12_buttons" style="display: none; padding: 5px">
-                        <button id="rpi_digital" class="k12_object" onclick="place_K12_object('raspberrypi_digital')" data-i18n="[title]k12menu.rpi_digital">
+                        <button tabindex="-1" id="rpi_digital" class="k12_object" onclick="place_K12_object('raspberrypi_digital')" data-i18n="[title]k12menu.rpi_digital">
                             <img src="K12-icons/raspberrypi_gpio_digital_on.png" alt="RPI Digital" class="k12_icon">
                         </button>
-                        <button id="rpi_analog_out" class="k12_object" onclick="place_K12_object('raspberrypi_analog_out')" data-i18n="[title]k12menu.rpi_analog_out">
+                        <button tabindex="-1" id="rpi_analog_out" class="k12_object" onclick="place_K12_object('raspberrypi_analog_out')" data-i18n="[title]k12menu.rpi_analog_out">
                             <img src="K12-icons/raspberrypi_gpio_analog_out_on.png" alt="RPI Analog Out" class="k12_icon">
                         </button>
-                        <button id="rpi_analog_in" class="k12_object" onclick="place_K12_object('raspberrypi_analog_in')" data-i18n="[title]k12menu.rpi_analog_in">
+                        <button tabindex="-1" id="rpi_analog_in" class="k12_object" onclick="place_K12_object('raspberrypi_analog_in')" data-i18n="[title]k12menu.rpi_analog_in">
                             <img src="K12-icons/raspberrypi_3008_analog_in_on.png" alt="RPI Analog In" class="k12_icon">
                         </button>
                     </div>
@@ -139,23 +139,23 @@
                 <div class="custom_break"></div>
                 <!-- Arduino tab -->
                 <div class="k12_tab" style="background-color:rgba(20, 100, 200, 0.3)">
-                    <button id="arduino_button" class="k12_tab_button" onclick="toggle_tab('arduino_div')">
+                    <button tabindex="-1" id="arduino_button" class="k12_tab_button" onclick="toggle_tab('arduino_div')">
                         Arduino
                     </button>
                     <div id="arduino_div" class="k12_buttons" style="display: none; padding: 5px;">
-                        <button id="arduino" class="k12_object" onclick="place_K12_object('arduino_connect')" data-i18n="[title]k12menu.arduino">
+                        <button tabindex="-1" id="arduino" class="k12_object" onclick="place_K12_object('arduino_connect')" data-i18n="[title]k12menu.arduino">
                             <img src="K12-icons/arduino_on.png" alt="Arduino" class="k12_icon">
                         </button>
-                        <button id="arduino_digital_in" class="k12_object" onclick="place_K12_object('arduino_digital_in')" data-i18n="[title]k12menu.arduino_digital_in">
+                        <button tabindex="-1" id="arduino_digital_in" class="k12_object" onclick="place_K12_object('arduino_digital_in')" data-i18n="[title]k12menu.arduino_digital_in">
                             <img src="K12-icons/arduino_digital_in.png" alt="Arduino Digital In" class="k12_icon">
                         </button>
-                        <button id="arduino_digital_out" class="k12_object" onclick="place_K12_object('arduino_digital_out')" data-i18n="[title]k12menu.arduino_digital_out">
+                        <button tabindex="-1" id="arduino_digital_out" class="k12_object" onclick="place_K12_object('arduino_digital_out')" data-i18n="[title]k12menu.arduino_digital_out">
                             <img src="K12-icons/arduino_digital_out.png" alt="Arduino Digital Out" class="k12_icon">
                         </button>
-                        <button id="arduino_analog_in" class="k12_object" onclick="place_K12_object('arduino_analog_in')" data-i18n="[title]k12menu.arduino_analog_in">
+                        <button tabindex="-1" id="arduino_analog_in" class="k12_object" onclick="place_K12_object('arduino_analog_in')" data-i18n="[title]k12menu.arduino_analog_in">
                             <img src="K12-icons/arduino_analog_in.png" alt="Arduino Analog In" class="k12_icon">
                         </button>
-                        <button id="arduino_analog_out" class="k12_object" onclick="place_K12_object('arduino_analog_out')" data-i18n="[title]k12menu.arduino_analog_out">
+                        <button tabindex="-1" id="arduino_analog_out" class="k12_object" onclick="place_K12_object('arduino_analog_out')" data-i18n="[title]k12menu.arduino_analog_out">
                             <img src="K12-icons/arduino_analog_out.png" alt="Arduino Analog Out" class="k12_icon">
                         </button>
                     </div>
@@ -163,38 +163,38 @@
                 <div class="custom_break"></div>
                 <!-- Wii tab -->
                 <div class="k12_tab" style="background-color:rgba(60, 224, 224, 0.3);">
-                    <button id="wii_button" class="k12_tab_button" onclick="toggle_tab('wii_div')">
+                    <button tabindex="-1" id="wii_button" class="k12_tab_button" onclick="toggle_tab('wii_div')">
                         Wii
                     </button>
                     <div id="wii_div" class="k12_buttons" style="display: none; padding: 5px">
-                        <button id="wii_connect" class="k12_object" onclick="place_K12_object('wii_connect')" data-i18n="[title]k12menu.wii_connect">
+                        <button tabindex="-1" id="wii_connect" class="k12_object" onclick="place_K12_object('wii_connect')" data-i18n="[title]k12menu.wii_connect">
                             <img src="K12-icons/wii_connect_on.png" alt="Wii Connect" class="k12_icon">
                         </button>
-                        <button id="wii_buttons" class="k12_object" onclick="place_K12_object('wii_buttons')" data-i18n="[title]k12menu.wii_buttons">
+                        <button tabindex="-1" id="wii_buttons" class="k12_object" onclick="place_K12_object('wii_buttons')" data-i18n="[title]k12menu.wii_buttons">
                             <img src="K12-icons/wii_buttons.png" alt="Wii Buttons" class="k12_icon">
                         </button>
-                        <button id="wii_hit" class="k12_object" onclick="place_K12_object('wii_hit')" data-i18n="[title]k12menu.wii_hit">
+                        <button tabindex="-1" id="wii_hit" class="k12_object" onclick="place_K12_object('wii_hit')" data-i18n="[title]k12menu.wii_hit">
                             <img src="K12-icons/wii_hit.png" alt="Wii Hit" class="k12_icon">
                         </button>
-                        <button id="wii_accelerometer" class="k12_object" onclick="place_K12_object('wii_accelerometer')" data-i18n="[title]k12menu.wii_accelerometer">
+                        <button tabindex="-1" id="wii_accelerometer" class="k12_object" onclick="place_K12_object('wii_accelerometer')" data-i18n="[title]k12menu.wii_accelerometer">
                             <img src="K12-icons/wii_accelerometer.png" alt="Wii Accelerometer" class="k12_icon">
                         </button>
-                        <button id="wii_speed_xry" class="k12_object" onclick="place_K12_object('wii_speed_xry')" data-i18n="[title]k12menu.wii_speed_xry">
+                        <button tabindex="-1" id="wii_speed_xry" class="k12_object" onclick="place_K12_object('wii_speed_xry')" data-i18n="[title]k12menu.wii_speed_xry">
                             <img src="K12-icons/wii_speed_xry.png" alt="Wii Speed XRY" class="k12_icon">
                         </button>
-                        <button id="wii_speed" class="k12_object" onclick="place_K12_object('wii_speed')" data-i18n="[title]k12menu.wii_speed">
+                        <button tabindex="-1" id="wii_speed" class="k12_object" onclick="place_K12_object('wii_speed')" data-i18n="[title]k12menu.wii_speed">
                             <img src="K12-icons/wii_speed.png" alt="Wii Speed" class="k12_icon">
                         </button>
-                        <button id="wii_nunchuk_buttons" class="k12_object" onclick="place_K12_object('wii_nunchuk_buttons')" data-i18n="[title]k12menu.wii_nunchuk_buttons">
+                        <button tabindex="-1" id="wii_nunchuk_buttons" class="k12_object" onclick="place_K12_object('wii_nunchuk_buttons')" data-i18n="[title]k12menu.wii_nunchuk_buttons">
                             <img src="K12-icons/wii_nunchuk_buttons.png" alt="Wii Nunchuk Buttons" class="k12_icon">
                         </button>
-                        <button id="wii_nunchuk_hit" class="k12_object" onclick="place_K12_object('wii_nunchuk_hit')" data-i18n="[title]k12menu.wii_nunchuk_hit">
+                        <button tabindex="-1" id="wii_nunchuk_hit" class="k12_object" onclick="place_K12_object('wii_nunchuk_hit')" data-i18n="[title]k12menu.wii_nunchuk_hit">
                             <img src="K12-icons/wii_nunchuk_hit.png" alt="Wii Nunchuk Hit" class="k12_icon">
                         </button>
-                        <button id="wii_nunchuk_accelerometer" class="k12_object" onclick="place_K12_object('wii_nunchuk_accelerometer')" data-i18n="[title]k12menu.wii_nunchuk_accelerometer">
+                        <button tabindex="-1" id="wii_nunchuk_accelerometer" class="k12_object" onclick="place_K12_object('wii_nunchuk_accelerometer')" data-i18n="[title]k12menu.wii_nunchuk_accelerometer">
                             <img src="K12-icons/wii_nunchuk_accelerometer.png" alt="Wii Nunchuk Accelerometer" class="k12_icon">
                         </button>
-                        <button id="wii_nunchuk_stick" class="k12_object" onclick="place_K12_object('wii_nunchuk_stick')" data-i18n="[title]k12menu.wii_nunchuk_stick">
+                        <button tabindex="-1" id="wii_nunchuk_stick" class="k12_object" onclick="place_K12_object('wii_nunchuk_stick')" data-i18n="[title]k12menu.wii_nunchuk_stick">
                             <img src="K12-icons/wii_nunchuk_stick.png" alt="Wii Nunchuk Stick" class="k12_icon">
                         </button>
                     </div>
@@ -202,44 +202,44 @@
                 <div class="custom_break"></div>
                 <!-- Math tab -->
                 <div class="k12_tab" style="background-color:rgba(255, 173, 51, 0.3)">
-                    <button id="math_button" class="k12_tab_button" onclick="toggle_tab('math_div')">
+                    <button tabindex="-1" id="math_button" class="k12_tab_button" onclick="toggle_tab('math_div')">
                         Math
                     </button>
                     <div id="math_div" class="k12_buttons" style="display: none; padding: 5px">
-                        <button id="math_number" class="k12_object" onclick="place_K12_object('math_number')" data-i18n="[title]k12menu.math_number">
+                        <button tabindex="-1" id="math_number" class="k12_object" onclick="place_K12_object('math_number')" data-i18n="[title]k12menu.math_number">
                             <img src="K12-icons/math_number.png" alt="Math Number" class="k12_icon">
                         </button>
-                        <button id="math_netsend" class="k12_object" onclick="place_K12_object('math_netsend')" data-i18n="[title]k12menu.math_netsend">
+                        <button tabindex="-1" id="math_netsend" class="k12_object" onclick="place_K12_object('math_netsend')" data-i18n="[title]k12menu.math_netsend">
                             <img src="K12-icons/math_netsend.png" alt="Math Netsend" class="k12_icon">
                         </button>
-                        <button id="math_netreceive" class="k12_object" onclick="place_K12_object('math_netreceive')" data-i18n="[title]k12menu.math_netreceive">
+                        <button tabindex="-1" id="math_netreceive" class="k12_object" onclick="place_K12_object('math_netreceive')" data-i18n="[title]k12menu.math_netreceive">
                             <img src="K12-icons/math_netreceive.png" alt="Math Netreceive" class="k12_icon">
                         </button>
-                        <button id="math_tag" class="k12_object" onclick="place_K12_object('math_tag')" data-i18n="[title]k12menu.math_tag">
+                        <button tabindex="-1" id="math_tag" class="k12_object" onclick="place_K12_object('math_tag')" data-i18n="[title]k12menu.math_tag">
                             <img src="K12-icons/math_tag.png" alt="Math Tag" class="k12_icon">
                         </button>
-                        <button id="math_routebytag" class="k12_object" onclick="place_K12_object('math_routebytag')" data-i18n="[title]k12menu.math_routebytag">
+                        <button tabindex="-1" id="math_routebytag" class="k12_object" onclick="place_K12_object('math_routebytag')" data-i18n="[title]k12menu.math_routebytag">
                             <img src="K12-icons/math_routebytag.png" alt="Math Routebytag" class="k12_icon">
                         </button>
-                        <button id="math_add" class="k12_object" onclick="place_K12_object('math_add')" data-i18n="[title]k12menu.math_add">
+                        <button tabindex="-1" id="math_add" class="k12_object" onclick="place_K12_object('math_add')" data-i18n="[title]k12menu.math_add">
                             <img src="K12-icons/math_add.png" alt="Math Add" class="k12_icon">
                         </button>
-                        <button id="math_subtract" class="k12_object" onclick="place_K12_object('math_subtract')" data-i18n="[title]k12menu.math_subtract">
+                        <button tabindex="-1" id="math_subtract" class="k12_object" onclick="place_K12_object('math_subtract')" data-i18n="[title]k12menu.math_subtract">
                             <img src="K12-icons/math_subtract.png" alt="Math Subtract" class="k12_icon">
                         </button>
-                        <button id="math_multiply" class="k12_object" onclick="place_K12_object('math_multiply')" data-i18n="[title]k12menu.math_multiply">
+                        <button tabindex="-1" id="math_multiply" class="k12_object" onclick="place_K12_object('math_multiply')" data-i18n="[title]k12menu.math_multiply">
                             <img src="K12-icons/multiply.png" alt="Math Multiply" class="k12_icon">
                         </button>
-                        <button id="math_divide" class="k12_object" onclick="place_K12_object('math_divide')" data-i18n="[title]k12menu.math_divide">
+                        <button tabindex="-1" id="math_divide" class="k12_object" onclick="place_K12_object('math_divide')" data-i18n="[title]k12menu.math_divide">
                             <img src="K12-icons/math_divide.png" alt="Math Divide" class="k12_icon">
                         </button>
-                        <button id="math_random" class="k12_object" onclick="place_K12_object('math_random')" data-i18n="[title]k12menu.math_random">
+                        <button tabindex="-1" id="math_random" class="k12_object" onclick="place_K12_object('math_random')" data-i18n="[title]k12menu.math_random">
                             <img src="K12-icons/math_random.png" alt="Math Random" class="k12_icon">
                         </button>
-                        <button id="math_average" class="k12_object" onclick="place_K12_object('math_average')" data-i18n="[title]k12menu.math_average">
+                        <button tabindex="-1" id="math_average" class="k12_object" onclick="place_K12_object('math_average')" data-i18n="[title]k12menu.math_average">
                             <img src="K12-icons/math_average.png" alt="Math Average" class="k12_icon">
                         </button>
-                        <button id="math_scale" class="k12_object" onclick="place_K12_object('math_scale')" data-i18n="[title]k12menu.math_scale">
+                        <button tabindex="-1" id="math_scale" class="k12_object" onclick="place_K12_object('math_scale')" data-i18n="[title]k12menu.math_scale">
                             <img src="K12-icons/math_scale.png" alt="Math Scale" class="k12_icon">
                         </button>
                     </div>
@@ -247,26 +247,26 @@
                 <div class="custom_break"></div>
                 <!-- Logic tab -->
                 <div class="k12_tab" style="background-color:rgba(255, 83, 26, 0.3)">
-                    <button id="logic_button" class="k12_tab_button" onclick="toggle_tab('logic_div')">
+                    <button tabindex="-1" id="logic_button" class="k12_tab_button" onclick="toggle_tab('logic_div')">
                         Logic
                     </button>
                     <div id="logic_div" class="k12_buttons" style="display: none; padding: 5px">
-                        <button id="logic_compare" class="k12_object" onclick="place_K12_object('logic_compare')" data-i18n="[title]k12menu.logic_compare">
+                        <button tabindex="-1" id="logic_compare" class="k12_object" onclick="place_K12_object('logic_compare')" data-i18n="[title]k12menu.logic_compare">
                             <img src="K12-icons/logic_compare.png" alt="Logic Compare" class="k12_icon">
                         </button>
-                        <button id="logic_mapper" class="k12_object" onclick="place_K12_object('logic_mapper')" data-i18n="[title]k12menu.logic_mapper">
+                        <button tabindex="-1" id="logic_mapper" class="k12_object" onclick="place_K12_object('logic_mapper')" data-i18n="[title]k12menu.logic_mapper">
                             <img src="K12-icons/logic_mapper.png" alt="Logic Mapper" class="k12_icon">
                         </button>
-                        <button id="logic_metronome" class="k12_object" onclick="place_K12_object('logic_metronome')" data-i18n="[title]k12menu.logic_metronome">
+                        <button tabindex="-1" id="logic_metronome" class="k12_object" onclick="place_K12_object('logic_metronome')" data-i18n="[title]k12menu.logic_metronome">
                             <img src="K12-icons/logic_metronome.png" alt="Logic Metronome" class="k12_icon">
                         </button>
-                        <button id="logic_counter" class="k12_object" onclick="place_K12_object('logic_counter')" data-i18n="[title]k12menu.logic_counter">
+                        <button tabindex="-1" id="logic_counter" class="k12_object" onclick="place_K12_object('logic_counter')" data-i18n="[title]k12menu.logic_counter">
                             <img src="K12-icons/logic_counter.png" alt="Logic Counter" class="k12_icon">
                         </button>
-                        <button id="logic_hit" class="k12_object" onclick="place_K12_object('logic_hit')" data-i18n="[title]k12menu.logic_hit">
+                        <button tabindex="-1" id="logic_hit" class="k12_object" onclick="place_K12_object('logic_hit')" data-i18n="[title]k12menu.logic_hit">
                             <img src="K12-icons/logic_hit.png" alt="Logic Hit" class="k12_icon">
                         </button>
-                        <button id="logic_sequencer" class="k12_object" onclick="place_K12_object('logic_sequencer')" data-i18n="[title]k12menu.logic_sequencer">
+                        <button tabindex="-1" id="logic_sequencer" class="k12_object" onclick="place_K12_object('logic_sequencer')" data-i18n="[title]k12menu.logic_sequencer">
                             <img src="K12-icons/logic_sequencer.png" alt="Logic Sequencer" class="k12_icon">
                         </button>
                     </div>
@@ -274,21 +274,21 @@
                 <div class="custom_break"></div>
                 <!-- Instrument tab -->
                 <div class="k12_tab" style="background-color:rgba(134, 20, 179, 0.3)">
-                    <button id="instr_button" class="k12_tab_button" onclick="toggle_tab('instr_div')">
+                    <button tabindex="-1" id="instr_button" class="k12_tab_button" onclick="toggle_tab('instr_div')">
                         Simple Instruments
                     </button>
                     <div id="instr_div" class="k12_buttons" style="display: none; padding: 5px">
-                        <button id="instr_short1" class="k12_object" onclick="place_K12_object('instr_short1')" data-i18n="[title]k12menu.instr_short1">
+                        <button tabindex="-1" id="instr_short1" class="k12_object" onclick="place_K12_object('instr_short1')" data-i18n="[title]k12menu.instr_short1">
                             <img src="K12-icons/instr_short1.png" alt="Instr Short 1" class="k12_icon">
                         </button>
                         </button>
-                        <button id="instr_short2" class="k12_object" onclick="place_K12_object('instr_short2')" data-i18n="[title]k12menu.instr_short2">
+                        <button tabindex="-1" id="instr_short2" class="k12_object" onclick="place_K12_object('instr_short2')" data-i18n="[title]k12menu.instr_short2">
                             <img src="K12-icons/instr_short2.png" alt="Instr Short 2" class="k12_icon">
                         </button>
-                        <button id="instr_sustained1" class="k12_object" onclick="place_K12_object('instr_sustained1')" data-i18n="[title]k12menu.instr_sustained1">
+                        <button tabindex="-1" id="instr_sustained1" class="k12_object" onclick="place_K12_object('instr_sustained1')" data-i18n="[title]k12menu.instr_sustained1">
                             <img src="K12-icons/instr_sustained1.png" alt="Instr Sustained 1" class="k12_icon">
                         </button>
-                        <button id="instr_sustained2" class="k12_object" onclick="place_K12_object('instr_sustained2')" data-i18n="[title]k12menu.instr_sustained2">
+                        <button tabindex="-1" id="instr_sustained2" class="k12_object" onclick="place_K12_object('instr_sustained2')" data-i18n="[title]k12menu.instr_sustained2">
                             <img src="K12-icons/instr_sustained2.png" alt="Instr Sustained 2" class="k12_icon">
                         </button>
                     </div>
@@ -296,61 +296,61 @@
                 <div class="custom_break"></div>
                 <!-- Signal tab -->
                 <div class="k12_tab" style="background-color:rgba(40, 40, 200, 0.3);">
-                    <button id="signal_button" class="k12_tab_button" onclick="toggle_tab('signal_div')">
+                    <button tabindex="-1" id="signal_button" class="k12_tab_button" onclick="toggle_tab('signal_div')">
                         Signal
                     </button>
                     <div id="signal_div" class="k12_buttons" style="display: none; padding: 5px">
-                        <button id="signal_microphone" class="k12_object" onclick="place_K12_object('signal_microphone')" data-i18n="[title]k12menu.signal_microphone">
+                        <button tabindex="-1" id="signal_microphone" class="k12_object" onclick="place_K12_object('signal_microphone')" data-i18n="[title]k12menu.signal_microphone">
                             <img src="K12-icons/signal_microphone.png" alt="Signal Microphone" class="k12_icon">
                         </button>
-                        <button id="signal_netsend" class="k12_object" onclick="place_K12_object('signal_netsend')" data-i18n="[title]k12menu.signal_netsend">
+                        <button tabindex="-1" id="signal_netsend" class="k12_object" onclick="place_K12_object('signal_netsend')" data-i18n="[title]k12menu.signal_netsend">
                             <img src="K12-icons/signal_netsend.png" alt="Signal Netsend" class="k12_icon">
                         </button>
-                        <button id="signal_netreceive" class="k12_object" onclick="place_K12_object('signal_netreceive')" data-i18n="[title]k12menu.signal_netreceive">
+                        <button tabindex="-1" id="signal_netreceive" class="k12_object" onclick="place_K12_object('signal_netreceive')" data-i18n="[title]k12menu.signal_netreceive">
                             <img src="K12-icons/signal_netreceive.png" alt="Signal Netreceive" class="k12_icon">
                         </button>
                         </button>
-                        <button id="signal_sampler" class="k12_object" onclick="place_K12_object('signal_sampler')" data-i18n="[title]k12menu.signal_sampler">
+                        <button tabindex="-1" id="signal_sampler" class="k12_object" onclick="place_K12_object('signal_sampler')" data-i18n="[title]k12menu.signal_sampler">
                             <img src="K12-icons/signal_sampler.png" alt="Signal Sampler" class="k12_icon">
                         </button>
                         </button>
-                        <button id="signal_player" class="k12_object" onclick="place_K12_object('signal_player')" data-i18n="[title]k12menu.signal_player">
+                        <button tabindex="-1" id="signal_player" class="k12_object" onclick="place_K12_object('signal_player')" data-i18n="[title]k12menu.signal_player">
                             <img src="K12-icons/signal_player.png" alt="Signal Player" class="k12_icon">
                         </button>
                         </button>
-                        <button id="signal_sine" class="k12_object" onclick="place_K12_object('signal_sine')" data-i18n="[title]k12menu.signal_sine">
+                        <button tabindex="-1" id="signal_sine" class="k12_object" onclick="place_K12_object('signal_sine')" data-i18n="[title]k12menu.signal_sine">
                             <img src="K12-icons/signal_sine.png" alt="Signal Sine" class="k12_icon">
                         </button>
                         </button>
-                        <button id="signal_saw" class="k12_object" onclick="place_K12_object('signal_saw')" data-i18n="[title]k12menu.signal_saw">
+                        <button tabindex="-1" id="signal_saw" class="k12_object" onclick="place_K12_object('signal_saw')" data-i18n="[title]k12menu.signal_saw">
                             <img src="K12-icons/signal_saw.png" alt="Signal Saw" class="k12_icon">
                         </button>
                         </button>
-                        <button id="signal_square" class="k12_object" onclick="place_K12_object('signal_square')" data-i18n="[title]k12menu.signal_square">
+                        <button tabindex="-1" id="signal_square" class="k12_object" onclick="place_K12_object('signal_square')" data-i18n="[title]k12menu.signal_square">
                             <img src="K12-icons/signal_square.png" alt="Signal Square" class="k12_icon">
                         </button>
                         </button>
-                        <button id="signal_triangle" class="k12_object" onclick="place_K12_object('signal_triangle')" data-i18n="[title]k12menu.signal_triangle">
+                        <button tabindex="-1" id="signal_triangle" class="k12_object" onclick="place_K12_object('signal_triangle')" data-i18n="[title]k12menu.signal_triangle">
                             <img src="K12-icons/signal_triangle.png" alt="Signal Triangle" class="k12_icon">
                         </button>
                         </button>
-                        <button id="signal_envelope" class="k12_object" onclick="place_K12_object('signal_envelope')" data-i18n="[title]k12menu.signal_envelope">
+                        <button tabindex="-1" id="signal_envelope" class="k12_object" onclick="place_K12_object('signal_envelope')" data-i18n="[title]k12menu.signal_envelope">
                             <img src="K12-icons/signal_envelope.png" alt="Signal Envelope" class="k12_icon">
                         </button>
                         </button>
-                        <button id="signal_noise" class="k12_object" onclick="place_K12_object('signal_noise')" data-i18n="[title]k12menu.signal_noise">
+                        <button tabindex="-1" id="signal_noise" class="k12_object" onclick="place_K12_object('signal_noise')" data-i18n="[title]k12menu.signal_noise">
                             <img src="K12-icons/signal_noise.png" alt="Signal Noise" class="k12_icon">
                         </button>
                         </button>
-                        <button id="signal_pink" class="k12_object" onclick="place_K12_object('signal_pink')" data-i18n="[title]k12menu.signal_pink">
+                        <button tabindex="-1" id="signal_pink" class="k12_object" onclick="place_K12_object('signal_pink')" data-i18n="[title]k12menu.signal_pink">
                             <img src="K12-icons/signal_pink.png" alt="Signal Pink" class="k12_icon">
                         </button>
                         </button>
-                        <button id="signal_add" class="k12_object" onclick="place_K12_object('signal_add')" data-i18n="[title]k12menu.signal_add">
+                        <button tabindex="-1" id="signal_add" class="k12_object" onclick="place_K12_object('signal_add')" data-i18n="[title]k12menu.signal_add">
                             <img src="K12-icons/signal_add.png" alt="Signal Add" class="k12_icon">
                         </button>
                         </button>
-                        <button id="signal_multiply" class="k12_object" onclick="place_K12_object('signal_multiply')" data-i18n="[title]k12menu.signal_multiply">
+                        <button tabindex="-1" id="signal_multiply" class="k12_object" onclick="place_K12_object('signal_multiply')" data-i18n="[title]k12menu.signal_multiply">
                             <img src="K12-icons/signal_multiply.png" alt="Signal Multiply" class="k12_icon">
                         </button>
                         </button>
@@ -359,21 +359,21 @@
                 <div class="custom_break"></div>
                 <!-- Midi tab -->
                 <div class="k12_tab" style="background-color:rgba(0, 0, 80, 0.3)">
-                    <button id="midi_button" class="k12_tab_button" onclick="toggle_tab('midi_div')">
+                    <button tabindex="-1" id="midi_button" class="k12_tab_button" onclick="toggle_tab('midi_div')">
                         MIDI
                     </button>
                     <div id="midi_div" class="k12_buttons" style="display: none; padding: 5px">
-                        <button id="midi_synth" class="k12_object" onclick="place_K12_object('midi_synth')" data-i18n="[title]k12menu.midi_synth">
+                        <button tabindex="-1" id="midi_synth" class="k12_object" onclick="place_K12_object('midi_synth')" data-i18n="[title]k12menu.midi_synth">
                             <img src="K12-icons/midi_synth.png" alt="Midi Synth"
                             class="k12_icon">
                         </button>
-                        <button id="midi_note" class="k12_object" onclick="place_K12_object('midi_note')" data-i18n="[title]k12menu.midi_note">
+                        <button tabindex="-1" id="midi_note" class="k12_object" onclick="place_K12_object('midi_note')" data-i18n="[title]k12menu.midi_note">
                             <img src="K12-icons/midi_note.png" alt="Midi Note" class="k12_icon">
                         </button>
-                        <button id="midi_instrument" class="k12_object" onclick="place_K12_object('midi_instrument')" data-i18n="[title]k12menu.midi_instrument">
+                        <button tabindex="-1" id="midi_instrument" class="k12_object" onclick="place_K12_object('midi_instrument')" data-i18n="[title]k12menu.midi_instrument">
                             <img src="K12-icons/midi_instrument.png" alt="Midi Instrument" class="k12_icon">
                         </button>
-                        <button id="midi_control" class="k12_object" onclick="place_K12_object('midi_control')" data-i18n="[title]k12menu.midi_control">
+                        <button tabindex="-1" id="midi_control" class="k12_object" onclick="place_K12_object('midi_control')" data-i18n="[title]k12menu.midi_control">
                             <img src="K12-icons/midi_control.png" alt="Midi Control" class="k12_icon">
                         </button>
                     </div>
@@ -381,23 +381,23 @@
                 <div class="custom_break"></div>
                 <!-- FX tab -->
                 <div class="k12_tab" style="background-color:rgba(240, 240, 80, 0.4)">
-                    <button id="fx_button" class="k12_tab_button" onclick="toggle_tab('fx_div')">
+                    <button tabindex="-1" id="fx_button" class="k12_tab_button" onclick="toggle_tab('fx_div')">
                         Audio Effects
                     </button>
                     <div id="fx_div" class="k12_buttons" style="display: none; padding: 5px">
-                        <button id="fx_pitchshift" class="k12_object" onclick="place_K12_object('fx_pitchshift')" data-i18n="[title]k12menu.fx_pitchshift">
+                        <button tabindex="-1" id="fx_pitchshift" class="k12_object" onclick="place_K12_object('fx_pitchshift')" data-i18n="[title]k12menu.fx_pitchshift">
                             <img src="K12-icons/fx_pitchshift.png" alt="FX Pitchshift" class="k12_icon">
                         </button>
-                        <button id="fx_filter" class="k12_object" onclick="place_K12_object('fx_filter')" data-i18n="[title]k12menu.fx_filter">
+                        <button tabindex="-1" id="fx_filter" class="k12_object" onclick="place_K12_object('fx_filter')" data-i18n="[title]k12menu.fx_filter">
                             <img src="K12-icons/fx_filter.png" alt="FX Filter" class="k12_icon">
                         </button>
-                        <button id="fx_phaser" class="k12_object" onclick="place_K12_object('fx_phaser')" data-i18n="[title]k12menu.fx_phaser">
+                        <button tabindex="-1" id="fx_phaser" class="k12_object" onclick="place_K12_object('fx_phaser')" data-i18n="[title]k12menu.fx_phaser">
                             <img src="K12-icons/fx_phaser.png" alt="FX Phaser" class="k12_icon">
                         </button>
-                        <button id="fx_multitap" class="k12_object" onclick="place_K12_object('fx_multitap')" data-i18n="[title]k12menu.fx_multitap">
+                        <button tabindex="-1" id="fx_multitap" class="k12_object" onclick="place_K12_object('fx_multitap')" data-i18n="[title]k12menu.fx_multitap">
                             <img src="K12-icons/fx_multitap.png" alt="FX Multitap" class="k12_icon">
                         </button>
-                        <button id="fx_reverb" class="k12_object" onclick="place_K12_object('fx_reverb')" data-i18n="[title]k12menu.fx_reverb">
+                        <button tabindex="-1" id="fx_reverb" class="k12_object" onclick="place_K12_object('fx_reverb')" data-i18n="[title]k12menu.fx_reverb">
                             <img src="K12-icons/fx_reverb.png" alt="FX Reverb" class="k12_icon">
                         </button>
                     </div>
@@ -407,7 +407,7 @@
             </div>
             <div id="k12_toggle" style="display: block; position: relative; float: left; left: 155px; top: 0px; width: 20px; margin-left: 0px;">
                 <div class="trapezoid" onmouseover="canvas_events.k12menu()" onmouseout="canvas_events.normal()">
-                    <button id="show_k12_menu" style="background-color: inherit; border: none; position: relative; left: -20px; top: -5px; padding: 0px; width: 18px; height: 60px; transition: 0.7s;" onclick="toggle_k12_menu_and_set_editmode(event)">
+                    <button tabindex="-1" id="show_k12_menu" style="background-color: inherit; border: none; position: relative; left: -20px; top: -5px; padding: 0px; width: 18px; height: 60px; transition: 0.7s;" onclick="toggle_k12_menu_and_set_editmode(event)">
                     <!--<strong>◄</strong>-->
                     <img id="k12_toggle_icon" src="K12-icons/lock-runtime.png" width="10px;" style="opacity: 0.5; margin-left: 1px;"></img>
                     </button>
