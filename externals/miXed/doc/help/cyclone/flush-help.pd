@@ -37,10 +37,10 @@ for Pd-l2ork version 2013.05.28;
 #X obj 6 50 bendin;
 #X obj 51 50 bendout;
 #X restore 209 595 pd Related_objects;
-#X obj 81 325 cnv 17 3 77 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 81 415 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 81 325 cnv 17 3 77 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 81 415 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header flush 3 12 0 18
 -204280 -1 0;
 #X obj 510 6 flush;
@@ -70,16 +70,16 @@ was received;
 #X text 183 368 - pitch/velocity pair;
 #X text 109 385 float;
 #X text 183 385 - set pitch;
-#X obj 81 455 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 81 455 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 109 415 float;
 #X text 183 415 - set velocity;
 #X text 92 532 1) float;
 #X text 183 531 - pitch;
 #X text 92 552 2) float;
 #X text 183 551 - velocity;
-#X obj 81 478 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 81 478 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 109 455 float;
 #X text 183 455 - pitch;
 #X text 183 478 - velocity;

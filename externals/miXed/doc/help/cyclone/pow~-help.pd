@@ -29,18 +29,18 @@ for Pd-l2ork version 2013.05.28;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 208 676 pd Related_objects;
-#X obj 81 432 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 81 459 cnv 17 3 35 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 81 432 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 81 459 cnv 17 3 35 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header pow~ 3 12 0 18
 -204280 -1 0;
 #X obj 514 8 pow~;
 #X text 11 23 Take base to the exponent power using signals;
 #X text 107 432 signal;
 #X text 181 432 - signal to take to exponent power;
-#X obj 81 516 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 81 516 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 107 459 float;
 #X text 107 478 signal;
 #X text 181 468 - base of power function;

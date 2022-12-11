@@ -28,19 +28,19 @@ for Pd-l2ork version 2013.05.28;
 #X text 6 1 Related Objects;
 #X obj 24 38 poltocar;
 #X restore 216 559 pd Related_objects;
-#X obj 81 362 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 81 362 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header cartopol 3 12 0
 18 -204280 -1 0;
-#X obj 81 388 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 81 388 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 12 23 cartesian to polar conversion;
 #X text 115 362 float;
 #X text 169 362 - real part of argument;
 #X text 115 388 float;
 #X text 169 388 - imaginary part of argument;
-#X obj 81 450 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 81 450 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 115 425 float;
 #X text 115 452 float;
 #X text 169 424 - amplitude;
@@ -58,8 +58,8 @@ for Pd-l2ork version 2013.05.28;
 #X msg 205 55 0;
 #X text 109 492 (none);
 #X obj 490 3 cartopol;
-#X obj 81 425 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 81 425 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 116 50 resets to zero;
 #X obj 4 557 pddp/pddplink @pd_help/all_about_help_patches.pd -text Usage Guide
 ;

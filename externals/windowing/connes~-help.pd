@@ -10,8 +10,8 @@
 -228856 -1 0;
 #X obj 3 359 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 -228856 -1 0;
-#X obj 72 259 cnv 17 3 30 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 72 259 cnv 17 3 30 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 168 40 formula:;
 #X floatatom 170 104 5 0 0 0 - - -;
 #X obj 97 86 hsl 71 15 -1 1 0 0 empty empty empty -2 -6 0 10 -262144
@@ -34,8 +34,8 @@ in terms of stopband attenuation and noise bandwidth.;
 #X coords 0 1 63 -1 200 140 1;
 #X restore 301 55 graph;
 #X text 169 52 cos(pi*x/2);
-#X obj 72 319 cnv 17 3 30 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 72 319 cnv 17 3 30 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 170 169 tabsend~ \$0-connes;
 #X obj 170 143 connes~;
 #X text 102 258 SIGNAL: the height (amplitude) of the window is controlled

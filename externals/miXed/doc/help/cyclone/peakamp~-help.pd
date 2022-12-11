@@ -29,10 +29,10 @@ for Pd-l2ork version 2013.05.28;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 204 561 pd Related_objects;
-#X obj 77 324 cnv 17 3 34 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 77 371 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 77 324 cnv 17 3 34 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 77 371 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header peakamp~ 3 12 0
 18 -204280 -1 0;
 #X obj 488 8 peakamp~;
@@ -68,8 +68,8 @@ for Pd-l2ork version 2013.05.28;
 #X text 177 342 - output current peak value;
 #X text 109 407 float;
 #X text 177 407 - output current peak amplitude of signal;
-#X obj 77 408 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 77 408 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 109 371 float;
 #X text 92 446 1) float;
 #X text 118 489 peakamp~ tracks and outputs the absolute value of the

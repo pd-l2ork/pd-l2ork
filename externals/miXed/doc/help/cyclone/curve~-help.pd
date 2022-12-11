@@ -30,7 +30,7 @@ adapted the patch to pd-extended 2015-02-02;
 #X obj 34 36 line~;
 #X obj 80 36 vline~;
 #X restore 211 716 pd Related_objects;
-#X obj 97 602 cnv 17 3 17 empty empty 0 5 9 0 16 -228856 -162280 0
+#X obj 97 602 cnv 17 3 17 empty empty 0 5 6 0 16 #dcdcdc #646464 0
 ;
 #X obj 8 35 cnv 15 552 40 empty empty curve~ 3 12 0 18 -204280 -1 0
 ;
@@ -38,18 +38,18 @@ adapted the patch to pd-extended 2015-02-02;
 #X text 123 658 1) float;
 #X text 123 677 2) float;
 #X obj 508 38 curve~;
-#X obj 97 397 cnv 17 3 130 empty empty 0 5 9 0 16 -228856 -162280 0
+#X obj 97 397 cnv 17 3 130 empty empty 0 5 6 0 16 #dcdcdc #646464 0
 ;
-#X obj 97 534 cnv 17 3 23 empty empty 1 5 9 0 16 -228856 -162280 0
+#X obj 97 534 cnv 17 3 23 empty empty 1 5 6 0 16 #dcdcdc #646464 0
 ;
 #X text 127 532 float;
-#X obj 97 560 cnv 17 3 17 empty empty 2 5 9 0 16 -228856 -162280 0
+#X obj 97 560 cnv 17 3 17 empty empty 2 5 6 0 16 #dcdcdc #646464 0
 ;
 #X text 127 561 float;
 #X obj 304 228 bng 35 250 50 0 empty empty empty 17 7 0 10 -228856
 -1 -1;
 #X text 187 659 - set initial value (default 0);
-#X obj 97 625 cnv 17 3 17 empty empty 1 5 9 0 16 -228856 -162280 0
+#X obj 97 625 cnv 17 3 17 empty empty 1 5 6 0 16 #dcdcdc #646464 0
 ;
 #X text 127 624 bang;
 #X text 117 462 messages:;

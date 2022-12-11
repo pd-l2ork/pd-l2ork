@@ -29,9 +29,9 @@ adapted the patch to pd-extended 2015-02-02;
 #X obj 0 0 cnv 15 425 20 empty empty empty 3 12 0 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 203 619 pd Related_objects;
-#X obj 84 357 cnv 17 3 75 empty empty 0 5 9 0 16 -228856 -162280 0
+#X obj 84 357 cnv 17 3 75 empty empty 0 5 6 0 16 #dcdcdc #646464 0
 ;
-#X obj 84 462 cnv 17 3 17 empty empty 0 5 9 0 16 -228856 -162280 0
+#X obj 84 462 cnv 17 3 17 empty empty 0 5 6 0 16 #dcdcdc #646464 0
 ;
 #X obj 6 39 cnv 15 552 40 empty empty loadmess 3 12 0 18 -204280 -1
 0;

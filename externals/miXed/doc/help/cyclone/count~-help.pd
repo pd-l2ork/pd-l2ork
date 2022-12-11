@@ -29,10 +29,10 @@ for Pd-l2ork version 2013.05.28;
 #X obj 50 31 counter;
 #X obj 121 31 phasor~;
 #X restore 204 769 pd Related_objects;
-#X obj 82 507 cnv 17 3 73 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 82 596 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 82 507 cnv 17 3 73 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 82 596 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 2 0 cnv 15 552 40 empty \$0-pddp.cnv.header count~ 3 12 0 18
 -204280 -1 0;
 #X text 14 23 sample counter for dsp;
@@ -70,8 +70,8 @@ for Pd-l2ork version 2013.05.28;
 #X text 180 526 - stop the counter;
 #X text 112 545 float;
 #X text 180 545 - set a minimum value;
-#X obj 82 636 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 82 636 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 112 596 float;
 #X text 180 596 - set a maximum value;
 #X text 112 565 autoreset;

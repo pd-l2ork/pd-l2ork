@@ -31,8 +31,8 @@ for Pd-l2ork version 2013.05.28;
 #X text 6 1 Related Objects;
 #X obj 45 40 qlist;
 #X restore 207 789 pd Related_objects;
-#X obj 76 392 cnv 17 3 140 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 76 392 cnv 17 3 140 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header mtr 3 12 0 18 -204280
 -1 0;
 #X obj 521 8 mtr;
@@ -73,16 +73,16 @@ for Pd-l2ork version 2013.05.28;
 #X text 107 597 list;
 #X text 107 555 track;
 #X text 187 555 - track to record (for inlets 1...n);
-#X obj 76 555 cnv 17 3 17 empty \$0-pddp.cnv.let.0 n 5 9 0 16 -228856
--162280 0;
+#X obj 76 555 cnv 17 3 17 empty \$0-pddp.cnv.let.0 n 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 187 597 - when "next" received \, outputs list with track #
 and duration;
-#X obj 76 630 cnv 17 3 17 empty \$0-pddp.cnv.let.0 n 5 9 0 16 -228856
--162280 0;
+#X obj 76 630 cnv 17 3 17 empty \$0-pddp.cnv.let.0 n 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 107 630 track;
 #X text 187 630 - one to one mapping of inlets to outlets;
-#X obj 76 597 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 76 597 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 85 713 The leftmost inlet of mtr is a control inlet for all
 tracks. You can send the same messages to individual tracks as well.
 Each track records what comes into its inlet \, and plays it back through

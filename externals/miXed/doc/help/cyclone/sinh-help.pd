@@ -27,8 +27,8 @@ for Pd-l2ork version 0.201305;
 #X text 6 1 Related Objects;
 #X obj 48 37 cosh;
 #X restore 204 423 pd Related_objects;
-#X obj 82 344 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 82 344 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 0 -1 cnv 15 552 40 empty \$0-pddp.cnv.header sinh 3 12 0 18
 -204280 -1 0;
 #X text 112 284 float;
@@ -43,8 +43,8 @@ for Pd-l2ork version 0.201305;
 #X obj 320 154 sinh 0.2;
 #X text 187 284 - the number to take sinh of;
 #X text 187 304 - output sinh of stored value;
-#X obj 82 284 cnv 17 3 36 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 82 284 cnv 17 3 36 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X floatatom 146 189 8 0 0 0 - - -, f 8;
 #X obj 146 140 / 100;
 #X floatatom 146 116 5 0 0 0 - - -, f 5;

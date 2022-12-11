@@ -28,14 +28,14 @@ for Pd-l2ork version 2013.05.28;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 200 440 pd Related_objects;
-#X obj 78 232 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 299 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 232 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 299 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header speedlim 3 12 0
 18 -204280 -1 0;
-#X obj 78 259 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 259 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 489 10 speedlim;
 #X text 11 23 speed limit for incoming messages;
 #X obj 134 135 speedlim 300;

@@ -35,8 +35,8 @@ for Pd-l2ork version 2013.05.28;
 #X obj 345 34 acos~;
 #X obj 76 59 acos;
 #X restore 189 393 pd Related_objects;
-#X obj 79 272 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 79 272 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 0 -1 cnv 15 552 40 empty \$0-pddp.cnv.header asin 3 12 0 18
 -204280 -1 0;
 #X text 106 212 float;
@@ -60,8 +60,8 @@ for Pd-l2ork version 2013.05.28;
 ;
 #X text 342 91 with bang button and argument inside acos object;
 #X text 74 91 with input as float value to take acos of;
-#X obj 79 215 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 79 215 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 8 392 pddp/pddplink @pd_help/all_about_help_patches.pd -text Usage Guide
 ;
 #X connect 13 0 18 0;

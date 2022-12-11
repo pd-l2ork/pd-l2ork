@@ -30,10 +30,10 @@ for Pd-l2ork version 2013.05.28;
 #X text 6 1 Related Objects;
 #X obj 39 42 line~;
 #X restore 202 754 pd Related_objects;
-#X obj 78 410 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 436 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 410 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 436 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header linedrive 3 12
 0 18 -204280 -1 0;
 #X obj 483 2 linedrive;
@@ -57,8 +57,8 @@ destination and a time in milliseconds;
 #X text 178 436 - time value in milliseconds;
 #X text 106 477 float;
 #X text 178 477 - scaled number;
-#X obj 78 477 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 477 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 251 160 argument1 is the reference input (int) \; argument2
 is the reference output (float) \; argument3 is the base value (float)
 \; argument4 is the time value in milliseconds (int);

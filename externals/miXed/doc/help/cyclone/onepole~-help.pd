@@ -28,10 +28,10 @@ for Pd-l2ork version 2013.05.28;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 196 668 pd Related_objects;
-#X obj 78 285 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 312 cnv 17 3 35 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 285 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 312 cnv 17 3 35 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header onepole~ 3 12 0
 18 -204280 -1 0;
 #X obj 489 8 onepole~;
@@ -57,8 +57,8 @@ roll-off of high frequencies.;
 #X text 110 539 this filter is equivalent to a biquad~ object with
 the coefficients \, [ a0 = k \, b1 = k - 1 ] \, as demonstrated above.
 ;
-#X obj 78 379 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 379 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 211 101 optional argument initializes cutoff frequency;
 #X floatatom 200 71 5 0 0 0 - - -, f 5;
 #X obj 131 175 Scope~ 160 75 256 3 128 -1 1 0 0 0 0 102 255 51 135

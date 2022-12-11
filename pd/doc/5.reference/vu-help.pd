@@ -40,16 +40,16 @@ to conform to the PDDP template for Pd version 0.42.;
 #X text 98 318 float;
 #X obj 78 465 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
 #646464 0;
-#X obj 78 417 cnv 17 3 30 empty \$0-pddp.cnv.let.1 1 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 417 cnv 17 3 30 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 335 list;
 #X text 98 417 float;
 #X text 98 433 list;
 #X text 168 335 - a 2-item list will be distributed to the two inlets
 ;
 #X text 98 465 float;
-#X obj 78 487 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 487 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 487 float;
 #N canvas 76 117 428 416 vu-creation-arguments 0;
 #X obj 25 237 s pd-vu-creation-arguments;

@@ -30,10 +30,10 @@ for Pd-l2ork version 2013.05.28;
 #X text 6 1 Related Objects;
 #X obj 9 30 buffir~;
 #X restore 204 731 pd Related_objects;
-#X obj 78 389 cnv 17 3 55 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 456 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 389 cnv 17 3 55 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 456 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header comb~ 3 12 0 18
 -204280 -1 0;
 #X text 11 23 comb filter;
@@ -129,12 +129,12 @@ for Pd-l2ork version 2013.05.28;
 #X text 111 387 signal;
 #X text 223 387 - signal to pass through comb filter;
 #X text 223 408 - can set arguments for filter (D \, a \, b \, c);
-#X obj 78 485 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
-#X obj 78 540 cnv 17 3 17 empty \$0-pddp.cnv.let.0 4 5 9 0 16 -228856
--162280 0;
-#X obj 78 582 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 485 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 540 cnv 17 3 17 empty \$0-pddp.cnv.let.0 4 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 582 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 111 456 float or signal;
 #X text 223 456 - D = delay time;
 #X text 237 180 a = input (pre delay) amplitude coefficient;
@@ -146,10 +146,10 @@ for Pd-l2ork version 2013.05.28;
 #X text 111 514 float or signal;
 #X text 111 540 float or signal;
 #X text 111 485 float or signal;
-#X obj 78 514 cnv 17 3 17 empty \$0-pddp.cnv.let.0 3 5 9 0 16 -228856
--162280 0;
-#X obj 78 514 cnv 17 3 17 empty \$0-pddp.cnv.let.0 3 5 9 0 16 -228856
--162280 0;
+#X obj 78 514 cnv 17 3 17 empty \$0-pddp.cnv.let.0 3 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 514 cnv 17 3 17 empty \$0-pddp.cnv.let.0 3 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 111 581 signal;
 #X text 223 581 - output from comb filter;
 #X text 111 619 1) float;

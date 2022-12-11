@@ -41,8 +41,8 @@ for Pd-l2ork version 2013.05.28;
 #X obj 121 54 midiformat;
 #X obj 65 54 midiout;
 #X restore 207 772 pd Related_objects;
-#X obj 79 444 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
+#X obj 79 444 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header Borax 3 12 0 18
 -204280 -1 0;
 #X text 11 23 reports current info on note on/off;
@@ -63,30 +63,30 @@ for Pd-l2ork version 2013.05.28;
 #X text 377 477 on or off;
 #X text 108 397 float;
 #X text 157 396 - midi note number;
-#X obj 79 500 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 79 500 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 108 420 float;
 #X text 157 419 - velocity;
-#X obj 79 421 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 79 421 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 108 442 bang;
 #X text 157 441 - reset all values;
-#X obj 79 523 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
-#X obj 79 477 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 79 546 cnv 17 3 17 empty \$0-pddp.cnv.let.0 3 5 9 0 16 -228856
--162280 0;
-#X obj 79 569 cnv 17 3 17 empty \$0-pddp.cnv.let.0 4 5 9 0 16 -228856
--162280 0;
-#X obj 79 592 cnv 17 3 17 empty \$0-pddp.cnv.let.0 5 5 9 0 16 -228856
--162280 0;
-#X obj 79 615 cnv 17 3 17 empty \$0-pddp.cnv.let.0 6 5 9 0 16 -228856
--162280 0;
-#X obj 79 642 cnv 17 3 17 empty \$0-pddp.cnv.let.0 7 5 9 0 16 -228856
--162280 0;
-#X obj 79 665 cnv 17 3 17 empty \$0-pddp.cnv.let.0 8 5 9 0 16 -228856
--162280 0;
+#X obj 79 523 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 79 477 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 79 546 cnv 17 3 17 empty \$0-pddp.cnv.let.0 3 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 79 569 cnv 17 3 17 empty \$0-pddp.cnv.let.0 4 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 79 592 cnv 17 3 17 empty \$0-pddp.cnv.let.0 5 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 79 615 cnv 17 3 17 empty \$0-pddp.cnv.let.0 6 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 79 642 cnv 17 3 17 empty \$0-pddp.cnv.let.0 7 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 79 665 cnv 17 3 17 empty \$0-pddp.cnv.let.0 8 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 108 523 float;
 #X text 108 499 float;
 #X text 108 546 float;
@@ -107,8 +107,8 @@ for Pd-l2ork version 2013.05.28;
 #X text 157 665 - delta time of last two note ons;
 #X text 97 711 (none);
 #X obj 424 4 Borax;
-#X obj 79 397 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 79 397 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 87 113 Borax;
 #X obj 7 770 pddp/pddplink @pd_help/all_about_help_patches.pd -text Usage Guide
 ;

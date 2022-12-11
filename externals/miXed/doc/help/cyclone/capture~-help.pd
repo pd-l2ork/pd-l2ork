@@ -32,10 +32,10 @@ for Pd-l2ork version 2013.05.28;
 #X obj 21 33 pddp/pddplink @pd_help/all_about_externals.pd -text _________;
 #X obj 21 33 pddp/pddplink @pd_help/all_about_externals.pd -text Externals;
 #X restore 211 687 pd Related_objects;
-#X obj 80 185 cnv 17 3 42 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 276 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 80 185 cnv 17 3 42 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 276 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 551 43 empty \$0-pddp.cnv.header capture~ 3 12 0
 18 -204280 -1 0;
 #X obj 1 687 pddp/pddplink help.pd -text help;

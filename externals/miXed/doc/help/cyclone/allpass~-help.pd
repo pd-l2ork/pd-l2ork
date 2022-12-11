@@ -30,8 +30,8 @@ for Pd-l2ork version 2013.05.28;
 #X text 6 1 Related Objects;
 #X obj 15 36 svf~;
 #X restore 201 648 pd Related_objects;
-#X obj 81 389 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 81 389 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header allpass~ 3 12 0
 18 -204280 -1 0;
 #X text 11 23 allpass filter for signal;
@@ -138,17 +138,17 @@ but changes the phase relationship between various frequencies. It
 does this by varying its propogation delay with frequency.;
 #X text 169 452 - output of allpass filter with del time;
 #X obj 492 2 allpass~;
-#X obj 81 412 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
-#X obj 81 450 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 81 412 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 81 450 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 113 387 float;
 #X text 163 387 - delay time;
 #X text 113 410 float;
 #X text 163 410 - gain;
 #X obj 482 50 pddp/dsp;
-#X obj 81 364 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 81 364 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 6 646 pddp/pddplink @pd_help/all_about_help_patches.pd -text Usage Guide
 ;
 #X connect 10 0 11 1;

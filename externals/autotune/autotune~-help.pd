@@ -33,10 +33,10 @@ lforate lfoshape lfosym warp scwarp fwarp pull pullpitch;
 #X obj 23 42 fiddle~;
 #X obj 83 42 sigmund~;
 #X restore 102 1104 pd Related_objects;
-#X obj 78 527 cnv 3 3 393 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
-#X obj 78 938 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 527 cnv 3 3 393 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 938 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 18 488 audio output;
 #X text 98 526 signal;
 #X text 98 937 signal;
@@ -227,10 +227,10 @@ to 5).See the chart on the rightto figure out what value touse.Default
 #X text 167 546 - a list of 12 values corresponding to each pitch in
 a chromatic scale (-1 = disabled \, 0 = normal \, 1 = snapping \, default
 none);
-#X obj 78 962 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 #dcdcdc
-#9c9c9c 0;
-#X obj 78 986 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 962 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 986 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 961 float;
 #X text 98 985 float;
 #X text 167 961 - confidence value (> 0.7 should be considered voiced).

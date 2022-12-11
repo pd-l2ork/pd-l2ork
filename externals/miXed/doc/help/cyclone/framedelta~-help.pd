@@ -30,10 +30,10 @@ for Pd-l2ork version 2013.05.28;
 #X obj 12 32 count~;
 #X obj 64 32 frameaccum~;
 #X restore 203 504 pd Related_objects;
-#X obj 81 270 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 82 312 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 81 270 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 82 312 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header framedelta~ 3 12
 0 18 -204280 -1 0;
 #X text 107 270 signal;

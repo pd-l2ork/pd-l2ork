@@ -28,8 +28,8 @@ float signal;
 #X obj 32 31 bitand~;
 #X obj 32 60 bitor~;
 #X restore 209 602 pd Related_objects;
-#X obj 83 438 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 83 438 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 551 41 empty \$0-pddp.cnv.header bitnot~ 3 12 0
 18 -204280 -1 0;
 #X text 119 437 signal;
@@ -61,8 +61,8 @@ signal input to integer \;;
 #X text 174 437 - output signal of bitwise not for mask and mode;
 #X obj 498 4 bitnot~;
 #X text 18 93 bitwise boolean operation on a signal as bits;
-#X obj 83 393 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 83 393 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 482 52 pddp/dsp;
 #X text 19 24 Performs bitwise boolean operations on a float signal.
 ;

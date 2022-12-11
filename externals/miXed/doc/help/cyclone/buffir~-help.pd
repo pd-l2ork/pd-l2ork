@@ -33,18 +33,18 @@ for Pd-l2ork version 2013.05.28;
 #X text 6 1 Related Objects;
 #X obj 11 28 fir;
 #X restore 202 693 pd Related_objects;
-#X obj 79 464 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 79 464 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 554 40 empty \$0-pddp.cnv.header buffir~ 3 12 0
 18 -204280 -1 0;
 #X text 105 440 signal;
 #X text 163 439 - signal to pass to FIR;
 #X text 105 523 signal;
-#X obj 79 485 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
+#X obj 79 485 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 105 465 float;
-#X obj 79 524 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 79 524 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 105 487 float;
 #X text 163 487 - Length (samples);
 #X text 163 463 - Offset (samples);
@@ -125,8 +125,8 @@ the maximum number of points is 256;
 #X obj 483 49 pddp/dsp;
 #X text 11 23 table based FIR (finite impulse response) convolution
 filter;
-#X obj 79 443 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 79 443 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 337 319 table is a 128-point downwards ramp with random values
 here and there with amplitude from 1 to 0;
 #X text 172 298 number of samples in impulse;

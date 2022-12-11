@@ -27,10 +27,10 @@ for Pd-l2ork version 2013.05.28;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 205 657 pd Related_objects;
-#X obj 78 457 cnv 17 3 45 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 516 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 457 cnv 17 3 45 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 516 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header peek~ 3 12 0 18
 -204280 -1 0;
 #X text 11 24 read and write sample values;
@@ -73,8 +73,8 @@ for Pd-l2ork version 2013.05.28;
 #X text 107 471 float;
 #X text 178 471 - set x value (set y value at same time in other outlet)
 ;
-#X obj 78 587 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 587 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 107 516 float;
 #X text 178 516 - set y value (set x value at same time in other outlet)
 ;
@@ -92,8 +92,8 @@ for Pd-l2ork version 2013.05.28;
 #X text 354 123 to change values in the table \, use lists...;
 #X text 389 240 ...or set the y val here and then set the x val in
 the first inlet;
-#X obj 78 545 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
+#X obj 78 545 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 107 545 ?????;
 #X text 178 545 ?????;
 #X obj 10 654 pddp/pddplink @pd_help/all_about_help_patches.pd -text Usage Guide

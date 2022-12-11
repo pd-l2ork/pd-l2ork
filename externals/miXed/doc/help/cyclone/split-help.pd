@@ -28,10 +28,10 @@ for Pd-l2ork version 2013.05.28;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 204 510 pd Related_objects;
-#X obj 79 290 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 79 396 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 79 290 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 79 396 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header split 3 12 0 18
 -204280 -1 0;
 #X obj 503 10 split;
@@ -47,10 +47,10 @@ for Pd-l2ork version 2013.05.28;
 #X text 203 136 set min;
 #X text 236 160 set max;
 #X msg 138 71 3 0 10;
-#X obj 79 335 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
-#X obj 79 360 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
+#X obj 79 335 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 79 360 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 111 289 list;
 #X text 203 289 - formatat value to compare \, min \, max;
 #X text 111 310 float;
@@ -63,8 +63,8 @@ for Pd-l2ork version 2013.05.28;
 #X text 203 457 - initial min;
 #X text 93 478 2) float;
 #X text 203 478 - initial max;
-#X obj 79 420 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 79 420 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 111 396 float;
 #X text 203 396 - output if number from inlet 0 in range;
 #X text 111 420 float;

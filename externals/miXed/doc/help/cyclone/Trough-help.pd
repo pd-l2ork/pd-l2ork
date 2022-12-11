@@ -30,24 +30,24 @@ for Pd-l2ork version 2013.05.28;
 #X text 6 1 Related Objects;
 #X obj 40 35 Peak;
 #X restore 209 671 pd Related_objects;
-#X obj 83 432 cnv 17 3 60 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 83 511 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 83 432 cnv 17 3 60 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 83 511 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header Trough 3 12 0 18
 -204280 -1 0;
 #X text 112 430 float;
 #X text 112 452 bang;
 #X text 112 474 list;
-#X obj 83 548 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 83 548 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 112 511 float;
 #X text 112 548 float;
 #X text 94 640 1) float;
-#X obj 83 573 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
-#X obj 83 598 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
+#X obj 83 573 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 83 598 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 11 23 output only numbers smaller than the previous;
 #X floatatom 106 81 5 0 0 0 - - -, f 5;
 #X floatatom 106 372 5 0 0 0 - - -, f 5;

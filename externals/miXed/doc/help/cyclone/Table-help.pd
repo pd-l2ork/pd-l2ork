@@ -30,10 +30,10 @@ for Pd-l2ork version 2013.05.28;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 195 769 pd Related_objects;
-#X obj 77 398 cnv 17 3 78 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 77 528 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 77 398 cnv 17 3 78 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 77 528 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header Table 3 12 0 18
 -204280 -1 0;
 #X obj 506 10 Table;
@@ -50,8 +50,8 @@ for Pd-l2ork version 2013.05.28;
 #X text 197 529 - could mean various things depending on input;
 #X text 197 598 - option arg to name the table \, or to read in from
 the table name specified;
-#X obj 77 553 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 77 553 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 101 552 bang;
 #X text 197 554 - when table has been changed by editing it with the
 mouse;
@@ -92,8 +92,8 @@ it the open message.;
 #X obj 162 171 vsl 16 66 0 79 0 0 empty empty empty 0 -8 0 8 -262144
 -1 -1 0 1;
 #X text 197 460 - open \, sum \, length;
-#X obj 77 487 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 77 487 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 197 488 - ?????;
 #X text 101 486 ??????;
 #X text 84 598 1) table name;

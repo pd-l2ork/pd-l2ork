@@ -32,18 +32,18 @@ ramp wave;
 #X obj 9 51 phasor~;
 #X obj 10 73 cycle~;
 #X restore 210 733 pd Related_objects;
-#X obj 79 455 cnv 17 3 36 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 79 556 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 79 455 cnv 17 3 36 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 79 556 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header triangle~ 3 12 0
 18 -204280 -1 0;
 #X obj 482 10 triangle~;
 #X text 11 23 triangle / ramp wavetable;
 #X text 108 454 signal;
 #X text 179 454 - change phase offset of the peak value;
-#X obj 79 507 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 79 507 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 108 505 signal;
 #X text 179 505 - ramp up value;
 #X text 108 555 signal;

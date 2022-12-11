@@ -31,10 +31,10 @@ buttonpress;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 200 671 pd Related_objects;
-#X obj 62 407 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 62 505 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 62 407 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 62 505 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header MouseState 3 12
 0 18 -204280 -1 0;
 #X obj 478 8 MouseState;
@@ -65,14 +65,14 @@ buttonpress;
 #X text 179 405 - update current state;
 #X text 85 425 other messages;
 #X text 179 426 - poll: poll mouse device;
-#X obj 62 527 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
-#X obj 62 550 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
-#X obj 62 574 cnv 17 3 17 empty \$0-pddp.cnv.let.0 3 5 9 0 16 -228856
--162280 0;
-#X obj 62 597 cnv 17 3 17 empty \$0-pddp.cnv.let.0 4 5 9 0 16 -228856
--162280 0;
+#X obj 62 527 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 62 550 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 62 574 cnv 17 3 17 empty \$0-pddp.cnv.let.0 3 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 62 597 cnv 17 3 17 empty \$0-pddp.cnv.let.0 4 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 179 505 - is button pressed?;
 #X text 85 505 toggle;
 #X text 85 527 float;

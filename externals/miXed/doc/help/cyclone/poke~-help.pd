@@ -29,10 +29,10 @@ index;
 14 #c4dcdc #000000 0;
 #X text 6 1 Related Objects;
 #X restore 203 784 pd Related_objects;
-#X obj 78 460 cnv 17 3 58 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
-#X obj 78 522 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 460 cnv 17 3 58 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 522 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header poke~ 3 12 0 18
 #c4dcdc #000000 0;
 #X obj 502 9 poke~;
@@ -70,8 +70,8 @@ index;
 channel to write (optional \, default 1);
 #X text 233 262 count maximum sets the number of samples recorded
 (think of it as the loop size);
-#X obj 78 543 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 543 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 102 543 float;
 #X text 186 543 - set channel of value being recorded;
 #X text 102 586 remotely sent to table;

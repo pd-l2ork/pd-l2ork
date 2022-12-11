@@ -31,8 +31,8 @@ for Pd-l2ork version 2013.05.28;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 209 563 pd Related_objects;
-#X obj 84 453 cnv 17 3 17 empty \$0-pddp.cnv.let.0 6 5 9 0 16 -228856
--162280 0;
+#X obj 84 453 cnv 17 3 17 empty \$0-pddp.cnv.let.0 6 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header midiformat 3 12
 0 18 -204280 -1 0;
 #X obj 450 8 midiformat;
@@ -54,23 +54,23 @@ for Pd-l2ork version 2013.05.28;
 #X floatatom 189 218 5 0 0 0 - - -, f 5;
 #X text 223 217 channel number (wraps around like n%16);
 #X text 115 453 float;
-#X obj 84 489 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 84 342 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
-#X obj 84 364 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
-#X obj 84 387 cnv 17 3 17 empty \$0-pddp.cnv.let.0 3 5 9 0 16 -228856
--162280 0;
+#X obj 84 489 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 84 342 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 84 364 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 84 387 cnv 17 3 17 empty \$0-pddp.cnv.let.0 3 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 115 387 float;
-#X obj 84 408 cnv 17 3 17 empty \$0-pddp.cnv.let.0 4 5 9 0 16 -228856
--162280 0;
+#X obj 84 408 cnv 17 3 17 empty \$0-pddp.cnv.let.0 4 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 115 408 float;
-#X obj 84 430 cnv 17 3 17 empty \$0-pddp.cnv.let.0 5 5 9 0 16 -228856
--162280 0;
+#X obj 84 430 cnv 17 3 17 empty \$0-pddp.cnv.let.0 5 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 115 430 float;
-#X obj 84 320 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 84 320 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 115 320 message;
 #X text 115 342 message;
 #X text 115 364 message;

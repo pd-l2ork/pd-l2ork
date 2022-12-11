@@ -27,10 +27,10 @@ for Pd-l2ork version 2013.05.28;
 #X text 6 1 Related Objects;
 #X obj 55 55 minimum;
 #X restore 198 495 pd Related_objects;
-#X obj 80 302 cnv 17 3 49 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 80 370 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 80 302 cnv 17 3 49 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 80 370 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header maximum 3 12 0
 18 -204280 -1 0;
 #X obj 493 2 maximum;
@@ -51,8 +51,8 @@ for Pd-l2ork version 2013.05.28;
 #X text 116 336 float;
 #X text 180 336 - output if higher than current value \, otherwise
 output current max;
-#X obj 80 416 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 80 416 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 116 370 float;
 #X text 180 370 - set current max;
 #X text 116 415 float;

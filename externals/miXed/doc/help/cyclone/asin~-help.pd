@@ -37,8 +37,8 @@ for Pd-l2ork version 2013.05.28;
 #X obj 327 43 acos~;
 #X obj 142 43 acos;
 #X restore 206 546 pd Related_objects;
-#X obj 84 381 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 84 381 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 0 -1 cnv 15 552 40 empty \$0-pddp.cnv.header asin~ 3 12 0 18
 -204280 -1 0;
 #X text 116 380 signal;
@@ -77,8 +77,8 @@ asin~ to output the value zero;
 #X text 176 338 - signal to take arcsine of;
 #X obj 510 2 asin~;
 #X text 449 213 outputs signal from -pi/2 to pi/2;
-#X obj 84 338 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 84 338 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 82 474 outputs signal from -pi/2 to pi/2 when input is -1 to
 1;
 #X obj 485 46 pddp/dsp;

@@ -21,10 +21,10 @@
 #X text 183 46 output sensor values;
 #X text 102 258 "info" - outputs info about the sensor on the right
 outlet;
-#X obj 72 336 cnv 17 3 20 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
-#X obj 72 310 cnv 17 3 20 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 72 336 cnv 17 3 20 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 72 310 cnv 17 3 20 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 15 6 description: get multitouches from trackpads and iPhones
 ;
 #X text 102 239 bang - output current multitouch data;

@@ -29,10 +29,10 @@ for Pd-l2ork version 2013.05.28;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 207 621 pd Related_objects;
-#X obj 78 320 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 349 cnv 17 3 33 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 320 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 349 cnv 17 3 33 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header lores~ 3 12 0 18
 -204280 -1 0;
 #X obj 502 7 lores~;
@@ -53,12 +53,12 @@ for Pd-l2ork version 2013.05.28;
 #X text 111 320 signal;
 #X text 178 320 - signal to go through low-pass filter with resonance
 ;
-#X obj 78 395 cnv 17 3 33 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
+#X obj 78 395 cnv 17 3 33 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 111 346 signal;
 #X text 178 356 - set cutoff frequency;
-#X obj 78 442 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 442 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 111 392 signal;
 #X text 111 411 float;
 #X text 178 400 - set resonance;

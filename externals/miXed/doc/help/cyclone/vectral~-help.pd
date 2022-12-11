@@ -30,10 +30,10 @@ deltaclip slide filter;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 204 828 pd Related_objects;
-#X obj 80 491 cnv 17 3 118 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 80 682 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 80 491 cnv 17 3 118 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 80 682 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header vectral~ 3 12 0
 18 -204280 -1 0;
 #X obj 490 7 vectral~;
@@ -72,8 +72,8 @@ to be in the given range;
 value;
 #X text 215 490 - rampsmooth <up> <down> \; linear ramp across up/down
 frames to the new value;
-#X obj 80 622 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 80 622 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 115 682 signal;
 #X text 215 682 - vector based envelope follower signal;
 #X text 96 723 1) float;
@@ -86,8 +86,8 @@ think of the changes happening between frames rather than between samples
 #X text 124 300 argument is vector size (default 512). whichever mode's
 message is received last is the current mode of operation;
 #X text 115 490 mode;
-#X obj 80 649 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
+#X obj 80 649 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 115 648 signal;
 #X text 215 648 - signal to filter;
 #X text 35 100 rampsmooth:;

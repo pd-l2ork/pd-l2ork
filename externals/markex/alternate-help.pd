@@ -34,10 +34,10 @@
 pdpedia: alternate;
 #X text 15 6 description: alternates messages between its two outlets
 ;
-#X obj 74 351 cnv 17 3 25 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
-#X obj 74 321 cnv 17 3 25 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 74 351 cnv 17 3 25 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 74 321 cnv 17 3 25 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 315 152 cnv 10 57 16 empty \$0-pddp.cnv.highlight empty 20 12
 0 14 -262126 -66577 0;
 #X obj 63 115 cnv 10 57 16 empty \$0-pddp.cnv.highlight empty 20 12

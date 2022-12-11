@@ -70,8 +70,8 @@ by Olaf Matthes);
 #X text 98 375 (none);
 #X obj 78 409 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
 #646464 0;
-#X obj 78 437 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 437 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 437 float;
 #X floatatom 138 81 5 0 0 0 - - -, f 5;
 #X floatatom 195 81 5 0 0 0 - - -, f 5;

@@ -29,10 +29,10 @@ for Pd-l2ork version 2013.05.28;
 #X obj 170 35 loadbang;
 #X obj 227 35 initbang;
 #X restore 209 532 pd Related_objects;
-#X obj 78 352 cnv 17 3 72 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 441 cnv 17 3 17 empty \$0-pddp.cnv.let.0 n 5 9 0 16 -228856
--162280 0;
+#X obj 78 352 cnv 17 3 72 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 441 cnv 17 3 17 empty \$0-pddp.cnv.let.0 n 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header bangbang 3 12 0
 18 -204280 -1 0;
 #X text 106 351 bang;

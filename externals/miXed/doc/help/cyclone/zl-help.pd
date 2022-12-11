@@ -31,18 +31,18 @@ swiss army knife;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 198 752 pd Related_objects;
-#X obj 79 452 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 79 564 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 79 452 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 79 564 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header zl 3 12 0 18 -204280
 -1 0;
 #X obj 514 11 zl;
 #X text 11 23 multi purpose list processing object a.k.a. swiss army
 knife;
 #X text 113 449 list;
-#X obj 79 502 cnv 17 3 35 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 79 502 cnv 17 3 35 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 113 523 float;
 #X text 204 521 - change number of elements per group;
 #X text 204 473 - change to <mode> and <int> number of elements per
@@ -249,8 +249,8 @@ tasks;
 #X text 113 501 list;
 #X text 204 499 - list to process;
 #X text 204 449 - list to process;
-#X obj 79 592 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 79 592 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 113 591 list;
 #X text 204 589 - the processed list based on where split is (slice
 and ecils only);

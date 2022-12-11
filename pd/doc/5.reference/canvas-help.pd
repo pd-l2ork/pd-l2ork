@@ -30,8 +30,8 @@ Jonathan Wilkes to conform to the PDDP template for Pd version 0.42.
 #X restore 22 42 pd;
 #X obj 52 42 table;
 #X restore 102 612 pd Related_objects;
-#X obj 78 302 cnv 17 3 85 empty \$0-pddp.cnv.let.n n 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 302 cnv 17 3 85 empty \$0-pddp.cnv.let.n n 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 328 11 (This help patch itself is a canvas);
 #X obj 101 560 pddp/pddplink all_about_canvas_properties.pd -text all_about_canvas_properties
 ;
@@ -59,8 +59,8 @@ garrays \, click below:;
 #X obj 170 374 pddp/pddplink inlet~-help.pd -text inlet~-help;
 #X obj 0 398 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
 13 #dcdcdc #000000 0;
-#X obj 78 407 cnv 17 3 90 empty \$0-pddp.cnv.let.n n 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 407 cnv 17 3 90 empty \$0-pddp.cnv.let.n n 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 406 anything;
 #X obj 170 433 pddp/pddplink outlet-help.pd -text outlet-help;
 #X text 98 453 signal;

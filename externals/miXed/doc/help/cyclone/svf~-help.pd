@@ -33,16 +33,16 @@ cutoff;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 195 828 pd Related_objects;
-#X obj 78 431 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 547 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 431 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 547 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header svf~ 3 12 0 18
 -204280 -1 0;
 #X obj 491 9 svf~;
 #X text 12 24 state-variable filter;
-#X obj 78 498 cnv 17 3 33 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
+#X obj 78 498 cnv 17 3 33 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 106 431 signal;
 #X text 178 431 - signal to filter;
 #X text 106 497 signal;
@@ -51,12 +51,12 @@ cutoff;
 #X text 106 472 float;
 #X text 178 463 - set cutoff frequency;
 #X text 178 505 - set resonance (0-1);
-#X obj 78 456 cnv 17 3 33 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
-#X obj 78 572 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
-#X obj 78 595 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
+#X obj 78 456 cnv 17 3 33 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 572 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 595 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 89 658 1) float;
 #X text 89 680 2) float;
 #X text 106 785 Floats or signals can modify these in real-time. The
@@ -141,8 +141,8 @@ in radians input mode);
 #X text 178 572 - highpass signal;
 #X text 106 595 signal;
 #X text 178 595 - bandpass signal;
-#X obj 78 620 cnv 17 3 17 empty \$0-pddp.cnv.let.0 3 5 9 0 16 -228856
--162280 0;
+#X obj 78 620 cnv 17 3 17 empty \$0-pddp.cnv.let.0 3 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 106 620 signal;
 #X text 178 620 - notch signal;
 #X obj 480 54 pddp/dsp;

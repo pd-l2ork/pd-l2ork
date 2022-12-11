@@ -26,10 +26,10 @@ for Pd-l2ork version 2013.05.28;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 199 726 pd Related_objects;
-#X obj 77 502 cnv 17 3 110 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 77 659 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 77 502 cnv 17 3 110 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 77 659 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header prob 3 12 0 18
 -204280 -1 0;
 #X obj 514 6 prob;
@@ -71,8 +71,8 @@ by y;
 #X text 105 572 message;
 #X text 105 632 float;
 #X text 177 632 - random number based on prob function;
-#X obj 77 632 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 77 632 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 105 659 bang;
 #X text 177 572 - clear: clear matrix \, dump: print out all rule \,
 embed: save matrix with the patch \, reset: when get stuck (reach number

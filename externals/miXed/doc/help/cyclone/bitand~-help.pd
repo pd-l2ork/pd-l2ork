@@ -28,8 +28,8 @@ for Pd-l2ork version 2013.05.28;
 #X obj 38 38 bitnot~;
 #X obj 38 68 bitor~;
 #X restore 202 783 pd Related_objects;
-#X obj 79 595 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 79 595 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header bitand~ 3 12 0
 18 -204280 -1 0;
 #X obj 14 402 clip~ -1 1;
@@ -147,8 +147,8 @@ be treated as signal of bit or signal as int/float;
 #X text 32 190 bitwise boolean operation on signal and some bitmask
 as bits;
 #X obj 484 50 pddp/dsp;
-#X obj 80 536 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 80 536 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 17 22 Performs bitwise boolean operations on a float signal.
 ;
 #X text 18 48 Works on floating point signal as bits or as an integer:

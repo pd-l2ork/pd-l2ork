@@ -33,14 +33,14 @@ adapted the patch to pd-extended 2015-02-02;
 #X obj 13 77 cyclone/pong~;
 #X obj 13 99 cyclone/round~;
 #X restore 206 726 pd Related_objects;
-#X obj 79 601 cnv 17 3 17 empty empty 0 5 9 0 16 -228856 -162280 0
+#X obj 79 601 cnv 17 3 17 empty empty 0 5 6 0 16 #dcdcdc #646464 0
 ;
 #X obj 3 38 cnv 15 552 40 empty empty round~ 3 12 0 18 -204280 -1 0
 ;
 #X text 123 643 1) float;
-#X obj 78 554 cnv 17 3 25 empty empty 1 5 9 0 16 -228856 -162280 0
+#X obj 78 554 cnv 17 3 25 empty empty 1 5 6 0 16 #dcdcdc #646464 0
 ;
-#X obj 79 502 cnv 17 3 45 empty empty 0 5 9 0 16 -228856 -162280 0
+#X obj 79 502 cnv 17 3 45 empty empty 0 5 6 0 16 #dcdcdc #646464 0
 ;
 #X obj 3 667 cnv 3 550 3 empty empty attributes 8 12 0 13 -228856 -1
 0;

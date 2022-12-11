@@ -9,10 +9,10 @@
 0 13 -245500 -191407 0;
 #X obj 3 371 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 15
 12 0 13 -245500 -191407 0;
-#X obj 72 245 cnv 17 3 20 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
-#X obj 72 199 cnv 17 3 40 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 72 245 cnv 17 3 20 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 72 199 cnv 17 3 40 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 412 6 pddp/pddplink http://wiki.puredata.info/en/apple/keyboard_light
 -text pdpedia: keyboard_light;
 #X obj 104 390 pddp/pddplink http://www.osxbook.com/book/bonus/chapter10/light/

@@ -30,10 +30,10 @@ signals;
 #X obj 38 34 cosh~;
 #X obj 38 60 sinh~;
 #X restore 204 539 pd Related_objects;
-#X obj 82 400 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 82 440 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 82 400 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 82 440 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 0 -2 cnv 15 552 40 empty \$0-pddp.cnv.header tanh~ 3 12 0 18
 -204280 -1 0;
 #X obj 0 539 pddp/pddplink help.pd -text help;

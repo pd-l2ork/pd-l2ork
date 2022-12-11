@@ -37,18 +37,18 @@ for Pd-l2ork version 2013.05.28;
 #X text 190 270 - phase;
 #X text 123 243 signal;
 #X text 123 270 signal;
-#X obj 92 245 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 92 271 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 92 245 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 92 271 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 190 311 - real part of signal;
 #X text 190 337 - imaginary part of signal;
 #X text 123 311 signal;
 #X text 123 337 signal;
-#X obj 92 312 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 92 338 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 92 312 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 92 338 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 50 56 Here's how to connect it to an fft~:;
 #X text 177 120 phase (in 271 radians);
 #X obj 121 202 ifft~ 256 256 0;

@@ -36,8 +36,8 @@ for Pd-l2ork version 2013.05.28;
 #X obj 20 34 acos;
 #X obj 166 34 acos~;
 #X restore 197 463 pd Related_objects;
-#X obj 79 381 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 79 381 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 0 -1 cnv 15 552 40 empty \$0-pddp.cnv.header acosh~ 3 12 0 18
 -204280 -1 0;
 #X text 16 23 Arc Hyperbolic cosine function (acosh(x)) for signals
@@ -66,8 +66,8 @@ for Pd-l2ork version 2013.05.28;
 #X obj 484 48 pddp/dsp;
 #X text 256 107 this is probably only useful for mathematical calculations
 ;
-#X obj 79 339 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 79 339 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 6 461 pddp/pddplink @pd_help/all_about_help_patches.pd -text Usage Guide
 ;
 #X connect 9 0 14 0;

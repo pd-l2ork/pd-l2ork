@@ -34,8 +34,8 @@ by Ivica Ico Bukvic to conform to the PDDP template for Pd-L2Ork.;
 #X obj 157 35 netreceive;
 #X text 8 2 [disis_netreceive] Related Objects;
 #X restore 102 664 pd Related_objects;
-#X obj 78 377 cnv 17 3 25 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 377 cnv 17 3 25 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 80 510 1) float;
 #X floatatom 262 82 0 0 0 0 - - - 0 0 1;
 #X obj 139 82 print tcp;
@@ -47,8 +47,8 @@ is TCP.);
 #X text 80 525 2) float;
 #X text 80 540 3) symbol atom;
 #X text 98 376 anything;
-#X obj 78 413 cnv 17 3 25 empty \$0-pddp.cnv.let.0 1 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 413 cnv 17 3 25 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 412 float;
 #X text 274 60 <- TCP \, port 3000;
 #X text 284 144 <- UDP \, port 3001;
@@ -89,8 +89,8 @@ be VERY INSECURE since it gives someone full access to your computer
 in the help patch for [disis_netsend].;
 #X msg 139 124 port 4000;
 #X text 203 123 Change port after creation;
-#X obj 78 321 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 321 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 168 376 - any message received by this [disis_netreceive] object
 will be sent to the left outlet.;
 #X text 98 320 port;

@@ -11,10 +11,10 @@
 0 13 -245500 -191407 0;
 #X obj 3 469 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 15
 12 0 13 -245500 -191407 0;
-#X obj 72 325 cnv 17 3 20 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
-#X obj 72 259 cnv 17 3 60 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 72 325 cnv 17 3 20 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 72 259 cnv 17 3 60 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #N canvas 309 454 609 478 guts 0;
 #X obj 117 95 textfile;
 #X msg 116 24 symbol template-HCS.pd;

@@ -18,8 +18,8 @@
 #X obj 73 54 tgl 15 0 empty empty empty 0 -6 0 10 -204786 -1 -1 0 1
 ;
 #X text 183 46 output sensor values;
-#X obj 72 279 cnv 17 3 20 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 72 279 cnv 17 3 20 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 103 276 list - a list with the values of the left and right
 sensors;
 #X floatatom 146 144 5 0 0 0 - - -, f 5;

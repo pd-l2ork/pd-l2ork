@@ -28,10 +28,10 @@ for Pd-l2ork version 2013.05.28;
 #X obj 8 30 maxlib/limit;
 #X obj 92 30 clip~;
 #X restore 200 529 pd Related_objects;
-#X obj 79 362 cnv 17 3 42 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 79 426 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 79 362 cnv 17 3 42 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 79 426 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header Clip 3 12 0 18
 -204280 -1 0;
 #X text 11 23 Constrains an int \, float or list within a certain range

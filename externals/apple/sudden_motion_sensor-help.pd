@@ -21,10 +21,10 @@
 #X text 183 46 output sensor values;
 #X text 102 227 "info" - outputs info about the sensor on the right
 outlet;
-#X obj 72 305 cnv 17 3 20 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
-#X obj 72 279 cnv 17 3 20 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 72 305 cnv 17 3 20 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 72 279 cnv 17 3 20 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 103 276 list - a list with the values of the left and right
 sensors;
 #X text 103 306 selector series with info about the sensor;

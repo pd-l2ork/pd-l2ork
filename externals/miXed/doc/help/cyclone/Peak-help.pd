@@ -29,10 +29,10 @@ for Pd-l2ork version 2013.05.28;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 197 680 pd Related_objects;
-#X obj 80 422 cnv 17 3 59 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 80 509 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 80 422 cnv 17 3 59 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 80 509 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header Peak 3 12 0 18
 -204280 -1 0;
 #X obj 506 9 Peak;
@@ -44,18 +44,18 @@ for Pd-l2ork version 2013.05.28;
 #X text 107 465 list;
 #X text 180 465 - x \, y pair \, first number resets peak value \,
 second one is treated like normal input;
-#X obj 80 546 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 80 546 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 107 509 float;
 #X text 180 509 - set new peak value;
 #X text 107 546 float;
 #X text 180 546 - peak value;
 #X text 89 646 1) float;
 #X text 180 646 - intial peak value;
-#X obj 80 571 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
-#X obj 80 596 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
+#X obj 80 571 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 80 596 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 107 571 bang;
 #X text 107 596 bang;
 #X text 180 571 - if new peak value;

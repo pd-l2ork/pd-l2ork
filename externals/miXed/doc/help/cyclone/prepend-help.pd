@@ -29,10 +29,10 @@ for Pd-l2ork version 2013.05.28;
 #X text 6 1 Related Objects;
 #X obj 14 35 list prepend;
 #X restore 205 876 pd Related_objects;
-#X obj 80 679 cnv 17 3 36 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 80 732 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 80 679 cnv 17 3 36 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 80 732 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header prepend 5 13 0
 18 -204280 -1 0;
 #X obj 10 876 pddp/pddplink help.pd -text help;
@@ -48,8 +48,8 @@ pdpedia: prepend;
 #X text 201 771 - new message with prepended text;
 #X text 105 812 1) message;
 #X text 201 813 - initial message to prepend;
-#X obj 80 772 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 80 772 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 105 732 message;
 #X text 201 732 - changes what to prepend;
 #X msg 169 184 set a quick brown fox;

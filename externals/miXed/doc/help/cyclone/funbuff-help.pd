@@ -26,10 +26,10 @@ for Pd-l2ork version 2013.05.28;
 #X text 6 1 Related Objects;
 #X obj 15 34 offer;
 #X restore 202 1108 pd Related_objects;
-#X obj 79 639 cnv 17 3 184 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 79 901 cnv 17 3 50 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 79 639 cnv 17 3 184 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 79 901 cnv 17 3 50 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header funbuff 3 12 0
 18 -204280 -1 0;
 #X obj 501 4 funbuff;
@@ -129,20 +129,20 @@ for Pd-l2ork version 2013.05.28;
 #X text 11 22 store x \, y pairs of numbers together;
 #X obj 7 1106 pddp/pddplink @pd_help/all_about_help_patches.pd -text Usage Guide
 ;
-#X obj 79 839 cnv 17 3 41 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 79 839 cnv 17 3 41 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 109 838 float;
 #X text 193 838 - y value to be stored (needs to be followed by an
 xvalue in th first inlet;
-#X obj 79 961 cnv 17 3 30 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 79 961 cnv 17 3 30 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 109 959 float;
 #X text 247 507 optional argument sets initial filename to load;
 #X text 193 704 clear: erase buffer contents;
 #X text 193 959 - outputs difference between the currently outputted
 value and the last outputted value;
-#X obj 79 1000 cnv 17 3 30 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
+#X obj 79 1000 cnv 17 3 30 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 109 998 bang;
 #X text 193 998 - outputs bang when funbuff has reached the end of
 its data list. See pd even_more... for additional info;

@@ -38,8 +38,8 @@ for Pd-l2ork version 2013.05.28;
 #X obj 243 85 cosx~;
 #X obj 327 33 acos~;
 #X restore 207 457 pd Related_objects;
-#X obj 83 382 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 83 382 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 0 -1 cnv 15 552 40 empty \$0-pddp.cnv.header cosh~ 3 12 0 18
 -204280 -1 0;
 #X text 117 343 signal;
@@ -56,8 +56,8 @@ for Pd-l2ork version 2013.05.28;
 #X obj 340 149 loadbang;
 #X text 173 343 - input to cosh function;
 #X obj 510 2 cosh~;
-#X obj 83 343 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 83 343 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 39 120 +~ 2;
 #X obj 40 203 Scope~ 165 83 256 3 128 1 11 0 0 0 0 102 255 51 135 135
 135 0;

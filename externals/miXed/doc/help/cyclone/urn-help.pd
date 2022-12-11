@@ -29,10 +29,10 @@ numbers;
 #X text 6 1 Related Objects;
 #X obj 19 30 random;
 #X restore 207 583 pd Related_objects;
-#X obj 81 373 cnv 17 3 55 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 81 487 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 81 373 cnv 17 3 55 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 81 487 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header urn 3 12 0 18 -204280
 -1 0;
 #X obj 516 11 urn;
@@ -60,16 +60,16 @@ numbers;
 #X text 196 392 - reseed random number generator;
 #X text 111 412 list;
 #X text 196 412 - clear list of numbers;
-#X obj 81 441 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 81 441 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 111 440 float;
 #X text 196 440 - clear rng and set new nr of values;
 #X text 111 486 float;
 #X text 196 486 - random output;
 #X text 93 552 1) float;
 #X text 196 552 - number of different values to produce;
-#X obj 81 511 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 81 511 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 111 511 bang;
 #X text 196 511 - sent out all different values;
 #X obj 13 583 pddp/pddplink @pd_help/all_about_help_patches.pd -text Usage Guide

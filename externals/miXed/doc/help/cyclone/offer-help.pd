@@ -29,10 +29,10 @@ Pd-l2ork version 2013.05.28;
 #X obj 13 27 funbuff;
 #C restore;
 #X restore 200 473 pd Related_objects;
-#X obj 79 281 cnv 17 3 57 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 403 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 79 281 cnv 17 3 57 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 403 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header offer 3 12 0 18
 -204280 -1 0;
 #X obj 509 7 offer;
@@ -66,8 +66,8 @@ value;
 #X text 108 443 (none);
 #X text 179 338 clear: clear contents of buffer;
 #X text 94 111 read corresponding y value and delete pair;
-#X obj 77 357 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 77 357 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 108 360 float;
 #X text 179 360 - input y value;
 #X text 175 68 x(int) y(may be float) pairs are stored;

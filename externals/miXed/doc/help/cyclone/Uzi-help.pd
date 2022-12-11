@@ -29,10 +29,10 @@ as possible;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 201 606 pd Related_objects;
-#X obj 81 378 cnv 17 3 42 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 81 474 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 81 378 cnv 17 3 42 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 81 474 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header Uzi 3 12 0 18 -204280
 -1 0;
 #X obj 505 11 Uzi;
@@ -42,8 +42,8 @@ as possible;
 #X text 108 398 messages;
 #X text 181 398 - pause \, break \, continue \, resume (all in reference
 to sending bangs);
-#X obj 81 437 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 81 437 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 108 437 float;
 #X text 181 436 - set number of bangs to output;
 #X text 93 570 1) float;
@@ -65,11 +65,11 @@ to sending bangs);
 #X text 181 473 - bang (based on number of bangs stored);
 #X text 108 526 float;
 #X obj 134 234 Uzi 2;
-#X obj 81 500 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 81 500 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 108 499 bang;
-#X obj 81 526 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
+#X obj 81 526 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 181 499 - bangs when the last bang has fired;
 #X text 176 234 optional arg sets initial number of bangs;
 #X text 181 526 - number of bangs sent;

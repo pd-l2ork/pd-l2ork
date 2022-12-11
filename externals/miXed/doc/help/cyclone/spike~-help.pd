@@ -28,17 +28,17 @@ non-zero;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 204 459 pd Related_objects;
-#X obj 81 303 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 81 366 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 81 303 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 81 366 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header spike~ 3 12 0 18
 -204280 -1 0;
 #X text 11 23 Report intervals of zero to non-zero transitions;
 #X text 108 303 signal;
 #X text 181 303 - input signal to detect transitions;
-#X obj 81 329 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 81 329 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 109 329 float;
 #X text 181 329 - set refractory period;
 #X text 109 364 float;

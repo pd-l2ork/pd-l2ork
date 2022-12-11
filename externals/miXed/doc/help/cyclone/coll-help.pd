@@ -32,8 +32,8 @@ for Pd-l2ork version 2013.05.28;
 #X obj 65 30 buddy;
 #X obj 108 30 textfile;
 #X restore 196 1120 pd Related_objects;
-#X obj 81 817 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 81 817 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header coll 3 12 0 18
 #c4dcdc #000000 0;
 #X text 11 23 store and edit collections of messages;
@@ -251,13 +251,13 @@ increments all indicesabove desired index;
 #X text 111 732 message;
 #X msg 50 147 prev;
 #X text 82 145 previous;
-#X obj 81 839 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 81 839 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 111 816 float;
-#X obj 81 861 cnv 17 3 17 empty \$0-pddp.cnv.let.0 3 5 9 0 16 #dcdcdc
-#9c9c9c 0;
-#X obj 81 795 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 81 861 cnv 17 3 17 empty \$0-pddp.cnv.let.0 3 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 81 795 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 111 838 bang;
 #X text 216 816 - index of message sent out;
 #X text 111 794 message;
@@ -266,8 +266,8 @@ increments all indicesabove desired index;
 #C restore;
 #X text 315 236 rewrite last file written;
 #X text 288 186 reopens last file read;
-#X obj 81 734 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 81 734 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 216 731 - can input message to store or many different commands
 for coll object as specified above;
 #X text 158 465 output by index;

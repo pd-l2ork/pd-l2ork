@@ -10,8 +10,8 @@
 -228856 -1 0;
 #X obj 3 347 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 -228856 -1 0;
-#X obj 72 247 cnv 17 3 30 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 72 247 cnv 17 3 30 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 168 40 formula:;
 #X obj 97 86 hsl 71 15 -1 1 0 0 empty empty empty -2 -6 0 10 -262144
 -1 -1 7000 1;
@@ -46,8 +46,8 @@ by the signal on its inlet.;
 ;
 #X obj 435 6 pddp/pddplink http://wiki.puredata.info/en/welch~ -text
 pdpedia: welch~;
-#X obj 73 307 cnv 17 3 30 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 73 307 cnv 17 3 30 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #N canvas 290 303 494 344 META 0;
 #X text 12 125 HELP_PATCH_AUTHORS "pd meta" information added by Jonathan
 Wilkes for Pd version 0.42.;

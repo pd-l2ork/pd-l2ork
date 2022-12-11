@@ -27,10 +27,10 @@ for Pd-l2ork version 2013.05.28;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 206 508 pd Related_objects;
-#X obj 80 342 cnv 17 3 47 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 80 431 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 80 342 cnv 17 3 47 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 80 431 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header mean 3 12 0 18
 -204280 -1 0;
 #X obj 518 4 mean;
@@ -55,8 +55,8 @@ for Pd-l2ork version 2013.05.28;
 #X text 107 408 float;
 #X text 180 408 - running average;
 #X text 107 476 (none);
-#X obj 80 408 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 80 408 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 107 431 float;
 #X text 180 431 - total number of values processed;
 #X text 199 135 list of numbers to average;

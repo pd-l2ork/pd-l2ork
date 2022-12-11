@@ -67,8 +67,8 @@ by Olaf Matthes);
 #X text 98 462 (none);
 #X obj 78 387 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
 #646464 0;
-#X obj 78 430 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 430 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 430 float;
 #X obj 99 565 pddp/pddplink all_about_midi_flags.pd -text all_about_midi_flags
 ;

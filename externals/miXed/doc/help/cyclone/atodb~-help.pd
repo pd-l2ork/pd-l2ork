@@ -7,9 +7,9 @@
 ;
 #X obj 4 501 cnv 3 550 3 empty empty arguments 8 12 0 13 -228856 -1
 0;
-#X obj 83 469 cnv 17 3 17 empty empty 0 5 9 0 16 -228856 -162280 0
+#X obj 83 469 cnv 17 3 17 empty empty 0 5 6 0 16 #dcdcdc #646464 0
 ;
-#X obj 83 426 cnv 17 3 17 empty empty 0 5 9 0 16 -228856 -162280 0
+#X obj 83 426 cnv 17 3 17 empty empty 0 5 6 0 16 #dcdcdc #646464 0
 ;
 #X text 147 469 signal;
 #X text 148 510 (none);

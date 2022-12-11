@@ -10,8 +10,8 @@
 -228856 -1 0;
 #X obj 3 359 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 -228856 -1 0;
-#X obj 72 259 cnv 17 3 30 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 72 259 cnv 17 3 30 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 168 40 formula:;
 #X obj 97 86 hsl 71 15 -1 1 0 0 empty empty empty -2 -6 0 10 -262144
 -1 -1 7000 1;
@@ -42,8 +42,8 @@ in both the frequency and time domains are proportional to their size
 (as a power-of-two in PD). The different windows have different characteristics
 in terms of stopband attenuation and noise bandwidth.;
 #X obj 127 158 tabsend~ \$0-blackman;
-#X obj 73 319 cnv 17 3 30 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 73 319 cnv 17 3 30 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 102 259 signal;
 #X text 102 318 signal;
 #X text 152 259 - the height (amplitude) of the window is controlled

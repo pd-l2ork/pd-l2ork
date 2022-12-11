@@ -28,10 +28,10 @@ for Pd-l2ork version 2013.05.28;
 #X text 6 1 Related Objects;
 #X obj 14 30 tabwrite~;
 #X restore 192 781 pd Related_objects;
-#X obj 80 542 cnv 17 3 65 empty \$0-pddp.cnv.let.0 n 5 9 0 16 -228856
--162280 0;
-#X obj 80 621 cnv 17 3 17 empty \$0-pddp.cnv.let.0 n+1 5 9 0 16 -228856
--162280 0;
+#X obj 80 542 cnv 17 3 65 empty \$0-pddp.cnv.let.0 n 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 80 621 cnv 17 3 17 empty \$0-pddp.cnv.let.0 n+1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header record~ 3 12 0
 18 -204280 -1 0;
 #X obj 490 10 record~;
@@ -44,12 +44,12 @@ for Pd-l2ork version 2013.05.28;
 #X text 208 557 - signal to record;
 #X text 123 594 set <table>;
 #X text 208 594 - change buffer for recording values;
-#X obj 80 652 cnv 17 3 17 empty \$0-pddp.cnv.let.0 n+2 5 9 0 16 -228856
--162280 0;
+#X obj 80 652 cnv 17 3 17 empty \$0-pddp.cnv.let.0 n+2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 123 621 float;
 #X text 208 621 - startpoint in the table in msec;
-#X obj 80 689 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 80 689 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 123 652 float;
 #X text 208 652 - endpoint in the table in msec;
 #X text 105 726 1) table;

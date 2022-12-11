@@ -29,10 +29,10 @@ for Pd-l2ork version 2013.05.28;
 #X text 6 1 Related Objects;
 #X obj 11 32 text;
 #X restore 203 807 pd Related_objects;
-#X obj 78 463 cnv 17 3 90 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
-#X obj 78 591 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 463 cnv 17 3 90 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 591 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header seq 3 12 0 18 #c4dcdc
 #000000 0;
 #X obj 519 8 seq;
@@ -65,8 +65,8 @@ for Pd-l2ork version 2013.05.28;
 #X msg 149 63 read test.mid;
 #X obj 149 392 seq;
 #X text 11 24 simple MIDI file player and recorder;
-#X obj 78 618 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 618 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 107 618 bang;
 #X text 227 618 - bang output at sequence's end;
 #X text 188 207 recording:;

@@ -30,18 +30,18 @@ slide;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 202 641 pd Related_objects;
-#X obj 80 366 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 80 456 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 80 366 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 80 456 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header slide~ 3 12 0 18
 -204280 -1 0;
 #X obj 498 11 slide~;
 #X text 18 24 Smooth-out changes in signal values;
-#X obj 80 392 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
-#X obj 80 419 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
+#X obj 80 392 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 80 419 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 264 148 args: <slideup> <slidedown>;
 #X floatatom 247 127 0 0 0 0 - - -;
 #X msg 172 60 1;

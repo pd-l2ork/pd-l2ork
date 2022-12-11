@@ -28,14 +28,14 @@ for Pd-l2ork version 2013.05.28;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 81 620 pd Related_objects;
-#X obj -44 322 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj -43 397 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj -44 322 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj -43 397 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -123 -265 cnv 15 552 40 empty \$0-pddp.cnv.header kink~ 3 12
 0 18 -204280 -1 0;
-#X obj -44 345 cnv 17 3 33 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj -44 345 cnv 17 3 33 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 387 -263 kink~;
 #X text -111 -243 Distort the output of a phasor~;
 #X msg 11 164 triglevel 0.01;

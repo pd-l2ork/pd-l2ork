@@ -32,10 +32,10 @@ for Pd-l2ork version 2013.05.28;
 #X obj 63 31 gate;
 #X obj 102 31 route;
 #X restore 200 492 pd Related_objects;
-#X obj 79 271 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 79 295 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 79 271 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 79 295 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header Decode 3 12 0 18
 -204280 -1 0;
 #X obj 500 4 Decode;
@@ -59,12 +59,12 @@ for Pd-l2ork version 2013.05.28;
 #X text 179 359 - 1 or 0 based on which outlets selected;
 #X text 92 401 1) float;
 #X text 179 401 - number of outlets;
-#X obj 79 360 cnv 17 3 17 empty \$0-pddp.cnv.let.0 n 5 9 0 16 -228856
--162280 0;
+#X obj 79 360 cnv 17 3 17 empty \$0-pddp.cnv.let.0 n 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 110 297 toggle;
 #X text 179 295 - enable all disabled outlets;
-#X obj 79 323 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
+#X obj 79 323 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 110 322 toggle;
 #X text 179 321 - disable all outlets (overrides outlet 1);
 #X text 110 446 If the input number is higher than the number of outlets

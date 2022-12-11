@@ -26,10 +26,10 @@ Pd-l2ork version 2013.05.28;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 201 633 pd Related_objects;
-#X obj 79 448 cnv 17 3 58 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 558 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 79 448 cnv 17 3 58 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 558 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header next 3 12 0 18
 -204280 -1 0;
 #X obj 516 7 next;
@@ -61,8 +61,8 @@ Pd-l2ork version 2013.05.28;
 1;
 #X msg 110 87 1 \, 2 \, 3 \, 4;
 #X text 107 602 (none);
-#X obj 78 529 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 529 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 109 528 bang;
 #X text 179 528 - bang if current message is not part of same logical
 stream;

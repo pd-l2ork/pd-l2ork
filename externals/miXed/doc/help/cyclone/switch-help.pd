@@ -26,10 +26,10 @@ for Pd-l2ork version 2013.05.28;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 202 491 pd Related_objects;
-#X obj 83 332 cnv 17 3 34 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 83 380 cnv 17 3 17 empty \$0-pddp.cnv.let.0 n 5 9 0 16 -228856
--162280 0;
+#X obj 83 332 cnv 17 3 34 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 83 380 cnv 17 3 17 empty \$0-pddp.cnv.let.0 n 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header switch 3 12 0 18
 -204280 -1 0;
 #X obj 498 10 switch;
@@ -43,8 +43,8 @@ for Pd-l2ork version 2013.05.28;
 #X text 117 330 float;
 #X text 117 350 bang;
 #X text 187 351 - output open outlet number;
-#X obj 83 418 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 83 418 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 187 330 - set which inlet is open;
 #X obj 178 253 switch 4;
 #X obj 178 281 print;

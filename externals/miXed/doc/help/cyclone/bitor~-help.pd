@@ -28,8 +28,8 @@ for Pd-l2ork version 2013.05.28;
 #X obj 35 37 bitand~;
 #X obj 35 68 bitnot~;
 #X restore 198 823 pd Related_objects;
-#X obj 81 583 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 81 583 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 41 empty \$0-pddp.cnv.header bitor~ 3 12 0 18
 -204280 -1 0;
 #X text 107 578 signal;
@@ -73,8 +73,8 @@ mode;
 as signal of bits or as ints;
 #X obj 504 5 bitor~;
 #X text 372 242 bitwise boolean operation on signals as integers;
-#X obj 81 538 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 81 538 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 483 51 pddp/dsp;
 #X text 13 20 Performs bitwise boolean operations on a float signal.
 ;

@@ -36,8 +36,8 @@ for Pd-l2ork version 2013.05.28;
 #X obj 335 39 acos~;
 #X obj 150 91 acos;
 #X restore 193 481 pd Related_objects;
-#X obj 79 405 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 79 405 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 0 -2 cnv 15 552 40 empty \$0-pddp.cnv.header atanh~ 3 12 0 18
 -204280 -1 0;
 #X text 113 369 signal;
@@ -61,8 +61,8 @@ for Pd-l2ork version 2013.05.28;
 #X text 169 407 - output of atanh function;
 #X obj 504 2 atanh~;
 #X obj 483 47 pddp/dsp;
-#X obj 79 370 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 79 370 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 319 107 this is probably only useful for mathematical calculations
 ;
 #X obj 10 480 pddp/pddplink @pd_help/all_about_help_patches.pd -text Usage Guide

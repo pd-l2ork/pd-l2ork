@@ -32,16 +32,16 @@ lsb most significant bit least;
 #X obj 37 87 xbendout2;
 #X obj 37 37 xbendin;
 #X restore 209 473 pd Related_objects;
-#X obj 79 285 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 79 325 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 79 285 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 79 325 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header xbendin2 3 12 0
 18 -204280 -1 0;
 #X text 179 285 - midi stream to input;
 #X text 112 325 float;
-#X obj 79 349 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 79 349 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 112 349 float;
 #X obj 489 12 xbendin2;
 #X obj 186 177 xbendin2 1;

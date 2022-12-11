@@ -28,20 +28,20 @@ ramp wave;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 204 738 pd Related_objects;
-#X obj 78 483 cnv 17 3 36 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 639 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 483 cnv 17 3 36 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 639 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header trapezoid~ 3 12
 0 18 -204280 -1 0;
 #X obj 477 11 trapezoid~;
 #X text 11 23 a trapezoidal wavetable;
 #X text 105 481 signal;
-#X obj 78 536 cnv 17 3 34 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 536 cnv 17 3 34 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 105 534 signal;
-#X obj 78 583 cnv 17 3 34 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
+#X obj 78 583 cnv 17 3 34 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 105 581 signal;
 #X text 105 555 float;
 #X text 105 602 float;

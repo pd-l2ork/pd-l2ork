@@ -9,8 +9,8 @@
 0 13 -228856 -1 0;
 #X obj 0 475 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 -228856 -1 0;
-#X obj 78 404 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 404 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 0 -1 cnv 15 552 40 empty \$0-pddp.cnv.header atan~ 3 12 0 18
 -204280 -1 0;
 #X text 107 403 signal;
@@ -63,8 +63,8 @@ for Pd-l2ork version 2013.05.28;
 #X obj 327 41 acos~;
 #X obj 142 68 acos;
 #X restore 193 527 pd Related_objects;
-#X obj 78 364 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 364 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 483 49 pddp/dsp;
 #X obj 8 526 pddp/pddplink @pd_help/all_about_help_patches.pd -text Usage Guide
 ;

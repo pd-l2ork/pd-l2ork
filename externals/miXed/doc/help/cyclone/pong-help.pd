@@ -29,15 +29,15 @@ adapted the patch to pd-extended 2015-02-02;
 #X obj 0 0 cnv 15 425 20 empty empty empty 3 12 0 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 202 743 pd Related_objects;
-#X obj 89 411 cnv 17 3 50 empty empty 0 5 9 0 16 -228856 -162280 0
+#X obj 89 411 cnv 17 3 50 empty empty 0 5 6 0 16 #dcdcdc #646464 0
 ;
-#X obj 88 541 cnv 17 3 17 empty empty 0 5 9 0 16 -228856 -162280 0
+#X obj 88 541 cnv 17 3 17 empty empty 0 5 6 0 16 #dcdcdc #646464 0
 ;
 #X obj 3 39 cnv 15 552 40 empty empty pong 3 12 0 18 -204280 -1 0;
 #X text 157 473 float;
-#X obj 89 496 cnv 17 3 17 empty empty 2 5 9 0 16 -228856 -162280 0
+#X obj 89 496 cnv 17 3 17 empty empty 2 5 6 0 16 #dcdcdc #646464 0
 ;
-#X obj 89 472 cnv 17 3 17 empty empty 1 5 9 0 16 -228856 -162280 0
+#X obj 89 472 cnv 17 3 17 empty empty 1 5 6 0 16 #dcdcdc #646464 0
 ;
 #X text 157 497 float;
 #X floatatom 402 307 0 -100 100 0 - - -;

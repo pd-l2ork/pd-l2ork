@@ -33,22 +33,22 @@ lsb most significant bit least;
 #X obj 36 37 xbendin;
 #X obj 36 87 xbendin2;
 #X restore 208 520 pd Related_objects;
-#X obj 79 405 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 79 317 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 79 405 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 79 317 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header xbendout2 3 12
 0 18 -204280 -1 0;
 #X text 113 405 midiout;
 #X text 113 317 float;
-#X obj 79 341 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 79 341 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 113 341 float;
 #X text 95 445 1) float;
 #X text 191 405 - output of midi stream;
 #X obj 483 11 xbendout2;
-#X obj 79 365 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
+#X obj 79 365 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 113 365 float;
 #X text 191 365 - channel number;
 #X text 11 23 midi pitchbend out using msb and lsb;

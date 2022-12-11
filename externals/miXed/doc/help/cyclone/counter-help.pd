@@ -34,10 +34,10 @@ for Pd-l2ork version 2013.05.28;
 #X obj 8 28 creb/count;
 #X obj 78 28 count~;
 #X restore -166 1148 pd Related_objects;
-#X obj -293 581 cnv 17 3 33 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj -293 642 cnv 17 3 33 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj -293 581 cnv 17 3 33 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj -293 642 cnv 17 3 33 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -370 1 cnv 15 552 40 empty \$0-pddp.cnv.header counter 3 12
 0 18 -204280 -1 0;
 #X text -321 23 count the number of bangs received;
@@ -87,12 +87,12 @@ for Pd-l2ork version 2013.05.28;
 #X text -159 242 number = bang =;
 #X text -112 341 set min **;
 #X obj -195 473 counter;
-#X obj -293 715 cnv 17 3 33 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
-#X obj -293 763 cnv 17 3 33 empty \$0-pddp.cnv.let.0 3 5 9 0 16 -228856
--162280 0;
-#X obj -293 809 cnv 17 3 33 empty \$0-pddp.cnv.let.0 4 5 9 0 16 -228856
--162280 0;
+#X obj -293 715 cnv 17 3 33 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj -293 763 cnv 17 3 33 empty \$0-pddp.cnv.let.0 3 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj -293 809 cnv 17 3 33 empty \$0-pddp.cnv.let.0 4 5 6 0 16 #dcdcdc
+#646464 0;
 #X text -273 580 bang;
 #X text -193 580 - main bang input \, where counter is collected;
 #X text -273 640 bang;
@@ -119,14 +119,14 @@ for Pd-l2ork version 2013.05.28;
 #X text -272 598 message;
 #X text -193 599 - "up" \, down" \, "updown" \, change direction. "inc"
 and "dec" increment or decrement counter;
-#X obj -293 874 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj -293 898 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
-#X obj -293 922 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
-#X obj -293 948 cnv 17 3 17 empty \$0-pddp.cnv.let.0 3 5 9 0 16 -228856
--162280 0;
+#X obj -293 874 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj -293 898 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj -293 922 cnv 17 3 17 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj -293 948 cnv 17 3 17 empty \$0-pddp.cnv.let.0 3 5 6 0 16 #dcdcdc
+#646464 0;
 #X text -272 923 float;
 #X text -272 949 float;
 #X text -193 872 - current value of counter;

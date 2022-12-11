@@ -27,10 +27,10 @@ in a message;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 200 404 pd Related_objects;
-#X obj 78 235 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 312 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 235 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 312 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -1 0 cnv 15 552 40 empty \$0-pddp.cnv.header substitute 3 12
 0 18 -204280 -1 0;
 #X obj 477 10 substitute;
@@ -41,8 +41,8 @@ in a message;
 #X msg 188 105 bar foo;
 #X text 106 235 message;
 #X text 181 235 - string to input and check for substitution;
-#X obj 78 264 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 264 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 106 264 message;
 #X text 181 264 - format <str1> <str2> \, change replacement policy
 to if see str1 change to str2;

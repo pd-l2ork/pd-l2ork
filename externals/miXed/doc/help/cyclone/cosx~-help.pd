@@ -39,8 +39,8 @@ for Pd-l2ork version 2013.05.28;
 #X obj 245 67 cosh;
 #X obj 329 40 acos~;
 #X restore 205 493 pd Related_objects;
-#X obj 78 339 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 339 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 0 -1 cnv 15 552 40 empty \$0-pddp.cnv.header cosx~ 3 12 0 18
 -204280 -1 0;
 #X text 111 303 signal;
@@ -61,8 +61,8 @@ phasor~'s output from 0 to 1);
 #X obj 507 3 cosx~;
 #X text 17 24 cosine function (cos(x)) for signals;
 #X obj 481 47 pddp/dsp;
-#X obj 78 303 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 303 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 7 492 pddp/pddplink @pd_help/all_about_help_patches.pd -text Usage Guide
 ;
 #X connect 12 0 18 0;
