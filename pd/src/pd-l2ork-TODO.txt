@@ -1,11 +1,13 @@
 PD-L2ORK TODO:
 *Seek RPi version of nw.js 0.67.1. IN PROGRESS
 
+*K12 mode does not remove items from the OSX top bar menu.
+  *May be an OSX limitation, and if so, need to implement mechanism for disabling those in K12 mode.
+
 *Refine K12 object sizes to make images fit better. JUSTIN
   *No need for K12 object gopspill image margins around nlets anymore.
 
-*K12 mode does not remove items from the OSX top bar menu.
-  *May be an OSX limitation, and if so, need to implement mechanism for disabling those in K12 mode.
+*Add translations for the K12 menu tooltips.
 
 *An error in OSX preferences when working with GUI dropdown (or something along those lines).
   *Figure out how to reproduce.
