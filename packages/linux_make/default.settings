@@ -75,3 +75,4 @@ path34: /usr/lib/pd-l2ork/extra/rjlib
 path35: /usr/lib/pd-l2ork/extra/disis
 path36: /usr/lib/pd-l2ork/extra/lyonpotpourri
 npath: 36
+guipreset: 60-hz
