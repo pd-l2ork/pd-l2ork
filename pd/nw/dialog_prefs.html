@@ -397,6 +397,8 @@ select {
               <span data-i18n="prefs.gui.presets.gui_preset"></span>
             </label>
             <select id="gui_preset" onchange="gui_preset_change(this);">
+              <option data-i18n="prefs.gui.presets.60-hz" value="60-hz">
+              </option>
               <option data-i18n="prefs.gui.presets.default" value="default">
               </option>
               <option data-i18n="prefs.gui.presets.inverted" value="inverted">
@@ -1158,7 +1160,7 @@ function gui_prefs_callback(name, show_grid, grid_size, save_zoom,
 
     // ag: scan the css subdir for user-defined styles
     var predefined = // built-in styles
-        [ "c64.css", "default.css", "dejavu.css", "extended.css",
+        [ "60-hz.css", "c64.css", "default.css", "dejavu.css", "extended.css",
           "footgun.css", "inverted.css", "solarized.css",
           "solarized_inverted.css", "strongbad.css", "subdued.css",
           "vanilla.css", "vanilla_inverted.css"];

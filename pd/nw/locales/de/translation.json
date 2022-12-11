@@ -451,6 +451,7 @@
       "presets": {
         "gui_preset": "GUI-Preset",
         "gui_preset_tt": "Kollektion von Patch-Farben und -Stilen",
+        "60-hz": "60-hz",
         "default": "Voreinstellung",
         "vanilla": "Vanilla",
         "vanilla_inverted": "Vanilla (Invertiert)",
