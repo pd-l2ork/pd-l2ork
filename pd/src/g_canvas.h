@@ -327,6 +327,7 @@ struct _array
     int a_n;            /* number of elements */
     int a_elemsize;     /* size in bytes; LATER get this from template */
     char *a_vec;        /* array of elements */
+    char *a_draw_vec;   /* array of elements at the the of the last drawing queue */
     t_symbol *a_templatesym;    /* template for elements */
     int a_valid;        /* protection against stale pointers into array */
     t_gpointer a_gp;    /* pointer to scalar or array element we're in */

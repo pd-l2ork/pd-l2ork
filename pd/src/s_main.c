@@ -308,7 +308,7 @@ static void pd_makeversion(void)
    instance of Pd. */
 void glob_forward_files_from_secondary_instance(void)
 {
-    fprintf(stderr, "glob_forward_files_from_secondary_instance\n");
+    //fprintf(stderr, "glob_forward_files_from_secondary_instance\n");
         /* check if we are unique, otherwise, just focus existing
            instance, and if necessary open file inside it. This doesn't
            yet work with the new GUI because we need to set it up to
@@ -324,7 +324,7 @@ void glob_forward_files_from_secondary_instance(void)
         for (nl = sys_openlist; nl; nl = nl->nl_next)
         {
             gui_s(nl->nl_string);
-            fprintf(stderr, "file: %s\n", nl->nl_string);
+            //fprintf(stderr, "file: %s\n", nl->nl_string);
         }
     }
     gui_end_array();

@@ -429,6 +429,8 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *As a redundant safety precaution, now that I understand the syntax, reverted the port value to +port which ensures that this is always a numerical value.
 *Added 60-hz theme and added ability to customize SVG and editmode background color (large and small tiles separately) and default array colors via CSS variables. Enabled assigning of custom text color to objects, and broken objects. All of these are used by the new 60-hz theme. Also included default SVG colors inside default.css.
 *Changed default OK keyboard shortcuts in dialogs to ctrl/cmd+enter/return, as leaving it as only enter, can crash nwjs if the user's focus was on a dropdown (a.k.a. select) object, which triggers request to render a dropdown at the same time that the window is being closed.
+*Implemented deterministic redrawing of the array despite using the queuegui mechanism which vastly lowers the CPU footprint of drawing arrays.
+*Refinements to the disconnect command on netserver.
 *Fixed bug where dropdown popup was off to the left when the screen has been scrolled to the right.
 *Merge K12 menu patch and clean-up (WIP)
   *Check if patch opens ok when creating new menu with K12 mode enabled. OK
