@@ -58,10 +58,10 @@ for an introduction to the necessary theory.;
 14 -204280 -1 0;
 #X text 7 1 [czero_rev~] Related Objects;
 #X restore 101 597 pd Related_objects;
-#X obj 78 449 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 312 cnv 17 3 45 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 449 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 312 cnv 17 3 45 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 312 signal;
 #X text 98 449 signal;
 #N canvas 3 174 550 380 test 0;
@@ -152,17 +152,17 @@ for an introduction to the necessary theory.;
 #X restore 101 568 pd test;
 #X text 98 327 clear;
 #X text 98 342 set;
-#X obj 78 362 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 362 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 362 signal;
-#X obj 78 387 cnv 17 3 17 empty \$0-pddp.cnv.let.2 2 5 9 0 16 -228856
--162280 0;
+#X obj 78 387 cnv 17 3 17 empty \$0-pddp.cnv.let.2 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 387 signal;
-#X obj 78 412 cnv 17 3 17 empty \$0-pddp.cnv.let.3 3 5 9 0 16 -228856
--162280 0;
+#X obj 78 412 cnv 17 3 17 empty \$0-pddp.cnv.let.3 3 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 412 signal;
-#X obj 78 474 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 474 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 474 signal;
 #X obj 474 10 czero_rev~;
 #X text 198 196 where y[n] is the output \, x[n] the input \, and a[n]

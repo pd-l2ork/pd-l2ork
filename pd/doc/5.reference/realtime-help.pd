@@ -49,13 +49,13 @@ is:;
 #X text 20 85 Related External Objects;
 #X obj 20 110 pddp/helplink iemlib/t3_timer;
 #X restore 102 597 pd Related_objects;
-#X obj 78 385 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 385 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 481 float;
-#X obj 78 482 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 429 cnv 17 3 35 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 482 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 429 cnv 17 3 35 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 486 11 realtime;
 #X msg 119 160 bang;
 #X msg 94 138 bang;

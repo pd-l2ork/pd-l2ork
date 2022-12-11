@@ -43,8 +43,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X obj 202 73 append;
 #X obj 254 73 sublist;
 #X restore 102 597 pd Related_objects;
-#X obj 78 296 cnv 17 3 72 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 296 cnv 17 3 72 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 500 10 struct;
 #X text 11 23 declare the fields in a data structure;
 #X text 98 193 (none);

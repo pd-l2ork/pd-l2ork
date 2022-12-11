@@ -36,10 +36,10 @@ bang_op;
 #X obj 22 43 symbol;
 #X obj 72 43 float;
 #X restore 102 597 pd Related_objects;
-#X obj 78 198 cnv 17 3 127 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 343 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 198 cnv 17 3 127 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 343 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X msg 514 11;
 #X msg 101 141 walk the dog;
 #X obj 101 164 print;

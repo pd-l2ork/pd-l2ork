@@ -34,8 +34,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 14 -204280 -1 0;
 #X text 7 1 [biquad~] Related Objects;
 #X restore 101 597 pd Related_objects;
-#X obj 78 330 cnv 17 3 75 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 330 cnv 17 3 75 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 489 12 biquad~;
 #X obj 155 216 env~;
 #X floatatom 155 243 0 0 0 0 - - -;
@@ -55,8 +55,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X text 98 330 signal;
 #X text 98 370 set;
 #X text 98 390 clear;
-#X obj 78 425 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 425 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 426 signal;
 #X text 169 503 y(n) = ff1 * w(n) + ff2 * w(n-1) + ff3 * w(n-2);
 #X text 169 519 w(n) = x(n) + fb1 * w(n-1) + fb2 * w(n-2);

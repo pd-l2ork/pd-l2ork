@@ -38,11 +38,11 @@ Pd version 0.42.;
 #X obj 19 136 pddp/helplink cxc/ascseq;
 #X text 19 74 Externals;
 #X restore 101 597 pd Related_objects;
-#X obj 78 188 cnv 17 3 120 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 188 cnv 17 3 120 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 187 float;
-#X obj 78 328 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 328 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 468 11 makefilename;
 #X floatatom 49 64 0 0 0 0 - - -;
 #X text 81 143 numbered filenames;

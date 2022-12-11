@@ -46,13 +46,13 @@ for Pd version 0.42.;
 #X obj 109 43 atan;
 #X text 8 2 [atan2] Related Objects;
 #X restore 101 598 pd Related_objects;
-#X obj 78 344 cnv 17 3 45 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 344 cnv 17 3 45 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 343 float;
 #X text 98 363 list;
 #X text 98 430 float;
-#X obj 78 431 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 431 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 506 12 atan2;
 #X text 92 97 The [atan2] object produces the arctangent of the quotient
 of its two arguments. The number produced is a value between Pi and
@@ -107,8 +107,8 @@ to the left inlet.;
 #X floatatom 261 217 5 0 0 0 - - -, f 5;
 #X obj 224 241 atan2;
 #X floatatom 224 268 5 0 0 0 - - -, f 5;
-#X obj 78 394 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 394 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 393 float;
 #X text 168 343 - Y coordinate;
 #X text 168 393 - X coordinate;

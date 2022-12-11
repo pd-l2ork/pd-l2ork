@@ -35,11 +35,11 @@ to conform to the PDDP template for Pd version 0.42.;
 #X text 20 67 All iem-gui objects:;
 #X obj 23 43 env~;
 #X restore 92 628 pd Related_objects;
-#X obj 78 296 cnv 17 3 115 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 296 cnv 17 3 115 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 318 float;
-#X obj 78 465 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 465 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 78 417 cnv 17 3 30 empty \$0-pddp.cnv.let.1 1 5 9 0 16 #dcdcdc
 #9c9c9c 0;
 #X text 98 335 list;

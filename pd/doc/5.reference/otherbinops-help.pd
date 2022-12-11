@@ -37,13 +37,13 @@ Pd. Revised by Jonathan Wilkes to conform to the PDDP template.;
 #X text 19 107 Links to signal operators;
 #X obj 19 127 pddp/pddplink sigbinops-help.pd;
 #X restore 102 598 pd Related_objects;
-#X obj 79 187 cnv 17 3 75 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 79 187 cnv 17 3 75 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 309 float;
-#X obj 79 310 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 79 273 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 79 310 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 79 273 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 272 float;
 #X text 11 23 relational and logical operators;
 #X obj 127 4 >;

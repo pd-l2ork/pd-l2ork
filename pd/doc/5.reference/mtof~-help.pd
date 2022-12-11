@@ -26,8 +26,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 0 13 -228856 -1 0;
 #X obj 0 520 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 -228856 -1 0;
-#X obj 78 427 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 427 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 496 (none);
 #N canvas 220 482 428 145 Related_objects 0;
 #X obj 23 43 ftom~;
@@ -55,8 +55,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X obj 256 179 metro 100;
 #X obj 256 149 loadbang;
 #X text 98 426 signal;
-#X obj 78 464 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 464 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 464 signal;
 #X text 99 524 This object takes an audio signal as input and output
 (and works sample by sample.) Since it calls a library math function

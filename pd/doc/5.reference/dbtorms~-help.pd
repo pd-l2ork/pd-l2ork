@@ -26,8 +26,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 0 13 -228856 -1 0;
 #X obj 0 510 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 -228856 -1 0;
-#X obj 78 418 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 418 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 487 (none);
 #N canvas 213 485 428 139 Related_objects 0;
 #X obj 116 42 rmstodb~;
@@ -53,8 +53,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X obj 276 169 metro 100;
 #X obj 276 139 loadbang;
 #X text 98 417 signal;
-#X obj 78 455 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 455 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 455 signal;
 #X obj 488 9 dbtorms~;
 #X obj 209 139 dbtorms~;

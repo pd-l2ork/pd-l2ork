@@ -44,8 +44,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X obj 22 112 pointer;
 #X text 7 1 [drawnumber] Related Objects;
 #X restore 101 597 pd Related_objects;
-#X obj 78 128 cnv 17 3 65 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 128 cnv 17 3 65 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 127 float;
 #X text 98 177 list;
 #X text 168 127 - [drawnumber] has a single inlet to toggle visibility

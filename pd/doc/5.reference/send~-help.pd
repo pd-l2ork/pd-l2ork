@@ -33,8 +33,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X obj 152 43 catch~;
 #X text 8 2 [send~] Related Objects;
 #X restore 102 597 pd Related_objects;
-#X obj 78 341 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 341 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 453 9 send~;
 #X obj 157 236 send~ signal1;
 #X obj 157 213 sig~ 50;

@@ -31,8 +31,8 @@ Dan Wilcox. Additional improvements/fixes/clean-up by Ivica Ico Bukvic
 #X restore 499 587 pd META;
 #X obj -1 370 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8 12
 0 13 #dcdcdc #000000 0;
-#X obj 77 334 cnv 17 3 30 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 77 334 cnv 17 3 30 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #N canvas 102 481 427 84 Related_objects 0;
 #X obj 1 0 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;

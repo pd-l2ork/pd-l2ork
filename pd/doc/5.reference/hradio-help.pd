@@ -27,8 +27,8 @@ and further clean-up by Ivica Ico Bukvic.;
 0 13 #dcdcdc #000000 0;
 #X obj 0 604 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 #dcdcdc #000000 0;
-#X obj 78 304 cnv 17 3 156 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 304 cnv 17 3 156 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #N canvas 219 506 428 129 Related_objects 0;
 #X obj 22 43 bang;
 #X obj 69 43 trigger;
@@ -41,8 +41,8 @@ and further clean-up by Ivica Ico Bukvic.;
 14 #c4dcdc #000000 0;
 #X text 8 2 [hradio] Related Objects;
 #X restore 100 654 pd Related_objects;
-#X obj 78 478 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 478 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 291 165 and receive names. Right-;
 #X text 291 180 click and choose;
 #X text 290 196 "Properties" to set them \,;

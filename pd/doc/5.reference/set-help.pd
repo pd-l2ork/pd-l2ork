@@ -40,12 +40,12 @@ by Jonathan Wilkes to conform to the PDDP template for Pd version 0.42.
 #X obj 81 69 struct;
 #X obj 133 69 pointer;
 #X restore 102 598 pd Related_objects;
-#X obj 78 332 cnv 17 3 35 empty \$0-pddp.cnv.let.n n 5 9 0 16 -228856
--162280 0;
+#X obj 78 332 cnv 17 3 35 empty \$0-pddp.cnv.let.n n 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 237 float;
 #X text 98 265 list;
-#X obj 78 374 cnv 17 3 17 empty \$0-pddp.cnv.let.r r 5 9 0 16 -228856
--162280 0;
+#X obj 78 374 cnv 17 3 17 empty \$0-pddp.cnv.let.r r 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 518 11 set;
 #X text 11 23 set values in a scalar;
 #N canvas 381 200 428 296 set-help-template 0;
@@ -81,8 +81,8 @@ b;
 #X text 98 373 pointer;
 #X text 168 265 - a list is distributed among the inlets.;
 #X text 98 405 (none);
-#X obj 78 238 cnv 17 3 85 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 238 cnv 17 3 85 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 332 float;
 #X text 98 283 bang;
 #X text 98 346 symbol;

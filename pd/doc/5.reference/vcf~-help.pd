@@ -34,15 +34,15 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X obj 22 43 bp~;
 #X text 8 2 [vcf~] Related Objects;
 #X restore 102 597 pd Related_objects;
-#X obj 78 385 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 477 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 413 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 385 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 477 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 413 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 501 9 vcf~;
-#X obj 78 440 cnv 17 3 17 empty \$0-pddp.cnv.let.2 2 5 9 0 16 -228856
--162280 0;
+#X obj 78 440 cnv 17 3 17 empty \$0-pddp.cnv.let.2 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 439 float;
 #X text 98 476 signal;
 #X text 98 384 signal;
@@ -75,8 +75,8 @@ in time.;
 ;
 #X obj 478 58 pddp/dsp;
 #X text 168 476 - the filtered signal (real part).;
-#X obj 78 500 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 500 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 499 signal;
 #X text 168 499 - the filtered signal (imaginary part).;
 #X text 76 283 [vcf~] is like [bp~] except that it takes an audio signal

@@ -35,10 +35,10 @@ write;
 #X obj 22 43 textfile;
 #X obj 85 43 receive;
 #X restore 102 597 pd Related_objects;
-#X obj 78 360 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 403 cnv 17 3 37 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 360 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 403 cnv 17 3 37 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 504 11 qlist;
 #N canvas 72 97 428 339 messages_to_qlist 0;
 #X msg 23 115 rewind;
@@ -119,8 +119,8 @@ should start with a symbol giving the destination object. In the file
 which are receives below.;
 #X restore 101 538 pd More_Info;
 #X text 98 402 list;
-#X obj 78 446 cnv 17 3 47 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 446 cnv 17 3 47 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 445 bang;
 #X text 168 445 - this outlet gets a bang when you hit the end of the
 sequence. In the file "qlist.txt" used in the example above \, the

@@ -26,8 +26,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 0 13 -228856 -1 0;
 #X obj 0 566 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 -228856 -1 0;
-#X obj 78 390 cnv 17 3 37 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 390 cnv 17 3 37 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #N canvas 219 468 428 166 Related_objects 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 -204280 -1 0;
@@ -44,8 +44,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X obj 293 108 czero_rev~;
 #X restore 101 597 pd Related_objects;
 #X text 98 389 signal;
-#X obj 78 497 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 497 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 497 signal;
 #X obj 510 11 hip~;
 #X obj 146 270 env~;
@@ -63,8 +63,8 @@ inlet is the cutoff frequency in Hz.;
 #X text 198 190 <-- reinitialize internal state;
 #X text 227 216 <-- set cutoff frequency;
 #X text 168 389 - incoming audio signal.;
-#X obj 78 432 cnv 17 3 45 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 432 cnv 17 3 45 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 431 float;
 #X text 98 449 list;
 #X text 98 409 clear;

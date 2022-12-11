@@ -62,11 +62,11 @@ by Olaf Matthes);
 #X obj 26 385 pddp/helplink cyclone/midiflush;
 #X restore 102 597 pd Related_objects;
 #X text 98 477 float;
-#X obj 78 478 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 478 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 445 (none);
-#X obj 78 503 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 503 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 364 572 pddp/pddplink all_about_midi_flags.pd -text all_about_midi_flags
 ;
 #X text 98 572 for an explanation of MIDI usage in Pd see:;

@@ -34,12 +34,12 @@ to conform to the PDDP template for Pd version 0.42.;
 #X text 7 1 [import] Related Objects;
 #X obj 22 42 declare;
 #X restore 102 597 pd Related_objects;
-#X obj 78 303 cnv 17 3 55 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 378 cnv 17 3 30 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 411 cnv 17 3 35 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 303 cnv 17 3 55 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 378 cnv 17 3 30 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 411 cnv 17 3 35 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 500 10 import;
 #X msg 91 114 bang;
 #X symbolatom 102 188 0 0 0 0 - - -;

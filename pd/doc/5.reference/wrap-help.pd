@@ -32,10 +32,10 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X text 8 2 [wrap] Related Objects;
 #X obj 22 43 wrap~;
 #X restore 102 597 pd Related_objects;
-#X obj 78 407 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 462 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 407 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 462 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X floatatom 78 171 0 0 0 0 - - -;
 #X floatatom 78 225 0 0 0 0 - - -;
 #X text 117 171 <- shift-drag here to get non-integers to try;

@@ -28,8 +28,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 0 13 -228856 -1 0;
 #X obj 0 566 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 -228856 -1 0;
-#X obj 78 366 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 366 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #N canvas 208 523 428 108 Related_objects 0;
 #X obj 23 36 min~;
 #X obj 70 36 max~;
@@ -39,8 +39,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X text 7 1 [clip~] Related Objects;
 #X restore 101 597 pd Related_objects;
 #X text 98 365 signal;
-#X obj 78 458 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 458 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 458 signal;
 #X obj 502 12 clip~;
 #X obj 41 177 clip~ -0.5 0.5;
@@ -51,11 +51,11 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X floatatom 162 150 4 0 0 0 - - -, f 4;
 #X text 176 177 creation arguments initialize clip range;
 #X text 183 250 <- graph the output;
-#X obj 78 396 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 396 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 395 float;
-#X obj 78 421 cnv 17 3 17 empty \$0-pddp.cnv.let.2 2 5 9 0 16 -228856
--162280 0;
+#X obj 78 421 cnv 17 3 17 empty \$0-pddp.cnv.let.2 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 420 float;
 #X obj 57 203 loadbang;
 #N canvas 0 0 450 300 (subpatch) 0;

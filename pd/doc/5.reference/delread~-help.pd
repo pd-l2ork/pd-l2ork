@@ -25,8 +25,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 0 13 -228856 -1 0;
 #X obj 0 479 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 -228856 -1 0;
-#X obj 78 301 cnv 17 3 75 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 301 cnv 17 3 75 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #N canvas 216 491 428 139 Related_objects 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 -204280 -1 0;
@@ -37,8 +37,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X obj 127 42 vd~ help;
 #X text 7 1 [delread~] Related Objects;
 #X restore 101 597 pd Related_objects;
-#X obj 78 393 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 393 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 393 signal;
 #X floatatom 299 169 0 0 0 0 - - -;
 #X text 340 168 input to delay line;

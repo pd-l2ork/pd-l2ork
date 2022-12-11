@@ -32,12 +32,12 @@ Jonathan Wilkes to conform to the PDDP template for Pd version 0.42.
 #X obj 62 43 exp~;
 #X obj 103 43 abs~;
 #X restore 102 598 pd Related_objects;
-#X obj 78 394 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 474 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 417 cnv 17 3 40 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 394 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 474 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 417 cnv 17 3 40 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 11 23 binary operators for signals;
 #X obj 15 286 +~;
 #X obj 103 284 -~;

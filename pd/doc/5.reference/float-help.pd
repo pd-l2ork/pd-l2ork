@@ -39,10 +39,10 @@ to conform to the PDDP template for Pd version 0.42.;
 0 13 -228856 -1 0;
 #X obj 0 523 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 -228856 -1 0;
-#X obj 78 408 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
-#X obj 78 347 cnv 17 3 55 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 408 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 347 cnv 17 3 55 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 462 12 float;
 #X obj 522 12 f;
 #X text 501 13 or;
@@ -145,8 +145,8 @@ by 3).;
 #X restore 101 597 pd Related_objects;
 #X text 99 445 float;
 #X text 11 20 store a number;
-#X obj 78 445 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 445 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 168 386 - truncates to the first element \, outputs it \, and
 stores it.;
 #X text 168 408 - a float received on the right inlet is stored.;

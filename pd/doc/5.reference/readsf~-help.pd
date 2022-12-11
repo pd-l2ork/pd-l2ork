@@ -33,10 +33,10 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X obj 103 44 writesf~;
 #X text 8 2 [readsf~] Related Objects;
 #X restore 102 597 pd Related_objects;
-#X obj 78 292 cnv 17 3 125 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 437 cnv 17 3 17 empty \$0-pddp.cnv.let.n n 5 9 0 16 -228856
--162280 0;
+#X obj 78 292 cnv 17 3 125 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 437 cnv 17 3 17 empty \$0-pddp.cnv.let.n n 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 492 12 readsf~;
 #X text 165 149 The wave \, aiff \, and nextstep formats are parsed
 automatically \, although only 2- 3- and 4- byte samples are accepted
@@ -51,8 +51,8 @@ a header size to skip \, a number of channels \, bytes per channel
 #X text 98 385 stop;
 #X text 98 402 print;
 #X text 168 402 - send statistics to the console for debugging.;
-#X obj 78 477 cnv 17 3 17 empty \$0-pddp.cnv.let.r r 5 9 0 16 -228856
--162280 0;
+#X obj 78 477 cnv 17 3 17 empty \$0-pddp.cnv.let.r r 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 476 bang;
 #X text 98 436 signal;
 #X text 168 436 - [readsf~] defaults to one signal outlet for a single

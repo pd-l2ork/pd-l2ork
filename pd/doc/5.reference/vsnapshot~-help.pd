@@ -33,11 +33,11 @@ on demand;
 #X obj 22 43 snapshot~;
 #X text 8 2 [vsnapshot~] Related Objects;
 #X restore 102 598 pd Related_objects;
-#X obj 79 445 cnv 17 3 45 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 79 445 cnv 17 3 45 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 509 float;
-#X obj 79 510 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 79 510 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 11 23 precision conversion of a signal to a number on demand
 ;
 #X obj 476 10 vsnapshot~;

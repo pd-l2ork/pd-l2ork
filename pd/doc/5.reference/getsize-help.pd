@@ -43,11 +43,11 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X obj 84 70 append;
 #X obj 138 70 sublist;
 #X restore 102 597 pd Related_objects;
-#X obj 78 415 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 415 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 451 float;
-#X obj 78 452 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 452 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 492 11 getsize;
 #X obj 78 135 pointer;
 #X floatatom 78 190 5 0 0 0 - - -, f 5;

@@ -67,14 +67,14 @@ by Olaf Matthes);
 #X obj 19 388 pddp/helplink cyclone/midiflush;
 #X restore 101 597 pd Related_objects;
 #X text 98 475 (none);
-#X obj 78 362 cnv 17 3 45 empty \$0-pddp.cnv.let.1 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 362 cnv 17 3 45 empty \$0-pddp.cnv.let.1 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 417 float;
-#X obj 78 418 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 418 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 442 float;
-#X obj 78 443 cnv 17 3 17 empty \$0-pddp.cnv.let.2 2 5 9 0 16 -228856
--162280 0;
+#X obj 78 443 cnv 17 3 17 empty \$0-pddp.cnv.let.2 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 362 571 pddp/pddplink all_about_midi_flags.pd -text all_about_midi_flags
 ;
 #X text 100 571 for an explanation of MIDI usage in Pd see:;

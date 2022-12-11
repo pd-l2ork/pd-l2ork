@@ -66,15 +66,15 @@ by Olaf Matthes);
 #X obj 21 375 pddp/helplink cyclone/midiparse;
 #X obj 21 390 pddp/helplink cyclone/midiflush;
 #X restore 101 597 pd Related_objects;
-#X obj 78 290 cnv 17 3 95 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 290 cnv 17 3 95 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 289 float;
 #X text 98 329 list;
 #X text 98 451 float;
-#X obj 78 452 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 391 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 452 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 391 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 390 float;
 #X obj 486 11 makenote;
 #X text 80 59 Makenote makes MIDI-style note-on/note-off pairs \, which
@@ -100,14 +100,14 @@ pitches).;
 duration) will be distributed to the three inlets. You can also send
 a two-element list to use the last duration supplied to [makenote].
 Lists with more than three elements are truncated.;
-#X obj 78 415 cnv 17 3 17 empty \$0-pddp.cnv.let.2 2 5 9 0 16 -228856
--162280 0;
+#X obj 78 415 cnv 17 3 17 empty \$0-pddp.cnv.let.2 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 414 float;
 #X text 158 544 - (optional) initial duration.;
 #X text 158 529 - (optional) initial velocity.;
 #X text 98 474 float;
-#X obj 78 475 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 475 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 168 474 - velocity (in milliseconds). After the specified duration
 \, a zero is output.;
 #X text 167 390 - velocity.;

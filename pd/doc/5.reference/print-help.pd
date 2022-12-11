@@ -32,8 +32,8 @@ to the PDDP template for Pd version 0.42.;
 #X text 8 2 [print] Related Objects;
 #X obj 22 43 print~;
 #X restore 102 597 pd Related_objects;
-#X obj 78 333 cnv 17 3 80 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 333 cnv 17 3 80 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 503 11 print;
 #X text 98 428 (none);
 #N canvas 103 75 428 487 print_oddities 0;

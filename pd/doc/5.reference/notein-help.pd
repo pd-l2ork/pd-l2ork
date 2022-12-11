@@ -65,8 +65,8 @@ by Olaf Matthes);
 #X obj 25 370 pddp/helplink cyclone/midiflush;
 #X restore 102 597 pd Related_objects;
 #X text 98 427 float;
-#X obj 78 428 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 428 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 498 11 notein;
 #X obj 43 107 notein;
 #X floatatom 43 175 5 0 0 0 - - -, f 5;
@@ -77,11 +77,11 @@ their note number \, velocity and channel number. Without the argument
 it reads from all MIDI channels (omni).;
 #X text 98 395 (none);
 #X text 98 452 float;
-#X obj 78 453 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 453 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 477 float;
-#X obj 78 478 cnv 17 3 17 empty \$0-pddp.cnv.let.2 2 5 9 0 16 -228856
--162280 0;
+#X obj 78 478 cnv 17 3 17 empty \$0-pddp.cnv.let.2 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X floatatom 188 282 5 0 0 0 - - -, f 5;
 #X floatatom 233 282 5 0 0 0 - - -, f 5;
 #X obj 188 249 notein 1;

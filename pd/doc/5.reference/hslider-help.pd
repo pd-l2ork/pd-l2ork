@@ -27,8 +27,8 @@ by Ivica Ico Bukvic.;
 0 13 #dcdcdc #000000 0;
 #X obj 0 703 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 #dcdcdc #000000 0;
-#X obj 78 300 cnv 17 3 260 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 300 cnv 17 3 260 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #N canvas 211 518 428 112 Related_objects 0;
 #X obj 19 52 x_all_guis bng tgl vsl hsl hradio vradio vu cnv nbx;
 #X text 17 28 All iem-gui objects:;
@@ -36,8 +36,8 @@ by Ivica Ico Bukvic.;
 14 #c4dcdc #000000 0;
 #X text 7 1 [hslider] Related Objects;
 #X restore 100 754 pd Related_objects;
-#X obj 78 576 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 576 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 291 175 and receive names. Right-;
 #X text 291 190 click and choose;
 #X text 290 206 "Properties" to set them \,;

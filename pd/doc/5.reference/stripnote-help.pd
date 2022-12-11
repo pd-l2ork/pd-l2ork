@@ -66,15 +66,15 @@ by Olaf Matthes);
 #X obj 22 385 pddp/helplink cyclone/midiparse;
 #X obj 22 400 pddp/helplink cyclone/midiflush;
 #X restore 102 597 pd Related_objects;
-#X obj 78 367 cnv 17 3 65 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 367 cnv 17 3 65 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 366 float;
 #X text 98 406 list;
 #X text 98 476 float;
-#X obj 78 477 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 439 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 477 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 439 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 438 float;
 #X obj 480 10 stripnote;
 #X text 130 227 Stripnote takes note-off (zero-velocity) messages out
@@ -93,8 +93,8 @@ the left outlet if the current value of the right inlet is non-zero.
 #X text 168 476 - the MIDI pitch value received at the left inlet will
 pass unchanged if the value of the right inlet is non-zero.;
 #X text 98 506 float;
-#X obj 78 507 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 507 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 168 506 - the velocity will pass unchanged if the value of
 the right inlet is non-zero.;
 #X text 11 23 send note-on messages and schedule note-off for later

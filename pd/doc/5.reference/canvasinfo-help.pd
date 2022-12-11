@@ -24,15 +24,15 @@ filename hitbox name pointer posonparent screenpos toplevel vis;
 0 13 #dcdcdc #000000 0;
 #X obj 0 631 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 #dcdcdc #000000 0;
-#X obj 78 527 cnv 17 3 30 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 527 cnv 17 3 30 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #N canvas 196 385 428 108 Related_objects 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
 #X text 7 1 [canvasinfo] Related Objects;
 #X restore 101 665 pd Related_objects;
-#X obj 78 571 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 571 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 4 665 pddp/pddplink all_about_help_patches.pd -text Usage Guide
 ;
 #X msg 39 48 print;

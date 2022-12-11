@@ -38,11 +38,11 @@ set;
 #fcfcfc #000000 #000000 0 256 0 0 1 0;
 #X obj 169 42 drawnumber;
 #X restore 104 937 pd Related_objects;
-#X obj 80 240 cnv 17 3 335 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 80 240 cnv 17 3 335 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 100 645 float;
-#X obj 80 646 cnv 17 3 60 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 80 646 cnv 17 3 60 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X floatatom 403 9 5 0 0 0 - - - 0 0 1, f 5;
 #X floatatom 27 58 0 0 0 0 - - - 0 0 1;
 #X floatatom 27 96 0 0 0 0 - - - 0 0 1;

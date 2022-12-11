@@ -45,14 +45,14 @@ is:;
 #X obj 24 55 pddp/helplink iemlib/t3_metro;
 #X obj 24 75 pddp/helplink maxlib/pulse;
 #X restore 102 597 pd Related_objects;
-#X obj 78 271 cnv 17 3 95 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 271 cnv 17 3 95 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 270 float;
 #X text 98 330 list;
-#X obj 78 457 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 382 cnv 17 3 55 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 457 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 382 cnv 17 3 55 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 381 float;
 #X obj 503 11 metro;
 #X obj 79 209 metro 500;

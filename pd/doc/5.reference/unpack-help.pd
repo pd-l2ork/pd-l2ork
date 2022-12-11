@@ -52,11 +52,11 @@ is:;
 #X obj 20 223 pddp/helplink zexy/drip;
 #X obj 20 243 pddp/helplink zexy/sort;
 #X restore 102 597 pd Related_objects;
-#X obj 78 200 cnv 17 3 185 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 200 cnv 17 3 185 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 267 float;
-#X obj 78 400 cnv 17 3 37 empty \$0-pddp.cnv.let.n n 5 9 0 16 -228856
--162280 0;
+#X obj 78 400 cnv 17 3 37 empty \$0-pddp.cnv.let.n n 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 500 11 unpack;
 #X floatatom 97 162 0 0 0 0 - - -;
 #X floatatom 202 162 0 0 0 0 - - -;

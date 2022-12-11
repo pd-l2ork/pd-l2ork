@@ -39,10 +39,10 @@ or first element;
 #X obj 72 43 spigot;
 #X obj 123 43 moses;
 #X restore 102 699 pd Related_objects;
-#X obj 78 249 cnv 17 3 125 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 456 cnv 17 3 17 empty \$0-pddp.cnv.let.0 n 5 9 0 16 -228856
--162280 0;
+#X obj 78 249 cnv 17 3 125 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 456 cnv 17 3 17 empty \$0-pddp.cnv.let.0 n 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 508 12 route;
 #X obj 27 113 route 0 1;
 #X msg 27 61 0 12;
@@ -75,8 +75,8 @@ to the rightmost outlet.;
 #X text 8 2 [route] Message Handling in "Float Mode";
 #X obj 1 261 cnv 3 500 3 empty \$0-pddp.cnv.inlets inlets 8 12 0 13
 -228856 -1 0;
-#X obj 70 270 cnv 17 3 225 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 70 270 cnv 17 3 225 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 138 438 - a bang will be sent to the rightmost inlet.;
 #X text 88 481 All other messages will be sent to the rightmost outlet.
 ;
@@ -129,8 +129,8 @@ below to see how message types are handled under each mode.;
 14 -204280 -1 0;
 #X obj 0 389 cnv 3 500 3 empty \$0-pddp.cnv.inlets inlets 8 12 0 13
 -228856 -1 0;
-#X obj 69 398 cnv 17 3 255 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 69 398 cnv 17 3 255 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 68 244 bng 12 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
 #X obj 101 244 bng 12 250 50 0 empty empty empty 17 7 0 10 -262144
@@ -216,8 +216,8 @@ box is shorthand for "float n");
 #X connect 44 2 45 0;
 #X connect 46 0 44 0;
 #X restore 171 331 pd selector_mode;
-#X obj 78 496 cnv 17 3 17 empty \$0-pddp.cnv.let.0 r 5 9 0 16 -228856
--162280 0;
+#X obj 78 496 cnv 17 3 17 empty \$0-pddp.cnv.let.0 r 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 497 anything;
 #X text 80 594 1) float;
 #X text 168 594 - [route] can take symbols or floats as arguments.
@@ -459,8 +459,8 @@ stripped off.;
 outlet." Incoming messages which do not match any of the arguments
 are sent to the rightmost outlet unchanged.;
 #X text 97 608 symbol;
-#X obj 78 387 cnv 17 3 45 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 387 cnv 17 3 45 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 386 float;
 #N canvas 79 52 428 344 second_inlet 0;
 #X floatatom 68 278 5 0 0 0 - - -, f 5;

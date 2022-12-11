@@ -41,12 +41,12 @@ by Jonathan Wilkes to conform to the PDDP template for Pd version 0.42.
 #X text 8 2 [setsize] Related Objects;
 #X obj 51 44 set;
 #X restore 102 598 pd Related_objects;
-#X obj 78 313 cnv 17 3 50 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 313 cnv 17 3 50 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 312 float;
 #X text 98 337 list;
-#X obj 78 369 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 369 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 11 23 resize an array;
 #X obj 491 11 setsize;
 #X scalar string_of_dolls 32 110 An_array_of_paper_dolls... \; -3 \;

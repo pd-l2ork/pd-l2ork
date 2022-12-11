@@ -50,14 +50,14 @@ is:;
 #X text 19 83 Externals;
 #X obj 19 103 pddp/helplink markex/multiselect;
 #X restore 102 597 pd Related_objects;
-#X obj 78 172 cnv 17 3 115 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 172 cnv 17 3 115 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 171 float;
 #X text 98 210 list;
-#X obj 78 368 cnv 17 3 40 empty \$0-pddp.cnv.let.n n 5 9 0 16 -228856
--162280 0;
-#X obj 78 306 cnv 17 3 45 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 368 cnv 17 3 40 empty \$0-pddp.cnv.let.n n 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 306 cnv 17 3 45 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 305 float;
 #X obj 444 10 select;
 #X text 491 10 or;
@@ -251,8 +251,8 @@ is created. When the value at the left inlet matches a creation argument
 #X text 168 171 - if an incoming float matches a creation argument
 \, a bang is sent to the corresponding outlet. If it does not match
 \, the float is sent to the rightmost outlet.;
-#X obj 78 421 cnv 17 3 30 empty \$0-pddp.cnv.let.r r 5 9 0 16 -228856
--162280 0;
+#X obj 78 421 cnv 17 3 30 empty \$0-pddp.cnv.let.r r 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 420 float;
 #X text 98 435 symbol;
 #X text 168 420 - if there is no match \, the float or symbol is sent

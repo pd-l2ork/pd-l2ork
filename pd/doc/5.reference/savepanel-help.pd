@@ -33,10 +33,10 @@ create;
 #X obj 22 43 openpanel;
 #X text 8 2 [savepanel] Related Objects;
 #X restore 102 597 pd Related_objects;
-#X obj 78 343 cnv 17 3 105 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 468 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 343 cnv 17 3 105 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 468 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 482 10 savepanel;
 #X text 98 342 bang;
 #X text 98 467 symbol;

@@ -45,12 +45,12 @@ for Pd version 0.42.;
 #X obj 20 148 pddp/helplink zexy/makesymbol;
 #X obj 20 128 pddp/helplink zexy/lister;
 #X restore 102 597 pd Related_objects;
-#X obj 78 326 cnv 17 3 110 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 484 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 442 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 326 cnv 17 3 110 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 484 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 442 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 500 10 symbol;
 #X text 11 23 store a symbol;
 #X text 98 325 bang;

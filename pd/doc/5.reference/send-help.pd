@@ -54,8 +54,8 @@ for Pd version 0.42.;
 #X obj 20 248 pddp/helplink shoutcast~;
 #X obj 20 288 pddp/helplink motex/system;
 #X restore 102 597 pd Related_objects;
-#X obj 78 342 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 342 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 465 10 send;
 #X text 497 10 or;
 #X obj 520 10 s;
@@ -78,11 +78,11 @@ for Pd version 0.42.;
 #X floatatom 152 168 5 0 0 0 - - -, f 5;
 #X obj 423 148 r hans;
 #X obj 152 192 s hans;
-#X obj 78 249 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 249 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 247 anything;
-#X obj 78 291 cnv 17 3 35 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 291 cnv 17 3 35 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 289 symbol;
 #X text 168 289 - if [send] is created without an argument \, the right
 inlet can be used to dynamically change the send/receive name. (See

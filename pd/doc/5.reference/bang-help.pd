@@ -29,8 +29,8 @@ Pd version 0.42.;
 0 13 -228856 -1 0;
 #X obj 0 437 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 -228856 -1 0;
-#X obj 78 338 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 338 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 413 (none);
 #N canvas 215 518 428 108 Related_objects 0;
 #X obj 21 42 trigger;
@@ -44,8 +44,8 @@ Pd version 0.42.;
 #X text 7 1 [bang] Related Objects;
 #X restore 101 598 pd Related_objects;
 #X text 98 381 bang;
-#X obj 78 381 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 381 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 468 11 bang;
 #X obj 139 224 print;
 #X msg 152 171 walk the cat;

@@ -46,15 +46,15 @@ may not exist in a single library.;
 #X text 20 80 Externals;
 #X obj 20 98 pddp/helplink cyclone/split;
 #X restore 102 597 pd Related_objects;
-#X obj 78 311 cnv 17 3 65 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 311 cnv 17 3 65 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 310 float;
 #X text 98 350 list;
 #X text 98 418 float;
-#X obj 78 419 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 382 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 419 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 382 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 381 float;
 #X obj 506 11 moses;
 #X floatatom 68 143 4 0 0 0 - - -, f 4;
@@ -85,8 +85,8 @@ pass through the right outlet.;
 #X text 167 381 - a float to the right inlet sets the control value.
 ;
 #X text 98 453 float;
-#X obj 78 454 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 454 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 168 453 - incoming values (to the left inlet) will pass at
 the right outlet if they are greater than or equal to the control value.
 ;

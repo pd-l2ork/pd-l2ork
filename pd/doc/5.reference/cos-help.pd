@@ -45,13 +45,13 @@ for Pd version 0.42.;
 #X obj 22 42 sin;
 #X text 7 1 [cos] Related Objects;
 #X restore 102 598 pd Related_objects;
-#X obj 78 396 cnv 17 3 45 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 396 cnv 17 3 45 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 395 float;
 #X text 98 415 list;
 #X text 98 460 float;
-#X obj 78 461 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 461 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X floatatom 396 170 0 0 0 0 - - -;
 #X floatatom 303 171 0 0 0 0 - - -;
 #X obj 210 136 sin;

@@ -38,13 +38,13 @@ order;
 #X obj 65 34 unpack;
 #X obj 20 89 pddp/helplink cyclone/split;
 #X restore 102 597 pd Related_objects;
-#X obj 78 229 cnv 17 3 145 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 229 cnv 17 3 145 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 433 float;
-#X obj 78 434 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 380 cnv 17 3 35 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 434 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 380 cnv 17 3 35 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 379 float;
 #X obj 445 10 swap;
 #X text 98 278 float;
@@ -64,8 +64,8 @@ order. Note that lists of 3 or more elements will be truncated.;
 It will be sent to the left outlet when a float or bang is received
 in the left inlet.;
 #X text 98 456 float;
-#X obj 78 457 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 457 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 78 152 swap;
 #X floatatom 106 79 5 0 0 0 - - -, f 5;
 #X floatatom 190 119 5 0 0 0 - - -, f 5;

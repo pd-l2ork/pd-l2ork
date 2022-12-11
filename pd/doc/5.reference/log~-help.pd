@@ -27,18 +27,18 @@ signal;
 14 -204280 -1 0;
 #X text 6 1 Related Objects;
 #X restore 203 375 pd Related_objects;
-#X obj 79 244 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 79 271 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 79 244 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 79 271 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj -2 -108 cnv 15 552 40 empty \$0-pddp.cnv.header log~ 3 12 0
 18 -204280 -1 0;
 #X obj 516 -104 log~;
 #X text 11 -84 Output the log (to a specified base) of a signal;
 #X text 109 243 signal;
 #X text 179 243 - signal to take log of;
-#X obj 79 308 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 79 308 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 109 273 float;
 #X text 179 270 - change base of the logarithm;
 #X text 109 307 signal;

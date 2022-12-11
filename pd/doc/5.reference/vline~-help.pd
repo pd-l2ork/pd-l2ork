@@ -35,22 +35,22 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X obj 62 43 line;
 #X text 8 2 [vline~] Related Objects;
 #X restore 102 597 pd Related_objects;
-#X obj 78 370 cnv 17 3 70 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 370 cnv 17 3 70 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 369 float;
 #X text 98 393 list;
-#X obj 78 508 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 448 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 508 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 448 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 447 float;
 #X obj 495 11 vline~;
 #X text 11 23 high-precision audio ramp generator;
 #X text 168 393 - a list to the first inlet is distributed among the
 inlets of [vline~].;
 #X text 98 426 stop;
-#X obj 78 471 cnv 17 3 17 empty \$0-pddp.cnv.let.2 2 5 9 0 16 -228856
--162280 0;
+#X obj 78 471 cnv 17 3 17 empty \$0-pddp.cnv.let.2 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 470 float;
 #X text 98 507 signal;
 #X text 168 507 - the output is a linear ramp whose levels and timing

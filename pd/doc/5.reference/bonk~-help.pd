@@ -27,8 +27,8 @@ learn forget write read;
 0 13 -228856 -1 0;
 #X obj 0 559 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 -228856 -1 0;
-#X obj 78 244 cnv 17 3 45 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 244 cnv 17 3 45 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #N canvas 209 519 428 101 Related_objects 0;
 #X obj 21 42 env~;
 #X obj 59 42 threshold~;
@@ -38,8 +38,8 @@ learn forget write read;
 14 -204280 -1 0;
 #X text 7 1 [bonk~] Related Objects;
 #X restore 100 597 pd Related_objects;
-#X obj 78 308 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 308 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 504 12 bonk~;
 #X obj 234 135 spigot;
 #X obj 151 79 bonk~;
@@ -188,8 +188,8 @@ below for units.);
 #X msg 390 89 90;
 #X text 392 108 output volume;
 #X text 406 123 (0-100);
-#X obj 78 350 cnv 17 3 100 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 350 cnv 17 3 100 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 308 list;
 #X text 98 350 list;
 #X text 147 187 In this patch \, after starting DSP \, you can print

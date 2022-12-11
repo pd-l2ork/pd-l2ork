@@ -28,8 +28,8 @@ for Pd version 0.42.;
 0 13 -228856 -1 0;
 #X obj 0 478 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 -228856 -1 0;
-#X obj 78 342 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 342 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 454 (none);
 #X text 98 416 float;
 #N canvas 214 380 428 252 Related_objects 0;
@@ -65,8 +65,8 @@ is the amount of time your computer's CPU requires to perform a task
 #X text 160 157 Click here to get elapsed CPU time. Click again...and
 again...to see periodic measurements from the start or reset time.
 Be patient.;
-#X obj 78 374 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 374 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 373 bang;
 #X text 168 416 - the elapsed time in milliseconds arrives at the outlet
 when the right inlet receives a bang.;
@@ -149,8 +149,8 @@ operating system's internal clock.;
 14 -204280 -1 0;
 #X text 7 1 [cputime] Why the Discrepencies Between Clocks?;
 #X restore 102 486 pd Time_Objects;
-#X obj 78 416 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 416 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 11 23 measure CPU time;
 #X text 98 341 bang;
 #X text 168 341 - an initial bang to the left inlet starts the timer.

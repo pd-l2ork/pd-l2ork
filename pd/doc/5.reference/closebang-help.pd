@@ -32,8 +32,8 @@ revised the patch to conform to the PDDP template for Pd version 0.42.
 14 -204280 -1 0;
 #X text 7 1 [closebang] Related Objects;
 #X restore 102 594 pd Related_objects;
-#X obj 78 430 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 430 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 481 11 closebang;
 #X text 99 397 (none);
 #X text 98 430 bang;

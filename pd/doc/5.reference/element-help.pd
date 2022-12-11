@@ -45,8 +45,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X obj 240 37 drawnumber;
 #X text 7 1 [element] Related Objects;
 #X restore 101 597 pd Related_objects;
-#X obj 78 342 cnv 17 3 70 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 342 cnv 17 3 70 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 99 343 float;
 #X text 98 398 list;
 #X text 228 255 <- subpatch to display the data structures;
@@ -90,15 +90,15 @@ the elements of the array "array1.";
 by a purple box and a number \, as specified here by the [filledpolygon]
 and [drawnumber] objects.;
 #X restore 77 301 pd array1-element-help-template;
-#X obj 78 421 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 421 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 420 pointer;
 #X text 169 343 - [element] takes a float to its left inlet \, which
 specifies the element of an array. Indices range from zero to the number
 of elements minus one. Indices out of range are quietly replaced by
 the nearest endpoint.;
-#X obj 78 458 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 458 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 459 pointer;
 #X text 168 459 - when [element] receives a float to its left inlet
 \, it outputs a pointer to the specified element of the array.;

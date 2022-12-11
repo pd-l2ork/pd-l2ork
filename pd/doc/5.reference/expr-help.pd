@@ -9,14 +9,14 @@
 0 13 -228856 -1 0;
 #X obj 0 537 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 -228856 -1 0;
-#X obj 78 127 cnv 17 3 153 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 127 cnv 17 3 153 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 126 float;
 #X text 98 426 float;
-#X obj 78 426 cnv 17 3 17 empty \$0-pddp.cnv.let.n n 5 9 0 16 -228856
--162280 0;
-#X obj 78 286 cnv 17 3 123 empty \$0-pddp.cnv.let.n n 5 9 0 16 -228856
--162280 0;
+#X obj 78 426 cnv 17 3 17 empty \$0-pddp.cnv.let.n n 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 286 cnv 17 3 123 empty \$0-pddp.cnv.let.n n 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 285 float;
 #X obj 514 11 expr;
 #X floatatom 87 50 0 0 0 0 - - -;

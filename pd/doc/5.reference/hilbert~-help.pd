@@ -34,12 +34,12 @@ Jonathan Wilkes to conform to the PDDP template for Pd version 0.42.
 #X text 8 2 [hilbert~] Related Objects;
 #X obj 22 43 complex-mod~;
 #X restore 102 598 pd Related_objects;
-#X obj 78 406 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 466 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 429 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 406 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 466 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 429 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 487 12 hilbert~;
 #X text 11 23 Hilbert transform;
 #X obj 37 225 hilbert~;
@@ -62,8 +62,8 @@ click on the object to bring up the subpatch to see how it works.;
 #X obj 478 50 pddp/dsp;
 #X obj 98 572 pddp/pddplink ../3.audio.examples/H09.ssb.modulation.pd
 -text doc/3.audio.examples/H09.ssb.modulation.pd;
-#X obj 78 489 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 489 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 488 signal;
 #N canvas 0 0 450 300 (subpatch) 0;
 #X array \$0-right 882 float 2;

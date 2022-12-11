@@ -27,8 +27,8 @@ to conform to the PDDP template for Pd version 0.42.;
 0 13 #dcdcdc #000000 0;
 #X obj 0 1190 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8
 12 0 13 #dcdcdc #000000 0;
-#X obj 71 357 cnv 17 3 432 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 71 357 cnv 17 3 432 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #N canvas 102 481 428 97 Related_objects 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
@@ -36,8 +36,8 @@ to conform to the PDDP template for Pd version 0.42.;
 #X text 7 1 [preset_hub] Related Objects;
 #X obj 98 36 preset_node_array;
 #X restore 101 1716 pd Related_objects;
-#X obj 71 804 cnv 17 3 120 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 71 804 cnv 17 3 120 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 4 1716 pddp/pddplink all_about_help_patches.pd -text Usage Guide
 ;
 #X text 11 20 universal preset system for pd-l2ork;

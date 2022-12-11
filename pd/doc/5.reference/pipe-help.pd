@@ -47,13 +47,13 @@ and properly installed the appropriate library. It may or may not exist
 in a single library.;
 #X obj 17 105 pddp/helplink iemlib/t3_delay;
 #X restore 102 597 pd Related_objects;
-#X obj 78 157 cnv 17 3 160 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 157 cnv 17 3 160 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 181 float;
-#X obj 78 410 cnv 17 3 40 empty \$0-pddp.cnv.let.n n 5 9 0 16 -228856
--162280 0;
-#X obj 78 374 cnv 17 3 17 empty \$0-pddp.cnv.let.r r 5 9 0 16 -228856
--162280 0;
+#X obj 78 410 cnv 17 3 40 empty \$0-pddp.cnv.let.n n 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 374 cnv 17 3 17 empty \$0-pddp.cnv.let.r r 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 513 11 pipe;
 #X text 98 206 symbol;
 #X text 98 232 pointer;
@@ -61,8 +61,8 @@ in a single library.;
 #X text 98 156 bang;
 #X text 98 286 flush;
 #X text 98 304 clear;
-#X obj 78 328 cnv 17 3 40 empty \$0-pddp.cnv.let.n n 5 9 0 16 -228856
--162280 0;
+#X obj 78 328 cnv 17 3 40 empty \$0-pddp.cnv.let.n n 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 373 float;
 #N canvas 78 30 428 522 Creation_arguments 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0

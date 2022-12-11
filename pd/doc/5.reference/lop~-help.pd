@@ -26,8 +26,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 0 13 -228856 -1 0;
 #X obj 0 567 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 -228856 -1 0;
-#X obj 78 390 cnv 17 3 37 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 390 cnv 17 3 37 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #N canvas 220 463 428 166 Related_objects 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 -204280 -1 0;
@@ -44,8 +44,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X text 8 2 [lop~] Related Objects;
 #X restore 101 597 pd Related_objects;
 #X text 98 389 signal;
-#X obj 78 497 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 497 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 497 signal;
 #X obj 147 240 env~;
 #X floatatom 147 263 0 0 0 0 - - -;
@@ -56,8 +56,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X obj 88 137 osc~ 100;
 #X msg 147 161 clear;
 #X text 168 389 - incoming audio signal.;
-#X obj 78 432 cnv 17 3 45 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 432 cnv 17 3 45 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 431 float;
 #X text 98 449 list;
 #X text 98 409 clear;

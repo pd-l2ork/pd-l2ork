@@ -26,8 +26,8 @@ by Ivica Ico Bukvic.;
 0 13 #dcdcdc #000000 0;
 #X obj 0 627 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 #dcdcdc #000000 0;
-#X obj 78 309 cnv 17 3 173 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 309 cnv 17 3 173 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #N canvas 220 497 428 129 Related_objects 0;
 #X obj 22 43 bang;
 #X obj 69 43 trigger;
@@ -41,8 +41,8 @@ by Ivica Ico Bukvic.;
 #X text 7 2 [bng] Related Objects;
 #X restore 101 661 pd Related_objects;
 #X text 98 497 bang;
-#X obj 78 497 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#X obj 78 497 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 310 anything;
 #X obj 526 13 bng 15 250 50 0 foo5_rcv empty empty 17 7 0 10 #fcfcfc
 #000000 #000000 1;

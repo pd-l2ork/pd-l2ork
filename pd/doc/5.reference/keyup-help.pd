@@ -36,8 +36,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X obj 18 113 pddp/helplink Gem/gemkeyname;
 #X restore 102 637 pd Related_objects;
 #X text 98 253 float;
-#X obj 78 254 cnv 17 3 130 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 254 cnv 17 3 130 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 222 (none);
 #X text 98 361 Also note that key combinations \, such as SHIFT+7 produce
 a different result than SHIFT or 7 alone.;

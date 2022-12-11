@@ -54,13 +54,13 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X obj 22 245 pddp/helplink tabenv;
 #X obj 22 265 pddp/helplink arraysize;
 #X restore 102 597 pd Related_objects;
-#X obj 78 256 cnv 17 3 160 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 256 cnv 17 3 160 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 255 float;
 #X text 98 362 list;
 #X text 98 430 float;
-#X obj 78 431 cnv 17 3 40 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 431 cnv 17 3 40 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 488 10 tabread4;
 #X floatatom 101 216 0 0 0 0 interpolation - -;
 #X floatatom 101 107 0 0 1000 0 location - -;

@@ -36,10 +36,10 @@ length;
 #X obj 112 42 pack;
 #X obj 152 42 unpack;
 #X restore 102 639 pd Related_objects;
-#X obj 78 196 cnv 17 3 17 empty \$0-pddp.cnv.let.n n 5 9 0 16 -228856
--162280 0;
-#X obj 78 153 cnv 17 3 17 empty \$0-pddp.cnv.let.n n 5 9 0 16 -228856
--162280 0;
+#X obj 78 196 cnv 17 3 17 empty \$0-pddp.cnv.let.n n 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 153 cnv 17 3 17 empty \$0-pddp.cnv.let.n n 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 510 11 list;
 #N canvas 1 112 555 502 append 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header empty 3 12 0 14
@@ -50,12 +50,12 @@ length;
 -228856 -1 0;
 #X obj 0 377 cnv 3 520 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
 13 -228856 -1 0;
-#X obj 78 386 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 303 cnv 17 3 40 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 353 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 386 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 303 cnv 17 3 40 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 353 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 304 anything;
 #X text 98 354 anything;
 #X obj 0 421 cnv 3 520 3 empty \$0-pddp.cnv.argument arguments 8 12
@@ -352,12 +352,12 @@ append" above.;
 -228856 -1 0;
 #X obj 0 377 cnv 3 520 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
 13 -228856 -1 0;
-#X obj 78 386 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 308 cnv 17 3 40 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 354 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 386 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 308 cnv 17 3 40 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 354 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 309 anything;
 #X text 98 355 anything;
 #X obj 0 421 cnv 3 520 3 empty \$0-pddp.cnv.argument arguments 8 12
@@ -407,12 +407,12 @@ sent to the outlet.;
 -228856 -1 0;
 #X obj 0 371 cnv 3 520 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
 13 -228856 -1 0;
-#X obj 78 380 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 286 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 314 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 380 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 286 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 314 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 287 anything;
 #X obj 0 458 cnv 3 520 3 empty \$0-pddp.cnv.argument arguments 8 12
 0 13 -228856 -1 0;
@@ -436,11 +436,11 @@ sent to the outlet.;
 #X text 178 287 - all input is converted to a list.;
 #X text 98 315 float;
 #X text 98 381 list;
-#X obj 78 403 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 403 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 404 list;
-#X obj 78 425 cnv 17 3 17 empty \$0-pddp.cnv.let.2 2 5 9 0 16 -228856
--162280 0;
+#X obj 78 425 cnv 17 3 17 empty \$0-pddp.cnv.let.2 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 426 list;
 #X text 178 315 - split point. A value of n will send the first n elements
 to the left outlet \, and the rest of the list to the middle outlet.
@@ -473,10 +473,10 @@ it is sent in its entirety to the rightmost outlet.;
 -228856 -1 0;
 #X obj 0 385 cnv 3 520 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
 13 -228856 -1 0;
-#X obj 78 394 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 339 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 394 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 339 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 340 anything;
 #X obj 0 429 cnv 3 520 3 empty \$0-pddp.cnv.argument arguments 8 12
 0 13 -228856 -1 0;
@@ -532,10 +532,10 @@ as bang);
 -228856 -1 0;
 #X obj 0 411 cnv 3 520 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
 13 -228856 -1 0;
-#X obj 78 420 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 383 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 420 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 383 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 384 anything;
 #X obj 0 448 cnv 3 520 3 empty \$0-pddp.cnv.argument arguments 8 12
 0 13 -228856 -1 0;
@@ -621,12 +621,12 @@ other creation arguments may be specified.;
 -228856 -1 0;
 #X obj 0 387 cnv 3 520 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
 13 -228856 -1 0;
-#X obj 78 396 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 313 cnv 17 3 40 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 363 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 396 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 313 cnv 17 3 40 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 363 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 314 anything;
 #X obj 0 431 cnv 3 520 3 empty \$0-pddp.cnv.argument arguments 8 12
 0 13 -228856 -1 0;

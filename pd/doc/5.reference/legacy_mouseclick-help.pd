@@ -35,8 +35,8 @@
 #X obj 21 42 legacy_mousemotion;
 #X restore 102 588 pd Related_objects;
 #X text 98 343 float;
-#X obj 78 344 cnv 17 3 30 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 344 cnv 17 3 30 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 311 (none);
 #X floatatom 122 230 5 0 0 0 x - -, f 5;
 #X obj 4 587 pddp/pddplink all_about_help_patches.pd -text Usage Guide
@@ -55,8 +55,8 @@ methods to [draw] with data structures for a better mouse event interface.
 #X text 168 311 - input comes directly from the mouse events in the
 GUI.;
 #X text 98 374 float;
-#X obj 78 375 cnv 17 3 30 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 375 cnv 17 3 30 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 479 (none);
 #X text 99 517 Unfortunately this object only returns coordinates when
 the mouse is hovering over a canvas window. To simulate something close
@@ -69,13 +69,13 @@ from the "View" menu.;
 the mouse is clicked on a Pd canvas. It is used to provide output for
 some old legacy externals from Pd-extended.;
 #X text 98 405 float;
-#X obj 78 406 cnv 17 3 30 empty \$0-pddp.cnv.let.0 2 5 9 0 16 -228856
--162280 0;
+#X obj 78 406 cnv 17 3 30 empty \$0-pddp.cnv.let.0 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 168 405 - x coordinate for the canvas window over which the
 mouse is currently hovering.;
 #X text 98 436 float;
-#X obj 78 437 cnv 17 3 30 empty \$0-pddp.cnv.let.0 3 5 9 0 16 -228856
--162280 0;
+#X obj 78 437 cnv 17 3 30 empty \$0-pddp.cnv.let.0 3 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 168 436 - y coordinate for the canvas window over which the
 mouse is currently hovering.;
 #X text 168 343 - 0 = mouseup \, 1 = mousedown;

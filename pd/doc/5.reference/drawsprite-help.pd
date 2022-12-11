@@ -23,8 +23,8 @@ rx ry;
 0 13 -228856 -1 0;
 #X obj 0 553 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 -228856 -1 0;
-#X obj 78 357 cnv 17 3 80 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 357 cnv 17 3 80 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #N canvas 212 516 428 108 Related_objects 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 -204280 -1 0;
@@ -32,8 +32,8 @@ rx ry;
 #X obj 92 36 draw;
 #X text 7 1 [draw sprite] Related Objects;
 #X restore 101 597 pd Related_objects;
-#X obj 78 455 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 455 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 4 597 pddp/pddplink all_about_help_patches.pd -text Usage Guide
 ;
 #X obj 115 56 struct draw-sprite-help float x float y;

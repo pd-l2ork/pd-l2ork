@@ -53,10 +53,10 @@ is:;
 #X text 21 238 iem.kug.ac.at/pdb/;
 #X obj 20 104 pddp/helplink unauthorized/exciter;
 #X restore 102 647 pd Related_objects;
-#X obj 78 278 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 315 cnv 17 3 17 empty \$0-pddp.cnv.let.n n 5 9 0 16 -228856
--162280 0;
+#X obj 78 278 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 315 cnv 17 3 17 empty \$0-pddp.cnv.let.n n 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 446 11 trigger;
 #X obj 516 11 t;
 #X text 496 11 or;

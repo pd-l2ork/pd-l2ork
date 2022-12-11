@@ -27,8 +27,8 @@ for Pd version 0.42.;
 0 13 -228856 -1 0;
 #X obj -1 566 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8
 12 0 13 -228856 -1 0;
-#X obj 78 346 cnv 17 3 125 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 346 cnv 17 3 125 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #N canvas 210 534 428 104 Related_objects 0;
 #X obj 15 31 spigot;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
@@ -36,8 +36,8 @@ for Pd version 0.42.;
 #X text 7 1 [change] Related Objects;
 #X obj 65 31 select;
 #X restore 101 597 pd Related_objects;
-#X obj 78 490 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 490 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 499 11 change;
 #X msg 22 108 1;
 #X msg 50 108 1;

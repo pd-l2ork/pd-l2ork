@@ -53,8 +53,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X obj 20 260 pddp/helplink tabenv;
 #X obj 20 280 pddp/helplink arraysize;
 #X restore 102 597 pd Related_objects;
-#X obj 78 333 cnv 17 3 135 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 333 cnv 17 3 135 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 484 9 tabwrite~;
 #X text 11 23 write a signal in an array;
 #X msg 95 194 bang;

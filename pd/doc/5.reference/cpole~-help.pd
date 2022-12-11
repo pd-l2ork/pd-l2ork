@@ -58,10 +58,10 @@ for an introduction to the necessary theory.;
 14 -204280 -1 0;
 #X text 7 1 [cpole~] Related Objects;
 #X restore 101 597 pd Related_objects;
-#X obj 78 433 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 296 cnv 17 3 45 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 433 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 296 cnv 17 3 45 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 296 signal;
 #X text 98 433 signal;
 #X obj 492 12 cpole~;
@@ -146,16 +146,16 @@ if/when |a[n]|>1.;
 #X restore 102 552 pd test;
 #X text 98 311 clear;
 #X text 98 326 set;
-#X obj 78 346 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 346 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 346 signal;
-#X obj 78 371 cnv 17 3 17 empty \$0-pddp.cnv.let.2 2 5 9 0 16 -228856
--162280 0;
+#X obj 78 371 cnv 17 3 17 empty \$0-pddp.cnv.let.2 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 371 signal;
-#X obj 78 396 cnv 17 3 17 empty \$0-pddp.cnv.let.3 3 5 9 0 16 -228856
--162280 0;
-#X obj 78 458 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 396 cnv 17 3 17 empty \$0-pddp.cnv.let.3 3 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 458 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 458 signal;
 #X text 11 23 complex one-pole (recursive) filter \, raw;
 #X text 98 396 signal;

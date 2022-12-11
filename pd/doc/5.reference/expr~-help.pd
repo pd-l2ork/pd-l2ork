@@ -34,12 +34,12 @@ for Pd version 0.42.;
 #X obj 21 42 expr;
 #X text 7 1 [expr~] Related Objects;
 #X restore 101 597 pd Related_objects;
-#X obj 78 194 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 377 cnv 17 3 17 empty \$0-pddp.cnv.let.n n 5 9 0 16 -228856
--162280 0;
-#X obj 78 235 cnv 17 3 125 empty \$0-pddp.cnv.let.n n 5 9 0 16 -228856
--162280 0;
+#X obj 78 194 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 377 cnv 17 3 17 empty \$0-pddp.cnv.let.n n 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 235 cnv 17 3 125 empty \$0-pddp.cnv.let.n n 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 252 float;
 #X text 98 343 symbol;
 #X obj 273 572 pddplink http://crca.ucsd.edu/~syadegar/expr.html;

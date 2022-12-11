@@ -33,10 +33,10 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X obj 23 43 tabsend~;
 #X text 8 2 [tabreceive~] Related Objects;
 #X restore 102 597 pd Related_objects;
-#X obj 78 459 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 496 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 459 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 496 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 466 10 tabreceive~;
 #X text 11 23 read a block of a signal from an array continuously;
 #X obj 95 226 tabreceive~;

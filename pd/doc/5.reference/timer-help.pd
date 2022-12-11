@@ -48,13 +48,13 @@ may not exist in a single library.;
 #X text 22 70 Externals;
 #X obj 24 95 pddp/helplink iemlib/t3_timer;
 #X restore 102 597 pd Related_objects;
-#X obj 78 318 cnv 17 3 60 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 318 cnv 17 3 60 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 433 float;
-#X obj 78 434 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 389 cnv 17 3 25 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 434 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 389 cnv 17 3 25 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 168 433 - upon sending the "flush" message to the left inlet
 \, [bag] will output each value in the order it was received.;
 #X obj 503 9 timer;

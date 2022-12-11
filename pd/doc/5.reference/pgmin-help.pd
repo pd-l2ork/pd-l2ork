@@ -64,8 +64,8 @@ by Olaf Matthes);
 #X obj 21 375 pddp/helplink cyclone/midiparse;
 #X obj 21 390 pddp/helplink cyclone/midiflush;
 #X restore 102 597 pd Related_objects;
-#X obj 78 440 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 440 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 507 10 pgmin;
 #X text 95 134 The [pgmin] object reads incoming program change messages.
 ;
@@ -76,8 +76,8 @@ by Olaf Matthes);
 #X floatatom 230 267 5 0 0 0 - - -, f 5;
 #X text 98 407 (none);
 #X text 98 439 float;
-#X obj 78 465 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 465 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 464 float;
 #X text 168 407 - [pgmin] receives data directly from the MIDI port.
 ;

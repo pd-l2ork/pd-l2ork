@@ -30,8 +30,8 @@ npoints bang print;
 0 13 -228856 -1 0;
 #X obj 0 562 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 -228856 -1 0;
-#X obj 78 322 cnv 17 3 30 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 322 cnv 17 3 30 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #N canvas 212 523 428 103 Related_objects 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 -204280 -1 0;
@@ -40,8 +40,8 @@ npoints bang print;
 #X text 7 1 [fiddle~] Related Objects;
 #X restore 101 597 pd Related_objects;
 #X text 98 321 signal;
-#X obj 78 372 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 372 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 488 11 fiddle~;
 #N canvas 62 43 489 501 Messages_to_fiddle~ 0;
 #X msg 22 416 print;
@@ -151,14 +151,14 @@ ones in determining the pitch. This specifies the number of the partial
 #X msg 201 65 0;
 #X floatatom 235 65 5 0 0 0 - - -, f 5;
 #X text 20 64 test input pitch;
-#X obj 78 392 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
-#X obj 78 412 cnv 17 3 17 empty \$0-pddp.cnv.let.2 2 5 9 0 16 -228856
--162280 0;
-#X obj 78 432 cnv 17 3 17 empty \$0-pddp.cnv.let.3 3 5 9 0 16 -228856
--162280 0;
-#X obj 78 452 cnv 17 3 17 empty \$0-pddp.cnv.let.4 4 5 9 0 16 -228856
--162280 0;
+#X obj 78 392 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 412 cnv 17 3 17 empty \$0-pddp.cnv.let.2 2 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 432 cnv 17 3 17 empty \$0-pddp.cnv.let.3 3 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 452 cnv 17 3 17 empty \$0-pddp.cnv.let.4 4 5 6 0 16 #dcdcdc
+#646464 0;
 #N canvas 89 215 428 349 More_info 0;
 #X text 19 38 The Fiddle object estimates the pitch and amplitude of
 an incoming sound \, both continuously and as a stream of discrete

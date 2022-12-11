@@ -547,7 +547,8 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Update installer to include lock icon and K12 menu images in the bin folder.
   *K12-icons has lock-editmode.png, lock-runtime.png, and l2ork_addons/K12/icons-large/*
   *Given the K12 mode uses 3rd-party externals, having this now disables light builds, which is ok, since that was never our focus anyhow...
-  
+*Updated all help files in the pd/doc/5.reference/ folder to also work with the new 60-hz theme. Namely, changed font and number location for mycanvas objects that denote each inlet in the help file. 
+
 
 
 

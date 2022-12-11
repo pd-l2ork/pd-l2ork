@@ -55,10 +55,10 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X obj 21 250 pddp/helplink tabenv;
 #X obj 21 270 pddp/helplink arraysize;
 #X restore 102 597 pd Related_objects;
-#X obj 78 314 cnv 17 3 75 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 426 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 314 cnv 17 3 75 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 426 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 479 12 tabread4~;
 #X text 11 23 4-point-interpolating table lookup;
 #X text 68 174 signal input x(n);
@@ -111,8 +111,8 @@ lookup algorithms. The interpolation scheme is 4-point polynomial.
 doc/3.audio.examples/B03.tabread4.pd;
 #X obj 100 545 pddp/pddplink ../3.audio.examples/B04.tabread4.interpolation.pd
 -text doc/3.audio.examples/B04.tabread4.interpolation.pd;
-#X obj 78 396 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 396 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 395 float;
 #X obj 247 395 pddp/pddplink ../3.audio.examples/B15.tabread4~-onset.pd
 -text doc/3.audio.examples/B15.tabread4~-onset.pd;

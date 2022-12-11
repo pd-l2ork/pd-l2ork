@@ -33,12 +33,12 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X text 8 2 [threshold~] Related Objects;
 #X obj 22 43 env~;
 #X restore 102 597 pd Related_objects;
-#X obj 78 304 cnv 17 3 40 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 405 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 352 cnv 17 3 35 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 304 cnv 17 3 40 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 405 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 352 cnv 17 3 35 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 351 float;
 #X obj 478 10 threshold~;
 #X text 11 23 trigger from audio signal;
@@ -57,8 +57,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 to "high." A nonzero value sets it to "low." There is no debounce period
 after this.;
 #X text 98 404 bang;
-#X obj 78 435 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 435 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 434 bang;
 #X text 168 404 - a bang is sent to the left outlet when the incoming
 signal is greater than or equal to the "trigger" value.;

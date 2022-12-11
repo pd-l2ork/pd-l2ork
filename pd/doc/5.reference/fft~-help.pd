@@ -38,12 +38,12 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X obj 163 42 block~;
 #X obj 210 42 switch~;
 #X restore 101 597 pd Related_objects;
-#X obj 78 408 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 469 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 433 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 408 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 469 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 433 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 512 10 fft~;
 #X floatatom 15 124 0 0 0 0 - - -;
 #X obj 15 75 * 44100;
@@ -66,8 +66,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X text 61 337 <- print resynthesis;
 #X text 98 407 signal;
 #X text 98 432 signal;
-#X obj 78 496 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 496 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 495 signal;
 #X text 98 468 signal;
 #X text 11 23 Fourier analyses;

@@ -45,14 +45,14 @@ for Pd version 0.42.;
 #X obj 265 42 sqrt;
 #X text 7 1 (arithmetic_operators) Related Objects;
 #X restore 102 597 pd Related_objects;
-#X obj 78 333 cnv 17 3 70 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 333 cnv 17 3 70 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 386 list;
 #X text 98 450 float;
-#X obj 78 451 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 414 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 451 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 414 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 413 float;
 #X text 78 499 1) float;
 #X obj 364 12 +;

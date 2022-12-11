@@ -47,8 +47,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X obj 32 123 pointer;
 #X obj 26 53 drawnumber;
 #X restore 102 597 pd Related_objects;
-#X obj 78 130 cnv 17 3 65 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 130 cnv 17 3 65 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 129 float;
 #X text 98 183 list;
 #X obj 513 11 plot;

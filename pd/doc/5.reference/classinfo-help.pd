@@ -24,15 +24,15 @@
 0 13 -228856 -1 0;
 #X obj 0 563 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 -228856 -1 0;
-#X obj 78 329 cnv 17 3 122 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 329 cnv 17 3 122 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #N canvas 196 385 428 108 Related_objects 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 -204280 -1 0;
 #X text 7 1 [classinfo] Related Objects;
 #X restore 101 597 pd Related_objects;
-#X obj 78 503 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 503 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 4 597 pddp/pddplink all_about_help_patches.pd -text Usage Guide
 ;
 #X msg 53 61 print;
@@ -60,8 +60,8 @@ followed by a semicolon and the output for that method.;
 #X text 295 276 todo: fix "print" method;
 #X text 295 291 when class doesn't exist;
 #X msg 153 210 symbol moses;
-#X obj 78 459 cnv 17 3 30 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 459 cnv 17 3 30 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 458 symbol;
 #X text 98 388 args;
 #X text 168 388 - list of argument types accepted by the object;

@@ -45,21 +45,21 @@ for Pd version 0.42.;
 #X text 8 2 [pow] Related Objects;
 #X obj 266 43 sqrt;
 #X restore 102 597 pd Related_objects;
-#X obj 78 350 cnv 17 3 45 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 350 cnv 17 3 45 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 349 float;
 #X text 98 369 list;
 #X text 98 435 float;
-#X obj 78 436 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 436 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X floatatom 179 187 0 0 0 0 - - -;
 #X floatatom 179 130 0 0 0 0 - - -;
 #X obj 179 160 pow;
 #X text 103 221 [pow] is used to exponentiate a number. 2 to the power
 of 2 = 4 . The right inlet or creation argument is the exponent while
 the left inlet is the base.;
-#X obj 78 400 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 400 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 399 float;
 #X obj 516 11 pow;
 #X text 11 23 exponential function;

@@ -35,10 +35,10 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X obj 82 43 q8_rsqrt~;
 #X text 8 2 [sqrt~] Related Objects;
 #X restore 102 597 pd Related_objects;
-#X obj 78 446 cnv 17 3 45 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
-#X obj 78 511 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 446 cnv 17 3 45 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 78 511 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X obj 511 7 sqrt~;
 #X obj 232 240 metro 500;
 #X floatatom 215 137 0 0 0 0 - - -;

@@ -44,13 +44,13 @@ for Pd version 0.42.;
 #X text 7 1 [log] Related Objects;
 #X obj 181 42 exp;
 #X restore 101 597 pd Related_objects;
-#X obj 78 308 cnv 17 3 45 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 308 cnv 17 3 45 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 307 float;
 #X text 98 327 list;
 #X text 98 422 float;
-#X obj 78 423 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 423 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X floatatom 239 177 0 0 0 0 - - -;
 #X floatatom 239 120 0 0 0 0 - - -;
 #X text 94 234 [log] will output the natural logarithm (base E) of
@@ -73,8 +73,8 @@ will be used as input.;
 #X obj 33 148 log 2;
 #X floatatom 33 173 5 0 0 0 - - -, f 5;
 #X floatatom 33 120 5 0 0 0 - - -, f 5;
-#X obj 78 358 cnv 17 3 30 empty \$0-pddp.cnv.let.0 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 358 cnv 17 3 30 empty \$0-pddp.cnv.let.0 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 357 float;
 #X text 168 357 - set the base;
 #X text 78 485 1) float;

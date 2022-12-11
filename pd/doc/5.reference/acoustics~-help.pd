@@ -24,8 +24,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 0 13 -228856 -1 0;
 #X obj 0 565 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 -228856 -1 0;
-#X obj 78 433 cnv 17 3 55 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 433 cnv 17 3 55 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 540 (none);
 #N canvas 339 468 428 163 Related_objects 0;
 #X text 19 37 Control objects for conversion:;
@@ -45,8 +45,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 14 -204280 -1 0;
 #X text 7 1 (acoustics) Related Objects;
 #X restore 223 598 pd Related_objects;
-#X obj 78 508 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 508 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 11 23 signal objects for conversion;
 #X text 98 432 signal;
 #X text 98 508 signal;

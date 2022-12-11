@@ -37,8 +37,8 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 #X obj 99 101 gemkeyname;
 #X restore 102 637 pd Related_objects;
 #X text 98 373 float;
-#X obj 78 374 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 9 0 16 -228856
--162280 0;
+#X obj 78 374 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 342 (none);
 #X obj 43 193 bng 15 250 50 0 empty empty empty 0 -6 0 8 -262144 -1
 -1;
@@ -78,8 +78,8 @@ keys of the keyboard. It captures both the "keydown" and "keyup" events.
 ;
 #X text 168 373 - the left inlet produces a 1 when a key goes down
 \, and a zero when the key goes up.;
-#X obj 78 404 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 9 0 16 -228856
--162280 0;
+#X obj 78 404 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 98 403 symbol;
 #X text 168 403 - the right outlet produces a symbol which represents
 the name of the key.;
