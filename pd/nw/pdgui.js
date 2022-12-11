@@ -27,6 +27,16 @@ function defunkify_windows_path(s) {
     return ret;
 }
 
+function funkify_windows_path(s) {
+    var ret = s;
+    if (process.platform === "win32") {
+        ret = ret.replace(/\//g, "\\");
+    }
+    return ret;
+}
+
+exports.funkify_windows_path = funkify_windows_path;
+
 exports.set_pd_engine_id = function (id) {
     pd_engine_id = id;
 }
@@ -2063,7 +2073,9 @@ function menu_k12_open_demos(cid) {
             style: "display: none;",
             type: "file",
             id: "fileDialog",
-            nwworkingdir: defunkify_windows_path(lib_dir + "/extra/K12/demos"),
+            nwworkingdir: (nw_os_is_windows ? 
+                funkify_windows_path(lib_dir + "/extra/K12/demos") :
+                (lib_dir + "/extra/K12/demos")),
             multiple: null,
             // These are copied from pd_filetypes in pdgui.js
             accept: ".pd,.pat,.mxt,.mxb,.help"

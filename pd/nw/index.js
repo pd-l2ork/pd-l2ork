@@ -720,7 +720,11 @@ function nw_create_pd_window_menus(gui, w) {
     }
 
     minit(pd_m.file.k12_demos, {
-        click: function (){
+        click: function () {
+            //pdgui.post("os_is_win=" + pdgui.nw_os_is_windows + " orig_path=<" +
+            //    pdgui.lib_dir + "/extra/K12/demos" + " funkyfied_path=<" +
+            //    pdgui.funkify_windows_path(pdgui.get_lib_dir() +
+            //    "/extra/K12/demos") + ">");
             var input, chooser,
                 span = w.document.querySelector("#fileDialogSpan");
             // Complicated workaround-- see comment in build_file_dialog_string
@@ -728,8 +732,10 @@ function nw_create_pd_window_menus(gui, w) {
                 style: "display: none;",
                 type: "file",
                 id: "fileDialog",
-                nwworkingdir: pdgui.defunkify_windows_path(
-                                pdgui.get_lib_dir() + "/extra/K12/demos"),
+              nwworkingdir: (pdgui.nw_os_is_windows ? 
+                  pdgui.funkify_windows_path(pdgui.get_lib_dir() +
+                      "/extra/K12/demos") :
+                  (pdgui.get_lib_dir() + "/extra/K12/demos")),
                 multiple: null,
                 // These are copied from pd_filetypes in pdgui.js
                 accept: ".pd,.pat,.mxt,.mxb,.help"

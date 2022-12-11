@@ -7,8 +7,6 @@ PD-L2ORK TODO:
 *K12 mode does not remove items from the OSX top bar menu.
   *May be an OSX limitation, and if so, need to implement mechanism for disabling those in K12 mode.
 
-*Windows path is not working for K12_demos and possibly other cases. Investigate and fix.
-
 *An error in OSX preferences when working with GUI dropdown (or something along those lines).
   *Figure out how to reproduce.
 
@@ -557,6 +555,9 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *More refinements to the help files to conform with 60-hz GUI preset.  
 *Added 60-hz preset as one of the built-in ones.
 *Made 60-hz preset default.
+*OSX and Windows installer fixes for the new K12 mode.
+*Fixed Windows path is not working for K12_demos.
+
 
 
 
