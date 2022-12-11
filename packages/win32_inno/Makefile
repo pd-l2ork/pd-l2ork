@@ -78,7 +78,7 @@ else
 	cp -rf $(cvs_root_dir)/l2ork_addons/K12 $(DESTDIR)$(prefix)/extra/
 	@echo "Adding K12 menu icons..."
 	install -d $(DESTDIR)$(bindir)/K12-icons/
-	cp -rf $(cvs_root_dir)/l2ork_addons/K12/icons-large/ $(DESTDIR)$(bindir)/K12-icons/
+	cp -rf $(cvs_root_dir)/l2ork_addons/K12/icons-large/* $(DESTDIR)$(bindir)/K12-icons/
 endif
 
 #==============================================================================#
