@@ -2446,7 +2446,11 @@ function set_editmode_bg(cid, svg_elem, state)
         else
             set_bg(cid, "none", "0% 0%", "repeat");
     } else {
-        set_bg(cid, create_editmode_bg(cid, svg_elem), "0% 0%", "repeat");
+        if (alt_key)
+            set_bg(cid, create_editmode_key_runmode_bg(cid, svg_elem),
+                "0% 0%", "repeat");
+        else
+            set_bg(cid, create_editmode_bg(cid, svg_elem), "0% 0%", "repeat");
     }
 }
 
