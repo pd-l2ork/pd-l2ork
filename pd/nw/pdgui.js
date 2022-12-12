@@ -2815,7 +2815,8 @@ var scroll = {},
     title_queue= {}, // ugly kluge to work around an ugly race condition
     popup_menu = {},
     toplevel_scalars = {},
-    editable = {}; // for allowing developer to lock the patch (e.g.) to beginners
+    editable = {}, // for allowing developer to lock the patch (e.g.) to beginners
+    k12_menu_canvas_x = {}; // per patch k12_menu offset when the menu is unfolded
 
     var patchwin = {}; // object filled with cid: [Window object] pairs
     var dialogwin = {}; // object filled with did: [Window object] pairs
@@ -4144,7 +4145,7 @@ function gui_canvas_patchcord_scroll(cid, x1, y1, x2, y2) {
     gui(cid).get_nw_window(function(nw_win) {
         var svg_elem = nw_win.window.document.getElementById("patchsvg");
         var { x: x, y: y, w: width, h: height,
-            mw: min_width, mh: min_height } = canvas_params(nw_win);
+            mw: min_width, mh: min_height } = canvas_params(nw_win, cid);
         //post("mw="+min_width+" mh="+min_height+" w="+width+" h="+height);
         // if there is nothing on the canvas, or the contents are only
         // using a subset of the canvas, we need to use window boundaries
@@ -4961,7 +4962,7 @@ function gui_canvas_move_selection(cid, x1, y1, x2, y2) {
     gui(cid).get_nw_window(function(nw_win) {
         var svg_elem = nw_win.window.document.getElementById("patchsvg");
         var { x: x, y: y, w: width, h: height,
-            mw: min_width, mh: min_height } = canvas_params(nw_win);
+            mw: min_width, mh: min_height } = canvas_params(nw_win, cid);
         //post("mw="+min_width+" mh="+min_height+" w="+width+" h="+height);
         // if there is nothing on the canvas, or the contents are only
         // using a subset of the canvas, we need to use window boundaries
@@ -9327,7 +9328,7 @@ function gui_canvas_scroll_to_gobj(cid, tag, smooth) {
             gui(cid).get_nw_window(function(nw_win) {
                 var svg_elem = nw_win.window.document.getElementById("patchsvg");
                 var { x: x, y: y, w: width, h: height,
-                    mw: min_width, mh: min_height } = canvas_params(nw_win);
+                    mw: min_width, mh: min_height } = canvas_params(nw_win, cid);
                 /*
                 post("..."+cid+" x="+x+" y="+y+" w="+width+" h="+height+
                   " mw="+min_width+" mh="+min_height);
@@ -9383,7 +9384,7 @@ exports.gui_canvas_scroll_to_gobj = gui_canvas_scroll_to_gobj;
 // leverages the get_nw_window method in the callers...
 // we need to pass both nw_win and cid because the two
 // are not the same
-function canvas_params(nw_win)
+function canvas_params(nw_win, cid)
 {
     // calculate the canvas parameters (svg bounding box and window geometry)
     // for do_getscroll and do_optimalzoom
@@ -9426,8 +9427,11 @@ function canvas_params(nw_win)
     if ((k12_mode == 1 || k12_menu_vis == 1) &&
         svg_elem.classList.contains("editmode")) {
         //post("canvas params--expanding the window size");
+        if (!k12_menu_canvas_x[cid] ||
+            ((bbox.x < 0 ? bbox.x : 0)  - 155) < k12_menu_canvas_x[cid])
+            k12_menu_canvas_x[cid] = (bbox.x < 0 ? bbox.x : 0)  - 155;
         bbox.width += 155;
-        bbox.x -= 155;
+        bbox.x = (bbox.x < 0 ? bbox.x : 0)  - 155;
     }
     //post("...post k12 menu canvas_params calculated bbox: x=" + bbox.x + " w=" + bbox.width);
     // We try to do Pd-extended style canvas origins. That is, coord (0, 0)
@@ -9580,7 +9584,7 @@ function do_getscroll(cid, checkgeom) {
     gui(cid).get_nw_window(function(nw_win) {
         var svg_elem = nw_win.window.document.getElementById("patchsvg");
         var { x: x, y: y, w: width, h: height,
-            mw: min_width, mh: min_height } = canvas_params(nw_win);
+            mw: min_width, mh: min_height } = canvas_params(nw_win, cid);
 
         //post("nw_version_bbox_offset=" + nw_version_bbox_offset +
         //  " min_height=" + min_height);
@@ -9723,7 +9727,7 @@ function do_optimalzoom(cid, hflag, vflag) {
     // the window
     gui(cid).get_nw_window(function(nw_win) {
         var { x: x, y: y, w: width, h: height, mw: min_width, mh: min_height } =
-            canvas_params(nw_win);
+            canvas_params(nw_win, cid);
         // Calculate the optimal horizontal and vertical zoom values,
         // using floor to always round down to the nearest integer. Note
         // that these may well be negative, if the viewport is too small
