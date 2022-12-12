@@ -19,8 +19,8 @@
 
 /* various SVG modifiable colors */
 :root {
-  --bg_large_grid: #ddd;
-  --bg_small_grid: #ddd;
+  --bg_large_grid: #bbb;
+  --bg_small_grid: #bbb;
   --default_array_fill: #46d5cf;
   --default_array_outline: #46d5cf;
 }
@@ -255,7 +255,7 @@ mark.console_find_highlighted {
 
 .cord.control {
     stroke-width: 1;
-    stroke: #191a1a;
+    stroke: #555;
 }
 
 /* selected connection between objects, or a new cord not yet connected */
