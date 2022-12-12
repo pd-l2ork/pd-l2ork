@@ -864,6 +864,10 @@ var canvas_events = (function() {
                     return;
                 }
                 //pdgui.post("leaving floating mode");
+                // refocus the textarea because toggling the k12 menu
+                // in the process somehow makes us lose this focus
+                document.getElementById("new_object_textentry").focus();
+                //pdgui.post("refocusing textentry...");
                 /* here we revert the cursor for the textentry to default.
                    this was activated at the creation time, see
                    canvas_startmotion inside the g_editor.c. after we
@@ -879,6 +883,10 @@ var canvas_events = (function() {
             },
             floating_text_keypress: function(evt) {
                 //pdgui.post("leaving floating mode");
+                // refocus the textarea because toggling the k12 menu
+                // in the process somehow makes us lose this focus
+                document.getElementById("new_object_textentry").focus();
+                //pdgui.post("refocusing textentry...");
                 canvas_events.text();
                 //evt.stopPropagation();
                 //evt.preventDefault();
