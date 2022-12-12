@@ -18,6 +18,8 @@
     "rpi_digital": "RaspberryPi Digital: Use this to read from or write to GPIO pins in digital format",
     "rpi_analog_out": "RaspberryPi Analog Out: Use this to write to GPIO pins in analog format using PWM",
     "rpi_analog_in": "RaspberryPi Analog In: Use this to read from RaspberryPi LOP Shield's analog inputs",
+    "rpi_motor": "RaspberryPi Motor: Use this to control a servo motor via a PWM-enabled digital pin",
+    "rpi_solenoid": "RaspberryPi Solenoid: Use this to control solenoid via a PWM-enabled digital pin",
     "math_number": "Number: Use this to assign a value to other objects",
     "math_netsend": "Netsend: Use this to send data over network to another computer",
     "math_netreceive": "Netreceive: Use this to receive data from another computer over network",

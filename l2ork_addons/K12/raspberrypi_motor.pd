@@ -1,6 +1,7 @@
-#N canvas 85 95 684 534 10;
-#X obj 162 159 ggee/image @pd_extra/K12/objects/raspberrypi_motor_on.png
-1;
+#N canvas 503 242 684 534 10;
+#X obj 149 146 ggee/image @pd_extra/K12/objects/raspberrypi_motor_off.png
+1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
+;
 #X obj 112 -8 inlet;
 #X msg 292 317 pwm \$1;
 #X obj 325 263 t 0 f clear;
@@ -10,17 +11,17 @@
 ;
 #X msg 239 21 open @pd_extra/K12/objects/raspberrypi_motor_on.png;
 #X obj 69 165 nbx 3 14 0 161 0 1 \$0-s-null \$0-r-null degree: -40
-8 0 11 -262144 -1 -1 161 256 3;
+8 0 11 #fcfcfc #000000 #000000 0 256 3 0 1 0;
 #X obj 112 38 max 0;
 #X obj 358 180 int;
-#X obj 171 181 nbx 2 14 0 10 0 0 empty empty channel: -47 8 0 11 -262144
--1 -1 3 256 3;
+#X obj 171 181 nbx 2 14 0 10 0 0 empty empty channel: -47 8 0 11 #fcfcfc
+#000000 #000000 0 256 3 0 1 0;
 #X obj 9 127 preset_node k12;
 #X obj 173 273 coll rpi_gpio.coll;
 #C restore;
 #X obj 160 414 disis_gpio;
-#X obj 148 196 cnv 15 52 15 empty \$0-r-cnv pin:17 4 7 0 11 -262144
--99865 0;
+#X obj 148 196 cnv 15 52 15 empty \$0-r-cnv pin:0 4 7 0 11 #fcfcfc
+#606060 0;
 #X obj 173 297 sprintf pin:%d;
 #X obj 173 318 tosymbol;
 #X msg 173 339 label \$1;
@@ -39,7 +40,7 @@
 #X msg 405 307 pwmrange \$1;
 #X obj 405 286 + 1;
 #X obj 179 156 tgl 15 0 \$0-bs-null \$0-br-null stay\ put: -54 7 0
-10 -262144 -1 -1 0 1;
+10 #fcfcfc #000000 #000000 0 1 1;
 #X obj 325 202 gate 2;
 #X obj 325 179 + 1;
 #X obj 462 122 maxlib/scale 1 161 455 145;
@@ -68,7 +69,7 @@
 #X obj 325 292 pipe 50;
 #X msg 27 334 servomode 1;
 #X msg 45 439 servomode 0;
-#X floatatom 427 197 5 0 0 0 - - -, f 5;
+#X floatatom 427 197 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 299 124 maxlib/scale 1 161 980 10;
 #X text 341 139 soft pwm scale;
 #X text 511 140 hard pwm scale;
@@ -161,3 +162,4 @@
 #X connect 60 0 14 0;
 #X connect 62 0 10 0;
 #X coords 0 -1 1 1 89 89 2 117 127;
+#X gopspill 1;
