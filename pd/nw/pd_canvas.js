@@ -2698,6 +2698,7 @@ function nw_create_patch_window_menus(gui, name) {
         enabled: true,
         click: function () {
             gui.Window.get().zoomLevel = 0;
+            setTimeout(function() { update_k12_menu(); }, 0);
             pdgui.pdsend(name, "zoom", 0);
             pdgui.gui_canvas_get_scroll(name);
         }

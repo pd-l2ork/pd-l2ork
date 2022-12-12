@@ -8,6 +8,15 @@ PD-L2ORK TODO:
         return osx_menu; // don't spawn multiple menus on OSX
       }
 
+*Consider adding smooth scroll to the scroll action. How?
+
+*Add output and comment objects to the K12 menu.
+
+*Add disis_gpio dummy to Windows install.
+  *Possibly also OSX.
+
+*Creating an object and having k12 menu pop up, then typing, adds text to the object but does not update it visually.
+
 *Patch does not close after prompting to save subpatches, leaving "abstraction dirty" border.
   *Looks like 2 potential bugs:
     *Patch not being marked not dirty.
@@ -572,6 +581,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Refined the 60-hz theme
 *Updated disis_gpio to support interfacing with servos and solenoids.
 *Pressing Alt key in K12 mode does not update background.
+*Fixed bug where zoom reset does not update the K12 menu size.
 
 
 
