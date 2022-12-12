@@ -8,10 +8,6 @@ PD-L2ORK TODO:
         return osx_menu; // don't spawn multiple menus on OSX
       }
 
-*Consider adding smooth scroll to the scroll action. How?
-
-*Add output and comment objects to the K12 menu.
-
 *Add disis_gpio dummy to Windows install.
   *Possibly also OSX.
 
@@ -155,7 +151,7 @@ MAYBE:
 
 *add ability to custom name each instance of pd-l2ork (pd~?).
 
-
+*Consider adding smooth scroll to the scroll action. NO--could end up too CPU intensive and not worth it until engine and front-end are fully decoupled.
 
 
 PD-L2ORK DONE:
@@ -582,7 +578,11 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Updated disis_gpio to support interfacing with servos and solenoids.
 *Pressing Alt key in K12 mode does not update background.
 *Fixed bug where zoom reset does not update the K12 menu size.
-
+*Ensured that once the K12_menu offset is established, that it stays consistent (observe how it jumped after the first object is created, since at that point bbox' leftmost point has also changed to the objects' leftmost point). Note how now canvas_params has a redundant nw_win and cid arguments. I am keeping this way because this prevents two redundant calls for gui(cid).get_nw_window since some of the other calls also need nw_win. LATER: rethink this, and perhaps only pass cid instead.
+*Updated K12 icons.
+*Added loudspeaker output to the K12 menu.
+*Added preset and comment K12 objects in a new tab.
+    
 
 
 
