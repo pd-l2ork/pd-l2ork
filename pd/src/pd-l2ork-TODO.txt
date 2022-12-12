@@ -4,8 +4,14 @@ PD-L2ORK TODO:
 *K12 mode does not remove items from the OSX top bar menu.
   *May be an OSX limitation, and if so, need to implement mechanism for disabling those in K12 mode.
 
+*Pressing Alt key in K12 mode does not update background.
+
+*Patch does not close after prompting to save subpatches, leaving "abstraction dirty" border.
+  *Looks like 2 potential bugs:
+    *Patch not being marked not dirty.
+    *Pd-L2Ork not closing the patch after saving all dirty subpatches.
+
 *Refine K12 object sizes to make images fit better. JUSTIN
-  *No need for K12 object gopspill image margins around nlets anymore.
 
 *Add translations for the K12 menu tooltips.
 
@@ -559,7 +565,10 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Made 60-hz preset default.
 *OSX and Windows installer fixes for the new K12 mode.
 *Fixed Windows path is not working for K12_demos.
-
+*Reverted K12 icons to the old non-notched version, added K12 motor and solenoid objects and supporting images.
+*Added new servo and solenoid objects to the K12 menu. Refined images and updated motor and servo abstractions.
+*Refined the 60-hz theme
+*Updated disis_gpio to support interfacing with servos and solenoids.
 
 
 
