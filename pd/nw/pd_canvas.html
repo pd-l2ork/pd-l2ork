@@ -400,6 +400,21 @@
                     </div>
                 </div> <!-- end FX tab -->
                 <div class="custom_break"></div>
+                <!-- Other tab -->
+                <div class="k12_tab" style="background-color:rgba(117, 205, 129, 0.3)">
+                    <button tabindex="-1" id="other_button" class="k12_tab_button" onclick="toggle_tab('other_div')">
+                        Other
+                    </button>
+                    <div id="other_div" class="k12_buttons" style="display: none; padding: 5px">
+                        <button tabindex="-1" id="other_preset" class="k12_object" onclick="place_K12_object('preset')" data-i18n="[title]k12menu.preset">
+                            <img src="K12-icons/preset.png" alt="Preset" class="k12_icon">
+                        </button>
+                        <button tabindex="-1" id="other_comment" class="k12_object" onclick="place_k12_comment()" data-i18n="[title]k12menu.comment">
+                            <img src="K12-icons/comment.png" alt="Comment" class="k12_icon">
+                        </button>
+                    </div>
+                </div> <!-- end Other tab -->
+                <div class="custom_break"></div>
                 <div class="custom_break"></div>
             </div>
             <div id="k12_toggle" style="display: block; position: relative; float: left; left: 155px; top: 0px; width: 20px; margin-left: 0px;">

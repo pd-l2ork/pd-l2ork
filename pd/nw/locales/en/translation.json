@@ -53,6 +53,8 @@
     "signal_add": "Signal Add: Use this to add two sounds (signals)",
     "signal_multiply": "Signal Multiply: Use this to multiply two sounds (signals)",
     "output": "Output: Use this to connect your audio generating objects to the computer loudspeaker",
+    "preset": "Preset: Use this to store and recall up to four different states of your patch",
+    "comment": "Comment: Use this to add notes to your patch",
     "instr_short1": "Bass Drum: Use this to produce short sounds like a single bass drum hit",
     "instr_short2": "Snare Drum: Use this to produce short sounds like a single snare drum hit",
     "instr_sustained1": "Air Instrument: Use this to produce long sustained sound like the sound of a woodwind instrument",

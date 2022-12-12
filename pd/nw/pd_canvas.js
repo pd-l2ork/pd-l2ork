@@ -3146,6 +3146,10 @@ function place_K12_object(object) {
     pdgui.pdsend(cid, "obj_abstraction " + object_path + " 0 0");
 }
 
+function place_k12_comment() {
+    pdgui.pdsend(canvas_events.get_id(), "text 0");
+}
+
 // hlkwok@vt.edu 2022-11-3: toggles edit mode in both edit menu and k12 menu
 // ico@vt.edu 2022-12-08: reworked to simplify edit functions inside pdgui.js
 function toggle_edit() {
