@@ -3,8 +3,10 @@ PD-L2ORK TODO:
 
 *K12 mode does not remove items from the OSX top bar menu.
   *May be an OSX limitation, and if so, need to implement mechanism for disabling those in K12 mode.
-
-*Pressing Alt key in K12 mode does not update background.
+  *TODO: comment out the following in pd_menus.js and test on OSX
+      if (osx_menu) {
+        return osx_menu; // don't spawn multiple menus on OSX
+      }
 
 *Patch does not close after prompting to save subpatches, leaving "abstraction dirty" border.
   *Looks like 2 potential bugs:
@@ -569,6 +571,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Added new servo and solenoid objects to the K12 menu. Refined images and updated motor and servo abstractions.
 *Refined the 60-hz theme
 *Updated disis_gpio to support interfacing with servos and solenoids.
+*Pressing Alt key in K12 mode does not update background.
 
 
 
