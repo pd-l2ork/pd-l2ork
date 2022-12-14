@@ -901,6 +901,7 @@ function nw_create_pd_window_menus(gui, w) {
         minit(pd_m.put.image, { enabled: false });
         //minit(pd_m.put.graph, { enabled: false });
         minit(pd_m.put.array, { enabled: false });
+        minit(pd_m.put.k12_menu, { enabled: false });
     }
 
     // Winman sub-entries

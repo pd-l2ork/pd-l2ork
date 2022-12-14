@@ -1,17 +1,7 @@
 PD-L2ORK TODO:
 *Seek RPi version of nw.js 0.67.1. IN PROGRESS
 
-*K12 mode does not remove items from the OSX top bar menu.
-  *May be an OSX limitation, and if so, need to implement mechanism for disabling those in K12 mode.
-  *TODO: comment out the following in pd_menus.js and test on OSX
-      if (osx_menu) {
-        return osx_menu; // don't spawn multiple menus on OSX
-      }
-
-*Add disis_gpio dummy to Windows install.
-  *Possibly also OSX.
-
-*Creating an object and having k12 menu pop up, then typing, adds text to the object but does not update it visually.
+*Add disis_gpio dummy to Windows and OSX install.
 
 *Patch does not close after prompting to save subpatches, leaving "abstraction dirty" border.
   *Looks like 2 potential bugs:
@@ -582,6 +572,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Updated K12 icons.
 *Added loudspeaker output to the K12 menu.
 *Added preset and comment K12 objects in a new tab.
+*Made OSX menu updates consistent with the K12 mode, including the K12 Menu option.
     
 
 

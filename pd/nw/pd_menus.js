@@ -779,6 +779,20 @@ function create_menu(gui, type) {
     // If we're on OSX, store the object
     if (process.platform === "darwin") {
         osx_menu = m;
+
+        // ico@vt.edu 2022-12-13: review elements
+        var i;
+        for (i = 0; i < window_menu.items[2].submenu.items.length; i++) {
+            console.log(i + ":" + window_menu.items[2].submenu.items[i].label);
+        }
+        for (i = 0; i < window_menu.items[3].submenu.items.length; i++) {
+            console.log(i + ":" + window_menu.items[3].submenu.items[i].label);
+        }
+        // remove redundant emoji option
+        window_menu.items[2].submenu.remove(window_menu.items[2].submenu.items[26]);
+
+        // remove redundant fullscreen option
+        window_menu.items[3].submenu.remove(window_menu.items[3].submenu.items[8]);
     }
     return m;
 }

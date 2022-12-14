@@ -2085,6 +2085,123 @@ function instantiate_live_box() {
     }
 }
 
+function update_osx_k12_menu() {
+    if (pdgui.nw_os_is_osx) {
+        if (pdgui.get_k12_mode())
+        {
+            //pdgui.post("osx k12");
+            m.file.message.enabled = false;
+
+            m.edit.paste_clipboard.enabled = false;
+            m.edit.reselect.enabled = false;
+            m.edit.clear_console.enabled = false;
+            m.edit.encapsulate.enabled = false;
+            m.edit.font.enabled = false;
+            m.edit.find.enabled = false;
+            m.edit.findagain.enabled = false;
+            m.edit.finderror.enabled = false;
+
+            m.put.object.enabled = false;
+            m.put.message.enabled = false;
+            m.put.number.enabled = false;
+            m.put.symbol.enabled = false;
+            m.put.comment.enabled = false;
+            m.put.dropdown.enabled = false;
+            m.put.bang.enabled = false;
+            m.put.toggle.enabled = false;
+            m.put.number2.enabled = false;
+            m.put.vslider.enabled = false;
+            m.put.hslider.enabled = false;
+            m.put.knob.enabled = false;
+            m.put.vradio.enabled = false;
+            m.put.hradio.enabled = false;
+            m.put.vu.enabled = false;
+            m.put.cnv.enabled = false;
+            m.put.image.enabled = false;
+            //m.put.graph.enabled = false;
+            m.put.array.enabled = false;
+            m.put.k12_menu.enabled = false;
+
+            m.media.audio_on.enabled = false;
+            m.media.audio_off.enabled = false;
+            m.media.test.enabled = false;
+            m.media.loadmeter.enabled = false;
+
+            m.win.nextwin.enabled = false;
+            m.win.prevwin.enabled = false;
+            m.win.parentwin.enabled = false;
+            m.win.visible_ancestor.enabled = false;
+            m.win.pdwin.enabled = false;
+            m.win.abstractions.enabled = false;
+
+            m.help.about.enabled = false;
+            m.help.manual.enabled = false;
+            m.help.browser.enabled = false;
+            m.help.intro.enabled = false;
+            m.help.l2ork_list.enabled = false;
+            m.help.pd_list.enabled = false;
+            m.help.forums.enabled = false;
+            m.help.irc.enabled = false;
+            m.help.devtools.enabled = false;
+        } else {
+            //pdgui.post("osx normal");
+            m.file.message.enabled = true;
+
+            m.edit.paste_clipboard.enabled = true;
+            m.edit.reselect.enabled = true;
+            m.edit.clear_console.enabled = true;
+            m.edit.encapsulate.enabled = true;
+            m.edit.font.enabled = true;
+            m.edit.find.enabled = true;
+            m.edit.findagain.enabled = true;
+            m.edit.finderror.enabled = true;
+
+            m.put.object.enabled = true;
+            m.put.message.enabled = true;
+            m.put.number.enabled = true;
+            m.put.symbol.enabled = true;
+            m.put.comment.enabled = true;
+            m.put.dropdown.enabled = true;
+            m.put.bang.enabled = true;
+            m.put.toggle.enabled = true;
+            m.put.number2.enabled = true;
+            m.put.vslider.enabled = true;
+            m.put.hslider.enabled = true;
+            m.put.knob.enabled = true;
+            m.put.vradio.enabled = true;
+            m.put.hradio.enabled = true;
+            m.put.vu.enabled = true;
+            m.put.cnv.enabled = true;
+            m.put.image.enabled = true;
+            //m.put.graph.enabled = true;
+            m.put.array.enabled = true;
+            m.put.k12_menu.enabled = true;
+
+            m.media.audio_on.enabled = true;
+            m.media.audio_off.enabled = true;
+            m.media.test.enabled = true;
+            m.media.loadmeter.enabled = true;
+
+            m.win.nextwin.enabled = true;
+            m.win.prevwin.enabled = true;
+            m.win.parentwin.enabled = true;
+            m.win.visible_ancestor.enabled = true;
+            m.win.pdwin.enabled = true;
+            m.win.abstractions.enabled = true;
+
+            m.help.about.enabled = true;
+            m.help.manual.enabled = true;
+            m.help.browser.enabled = true;
+            m.help.intro.enabled = true;
+            m.help.l2ork_list.enabled = true;
+            m.help.pd_list.enabled = true;
+            m.help.forums.enabled = true;
+            m.help.irc.enabled = true;
+            m.help.devtools.enabled = true;
+        }
+    }
+}
+
 function set_edit_menu_modals(window, state) {
     //pdgui.post("set_edit_menu_modals state=" + state);
     // if we have toplevel scalars disable editing
@@ -2111,7 +2228,7 @@ function set_edit_menu_modals(window, state) {
     if (m.edit.font)
         m.edit.font.enabled = state;
 
-    //TODO!: K12 check if we need to add anything else here?
+    update_osx_k12_menu();
 }
 
 function set_menu_modals(window, state) {
@@ -2192,6 +2309,7 @@ function set_menu_modals(window, state) {
         m.put.image.enabled = context_state;
         //m.put.graph.enabled = context_state;
         m.put.array.enabled = context_state;
+        m.put.k12_menu.enabled = context_state;
     }
 
     if (m.win) {
@@ -2199,6 +2317,8 @@ function set_menu_modals(window, state) {
         m.win.visible_ancestor.enabled = context_state;
         m.win.pdwin.enabled = context_state;
     }
+
+    update_osx_k12_menu();
 }
 
 function set_editmode_checkbox(state) {
@@ -3055,8 +3175,15 @@ function nw_create_patch_window_menus(gui, name) {
             m.put.image.enabled = false;
             //m.put.graph.enabled = false;
             m.put.array.enabled = false;
+
+            m.put.k12_menu.enabled = false;
         }
     }
+    // ico@vt.edu 2022-12-13: toggle menu options on OSX
+    // since (AFAICT) we cannot add/remove menu contents
+    if (pdgui.nw_os_is_osx) {
+        update_osx_k12_menu();
+    } 
 }
 
 function init_menu_font_size(size) {
@@ -3186,10 +3313,7 @@ function toggle_k12_menu_visibility() {
     pdgui.toggle_k12_menu_visibility(canvas_events.get_id(), m.put.k12_menu.checked);
 }
 
-// ico@vt.edu 2022-12-09: invoked via onchange() call from pdgui's
-// set_k12_mode using invisible element with id=k12_mode.
-// we do this, so that pdgui can trigger updates on all open
-// canvases.
+// ico@vt.edu 2022-12-09: invoked from pdgui.js for K12_menu purposes
 function update_menu() {
     //pdgui.post("pd_canvas.js update_menu");
     nw_create_patch_window_menus(gui, canvas_events.get_id());
