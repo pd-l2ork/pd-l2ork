@@ -5,6 +5,9 @@ PD-L2ORK TODO:
   *Looks like 2 potential bugs:
     *Patch not being marked not dirty.
     *Pd-L2Ork not closing the patch after saving all dirty subpatches.
+  *Cannot reproduce on OSX.
+
+*When resizing object past its minimum width, its text should not get any narrower.
 
 *Refine K12 object sizes to make images fit better. JUSTIN
 
@@ -575,6 +578,8 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Refined building of dummy disis_gpio and disis_spi on Windows.
 *Fixed benign occasional bug where snap to grid would (due to its delayed nature) sometimes trigger canvas_get_snap_offset consistency check error due to selection being let go before the delayed action took place.
 *Forgot to add updates tar_em_up.sh script for dummy gpio and spi externals for Windows and OSX.
+*Bunch of additional refinements of the build process due to inclusion of the dummy gpio and spi externals.
+*Added way to update default theme on Windows.
 
 
 
