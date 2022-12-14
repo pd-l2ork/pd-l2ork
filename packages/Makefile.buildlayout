@@ -180,7 +180,7 @@ PD_TEST_VERSION := $(shell grep PD_TEST_VERSION $(pd_src)/src/m_pd.h | \
 #	PD_VERSION := $(PD_VERSION)-$(PD_TEST_VERSION)
 #endif
 
-# AG: Pd-l2ork version number. This becomes part of the PD_VERSION.
+# AG: Pd-L2Ork version number. This becomes part of the PD_VERSION.
 # It comes from the m_pd.h file and will be something like 1.x for
 # "classic" Pd-l2ork and 2.x for the new nw.js version.
 PD_L2ORK_VERSION := $(shell grep PD_L2ORK_VERSION $(pd_src)/src/m_pd.h | \
@@ -196,7 +196,7 @@ PD_L2ORK_VERSION := $(shell grep PD_L2ORK_VERSION $(pd_src)/src/m_pd.h | \
 PD_BUILD_VERSION := $(shell git log -1 --format=%cd --date=short | sed -e 's/-//g')-rev.$(shell git rev-parse --short HEAD)
 
 # AG: This is being used for the package name and accompanying materials. For
-# Pd-l2ork the vanilla Pd version numbers are rather meaningless (they are
+# Pd-L2Ork the vanilla Pd version numbers are rather meaningless (they are
 # mainly kept around so that 3rd party externals and abstractions know what
 # iteration of the vanilla API they have available). Instead, we use a version
 # number derived from PD_L2ORK_VERSION and PD_BUILD_VERSION.

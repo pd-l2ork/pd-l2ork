@@ -60,10 +60,17 @@ pd_install: build_pd
 #	-$(MAKE) -C $(pd_src)/src $(DEST_PATHS) install
 	$(MAKE) -C $(pd_src)/src -f makefile.mingw $(DEST_PATHS) install
 
-install: pd_install prebuilt_install lib_install exe_install
+rpi_install:
+	cd $(cvs_root_dir)/l2ork_addons/raspberry_pi/disis_gpio_dummy && make && cd ../ \
+		&& cp -f disis_gpio_dummy/disis_gpio.dll $(DESTDIR)/extra && \
+		cp -f disis_gpio/disis_gpio-help.pd $(DESTDIR)/extra && \
+		cd disis_spi_dummy && make && cd ../ && \
+		cp -f disis_spi_dummy/disis_spi.dll $(DESTDIR)/extra && \
+		cp -f disis_spi/disis_spi-help.pd $(DESTDIR)/extra
+
+install: pd_install rpi_install prebuilt_install lib_install exe_install
 	@echo " "
 	@echo "win32_inno install succeeded!"
-
 
 prebuilt_install:
 	$(MAKE) -C $(packages_src) $(DEST_PATHS) extended_install INCREMENTAL=$(INCREMENTAL) LIGHT=$(LIGHT)
@@ -131,7 +138,7 @@ ifneq ($(LIGHT),yes)
 	-install -p $(bin_src)/libFLAC-8.dll     $(DESTDIR)$(bindir)/
 	-install -p $(bin_src)/libFLAC.dll     $(DESTDIR)$(bindir)/
 	install -p $(bin_src)/libspeex-1.dll     $(DESTDIR)$(bindir)/
-        # These are for Gem
+	# These are for Gem
 	install -p $(bin_src)/libftgl-2.dll $(DESTDIR)$(bindir)/
 	install -p $(bin_src)/libfreetype-6.dll $(DESTDIR)$(bindir)/
 	install -p $(bin_src)/libbz2-1.dll $(DESTDIR)$(bindir)/
