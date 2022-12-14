@@ -1,8 +1,6 @@
 PD-L2ORK TODO:
 *Seek RPi version of nw.js 0.67.1. IN PROGRESS
 
-*Add disis_gpio dummy to Windows and OSX install.
-
 *Patch does not close after prompting to save subpatches, leaving "abstraction dirty" border.
   *Looks like 2 potential bugs:
     *Patch not being marked not dirty.
@@ -12,13 +10,29 @@ PD-L2ORK TODO:
 
 *Add translations for the K12 menu tooltips.
 
-*An error in OSX preferences when working with GUI dropdown (or something along those lines).
-  *Figure out how to reproduce.
-
-*Investigate if patchwin array is kept properly up-to-date. Got window error when one creates a window, toggles its k12_menu, then creates another one and closes the original one and tries again. Suspect that going through the array trips up across the previously closed window. Currently, have a stopgap check if patchwin is not null before invoking its pd_canvas.js onchange.
-
 *Port vanilla garray set colors, line width, visibility, display style, and disable mouse editing (disabling mouse editing is URGENT for the forgotten planet module).
   *Make sure that if an array is not editable, that is passes along its mouse interaction to objects below.
+
+*Implement object tooltips.
+
+*Port:
+  *cyclone
+    *mousestate
+    *mousefilter
+    *active
+    *comment
+  *tof
+    *breakpoints
+    *breakpoints~
+    *folderpanel
+    *menubutton
+    *pmenu
+  *vanilla
+    *openpanel?
+    *new patch offset (Every "new" window is a bit shifted so it does not appear perfectly superimposed)
+    *listbox gatom
+    *file
+    *force close pd instance to ensure there are no stray ones left? (sounds potentially counterproductive given we also have -unique flag)
 
 *Test nwjs 0.67.1 for regressions:
   *Patch window positioning: loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
@@ -65,25 +79,6 @@ RPI 0.28.4 current RPi version.
     0.70.1 window close nw1 bug (see #7981 nwjs bug report).
   *Need to figure out what is slowing down nw2 on versions 0.42.3 and onward, so that we can get away from all the weird idiosyncrasies with window positioning and other issues.
 
-*Port:
-  *cyclone
-    *mousestate
-    *mousefilter
-    *active
-    *comment
-  *tof
-    *breakpoints
-    *breakpoints~
-    *folderpanel
-    *menubutton
-    *pmenu
-  *vanilla
-    *openpanel?
-    *new patch offset (Every "new" window is a bit shifted so it does not appear perfectly superimposed)
-    *listbox gatom
-    *file
-    *force close pd instance to ensure there are no stray ones left? (sounds potentially counterproductive given we also have -unique flag)
-
 *Ubuntu 22.04 build: investigate iem16 build issues and gmerlin library support. 20.04 uses 1.16 automake and 2.69 autoconf. 22.04 uses 2.71 autoconf and ??? automake.
 
 *HDMI audio output support (RPi).
@@ -108,20 +103,22 @@ RPI 0.28.4 current RPi version.
 
 *add bezier curve drawing ability to the arrays (currently displaying them as polygons).
 
-*tooltips.
-
-*K12 menu/mode.
-
 *fix inefficiency of the profuse console output.
 
 *Fix build system inconsistencies.
   *Make incremental on a Mac results in a broken build that does not include Gem.
   *Repair light build on OSX. Test it on other platforms.
+  *UPDATE: should we disable light builds altogether now that K12 mode is baked into the core?
+
+*Investigate if patchwin array is kept properly up-to-date. Got window error when one creates a window, toggles its k12_menu, then creates another one and closes the original one and tries again. Suspect that going through the array trips up across the previously closed window. Currently, have a stopgap check if patchwin is not null before invoking its pd_canvas.js onchange.
 
 *think about a way to deterministically inform both front-end and the back-end that the canvas has indeed loaded. See https://stackoverflow.com/questions/4057236/how-to-add-onload-event-to-a-div-element/55106785#58838457 (Third Attempt (and Definitive Solution))
 
 
 RARE:
+*An error in OSX preferences when working with GUI dropdown (or something along those lines).
+  *Figure out how to reproduce.
+
 *sometimes closing a newly created window before it has posted or possibly creating two windows by quickly double clicking on a subpatch irreversibly breaks the front-end. Need the better checks'n'balances.
 
 *occasionally when editing a new object text is not displaying until you click outside it. happened with the modulo object.
@@ -573,7 +570,9 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Added loudspeaker output to the K12 menu.
 *Added preset and comment K12 objects in a new tab.
 *Made OSX menu updates consistent with the K12 mode, including the K12 Menu option.
-    
+*Added dummy disis_gpio and disis_spi objects to OSX and prepared the build of the same for Windows.
+*Refined building of dummy disis_gpio and disis_spi on Windows.
+
 
 
 
