@@ -438,7 +438,7 @@ then
 		cd ../
 	else
 		cd raspberry_pi
-		if [ $dmg -eq 1 ]; then
+		if [[ $os == "osx" ]]; then
 			#OSX
 			cd disis_gpio_dummy && make pd_darwin && cd ../
 			cp -f disis_gpio_dummy/disis_gpio.pd_darwin ../../packages/darwin_app/build/Pd-L2Ork.app/Contents/Resources/app.nw/extra
