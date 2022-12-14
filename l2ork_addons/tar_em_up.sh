@@ -449,10 +449,10 @@ then
 		else
 			#Windows
 			cd disis_gpio_dummy && make pd_nt && cd ../
-			cp -f disis_gpio_dummy/disis_gpio.pd_darwin ../../packages/win32_inno/build/extra
+			cp -f disis_gpio_dummy/disis_gpio.dll ../../packages/win32_inno/build/extra
 			cp -f disis_gpio/disis_gpio-help.pd ../../packages/win32_inno/build/extra
 			cd disis_spi_dummy && make pd_nt && cd ../
-			cp -f disis_spi_dummy/disis_spi.pd_darwin ../../packages/win32_inno/build/extra
+			cp -f disis_spi_dummy/disis_spi.dll ../../packages/win32_inno/build/extra
 			cp -f disis_spi/disis_spi-help.pd ../../packages/win32_inno/build/extra
 		fi
 		cd ../
