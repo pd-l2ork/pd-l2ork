@@ -23,7 +23,7 @@ endif
 # which CPU to compile for
 UNAME_MACHINE := $(shell uname -m)
 ifeq ($(UNAME_MACHINE),x86_64)
-  ifeq ($(UNAME),linux)
+  ifeq ($(UNAME),Linux)
     ARCH = l_ia64
   endif
   ifeq ($(UNAME),Darwin)
@@ -34,7 +34,7 @@ ifeq ($(UNAME_MACHINE),x86_64)
   endif
 endif
 ifeq ($(UNAME_MACHINE),i386)
-  ifeq ($(UNAME),linux)
+  ifeq ($(UNAME),Linux)
     ARCH = l_i386
   endif
   ifeq (MINGW,$(findstring MINGW,$(UNAME)))
