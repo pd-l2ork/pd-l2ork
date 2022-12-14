@@ -116,26 +116,20 @@ endif
 
 # ----------------------- Mac OSX -----------------------
 
-d_ppc: $(NAME).d_ppc
-d_fat: $(NAME).d_fat
+pd_darwin: $(NAME).pd_darwin
 
-.SUFFIXES: .d_ppc .d_fat
+.SUFFIXES: .pd_darwin
 
 DARWINCFLAGS = -DPD -O2 -Wall -W -Wshadow -Wstrict-prototypes \
     -Wno-unused -Wno-parentheses -Wno-switch
 
-.c.d_ppc:
+.c.pd_darwin:
 	$(CC) $(DARWINCFLAGS) $(UNIXINCLUDE) -o $*.o -c $*.c
-	$(CC) -bundle -undefined suppress -flat_namespace -o $*.pd_darwin $*.o 
-	rm -f $*.o
-
-.c.d_fat:
-	$(CC) -arch i386 -arch ppc $(DARWINCFLAGS) $(UNIXINCLUDE) -o $*.o -c $*.c
-	$(CC) -arch i386 -arch ppc -bundle -undefined suppress -flat_namespace \
-	    -o $*.d_fat $*.o 
+	$(CC) -bundle -undefined suppress -flat_namespace \
+	    -o $*.pd_darwin $*.o 
 	rm -f $*.o
 
 # ----------------------------------------------------------
 
 clean:
-	rm -f *.o *.pd_* *.d_ppc *.d_fat *.l_i386 *.l_ia64 *.dll
+	rm -f *.o *.pd_* *.l_i386 *.l_ia64 *.dll
