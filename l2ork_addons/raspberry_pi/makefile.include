@@ -49,20 +49,9 @@ pd_nt: $(NAME).dll
 
 .SUFFIXES: .dll
 
-PDNTCFLAGS = /W3 /WX /DNT /DPD /nologo
-VC="C:\Program Files\Microsoft Visual Studio\Vc98"
-
-PDNTINCLUDE = /I. /I..\pd\src /I..\..\pd\src  /I..\..\..\pd\src /I$(VC)\include
-
-PDNTLDIR = $(VC)\lib
-PDNTLIB = $(PDNTLDIR)\libc.lib \
-	$(PDNTLDIR)\oldnames.lib \
-	$(PDNTLDIR)\kernel32.lib \
-	..\..\bin\pd.lib 
-
 .c.dll:
-	cl $(PDNTCFLAGS) $(PDNTINCLUDE) /c $*.c
-	link /dll /export:$(CSYM)_setup $*.obj $(PDNTLIB)
+	gcc -DMSW -DNT -DPD -I../../../pd/src -Wall -Wextra -Wshadow -Winline -Wstrict-aliasing -O3 -o $*.o -c $*.c
+	gcc -static-libgcc -shared -Wl,--enable-auto-import "../../../pd/src/pd.dll" -o $*.dll $*.o
 
 # ----------------------- LINUX i386 and ia64 -----------------------
 
