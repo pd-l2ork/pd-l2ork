@@ -61,11 +61,19 @@ all:
 install: darwin_app
 
 #------------------------------------------------------------------------------#
-darwin_app: darwin_app_core extended_install darwin_app_embed_libs
+darwin_app: darwin_app_core rpi_install extended_install darwin_app_embed_libs
 	@echo " "
 	@echo "Pd.app build succeeded!"
 
 NWFILES = $(foreach file,$(wildcard $(cvs_root_dir)/pd/nw/*),$(DESTDIR)/bin/$(notdir $(file)))
+
+rpi_install:
+	cd $(cvs_root_dir)/l2ork_addons/raspberry_pi/disis_gpio_dummy && make && cd ../ \
+		&& cp -f disis_gpio_dummy/disis_gpio.pd_darwin $(DESTDIR)/extra && \
+		cp -f disis_gpio/disis_gpio-help.pd $(DESTDIR)/extra && \
+		cd disis_spi_dummy && make && cd ../ && \
+		cp -f disis_spi_dummy/disis_spi.pd_darwin $(DESTDIR)/extra && \
+		cp -f disis_spi/disis_spi-help.pd $(DESTDIR)/extra
 
 extended_install:
 # We now build Gem regardless the version. LATER clean this if statement.

@@ -436,20 +436,6 @@ then
 		cp -f disis_spi/disis_spi-help.pd ../../packages/linux_make/build$inst_dir/lib/pd-l2ork/extra
 		fi
 		cd ../
-	else
-		cd raspberry_pi
-		# here we only deal with OSX since Windows has to be inside its own installer, as we get here
-		# after we are done building that installer. see ../packages/win32_inno/Makefile for more info
-		if [[ $os == "osx" ]]; then
-			#OSX
-			cd disis_gpio_dummy && make && cd ../
-			cp -f disis_gpio_dummy/disis_gpio.pd_darwin ../../packages/darwin_app/build/Pd-L2Ork.app/Contents/Resources/app.nw/extra
-			cp -f disis_gpio/disis_gpio-help.pd ../../packages/darwin_app/build/Pd-L2Ork.app/Contents/Resources/app.nw/extra
-			cd disis_spi_dummy && make && cd ../
-			cp -f disis_spi_dummy/disis_spi.pd_darwin ../../packages/darwin_app/build/Pd-L2Ork.app/Contents/Resources/app.nw/extra
-			cp -f disis_spi/disis_spi-help.pd ../../packages/darwin_app/build/Pd-L2Ork.app/Contents/Resources/app.nw/extra
-		fi
-		cd ../
 	fi
 	echo "done with l2ork addons."
 	cd ../
