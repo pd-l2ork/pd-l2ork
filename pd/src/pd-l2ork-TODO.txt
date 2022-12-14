@@ -569,6 +569,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Updated K12 icons.
 *Added loudspeaker output to the K12 menu.
 *Added preset and comment K12 objects in a new tab.
+*Fixed issue where creating an object and having k12 menun pop up (or already open with mouse being above the k12 menu), then typing, added text to the object (from the engine's perspective) but did not update the visible text inside the box.
 *Made OSX menu updates consistent with the K12 mode, including the K12 Menu option.
 *Added dummy disis_gpio and disis_spi objects to OSX and prepared the build of the same for Windows.
 *Refined building of dummy disis_gpio and disis_spi on Windows.
