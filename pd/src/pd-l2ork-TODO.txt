@@ -573,6 +573,8 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Made OSX menu updates consistent with the K12 mode, including the K12 Menu option.
 *Added dummy disis_gpio and disis_spi objects to OSX and prepared the build of the same for Windows.
 *Refined building of dummy disis_gpio and disis_spi on Windows.
+*Fixed benign occasional bug where snap to grid would (due to its delayed nature) sometimes trigger canvas_get_snap_offset consistency check error due to selection being let go before the delayed action took place.
+*Forgot to add updates tar_em_up.sh script for dummy gpio and spi externals for Windows and OSX.
 
 
 
