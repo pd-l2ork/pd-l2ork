@@ -1,6 +1,13 @@
 PD-L2ORK TODO:
 *Seek RPi version of nw.js 0.67.1. IN PROGRESS
 
+*rj/phaser is missing and K12/
+
+*no fluid~ on Windows. "specified module could not be found. (126)" error.
+  *do we have GM soundfont? YES
+
+*Still unpredictable behavior when creating new objects and dragging them with the K12 menu in the mix.
+
 *Add translations for the K12 menu tooltips.
 
 *Test nwjs 0.67.1 for regressions:
