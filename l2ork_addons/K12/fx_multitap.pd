@@ -3,16 +3,16 @@
 #X obj 12 370 outlet~;
 #X obj 198 264 *~ 0.85;
 #X obj 12 339 *~ 0.5;
-#X obj 363 123 ggee/image @pd_extra/K12/objects/fx_multitap.png 1 0
+#X obj 362 122 ggee/image @pd_extra/K12/objects/fx_multitap.png 1 0
 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X obj 41 153 delwrite~ \$0-delread_ex 2000;
 #X obj 230 76 preset_node k12;
 #X obj 335 130 hsl 74 14 5 2000 0 1 \$0-s-null \$0-r-null empty -2
--8 0 10 #fcfcfc #000000 #000000 500 1 0;
+-8 0 10 #fcfcfc #000000 #000000 500 1 0 1;
 #X text 334 141 short;
 #X text 387 141 long;
 #X obj 335 157 hsl 74 14 0 900 0 1 \$0-s-null \$0-r-null empty -2 -8
-0 10 #fcfcfc #000000 #000000 4000 1 0;
+0 10 #fcfcfc #000000 #000000 4000 1 0 1;
 #X text 348 168 feedback;
 #X obj 335 227 / 1000;
 #X obj 230 98 preset_node k12;
@@ -37,5 +37,5 @@
 #X connect 16 0 15 0;
 #X connect 17 0 18 0;
 #X connect 18 0 7 0;
-#X coords 0 -1 1 1 90 90 2 330 103;
+#X coords 0 -1 1 1 89 89 2 330 103;
 #X gopspill 1;

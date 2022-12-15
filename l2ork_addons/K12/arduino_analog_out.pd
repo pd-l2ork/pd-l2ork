@@ -1,9 +1,9 @@
-#N canvas 297 158 508 447 10;
+#N canvas 1133 250 508 447 10;
 #X obj 216 93 ggee/image @pd_extra/K12/objects/arduino_analog_out.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
 #X obj 58 388 outlet;
-#X obj 216 93 ggee/image @pd_extra/K12/objects/arduino_analog_out_off.png
+#X obj 215 92 ggee/image @pd_extra/K12/objects/arduino_analog_out_off.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
 #X obj 58 40 inlet;
@@ -67,10 +67,10 @@
 #X obj 284 242 t f f;
 #X msg 58 304 pwm \$2 \$1;
 #X obj 58 281 pack 0 0;
-#X obj 228 119 nbx 3 14 -1 13 0 1 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 -1 256 3 0;
+#X obj 228 118 nbx 3 14 -1 13 0 1 empty empty empty 0 -8 0 10 #fcfcfc
+#000000 #000000 -1 256 3 0 1 0;
 #X obj 238 134 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 0 1;
+#000000 0 1 1;
 #X text 200 131 servo:;
 #X text 196 102 PWM OUTPUT;
 #X obj 280 73 preset_node k12;

@@ -17,7 +17,7 @@
 #X msg 139 275 0;
 #X obj 206 284 line~;
 #X obj 124 120 + 1;
-#X obj 431 97 ggee/image @pd_extra/K12/objects/instr_sustained2.png
+#X obj 430 96 ggee/image @pd_extra/K12/objects/instr_sustained2.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
 #X obj 400 113 cnv 15 65 23 empty empty Brass 16 12 1 20 #fcfcfc #404040
@@ -28,7 +28,6 @@
 #X obj 142 17 loadbang;
 #X msg 142 39 60;
 #X connect 0 0 22 0;
-#X connect 1 0 5 0;
 #X connect 2 0 1 0;
 #X connect 3 0 1 1;
 #X connect 5 0 7 0;
@@ -37,7 +36,6 @@
 #X connect 8 0 9 1;
 #X connect 9 0 6 0;
 #X connect 10 0 7 1;
-#X connect 11 0 12 0;
 #X connect 12 0 13 0;
 #X connect 13 0 6 0;
 #X connect 14 0 15 0;
@@ -52,5 +50,5 @@
 #X connect 22 0 16 0;
 #X connect 23 0 24 0;
 #X connect 24 0 21 0;
-#X coords 0 -1 1 1 90 90 2 398 77;
+#X coords 0 -1 1 1 89 89 2 398 77;
 #X gopspill 1;

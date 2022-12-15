@@ -1,7 +1,9 @@
 PD-L2ORK TODO:
 *Seek RPi version of nw.js 0.67.1. IN PROGRESS
 
-*Refine K12 object sizes to make images fit better. JUSTIN
+*Saving dirty subpatch (abstraction) leaves parent patch still showing dirty (leaves subdirty class name on it). See wii_buttons.pd and multibuttons.pd for an example.
+
+*Selection box when moving mouse over K12 menu gets stuck and returning to the canvas keeps the selection stuck until user clicks.
 
 *Add translations for the K12 menu tooltips.
 
@@ -576,6 +578,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Added way to update default theme on Windows.
 *Ensured that Windows installer installs settings system-wide, that pd-l2ork upon quitting (re)saves settings, that Windows installer now provides a custom new default theme (60-hz), that Windows uninstall does not obliterate user settings, and that Windows installer does not ask redundant questions about uninstalling older version.
 *When resizing object past its minimum width, as allowed by the number of inlets or outlets (whichever is greater) and in-between spaces, its text should not get any narrower.
+*Refine K12 object sizes to make images fit better.
 
 
 

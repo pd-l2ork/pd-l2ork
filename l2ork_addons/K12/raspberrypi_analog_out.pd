@@ -1,11 +1,11 @@
-#N canvas 396 117 381 515 10;
-#X obj 86 103 ggee/image @pd_extra/K12/objects/raspberrypi_gpio_analog_out_off.png
+#N canvas 913 267 381 515 10;
+#X obj 85 102 ggee/image @pd_extra/K12/objects/raspberrypi_gpio_analog_out_off.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
-#X obj 86 103 ggee/image @pd_extra/K12/objects/raspberrypi_gpio_analog_out_on.png
+#X obj 85 102 ggee/image @pd_extra/K12/objects/raspberrypi_gpio_analog_out_on.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 0 1
 ;
-#X obj 111 122 nbx 2 14 0 8 0 0 empty empty channel: -48 8 0 11 #fcfcfc
+#X obj 111 122 nbx 2 14 0 8 0 0 empty empty channel: -48 6 0 11 #fcfcfc
 #000000 #000000 0 256 3 0 1 0;
 #X obj 168 80 preset_node k12;
 #X obj 111 187 coll rpi_gpio.coll;
@@ -13,9 +13,8 @@
 #X obj 97 454 disis_gpio;
 #X obj 323 364 inlet;
 #X msg 278 415 pwm \$1;
-#X obj 88 137 cnv 15 52 15 empty \$0-r-cnv pin:0 4 7 0 11 #fcfcfc #606060
-0;
-#X obj 111 211 sprintf pin:%d;
+#X obj 85 137 cnv 15 52 15 empty \$0-r-cnv pin:00 4 7 0 11 #fcfcfc
+#606060 0;
 #X obj 111 232 tosymbol;
 #X msg 111 253 label \$1;
 #X obj 111 274 s \$0-r-cnv;
@@ -34,36 +33,37 @@
 #X msg 237 364 export \$1;
 #X obj 42 301 t b b f b;
 #X obj 42 328 pipe 100;
+#X obj 111 211 sprintf pin:%02d;
 #X connect 2 0 3 0;
 #X connect 2 0 4 0;
 #X connect 3 0 2 0;
-#X connect 4 0 9 0;
-#X connect 4 0 15 0;
-#X connect 5 1 13 0;
-#X connect 5 1 16 0;
-#X connect 6 0 13 1;
+#X connect 4 0 14 0;
+#X connect 4 0 27 0;
+#X connect 5 1 12 0;
+#X connect 5 1 15 0;
+#X connect 6 0 12 1;
 #X connect 7 0 5 0;
 #X connect 9 0 10 0;
 #X connect 10 0 11 0;
-#X connect 11 0 12 0;
-#X connect 13 0 7 0;
-#X connect 14 0 19 0;
-#X connect 14 1 26 0;
-#X connect 15 0 14 0;
-#X connect 16 0 22 0;
-#X connect 17 0 5 0;
-#X connect 18 0 17 0;
-#X connect 19 0 5 0;
-#X connect 20 0 21 0;
-#X connect 21 0 2 0;
-#X connect 22 0 1 0;
+#X connect 12 0 7 0;
+#X connect 13 0 18 0;
+#X connect 13 1 25 0;
+#X connect 14 0 13 0;
+#X connect 15 0 21 0;
+#X connect 16 0 5 0;
+#X connect 17 0 16 0;
+#X connect 18 0 5 0;
+#X connect 19 0 20 0;
+#X connect 20 0 2 0;
+#X connect 21 0 1 0;
+#X connect 22 0 5 0;
 #X connect 23 0 5 0;
 #X connect 24 0 5 0;
-#X connect 25 0 5 0;
-#X connect 26 0 27 0;
-#X connect 26 1 23 0;
-#X connect 26 2 25 0;
-#X connect 26 3 19 0;
-#X connect 27 0 24 0;
-#X coords 0 -1 1 1 90 90 2 53 83;
+#X connect 25 0 26 0;
+#X connect 25 1 22 0;
+#X connect 25 2 24 0;
+#X connect 25 3 18 0;
+#X connect 26 0 23 0;
+#X connect 27 0 9 0;
+#X coords 0 -1 1 1 89 89 2 53 83;
 #X gopspill 1;

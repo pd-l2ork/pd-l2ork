@@ -1,10 +1,10 @@
-#N canvas 571 71 452 350 10;
-#X obj 150 147 ggee/image @pd_extra/K12/objects/math_tag.png 1 0 25
+#N canvas 1048 225 452 350.031 10;
+#X obj 149 146 ggee/image @pd_extra/K12/objects/math_tag.png 1 0 25
 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X obj 121 228 inlet;
 #X obj 59 54 preset_node k12;
 #X obj 121 278 outlet;
-#X symbolatom 121 167 13 0 0 0 - - - 0 0, f 13;
+#X symbolatom 121 167 13 0 0 0 - - - 0 0 1, f 13;
 #X text 181 179 tag;
 #X obj 23 104 loadbang;
 #X msg 23 126 set ...;
@@ -15,5 +15,5 @@
 #X connect 6 0 7 0;
 #X connect 7 0 4 0;
 #X connect 8 0 3 0;
-#X coords 0 -1 1 1 90 90 2 117 127;
+#X coords 0 -1 1 1 89 89 2 117 127;
 #X gopspill 1;

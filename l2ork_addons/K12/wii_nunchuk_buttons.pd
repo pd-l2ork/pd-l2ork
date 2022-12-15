@@ -1,8 +1,8 @@
 #N canvas 605 331 488 320 10;
 #X obj 254 116 bng 14 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#000000 #000000;
+#000000 #000000 1;
 #X obj 245 134 bng 32 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#000000 #000000;
+#000000 #000000 1;
 #X obj 65 273 outlet;
 #X obj 65 5 inlet;
 #X msg 141 180 2;
@@ -10,8 +10,8 @@
 #X obj 65 208 & 8;
 #X obj 65 97 route button;
 #X obj 65 229 > 0;
-#X obj 249 94 ggee/image @pd_extra/K12/objects/wii_nunchuk_buttons.png
-1 0 25 25 empty empty empty 110 170 1 0 10 #000000 0 -8 55 85 0 1 1
+#X obj 248 108 ggee/image @pd_extra/K12/objects/wii_nunchuk_buttons.png
+1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 85 0 1 1
 ;
 #X obj 65 26 route nunchuk passthrough motionplus;
 #N canvas 411 217 455 392 check_4_wiimote_passthrough 0;
@@ -45,14 +45,14 @@
 #X connect 12 0 13 0;
 #X connect 13 0 7 0;
 #X restore 136 53 pd check_4_wiimote_passthrough;
-#X floatatom 141 230 5 0 0 0 - - - 0 0, f 5;
+#X floatatom 141 230 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 141 251 sel 2 1;
 #X obj 90 139 preset_node k12;
-#X obj 249 94 ggee/image @pd_extra/K12/objects/wii_nunchuk_buttons_C.png
-1 0 25 25 empty empty empty 110 170 1 0 10 #000000 0 -8 55 85 0 0 1
+#X obj 248 108 ggee/image @pd_extra/K12/objects/wii_nunchuk_buttons_C.png
+1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 85 0 0 1
 ;
-#X obj 249 94 ggee/image @pd_extra/K12/objects/wii_nunchuk_buttons_Z.png
-1 0 25 25 empty empty empty 110 170 1 0 10 #000000 0 -8 55 85 0 0 1
+#X obj 248 108 ggee/image @pd_extra/K12/objects/wii_nunchuk_buttons_Z.png
+1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 85 0 0 1
 ;
 #X msg 141 284 visible 1;
 #X msg 207 284 visible 0;
@@ -84,5 +84,5 @@
 #X connect 19 0 16 0;
 #X connect 20 0 15 0;
 #X connect 21 0 9 0;
-#X coords 0 -1 1 1 90 90 2 216 89;
+#X coords 0 -1 1 1 89 89 2 216 89;
 #X gopspill 1;

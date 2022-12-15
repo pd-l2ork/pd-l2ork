@@ -1,6 +1,6 @@
 #N canvas 519 64 339 482 10;
 #X obj 130 23 bng 78 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000;
+#000000 1;
 #X obj 13 88 inlet;
 #N canvas 141 109 450 364 unpack_motionplus 0;
 #X obj 14 12 inlet;
@@ -10,9 +10,9 @@
 #X obj 14 238 f;
 #X obj 78 240 f;
 #X obj 14 271 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 11
-#fcfcfc #000000 #000000 0 256 0 0;
+#fcfcfc #000000 #000000 0 256 0 0 1 0;
 #X obj 78 271 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 11
-#fcfcfc #000000 #000000 0 256 0 0;
+#fcfcfc #000000 #000000 0 256 0 0 1 0;
 #X obj 14 308 outlet;
 #X obj 78 307 outlet;
 #X obj 274 305 outlet;
@@ -100,7 +100,7 @@
 #X obj 25 303 int;
 #X obj 25 281 * 100;
 #X obj 25 326 / 100;
-#X obj 158 38 ggee/image @pd_extra/K12/objects/wii_speed.png 1 0 25
+#X obj 157 37 ggee/image @pd_extra/K12/objects/wii_speed.png 1 0 25
 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X obj 138 52 cnv 15 61 26 empty \$0-speed_num 0 10 12 0 20 #fcfcfc
 #404040 0;
@@ -118,5 +118,5 @@
 #X connect 7 0 9 0;
 #X connect 8 0 7 0;
 #X connect 9 0 6 0;
-#X coords 0 -1 1 1 90 90 2 125 18;
+#X coords 0 -1 1 1 89 89 2 125 18;
 #X gopspill 1;

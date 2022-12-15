@@ -1,4 +1,4 @@
-#N canvas 283 127 688 570 10;
+#N canvas 510 126 688 570 10;
 #X obj 216 82 ggee/image @pd_extra/K12/objects/arduino_on.png 1 0 25
 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #N canvas 340 108 527 287 buffer 0;
@@ -57,7 +57,7 @@
 #X text 51 465 message structure:;
 #X text 51 477 digital = d <channel> <val>;
 #X text 51 488 analog = a <channel> <val>;
-#X obj 216 82 ggee/image @pd_extra/K12/objects/arduino_off.png 1 0
+#X obj 215 81 ggee/image @pd_extra/K12/objects/arduino_off.png 1 0
 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X obj 332 87 select 0 1;
 #X obj 332 65 change;
@@ -74,8 +74,8 @@ with;
 #X obj 242 376 route digital analog;
 #X obj 369 310 r arduino-\$0;
 #X text 195 101 Device:;
-#X obj 237 103 nbx 2 14 -1 7 0 1 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 -1 256 3 0;
+#X obj 237 102 nbx 2 14 -1 7 0 1 empty empty empty 0 -8 0 10 #fcfcfc
+#000000 #000000 -1 256 3 0 1 0;
 #X obj 300 406 route 0 1 2 3 4 5, f 21;
 #X text 450 310 receive from downstream objects;
 #X obj 99 310 inlet;

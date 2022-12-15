@@ -1,20 +1,20 @@
-#N canvas 425 59 429 350 10;
-#X obj 248 219 ggee/image @pd_extra/K12/objects/sarcduino_hit6.png
+#N canvas 556 584 429 350 10;
+#X obj 247 218 ggee/image @pd_extra/K12/objects/sarcduino_hit6.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
-#X obj 248 219 ggee/image @pd_extra/K12/objects/sarcduino_hit5.png
+#X obj 247 218 ggee/image @pd_extra/K12/objects/sarcduino_hit5.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 0 1
 ;
-#X obj 248 219 ggee/image @pd_extra/K12/objects/sarcduino_hit4.png
+#X obj 247 218 ggee/image @pd_extra/K12/objects/sarcduino_hit4.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 0 1
 ;
-#X obj 248 219 ggee/image @pd_extra/K12/objects/sarcduino_hit3.png
+#X obj 247 218 ggee/image @pd_extra/K12/objects/sarcduino_hit3.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 0 1
 ;
-#X obj 248 219 ggee/image @pd_extra/K12/objects/sarcduino_hit2.png
+#X obj 247 218 ggee/image @pd_extra/K12/objects/sarcduino_hit2.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 0 1
 ;
-#X obj 248 219 ggee/image @pd_extra/K12/objects/sarcduino_hit1.png
+#X obj 247 218 ggee/image @pd_extra/K12/objects/sarcduino_hit1.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
 #X obj 33 22 inlet;
@@ -22,9 +22,9 @@
 #X obj 197 127 delay 100;
 #X obj 33 316 outlet;
 #X obj 217 230 nbx 4 14 0 1e+37 0 1 \$0-s-null \$0-r-null empty 0 -8
-0 10 #fcfcfc #000000 #000000 0.03 256 3 0;
+0 10 #fcfcfc #000000 #000000 0.03 256 3 0 1 0;
 #X obj 217 252 nbx 4 14 0 1e+37 0 1 \$0-s-null \$0-r-null empty 0 -8
-0 10 #fcfcfc #000000 #000000 0.01 256 3 0;
+0 10 #fcfcfc #000000 #000000 0.01 256 3 0 1 0;
 #X obj 311 199 preset_node k12;
 #X obj 311 221 preset_node k12;
 #X obj 33 48 t f f;
@@ -149,5 +149,5 @@
 #X connect 26 2 3 0;
 #X connect 26 3 2 0;
 #X connect 26 4 1 0;
-#X coords 0 -1 1 1 90 90 2 215 199;
+#X coords 0 -1 1 1 89 89 2 215 199;
 #X gopspill 1;

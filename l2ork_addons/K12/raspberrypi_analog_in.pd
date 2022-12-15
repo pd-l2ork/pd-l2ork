@@ -1,12 +1,12 @@
 #N canvas 262 181 320 473 10;
-#X obj 76 143 ggee/image @pd_extra/K12/objects/raspberrypi_3008_analog_in_off.png
+#X obj 75 142 ggee/image @pd_extra/K12/objects/raspberrypi_3008_analog_in_off.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
-#X obj 76 143 ggee/image @pd_extra/K12/objects/raspberrypi_3008_analog_in_on.png
+#X obj 75 142 ggee/image @pd_extra/K12/objects/raspberrypi_3008_analog_in_on.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 0 1
 ;
 #X obj 124 430 outlet;
-#X obj 101 161 nbx 2 14 -1 7 0 0 empty empty channel: -48 8 0 11 #fcfcfc
+#X obj 99 161 nbx 2 14 -1 7 0 0 empty empty channel: -48 6 0 11 #fcfcfc
 #000000 #000000 -1 256 3 0 1 0;
 #X obj 150 114 preset_node k12;
 #X obj 138 382 disis_spi;
@@ -53,5 +53,5 @@
 #X connect 17 0 18 0;
 #X connect 18 0 3 0;
 #X connect 19 0 1 0;
-#X coords 0 -1 1 1 90 90 2 43 123;
+#X coords 0 -1 1 1 89 89 2 43 123;
 #X gopspill 1;

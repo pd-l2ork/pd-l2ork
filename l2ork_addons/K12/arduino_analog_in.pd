@@ -1,9 +1,9 @@
 #N canvas 162 64 413 407 10;
-#X obj 173 105 ggee/image @pd_extra/K12/objects/arduino_analog_in.png
+#X obj 172 104 ggee/image @pd_extra/K12/objects/arduino_analog_in.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
 #X obj 66 136 outlet;
-#X obj 173 105 ggee/image @pd_extra/K12/objects/arduino_analog_in_off.png
+#X obj 172 104 ggee/image @pd_extra/K12/objects/arduino_analog_in_off.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
 #X obj 14 12 inlet;
@@ -15,7 +15,7 @@
 #X obj 78 234 f, f 2;
 #X obj 180 252 change;
 #X msg 180 274 symbol arduino-\$1;
-#X symbolatom 184 134 3 0 0 0 - - - 0 0, f 3;
+#X symbolatom 184 134 3 0 0 0 - - - 0 0 1, f 3;
 #X text 159 133 pin:;
 #N canvas 440 420 530 407 pin_parser 0;
 #X obj 18 18 inlet;
@@ -83,5 +83,5 @@
 #X connect 17 0 18 0;
 #X connect 18 0 12 0;
 #X connect 20 0 16 0;
-#X coords 0 -1 1 1 90 90 2 140 85;
+#X coords 0 -1 1 1 89 89 2 140 85;
 #X gopspill 1;

@@ -1,16 +1,16 @@
-#N canvas 666 160 335 235 10;
+#N canvas 999 314 335 235 10;
 #X obj 102 197 outlet;
-#X obj 106 113 ggee/image @pd_extra/K12/objects/sarcduino_digital.png
+#X obj 105 112 ggee/image @pd_extra/K12/objects/sarcduino_digital.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
 #X obj 129 124 nbx 2 14 2 13 0 0 empty empty channel: -48 8 0 11 #fcfcfc
-#000000 #000000 2 256 3 0;
+#000000 #000000 2 256 3 0 1 0;
 #X obj 18 20 inlet;
 #X obj 154 65 preset_node k12;
 #X obj 18 65 route list;
 #X obj 18 88 route d;
 #X obj 102 140 tgl 30 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 0 1;
+#000000 0 1 1;
 #X obj 18 111 route 2;
 #X connect 2 0 4 0;
 #X connect 2 0 8 1;
@@ -20,5 +20,5 @@
 #X connect 6 0 8 0;
 #X connect 7 0 0 0;
 #X connect 8 0 7 0;
-#X coords 0 -1 1 1 90 90 2 73 93;
+#X coords 0 -1 1 1 89 89 2 73 93;
 #X gopspill 1;

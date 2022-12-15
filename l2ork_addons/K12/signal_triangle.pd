@@ -1,12 +1,12 @@
-#N canvas 391 106 345 318 10;
-#X obj 129 103 ggee/image @pd_extra/K12/objects/signal_triangle.png
+#N canvas 391 106 345 318.031 10;
+#X obj 128 102 ggee/image @pd_extra/K12/objects/signal_triangle.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
 #X obj 75 23 inlet;
 #X obj 32 248 outlet~;
 #X obj 115 23 preset_node k12;
 #X obj 104 120 nbx 5 19 -1e+37 1e+37 0 0 \$0-s-null \$0-r-null empty
-0 -8 0 16 #fcfcfc #000000 #000000 0 256 1 0;
+0 -8 0 16 #fcfcfc #000000 #000000 0 256 1 0 1 0;
 #X obj 31 225 triangle~;
 #X obj 31 180 mtof;
 #X obj 31 202 phasor~;
@@ -15,6 +15,5 @@
 #X connect 4 0 6 0;
 #X connect 5 0 2 0;
 #X connect 6 0 7 0;
-#X connect 7 0 5 0;
-#X coords 0 -1 1 1 90 90 2 96 83;
+#X coords 0 -1 1 1 89 89 2 96 83;
 #X gopspill 1;

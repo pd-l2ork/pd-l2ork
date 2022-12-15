@@ -1,7 +1,7 @@
-#N canvas 433 193 609 484 10;
-#X obj 177 176 ggee/image @pd_extra/K12/objects/audio_off.png 1 0 25
+#N canvas 1032 286 609 484 10;
+#X obj 176 175 ggee/image @pd_extra/K12/objects/audio_off.png 1 0 25
 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
-#X obj 177 176 ggee/image @pd_extra/K12/objects/audio_on.png 1 0 25
+#X obj 176 175 ggee/image @pd_extra/K12/objects/audio_on.png 1 0 25
 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 0 1;
 #X obj 6 26 inlet~;
 #N canvas 316 207 286 259 dsp 0;
@@ -33,7 +33,7 @@
 #X obj 6 426 *~ 0.5;
 #X obj 91 120 preset_node k12;
 #X obj 193 192 vsl 34 44 0 100 0 0 pd-l2ork-k12_main_out null empty
-0 -9 0 10 #fcfcfc #000000 #000000 0 1 0;
+0 -9 0 10 #fcfcfc #000000 #000000 0 1 0 1;
 #N canvas 0 0 271 201 level 0;
 #X obj 49 8 inlet~;
 #X obj 48 140 *~;
@@ -53,7 +53,7 @@
 #X restore 6 50 pd level;
 #X obj 65 50 loadbang;
 #X obj 149 226 tgl 15 0 \$0-null-send \$0-null-receive empty 17 7 0
-10 #fcfcfc #000000 #000000 1 1;
+10 #fcfcfc #000000 #000000 0 1 1;
 #X text 146 209 mode;
 #X text 146 200 stereo;
 #X obj 6 322 *~;
@@ -92,21 +92,16 @@
 #X connect 7 0 6 0;
 #X connect 8 0 13 0;
 #X connect 8 1 12 0;
-#X connect 9 0 8 1;
-#X connect 10 0 8 2;
 #X connect 12 0 11 0;
 #X connect 13 0 11 1;
 #X connect 14 0 15 0;
 #X connect 15 0 16 1;
 #X connect 15 0 41 0;
-#X connect 16 0 6 0;
-#X connect 16 0 5 0;
 #X connect 17 0 7 0;
 #X connect 18 0 25 0;
 #X connect 18 0 29 0;
 #X connect 18 0 31 0;
 #X connect 18 0 43 0;
-#X connect 21 0 8 0;
 #X connect 22 0 13 0;
 #X connect 22 0 12 0;
 #X connect 23 0 22 1;
@@ -134,5 +129,5 @@
 #X connect 44 1 42 0;
 #X connect 46 0 42 0;
 #X connect 47 0 1 0;
-#X coords 0 -1 1 1 90 90 2 144 156;
+#X coords 0 -1 1 1 89 89 2 144 156;
 #X gopspill 1;

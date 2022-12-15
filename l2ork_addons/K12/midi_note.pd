@@ -1,14 +1,14 @@
 #N canvas 414 55 365 410 10;
-#X obj 183 60 ggee/image @pd_extra/K12/objects/midi_note.png 1 0 25
+#X obj 182 59 ggee/image @pd_extra/K12/objects/midi_note.png 1 0 25
 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X obj 207 68 nbx 2 14 1 16 0 1 empty empty empty -7 -8 0 10 #fcfcfc
-#000000 #000000 1 256 3 0;
+#000000 #000000 1 256 3 0 1 0;
 #X obj 18 40 inlet;
 #X obj 246 41 preset_node k12;
 #X obj 247 67 preset_node k12;
 #X text 160 67 Channel:;
 #X obj 167 99 nbx 5 14 0 1e+37 0 1 empty empty empty -4 -8 0 10 #fcfcfc
-#000000 #000000 250 256 1 0;
+#000000 #000000 250 256 1 0 1 0;
 #X text 167 82 Duration:;
 #X obj 18 353 outlet;
 #X obj 18 172 t l l, f 18;
@@ -41,5 +41,5 @@
 #X connect 18 0 13 2;
 #X connect 18 1 19 0;
 #X connect 19 0 17 0;
-#X coords 0 -1 1 1 90 90 2 150 40;
+#X coords 0 -1 1 1 89 89 2 150 40;
 #X gopspill 1;

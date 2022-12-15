@@ -1,15 +1,15 @@
-#N canvas 693 145 509 603 10;
-#X obj 249 319 ggee/image @pd_extra/K12/objects/wii_hit6.png 1 0 25
+#N canvas 693 145 509 603.031 10;
+#X obj 248 318 ggee/image @pd_extra/K12/objects/wii_hit6.png 1 0 25
 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
-#X obj 249 319 ggee/image @pd_extra/K12/objects/wii_hit5.png 1 0 25
+#X obj 248 318 ggee/image @pd_extra/K12/objects/wii_hit5.png 1 0 25
 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
-#X obj 249 319 ggee/image @pd_extra/K12/objects/wii_hit4.png 1 0 25
+#X obj 248 318 ggee/image @pd_extra/K12/objects/wii_hit4.png 1 0 25
 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
-#X obj 249 319 ggee/image @pd_extra/K12/objects/wii_hit3.png 1 0 25
+#X obj 248 318 ggee/image @pd_extra/K12/objects/wii_hit3.png 1 0 25
 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
-#X obj 249 319 ggee/image @pd_extra/K12/objects/wii_hit2.png 1 0 25
+#X obj 248 318 ggee/image @pd_extra/K12/objects/wii_hit2.png 1 0 25
 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
-#X obj 249 319 ggee/image @pd_extra/K12/objects/wii_hit1.png 1 0 25
+#X obj 248 318 ggee/image @pd_extra/K12/objects/wii_hit1.png 1 0 25
 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X obj 25 110 expr sqrt(pow($f1 \, 2) + pow($f2 \, 2) + pow($f3 \,
 2));
@@ -38,9 +38,9 @@
 #X obj 120 441 line;
 #X obj 169 179 change;
 #X obj 218 330 nbx 4 14 0 1e+37 0 1 \$0-s-null \$0-r-null empty 0 -8
-0 10 #fcfcfc #000000 #000000 0.3 256 3 0;
+0 10 #fcfcfc #000000 #000000 0.3 256 3 0 1 0;
 #X obj 218 352 nbx 4 14 0 1e+37 0 1 \$0-s-null \$0-r-null empty 0 -8
-0 10 #fcfcfc #000000 #000000 0.02 256 3 0;
+0 10 #fcfcfc #000000 #000000 0.02 256 3 0 1 0;
 #X text 225 318 high;
 #X text 225 341 low;
 #X obj 311 299 preset_node k12;
@@ -141,5 +141,5 @@
 #X connect 37 2 3 0;
 #X connect 37 3 4 0;
 #X connect 37 4 5 0;
-#X coords 0 -1 1 1 90 90 2 216 299;
+#X coords 0 -1 1 1 89 89 2 216 299;
 #X gopspill 1;

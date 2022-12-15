@@ -1,16 +1,16 @@
 #N canvas 417 64 333 250 10;
 #X obj 88 224 outlet;
-#X obj 116 142 ggee/image @pd_extra/K12/objects/sarcduino_piezo.png
+#X obj 115 141 ggee/image @pd_extra/K12/objects/sarcduino_piezo.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
 #X obj 145 154 nbx 1 14 0 15 0 0 empty empty channel: -48 8 0 11 #fcfcfc
-#000000 #000000 0 256 3 0;
+#000000 #000000 0 256 3 0 1 0;
 #X obj 28 19 inlet;
 #X obj 145 95 preset_node k12;
 #X obj 28 67 route a;
 #X obj 28 44 route list;
 #X obj 88 173 nbx 4 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 20
-#fcfcfc #000000 #000000 0 256 3 0;
+#fcfcfc #000000 #000000 0 256 3 0 1 0;
 #X obj 28 112 - 337;
 #X obj 28 156 abs;
 #X obj 28 134 / 337;
@@ -26,5 +26,5 @@
 #X connect 9 0 7 0;
 #X connect 10 0 9 0;
 #X connect 11 0 8 0;
-#X coords 0 -1 1 1 90 90 2 83 122;
+#X coords 0 -1 1 1 89 89 2 83 122;
 #X gopspill 1;

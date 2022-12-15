@@ -1,6 +1,6 @@
 #N canvas 452 146 354 335 10;
 #X obj 142 43 bng 78 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000;
+#000000 1;
 #X obj 25 108 inlet;
 #N canvas 141 109 450 366 unpack_motionplus 0;
 #X obj 14 12 inlet;
@@ -10,9 +10,9 @@
 #X obj 15 238 f;
 #X obj 79 240 f;
 #X obj 15 271 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 11
-#fcfcfc #000000 #000000 0 256 0 0;
+#fcfcfc #000000 #000000 0 256 0 0 1 0;
 #X obj 79 271 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 11
-#fcfcfc #000000 #000000 0 256 0 0;
+#fcfcfc #000000 #000000 0 256 0 0 1 0;
 #X obj 15 308 outlet;
 #X obj 79 307 outlet;
 #X obj 277 305 outlet;
@@ -29,7 +29,7 @@
 #X obj 23 211 t b b b;
 #X obj 144 240 f;
 #X obj 144 271 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 11
-#fcfcfc #000000 #000000 0 256 0 0;
+#fcfcfc #000000 #000000 0 256 0 0 1 0;
 #X obj 144 307 outlet;
 #X obj 386 305 outlet;
 #X connect 0 0 1 0;
@@ -95,7 +95,7 @@
 #X connect 19 0 18 0;
 #X restore 25 209 pd motionplus_logic;
 #X obj 25 298 outlet;
-#X obj 170 57 ggee/image @pd_extra/K12/objects/wii_speed_xry.png 1
+#X obj 169 56 ggee/image @pd_extra/K12/objects/wii_speed_xry.png 1
 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X obj 230 37 preset_node k12;
 #X obj 154 59 cnv 13 14 13 empty \$0-compare x 20 12 0 18 #fcfcfc #404040
@@ -109,7 +109,7 @@
 #X msg 186 155 r;
 #X obj 25 276 / 8000;
 #X obj 157 87 hradio 15 1 0 3 empty empty empty 0 -8 0 10 #fcfcfc #000000
-#000000 0;
+#000000 0 1;
 #X connect 0 0 2 1;
 #X connect 1 0 2 0;
 #X connect 2 0 3 5;
@@ -131,5 +131,5 @@
 #X connect 15 0 4 0;
 #X connect 16 0 8 0;
 #X connect 16 0 3 6;
-#X coords 0 -1 1 1 90 90 2 137 37;
+#X coords 0 -1 1 1 89 89 2 137 37;
 #X gopspill 1;

@@ -1,13 +1,13 @@
-#N canvas 384 89 373 601 10;
-#X obj 129 192 ggee/image @pd_extra/K12/objects/signal_player.png 1
+#N canvas 983 255 373 601 10;
+#X obj 128 192 ggee/image @pd_extra/K12/objects/signal_player.png 1
 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X obj 19 91 inlet;
 #X obj 99 220 hsl 78 11 0 100 0 1 \$0-s-null \$0-r-null start 26 4
-0 10 #fcfcfc #000000 #000000 7700 1 0;
+0 10 #fcfcfc #000000 #000000 7700 1 0 1;
 #X obj 99 233 hsl 78 11 0 100 0 1 \$0-s-null \$0-r-null end 31 4 0
-10 #fcfcfc #000000 #000000 7700 1 0;
+10 #fcfcfc #000000 #000000 7700 1 0 1;
 #X obj 167 203 tgl 15 0 \$0-tgl-s \$0-tgl-play-r empty 17 7 0 10 #00fc04
-#000000 #000000 0 1;
+#000000 #000000 0 1 1;
 #X text 157 186 play;
 #X obj 19 113 t 1 f;
 #X obj 234 174 preset_node k12;
@@ -15,7 +15,7 @@
 #X obj 97 34 inlet;
 #X obj 207 457 outlet;
 #X obj 99 203 bng 15 250 50 0 empty empty empty 17 7 0 10 #f8fc00 #000000
-#000000;
+#000000 1;
 #X text 96 186 open;
 #X obj 35 435 tabread4~ \$0-buffer;
 #X obj 35 558 outlet~;
@@ -36,7 +36,7 @@
 #X obj 247 118 \$0;
 #X msg 247 140 \; \$1-buffer const 0;
 #X obj 142 241 openpanel;
-#X symbolatom 142 286 48 0 0 0 - - - 0 0, f 48;
+#X symbolatom 142 286 48 0 0 0 - - - 0 0 1, f 48;
 #X obj 39 237 preset_node k12;
 #X obj 142 59 t b b;
 #X obj 39 398 outlet;
@@ -195,5 +195,5 @@
 #X connect 33 0 34 0;
 #X connect 33 1 27 0;
 #X connect 34 0 17 0;
-#X coords 0 -1 1 1 90 90 2 96 173;
+#X coords 0 -1 1 1 89 89 2 96 173;
 #X gopspill 1;

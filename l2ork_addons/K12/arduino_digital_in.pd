@@ -1,6 +1,6 @@
-#N canvas 275 143 503 389 10;
+#N canvas 817 154 503 389 10;
 #X obj 110 134 outlet;
-#X obj 215 102 ggee/image @pd_extra/K12/objects/arduino_digital_in_off.png
+#X obj 215 101 ggee/image @pd_extra/K12/objects/arduino_digital_in_off.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
 #X obj 58 10 inlet;
@@ -32,8 +32,8 @@
 #X obj 77 358 send, f 25;
 #X text 211 115 INPUT;
 #X text 206 131 pin:;
-#X obj 230 134 nbx 3 14 -1 13 0 1 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 -1 256 3 0;
+#X obj 230 133 nbx 3 14 -1 13 0 1 empty empty empty 0 -8 0 10 #fcfcfc
+#000000 #000000 -1 256 3 0 1 0;
 #X msg 77 318 pinMode \$1 input;
 #X obj 110 78 route d;
 #X connect 2 0 4 0;
@@ -54,5 +54,5 @@
 #X connect 15 0 10 0;
 #X connect 16 0 12 0;
 #X connect 17 0 11 0;
-#X coords 0 -1 1 1 90 90 2 183 82;
+#X coords 0 -1 1 1 89 89 2 183 82;
 #X gopspill 1;

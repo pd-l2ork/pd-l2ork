@@ -1,20 +1,20 @@
 #N canvas 754 231 417 532 10;
-#X obj 239 359 ggee/image @pd_extra/K12/objects/wii_nunchuk_hit6.png
+#X obj 238 358 ggee/image @pd_extra/K12/objects/wii_nunchuk_hit6.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
-#X obj 239 359 ggee/image @pd_extra/K12/objects/wii_nunchuk_hit5.png
+#X obj 238 358 ggee/image @pd_extra/K12/objects/wii_nunchuk_hit5.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
-#X obj 239 359 ggee/image @pd_extra/K12/objects/wii_nunchuk_hit4.png
+#X obj 238 358 ggee/image @pd_extra/K12/objects/wii_nunchuk_hit4.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
-#X obj 239 359 ggee/image @pd_extra/K12/objects/wii_nunchuk_hit3.png
+#X obj 238 358 ggee/image @pd_extra/K12/objects/wii_nunchuk_hit3.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
-#X obj 239 359 ggee/image @pd_extra/K12/objects/wii_nunchuk_hit2.png
+#X obj 238 358 ggee/image @pd_extra/K12/objects/wii_nunchuk_hit2.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
-#X obj 239 359 ggee/image @pd_extra/K12/objects/wii_nunchuk_hit1.png
+#X obj 238 358 ggee/image @pd_extra/K12/objects/wii_nunchuk_hit1.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
 #X obj 15 150 expr sqrt(pow($f1 \, 2) + pow($f2 \, 2) + pow($f3 \,
@@ -44,9 +44,9 @@
 #X obj 110 481 line;
 #X obj 159 219 change;
 #X obj 208 370 nbx 4 14 0 1e+37 0 1 \$0-s-null \$0-r-null empty 0 -8
-0 10 #fcfcfc #000000 #000000 0.3 256 3 0;
+0 10 #fcfcfc #000000 #000000 0.3 256 3 0 1 0;
 #X obj 208 392 nbx 4 14 0 1e+37 0 1 \$0-s-null \$0-r-null empty 0 -8
-0 10 #fcfcfc #000000 #000000 0.02 256 3 0;
+0 10 #fcfcfc #000000 #000000 0.02 256 3 0 1 0;
 #X text 215 358 high;
 #X text 215 381 low;
 #X obj 301 339 preset_node k12;
@@ -182,5 +182,5 @@
 #X connect 39 2 3 0;
 #X connect 39 3 4 0;
 #X connect 39 4 5 0;
-#X coords 0 -1 1 1 90 90 2 206 339;
+#X coords 0 -1 1 1 89 89 2 206 339;
 #X gopspill 1;

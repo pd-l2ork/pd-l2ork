@@ -1,4 +1,4 @@
-#N canvas 367 114 530 420 10;
+#N canvas 1056 226 530 420 10;
 #X obj 267 205 select 255;
 #X obj 267 229 zl group 70;
 #X obj 267 252 unpack f f f f f f f f f f f f f f;
@@ -206,9 +206,9 @@
 #X text 41 335 message structure:;
 #X text 41 347 digital = d <channel> <val>;
 #X text 41 358 analog = a <channel> <val>;
-#X obj 190 20 bng 74 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000;
-#X obj 216 33 ggee/image @pd_extra/K12/objects/sarcduino_off.png 1
+#X obj 189 19 bng 74 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
+#X obj 215 32 ggee/image @pd_extra/K12/objects/sarcduino_off.png 1
 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X obj 140 127 gate 2 1;
 #X obj 140 105 + 1;
@@ -218,7 +218,7 @@
 #X msg 289 148 info;
 #X obj 140 84 change;
 #X obj 267 182 comport -1 57600;
-#X obj 216 33 ggee/image @pd_extra/K12/objects/sarcduino_on.png 1 0
+#X obj 215 32 ggee/image @pd_extra/K12/objects/sarcduino_on.png 1 0
 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 0 1;
 #X msg 336 26 visible \$1;
 #X connect 0 0 1 0;
@@ -269,5 +269,5 @@
 #X connect 33 0 0 0;
 #X connect 33 1 19 0;
 #X connect 35 0 34 0;
-#X coords 0 -1 1 1 90 90 2 183 13;
+#X coords 0 -1 1 1 89 89 2 183 13;
 #X gopspill 1;

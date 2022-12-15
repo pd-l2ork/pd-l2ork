@@ -1,5 +1,5 @@
-#N canvas 542 158 466 588 10;
-#X obj 129 133 ggee/image @pd_extra/K12/objects/signal_sampler.png
+#N canvas 427 147 466 588 10;
+#X obj 128 132 ggee/image @pd_extra/K12/objects/signal_sampler.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
 #X obj 139 61 loadbang;
@@ -9,17 +9,17 @@
 #X msg 186 269 stop;
 #X obj 140 434 tabread4~ \$0-buffer;
 #X obj 99 143 tgl 15 0 \$0-tgl-s \$0-tgl-r empty 17 7 0 10 #fc0400
-#000000 #000000 0 1;
+#000000 #000000 0 1 1;
 #X obj 99 160 hsl 78 11 0 100 0 1 \$0-s-null \$0-r-null start 26 4
-0 10 #fcfcfc #000000 #000000 0 1 0;
+0 10 #fcfcfc #000000 #000000 0 1 0 1;
 #X obj 99 173 hsl 78 11 0 100 0 1 \$0-s-null \$0-r-null end 31 4 0
-10 #fcfcfc #000000 #000000 1300 1 0;
+10 #fcfcfc #000000 #000000 1300 1 0 1;
 #X text 95 127 rec;
 #X obj 139 562 outlet~;
 #X obj 140 222 sel 1 0;
 #X obj 47 247 delay 10000;
 #X obj 139 143 nbx 1 14 0 9 0 0 empty empty empty 0 -8 0 12 #fcfcfc
-#000000 #000000 0 256 3 0;
+#000000 #000000 0 256 3 0 1 0;
 #X text 122 141 snd:;
 #N canvas 273 195 523 442 fileio_logic 0;
 #X obj 142 -23 inlet;
@@ -131,7 +131,7 @@
 #X msg 140 386 \$2 \, \$3 \$4;
 #X msg 139 83 0;
 #X obj 167 143 tgl 15 0 \$0-tgl-s \$0-tgl-play-r empty 17 7 0 10 #00fc04
-#000000 #000000 0 1;
+#000000 #000000 0 1 1;
 #X text 157 126 play;
 #X obj 275 235 sel 1;
 #X obj 29 81 t 1 f;
@@ -227,5 +227,5 @@
 #X connect 44 0 45 0;
 #X connect 44 1 41 0;
 #X connect 45 0 18 0;
-#X coords 0 -1 1 1 90 90 2 96 113;
+#X coords 0 -1 1 1 89 89 2 96 113;
 #X gopspill 1;

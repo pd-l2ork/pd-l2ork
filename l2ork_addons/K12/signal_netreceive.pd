@@ -1,9 +1,9 @@
 #N canvas 571 80 340 313 10;
-#X obj 150 146 ggee/image @pd_extra/K12/objects/signal_netreceive.png
+#X obj 149 146 ggee/image @pd_extra/K12/objects/signal_netreceive.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
 #X obj 121 253 mrpeach/udpreceive~ 8008 1 1024;
 #X obj 121 276 outlet~;
 #X connect 1 0 2 0;
-#X coords 0 -1 1 1 90 90 2 117 127;
+#X coords 0 -1 1 1 89 89 2 117 127;
 #X gopspill 1;

@@ -3,13 +3,13 @@
 #X obj 65 25 inlet;
 #X obj 65 47 route acceleration;
 #X obj 65 70 unpack 0 0 0;
-#X obj 249 109 ggee/image @pd_extra/K12/objects/wii_accelerometer.png
+#X obj 248 108 ggee/image @pd_extra/K12/objects/wii_accelerometer.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
 #X obj 311 89 preset_node k12;
 #X obj 46 217 switch 3 1;
 #X obj 238 139 hradio 15 1 0 3 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0;
+#000000 #000000 0 1;
 #X obj 46 238 / 4.846;
 #X obj 235 111 cnv 13 14 13 empty \$0-compare x 20 12 0 18 #fcfcfc
 #404040 0;
@@ -40,5 +40,5 @@
 #X connect 15 0 11 0;
 #X connect 16 0 11 0;
 #X connect 17 0 6 0;
-#X coords 0 -1 1 1 90 90 2 216 89;
+#X coords 0 -1 1 1 89 89 2 216 89;
 #X gopspill 1;

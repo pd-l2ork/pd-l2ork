@@ -1,12 +1,12 @@
-#N canvas 571 89 388 350 10;
-#X obj 150 147 ggee/image @pd_extra/K12/objects/math_netreceive.png
+#N canvas 1064 406 388 350 10;
+#X obj 149 146 ggee/image @pd_extra/K12/objects/math_netreceive.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
 #X obj 239 111 inlet;
 #X obj 59 54 preset_node k12;
 #X obj 121 276 outlet;
 #X obj 121 164 nbx 5 19 -1e+37 1e+37 0 0 \$0-s-null \$0-r-null empty
-0 -8 0 16 #fcfcfc #000000 #000000 3000 256 1 0;
+0 -8 0 16 #fcfcfc #000000 #000000 3000 256 1 0 1 0;
 #X text 178 179 port;
 #X obj 278 111 loadbang;
 #X msg 278 133 3000;
@@ -19,5 +19,5 @@
 #X connect 7 0 4 0;
 #X connect 8 0 3 0;
 #X connect 9 0 8 0;
-#X coords 0 -1 1 1 90 90 2 117 127;
+#X coords 0 -1 1 1 89 89 2 117 127;
 #X gopspill 1;

@@ -1,12 +1,12 @@
 #N canvas 571 89 362 413 10;
 #X obj 189 114 preset_node k12;
 #X obj 19 22 inlet;
-#X obj 149 207 ggee/image @pd_extra/K12/objects/logic_metronome.png
+#X obj 148 206 ggee/image @pd_extra/K12/objects/logic_metronome.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
 #X obj 192 146 preset_node k12;
-#X obj 125 214 tgl 20 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 0 1;
+#X obj 124 214 tgl 20 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1 1;
 #X obj 239 181 inlet;
 #X obj 19 45 sel 0 1;
 #X msg 38 128 1;
@@ -15,10 +15,10 @@
 #X obj 73 309 metro 1000;
 #X msg 73 341 1;
 #X obj 73 374 outlet;
-#X obj 125 238 nbx 5 19 1 1e+37 0 0 \$0-s-null \$0-r-null empty 0 -8
-0 16 #fcfcfc #000000 #000000 60 256 1 0;
-#X text 147 214 on/off;
-#X text 142 257 speed(BPM);
+#X obj 124 237 nbx 5 19 1 1e+37 0 0 \$0-s-null \$0-r-null empty 0 -8
+0 16 #fcfcfc #000000 #000000 60 256 1 0 1 0;
+#X text 145 217 on/off;
+#X text 137 257 speed(BPM);
 #X obj 278 181 loadbang;
 #X msg 278 203 set 60;
 #X obj 38 72 pipe 1;
@@ -40,5 +40,5 @@ counters and other things get their values first, f 36;
 #X connect 16 0 17 0;
 #X connect 17 0 13 0;
 #X connect 18 0 7 0;
-#X coords 0 -1 1 1 90 90 2 116 187;
+#X coords 0 -1 1 1 89 89 2 116 187;
 #X gopspill 1;

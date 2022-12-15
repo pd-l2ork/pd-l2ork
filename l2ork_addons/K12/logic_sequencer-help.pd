@@ -7,8 +7,8 @@
 0 72 %node% 2 10 51 %preset% 0 71 %node% 2 10 56 %preset% 0 69 %node%
 2 10 61 %preset% 0 67 %node% 2 10 66 %preset% 0 65 %node% 2 10 71 %preset%
 0 64 %node% 2 10 76 %preset% 0 62 %node% 2 10 81 %preset% 0 60 %node%
-2 12 28 %preset% 0 1 %node% 2 8 0 %preset% 0 120 %node% 2 9 2 %preset%
-0 1 %node% 2 9 18 %preset% 0 16 %node% 2 7 7;
+2 8 0 %preset% 0 120 %node% 2 9 2 %preset% 0 1 %node% 2 9 18 %preset%
+0 16 %node% 2 7 7 %node% 2 12 25;
 #X obj 127 182 cnv 15 369 89 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
 #X obj 22 265 cnv 15 374 231 empty empty empty 20 12 0 14 #e0e0e0 #404040

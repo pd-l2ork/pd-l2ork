@@ -1,5 +1,5 @@
 #N canvas 152 87 866 456 10;
-#X obj 579 81 ggee/image @pd_extra/K12/objects/logic_mapper.png 1 0
+#X obj 578 80 ggee/image @pd_extra/K12/objects/logic_mapper.png 1 0
 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X obj 291 425 outlet;
 #X obj 337 425 outlet;
@@ -18,12 +18,12 @@
 #X msg 811 301 \$1 100;
 #X obj 556 323 line;
 #X msg 556 301 \$1 100;
-#X obj 551 89 vsl 22 38 0 1 0 0 \$0-sld1-nullout \$0-sld1-nullin empty
-0 -9 0 10 #fcfcfc #000000 #000000 0 1 0;
+#X obj 554 89 vsl 22 38 0 1 0 0 \$0-sld1-nullout \$0-sld1-nullin empty
+0 -9 0 10 #fcfcfc #000000 #000000 0 1 0 1;
 #X obj 584 91 vradio 13 1 0 4 \$0-vradio-nullout \$0-vradio-nullin
-empty 0 -8 0 10 #fcfcfc #000000 #000000 0;
-#X obj 610 89 vsl 22 38 0 1 0 0 \$0-sld2-nullout \$0-sld2-nullin empty
-0 -9 0 10 #fcfcfc #000000 #000000 0 1 0;
+empty 0 -8 0 10 #fcfcfc #000000 #000000 0 1;
+#X obj 605 89 vsl 22 38 0 1 0 0 \$0-sld2-nullout \$0-sld2-nullin empty
+0 -9 0 10 #fcfcfc #000000 #000000 0 1 0 1;
 #X obj 313 266 expr if(abs($f1) <= 1 \, \\$f1 \, \\$f1) \; if(abs($f1)
 <= 1 \, \\$f1/2 \, \\$f1/2);
 #X obj 556 266 expr if(abs($f1) <= 1 \, \\$f1 \, \\$f1) \; if(abs($f1)
@@ -65,5 +65,5 @@ empty 0 -8 0 10 #fcfcfc #000000 #000000 0;
 #X connect 25 0 23 0;
 #X connect 25 1 21 0;
 #X connect 25 2 22 0;
-#X coords 0 -1 1 1 90 90 2 546 61;
+#X coords 0 -1 1 1 89 89 2 546 61;
 #X gopspill 1;

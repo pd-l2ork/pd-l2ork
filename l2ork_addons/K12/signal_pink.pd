@@ -1,10 +1,10 @@
-#N canvas 674 117 338 213 10;
-#X obj 129 83 ggee/image @pd_extra/K12/objects/signal_pink.png 1 0
+#N canvas 674 117 338 213.062 10;
+#X obj 128 82 ggee/image @pd_extra/K12/objects/signal_pink.png 1 0
 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X obj 32 123 outlet~;
 #X obj 32 83 pink~;
 #X obj 101 94 cnv 15 51 21 empty empty Pink 20 12 1 20 #fcfcfc #404040
 0;
 #X connect 2 0 1 0;
-#X coords 0 -1 1 1 90 90 2 96 63;
+#X coords 0 -1 1 1 89 89 2 96 63;
 #X gopspill 1;

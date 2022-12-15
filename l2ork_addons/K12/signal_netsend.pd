@@ -1,10 +1,10 @@
-#N canvas 722 145 357 422 10;
-#X obj 150 147 ggee/image @pd_extra/K12/objects/signal_netsend.png
+#N canvas 722 145 357 422.031 10;
+#X obj 149 146 ggee/image @pd_extra/K12/objects/signal_netsend.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
 #X obj 59 54 preset_node k12;
 #X msg 52 338 disconnect \, connect \$1 \$2;
-#X symbolatom 122 174 13 0 0 0 - - - 0 0, f 13;
+#X symbolatom 122 174 13 0 0 0 - - - 0 0 1, f 13;
 #X text 119 158 address;
 #X obj 215 110 loadbang;
 #X obj 34 373 mrpeach/udpsend~ 1 1024;
@@ -19,5 +19,5 @@
 #X connect 8 0 3 0;
 #X connect 9 0 2 0;
 #X connect 10 0 3 0;
-#X coords 0 -1 1 1 90 90 2 117 127;
+#X coords 0 -1 1 1 89 89 2 117 127;
 #X gopspill 1;

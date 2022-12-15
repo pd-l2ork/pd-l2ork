@@ -1,8 +1,8 @@
-#N canvas 203 140 524 445 10;
-#X obj 157 332 bng 75 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#000000 #000000;
-#X obj 188 344 ggee/image @pd_extra/K12/objects/fx_reverb1.png 1 0
-25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 0 1;
+#N canvas 1074 169 524 445 10;
+#X obj 156 331 bng 75 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000 1;
+#X obj 187 343 ggee/image @pd_extra/K12/objects/fx_reverb1.png 1 0
+25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X obj 31 262 freeverb~;
 #X obj 31 117 inlet~;
 #N canvas 41 75 470 252 reverb_levels 0;
@@ -33,17 +33,17 @@
 #X obj 211 140 select 0 1 2 3;
 #X obj 31 206 +~ 1e-07;
 #X obj 219 93 preset_node k12;
-#X floatatom 211 116 5 0 0 0 - - - 0 0, f 5;
+#X floatatom 211 116 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 211 70 counter 0 3;
 #X obj 269 44 + 1;
 #X obj 242 23 sel 3;
 #X msg 242 44 0;
 #X obj 151 70 loadbang;
-#X obj 188 344 ggee/image @pd_extra/K12/objects/fx_reverb2.png 1 0
-25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
-#X obj 188 344 ggee/image @pd_extra/K12/objects/fx_reverb3.png 1 0
+#X obj 187 343 ggee/image @pd_extra/K12/objects/fx_reverb2.png 1 0
 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 0 1;
-#X obj 188 344 ggee/image @pd_extra/K12/objects/fx_reverb4.png 1 0
+#X obj 187 343 ggee/image @pd_extra/K12/objects/fx_reverb3.png 1 0
+25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 0 1;
+#X obj 187 343 ggee/image @pd_extra/K12/objects/fx_reverb4.png 1 0
 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 0 1;
 #X msg 427 246 visible \$1;
 #X msg 355 246 visible \$1;
@@ -97,5 +97,5 @@
 #X connect 25 2 19 0;
 #X connect 25 3 18 0;
 #X connect 26 0 9 0;
-#X coords 0 -1 1 1 90 90 2 155 324;
+#X coords 0 -1 1 1 89 89 2 155 324;
 #X gopspill 1;

@@ -1,8 +1,8 @@
-#N canvas 540 64 345 208 10;
+#N canvas 540 64 345 208.031 10;
 #X obj 32 21 inlet;
 #X obj 73 21 inlet;
 #X obj 32 161 outlet;
-#X obj 205 66 ggee/image @pd_extra/K12/objects/math_divide.png 1 0
+#X obj 204 65 ggee/image @pd_extra/K12/objects/math_divide.png 1 0
 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X obj 73 46 t b f;
 #X obj 32 77 /;
@@ -11,5 +11,5 @@
 #X connect 4 0 5 0;
 #X connect 4 1 5 1;
 #X connect 5 0 2 0;
-#X coords 0 -1 1 1 90 90 2 172 46;
+#X coords 0 -1 1 1 89 89 2 172 46;
 #X gopspill 1;

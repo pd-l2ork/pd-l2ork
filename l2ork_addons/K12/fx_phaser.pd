@@ -2,16 +2,16 @@
 #X obj 20 291 inlet~;
 #X obj 20 337 outlet~;
 #X obj 108 16 inlet;
-#X obj 135 154 ggee/image @pd_extra/K12/objects/fx_phaser.png 1 0 25
+#X obj 134 153 ggee/image @pd_extra/K12/objects/fx_phaser.png 1 0 25
 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X obj 201 134 preset_node k12;
 #X obj 20 314 rj/e_phaser;
 #X msg 83 265 freq \$1;
 #X msg 139 265 depth \$1;
 #X obj 108 164 hsl 74 14 0 127 0 1 \$0-s-null \$0-r-null empty -2 -8
-0 10 #fcfcfc #000000 #000000 500 0 0;
+0 10 #fcfcfc #000000 #000000 500 0 0 1;
 #X obj 108 191 hsl 74 14 0 127 0 1 \$0-s-null \$0-r-null empty -2 -8
-0 10 #fcfcfc #000000 #000000 4000 1 0;
+0 10 #fcfcfc #000000 #000000 4000 1 0 1;
 #X text 107 175 low;
 #X text 160 175 high;
 #X text 155 202 depth;
@@ -19,7 +19,6 @@
 #X text 107 147 freq;
 #X obj 139 241 / 100;
 #X obj 83 241 / 10;
-#X connect 0 0 5 0;
 #X connect 2 0 8 0;
 #X connect 4 0 8 0;
 #X connect 5 0 1 0;
@@ -30,5 +29,5 @@
 #X connect 13 0 9 0;
 #X connect 15 0 7 0;
 #X connect 16 0 6 0;
-#X coords 0 -1 1 1 90 90 2 102 134;
+#X coords 0 -1 1 1 89 89 2 102 134;
 #X gopspill 1;

@@ -1,5 +1,5 @@
-#N canvas 485 324 394 369 10;
-#X obj 192 61 ggee/image @pd_extra/K12/objects/midi_synth.png 1 0 25
+#N canvas 809 317 394 369 10;
+#X obj 191 60 ggee/image @pd_extra/K12/objects/midi_synth.png 1 0 25
 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X obj 107 321 outlet~;
 #X obj 260 321 outlet~;
@@ -26,5 +26,5 @@
 #X connect 10 1 12 0;
 #X connect 12 0 1 0;
 #X connect 12 1 2 0;
-#X coords 0 -1 1 1 90 90 2 159 41;
+#X coords 0 -1 1 1 89 89 2 159 41;
 #X gopspill 1;

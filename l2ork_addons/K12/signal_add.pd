@@ -1,5 +1,5 @@
-#N canvas 560 267 352 302 10;
-#X obj 129 193 ggee/image @pd_extra/K12/objects/signal_add.png 1 0
+#N canvas 560 267 352 302.062 10;
+#X obj 128 192 ggee/image @pd_extra/K12/objects/signal_add.png 1 0
 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X obj 42 167 +~;
 #X obj 92 111 inlet~;
@@ -8,5 +8,5 @@
 #X connect 1 0 4 0;
 #X connect 2 0 1 1;
 #X connect 3 0 1 0;
-#X coords 0 -1 1 1 90 90 2 96 173;
+#X coords 0 -1 1 1 89 89 2 96 173;
 #X gopspill 1;

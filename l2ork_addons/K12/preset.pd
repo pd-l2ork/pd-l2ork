@@ -1,19 +1,19 @@
 #N canvas 427 183 342 280 10;
-#X obj 133 107 ggee/image @pd_extra/K12/objects/preset.png 1 0 25 25
+#X obj 132 106 ggee/image @pd_extra/K12/objects/preset.png 1 0 25 25
 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X obj 105 120 hradio 15 1 0 4 \$0-send-none \$0-receive-none empty
-0 -8 0 10 #fcfcfc #d86c6c #000000 0;
+0 -8 0 10 #fcfcfc #d86c6c #000000 0 1;
 #X msg 46 210 store \$1;
 #X msg 105 210 recall \$1;
 #X obj 105 150 hradio 15 1 0 4 \$0-s-null \$0-r-null empty 0 -8 0 10
-#fcfcfc #78b478 #000000 0;
+#fcfcfc #78b478 #000000 0 1;
 #X text 102 104 store;
 #X text 102 134 recall;
 #X obj 46 234 preset_node k12;
 #X obj 169 120 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#d86c6c #000000;
+#d86c6c #000000 1;
 #X obj 169 150 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#78b478 #000000;
+#78b478 #000000 1;
 #X obj 40 29 inlet;
 #X obj 80 29 inlet;
 #X text 108 119 0;
@@ -32,5 +32,5 @@ empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X connect 4 0 9 0;
 #X connect 10 0 4 0;
 #X connect 11 0 1 0;
-#X coords 0 -1 1 1 90 90 2 100 87;
+#X coords 0 -1 1 1 89 89 2 100 87;
 #X gopspill 1;

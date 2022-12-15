@@ -1,7 +1,7 @@
 #N canvas 319 208 341 392 10;
 #X obj 26 358 outlet;
 #X obj 25 15 inlet;
-#X obj 209 199 ggee/image @pd_extra/K12/objects/wii_nunchuk_stick.png
+#X obj 208 198 ggee/image @pd_extra/K12/objects/wii_nunchuk_stick.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
 #X obj 82 358 outlet;
@@ -54,5 +54,5 @@
 #X connect 10 0 5 0;
 #X connect 10 1 11 0;
 #X connect 10 2 11 1;
-#X coords 0 -1 1 1 90 90 2 176 179;
+#X coords 0 -1 1 1 89 89 2 176 179;
 #X gopspill 1;

@@ -1,15 +1,15 @@
-#N canvas 512 64 389 487 10;
-#X obj 150 106 ggee/image @pd_extra/K12/objects/math_random.png 1 0
+#N canvas 1431 390 389 487 10;
+#X obj 149 105 ggee/image @pd_extra/K12/objects/math_random.png 1 0
 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
-#X obj 121 141 nbx 5 19 -1e+37 1e+37 0 1 \$0-s-null \$0-r-null empty
-0 -8 0 16 #fcfcfc #000000 #000000 127 256 1 0;
+#X obj 125 138 nbx 5 19 -1e+37 1e+37 0 1 \$0-s-null \$0-r-null empty
+0 -8 0 16 #fcfcfc #000000 #000000 127 256 1 0 1 0;
 #X obj 8 45 inlet;
-#X obj 121 116 nbx 5 19 -1e+37 1e+37 0 1 \$0-s-null \$0-r-null empty
-0 -8 0 16 #fcfcfc #000000 #000000 0 256 1 0;
+#X obj 125 116 nbx 5 19 -1e+37 1e+37 0 1 \$0-s-null \$0-r-null empty
+0 -8 0 16 #fcfcfc #000000 #000000 0 256 1 0 1 0;
 #X obj 62 22 preset_node k12;
 #X obj 8 451 outlet;
-#X text 120 100 low;
-#X text 175 157 high;
+#X text 124 101 low;
+#X text 172 155 high;
 #X obj 63 45 preset_node k12;
 #X obj 8 67 sel 1;
 #X obj 8 425 int;
@@ -58,5 +58,5 @@
 #X connect 22 0 23 0;
 #X connect 23 0 3 0;
 #X connect 24 0 22 0;
-#X coords 0 -1 1 1 90 90 2 117 86;
+#X coords 0 -1 1 1 89 89 2 117 86;
 #X gopspill 1;

@@ -1,14 +1,14 @@
-#N canvas 535 200 419 431 10;
-#X obj 129 133 ggee/image @pd_extra/K12/objects/signal_envelope.png
+#N canvas 1136 324 419 431 10;
+#X obj 128 132 ggee/image @pd_extra/K12/objects/signal_envelope.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
 #X obj 59 310 vline~;
 #X obj 99 143 hsl 79 19 5 2000 0 0 \$0-s-null \$0-r-null attack 21
-10 0 10 #fcfcfc #000000 #000000 0 1 0;
+10 0 10 #fcfcfc #000000 #000000 0 1 0 1;
 #X text 97 126 short;
 #X text 156 125 long;
 #X obj 99 165 hsl 79 19 5 2000 0 0 \$0-s-null \$0-r-null decay 24 9
-0 10 #fcfcfc #000000 #000000 1620 1 0;
+0 10 #fcfcfc #000000 #000000 0 1 0 1;
 #X obj 59 267 pack 0 0 0;
 #X obj 59 166 sel 1;
 #X obj 59 68 inlet;
@@ -47,5 +47,5 @@
 #X connect 19 0 6 0;
 #X connect 20 0 21 0;
 #X connect 21 0 17 1;
-#X coords 0 -1 1 1 90 90 2 96 113;
+#X coords 0 -1 1 1 89 89 2 96 113;
 #X gopspill 1;

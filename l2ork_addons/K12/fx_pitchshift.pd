@@ -2,11 +2,11 @@
 #X obj 7 238 inlet~;
 #X obj 7 284 outlet~;
 #X obj 130 12 inlet;
-#X obj 155 154 ggee/image @pd_extra/K12/objects/fx_pitchshift.png 1
+#X obj 154 153 ggee/image @pd_extra/K12/objects/fx_pitchshift.png 1
 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X obj 221 134 preset_node k12;
 #X obj 130 170 nbx 5 19 -127 127 0 1 \$0-s-null \$0-r-null empty 0
--8 0 16 #fcfcfc #000000 #000000 0 256 1 0;
+-8 0 16 #fcfcfc #000000 #000000 0 256 1 0 1 0;
 #X text 150 187 pitch;
 #X msg 130 238 pitch \$1;
 #X obj 7 261 rjlib/rj/e_pitchshift;
@@ -16,5 +16,5 @@
 #X connect 5 0 7 0;
 #X connect 7 0 8 1;
 #X connect 8 0 1 0;
-#X coords 0 -1 1 1 90 90 2 122 134;
+#X coords 0 -1 1 1 89 89 2 122 134;
 #X gopspill 1;
