@@ -1,4 +1,4 @@
-#N canvas 503 242 684 534 10;
+#N canvas 127 229 684 534 10;
 #X obj 149 146 ggee/image @pd_extra/K12/objects/raspberrypi_motor_off.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
@@ -38,7 +38,7 @@
 #X msg 520 361 togglepwm 1;
 #X msg 405 307 pwmrange \$1;
 #X obj 405 286 + 1;
-#X obj 179 156 tgl 15 0 \$0-bs-null \$0-br-null stay\ put: -54 5 0
+#X obj 180 156 tgl 15 0 \$0-bs-null \$0-br-null stay\ put: -55 5 0
 10 #fcfcfc #000000 #000000 0 1 1;
 #X obj 325 202 gate 2;
 #X obj 325 179 + 1;

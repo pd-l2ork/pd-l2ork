@@ -1,4 +1,4 @@
-#N canvas 1133 250 508 447 10;
+#N canvas 1133 262 508 447 10;
 #X obj 216 93 ggee/image @pd_extra/K12/objects/arduino_analog_out.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;
@@ -71,7 +71,7 @@
 #000000 #000000 -1 256 3 0 1 0;
 #X obj 238 134 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 0 1 1;
-#X text 200 131 servo:;
+#X text 200 133 servo:;
 #X text 196 102 PWM OUTPUT;
 #X obj 280 73 preset_node k12;
 #X obj 266 294 gate 2 1;
