@@ -588,6 +588,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Further refined the issue of creating objects dragging them with the K12 menu in the mix and starting with the mouse being over the K12 menu (now we disable the Put menu when hovering over the K12 menu).
 *Cosmetic improvements to the K12 objects.
 *Added missing functions to the dummy gpio object to prevent unnecessary error messages in the console.
+*Fixed issue that manifests when getting the close prompt without saving the patch and after having the canvas zoomed, the scrollbars and the K12 menu do not update after zoom reset and before the close dialog appears.
 
 
 

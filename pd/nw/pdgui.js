@@ -2185,6 +2185,15 @@ function canvas_menuclose_callback(cid_for_dialog, cid, force) {
     // big workaround-- apparently the dialog placement algo and the nw.js
     // zoomLevel state change don't happen deterministically. So we set a
     // timeout to force the dialog to render after the zoomLevel change.
+    // ico@vt.edu 2022-12-15: update K12_menu and getscroll to update
+    // scrollbars in case we are changing zoom level. otherwise menu and
+    // scrollbars end-up being incorrect. we delay this to allow for
+    // zoom to update.
+    //post("canvas_menuclose_callback");
+    w.setTimeout(function() {
+        update_k12_menu(cid);
+        do_getscroll(cid, 1);
+    }, 0);
 
     // Probably the best solution is to give up on using the nw.js zoomLevel
     // method altogether and do canvas zooming completely in the DOM. This will
