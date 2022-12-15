@@ -1,20 +1,26 @@
 PD-L2ORK TODO:
 *Seek RPi version of nw.js 0.67.1. IN PROGRESS
 
-*Patch does not close after prompting to save subpatches, leaving "abstraction dirty" border.
-  *Looks like 2 potential bugs:
-    *Patch not being marked not dirty.
-    *Pd-L2Ork not closing the patch after saving all dirty subpatches.
-  *Cannot reproduce on OSX.
-
 *When resizing object past its minimum width, its text should not get any narrower.
 
 *Refine K12 object sizes to make images fit better. JUSTIN
 
 *Add translations for the K12 menu tooltips.
 
+*Test nwjs 0.67.1 for regressions:
+  *Patch window positioning: loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
+  *Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
+    *Investigate index.js' nw_create_window, and the pdgui.js' canvas_check_geometry.
+    *Also use index.js console positioning aspect, if necessary.
+    *UPDATE: scripted repetitive vis/unvis window in pitch_relationships patch makes the window open further down (but not always) and makes the window bigger.
+    *Clean-up all the other offsets found throughout the code (e.g. window_offset, which does not appear to affect the setbounds call).
+
+*Add canvas options for nomenu, background color, draw border, and ontop (if it works in nw.js). Test noscroll option.
+
 *Port vanilla garray set colors, line width, visibility, display style, and disable mouse editing (disabling mouse editing is URGENT for the forgotten planet module).
   *Make sure that if an array is not editable, that is passes along its mouse interaction to objects below.
+
+*Consider implementing verbose option from vanilla.
 
 *Implement object tooltips.
 
@@ -36,16 +42,6 @@ PD-L2ORK TODO:
     *listbox gatom
     *file
     *force close pd instance to ensure there are no stray ones left? (sounds potentially counterproductive given we also have -unique flag)
-
-*Test nwjs 0.67.1 for regressions:
-  *Patch window positioning: loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
-  *Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
-    *Investigate index.js' nw_create_window, and the pdgui.js' canvas_check_geometry.
-    *Also use index.js console positioning aspect, if necessary.
-    *UPDATE: scripted repetitive vis/unvis window in pitch_relationships patch makes the window open further down (but not always) and makes the window bigger.
-    *Clean-up all the other offsets found throughout the code (e.g. window_offset, which does not appear to affect the setbounds call).
-
-*Add canvas options for nomenu, background color, draw border, and ontop (if it works in nw.js). Test noscroll option.
 
 *Pick the best nw.js (==> denotes the current choice)
   *Current status:
@@ -580,6 +576,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Forgot to add updates tar_em_up.sh script for dummy gpio and spi externals for Windows and OSX.
 *Bunch of additional refinements of the build process due to inclusion of the dummy gpio and spi externals.
 *Added way to update default theme on Windows.
+*Ensured that Windows installer installs settings system-wide, that pd-l2ork upon quitting (re)saves settings, that Windows installer now provides a custom new default theme (60-hz), that Windows uninstall does not obliterate user settings, and that Windows installer does not ask redundant questions about uninstalling older version.
 
 
 
