@@ -66,6 +66,18 @@ static void disis_gpio_bang(t_disis_gpio_dummy *x)
 
 }
 
+static void disis_gpio_pwmrange(t_disis_gpio *x, t_float range) {
+
+}
+
+static void disis_gpio_pwmclock(t_disis_gpio *x, t_float clock) {
+
+}
+
+static void disis_gpio_servomode(t_disis_gpio *x, t_float mode) {
+
+}
+
 static void disis_gpio_free(t_disis_gpio_dummy *x) {
 
 }
@@ -104,4 +116,10 @@ void disis_gpio_setup(void)
     //    A_FLOAT, 0);
     class_addfloat(disis_gpio_dummy_class, disis_gpio_float);
     class_addbang(disis_gpio_dummy_class, disis_gpio_bang);
+    class_addmethod(disis_gpio_class, (t_method)disis_gpio_servomode, gensym("servomode"),
+        A_FLOAT, 0);
+    class_addmethod(disis_gpio_class, (t_method)disis_gpio_pwmrange, gensym("pwmrange"),
+        A_FLOAT, 0);
+    class_addmethod(disis_gpio_class, (t_method)disis_gpio_pwmclock, gensym("pwmclock"),
+        A_FLOAT, 0);
 }
