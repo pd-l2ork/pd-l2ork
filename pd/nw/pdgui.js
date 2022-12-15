@@ -9424,15 +9424,18 @@ function canvas_params(nw_win, cid)
             gop_svgs[i].style.display = "block";
         }
     }
-    //post("canvas_params calculated bbox: x=" + bbox.x + " w=" + bbox.width);
+    //post("canvas_params calculated bbox: x=" + bbox.x +
+    //     " w=" + bbox.width + " offset=" + k12_menu_canvas_x[cid]);
     if ((k12_mode == 1 || k12_menu_vis == 1) &&
         svg_elem.classList.contains("editmode")) {
+        if (bbox.x == 0 && bbox.width == 0)
+            k12_menu_canvas_x[cid] = 0;
         //post("canvas params--expanding the window size");
         if (!k12_menu_canvas_x[cid] ||
             ((bbox.x < 0 ? bbox.x : 0)  - 155) < k12_menu_canvas_x[cid])
             k12_menu_canvas_x[cid] = (bbox.x < 0 ? bbox.x : 0)  - 155;
         bbox.width += 155;
-        bbox.x = (bbox.x < 0 ? bbox.x : 0)  - 155;
+        bbox.x = k12_menu_canvas_x[cid];
     }
     //post("...post k12 menu canvas_params calculated bbox: x=" + bbox.x + " w=" + bbox.width);
     // We try to do Pd-extended style canvas origins. That is, coord (0, 0)
