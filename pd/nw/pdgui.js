@@ -104,6 +104,7 @@ function gui_set_current_dir(dummy, dir_and_filename) {
 }
 
 function gui_set_gui_preset(name) {
+    //post("gui_set_gui_preset " + name);
     skin.set(name);
 }
 

@@ -339,6 +339,7 @@ extern int sys_autocomplete, sys_autocomplete_prefix,
 /* this is called from main() in s_entry.c */
 int sys_main(int argc, char **argv)
 {
+    fprintf(stderr, "sys_main");
     int i, noprefs;
     t_namelist *nl;
     sys_externalschedlib = 0;

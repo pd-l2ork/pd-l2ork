@@ -193,6 +193,7 @@ static void sys_initloadpreferences( void)
 
 static int sys_getpreference(const char *key, char *value, int size)
 {
+    //post("sys_getpreference");
     HKEY hkey;
     DWORD bigsize = size;
     LONG err = RegOpenKeyEx(HKEY_CURRENT_USER,
@@ -200,13 +201,14 @@ static int sys_getpreference(const char *key, char *value, int size)
     if (err != ERROR_SUCCESS)
     {
         err = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-            "Software\\Pd-L2Ork", 0,  KEY_QUERY_VALUE, &hkey);
+            "Software\\WOW6432Node\\Pd-L2Ork", 0,  KEY_QUERY_VALUE, &hkey);
         if (err != ERROR_SUCCESS)
         {
             return (0);
 	}
     }
     err = RegQueryValueEx(hkey, key, 0, 0, value, &bigsize);
+    //post("...%s %s", key, value);
     if (err != ERROR_SUCCESS)
     {
         RegCloseKey(hkey);
@@ -696,6 +698,7 @@ void sys_loadpreferences( void)
     {
         char preset_buf[MAXPDSTRING];
         sscanf(prefbuf, "%s", preset_buf);
+        //post("gui_preset = %s", preset_buf);
         sys_gui_preset = gensym(preset_buf);
     }
     if (sys_getpreference("flags", prefbuf, MAXPDSTRING))
