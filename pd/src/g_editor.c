@@ -1309,7 +1309,6 @@ void canvas_undo_paste(t_canvas *x, void *z, int action)
     }
 }
 
-void canvas_dirtyclimb(t_canvas *x, int n);
 void clone_iterate(t_pd *z, t_canvas_iterator it, void* data);
 int clone_match(t_pd *z, t_symbol *name, t_symbol *dir);
 int clone_isab(t_pd *z);

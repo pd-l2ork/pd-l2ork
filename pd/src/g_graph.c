@@ -241,7 +241,7 @@ int canvas_hastoplevelscalar(t_canvas *x)
 /* JMZ: emit a closebang message */
 void canvas_closebang(t_canvas *x);
 
-void canvas_dirtyclimb(t_canvas *x, int n);
+void canvas_dirtyclimb(t_canvas *x, int n, int draw_only);
 
     /* delete an object from a glist and free it */
 void glist_delete(t_glist *x, t_gobj *y)
@@ -273,7 +273,7 @@ void glist_delete(t_glist *x, t_gobj *y)
                 drawcommand = 1;
 
             if(((t_canvas *)y)->gl_dirty)
-                canvas_dirtyclimb((t_canvas *)y, 0);
+                canvas_dirtyclimb((t_canvas *)y, 0, 0);
         }
      
         wasdeleting = canvas_setdeleting(canvas, 1);
@@ -1469,7 +1469,7 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
         // ico@vt.edu 2022-09-28: reattach labels dirty and subdirty
         // upon redrawing, so that the GOP border is colored accordingly.
         //post("===========is gop dirty? %zx %d", x, x->gl_dirty);
-        canvas_dirtyclimb(x, x->gl_dirty);
+        canvas_dirtyclimb(x, x->gl_dirty, 1);
         /* reselect it upon redrawing if it was selected before */
         if (glist_isselected(parent_glist, gr))
             gobj_select(gr, parent_glist, 1);

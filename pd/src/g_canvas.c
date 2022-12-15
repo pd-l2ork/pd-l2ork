@@ -841,18 +841,21 @@ void canvas_reflecttitle(t_canvas *x)
 
 /* climbs up to the root canvas while enabling or disabling visual markings for dirtiness
     of traversed canvases */
-void canvas_dirtyclimb(t_canvas *x, int n)
+void canvas_dirtyclimb(t_canvas *x, int n, int draw_only)
 {
+    //post("canvas_dirtyclimb %zx dirty=%d draw_only=%d", x, n, draw_only);
     if (x->gl_owner)
     {
+        //post("...first %zx dirty=%d subdirty=%d", x, x->gl_dirty, x->gl_subdirties);
         gobj_dirty(&x->gl_gobj, x->gl_owner,
             (n ? 1 : (x->gl_subdirties ? 2 : 0)));
         x = x->gl_owner;
         while(x->gl_owner)
         {
-            x->gl_subdirties += ((unsigned)n ? 1 : x->gl_subdirties > 0 ? -1 : 0);
-            if(!x->gl_dirty)
-                gobj_dirty(&x->gl_gobj, x->gl_owner, (x->gl_subdirties ? 2 : 0));
+            //post("...next %zx dirty=%d subdirty=%d", x, x->gl_dirty, x->gl_subdirties);
+            if (!draw_only)
+                x->gl_subdirties += ((unsigned)n ? 1 : x->gl_subdirties > 0 ? -1 : 0);
+            gobj_dirty(&x->gl_gobj, x->gl_owner, (x->gl_subdirties ? 2 : 0));
             x = x->gl_owner;
         }
     }
@@ -1034,7 +1037,7 @@ void canvas_dirty(t_canvas *x, t_floatarg n)
             canvas_reflecttitle(x2);
 
         /* set dirtiness visual markings */
-        canvas_dirtyclimb(x2, (unsigned)n);
+        canvas_dirtyclimb(x2, (unsigned)n, 0);
 
         /* in the case it is an abstraction, we tell all other
             instances that there is eiher one more dirty instance or

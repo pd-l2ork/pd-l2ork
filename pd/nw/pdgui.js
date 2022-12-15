@@ -4756,25 +4756,25 @@ function gui_gobj_deselect(cid, tag) {
 }
 
 function gui_gobj_dirty(cid, tag, state) {
-    //post("gui_gobj_dirty cid=" + cid + " tag=" + tag + " state=" + state);
+    //post("gui_gobj_dirty cid=" + cid + " state=" + state);
     gui(cid).get_gobj(tag, function(e) {
         // ico@vt.edu 2022-09-28: we add two conditions, one
         // for border classes (canvas with GOP disabled) used
         // by non-GOP abstractions, and another, gopborder,
         // for GOP-enabled abstractions
-        var border = e.querySelectorAll(".gopborder");
+        var border = e.querySelectorAll(":scope > .gopborder");
         if (border.length > 0) {
             //post("...got gopborder length=" + border.length + " gopborder=" + border);
-            border[border.length - 1].classList.remove("dirty");
-            border[border.length - 1].classList.remove("subdirty");
+            border[0].classList.remove("dirty");
+            border[0].classList.remove("subdirty");
             if(state === 1) border[border.length - 1].classList.add("dirty");
             else if(state === 2) border[border.length - 1].classList.add("subdirty");
         }
-        border = e.querySelectorAll(".border");
+        border = e.querySelectorAll(":scope > .border");
         if (border.length > 0) {
             //post("...got border length=" + border.length + " border=" + border);
-            border[border.length - 1].classList.remove("dirty");
-            border[border.length - 1].classList.remove("subdirty");
+            border[0].classList.remove("dirty");
+            border[0].classList.remove("subdirty");
             if(state === 1) border[border.length - 1].classList.add("dirty");
             else if(state === 2) border[border.length - 1].classList.add("subdirty");
         }
