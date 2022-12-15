@@ -1383,8 +1383,9 @@ var canvas_events = (function() {
             document.addEventListener("keypress", events.keypress, false);
             document.addEventListener("keyup", events.keyup, false);
             document.addEventListener("mouseup", events.mouseup, false);
-            document.addEventListener("mousemove", events.mousemove, false);
+            //document.addEventListener("mousemove", events.mousemove, false);
             state = "normal";
+            toggle_put_menu(false);
             // ico@vt.edu 2022-12-08: we do this to prevent scroll from
             // "leaking" onto the patchsvg below the k12 menu
             document.body.style.overflow = 'hidden';
@@ -1395,6 +1396,7 @@ var canvas_events = (function() {
             //document.body.style.overflow = 'visible';
             // ico@vt.edu 2022-12-08: we do this to reenable patchsvg
             // scrolling
+            toggle_put_menu(true);
             document.body.style.overflow = 'visible';
             canvas_events.normal();
         },
@@ -2085,6 +2087,30 @@ function instantiate_live_box() {
     if (have_live_box()) {
         canvas_events.create_obj();
     }
+}
+
+// ico@vt.edu 2022-12-15: we toggle off creation of new put
+// menu objects
+function toggle_put_menu(state) {
+    m.put.object.enabled = state;
+    m.put.message.enabled = state;
+    m.put.number.enabled = state;
+    m.put.symbol.enabled = state;
+    m.put.comment.enabled = state;
+    m.put.dropdown.enabled = state;
+    m.put.bang.enabled = state;
+    m.put.toggle.enabled = state;
+    m.put.number2.enabled = state;
+    m.put.vslider.enabled = state;
+    m.put.hslider.enabled = state;
+    m.put.knob.enabled = state;
+    m.put.vradio.enabled = state;
+    m.put.hradio.enabled = state;
+    m.put.vu.enabled = state;
+    m.put.cnv.enabled = state;
+    m.put.image.enabled = state;
+    //m.put.graph.enabled = state;
+    m.put.array.enabled = state;
 }
 
 function update_osx_k12_menu() {
