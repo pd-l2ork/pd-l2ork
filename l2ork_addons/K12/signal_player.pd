@@ -1,9 +1,9 @@
-#N canvas 983 255 373 601 10;
+#N canvas 983 255 348 601 10;
 #X obj 128 192 ggee/image @pd_extra/K12/objects/signal_player.png 1
 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X obj 19 91 inlet;
 #X obj 99 220 hsl 78 11 0 100 0 1 \$0-s-null \$0-r-null start 26 4
-0 10 #fcfcfc #000000 #000000 7700 1 0 1;
+0 10 #fcfcfc #000000 #000000 0 1 0 1;
 #X obj 99 233 hsl 78 11 0 100 0 1 \$0-s-null \$0-r-null end 31 4 0
 10 #fcfcfc #000000 #000000 7700 1 0 1;
 #X obj 167 203 tgl 15 0 \$0-tgl-s \$0-tgl-play-r empty 17 7 0 10 #00fc04
@@ -65,29 +65,29 @@
 #X connect 20 0 18 0;
 #X restore 47 270 pd fileio_logic;
 #X obj 35 410 line~;
-#N canvas 571 236 393 308 play_logic 0;
-#X obj 155 54 inlet;
-#X obj 227 230 t b f;
-#X obj 200 54 inlet;
-#X obj 11 49 inlet;
-#X obj 266 230 t b f;
-#X obj 303 230 t b f;
-#X obj 11 71 - 60;
-#X obj 11 115 expr pow(2 \, \\$f1);
-#X obj 11 93 / 12;
-#X obj 155 160 t f f;
-#X obj 11 138 t b f;
-#X obj 200 160 t f f;
-#X obj 86 308 pack 0 0 0 0;
-#X obj 86 329 outlet;
-#X obj 182 284 expr (abs($f2-$f1))/$f3*1000/$f4;
-#X obj 244 54 inlet;
-#X obj 155 76 / 100;
-#X obj 200 76 / 100;
-#X obj 155 128 *;
-#X obj 200 128 *;
-#X obj 289 54 inlet;
-#X obj 244 76 t b f;
+#N canvas 571 236 393 329 play_logic 0;
+#X obj 155 14 inlet;
+#X obj 227 190 t b f;
+#X obj 200 14 inlet;
+#X obj 11 9 inlet;
+#X obj 266 190 t b f;
+#X obj 303 190 t b f;
+#X obj 11 31 - 60;
+#X obj 11 75 expr pow(2 \, \\$f1);
+#X obj 11 53 / 12;
+#X obj 155 120 t f f;
+#X obj 11 98 t b f;
+#X obj 200 120 t f f;
+#X obj 86 268 pack 0 0 0 0;
+#X obj 86 289 outlet;
+#X obj 182 244 expr (abs($f2-$f1))/$f3*1000/$f4;
+#X obj 244 14 inlet;
+#X obj 155 36 / 100;
+#X obj 200 36 / 100;
+#X obj 155 88 *;
+#X obj 200 88 *;
+#X obj 289 14 inlet;
+#X obj 244 36 t b f;
 #X connect 0 0 16 0;
 #X connect 1 0 14 0;
 #X connect 1 1 14 1;

@@ -1,4 +1,4 @@
-#N canvas 345 207 502 320 10;
+#N canvas 345 207 501 320 10;
 #X obj 14 -174 cnv 15 474 104 empty empty empty 20 12 0 14 #e0e0e0
 #404040 0;
 #X obj 260 -236 preset_hub k12 %hidden% %node% 2 2 14 %node% 2 2 25
@@ -8,7 +8,7 @@
 #X text 11 5 DESCRIPTION This generates white noise.;
 #X text 11 30 OUTLET_0 This outputs white noise. Send this to any effect
 object \, signal math object \, or the sound object.;
-#X restore 447 53 pd META;
+#X restore 445 43 pd META;
 #X obj -1 -215 cnv 3 501 3 empty empty empty 5 14 0 20 #fc8000 #b8b8b8
 0;
 #X obj -1 -243 cnv 15 501 28 empty empty Signal/Noise 5 14 0 20 #880024

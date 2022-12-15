@@ -1,10 +1,11 @@
-#N canvas 424 230 502 411 10;
+#N canvas 424 230 502 422 10;
 #X obj 15 -62 cnv 15 464 102 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
-#X obj 261 -236 preset_hub k12 %hidden% %node% 2 2 14 %preset% 0 74.4186
-%preset% 1 74.4186 %preset% 2 74.4186 %preset% 3 74.4186 %node% 2 2
-25 %preset% 0 0 %node% 2 7 6 %preset% 0 60 %node% 2 10 7 %node% 2 8
-3 %preset% 0 60;
+#X obj 261 -236 preset_hub k12 %hidden% %node% 2 2 14 %preset% 0 30.2326
+%preset% 1 23.2558 %preset% 2 67.4419 %preset% 3 0 %node% 2 2 25 %preset%
+0 0 %preset% 1 1 %preset% 2 1 %preset% 3 0 %node% 2 7 6 %preset% 0
+46 %preset% 1 58 %preset% 2 24 %preset% 3 60 %node% 2 10 7 %node% 2
+8 3 %preset% 0 46 %preset% 1 58 %preset% 2 24 %preset% 3 60;
 #X obj 22 64 K12/output;
 #N canvas 690 254 450 514 META 0;
 #X text 16 62 OUTLET_0 This outputs a sawtooth wave. Send this to any

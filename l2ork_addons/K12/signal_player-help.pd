@@ -1,12 +1,13 @@
 #N canvas 318 111 502 570 10;
 #X obj 227 -21 preset_hub k12 %hidden% %node% 2 6 14 %preset% 0 100
-%preset% 1 100 %preset% 2 100 %node% 2 10 8 %preset% 0 0 %preset% 1
-0 %preset% 2 50.6493 %node% 2 6 25 %preset% 0 1 %preset% 1 1 %preset%
-2 1 %node% 2 7 6 %preset% 0 1 %preset% 1 0 %preset% 2 1 %node% 2 8
-7 %node% 2 11 6 %preset% 0 60 %preset% 1 48 %preset% 2 55 %node% 2
-10 7 %preset% 0 100 %preset% 1 100 %preset% 2 29.8701 %node% 3 10 15
-14 %preset% 0 /usr/lib/pd-l2ork/extra/K12/voice2.wav %preset% 1 /usr/lib/pd-l2ork/extra/K12/voice2.wav
-%preset% 2 /usr/lib/pd-l2ork/extra/K12/voice2.wav;
+%preset% 1 100 %preset% 2 100 %preset% 3 100 %node% 2 10 8 %preset%
+0 0 %preset% 1 0 %preset% 2 50.6493 %preset% 3 80.5195 %node% 2 6 25
+%preset% 0 1 %preset% 1 1 %preset% 2 1 %preset% 3 1 %node% 2 7 6 %preset%
+0 1 %preset% 1 0 %preset% 2 1 %preset% 3 0 %node% 2 8 7 %node% 2 11
+6 %preset% 0 60 %preset% 1 48 %preset% 2 55 %preset% 3 58 %node% 2
+10 7 %preset% 0 100 %preset% 1 100 %preset% 2 29.8701 %preset% 3 87.013
+%node% 3 10 15 14 %preset% 0 voice2.wav %preset% 1 voice2.wav %preset%
+2 voice2.wav %preset% 3 voice2.wav;
 #X obj 2 160 cnv 15 480 456 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
 #X obj -8 -3 cnv 3 501 3 empty empty empty 5 14 0 20 #fc8000 #b8b8b8

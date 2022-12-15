@@ -1,6 +1,6 @@
-#N canvas 318 98 502 484 10;
-#X obj 233 -22 preset_hub k12 %hidden% %node% 2 4 14 %node% 2 4 28
-%node% 2 7 10 %node% 2 8 7 %node% 2 7 14;
+#N canvas 318 98 502 492 10;
+#X obj 233 -22 preset_hub k12 %hidden% %node% 2 4 14 %node% 2 7 10
+%node% 2 7 14 %node% 2 4 25 %node% 2 8 6;
 #X obj 9 148 cnv 15 483 148 empty empty empty 20 12 0 14 #dcdcdc #404040
 0;
 #X obj 0 -2 cnv 3 501 3 empty empty empty 5 14 0 20 #fc8000 #b8b8b8

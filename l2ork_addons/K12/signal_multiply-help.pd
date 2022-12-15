@@ -1,8 +1,8 @@
-#N canvas 278 90 502 510 10;
+#N canvas 278 90 498 518 10;
 #X obj 260 -236 preset_hub k12 %hidden% %node% 2 2 14 %preset% 0 100
-%preset% 1 0 %node% 2 8 4 %preset% 0 72 %preset% 1 783.991 %node% 2
-10 4 %preset% 0 -24 %preset% 1 8.1758 %node% 2 2 25 %preset% 0 0 %node%
-2 7 6 %preset% 0 72 %node% 2 9 6 %preset% 0 -24 %node% 2 13 7;
+%preset% 1 0 %node% 2 2 25 %preset% 0 0 %node% 2 7 6 %preset% 0 72
+%node% 2 9 6 %preset% 0 -24 %node% 2 13 7 %node% 2 8 3 %node% 2 10
+3;
 #X obj 11 33 cnv 15 468 104 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
 #X obj 18 160 K12/output;
@@ -30,8 +30,9 @@ empty empty empty 48 50 1 0 10 #000000 0 -8 24 25 0 1 1;
 #X text 240 -109 Recall leftmost presetto start the example.;
 #X text 113 54 The Signal Multiply object multiplies two signals together.
 One way to think of it is that the wave at the right inlet controls
-the loudness of the wave at the left inlet. The result is the multiplication
-of the two signals.;
+the loudness (or amplitude) of the wave at the left inlet. The result
+is the multiplication of the two signals \, or what we refer to as
+amplitude modulation.;
 #X connect 7 0 8 0;
 #X connect 8 0 11 0;
 #X connect 9 0 10 0;

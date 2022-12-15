@@ -11,17 +11,17 @@
 #X obj 99 143 tgl 15 0 \$0-tgl-s \$0-tgl-r empty 17 7 0 10 #fc0400
 #000000 #000000 0 1 1;
 #X obj 99 160 hsl 78 11 0 100 0 1 \$0-s-null \$0-r-null start 26 4
-0 10 #fcfcfc #000000 #000000 0 1 0 1;
+0 10 #fcfcfc #000000 #000000 1377 1 0 1;
 #X obj 99 173 hsl 78 11 0 100 0 1 \$0-s-null \$0-r-null end 31 4 0
-10 #fcfcfc #000000 #000000 1300 1 0 1;
+10 #fcfcfc #000000 #000000 77 1 0 1;
 #X text 95 127 rec;
 #X obj 139 562 outlet~;
 #X obj 140 222 sel 1 0;
 #X obj 47 247 delay 10000;
 #X obj 139 143 nbx 1 14 0 9 0 0 empty empty empty 0 -8 0 12 #fcfcfc
-#000000 #000000 0 256 3 0 1 0;
-#X text 122 141 snd:;
-#N canvas 273 195 523 442 fileio_logic 0;
+#000000 #000000 1 256 3 0 1 0;
+#X text 122 142 snd:;
+#N canvas 819 278 523 442 fileio_logic 1;
 #X obj 142 -23 inlet;
 #X obj 142 159 patch_name 99;
 #X obj 142 203 tosymbol;
