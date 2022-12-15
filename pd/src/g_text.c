@@ -2286,7 +2286,7 @@ extern t_rtext *glist_tryfindrtext(t_glist *gl, t_text *who);
 static void text_getrect(t_gobj *z, t_glist *glist,
     int *xp1, int *yp1, int *xp2, int *yp2)
 {
-    //fprintf(stderr,"text_getrect\n");
+    //post("text_getrect");
     t_text *x = (t_text *)z;
     int width = 0, height = 0, iscomment = (x->te_type == T_TEXT);
     t_float x1, y1, x2, y2;
@@ -2335,14 +2335,14 @@ static void text_getrect(t_gobj *z, t_glist *glist,
         built.  LATER reconsider when "vis" flag should be on and off? */
     else if (glist->gl_editor && glist->gl_editor->e_rtext)
     {
+        int font = glist_getfont(glist);
+        int fontwidth = sys_fontwidth(font);
         t_rtext *y = glist_tryfindrtext(glist, x);
         if (y)
         {
             width = rtext_width(y);
             if (is_dropdown(x))
             {
-                int font = glist_getfont(glist);
-                int fontwidth = sys_fontwidth(font);
                 //width += fontwidth * 2;
                 width = fontwidth * (((t_dropdown *)x)->a_maxnamewidth + 2);
             }
@@ -2382,10 +2382,26 @@ static void text_getrect(t_gobj *z, t_glist *glist,
                 pd_class(&z->g_pd) == canvas_class &&
                     !((t_glist *)z)->gl_isgraph)
         {
-            if (width < (IOWIDTH * m) * 2 - IOWIDTH)
+            /*
+            // debug stuff
+            t_rtext *y = glist_tryfindrtext(glist, x);
+            char *bufdbg = NULL;
+            int bufsizedbg;
+            if (y) rtext_gettext(y, &bufdbg, &bufsizedbg);
+            */
+            // ico@vt.edu 2022-12-14: keeping the text object width
+            // consistent with text width. that way resizing it will
+            // not result in weird fractional resizing and the
+            // inability to return to the original width.
+            int nlet_width =
+                ((((IOWIDTH * m) * 2 - IOWIDTH) / fontwidth) + 1) * fontwidth;
+            // more debugging
+            //post("object=%s nlet_width=%d width=%d",
+            //  (bufdbg ? bufdbg : "???"), nlet_width, width);
+            if (width < nlet_width)
             {
                 //we have to resize the object
-                width = (IOWIDTH * m) * 2 - IOWIDTH;
+                width = nlet_width;
             }
         }
         height = rtext_height(y) - (iscomment << 1);
@@ -2503,7 +2519,7 @@ static void text_vis(t_gobj *z, t_glist *glist, int vis)
     char type[8];
     text_get_typestring(x->te_type, type);
 #ifdef PDL2ORK
-    //if we are in k12 mode and this is hub with level 1 (global)
+    //if we this is hub with level 1 (global)
     //don't draw it and make its width/height 0
     int exception = 0;
     //post("...exception=%d k12=%d", exception, sys_k12_mode);

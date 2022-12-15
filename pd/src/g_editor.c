@@ -6423,9 +6423,31 @@ void canvas_motion(t_canvas *x, t_floatarg xpos, t_floatarg ypos,
                         !((t_canvas *)ob)->gl_isgraph)))
             {
                 //post("...object");
+                // ico@vt.edu 2022-12-14: check for minimum allowable
+                // width based on how many nlets we have (in or out,
+                // whichever are the largest number). this should be
+                // in sync with text_getrect inside g_text.c. this is
+                // why there we add one character width to squash
+                // any decimal difference because number of nlets and
+                // spaces may generate a number that is in between
+                // the width of two characters.
+                int minwidth = 1;
+                int no = obj_noutlets(ob);
+                int ni = obj_ninlets(ob);
+                int m = ( ni > no ? ni : no);
+                if (minwidth < (((IOWIDTH * m) * 2 - IOWIDTH)
+                    / sys_fontwidth(glist_getfont(x))))
+                {
+                    // object's minimum width is less than its required
+                    // width due to the number of nlets, so we change
+                    // the minimum allowable width
+                    minwidth = (((IOWIDTH * m) * 2 - IOWIDTH)
+                        / sys_fontwidth(glist_getfont(x)));
+                }
                 wantwidth = wantwidth / sys_fontwidth(glist_getfont(x));
-                if (wantwidth < 1)
-                    wantwidth = 1;
+
+                if (wantwidth < minwidth)
+                    wantwidth = minwidth;
                 ob->te_width = wantwidth;
                 gobj_vis(resized_gobj, x, 0);
                 canvas_fixlinesfor(x, ob);
