@@ -2,7 +2,7 @@ PD-L2ORK TODO:
 *Seek RPi version of nw.js 0.67.1. IN PROGRESS
 
 *no fluid~ on Windows. "specified module could not be found. (126)" error.
-  *do we have GM soundfont? YES
+  *looks like a combination of incompatible libfluidsynth and libportaudio (prior to latest pacman upgrade).
 
 *Still unpredictable behavior when creating new objects and dragging them with the K12 menu in the mix.
 
