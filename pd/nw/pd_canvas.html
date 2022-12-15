@@ -32,77 +32,8 @@
          class="noselect"
          viewBox="0 0 0 0">
     </svg>
-    <div id="canvas_find" style="display:none;">
-      <label><input type="text"
-                    id="canvas_find_text"
-                    name="canvas_find_text"
-                    defaultValue="Search in Canvas"
-                    style="width:10em"/>
-      </label>
-      <label><span data-i18n="canvas.find.whole_word"
-          style="margin-left: 7px;  margin-right: -3px;"></span>
-          <input type="checkbox"
-               id="canvas_find_whole_word"
-               name="canvas_find_whole_word"
-               style="position: relative; top: 2px; margin-right: 5px;"/> 
-      </label>
-      <button type="button"
-              id="canvas_find_button"
-              data-i18n="[title]canvas.find.search_tt">
-        <span data-i18n="canvas.find.search"></span>
-      </button>
-    </div>
-    <div style="display:none;" id="dropdown_list" class="noselect">
-      <ol></ol>
-    </div>
-    <dialog id="save_before_quit">
-      <h5 style="text-align: center;"><span data-i18n="canvas.save_dialog.prompt"></span>
-        <span id="save_before_quit_filename"></span>?
-      </h5>
-      <div class="submit_buttons">
-        <button type="button"
-                id="yes_button"
-                data-i18n="[title]canvas.save_dialog.yes_tt">
-          <span data-i18n="canvas.save_dialog.yes"></span>
-        </button>
-        <button type="button"
-                id="no_button"
-                data-i18n="[title]canvas.save_dialog.no_tt">
-          <span data-i18n="canvas.save_dialog.no"></span>
-        </button>
-        <button type="button"
-                id="cancel_button"
-                data-i18n="[title]canvas.save_dialog.cancel_tt">
-          <span data-i18n="canvas.save_dialog.cancel"></span>
-        </button>
-      </div>
-    </dialog>
-   
-        <dialog id="abstract_dialog">
-      <h4><span style="white-space: pre-line"
-                data-i18n="canvas.abstract_dialog.prompt"></span>
-        <span id="abstract_dialog_candidates"></span>
-      </h4>
-      <h5> <span data-i18n="canvas.abstract_dialog.note"></span> </h5>
-      <div class="abstract_submit_buttons"><button type="button"
-                id="abstract_single_button"
-                data-i18n="[title]canvas.abstract_dialog.single_tt">
-          <span data-i18n="canvas.abstract_dialog.single"></span>
-        </button>
-        <button type="button"
-                id="abstract_all_button"
-                data-i18n="[title]canvas.abstract_dialog.all_tt">
-          <span data-i18n="canvas.abstract_dialog.all"></span>
-        </button>
-        <button type="button"
-                id="abstract_none_button"
-                data-i18n="[title]canvas.abstract_dialog.none_tt">
-          <span data-i18n="canvas.abstract_dialog.none"></span>
-        </button>
-      </div>
-    </dialog>
     <!-- hlkwok@vt.edu: k12 menu -->
-    <div id="k12_menu" class="unselectable" style="position: fixed; left: -175px; top: 0px; height: 100%; width: 155px; background-color:rgba(220, 220, 220, 0.95); display: none; transition: left 0.7s" onmouseover="canvas_events.k12menu()" onmouseout="canvas_events.k12menu_out()">
+    <div id="k12_menu" class="unselectable" style="position: fixed; left: -175px; top: 0px; height: 100%; width: 155px; background-color:rgba(220, 220, 220, 0.95); display: none; transition: left 0.7s">
         <div style="width: 155px"> <!-- Container div -->
             <!-- Top part of k12 menu (Edit div) -->
             <!--
@@ -118,7 +49,7 @@
                 </div>
             </div> --><!-- end Edit div -->
             <!-- k12 menu tabs -->
-            <div id="tab_menu" style="position: relative; display: block; padding: 0px; margin-left: 1px; padding-top: 6px; float: left; height: 100%; width: 154px; overflow-y: scroll; overflow-x: hidden">
+            <div id="tab_menu" style="position: relative; display: block; padding: 0px; margin-left: 1px; padding-top: 6px; float: left; height: 100%; width: 154px; overflow-y: scroll; overflow-x: hidden" onmouseover="canvas_events.k12menu()" onmouseout="canvas_events.k12menu_out()">
                 <!-- RPI tab -->
                 <div class="k12_tab" style="background-color:rgba(204, 0, 0, 0.3)">  
                     <button tabindex="-1" id="rpi_button" class="k12_tab_button" onclick="toggle_tab('rpi_div')">
@@ -428,6 +359,75 @@
         </div> <!-- End container div -->
     </div> <!-- end of k12_menu div -->
     <!-- end of k12 menu -->
+    <div id="canvas_find" style="display:none;">
+      <label><input type="text"
+                    id="canvas_find_text"
+                    name="canvas_find_text"
+                    defaultValue="Search in Canvas"
+                    style="width:10em"/>
+      </label>
+      <label><span data-i18n="canvas.find.whole_word"
+          style="margin-left: 7px;  margin-right: -3px;"></span>
+          <input type="checkbox"
+               id="canvas_find_whole_word"
+               name="canvas_find_whole_word"
+               style="position: relative; top: 2px; margin-right: 5px;"/> 
+      </label>
+      <button type="button"
+              id="canvas_find_button"
+              data-i18n="[title]canvas.find.search_tt">
+        <span data-i18n="canvas.find.search"></span>
+      </button>
+    </div>
+    <div style="display:none;" id="dropdown_list" class="noselect">
+      <ol></ol>
+    </div>
+    <dialog id="save_before_quit">
+      <h5 style="text-align: center;"><span data-i18n="canvas.save_dialog.prompt"></span>
+        <span id="save_before_quit_filename"></span>?
+      </h5>
+      <div class="submit_buttons">
+        <button type="button"
+                id="yes_button"
+                data-i18n="[title]canvas.save_dialog.yes_tt">
+          <span data-i18n="canvas.save_dialog.yes"></span>
+        </button>
+        <button type="button"
+                id="no_button"
+                data-i18n="[title]canvas.save_dialog.no_tt">
+          <span data-i18n="canvas.save_dialog.no"></span>
+        </button>
+        <button type="button"
+                id="cancel_button"
+                data-i18n="[title]canvas.save_dialog.cancel_tt">
+          <span data-i18n="canvas.save_dialog.cancel"></span>
+        </button>
+      </div>
+    </dialog>
+   
+        <dialog id="abstract_dialog">
+      <h4><span style="white-space: pre-line"
+                data-i18n="canvas.abstract_dialog.prompt"></span>
+        <span id="abstract_dialog_candidates"></span>
+      </h4>
+      <h5> <span data-i18n="canvas.abstract_dialog.note"></span> </h5>
+      <div class="abstract_submit_buttons"><button type="button"
+                id="abstract_single_button"
+                data-i18n="[title]canvas.abstract_dialog.single_tt">
+          <span data-i18n="canvas.abstract_dialog.single"></span>
+        </button>
+        <button type="button"
+                id="abstract_all_button"
+                data-i18n="[title]canvas.abstract_dialog.all_tt">
+          <span data-i18n="canvas.abstract_dialog.all"></span>
+        </button>
+        <button type="button"
+                id="abstract_none_button"
+                data-i18n="[title]canvas.abstract_dialog.none_tt">
+          <span data-i18n="canvas.abstract_dialog.none"></span>
+        </button>
+      </div>
+    </dialog>
     <div style="position: fixed; right: 2%; top: 2%; ">
       <strong id="canvas_warning" style="display: none; text-align: right; -webkit-user-select: none; cursor: pointer;">!</strong>
     </div>
