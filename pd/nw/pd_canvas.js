@@ -2092,25 +2092,31 @@ function instantiate_live_box() {
 // ico@vt.edu 2022-12-15: we toggle off creation of new put
 // menu objects
 function toggle_put_menu(state) {
-    m.put.object.enabled = state;
-    m.put.message.enabled = state;
-    m.put.number.enabled = state;
-    m.put.symbol.enabled = state;
-    m.put.comment.enabled = state;
-    m.put.dropdown.enabled = state;
-    m.put.bang.enabled = state;
-    m.put.toggle.enabled = state;
-    m.put.number2.enabled = state;
-    m.put.vslider.enabled = state;
-    m.put.hslider.enabled = state;
-    m.put.knob.enabled = state;
-    m.put.vradio.enabled = state;
-    m.put.hradio.enabled = state;
-    m.put.vu.enabled = state;
-    m.put.cnv.enabled = state;
-    m.put.image.enabled = state;
-    //m.put.graph.enabled = state;
-    m.put.array.enabled = state;
+    // we do this only if we are NOT in k12 mode
+    // since in that mode we don't have the put
+    // menu to begin with. otherwise, we trigger
+    // an error and break the front-end.
+    if (!pdgui.get_k12_mode()) {
+        m.put.object.enabled = state;
+        m.put.message.enabled = state;
+        m.put.number.enabled = state;
+        m.put.symbol.enabled = state;
+        m.put.comment.enabled = state;
+        m.put.dropdown.enabled = state;
+        m.put.bang.enabled = state;
+        m.put.toggle.enabled = state;
+        m.put.number2.enabled = state;
+        m.put.vslider.enabled = state;
+        m.put.hslider.enabled = state;
+        m.put.knob.enabled = state;
+        m.put.vradio.enabled = state;
+        m.put.hradio.enabled = state;
+        m.put.vu.enabled = state;
+        m.put.cnv.enabled = state;
+        m.put.image.enabled = state;
+        //m.put.graph.enabled = state;
+        m.put.array.enabled = state;
+    }
 }
 
 function update_osx_k12_menu() {
