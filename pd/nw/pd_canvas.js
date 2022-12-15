@@ -1382,6 +1382,8 @@ var canvas_events = (function() {
             document.addEventListener("keydown", events.keydown, false);
             document.addEventListener("keypress", events.keypress, false);
             document.addEventListener("keyup", events.keyup, false);
+            document.addEventListener("mouseup", events.mouseup, false);
+            document.addEventListener("mousemove", events.mousemove, false);
             state = "normal";
             // ico@vt.edu 2022-12-08: we do this to prevent scroll from
             // "leaking" onto the patchsvg below the k12 menu
