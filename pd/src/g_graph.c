@@ -1238,6 +1238,11 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
                 y2 - y1,
                 1
             );
+            // ico@vt.edu 2022-12-15: make sure that the dirty
+            // rectangle is redrawn based on dirty and subdirty
+            gui_vmess("gui_gobj_dirty", "xsi",
+                glist_getcanvas(x->gl_owner), tag,
+                (x->gl_dirty ? 1 : x->gl_subdirties ? 2 : 0));
             glist_noselect(x->gl_owner);
             gui_vmess("gui_graph_fill_border", "xsi",
                 glist_getcanvas(x->gl_owner),

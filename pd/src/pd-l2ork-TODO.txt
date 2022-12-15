@@ -577,6 +577,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Refine K12 object sizes to make images fit better.
 *Fixed bug where selection box, when moving mouse over K12 menu, gets stuck and returning to the canvas keeps the selection stuck until user clicks. Similarly, now objects can be dragged below the menu, and after letting go, the canvas updates its location to make the leftmost objects visible.
 *Saving dirty subpatch (abstraction) leaves parent patch still showing dirty (leaves subdirty class name on it). See wii_buttons.pd and multibuttons.pd for an example. This was due to a regression where canvas_dirtyclimb was also called from graph_vis, resulting in erroneous higher subdirties value.
+*Made sure that the border coloring of GOP-enabled canvases on their parent canvases remains acurate after they are (re)opened into their own window.
 
 
 

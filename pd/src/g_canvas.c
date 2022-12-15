@@ -855,7 +855,8 @@ void canvas_dirtyclimb(t_canvas *x, int n, int draw_only)
             //post("...next %zx dirty=%d subdirty=%d", x, x->gl_dirty, x->gl_subdirties);
             if (!draw_only)
                 x->gl_subdirties += ((unsigned)n ? 1 : x->gl_subdirties > 0 ? -1 : 0);
-            gobj_dirty(&x->gl_gobj, x->gl_owner, (x->gl_subdirties ? 2 : 0));
+            if (!x->gl_dirty)
+                gobj_dirty(&x->gl_gobj, x->gl_owner, (x->gl_subdirties ? 2 : 0));
             x = x->gl_owner;
         }
     }
