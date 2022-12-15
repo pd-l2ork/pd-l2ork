@@ -4,8 +4,6 @@ PD-L2ORK TODO:
 *no fluid~ on Windows. "specified module could not be found. (126)" error.
   *looks like a combination of incompatible libfluidsynth and libportaudio (prior to latest pacman upgrade).
 
-*Still unpredictable behavior when creating new objects and dragging them with the K12 menu in the mix.
-
 *Add translations for the K12 menu tooltips.
 
 *Test nwjs 0.67.1 for regressions:
@@ -587,6 +585,9 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Fixed bug in patch_name where it did not observe the optional argument, thus being unable to pull info from parent patches.
 *Refinements to the K12 objects to make them work on all platforms.
 *Fixed K12 phaser abstraction to not rely on the rjlib and improved help file by adding another preset.
+*Further refined the issue of creating objects dragging them with the K12 menu in the mix and starting with the mouse being over the K12 menu (now we disable the Put menu when hovering over the K12 menu).
+*Cosmetic improvements to the K12 objects.
+*Added missing functions to the dummy gpio object to prevent unnecessary error messages in the console.
 
 
 
