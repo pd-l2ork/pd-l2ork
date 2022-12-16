@@ -449,6 +449,17 @@ function add_events() {
     });
     // Pd Window zooming with mousewheel
     document.addEventListener("wheel", function(evt) {
+        // ico@vt.edu 2022-12-16: prevent unwanted
+        // zoom due to intertial wheel behavior
+        // this threshold is larger than the one
+        // inside pd_canvas.js, for some reason...
+        var threshold = 20;
+        if (evt.deltaY > -threshold && evt.deltaY < threshold && 
+            evt.deltaX > -threshold && evt.deltaX < threshold) {
+            //pdgui.post("minimal delta");
+            return;
+        }
+        //pdgui.post("console wheel " + evt.deltaY);
         if (pdgui.cmd_or_ctrl_key(evt)) {
             if (evt.deltaY < 0) {
                 nw_window_zoom(+1);
