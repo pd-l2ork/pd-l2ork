@@ -1,9 +1,6 @@
 PD-L2ORK TODO:
 *Seek RPi version of nw.js 0.67.1. IN PROGRESS
 
-*Finish K12 object refinements.
-  *disis_gpio on RPi is not working (got a dummy instead).
-
 *Investigate ggee/image redraw of the entire canvas.
   *This is due to undo_cut redrawing canvas to reposition all objects where they belong. Added TODO inside g_editor.c where repositioning inside DOM should take place.
     *Need to figure out logic how to do this reliably. Probably by referencing the tag of the object right below it (or above it, whichever is easier) and placing it there.
@@ -611,6 +608,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Window should resize to the right when the K12 menu is unfolded. OK
   *The scrollbars should also update, as needed. OK
     *Sometimes scrollbars stop updating after having used K12 menu. Open ~/Desktop/title.pd and toggle k12_menu. Looks like overflow does not get reenabled. REWORKED wheel, scroll, and canvas_params logic.
+*Fix disis_gpio on RPi is not working (got a dummy instead) due to a bug (regression?) in the tar_em_up.sh script.
 
 
 
