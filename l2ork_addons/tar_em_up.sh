@@ -137,6 +137,7 @@ if [ $any -gt 0 ]; then
 	else
 		deb=$any
 		inst_dir=${inst_dir:-/usr}
+		arch=`uname -m`
 	fi
 fi
 
