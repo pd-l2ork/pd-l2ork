@@ -3,15 +3,22 @@ PD-L2ORK TODO:
 
 *Finish K12 object refinements.
   *disis_gpio on RPi is not working (got a dummy instead).
-  *all arduino objects (except for connect) need to have dynamic updates rather than loading image from the disk.
-  *arduino connect object has its icon behavior reversed (on when off and vice-versa).
-  *all arudino objects are incorrectly offset.
-  *check all other image toggling objects.
-*Investigate ggee/image redraw of the entire canvas (visible on RPi--perhaps related to the nw.js version?).
+*Investigate ggee/image redraw of the entire canvas.
+  *This is due to undo_cut redrawing canvas to reposition all objects where they belong. Added TODO inside g_editor.c where repositioning inside DOM should take place.
+    *Need to figure out logic how to do this reliably. Probably by referencing the tag of the object right below it (or above it, whichever is easier) and placing it there.
+      *How to deal with selection of multiple objects, however?
+        *Perhaps this should be tackled during pasting action (per object, if possible), not after the fact?
+          *Is this worth the effort just to offset the flicker of images loading inside K12 objects? Or, could this be handled inside the image object instead?
 
-*Preferences should offer an option to clear user settings registry and repopulate it with defaults.
+*Preferences should offer an option to clear user settings (on Windows, registry) and repopulate it with defaults.
+
+*Window should resize to the right when the K12 menu is unfolded.
+  *The scrollbars should also update, as needed.
+    *Sometimes scrollbars stop updating after having used K12 menu.
 
 *Add translations for the K12 menu tooltips.
+
+*When two-finger scrolling and afterwards pressing ctrl, the screen continues to use values to zoom in or out.
 
 *Test nwjs 0.67.1 for regressions:
   *Patch window positioning: loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
@@ -22,6 +29,7 @@ PD-L2ORK TODO:
     *Clean-up all the other offsets found throughout the code (e.g. window_offset, which does not appear to affect the setbounds call).
 
 *Add canvas options for nomenu, background color, draw border, and ontop (if it works in nw.js). Test noscroll option.
+  *Also add resizable (to prevent resizing of the canvas in K12 mode and other more controlled applications).
 
 *Port vanilla garray set colors, line width, visibility, display style, and disable mouse editing (disabling mouse editing is URGENT for the forgotten planet module).
   *Make sure that if an array is not editable, that is passes along its mouse interaction to objects below.
@@ -601,6 +609,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Updated K12/output object to support stereo and mono-to-stereo. Updated help file and supporting icons. Ensured that the object by default is in the off position.
 *On Windows make pd-l2ork default to open a filetype rather than prompting every time. WILL NOT CHANGE (if user has multiple versions of pd or other text editors that could open the .pd file, it should be up to them to set the default inside the OS).
 *Made arduino abstractions available on OSX and Windows.
+*Updated and cleaned-up all K12 objects and abstractions.
 
 
 

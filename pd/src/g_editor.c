@@ -1081,6 +1081,8 @@ void canvas_undo_cut(t_canvas *x, void *z, int action)
             }
             do_not_redraw -= 1;
             //LATER disable redrawing here
+            // TODO!: move the object to be on the DOM stack, rather than
+            // redrawing everything
             canvas_redraw(x);
             if (x->gl_owner && glist_isvisible(x->gl_owner))
             {
