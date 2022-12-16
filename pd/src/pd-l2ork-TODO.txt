@@ -3,6 +3,7 @@ PD-L2ORK TODO:
 
 *Finish K12 object refinements.
   *disis_gpio on RPi is not working (got a dummy instead).
+
 *Investigate ggee/image redraw of the entire canvas.
   *This is due to undo_cut redrawing canvas to reposition all objects where they belong. Added TODO inside g_editor.c where repositioning inside DOM should take place.
     *Need to figure out logic how to do this reliably. Probably by referencing the tag of the object right below it (or above it, whichever is easier) and placing it there.
@@ -12,13 +13,9 @@ PD-L2ORK TODO:
 
 *Preferences should offer an option to clear user settings (on Windows, registry) and repopulate it with defaults.
 
-*Window should resize to the right when the K12 menu is unfolded.
-  *The scrollbars should also update, as needed.
-    *Sometimes scrollbars stop updating after having used K12 menu.
-
-*Fixed issue when two-finger scrolling and afterwards pressing ctrl, the screen continues to use values to zoom in or out due to scroll inertia. Affects Windows only. Needs to be tested on other OSs.
-
 *Add translations for the K12 menu tooltips.
+
+*Consider disabling help for the comment in K12 mode.
 
 *Test nwjs 0.67.1 for regressions:
   *Patch window positioning: loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
@@ -610,6 +607,10 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *On Windows make pd-l2ork default to open a filetype rather than prompting every time. WILL NOT CHANGE (if user has multiple versions of pd or other text editors that could open the .pd file, it should be up to them to set the default inside the OS).
 *Made arduino abstractions available on OSX and Windows.
 *Updated and cleaned-up all K12 objects and abstractions.
+*Fixed issue when two-finger scrolling and afterwards pressing ctrl, the screen continues to use values to zoom in or out due to scroll inertia. Affects Windows only. The fix does not have any observable regressions on other OSs. Fixed the same for the console window.
+*Window should resize to the right when the K12 menu is unfolded. OK
+  *The scrollbars should also update, as needed. OK
+    *Sometimes scrollbars stop updating after having used K12 menu. Open ~/Desktop/title.pd and toggle k12_menu. Looks like overflow does not get reenabled. REWORKED wheel, scroll, and canvas_params logic.
 
 
 

@@ -1376,8 +1376,8 @@ var canvas_events = (function() {
         k12menu: function() {
             // ico@vt.edu 2022-12-08: have to approach this in a hybrid fashion
             // we disable all events, then enable select ones, and then make
-            // our state "normal". otherwise events from the normal: state
-            // will not work.
+            // our state "normal". otherwise events dependent on the normal
+            // state will not work (some of them have checks inside functions).
             canvas_events.none();
             document.addEventListener("keydown", events.keydown, false);
             document.addEventListener("keypress", events.keypress, false);
@@ -1388,7 +1388,10 @@ var canvas_events = (function() {
             toggle_put_menu(false);
             // ico@vt.edu 2022-12-08: we do this to prevent scroll from
             // "leaking" onto the patchsvg below the k12 menu
-            document.body.style.overflow = 'hidden';
+            // ico@vt.edu 2022-12-16: this is problematic because
+            // leaving event is not always triggered accurately,
+            // in part because of the animated menu
+            //document.body.style.overflow = 'hidden';
             //pdgui.post("k12menu activated");
         },
         k12menu_out: function() {
@@ -1397,7 +1400,10 @@ var canvas_events = (function() {
             // ico@vt.edu 2022-12-08: we do this to reenable patchsvg
             // scrolling
             toggle_put_menu(true);
-            document.body.style.overflow = 'visible';
+            // ico@vt.edu 2022-12-16: this is problematic because
+            // leaving event is not always triggered accurately,
+            // in part because of the animated menu
+            //document.body.style.overflow = 'visible';
             canvas_events.normal();
         },
         scalar_drag: function() {
@@ -1756,20 +1762,8 @@ var canvas_events = (function() {
                     pdgui.pdsend(name, "paste");
                 }
             });
-
-            // MouseWheel event for zooming
-            document.addEventListener("wheel", function(evt) {
+            document.getElementById("k12_menu").addEventListener("wheel", function(evt) {
                 var d = { deltaX: 0, deltaY: 0, deltaZ: 0 };
-                //pdgui.post("wheel event type=" + evt.type + " " + evt.deltaY);
-                // ico@vt.edu 2022-12-16: catching wheel inertia on Windows
-                // to prevent unwanted zooms once one presses ctrl after having
-                // done a large swipe with two fingers to scroll
-                var threshold = 10;
-                if (evt.deltaY > -threshold && evt.deltaY < threshold && 
-                    evt.deltaX > -threshold && evt.deltaX < threshold) {
-                    //pdgui.post("minimal delta");
-                    return;
-                }
                 Object.keys(d).forEach(function(key) {
                     if (evt[key] < 0) {
                         d[key] = -1;
@@ -1779,15 +1773,46 @@ var canvas_events = (function() {
                         d[key] = 0;
                     }
                 });
-                if (pdgui.cmd_or_ctrl_key(evt)) {
-                    // scroll up for zoom-in, down for zoom-out
-                    nw_window_zoom(name, -d.deltaY);
-                }
+                pdgui.pdsend(name, "legacy_mousewheel",
+                    d.deltaX, d.deltaY, d.deltaZ);
+                //pdgui.post("k12_menu scroll " + d.deltaY);
+                var tab = document.getElementById("tab_menu");
+                tab.scroll(0, tab.scrollTop + (d.deltaY * 4));
+                evt.preventDefault();
+                //evt.stopPropagation();
+            });
+
+            // MouseWheel event for zooming
+            document.addEventListener("wheel", function(evt) {
+                var d = { deltaX: 0, deltaY: 0, deltaZ: 0 };
+                Object.keys(d).forEach(function(key) {
+                    if (evt[key] < 0) {
+                        d[key] = -1;
+                    } else if (evt[key] > 0) {
+                        d[key] = 1;
+                    } else {
+                        d[key] = 0;
+                    }
+                });
                 // Send a message on to Pd for the [mousewheel] legacy object
                 // (in the future we can refcount to prevent forwarding
                 // these messages when there's no extant receiver)
                 pdgui.pdsend(name, "legacy_mousewheel",
                     d.deltaX, d.deltaY, d.deltaZ);
+
+                // ico@vt.edu 2022-12-16: catching wheel inertia on Windows
+                // to prevent unwanted zooms once one presses ctrl after having
+                // done a large swipe with two fingers to scroll
+                var threshold = 10 + (pdgui.nw_os_is_osx ? 590 : 0);
+                if (evt.deltaY > -threshold && evt.deltaY < threshold && 
+                    evt.deltaX > -threshold && evt.deltaX < threshold) {
+                    //pdgui.post("minimal delta");
+                    return;
+                }
+                if (pdgui.cmd_or_ctrl_key(evt)) {
+                    // scroll up for zoom-in, down for zoom-out
+                    nw_window_zoom(name, -d.deltaY);
+                }
             });
 
             // ico@vt.edu 2022-12-16: this on windows prevents
@@ -1893,7 +1918,7 @@ var canvas_events = (function() {
                 // window resizes
                 // ico@vt.edu 2022-12-05: add a delay, so that
                 // when switching to full screen, we are sure
-                // we got the right size TODO!: test on Win/OSX
+                // we got the right size
                 setTimeout(function() { update_k12_menu() }, 0);
             });
             gui.Window.get().on("focus", function() {

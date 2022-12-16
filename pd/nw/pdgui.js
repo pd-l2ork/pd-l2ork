@@ -9399,8 +9399,10 @@ function canvas_params(nw_win, cid)
     // calculate the canvas parameters (svg bounding box and window geometry)
     // for do_getscroll and do_optimalzoom
     //post("canvas_params nw_win=" + nw_win + " " + nw_win.window + " " + nw_win.window.document);
-    var bbox, width, height, min_width, min_height, x, y, selbox, patchcord, svg_elem, gop_svgs, i;
+    var bbox, width, height, min_width, min_height, x, y,
+        selbox, patchcord, svg_elem, gop_svgs, i, k12m;
     svg_elem = nw_win.window.document.getElementById("patchsvg");
+    k12m = nw_win.window.document.getElementById("k12_menu");
     // ico@vt.edu 20210421: hide selection box, so that we don't include it in the
     // bbox calculation
     selbox = nw_win.window.document.getElementById("selection_rectangle");
@@ -9435,18 +9437,32 @@ function canvas_params(nw_win, cid)
     }
     //post("canvas_params calculated bbox: x=" + bbox.x +
     //     " w=" + bbox.width + " offset=" + k12_menu_canvas_x[cid]);
-    if ((k12_mode == 1 || k12_menu_vis == 1) &&
-        svg_elem.classList.contains("editmode")) {
-        if (bbox.x == 0 && bbox.width == 0)
-            k12_menu_canvas_x[cid] = 0;
-        //post("canvas params--expanding the window size");
-        if (!k12_menu_canvas_x[cid] ||
-            ((bbox.x < 0 ? bbox.x : 0)  - 155) < k12_menu_canvas_x[cid])
-            k12_menu_canvas_x[cid] = (bbox.x < 0 ? bbox.x : 0)  - 155;
+    // ico@vt.edu 2022-12: adjust canvas size if the k12_menu
+    // is unfolded.
+    if ((k12_mode == 1 || k12_menu_vis == 1)) {
+        if (k12m.style.left == "0px") {
+            if (k12_menu_canvas_x[cid] == null) {
+                //post("set offset");
+                // if there are no objects on canvas, reset stored offset
+                if (bbox.x == 0 && bbox.width == 0)
+                    k12_menu_canvas_x[cid] = 0;
+                //post("canvas params--expanding the window size");
+                if (!k12_menu_canvas_x[cid] ||
+                    ((bbox.x < 0 ? bbox.x : 0)  - 155) < k12_menu_canvas_x[cid])
+                    k12_menu_canvas_x[cid] = (bbox.x < 0 ? bbox.x : 0)  - 155;
+            }
+        } else {
+            k12_menu_canvas_x[cid] = null;
+        }
+    } else {
+        k12_menu_canvas_x[cid] = null;
+    }
+    if (k12_menu_canvas_x[cid] !== null) {
         bbox.width += 155;
         bbox.x = k12_menu_canvas_x[cid];
     }
-    //post("...post k12 menu canvas_params calculated bbox: x=" + bbox.x + " w=" + bbox.width);
+    //post("...post k12 menu canvas_params calculated bbox: x=" +
+    //     bbox.x + " w=" + bbox.width);
     // We try to do Pd-extended style canvas origins. That is, coord (0, 0)
     // should be in the top-left corner unless there are objects with a
     // negative x or y.
@@ -9581,7 +9597,6 @@ exports.pd_do_getscroll = pd_do_getscroll;*/
 var nw_version_bbox_offset = check_nw_version("0.46") ? 0 : -4;
 
 function do_getscroll(cid, checkgeom) {
-    //post("do_getscroll");
     // Since we're throttling these getscroll calls, they can happen after
     // the patch has been closed. We remove the cid from the patchwin
     // object on close, so we can just check to see if our Window object has
@@ -9609,7 +9624,7 @@ function do_getscroll(cid, checkgeom) {
         }
         // If the svg extends beyond the viewport, it might be nice to pad
         // both the height/width and the x/y coords so that there is extra
-        // room for making connections and manipulating the objects.  As it
+        // room for making connections and manipulating the objects. As it
         // stands objects will be flush with the scrollbars and window
         // edges.
         if (height < min_height) {
@@ -10365,13 +10380,18 @@ function toggle_k12_menu(cid, state) {
         k12m.style.left = "0px";
         patchwin[cid].window.document.
             getElementById("k12_toggle_icon").src= lock_editmode.src;
+        patchwin[cid].window.resizeBy(155, 0);
     }
     else if (state == 0) {
+        if (k12m.style.left == "0px")
+            patchwin[cid].window.resizeBy(-155, 0);
         k12m.style.left = "-155px";
         patchwin[cid].window.document.
             getElementById("k12_toggle_icon").src= lock_runtime.src;
     }
     else if (state == -1) {
+        if (k12m.style.left == "0px")
+            patchwin[cid].window.resizeBy(-155, 0);
         k12m.style.left = "-175px";
     }
     gui_canvas_get_immediate_scroll(cid);
