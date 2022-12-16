@@ -453,7 +453,7 @@ function add_events() {
         // zoom due to intertial wheel behavior
         // this threshold is larger than the one
         // inside pd_canvas.js, for some reason...
-        var threshold = 20;
+        var threshold = 20 + (process.platform === "darwin" ? 280 : 0);
         if (evt.deltaY > -threshold && evt.deltaY < threshold && 
             evt.deltaX > -threshold && evt.deltaX < threshold) {
             //pdgui.post("minimal delta");
