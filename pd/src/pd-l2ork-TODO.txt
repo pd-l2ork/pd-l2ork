@@ -595,6 +595,8 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 
 
 TWEETER TODO:
+*Deal with sync issues when one user tries to sync with another using one of the mouse multiclick options that are invoked by clicking on the instrument/part number the user wishes to sync with.
+
 *In offline mode, enable keyboard and other input for multiple tracks. Consider using the mouse focus by utilizing invisible ggee/image to make focus switching easier.
 
 *When trying to load a pattern that does not exist (after having successfully loaded one that does), the main level goes to zero.
