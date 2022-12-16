@@ -1637,7 +1637,7 @@ int sys_startgui(const char *guidir)
         // running and sys_unique can only tell us if the user wants
         // to spawn a new instance.
         set_datadir(data_dir_flag, sys_unique, portno);
-        fprintf(stderr,"sys_startgui calling spawnret port=%d\n", portno);
+        //fprintf(stderr,"sys_startgui calling spawnret port=%d\n", portno);
         spawnret = _spawnl(P_NOWAIT, wishbuf, "pd-nw",
             data_dir_flag,
             scriptbuf,
