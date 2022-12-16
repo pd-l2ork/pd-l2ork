@@ -1,33 +1,51 @@
-#N canvas 1014 116 502 614 10;
-#X obj 205 -24 preset_hub k12 %hidden% %node% 2 2 14 %node% 2 2 28
-;
-#X obj 7 379 cnv 15 478 164 empty empty empty 20 12 0 14 #e0e0e0 #404040
+#N canvas 1014 128 501 687 10;
+#X obj 205 -24 preset_hub k12 %hidden% %node% 2 2 14 %preset% 0 69.7674
+%preset% 1 69.7674 %preset% 2 37.2093 %preset% 3 46.5116 %node% 2 2
+25 %preset% 0 0 %preset% 1 1 %preset% 2 1 %preset% 3 1 %node% 2 10
+6 %preset% 0 1 %preset% 1 1 %preset% 2 1 %preset% 3 1 %node% 2 11 6
+%preset% 0 60 %preset% 1 60 %preset% 2 67 %preset% 3 72 %node% 2 12
+7;
+#X obj 10 239 cnv 15 478 377 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
-#X obj 14 386 K12/output;
-#X obj 14 147 K12/wii_speed;
-#X obj 14 269 K12/instr_sustained2;
+#X obj 18 246 K12/output;
+#X obj 18 129 K12/instr_sustained2;
 #N canvas 616 449 395 407 META 0;
 #X text 9 47 INLET_0 Connect any signal (one or more) you want to hear
 through the speakers;
 #X text 9 10 DESCRIPTION This is the main sound output. This sends
 the signals to the speakers and controls the main volume;
-#X restore 445 559 pd META;
+#X restore 443 627 pd META;
 #X obj -2 -2 cnv 3 501 3 empty empty empty 5 14 0 20 #fc8000 #b8b8b8
 0;
 #X obj -2 -30 cnv 15 501 28 empty empty Output 5 14 0 20 #880024 #fcfcfc
 0;
 #X obj 445 -24 ggee/image @pd_extra/K12/icons/l2ork.png 0 0 48 50 empty
 empty empty 48 50 1 0 10 #000000 0 -8 24 25 0 1 1;
-#X obj 14 34 K12/wii_connect;
-#X text 111 454 Toggle "stereo mode" on when using headphones or standard
-computer speakers. Toggle it off when using the L2Ork setup.;
-#X text 111 388 The Output object sends the sound from this program
+#X text 115 248 The Output object sends the sound from this program
 to the speakers. The slider controls the overall volume. Sliding it
 up turns the speakers on and sets the level. Sliding it all the way
 down turns the speakers off.;
-#X text 111 490 Typically you want to use only one output object per
+#X text 115 410 Typically you want to use only one output object per
 patch. If you use more than one \, they will all mirror each other's
 settings (e.g. loudness level and on/off state).;
-#X connect 3 0 4 0;
-#X connect 4 0 2 0;
-#X connect 9 0 3 0;
+#X obj 18 40 K12/math_number;
+#X obj 124 40 K12/math_number;
+#X obj 340 60 K12/preset;
+#X text 115 314 Note that output has two inlets. Left one connects
+to the left loudspeaker and the right one to the right loudspeaker.
+When you are using one (mono) audio source and are feeding into the
+left loudspeaker \, you can toggle "copy left to right" option to copy
+whatever is coming into the left inlet to be also played in the right
+loudspeaker.;
+#X text 115 470 The Output object has a built-in limiter to minimize
+the possibility of hurting your ears \, particularly when using headphones.
+Nonetheless \, you should exercise caution when adding audio signals
+together \, as they can get loud. Adjust audio volume on your computer
+and/or your headphones (or earbuds) to your comfort level. To do so
+\, minimize your headphones (or computer) volume \, and maximize Output
+level. Then slowly increase computer (or headphone) level until your
+comfort level is reached. This will be the loudest volume you will
+be able to generate with the Output object.;
+#X connect 3 0 2 0;
+#X connect 10 0 3 0;
+#X connect 11 0 3 1;
