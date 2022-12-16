@@ -16,9 +16,9 @@ PD-L2ORK TODO:
   *The scrollbars should also update, as needed.
     *Sometimes scrollbars stop updating after having used K12 menu.
 
-*Add translations for the K12 menu tooltips.
+*Fixed issue when two-finger scrolling and afterwards pressing ctrl, the screen continues to use values to zoom in or out due to scroll inertia. Affects Windows only. Needs to be tested on other OSs.
 
-*When two-finger scrolling and afterwards pressing ctrl, the screen continues to use values to zoom in or out.
+*Add translations for the K12 menu tooltips.
 
 *Test nwjs 0.67.1 for regressions:
   *Patch window positioning: loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
