@@ -1760,6 +1760,16 @@ var canvas_events = (function() {
             // MouseWheel event for zooming
             document.addEventListener("wheel", function(evt) {
                 var d = { deltaX: 0, deltaY: 0, deltaZ: 0 };
+                //pdgui.post("wheel event type=" + evt.type + " " + evt.deltaY);
+                // ico@vt.edu 2022-12-16: catching wheel inertia on Windows
+                // to prevent unwanted zooms once one presses ctrl after having
+                // done a large swipe with two fingers to scroll
+                var threshold = 10;
+                if (evt.deltaY > -threshold && evt.deltaY < threshold && 
+                    evt.deltaX > -threshold && evt.deltaX < threshold) {
+                    //pdgui.post("minimal delta");
+                    return;
+                }
                 Object.keys(d).forEach(function(key) {
                     if (evt[key] < 0) {
                         d[key] = -1;
@@ -1778,6 +1788,14 @@ var canvas_events = (function() {
                 // these messages when there's no extant receiver)
                 pdgui.pdsend(name, "legacy_mousewheel",
                     d.deltaX, d.deltaY, d.deltaZ);
+            });
+
+            // ico@vt.edu 2022-12-16: this on windows prevents
+            // pinch resizing using default zoom levels and thus
+            // matches behavior on OSX
+            window.visualViewport.addEventListener("resize", function(evt) {
+                //pdgui.post("viewport resize");
+                evt.preventDefault();
             });
 
             // The following is commented out because we have to set the
