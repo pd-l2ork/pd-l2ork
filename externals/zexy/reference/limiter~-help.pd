@@ -1,16 +1,16 @@
-#N canvas 4 50 762 443 10;
+#N canvas 72 76 762 443 10;
 #X text 189 15 limiter;
 #X text 187 25 ========;
 #X msg 398 249 print;
 #X obj 445 319 *~;
 #X obj 476 319 *~;
-#X floatatom 476 199 0 0 0 2 left - -;
-#X floatatom 562 200 0 0 0 2 right - -;
-#X floatatom 520 181 0 0 0 2 both - -;
+#X floatatom 476 199 0 0 0 2 left - - 0 0 1;
+#X floatatom 562 200 0 0 0 2 right - - 0 0 1;
+#X floatatom 520 181 0 0 0 2 both - - 0 0 1;
 #X obj 476 266 limiter~ 50 1;
 #N canvas 0 153 455 493 tabwrite 0;
 #N canvas 0 0 450 300 (subpatch) 0;
-#X array array1 32768 float 0;
+#X array array1 32768 float 0 black black;
 #X coords 0 1 32767 -1 200 140 1;
 #X restore 130 196 graph;
 #X obj 111 63 inlet~;
@@ -24,7 +24,7 @@
 #X connect 5 0 2 0;
 #X restore 372 408 pd tabwrite;
 #X obj 382 341 env~;
-#X floatatom 382 359 4 0 0 0 - - -;
+#X floatatom 382 359 4 0 0 0 - - - 0 0 1, f 4;
 #X text 30 299 to learn more about this object \, try these;
 #X text 48 371 http://users.iem.at/zmoelnig;
 #N canvas 59 76 600 400 generator~ 0;
@@ -67,7 +67,7 @@ the limiter-amplification is applied to prevent clicks !!!;
 #X obj 493 298 z~ 64;
 #X obj 445 299 z~ 64;
 #X text 539 17 part of zexy;
-#X floatatom 492 354 0 0 100 0 - - -;
+#X floatatom 492 354 0 0 100 0 - - - 0 0 1;
 #N canvas 159 26 532 285 output 0;
 #X obj 348 160 t b;
 #X obj 348 110 f;
@@ -151,7 +151,7 @@ set limits set2 treshold compress;
 #X text 36 41 limiter will output the amplification-factor that has
 to be applied on all inlet~s to get a beautiful limited multichannel-signal
 that preserves the balance between the channels;
-#N canvas 4 50 951 819 modes 0;
+#N canvas 72 64 951 819 modes 0;
 #X text 81 189 MODE 0 : 1-treshold-limiter;
 #X text 79 384 MODE 1 : 2-tresholds-limiter;
 #X msg 502 255 print;
@@ -207,10 +207,6 @@ to compress;
 ;
 #X text 10 621 the output signal will never become louder than the
 specified output-limit.;
-#X text 10 653 if the input-signal becomes loader than the input-treshold
-\, a compressor will start working \, compressing the dynamic range
-by the specified ratio. Signals lesser than the treshold will pass
-through uncompressed.;
 #X text 39 59 set the limiter~ to one of the 3 modes;
 #X text 604 380 set both limits;
 #X text 11 210 this is simple : the output will not become bigger than
@@ -234,6 +230,10 @@ not \, the limiter will be reset to MODE 0);
 produce satisfying results (following pd's agreement on the deziBel-scale
 \, 100dB are equal to 1 \, 0dB equals 0 \, ...);
 #X text 624 123 context(!) help;
+#X text 10 653 if the input-signal becomes louder than the input-treshold
+\, a compressor will start working \, compressing the dynamic range
+by the specified ratio. Signals lesser than the treshold will pass
+through uncompressed.;
 #X connect 2 0 3 0;
 #X connect 5 0 4 0;
 #X connect 6 0 4 0;
@@ -260,9 +260,9 @@ produce satisfying results (following pd's agreement on the deziBel-scale
 #X connect 42 0 49 0;
 #X connect 43 0 49 0;
 #X connect 45 0 49 0;
-#X connect 57 0 23 0;
+#X connect 56 0 23 0;
 #X restore 189 322 pd modes;
-#N canvas 4 50 565 362 creation 0;
+#N canvas 72 76 565 362 creation 0;
 #X text 211 152 creates a default limiter (MONO \, 9-samples-buffer)
 ;
 #X text 213 189 creates a limiter(MONO \, 10ms-buffer);
