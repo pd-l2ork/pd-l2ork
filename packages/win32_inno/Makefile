@@ -151,6 +151,12 @@ ifneq ($(LIGHT),yes)
 	install -p $(bin_src)/libpcre-1.dll $(DESTDIR)$(bindir)/
 	install -p $(bin_src)/libgraphite2.dll $(DESTDIR)$(bindir)/
 	install -p $(bin_src)/libjpeg-8.dll $(DESTDIR)$(bindir)/
+	# ico@vt.edu 2022-12-15: added libraries that are needed for
+	# fluid~ even though there is no mention of them anywhere, and
+	# had to be identified by copying the entire /mingw32/bin/ folder
+	# and then pruning...
+	install -p $(bin_src)/libgomp-1.dll $(DESTDIR)$(bindir)/
+	install -p $(bin_src)/libpcre2-8-0.dll $(DESTDIR)$(bindir)/
 	# New: lossless compression algorithm. Gem.dll won't load without it.
 	# Cf.: https://github.com/bagder/libbrotli. Looks like this recently
 	# got added to MSYS2. Apparently Gem needs only the decoder , but we

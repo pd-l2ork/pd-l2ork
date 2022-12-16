@@ -1,8 +1,7 @@
 PD-L2ORK TODO:
 *Seek RPi version of nw.js 0.67.1. IN PROGRESS
 
-*no fluid~ on Windows. "specified module could not be found. (126)" error.
-  *looks like a combination of incompatible libfluidsynth and libportaudio (prior to latest pacman upgrade).
+*On Windows make pd-l2ork default to open a filetype rather than prompting every time.
 
 *Add translations for the K12 menu tooltips.
 
@@ -589,6 +588,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Cosmetic improvements to the K12 objects.
 *Added missing functions to the dummy gpio object to prevent unnecessary error messages in the console.
 *Fixed issue that manifests when getting the close prompt without saving the patch and after having the canvas zoomed, the scrollbars and the K12 menu do not update after zoom reset and before the close dialog appears.
+*Fixed issue where fluid~ on Windows would not instantiate due to 2 'silent' dependencies by the libfluidsynth-3.dll, libgomp-1.dll and libpcre2-8-0.dll. Go figure...
 
 
 
