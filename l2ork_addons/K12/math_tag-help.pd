@@ -32,7 +32,6 @@ name for use in sending over the network;
 #X obj 125 242 K12/math_tag 0;
 #X obj 134 787 K12/math_number 0;
 #X obj 134 673 K12/math_routebytag 0;
-#X text 243 102 Recall leftmost presetto start the example.;
 #X text 223 201 The Math Tag objects gives data a tagfor use in sending
 over the network.Here \, we are using the tags 'thistag' and 'thattag'.
 Change the number box abovethe 'thistag' tag object and see how itis
@@ -42,6 +41,7 @@ is the MathRouteByTag object \, used to filterincoming data over
 the network with thetag name that you choose.Look at the help files
 for the RouteByTag \, NetSend \, and NetReceive objects for moreinformation
 on how those objects work.;
+#X text 243 107 Recall leftmost presetto initialize values.;
 #X connect 8 0 12 0;
 #X connect 8 0 17 0;
 #X connect 9 0 11 0;

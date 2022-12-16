@@ -1,6 +1,6 @@
-#N canvas 390 81 503 501 10;
-#X obj 225 6 preset_hub k12 %hidden% %node% 2 4 14 %node% 2 4 28 %node%
-2 17 8 %node% 2 15 24 %node% 2 18 6;
+#N canvas 390 81 503 505 10;
+#X obj 225 6 preset_hub k12 %hidden% %node% 2 4 14 %node% 2 17 8 %node%
+2 15 24 %node% 2 18 6 %node% 2 4 25;
 #X obj 0 299 cnv 15 486 220 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
 #X obj 5 170 K12/wii_speed;

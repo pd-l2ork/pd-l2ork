@@ -39,7 +39,7 @@ the top number box to see a NetSend object send information to this
 NetReceive object.Look at the help files for the NetSend \, Tag \,
 and RouteByTag objects for more information on how those objects work.
 ;
-#X text 247 105 Recall leftmost presetto start the example.;
+#X text 247 107 Recall leftmost presetto initialize values.;
 #X connect 8 0 12 0;
 #X connect 9 0 11 0;
 #X connect 11 0 7 0;

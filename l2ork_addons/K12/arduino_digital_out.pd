@@ -1,7 +1,10 @@
-#N canvas 256 101 512 323 10;
-#X obj 58 287 outlet;
+#N canvas 256 101 460 323 10;
 #X obj 215 81 ggee/image @pd_extra/K12/objects/arduino_digital_out_off.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
+;
+#X obj 58 287 outlet;
+#X obj 215 81 ggee/image @pd_extra/K12/objects/arduino_digital_out.png
+1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 0 1
 ;
 #X obj 58 20 inlet;
 #X obj 240 35 preset_node k12;
@@ -10,17 +13,16 @@
 #X obj 37 220 outlet;
 #X obj 228 220 outlet;
 #X obj 171 59 split 0 13;
-#X obj 171 81 t f b;
-#X msg 228 109 open @pd_extra/K12/objects/arduino_digital_out_off.png
-;
-#X msg 198 139 open @pd_extra/K12/objects/arduino_digital_out.png;
+#X msg 200 140 visible \$1;
+#X msg 228 109 0;
+#X obj 171 81 t f 1;
 #X connect 0 0 3 0;
-#X connect 3 0 4 0;
+#X connect 3 0 6 0;
 #X connect 3 1 5 0;
-#X connect 4 0 1 0;
-#X connect 4 1 6 0;
-#X connect 5 0 2 0;
-#X connect 6 0 2 0;
+#X connect 4 0 2 0;
+#X connect 5 0 4 0;
+#X connect 6 0 1 0;
+#X connect 6 1 4 0;
 #X restore 277 154 pd pin_parser;
 #X obj 277 176 t f f;
 #X obj 58 212 pack 0 0;
@@ -34,20 +36,20 @@
 #X obj 109 113 > 1;
 #X obj 58 62 int;
 #X obj 304 199 pipe 1000;
-#X connect 2 0 14 0;
-#X connect 3 0 11 0;
-#X connect 4 0 5 0;
-#X connect 4 1 1 0;
-#X connect 5 0 6 1;
-#X connect 5 1 15 0;
-#X connect 6 0 8 0;
-#X connect 7 0 0 0;
-#X connect 8 0 0 0;
-#X connect 11 0 4 0;
-#X connect 12 0 6 0;
-#X connect 12 1 13 0;
-#X connect 13 0 6 0;
-#X connect 14 0 12 0;
-#X connect 15 0 7 0;
+#X connect 3 0 15 0;
+#X connect 4 0 12 0;
+#X connect 5 0 6 0;
+#X connect 5 1 2 0;
+#X connect 6 0 7 1;
+#X connect 6 1 16 0;
+#X connect 7 0 9 0;
+#X connect 8 0 1 0;
+#X connect 9 0 1 0;
+#X connect 12 0 5 0;
+#X connect 13 0 7 0;
+#X connect 13 1 14 0;
+#X connect 14 0 7 0;
+#X connect 15 0 13 0;
+#X connect 16 0 8 0;
 #X coords 0 -1 1 1 89 89 2 183 62;
 #X gopspill 1;

@@ -1,4 +1,4 @@
-#N canvas 362 73 502 451 10;
+#N canvas 362 73 501 451 10;
 #X obj 8 132 cnv 15 477 170 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
 #X obj 14 138 K12/wii_hit;
@@ -7,7 +7,7 @@
 #X text 8 9 DESCRIPTION Registers jolts from the Wiimote as hits;
 #X text 7 58 OUTLET_0 Outputs 1 when a hit has been detected and a
 0 once the hit has ended;
-#X restore 444 390 pd META;
+#X restore 442 381 pd META;
 #X obj 14 21 K12/wii_connect;
 #X obj -2 -6 cnv 3 501 3 empty empty empty 5 14 0 20 #fc8000 #b8b8b8
 0;

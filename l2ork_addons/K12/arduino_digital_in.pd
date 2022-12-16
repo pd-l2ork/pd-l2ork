@@ -1,7 +1,10 @@
-#N canvas 817 154 503 389 10;
-#X obj 110 134 outlet;
+#N canvas 817 154 402 399 10;
 #X obj 215 101 ggee/image @pd_extra/K12/objects/arduino_digital_in_off.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
+;
+#X obj 110 134 outlet;
+#X obj 215 101 ggee/image @pd_extra/K12/objects/arduino_digital_in.png
+1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 0 1
 ;
 #X obj 58 10 inlet;
 #X obj 240 55 preset_node k12;
@@ -13,20 +16,19 @@
 #X msg 224 252 symbol arduino-\$1;
 #N canvas 760 363 537 255 pin_parser 0;
 #X obj 171 23 inlet;
-#X obj 37 220 outlet;
-#X obj 198 220 outlet;
+#X obj 37 200 outlet;
+#X obj 198 200 outlet;
 #X obj 171 59 split 0 13;
-#X obj 171 81 t f b;
-#X msg 199 136 open @pd_extra/K12/objects/arduino_digital_in.png;
-#X msg 228 112 open @pd_extra/K12/objects/arduino_digital_in_off.png
-;
+#X obj 171 81 t f 1;
+#X msg 198 136 visible \$1;
+#X msg 228 92 0;
 #X connect 0 0 3 0;
 #X connect 3 0 4 0;
 #X connect 3 1 6 0;
 #X connect 4 0 1 0;
 #X connect 4 1 5 0;
 #X connect 5 0 2 0;
-#X connect 6 0 2 0;
+#X connect 6 0 5 0;
 #X restore 277 174 pd pin_parser;
 #X obj 110 111 route -1;
 #X obj 77 358 send, f 25;
@@ -36,23 +38,23 @@
 #000000 #000000 -1 256 3 0 1 0;
 #X msg 77 318 pinMode \$1 input;
 #X obj 110 78 route d;
-#X connect 2 0 4 0;
-#X connect 3 0 15 0;
-#X connect 4 0 6 0;
-#X connect 4 1 17 0;
-#X connect 5 0 16 0;
-#X connect 6 0 7 0;
-#X connect 6 1 5 0;
-#X connect 6 2 8 0;
-#X connect 7 0 5 1;
-#X connect 8 0 9 0;
-#X connect 9 0 12 1;
-#X connect 10 0 7 0;
-#X connect 10 0 11 1;
-#X connect 10 1 1 0;
-#X connect 11 0 0 0;
-#X connect 15 0 10 0;
-#X connect 16 0 12 0;
-#X connect 17 0 11 0;
+#X connect 3 0 5 0;
+#X connect 4 0 16 0;
+#X connect 5 0 7 0;
+#X connect 5 1 18 0;
+#X connect 6 0 17 0;
+#X connect 7 0 8 0;
+#X connect 7 1 6 0;
+#X connect 7 2 9 0;
+#X connect 8 0 6 1;
+#X connect 9 0 10 0;
+#X connect 10 0 13 1;
+#X connect 11 0 8 0;
+#X connect 11 0 12 1;
+#X connect 11 1 2 0;
+#X connect 12 0 1 0;
+#X connect 16 0 11 0;
+#X connect 17 0 13 0;
+#X connect 18 0 12 0;
 #X coords 0 -1 1 1 89 89 2 183 82;
 #X gopspill 1;

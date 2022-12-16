@@ -1,7 +1,7 @@
 #N canvas 305 91 502 525 10;
-#X obj 225 -28 preset_hub k12 %hidden% %node% 2 6 7 %node% 2 10 4 %node%
-2 8 17 %node% 2 7 13 %node% 2 7 14;
-#X obj 9 224 cnv 15 480 104 empty empty empty 20 12 0 14 #e0e0e0 #404040
+#X obj 225 -28 preset_hub k12 %hidden% %node% 2 10 4 %node% 2 8 17
+%node% 2 7 13 %node% 2 7 14 %node% 2 6 6;
+#X obj 10 224 cnv 15 480 104 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
 #X obj 0 -7 cnv 3 501 3 empty empty empty 5 14 0 20 #fc8000 #b8b8b8
 0;
@@ -16,15 +16,15 @@ once the detected hit has ended;
 control data stream;
 #X text 6 38 INLET_0 Connect any control data stream to this inlet
 ;
-#X restore 447 465 pd META;
-#X obj 17 364 K12/math_number;
-#X obj 17 231 K12/logic_hit;
-#X obj 17 15 K12/arduino_connect;
-#X text 116 246 The Logic Hit object detects sudden changes in the
+#X restore 447 458 pd META;
+#X obj 18 364 K12/math_number;
+#X obj 18 231 K12/logic_hit;
+#X obj 18 15 K12/arduino_connect;
+#X text 117 246 The Logic Hit object detects sudden changes in the
 incoming data. Connect any non-audio data stream to the inlet. This
 object will output the number 1 when a hit is detected and a 0 when
 the detected hit has ended.;
-#X obj 17 122 K12/arduino_analog_in;
+#X obj 18 122 K12/arduino_analog_in;
 #X connect 7 0 6 0;
 #X connect 8 0 10 0;
 #X connect 10 0 7 0;

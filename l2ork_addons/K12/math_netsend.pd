@@ -1,15 +1,15 @@
-#N canvas 998 221 344 443 10;
+#N canvas 998 221 359 443 10;
 #X obj 149 146 ggee/image @pd_extra/K12/objects/math_netsend.png 1
 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X obj 34 128 inlet;
 #X obj 57 62 preset_node k12;
 #X obj 34 395 outlet;
-#X obj 122 180 nbx 5 19 -1e+37 1e+37 0 0 \$0-s-null \$0-r-null empty
+#X obj 126 183 nbx 5 19 -1e+37 1e+37 0 0 \$0-s-null \$0-r-null empty
 0 -8 0 16 #fcfcfc #000000 #000000 3000 256 1 0 1 0;
-#X text 178 196 port;
+#X text 173 199 port;
 #X msg 52 338 disconnect \, connect \$1 \$2;
-#X symbolatom 122 161 13 0 0 0 - - - 0 0 1, f 13;
-#X text 119 145 address;
+#X symbolatom 122 164 13 0 0 0 - - - 0 0 1, f 13;
+#X text 120 149 address;
 #X obj 52 316 pack s f;
 #X msg 34 150 send \$1 \$2;
 #X obj 215 110 loadbang;
@@ -27,6 +27,7 @@
 #X connect 4 0 14 0;
 #X connect 6 0 20 0;
 #X connect 7 0 16 0;
+#X connect 7 0 13 0;
 #X connect 9 0 6 0;
 #X connect 10 0 20 0;
 #X connect 11 0 18 0;

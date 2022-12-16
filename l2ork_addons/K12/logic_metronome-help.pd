@@ -1,4 +1,4 @@
-#N canvas 64 73 502 501 10;
+#N canvas 64 73 501 507 10;
 #X obj 10 134 cnv 15 469 103 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
 #X obj 117 -36 preset_hub k12 %hidden% %node% 2 11 3 %preset% 0 1 %preset%

@@ -1,10 +1,10 @@
 #N canvas 334 73 502 574 10;
-#X obj 245 29 cnv 15 243 107 empty empty empty 20 12 0 14 #e0e0e0 #404040
+#X obj 245 42 cnv 15 243 107 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
 #X obj 15 201 cnv 15 473 207 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
 #X obj 121 -29 preset_hub k12 %hidden% %node% 2 10 6 %preset% 0 0 %node%
-2 9 6 %node% 2 16 6 %preset% 0 1 %node% 2 7 2 %preset% 0 3000 %node%
+2 9 6 %node% 2 15 6 %preset% 0 1 %node% 2 7 2 %preset% 0 3000 %node%
 2 7 13 %preset% 0 localhost %node% 2 8 2 %preset% 0 3000 %node% 2 11
 2 %preset% 0 something %node% 2 12 2 %preset% 0 something %node% 2
 13 7;
@@ -28,8 +28,7 @@ connection;
 #X obj 24 765 K12/math_number 0;
 #X obj 24 99 K12/math_tag 0;
 #X obj 24 651 K12/math_routebytag 0;
-#X obj 390 38 K12/preset 0;
-#X text 252 90 Recall leftmost presetto start the example.;
+#X obj 390 51 K12/preset 0;
 #X text 122 206 The Math NetSend object sends data information over
 the network to another computer. In this example \, we are first tagging
 numbers with the tag 'kerplop'. These tagged numbers are then given
@@ -42,7 +41,8 @@ you send. Netsend's outlet outputs 1 on successful connect \, 0 otherwise.Look
 at the help files for the NetReceive \, Tag \, and RouteByTag objects
 for more information on how those objects work., f 59;
 #X obj 24 429 K12/math_number 0;
-#X connect 7 0 16 0;
+#X text 251 113 Recall leftmost presetto initialize values.;
+#X connect 7 0 15 0;
 #X connect 8 0 12 0;
 #X connect 9 0 11 0;
 #X connect 11 0 7 0;

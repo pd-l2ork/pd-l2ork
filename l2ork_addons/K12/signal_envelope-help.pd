@@ -36,10 +36,10 @@ and how fast it fades away. Input the signal to be shaped into the
 left inlet. Use the right inlet to trigger the sound by sending it
 a 1 the outlet will be the signal that has been shaped by the envelope.
 Recall leftmost preset above for an example.;
-#X obj 237 -180 cnv 15 243 107 empty empty empty 20 12 0 14 #e0e0e0
+#X obj 237 -160 cnv 15 243 107 empty empty empty 20 12 0 14 #e0e0e0
 #404040 0;
-#X obj 382 -171 K12/preset 0;
-#X text 243 -123 Recall one of thepresets to start theexample.;
+#X obj 382 -151 K12/preset 0;
+#X text 245 -105 Recall one of thepresets to initializevalues.;
 #X connect 7 0 8 0;
 #X connect 8 0 9 0;
 #X connect 9 0 2 0;

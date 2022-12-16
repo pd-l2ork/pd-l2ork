@@ -9,14 +9,14 @@
 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X obj 118 86 loadbang;
 #X obj 81 171 hsl 68 14 50 10000 0 0 \$0-s-filt0 \$0-r-filt0 empty
--2 -8 0 10 #fcfcfc #000000 #000000 1597 1 0 1;
+-2 -8 0 10 #fcfcfc #000000 #000000 0 1 0 1;
 #X obj 81 281 line~ 0;
 #X obj 171 144 preset_node k12;
 #X obj 81 32 abs;
-#X text 80 182 low;
-#X text 128 182 high;
+#X text 80 183 low;
+#X text 128 183 high;
 #X obj 271 144 preset_node k12;
-#X obj 93 213 cnv 13 14 13 empty \$0-compare notch 10 7 0 10 #fcfcfc
+#X obj 93 211 cnv 13 14 13 empty \$0-compare lowpass 3 7 0 10 #fcfcfc
 #000000 0;
 #X obj 284 332 tosymbol;
 #X obj 284 407 s \$0-compare;
@@ -78,7 +78,7 @@
 #X msg 184 265 lowpass 3;
 #X obj 254 228 select 0 1 2 3;
 #X obj 87 199 hradio 15 1 1 4 empty empty empty 0 -8 0 10 #fcfcfc #000000
-#000000 3 1;
+#000000 0 1;
 #X connect 0 0 2 0;
 #X connect 2 0 19 1;
 #X connect 2 1 19 2;

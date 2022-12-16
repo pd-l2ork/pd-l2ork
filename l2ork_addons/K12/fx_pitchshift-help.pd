@@ -11,13 +11,13 @@
 2 100 %node% 3 15 15 14 %preset% 0 C:/Program\ Files\ (x86)/Pd-L2Ork/extra/K12/voice2.wav
 %preset% 1 C:/Program\ Files\ (x86)/Pd-L2Ork/extra/K12/voice2.wav %preset%
 2 C:/Program\ Files\ (x86)/Pd-L2Ork/extra/K12/voice2.wav;
-#X obj 11 318 cnv 15 483 133 empty empty empty 20 12 0 14 #dcdcdc #404040
+#X obj 9 318 cnv 15 483 133 empty empty empty 20 12 0 14 #dcdcdc #404040
 0;
 #X obj 0 -2 cnv 3 501 3 empty empty empty 5 14 0 20 #fc8000 #b8b8b8
 0;
 #X obj 0 -30 cnv 15 501 28 empty empty FX/Pitchshift 5 14 0 20 #880024
 #fcfcfc 0;
-#X obj 19 470 K12/output;
+#X obj 17 470 K12/output;
 #N canvas 425 288 392 172 META 0;
 #X text 7 120 OUTLET_0 Connect this to a sound object or sound output
 ;
@@ -30,10 +30,10 @@ of detune (-127 to 127 \, default 0);
 #X restore 447 564 pd META;
 #X obj 447 -24 ggee/image @pd_extra/K12/icons/l2ork.png 0 0 48 50 empty
 empty empty 48 50 1 0 10 #000000 0 -8 24 25 0 1 1;
-#X obj 19 325 K12/fx_pitchshift;
-#X obj 19 115 K12/math_number;
-#X obj 137 115 K12/math_number;
-#X text 121 324 Pitchshift is used to transpose \, or change the pitch
+#X obj 17 325 K12/fx_pitchshift;
+#X obj 17 115 K12/math_number;
+#X obj 135 115 K12/math_number;
+#X text 119 324 Pitchshift is used to transpose \, or change the pitch
 of the incoming sound in real-time. This process is also known as detune.
 Use left inlet to connect sound you wish to detune. Use the right inlet
 to change the pitch (range -127 to 127 \, default 0). Each whole number
@@ -41,11 +41,11 @@ corresponds to a half-step (e.g. C to C#). You can also use decimal
 numbers for pitches in between half-steps (e.g. 0.5 will detune by
 a 1/4 of a step). Connect the outgoing sound to output or other effects.
 ;
-#X obj 173 237 K12/math_number;
+#X obj 171 237 K12/math_number;
 #X obj 396 79 K12/preset;
 #X text 268 111 Use preset 0 to play original sound \, then recall
 preset 1 to hear detuned sound., f 20;
-#X obj 19 207 K12/signal_player 0;
+#X obj 17 207 K12/signal_player 0;
 #X connect 8 0 5 0;
 #X connect 9 0 15 0;
 #X connect 10 0 15 1;

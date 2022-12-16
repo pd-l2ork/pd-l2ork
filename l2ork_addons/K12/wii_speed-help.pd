@@ -1,4 +1,4 @@
-#N canvas 363 64 502 448 10;
+#N canvas 363 64 501 448 10;
 #X obj 228 -25 preset_hub k12 %hidden%;
 #X obj -3 -1 cnv 3 501 3 empty empty empty 5 14 0 20 #fc8000 #b8b8b8
 0;
@@ -12,7 +12,7 @@
 #X text 12 54 OUTLET_0 Outputs values between -1 and 1 Connect to an
 instrument to drive its loudness or to some other mathematical object
 that will modify its value;
-#X restore 444 392 pd META;
+#X restore 444 384 pd META;
 #X obj -3 -30 cnv 15 501 28 empty empty Wii/Speed 5 14 0 20 #880024
 #fcfcfc 0;
 #X obj 444 -24 ggee/image @pd_extra/K12/icons/l2ork.png 0 0 48 50 empty

@@ -19,7 +19,7 @@ set inside the object whenever a non-zero value is sent;
 through this object;
 #X text 6 99 OUTLET_0 Connect this to any math or instrument object
 ;
-#X restore 448 556 pd META;
+#X restore 448 548 pd META;
 #X obj 15 195 K12/math_number;
 #X text 116 195 The Math Number object simply displays the current
 value of the numbers passing through it. You can set the value of the

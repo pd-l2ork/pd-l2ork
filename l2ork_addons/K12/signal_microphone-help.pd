@@ -17,8 +17,8 @@ objects \, or to the sound object;
 #X text 8 93 OUTLET_1 This is the average level of the audio from the
 microphone (non-signal);
 #X restore 437 288 pd META;
-#X obj 13 186 K12/output;
-#X obj 125 186 K12/math_number;
+#X obj 12 186 K12/output;
+#X obj 124 186 K12/math_number;
 #X text 110 77 The Microphone object allows you to get the signal from
 your microphone. Connect this to any signal math \, effect objects
 \, the record buffer object \, or the sound object. The left outlet

@@ -3,19 +3,18 @@
 0;
 #X obj 233 -22 preset_hub k12 %hidden% %node% 2 5 14 %preset% 0 100
 %preset% 1 100 %preset% 2 100 %preset% 3 100 %node% 2 13 4 %preset%
-0 0 %preset% 1 7 %preset% 2 81 %preset% 3 127 %node% 2 13 13 %preset%
-0 69.589 %preset% 1 69.589 %preset% 2 127 %preset% 3 127 %node% 2 9
-6 %preset% 0 1 %preset% 1 1 %preset% 2 1 %preset% 3 0.5 %node% 2 10
-6 %preset% 0 60 %preset% 1 60 %preset% 2 60 %preset% 3 67 %node% 2
-11 6 %preset% 0 0 %preset% 1 7 %preset% 2 81 %preset% 3 127 %node%
-2 12 7 %node% 2 5 25 %preset% 3 0;
-#X obj 11 318 cnv 15 481 108 empty empty empty 20 12 0 14 #dcdcdc #404040
+0 0 %preset% 1 7 %preset% 2 81 %preset% 3 127 %node% 2 9 6 %preset%
+0 1 %preset% 1 1 %preset% 2 1 %preset% 3 0.5 %node% 2 10 6 %preset%
+0 60 %preset% 1 60 %preset% 2 60 %preset% 3 67 %node% 2 11 6 %preset%
+0 0 %preset% 1 7 %preset% 2 81 %preset% 3 127 %node% 2 12 7 %node%
+2 5 25 %preset% 3 0 %node% 2 13 12;
+#X obj 10 318 cnv 15 481 108 empty empty empty 20 12 0 14 #dcdcdc #404040
 0;
 #X obj 0 -2 cnv 3 501 3 empty empty empty 5 14 0 20 #fc8000 #b8b8b8
 0;
 #X obj 0 -30 cnv 15 501 28 empty empty FX/Phaser 5 14 0 20 #880024
 #fcfcfc 0;
-#X obj 19 470 K12/output;
+#X obj 18 470 K12/output;
 #N canvas 415 278 392 172 META 0;
 #X text 7 120 OUTLET_0 Connect this to a sound object or sound output
 ;
@@ -28,15 +27,15 @@ the incoming sound;
 #X restore 447 564 pd META;
 #X obj 447 -24 ggee/image @pd_extra/K12/icons/l2ork.png 0 0 48 50 empty
 empty empty 48 50 1 0 10 #000000 0 -8 24 25 0 1 1;
-#X obj 19 208 K12/instr_sustained2;
-#X obj 19 115 K12/math_number;
-#X obj 117 115 K12/math_number;
-#X obj 173 237 K12/math_number;
+#X obj 18 208 K12/instr_sustained2;
+#X obj 18 115 K12/math_number;
+#X obj 116 115 K12/math_number;
+#X obj 172 237 K12/math_number;
 #X obj 396 79 K12/preset;
-#X obj 19 327 K12/fx_phaser;
+#X obj 18 327 K12/fx_phaser;
 #X text 267 99 Use preset 0 to play original sound \, then recall presets
 1 and 2 to hear processed sound., f 20;
-#X text 121 324 Phaser is used to create a flange-like (wah-wah) sound
+#X text 120 324 Phaser is used to create a flange-like (wah-wah) sound
 that sound. Use left inlet to connect sound you wish to process. Use
 the right inlet to change the frequency (range 0 to 127 \, default
 0). Each whole number corresponds to a 1/10 of Hz. Connect the outgoing

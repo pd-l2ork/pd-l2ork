@@ -1,8 +1,8 @@
-#N canvas 254 64 502 509 10;
+#N canvas 254 64 502 517 10;
 #X obj 8 134 cnv 15 484 186 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
-#X obj 121 -36 preset_hub k12 %hidden% %node% 2 7 7 %node% 2 8 7 %node%
-2 9 7 %node% 2 6 2 %node% 2 6 28;
+#X obj 121 -36 preset_hub k12 %hidden% %node% 2 6 2 %node% 2 6 28 %node%
+2 7 6 %node% 2 8 6 %node% 2 9 6;
 #X obj 0 -10 cnv 3 501 3 empty empty empty 5 14 0 20 #fc8000 #b8b8b8
 0;
 #X obj 0 -38 cnv 15 501 28 empty empty Logic/Compare 5 14 0 20 #880024

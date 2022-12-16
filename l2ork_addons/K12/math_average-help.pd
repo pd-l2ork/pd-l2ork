@@ -1,7 +1,7 @@
-#N canvas 290 67 502 456 10;
-#X obj 264 -25 preset_hub k12 %hidden% %node% 2 6 7 %node% 2 7 7 %node%
-2 8 6;
-#X obj 12 163 cnv 15 480 100 empty empty empty 20 12 0 14 #e0e0e0 #404040
+#N canvas 290 67 500 463 10;
+#X obj 264 -25 preset_hub k12 %hidden% %node% 2 8 6 %node% 2 6 6 %node%
+2 7 6;
+#X obj 8 163 cnv 15 480 100 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
 #N canvas 574 86 450 514 META 0;
 #X text 13 45 INLET_0 Connect any non-signal numbers here;
@@ -16,10 +16,10 @@ in the inlet.;
 #fcfcfc 0;
 #X obj 445 -22 ggee/image @pd_extra/K12/icons/l2ork.png 0 0 48 50 empty
 empty empty 48 50 1 0 10 #000000 0 -8 24 25 0 1 1;
-#X obj 17 33 K12/math_number;
-#X obj 17 297 K12/math_number;
-#X obj 17 168 K12/math_average;
-#X text 124 177 The Math Average object allows you to calculate the
+#X obj 12 33 K12/math_number;
+#X obj 12 297 K12/math_number;
+#X obj 12 168 K12/math_average;
+#X text 119 177 The Math Average object allows you to calculate the
 average of a stream of numbers. Send the stream you want to be averaged
 to the inlet. The length number determines how many numbers have to
 be input before an average is calculated. The output outputs the average.

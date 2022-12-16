@@ -1,10 +1,10 @@
-#N canvas 339 132 502 500 10;
+#N canvas 339 132 501 500 10;
 #X obj 170 -26 preset_hub k12 %hidden% %node% 2 9 6 %node% 3 2 4 19
 ;
-#X obj 11 139 cnv 15 474 196 empty empty empty 20 12 0 14 #e0e0e0 #404040
+#X obj 12 139 cnv 15 474 196 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
-#X obj 18 146 K12/wii_buttons;
-#X text 121 215 Select a button by clicking on one of the possibilities.
+#X obj 19 146 K12/wii_buttons;
+#X text 122 215 Select a button by clicking on one of the possibilities.
 Once selected \, only that button will register.;
 #N canvas 547 167 450 514 META 0;
 #X text 8 34 INLET_0 Attach the Wii Connect object here;
@@ -12,18 +12,18 @@ Once selected \, only that button will register.;
 to use.;
 #X text 7 51 OUTLET_0 This outputs 0 if the button is not pressed and
 1 if it is pressed.;
-#X restore 448 443 pd META;
+#X restore 446 435 pd META;
 #X obj -1 -4 cnv 3 501 3 empty empty empty 5 14 0 20 #fc8000 #b8b8b8
 0;
 #X obj -1 -33 cnv 15 501 28 empty empty Wii/Buttons 5 14 0 20 #880024
 #fcfcfc 0;
 #X obj 446 -25 ggee/image @pd_extra/K12/icons/l2ork.png 0 0 48 50 empty
 empty empty 48 50 1 0 10 #000000 0 -8 24 25 0 1 1;
-#X obj 18 30 K12/wii_connect;
-#X obj 18 355 K12/math_number;
-#X text 120 166 The Wii Buttons object is used to program the buttons
+#X obj 19 30 K12/wii_connect;
+#X obj 19 355 K12/math_number;
+#X text 121 166 The Wii Buttons object is used to program the buttons
 on the Wiimote. Connect the Wii Connect object to the inlet.;
-#X text 119 257 The Wii Buttons object will output a 0 if the button
+#X text 120 257 The Wii Buttons object will output a 0 if the button
 is not being pressed \, and a 1 if it is being pressed.;
 #X connect 2 0 9 0;
 #X connect 8 0 2 0;

@@ -1,13 +1,13 @@
-#N canvas 475 73 502 677 10;
+#N canvas 475 73 501 682 10;
 #X obj 242 23 cnv 15 242 107 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
 #X obj 12 322 cnv 15 477 200 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
-#X obj 120 -38 preset_hub k12 %hidden% %node% 2 13 8 %preset% 0 127
-%node% 2 5 6 %preset% 0 1 %node% 2 12 0 %node% 2 12 3 %preset% 0 1
-%node% 2 13 4 %preset% 0 0 %node% 2 6 3 %preset% 0 0 %node% 2 6 5 %preset%
+#X obj 120 -38 preset_hub k12 %hidden% %node% 2 12 8 %preset% 0 127
+%node% 2 5 6 %preset% 0 1 %node% 2 11 0 %node% 2 11 3 %preset% 0 1
+%node% 2 12 4 %preset% 0 0 %node% 2 6 3 %preset% 0 0 %node% 2 6 5 %preset%
 0 100 %node% 2 6 10 %preset% 0 0 %node% 2 6 11 %preset% 0 1 %node%
-2 14 7 %node% 2 15 6 %preset% 0 115;
+2 13 7 %node% 2 14 6 %preset% 0 115;
 #X obj -1 -12 cnv 3 501 3 empty empty empty 5 14 0 20 #fc8000 #b8b8b8
 0;
 #N canvas 529 184 450 300 META 0;
@@ -34,12 +34,12 @@ loudness of a sound in pd-l2ork.;
 #fcfcfc 0;
 #X obj 441 -33 ggee/image @pd_extra/K12/icons/l2ork.png 0 0 48 50 empty
 empty empty 48 50 1 0 10 #000000 0 -8 24 25 0 1 1;
-#X text 247 86 Recall leftmost presetto start the example.;
 #X obj 21 34 K12/logic_metronome;
 #X obj 21 143 K12/math_random;
 #X obj 386 32 K12/preset;
 #X obj 21 251 K12/math_number;
+#X text 247 91 Recall leftmost presetto initialize values.;
 #X connect 6 0 5 0;
-#X connect 12 0 13 0;
-#X connect 13 0 15 0;
-#X connect 15 0 6 0;
+#X connect 11 0 12 0;
+#X connect 12 0 14 0;
+#X connect 14 0 6 0;

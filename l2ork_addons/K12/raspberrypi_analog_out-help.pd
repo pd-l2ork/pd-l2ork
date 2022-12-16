@@ -1,5 +1,5 @@
-#N canvas 289 39 502 641 10;
-#X obj 245 -39 preset_hub k12 %hidden% %node% 2 6 6 %node% 2 7 2;
+#N canvas 289 39 501 641 10;
+#X obj 245 -39 preset_hub k12 %hidden% %node% 2 6 6 %node% 2 7 3;
 #X obj 4 98 cnv 15 479 265 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
 #X obj -7 -17 cnv 3 501 3 empty empty empty 5 14 0 20 #fc8000 #b8b8b8
@@ -14,12 +14,12 @@ Pi's GPIO outputs using PWM algorithm. Specify channel (1-10) to connect.
 Use channel 0 to disconnect.;
 #X text 6 71 INLET_0 Send data (0-1023) to a desired Raspberry Pi analog
 channel (1-10).;
-#X restore 441 571 pd META;
+#X restore 441 565 pd META;
 #X obj 14 22 K12/math_number;
 #X obj 14 107 K12/raspberrypi_analog_out;
-#X obj 115 367 ggee/image @pd_extra/K12/images/lop_board.png 0 0 250
-168 empty empty empty 250 168 1 0 10 #000000 0 -8 125 84 0 1 1;
-#X obj 19 527 pddplink http://moderndevice.com/product/lots-of-pots-lop-board-for-raspberry-pi/
+#X obj 115 370 ggee/image @pd_extra/K12/images/lop_board.png 0 0 250
+167 empty empty empty 250 167 1 0 10 #000000 0 -8 125 84 0 1 1;
+#X obj 20 543 pddplink http://moderndevice.com/product/lots-of-pots-lop-board-for-raspberry-pi/
 ;
 #X text 110 104 The Raspberry Pi Analog Output object allows for sending
 analog data using GPIOs using Pulse Width Modulation (PWM) algorithm.

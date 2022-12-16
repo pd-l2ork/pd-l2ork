@@ -1,6 +1,6 @@
-#N canvas 127 73 502 457 10;
-#X obj 244 -26 preset_hub k12 %hidden% %node% 2 8 7 %node% 2 9 7 %node%
-2 10 7;
+#N canvas 127 73 501 462 10;
+#X obj 244 -26 preset_hub k12 %hidden% %node% 2 8 6 %node% 2 9 6 %node%
+2 10 6;
 #X obj 13 148 cnv 15 466 99 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
 #X obj 18 152 K12/math_multiply;

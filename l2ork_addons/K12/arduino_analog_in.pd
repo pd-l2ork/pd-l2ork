@@ -1,4 +1,4 @@
-#N canvas 162 64 413 407 10;
+#N canvas 162 64 387 407 10;
 #X obj 172 104 ggee/image @pd_extra/K12/objects/arduino_analog_in.png
 1 0 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1
 ;

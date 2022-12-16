@@ -1,5 +1,5 @@
 #N canvas 341 73 502 572 10;
-#X obj 239 29 cnv 15 243 107 empty empty empty 20 12 0 14 #e0e0e0 #404040
+#X obj 239 59 cnv 15 243 107 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
 #X obj 4 464 cnv 15 479 240 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
@@ -27,7 +27,7 @@ data that matches this tag name;
 #X obj 14 724 K12/math_number 0;
 #X obj 14 117 K12/math_tag 0;
 #X obj 14 473 K12/math_routebytag 0;
-#X obj 384 38 K12/preset 0;
+#X obj 384 68 K12/preset 0;
 #X obj 119 30 K12/math_number 0;
 #X obj 119 117 K12/math_tag 0;
 #X obj 128 724 K12/math_number 0;
@@ -42,7 +42,7 @@ Tag object \, used to tag data sentover the network with the tag name
 thatyou choose.Look at the help files for the Tag \, NetSend \,
 and NetReceive objects for moreinformation on how those objects work.
 ;
-#X text 245 94 Recall leftmost presetto start the example.;
+#X text 245 127 Recall leftmost presetto initialize values.;
 #X connect 8 0 12 0;
 #X connect 8 0 17 0;
 #X connect 9 0 11 0;

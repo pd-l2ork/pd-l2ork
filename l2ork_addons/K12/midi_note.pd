@@ -7,7 +7,7 @@
 #X obj 246 41 preset_node k12;
 #X obj 247 67 preset_node k12;
 #X text 160 67 Channel:;
-#X obj 167 99 nbx 5 14 0 1e+37 0 1 empty empty empty -4 -8 0 10 #fcfcfc
+#X obj 169 99 nbx 5 14 0 1e+37 0 1 empty empty empty -4 -8 0 10 #fcfcfc
 #000000 #000000 250 256 1 0 1 0;
 #X text 167 82 Duration:;
 #X obj 18 353 outlet;
