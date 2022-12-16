@@ -90,6 +90,8 @@ ifneq ($(LIGHT),yes)
 	@echo "Adding K12 menu icons..."
 	install -d $(DESTDIR)/K12-icons/
 	cp -rf $(cvs_root_dir)/l2ork_addons/K12/icons-large/ $(DESTDIR)/K12-icons/
+	@echo "Adding arduino abstractions..."
+	cp -rf $(cvs_root_dir)/externals/hardware/arduino $(DESTDIR)/extra/
 endif
 	# Huge kludge to move all the nw.js files in $DESTDIR/bin to
 	# $DESTDIR. We need to do this because the nw.js app expects

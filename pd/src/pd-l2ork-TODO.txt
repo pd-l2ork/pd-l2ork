@@ -1,6 +1,16 @@
 PD-L2ORK TODO:
 *Seek RPi version of nw.js 0.67.1. IN PROGRESS
 
+*Finish K12 object refinements.
+  *disis_gpio on RPi is not working (got a dummy instead).
+  *all arduino objects (except for connect) need to have dynamic updates rather than loading image from the disk.
+  *arduino connect object has its icon behavior reversed (on when off and vice-versa).
+  *all arudino objects are incorrectly offset.
+  *check all other image toggling objects.
+*Investigate ggee/image redraw of the entire canvas (visible on RPi--perhaps related to the nw.js version?).
+
+*Preferences should offer an option to clear user settings registry and repopulate it with defaults.
+
 *Add translations for the K12 menu tooltips.
 
 *Test nwjs 0.67.1 for regressions:
@@ -590,6 +600,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Fixed typo in the documentation.
 *Updated K12/output object to support stereo and mono-to-stereo. Updated help file and supporting icons. Ensured that the object by default is in the off position.
 *On Windows make pd-l2ork default to open a filetype rather than prompting every time. WILL NOT CHANGE (if user has multiple versions of pd or other text editors that could open the .pd file, it should be up to them to set the default inside the OS).
+*Made arduino abstractions available on OSX and Windows.
 
 
 
