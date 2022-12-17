@@ -8,6 +8,8 @@ PD-L2ORK TODO:
         *Perhaps this should be tackled during pasting action (per object, if possible), not after the fact?
           *Is this worth the effort just to offset the flicker of images loading inside K12 objects? Or, could this be handled inside the image object instead?
 
+*Make arduino_connect off when using -1 option. (seems to turn green/on on RPi for some reason, even when using -1)
+
 *Preferences should offer an option to clear user settings (on Windows, registry) and repopulate it with defaults.
 
 *Add translations for the K12 menu tooltips.
