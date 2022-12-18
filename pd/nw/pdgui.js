@@ -10485,8 +10485,10 @@ function reset_user_settings() {
     }
     else if (nw_os_is_linux) {
         // copy default file to user preferences
-        sourcefile = path.resolve("/etc/pd-l2ork/default.settings");
-        targetfile = path.resolve(require('os').homedir() + ".pd-l2ork/user.settings");
+        sourcefile = path.resolve(global.__dirname +
+            "/../default.settings");
+        targetfile = path.resolve(process.env.HOME + "/.pd-l2ork/user.settings");
+        //post("sourcefile=" + sourcefile + " targetfile=" + targetfile);
         fs.copyFile(sourcefile, targetfile, (err) => {
             if (err) throw err;
             console.log(sourcefile + " was copied to " + targetfile);
