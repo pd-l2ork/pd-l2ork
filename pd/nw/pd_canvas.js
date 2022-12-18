@@ -1777,7 +1777,7 @@ var canvas_events = (function() {
                     d.deltaX, d.deltaY, d.deltaZ);
                 //pdgui.post("k12_menu scroll " + d.deltaY);
                 var tab = document.getElementById("tab_menu");
-                tab.scroll(0, tab.scrollTop + (d.deltaY * 4));
+                tab.scroll(0, tab.scrollTop + (evt.deltaY));
                 evt.preventDefault();
                 //evt.stopPropagation();
             });
