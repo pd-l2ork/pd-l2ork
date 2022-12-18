@@ -1,6 +1,12 @@
 PD-L2ORK TODO:
 *Seek RPi version of nw.js 0.67.1. IN PROGRESS
 
+
+Before release:
+*Make arduino_connect off when using -1 option. (seems to turn green/on on RPi for some reason, even when using -1).
+*Consider disabling help for the comment in K12 mode.
+
+
 *Investigate ggee/image redraw of the entire canvas.
   *This is due to undo_cut redrawing canvas to reposition all objects where they belong. Added TODO inside g_editor.c where repositioning inside DOM should take place.
     *Need to figure out logic how to do this reliably. Probably by referencing the tag of the object right below it (or above it, whichever is easier) and placing it there.
@@ -8,13 +14,7 @@ PD-L2ORK TODO:
         *Perhaps this should be tackled during pasting action (per object, if possible), not after the fact?
           *Is this worth the effort just to offset the flicker of images loading inside K12 objects? Or, could this be handled inside the image object instead?
 
-*Make arduino_connect off when using -1 option. (seems to turn green/on on RPi for some reason, even when using -1)
-
-*Preferences should offer an option to clear user settings (on Windows, registry) and repopulate it with defaults.
-
 *Add translations for the K12 menu tooltips.
-
-*Consider disabling help for the comment in K12 mode.
 
 *Test nwjs 0.67.1 for regressions:
   *Patch window positioning: loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
@@ -611,6 +611,15 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
   *The scrollbars should also update, as needed. OK
     *Sometimes scrollbars stop updating after having used K12 menu. Open ~/Desktop/title.pd and toggle k12_menu. Looks like overflow does not get reenabled. REWORKED wheel, scroll, and canvas_params logic.
 *Fix disis_gpio on RPi is not working (got a dummy instead) due to a bug (regression?) in the tar_em_up.sh script.
+*Updated L2Ork Tweeter to 0.71 with regression fixes.
+*Refined K12 menu scroll (using native info, rather than cooked version that is sent to the backend).
+*Preferences should offer an option to clear user settings (on Windows, registry) and repopulate it with defaults.
+*Moved reset_nwjs_user_settings_folder() from the dialog_prefs.html and disabled its button option on the General tab since it is such an uncommon option. Instead, started building functions that can be invoked from the File->Message that involve less common situations like this one.
+  *Added reset_user_settings() function that reverts all settings to default while keeping recent files.
+  *The two functions can be invoked in the File->Message prompt as:
+    nwjs:reset_nwjs_user_settings_folder()
+    nwjs:reset_user_settings()
+*Improved preferences dialog, so that the bottom three buttons are always aligned the same, regardless the focused tab.
 
 
 

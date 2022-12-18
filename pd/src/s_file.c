@@ -1020,3 +1020,61 @@ void glob_clear_recent_files(t_pd *dummy)
     sys_save_recent_files();
     glob_recent_files(dummy);
 }
+
+// clearing of the registry on windows plus for both windows
+// and other OSs to reinit settings based on the default values
+// (with the exception of recent files which we keep)
+// this is called from the File->Message and then calling:
+// pd reinit-user-settings OR (better, cross-platform)
+// nwjs:reset_user_settings()
+#ifdef MSW
+
+// other includes already added on top of this file
+#include <strsafe.h>
+
+//*************************************************************
+//
+//  RegDelnode()
+//
+//  Purpose:    Deletes target key
+//
+//  Parameters: hKeyRoot    -   Root key
+//              lpSubKey    -   SubKey to delete
+//
+//*************************************************************
+
+#define MAX_KEY_LENGTH 255
+#define MAX_VALUE_NAME 16383
+
+void RegDelnode (HKEY hKeyRoot, LPTSTR lpSubKey)
+{
+    TCHAR szDelKey[MAX_PATH*2];
+    StringCchCopy (szDelKey, MAX_PATH*2, lpSubKey);
+
+    LONG lResult;
+
+    // this wipes the whole Pd-L2Ork "key",
+    lResult = RegDeleteKey(hKeyRoot, szDelKey);
+
+    if (lResult != ERROR_SUCCESS) {
+        post("Error deleting HKCU\\Software\\Pd-L2Ork registry key");
+    }
+}
+
+#endif
+
+void reinit_user_settings(void *dummy)
+{
+    // this part should be called only from the Windows OS.
+#ifdef MSW
+    RegDelnode(HKEY_CURRENT_USER, TEXT("Software\\Pd-L2Ork"));
+#endif
+
+    // reload preferences given we now only have default settings
+    // plus the recent files we handle below
+    sys_loadpreferences();
+    // update the visual theme
+    gui_vmess("gui_set_gui_preset", "s", sys_gui_preset->s_name);
+    // now reinstate recent files
+    sys_save_recent_files();
+}

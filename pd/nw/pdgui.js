@@ -2267,7 +2267,7 @@ function gui_quit_dialog() {
 function menu_send(name) {
     var message,
         win = name ? patchwin[name] : pd_window;
-    message = win.window.prompt("Type a message to send to Pd", name);
+    message = win.window.prompt("Type a message to send to Pd-L2Ork", name);
     if (message != undefined && message.length) {
         var semi = (message.endsWith(";") ? "" : ";");
         if (message.startsWith("nwjs:")) {
@@ -8579,9 +8579,10 @@ function gui_pd_dsp(state) {
     }
 }
 
+// dialog_prefs.html
 function open_prefs() {
     if (!dialogwin["prefs"]) {
-        create_window("prefs", "prefs", 486, 532, 0, 0, null);
+        create_window("prefs", "prefs", 486, 552 + (nw_os_is_osx * 48), 0, 0, null);
     } else {
         dialog_raise("prefs");
     }
@@ -8589,6 +8590,7 @@ function open_prefs() {
 
 exports.open_prefs = open_prefs;
 
+// dialog_search.html
 function open_search() {
     if (!dialogwin["search"]) {
         create_window("search", "search", 300, 400, 20, 20, null);
@@ -10415,3 +10417,84 @@ function toggle_k12_menu_visibility(cid, state) {
 }
 
 exports.toggle_k12_menu_visibility = toggle_k12_menu_visibility;
+
+// ico@vt.edu 2022-12-18: moving this from the dialog_prefs.html
+// so that we can call it via File->Message with a nwjs: prefix
+// below, we will continue to add other functions, as needed,
+// and potentially eventually pull this out of this file into
+// a separate js file to be included with pdgui.js.
+
+// this first call is to reset nw.js settings, which may be
+// necessary if we ever (again) downgrade nw.js, in which case
+// older version may not be able to read settings of a newer
+// version, thus spawning an error popup at start-up.
+function reset_nwjs_user_settings_folder() {
+    post("calling reset_nwjs_user_settings_folder...");
+    var os = require('os').platform();
+    var targetdir;
+    if (nw_os_is_linux) {
+        // Linux
+        targetdir = path.resolve(require('os').homedir() + "/.config/pd-l2ork");
+    } else if (nw_os_is_osx) {
+        // OSX
+        targetdir = path.resolve(require('os').homedir() + "/Library/Application Support/Pd-L2Ork");
+    } else {
+        // Windows
+        targetdir = path.resolve(process.env.LOCALAPPDATA);
+    }
+    //post("targetdir=" + targetdir);
+    if (fs.existsSync(targetdir)) {
+        // Windows does not make this easy, so we can only inform the user of what they need to do...
+        if (nw_os_is_windows) {
+            post("\nWindows does not allow for deletion of the settings folder while pd-l2ork is " +
+                 "running. Pd-L2Ork has just opened the folder where the settings folder is located." +
+                 " Please quit pd-l2ork and then delete the pd-l2ork folder in the explorer window " +
+                 "(the exact location is " + targetdir + "\\pd-l2ork). Then reopen pd-l2ork...");
+            require('child_process').exec("start " + targetdir);
+            return;
+        }
+        setTimeout(function () {
+          menu_quit();
+        }, 1000);
+        //console.log("nwjs user settings folder exists, deleting...");
+        //post("Your nwjs application folder has been deleted.");
+        rmdir(targetdir);
+        fs.mkdirSync(targetdir);
+    }
+    post("done.");
+}
+
+exports.reset_nwjs_user_settings_folder = reset_nwjs_user_settings_folder;
+
+function reset_user_settings() {
+    post("calling reset_user_settings...");
+    var sourcefile, targetfile;
+    // only Linux and OSX need to have their external file deleted
+    // Windows is handled below via the pdsend call since it involves
+    // the registry
+    if (nw_os_is_osx) {
+        // copy default file to user preferences
+        sourcefile = path.resolve(
+            global.__dirname + "/../org.puredata.pd-l2ork.default.plist");
+        targetfile = path.resolve(require('os').homedir() +
+            "/Library/Preferences/org.puredata.pd-l2ork.plist");
+        fs.copyFile(sourcefile, targetfile, (err) => {
+            if (err) throw err;
+            console.log(sourcefile + " was copied to " + targetfile);
+        });
+    }
+    else if (nw_os_is_linux) {
+        // copy default file to user preferences
+        sourcefile = path.resolve("/etc/pd-l2ork/default.settings");
+        targetfile = path.resolve(require('os').homedir() + ".pd-l2ork/user.settings");
+        fs.copyFile(sourcefile, targetfile, (err) => {
+            if (err) throw err;
+            console.log(sourcefile + " was copied to " + targetfile);
+        });
+    }
+    // then handle Windows registry stuff and reinit all preferences
+    pdsend("pd reinit-user-settings");
+    post("done.");
+}
+
+exports.reset_user_settings = reset_user_settings;

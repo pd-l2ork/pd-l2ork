@@ -551,13 +551,13 @@ select {
               <span data-i18n="prefs.gui.autocomplete.autocomplete_relevance"></span>
             </label>
             <br/><br/>
-            <span data-i18n="prefs.general.nwjs.nwjs_title"></span>
+            <!--<span data-i18n="prefs.general.nwjs.nwjs_title"></span>
             <br/>
-            <button type="button" onClick="reset_nwjs_user_settings_folder()"
+            <button type="button" onClick="pdgui.reset_nwjs_user_settings_folder()"
                 data-i18n="[title]prefs.general.nwjs.nwjs_settings_tt">
               <span data-i18n="prefs.general.nwjs.nwjs_settings"></span>
             </button>
-            <br/><br/>
+            <br/><br/>-->
             <span data-i18n="prefs.general.apps.apps_title"></span>
             <br/>
             <button type="button" onClick="restore_apps()"
@@ -792,6 +792,7 @@ function kludge_chans(type, attrs, index) {
 }
 
 function apply(save_prefs) {
+    pdgui.do_not_save_preferences_on_quit = 0;
     var attrs = pd_audio_attrs,
         midi_use_alsa;
 
@@ -1545,37 +1546,6 @@ function remake_index() {
         pdgui.rebuild_index(1);
     old_browser_doc = get_bool_elem("browser_doc");
     old_browser_path = get_bool_elem("browser_path");
-}
-
-function reset_nwjs_user_settings_folder() {
-    var os = require('os').platform();
-    var targetdir;
-    if (pdgui.nw_os_is_linux) {
-        // Linux
-        targetdir = path.resolve(require('os').homedir() + "/.config/pd-l2ork");
-    } else if (pdgui.nw_os_is_osx) {
-        // OSX
-        targetdir = path.resolve(require('os').homedir() + "/Library/Application Support/Pd-L2Ork");
-    } else {
-        // Windows
-        targetdir = path.resolve(process.env.LOCALAPPDATA);
-    }
-    //pdgui.post("targetdir=" + targetdir);
-    if (fs.existsSync(targetdir)) {
-        // Windows does not make this easy, so we can only inform the user of what they need to do...
-        if (pdgui.nw_os_is_windows) {
-            pdgui.post("\nWindows does not allow for deletion of the settings folder while pd-l2ork is running. Pd-L2Ork has just opened the folder where the settings folder is located. Please quit pd-l2ork and then delete the pd-l2ork folder in the explorer window (the exact location is " + targetdir + "\\pd-l2ork). Then reopen pd-l2ork...");
-            require('child_process').exec("start " + targetdir);
-            return;
-        }
-        setTimeout(function () {
-          pdgui.menu_quit();
-        }, 1000);
-        //console.log("nwjs user settings folder exists, deleting...");
-        //pdgui.post("Your nwjs application folder has been deleted.");
-        rmdir(targetdir);
-        fs.mkdirSync(targetdir);
-    }
 }
 
   </script>

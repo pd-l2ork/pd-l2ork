@@ -157,6 +157,9 @@ void glob_set_k12_mode(void *dummy, t_float f)
     //fprintf(stderr, "k12_mode=%d", sys_k12_mode);
 }
 
+// located in s_file.c
+extern int reinit_user_settings(void *dummy);
+
 void glob_init(void)
 {
     maxclass = class_new(gensym("max"), 0, 0, sizeof(t_pd),
@@ -238,6 +241,9 @@ void glob_init(void)
         gensym("gui-busy"), A_DEFFLOAT, 0);
     class_addmethod(glob_pdobject, (t_method)glob_set_k12_mode,
         gensym("set-k12-mode"), A_DEFFLOAT, 0);
+    /* -------------- windows delete all registry keys in s_file.c ------------------ */
+    class_addmethod(glob_pdobject, (t_method)reinit_user_settings,
+        gensym("reinit-user-settings"), 0);
 #ifdef UNIX
     class_addmethod(glob_pdobject, (t_method)glob_watchdog,
         gensym("watchdog"), 0);
