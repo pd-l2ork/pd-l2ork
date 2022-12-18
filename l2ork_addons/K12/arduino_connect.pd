@@ -1,4 +1,4 @@
-#N canvas 510 126 688 570 10;
+#N canvas 510 130 688 570 10;
 #X obj 215 81 ggee/image @pd_extra/K12/objects/arduino_on.png 1 0 25
 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #N canvas 340 108 527 287 buffer 0;
@@ -50,36 +50,36 @@
 #X connect 19 0 13 0;
 #X connect 20 0 13 0;
 #X connect 21 0 13 0;
-#X restore 300 438 pd buffer;
-#X msg 242 310 close \, info;
-#X obj 435 376 route open;
-#X obj 336 497 outlet;
-#X text 51 465 message structure:;
-#X text 51 477 digital = d <channel> <val>;
-#X text 51 488 analog = a <channel> <val>;
+#X restore 300 458 pd buffer;
+#X msg 242 330 close \, info;
+#X obj 435 396 route open;
+#X obj 336 517 outlet;
+#X text 51 485 message structure:;
+#X text 51 497 digital = d <channel> <val>;
+#X text 51 508 analog = a <channel> <val>;
 #X obj 215 81 ggee/image @pd_extra/K12/objects/arduino_off.png 1 0
 25 25 empty empty empty 110 140 1 0 10 #000000 0 -8 55 70 0 1 1;
 #X obj 332 87 select 0 1;
 #X obj 332 65 change;
 #X obj 514 232 loadbang;
 #X obj 514 254 metro 1000;
-#X msg 325 310 info;
-#X obj 514 415 f \$0;
-#X msg 514 438 arduino \$1;
-#X text 500 468 used to inform its membersof the instance they arelinked
+#X msg 325 330 info;
+#X obj 514 435 f \$0;
+#X msg 514 458 arduino \$1;
+#X text 500 488 used to inform its membersof the instance they arelinked
 with;
 #X obj 285 35 preset_node k12;
-#X msg 140 310 open \$1 \, info;
-#X obj 207 438 list prepend d;
-#X obj 242 376 route digital analog;
-#X obj 369 310 r arduino-\$0;
+#X msg 140 330 open \$1 \, info;
+#X obj 207 458 list prepend d;
+#X obj 242 396 route digital analog;
+#X obj 369 330 r arduino-\$0;
 #X text 195 101 Device:;
 #X obj 237 102 nbx 2 14 -1 7 0 1 empty empty empty 0 -8 0 10 #fcfcfc
 #000000 #000000 -1 256 3 0 1 0;
-#X obj 300 406 route 0 1 2 3 4 5, f 21;
-#X text 450 310 receive from downstream objects;
-#X obj 99 310 inlet;
-#X obj 242 344 arduino/arduino -1;
+#X obj 300 426 route 0 1 2 3 4 5, f 21;
+#X text 450 330 receive from downstream objects;
+#X obj 99 330 inlet;
+#X obj 242 364 arduino/arduino -1;
 #X obj 179 180 gate 2 1, f 11;
 #X obj 179 158 + 1;
 #X obj 242 251 change -2;
@@ -88,6 +88,7 @@ with;
 #X msg 218 222 set \$1;
 #X msg 360 109 visible 0;
 #X msg 332 130 visible 1;
+#X obj 107 302 sel -1;
 #X connect 1 0 4 0;
 #X connect 2 0 27 0;
 #X connect 3 0 1 6;
@@ -123,13 +124,14 @@ with;
 #X connect 28 1 30 0;
 #X connect 29 0 28 0;
 #X connect 30 0 31 0;
-#X connect 31 0 18 0;
+#X connect 31 0 36 0;
 #X connect 31 1 2 0;
-#X connect 32 0 18 0;
+#X connect 32 0 36 0;
 #X connect 32 1 2 0;
 #X connect 32 2 33 0;
 #X connect 33 0 30 0;
 #X connect 34 0 8 0;
 #X connect 35 0 8 0;
+#X connect 36 1 18 0;
 #X coords 0 -1 1 1 89 89 2 183 62;
 #X gopspill 1;

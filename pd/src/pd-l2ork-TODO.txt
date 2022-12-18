@@ -1,11 +1,6 @@
 PD-L2ORK TODO:
 *Seek RPi version of nw.js 0.67.1. IN PROGRESS
 
-
-Before release:
-*Make arduino_connect off when using -1 option. (seems to turn green/on on RPi for some reason, even when using -1).
-
-
 *Investigate ggee/image redraw of the entire canvas.
   *This is due to undo_cut redrawing canvas to reposition all objects where they belong. Added TODO inside g_editor.c where repositioning inside DOM should take place.
     *Need to figure out logic how to do this reliably. Probably by referencing the tag of the object right below it (or above it, whichever is easier) and placing it there.
@@ -620,6 +615,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
     nwjs:reset_user_settings()
 *Improved preferences dialog, so that the bottom three buttons are always aligned the same, regardless the focused tab.
 *Disabled right-click help for the comment object in K12 mode to prevent user from navigating into the non-K12 help documentation, since comment object is the same in both modes.
+*Made arduino_connect off when using -1 option. (prior to the fix, it ran green/on on RPi for some reason, even when using -1).
 
 
 
