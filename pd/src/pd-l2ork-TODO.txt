@@ -4,7 +4,6 @@ PD-L2ORK TODO:
 
 Before release:
 *Make arduino_connect off when using -1 option. (seems to turn green/on on RPi for some reason, even when using -1).
-*Consider disabling help for the comment in K12 mode.
 
 
 *Investigate ggee/image redraw of the entire canvas.
@@ -620,6 +619,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
     nwjs:reset_nwjs_user_settings_folder()
     nwjs:reset_user_settings()
 *Improved preferences dialog, so that the bottom three buttons are always aligned the same, regardless the focused tab.
+*Disabled right-click help for the comment object in K12 mode to prevent user from navigating into the non-K12 help documentation, since comment object is the same in both modes.
 
 
 

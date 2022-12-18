@@ -2803,6 +2803,13 @@ static void canvas_rightclick(t_canvas *x, int xpos, int ypos, t_gobj *y_sel)
     /* or if it is the background of a subpatch */
     cansaveas = (cansaveas || (!y && canvas_getrootfor(x) != x &&
                     !canvas_isabstraction((t_canvas *)x)));
+    // ico@vt.edu 2022-12-18: avoid creating help for the comment object
+    // in the K12 mode, to avoid users to dig into non-K12 help files
+    if (sys_k12_mode == 1 && pd_class(&y->g_pd) == text_class && 
+        ((t_text *)y)->te_type == T_TEXT) {
+        post("ignoring right-click in K12 mode for a comment object");
+        return;
+    }
     gui_vmess("gui_canvas_popup", "xiiiiii",
         x,
         xpos,
