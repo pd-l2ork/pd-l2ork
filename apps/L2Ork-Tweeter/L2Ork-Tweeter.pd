@@ -1,9 +1,9 @@
-#N canvas 137 76 1638 982 10;
+#N canvas 113 7 1638 982 10;
 #X obj 0 0 cnv 15 1637 973 empty empty empty 5 7 0 10 #444444 #fcfcfc
 0;
 #X obj 4 2 cnv 15 1630 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.70\ by
+#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.71\ by
 4 5 0 10 #6c6c6c #fcfcfc 0;
 #X obj 252 3 cnv 15 125 16 empty empty (c)\ 2020-2\ Released\ under\ the
 4 6 0 10 #6c6c6c #fcfcfc 0;
@@ -461,7 +461,7 @@ to keep its state in sync with the server (does not work for guests)
 #X obj 89 651 s load-session-delayed-network-sync;
 #X obj 511 625 coll;
 #C restore;
-#X obj 664 551 patch_name;
+#X obj 664 551 patch_name 1;
 #X obj 697 482 r session-name-s;
 #X obj 664 573 pack s s;
 #X obj 664 505 symbol;
@@ -499,7 +499,7 @@ bang;
 #X msg 324 152 0;
 #X obj 32 104 route load save sync-save sync-save-data sync-vis sync-data
 ;
-#X obj 697 319 patch_name;
+#X obj 697 319 patch_name 1;
 #X msg 628 401 dump;
 #X obj 628 172 symbol;
 #X obj 697 341 pack s s;
@@ -1318,7 +1318,7 @@ stored in the pd network-io, f 24;
 #X obj 27 205 route report;
 #X obj 96 523 coll;
 #C restore;
-#X obj 305 294 patch_name;
+#X obj 305 294 patch_name 1;
 #X obj 375 294 s \$0-redraw-gui;
 #X msg 603 59 clear;
 #X obj 96 352 list prepend;
@@ -1332,7 +1332,7 @@ stored in the pd network-io, f 24;
 #X obj 51 523 + 1;
 #X obj 51 549 gate 2 1;
 #X obj 162 851 s network-in;
-#X obj 618 302 patch_name;
+#X obj 618 302 patch_name 1;
 #X obj 618 191 gate 1 0;
 #X obj 305 265 t b b s;
 #X obj 305 221 symbol;
@@ -1394,7 +1394,7 @@ broadcast via internet (if connected) upon loading a session, f 42
 #X obj 166 173 sel 0;
 #X obj 166 219 openpanel;
 #X obj 166 247 outlet;
-#X obj 215 123 patch_name;
+#X obj 215 123 patch_name 1;
 #X obj 215 101 loadbang;
 #X obj 215 145 sprintf %s/sessions/;
 #X obj 215 173 tosymbol;
@@ -1541,7 +1541,7 @@ are added later. this allows for deterministic session saving., f
 #X text 99 75 DEBUG;
 #X obj 177 168 sprintf L2Ork Tweeter v.%.02f by;
 #X obj 177 193 tosymbol;
-#X msg 177 76 0.7;
+#X msg 177 76 0.71;
 #X connect 0 0 10 0;
 #X connect 1 0 8 0;
 #X connect 1 1 2 0;

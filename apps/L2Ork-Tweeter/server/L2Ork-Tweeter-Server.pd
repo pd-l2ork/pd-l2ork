@@ -1004,7 +1004,7 @@ modifying of other users' settings, f 34;
 slot \, 3 adds it to the requested slot \, and 4 connects user as a
 guest because either the slot is already occupied \, or all slots are
 taken, f 67;
-#X msg 232 741 0.7;
+#X msg 232 741 0.71;
 #X text 1240 905 (c) 2020-2 Ivica Ico Bukvic ico.bukvic.net;
 #X connect 0 0 76 0;
 #X connect 0 0 115 0;
