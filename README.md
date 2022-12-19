@@ -197,7 +197,7 @@ Hard drive space required: *roughly 2 GB*
 
 #### Windows 32-bit Using msys2
 
-Time to build: *roughly 1.5 hours-- 30 minutes of this is for Gem alone*  
+Time to build: *roughly 1.5 hours--30 minutes of this is for Gem alone*  
 Hard drive space required to build: *rougly 2.5 GB*
 
 **Important note:** We recommend doing the build under your msys2 home

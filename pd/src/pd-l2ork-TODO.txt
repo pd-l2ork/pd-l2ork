@@ -8,15 +8,9 @@ PD-L2ORK TODO:
         *Perhaps this should be tackled during pasting action (per object, if possible), not after the fact?
           *Is this worth the effort just to offset the flicker of images loading inside K12 objects? Or, could this be handled inside the image object instead?
 
-*Add translations for the K12 menu tooltips.
+*Update patch_name, so that it generates correct paths in Windows (Windows needs C:/ prefix). This is currently preventing opening of the correct path for sessions in Tweeter, for instance.
 
-*Test nwjs 0.67.1 for regressions:
-  *Patch window positioning: loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
-  *Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
-    *Investigate index.js' nw_create_window, and the pdgui.js' canvas_check_geometry.
-    *Also use index.js console positioning aspect, if necessary.
-    *UPDATE: scripted repetitive vis/unvis window in pitch_relationships patch makes the window open further down (but not always) and makes the window bigger.
-    *Clean-up all the other offsets found throughout the code (e.g. window_offset, which does not appear to affect the setbounds call).
+*Add translations for the K12 menu tooltips.
 
 *Add canvas options for nomenu, background color, draw border, and ontop (if it works in nw.js). Test noscroll option.
   *Also add resizable (to prevent resizing of the canvas in K12 mode and other more controlled applications).
@@ -27,6 +21,14 @@ PD-L2ORK TODO:
 *Consider implementing verbose option from vanilla.
 
 *Implement object tooltips.
+
+*Test nwjs 0.67.1 for regressions:
+  *Patch window positioning: loading saved one (offset issues), and scripted ones (e.g. spectrogram inside pitch relationships patch).
+  *Opening and closing window via a script does not reopen the window in the same place nor with the same size. Same is true for saving a patch and reopening it. Affects Linux running nw.js 0.28.1. Need to test with the latest nw.js.
+    *Investigate index.js' nw_create_window, and the pdgui.js' canvas_check_geometry.
+    *Also use index.js console positioning aspect, if necessary.
+    *UPDATE: scripted repetitive vis/unvis window in pitch_relationships patch makes the window open further down (but not always) and makes the window bigger.
+    *Clean-up all the other offsets found throughout the code (e.g. window_offset, which does not appear to affect the setbounds call).
 
 *Port:
   *cyclone
