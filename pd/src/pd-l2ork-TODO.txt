@@ -8,8 +8,6 @@ PD-L2ORK TODO:
         *Perhaps this should be tackled during pasting action (per object, if possible), not after the fact?
           *Is this worth the effort just to offset the flicker of images loading inside K12 objects? Or, could this be handled inside the image object instead?
 
-*Update patch_name, so that it generates correct paths in Windows (Windows needs C:/ prefix). This is currently preventing opening of the correct path for sessions in Tweeter, for instance.
-
 *Add translations for the K12 menu tooltips.
 
 *Add canvas options for nomenu, background color, draw border, and ontop (if it works in nw.js). Test noscroll option.
@@ -618,6 +616,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Improved preferences dialog, so that the bottom three buttons are always aligned the same, regardless the focused tab.
 *Disabled right-click help for the comment object in K12 mode to prevent user from navigating into the non-K12 help documentation, since comment object is the same in both modes.
 *Made arduino_connect off when using -1 option. (prior to the fix, it ran green/on on RPi for some reason, even when using -1).
+*Updated nwjs to use USERPROFILE instead of HOMEPATH, so that it generates correct paths in Windows (Windows needs C:/ prefix and HOMEPATH does not supply that anymore on nw.js 0.67.1). This was preventing opening of the correct path for sessions in Tweeter, for instance.
 
 
 
