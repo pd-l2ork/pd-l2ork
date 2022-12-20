@@ -452,7 +452,7 @@ function finish_index() {
 // AG: pilfered from https://stackoverflow.com/questions/21077670
 function expand_tilde(filepath) {
     if (filepath[0] === '~') {
-        var home = nw_os_is_windows ? process.env.HOMEPATH : process.env.HOME;
+        var home = nw_os_is_windows ? process.env.USERPROFILE : process.env.HOME;
         return path.join(home, filepath.slice(1));
     }
     return filepath;
@@ -10132,7 +10132,7 @@ function restore_apps(force) {
     const fs = require('fs');
     var homedir, dir;
     if (nw_os_is_windows) {
-        homedir = process.env.HOMEPATH;
+        homedir = process.env.USERPROFILE;
     } else {
         homedir = process.env.HOME;
     }

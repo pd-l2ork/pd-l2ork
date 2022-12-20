@@ -12,7 +12,7 @@ var PD_L2ORK_NW_DEBUG = 0;
 // We're using the following pwd variable as the default dir in which various
 // file dialogs open, so we need to initialize it in some way. The following
 // provides a reasonable default (use the PWD if it's available, otherwise
-// fall back to HOME, or HOMEPATH on Windows). This will be updated later by
+// fall back to HOME, or USERPROFILE on Windows). This will be updated later by
 // the engine through pdgui.gui_set_cwd() once the engine has completed its
 // startup.
 
@@ -21,9 +21,11 @@ var PD_L2ORK_NW_DEBUG = 0;
 var pwd = process.env.PWD !== undefined ? process.env.PWD : process.env.HOME;
 
 // Windows doesn't have either of the environment variables above, so we
-// compromise atm with HOMEPATH.
+// use USERPROFILE because it also includes drive letter (HOMEPATH apparently
+// doesn't), so, this can pollute patch_name and other code relying on
+// canvasinfo, resulting in openpanel->(pdgui.js) file_dialog() not working.
 if (!pwd) {
-    pwd = process.env.HOMEPATH;
+    pwd = process.env.USERPROFILE;
 }
 
 // gui preset

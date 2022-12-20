@@ -168,7 +168,7 @@ var toc = [
     },
     {
         id: (pdgui.nw_os_is_windows ?
-            process.env.HOMEPATH + '\\Pd-L2Ork\\apps\\L2Ork-Tweeter'
+            process.env.USERPROFILE + '\\Pd-L2Ork\\apps\\L2Ork-Tweeter'
             : process.env.HOME + '/Pd-L2Ork/apps/L2Ork-Tweeter'),
             //"apps/L2Ork-Tweeter",
         title: "L2Ork Tweeter",
@@ -176,7 +176,7 @@ var toc = [
     },
     {
         id: (pdgui.nw_os_is_windows ?
-            process.env.HOMEPATH + '\\Pd-L2Ork\\apps\\Audio-Chat'
+            process.env.USERPROFILE + '\\Pd-L2Ork\\apps\\Audio-Chat'
             : process.env.HOME + '/Pd-L2Ork/apps/Audio-Chat'),
             //"apps/Audio-Chat",
         title: "Audio Chat",
@@ -207,7 +207,7 @@ function toc_bookmarks()
 
 function expand_tilde(filepath) {
     if (filepath[0] === '~') {
-        var home = pdgui.check_os("win32") ? process.env.HOMEPATH :
+        var home = pdgui.check_os("win32") ? process.env.USERPROFILE :
 	    process.env.HOME;
         return path.join(home, filepath.slice(1));
     }
