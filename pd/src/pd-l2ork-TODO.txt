@@ -13,7 +13,7 @@ PD-L2ORK TODO:
 *Add canvas options for nomenu, background color, draw border, and ontop (if it works in nw.js). Test noscroll option.
   *Also add resizable (to prevent resizing of the canvas in K12 mode and other more controlled applications).
 
-*Port vanilla garray set colors, line width, visibility, display style, and disable mouse editing (disabling mouse editing is URGENT for the forgotten planet module).
+*Port vanilla garray set colors (we already have this, so check if the two are compatible), line width, visibility, display style (is this something other than the type of graph?), and disable mouse editing (disabling mouse editing is URGENT for the forgotten planet module).
   *Make sure that if an array is not editable, that is passes along its mouse interaction to objects below.
 
 *Consider implementing verbose option from vanilla.
@@ -85,12 +85,6 @@ RPI 0.28.4 current RPi version.
 *Ubuntu 22.04 build: investigate iem16 build issues and gmerlin library support. 20.04 uses 1.16 automake and 2.69 autoconf. 22.04 uses 2.71 autoconf and ??? automake.
 
 *HDMI audio output support (RPi).
-
-*Add reset preferences to default option in the settings and check if the default settings are correct (OSX is ok, as is Linux).
-
-*Enable reindexing without restart
-  *Add a button in preferences
-  *Make sure indexing also covers the extra folder, as well as the user folder.
 
 *Submit patch to js external github.
 
