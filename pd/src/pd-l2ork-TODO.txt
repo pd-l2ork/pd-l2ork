@@ -1,6 +1,8 @@
 PD-L2ORK TODO:
 *Seek RPi version of nw.js 0.67.1. IN PROGRESS
 
+*Add documentation for second inlet of the K12/output object inside its help file META subpatch.
+
 *Investigate ggee/image redraw of the entire canvas.
   *This is due to undo_cut redrawing canvas to reposition all objects where they belong. Added TODO inside g_editor.c where repositioning inside DOM should take place.
     *Need to figure out logic how to do this reliably. Probably by referencing the tag of the object right below it (or above it, whichever is easier) and placing it there.
