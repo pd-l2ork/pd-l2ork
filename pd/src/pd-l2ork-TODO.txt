@@ -1,7 +1,15 @@
 PD-L2ORK TODO:
 *Seek RPi version of nw.js 0.67.1. IN PROGRESS
 
+*Finish integration of packages necessary for a successful compiling of the Windows version of pd-l2ork into README.md.
+
 *Add documentation for second inlet of the K12/output object inside its help file META subpatch.
+
+*Selecting and displacing an array within a GOP doubly displaces its array data.
+
+*Update portaudio.
+
+*Consider porting AG version of cyclone editor (what are the differences?).
 
 *Investigate ggee/image redraw of the entire canvas.
   *This is due to undo_cut redrawing canvas to reposition all objects where they belong. Added TODO inside g_editor.c where repositioning inside DOM should take place.
@@ -614,6 +622,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Disabled right-click help for the comment object in K12 mode to prevent user from navigating into the non-K12 help documentation, since comment object is the same in both modes.
 *Made arduino_connect off when using -1 option. (prior to the fix, it ran green/on on RPi for some reason, even when using -1).
 *Updated nwjs to use USERPROFILE instead of HOMEPATH, so that it generates correct paths in Windows (Windows needs C:/ prefix and HOMEPATH does not supply that anymore on nw.js 0.67.1). This was preventing opening of the correct path for sessions in Tweeter, for instance.
+*Initial integration of the downgraded mingw packages to make Windows version compile successful.
 
 
 
