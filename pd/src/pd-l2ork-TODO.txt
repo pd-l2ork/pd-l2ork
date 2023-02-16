@@ -7,7 +7,9 @@ PD-L2ORK TODO:
 
 *Selecting and displacing an array within a GOP doubly displaces its array data.
 
-*Update portaudio.
+*Update portaudio for OSX and re-check if it is ok for all platforms.
+
+*Figure out the OSX Big Sur issue that the user does not have a permission to run the application.
 
 *Consider porting AG version of cyclone editor (what are the differences?).
 
