@@ -5,11 +5,14 @@ PD-L2ORK TODO:
 
 *Add documentation for second inlet of the K12/output object inside its help file META subpatch.
 
-*Selecting and displacing an array within a GOP doubly displaces its array data.
+RARE:
+  *Selecting and displacing an array within a GOP doubly displaces its array data.
+  *Putting bar graph and then editing it displaces its data.
 
 *Update portaudio for OSX and re-check if it is ok for all platforms.
 
 *Figure out the OSX Big Sur issue that the user does not have a permission to run the application.
+  *Appears to be related to opening the program from multiple accounts.
 
 *Consider porting AG version of cyclone editor (what are the differences?).
 
@@ -625,6 +628,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Made arduino_connect off when using -1 option. (prior to the fix, it ran green/on on RPi for some reason, even when using -1).
 *Updated nwjs to use USERPROFILE instead of HOMEPATH, so that it generates correct paths in Windows (Windows needs C:/ prefix and HOMEPATH does not supply that anymore on nw.js 0.67.1). This was preventing opening of the correct path for sessions in Tweeter, for instance.
 *Initial integration of the downgraded mingw packages to make Windows version compile successful.
+*Fixed regression with OSX where saved patch when reopened on OSX ended-up being smaller.
 
 
 
