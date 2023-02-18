@@ -5,8 +5,6 @@ PD-L2ORK TODO:
 
 *Update versioning to get rid of 2.16.0 and just keep the date (date becomes the version, while build only retains the git commit value).
 
-*Add documentation for second inlet of the K12/output object inside its help file META subpatch.
-
 RARE:
   *Selecting and displacing an array within a GOP doubly displaces its array data.
   *Putting bar graph and then editing it displaces its data (both Windows and OSX when creating an array as part of a subpatch, possibly leaving it selected, and then manipulating it on the parent window--but not always?).
@@ -632,6 +630,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Initial integration of the downgraded mingw packages to make Windows version compile successful.
 *Fixed regression with OSX where saved patch when reopened on OSX ended-up being smaller.
 *Upgraded portaudio and other array of fixes for the M1/M2 platform (still need to use Intel builds due to externals causing crashes). This is a cherry-picked port of Purr-Data commit 842 by Albert Graef.
+*Added documentation for second inlet of the K12/output object inside its help file META subpatch and updated documentation for the first inlet.
 
 
 
