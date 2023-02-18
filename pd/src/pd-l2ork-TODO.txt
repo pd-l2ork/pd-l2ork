@@ -3,11 +3,13 @@ PD-L2ORK TODO:
 
 *Finish integration of packages necessary for a successful compiling of the Windows version of pd-l2ork into README.md.
 
+*Update versioning to get rid of 2.16.0 and just keep the date (date becomes the version, while build only retains the git commit value).
+
 *Add documentation for second inlet of the K12/output object inside its help file META subpatch.
 
 RARE:
   *Selecting and displacing an array within a GOP doubly displaces its array data.
-  *Putting bar graph and then editing it displaces its data.
+  *Putting bar graph and then editing it displaces its data (both Windows and OSX when creating an array as part of a subpatch, possibly leaving it selected, and then manipulating it on the parent window--but not always?).
 
 *Update portaudio for OSX and re-check if it is ok for all platforms. IN PROGRESS
 
