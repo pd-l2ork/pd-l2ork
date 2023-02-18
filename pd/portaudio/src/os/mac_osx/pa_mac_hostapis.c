@@ -1,9 +1,9 @@
 /*
- * $Id: pa_mac_hostapis.c 1097 2006-08-26 08:27:53Z rossb $
- * Portable Audio I/O Library Macintosh initialization table
+ * Portable Audio I/O Library
+ * Java Binding for PortAudio
  *
  * Based on the Open Source API proposed by Ross Bencina
- * Copyright (c) 1999-2002 Ross Bencina, Phil Burk
+ * Copyright (c) 2008 Ross Bencina
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files
@@ -36,54 +36,25 @@
  * license above.
  */
 
+
 /** @file
- @ingroup macosx_src
-Mac OS host API initialization function table.
+ @ingroup bindings_java
+
+ @brief Information about a JPortAudio Stream.
 */
 
+package com.portaudio;
 
-#include "pa_hostapi.h"
-
-#ifdef __cplusplus
-extern "C"
+/**
+ * Equivalent to PaStreamInfo
+ * @see PortAudio
+ * @author Phil Burk
+ *
+ */
+public class StreamInfo
 {
-#endif /* __cplusplus */
-    
-    PaError PaSkeleton_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
-    PaError PaMacCore_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
-    PaError PaMacSm_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
-    PaError PaJack_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
-    PaError PaMacAsio_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
-    
-#ifdef __cplusplus
+	public int structVersion;
+	public double outputLatency;
+	public double inputLatency;
+	public double sampleRate;
 }
-#endif /* __cplusplus */
-
-
-PaUtilHostApiInitializer *paHostApiInitializers[] =
-{
-#if PA_USE_COREAUDIO
-    PaMacCore_Initialize,
-#endif
-    
-#if PA_USE_SM
-    PaMacSm_Initialize,
-#endif
-    
-#if PA_USE_JACK
-    PaJack_Initialize,
-#endif
-
-#if PA_USE_ASIO
-    PaMacAsio_Initialize,
-#endif
-    
-#if PA_USE_SKELETON
-    PaSkeleton_Initialize, /* just for testing */
-#endif
-
-    0   /* NULL terminated array */
-};
-
-
-int paDefaultHostApiIndex = 0;
