@@ -799,3 +799,21 @@ pdgui.js gui_canvas_get_immediate_scroll calls do_getscroll (check_geom = 0)
          do_getscroll calls canvas_params (which calculates bbox)
 
 pd_canvas.js in nw_create_patch_window_menus toggles visibility of the K12 menu if the mode is toggled from the file menu
+
+
+
+
+M1/M2 cross-compiling for Intel platform (from AG's post):
+A quick note to anyone who wants to do their own Intel builds from this branch: This is done most easily if you still have an Intel Mac, but if all you have is an M1/M2 Mac, you can still cross-compile for x86_64 using Xcode and a parallel x86_64 installation of Homebrew, as explained in this blog post: https://medium.com/mkdir-awesome/how-to-install-x86-64-homebrew-packages-on-apple-m1-macbook-54ba295230f.
+I have tried this method myself, and it works. In addition to what's written in the blog post, I recommend setting up a dedicated shell profile, so that the Homebrew environment is set for x86_64 compilation. Something like this should do the trick:
+
+# Set PATH, MANPATH, etc., for Homebrew.
+eval "$(/usr/local/homebrew/bin/brew shellenv)"
+
+# readline is keg-only, make sure that its pkgconfig is found
+export PKG_CONFIG_PATH="/usr/local/homebrew/Cellar/readline/8.2.1/lib/pkgconfig"
+
+alias axbrew='arch -x86_64 /usr/local/homebrew/bin/brew'
+alias ax='arch -x86_64'
+
+You can then use axbrew to install the required packages as described in the blog post, and ax make to compile Purr Data itself. Be warned, however, that brew will have to compile many packages you install from source, since ready-made binary packages for x86_64 aren't always available for the latest arm64 versions of macOS.
