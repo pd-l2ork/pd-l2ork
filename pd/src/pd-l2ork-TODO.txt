@@ -5,7 +5,8 @@ PD-L2ORK TODO:
 
 *Update versioning to get rid of 2.16.0 and just keep the date (date becomes the version, while build only retains the git commit value).
 
-*Merge improved forbidden planet documentation patch.
+*Merge improved forbidden planet documentation patch (I03.resynthesis.pd in audio examples).
+  *Investigate why this patch is not using vanilla DAC abstraction, instead of its improved "extended" version.
 
 *Explore what limits the hex color interpretation to also include alpha channel and support for it. Straightforward CSS works, so this is likely a backend limitation.
 
