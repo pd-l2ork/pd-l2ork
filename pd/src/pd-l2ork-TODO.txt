@@ -5,6 +5,10 @@ PD-L2ORK TODO:
 
 *Update versioning to get rid of 2.16.0 and just keep the date (date becomes the version, while build only retains the git commit value).
 
+*Merge improved forbidden planet documentation patch.
+
+*Explore what limits the hex color interpretation to also include alpha channel and support for it. Straightforward CSS works, so this is likely a backend limitation.
+
 RARE:
   *Selecting and displacing an array within a GOP doubly displaces its array data.
   *Putting bar graph and then editing it displaces its data (both Windows and OSX when creating an array as part of a subpatch, possibly leaving it selected, and then manipulating it on the parent window--but not always?).
