@@ -1,4 +1,4 @@
-#N canvas 394 169 557 379 10;
+#N canvas 394 169 557 401 10;
 #N canvas 265 48 643 640 fft-analysis 0;
 #X obj 15 164 *~;
 #X obj 14 99 inlet~;
@@ -97,7 +97,7 @@ the file smaller (it doesn't have to be saved with the array.);
 #X connect 16 0 17 0;
 #X restore 142 338 pd Hann-window;
 #X obj 14 311 output~;
-#X obj 12 252 noise~;
+#X obj 13 252 noise~;
 #N canvas 0 22 450 300 (subpatch) 0;
 #X array \$0-gain 256 float 23 black black;
 #A 0 -0.01 -0.01 -0.01 -0.01 -0.01 -0.01 -0.01 -0.01 -0.01 -0.01 -0.01
@@ -131,13 +131,13 @@ the file smaller (it doesn't have to be saved with the array.);
 #X text 22 215 0;
 #X text 519 218 22K;
 #X text 200 291 <- reset gain;
-#X text 227 135 GAIN;
-#X text 9 35 Using Fourier resynthesis you can take an incoming sound
+#X text 247 135 GAIN;
+#X text 13 45 Using Fourier resynthesis you can take an incoming sound
 \, operate on its spectrum \, and hear the result. Here we start with
 white noise and apply a frequency-dependent gain \, which works as
 a graphic equalizer. There are N/2 = 256 points \, each spaced SR/512
 Hz. apart (although their frequency ranges overlap). Open the "fft-analysis"
-patch to see the workings.;
+patch to see the workings., f 88;
 #X obj 1 1 cnv 15 554 20 empty \$0-pddp.cnv.header Fourier_resynthesis
 8 8 1 18 #fcc048 #202020 0;
 #X obj 522 3 pddp/pddplink http://puredata.info/dev/pddp -text pddp
@@ -154,13 +154,13 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 0.42.;
 #X text 12 45 DESCRIPTION Fourier resynthesis;
 #X text 12 5 KEYWORDS signal tutorial;
-#X restore 505 380 pd META;
+#X restore 504 380 pd META;
 #N canvas 13 202 428 190 References 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #fcc048 #202020 0;
 #X text 7 2 Fourier resynthesis- Related Help Documents;
 #X text 19 37 Links:;
-#X restore 103 380 pd References;
+#X restore 224 380 pd References;
 #X obj 6 380 pddp/pddplink ../5.reference/pddp/help.pd -text help;
 #X connect 0 0 2 0;
 #X connect 0 0 2 1;
