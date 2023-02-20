@@ -636,6 +636,8 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Fixed regression with OSX where saved patch when reopened on OSX ended-up being smaller.
 *Upgraded portaudio and other array of fixes for the M1/M2 platform (still need to use Intel builds due to externals causing crashes). This is a cherry-picked port of Purr-Data commit 842 by Albert Graef.
 *Added documentation for second inlet of the K12/output object inside its help file META subpatch and updated documentation for the first inlet.
+*Fixed a regression due to implementation of the true GOP drawing logic that caused GOP-embedded iemgui's pos and delta messages to incorrectly reposition them.
+*Aesthetic updates to select documentation patches.
 
 
 

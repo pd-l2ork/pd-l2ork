@@ -1,4 +1,4 @@
-#N canvas 185 100 553 682 10;
+#N canvas 185 100 553 660 10;
 #N canvas 93 78 450 511 let's-play-pong! 0;
 #X obj 148 128 cnv 15 100 25 empty \$0-score Score:0 5 12 0 14 #e0e0e0
 #404040 0;
@@ -7,7 +7,7 @@
 #X msg 257 112 delta 0 \$1;
 #X msg 257 87 -5;
 #X obj 68 48 tgl 16 0 empty empty Go! 19 8 0 10 #00fc04 #000000 #000000
-0 1;
+0 1 1;
 #X obj 337 158 r \$0-ps;
 #X obj 337 180 unpack;
 #X obj 370 202 v py;
@@ -38,7 +38,7 @@
 #X obj 136 115 sel 0;
 #X msg 130 137 1e+37;
 #X obj 205 155 t a;
-#X floatatom 13 147 5 0 0 0 - - - 0 0, f 5;
+#X floatatom 13 147 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 93 118 + 1;
 #X connect 0 0 3 0;
 #X connect 1 0 9 0;
@@ -269,16 +269,16 @@ the gui-properties of [cnv]:;
 #X text 12 301 get position on canvas;
 #X msg 13 109 size \$1;
 #X obj 13 72 nbx 3 14 8 200 0 0 empty \$0-dim empty 0 -8 0 12 #fcfcfc
-#000000 #000000 15 256 0 0;
+#000000 #000000 15 256 0 0 1 0;
 #X obj 13 133 s cnv_rcv;
 #N canvas 366 206 174 259 flash-time 0;
 #X obj 68 180 pack;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-width empty
-0 -8 0 12 #fcfcfc #000000 #000000 100 256 0 0;
+0 -8 0 12 #fcfcfc #000000 #000000 100 256 0 0 1 0;
 #X obj 103 124 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-height empty
-0 -8 0 12 #fcfcfc #000000 #000000 60 256 0 0;
+0 -8 0 12 #fcfcfc #000000 #000000 60 256 0 0 1 0;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 1 1 0 1;
@@ -314,9 +314,9 @@ the gui-properties of [cnv]:;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-xlabel empty
-0 -8 0 12 #fcfcfc #000000 #000000 20 256 0 0;
+0 -8 0 12 #fcfcfc #000000 #000000 20 256 0 0 1 0;
 #X obj 103 124 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-ylabel empty
-0 -8 0 12 #fcfcfc #000000 #000000 12 256 0 0;
+0 -8 0 12 #fcfcfc #000000 #000000 12 256 0 0 1 0;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 1 1 0 1;
@@ -329,9 +329,9 @@ the gui-properties of [cnv]:;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 0 2 0 0 \$0-dummy \$0-font empty 0 -8 0 12
-#fcfcfc #000000 #000000 0 256 0 0;
+#fcfcfc #000000 #000000 0 256 0 0 1 0;
 #X obj 103 124 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-font-size empty
-0 -8 0 12 #fcfcfc #000000 #000000 14 256 0 0;
+0 -8 0 12 #fcfcfc #000000 #000000 14 256 0 0 1 0;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 1 1 0 1;
@@ -349,9 +349,9 @@ the gui-properties of [cnv]:;
 #X obj 69 196 t b a;
 #X obj 33 262 outlet;
 #X obj 103 104 nbx 3 14 0 29 0 0 \$0-dummy \$0-bg empty 0 -8 0 12 #fcfcfc
-#000000 #000000 10 256 0 0;
+#000000 #000000 10 256 0 0 1 0;
 #X obj 103 124 nbx 3 14 0 29 0 0 \$0-dummy \$0-label empty 0 -8 0 12
-#fcfcfc #000000 #000000 12 256 0 0;
+#fcfcfc #000000 #000000 12 256 0 0 1 0;
 #X obj 33 237 pack 0 0;
 #X connect 0 0 4 0;
 #X connect 0 1 4 1;
@@ -373,14 +373,14 @@ the gui-properties of [cnv]:;
 #X obj 96 385 list prepend 0;
 #X obj 115 456 t b a;
 #X obj 104 124 vradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0;
+#000000 #000000 0 1;
 #X text 120 120 1.bg;
 #X obj 103 105 nbx 3 14 0 255 0 0 \$0-dummy \$0-r empty 0 -8 0 10 #fcfcfc
-#fc0400 #000000 0 256 0 0;
+#fc0400 #000000 0 256 0 0 1 0;
 #X obj 133 105 nbx 3 14 0 255 0 0 \$0-dummy \$0-g empty 0 -8 0 10 #fcfcfc
-#0c4410 #000000 0 256 0 0;
+#0c4410 #000000 0 256 0 0 1 0;
 #X obj 163 105 nbx 3 14 0 255 0 0 \$0-dummy \$0-b empty 0 -8 0 10 #fcfcfc
-#0400fc #000000 0 256 0 0;
+#0400fc #000000 0 256 0 0 1 0;
 #X text 120 137 2.label;
 #X obj 96 410 route 0 1;
 #X obj 96 497 pack 0 0;
@@ -408,7 +408,7 @@ the gui-properties of [cnv]:;
 #X restore 265 323 pd flash-time;
 #X obj 165 534 list;
 #X obj 165 483 bng 20 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#000000 #000000;
+#000000 #000000 1;
 #X text 214 325 1.bg;
 #X text 61 482 1.x-position;
 #X text 61 504 2.y-position;
@@ -419,9 +419,9 @@ the gui-properties of [cnv]:;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-xpos empty 0
--8 0 12 #fcfcfc #000000 #000000 310 256 0 0;
+-8 0 12 #fcfcfc #000000 #000000 310 256 0 0 1 0;
 #X obj 103 124 nbx 3 14 -1e+37 1e+37 0 0 \$0-dummy \$0-ypos empty 0
--8 0 12 #fcfcfc #000000 #000000 500 256 0 0;
+-8 0 12 #fcfcfc #000000 #000000 500 256 0 0 1 0;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 1 1 0 1;
@@ -434,9 +434,9 @@ the gui-properties of [cnv]:;
 #X obj 103 149 t b a;
 #X obj 68 205 outlet;
 #X obj 103 104 nbx 3 14 -20 20 0 0 \$0-dummy \$0-xdelta empty 0 -8
-0 12 #fcfcfc #000000 #000000 0 256 0 0;
+0 12 #fcfcfc #000000 #000000 0 256 0 0 1 0;
 #X obj 103 124 nbx 3 14 -20 20 0 0 \$0-dummy \$0-ydelta empty 0 -8
-0 12 #fcfcfc #000000 #000000 0 256 0 0;
+0 12 #fcfcfc #000000 #000000 0 256 0 0 1 0;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 1 1 0 1;
@@ -467,9 +467,9 @@ the gui-properties of [cnv]:;
 #X obj 27 370 r cnv_snd;
 #X msg 165 408 color \$1 \$2;
 #X obj 27 421 nbx 3 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 12
-#fcfcfc #000000 #000000 0 256 0 0;
+#fcfcfc #000000 #000000 0 256 0 0 1 0;
 #X obj 90 421 nbx 3 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 12
-#fcfcfc #000000 #000000 0 256 0 0;
+#fcfcfc #000000 #000000 0 256 0 0 1 0;
 #X msg 25 245 label my_canvas;
 #X msg 204 109 send cnv_snd;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
@@ -529,16 +529,16 @@ a cnv:;
 #X text 168 463 - creating a [cnv] without any arguments will set default
 values for all gui-properties. See the subpatch below to learn how
 to dynamically instantiate a [cnv] object with custom properties:;
-#X floatatom 338 318 4 0 0 0 - - - 0 0, f 4;
-#X floatatom 382 318 4 0 0 0 - - - 0 0, f 4;
+#X floatatom 338 318 4 0 0 0 - - - 0 0 1, f 4;
+#X floatatom 382 318 4 0 0 0 - - - 0 0 1, f 4;
 #X text 349 334 x;
 #X text 393 334 y;
 #X obj 435 170 metro 100;
 #X obj 435 150 tgl 15 1 empty empty empty 20 8 0 10 #fcfcfc #000000
-#000000 1 1;
+#000000 1 1 1;
 #X obj 338 270 r from_K1;
-#X floatatom 435 318 4 0 0 0 - - - 0 0, f 4;
-#X floatatom 479 318 4 0 0 0 - - - 0 0, f 4;
+#X floatatom 435 318 4 0 0 0 - - - 0 0 1, f 4;
+#X floatatom 479 318 4 0 0 0 - - - 0 0 1, f 4;
 #X text 445 334 x;
 #X text 490 334 y;
 #X obj 435 270 r from_K2;
@@ -598,11 +598,11 @@ a [cnv] \, as are the horizontal dividers below.;
 #X obj 342 170 + 1;
 #X obj 35 12 r \$0-bng;
 #X obj 106 14 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000;
+#000000 1;
 #X obj 310 197 div 13;
 #X msg 310 314 color \$1 0;
 #X obj 242 105 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 0 1;
+#000000 0 1 1;
 #X obj 279 86 sel 0;
 #X obj 279 107 -1;
 #X obj 279 130 t a;
@@ -701,15 +701,15 @@ a [cnv] \, as are the horizontal dividers below.;
 #X coords 0 -1 1 1 15 15 2 100 100;
 #X restore 71 330 pd;
 #X obj 169 553 bng 14 250 50 0 \$0-bng empty empty 4 7 0 12 #fcfcfc
-#fcfcfc #000000;
+#fcfcfc #000000 1;
 #X text 66 275 You can also use a white [cnv] to;
 #X text 66 290 conceal parts of a patch (use;
 #X text 66 305 with care);
 #X text 185 551 musil@iem.kug.ac.at;
 #X text 171 550 c;
-#X obj 63 267 cnv 15 210 70 empty \$0-cnv empty 20 12 0 14 #fcfcfc
+#X obj 63 267 cnv 15 210 70 empty \$0-cnv empty 20 12 0 14 #9e9e9e
 #fcfcfc 0;
-#X obj 69 329 cnv 15 17 17 empty empty empty 20 12 0 14 #fcfcfc #404040
+#X obj 69 329 cnv 15 17 17 empty empty empty 20 12 0 14 #9e9e9e #404040
 0;
 #X text 244 191 send it a "get_pos" message ->;
 #X text 244 176 To get a cnv position \,;
@@ -721,14 +721,14 @@ how you canuse cnv to hide things;
 #N canvas 597 433 426 198 using_canvas_to_hide_objects_that_capture_mouse_clicks
 0;
 #X obj 19 46 tgl 43 0 empty empty empty 17 7 0 10 #fcfcfc #000000 #000000
-0 1;
+0 1 1;
 #X obj 0 0 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
 #X text 7 1 Using [cnv] to hide objects that capture mouse clicks;
 #X obj 19 46 cnv 15 43 43 empty empty CLICK 6 22 0 10 #f0805c #404040
 0;
 #X obj 19 108 tgl 21 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 0 1;
+#000000 0 1 1;
 #X text 86 45 Try clicking on the [cnv] object to the left.Notice
 how the [cnv] on the left seemingly exhibitstoggle-like behavior.
 In fact \, it is not the [cnv]that is responsible for toggle changing
@@ -744,7 +744,7 @@ insteadpasses them to objects below it.;
 #404040 0;
 #X obj 0 -594 cnv 15 466 21 empty \$0-pddp.cnv.subheading empty 3 12
 0 14 #c4dcdc #000000 0;
-#X floatatom 84 -450 5 0 0 0 - - - 0 0, f 5;
+#X floatatom 84 -450 5 0 0 0 - - - 0 0 1, f 5;
 #X text 5 -591 Advanced CSS properties;
 #X obj 84 -357 cnv 15 188 23 empty top-canvas empty 20 12 0 14 #e0e0e0
 #404040 0;
