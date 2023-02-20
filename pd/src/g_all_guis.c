@@ -1535,6 +1535,16 @@ void iemgui_base_draw_move(t_iemgui *x)
     c->c_wb->w_getrectfn((t_gobj *)x,x->x_glist,&x1,&y1,&x2,&y2);
     //iemgui_getrect_draw(x, &x1, &y1, &x2, &y2);
     gop_redraw=gr;
+    // ico@vt.edu 2023-02-20: due to new nested drawing we now
+    // have to displace any requested position by the object's
+    // original position, but only if we are drawing inside a GOP
+    if (x->x_glist != glist_getcanvas(x->x_glist))
+    {
+        x1 -= glist_xtopixels(x->x_glist, x->x_glist->gl_x1);
+        x2 -= glist_xtopixels(x->x_glist, x->x_glist->gl_x1);
+        y1 -= glist_ytopixels(x->x_glist, x->x_glist->gl_y1);
+        y2 -= glist_ytopixels(x->x_glist, x->x_glist->gl_y1);
+    }
     gui_vmess("gui_iemgui_move_and_resize", "xxiiii",
         canvas, x, x1, y1, x2, y2);
 }
