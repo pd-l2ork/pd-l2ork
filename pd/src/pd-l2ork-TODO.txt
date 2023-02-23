@@ -638,6 +638,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Added documentation for second inlet of the K12/output object inside its help file META subpatch and updated documentation for the first inlet.
 *Fixed a regression due to implementation of the true GOP drawing logic that caused GOP-embedded iemgui's pos and delta messages to incorrectly reposition them.
 *Aesthetic updates to select documentation patches.
+*Added experimental updating of the array on each bang message inside the tabwrite~ object, to ensure it is redrawn even if only a fraction of the array is being populated.
 
 
 
