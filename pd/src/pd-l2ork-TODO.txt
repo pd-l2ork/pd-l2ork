@@ -647,6 +647,8 @@ TWEETER TODO:
 *Offer a way to deal with different keyboards (some keys are not in the same place)
 
 *Del is by default also moving pattern?
+  No. Just when the shift is held and focus lost is when things break down.
+  Consider resetting keyboard modifiers on refocus?
 
 *Deal with sync issues when one user tries to sync with another using one of the mouse multiclick options that are invoked by clicking on the instrument/part number the user wishes to sync with.
 
