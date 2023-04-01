@@ -603,8 +603,8 @@ function nw_create_window(cid, type, width, height, xpos, ypos, attr_array) {
         // widget for the "Put" menu.
         // ico@vt.edu: on 0.46.2 this is now 25, go figure...
         height: height + (pdgui.nw_menu_offset * !pdgui.nw_os_is_osx),
-        x: xpos,
-        y: ypos,
+        x: Math.floor(xpos),
+        y: Math.floor(ypos),
         frame: win_frame,
         transparent: win_transparent
     }, function (new_win) {

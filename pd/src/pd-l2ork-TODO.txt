@@ -639,11 +639,14 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Fixed a regression due to implementation of the true GOP drawing logic that caused GOP-embedded iemgui's pos and delta messages to incorrectly reposition them.
 *Aesthetic updates to select documentation patches.
 *Added experimental updating of the array on each bang message inside the tabwrite~ object, to ensure it is redrawn even if only a fraction of the array is being populated.
+*Fixed a bug where saved patch at (0, 0) coordinates resulted in a requested float coordinates and an error in js.
 
 
 
 
 TWEETER TODO:
+*Not able to save sessions using teacher widget on Windows?
+
 *Offer a way to deal with different keyboards (some keys are not in the same place)
 
 *Del is by default also moving pattern?
@@ -663,7 +666,7 @@ TWEETER DONE:
 *L2Ork Tweeter: Enabled smooth pitch changing (detuning directly to signal generators without triggering the envelope).
 *0.50 requires latest Pd-L2Ork 20211012 or newer due to new features added to the core pd-l2ork
 *Fixed bug where shift+delete deleted twice
-*Added hover mode ability to add notes based on the mouse (as opposed to the time bar) position. 00Made erasing using delete and shift+delete to support the hover mode. Also made insert (shift+` or ~) to support the hover mode.
+*Added hover mode ability to add notes based on the mouse (as opposed to the time bar) position. Made erasing using delete and shift+delete to support the hover mode. Also made insert (shift+` or ~) to support the hover mode.
 *Updated and optimized the left panel to make room for the hover mode option.
 *Updated server to also support the hover mode.
 *Swapped tab and alt key functions to make play button easier to access.
