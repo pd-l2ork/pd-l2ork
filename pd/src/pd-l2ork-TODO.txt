@@ -10,6 +10,26 @@ PD-L2ORK TODO:
 
 *Explore what limits the hex color interpretation to also include alpha channel and support for it. Straightforward CSS works, so this is likely a backend limitation.
 
+*Consider changing netserver.c as is the case on the server computer:
++++ b/externals/maxlib/netserver.c
+@@ -326,7 +326,7 @@ static void netserver_send(t_netserver *x, t_symbol *s, int
+argc, t_atom *argv)
+                        //sys_sockerror("netserver");
+                        if (x->x_log_pri >= LOG_ERR)
+                           post("netserver: could not send data to the client");
+-                       x->x_fd_error[client]++;
++                       //x->x_fd_error[client]++;
+                        if (x->x_fd_error[client] >= x->x_fd_error_threshold)
+                        {
+                                post("netserver: disconnecting client on the socket %d due to %d failed attempts to send packets", x->x_fd[i], x->x_fd_error_threshold);
+@@ -419,7 +419,7 @@ static void netserver_client_send(t_netserver *x, t_symbol *s, int argc, t_atom
+                        //sys_sockerror("netserver");
+                        if (x->x_log_pri >= LOG_ERR)
+                           post("netserver: could not send data to the client");
+-                       x->x_fd_error[client - 1]++;
++                       //x->x_fd_error[client - 1]++;
+
+
 RARE:
   *Selecting and displacing an array within a GOP doubly displaces its array data.
   *Putting bar graph and then editing it displaces its data (both Windows and OSX when creating an array as part of a subpatch, possibly leaving it selected, and then manipulating it on the parent window--but not always?).
@@ -759,6 +779,10 @@ TWEETER DONE:
 *0.70:
   *Implemented editable option to prevent accidental edit mode.
   *Refinements to the Grapevine patches.
+*0.71:
+  *Fixed regression due to a bug fix in the disis/patch_name.pd abstraction.
+*0.72:
+  *Fixed a session saving bug and other refinements to Transcontinental Grapevine.
 
 
 

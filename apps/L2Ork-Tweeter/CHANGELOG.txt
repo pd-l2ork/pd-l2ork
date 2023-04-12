@@ -9,6 +9,9 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+12-04-2023 0.72
+*Fixed a session saving bug and other refinements to Transcontinental Grapevine.
+
 18-12-2022 0.71
 *Fixed regression due to a bug fix in the disis/patch_name.pd abstraction.
 
