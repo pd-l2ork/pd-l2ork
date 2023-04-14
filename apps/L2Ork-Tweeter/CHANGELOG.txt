@@ -9,6 +9,13 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+13-04-2023 0.73
+*Added Loop-Preset-Widget.pd widget for easier access to more loops and presets than the keyboard allows.
+*Added widgets subpatch to main Tweeter window where most common conductor and performer widgets can be easily accessed.
+*Cleaned-up top-right corner of the main Tweeter window.
+*Overhauled ediable option. Now can toggle patch editability with Shift+Ctrl+Alt (with Alt being the last key to be pressed).
+*Introduced glob-recall-preset, glob-save-preset, glob-recall-loop, and glob-recall-preset, used by the aforesaid Loop-Preset-Widget.pd.
+
 12-04-2023 0.72
 *Fixed a session saving bug and other refinements to Transcontinental Grapevine.
 

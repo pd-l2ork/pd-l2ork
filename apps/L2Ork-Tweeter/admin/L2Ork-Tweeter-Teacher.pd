@@ -1,4 +1,4 @@
-#N canvas 17 742 820 224 10;
+#N canvas 559 500 820 224 10;
 #X obj 0 0 cnv 15 820 217 empty empty empty 5 7 0 10 #444444 #fcfcfc
 0;
 #X obj 3 3 cnv 15 814 28 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
@@ -142,13 +142,13 @@ f 21;
 #fcfcfc 0;
 #X obj 3 185 cnv 15 814 28 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
 0;
-#X symbolatom 151 191 24 0 0 0 - #0-session-r #0-session-s 0 0 1,
-f 24;
-#X obj 8 191 cnv 15 15 15 empty empty LOAD\ SESSION/SYNC\ DELAY 0 6
-0 10 #6c6c6c #fcfcfc 0;
-#X floatatom 303 191 8 0 0 0 - #0-session-delay-r #0-session-delay-s
+#X symbolatom 139 191 28 0 0 0 - #0-session-r #0-session-s 0 0 1,
+f 28;
+#X obj 8 191 cnv 15 15 15 empty empty LOAD\ SESSION/SYNC\ DLY 0 6 0
+10 #6c6c6c #fcfcfc 0;
+#X floatatom 313 191 8 0 0 0 - #0-session-delay-r #0-session-delay-s
 0 0 1, f 8;
-#X obj 359 191 bng 16 250 50 0 \$0-session-load-s \$0-session-load-r
+#X obj 369 191 bng 16 250 50 0 \$0-session-load-s \$0-session-load-r
 LOAD 20 6 0 10 #80fc80 #008080 #ffffff 1;
 #N canvas 993 486 377 95 core 0;
 #N canvas 143 109 702 717 ae-logic 0;
@@ -984,10 +984,30 @@ when requesting sync., f 39;
 #X connect 11 0 6 0;
 #X connect 11 0 9 0;
 #X restore 17 19 pd init;
+#N canvas 727 341 292 173 glob-vars 0;
+#X obj 48 97 s \$0-session-r;
+#X obj 21 125 s \$0-session-load-r;
+#X obj 21 23 r glob-session-load;
+#X obj 151 23 r glob-session-save;
+#X obj 151 125 s \$0-session-save-r;
+#X obj 21 48 t b a;
+#X obj 48 73 tosymbol;
+#X obj 178 97 s \$0-session-r;
+#X obj 151 48 t b a;
+#X obj 178 73 tosymbol;
+#X connect 2 0 5 0;
+#X connect 3 0 8 0;
+#X connect 5 0 1 0;
+#X connect 5 1 6 0;
+#X connect 6 0 0 0;
+#X connect 8 0 4 0;
+#X connect 8 1 9 0;
+#X connect 9 0 7 0;
+#X restore 132 60 pd glob-vars;
 #X restore 766 191 pd core;
 #X obj 682 191 bng 16 250 50 0 \$0-sync-all-s \$0-sync-all-r RESET\ ALL
 20 6 0 10 #fcb46c #fc6418 #ffffff 1;
-#X obj 409 191 bng 16 250 50 0 \$0-session-save-s \$0-session-save-r
+#X obj 419 191 bng 16 250 50 0 \$0-session-save-s \$0-session-save-r
 SAVE 20 6 0 10 #fcb46c #fc6418 #ffffff 1;
 #X obj 568 191 bng 16 250 50 0 \$0-load-session-network-sync null-r
 SESSION\ SYNC 20 6 0 10 #fcb46c #fc6418 #ffffff 1;

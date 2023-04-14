@@ -3,7 +3,7 @@
 0;
 #X obj 4 2 cnv 15 1630 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.71\ by
+#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.73\ by
 4 5 0 10 #6c6c6c #fcfcfc 0;
 #X obj 252 3 cnv 15 125 16 empty empty (c)\ 2020-1\ Released\ under\ the
 4 6 0 10 #6c6c6c #fcfcfc 0;
@@ -68,67 +68,11 @@ empty -64 5 0 12 #80fc80 #000000 #000000 23 256 0 1 1 0;
 empty -5 -9 0 10 #fcb46c #fc6418 #fcfcfc 1;
 #X obj 867 45 bng 15 250 50 0 \$0-recall-preset-apply \$0-recall-preset-apply-r
 empty -5 -9 0 10 #80fc80 #008080 #fcfcfc 1;
-#N canvas 656 200 513 657 supplemental-documentation 0;
-#X obj 0 0 cnv 15 512 651 empty empty empty 20 12 0 14 #e0e0e0 #404040
-0;
-#X obj 8 576 cnv 15 65 17 empty empty empty 20 12 0 14 #fcb46c #404040
-0;
-#X obj 8 379 cnv 15 160 17 empty empty empty 20 12 0 14 #fcb46c #404040
-0;
-#X obj 8 329 cnv 15 52 17 empty empty empty 20 12 0 14 #fcb46c #404040
-0;
-#X obj 8 266 cnv 15 112 17 empty empty empty 20 12 0 14 #fcb46c #404040
-0;
-#X obj 8 81 cnv 15 106 17 empty empty empty 20 12 0 14 #fcb46c #404040
-0;
-#X text 8 11 Please consider viewing the introductory video found at:
-;
-#X obj 7 31 pddp/pddplink http://bit.ly/L2Ork-Tweeter;
-#X text 8 81 Instrument Levels;
-#X text 8 266 Instrument Presets;
-#X text 8 287 Shift+Up/Down: increase/decrease preset instrument number
-and immediately apply it., f 82;
-#X text 8 329 Main Mix;
-#X text 8 350 Left/Right: incrementally change the panning of the main
-output., f 82;
-#X text 8 235 Shift+Backslash (or |): set instrument output level to
-one or 100% (unity)., f 82;
-#X text 8 101 ' (key next to Return): set instrument output level to
-zero (OVR/LVL slider). Repeat press sets it temporarily to the last
-known value \, while upon release it reverts to zero., f 82;
-#X text 8 379 Sharing Loops and Patterns;
-#X text 9 576 Hover Mode;
-#X text 9 597 When hover mode is enabled \, you can enter notes anywhere
-on the tracker timeline regardless where the timebar is currently located.
-Delete \, shift+delete \, and ~ (insert) also work in this mode.,
-f 82;
-#X text 8 51 Below is a list of additional commands that are not clearly
-annotated elsewhere., f 82;
-#X text 8 148 Return or Enter: set instrument output level to the last
-known value (OVR/LVL slider). Repeat press sets it temporarily to zero
-\, while upon release it reverts to the last known value. When holding
-Return/Enter pressed during changing of instruments (e.g. \, using
-shift+up/down) \, the instrument will remain silent until the Return/Enter
-key is released \, at which point \, the level will revert to the new
-instrument's value., f 82;
-#X text 8 400 You can easily share your patterns and loops with others.
-To do so \, you will want to click on the user number you wish to copy
-instrument and/or loop from \, using one of the following clicking
-actions that need to be performed within the 500ms of initiating the
-first click:, f 82;
-#X text 8 456 single click - loop sync (play on/off and time bar location)double
-click - loop contents and lengthtriple click - loop sync and contents
-and lengthquadruple click - everything (loop \, loop sync \, preset
-\, main out \, and pan)shift + single click - preset (instrument)shift
-+ double click - main out and pan valuesshift + triple click - preset
-and main out and pan valuesshift + quadruple click - everything (loop
-\, loop sync \, preset \, main out \, and pan), f 82;
-#X restore 1326 3 pd supplemental-documentation (click here);
 #X obj 153 3 pddp/pddplink http://ico.bukvic.net -text Ivica Ico Bukvic
 ;
 #X obj 437 3 pddp/pddplink https://www.gnu.org/licenses/gpl-3.0.en.html
 -text GPL v3 License;
-#N canvas 769 596 502 142 core 0;
+#N canvas 769 596 502 153 core 0;
 #N canvas 139 262 861 614 loop-logic 0;
 #X obj 506 413 r myclientnum;
 #X obj 101 566 forward null;
@@ -1531,7 +1475,7 @@ are added later. this allows for deterministic session saving., f
 #X text 99 75 DEBUG;
 #X obj 177 168 sprintf L2Ork Tweeter v.%.02f by;
 #X obj 177 193 tosymbol;
-#X msg 177 76 0.71;
+#X msg 177 76 0.73;
 #X connect 0 0 10 0;
 #X connect 1 0 8 0;
 #X connect 1 1 2 0;
@@ -1722,20 +1666,101 @@ Chat will appear in the console., f 32;
 #X text 92 84 dummy receive to intercept guest data request and prevent
 unnecessary error being printed into the console, f 27;
 #X restore 337 81 pd guest-stuff;
-#N canvas 808 546 356 238 editable 0;
-#X msg 85 65 \; pd-L2Ork-Tweeter.pd editable 0;
-#X msg 85 105 \; pd-L2Ork-Tweeter.pd editable 1;
+#N canvas 808 359 383 413 editable 0;
+#X msg 19 43 \; pd-L2Ork-Tweeter.pd editable 0;
+#X obj 19 19 loadbang;
+#X msg 19 355 \; pd-L2Ork-Tweeter.pd editable \$1;
+#X obj 161 125 keyname 1;
+#X obj 172 150 sel Shift;
+#X msg 172 175 1;
+#X msg 223 175 0;
+#X obj 116 219 gate 1 0;
+#X obj 259 125 keyname 1;
+#X msg 270 175 1;
+#X msg 333 175 0;
+#X obj 214 219 gate 1 0;
+#X obj 270 150 sel Control;
+#X obj 19 256 expr \\$f1+$f2+$f3, f 33;
+#X obj 19 281 == 3;
+#X obj 19 306 sel 1;
+#X obj 19 331 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1 1 1;
+#X text 19 92 ctrl+shift+alt toggles editability (alt being last!)
+;
+#X obj 64 125 keyname 1;
+#X msg 75 175 1;
+#X msg 114 175 0;
+#X obj 19 219 gate 1 0;
+#X obj 75 150 sel Alt;
+#X connect 1 0 0 0;
+#X connect 3 0 7 1;
+#X connect 3 1 4 0;
+#X connect 4 0 5 0;
+#X connect 4 1 6 0;
+#X connect 5 0 7 0;
+#X connect 6 0 7 0;
+#X connect 7 0 13 1;
+#X connect 8 0 11 1;
+#X connect 8 1 12 0;
+#X connect 9 0 11 0;
+#X connect 10 0 11 0;
+#X connect 11 0 13 2;
+#X connect 12 0 9 0;
+#X connect 12 1 10 0;
+#X connect 13 0 14 0;
+#X connect 14 0 15 0;
+#X connect 15 0 16 0;
+#X connect 16 0 2 0;
+#X connect 18 0 21 1;
+#X connect 18 1 22 0;
+#X connect 19 0 21 0;
+#X connect 20 0 21 0;
+#X connect 21 0 13 0;
+#X connect 22 0 19 0;
+#X connect 22 1 20 0;
 #X restore 256 81 pd editable;
+#N canvas 727 341 450 314 loop-preset-glob 0;
+#X obj 74 63 r glob-recall-loop;
+#X obj 234 63 r glob-store-loop;
+#X obj 64 193 r glob-recall-preset;
+#X obj 234 193 r glob-store-preset;
+#X obj 261 112 s \$0-store-loop-r;
+#X obj 74 88 t b f;
+#X obj 234 88 t b f;
+#X obj 234 137 s \$0-store-loop-apply-r;
+#X obj 101 112 s \$0-recall-loop-r;
+#X obj 74 137 s \$0-recall-loop-apply-r;
+#X obj 234 218 t b f;
+#X obj 64 218 t b f;
+#X obj 91 242 s \$0-recall-preset-r;
+#X obj 64 267 s \$0-recall-preset-apply-r;
+#X obj 261 242 s \$0-store-preset-r;
+#X obj 234 267 s \$0-store-preset-apply-r;
+#X text 66 18 translator for external widgets that offer a largernumber
+of easy-to-access presets and loops;
+#X connect 0 0 5 0;
+#X connect 1 0 6 0;
+#X connect 2 0 11 0;
+#X connect 3 0 10 0;
+#X connect 5 0 9 0;
+#X connect 5 1 8 0;
+#X connect 6 0 7 0;
+#X connect 6 1 4 0;
+#X connect 10 0 15 0;
+#X connect 10 1 14 0;
+#X connect 11 0 13 0;
+#X connect 11 1 12 0;
+#X restore 126 81 pd loop-preset-glob;
 #X connect 5 0 6 0;
 #X restore 1586 3 pd core;
-#X obj 1089 3 hsl 229 17 1 101 1 1 main-out-multiplier main-out-multiplier-r
+#X obj 1101 3 hsl 229 17 1 101 1 1 main-out-multiplier main-out-multiplier-r
 LOCAL\ MAIN\ OUT -90 6 0 10 #80fc80 #008000 #ffffff 22800 1 0 1;
 #X obj 751 3 pddp/pddplink https://l2ork.music.vt.edu/main/make-your-own-l2ork/tweeter/
 -text website;
 #X obj 526 3 cnv 15 19 16 empty empty For\ latest\ updates\ visit\ the\ project
 4 6 0 10 #6c6c6c #fcfcfc 0;
-#X text 1091 3 MIN;
-#X text 1300 3 MAX;
+#X text 1103 3 MIN;
+#X text 1312 3 MAX;
 #X obj 3 68 core/L2OrkTweet-L2Orkmote 1;
 #X obj 3 219 core/L2OrkTweet-L2Orkmote 2;
 #X obj 3 370 core/L2OrkTweet-L2Orkmote 3;
@@ -1748,3 +1773,71 @@ LOCAL\ MAIN\ OUT -90 6 0 10 #80fc80 #008000 #ffffff 22800 1 0 1;
 #X obj 820 521 core/L2OrkTweet-L2Orkmote 10;
 #X obj 820 672 core/L2OrkTweet-L2Orkmote 11;
 #X obj 820 823 core/L2OrkTweet-L2Orkmote 12;
+#N canvas 656 200 513 657 supplemental-documentation 0;
+#X obj 0 0 cnv 15 512 651 empty empty empty 20 12 0 14 #e0e0e0 #404040
+0;
+#X obj 8 576 cnv 15 65 17 empty empty empty 20 12 0 14 #fcb46c #404040
+0;
+#X obj 8 379 cnv 15 160 17 empty empty empty 20 12 0 14 #fcb46c #404040
+0;
+#X obj 8 329 cnv 15 52 17 empty empty empty 20 12 0 14 #fcb46c #404040
+0;
+#X obj 8 266 cnv 15 112 17 empty empty empty 20 12 0 14 #fcb46c #404040
+0;
+#X obj 8 81 cnv 15 106 17 empty empty empty 20 12 0 14 #fcb46c #404040
+0;
+#X text 8 11 Please consider viewing the introductory video found at:
+;
+#X obj 7 31 pddp/pddplink http://bit.ly/L2Ork-Tweeter;
+#X text 8 81 Instrument Levels;
+#X text 8 266 Instrument Presets;
+#X text 8 287 Shift+Up/Down: increase/decrease preset instrument number
+and immediately apply it., f 82;
+#X text 8 329 Main Mix;
+#X text 8 350 Left/Right: incrementally change the panning of the main
+output., f 82;
+#X text 8 235 Shift+Backslash (or |): set instrument output level to
+one or 100% (unity)., f 82;
+#X text 8 101 ' (key next to Return): set instrument output level to
+zero (OVR/LVL slider). Repeat press sets it temporarily to the last
+known value \, while upon release it reverts to zero., f 82;
+#X text 8 379 Sharing Loops and Patterns;
+#X text 9 576 Hover Mode;
+#X text 9 597 When hover mode is enabled \, you can enter notes anywhere
+on the tracker timeline regardless where the timebar is currently located.
+Delete \, shift+delete \, and ~ (insert) also work in this mode.,
+f 82;
+#X text 8 51 Below is a list of additional commands that are not clearly
+annotated elsewhere., f 82;
+#X text 8 148 Return or Enter: set instrument output level to the last
+known value (OVR/LVL slider). Repeat press sets it temporarily to zero
+\, while upon release it reverts to the last known value. When holding
+Return/Enter pressed during changing of instruments (e.g. \, using
+shift+up/down) \, the instrument will remain silent until the Return/Enter
+key is released \, at which point \, the level will revert to the new
+instrument's value., f 82;
+#X text 8 400 You can easily share your patterns and loops with others.
+To do so \, you will want to click on the user number you wish to copy
+instrument and/or loop from \, using one of the following clicking
+actions that need to be performed within the 500ms of initiating the
+first click:, f 82;
+#X text 8 456 single click - loop sync (play on/off and time bar location)double
+click - loop contents and lengthtriple click - loop sync and contents
+and lengthquadruple click - everything (loop \, loop sync \, preset
+\, main out \, and pan)shift + single click - preset (instrument)shift
++ double click - main out and pan valuesshift + triple click - preset
+and main out and pan valuesshift + quadruple click - everything (loop
+\, loop sync \, preset \, main out \, and pan), f 82;
+#X restore 1338 3 pd supplemental-documentation;
+#N canvas 1555 88 150 167 widgets 0;
+#X obj 0 0 cnv 15 149 159 empty empty empty 20 12 0 14 #e0e0e0 #404040
+0;
+#X text 12 105 PERFORMER:;
+#X text 12 12 CONDUCTOR:;
+#X obj 12 32 pddplink admin/L2Ork-Tweeter-Teacher.pd -text Teacher
+;
+#X obj 12 124 pddplink widgets/Loop-Preset-Matrix.pd -text Loop Preset
+Matrix;
+#X obj 13 53 pddplink admin/DISIS-Dante-Out-Controls.pd -text DISIS
+Dante Out;
+#X restore 1519 3 pd widgets;

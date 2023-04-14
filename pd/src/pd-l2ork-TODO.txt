@@ -3,6 +3,12 @@ PD-L2ORK TODO:
 
 *Finish integration of packages necessary for a successful compiling of the Windows version of pd-l2ork into README.md.
 
+*On Windows (and possibly other OSs) make sure that properties windows are never below the edge of the screen (e.g. when the properties are opened on an object at or near the bottom of the screen).
+
+*Hide nlets for GOP (all?) objects when not in edit mode, so that GOP objects can be seamless visually when on top level.
+
+*pddplink when using tidy-up option does not move/redraw as expected. See pd widgets inside Tweeter's main window.
+
 *Update versioning to get rid of 2.16.0 and just keep the date (date becomes the version, while build only retains the git commit value).
 
 *Merge improved forbidden planet documentation patch (I03.resynthesis.pd in audio examples).
@@ -783,6 +789,12 @@ TWEETER DONE:
   *Fixed regression due to a bug fix in the disis/patch_name.pd abstraction.
 *0.72:
   *Fixed a session saving bug and other refinements to Transcontinental Grapevine.
+*0.73:
+  *Added Loop-Preset-Widget.pd widget for easier access to more loops and presets than the keyboard allows.
+  *Added widgets subpatch to main Tweeter window where most common conductor and performer widgets can be easily accessed.
+  *Cleaned-up top-right corner of the main Tweeter window.
+  *Overhauled ediable option. Now can toggle patch editability with Shift+Ctrl+Alt (with Alt being the last key to be pressed).
+  *Introduced glob-recall-preset, glob-save-preset, glob-recall-loop, and glob-recall-preset, used by the aforesaid Loop-Preset-Widget.pd.
 
 
 
