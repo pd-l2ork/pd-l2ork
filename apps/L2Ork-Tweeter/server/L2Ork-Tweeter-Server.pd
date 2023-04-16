@@ -1005,7 +1005,7 @@ slot \, 3 adds it to the requested slot \, and 4 connects user as a
 guest because either the slot is already occupied \, or all slots are
 taken, f 67;
 #X text 1240 905 (c) 2020-2 Ivica Ico Bukvic ico.bukvic.net;
-#X msg 232 741 0.72;
+#X msg 232 741 0.73;
 #X connect 0 0 76 0;
 #X connect 0 0 115 0;
 #X connect 2 0 175 0;
