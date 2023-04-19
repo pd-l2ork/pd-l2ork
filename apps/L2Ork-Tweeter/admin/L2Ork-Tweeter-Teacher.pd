@@ -1,4 +1,4 @@
-#N canvas 559 500 820 224 10;
+#N canvas 542 443 820 224 10;
 #X obj 0 0 cnv 15 820 217 empty empty empty 5 7 0 10 #444444 #fcfcfc
 0;
 #X obj 3 3 cnv 15 814 28 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
@@ -236,7 +236,7 @@ LOAD 20 6 0 10 #80fc80 #008080 #ffffff 1;
 #X connect 32 0 14 1;
 #X connect 34 0 23 0;
 #X connect 35 0 15 0;
-#X restore 261 19 pd ae-logic;
+#X restore 260 19 pd ae-logic;
 #N canvas 727 338 584 470 update-user-num 0;
 #X obj 252 356 tosymbol;
 #X msg 252 379 label \$1;
@@ -289,7 +289,7 @@ LOAD 20 6 0 10 #80fc80 #008080 #ffffff 1;
 #X connect 23 2 19 0;
 #X connect 23 3 6 0;
 #X connect 23 4 22 0;
-#X restore 67 19 pd update-user-num;
+#X restore 66 19 pd update-user-num;
 #N canvas 143 109 702 717 mod-logic 0;
 #X obj 424 236 until;
 #X obj 424 283 f;
@@ -483,7 +483,7 @@ username reset, f 164;
 #X connect 33 31 34 0;
 #X connect 36 0 39 0;
 #X connect 37 0 38 0;
-#X restore 182 19 pd net-input;
+#X restore 181 19 pd net-input;
 #N canvas 680 374 1201 586 val-logic 0;
 #X obj 545 550 s \$0-teacher-commands;
 #X obj 22 18 r \$0-loop-length-s;
@@ -1003,7 +1003,7 @@ when requesting sync., f 39;
 #X connect 8 0 4 0;
 #X connect 8 1 9 0;
 #X connect 9 0 7 0;
-#X restore 132 60 pd glob-vars;
+#X restore 132 59 pd glob-vars;
 #X restore 766 191 pd core;
 #X obj 682 191 bng 16 250 50 0 \$0-sync-all-s \$0-sync-all-r RESET\ ALL
 20 6 0 10 #fcb46c #fc6418 #ffffff 1;
