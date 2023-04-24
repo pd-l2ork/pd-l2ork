@@ -3,6 +3,8 @@ PD-L2ORK TODO:
 
 *Finish integration of packages necessary for a successful compiling of the Windows version of pd-l2ork into README.md.
 
+*Selecting and displacing an array within a GOP doubly displaces its array data when tabwrite is being activated using metro (redraw option keeps adding/subtracting from the array's original position--this is likely a scalargobj getrect bug)
+
 *On Windows (and possibly other OSs) make sure that properties windows are never below the edge of the screen (e.g. when the properties are opened on an object at or near the bottom of the screen).
 
 *Hide nlets for GOP (all?) objects when not in edit mode, so that GOP objects can be seamless visually when on top level.
@@ -37,7 +39,6 @@ argc, t_atom *argv)
 
 
 RARE:
-  *Selecting and displacing an array within a GOP doubly displaces its array data.
   *Putting bar graph and then editing it displaces its data (both Windows and OSX when creating an array as part of a subpatch, possibly leaving it selected, and then manipulating it on the parent window--but not always?).
 
 *Update portaudio for OSX and re-check if it is ok for all platforms. IN PROGRESS
