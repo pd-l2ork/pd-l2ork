@@ -667,7 +667,9 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Aesthetic updates to select documentation patches.
 *Added experimental updating of the array on each bang message inside the tabwrite~ object, to ensure it is redrawn even if only a fraction of the array is being populated.
 *Fixed a bug where saved patch at (0, 0) coordinates resulted in a requested float coordinates and an error in js.
-*Fixed emscripten building bug for ggee/image.
+*Fixed emscripten building bug for ggee/image (may affect merging of the emscripten branch).
+*Updated README.md to include additional msys packages that are appear to be necessary with the latest version of msys.
+*Fixed a meta subpatch with inlet info that will be used for tooltips.
 
 
 
