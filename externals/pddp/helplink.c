@@ -76,6 +76,11 @@ static void helplink_displace(t_gobj *z, t_glist *glist, int dx, int dy)
     {
         t_rtext *y = glist_findrtext(glist, t);
         rtext_displace(y, dx, dy);
+        gui_vmess("gui_text_displace", "xsii",
+            glist,
+            rtext_gettag(y),
+            dx,
+            dy);
     }
 }
 
