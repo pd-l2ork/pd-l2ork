@@ -9,8 +9,6 @@ PD-L2ORK TODO:
 
 *Hide nlets for GOP (all?) objects when not in edit mode, so that GOP objects can be seamless visually when on top level.
 
-*pddplink when using tidy-up option does not move/redraw as expected. See pd widgets inside Tweeter's main window.
-
 *Update versioning to get rid of 2.16.0 and just keep the date (date becomes the version, while build only retains the git commit value).
 
 *Merge improved forbidden planet documentation patch (I03.resynthesis.pd in audio examples).
@@ -669,7 +667,9 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Fixed a bug where saved patch at (0, 0) coordinates resulted in a requested float coordinates and an error in js.
 *Fixed emscripten building bug for ggee/image (may affect merging of the emscripten branch).
 *Updated README.md to include additional msys packages that are appear to be necessary with the latest version of msys.
+*Added missing package to the Windows MSYS compile instructions.
 *Fixed a meta subpatch with inlet info that will be used for tooltips.
+*Fixed pddplink and helplink bug where tidy did not properly reposition the object.
 
 
 
