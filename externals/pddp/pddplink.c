@@ -73,6 +73,7 @@ static void pddplink_getrect(t_gobj *z, t_glist *glist,
 
 static void pddplink_displace(t_gobj *z, t_glist *glist, int dx, int dy)
 {
+    //post("pddplink_displace");
     t_text *t = (t_text *)z;
     t->te_xpix += dx;
     t->te_ypix += dy;
@@ -80,11 +81,17 @@ static void pddplink_displace(t_gobj *z, t_glist *glist, int dx, int dy)
     {
         t_rtext *y = glist_findrtext(glist, t);
         rtext_displace(y, dx, dy);
+        gui_vmess("gui_text_displace", "xsii",
+            glist,
+            rtext_gettag(y),
+            dx,
+            dy);
     }
 }
 
 static void pddplink_displace_withtag(t_gobj *z, t_glist *glist, int dx, int dy)
 {
+    //post("pddplink_displace_withtag");
     t_text *t = (t_text *)z;
     t->te_xpix += dx;
     t->te_ypix += dy;
@@ -116,6 +123,7 @@ static void pddplink_select(t_gobj *z, t_glist *glist, int state)
 
 static void pddplink_vis(t_gobj *z, t_glist *glist, int vis)
 {
+    //post("pddplink_vis");
     t_pddplink *x = (t_pddplink *)z;
     t_rtext *y;
     if (vis)
