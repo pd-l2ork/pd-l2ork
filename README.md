@@ -70,7 +70,7 @@ For Pd-L2Ork website see:
  
 ### Relationship of Pd-L2Ork to Pure Data
 
-There are three maintained distributions of Pure Data:
+There are two maintained distributions of Pure Data:
 
 1. This is the 2.x version of Pd-L2Ork. It ships with lots of
    external libraries and uses a modern GUI written using HTML5.
