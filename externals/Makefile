@@ -1577,12 +1577,15 @@ ifeq ($(OS_NAME),darwin)
 		&& cmake --build out/build/x64-macos-Debug --target clean
 	cd $(externals_src)/pdjs/v8 && rm -rf lib
 	cd $(externals_src)/pdjs && rm -rf binaries
+	cd $(externals_src)/pdjs/out/build/x64-macos-Debug && rm -rf * && rm -rf ./.ninja*
 endif
 ifeq ($(OS_NAME),linux)
 	cd $(externals_src)/pdjs \
 		&& cmake --build out/build/x64-linux-Debug --target clean
 	cd $(externals_src)/pdjs/v8 && rm -rf lib
 	cd $(externals_src)/pdjs && rm -rf binaries
+	cd $(externals_src)/pdjs && rm -rf binaries
+	cd $(externals_src)/pdjs/out/build/x64-linux-Debug && rm -rf * && rm -rf ./.ninja*
 endif
 
 #------------------------------------------------------------------------------#
