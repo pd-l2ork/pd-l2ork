@@ -20,7 +20,7 @@ UninstallDisplayIcon={app}\lib\pd_l2ork.ico
 
 Compression=lzma/ultra
 ChangesAssociations=true
-OutputBaseFilename=Pd-L2Ork-PD_VERSION (64-bit)
+OutputBaseFilename=Pd-L2Ork-full-PD_VERSION (64-bit)
 AppCopyright=GNU GPL
 WizardImageFile=pd_l2ork_large.bmp
 WizardImageStretch=no

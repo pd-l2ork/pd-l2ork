@@ -1045,19 +1045,19 @@ void sys_get_audio_apis2(t_binbuf *buf)
     binbuf_addv(buf, "si", gensym("OSS"), API_OSS); n++;
 #endif
 #ifdef USEAPI_MMIO
-    binbuf_addv(buf, "si", gensym("standard (MMIO)"), API_MMIO); n++;
+    binbuf_addv(buf, "si", gensym("Standard (MMIO)"), API_MMIO); n++;
 #endif
 #ifdef USEAPI_ALSA
     binbuf_addv(buf, "si", gensym("ALSA"), API_ALSA); n++;
 #endif
 #ifdef USEAPI_PORTAUDIO
 #ifdef MSW
-    binbuf_addv(buf, "si", gensym("ASIO (via portaudio)"), API_PORTAUDIO);
+    binbuf_addv(buf, "si", gensym("ASIO (via PortAudio)"), API_PORTAUDIO);
 #else
 #ifdef OSX
-    binbuf_addv(buf, "si", gensym("standard (portaudio)"), API_PORTAUDIO);
+    binbuf_addv(buf, "si", gensym("Standard (PortAudio)"), API_PORTAUDIO);
 #else
-    binbuf_addv(buf, "si", gensym("portaudio"), API_PORTAUDIO);
+    binbuf_addv(buf, "si", gensym("PortAudio"), API_PORTAUDIO);
 #endif
 #endif
      n++;

@@ -171,9 +171,12 @@ readme_install:
 #------------------------------------------------------------------------------#
 ifeq ($(LIGHT),yes)
 default = light
+Build_Type = light
 else
 default = default
+Build_Type = full
 endif
+##added light and full differentiation
 darwin_app_core: darwin_app_wrapper
 	$(MAKE) -C $(packages_src) $(DEST_PATHS) \
 		PD_CONFIGURE_FLAGS="--enable-jack=no --disable-fat" \
@@ -198,7 +201,8 @@ darwin_app_core: darwin_app_wrapper
 
 package: dmg
 
-VOLUME_NAME = Pd-L2Ork
+#Added Build_Type
+VOLUME_NAME = Pd-L2Ork-$(Build_Type)
 dmg:
 # ico@vt.edu 2022-10-10: sign the app, so that we can get the mic/camera
 # permission prompts
