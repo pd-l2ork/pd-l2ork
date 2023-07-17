@@ -260,6 +260,8 @@ static void envgen_shownum(t_envgen *x, t_glist* glist)
     clock_delay(x->w.numclock,700);
 }
 
+extern char *gobj_vis_gethelpname(t_gobj *z, char *namebuf);
+
 static void envgen_create(t_envgen *x, t_glist *glist)
 {
     int i;
@@ -272,7 +274,15 @@ static void envgen_create(t_envgen *x, t_glist *glist)
     ypos = (int)text_ypix(&x->x_obj, glist);
     x->w.numclock = clock_new(x, (t_method)envgen_delnum);
 
-    gui_vmess("gui_gobj_new", "xxxxsiiii",
+    t_rtext *y = glist_findrtext(glist, x);
+    char *buf2;
+    int bufsize;
+    rtext_gettext(y, &buf2, &bufsize);
+
+    char namebuf[FILENAME_MAX];
+    gobj_vis_gethelpname((t_gobj *)x, &namebuf);
+
+    gui_vmess("gui_gobj_new", "xxxxsiiiiss",
         glist_getcanvas(glist),
         glist,
         glist->gl_owner,
@@ -281,7 +291,9 @@ static void envgen_create(t_envgen *x, t_glist *glist)
         xpos,
         ypos,
         glist_istoplevel(glist),
-        0
+        0,
+        namebuf,
+        buf2
     );
 
     //sys_vgui(".x%x.c create rectangle "

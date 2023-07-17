@@ -1500,6 +1500,8 @@ void iemgui_io_draw_move(t_iemgui *x)
     }
 }
 
+extern char *gobj_vis_gethelpname(t_gobj *z, char *namebuf);
+
 void iemgui_base_draw_new(t_iemgui *x)
 {
     t_canvas *canvas=glist_getcanvas(x->x_glist);
@@ -1507,13 +1509,24 @@ void iemgui_base_draw_new(t_iemgui *x)
     int x1, y1, x2, y2, gr = gop_redraw;
     gop_redraw = 0;
     c->c_wb->w_getrectfn((t_gobj *)x, x->x_glist, &x1, &y1, &x2, &y2);
+    
+    t_rtext *y = glist_findrtext(x->x_glist, x);
+    char *buf;
+    int bufsize;
+    rtext_gettext(y, &buf, &bufsize);
+
+
     //iemgui_getrect_draw(x, &x1, &y1, &x2, &y2); 
     gop_redraw = gr;
     char colorbuf[MAXPDSTRING];
     sprintf(colorbuf, "#%6.6x", x->x_bcol);
-    gui_vmess("gui_gobj_new", "xxxxsiiii", canvas, x->x_glist,
+
+    char namebuf[FILENAME_MAX];
+    gobj_vis_gethelpname((t_gobj *)x, &namebuf);
+
+    gui_vmess("gui_gobj_new", "xxxxsiiiiss", canvas, x->x_glist,
         x->x_glist->gl_owner, x, "iemgui", x1, y1,
-        glist_istoplevel(x->x_glist), 0);
+        glist_istoplevel(x->x_glist), 0, namebuf, buf);
     gui_vmess("gui_text_draw_border", "xxsiiii",
         canvas,
         x,

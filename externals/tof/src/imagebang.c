@@ -163,6 +163,8 @@ static int imagebang_click(t_imagebang *x, struct _glist *glist,
     return (1);
 }
 
+extern char *gobj_vis_gethelpname(t_gobj *z, char *namebuf);
+
 static void imagebang_drawme(t_imagebang *x, t_glist *glist, int firsttime)
 {
     if (firsttime)
@@ -177,7 +179,15 @@ static void imagebang_drawme(t_imagebang *x, t_glist *glist, int firsttime)
 
         //sys_vgui("pd [concat %s _imagesize [image width %x_imagebang] [image height %x_imagebang] \\;]\n",x->receive->s_name,x->image_a,x->image_a);
 
-        gui_vmess("gui_gobj_new", "xxxxsiiii",
+        t_rtext *y = glist_findrtext(glist, (t_gobj *)x);
+        char *buf;
+        int bufsize;
+        rtext_gettext(y, &buf, &bufsize);
+
+        char namebuf[FILENAME_MAX];
+        gobj_vis_gethelpname((t_gobj *)x, &namebuf);
+
+        gui_vmess("gui_gobj_new", "xxxxsiiiiss",
             glist_getcanvas(glist),
             glist,
             glist->gl_owner,
@@ -186,7 +196,9 @@ static void imagebang_drawme(t_imagebang *x, t_glist *glist, int firsttime)
             text_xpix(&x->x_obj, glist),
             text_ypix(&x->x_obj, glist),
             glist_istoplevel(glist),
-            0
+            0,
+            namebuf,
+            buf
         );
         sprintf(key_a, "%zx_a", (t_uint)x);
         gui_vmess("gui_gobj_draw_image", "xxssiiiii",

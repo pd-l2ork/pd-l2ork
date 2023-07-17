@@ -108,9 +108,9 @@ void magicGlass_updateText(t_magicGlass *x, int moved)
 
 void magicGlass_drawNew(t_magicGlass *x)
 {
-    gui_vmess("gui_gobj_new", "xxxssiiii",
+    gui_vmess("gui_gobj_new", "xxxssiiiiss",
         x->x_c, x->x_c, x->x_c->gl_owner,
-        "cord_inspector", "cord_inspector", 0, 0, 1, 0);
+        "cord_inspector", "cord_inspector", 0, 0, 1, 0, "", "cord-inspector");
     gui_vmess("gui_cord_inspector_new", "xi",
         x->x_c, x->x_display_font);
     magicGlass_updateText(x, 0);

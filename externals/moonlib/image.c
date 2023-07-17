@@ -91,13 +91,25 @@ static const char *image_get_filename(t_image *x, char *file)
 // firsttime == 1, redraw only without loading the image (to avoid
 //                 race condition between front-end and back-end)
 // firsttime == 2, also do a load of the image
+
+extern char *gobj_vis_gethelpname(t_gobj *z, char *namebuf);
+
 static void image_drawme(t_image *x, t_glist *glist, int firsttime)
 {
     char key[MAXPDSTRING];
     char key2[MAXPDSTRING];
     if (firsttime)
     {
-        gui_vmess("gui_gobj_new", "xxxxsiiii",
+
+        t_rtext *y = glist_findrtext(glist, (t_gobj *)x);
+        char *buf;
+        int bufsize;
+        rtext_gettext(y, &buf, &bufsize);
+
+        char namebuf[FILENAME_MAX];
+        gobj_vis_gethelpname((t_gobj *)x, &namebuf);
+
+        gui_vmess("gui_gobj_new", "xxxxsiiiiss",
             glist_getcanvas(glist),
             x->x_glist,
             x->x_glist->gl_owner,
@@ -106,7 +118,9 @@ static void image_drawme(t_image *x, t_glist *glist, int firsttime)
             text_xpix(&x->x_obj, glist),
             text_ypix(&x->x_obj, glist),
             glist_istoplevel(glist),
-            0
+            0,
+            namebuf,
+            buf
         );
         const char *fname = image_get_filename(x, x->x_image->s_name);
         if (x->x_image == &s_ || !fname) // if we have a blank image name, use the included filler

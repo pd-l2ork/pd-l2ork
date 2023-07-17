@@ -76,11 +76,6 @@ static void helplink_displace(t_gobj *z, t_glist *glist, int dx, int dy)
     {
         t_rtext *y = glist_findrtext(glist, t);
         rtext_displace(y, dx, dy);
-        gui_vmess("gui_text_displace", "xsii",
-            glist,
-            rtext_gettag(y),
-            dx,
-            dy);
     }
 }
 
@@ -134,6 +129,8 @@ static void helplink_activate(t_gobj *z, t_glist *glist, int state)
     }
 }
 
+extern char *gobj_vis_gethelpname(t_gobj *z, char *namebuf);
+
 static void helplink_vis(t_gobj *z, t_glist *glist, int vis)
 {
     t_helplink *x = (t_helplink *)z;
@@ -143,7 +140,17 @@ static void helplink_vis(t_gobj *z, t_glist *glist, int vis)
         if ((glist->gl_havewindow || x->x_isgopvisible)
             && (y = glist_findrtext(glist, (t_text *)x)))
         {
-            gui_vmess("gui_gobj_new", "xxxssiiii",
+
+            // t_rtext *y = glist_findrtext(glist, t);
+            char *buf;
+            int bufsize;
+            rtext_gettext(y, &buf, &bufsize);
+
+            char namebuf[FILENAME_MAX];
+            gobj_vis_gethelpname(z, &namebuf);
+
+    
+            gui_vmess("gui_gobj_new", "xxxssiiiiss",
                 glist_getcanvas(glist),
                 x->x_glist,
                 x->x_glist->gl_owner,
@@ -152,7 +159,9 @@ static void helplink_vis(t_gobj *z, t_glist *glist, int vis)
                 text_xpix(&x->x_ob, glist_getcanvas(glist)),
                 text_ypix(&x->x_ob, glist_getcanvas(glist)),
                 glist_istoplevel(glist),
-                0
+                0,
+                namebuf,
+                buf
             );
             rtext_draw(y);
             gui_vmess("gui_text_set", "xss",

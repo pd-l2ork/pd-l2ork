@@ -136,12 +136,22 @@ static void pianoroll_draw_update(t_pianoroll *x, t_glist *glist)
     }
 }
 
+extern char *gobj_vis_gethelpname(t_gobj *z, char *namebuf);
+
 static void pianoroll_draw_innards(t_pianoroll *x, t_glist *glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
 
+    t_rtext *y = glist_findrtext(glist, x);
+    char *buf;
+    int bufsize;
+    rtext_gettext(y, &buf, &bufsize);
+
+    char namebuf[FILENAME_MAX];
+    gobj_vis_gethelpname((t_gobj *)x, &namebuf);
+
     // create a gobj container in the GUI
-    gui_vmess("gui_gobj_new", "xxxxsiiii",
+    gui_vmess("gui_gobj_new", "xxxxsiiiiss",
         canvas,
         x->x_glist,
         x->x_glist->gl_owner,
@@ -150,7 +160,9 @@ static void pianoroll_draw_innards(t_pianoroll *x, t_glist *glist)
         text_xpix(&x->x_obj, glist),
         text_ypix(&x->x_obj, glist),
         glist_istoplevel(glist),
-        0
+        0,
+        namebuf,
+        buf
     );
 
     t_float xgstep = x->x_width/x->x_nbsteps;

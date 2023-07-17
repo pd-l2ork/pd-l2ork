@@ -606,17 +606,29 @@ text.activated {
 }
 
 /* control inlet */
-.xlet_control {
+.editmode .xlet_control {
     stroke: #1a1a1a;
     fill: #1a1a1a;
     stroke-width: 1;
+    visibility: visible;
+}
+
+/* control inlet or outlet -- ico@vt.edu 2023-07-17: by default now hidden */
+.xlet_control {
+    visibility: hidden;
 }
 
 /* signal inlet */
-.xlet_signal {
+.editmode .xlet_signal {
     stroke: #46d5cf;
     fill: #46d5cf;
     stroke-width: 1;
+    visibility: visible;
+}
+
+/* signal inlet or outlet -- ico@vt.edu 2023-07-17: by default now hidden */
+.xlet_signal {
+    visibility: hidden;
 }
 
 /* iemgui inlet or outlet in editmode */

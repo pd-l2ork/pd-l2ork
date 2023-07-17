@@ -3491,7 +3491,7 @@ static void canvas_doarrange(t_canvas *x, t_float which, t_gobj *oldy,
     glob_preset_node_list_check_loc_and_update();
 }
 
-static char *canvas_gethelpname(t_object *ob)
+char *canvas_gethelpname(t_object *ob)
 {
     if (ob->te_binbuf &&
         binbuf_getnatom(ob->te_binbuf) &&
@@ -3662,6 +3662,7 @@ void canvas_done_popup(t_canvas *x, t_float which, t_float xpos,
                         namebuf[FILENAME_MAX-1] = 0;
                         dir = class_gethelpdir(pd_class(&y->g_pd));
                     }
+                    //post("canvas_done_popup help namebuf=<%s>", namebuf);
                     if (strlen(namebuf) < 4 ||
                         strcmp(namebuf + strlen(namebuf) - 3, ".pd"))
                             strcat(namebuf, ".pd");

@@ -112,15 +112,25 @@ t_symbol *image_trytoopen(t_image* x)
     }
 }
 
-static void image_drawme(t_gobj *client, t_glist *glist)
+extern char *gobj_vis_gethelpname(t_gobj *z, char *namebuf);
+
+static void image_drawme(t_image *x, t_glist *glist)
 {
-    t_image *x = (t_image *)client;
     if(gobj_shouldvis((t_gobj *)x, glist))
     {
         if (x->x_draw_firstime)
         {
             t_symbol *fname = image_trytoopen(x);
-            gui_vmess("gui_gobj_new", "xxxxsiiii",
+
+            t_rtext *y = glist_findrtext(glist, (t_gobj *)x);
+            char *buf;
+            int bufsize;
+            rtext_gettext(y, &buf, &bufsize);
+
+            char namebuf[FILENAME_MAX];
+            gobj_vis_gethelpname((t_gobj *)x, &namebuf);
+
+            gui_vmess("gui_gobj_new", "xxxxsiiiiss",
                 glist_getcanvas(glist),
                 x->x_gui.x_glist,
                 x->x_gui.x_glist->gl_owner,
@@ -129,7 +139,9 @@ static void image_drawme(t_gobj *client, t_glist *glist)
                 text_xpix(&x->x_gui.x_obj, glist),
                 text_ypix(&x->x_gui.x_obj, glist),
                 glist_istoplevel(glist),
-                0
+                0,
+                namebuf,
+                buf
             );
             if (fname) {
                 // if we are using gop_spill, reloading may cause flicker
@@ -434,7 +446,7 @@ static void image_vis(t_gobj *z, t_glist *glist, int vis)
     if (vis)
     {
         x->x_draw_firstime = 1;
-        image_drawme(z, glist);
+        image_drawme(x, glist);
     }
     else
         image_erase(x, glist);
@@ -954,7 +966,7 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
         // canvas' x and y coordinates instead of ones inside the gop
         // subpatch/abstraction
         x->x_draw_firstime = 0;
-        image_drawme((t_gobj *)x, x->x_gui.x_glist);
+        image_drawme(x, x->x_gui.x_glist);
 
         if (glist_isselected(x->x_gui.x_glist, (t_gobj *)x) &&
             glist_getcanvas(x->x_gui.x_glist) == x->x_gui.x_glist)
@@ -1351,9 +1363,9 @@ void image_draw(t_image *x, t_glist *glist, int mode)
 {
     if(mode == IEM_GUI_DRAW_MODE_UPDATE)      sys_queuegui(x, glist, image_drawme);
     else if(mode == IEM_GUI_DRAW_MODE_MOVE)   image_draw_move(x, glist);
-    else if(mode == IEM_GUI_DRAW_MODE_NEW)    image_drawme((t_gobj *)x, glist);
+    else if(mode == IEM_GUI_DRAW_MODE_NEW)    image_drawme(x, glist);
     //else if(mode == IEM_GUI_DRAW_MODE_SELECT) iemgui_select(x, glist);
-    else if(mode == IEM_GUI_DRAW_MODE_CONFIG) image_drawme((t_gobj *)x, glist);
+    else if(mode == IEM_GUI_DRAW_MODE_CONFIG) image_drawme(x, glist);
 }
 
 static void image_setwidget(void)

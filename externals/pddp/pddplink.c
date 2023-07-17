@@ -73,7 +73,6 @@ static void pddplink_getrect(t_gobj *z, t_glist *glist,
 
 static void pddplink_displace(t_gobj *z, t_glist *glist, int dx, int dy)
 {
-    //post("pddplink_displace");
     t_text *t = (t_text *)z;
     t->te_xpix += dx;
     t->te_ypix += dy;
@@ -81,17 +80,11 @@ static void pddplink_displace(t_gobj *z, t_glist *glist, int dx, int dy)
     {
         t_rtext *y = glist_findrtext(glist, t);
         rtext_displace(y, dx, dy);
-        gui_vmess("gui_text_displace", "xsii",
-            glist,
-            rtext_gettag(y),
-            dx,
-            dy);
     }
 }
 
 static void pddplink_displace_withtag(t_gobj *z, t_glist *glist, int dx, int dy)
 {
-    //post("pddplink_displace_withtag");
     t_text *t = (t_text *)z;
     t->te_xpix += dx;
     t->te_ypix += dy;
@@ -121,9 +114,10 @@ static void pddplink_select(t_gobj *z, t_glist *glist, int state)
     }
 }
 
+extern char *gobj_vis_gethelpname(t_gobj *z, char *namebuf);
+
 static void pddplink_vis(t_gobj *z, t_glist *glist, int vis)
 {
-    //post("pddplink_vis");
     t_pddplink *x = (t_pddplink *)z;
     t_rtext *y;
     if (vis)
@@ -131,7 +125,14 @@ static void pddplink_vis(t_gobj *z, t_glist *glist, int vis)
         if ((glist->gl_havewindow || x->x_isgopvisible)
             && (y = glist_findrtext(glist, (t_text *)x)))
         {
-            gui_vmess("gui_gobj_new", "xxxssiiii",
+            char *buf;
+            int bufsize;
+            rtext_gettext(y, &buf, &bufsize);
+
+            char namebuf[FILENAME_MAX];
+            gobj_vis_gethelpname(z, &namebuf);
+
+            gui_vmess("gui_gobj_new", "xxxssiiiiss",
                 glist_getcanvas(glist),
                 x->x_glist,
                 x->x_glist->gl_owner,
@@ -140,7 +141,9 @@ static void pddplink_vis(t_gobj *z, t_glist *glist, int vis)
                 text_xpix(&x->x_ob, glist),
                 text_ypix(&x->x_ob, glist),
                 glist_istoplevel(glist),
-                0
+                0,
+                namebuf,
+                buf
             );
             /* This is a bit screwy... first we do rtext_draw
                which sends the wrong box text (at least when we're

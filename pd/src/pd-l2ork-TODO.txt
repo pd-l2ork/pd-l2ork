@@ -7,11 +7,19 @@ PD-L2ORK TODO:
 
 *On Windows (and possibly other OSs) make sure that properties windows are never below the edge of the screen (e.g. when the properties are opened on an object at or near the bottom of the screen).
 
-*Hide nlets for GOP (all?) objects when not in edit mode, so that GOP objects can be seamless visually when on top level.
+*Merge nlets megapatch. Still TODO:
+  *Make sure GOP objects get no tooltips. DONE
+  *Only K12/output gets tooltips. Why? DONE (forgot to rebuild index)
+  *Store tooltips inside the svg parent group, so that they can be disabled in runtime mode, and reenabled in edit mode without having to go search for them again.
+  *Hide nlets of GOP or even all objects when in runtime.
+  *Figure out how to update tooltips on the parent patch for dynamically created inlets and outlets inside a GOP patch.
+    *Should nlet objects have their own tooltips built-in?
+  LATER:
+    *Add runtime tooltip field to all objects (editable via properties and/or a message, and storable like the scripts "f" option that defines object width) and store it also inside the parent svg group, so that the editmode and runtime tooltips can be efficiently toggled between.
 
 *Update versioning to get rid of 2.16.0 and just keep the date (date becomes the version, while build only retains the git commit value).
 
-*Merge improved forbidden planet documentation patch (I03.resynthesis.pd in audio examples).
+*Merge improved forbidden planet documentation patch (I03.resynthesis.pd in audio examples). DONE
   *Investigate why this patch is not using vanilla DAC abstraction, instead of its improved "extended" version.
 
 *Explore what limits the hex color interpretation to also include alpha channel and support for it. Straightforward CSS works, so this is likely a backend limitation.

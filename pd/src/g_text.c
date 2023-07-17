@@ -284,7 +284,7 @@ static int get_autopatch_yoffset(t_canvas *x)
 {
     if (sys_autopatch_yoffset)
         return sys_autopatch_yoffset;
-    else
+    else 
     {
         int fontsize = glist_getfont(x);
         switch (fontsize)
@@ -2511,6 +2511,36 @@ static void text_get_typestring(int type, char *buf)
         sprintf(buf, "%s", "atom");
 }
 
+extern char *canvas_gethelpname(t_object *ob);
+
+char *gobj_vis_gethelpname(t_gobj *z, char *namebuf) {
+    //namebuf = "|null|";
+
+    if (pd_class(&z->g_pd) == canvas_class &&
+        canvas_isabstraction((t_canvas *)z))
+    {
+        t_object *ob = (t_object *)z;
+        int ac = binbuf_getnatom(ob->te_binbuf);
+        t_atom *av = binbuf_getvec(ob->te_binbuf);
+        if (ac < 1)
+            return;
+        atom_string(av, namebuf, FILENAME_MAX);
+    }
+    else
+    {
+        char *obname = (pd_class(&z->g_pd) == canvas_class) ?
+            canvas_gethelpname((t_object *)z) :
+            class_gethelpname(pd_class(&z->g_pd));
+        strncpy(namebuf, obname,
+            FILENAME_MAX-1);
+        namebuf[FILENAME_MAX-1] = 0;
+    }
+    //TODO: what happens if either abstraction or object does not have help file?
+    //TODO: what about a subpatch?
+    post("gobj_vis_gethelpname obname=<%s> namebuf=<%s>",
+        class_gethelpname(pd_class(&z->g_pd)), namebuf);
+}
+
 static void text_vis(t_gobj *z, t_glist *glist, int vis)
 {
     //post("text_vis %d", vis);
@@ -2551,9 +2581,16 @@ static void text_vis(t_gobj *z, t_glist *glist, int vis)
                 //post("text_vis drawit canvas_class=%d",
                 //    (pd_class(&x->te_pd) == canvas_class ? 1 : 0));
                 t_rtext *y = glist_findrtext(glist, x);
+                char *buf;
+                int bufsize;
+                rtext_gettext(y, &buf, &bufsize);
+
+                char namebuf[FILENAME_MAX];
+                gobj_vis_gethelpname(z, &namebuf);
+
                 // make a group
                 text_getrect(&x->te_g, glist, &x1, &y1, &x2, &y2);
-                gui_vmess("gui_gobj_new", "xxxssiiii",
+                gui_vmess("gui_gobj_new", "xxxssiiiiss",
                     glist_getcanvas(glist),
                     // if it is not toplevel and glist_getcanvas is not gl_owner
                     // this means we are drawn 2nd or deeper level down
@@ -2564,7 +2601,9 @@ static void text_vis(t_gobj *z, t_glist *glist, int vis)
                     x1,
                     y1,
                     glist_istoplevel(glist),
-                    (pd_class(&x->te_pd) == canvas_class ? 1 : 0)
+                    (pd_class(&x->te_pd) == canvas_class ? 1 : 0),
+                    namebuf,
+                    buf
                 );
                 if (x->te_type == T_ATOM)
                     glist_retext(glist, x);

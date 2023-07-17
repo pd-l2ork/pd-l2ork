@@ -151,6 +151,8 @@ function init_elasticlunr()
     index.addField("description");
     index.addField("related_objects");
     index.addField("ref_related_objects");
+    index.addField("inlets_outlets");
+    index.addField("tippathname");
     index.setRef("id");
     return index;
 }
@@ -171,6 +173,7 @@ function index_entry_esc(s) {
 // GB: This actually retrieves the meta data concerning related_objects,
 // keywords, and description of help patches.
 function add_doc_details_to_index(filename, data) {
+    //post(filename);
     var title = path.basename(filename, "-help.pd"),
         // AG: This is confusing. I'm not sure why we just replace the first
         // newline here. Maybe there's a reason to do so, but I don't get it.
@@ -178,7 +181,9 @@ function add_doc_details_to_index(filename, data) {
         keywords,
         desc,
         rel_objs,
-        ref_rel_objs;
+        ref_rel_objs,
+        inout,
+        tippathname;  //added
     // GB: investigate the related objects of each file
     const machine_related_objects = {
         found_objects: [],
@@ -241,12 +246,30 @@ function add_doc_details_to_index(filename, data) {
     rel_objs = rel_objs ? rel_objs.toString().replace(/\,/g, " ") : null;
 
     // We use [\s\S] to match across multiple lines...
+
     keywords = big_line
         .match(/#X text \-?[0-9]+ \-?[0-9]+ KEYWORDS ([\s\S]*?);/i);
     desc = big_line
         .match(/#X text \-?[0-9]+ \-?[0-9]+ DESCRIPTION ([\s\S]*?);/i);
+
+    var inlet = big_line
+        .match(/#X text \-?[0-9]+ \-?[0-9]+ INLET_. ([\s\S]*?);/gi);
+
+    var outlet = big_line
+        .match(/#X text \-?[0-9]+ \-?[0-9]+ OUTLET_. ([\s\S]*?);/gi);
+
+
     keywords = keywords && keywords.length > 1 ? keywords[1].trim() : null;
     desc = desc && desc.length > 1 ? desc[1].trim() : null;
+
+    if (nw_os_is_windows) {
+        tippathname=filename.replaceAll("\\"," ");
+    } else {
+        tippathname=filename.replaceAll("/"," ");
+    }
+    post("tippathname=" + tippathname);
+    // inlet = inlet && inlet.length > 1 ? inlet[1].trim() : null;
+
     // Remove the Pd escapes for commas
     // AG: We want to do a global replacement here.
     desc = desc ? desc.replace(/ \\,/g, ",") : null;
@@ -255,6 +278,45 @@ function add_doc_details_to_index(filename, data) {
         // whatsover to preserve the original formatting.
         desc = desc.replace(/\n/g, " ");
     }
+    // console.log("title: "+ title);
+    // console.log("inlet: "+ inlet);
+    // console.log("outlet: "+outlet);
+    let res = '';
+    if(inlet){
+        if(inlet.length !=0){
+            res+="|";
+        }
+        for (let i = 0; i < inlet.length; i++) {
+            const match = inlet[i].match(/INLET_+([\s\S]*?);/i);
+            // console.log(match);
+
+            if (match){
+                res +=  "I"+ match[1].trim()+ '|';
+              }
+        }
+    }
+    if(outlet){
+        if(outlet.length !=0 && !inlet){
+            res+="|";
+        }
+        for (let i = 0; i < outlet.length; i++) {
+            const match2 = outlet[i].match(/OUTLET_+([\s\S]*?);/i);
+
+            if ( match2){
+                res +="O"+ match2[1].trim()+ '|';
+              }
+        }
+    }
+    // console.log("title: "+ title);
+    // console.log("inlet: "+ inlet);
+    console.log("res: "+res);
+    // console.log("outlet: "+outlet);
+    inout = res;
+    // AG: And we want to get rid of the newlines, there's no reason
+    // whatsover to preserve the original formatting.
+    inout = inout.replace(/\n/g, " ");
+    // outlet = outlet.replace(/\n/g, " ");
+    // console.log (title + ' ' + inout);
 
     // AG: Deal with a bunch of special cases which have multiple objects
     // documented in them, listing the object names (and arguments) in the
@@ -360,7 +422,7 @@ function add_doc_details_to_index(filename, data) {
     if (title.slice(-5) === "-help") {
         title = title.slice(0, -5);
     }
-    index_cache[index_cache.length] = [filename, title, keywords, desc, rel_objs, ref_rel_objs]
+    index_cache[index_cache.length] = [filename, title, keywords, desc, rel_objs, ref_rel_objs, inout, tippathname]
 	.map(index_entry_esc).join(":");
     var d = path.dirname(filename);
     index_manif.add(d);
@@ -372,7 +434,9 @@ function add_doc_details_to_index(filename, data) {
         "keywords": keywords,
         "description": desc,
         "related_objects": rel_objs,
-        "ref_related_objects": ref_rel_objs
+        "ref_related_objects": ref_rel_objs,
+        "inlets_outlets": inout,
+        "tippathname": tippathname
         //"body": big_line,
     });
 }
@@ -562,13 +626,18 @@ function make_index(force) {
                 var desc = e[3] ? e[3] : null;
                 var rel_obj = e[4] ? e[4] : null;
                 var ref_rel_obj = e[5] ? e[5] : null;
+                var inout = e[6] ? e[6] : null;
+                var tippathname = e[7] ? e[7] : null;
                 index.addDoc({
                     "id": filename,
                     "title": title,
                     "keywords": keywords,
                     "description": desc,
                     "related_objects": rel_obj,
-                    "ref_related_objects": ref_rel_obj
+                    "ref_related_objects": ref_rel_obj,
+                    "inlets_outlets": inout,
+                    "tippathname":tippathname
+                    // "outlets": outlet
                 });
             }
         }
@@ -3020,6 +3089,7 @@ function create_window(cid, type, width, height, xpos, ypos, attr_array) {
 function gui_canvas_new(cid, width, height, geometry, grid, grid_size_value,
     zoom, editmode, name, dir, dirty_flag, warid, hide_scroll, hide_menu,
     has_toplevel_scalars, isblank, cargs) {
+
     //post("gui_canvas_new geometry=" + geometry + " w=" + width + " h=" + height);
     //post("gui_canvas_new cid=" + cid + " has_top_level_scalars=" + has_toplevel_scalars);
     // hack for buggy tcl popups... should go away for node-webkit
@@ -3631,10 +3701,18 @@ exports.gui = gui;
                  between the two contexts and offers a convenient way to filter objects
                  whose selection border should be highlighted when they are selected.
 */
-function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplevel, is_canvas_obj) {
+function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplevel, is_canvas_obj, objname, tipName) {
     var g, draw_xpos, draw_ypos;
     draw_xpos = xpos;
     draw_ypos = ypos;
+
+    //TODO: disable tooltips for non-toplevel objects
+
+    post("gui_gobj_new objname=" + objname + " tipName=" + tipName);
+    tipName = tipName.trim();
+    if(tipName==null){
+        tipName="fixme";
+    }
     if (type === "graph") { // graph object
         /*
         post("===\ngui_gobj_new GRAPH drawon=" + cid + " ownercid=" + ownercid +
@@ -3650,6 +3728,7 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
         */
         gui(cid).get_elem("patchsvg", function(svg_elem, w) {
             var nested_gop;
+
             if (is_toplevel === 0) {
                 nested_gop = w.document.getElementsByClassName(
                     (parentcid === cid ? ownercid + "svg" : parentcid + "svg"));
@@ -3673,7 +3752,8 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
                 class: type + 
                     (is_toplevel === 0 ? "" : " gop") + 
                     (type == "graph" ? " " + ownercid : "") +
-                    (is_canvas_obj === 0 ? "" : " canvasobj")
+                    (is_canvas_obj === 0 ? "" : " canvasobj"),
+                obj_text: tipName
             });
             var s = create_item(cid, "svg", {
                 id: tag + "svg",
@@ -3683,6 +3763,25 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
             });
             add_gobj_to_svg((is_toplevel === 1 ? svg_elem : nested_gop[0]), g);
             g.appendChild(s);
+
+            post("gui_gobj_new graph tipName=<" + tipName + ">");
+            if (tipName !=null) {
+                var x = document.createElementNS("http://www.w3.org/2000/svg", "title");
+
+                var t= index.search(tipName.replaceAll("/"," "), {fields: {tippathname: {}}});
+                post("...t=" + t);
+                if (t.length > 0) {
+                    var ii;
+
+                    for (ii = 0; ii < t.length; ii++) {
+                        post("...t[" + ii + "]: " + index.documentStore.getDoc(t[ii].ref).tippathname); 
+                    }
+                    var yyy = index.documentStore.getDoc(t[0].ref);
+                    x.textContent=yyy.description;
+                    post("...tip=<" + yyy.description + ">");
+                    g.appendChild(x);
+                }
+            }
        });
    } else { // non-graph object (can be inside a GOP, tested with is_toplevel)
         //post("...OBJECT classname=" + ownercid + "svg");
@@ -3693,6 +3792,8 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
             " is_canvas_obj=" + is_canvas_obj);
         */
         gui(cid).get_elem("patchsvg", function(svg_elem, w) {
+            var tipFirstArg = tipName.replace(/ .*/,'');
+            // post("ID=<" + tipName + "> <" + tipFirstArg + ">");
             var transform_string;
             if (is_toplevel === 0) {
                 var tgt = w.document.getElementsByClassName(ownercid + "svg");
@@ -3728,10 +3829,21 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
                 id: tag + "gobj",
                 transform: transform_string,
                 class: type +
-                       (is_canvas_obj === 0 ? "" : " canvasobj"),
+                    (is_canvas_obj === 0 ? "" : " canvasobj"),
                 orig_xpos: xpos,
-                orig_ypos: ypos
+                orig_ypos: ypos,
+                obj_text: objname
             });
+
+            if (objname !=null  && is_toplevel === 1) {
+                var x = document.createElementNS("http://www.w3.org/2000/svg", "title");
+                var t= index.search(objname,{fields: {title: {}}});
+                if (t.length > 0) {
+                    var yyy = index.documentStore.getDoc(t[0].ref);
+                    x.textContent=yyy.description;
+                    g.appendChild(x);
+                }
+            }
             if (is_toplevel === 0) {
                 //post("GOP appendChild")
                 tgt[0].appendChild(g);
@@ -3778,7 +3890,7 @@ function gui_graph_gopspill(cid, tag, state) {
         // etc.
         if (state)
         {
-            graph_gobj.insertBefore(border[0], border[0].previousElementSibling);
+            graph_gobj.insertBefore(border[0], graph_gobj.firstChild);
         } else {
             // for some reason nextElementSibling or nextSibling returns null
             // so we go by the lastChild which are the nlets
@@ -3788,7 +3900,7 @@ function gui_graph_gopspill(cid, tag, state) {
 }
 
 function gui_text_draw_border(cid, tag, bgcolor, isbroken, width, height, is_toplevel) {
-    //post("===\ngui_text_draw_border is_toplevel=" + is_toplevel);
+    // post("===\ngui_text_draw_border is_toplevel=" + is_toplevel);
     var isgop = 0;
     gui(cid).get_gobj(tag, function(e) {
         if(e.classList.contains("graph")) {
@@ -3851,6 +3963,64 @@ function gui_gobj_draw_io(cid, parenttag, tag, x1, y1, x2, y2, basex, basey,
             class: xlet_class,
             //"shape-rendering": "crispEdges"
         });
+        gui(cid).get_gobj(parenttag, function(e) { //lilykhoch
+            // post(e.getAttribute('obj_text'));
+            var x = document.createElementNS("http://www.w3.org/2000/svg", "title");
+            var parent= e.getAttribute('obj_text');
+            // post(parent);
+            if(parent==null) {
+                parent="fixme";
+            }
+            var parentname = parent.replace(/ .*/,'');
+            if (parentname.length > 0) {
+                var t = index.search(parentname.replaceAll("/"," "),{fields: {tippathname: {}}});
+                post("t=<" + t +">");
+                if (t.length > 0) {
+                    var yyy = index.documentStore.getDoc(t[0].ref);
+                    if (yyy != null && yyy.inlets_outlets != null) {
+                        // post("search result: title=" + yyy.title + " inletsoutles=" + yyy.inlets_outlets);
+                        var inlet = yyy.inlets_outlets
+                            .match(/(?<=I.\s)[^\|]+/g);
+                        var outlet = yyy.inlets_outlets
+                            .match(/(?<=O.\s)[^\|]+/g);
+                        var inlet_outlet = yyy.inlets_outlets
+                            .match(/(?<=\|)[^|]*(?=\|)/g);
+                        var rectId= rect.getAttribute('id').slice(-2); //id of rectangle nlet
+                        post(rectId);
+                        for (var i=0;i<inlet_outlet.length;i++){ //Case 1: I0,I2,O1,O2,...
+                            var nlet_id=inlet_outlet[i].match(/^[^ ]*/); //id of the nlet in tooltip array
+                            if(nlet_id==rectId.toUpperCase()){
+                                x.textContent=inlet_outlet[i].match(/(?<= )(.*)/)[0];
+                                // post("nlet_id:"+nlet_id + " rectId:"+ rectId+"tooltip:"+x.textContent);
+                                break;
+                            }
+                        }
+                        if(x.textContent==""){//Case 2:IN,ON
+                            for (var i=0;i<inlet_outlet.length;i++){
+                                var nlet_id=inlet_outlet[i].match(/^[^ ]*/); //id of the nlet in tooltip array
+                                // post("nletid"+rectId.charAt(0));
+                                if( nlet_id== "IN" && rectId.charAt(0).toUpperCase()=="I" ){
+                                    post("inletN");
+                                    x.textContent=inlet[inlet.length-1];
+                                    break;
+                                }
+                                else if( nlet_id=="ON" && rectId.charAt(0).toUpperCase()=="O"){
+                                    post("ouletN");
+                                    x.textContent=outlet[outlet.length-1];
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if(x.textContent==""){     //Case 3: no tooltip
+                        x.textContent="";
+                    }
+                    rect.appendChild(x);
+                }
+            }
+        });
+        // rect.appendChild(x);
         frag.appendChild(rect);
         return frag;
     });
@@ -5263,12 +5433,12 @@ function numbox_data_string_triangle(w, h) {
 }
 
 // TODO: send fewer parameters from c (ico@vt.edu 20200916: not sure if this is possible)
-function gui_numbox_new(cid, ownercid, parentcid, tag, color, x, y, w, h, drawstyle, is_toplevel) {
+function gui_numbox_new(cid, ownercid, parentcid, tag, color, x, y, w, h, drawstyle, is_toplevel,name) {
     // numbox doesn't have a standard iemgui border,
     // so we must create its gobj manually
     //gui(cid).get_elem("patchsvg", function() {
     //    var g = gui_gobj_new(cid, tag, "iemgui", x, y, is_toplevel);
-    var g = gui_gobj_new(cid, ownercid, parentcid, tag, "iemgui", x, y, is_toplevel, 0);
+    var g = gui_gobj_new(cid, ownercid, parentcid, tag, "iemgui", x, y, is_toplevel, 0, "numbox2", "numbox2");
     var border = create_item(cid, "path", {
         d: numbox_data_string_frame(w, h),
         fill: color,
@@ -7184,7 +7354,7 @@ function gui_configure_grid(cid, tag, w, h, bg_color, has_grid, x_l, y_l) {
 
 function gui_grid_new(cid, ownercid, parentcid, tag, x, y, is_toplevel) {
     gui(cid).get_elem("patchsvg", function(svg_elem) {
-        gui_gobj_new(cid, ownercid, parentcid, tag, "obj wide-select-border", x, y, is_toplevel, 0);
+        gui_gobj_new(cid, ownercid, parentcid, tag, "obj wide-select-border", x, y, is_toplevel, 0, "grid", "grid");
     });
     gui(cid).get_gobj(tag)
     .append(function(frag) {
@@ -7272,7 +7442,7 @@ function gui_pianoroll_erase_innards(cid, tag) {
 function gui_mknob_new(cid, ownercid, parentcid, tag, x, y, is_toplevel, show_in, show_out,
     is_footils_knob) {
     gui(cid).get_elem("patchsvg", function(svg_elem) {
-        gui_gobj_new(cid, ownercid, parentcid, tag, "obj", x, y, is_toplevel, 0);
+        gui_gobj_new(cid, ownercid, parentcid, tag, "obj", x, y, is_toplevel, 0, "knob", "knob");
     });
     gui(cid).get_gobj(tag)
     .append(function(frag) {
@@ -7410,7 +7580,7 @@ function gui_turn_mknob(cid, tag, x1, y1, x2, y2, is_footils_knob, val) {
 function gui_room_sim_new(cid, ownercid, parentcid, tag, x, y, w, h, is_toplevel) {
     gui(cid).get_elem("patchsvg", function(svg_elem) {
         gui_gobj_new(cid, ownercid, parentcid, tag,
-            "obj wide-select-border", x, y, is_toplevel, 0);
+            "obj wide-select-border", x, y, is_toplevel, 0, "room_sim", "room_sim");
     });
     gui(cid).get_gobj(tag)
     .append(function(frag) {
@@ -7942,7 +8112,7 @@ function gui_graph_tick_label(cid, tag, x, y, text, font, font_size, font_weight
 
 function gui_canvas_drawredrect(cid, x1, y1, x2, y2) {
     gui(cid).get_elem("patchsvg", function(svg_elem) {
-        var g = gui_gobj_new(cid, cid, cid, cid, "gop_rect", x1, y1, 1, 0);
+        var g = gui_gobj_new(cid, cid, cid, cid, "gop_rect", x1, y1, 1, 0, "rect", "rect");
         var r = create_item(cid, "rect", {
             width: x2 - x1,
             height: y2 - y1,

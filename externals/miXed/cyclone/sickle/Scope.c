@@ -890,6 +890,8 @@ static void scope_revis(t_scope *x, t_canvas *cv)
 	scope_drawmono(x, cv);
 }
 
+extern char *gobj_vis_gethelpname(t_gobj *z, char *namebuf);
+
 static void scope_vis(t_gobj *z, t_glist *glist, int vis)
 {
     t_scope *x = (t_scope *)z;
@@ -899,7 +901,17 @@ static void scope_vis(t_gobj *z, t_glist *glist, int vis)
     {
         int x1, y1, x2, y2;
 	scope_getrect(z, glist, &x1, &y1, &x2, &y2);
-        gui_vmess("gui_gobj_new", "xxxxsiiii",
+        
+        t_rtext *y = glist_findrtext(glist, t);
+        char *buf;
+        int bufsize;
+        rtext_gettext(y, &buf, &bufsize);
+
+
+        char namebuf[FILENAME_MAX];
+        gobj_vis_gethelpname(z, &namebuf);
+
+        gui_vmess("gui_gobj_new", "xxxxsiiiiss",
             glist_getcanvas(glist),
             x->x_glist,
             x->x_glist->gl_owner,
@@ -908,7 +920,9 @@ static void scope_vis(t_gobj *z, t_glist *glist, int vis)
             x1,
             y1,
             glist_istoplevel(glist),
-            0
+            0,
+            namebuf,
+            buf
         );
 	t_scopehandle *sh = (t_scopehandle *)x->x_handle;
 #if FORKY_VERSION < 37

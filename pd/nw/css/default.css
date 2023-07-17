@@ -579,17 +579,29 @@ text.activated {
 }
 
 /* control inlet */
-.xlet_control {
+.editmode .xlet_control {
     stroke: #777;
     fill: white;
     stroke-width: 1;
+    visibility: visible;
+}
+
+/* control inlet or outlet -- ico@vt.edu 2023-07-17: by default now hidden */
+.xlet_control {
+    visibility: hidden;
 }
 
 /* signal inlet */
-.xlet_signal {
+.editmode .xlet_signal {
     stroke: #777;
     fill: #808095;
     stroke-width: 1;
+    visibility: visible;
+}
+
+/* signal inlet or outlet -- ico@vt.edu 2023-07-17: by default now hidden */
+.xlet_signal {
+    visibility: hidden;
 }
 
 /* iemgui inlet or outlet in editmode */
@@ -600,7 +612,7 @@ text.activated {
     visibility: visible;
 }
 
-/* iemgui inlet or outlet -- ico@vt.edu 2020-11-29:; by default now hidden */
+/* iemgui inlet or outlet -- ico@vt.edu 2020-11-29: by default now hidden */
 .xlet_iemgui {
     visibility: hidden;
 }
