@@ -126,10 +126,21 @@ int scalar_in_a_box;
 extern void glist_scalar(t_glist *canvas, t_symbol *s, int argc, t_atom *argv);
 void canvas_getargs(int *argcp, t_atom **argvp);
 
+extern void binbuf_gettext_from_a_gimme(char *buf, int ac, t_atom *av);
+
+void objtext_set_runtime_tooltip(t_text *x, t_symbol *s, int ac, t_atom *av)
+{
+    // this is a symbol only debug message
+    post("set_runtime_tooltip %d 1st-arg=<%s>", ac, av[0].a_w.w_symbol->s_name);
+
+    binbuf_gettext_from_a_gimme(x->te_rttp, ac, av);
+    post("...<%s>", x->te_rttp);
+}
+
 static void canvas_objtext(t_glist *gl, int xpix, int ypix,
     int width, int selected, t_binbuf *b, int connectme)
 {
-    //fprintf(stderr,"canvas_objtext\n");
+    fprintf(stderr,"canvas_objtext\n");
     t_text *x;
     int argc;
     t_atom *argv;
@@ -2535,8 +2546,8 @@ char *gobj_vis_gethelpname(t_gobj *z, char *namebuf) {
             FILENAME_MAX-1);
         namebuf[FILENAME_MAX-1] = 0;
     }
-    //TODO: what happens if either abstraction or object does not have help file?
-    //TODO: what about a subpatch?
+    //TODO!!!: what happens if either abstraction or object does not have help file?
+    //TODO!!!: what about a subpatch?
     post("gobj_vis_gethelpname obname=<%s> namebuf=<%s>",
         class_gethelpname(pd_class(&z->g_pd)), namebuf);
 }

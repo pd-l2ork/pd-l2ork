@@ -2555,18 +2555,39 @@ exports.canvas_fake_alt_key_release = canvas_fake_alt_key_release;
 // requires nw.js API (Menuitem)
 // this is called from nwjs
 function canvas_set_editmode(cid, state) {
-    //post("canvas_set_editmode " + cid + " " + state);
+    post("canvas_set_editmode " + cid + " " + state);
     gui(cid).get_elem("patchsvg", function(patchsvg, w) {
         w.set_editmode_checkbox(state !== 0 ? true : false);
+        post("...state=" + state);
         if (state !== 0) {
             patchsvg.classList.add("editmode");
             // For now, we just change the opacity of the background grid
             // depending on whether snap-to-grid is turned on. This way
             // edit mode is always visually distinct.
             set_editmode_bg(cid, patchsvg, true);
+            var all_svg_g = patchsvg.getElementsByTagName('g');
+            post("..." + all_svg_g);
+            for (var i = 0; i < all_svg_g.length; i++) {
+                post("...g=" + all_svg_g[i]);
+                var tooltip = "";
+                if (all_svg_g[i].getAttribute('tooltip'))
+                    tooltip = all_svg_g[i].getAttribute('tooltip');
+                post("...tooltip=<" + tooltip + ">");
+                all_svg_g[i].getElementsByTagName('title')[0].textContent = tooltip;
+            }
         } else {
             patchsvg.classList.remove("editmode");
             set_editmode_bg(cid, patchsvg, false);
+            var all_svg_g = patchsvg.getElementsByTagName('g');
+            post("..." + all_svg_g);
+            for (var i = 0; i < all_svg_g.length; i++) {
+                post("...g=" + all_svg_g[i]);
+                var tooltip = "";
+                if (all_svg_g[i].getAttribute('runtime_tooltip'))
+                    tooltip = all_svg_g[i].getAttribute('runtime_tooltip');
+                post("...tooltip=<" + tooltip + ">");
+                all_svg_g[i].getElementsByTagName('title')[0].textContent = tooltip;
+            }
         }
     });
 }
@@ -3706,8 +3727,6 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
     draw_xpos = xpos;
     draw_ypos = ypos;
 
-    //TODO: disable tooltips for non-toplevel objects
-
     post("gui_gobj_new objname=" + objname + " tipName=" + tipName);
     tipName = tipName.trim();
     if(tipName==null){
@@ -3779,7 +3798,9 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
                     var yyy = index.documentStore.getDoc(t[0].ref);
                     x.textContent=yyy.description;
                     post("...tip=<" + yyy.description + ">");
+
                     g.appendChild(x);
+                    g.setAttribute("tooltip", yyy.description);
                 }
             }
        });
@@ -3835,13 +3856,18 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
                 obj_text: objname
             });
 
-            if (objname !=null  && is_toplevel === 1) {
+            // ico 2023-07-18: here we can only allow tooltips for toplevel
+            // objects. this is currently disabled, as it limits customization
+            // of tooltips at runtime for each object inside a GOP subpatch
+            // or abstraction.
+            if (objname !=null  /*&& is_toplevel === 1*/) {
                 var x = document.createElementNS("http://www.w3.org/2000/svg", "title");
                 var t= index.search(objname,{fields: {title: {}}});
                 if (t.length > 0) {
                     var yyy = index.documentStore.getDoc(t[0].ref);
                     x.textContent=yyy.description;
                     g.appendChild(x);
+                    g.setAttribute("tooltip", yyy.description);
                 }
             }
             if (is_toplevel === 0) {
@@ -3974,7 +4000,7 @@ function gui_gobj_draw_io(cid, parenttag, tag, x1, y1, x2, y2, basex, basey,
             var parentname = parent.replace(/ .*/,'');
             if (parentname.length > 0) {
                 var t = index.search(parentname.replaceAll("/"," "),{fields: {tippathname: {}}});
-                post("t=<" + t +">");
+                //post("t=<" + t +">");
                 if (t.length > 0) {
                     var yyy = index.documentStore.getDoc(t[0].ref);
                     if (yyy != null && yyy.inlets_outlets != null) {

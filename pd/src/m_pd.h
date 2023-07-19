@@ -276,6 +276,7 @@ typedef struct _text        /* patchable object - graphical, with text */
                                    value 2 to adopt mycanvas resize 
                                    behavior, and 3 to also allow for
                                    passthrough click tracking */
+    char te_rttp[MAXPDSTRING];  /* runtime tooltip (by default) */
 } t_text;
 
 #define T_TEXT 0        /* just a textual comment */

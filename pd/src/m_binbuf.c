@@ -83,6 +83,28 @@ void binbuf_clear(t_binbuf *x)
     x->b_n = 0;
 }
 
+void binbuf_gettext_from_a_gimme(char *buf, int ac, t_atom *av)
+{
+    t_binbuf *b = binbuf_new();
+    b->b_n = ac;
+    b->b_vec = av;
+
+    int bufsize;
+
+    binbuf_gettext(b, &buf, &bufsize);
+    post("binbuf_gettext_from_a_gimme <%s> size=%d", buf, bufsize);
+    buf[bufsize] = 0;
+
+    b->b_n = 0;
+    b->b_vec = t_getbytes(0);
+    binbuf_free(b);
+}
+
+void binbuf_setvec(t_binbuf *x, t_atom *vec)
+{
+    x->b_vec = vec;
+}
+
     /* convert text to a binbuf */
 void binbuf_text(t_binbuf *x, char *text, size_t size)
 {

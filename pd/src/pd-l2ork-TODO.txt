@@ -10,7 +10,7 @@ PD-L2ORK TODO:
 *Merge nlets megapatch. Still TODO:
   *Make sure GOP objects get no tooltips. DONE
   *Only K12/output gets tooltips. Why? DONE (forgot to rebuild index)
-  *Store tooltips inside the svg parent group, so that they can be disabled in runtime mode, and reenabled in edit mode without having to go search for them again.
+  *Store tooltips inside the svg parent group, so that they can be disabled at runtime mode, and reenabled in edit mode without having to go search for them again.
   *Hide nlets of GOP or even all objects when in runtime.
   *Figure out how to update tooltips on the parent patch for dynamically created inlets and outlets inside a GOP patch.
     *Should nlet objects have their own tooltips built-in?
