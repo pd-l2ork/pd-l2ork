@@ -200,7 +200,7 @@ PD_BUILD_VERSION := $(shell git log -1 --format=%cd --date=short | sed -e 's/-//
 # mainly kept around so that 3rd party externals and abstractions know what
 # iteration of the vanilla API they have available). Instead, we use a version
 # number derived from PD_L2ORK_VERSION and PD_BUILD_VERSION.
-PD_VERSION := $(PD_L2ORK_VERSION)-$(PD_BUILD_VERSION)
+PD_VERSION := $(PD_BUILD_VERSION)
 
 VERSION_DATE := $(shell date +%Y%m%d)
 
