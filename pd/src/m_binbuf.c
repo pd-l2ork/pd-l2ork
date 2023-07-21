@@ -83,17 +83,14 @@ void binbuf_clear(t_binbuf *x)
     x->b_n = 0;
 }
 
-void binbuf_gettext_from_a_gimme(char *buf, int ac, t_atom *av)
+void binbuf_gettext_from_a_gimme(char **buf, int *len, int ac, t_atom *av)
 {
     t_binbuf *b = binbuf_new();
     b->b_n = ac;
     b->b_vec = av;
 
-    int bufsize;
-
-    binbuf_gettext(b, &buf, &bufsize);
-    post("binbuf_gettext_from_a_gimme <%s> size=%d", buf, bufsize);
-    buf[bufsize] = 0;
+    binbuf_gettext(b, buf, len);
+    //post("binbuf_gettext_from_a_gimme <%s> size=%d", *buf, *len);
 
     b->b_n = 0;
     b->b_vec = t_getbytes(0);

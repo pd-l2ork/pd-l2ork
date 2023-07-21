@@ -76,3 +76,7 @@ path35: /usr/lib/pd-l2ork/extra/disis
 path36: /usr/lib/pd-l2ork/extra/lyonpotpourri
 npath: 36
 guipreset: 60-hz
+autocomplete_relevance: 1
+browser_doc: 0
+browser_path: 0
+browser_init: 0

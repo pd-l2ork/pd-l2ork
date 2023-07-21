@@ -7,17 +7,25 @@ PD-L2ORK TODO:
 
 *On Windows (and possibly other OSs) make sure that properties windows are never below the edge of the screen (e.g. when the properties are opened on an object at or near the bottom of the screen).
 
-*Merge nlets megapatch. Still TODO:
+*Merge nlets megapatch. IN PROGRESS
   *Make sure GOP objects get no tooltips. DONE
-  *Only K12/output gets tooltips. Why? DONE (forgot to rebuild index)
-  *Hide nlets of GOP or even all objects when in runtime. DONE (all are hidden)
-  *Store tooltips inside the svg parent group, so that they can be disabled at runtime mode, and reenabled in edit mode without having to go search for them again.
+  *Only K12/output gets tooltips. Why? Forgot to rebuild index. DONE
+      *Change default indexing settings in the settings file that ships with pd-l2ork, so that it includes all objects. DONE
+  *Hide nlets of all objects when in runtime. DONE
+  *Store tooltips inside the svg parent group, so that they can be disabled at runtime mode, and reenabled in edit mode without having to go search for them again. DONE
+  *Add runtime tooltip field to all objects (editable via a message, and store it also inside the parent svg group, so that the editmode and runtime tooltips can be efficiently toggled between. DONE
+    *Rename message to _tooltip, to minimize chances of namespace collision. DONE
+    *What about gatom?
+    *Should I try once more to run this via pd_typedmess while checking if the object is gobj?
+  *Refine K12/output help file to fix a missing tooltip. DONE
+  *Figure out why valgrind reports illegal read of 1.
   *Figure out how to update tooltips on the parent patch for dynamically created inlets and outlets inside a GOP patch. IN PROGRESS
     *Should nlet objects have their own tooltips built-in?
   LATER:
-    *Add runtime tooltip field to all objects (editable via properties and/or a message, and storable like the scripts "f" option that defines object width) and store it also inside the parent svg group, so that the editmode and runtime tooltips can be efficiently toggled between. IN PROGRESS
+  *Make runtime tooltip editable via properties.
+  *Make runtime tooltip storable like the scripts "f" option that defines object width.
 
-*Update versioning to get rid of 2.16.0 and just keep the date (date becomes the version, while build only retains the git commit value).
+*Update versioning to get rid of 2.16.0 and just keep the date (date becomes the version, while build only retains the git commit value). DONE?
 
 *Merge improved forbidden planet documentation patch (I03.resynthesis.pd in audio examples). DONE
   *Investigate why this patch is not using vanilla DAC abstraction, instead of its improved "extended" version.

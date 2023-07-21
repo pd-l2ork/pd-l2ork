@@ -688,6 +688,13 @@ Root: HKLM; SubKey: SOFTWARE\Pd-L2Ork; ValueType: none; ValueName: path100; Task
 
 ; Default GUI preset
 Root: HKLM; SubKey: SOFTWARE\Pd-L2Ork; ValueType: string; ValueName: guipreset; ValueData: 60-hz; Tasks: libs; Flags: uninsdeletekey
+
+; Default indexing settings
+Root: HKLM; SubKey: SOFTWARE\Pd-L2Ork; ValueType: string; ValueName: autocomplete_relevance; ValueData: 1; Tasks: libs; Flags: uninsdeletekey
+Root: HKLM; SubKey: SOFTWARE\Pd-L2Ork; ValueType: string; ValueName: browser_doc; ValueData: 0; Tasks: libs; Flags: uninsdeletekey
+Root: HKLM; SubKey: SOFTWARE\Pd-L2Ork; ValueType: string; ValueName: browser_path; ValueData: 0; Tasks: libs; Flags: uninsdeletekey
+Root: HKLM; SubKey: SOFTWARE\Pd-L2Ork; ValueType: string; ValueName: browser_init; ValueData: 0; Tasks: libs; Flags: uninsdeletekey
+
 ; Currently disabled
 ; Root: HKCU; SubKey: SOFTWARE\Pd-L2Ork; ValueType: string; ValueName: guipreset; ValueData: 60-hz; Tasks: libs;
 

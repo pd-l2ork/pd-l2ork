@@ -24,6 +24,14 @@
 	<string>/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Home/lib/fonts</string>
 	<key>npath</key>
 	<string>5</string>
+	<key>autocomplete_relevance</key>
+	<string>1</string>
+	<key>browser_doc</key>
+	<string>0</string>
+	<key>browser_path</key>
+	<string>0</string>
+	<key>browser_init</key>
+	<string>0</string>
 </dict>
 
 </plist>

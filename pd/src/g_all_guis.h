@@ -122,6 +122,8 @@ typedef struct _iemgui
     int *x_color1;             // references 1st color, by default x_bcol
     int *x_color2;             // references 2nd color, by default x_fcol
     int *x_color3;             // references 3rd color, by default x_lcol
+
+    char x_rttp[MAXPDSTRING];     /* optional runtime tooltip */
 } t_iemgui;
 
 typedef struct _bng

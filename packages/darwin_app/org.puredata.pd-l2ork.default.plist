@@ -94,6 +94,14 @@
 	<string>5</string>
 	<key>guipreset</key>
 	<string>60-hz</string>
+	<key>autocomplete_relevance</key>
+	<string>1</string>
+	<key>browser_doc</key>
+	<string>0</string>
+	<key>browser_path</key>
+	<string>0</string>
+	<key>browser_init</key>
+	<string>0</string>
 </dict>
 
 </plist>

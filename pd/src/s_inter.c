@@ -859,9 +859,11 @@ void sys_gui(const char *s)
 
 static void escape_double_quotes(const char *src) {
     int dq = 0, len = 0;
+    //fprintf(stderr, "escape_double_quotes <%s> %d\n", src, strlen(src));
     const char *s = src;
     while(*s)
     {
+        //fprintf(stderr,"<%s><%d> %d\n", s, *s, len);
         len++;
         if (*s == '\"' || *s == '\\')
         {
@@ -927,6 +929,7 @@ static void set_leading_array(int state) {
 /* quick hack to send a parameter list for use as a function call in nw.js */
 void gui_do_vmess(const char *sel, char *fmt, int end, va_list ap)
 {
+    //fprintf(stderr, "gui_do_vmess <%s>\n", sel);
     //va_list ap;
     int nargs = 0;
     char *fp = fmt;

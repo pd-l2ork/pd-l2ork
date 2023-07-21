@@ -126,21 +126,10 @@ int scalar_in_a_box;
 extern void glist_scalar(t_glist *canvas, t_symbol *s, int argc, t_atom *argv);
 void canvas_getargs(int *argcp, t_atom **argvp);
 
-extern void binbuf_gettext_from_a_gimme(char *buf, int ac, t_atom *av);
-
-void objtext_set_runtime_tooltip(t_text *x, t_symbol *s, int ac, t_atom *av)
-{
-    // this is a symbol only debug message
-    post("set_runtime_tooltip %d 1st-arg=<%s>", ac, av[0].a_w.w_symbol->s_name);
-
-    binbuf_gettext_from_a_gimme(x->te_rttp, ac, av);
-    post("...<%s>", x->te_rttp);
-}
-
 static void canvas_objtext(t_glist *gl, int xpix, int ypix,
     int width, int selected, t_binbuf *b, int connectme)
 {
-    fprintf(stderr,"canvas_objtext\n");
+    //fprintf(stderr,"canvas_objtext\n");
     t_text *x;
     int argc;
     t_atom *argv;
@@ -1695,6 +1684,7 @@ void canvas_atom(t_glist *gl, t_atomtype type,
     if (canvas_hasarray(gl)) return;
     //fprintf(stderr,"canvas_atom\n");
     t_gatom *x = (t_gatom *)pd_new(gatom_class);
+    post("canvas_atom %lx g_pd=%lx", x, ((t_gobj*)x)->g_pd);
     t_atom at;
     x->a_text.te_width = 0;                        /* don't know it yet. */
     x->a_text.te_type = T_ATOM;
@@ -2548,8 +2538,8 @@ char *gobj_vis_gethelpname(t_gobj *z, char *namebuf) {
     }
     //TODO!!!: what happens if either abstraction or object does not have help file?
     //TODO!!!: what about a subpatch?
-    post("gobj_vis_gethelpname obname=<%s> namebuf=<%s>",
-        class_gethelpname(pd_class(&z->g_pd)), namebuf);
+    //post("gobj_vis_gethelpname obname=<%s> namebuf=<%s>",
+    //    class_gethelpname(pd_class(&z->g_pd)), namebuf);
 }
 
 static void text_vis(t_gobj *z, t_glist *glist, int vis)
@@ -2598,6 +2588,8 @@ static void text_vis(t_gobj *z, t_glist *glist, int vis)
 
                 char namebuf[FILENAME_MAX];
                 gobj_vis_gethelpname(z, &namebuf);
+
+                //post("buf=<%s> namebuf=<%s>", buf, namebuf);
 
                 // make a group
                 text_getrect(&x->te_g, glist, &x1, &y1, &x2, &y2);

@@ -1671,6 +1671,28 @@ void iemgui_init(t_iemgui *x, t_floatarg f)
     iemgui_update_properties(x, IEM_GUI_PROP_INIT);
 }
 
+extern void binbuf_gettext_from_a_gimme(char **buf, int *len, int ac, t_atom *av);
+
+void iemgui_runtime_tooltip(t_iemgui *x, t_symbol *s, int ac, t_atom *av)
+{
+    char *buf;
+    int size;
+    binbuf_gettext_from_a_gimme(&buf, &size, ac, av);
+    if (size < 1000)
+    {
+        strncpy(x->x_rttp, buf, 1000);
+        buf[size] = '\0';
+    } else {
+        pd_error(x, "runtime tooltip is larger than the maximum allowed length of %d", MAXPDSTRING);
+    }
+    //post("iemgui_runtime_tooltip x=%lx class=<%s> tooltip=<%s>",
+    //    x, class_getname(pd_class(&x->x_obj.te_pd)), x->x_rttp);
+    gui_vmess("gobj_set_runtime_tooltip", "xxs",
+                glist_getcanvas(x->x_glist),
+                x,
+                x->x_rttp);
+}
+
 void iemgui_class_addmethods(t_class *c)
 {
     class_addmethod(c, (t_method)iemgui_delta,
@@ -1689,7 +1711,10 @@ void iemgui_class_addmethods(t_class *c)
         gensym("label_pos"), A_GIMME, 0);
     class_addmethod(c, (t_method)iemgui_label_font,
         gensym("label_font"), A_GIMME, 0);
-    class_addmethod(c, (t_method)iemgui_css, gensym("css"), A_GIMME, 0);
+    class_addmethod(c, (t_method)iemgui_css,
+        gensym("css"), A_GIMME, 0);
+    class_addmethod(c, (t_method)iemgui_runtime_tooltip,
+        gensym("_tooltip"), A_GIMME, 0);
 }
 
 void g_iemgui_setup (void)

@@ -8,3 +8,7 @@ path1: ~/pd-l2ork-externals
 path2: /usr/lib/pd-l2ork/extra/pddp
 npath: 2
 flags: -font-size 12
+autocomplete_relevance: 1
+browser_doc: 0
+browser_path: 0
+browser_init: 0
