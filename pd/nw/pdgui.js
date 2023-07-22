@@ -511,6 +511,9 @@ function finish_index() {
     var t = new Date().getTime() / 1000;
     post("finished " + (have_cache?"building":"loading") + " help index (" +
 	 (t-index_start_time).toFixed(2) + " secs)");
+
+    //now redraw all canvases to update tooltips
+    redraw_all_visible_canvases();
 }
 
 // AG: pilfered from https://stackoverflow.com/questions/21077670
@@ -2556,7 +2559,7 @@ function gobj_set_runtime_tooltip(cid, tag, tooltip) {
     var elem;
     gui(cid).get_elem(tag + "gobj", function(e) {
         elem = e;
-        e.setAttribute("runtime_tooltip", tooltip);
+        e.setAttribute("runtime_tooltip", tooltip.replace(/\\/g,''));
     });
 
     gui(cid).get_elem("patchsvg", function(patchsvg) {
@@ -2584,27 +2587,31 @@ function canvas_set_editmode(cid, state) {
             // edit mode is always visually distinct.
             set_editmode_bg(cid, patchsvg, true);
             var all_svg_g = patchsvg.getElementsByTagName('g');
-            //post("..." + all_svg_g);
+            //post("..." + all_svg_g.length);
             for (var i = 0; i < all_svg_g.length; i++) {
                 //post("...g=" + all_svg_g[i]);
                 var tooltip = "";
                 if (all_svg_g[i].getAttribute('tooltip'))
                     tooltip = all_svg_g[i].getAttribute('tooltip');
                 //post("...tooltip=<" + tooltip + ">");
-                all_svg_g[i].getElementsByTagName('title')[0].textContent = tooltip;
+                if (all_svg_g[i].getElementsByTagName('title').length > 0) {
+                    all_svg_g[i].getElementsByTagName('title')[0].textContent = tooltip;
+                }
             }
         } else {
             patchsvg.classList.remove("editmode");
             set_editmode_bg(cid, patchsvg, false);
             var all_svg_g = patchsvg.getElementsByTagName('g');
-            //post("..." + all_svg_g);
+            //post("..." + all_svg_g.length);
             for (var i = 0; i < all_svg_g.length; i++) {
                 //post("...g=" + all_svg_g[i]);
                 var tooltip = "";
                 if (all_svg_g[i].getAttribute('runtime_tooltip'))
                     tooltip = all_svg_g[i].getAttribute('runtime_tooltip');
                 //post("...tooltip=<" + tooltip + ">");
-                all_svg_g[i].getElementsByTagName('title')[0].textContent = tooltip;
+                if (all_svg_g[i].getElementsByTagName('title').length > 0) {
+                    all_svg_g[i].getElementsByTagName('title')[0].textContent = tooltip;
+                }
             }
         }
     });
@@ -3801,24 +3808,36 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
             add_gobj_to_svg((is_toplevel === 1 ? svg_elem : nested_gop[0]), g);
             g.appendChild(s);
 
-            //post("gui_gobj_new graph tipName=<" + tipName + ">");
-            if (tipName !=null) {
+            //post("gui_gobj_new graph tipName=<" + tipName + "> objname=<" + objname + ">");
+            var concatName = tipName.split(' ', 1)[0].replaceAll("/"," ");
+            //post("concatName=<" + concatName + ">");
+            if (concatName != null) {
+                var t;
+                // ico 2023-07-21: prevent tooltip searching for a GOP-enabled "pd" object,
+                // as it will trip up across all of them
+                if (concatName === "pd") {
+                    t = index.search(concatName, {fields: {title: {}}});
+                } else {
+                    t = index.search(concatName, {fields: {tippathname: {}}});
+                }
                 var x = document.createElementNS("http://www.w3.org/2000/svg", "title");
 
-                var t = index.search(tipName.replaceAll("/"," "), {fields: {tippathname: {}}});
+                //var t = index.search(tipName.replaceAll("/"," "), {fields: {tippathname: {}}});
                 //post("...t=" + t);
                 if (t.length > 0) {
+                    /*
                     var ii;
-
                     for (ii = 0; ii < t.length; ii++) {
-                        //post("...t[" + ii + "]: " + index.documentStore.getDoc(t[ii].ref).tippathname); 
+                        post("...t[" + ii + "]: " + index.documentStore.getDoc(t[ii].ref).tippathname); 
                     }
+                    */
                     var yyy = index.documentStore.getDoc(t[0].ref);
-                    x.textContent=yyy.description;
+                    var parsed_tooltip = String(yyy.description).replace(/\\/g,'');
+                    x.textContent = parsed_tooltip;
                     //post("...tip=<" + yyy.description + ">");
 
                     g.appendChild(x);
-                    g.setAttribute("tooltip", yyy.description);
+                    g.setAttribute("tooltip", parsed_tooltip);
                 }
             }
        });
@@ -3878,14 +3897,18 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
             // objects. this is currently disabled, as it limits customization
             // of tooltips at runtime for each object inside a GOP subpatch
             // or abstraction.
-            if (objname !=null  /*&& is_toplevel === 1*/) {
+            // ico 2023-07-21: we only allow tooltips for toplevel objects
+            // because otherwise all the background objects may potentially
+            // prevent the most important graph-on-parent tooltip
+            if (objname != null && is_toplevel === 1) {
                 var x = document.createElementNS("http://www.w3.org/2000/svg", "title");
                 var t= index.search(objname,{fields: {title: {}}});
                 if (t.length > 0) {
                     var yyy = index.documentStore.getDoc(t[0].ref);
-                    x.textContent=yyy.description;
+                    var parsed_tooltip = String(yyy.description).replace(/\\/g,'');
+                    x.textContent = parsed_tooltip;
                     g.appendChild(x);
-                    g.setAttribute("tooltip", yyy.description);
+                    g.setAttribute("tooltip", parsed_tooltip);
                 }
             }
             if (is_toplevel === 0) {
@@ -4032,26 +4055,28 @@ function gui_gobj_draw_io(cid, parenttag, tag, x1, y1, x2, y2, basex, basey,
                             .match(/(?<=\|)[^|]*(?=\|)/g);
                         var rectId= rect.getAttribute('id').slice(-2); //id of rectangle nlet
                         //post(rectId);
-                        for (var i=0;i<inlet_outlet.length;i++){ //Case 1: I0,I2,O1,O2,...
-                            var nlet_id=inlet_outlet[i].match(/^[^ ]*/); //id of the nlet in tooltip array
-                            if(nlet_id==rectId.toUpperCase()){
-                                x.textContent=inlet_outlet[i].match(/(?<= )(.*)/)[0];
-                                //post("nlet_id:"+nlet_id + " rectId:"+ rectId+"tooltip:"+x.textContent);
+                        for (var i = 0; i < inlet_outlet.length; i++) { //Case 1: I0,I2,O1,O2,...
+                            var nlet_id = inlet_outlet[i].match(/^[^ ]*/); //id of the nlet in tooltip array
+                            if(nlet_id == rectId.toUpperCase()) {
+                                //post("nlet_tooltip=" + inlet_outlet[i].match(/(?<= )(.*)/)[0]);
+                                //post("nlet tooltip=" + inlet_outlet[i].match(/(?<= )(.*)/)[0].replace(/\\/g,''));
+                                x.textContent = inlet_outlet[i].match(/(?<= )(.*)/)[0].replace(/\\/g,'');
+                                //post("nlet_id:" + nlet_id + " rectId:" + rectId + " tooltip:" + x.textContent);
                                 break;
                             }
                         }
                         if(x.textContent==""){//Case 2:IN,ON
-                            for (var i=0;i<inlet_outlet.length;i++){
-                                var nlet_id=inlet_outlet[i].match(/^[^ ]*/); //id of the nlet in tooltip array
+                            for (var i = 0; i < inlet_outlet.length; i++) {
+                                var nlet_id = inlet_outlet[i].match(/^[^ ]*/); //id of the nlet in tooltip array
                                 // post("nletid"+rectId.charAt(0));
-                                if( nlet_id== "IN" && rectId.charAt(0).toUpperCase()=="I" ){
+                                if(nlet_id == "IN" && rectId.charAt(0).toUpperCase() == "I") {
                                     //post("inletN");
-                                    x.textContent=inlet[inlet.length-1];
+                                    x.textContent= inlet[inlet.length-1].replace(/\\/g,'');
                                     break;
                                 }
-                                else if( nlet_id=="ON" && rectId.charAt(0).toUpperCase()=="O"){
+                                else if( nlet_id == "ON" && rectId.charAt(0).toUpperCase() == "O") {
                                     //post("ouletN");
-                                    x.textContent=outlet[outlet.length-1];
+                                    x.textContent= outlet[outlet.length-1].replace(/\\/g,'');
                                     break;
                                 }
                             }

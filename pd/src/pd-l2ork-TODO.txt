@@ -14,11 +14,13 @@ PD-L2ORK TODO:
   *Hide nlets of all objects when in runtime. DONE
   *Store tooltips inside the svg parent group, so that they can be disabled at runtime mode, and reenabled in edit mode without having to go search for them again. DONE
   *Add runtime tooltip field to all objects (editable via a message, and store it also inside the parent svg group, so that the editmode and runtime tooltips can be efficiently toggled between. DONE
-    *Rename message to _tooltip, to minimize chances of namespace collision. DONE
-    *What about gatom?
-    *Should I try once more to run this via pd_typedmess while checking if the object is gobj?
+    *Rename message to tooltip, since we are now using them only for select objects. DONE
+    *What about gatom? IN PROGRESS
+  *Make tooltips redraw after rebuilding search index. DONE
+  *Fix escaping characters ('\') in the tooltip text (e.g. ggee/image outlet). DONE
   *Refine K12/output help file to fix a missing tooltip. DONE
-  *Figure out why valgrind reports illegal read of 1.
+  *Refine ggee/image help file which had a typo for inlet 0. DONE
+  *Figure out why valgrind reports illegal read of 1. UNABLE TO FIGURE THIS ONE OUT (suspect it being a va_arg issue)
   *Figure out how to update tooltips on the parent patch for dynamically created inlets and outlets inside a GOP patch. IN PROGRESS
     *Should nlet objects have their own tooltips built-in?
   LATER:

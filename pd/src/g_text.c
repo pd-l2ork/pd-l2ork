@@ -121,6 +121,29 @@ void glist_text(t_glist *gl, t_symbol *s, int argc, t_atom *argv)
 
 /* ----------------- the "object" object.  ------------------ */
 
+extern void binbuf_gettext_from_a_gimme(char **buf, int *len, int ac, t_atom *av);
+
+void text_runtime_tooltip(t_text *x, t_glist *glist, t_symbol *s, int ac, t_atom *av)
+{
+    char *buf;
+    int size;
+    binbuf_gettext_from_a_gimme(&buf, &size, ac, av);
+    if (size < 1000)
+    {
+        strncpy(x->te_rttp, buf, 1000);
+        buf[size] = '\0';
+    } else {
+        pd_error(x, "runtime tooltip is larger than the maximum allowed length of %d", MAXPDSTRING);
+    }
+    //post("iemgui_runtime_tooltip x=%lx class=<%s> tooltip=<%s>",
+    //    x, class_getname(pd_class(&x->x_obj.te_pd)), x->x_rttp);
+    gui_vmess("gobj_set_runtime_tooltip", "xxs",
+        glist,
+        x,
+        x->te_rttp
+    );
+}
+
 extern t_pd *newest;
 int scalar_in_a_box;
 extern void glist_scalar(t_glist *canvas, t_symbol *s, int argc, t_atom *argv);
@@ -1684,7 +1707,7 @@ void canvas_atom(t_glist *gl, t_atomtype type,
     if (canvas_hasarray(gl)) return;
     //fprintf(stderr,"canvas_atom\n");
     t_gatom *x = (t_gatom *)pd_new(gatom_class);
-    post("canvas_atom %lx g_pd=%lx", x, ((t_gobj*)x)->g_pd);
+    //post("canvas_atom %lx g_pd=%lx", x, ((t_gobj*)x)->g_pd);
     t_atom at;
     x->a_text.te_width = 0;                        /* don't know it yet. */
     x->a_text.te_type = T_ATOM;

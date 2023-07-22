@@ -1,4 +1,4 @@
-#N canvas 440 120 501 689 10;
+#N canvas 440 132 501 689 10;
 #X obj 205 -24 preset_hub k12 %hidden% %node% 2 2 14 %preset% 0 69.7674
 %preset% 1 69.7674 %preset% 2 37.2093 %preset% 3 46.5116 %node% 2 2
 25 %preset% 0 0 %preset% 1 1 %preset% 2 1 %preset% 3 1 %node% 2 10
@@ -9,15 +9,14 @@
 0;
 #X obj 18 246 K12/output;
 #X obj 18 129 K12/instr_sustained2;
-#N canvas 541 600 389 177 META 0;
+#N canvas 541 612 389 177 META 0;
 #X text 20 20 DESCRIPTION This is the main sound output. This sends
 the signals to the speakers and controls the main volume;
 #X text 20 57 INLET_0 Connect any signal (one or more) you want to
 hear through the left or (if "copy left to right" option is enabled)
 both speakers;
-#X text 19 106 INLET_1 Connect any signal you want to hear through
-the right speaker ONLY if "copy left to right"option is disabled,
-f 57;
+#X text 20 107 INLET_1 Connect any signal you want to hear through
+the right speaker ONLY if "copy left to right" option is enabled;
 #X restore 443 627 pd META;
 #X obj -2 -2 cnv 3 501 3 empty empty empty 5 14 0 20 #fc8000 #b8b8b8
 0;

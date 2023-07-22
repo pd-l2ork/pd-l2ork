@@ -1,11 +1,11 @@
-#N canvas 151 221 554 780 10;
+#N canvas 151 233 554 780 10;
 #X obj 0 1917 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
 14 #dcdcdc #404040 0;
 #X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header ggee/image 3 12
 0 18 #c4dcdc #000000 0;
 #X obj 0 500 cnv 3 550 3 empty \$0-pddp.cnv.inlets inlets 8 12 0 13
 #dcdcdc #000000 0;
-#N canvas 707 445 384 311 META 0;
+#N canvas 707 457 384 311 META 0;
 #X text 10 175 LIBRARY internal;
 #X text 10 9 NAME ggee/image;
 #X text 10 29 ALIAS N/A;
@@ -18,7 +18,7 @@
 #X text 10 235 RELEASE_DATE 2021;
 #X text 10 155 OUTLET_0 bang list(mousedown \, absX \, absY \, x \,
 y) size(x \, y);
-#X text 10 109 gopspi alpha click color constrain delta gopspill gopspill_size
+#X text 10 110 INLET_0 alpha click color constrain delta gopspill gopspill_size
 label label_font label_pos open pos receive reload reset rotate send
 size visible;
 #X restore 503 1919 pd META;
