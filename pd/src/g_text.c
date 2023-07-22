@@ -709,9 +709,10 @@ static void message_blob(t_message *x, t_blob *st)
 
 static void message_list(t_message *x, t_symbol *s, int argc, t_atom *argv)
 {
-    // TODO: here and elsewhere in the message, do we want $0 to be parsed
+    // here and elsewhere in the message, do we want $0 to be parsed
     // into canvas instance? Makes sense since there is no such argument,
     // but will this break anything?
+    // Yes. So far, no notable breakage.
     /*  we do canvas_setcurrent/unsetcurrent to substitute canvas
         instance number for $0 */
     binbuf_eval(x->m_text.te_binbuf, &x->m_messresponder.mr_pd, argc, argv);
@@ -2559,8 +2560,11 @@ char *gobj_vis_gethelpname(t_gobj *z, char *namebuf) {
             FILENAME_MAX-1);
         namebuf[FILENAME_MAX-1] = 0;
     }
-    //TODO!!!: what happens if either abstraction or object does not have help file?
-    //TODO!!!: what about a subpatch?
+    // ico 2023-07-22:
+    // what happens if either abstraction or object does not have help file?
+    // no tip is created and no error thrown
+    // what about a subpatch?
+    // same
     //post("gobj_vis_gethelpname obname=<%s> namebuf=<%s>",
     //    class_gethelpname(pd_class(&z->g_pd)), namebuf);
 }

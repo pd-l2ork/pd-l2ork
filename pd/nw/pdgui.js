@@ -512,6 +512,15 @@ function finish_index() {
     post("finished " + (have_cache?"building":"loading") + " help index (" +
 	 (t-index_start_time).toFixed(2) + " secs)");
 
+    //post("loading file from the disk");
+    var idxf = fs.readFileSync
+        (expand_tilde(cache_name), 'utf8');
+    index_file_lines = idxf.split('\n');
+    index_file_lines_path = idxf.split('\n');
+    for (var i = 0; i < index_file_lines.length; i++) {
+        index_file_lines_path[i] =
+            index_file_lines_path[i].split(':').pop();
+    }
     //now redraw all canvases to update tooltips
     redraw_all_visible_canvases();
 }
@@ -650,6 +659,21 @@ function make_index(force) {
         // save the new cache along the way
         post("scanning help patches in " + doc_path);
         dive(doc_path, add_doc_to_index, make_index_cont);
+    }
+    // ico 2023-07-22:
+    // finally load the indexed file into working memory
+    // for old school manual exact search to be used
+    // for tooltips (this one does not require redrawing
+    // because this code path is reached only if the
+    // file already exists)
+    //post("loading file from the disk");
+    var idxf = fs.readFileSync
+        (expand_tilde(cache_name), 'utf8');
+    index_file_lines = idxf.split('\n');
+    index_file_lines_path = idxf.split('\n');
+    for (var i = 0; i < index_file_lines.length; i++) {
+        index_file_lines_path[i] =
+            index_file_lines_path[i].split(':').pop();
     }
     pdsend("pd gui-busy 0");
 }
@@ -3696,6 +3720,60 @@ var gui = (function() {
 // For debugging
 exports.gui = gui;
 
+var index_file_lines;      // for a better search for tooltips
+                           // text file into lines of text
+var index_file_lines_path; // keeps only the last entry that deals
+                           // with full path of each object
+
+var _tooltip_obj  = 3;
+var _tooltip_nlet = 6;
+
+// helper function to get the tooltip data for the object obj
+// which denotes either object itself (3), or nlets (6), see
+// static variables above _tooltip_obj and _tooltip_nlet that
+// are defined for this purpose
+function find_tooltip_index_line(tip, obj) {
+    // if the index has not been built yet
+    if (!index_file_lines_path) {
+        //post("index_file_lines_path empty");
+        return;
+    }
+
+    var line = -1;
+    var i;
+
+    // first clean up the tip, getting rid of potential creation arguments
+    var tipname = tip.replace(/ .*/,'');
+    // now replace '/' with ' '
+    tipname = String(tipname).replaceAll("/"," ");
+    // add space before it, to prevent false positives (e.g. image is found in drawimage)
+    tipname = " " + tipname + "-help";
+    for (i = 0; i < index_file_lines_path.length; i++) {
+        if (index_file_lines_path[i].includes(tipname)) {
+            line = i;
+            break;
+        }
+    }
+    //post("line=" + line + " tipname=" + tipname);
+    if (line === -1) {
+        // if we haven't found anything using tip var, try the obj var
+        // first clean up the obj, getting rid of potential creation arguments
+        var objname = obj.replace(/ .*/,'');
+        // now replace '/' with ' '
+        objname = String(objname).replaceAll("/"," ");
+        // add space before it, to prevent false positives (e.g. image is found in drawimage)
+        objname = " " + objname + "-help";
+        for (i = 0; i < index_file_lines_path.length; i++) {
+            if (index_file_lines_path[i].includes(tipname)) {
+                line = i;
+                break;
+            }
+        }
+    }
+    return line;    
+}
+
+
 // Most of the following functions map either to pd.tk procs, or in some cases
 // tk canvas subcommands
 
@@ -3747,16 +3825,16 @@ exports.gui = gui;
                  between the two contexts and offers a convenient way to filter objects
                  whose selection border should be highlighted when they are selected.
 */
-function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplevel, is_canvas_obj, objname, tipName) {
+function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplevel, is_canvas_obj, objname, tipname) {
     var g, draw_xpos, draw_ypos;
     draw_xpos = xpos;
     draw_ypos = ypos;
 
-    //post("gui_gobj_new objname=" + objname + " tipName=" + tipName);
-    if(tipName==null){
-        tipName="fixme";
+    //post("gui_gobj_new objname=" + objname + " tipname=" + tipname);
+    if(tipname==null){
+        tipname="fixme";
     }
-    tipName = tipName.trim();
+    tipname = tipname.trim();
     if (type === "graph") { // graph object
         /*
         post("===\ngui_gobj_new GRAPH drawon=" + cid + " ownercid=" + ownercid +
@@ -3797,7 +3875,8 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
                     (is_toplevel === 0 ? "" : " gop") + 
                     (type == "graph" ? " " + ownercid : "") +
                     (is_canvas_obj === 0 ? "" : " canvasobj"),
-                obj_text: tipName
+                obj_text: objname,
+                tip_text: tipname
             });
             var s = create_item(cid, "svg", {
                 id: tag + "svg",
@@ -3808,37 +3887,19 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
             add_gobj_to_svg((is_toplevel === 1 ? svg_elem : nested_gop[0]), g);
             g.appendChild(s);
 
-            //post("gui_gobj_new graph tipName=<" + tipName + "> objname=<" + objname + ">");
-            var concatName = tipName.split(' ', 1)[0].replaceAll("/"," ");
-            //post("concatName=<" + concatName + ">");
-            if (concatName != null) {
-                var t;
-                // ico 2023-07-21: prevent tooltip searching for a GOP-enabled "pd" object,
-                // as it will trip up across all of them
-                if (concatName === "pd") {
-                    t = index.search(concatName, {fields: {title: {}}});
-                } else {
-                    t = index.search(concatName, {fields: {tippathname: {}}});
-                }
-                var x = document.createElementNS("http://www.w3.org/2000/svg", "title");
+            //post("gui_gobj_new graph tipname=<" + tipname + "> objname=<" + objname + ">");
+            var x = document.createElementNS("http://www.w3.org/2000/svg", "title");
 
-                //var t = index.search(tipName.replaceAll("/"," "), {fields: {tippathname: {}}});
-                //post("...t=" + t);
-                if (t.length > 0) {
-                    /*
-                    var ii;
-                    for (ii = 0; ii < t.length; ii++) {
-                        post("...t[" + ii + "]: " + index.documentStore.getDoc(t[ii].ref).tippathname); 
-                    }
-                    */
-                    var yyy = index.documentStore.getDoc(t[0].ref);
-                    var parsed_tooltip = String(yyy.description).replace(/\\/g,'');
-                    x.textContent = parsed_tooltip;
-                    //post("...tip=<" + yyy.description + ">");
+            // here we need to use tipname as objname may resolve into something that
+            // does not reflect the actual object (e.g. help file for pd could be canvas)
+            var line = find_tooltip_index_line(tipname, objname);
+            if (line > -1) {
+                var yyy = index_file_lines[line].split(':')[_tooltip_obj];
+                var parsed_tooltip = String(yyy).replace(/\\/g,'');
+                x.textContent = parsed_tooltip;
 
-                    g.appendChild(x);
-                    g.setAttribute("tooltip", parsed_tooltip);
-                }
+                g.appendChild(x);
+                g.setAttribute("tooltip", parsed_tooltip);
             }
        });
    } else { // non-graph object (can be inside a GOP, tested with is_toplevel)
@@ -3850,8 +3911,8 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
             " is_canvas_obj=" + is_canvas_obj);
         */
         gui(cid).get_elem("patchsvg", function(svg_elem, w) {
-            var tipFirstArg = tipName.replace(/ .*/,'');
-            // post("ID=<" + tipName + "> <" + tipFirstArg + ">");
+            var tipFirstArg = tipname.replace(/ .*/,'');
+            // post("ID=<" + tipname + "> <" + tipFirstArg + ">");
             var transform_string;
             if (is_toplevel === 0) {
                 var tgt = w.document.getElementsByClassName(ownercid + "svg");
@@ -3890,7 +3951,8 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
                     (is_canvas_obj === 0 ? "" : " canvasobj"),
                 orig_xpos: xpos,
                 orig_ypos: ypos,
-                obj_text: objname
+                obj_text: objname,
+                tip_text: tipname
             });
 
             // ico 2023-07-18: here we can only allow tooltips for toplevel
@@ -3900,12 +3962,17 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
             // ico 2023-07-21: we only allow tooltips for toplevel objects
             // because otherwise all the background objects may potentially
             // prevent the most important graph-on-parent tooltip
+            //post("objname=" + objname + " tipname=" + tipname);
             if (objname != null && is_toplevel === 1) {
                 var x = document.createElementNS("http://www.w3.org/2000/svg", "title");
-                var t= index.search(objname,{fields: {title: {}}});
-                if (t.length > 0) {
-                    var yyy = index.documentStore.getDoc(t[0].ref);
-                    var parsed_tooltip = String(yyy.description).replace(/\\/g,'');
+                // here we need to use tipname as objname may resolve into something that
+                // does not reflect the actual object (e.g. help file for inlet is pd)
+                var line = find_tooltip_index_line(tipname, objname);
+                if (line > -1) {
+                    //post("objname: " + objname +
+                    //    " object description: " + index_file_lines[line]);
+                    var yyy = index_file_lines[line].split(':')[_tooltip_obj];
+                    var parsed_tooltip = String(yyy).replace(/\\/g,'');
                     x.textContent = parsed_tooltip;
                     g.appendChild(x);
                     g.setAttribute("tooltip", parsed_tooltip);
@@ -4004,6 +4071,7 @@ function gui_text_draw_border(cid, tag, bgcolor, isbroken, width, height, is_top
 function gui_gobj_draw_io(cid, parenttag, tag, x1, y1, x2, y2, basex, basey,
     type, i, is_signal, is_iemgui) {
     //post("gui_gobj_draw_io");
+
     gui(cid).get_gobj(parenttag)
     .append(function(frag) {
         var xlet_class, xlet_id, rect;
@@ -4031,63 +4099,50 @@ function gui_gobj_draw_io(cid, parenttag, tag, x1, y1, x2, y2, basex, basey,
             class: xlet_class,
             //"shape-rendering": "crispEdges"
         });
-        gui(cid).get_gobj(parenttag, function(e) { //lilykhoch
-            //post("obj_text=" + e.getAttribute('obj_text'));
+        gui(cid).get_gobj(parenttag, function(e) { //lilykhoch, redesigned by ico
             var x = document.createElementNS("http://www.w3.org/2000/svg", "title");
-            var parent= e.getAttribute('obj_text');
-            //post("parent=" + parent);
-            if(parent==null) {
-                parent="fixme";
+            var parent_obj_text = e.getAttribute('obj_text');
+            if(parent_obj_text == null) {
+                parent_obj_text = "fixme";
             }
-            var parentname = parent.replace(/ .*/,'');
-            if (parentname.length > 0) {
-                var t = index.search(parentname.replaceAll("/"," "),{fields: {tippathname: {}}});
-                //post("t=<" + t +">");
-                if (t.length > 0) {
-                    var yyy = index.documentStore.getDoc(t[0].ref);
-                    if (yyy != null && yyy.inlets_outlets != null) {
-                        //post("search result: title=" + yyy.title + " inletsoutles=" + yyy.inlets_outlets);
-                        var inlet = yyy.inlets_outlets
-                            .match(/(?<=I.\s)[^\|]+/g);
-                        var outlet = yyy.inlets_outlets
-                            .match(/(?<=O.\s)[^\|]+/g);
-                        var inlet_outlet = yyy.inlets_outlets
-                            .match(/(?<=\|)[^|]*(?=\|)/g);
-                        var rectId= rect.getAttribute('id').slice(-2); //id of rectangle nlet
-                        //post(rectId);
-                        for (var i = 0; i < inlet_outlet.length; i++) { //Case 1: I0,I2,O1,O2,...
+            var parent_tip_text = e.getAttribute('tip_text');
+            if(parent_tip_text == null) {
+                parent_tip_text = "fixme";
+            }           
+            var line = find_tooltip_index_line(parent_tip_text, parent_obj_text);
+            if (line > -1) {
+                var yyy = index_file_lines[line].split(':')[_tooltip_nlet];
+                if (yyy != null) {
+                    var inlet = yyy.match(/(?<=I.\s)[^\|]+/g);
+                    var outlet = yyy.match(/(?<=O.\s)[^\|]+/g);
+                    var inlet_outlet = yyy.match(/(?<=\|)[^|]*(?=\|)/g);
+                    var rectId= rect.getAttribute('id').slice(-2); //id of rectangle nlet
+                    for (var i = 0; i < inlet_outlet.length; i++) { //Case 1: I0,I2,O1,O2,...
+                        var nlet_id = inlet_outlet[i].match(/^[^ ]*/); //id of the nlet in tooltip array
+                        if(nlet_id == rectId.toUpperCase()) {
+                            x.textContent = inlet_outlet[i].match(/(?<= )(.*)/)[0].replace(/\\/g,'');
+                            break;
+                        }
+                    }
+                    if(x.textContent==""){//Case 2:IN,ON
+                        for (var i = 0; i < inlet_outlet.length; i++) {
                             var nlet_id = inlet_outlet[i].match(/^[^ ]*/); //id of the nlet in tooltip array
-                            if(nlet_id == rectId.toUpperCase()) {
-                                //post("nlet_tooltip=" + inlet_outlet[i].match(/(?<= )(.*)/)[0]);
-                                //post("nlet tooltip=" + inlet_outlet[i].match(/(?<= )(.*)/)[0].replace(/\\/g,''));
-                                x.textContent = inlet_outlet[i].match(/(?<= )(.*)/)[0].replace(/\\/g,'');
-                                //post("nlet_id:" + nlet_id + " rectId:" + rectId + " tooltip:" + x.textContent);
+                            if(nlet_id == "IN" && rectId.charAt(0).toUpperCase() == "I") {
+                                x.textContent= inlet[inlet.length-1].replace(/\\/g,'');
+                                break;
+                            }
+                            else if( nlet_id == "ON" && rectId.charAt(0).toUpperCase() == "O") {
+                                x.textContent= outlet[outlet.length-1].replace(/\\/g,'');
                                 break;
                             }
                         }
-                        if(x.textContent==""){//Case 2:IN,ON
-                            for (var i = 0; i < inlet_outlet.length; i++) {
-                                var nlet_id = inlet_outlet[i].match(/^[^ ]*/); //id of the nlet in tooltip array
-                                // post("nletid"+rectId.charAt(0));
-                                if(nlet_id == "IN" && rectId.charAt(0).toUpperCase() == "I") {
-                                    //post("inletN");
-                                    x.textContent= inlet[inlet.length-1].replace(/\\/g,'');
-                                    break;
-                                }
-                                else if( nlet_id == "ON" && rectId.charAt(0).toUpperCase() == "O") {
-                                    //post("ouletN");
-                                    x.textContent= outlet[outlet.length-1].replace(/\\/g,'');
-                                    break;
-                                }
-                            }
-                        }
                     }
-
-                    if(x.textContent==""){     //Case 3: no tooltip
-                        x.textContent="";
-                    }
-                    rect.appendChild(x);
                 }
+
+                if(x.textContent==""){     //Case 3: no tooltip
+                    x.textContent="";
+                }
+                rect.appendChild(x);
             }
         });
         // rect.appendChild(x);

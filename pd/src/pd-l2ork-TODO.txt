@@ -7,6 +7,8 @@ PD-L2ORK TODO:
 
 *On Windows (and possibly other OSs) make sure that properties windows are never below the edge of the screen (e.g. when the properties are opened on an object at or near the bottom of the screen).
 
+*Prev/next window from the Pd window does not work.
+
 *Merge nlets megapatch. IN PROGRESS
   *Make sure GOP objects get no tooltips. DONE
   *Only K12/output gets tooltips. Why? Forgot to rebuild index. DONE
@@ -21,11 +23,16 @@ PD-L2ORK TODO:
   *Refine K12/output help file to fix a missing tooltip. DONE
   *Refine ggee/image help file which had a typo for inlet 0. DONE
   *Figure out why valgrind reports illegal read of 1. UNABLE TO FIGURE THIS ONE OUT (suspect it being a va_arg issue)
-  *Figure out how to update tooltips on the parent patch for dynamically created inlets and outlets inside a GOP patch. IN PROGRESS
-    *Should nlet objects have their own tooltips built-in?
+  *Figure out how to update tooltips on the parent patch for dynamically created inlets and outlets inside a GOP patch. This is not necessary, since abstractions can use META to define their inlets/outlets, while subpatches are mostly there for encapsulation purposes. We can revisit this potentially later. DONE
+    *Should nlet objects have their own tooltips built-in? No. DONE
+  *Slowness with built-in objects like inlet and outlet (looks like the search function pulls from all the different places?). DONE
+    *Rework how the tooltips are pulled from the index. DONE
+    *Figure out why inlet/outlet have wrong descriptions. DONE
+      *tipName first, then objname? Yes. DONE
   LATER:
-  *Make runtime tooltip editable via properties.
-  *Make runtime tooltip storable like the scripts "f" option that defines object width.
+  *Make runtime tooltip editable via properties?
+  *Make runtime tooltip storable like the scripts "f" option that defines object width?
+  *Make nlets have programmable runtime tooltips? (this is not really necessary since abstraction META file takes care of this and subpatches are generally not ideal for more advanced UI operations)
 
 *Update versioning to get rid of 2.16.0 and just keep the date (date becomes the version, while build only retains the git commit value). DONE?
 
