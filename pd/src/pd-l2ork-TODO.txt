@@ -9,31 +9,6 @@ PD-L2ORK TODO:
 
 *Prev/next window from the Pd window does not work.
 
-*Merge nlets megapatch. IN PROGRESS
-  *Make sure GOP objects get no tooltips. DONE
-  *Only K12/output gets tooltips. Why? Forgot to rebuild index. DONE
-      *Change default indexing settings in the settings file that ships with pd-l2ork, so that it includes all objects. DONE
-  *Hide nlets of all objects when in runtime. DONE
-  *Store tooltips inside the svg parent group, so that they can be disabled at runtime mode, and reenabled in edit mode without having to go search for them again. DONE
-  *Add runtime tooltip field to all objects (editable via a message, and store it also inside the parent svg group, so that the editmode and runtime tooltips can be efficiently toggled between. DONE
-    *Rename message to tooltip, since we are now using them only for select objects. DONE
-    *What about gatom? IN PROGRESS
-  *Make tooltips redraw after rebuilding search index. DONE
-  *Fix escaping characters ('\') in the tooltip text (e.g. ggee/image outlet). DONE
-  *Refine K12/output help file to fix a missing tooltip. DONE
-  *Refine ggee/image help file which had a typo for inlet 0. DONE
-  *Figure out why valgrind reports illegal read of 1. UNABLE TO FIGURE THIS ONE OUT (suspect it being a va_arg issue)
-  *Figure out how to update tooltips on the parent patch for dynamically created inlets and outlets inside a GOP patch. This is not necessary, since abstractions can use META to define their inlets/outlets, while subpatches are mostly there for encapsulation purposes. We can revisit this potentially later. DONE
-    *Should nlet objects have their own tooltips built-in? No. DONE
-  *Slowness with built-in objects like inlet and outlet (looks like the search function pulls from all the different places?). DONE
-    *Rework how the tooltips are pulled from the index. DONE
-    *Figure out why inlet/outlet have wrong descriptions. DONE
-      *tipName first, then objname? Yes. DONE
-  LATER:
-  *Make runtime tooltip editable via properties?
-  *Make runtime tooltip storable like the scripts "f" option that defines object width?
-  *Make nlets have programmable runtime tooltips? (this is not really necessary since abstraction META file takes care of this and subpatches are generally not ideal for more advanced UI operations)
-
 *Update versioning to get rid of 2.16.0 and just keep the date (date becomes the version, while build only retains the git commit value). DONE?
 
 *Merge improved forbidden planet documentation patch (I03.resynthesis.pd in audio examples). DONE
@@ -155,7 +130,7 @@ RPI 0.28.4 current RPi version.
 
 *Ubuntu 22.04 build: investigate iem16 build issues and gmerlin library support. 20.04 uses 1.16 automake and 2.69 autoconf. 22.04 uses 2.71 autoconf and ??? automake.
 
-*HDMI audio output support (RPi).
+*HDMI audio output support (RPi). DONE, NEEDS TO BE MERGED
 
 *Submit patch to js external github.
 
@@ -207,6 +182,11 @@ MAYBE:
 *add ability to custom name each instance of pd-l2ork (pd~?).
 
 *Consider adding smooth scroll to the scroll action. NO--could end up too CPU intensive and not worth it until engine and front-end are fully decoupled.
+
+
+LATER:
+*Make runtime tooltip editable via properties and storable like the pd patch script's "f" option that defines object width?
+*Make nlets have programmable runtime tooltips? (this is not really necessary since abstraction META file takes care of this and subpatches are generally not ideal for more advanced UI operations)
 
 
 PD-L2ORK DONE:
@@ -695,6 +675,27 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Added missing package to the Windows MSYS compile instructions.
 *Fixed a meta subpatch with inlet info that will be used for tooltips.
 *Fixed pddplink and helplink bug where tidy did not properly reposition the object.
+*Rework and merge nlets megapatch. DONE
+  *Make sure GOP objects get no tooltips. DONE
+  *Only K12/output gets tooltips. Why? Forgot to rebuild index. DONE
+      *Change default indexing settings in the settings file that ships with pd-l2ork, so that it includes all objects. DONE
+  *Hide nlets of all objects when in runtime. DONE
+  *Store tooltips inside the svg parent group, so that they can be disabled at runtime mode, and reenabled in edit mode without having to go search for them again. DONE
+  *Add runtime tooltip field to all objects (editable via a message, and store it also inside the parent svg group, so that the editmode and runtime tooltips can be efficiently toggled between. DONE
+    *Rename message to tooltip, since we are now using them only for select objects. DONE
+    *What about gatom? DONE
+  *Make tooltips redraw after rebuilding search index. DONE
+  *Fix escaping characters ('\') in the tooltip text (e.g. ggee/image outlet). DONE
+  *Refine K12/output help file to fix a missing tooltip. DONE
+  *Refine ggee/image help file which had a typo for inlet 0. DONE
+  *Figure out why valgrind reports illegal read of 1. UNABLE TO FIGURE THIS ONE OUT (suspect it being a va_arg issue)
+  *Figure out how to update tooltips on the parent patch for dynamically created inlets and outlets inside a GOP patch. This is not necessary, since abstractions can use META to define their inlets/outlets, while subpatches are mostly there for encapsulation purposes. We can revisit this potentially later. DONE
+    *Should nlet objects have their own tooltips built-in? No. DONE
+  *Slowness with built-in objects like inlet and outlet (looks like the search function pulls from all the different places?). DONE
+    *Rework how the tooltips are pulled from the index. DONE
+    *Figure out why inlet/outlet have wrong descriptions. DONE
+      *tipName first, then objname? Yes. DONE
+  *Fix bugs in the tooltip search, rework iemgui and gatom tooltip approaches, so that they can share more. DONE
 
 
 

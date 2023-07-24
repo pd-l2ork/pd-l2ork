@@ -2580,6 +2580,7 @@ function canvas_fake_alt_key_release(cid) {
 exports.canvas_fake_alt_key_release = canvas_fake_alt_key_release;
 
 function gobj_set_runtime_tooltip(cid, tag, tooltip) {
+    //post("gobj_set_runtime_tooltip cid=" + cid + " tag=" + tag);
     var elem;
     gui(cid).get_elem(tag + "gobj", function(e) {
         elem = e;
@@ -3751,10 +3752,11 @@ function find_tooltip_index_line(tip, obj) {
     for (i = 0; i < index_file_lines_path.length; i++) {
         if (index_file_lines_path[i].includes(tipname)) {
             line = i;
+            //post("...found it at " + line);
             break;
         }
     }
-    //post("line=" + line + " tipname=" + tipname);
+    //post("#1 line=" + line + " tipname=" + tipname);
     if (line === -1) {
         // if we haven't found anything using tip var, try the obj var
         // first clean up the obj, getting rid of potential creation arguments
@@ -3762,14 +3764,16 @@ function find_tooltip_index_line(tip, obj) {
         // now replace '/' with ' '
         objname = String(objname).replaceAll("/"," ");
         // add space before it, to prevent false positives (e.g. image is found in drawimage)
-        objname = " " + objname + "-help";
+        //objname = " " + objname + "-help";
         for (i = 0; i < index_file_lines_path.length; i++) {
-            if (index_file_lines_path[i].includes(tipname)) {
+            if (index_file_lines_path[i].includes(objname)) {
                 line = i;
+                //post("...found it at " + line);
                 break;
             }
         }
     }
+    //post("#2 line=" + line + " objname=<" + objname + ">");
     return line;    
 }
 
@@ -3830,7 +3834,7 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
     draw_xpos = xpos;
     draw_ypos = ypos;
 
-    //post("gui_gobj_new objname=" + objname + " tipname=" + tipname);
+    //post("gui_gobj_new cid=" + cid + " tag=" + tag + " objname=" + objname + " tipname=" + tipname);
     if(tipname==null){
         tipname="fixme";
     }

@@ -123,8 +123,9 @@ void glist_text(t_glist *gl, t_symbol *s, int argc, t_atom *argv)
 
 extern void binbuf_gettext_from_a_gimme(char **buf, int *len, int ac, t_atom *av);
 
-void text_runtime_tooltip(t_text *x, t_glist *glist, t_symbol *s, int ac, t_atom *av)
+void get_runtime_tooltip_text(t_text *x, int ac, t_atom *av)
 {
+    //post("get_runtime_tooltip_text text=%lx", x);
     char *buf;
     int size;
     binbuf_gettext_from_a_gimme(&buf, &size, ac, av);
@@ -134,14 +135,8 @@ void text_runtime_tooltip(t_text *x, t_glist *glist, t_symbol *s, int ac, t_atom
         buf[size] = '\0';
     } else {
         pd_error(x, "runtime tooltip is larger than the maximum allowed length of %d", MAXPDSTRING);
+        x->te_rttp[0] = '\0';
     }
-    //post("iemgui_runtime_tooltip x=%lx class=<%s> tooltip=<%s>",
-    //    x, class_getname(pd_class(&x->x_obj.te_pd)), x->x_rttp);
-    gui_vmess("gobj_set_runtime_tooltip", "xxs",
-        glist,
-        x,
-        x->te_rttp
-    );
 }
 
 extern t_pd *newest;
@@ -924,6 +919,28 @@ typedef struct _gatom
     int a_click;             /* used to allow (1, default) or prevent (0)
                                 user interaction with the gatom */
 } t_gatom;
+
+// intermediary function for gatoms only, that adds glist,
+// so that text_runtime_tooltip can do the rest, while also being
+// used by iemgui objects (see g_all_guis.c)
+void gatom_runtime_tooltip(t_gatom *x, t_symbol *s, int ac, t_atom *av)
+{
+    if (gobj_shouldvis(x, x->a_glist))
+    {
+        t_rtext *y = glist_findrtext(x->a_glist, &x->a_text);
+        if (y)
+        {
+            get_runtime_tooltip_text(&x->a_text, ac, av);
+                //post("iemgui_runtime_tooltip x=%lx class=<%s> tooltip=<%s>",
+            //    x, class_getname(pd_class(&x->x_obj.te_pd)), x->x_rttp);
+            gui_vmess("gobj_set_runtime_tooltip", "xss",
+                glist_getcanvas(x->a_glist),
+                rtext_gettag(y),
+                x->a_text.te_rttp
+            );
+        }
+    }
+}
 
     /* prepend "-" as necessary to avoid empty strings, so we can
     use them in Pd messages.  A more complete solution would be
@@ -3456,6 +3473,8 @@ void g_text_setup(void)
     class_addmethod(gatom_class, (t_method)gatom_css, gensym("css"), A_GIMME, 0);
     class_addmethod(gatom_class, (t_method)gatom_interactive, gensym("interactive"),
         A_FLOAT, 0);
+    class_addmethod(gatom_class, (t_method)gatom_runtime_tooltip,
+        gensym("tooltip"), A_GIMME, 0);
     class_setwidget(gatom_class, &gatom_widgetbehavior);
     class_setpropertiesfn(gatom_class, gatom_properties);
 

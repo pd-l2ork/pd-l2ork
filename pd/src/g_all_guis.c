@@ -1671,12 +1671,18 @@ void iemgui_init(t_iemgui *x, t_floatarg f)
     iemgui_update_properties(x, IEM_GUI_PROP_INIT);
 }
 
-extern void text_runtime_tooltip(
-    t_text *x, t_glist *glist, t_symbol *s, int ac, t_atom *av);
+extern void get_runtime_tooltip_text(t_text *x, int ac, t_atom *av);
 
 void iemgui_runtime_tooltip(t_iemgui *x, t_symbol *s, int ac, t_atom *av)
 {
-    text_runtime_tooltip(&x->x_obj, glist_getcanvas(x->x_glist), s, ac, av);
+    get_runtime_tooltip_text(&x->x_obj, ac, av);
+        //post("iemgui_runtime_tooltip x=%lx class=<%s> tooltip=<%s>",
+    //    x, class_getname(pd_class(&x->x_obj.te_pd)), x->x_rttp);
+    gui_vmess("gobj_set_runtime_tooltip", "xxs",
+        glist_getcanvas(x->x_glist),
+        x,
+        x->x_obj.te_rttp
+    );
 }
 
 void iemgui_class_addmethods(t_class *c)
