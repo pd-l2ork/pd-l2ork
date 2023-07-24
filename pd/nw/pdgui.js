@@ -4103,7 +4103,9 @@ function gui_gobj_draw_io(cid, parenttag, tag, x1, y1, x2, y2, basex, basey,
             class: xlet_class,
             //"shape-rendering": "crispEdges"
         });
+        //post("gui_gobj_draw_io parenttag=" + parenttag);
         gui(cid).get_gobj(parenttag, function(e) { //lilykhoch, redesigned by ico
+            //post("...e="+ e);
             var x = document.createElementNS("http://www.w3.org/2000/svg", "title");
             var parent_obj_text = e.getAttribute('obj_text');
             if(parent_obj_text == null) {
@@ -4121,23 +4123,25 @@ function gui_gobj_draw_io(cid, parenttag, tag, x1, y1, x2, y2, basex, basey,
                     var outlet = yyy.match(/(?<=O.\s)[^\|]+/g);
                     var inlet_outlet = yyy.match(/(?<=\|)[^|]*(?=\|)/g);
                     var rectId= rect.getAttribute('id').slice(-2); //id of rectangle nlet
-                    for (var i = 0; i < inlet_outlet.length; i++) { //Case 1: I0,I2,O1,O2,...
-                        var nlet_id = inlet_outlet[i].match(/^[^ ]*/); //id of the nlet in tooltip array
-                        if(nlet_id == rectId.toUpperCase()) {
-                            x.textContent = inlet_outlet[i].match(/(?<= )(.*)/)[0].replace(/\\/g,'');
-                            break;
-                        }
-                    }
-                    if(x.textContent==""){//Case 2:IN,ON
-                        for (var i = 0; i < inlet_outlet.length; i++) {
+                    if (inlet_outlet) {
+                        for (var i = 0; i < inlet_outlet.length; i++) { //Case 1: I0,I2,O1,O2,...
                             var nlet_id = inlet_outlet[i].match(/^[^ ]*/); //id of the nlet in tooltip array
-                            if(nlet_id == "IN" && rectId.charAt(0).toUpperCase() == "I") {
-                                x.textContent= inlet[inlet.length-1].replace(/\\/g,'');
+                            if(nlet_id == rectId.toUpperCase()) {
+                                x.textContent = inlet_outlet[i].match(/(?<= )(.*)/)[0].replace(/\\/g,'');
                                 break;
                             }
-                            else if( nlet_id == "ON" && rectId.charAt(0).toUpperCase() == "O") {
-                                x.textContent= outlet[outlet.length-1].replace(/\\/g,'');
-                                break;
+                        }
+                        if(x.textContent == ""){//Case 2:IN,ON
+                            for (var i = 0; i < inlet_outlet.length; i++) {
+                                var nlet_id = inlet_outlet[i].match(/^[^ ]*/); //id of the nlet in tooltip array
+                                if(nlet_id == "IN" && rectId.charAt(0).toUpperCase() == "I") {
+                                    x.textContent= inlet[inlet.length-1].replace(/\\/g,'');
+                                    break;
+                                }
+                                else if( nlet_id == "ON" && rectId.charAt(0).toUpperCase() == "O") {
+                                    x.textContent= outlet[outlet.length-1].replace(/\\/g,'');
+                                    break;
+                                }
                             }
                         }
                     }
