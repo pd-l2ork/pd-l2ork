@@ -78,6 +78,10 @@ typedef int socklen_t;
 #include <stdlib.h>
 #endif
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 #define DEBUG_MESSUP 1      /* messages up from pd to pd-gui */
 #define DEBUG_MESSDOWN 2    /* messages down from pd-gui to pd */
 
@@ -713,6 +717,18 @@ static int sys_guibufsize;
 static int sys_waitingforping;
 static int sys_bytessincelastping;
 
+#ifdef __EMSCRIPTEN__
+void __Pd_receiveCommandBuffer(char *buf);
+#endif
+static int do_send(int sockfd, char *buf, int len, int flags)
+{
+#ifdef __EMSCRIPTEN__
+    __Pd_receiveCommandBuffer(buf);
+    return len;
+#endif
+    return send(sockfd, buf, len, flags);
+}
+
 static void sys_trytogetmoreguibuf(int newsize)
 {
     char *newbuf = realloc(sys_guibuf, newsize);
@@ -740,7 +756,7 @@ static void sys_trytogetmoreguibuf(int newsize)
         int written = 0;
         while (1)
         {
-            int res = send(sys_guisock,
+            int res = do_send(sys_guisock,
                 sys_guibuf + sys_guibuftail + written, bytestowrite, 0);
             if (res < 0)
             {
@@ -1072,7 +1088,7 @@ int sys_flushtogui( void)
 {
     int writesize = sys_guibufhead - sys_guibuftail, nwrote = 0;
     if (writesize > 0)
-        nwrote = send(sys_guisock, sys_guibuf + sys_guibuftail, writesize, 0);
+        nwrote = do_send(sys_guisock, sys_guibuf + sys_guibuftail, writesize, 0);
 
 #if 0   
     if (writesize)
@@ -1313,11 +1329,10 @@ int sys_startgui(const char *guidir)
     if (GetCurrentDirectory(FILENAME_MAX, cwd) == 0)
         strcpy(cwd, ".");
 #endif
-#ifdef HAVE_UNISTD_H
+#if defined(HAVE_UNISTD_H) || defined(__EMSCRIPTEN__)
     if (!getcwd(cwd, FILENAME_MAX))
         strcpy(cwd, ".");
-#endif
-#ifdef HAVE_UNISTD_H
+
     int stdinpipe[2];
 #endif
     /* create an empty FD poll list */
@@ -1370,6 +1385,7 @@ int sys_startgui(const char *guidir)
             exit(1);
         }
     }
+#ifndef __EMSCRIPTEN__
     else    /* default behavior: start up the GUI ourselves. */
     {
 #ifdef MSW
@@ -1420,6 +1436,11 @@ int sys_startgui(const char *guidir)
             int err = errno;
             if ((ntry++ > 20) || (err != EADDRINUSE))
 #endif
+            // TODO!!!
+            // Drew Bowman moved the line in the else part above here
+            // this can break the MSW build, so it remains commented
+            // until it is tested
+            //if ((ntry++ > 20) || (err != EADDRINUSE))
             {
                 perror("bind");
                 fprintf(stderr,
@@ -1685,12 +1706,15 @@ int sys_startgui(const char *guidir)
         if (sys_verbose)
             fprintf(stderr, "... connected\n");
     }
+#endif /* __EMSCRIPTEN__ */
     if (!sys_nogui)
     {
       char buf[256], buf2[256];
+#ifndef __EMSCRIPTEN__
          sys_socketreceiver = socketreceiver_new(0, 0, 0, 0);
          sys_addpollfn(sys_guisock, (t_fdpollfn)socketreceiver_read,
              sys_socketreceiver);
+#endif /* __EMSCRIPTEN__ */
 
             /* here is where we start the pinging. */
 #if defined(__linux__) || defined(IRIX)

@@ -114,8 +114,9 @@ t_symbol *image_trytoopen(t_image* x)
 
 extern char *gobj_vis_gethelpname(t_gobj *z, char *namebuf);
 
-static void image_drawme(t_image *x, t_glist *glist)
+static void image_drawme(t_gobj *client, t_glist *glist)
 {
+    t_image *x = (t_image *)client;
     if(gobj_shouldvis((t_gobj *)x, glist))
     {
         if (x->x_draw_firstime)
@@ -446,7 +447,7 @@ static void image_vis(t_gobj *z, t_glist *glist, int vis)
     if (vis)
     {
         x->x_draw_firstime = 1;
-        image_drawme(x, glist);
+        image_drawme(z, glist);
     }
     else
         image_erase(x, glist);
@@ -966,7 +967,7 @@ static void image_imagesize_callback(t_image *x, t_float w, t_float h) {
         // canvas' x and y coordinates instead of ones inside the gop
         // subpatch/abstraction
         x->x_draw_firstime = 0;
-        image_drawme(x, x->x_gui.x_glist);
+        image_drawme((t_gobj *)x, x->x_gui.x_glist);
 
         if (glist_isselected(x->x_gui.x_glist, (t_gobj *)x) &&
             glist_getcanvas(x->x_gui.x_glist) == x->x_gui.x_glist)
@@ -1363,9 +1364,9 @@ void image_draw(t_image *x, t_glist *glist, int mode)
 {
     if(mode == IEM_GUI_DRAW_MODE_UPDATE)      sys_queuegui(x, glist, image_drawme);
     else if(mode == IEM_GUI_DRAW_MODE_MOVE)   image_draw_move(x, glist);
-    else if(mode == IEM_GUI_DRAW_MODE_NEW)    image_drawme(x, glist);
+    else if(mode == IEM_GUI_DRAW_MODE_NEW)    image_drawme((t_gobj *)x, glist);
     //else if(mode == IEM_GUI_DRAW_MODE_SELECT) iemgui_select(x, glist);
-    else if(mode == IEM_GUI_DRAW_MODE_CONFIG) image_drawme(x, glist);
+    else if(mode == IEM_GUI_DRAW_MODE_CONFIG) image_drawme((t_gobj *)x, glist);
 }
 
 static void image_setwidget(void)

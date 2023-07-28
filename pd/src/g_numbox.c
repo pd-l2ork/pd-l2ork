@@ -700,7 +700,7 @@ static void my_numbox_click(t_my_numbox *x, t_floatarg xpos, t_floatarg ypos,
     //post("my_numbox_click: is this even being used at all other than below?");
     if (x->x_gui.x_click)
         glist_grab(x->x_gui.x_glist, &x->x_gui.x_obj.te_g,
-                    (t_glistmotionfn)my_numbox_motion, 0, my_numbox_list,
+                    (t_glistmotionfn)my_numbox_motion, 0, (t_glistkeynameafn)my_numbox_list,
                     xpos, ypos, 0);
 }
 
@@ -792,7 +792,7 @@ static int my_numbox_newclick(t_gobj *z, struct _glist *glist,
                     //post("|...entering keyboard focus (if enabled, using exclusive)");
                     x->x_focused = 3;
                     glist_grab(x->x_gui.x_glist, &x->x_gui.x_obj.te_g,
-                        (t_glistmotionfn)my_numbox_motion, my_numbox_key, my_numbox_list,
+                        (t_glistmotionfn)my_numbox_motion, my_numbox_key, (t_glistkeynameafn)my_numbox_list,
                         (t_floatarg)xpix, (t_floatarg)ypix, x->x_exclusive);
                     sys_queuegui(x, x->x_gui.x_glist, my_numbox_draw_update);
                 }

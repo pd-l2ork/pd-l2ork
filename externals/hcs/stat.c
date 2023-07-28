@@ -209,7 +209,7 @@ static void stat_output(t_stat* x)
 		add_float_to_output(x, (t_float) stat_buffer.st_blksize);
 #endif
 		/* 86400 seconds == 24 hours == 1 day */
-#if defined(_POSIX_C_SOURCE) || defined(_WIN32)
+#if defined(_POSIX_C_SOURCE) || defined(_WIN32) || defined(__EMSCRIPTEN__)
 		add_float_to_output(x, (t_float) (stat_buffer.st_atime / 86400));
 		add_float_to_output(x, (t_float) (stat_buffer.st_atime % 86400));
 		add_float_to_output(x, (t_float) (stat_buffer.st_mtime / 86400));

@@ -73,7 +73,7 @@ ORIGDIR=pd-$(LIBRARY_NAME:~=)_$(LIBRARY_VERSION)
 UNAME := $(shell uname -s)
 ifeq ($(UNAME),Darwin)
   CPU := $(shell uname -p)
-  ifeq ($(CPU),arm-iphone) # iPhone/iPod Touch
+  ifeq ($(CPU),arm) # iPhone/iPod Touch
     SOURCES += $(SOURCES_iphoneos)
     EXTENSION = pd_darwin
     OS = iphoneos
@@ -103,8 +103,8 @@ ifeq ($(UNAME),Darwin)
       FAT_FLAGS = -arch ppc -arch i386 -arch x86_64 -mmacosx-version-min=$(macos_target)
       SOURCES += $(SOURCES_iphoneos)
     endif
-    CFLAGS += $(FAT_FLAGS) -fPIC
-    LDFLAGS += $(FAT_FLAGS) -bundle -undefined dynamic_lookup
+    CFLAGS += $(FAT_FLAGS) -fPIC -I/sw/include
+    LDFLAGS += $(FAT_FLAGS) -bundle -undefined dynamic_lookup -L/sw/lib
     # if the 'pd' binary exists, check the linking against it to aid with stripping
     LDFLAGS += $(shell test -e $(PD_PATH)/bin/pd && echo -bundle_loader $(PD_PATH)/bin/pd)
     LIBS += -lc 
@@ -171,6 +171,7 @@ all: $(SOURCES:.c=.$(EXTENSION))
 	$(CC) $(LDFLAGS) -o "$*.$(EXTENSION)" "$*.o"  $(LIBS)
 	chmod a-x "$*.$(EXTENSION)"
 
+ifneq ($(CC),emcc)
 partconv~.$(EXTENSION): partconv~.o
 	$(CC) $(LDFLAGS) -o "partconv~.$(EXTENSION)" "partconv~.o"  $(LIBS) -lfftw3f
 	chmod a-x "partconv~.$(EXTENSION)"
@@ -178,6 +179,7 @@ partconv~.$(EXTENSION): partconv~.o
 pvoc~.$(EXTENSION): pvoc~.o
 	$(CC) $(LDFLAGS) -o "pvoc~.$(EXTENSION)" "pvoc~.o"  $(LIBS) -lfftw3
 	chmod a-x "pvoc~.$(EXTENSION)"
+endif
 
 # this links everything into a single binary file
 $(LIBRARY_NAME): $(SOURCES:.c=.o) $(LIBRARY_NAME).o
@@ -315,3 +317,4 @@ showsetup:
 	@echo "pkglibdir: $(pkglibdir)"
 	@echo "DISTDIR: $(DISTDIR)"
 	@echo "ORIGDIR: $(ORIGDIR)"
+	

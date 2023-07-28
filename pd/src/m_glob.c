@@ -9,6 +9,16 @@
 t_class *glob_pdobject;
 static t_class *maxclass;
 
+/* ico@vt.edu 2023-04-17: moved sys_curved_cords, sys_snaptogrid, sys_gridsize, sys_autocomplete_relevance, sys_autocomplete_prefix, and sys_autocomplete to m_glob.c to allow for
+   emscripten to compile since emscripten currently does not compile s_file.c */
+int sys_curved_cords = 1;
+int sys_snaptogrid = 1;
+int sys_gridsize = 10;
+int sys_autocomplete_relevance = 1;
+int sys_autocomplete_prefix;
+int sys_autocomplete = 1;
+
+
 int sys_perf;   /* true if we should query user on close and quit */
 
 /* Compatibility level, e.g., 43 for pd 0.43 compatibility. We default to
@@ -157,8 +167,10 @@ void glob_set_k12_mode(void *dummy, t_float f)
     //fprintf(stderr, "k12_mode=%d", sys_k12_mode);
 }
 
+#ifndef __EMSCRIPTEN__
 // located in s_file.c
 extern int reinit_user_settings(void *dummy);
+#endif
 
 void glob_init(void)
 {
@@ -242,8 +254,10 @@ void glob_init(void)
     class_addmethod(glob_pdobject, (t_method)glob_set_k12_mode,
         gensym("set-k12-mode"), A_DEFFLOAT, 0);
     /* -------------- windows delete all registry keys in s_file.c ------------------ */
+#ifndef __EMSCRIPTEN__
     class_addmethod(glob_pdobject, (t_method)reinit_user_settings,
         gensym("reinit-user-settings"), 0);
+#endif
 #ifdef UNIX
     class_addmethod(glob_pdobject, (t_method)glob_watchdog,
         gensym("watchdog"), 0);

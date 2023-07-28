@@ -52,6 +52,17 @@ CFLAGS = -DPD -D__USE_MINGW_ANSI_STDIO=1 -I$(pd_src)/src $(WARN_FLAGS) $(DEBUG_C
 LDFLAGS =  
 LIBS = -lm
 
+# emscripten
+ifeq ($(EMSCRIPTEN),yes)
+  set_em_flags = CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" CC="$(CC)" CXX="$(CXX)" CXXFLAGS="$(CXXFLAGS)" ALL_CFLAGS="$(CFLAGS)" ALL_LDFLAGS="$(LDFLAGS)" ALL_LIBS="$(LIBS)" SHARED_LIB="" EXTENSION="$(EXTENSION)" STRIP="$(STRIP)"
+  define if_emscripten
+    $(if $(filter $(EMSCRIPTEN),yes),$1)
+  endef
+else
+  set_em_flags =
+endif
+
+
 ifeq ($(OS_NAME),darwin)
 # 10.4 Tiger
 #  FAT_FLAGS = -arch ppc -arch ppc64 -arch i386
@@ -142,17 +153,20 @@ CXXFLAGS = $(CFLAGS)
 ifeq ($(LIGHT),yes)
 # minimal set of extensions for the "light" build
 lib_targets = loaders-libdir pddp
-# add specified externals to the light build
-lib_targets += $(addons)
 INCREMENTAL = yes
+else ifeq ($(EMSCRIPTEN),yes)
+#lib_targets = arraysize autotune bassemu boids bsaylor comport creb cxc earplug ekext ext13 freeverb ggee hcs iem_ambi iem_bin_ambi iemguts iem_adaptfilt iem_delay iem_roomsim iem_spec2 jasch_lib loaders-libdir mapping markex maxlib mjlib moonlib motex mrpeach pan pddp rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing
+lib_targets = arraysize autotune bassemu boids bsaylor comport creb cxc earplug ekext ext13 freeverb ggee hcs jasch_lib loaders-libdir mapping markex maxlib mjlib moonlib motex mrpeach pan pddp rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing
 else
-lib_targets = adaptive arraysize autotune bassemu bendinfix boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui fluid freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemgui iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moocow moonlib motex mrpeach oscx pan pdcontainer pddp pdjs pdlua pdogg plugin pmpd rjlib sensel sigpack smlib tof unauthorized vbap windowing zexy
+lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui fluid freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemgui iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moocow moonlib motex mrpeach oscx pan pdcontainer pddp pdlua pdogg plugin pmpd rjlib sigpack smlib tof unauthorized vbap windowing zexy
 endif
+
 
 # NEW (IN-PROGRESS): flext
 
 # this is for libraries that don't compile (yet) on all platforms
 ifneq ($(LIGHT),yes)
+ifneq ($(EMSCRIPTEN),yes)
 ifeq ($(OS_NAME),windows)
   ifneq ($(INCREMENTAL),yes)
     lib_targets += gem
@@ -160,10 +174,9 @@ ifeq ($(OS_NAME),windows)
 else
   ifeq ($(OS_NAME),darwin)
 # on Mac OS X 10.6/Snow Leopard don't build hid since it needs Carbon
-     ifeq ($(INCREMENTAL),yes)
- 	lib_targets += pdp iem16 apple
-     else
- 	lib_targets += gem pdp iem16 apple
+    lib_targets += pdp iem16 apple
+    ifneq ($(shell uname -r | sed 's|10\.[0-9][0-9]*\.[0-9][0-9]*|10|'),10)
+      lib_targets +=
     endif
   else ifneq ($(LIGHT),yes)
     # GNU/Linux, BSD, IRIX, etc. (we use exported variable INCREMENTAL to
@@ -175,7 +188,9 @@ else
     endif
   endif
 endif
+endif # ifneq ($(EMSCRIPTEN),yes)
 endif # ifneq ($(LIGHT),yes)
+
 
 # filter out blacklist of all targets NOT to be built
 LIB_TARGETS = $(filter-out $(blacklist),$(lib_targets))
@@ -320,7 +335,7 @@ aka.wiiremote_clean:
 #------------------------------------------------------------------------------#
 # APPLE
 apple:
-	make -C $(externals_src)/apple PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/apple PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" 
 
 apple_install:
 	make -C $(externals_src)/apple DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
@@ -331,11 +346,11 @@ apple_clean:
 #------------------------------------------------------------------------------#
 # AUTOTUNE
 autotune:
-	make -C $(externals_src)/autotune PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/autotune PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 autotune_install:
 	make -C $(externals_src)/autotune DESTDIR="$(DESTDIR)" \
-		objectsdir="$(objectsdir)" install
+		objectsdir="$(objectsdir)" $(call set_em_flags) install
 	install -p $(externals_src)/autotune/autotune_scale_warp.png \
 		$(DESTDIR)/$(objectsdir)/autotune~
 
@@ -345,10 +360,10 @@ autotune_clean:
 #------------------------------------------------------------------------------#
 # ARRAYSIZE
 arraysize:
-	make -C $(externals_src)/arraysize PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/arraysize PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 arraysize_install:
-	make -C $(externals_src)/arraysize DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/arraysize DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 arraysize_clean:
 	make -C $(externals_src)/arraysize clean
@@ -357,38 +372,23 @@ arraysize_clean:
 #------------------------------------------------------------------------------#
 # BASSEMU
 bassemu:
-	make -C $(externals_src)/bassemu~ PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/bassemu~ PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 bassemu_install:
-	make -C $(externals_src)/bassemu~ DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/bassemu~ DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 bassemu_clean:
 	make -C $(externals_src)/bassemu~ clean
 
 
 #------------------------------------------------------------------------------#
-# BENDINFIX
-
-bendinfix:
-	make -C $(externals_src)/bendinfix PD_PATH=$(pd_src) \
-		pdbinpath=$(pd_src)/src CFLAGS="$(CFLAGS_ADD)"
-
-bendinfix_install:
-	make -C $(externals_src)/bendinfix DESTDIR="$(DESTDIR)" \
-		objectsdir="$(objectsdir)" install
-
-bendinfix_clean:
-	make -C $(externals_src)/bendinfix clean
-
-
-#------------------------------------------------------------------------------#
 # BOIDS
 boids:
-	make -C $(externals_src)/boids PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/boids PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 boids_install:
 	make -C $(externals_src)/boids \
-		DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+		DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 boids_clean:
 	make -C $(externals_src)/boids clean
@@ -397,28 +397,27 @@ boids_clean:
 #------------------------------------------------------------------------------#
 # BSAYLOR
 bsaylor:
-	make -C $(externals_src)/bsaylor PD_PATH=$(pd_src) CFLAGS="$(CFLAGS) -fno-strict-aliasing" LDFLAGS="$(LDFLAGS)"
+	make -C $(externals_src)/bsaylor PD_PATH=$(pd_src) CFLAGS="$(CFLAGS) -fno-strict-aliasing" $(call set_em_flags)
 
 bsaylor_install:
 	make -C $(externals_src)/bsaylor \
-		DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+		DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
+	$(call if_emscripten, -rm -f $(DESTDIR)$(objectsdir)/bsaylor/pvoc~* $(DESTDIR)$(objectsdir)/bsaylor/partconv~*)
 
 bsaylor_clean:
 	make -C $(externals_src)/bsaylor clean
 
-
 #------------------------------------------------------------------------------#
 # COMPORT
 comport:
-	make -C $(externals_src)/iem/comport/comport PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/iem/comport/comport PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 comport_install:
 	make -C $(externals_src)/iem/comport/comport \
-		DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+		DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 comport_clean:
 	make -C $(externals_src)/iem/comport/comport clean
-
 
 #------------------------------------------------------------------------------#
 # CREB
@@ -459,14 +458,13 @@ creb_clean:
 #------------------------------------------------------------------------------#
 # CXC
 cxc:
-	make -C $(externals_src)/cxc PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/cxc PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 cxc_install:
-	make -C $(externals_src)/cxc DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/cxc DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 cxc_clean:
 	make -C $(externals_src)/cxc clean
-
 
 #------------------------------------------------------------------------------#
 # CYCLONE
@@ -513,10 +511,10 @@ endif
 #------------------------------------------------------------------------------#
 # EKEXT
 ekext:
-	make -C $(externals_src)/ekext PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/ekext PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 ekext_install:
-	make -C $(externals_src)/ekext DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/ekext DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 ekext_clean:
 	make -C $(externals_src)/ekext clean
@@ -525,10 +523,10 @@ ekext_clean:
 #------------------------------------------------------------------------------#
 # EXT13
 ext13:
-	make -C $(externals_src)/ext13 PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/ext13 PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 ext13_install:
-	make -C $(externals_src)/ext13 DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/ext13 DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 ext13_clean:
 	make -C $(externals_src)/ext13 clean
@@ -671,10 +669,10 @@ fluid_clean:
 #------------------------------------------------------------------------------#
 # FREEVERB
 freeverb:
-	make -C $(externals_src)/freeverb~ PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/freeverb~ PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 freeverb_install:
-	make -C $(externals_src)/freeverb~ DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/freeverb~ DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 freeverb_clean:
 	make -C $(externals_src)/freeverb~ clean
@@ -821,10 +819,10 @@ gem2pdp_clean:
 #------------------------------------------------------------------------------#
 # GGEE
 ggee:
-	make -C $(externals_src)/ggee PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/ggee PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 ggee_install:
-	make -C $(externals_src)/ggee DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/ggee DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 	cp $(externals_src)/ggee/gui/logo100.gif $(DESTDIR)/$(objectsdir)/ggee
 	cp $(externals_src)/ggee/gui/empty_image.png $(DESTDIR)/$(objectsdir)/ggee
 	cp $(externals_src)/ggee/gui/source3.gif $(DESTDIR)/$(objectsdir)/ggee
@@ -840,10 +838,10 @@ ggee_clean:
 #------------------------------------------------------------------------------#
 # HCS
 hcs:
-	make -C $(externals_src)/hcs PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/hcs PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 hcs_install:
-	make -C $(externals_src)/hcs DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/hcs DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 hcs_clean:
 	make -C $(externals_src)/hcs clean
@@ -1211,10 +1209,10 @@ jasch_lib_clean:
 #------------------------------------------------------------------------------#
 # LOADERS-LIBDIR
 loaders-libdir:
-	make -C $(externals_src)/loaders/libdir PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/loaders/libdir PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 loaders-libdir_install:
-	make -C $(externals_src)/loaders/libdir DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/loaders/libdir DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 loaders-libdir_clean:
 	make -C $(externals_src)/loaders/libdir clean
@@ -1268,10 +1266,10 @@ lyonpotpourri_clean:
 #------------------------------------------------------------------------------#
 # MAPPING
 mapping:
-	make -C $(externals_src)/mapping PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/mapping PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 mapping_install:
-	make -C $(externals_src)/mapping DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/mapping DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 mapping_clean:
 	make -C $(externals_src)/mapping clean
@@ -1279,10 +1277,10 @@ mapping_clean:
 #------------------------------------------------------------------------------#
 # MARKEX
 markex:
-	make -C $(externals_src)/markex PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/markex PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 markex_install:
-	make -C $(externals_src)/markex DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/markex DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 markex_clean:
 	make -C $(externals_src)/markex clean
@@ -1290,10 +1288,10 @@ markex_clean:
 #------------------------------------------------------------------------------#
 # MAXLIB
 maxlib:
-	make -C $(externals_src)/maxlib PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/maxlib PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 maxlib_install:
-	make -C $(externals_src)/maxlib DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/maxlib DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 maxlib_clean:
 	make -C $(externals_src)/maxlib clean
@@ -1302,10 +1300,10 @@ maxlib_clean:
 #------------------------------------------------------------------------------#
 # MJLIB
 mjlib:
-	make -C $(externals_src)/mjlib PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/mjlib PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 mjlib_install:
-	make -C $(externals_src)/mjlib DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/mjlib DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 mjlib_clean:
 	make -C $(externals_src)/mjlib clean
@@ -1372,10 +1370,10 @@ moocow_clean:
 #------------------------------------------------------------------------------#
 # MOONLIB
 moonlib:
-	make -C $(externals_src)/moonlib PD_PATH=$(pd_src) CFLAGS="$(CFLAGS) -fno-strict-aliasing"
+	make -C $(externals_src)/moonlib PD_PATH=$(pd_src) CFLAGS="$(CFLAGS) -fno-strict-aliasing" $(call set_em_flags)
 
 moonlib_install:
-	make -C $(externals_src)/moonlib DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/moonlib DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 moonlib_clean:
 	make -C $(externals_src)/moonlib clean
@@ -1385,13 +1383,14 @@ moonlib_clean:
 #------------------------------------------------------------------------------#
 # MOTEX
 motex:
-	make -C $(externals_src)/motex PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/motex PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 motex_install:
-	make -C $(externals_src)/motex DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/motex DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 motex_clean:
 	make -C $(externals_src)/motex clean
+
 
 
 
@@ -1418,6 +1417,7 @@ mrpeach_install: mrpeach
 	install -d $(DESTDIR)$(objectsdir)/$(MRPEACH_NAME)/examples
 	install -p $(externals_src)/mrpeach/net/examples/test.txt \
 		$(DESTDIR)$(objectsdir)/$(MRPEACH_NAME)/examples
+	$(call if_emscripten, -rm -f $(DESTDIR)$(objectsdir)/$(MRPEACH_NAME)/which*)
 
 mrpeach_clean:
 	-rm -f -- $(MRPEACH_OBJECTS:.c=.$(EXTENSION))
@@ -1475,10 +1475,10 @@ oscx_clean:
 #------------------------------------------------------------------------------#
 # PAN
 pan:
-	make -C $(externals_src)/pan PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/pan PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 pan_install:
-	make -C $(externals_src)/pan DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/pan DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 pan_clean:
 	make -C $(externals_src)/pan clean
@@ -1487,13 +1487,14 @@ pan_clean:
 #------------------------------------------------------------------------------#
 # PDDP
 pddp:
-	make -C $(externals_src)/pddp PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/pddp PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 pddp_install:
-	make -C $(externals_src)/pddp DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/pddp DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 pddp_clean:
 	make -C $(externals_src)/pddp clean
+
 
 #------------------------------------------------------------------------------#
 # pdjs
@@ -1767,10 +1768,10 @@ pidip_clean:
 #------------------------------------------------------------------------------#
 # PLUGIN
 plugin:
-	make -C $(externals_src)/plugin~ PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/plugin~ PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 plugin_install:
-	make -C $(externals_src)/plugin~ DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/plugin~ DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 plugin_clean:
 	make -C $(externals_src)/plugin~ clean
@@ -1779,10 +1780,10 @@ plugin_clean:
 #------------------------------------------------------------------------------#
 # PMPD
 pmpd:
-	make -C $(externals_src)/pmpd PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/pmpd PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 pmpd_install:
-	make -C $(externals_src)/pmpd DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/pmpd DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 pmpd_clean:
 	make -C $(externals_src)/pmpd clean
@@ -1908,10 +1909,10 @@ sensel_clean:
 #------------------------------------------------------------------------------#
 # SIGPACK
 sigpack:
-	make -C $(externals_src)/sigpack PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/sigpack PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 sigpack_install:
-	make -C $(externals_src)/sigpack DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/sigpack DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 sigpack_clean:
 	make -C $(externals_src)/sigpack clean
@@ -1921,10 +1922,10 @@ sigpack_clean:
 #------------------------------------------------------------------------------#
 # SMLIB
 smlib:
-	make -C $(externals_src)/smlib PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/smlib PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 smlib_install:
-	make -C $(externals_src)/smlib DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/smlib DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 smlib_clean:
 	make -C $(externals_src)/smlib clean
@@ -2025,12 +2026,13 @@ toxy_clean:
 #------------------------------------------------------------------------------#
 # UNAUTHORIZED
 unauthorized:
-	make -C $(externals_src)/unauthorized CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
-		PD_PATH=$(pd_src) PD_INCLUDE=$(pd_src)/src
+	make -C $(externals_src)/unauthorized CFLAGS="$(CFLAGS)" \
+		PD_PATH=$(pd_src) PD_INCLUDE=$(pd_src)/src $(call set_em_flags)
 
 unauthorized_install:
 	make -C $(externals_src)/unauthorized \
-		DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+		DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
+	$(call if_emscripten, -rm -f $(DESTDIR)$(objectsdir)/unauthorized/mp3cast~* $(DESTDIR)$(objectsdir)/unauthorized/mp3streamout~* $(DESTDIR)$(objectsdir)/unauthorized/mp3write~* $(DESTDIR)$(objectsdir)/unauthorized/speexin~* $(DESTDIR)$(objectsdir)/unauthorized/speexout~*)
 
 unauthorized_clean:
 	make -C $(externals_src)/unauthorized clean
@@ -2039,13 +2041,14 @@ unauthorized_clean:
 #------------------------------------------------------------------------------#
 # VBAP
 vbap:
-	make -C $(externals_src)/vbap PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)"
+	make -C $(externals_src)/vbap PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
 vbap_install:
-	make -C $(externals_src)/vbap DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/vbap DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 vbap_clean:
 	make -C $(externals_src)/vbap clean
+
 
 
 #------------------------------------------------------------------------------#

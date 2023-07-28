@@ -1450,7 +1450,7 @@ static void gatom_click(t_gatom *x,
             // with the vanilla gatom, based on its exlcusive flag (default off),
             // so that we can match the rest of the behavior.
     	   	glist_grab(x->a_glist, &x->a_text.te_g, gatom_motion, gatom_key,
-    	        gatom_list, xpos, ypos, x->a_exclusive);
+    	        (t_glistkeynameafn)gatom_list, xpos, ypos, x->a_exclusive);
     	    //post("a_shift_clicked=%d", x->a_shift_clicked);
             x->a_shift_clicked = x->a_shift;
     	    	// second click wipes prior text

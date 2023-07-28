@@ -273,6 +273,8 @@ EXTERN void iemgui_properties(t_iemgui *x, t_symbol **srl);
 EXTERN void iemgui_update_properties(t_iemgui *x, int option);
 EXTERN int iemgui_dialog(t_iemgui *x, int argc, t_atom *argv);
 
+EXTERN int canvas_getdollarzero(t_pd *x);
+
 EXTERN void iem_inttosymargs(t_iemgui *x, int n);
 EXTERN int iem_symargstoint(t_iemgui *x);
 EXTERN void iem_inttofstyle(t_iemgui *x, int n);

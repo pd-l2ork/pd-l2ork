@@ -29,6 +29,8 @@
 /* Theo Hakola --                                                               */
 /* ---------------------------------------------------------------------------- */
 
+#ifndef __EMSCRIPTEN__
+
 #include <sys/types.h>
 #include <string.h>
 #include <stdio.h>
@@ -642,3 +644,4 @@ void mp3streamout_tilde_setup(void)
     class_addmethod(mp3streamout_class, (t_method)mp3streamout_print, gensym("print"), 0);
 }
 
+#endif /* __EMSCRIPTEN__ */

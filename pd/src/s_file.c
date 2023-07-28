@@ -42,10 +42,26 @@
 #define snprintf sprintf_s
 #endif
 
-int sys_defeatrt, sys_autopatch_yoffset, sys_snaptogrid = 1, sys_gridsize = 10,
-    sys_zoom, sys_autocomplete = 1, sys_autocomplete_prefix,
-    sys_autocomplete_relevance = 1, sys_browser_doc = 1,
-    sys_browser_path, sys_browser_init, sys_curved_cords = 1;
+int sys_defeatrt, sys_autopatch_yoffset,
+    sys_zoom, sys_browser_doc = 1, sys_browser_path, sys_browser_init;
+
+/* ico@vt.edu 2023-04-17: moved sys_curved_cords, sys_snaptogrid, sys_gridsize, sys_autocomplete_relevance, sys_autocomplete_prefix to m_glob.c to allow for
+   emscripten to compile since emscripten currently does not compile s_file.c */
+extern int sys_curved_cords;
+extern int sys_snaptogrid;
+extern int sys_gridsize;
+extern int sys_autocomplete_relevance;
+extern int sys_autocomplete_prefix;
+extern int sys_autocomplete;
+
+//extern int sys_defeatrt;
+//extern int sys_autopatch_yoffset;
+//extern int sys_zoom;
+//extern int sys_browser_doc;
+//extern int sys_browser_path;
+//extern int sys_browser_init;
+
+
 t_symbol *sys_flags = &s_;
 void sys_doflags( void);
 

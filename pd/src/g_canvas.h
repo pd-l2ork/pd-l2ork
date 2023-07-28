@@ -354,7 +354,9 @@ typedef struct _linetraverser
 } t_linetraverser;
 
 EXTERN int outconnect_visible(t_outconnect *oc);
-EXTERN int outconnect_setvisible(t_outconnect *oc, int vis);
+EXTERN void outconnect_setvisible(t_outconnect *oc, int vis);   
+// 4-17-23 Drew Bowman: this function above is void elsewhere 
+// and I believe casuing the function signature mismatch error in main.wasm
 
 /* function types used to define graphical behavior for gobjs, a bit like X
 widgets.  We don't use Pd methods because Pd's typechecking can't specify the

@@ -75,7 +75,7 @@
 # list should normally do the trick. Or you can add an option like `-lib foo`
 # when running Pd-L2Ork from the command line.
 
-.PHONY: all incremental checkout clean realclean dist
+.PHONY: all incremental emscripten checkout clean realclean dist
 
 # Target platform (OSX/macOS only): On Mojave (10.14 with Xcode 10) this needs
 # to be at least 10.9, which is the default now. With older Xcode versions you
@@ -117,6 +117,12 @@ incremental:
 
 light:
 	cd l2ork_addons && $(env) ./tar_em_up.sh -tkl
+
+emscripten:
+# making emscripten a separate build for the time being, so disabling the line below
+# cd l2ork_addons && $(env) ./tar_em_up.sh -ckln
+	make -C emscripten
+
 
 # Convenience targets to build the double precision version.
 

@@ -26,6 +26,9 @@
 #define snprintf sprintf_s
 #define stat _stat
 #endif
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 typedef void (*t_xxx)(void);
 
@@ -37,7 +40,10 @@ objects.  The specific name is the letter b, l, d, or m for  BSD, linux,
 darwin, or microsoft, followed by a more specific string, either "fat" for
 a fat binary or an indication of the instruction set. */
 
-#if defined(__linux__) || defined(__FreeBSD_kernel__) || defined(__GNU__) || defined(__FreeBSD__)
+#if defined(__EMSCRIPTEN__)
+static char sys_dllextent[] = ".wasm", sys_dllextent2[] = ".so";
+int __Pd_loadLib(const char *filename, const char *symname);
+#elif defined(__linux__) || defined(__FreeBSD_kernel__) || defined(__GNU__) || defined(__FreeBSD__)
 static char sys_dllextent2[] = ".pd_linux";
 # ifdef __x86_64__
 static char sys_dllextent[] = ".l_ia64"; // this should be .l_x86_64 or .l_amd64
@@ -229,7 +235,19 @@ gotone:
     strncat(filename, nameptr, MAXPDSTRING-strlen(filename));
     filename[MAXPDSTRING-1] = 0;
 
-#ifdef _WIN32
+    
+#ifdef __EMSCRIPTEN__
+    int ret = __Pd_loadLib(filename, symname);
+    if (ret == 1) {
+        class_set_extern_dir(&s_);
+        return (1);
+    }
+    else if (ret == 0) {
+        verbose(1, "%s: couldn't load", filename);
+        class_set_extern_dir(&s_);
+        return (0);
+    }
+#elif _WIN32
     {
         char dirname[MAXPDSTRING], *s, *basename;
         sys_bashfilename(filename, filename);

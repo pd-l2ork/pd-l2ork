@@ -412,6 +412,21 @@ void sys_close_audio(void)
         mmio_close_audio();
     else
 #endif
+#ifdef USEAPI_AUDIOUNIT
+    if (sys_audioapiopened == API_AUDIOUNIT)
+        audiounit_close_audio();
+    else
+#endif
+#ifdef USEAPI_ESD
+    if (sys_audioapiopened == API_ESD)
+        esd_close_audio();
+    else
+#endif
+#ifdef USEAPI_DUMMY
+    if (sys_audioapiopened == API_DUMMY)
+        dummy_close_audio();
+    else
+#endif
         post("sys_close_audio: unknown API %d", sys_audioapiopened);
     sys_inchannels = sys_outchannels = 0;
     sys_audioapiopened = -1;
@@ -566,6 +581,21 @@ int sys_send_dacs(void)
         return (mmio_send_dacs());
     else
 #endif
+#ifdef USEAPI_AUDIOUNIT
+    if (sys_audioapi == API_AUDIOUNIT)
+        return (audiounit_send_dacs());
+    else
+#endif
+#ifdef USEAPI_ESD
+    if (sys_audioapi == API_ESD)
+        return (esd_send_dacs());
+    else
+#endif
+#ifdef USEAPI_DUMMY
+    if (sys_audioapi == API_DUMMY)
+        return (dummy_send_dacs());
+    else
+#endif
     post("unknown API");    
     return (0);
 }
@@ -656,6 +686,28 @@ static void audio_getdevs(char *indevlist, int *nindevs,
     if (sys_audioapi == API_MMIO)
     {
         mmio_getdevs(indevlist, nindevs, outdevlist, noutdevs, canmulti,
+            maxndev, devdescsize);
+    }
+    else
+#endif
+#ifdef USEAPI_AUDIOUNIT
+    if (sys_audioapi == API_AUDIOUNIT)
+    {
+    }
+    else
+#endif
+#ifdef USEAPI_ESD
+    if (sys_audioapi == API_ESD)
+    {
+        esd_getdevs(indevlist, nindevs, outdevlist, noutdevs, canmulti,
+            maxndev, devdescsize);
+    }
+    else
+#endif
+#ifdef USEAPI_DUMMY
+    if (sys_audioapi == API_DUMMY)
+    {
+        dummy_getdevs(indevlist, nindevs, outdevlist, noutdevs, canmulti,
             maxndev, devdescsize);
     }
     else
@@ -830,6 +882,10 @@ void glob_audio_properties(t_pd *dummy, t_floatarg flongform)
 //    gfxstub_new(&glob_pdobject, (void *)glob_audio_properties, buf);
 }
 
+#ifdef __EMSCRIPTEN__
+void __Pd_reinit(int newinchan, int newoutchan, int newrate);
+#endif
+
 extern int pa_foo;
     /* new values from dialog window */
 void glob_audio_dialog(t_pd *dummy, t_symbol *s, int argc, t_atom *argv)
@@ -850,6 +906,11 @@ void glob_audio_dialog(t_pd *dummy, t_symbol *s, int argc, t_atom *argv)
         newaudiooutdev[i] = atom_getintarg(i+8, argc, argv);
         newaudiooutchan[i] = atom_getintarg(i+12, argc, argv);
     }
+
+#ifdef __EMSCRIPTEN__
+    __Pd_reinit(newaudioinchan[0], newaudiooutchan[0], newrate);
+    return;
+#endif
 
     for (i = 0, nindev = 0; i < 4; i++)
     {
@@ -927,6 +988,21 @@ void sys_listdevs(void )
         sys_listaudiodevs();
     else
 #endif
+#ifdef USEAPI_AUDIOUNIT
+    if (sys_audioapi == API_AUDIOUNIT)
+        sys_listaudiodevs();
+    else
+#endif
+#ifdef USEAPI_ESD
+    if (sys_audioapi == API_ESD)
+        sys_listaudiodevs();
+    else
+#endif
+#ifdef USEAPI_DUMMY
+    if (sys_audioapi == API_DUMMY)
+        sys_listaudiodevs();
+    else
+#endif
     post("unknown API");    
 
     sys_listmididevs();
@@ -954,9 +1030,42 @@ void sys_get_audio_devs(char *indevlist, int *nindevs,
 
 void sys_set_audio_api(int which)
 {
-     sys_audioapi = which;
-     if (sys_verbose)
-        post("sys_audioapi %d", sys_audioapi);
+    int ok = 0;    /* check if the API is actually compiled in */
+#ifdef USEAPI_PORTAUDIO
+    ok += (which == API_PORTAUDIO);
+#endif
+#ifdef USEAPI_JACK
+    ok += (which == API_JACK);
+#endif
+#ifdef USEAPI_OSS
+    ok += (which == API_OSS);
+#endif
+#ifdef USEAPI_ALSA
+    ok += (which == API_ALSA);
+#endif
+#ifdef USEAPI_MMIO
+    ok += (which == API_MMIO);
+#endif
+#ifdef USEAPI_AUDIOUNIT
+    ok += (which == API_AUDIOUNIT);
+#endif
+#ifdef USEAPI_ESD
+    ok += (which == API_ESD);
+#endif
+#ifdef USEAPI_DUMMY
+    ok += (which == API_DUMMY);
+#endif
+    if (!which)
+        ok++;
+    if (!ok)
+    {
+        post("API %d not supported, reverting to %d (%s)",
+            which, API_DEFAULT, API_DEFSTRING);
+        which = API_DEFAULT;
+    }
+    sys_audioapi = which;
+    if (sys_verbose && ok)
+        post("sys_audioapi set to %d", sys_audioapi);
 }
 
 void glob_audio_setapi(void *dummy, t_floatarg f)
@@ -1032,6 +1141,15 @@ void sys_get_audio_apis(char *buf)
 #ifdef USEAPI_JACK
     sprintf(buf + strlen(buf), "{JACK %d} ", API_JACK); n++;
 #endif
+#ifdef USEAPI_AUDIOUNIT
+    sprintf(buf + strlen(buf), "{AudioUnit %d} ", API_AUDIOUNIT); n++;
+#endif
+#ifdef USEAPI_ESD
+    sprintf(buf + strlen(buf), "{ESD %d} ", API_ESD); n++;
+#endif
+#ifdef USEAPI_DUMMY
+    sprintf(buf + strlen(buf), "{dummy %d} ", API_DUMMY); n++;
+#endif
     strcat(buf, "}");
         /* then again, if only one API (or none) we don't offer any choice. */
     if (n < 2)
@@ -1064,6 +1182,15 @@ void sys_get_audio_apis2(t_binbuf *buf)
 #endif
 #ifdef USEAPI_JACK
     binbuf_addv(buf, "si", gensym("JACK"), API_JACK); n++;
+#endif
+#ifdef USEAPI_AUDIOUNIT
+    binbuf_addv(buf, "si", gensym("AudioUnit"), USEAPI_AUDIOUNIT); n++;
+#endif
+#ifdef USEAPI_ESD
+    binbuf_addv(buf, "si", gensym("ESD"), API_ESD); n++;
+#endif
+#ifdef USEAPI_DUMMY
+    binbuf_addv(buf, "si", gensym("dummy"), API_DUMMY); n++;
 #endif
        /* then again, if only one API (or none) we don't offer any choice. */
 //    if (n < 2)

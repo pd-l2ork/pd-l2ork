@@ -415,7 +415,7 @@ static void slider_click(t_slider *x, t_floatarg xpos, t_floatarg ypos,
         x->x_is_last_float=0; // does anyone know how this works with !steady && rcv==snd ?
         slider_bang(x);
         glist_grab(x->x_gui.x_glist, &x->x_gui.x_obj.te_g,
-            (t_glistmotionfn)slider_motion, 0, slider_list, xpos, ypos, x->x_exclusive);
+            (t_glistmotionfn)slider_motion, 0, (t_glistkeynameafn)slider_list, xpos, ypos, x->x_exclusive);
     }
 }
 

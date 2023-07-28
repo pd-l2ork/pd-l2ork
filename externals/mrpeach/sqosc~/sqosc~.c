@@ -40,7 +40,7 @@
 extern int finite(double);
 #endif                                                                          
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__EMSCRIPTEN__)
 #include <endian.h>
 #endif
 
