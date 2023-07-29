@@ -10,16 +10,16 @@
 #==============================================================================#
 
 CWD := $(shell pwd)
-PURR_DIR = $(CWD)/..
-EM_PATH = $(PURR_DIR)/emscripten
-LIBPD_PATH = $(PURR_DIR)/libpd
-PD_PATH = $(PURR_DIR)/pd
+PD_L2ORK_DIR = $(CWD)/..
+EM_PATH = $(PD_L2ORK_DIR)/emscripten
+LIBPD_PATH = $(PD_L2ORK_DIR)/libpd
+PD_PATH = $(PD_L2ORK_DIR)/pd
 BUILD_PATH = $(EM_PATH)/build
-INSTALL_PATH = $(EM_PATH)/project/pd-l2ork-web/
+INSTALL_PATH = $(EM_PATH)/projects/pd-l2ork-web
 DESTDIR = $(BUILD_PATH)/pd-l2ork-web/
 objectsdir = extra/
-WARN_FLAGS = -Wall -W -Wno-unused-parameter -Wbad-function-cast -Wcast-function-type
-EM_FLAGS = -s SIDE_MODULE=1 -O3 -sEMULATE_FUNCTION_POINTER_CASTS=1
+WARN_FLAGS = -Wall -W -Wno-unused-parameter
+EM_FLAGS = -s SIDE_MODULE=1 -O3
 CFLAGS = -DPD -I$(PD_PATH)/src $(WARN_FLAGS) $(EM_FLAGS)
 LDFLAGS = $(EM_FLAGS)
 LIBS = 
@@ -31,14 +31,18 @@ STRIP = echo
 
 .PHONY: all libpd externals extra $(extras) abstractions doc build project clean
 
-all: libpd externals extra abstractions doc build project
+# removed projects until this part is reviewed and revised. namely, do we need
+# dialogs and extra css for this to be a runtime environment? css probably, but
+# not sure about the dialogs.
+all: libpd externals extra abstractions doc build
 
 
 libpd: $(LIBPD_PATH)
+	cd ../pd/src && test -f config.h || (aclocal && autoconf && make -C ../../packages pd_emscripten)
 	cd $< && mkdir -p build && cd build && emcmake cmake .. -DPD_UTILS:BOOL=OFF -DCMAKE_BUILD_TYPE=Release && emmake make
 
 
-externals: $(PURR_DIR)/externals
+externals: $(PD_L2ORK_DIR)/externals
 	make -C $< EMSCRIPTEN="yes" WARN_FLAGS="$(WARN_FLAGS)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" CC="$(CC)" CXX="$(CXX)" CXXFLAGS="$(CXXFLAGS)" EXTENSION="$(EXTENSION)" STRIP="$(STRIP)"
 	mkdir -p $(DESTDIR)/$(objectsdir)
 	make -C $< EMSCRIPTEN="yes" DESTDIR="$(DESTDIR)" EXTENSION="$(EXTENSION)" STRIP="$(STRIP)" objectsdir="$(objectsdir)" install
@@ -53,7 +57,7 @@ $(extras): %: $(PD_PATH)/extra
 	cp -r $</$@ $(DESTDIR)/$(objectsdir)
 	find $(DESTDIR)/$(objectsdir)/$@ -type f ! -name '*.pd' -and ! -name '*.wasm' -delete
 
-abstractions: $(PURR_DIR)/abstractions
+abstractions: $(PD_L2ORK_DIR)/abstractions
 	mkdir -p $(DESTDIR)/$(objectsdir)
 	make -C $< DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
 
@@ -71,7 +75,7 @@ project: $(INSTALL_PATH)
 	cd $< && npm install && npm run build && npm start
 	
 clean:
-	find $(PURR_DIR)/externals -name "*.wasm" -type f -delete
+	find $(PD_L2ORK_DIR)/externals -name "*.wasm" -type f -delete
 	find $(PD_PATH)/extra -name "*.wasm" -type f -delete
 	make -C $(LIBPD_PATH) clean
 	make -C $(BUILD_PATH) clean

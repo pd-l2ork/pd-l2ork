@@ -382,9 +382,13 @@ int sys_main(int argc, char **argv)
     for (i = noprefs = 0; i < argc; i++)        /* prescan args for noprefs */
         if (!strcmp(argv[i], "-noprefs"))
             noprefs = 1;
+// do not load preferences and recent files if using emscripten
+// LATER: distinguish between PdWebParty emscripten and full online editor
+#ifndef __EMSCRIPTEN__
     if (!noprefs)
         sys_loadpreferences();                  /* load default settings */
     sys_load_recent_files();                    /* load recent files table */
+#endif
 #ifndef MSW
     if (!noprefs)
         sys_rcfile();                           /* parse the startup file */

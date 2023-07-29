@@ -1500,7 +1500,7 @@ void iemgui_io_draw_move(t_iemgui *x)
     }
 }
 
-extern char *gobj_vis_gethelpname(t_gobj *z, char *namebuf);
+extern void gobj_vis_gethelpname(t_gobj *z, char *namebuf);
 
 void iemgui_base_draw_new(t_iemgui *x)
 {

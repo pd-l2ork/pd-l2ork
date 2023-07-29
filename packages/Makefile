@@ -13,7 +13,6 @@ cvs_root_dir := $(shell cd $(CWD)/.. && pwd)
 DESTDIR = $(CWD)/build
 BUILDLAYOUT_DIR = $(CWD)
 
-
 ## default target
 all: pd abstractions doc externals
 	@echo "Complete build succeeded!"
@@ -135,6 +134,11 @@ pd: git_version
 		&& make $(DEST_PATHS) $(PD_BUILD_FLAGS)
 
 PD_NAME=Pd
+pd_emscripten: git_version
+	cd $(pd_src)/src/ \
+		&& ./autogen.sh \
+		&& ./configure $(PD_CONFIGURE_FLAGS)
+
 pd_install: pd
 	$(MAKE) -C $(pd_src) $(DEST_PATHS) $(PD_BUILD_FLAGS) install
 	install -d $(DESTDIR)$(manualsdir)/$(PD_NAME)
@@ -160,6 +164,10 @@ pd: $(pd_src)/src/configure git_version
 		make $(DEST_PATHS) $(PD_BUILD_FLAGS)
 
 PD_NAME=Pd
+pd_emscripten: git_version
+	cd $(pd_src)/src/ \
+		&& ./configure $(PD_CONFIGURE_FLAGS)
+
 pd_install: pd
 	$(MAKE) -C $(pd_src)/src $(DEST_PATHS) $(PD_BUILD_FLAGS) install
 	install -d $(DESTDIR)$(manualsdir)/$(PD_NAME)

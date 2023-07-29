@@ -2555,7 +2555,7 @@ static void text_get_typestring(int type, char *buf)
 
 extern char *canvas_gethelpname(t_object *ob);
 
-char *gobj_vis_gethelpname(t_gobj *z, char *namebuf) {
+void gobj_vis_gethelpname(t_gobj *z, char *namebuf) {
     //namebuf = "|null|";
 
     if (pd_class(&z->g_pd) == canvas_class &&

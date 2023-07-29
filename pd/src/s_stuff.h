@@ -35,16 +35,23 @@ int sys_trytoopenone(const char *dir, const char *name, const char* ext,
 t_symbol *sys_decodedialog(t_symbol *s);
 
 /* s_file.c */
-
+// do not load preferences and recent files if using emscripten
+// LATER: distinguish between PdWebParty emscripten and full online editor
+#ifndef __EMSCRIPTEN__
 void sys_loadpreferences( void);
 void sys_savepreferences( void);
+#endif
 extern int sys_defeatrt;
 extern t_symbol *sys_gui_preset;
 extern t_symbol *sys_flags;
 
 #define MAX_RECENT_FILES 8
+// do not load preferences and recent files if using emscripten
+// LATER: distinguish between PdWebParty emscripten and full online editor
+#ifndef __EMSCRIPTEN__
 void sys_load_recent_files(void);
 void sys_save_recent_files(void);
+#endif
 void sys_add_recent_file(const char *s);
 void sys_clear_recent_files(void);
 extern int sys_n_recent_files;

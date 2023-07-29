@@ -16,7 +16,7 @@
 extern t_int gfxstub_haveproperties(void *key);
 void my_canvas_draw_select(t_my_canvas* x, t_glist* glist);
 
-extern char *gobj_vis_gethelpname(t_gobj *z, char *namebuf);
+extern void gobj_vis_gethelpname(t_gobj *z, char *namebuf);
 
 t_widgetbehavior my_canvas_widgetbehavior;
 /*static*/ t_class *my_canvas_class;

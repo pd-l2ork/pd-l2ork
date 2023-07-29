@@ -38,7 +38,11 @@
 // forward declares
 void pd_init(void);
 int sys_startgui(const char *libdir);
-void sys_stopgui(void);
+// adding a dummy function ({} part) to prevent emscripten from
+// complaining about undefined reference, since this file is the
+// only place that references sys_stopgui(). LATER: figure out
+// why do we even need this in the first place.
+void sys_stopgui(void) {}
 int sys_pollgui(void);
 
 static t_atom *s_argv = NULL;

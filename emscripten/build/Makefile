@@ -11,12 +11,12 @@
 #==============================================================================#
 
 CWD := $(shell pwd)
-PURR_DIR = $(CWD)/../..
-EM_PATH = $(PURR_DIR)/emscripten
-LIBPD_PATH = $(PURR_DIR)/libpd
-PD_PATH = $(PURR_DIR)/pd
-INSTALL_PATH = $(EM_PATH)/project/pd-l2ork-web/
-DESTDIR = pd-l2ork-web/
+PD_L2ORK_DIR = $(CWD)/../..
+EM_PATH = $(PD_L2ORK_DIR)/emscripten
+LIBPD_PATH = $(PD_L2ORK_DIR)/libpd
+PD_PATH = $(PD_L2ORK_DIR)/pd
+INSTALL_PATH = $(EM_PATH)/projects/pd-l2ork-web
+DESTDIR = pd-l2ork-web
 SRC_DIR = $(EM_PATH)/src
 SRC_FILES = $(SRC_DIR)/main.cpp $(SRC_DIR)/pd.cpp $(SRC_DIR)/js.cpp
 TARGET = main.html
@@ -37,11 +37,12 @@ build: $(SRC_FILES) $(DESTDIR)
 	@echo "emscripten build succeeded!"
 
 install: $(OUTPUT_FILES)
+	cp main* $(EM_PATH)/projects/PdWebParty/public/emscripten
 	@echo "emscripten install succeeded!"
 
 $(OUTPUT_FILES): %: $(INSTALL_PATH)
 	cp -f $@ $<
 
 clean:
-	rm -rf $(OUTPUT_FILES)
-
+	rm -f $(OUTPUT_FILES)
+	rm -f $(EM_PATH)/projects/PdWebParty/public/emscripten/main*

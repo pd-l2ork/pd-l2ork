@@ -1140,7 +1140,7 @@ void glist_redraw(t_glist *x)
 
 int garray_getname(t_garray *x, t_symbol **namep);
 t_symbol *garray_getlabelcolor(t_garray *x);
-extern char *gobj_vis_gethelpname(t_gobj *z, char *namebuf);
+extern void gobj_vis_gethelpname(t_gobj *z, char *namebuf);
 
     /* Note that some code in here would also be useful for drawing
     graph decorations in toplevels... */
