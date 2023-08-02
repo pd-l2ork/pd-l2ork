@@ -417,7 +417,7 @@ t_class *class_new(t_symbol *s, t_newmethod newmethod, t_method freemethod,
     post("class: %s", c->c_name->s_name);
 #endif
     classtable_register(c);
-//    post("class: %s", c->c_name->s_name);
+    //post("class:%s newmethod=%lx", c->c_name->s_name, newmethod);
     return (c);
 }
 

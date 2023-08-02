@@ -223,7 +223,11 @@ static int sys_domicrosleep(int microsec, int pollem)
                 Sleep(microsec/1000);
         else
 #endif
+#ifdef __EMSCRIPTEN__
+        select(sys_maxfd+1, &readset, &writeset, 0, &timout);
+#else
         select(sys_maxfd+1, &readset, &writeset, &exceptset, &timout);
+#endif
         for (i = 0; i < sys_nfdpoll; i++)
             if (FD_ISSET(sys_fdpoll[i].fdp_fd, &readset))
         {

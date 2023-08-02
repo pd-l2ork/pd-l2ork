@@ -268,8 +268,11 @@ int socket_connect(int socket, const struct sockaddr *addr,
         FD_SET(socket, &writefds); /* socket is connected when writable */
         FD_ZERO(&errfds);
         FD_SET(socket, &errfds); /* catch exceptions */
-
+#ifdef __EMSCRIPTEN__
+        status = select(socket+1, NULL, &writefds, 0, &timeoutval);
+#else
         status = select(socket+1, NULL, &writefds, &errfds, &timeoutval);
+#endif
         if (status < 0) /* select failed */
         {
             fprintf(stderr, "socket_connect: select failed");

@@ -42,7 +42,6 @@ a fat binary or an indication of the instruction set. */
 
 #if defined(__EMSCRIPTEN__)
 static char sys_dllextent[] = ".wasm", sys_dllextent2[] = ".so";
-int __Pd_loadLib(const char *filename, const char *symname);
 #elif defined(__linux__) || defined(__FreeBSD_kernel__) || defined(__GNU__) || defined(__FreeBSD__)
 static char sys_dllextent2[] = ".pd_linux";
 # ifdef __x86_64__
@@ -235,19 +234,7 @@ gotone:
     strncat(filename, nameptr, MAXPDSTRING-strlen(filename));
     filename[MAXPDSTRING-1] = 0;
 
-    
-#ifdef __EMSCRIPTEN__
-    int ret = __Pd_loadLib(filename, symname);
-    if (ret == 1) {
-        class_set_extern_dir(&s_);
-        return (1);
-    }
-    else if (ret == 0) {
-        verbose(1, "%s: couldn't load", filename);
-        class_set_extern_dir(&s_);
-        return (0);
-    }
-#elif _WIN32
+#ifdef _WIN32
     {
         char dirname[MAXPDSTRING], *s, *basename;
         sys_bashfilename(filename, filename);
@@ -284,7 +271,7 @@ gotone:
              makeout = (t_xxx)GetProcAddress(ntdll, "setup");
         SetDllDirectory(NULL); /* reset DLL dir to nothing */
     }
-#elif defined(HAVE_LIBDL) || defined(__FreeBSD__)
+#elif defined(HAVE_LIBDL) || defined(__FreeBSD__) || defined(__EMSCRIPTEN__)
     dlobj = dlopen(filename, RTLD_NOW | RTLD_GLOBAL);
     if (!dlobj)
     {
@@ -443,7 +430,7 @@ int sys_run_scheduler(const char *externalschedlibname,
             externalmainfunc =
                 (t_externalschedlibmain)GetProcAddress(ntdll, "main");
     }
-#elif defined HAVE_LIBDL
+#elif defined HAVE_LIBDL || defined __EMSCRIPTEN__
     {
         void *dlobj;
         dlobj = dlopen(filename, RTLD_NOW | RTLD_GLOBAL);

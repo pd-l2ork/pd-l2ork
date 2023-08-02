@@ -11,6 +11,8 @@
 
 #include "js.hpp"
 #include <emscripten.h>
+#include <stdio.h>
+#include <dlfcn.h>
 
 // EM_JS functions are exposed to the global scope in javascript
 // we use a double underscore prefix to prevent potential namespace collision
@@ -84,26 +86,6 @@ EM_JS(const char *, __Pd_getMidiOutDeviceName, (int devno), {
     else {
         console.error("couldn't find the javascript function 'Module.Pd.getMidiOutDeviceName'");
     }
-});
-
-EM_JS(int, __Pd_loadLib, (const char *filename, const char *symname), {
-    return Asyncify.handleAsync(async () => {
-        try {
-            await loadDynamicLibrary(UTF8ToString(filename), {loadAsync: true, global: true, nodelete: true, fs: FS});
-            var makeout = Module['_' + UTF8ToString(symname)];
-            if (typeof makeout === "function") {
-                makeout();
-                return 1; // success
-            }
-            else {
-                return -1; // couldn't find the function
-            }
-        }
-        catch (error) {
-            console.error(error);
-            return 0; // couldn't load the external
-        }
-    });
 });
 
 EM_JS(void, __Pd_receiveCommandBuffer, (char *buf), {

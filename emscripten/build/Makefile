@@ -21,23 +21,32 @@ SRC_DIR = $(EM_PATH)/src
 SRC_FILES = $(SRC_DIR)/main.cpp $(SRC_DIR)/pd.cpp $(SRC_DIR)/js.cpp
 TARGET = main.html
 OUTPUT_FILES = $(TARGET) main.js main.wasm main.data
-CFLAGS = -I$(PD_PATH)/src -I$(LIBPD_PATH)/libpd_wrapper -O3
+CFLAGS = -I$(PD_PATH)/src -I$(LIBPD_PATH)/libpd_wrapper -O3 -fsanitize=address
 LDFLAGS = -L$(LIBPD_PATH)/libs -lpd -lm
+ifeq ($(DEBUG), true)
+    CFLAGS = -I$(PD_PATH)/src -I$(LIBPD_PATH)/libpd_wrapper -g -O0 -fsanitize=address
+    LDFLAGS = -L$(LIBPD_PATH)/libs -lpd -lm -sASSERTIONS --profiling-funcs
+endif
 
 .PHONY: build install $(OUTPUT_FILES) clean
 
 all: build install
 
+# removed from the second line (right below build:'s first line of the emcc call) the following
+# 	-s ASYNCIFY -s "ASYNCIFY_IMPORTS=['__Pd_loadLib']" \
+#
 build: $(SRC_FILES) $(DESTDIR)
+	@echo "build/Makefile building with $(CFLAGS)..."
+# use this to clear the cache
+#	emcc  --cache ./emcc-cache --clear-cache
 	emcc $(CFLAGS) -s MAIN_MODULE=1 --bind -o $(TARGET) $(SRC_FILES) \
-	-s ASYNCIFY -s "ASYNCIFY_IMPORTS=['__Pd_loadLib']" \
 	-s USE_SDL=2 -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s ALLOW_MEMORY_GROWTH=1 \
-	-s FORCE_FILESYSTEM=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['FS']" \
-	--no-heap-copy --preload-file $(DESTDIR) $(LDFLAGS)
+	-s FORCE_FILESYSTEM=1 -s EXPORTED_RUNTIME_METHODS=FS \
+	--preload-file $(DESTDIR) $(LDFLAGS) --cache ./emcc-cache
 	@echo "emscripten build succeeded!"
 
 install: $(OUTPUT_FILES)
-	cp main* $(EM_PATH)/projects/PdWebParty/public/emscripten
+	cp main* $(EM_PATH)/projects/PdWebParty/public/emscripten/
 	@echo "emscripten install succeeded!"
 
 $(OUTPUT_FILES): %: $(INSTALL_PATH)

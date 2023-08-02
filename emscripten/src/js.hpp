@@ -21,7 +21,6 @@ extern void __Pd_openMidi(int nmidiin, int *midiinvec,
                           int nmidiout, int *midioutvec);
 extern const char *__Pd_getMidiInDeviceName(int devno);
 extern const char *__Pd_getMidiOutDeviceName(int devno);
-extern int __Pd_loadLib(const char *filename, const char *symname);
 extern void __Pd_receiveCommandBuffer(char *buf);
 extern void __Pd_receivePrint(const char *s);
 extern void __Pd_receiveBang(const char *source);
