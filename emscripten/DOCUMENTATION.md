@@ -1,5 +1,6 @@
 # Authors
 Zack Lee <cuinjune@gmail.com>
+Drew Bowman <drewb00@vt.edu>
 Ivica Ico Bukvic <ico@vt.edu>
 
 With contributions from Jonathan Wilkes and Albert Graef
