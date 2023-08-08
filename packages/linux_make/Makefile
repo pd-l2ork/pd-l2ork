@@ -70,13 +70,25 @@ install:
 #
 #==============================================================================#
 
-PACKAGE_NAME = Pd-L2Ork-$(PD_VERSION)-`uname -m`
+# 2023-07-13: added build suffix light or full depending on the build type
+#PACKAGE_NAME = Pd-L2Ork-$(PD_VERSION)-`uname -m`
+
+#ifeq ($(LIGHT),yes)
+#default = light
+#else
+#default = default
+#endif
 
 ifeq ($(LIGHT),yes)
 default = light
+BUILD_TYPE = light
 else
 default = default
+BUILD_TYPE = full
 endif
+
+PACKAGE_NAME = Pd-L2Ork-$(BUILD_TYPE)-$(PD_VERSION)-`uname -m`
+# end build suffix fix
 
 package: $(PACKAGE_TYPE)
 
