@@ -252,7 +252,7 @@ welcome_install:
 	echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"http://puredata.org/ploneCustom.css\" />" >> $(WELCOME_FILE)
 	echo "</head>" >> $(WELCOME_FILE)
 	echo "<body><p><p>" >> $(WELCOME_FILE)
-	echo "<h2>Pd-l2ork version $(PD_BUILD_VERSION)</h2>" >> $(WELCOME_FILE)
+	echo "<h2>Pd-l2ork version $(PD_L2ORK_VERSION) $(PD_BUILD_VERSION)</h2>" >> $(WELCOME_FILE)
 	echo "<p>Pd-l2ork was written by Ivica Bukvic and Jonathan Wilkes. It is a fork of Hans-Christoph Steiner's Pd-extended, which in turn is based on Miller S. Puckette's Pd. The included Pd abstractions and externals are the work of many people whose contributions are gratefully acknowledged.</p>" >> $(WELCOME_FILE)
 	echo "<font size=\"-1\">" >> $(WELCOME_FILE)
 	echo "<p>`grep -A9 ACKNOWLEDG $(pd_src)/README.txt`</p>" >> $(WELCOME_FILE)

@@ -44,9 +44,9 @@ debdist = pd-l2ork-$(debversion)
 # nw.js sdk
 # NOTE: arm packages need some special-casing, since they are released
 # separately, and the version numbers do not always match up.
-nwjsver = 0.28.1
+nwjsver = 0.67.1
 nwjspkg = nwjs-sdk-v$(nwjsver)-linux
-nwjsver_arm = 0.27.6
+nwjsver_arm = 0.28.4
 nwjspkg_arm = nwjs-sdk-v$(nwjsver_arm)-linux
 nwjs = $(nwjspkg)-ia32.tar.gz $(nwjspkg)-x64.tar.gz $(nwjspkg_arm)-arm.tar.gz
 
@@ -97,7 +97,7 @@ debsrc-us:
 
 # Determine the build version which needs git to be computed, so we can't do
 # it in a stand-alone build from a tarball.
-PD_BUILD_VERSION := $(shell git log -1 --format=%cd --date=short | sed -e 's/-//g')-rev.$(shell git rev-parse --short HEAD)
+PD_BUILD_VERSION := rev.$(shell git rev-parse --short HEAD)
 
 $(debsrc):
 	rm -rf $(debdist)

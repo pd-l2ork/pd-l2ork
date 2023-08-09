@@ -157,7 +157,7 @@ endif
 # AG: Pd-l2ork version number
 PD_L2ORK_VERSION := $(shell grep PD_L2ORK_VERSION m_pd.h | \
 	sed 's|^.define *PD_L2ORK_VERSION *"\(.*\)".*|\1|' )
-PD_BUILD_VERSION := $(shell git log -1 --format=%cd --date=short | sed -e 's/-//g')-rev.$(shell git rev-parse --short HEAD)
+PD_BUILD_VERSION := rev.$(shell git rev-parse --short HEAD)
 
 
 #

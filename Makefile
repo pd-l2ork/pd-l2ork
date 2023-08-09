@@ -254,7 +254,7 @@ dist: $(debsrc)
 
 # Determine the build version which needs git to be computed, so we can't do
 # it in a stand-alone build from a tarball.
-PD_BUILD_VERSION := $(shell test -d .git && (git log -1 --format=%cd --date=short | sed -e 's/-//g'))-rev.$(shell test -d .git && git rev-parse --short HEAD)
+PD_BUILD_VERSION := rev.$(shell test -d .git && git rev-parse --short HEAD)
 
 $(debsrc):
 	@test -d .git || (echo "Not a git repository, bailing out." && false)

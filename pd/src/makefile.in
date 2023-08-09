@@ -106,7 +106,7 @@ PD_L2ORK_VERSION := $(shell grep PD_L2ORK_VERSION m_pd.h | \
 # This is replicated from packages/Makefile.buildlayout. XXXFIXME: Right now
 # you have to manually keep these two definitions in sync; if you edit one of
 # them, you should also edit the other.
-PD_BUILD_VERSION := $(shell git log -1 --format=%cd --date=short | sed -e 's/-//g')-rev.$(shell git rev-parse --short HEAD)
+PD_BUILD_VERSION := rev.$(shell git rev-parse --short HEAD)
 
 #
 #  ------------------ targets ------------------------------------

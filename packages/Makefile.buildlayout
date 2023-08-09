@@ -193,14 +193,14 @@ PD_L2ORK_VERSION := $(shell grep PD_L2ORK_VERSION $(pd_src)/src/m_pd.h | \
 # materials (ReadMe files and such). Note that this will only work when
 # building directly from a clone of the git repo, and of course you'll need to
 # have git installed.
-PD_BUILD_VERSION := $(shell git log -1 --format=%cd --date=short | sed -e 's/-//g')-rev.$(shell git rev-parse --short HEAD)
+PD_BUILD_VERSION := rev.$(shell git rev-parse --short HEAD)
 
 # AG: This is being used for the package name and accompanying materials. For
 # Pd-L2Ork the vanilla Pd version numbers are rather meaningless (they are
 # mainly kept around so that 3rd party externals and abstractions know what
 # iteration of the vanilla API they have available). Instead, we use a version
 # number derived from PD_L2ORK_VERSION and PD_BUILD_VERSION.
-PD_VERSION := $(PD_BUILD_VERSION)
+PD_VERSION := $(PD_L2ORK_VERSION)-$(PD_BUILD_VERSION)
 
 VERSION_DATE := $(shell date +%Y%m%d)
 

@@ -1,5 +1,5 @@
 #N struct cat float x float y;
-#N canvas 337 210 527 466 12;
+#N canvas 337 234 519 466 12;
 #N canvas 634 205 452 371 version 0;
 #X msg 61 51 l2ork_version;
 #X obj 61 76 pdinfo;
@@ -51,7 +51,7 @@ is distributed under the same license as Pd. For additional info see:
 #X text 18 381 Reference documentation for Pd lives in:;
 #X obj 18 399 pddp/pddplink @pd_help/../1.manual/index.htm -text doc/1.manual/index.htm
 ;
-#X obj 18 32 cnv 15 482 33 empty \$0-about_text Pd-l2ork-2.16.0\ 20211129-rev.b5f194e7
+#X obj 18 32 cnv 15 482 33 empty \$0-about_text Pd-l2ork-2.16.0\ 20230808-rev.f8a16487
 67 12 0 18 #ff9f71 #000000 0;
 #N canvas 430 372 450 323 cat 0;
 #X obj 16 180 draw sprite ./cat;
@@ -74,9 +74,9 @@ is distributed under the same license as Pd. For additional info see:
 #X scalar cat 411 75 \;;
 #X obj 407 58 cnv 15 93 20 empty \$0-vanilla_text Pd-0.48.0 10 6 0
 14 #d0d0d0 #000000 0;
-#X obj 393 398 cnv 15 31 20 empty \$0-precision_text 32 10 6 0 14 #fcfcfc
+#X obj 393 398 cnv 15 31 20 empty \$0-precision_text 32 10 7 0 14 #fcfcfc
 #000000 0;
-#X text 427 396 bit floats;
+#X text 427 397 bit floats;
 #X text 18 304 Pd-L2Ork 2.x integrates elements of Purr-Data and merges
 it with the milestones achieved in the Pd-L2Ork 1.x and Pure-Data.
 It further introduces an array of new and unique features.;
