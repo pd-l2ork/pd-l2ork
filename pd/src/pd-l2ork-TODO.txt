@@ -696,6 +696,8 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Added support for the latest RPi hardware and kernel that identifies itself differently.
 *Removed Purr-Data versioning from the post-install README.
 *Fixed stray help files that did not have their cnv number recolored, making it effectively invisible when using the new theme.
+*Fixed a bug where tooltip parsing did not work on Windows because the delimiter was ':' which is also used in Windows paths (e.g. C:\Users\somefile.pd), resulting in erroneous data.
+*Reworked how the rtext info is formatted before being sent to gui_gobj_new. Due to lack of null terminating character, on Windows in particular, this would result in an error that would prevent the canvas to be properly drawn. Streamlined how all objects that call gui_gobj_new obtain this info.
 
 
 
