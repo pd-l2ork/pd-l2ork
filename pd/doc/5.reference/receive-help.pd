@@ -54,7 +54,7 @@ for Pd version 0.42.;
 #X obj 20 268 pddp/helplink maxlib/netdist;
 #X restore 102 647 pd Related_objects;
 #X obj 78 390 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
-#9c9c9c 0;
+#646464 0;
 #X obj 518 12 r;
 #X obj 444 12 receive;
 #X text 494 12 or;
@@ -171,12 +171,12 @@ doc/2.control.examples/13.locality.pd;
 #X msg 270 88 set dave;
 #X text 98 285 anything;
 #X obj 77 285 cnv 17 3 50 empty \$0-pddp.cnv.let.0 0 5 7 0 16 #dcdcdc
-#9c9c9c 0;
+#646464 0;
 #X text 168 285 - anything sent to first inlet will be sent immediately
 out. this is simply a courtesy inlet to be able to also send stuff
 to a receive.;
 #X obj 77 350 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 7 0 16 #dcdcdc
-#9c9c9c 0;
+#646464 0;
 #X text 98 350 set;
 #X text 168 350 - sets/changes the name or scope of the receive.;
 #X text 141 53 note how receives with no name have second inlet where

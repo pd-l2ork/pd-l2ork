@@ -38,9 +38,9 @@ size visible;
 is buggy and included only for legacy purposes.;
 #X restore 102 1919 pd Related_objects;
 #X obj 78 509 cnv 17 3 1076 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
-#9c9c9c 0;
+#646464 0;
 #X obj 78 1616 cnv 17 3 113 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
-#9c9c9c 0;
+#646464 0;
 #X obj 4 1919 pddp/pddplink all_about_help_patches.pd -text Usage Guide
 ;
 #X text 465 12 [ggee/image];
@@ -101,8 +101,8 @@ visible alpha;
 #X obj 456 275 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 0 1 1;
 #X msg 456 295 visible \$1;
-#X obj 287 375 ggee/image vu-dial.png 0 0 65 81 empty dial empty 65
-81 1 0 10 #000000 0 -8 81 102 -4.78725 1 1;
+#X obj 287 375 ggee/image vu-dial.png 0 0 65 82 empty dial empty 65
+82 1 0 10 #000000 0 -8 81 102 -4.78725 1 1;
 #X obj 456 253 > 99.9;
 #X obj 393 146 t f f, f 11;
 #N canvas 167 112 469 625 control-surface 0;

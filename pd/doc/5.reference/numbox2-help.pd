@@ -39,12 +39,12 @@ updated by Ivica Ico Bukvic.;
 #X text 18 66 All iem-gui objects:;
 #X restore 103 972 pd Related_objects;
 #X obj 78 332 cnv 17 3 394 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
-#9c9c9c 0;
+#646464 0;
 #X text 98 539 float;
 #X text 98 681 list;
 #X text 98 801 float;
 #X obj 78 801 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
-#9c9c9c 0;
+#646464 0;
 #X floatatom 28 175 6 0 0 0 - - - 0 0 1, f 6;
 #X msg 57 94 set \$1;
 #X floatatom 48 49 6 0 0 0 - - - 0 0 1, f 6;

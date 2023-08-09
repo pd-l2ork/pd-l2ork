@@ -30,7 +30,7 @@ for Pd-l2ork version 2013.05.28;
 #X obj 87 276 cnv 17 3 35 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
 #646464 0;
 #X obj 87 326 cnv 17 3 17 empty \$0-pddp.cnv.let.0 1 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#646464 0;
 #X obj 0 2 cnv 15 552 40 empty \$0-pddp.cnv.header gate 3 12 0 18 #c4dcdc
 #000000 0;
 #X obj 516 4 gate;
@@ -59,7 +59,7 @@ for Pd-l2ork version 2013.05.28;
 #X text 112 296 float;
 #X text 187 296 - set open gate number (0 is closed);
 #X obj 87 367 cnv 17 3 17 empty \$0-pddp.cnv.let.0 n 5 9 0 16 #dcdcdc
-#9c9c9c 0;
+#646464 0;
 #X text 112 326 anything;
 #X text 187 326 - data to send through gate;
 #X text 112 367 anything;
