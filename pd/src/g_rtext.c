@@ -111,6 +111,22 @@ void rtext_gettext(t_rtext *x, char **buf, int *bufsize)
     *bufsize = x->x_bufsize;
 }
 
+// ico 2023-08-08: used to get null terminated text
+// to prevent reading past the allocated memory
+void rtext_getterminatedtext(t_rtext *x, char *result)
+{
+    if (x)
+    {
+        char *buf;
+        int bufsize;
+        rtext_gettext(x, &buf, &bufsize);
+        int final_size =
+            (bufsize >= FILENAME_MAX ? FILENAME_MAX - 1 : bufsize);
+        strncpy(result, buf, final_size);
+        result[final_size] = '\0';
+    }
+}
+
 void rtext_settext(t_rtext *x, char *buf, int bufsize)
 {
     if (x->x_bufsize) freebytes(x->x_buf, x->x_bufsize);

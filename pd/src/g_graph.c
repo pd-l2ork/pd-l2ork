@@ -1190,9 +1190,8 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
         xpix = text_xpix(&x->gl_obj, parent_glist);
         ypix = text_ypix(&x->gl_obj, parent_glist);
 
-        char *buf;
-        int bufsize;
-        rtext_gettext(rtext, &buf, &bufsize);
+        char buf[FILENAME_MAX];
+        rtext_getterminatedtext(rtext, &buf);
 
         char namebuf[FILENAME_MAX];
         gobj_vis_gethelpname((t_gobj *)gr, &namebuf);

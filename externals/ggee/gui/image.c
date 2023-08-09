@@ -124,9 +124,8 @@ static void image_drawme(t_gobj *client, t_glist *glist)
             t_symbol *fname = image_trytoopen(x);
 
             t_rtext *y = glist_findrtext(glist, (t_gobj *)x);
-            char *buf;
-            int bufsize;
-            rtext_gettext(y, &buf, &bufsize);
+            char buf[FILENAME_MAX];
+            rtext_getterminatedtext(y, &buf);
 
             char namebuf[FILENAME_MAX];
             gobj_vis_gethelpname((t_gobj *)x, &namebuf);

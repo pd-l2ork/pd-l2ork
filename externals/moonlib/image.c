@@ -102,9 +102,8 @@ static void image_drawme(t_image *x, t_glist *glist, int firsttime)
     {
 
         t_rtext *y = glist_findrtext(glist, (t_gobj *)x);
-        char *buf;
-        int bufsize;
-        rtext_gettext(y, &buf, &bufsize);
+        char buf[FILENAME_MAX];
+        rtext_getterminatedtext(y, &buf);
 
         char namebuf[FILENAME_MAX];
         gobj_vis_gethelpname((t_gobj *)x, &namebuf);

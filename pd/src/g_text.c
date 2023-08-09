@@ -2626,9 +2626,8 @@ static void text_vis(t_gobj *z, t_glist *glist, int vis)
                 //post("text_vis drawit canvas_class=%d",
                 //    (pd_class(&x->te_pd) == canvas_class ? 1 : 0));
                 t_rtext *y = glist_findrtext(glist, x);
-                char *buf;
-                int bufsize;
-                rtext_gettext(y, &buf, &bufsize);
+                char buf[FILENAME_MAX];
+                rtext_getterminatedtext(y, &buf);
 
                 char namebuf[FILENAME_MAX];
                 gobj_vis_gethelpname(z, &namebuf);

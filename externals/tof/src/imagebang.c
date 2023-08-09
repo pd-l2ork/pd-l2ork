@@ -180,9 +180,8 @@ static void imagebang_drawme(t_imagebang *x, t_glist *glist, int firsttime)
         //sys_vgui("pd [concat %s _imagesize [image width %x_imagebang] [image height %x_imagebang] \\;]\n",x->receive->s_name,x->image_a,x->image_a);
 
         t_rtext *y = glist_findrtext(glist, (t_gobj *)x);
-        char *buf;
-        int bufsize;
-        rtext_gettext(y, &buf, &bufsize);
+        char buf[FILENAME_MAX];
+        rtext_getterminatedtext(y, &buf);
 
         char namebuf[FILENAME_MAX];
         gobj_vis_gethelpname((t_gobj *)x, &namebuf);

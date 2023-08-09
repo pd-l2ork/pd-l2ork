@@ -275,9 +275,8 @@ static void envgen_create(t_envgen *x, t_glist *glist)
     x->w.numclock = clock_new(x, (t_method)envgen_delnum);
 
     t_rtext *y = glist_findrtext(glist, x);
-    char *buf2;
-    int bufsize;
-    rtext_gettext(y, &buf2, &bufsize);
+    char buf2[FILENAME_MAX];
+    rtext_getterminatedtext(y, &buf2);
 
     char namebuf[FILENAME_MAX];
     gobj_vis_gethelpname((t_gobj *)x, &namebuf);

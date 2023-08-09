@@ -901,12 +901,10 @@ static void scope_vis(t_gobj *z, t_glist *glist, int vis)
     {
         int x1, y1, x2, y2;
 	scope_getrect(z, glist, &x1, &y1, &x2, &y2);
-        
-        t_rtext *y = glist_findrtext(glist, t);
-        char *buf;
-        int bufsize;
-        rtext_gettext(y, &buf, &bufsize);
 
+        t_rtext *y = glist_findrtext(glist, t);
+        char buf[FILENAME_MAX];
+        rtext_getterminatedtext(y, &buf);
 
         char namebuf[FILENAME_MAX];
         gobj_vis_gethelpname(z, &namebuf);

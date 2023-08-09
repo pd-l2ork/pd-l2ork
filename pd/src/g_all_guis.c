@@ -1511,10 +1511,8 @@ void iemgui_base_draw_new(t_iemgui *x)
     c->c_wb->w_getrectfn((t_gobj *)x, x->x_glist, &x1, &y1, &x2, &y2);
     
     t_rtext *y = glist_findrtext(x->x_glist, x);
-    char *buf;
-    int bufsize;
-    rtext_gettext(y, &buf, &bufsize);
-
+    char buf[FILENAME_MAX];
+    rtext_getterminatedtext(y, &buf);
 
     //iemgui_getrect_draw(x, &x1, &y1, &x2, &y2); 
     gop_redraw = gr;

@@ -125,9 +125,8 @@ static void pddplink_vis(t_gobj *z, t_glist *glist, int vis)
         if ((glist->gl_havewindow || x->x_isgopvisible)
             && (y = glist_findrtext(glist, (t_text *)x)))
         {
-            char *buf;
-            int bufsize;
-            rtext_gettext(y, &buf, &bufsize);
+            char buf[FILENAME_MAX];
+            rtext_getterminatedtext(y, &buf);
 
             char namebuf[FILENAME_MAX];
             gobj_vis_gethelpname(z, &namebuf);

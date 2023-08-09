@@ -3,13 +3,14 @@ PD-L2ORK TODO:
 
 *Finish integration of packages necessary for a successful compiling of the Windows version of pd-l2ork into README.md.
 
+*cnv object right-click->properties when patch is locked enables edit mode but opens properties of the canvas (patch itself) if the click location is inside the grabbing box, but outside the actual canvas. Doing the same in edit mode works fine.
+
 *Selecting and displacing an array within a GOP doubly displaces its array data when tabwrite is being activated using metro (redraw option keeps adding/subtracting from the array's original position--this is likely a scalargobj getrect bug)
+    *Duplicate of another bug report: putting bar graph and then editing it displaces its data (both Windows and OSX when creating an array as part of a subpatch, possibly leaving it selected, and then manipulating it on the parent window--but not always?).
 
 *On Windows (and possibly other OSs) make sure that properties windows are never below the edge of the screen (e.g. when the properties are opened on an object at or near the bottom of the screen).
 
 *Prev/next window from the Pd window does not work.
-
-*Update versioning to get rid of 2.16.0 and just keep the date (date becomes the version, while build only retains the git commit value). DONE?
 
 *Merge improved forbidden planet documentation patch (I03.resynthesis.pd in audio examples). DONE
   *Investigate why this patch is not using vanilla DAC abstraction, instead of its improved "extended" version.
@@ -34,12 +35,6 @@ argc, t_atom *argv)
                            post("netserver: could not send data to the client");
 -                       x->x_fd_error[client - 1]++;
 +                       //x->x_fd_error[client - 1]++;
-
-
-RARE:
-  *Putting bar graph and then editing it displaces its data (both Windows and OSX when creating an array as part of a subpatch, possibly leaving it selected, and then manipulating it on the parent window--but not always?).
-
-*Update portaudio for OSX and re-check if it is ok for all platforms. IN PROGRESS
 
 *Figure out the OSX Big Sur issue that the user does not have a permission to run the application.
   *Appears to be related to opening the program from multiple accounts.
@@ -130,8 +125,6 @@ RPI 0.28.4 current RPi version.
 
 *Ubuntu 22.04 build: investigate iem16 build issues and gmerlin library support. 20.04 uses 1.16 automake and 2.69 autoconf. 22.04 uses 2.71 autoconf and ??? automake.
 
-*HDMI audio output support (RPi). DONE, NEEDS TO BE MERGED
-
 *Submit patch to js external github.
 
 *Consider adding ability to display array name that is other than the internal name (e.g. so that we don't have to use $0, $1, _ etc. in the name).
@@ -156,7 +149,6 @@ RPI 0.28.4 current RPi version.
 *Investigate if patchwin array is kept properly up-to-date. Got window error when one creates a window, toggles its k12_menu, then creates another one and closes the original one and tries again. Suspect that going through the array trips up across the previously closed window. Currently, have a stopgap check if patchwin is not null before invoking its pd_canvas.js onchange.
 
 *think about a way to deterministically inform both front-end and the back-end that the canvas has indeed loaded. See https://stackoverflow.com/questions/4057236/how-to-add-onload-event-to-a-div-element/55106785#58838457 (Third Attempt (and Definitive Solution))
-
 
 RARE:
 *An error in OSX preferences when working with GUI dropdown (or something along those lines).
@@ -675,7 +667,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Added missing package to the Windows MSYS compile instructions.
 *Fixed a meta subpatch with inlet info that will be used for tooltips.
 *Fixed pddplink and helplink bug where tidy did not properly reposition the object.
-*Rework and merge nlets megapatch. DONE
+*Rework and merge tooltips megapatch. DONE
   *Make sure GOP objects get no tooltips. DONE
   *Only K12/output gets tooltips. Why? Forgot to rebuild index. DONE
       *Change default indexing settings in the settings file that ships with pd-l2ork, so that it includes all objects. DONE
@@ -696,6 +688,14 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
     *Figure out why inlet/outlet have wrong descriptions. DONE
       *tipName first, then objname? Yes. DONE
   *Fix bugs in the tooltip search, rework iemgui and gatom tooltip approaches, so that they can share more. DONE
+  *Fixed a showstopping bug where inlet and/or outlet tooltips were null, resulting in UI freezing.
+*Added emscripten branch and made sure the PdWebParty builds correctly, including a collection of bug-fixes and improvements.
+*Raspberry pi fix for using HDMI audio output (enabled PortAudio in Linux/RPi builds). Cosmetic fixes to the naming scheme for the different audio drivers.
+  *Added full and light suffixes to the built package name.
+  *Removed Purr-Data version number, keeping only the date build and vanilla compatibility version.
+*Added support for the latest RPi hardware and kernel that identifies itself differently.
+*Removed Purr-Data versioning from the post-install README.
+*Fixed stray help files that did not have their cnv number recolored, making it effectively invisible when using the new theme.
 
 
 

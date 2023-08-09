@@ -142,9 +142,8 @@ static void helplink_vis(t_gobj *z, t_glist *glist, int vis)
         {
 
             // t_rtext *y = glist_findrtext(glist, t);
-            char *buf;
-            int bufsize;
-            rtext_gettext(y, &buf, &bufsize);
+            char buf[FILENAME_MAX];
+            rtext_getterminatedtext(y, &buf);
 
             char namebuf[FILENAME_MAX];
             gobj_vis_gethelpname(z, &namebuf);
