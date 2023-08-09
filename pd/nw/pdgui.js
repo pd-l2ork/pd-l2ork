@@ -423,7 +423,7 @@ function add_doc_details_to_index(filename, data) {
         title = title.slice(0, -5);
     }
     index_cache[index_cache.length] = [filename, title, keywords, desc, rel_objs, ref_rel_objs, inout, tippathname]
-	.map(index_entry_esc).join(":");
+	.map(index_entry_esc).join(";:");
     var d = path.dirname(filename);
     index_manif.add(d);
     // Also add the parent directory to catch additions of siblings.
@@ -490,7 +490,7 @@ function finish_index() {
 	    var a = new Array();
 	    index_manif.forEach(function(x) {
 		var st = fs.statSync(x);
-		a[a.length] = index_entry_esc(x) + ":" + st.mtimeMs;
+		a[a.length] = index_entry_esc(x) + ";:" + st.mtimeMs;
 	    });
 	    a.sort();
 	    // Make sure that the target dir exists:
@@ -519,7 +519,7 @@ function finish_index() {
     index_file_lines_path = idxf.split('\n');
     for (var i = 0; i < index_file_lines.length; i++) {
         index_file_lines_path[i] =
-            index_file_lines_path[i].split(':').pop();
+            index_file_lines_path[i].split(';:').pop();
     }
     //now redraw all canvases to update tooltips
     redraw_all_visible_canvases();
@@ -539,7 +539,7 @@ function check_timestamps(manif)
     manif = manif.split('\n');
     for (var j = 0, l = manif.length; j < l; j++) {
 	if (manif[j]) {
-	    var e = manif[j].replace(/\\:/g, "\x1c").split(':')
+	    var e = manif[j].replace(/\\:/g, "\x1c").split(';:')
 		.map(x => x
 		     .replace(/\x1c/g, ":")
 		     .replace(/\\n/g, "\n")
@@ -627,7 +627,7 @@ function make_index(force) {
         idx = idx.split('\n');
         for (var j = 0, l = idx.length; j < l; j++) {
             if (idx[j]) {
-                var e = idx[j].replace(/\\:/g, "\x1c").split(':')
+                var e = idx[j].replace(/\\:/g, "\x1c").split(';:')
                     .map(x => x
                         .replace(/\x1c/g, ":")
                         .replace(/\\n/g, "\n")
@@ -673,7 +673,7 @@ function make_index(force) {
     index_file_lines_path = idxf.split('\n');
     for (var i = 0; i < index_file_lines.length; i++) {
         index_file_lines_path[i] =
-            index_file_lines_path[i].split(':').pop();
+            index_file_lines_path[i].split(';:').pop();
     }
     pdsend("pd gui-busy 0");
 }
@@ -3898,7 +3898,7 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
             // does not reflect the actual object (e.g. help file for pd could be canvas)
             var line = find_tooltip_index_line(tipname, objname);
             if (line > -1) {
-                var yyy = index_file_lines[line].split(':')[_tooltip_obj];
+                var yyy = index_file_lines[line].split(';:')[_tooltip_obj];
                 var parsed_tooltip = String(yyy).replace(/\\/g,'');
                 x.textContent = parsed_tooltip;
 
@@ -3975,7 +3975,7 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
                 if (line > -1) {
                     //post("objname: " + objname +
                     //    " object description: " + index_file_lines[line]);
-                    var yyy = index_file_lines[line].split(':')[_tooltip_obj];
+                    var yyy = index_file_lines[line].split(';:')[_tooltip_obj];
                     var parsed_tooltip = String(yyy).replace(/\\/g,'');
                     x.textContent = parsed_tooltip;
                     g.appendChild(x);
@@ -4117,7 +4117,7 @@ function gui_gobj_draw_io(cid, parenttag, tag, x1, y1, x2, y2, basex, basey,
             }           
             var line = find_tooltip_index_line(parent_tip_text, parent_obj_text);
             if (line > -1) {
-                var yyy = index_file_lines[line].split(':')[_tooltip_nlet];
+                var yyy = index_file_lines[line].split(';:')[_tooltip_nlet];
                 if (yyy != null) {
                     var inlet = yyy.match(/(?<=I.\s)[^\|]+/g);
                     var outlet = yyy.match(/(?<=O.\s)[^\|]+/g);
@@ -5566,7 +5566,7 @@ function numbox_data_string_triangle(w, h) {
 }
 
 // TODO: send fewer parameters from c (ico@vt.edu 20200916: not sure if this is possible)
-function gui_numbox_new(cid, ownercid, parentcid, tag, color, x, y, w, h, drawstyle, is_toplevel,name) {
+function gui_numbox_new(cid, ownercid, parentcid, tag, color, x, y, w, h, drawstyle, is_toplevel, name) {
     // numbox doesn't have a standard iemgui border,
     // so we must create its gobj manually
     //gui(cid).get_elem("patchsvg", function() {
