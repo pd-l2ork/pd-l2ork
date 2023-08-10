@@ -1,9 +1,9 @@
-#N canvas 118 5 1638 982 10;
+#N canvas 118 64 1638 982 10;
 #X obj 0 0 cnv 15 1637 973 empty empty empty 5 7 0 10 #444444 #fcfcfc
 0;
 #X obj 4 2 cnv 15 1630 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.73\ by
+#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.74\ by
 4 5 0 10 #6c6c6c #fcfcfc 0;
 #X obj 252 3 cnv 15 125 16 empty empty (c)\ 2020-2\ Released\ under\ the
 4 6 0 10 #6c6c6c #fcfcfc 0;
@@ -82,7 +82,7 @@ empty -5 -9 0 10 #80fc80 #008080 #fcfcfc 1;
 -text GPL v3 License;
 #X obj 820 672 core/L2OrkTweet 11;
 #X obj 820 823 core/L2OrkTweet 12;
-#N canvas 769 560 502 135 core 0;
+#N canvas 769 572 502 135 core 0;
 #N canvas 139 226 861 609 loop-logic 0;
 #X obj 506 423 r myclientnum;
 #X obj 101 566 forward null;
@@ -1474,7 +1474,7 @@ delay from 250 to 1000 in 0.73., f 41;
 #X connect 77 0 76 0;
 #X connect 78 0 11 0;
 #X restore 359 52 pd load-save-session;
-#N canvas 245 529 450 324 version 0;
+#N canvas 245 541 450 324 version 0;
 #X obj 177 51 loadbang;
 #X obj 177 101 t f f;
 #X obj 204 125 s version;
@@ -1485,7 +1485,7 @@ delay from 250 to 1000 in 0.73., f 41;
 #X text 99 75 DEBUG;
 #X obj 177 168 sprintf L2Ork Tweeter v.%.02f by;
 #X obj 177 193 tosymbol;
-#X msg 177 76 0.73;
+#X msg 177 76 0.74;
 #X connect 0 0 10 0;
 #X connect 1 0 8 0;
 #X connect 1 1 2 0;
@@ -1674,7 +1674,7 @@ unnecessary error being printed into the console, f 27;
 #X obj 19 281 == 3;
 #X obj 19 306 sel 1;
 #X obj 19 331 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 1 1 1;
+#000000 0 1 1;
 #X text 19 92 ctrl+shift+alt toggles editability (alt being last!)
 ;
 #X obj 64 125 keyname 1;
@@ -1821,3 +1821,4 @@ instrument and/or loop from \, using one of the following clicking
 actions that need to be performed within the 500ms of initiating the
 first click:, f 82;
 #X restore 1338 3 pd supplemental-documentation;
+#X editable 0;
