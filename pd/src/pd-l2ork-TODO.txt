@@ -1,8 +1,6 @@
 PD-L2ORK TODO:
 *Seek RPi version of nw.js 0.67.1. IN PROGRESS
 
-*Finish integration of packages necessary for a successful compiling of the Windows version of pd-l2ork into README.md.
-
 *cnv object right-click->properties when patch is locked enables edit mode but opens properties of the canvas (patch itself) if the click location is inside the grabbing box, but outside the actual canvas. Doing the same in edit mode works fine.
 
 *Selecting and displacing an array within a GOP doubly displaces its array data when tabwrite is being activated using metro (redraw option keeps adding/subtracting from the array's original position--this is likely a scalargobj getrect bug)
@@ -698,14 +696,13 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Fixed stray help files that did not have their cnv number recolored, making it effectively invisible when using the new theme.
 *Fixed a bug where tooltip parsing did not work on Windows because the delimiter was ':' which is also used in Windows paths (e.g. C:\Users\somefile.pd), resulting in erroneous data.
 *Reworked how the rtext info is formatted before being sent to gui_gobj_new. Due to lack of null terminating character, on Windows in particular, this would result in an error that would prevent the canvas to be properly drawn. Streamlined how all objects that call gui_gobj_new obtain this info.
+*Finish integration of packages necessary for a successful compiling of the Windows version of pd-l2ork into README.md.
 
 
 
 
 TWEETER TODO:
-*Not able to save sessions using teacher widget on Windows?
-
-*Offer a way to deal with different keyboards (some keys are not in the same place)
+*Offer a way to deal with different keyboards (some keys are not in the same place, see the ELSE approach and new objects that deal with this)
 
 *Del is by default also moving pattern?
   No. Just when the shift is held and focus lost is when things break down.
@@ -826,6 +823,9 @@ TWEETER DONE:
   *Cleaned-up top-right corner of the main Tweeter window.
   *Overhauled ediable option. Now can toggle patch editability with Shift+Ctrl+Alt (with Alt being the last key to be pressed).
   *Introduced glob-recall-preset, glob-save-preset, glob-recall-loop, and glob-recall-preset, used by the aforesaid Loop-Preset-Widget.pd.
+*0.74:
+  *Version bump due to incremental changes that did not include version change, to prevent confusion with 0.73.
+  *Inclusion of the Transcontinental Grapevine Score and Parts.
 
 
 

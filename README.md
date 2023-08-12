@@ -249,21 +249,27 @@ since it will usually contain spaces, making the build fail.
           mingw-w64-i686-ninja \
           mingw-w64-i686-glfw mingw-w64-i686-pcre
 
-5. Download the source code *(3-6 minutes)*  
+5. Install older versions of dlfcn and binutils packages that are included in the pd-l2ork git. This is due to newer packages misssing one critical library that prevents certain externals from building. For an experimental 64-bit version (currently unsupported) replace win32_inno with win64_inno:
+
+        cd packages/win32_inno/msys
+        pacman -U mingw-w64-i686-dlfcn-1.2.0-1-any.pkg.tar.xz \
+          mingw-w64-i686-binutils-2.39-3-any.pkg.tar.zst
+
+6. Download the source code *(3-6 minutes)*  
    Issue the following command to create a new directory "pd-l2ork" and clone
    the repository to it:
 
         git clone https://github.com/pd-l2ork/pd-l2ork.git
 
-6. Enter the source directory *(less than a minute)*
+7. Enter the source directory *(less than a minute)*
 
         cd pd-l2ork
 
-7. Finally, build Pd-L2Ork *(45-80 minutes)*
+8. Finally, build Pd-L2Ork *(45-80 minutes)*
 
         make
 
-8. Look in the top level source directory and double-click the setup file to
+9. Look in the top level source directory and double-click the setup file to
    start installing Pd-L2Ork on your system.
 
 #### Windows 64-bit Using msys2
