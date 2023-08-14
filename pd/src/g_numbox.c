@@ -268,13 +268,8 @@ static void my_numbox_draw_new(t_my_numbox *x, t_glist *glist)
     int d=1+x->x_gui.x_h/34;
     int x1=text_xpix(&x->x_gui.x_obj, glist), x2=x1+x->x_numwidth;
     int y1=text_ypix(&x->x_gui.x_obj, glist), y2=y1+x->x_gui.x_h;
-    t_rtext *y = glist_findrtext(glist, x);
-    char *buf;
-    int bufsize;
-    rtext_gettext(y, &buf, &bufsize);
 
-
-    gui_vmess("gui_numbox_new", "xxxxsiiiiiis",
+    gui_vmess("gui_numbox_new", "xxxxsiiiiii",
         canvas,
         x->x_gui.x_glist,
         x->x_gui.x_glist->gl_owner,
@@ -285,8 +280,7 @@ static void my_numbox_draw_new(t_my_numbox *x, t_glist *glist)
         x2 - x1,
         y2 - y1,
         x->x_drawstyle,
-        glist_istoplevel(glist),
-        buf);
+        glist_istoplevel(glist));
 
     my_numbox_ftoa(x, 0);
     sprintf(cbuf, "#%6.6x", x->x_gui.x_fcol);

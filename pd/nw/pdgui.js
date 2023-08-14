@@ -309,7 +309,7 @@ function add_doc_details_to_index(filename, data) {
     }
     // console.log("title: "+ title);
     // console.log("inlet: "+ inlet);
-    console.log("res: "+res);
+    //console.log("res: "+res);
     // console.log("outlet: "+outlet);
     inout = res;
     // AG: And we want to get rid of the newlines, there's no reason
@@ -5566,7 +5566,7 @@ function numbox_data_string_triangle(w, h) {
 }
 
 // TODO: send fewer parameters from c (ico@vt.edu 20200916: not sure if this is possible)
-function gui_numbox_new(cid, ownercid, parentcid, tag, color, x, y, w, h, drawstyle, is_toplevel, name) {
+function gui_numbox_new(cid, ownercid, parentcid, tag, color, x, y, w, h, drawstyle, is_toplevel) {
     // numbox doesn't have a standard iemgui border,
     // so we must create its gobj manually
     //gui(cid).get_elem("patchsvg", function() {
