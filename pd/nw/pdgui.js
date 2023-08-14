@@ -263,9 +263,16 @@ function add_doc_details_to_index(filename, data) {
     desc = desc && desc.length > 1 ? desc[1].trim() : null;
 
     if (nw_os_is_windows) {
+        // we don't need an RPI-LATER workaround here since this is Windows
         tippathname=filename.replaceAll("\\"," ");
     } else {
-        tippathname=filename.replaceAll("/"," ");
+        // we check for the RPi nwjs version since as of 2023-08-14 that one
+        // lacks the replaceAll function, and provide our own
+        // RPI-LATER: update this once we update the RPi nwjs version to a newer one
+        if (check_nw_version("0.28"))
+            tippathname = String(filename).split("/").join(" ");
+        else
+            tippathname=filename.replaceAll("/"," ");
     }
     //post("tippathname=" + tippathname);
     // inlet = inlet && inlet.length > 1 ? inlet[1].trim() : null;
@@ -3746,7 +3753,13 @@ function find_tooltip_index_line(tip, obj) {
     // first clean up the tip, getting rid of potential creation arguments
     var tipname = tip.replace(/ .*/,'');
     // now replace '/' with ' '
-    tipname = String(tipname).replaceAll("/"," ");
+    // we check for the RPi nwjs version since as of 2023-08-14 that one
+    // lacks the replaceAll function, and provide our own
+    // RPI-LATER: update this once we update the RPi nwjs version to a newer one
+    if (check_nw_version("0.28"))
+        tipname = String(tipname).split("/").join(" ");
+    else
+        tipname = String(tipname).replaceAll("/"," ");
     // add space before it, to prevent false positives (e.g. image is found in drawimage)
     tipname = " " + tipname + "-help";
     for (i = 0; i < index_file_lines_path.length; i++) {
@@ -3762,7 +3775,13 @@ function find_tooltip_index_line(tip, obj) {
         // first clean up the obj, getting rid of potential creation arguments
         var objname = obj.replace(/ .*/,'');
         // now replace '/' with ' '
-        objname = String(objname).replaceAll("/"," ");
+        // we check for the RPi nwjs version since as of 2023-08-14 that one
+        // lacks the replaceAll function, and provide our own
+        // RPI-LATER: update this once we update the RPi nwjs version to a newer one
+        if (check_nw_version("0.28"))
+            objname = String(objname).split("/").join(" ");
+        else
+            objname = String(objname).replaceAll("/"," ");
         // add space before it, to prevent false positives (e.g. image is found in drawimage)
         //objname = " " + objname + "-help";
         for (i = 0; i < index_file_lines_path.length; i++) {

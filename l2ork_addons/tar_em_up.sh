@@ -421,7 +421,7 @@ then
 		# application if the platform is not recognized. this will result
 		# in objects like disis_spi and disis_gpio to fail to create,
 		# but at least they will not crash.
-		if [ $arch == "armv7l" ]; then
+		if [[ $arch == "armv7l" || $arch == "aarch64" ]]; then
 			if [ -f disis_gpio/disis_gpio.pd_linux ]; then
 			cp -f disis_gpio/disis_gpio.pd_linux ../../packages/linux_make/build$inst_dir/lib/pd-l2ork/extra
 			cp -f disis_gpio/disis_gpio-help.pd ../../packages/linux_make/build$inst_dir/lib/pd-l2ork/extra
