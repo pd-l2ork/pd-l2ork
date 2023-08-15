@@ -176,7 +176,7 @@ else
 default = default
 BUILD_TYPE = full
 endif
-PACKAGE_NAME = Pd-L2Ork-$(BUILD_TYPE)-$(PD_VERSION)-x86_64
+PACKAGE_NAME = Pd-L2Ork-$(BUILD_TYPE)-$(PD_VERSION)-$(shell uname -m)
 ##added light and full differentiation
 darwin_app_core: darwin_app_wrapper
 	$(MAKE) -C $(packages_src) $(DEST_PATHS) \
