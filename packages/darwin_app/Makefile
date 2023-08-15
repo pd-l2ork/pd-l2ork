@@ -171,11 +171,12 @@ readme_install:
 #------------------------------------------------------------------------------#
 ifeq ($(LIGHT),yes)
 default = light
-Build_Type = light
+BUILD_TYPE = light
 else
 default = default
-Build_Type = full
+BUILD_TYPE = full
 endif
+PACKAGE_NAME = Pd-L2Ork-$(BUILD_TYPE)-$(PD_VERSION)-x86_64
 ##added light and full differentiation
 darwin_app_core: darwin_app_wrapper
 	$(MAKE) -C $(packages_src) $(DEST_PATHS) \
@@ -201,8 +202,9 @@ darwin_app_core: darwin_app_wrapper
 
 package: dmg
 
-#Added Build_Type
-VOLUME_NAME = Pd-L2Ork-$(Build_Type)
+#Added BUILD_TYPE
+
+VOLUME_NAME = $(PACKAGE_NAME)
 dmg:
 # ico@vt.edu 2022-10-10: sign the app, so that we can get the mic/camera
 # permission prompts
