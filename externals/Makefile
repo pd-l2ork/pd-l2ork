@@ -157,7 +157,8 @@ INCREMENTAL = yes
 else ifeq ($(EMSCRIPTEN),yes)
 # original one used by the first iteration of PdWebParty: lib_targets = arraysize autotune bassemu boids bsaylor comport creb cxc earplug ekext ext13 freeverb ggee hcs iem_ambi iem_bin_ambi iemguts iem_adaptfilt iem_delay iem_roomsim iem_spec2 jasch_lib loaders-libdir mapping markex maxlib mjlib moonlib motex mrpeach pan pddp rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing
 lib_targets = arraysize autotune bassemu boids bsaylor comport creb cxc earplug ekext ext13 freeverb ggee hcs jasch_lib loaders-libdir mapping markex maxlib mjlib moonlib motex mrpeach pan pddp rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing
-# short one for quick building: lib_targets = maxlib
+# short one for quick building for debugging purposes (disabled by default):
+# lib_targets = maxlib
 else
 lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui fluid freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemgui iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moocow moonlib motex mrpeach oscx pan pdcontainer pddp pdlua pdogg plugin pmpd rjlib sigpack smlib tof unauthorized vbap windowing zexy
 endif
@@ -175,9 +176,10 @@ ifeq ($(OS_NAME),windows)
 else
   ifeq ($(OS_NAME),darwin)
 # on Mac OS X 10.6/Snow Leopard don't build hid since it needs Carbon
-    lib_targets += pdp iem16 apple
-    ifneq ($(shell uname -r | sed 's|10\.[0-9][0-9]*\.[0-9][0-9]*|10|'),10)
-      lib_targets +=
+    ifeq ($(INCREMENTAL),yes)
+			lib_targets += pdp iem16 apple
+    else
+			lib_targets += gem pdp iem16 apple
     endif
   else ifneq ($(LIGHT),yes)
     # GNU/Linux, BSD, IRIX, etc. (we use exported variable INCREMENTAL to
