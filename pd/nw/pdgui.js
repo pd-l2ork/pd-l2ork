@@ -3830,7 +3830,8 @@ function find_tooltip_index_line(tip, obj) {
                  is the actual canvas the gobj belongs to. cid on the other hand
                  references the canvas on which gobj is being drawn and for gop-
                  drawn objects that may be a parent or even several levels above
-                 the parent (e.g. toplevel->gop1->gop2 that is visible gop1, etc.).
+                 the parent (e.g. toplevel->gop1->gop2 that is visible inside
+                 gop1, etc.).
 
    parentcid   = the immediate parent of the ownercid. This is needed to identify
                  appropriate class context below when we wish to reference the right
@@ -3840,8 +3841,8 @@ function find_tooltip_index_line(tip, obj) {
                  exception: when drawing a gop graph, is_toplevel means the gop being
                  drawn is exactly one level below the toplevel, so that it can be
                  drawn as a GOP graph. This is critical for the new GOP implementation
-                 that truly lends a window inside a GOP subpatch/abstraction instead
-                 of the old klunky implemnetation that only draws items that fit
+                 that truly draws a window inside a GOP subpatch/abstraction instead
+                 of the old klunky implementation that only draws items that fit
                  inside GOP, except that it also draws scalars and other things
                  happily outside of its bounds. IMPORTANT: this variable is now present
                  in many (most?) drawing commands as it allows us to differentiate
@@ -3938,8 +3939,9 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
             // post("ID=<" + tipname + "> <" + tipFirstArg + ">");
             var transform_string;
             if (is_toplevel === 0) {
-                var tgt = w.document.getElementsByClassName(ownercid + "svg");
+                var tgt;
                 if (parentcid === cid) {
+                    tgt = w.document.getElementsByClassName(ownercid + "svg");
                     /*
                     post("......parentcid==drawcid parentcid=" + parentcid +
                         " (" + tgt[0].getCTM().a + 
@@ -3958,8 +3960,19 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
                     draw_ypos = draw_ypos - tgt[0].getCTM().f - svg_view_box[1];
                 } else {
                     //post("......parentcid != drawcid");
-                    draw_xpos -= tgt[0].getAttribute("orig_xpos");
-                    draw_ypos -= tgt[0].getAttribute("orig_ypos");
+                    //draw_xpos -= tgt[0].getAttribute("orig_xpos");
+                    //draw_ypos -= tgt[0].getAttribute("orig_ypos");
+                    // ico 2023-08-15: for some reason, unlike garrays, regular
+                    // objects need to always reference their owner, and never
+                    // parent (compare to gui_scalar_new). this is likely due
+                    // to the differences in the way getrect is calculated by
+                    // the two. This may need to be revisited later if we
+                    // encounter inconsistencies with objects that are being
+                    // redrawn due to external events (e.g. repositioning bng
+                    // via message pos x y)
+                    tgt = w.document.getElementsByClassName(ownercid + "svg");
+                    draw_xpos = draw_xpos - tgt[0].getAttribute("orig_xpos");
+                    draw_ypos = draw_ypos - tgt[0].getAttribute("orig_ypos");
                 }
                 //post("......offset x=" + draw_xpos + " y=" + draw_ypos);
             } else {
@@ -4989,7 +5002,7 @@ function gui_text_new(cid, tag, type, isselected, left_margin,
             "font-size": pd_fontsize_to_gui_fontsize(font) + "px",
             "font-weight": "normal",
             id: tag + "text",
-            "class": classname
+            "class": classname + (type === "graph_label" ? " graph_label" : "")
         });
         // trim off any extraneous leading/trailing whitespace. Because of
         // the way binbuf_gettext works we almost always have a trailing
@@ -6337,7 +6350,7 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
     /*
     post("gui_scalar_new drawon=" + cid + " ownercid=" + ownercid +
     " parentcid=" + parentcid + " tag=" + tag + " isselected=" + isselected +
-    " plot_style=" + plot_style + " t1=" + t1 + " t2=" + t2 + " t3=" + t3 + "t4=" + t4 +
+    " plot_style=" + plot_style + " t1=" + t1 + " t2=" + t2 + " t3=" + t3 + " t4=" + t4 +
     " xpos(t5)=" + t5 + " ypos(t6)=" + t6 + " is_toplevel=" + is_toplevel);
     */
     var g, draw_xpos, draw_ypos;
@@ -6355,13 +6368,17 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
                 var svg_view_box = svg_elem.getAttribute("viewBox").split(" ");
                 
                 draw_xpos += 0.5;
-                draw_ypos += 0.5;
+                draw_ypos -= 1;
                 draw_xpos = draw_xpos - tgt[0].getCTM().e - svg_view_box[0];
                 draw_ypos = draw_ypos - tgt[0].getCTM().f - svg_view_box[1];
             } else {
-                //post("......parentcid != drawcid");
-                draw_xpos -= tgt[0].getAttribute("orig_xpos");
-                draw_ypos -= tgt[0].getAttribute("orig_ypos");
+                draw_xpos = t3 - 0.5;
+                draw_ypos = -t4 - 1;
+                /*
+                post("......parentcid != drawcid parentxy=(" + tgt[0].getCTM().e
+                    + "," + tgt[0].getCTM().f + ") drawxy=(" + draw_xpos + "," +
+                    draw_ypos + ")");
+                */
             }
             //post("......offset x=" + draw_xpos + " y=" + draw_ypos);
         }
@@ -8138,7 +8155,7 @@ function gui_graph_label(cid, tag, font_size, font_height, is_selected,
             var x, y;
             if (!!legacy_mode) { // Pd Vanilla labels go above the box
                 y = -font_height * (narrays - (i + 1)) - 1;
-            } else { // In L2ork they go inside the box
+            } else { // In L2Ork they go inside the box
                 // shift the label to the right if we're displaying a small
                 // rectangle to show the color
                 x = show_color_rect ? 17 : 2;

@@ -103,3 +103,9 @@
     fill: #46d5cf;
     stroke-width: 1;
 }
+
+.graph_label {
+    font-weight: bold;
+    filter: invert(1);
+    mix-blend-mode: difference;
+}

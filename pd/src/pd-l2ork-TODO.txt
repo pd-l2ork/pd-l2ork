@@ -3,9 +3,11 @@ PD-L2ORK TODO:
 
 *cnv object right-click->properties when patch is locked enables edit mode but opens properties of the canvas (patch itself) if the click location is inside the grabbing box, but outside the actual canvas. Doing the same in edit mode works fine.
 
-*Selecting and displacing an array within a GOP doubly displaces its array data when tabwrite is being activated using metro (redraw option keeps adding/subtracting from the array's original position--this is likely a scalargobj getrect bug)
-    *Duplicate of another bug report: putting bar graph and then editing it displaces its data (both Windows and OSX when creating an array as part of a subpatch, possibly leaving it selected, and then manipulating it on the parent window--but not always?).
+*Selecting and displacing an array within a GOP doubly displaces its array data when tabwrite is being activated using metro (redraw option keeps adding/subtracting from the array's original position--this is likely a scalargobj getrect bug) DONE
+    *Duplicate of another bug report: putting bar graph and then editing it displaces its data (both Windows and OSX when creating an array as part of a subpatch, possibly leaving it selected, and then manipulating it on the parent window--but not always?). DONE
     *Arrays do not draw properly if you open a subpatch with them and arrays being already redrawn due to dsp (also metro?) running until one resizes the window (!!!)
+    *When an opened GOP-enabled subpatch that contains a subpatch with a scalar is closed, the scalar does not redraw until its location is changed.
+
 
 *On Windows (and possibly other OSs) make sure that properties windows are never below the edge of the screen (e.g. when the properties are opened on an object at or near the bottom of the screen).
 
