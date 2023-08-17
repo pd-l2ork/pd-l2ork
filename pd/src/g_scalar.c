@@ -906,25 +906,31 @@ void scalar_doconfigure(t_gobj *xgobj, t_glist *owner)
             ypos
         );
 
-        for (y = templatecanvas->gl_list; y; y = y->g_next)
+        // ico 2023-08-16: check if we still have a templatecanvas
+        // because our template may have been deleted, in which
+        // case, we should bail...
+        if (templatecanvas && templatecanvas->gl_list)
         {
-            t_parentwidgetbehavior *wb = pd_getparentwidget(&y->g_pd);
-            if (!wb)
+            for (y = templatecanvas->gl_list; y; y = y->g_next)
             {
-                /* check subpatches for more drawing commands.
-                   (Optimized to only search [group] subpatches) */
-                if (pd_class(&y->g_pd) == canvas_class &&
-                    ((t_glist *)y)->gl_svg)
+                t_parentwidgetbehavior *wb = pd_getparentwidget(&y->g_pd);
+                if (!wb)
                 {
-                    scalar_group_configure(x, owner, template, x->sc_vec,
-                        (t_glist *)y, templatecanvas, 0);
+                    /* check subpatches for more drawing commands.
+                       (Optimized to only search [group] subpatches) */
+                    if (pd_class(&y->g_pd) == canvas_class &&
+                        ((t_glist *)y)->gl_svg)
+                    {
+                        scalar_group_configure(x, owner, template, x->sc_vec,
+                            (t_glist *)y, templatecanvas, 0);
+                    }
+                    continue;
                 }
-                continue;
+                //(*wb->w_parentvisfn)(y, owner, 0, x, x->sc_vec, template,
+                //    basex, basey, 0, vis);
+                svg_parentwidgettogui(y, x, owner, x->sc_vec, template);
+                svg_register_events(y, owner, x, template, x->sc_vec, 0);
             }
-            //(*wb->w_parentvisfn)(y, owner, 0, x, x->sc_vec, template,
-            //    basex, basey, 0, vis);
-            svg_parentwidgettogui(y, x, owner, x->sc_vec, template);
-            svg_register_events(y, owner, x, template, x->sc_vec, 0);
         }
         if (glist_isselected(owner, &x->sc_gobj))
         {

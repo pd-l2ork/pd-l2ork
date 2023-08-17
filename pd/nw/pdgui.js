@@ -3878,18 +3878,17 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
             if (is_toplevel === 0) {
                 nested_gop = w.document.getElementsByClassName(
                     (parentcid === cid ? ownercid + "svg" : parentcid + "svg"));
-                if (parentcid === cid) {
-                    draw_xpos -= nested_gop[0].getCTM().e;
-                    draw_ypos -= nested_gop[0].getCTM().f;
-                } else {
-                    draw_xpos -= nested_gop[0].getAttribute("orig_xpos");
-                    draw_ypos -= nested_gop[0].getAttribute("orig_ypos");
-                }
+                var svg_view_box = svg_elem.getAttribute("viewBox").split(" ");
+                draw_xpos = draw_xpos - nested_gop[0].getScreenCTM().e +
+                    svg_elem.getBoundingClientRect().left - svg_view_box[0];
+                draw_ypos = draw_ypos - nested_gop[0].getScreenCTM().f +
+                    svg_elem.getBoundingClientRect().top - svg_view_box[1];
                 //post("......offset x=" + draw_xpos + " y=" + draw_ypos);
-            } else {
-                draw_xpos += 0.5;
-                draw_ypos += 0.5;
             }
+
+            draw_xpos += 0.5;
+            draw_ypos += 0.5;
+
             var transform_string = "matrix(1,0,0,1," + draw_xpos + "," + draw_ypos + ")";
             // we make graph into another svg elem to allow for clipping
             g = create_item(cid, "g", {
@@ -3904,9 +3903,7 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
             });
             var s = create_item(cid, "svg", {
                 id: tag + "svg",
-                class: (type == "graph" ? "graphsvg " + ownercid + "svg" : ""),
-                orig_xpos: xpos,
-                orig_ypos: ypos
+                class: (type == "graph" ? "graphsvg " + ownercid + "svg" : "")
             });
             add_gobj_to_svg((is_toplevel === 1 ? svg_elem : nested_gop[0]), g);
             g.appendChild(s);
@@ -3939,54 +3936,27 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
             // post("ID=<" + tipname + "> <" + tipFirstArg + ">");
             var transform_string;
             if (is_toplevel === 0) {
-                var tgt;
-                if (parentcid === cid) {
-                    tgt = w.document.getElementsByClassName(ownercid + "svg");
-                    /*
-                    post("......parentcid==drawcid parentcid=" + parentcid +
-                        " (" + tgt[0].getCTM().a + 
-                        " " + tgt[0].getCTM().b +
-                        " " + tgt[0].getCTM().c +
-                        " " + tgt[0].getCTM().d +
-                        " " + tgt[0].getCTM().e +
-                        " " + tgt[0].getCTM().f + ")"
-                    );
-                    */
-                    var svg_view_box = svg_elem.getAttribute("viewBox").split(" ");
-                    
-                    draw_xpos += 0.5;
-                    draw_ypos += 0.5;
-                    draw_xpos = draw_xpos - tgt[0].getCTM().e - svg_view_box[0];
-                    draw_ypos = draw_ypos - tgt[0].getCTM().f - svg_view_box[1];
-                } else {
-                    //post("......parentcid != drawcid");
-                    //draw_xpos -= tgt[0].getAttribute("orig_xpos");
-                    //draw_ypos -= tgt[0].getAttribute("orig_ypos");
-                    // ico 2023-08-15: for some reason, unlike garrays, regular
-                    // objects need to always reference their owner, and never
-                    // parent (compare to gui_scalar_new). this is likely due
-                    // to the differences in the way getrect is calculated by
-                    // the two. This may need to be revisited later if we
-                    // encounter inconsistencies with objects that are being
-                    // redrawn due to external events (e.g. repositioning bng
-                    // via message pos x y)
-                    tgt = w.document.getElementsByClassName(ownercid + "svg");
-                    draw_xpos = draw_xpos - tgt[0].getAttribute("orig_xpos");
-                    draw_ypos = draw_ypos - tgt[0].getAttribute("orig_ypos");
-                }
+                var tgt = w.document.getElementsByClassName(ownercid + "svg");
+                var svg_view_box = svg_elem.getAttribute("viewBox").split(" ");
+
+                draw_xpos = draw_xpos - tgt[0].getScreenCTM().e +
+                    svg_elem.getBoundingClientRect().left - svg_view_box[0];
+                draw_ypos = draw_ypos - tgt[0].getScreenCTM().f +
+                    svg_elem.getBoundingClientRect().top - svg_view_box[1];
                 //post("......offset x=" + draw_xpos + " y=" + draw_ypos);
-            } else {
-                draw_xpos += 0.5;
-                draw_ypos += 0.5;              
             }
+
+            draw_xpos += 0.5;
+            draw_ypos += 0.5;
+
             transform_string = "matrix(1,0,0,1," + draw_xpos + ", " + draw_ypos + ")";  
             g = create_item(cid, "g", {
                 id: tag + "gobj",
                 transform: transform_string,
                 class: type +
                     (is_canvas_obj === 0 ? "" : " canvasobj"),
-                orig_xpos: xpos,
-                orig_ypos: ypos,
+                //orig_xpos: xpos,
+                //orig_ypos: ypos,
                 obj_text: objname,
                 tip_text: tipname
             });
@@ -6361,27 +6331,32 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
         var transform_string;
         if (is_toplevel === 0) {
             var tgt = w.document.getElementsByClassName(ownercid + "svg");
-            if (parentcid === cid) {
-                //post("......parentcid==drawcid parentGOPx=" +
-                //    tgt[0].getCTM().e + " parentGOPy=" + tgt[0].getCTM().f);
-
-                var svg_view_box = svg_elem.getAttribute("viewBox").split(" ");
-                
-                draw_xpos += 0.5;
-                draw_ypos -= 1;
-                draw_xpos = draw_xpos - tgt[0].getCTM().e - svg_view_box[0];
-                draw_ypos = draw_ypos - tgt[0].getCTM().f - svg_view_box[1];
-            } else {
-                draw_xpos = t3 - 0.5;
-                draw_ypos = -t4 - 1;
-                /*
-                post("......parentcid != drawcid parentxy=(" + tgt[0].getCTM().e
-                    + "," + tgt[0].getCTM().f + ") drawxy=(" + draw_xpos + "," +
-                    draw_ypos + ")");
-                */
-            }
-            //post("......offset x=" + draw_xpos + " y=" + draw_ypos);
+            var svg_view_box = svg_elem.getAttribute("viewBox").split(" ");
+            draw_xpos = draw_xpos - tgt[0].getScreenCTM().e +
+                svg_elem.getBoundingClientRect().left - svg_view_box[0];
+            draw_ypos = draw_ypos - tgt[0].getScreenCTM().f +
+                svg_elem.getBoundingClientRect().top - svg_view_box[1];
+            /*
+            post("......parentcid != drawcid\n" +
+                "   t5=" + t5 + " t6=" + t6 + "\n" +
+                //"   scroll=(" + scrollX + "," + scrollY +")\n" +
+                "   svg_elem screenCTM=(" + svg_elem.getScreenCTM().e + "," +
+                    svg_elem.getScreenCTM().f + ")\n" +
+                "   svg elem CTM=(" + svg_elem.getCTM().e + "," +
+                    svg_elem.getCTM().f + ")\n" +
+                "   tgt[0].getScreenCTM=(" + tgt[0].getScreenCTM().e + "," + 
+                    tgt[0].getScreenCTM().f + ")\n" +
+                "   view_box=(" + svg_view_box[0] + "," + svg_view_box[1] + ")\n" +
+                "   scroll=(" + svg_elem.scrollLeft + "," + svg_elem.scrollTop + ")\n" +
+                "   rect=(" +  svg_elem.getBoundingClientRect().left + "," +
+                    svg_elem.getBoundingClientRect().top + ")\n" +
+                "   drawxy=(" + draw_xpos + "," + draw_ypos + ")"
+            );
+            */
         }
+
+        draw_xpos += 0.5;
+        draw_ypos -= 1;
 
         /* ico@vt.edu HACKTASCTIC: calculating scrollbars is throwing 0.997 for
            plots drawn inside the subpatch and it is a result of the -1 in the
@@ -7333,21 +7308,15 @@ function gui_image_coords(cid, ownercid, parentcid, tag, x, y, is_toplevel) {
     if (is_toplevel === 0) {
         gui(cid).get_elem("patchsvg", function(svg_elem, w) {
             var tgt = w.document.getElementsByClassName(ownercid + "svg");
-            if (parentcid === cid) {
-                var svg_view_box = svg_elem.getAttribute("viewBox").split(" ");
-                draw_xpos += 0.5;
-                draw_ypos += 0.5;
-                draw_xpos = draw_xpos - tgt[0].getCTM().e - svg_view_box[0];
-                draw_ypos = draw_ypos - tgt[0].getCTM().f - svg_view_box[1];
-            } else {
-                draw_xpos -= tgt[0].getAttribute("orig_xpos");
-                draw_ypos -= tgt[0].getAttribute("orig_ypos");
-            }
+            var svg_view_box = svg_elem.getAttribute("viewBox").split(" ");
+            draw_xpos = draw_xpos - tgt[0].getScreenCTM().e +
+                svg_elem.getBoundingClientRect().left - svg_view_box[0];
+            draw_ypos = draw_ypos - tgt[0].getScreenCTM().f +
+                svg_elem.getBoundingClientRect().top - svg_view_box[1];
         });
-    } else {
-        draw_xpos += 0.5;
-        draw_ypos += 0.5;              
     }
+    draw_xpos += 0.5;
+    draw_ypos += 0.5;
     //post("...gui_image_coords offset x=" + draw_xpos + " y=" + draw_ypos);
     gui(cid).get_gobj(tag, function(e) {
         elem_move(e, draw_xpos, draw_ypos);
