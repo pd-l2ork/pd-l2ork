@@ -3539,6 +3539,23 @@ void canvas_done_popup(t_canvas *x, t_float which, t_float xpos,
 
     t_gobj *yclick = NULL;
 
+    // ico 2023-08-17: move the enabling of editmode before
+    // looking for a hitbox, so that the right hitbox is sought
+    // for objects like mycanvas that have different hitboxes
+    // depending on whether the patch is in editmode. this is
+    // an issue due to an arguably broken way of using mycanvas'
+    // selection handle as larger than the actual widget to serve
+    // as a frame for all standardized help patches.
+    // since we only got here because properties was enabled as
+    // an option in the pop-up menu, which means, there was clearly
+    // something under the cursor that has properties as an option,
+    // we can go ahead and enable editmode here, rather than doing
+    // so below in the properties if statement. that way, we always
+    // get the optimal hitbox.
+
+    if (which == 0 && !x->gl_edit)
+        canvas_editmode(x, 1);
+
     ///if (which == 3 || which == 4) {
         // if no object has been selected for to-front/back action
     //if (!x->gl_editor->e_selection)
@@ -3604,8 +3621,10 @@ void canvas_done_popup(t_canvas *x, t_float which, t_float xpos,
                     if (!class_getpropertiesfn(pd_class(&y->g_pd)))
                         continue;
                     else {
-                        if (!x->gl_edit)
-                            canvas_editmode(x, 1);
+                        // ico 2023-08-17: disabled, see the beginning of
+                        // this function
+                        //if (!x->gl_edit)
+                        //    canvas_editmode(x, 1);
                         if (!glist_isselected(x, y))
                             glist_select(x, y);
                         (*class_getpropertiesfn(pd_class(&y->g_pd)))(y, x);
