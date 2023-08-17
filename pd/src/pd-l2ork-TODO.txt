@@ -1,6 +1,4 @@
 PD-L2ORK TODO:
-*Seek RPi version of nw.js 0.67.1. IN PROGRESS
-
 *On Windows (and possibly other OSs) make sure that properties windows are never below the edge of the screen (e.g. when the properties are opened on an object at or near the bottom of the screen).
 
 *Merge improved forbidden planet documentation patch (I03.resynthesis.pd in audio examples). DONE
@@ -119,7 +117,7 @@ RPI 0.28.4 current RPi version.
 *Consider adding ability to display array name that is other than the internal name (e.g. so that we don't have to use $0, $1, _ etc. in the name).
 
 *Error closing a new window because there is no "width" property (e.g. a subpatch has been created). Only affects RPi version of nw.js?
-  *Consider bumping the RPi nw.js version...
+  *Seeking RPi version of nw.js 0.67.1. IN PROGRESS
 
 *Consider adding tiled version of an image inside ggee/image.
 
