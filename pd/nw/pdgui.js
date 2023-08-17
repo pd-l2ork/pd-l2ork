@@ -1310,7 +1310,7 @@ var pd_window;
 // Turns out I messed this up. pd_window should really be an
 // "nw window", so that you can use it to access all the
 // nw window methods and settings.  Instead I set it to the
-// DOM window object. This complicates things-- for example,
+// DOM window object. This complicates things--for example,
 // in walk_window_list I have to take care when comparing
 // patchwin[]-- which are nw windows-- and pd_window.
 // I'm not sure of the best way to fix this. Probably we want to
@@ -3445,7 +3445,7 @@ function connect_as_server(gui_path, file_path) {
             }, 30); // Not sure we really need a delay here
         } else {
             pd_window.alert("Error: couldn't bind to a port. Either port nos " +
-                  PORT + " through " + port + " are taken or you don't have " +
+                  PORT + " through " + port + " are taken, or you don't have " +
                   "networking turned on. (See Pd's html doc for details.)");
             server.close();
             process.exit(1);
@@ -8392,6 +8392,11 @@ function walk_window_list(cid, offset) {
         next = (((match + offset) % win_array_length) // modulo...
                 + win_array_length) % win_array_length; // handle negatives
         gui_raise_window(Object.keys(patchwin)[next]);
+    } else if (cid === "pd_window" && Object.keys(patchwin).length > 0) {
+        // for Windows and Linux, fall back here if we are passing
+        // "pd_window" from the main window (see pd_m.win.nextwin in index.js)
+        gui_raise_window(Object.keys(patchwin)
+            [(offset === 1 ? 0 : Object.keys(patchwin).length - 1)])
     } else {
         post("error: cannot find last focused window.");
     }

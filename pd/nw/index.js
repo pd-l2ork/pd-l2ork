@@ -916,7 +916,7 @@ function nw_create_pd_window_menus(gui, w) {
     }
 
     // Winman sub-entries
-    /*
+    
     minit(pd_m.win.nextwin, {
         click: function() {
             pdgui.raise_next("pd_window");
@@ -927,7 +927,7 @@ function nw_create_pd_window_menus(gui, w) {
             pdgui.raise_prev("pd_window");
         }
     });
-    */
+    
     if (osx) {
         minit(pd_m.win.parentwin, { enabled: false });
         minit(pd_m.win.visible_ancestor, { enabled: false });
