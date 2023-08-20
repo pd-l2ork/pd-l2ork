@@ -1,5 +1,4 @@
 PD-L2ORK TODO:
-*On Windows (and possibly other OSs) make sure that properties windows are never below the edge of the screen (e.g. when the properties are opened on an object at or near the bottom of the screen).
 
 *Merge improved forbidden planet documentation patch (I03.resynthesis.pd in audio examples). DONE
   *Investigate why this patch is not using vanilla DAC abstraction, instead of its improved "extended" version.
@@ -694,6 +693,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Fixed a bug where sending pointer data using metro while the data structure is deleted crashes pd-l2ork.
 *Fixed issue where cnv object right-click->properties when patch is locked enables edit mode but opens properties of the canvas (patch itself) if the click location is inside the grabbing box, but outside the actual canvas. Doing the same in edit mode works fine. This is a prevalent legacy use in the help patches, using the grabbing box as a hollow frame for a number denoting number of inlets/outlets/arguments.
 *Fixed issue where prev/next window from the main Pd window did not work on Windows and Linux.
+*On Windows made sure that properties windows are never below the edge of the screen (e.g. when the properties are opened on an object at or near the bottom of the screen).
 
 
 

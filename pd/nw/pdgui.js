@@ -3012,6 +3012,26 @@ exports.remove_dialogwin = function(name) {
     dialogwin[name] = null;
 }
 
+// ico 2023-08-20: this is called by all dialog windows
+// to check on Windows if the dialog is spilling outside 
+// the desktop and adjust its position accordingly.
+exports.dialogwin_check_overflow = function (win) {
+    if (nw_os_is_windows) {
+        var sw = window.screen.width;
+        var sh = window.screen.height;
+
+        // ways to obtain window and screen info
+        //post(sw + "," + sh);
+        //post(win.height + " " + win.x);
+
+        // deal with bottom and right overflow
+        if (win.x + win.width > sw)
+            win.x -= win.x + win.width - sw;
+        if (win.y + win.height > sh)
+            win.y -= win.y + win.height- sh;
+    }
+}
+
 exports.get_toplevel_scalars = function(name) {
     return toplevel_scalars[name];
 }

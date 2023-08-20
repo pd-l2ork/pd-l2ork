@@ -621,6 +621,10 @@ function nw_create_window(cid, type, width, height, xpos, ypos, attr_array) {
             pdgui.set_patchwin(cid, new_win);
         } else {
             pdgui.set_dialogwin(cid, new_win);
+            // ico 2023-08-20: check for windows that may be sticking
+            // outside the visible desktop area and reposition them
+            // accordingly
+            pdgui.dialogwin_check_overflow(new_win);
         }
         new_win.on("loaded", function() {
             // Off to the races... :(
