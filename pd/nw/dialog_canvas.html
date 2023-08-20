@@ -755,6 +755,8 @@ function register_window_id(gfxstub, attr_objects) {
         // creating a new array
         document.getElementById("apply_button").style.setProperty("display",
             "none");
+        document.getElementById("titlebar_title").innerHTML =
+            "Array Properties";
     } else {
         pd_garray_attrs = attr_objects.slice(1);
         new_array_dialog = false; // this is a canvas/array props dialog

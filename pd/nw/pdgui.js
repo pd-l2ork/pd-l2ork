@@ -3066,6 +3066,9 @@ function dialogwin_check_overflow(win, object) {
         case "Canvas":
             height = 560;
             break;
+        case "Array":
+            height = 321;
+            break;
         default:
             height = 604;
             break;

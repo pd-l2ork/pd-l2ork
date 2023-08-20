@@ -694,11 +694,12 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Fixed issue where cnv object right-click->properties when patch is locked enables edit mode but opens properties of the canvas (patch itself) if the click location is inside the grabbing box, but outside the actual canvas. Doing the same in edit mode works fine. This is a prevalent legacy use in the help patches, using the grabbing box as a hollow frame for a number denoting number of inlets/outlets/arguments.
 *Fixed issue where prev/next window from the main Pd window did not work on Windows and Linux.
 *On Windows made sure that properties windows are never below the edge of the screen (e.g. when the properties are opened on an object at or near the bottom of the screen).
-*Reworked repositioning of windows to sidestep nwjs v1 limitations that appear to remain unaddressed, first focusing on OSX, while also adjusting following cosmetic fixes:
+*Reworked repositioning of windows to sidestep nwjs v1 limitations that appear to remain unaddressed, first focusing on OSX, while also adjusting following cosmendtic fixes:
   *Changed Atom Properties title for SymAtom as SymAtom Properties (this is to distinguish between the two due to their size differences)
   *Fixed frame visibility around flatgui/knob in the 60-hz theme
   *Fixed square close button on OSX inside the dropdown dialog
   *Made put array menu show up in the center of the focused patch and added repositioning to its dialog (both create array and canvas properties).
+  *Distinguished between Put Array and Canvas Properties dialog, so that they can get unique heights for overflow repositioning.
 
 
 
