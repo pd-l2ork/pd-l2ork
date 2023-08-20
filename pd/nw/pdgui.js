@@ -109,6 +109,7 @@ function gui_set_gui_preset(name) {
 }
 
 exports.set_focused_patchwin = function(cid) {
+    //post("set_focused_patchwin=" + cid);
     last_focused = cid;
 }
 
@@ -3061,6 +3062,9 @@ function dialogwin_check_overflow(win, object) {
             break;
         case "Data":
             height = 345;
+            break;
+        case "Canvas":
+            height = 560;
             break;
         default:
             height = 604;
@@ -8823,7 +8827,8 @@ function gui_array_new(did, count) {
         array_in_existing_graph: 0
     }];
     dialogwin[did] = create_window(did, "canvas",
-        280 + (5 * nw_os_is_linux) - (30 * nw_os_is_osx), 268-25, 25, 25,
+        280, 243, patchwin[last_focused].x + patchwin[last_focused].width/2 - 140,
+        patchwin[last_focused].y + 10,
         attr_array);
 }
 
