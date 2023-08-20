@@ -701,6 +701,7 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
   *Made put array menu show up in the center of the focused patch and added repositioning to its dialog (both create array and canvas properties).
   *Distinguished between Put Array and Canvas Properties dialog, so that they can get unique heights for overflow repositioning.
   *Distinguished between Canvas and Canvas&Array properties.
+*Fixed array name being invisible on the outdated RPi nwjs version.
 
 
 

@@ -5080,6 +5080,14 @@ function gui_text_new(cid, tag, type, isselected, left_margin,
             parent.prepend(svg_text);
         else
             parent.appendChild(svg_text);
+        // ico 2023-08-20: ugly workaround for RPi's outdated nwjs
+        gui(cid).get_gobj(tag, function(e) {
+        if(type === "graph_label" && check_nw_version("0.28")) {
+            //post("got graph label on outdated nwjs");
+            svg_text.style.setProperty("mix-blend-mode", "inherit");
+            svg_text.style.setProperty("font-weight", "normal");
+        }
+    });
         if (isselected) {
             gui_gobj_select(cid, tag);
         }
