@@ -687,13 +687,17 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Reworked how the rtext info is formatted before being sent to gui_gobj_new. Due to lack of null terminating character, on Windows in particular, this would result in an error that would prevent the canvas to be properly drawn. Streamlined how all objects that call gui_gobj_new obtain this info.
 *Finish integration of packages necessary for a successful compiling of the Windows version of pd-l2ork into README.md.
 *Fixed a bug where selecting and displacing an array within a GOP doubly displaces its array data when tabwrite is being activated using metro (redraw option keeps adding/subtracting from the array's original position--this is likely a scalargobj getrect bug) DONE
-    *Potential duplicate of another bug report: putting bar graph and then editing it displaces its data (both Windows and OSX when creating an array as part of a subpatch, possibly leaving it selected, and then manipulating it on the parent window--but not always?). DONE
-    *Arrays do not draw properly if you open a subpatch with them and arrays being already redrawn due to dsp (also metro?) running until one resizes the window (see Audio Chat subpatch with arrays). DONE
-      *When an opened GOP-enabled subpatch that contains a subpatch with a scalar is closed, the scalar does not redraw until its location is changed. DONE
+  *Potential duplicate of another bug report: putting bar graph and then editing it displaces its data (both Windows and OSX when creating an array as part of a subpatch, possibly leaving it selected, and then manipulating it on the parent window--but not always?). DONE
+  *Arrays do not draw properly if you open a subpatch with them and arrays being already redrawn due to dsp (also metro?) running until one resizes the window (see Audio Chat subpatch with arrays). DONE
+    *When an opened GOP-enabled subpatch that contains a subpatch with a scalar is closed, the scalar does not redraw until its location is changed. DONE
 *Fixed a bug where sending pointer data using metro while the data structure is deleted crashes pd-l2ork.
 *Fixed issue where cnv object right-click->properties when patch is locked enables edit mode but opens properties of the canvas (patch itself) if the click location is inside the grabbing box, but outside the actual canvas. Doing the same in edit mode works fine. This is a prevalent legacy use in the help patches, using the grabbing box as a hollow frame for a number denoting number of inlets/outlets/arguments.
 *Fixed issue where prev/next window from the main Pd window did not work on Windows and Linux.
 *On Windows made sure that properties windows are never below the edge of the screen (e.g. when the properties are opened on an object at or near the bottom of the screen).
+*Reworked repositioning of windows to sidestep nwjs v1 limitations that appear to remain unaddressed, first focusing on OSX, while also adjusting following cosmetic fixes:
+  *Changed Atom Properties title for SymAtom as SymAtom Properties (this is to distinguish between the two due to their size differences)
+  *Fixed frame visibility around flatgui/knob in the 60-hz theme
+  *Fixed square close button on OSX inside the dropdown dialog
 
 
 
