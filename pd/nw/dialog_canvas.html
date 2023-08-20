@@ -761,6 +761,11 @@ function register_window_id(gfxstub, attr_objects) {
         pd_garray_attrs = attr_objects.slice(1);
         new_array_dialog = false; // this is a canvas/array props dialog
         populate_form(attr_objects[0]);
+        if (attr_objects.length > 1) {
+            //pdgui.post("I have arrays");
+            document.getElementById("titlebar_title").innerHTML =
+                "Canvas&Array Properties";
+        }
     }
     init_arrays(pd_garray_attrs);
 

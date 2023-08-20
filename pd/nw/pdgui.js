@@ -3064,15 +3064,31 @@ function dialogwin_check_overflow(win, object) {
             height = 345;
             break;
         case "Canvas":
-            height = 560;
+            height = 417;
             break;
         case "Array":
             height = 321;
+            break;
+        case "Canvas&Array":
+            height = 560;
             break;
         default:
             height = 604;
             break;
     }
+    /*
+    // ico 2023-08-20:
+    // we will leave this disabled for the time being
+    // as on Windows not all dialogs have a consistent
+    // size in comparison to Linux and OSX, so they
+    // all might as well be a bit off the bottom,
+    // particularly since there can be also a bar at the
+    // bottom that is currently not factored in into the
+    // screen resolution calculation.
+    if (nw_os_is_windows) {
+        height -= 6;
+    }
+    */
     //post("height=" + height);
     if (win.x + win.width > sw)
         win.x -= win.x + win.width - sw;
