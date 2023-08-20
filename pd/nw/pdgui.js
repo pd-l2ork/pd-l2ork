@@ -3000,9 +3000,11 @@ var set_patchwin = function(cid, win) {
 
 exports.set_patchwin = set_patchwin;
 
-exports.get_dialogwin = function(name) {
+function get_dialogwin(name) {
     return dialogwin[name];
 }
+
+exports.get_dialogwin = get_dialogwin;
 
 exports.set_dialogwin = function(did, win) {
     dialogwin[did] = win;
@@ -3013,24 +3015,65 @@ exports.remove_dialogwin = function(name) {
 }
 
 // ico 2023-08-20: this is called by all dialog windows
-// to check on Windows if the dialog is spilling outside 
-// the desktop and adjust its position accordingly.
-exports.dialogwin_check_overflow = function (win) {
-    if (nw_os_is_windows) {
-        var sw = window.screen.width;
-        var sh = window.screen.height;
+// to check if the dialog is spilling outside the desktop 
+// and adjust its position accordingly.
+function dialogwin_check_overflow(win, object) {
+    var sw = window.screen.width;
+    var sh = window.screen.height;
 
-        // ways to obtain window and screen info
-        //post(sw + "," + sh);
-        //post(win.height + " " + win.x);
+    // ways to obtain window and screen info
+    //post(sw + "," + sh);
+    //post(win.height + " " + win.x);
 
-        // deal with bottom and right overflow
-        if (win.x + win.width > sw)
-            win.x -= win.x + win.width - sw;
-        if (win.y + win.height > sh)
-            win.y -= win.y + win.height- sh;
+    // deal with bottom and right overflow
+    var height = 0;
+    switch(object) {
+        case "bng":
+        case "tgl":
+        case "vradio":
+        case "hradio":
+            height = 490;
+            break;
+        case "hsl":
+        case "vsl":
+            height = 547;
+            break;
+        case "nbx":
+            height = 604;
+            break;
+        case "cnv":
+            height = 432;
+            break;
+        case "vu":
+            height = 391;
+            break;
+        case "ggee/image":
+            height = 651;
+            break;
+        case "Dropdown":
+            height = 306;
+            break;
+        case "Atom":
+            height = 373;
+            break;
+        case "SymAtom":
+            height = 305;
+            break;
+        case "Data":
+            height = 345;
+            break;
+        default:
+            height = 604;
+            break;
     }
+    //post("height=" + height);
+    if (win.x + win.width > sw)
+        win.x -= win.x + win.width - sw;
+    if (win.y + height > sh)
+        win.y -= win.y + height - sh;
 }
+
+exports.dialogwin_check_overflow = dialogwin_check_overflow;
 
 exports.get_toplevel_scalars = function(name) {
     return toplevel_scalars[name];
@@ -3167,7 +3210,17 @@ function window_is_loading(cid) {
 
 exports.window_is_loading = window_is_loading;
 
-function set_window_finished_loading(cid) {
+function set_window_finished_loading(cid, new_win) {
+    // ico 2023-08-20: check for dialogs that may be sticking
+    // outside the visible desktop area and reposition them
+    // accordingly
+    //post("set_window_finished_loading " + new_win);
+    if (new_win === get_dialogwin(cid)) {
+        var object = dialogwin[cid].window.document.
+            getElementById("titlebar_title").innerHTML.split(" ")[0]
+            .replace('[','').replace(']','');
+        dialogwin_check_overflow(new_win, object);
+    }
     loading[cid] = null;
 }
 
@@ -8665,13 +8718,15 @@ function gui_iemgui_dialog(did, attr_array) {
     // We are subtracting 25 for the menu
     // ico@vt.edu: since adding frameless window, we use top 20px for draggable titlebar,
     // so now we subtract only 5 (25-20)
-    create_window(did, "iemgui", 305, 414-5,
+
+    // we also need adjustment for flatgui/knob (in the menu, a.k.a. footils), and moonlinb/msknob
+    create_window(did, "iemgui", 305, 366,
         popup_coords[2] + 10, popup_coords[3] + 60,
         attr_array_to_object(attr_array));
 }
 
 function gui_image_dialog(did, attr_array) {
-    create_window(did, "image", 303, 414-5,
+    create_window(did, "image", 303, 651,
         popup_coords[2] + 10, popup_coords[3] + 60,
         attr_array_to_object(attr_array));
 }
@@ -8768,7 +8823,7 @@ function gui_array_new(did, count) {
         array_in_existing_graph: 0
     }];
     dialogwin[did] = create_window(did, "canvas",
-        280 + (5 * nw_os_is_linux) - (30 * nw_os_is_osx), 268-25, 20, 20,
+        280 + (5 * nw_os_is_linux) - (30 * nw_os_is_osx), 268-25, 25, 25,
         attr_array);
 }
 
@@ -8797,7 +8852,7 @@ function gui_canvas_dialog(did, attr_arrays) {
         // 3 for canvas with 2 arrays, etc.
         // We also substract here 5 for the smaller top bar...
         268 + (8 * has_array),
-        (attr_arrays.length > 1 ? 575-25 : 432-25),
+        (attr_arrays.length > 1 ? 563-25 : 420-25),
         popup_coords[2], popup_coords[3],
         attr_arrays);
 }

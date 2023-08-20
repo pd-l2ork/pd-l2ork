@@ -393,8 +393,8 @@ text.activated {
 
 /* flatgui knob border */
 .flatgui.knob.border {
-    stroke: black;
-    fill: #d9d9d9;
+    stroke: none;
+    fill: none;
 }
 
 /* atom box */

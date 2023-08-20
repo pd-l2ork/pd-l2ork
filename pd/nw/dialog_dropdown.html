@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link id="page_style" rel="stylesheet" type="text/css" href="css/default.css">
+    <link id="page_style" rel="stylesheet"
+        type="text/css" href="css/default.css">
   </head>
   <body class="dialog_body">
     <div class="container noselect">
@@ -305,6 +306,7 @@ function register_window_id(gfxstub, attributes) {
     var attr;
     pd_object_callback = gfxstub;
     add_events(gfxstub);
+    pdgui.gui_check_for_dialog_appearance_inconsistencies(gfxstub);
 
     // before translating, set the header based on class name:
     document.querySelector("#dialog_header")

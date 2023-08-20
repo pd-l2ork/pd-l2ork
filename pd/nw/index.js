@@ -621,10 +621,6 @@ function nw_create_window(cid, type, width, height, xpos, ypos, attr_array) {
             pdgui.set_patchwin(cid, new_win);
         } else {
             pdgui.set_dialogwin(cid, new_win);
-            // ico 2023-08-20: check for windows that may be sticking
-            // outside the visible desktop area and reposition them
-            // accordingly
-            pdgui.dialogwin_check_overflow(new_win);
         }
         new_win.on("loaded", function() {
             // Off to the races... :(
@@ -653,7 +649,7 @@ function nw_create_window(cid, type, width, height, xpos, ypos, attr_array) {
                 // flag the window as loaded. We may want to wait until the
                 // DOM window has finished loading for this.
                 //pdgui.post("window finished loading...");
-                pdgui.set_window_finished_loading(cid);
+                pdgui.set_window_finished_loading(cid, new_win);
             } else {
                 // If the window is no longer loading, we need to go ahead
                 // and remove the reference to it in the patchwin array.
