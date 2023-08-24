@@ -213,6 +213,8 @@
     "print_tt": "Imprimer un patch Pd, en enregistrant le résultat dans un fichier PDF",
     "message":    "Message...",
     "message_tt": "Envoyer un message directement à l'instance Pd en cours d'exécution",
+    "k12_mode": "K12 Mode",
+    "k12_mode_tt": "Activer le mode créateur K12 qui limite l'accès à seulement une sélection d'abstractions d'introduction",
 
     "close":    "Fermer",
     "close_tt": "Fermer le patch",

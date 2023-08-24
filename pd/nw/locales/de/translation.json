@@ -214,6 +214,8 @@
     "print_tt": "Drucke einen Pd-Patch und speichere das Resultat in einer PDF-Datei",
     "message": "Nachricht...",
     "message_tt": "Sende eine Nachricht direkt an die laufende Pd-Instanz",
+    "k12_mode": "K12-Mode",
+    "k12_mode_tt": "Schalten Sie den K12-Maker-Modus um, der den Zugriff nur auf eine Auswahl einführender Abstraktionen beschränkt",
 
     "close": "Schließen",
     "close_tt": "Schließe den Patch",
