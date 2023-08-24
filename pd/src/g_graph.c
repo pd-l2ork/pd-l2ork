@@ -922,13 +922,13 @@ t_float glist_xtopixels(t_glist *x, t_float xval)
         if (g != NULL && g->g_pd == garray_class)
         {
             if (garray_get_style((t_garray *)g) == PLOTSTYLE_BARS)
-                plot_offset = 2;
+                plot_offset = 1;
         }
         int x1, y1, x2, y2;
         if (!x->gl_owner)
             bug("glist_pixelstox");
         graph_graphrect(&x->gl_gobj, x->gl_owner, &x1, &y1, &x2, &y2);
-        return (x1 + (x2 - x1 - plot_offset) * (xval - x->gl_x1) / (x->gl_x2 - x->gl_x1));
+        return (x1 + (x2 - x1 - plot_offset) * (xval - x->gl_x1) / (x->gl_x2 - x->gl_x1) - plot_offset);
     }
 }
 
@@ -963,7 +963,7 @@ t_float glist_norm_x_per_scalar(t_glist *x, t_float xval)
     if (g != NULL && g->g_pd == garray_class)
     {
         if (garray_get_style((t_garray *)g) == PLOTSTYLE_BARS)
-            plot_offset = 2;
+            plot_offset = 1;
     }
     int x1, y1, x2, y2;
     if (!x->gl_owner)
@@ -973,7 +973,7 @@ t_float glist_norm_x_per_scalar(t_glist *x, t_float xval)
     // is the removal of "x1 + " at the beginning of the function,
     // which makes the calculation more accurate and prevents too long
     // or too short of array width
-    return ((x2 - x1 - plot_offset) * (xval - x->gl_x1) / (x->gl_x2 - x->gl_x1));
+    return ((x2 - x1 - plot_offset) * (xval - x->gl_x1) / (x->gl_x2 - x->gl_x1) - plot_offset);
 }
 
 t_float glist_ytopixels(t_glist *x, t_float yval)
