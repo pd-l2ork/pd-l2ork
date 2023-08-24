@@ -159,6 +159,8 @@ ifneq ($(LIGHT),yes)
 	# and then pruning...
 	install -p $(bin_src)/libgomp-1.dll $(DESTDIR)$(bindir)/
 	install -p $(bin_src)/libpcre2-8-0.dll $(DESTDIR)$(bindir)/
+	# ico 2023-08-24: more libraries needed (msys keeps moving the goal posts)
+	install -p $(bin_src)/libmpg123-0.dll $(DESTDIR)$(bindir)/
 	# New: lossless compression algorithm. Gem.dll won't load without it.
 	# Cf.: https://github.com/bagder/libbrotli. Looks like this recently
 	# got added to MSYS2. Apparently Gem needs only the decoder , but we
