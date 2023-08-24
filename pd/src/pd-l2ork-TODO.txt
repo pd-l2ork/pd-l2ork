@@ -1,5 +1,16 @@
 PD-L2ORK TODO:
 
+*Investigate Gem not showing while L2Ork Tweeter is open.
+  *Likely due to multiple screens?
+
+Data structure game not allowing for the sprite to be selected after L2Ork Tweeter has been opened (most of the time).
+
+*Investigate weird zoom when selecting all objects in the game.pd and then pressing up creates a weird zoom.
+
+*Deleting game.pd's main subpatch and undoing it crashes pd-l2ork.
+
+
+
 *Merge improved forbidden planet documentation patch (I03.resynthesis.pd in audio examples). DONE
   *Investigate why this patch is not using vanilla DAC abstraction, instead of its improved "extended" version.
 
@@ -702,6 +713,9 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
   *Distinguished between Put Array and Canvas Properties dialog, so that they can get unique heights for overflow repositioning.
   *Distinguished between Canvas and Canvas&Array properties.
 *Fixed array name being invisible on the outdated RPi nwjs version.
+*Fixed on Windows a bug where opening a second instance of pd-l2ork without the unique flag did not get that second instance closed properly.
+*Improved bar graph positioning.
+*Improved visibility of the array name.
 
 
 

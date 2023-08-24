@@ -402,6 +402,7 @@ function add_events() {
                     //host = win_args[0].split(" ").slice(-1).join();
                     host = "0.0.0.0";
                     port = win_args[0].split(" ").slice(-2, -1).join();
+                    pd_engine_id = win_args[1].split(" ").pop();
                     //pdgui.post("...argv_string final: host=" + host + " port=" + port + " engine=" + pd_engine_id);
 
                     // LATER: consider taking this approach instead,

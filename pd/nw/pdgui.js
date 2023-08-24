@@ -4986,12 +4986,17 @@ function gui_text_new(cid, tag, type, isselected, left_margin,
     if (is_toplevel === 1) {
         classname = classname + " toplevel";
     }
+    if (type === "graph_label") {
+        xoff -= 2;
+    }
+    /*
     gui(cid).get_gobj(tag, function(e) {
         if(e.classList.contains("graph")) {
             //xoff = -1;
             //yoff = 1;
         }
     });
+    */
 
 /*
     // TODO: eElement.insertBefore(newFirstElement, eElement.firstChild);
@@ -5081,13 +5086,15 @@ function gui_text_new(cid, tag, type, isselected, left_margin,
         else
             parent.appendChild(svg_text);
         // ico 2023-08-20: ugly workaround for RPi's outdated nwjs
+        /*
         gui(cid).get_gobj(tag, function(e) {
-        if(type === "graph_label" && !check_nw_version("0.67")) {
-            //post("got graph label on outdated nwjs");
-            svg_text.style.setProperty("mix-blend-mode", "inherit");
-            svg_text.style.setProperty("font-weight", "normal");
-        }
-    });
+            if(type === "graph_label" && !check_nw_version("0.67")) {
+                //post("got graph label on outdated nwjs");
+                //svg_text.style.setProperty("mix-blend-mode", "inherit");
+                //svg_text.style.setProperty("font-weight", "normal");
+            }
+        });
+        */
         if (isselected) {
             gui_gobj_select(cid, tag);
         }
@@ -8246,7 +8253,7 @@ function gui_graph_label(cid, tag, font_size, font_height, is_selected,
                     stroke: "black",
                     "stroke-width": 1,
                     x: 4,
-                    y: font_height * i + (font_height * 0.5),
+                    y: font_height * i + (font_height * 0.3),
                     width: 10,
                     height: 10
                 });
