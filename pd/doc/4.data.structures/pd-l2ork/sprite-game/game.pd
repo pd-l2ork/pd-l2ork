@@ -1,23 +1,23 @@
 #N struct foo;
-#N canvas 1 53 881 631 10;
+#N canvas 72 65 881 631 10;
 #N canvas 457 98 853 628 (subpatch) 0;
-#X obj 253 455 cnv 15 378 41 empty empty empty 20 12 0 14 -204786 -66577
+#X obj 253 455 cnv 15 378 41 empty empty empty 20 12 0 14 #c4fcc4 #404040
 0;
-#X obj 33 550 cnv 15 270 32 empty empty empty 20 12 0 14 -204786 -66577
+#X obj 33 550 cnv 15 270 32 empty empty empty 20 12 0 14 #c4fcc4 #404040
 0;
-#X obj 494 208 cnv 15 123 28 empty empty empty 20 12 0 14 -204786 -66577
+#X obj 494 208 cnv 15 123 28 empty empty empty 20 12 0 14 #c4fcc4 #404040
 0;
-#X obj 284 279 cnv 15 141 25 empty empty empty 20 12 0 14 -204786 -66577
+#X obj 284 279 cnv 15 141 25 empty empty empty 20 12 0 14 #c4fcc4 #404040
 0;
-#X obj 33 65 cnv 15 133 24 empty empty empty 20 12 0 14 -204786 -66577
+#X obj 33 65 cnv 15 133 24 empty empty empty 20 12 0 14 #c4fcc4 #404040
 0;
 #X obj 35 5 inlet;
 #X obj 35 68 draw sprite omnibus;
 #X obj 38 558 draw polyline 100 42 200 32 200 52 100 42;
 #X obj 61 427 r \$0-direction;
 #X obj 39 245 loadbang;
-#X obj 39 305 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
-1;
+#X obj 39 305 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1 1;
 #X msg 39 391 vis \$1;
 #X msg 259 434 vis \$1;
 #X obj 259 460 draw path M 60 -5 l 0 0 5 0 0 -5 -5 0 z M 60 -15 l 0
@@ -428,7 +428,7 @@ z m -10.2 6.76 c -16.409 -1.07188 2.85868 -24.3778 6.81644 -7.79128
 #X restore 734 138 draw g;
 #X obj 731 39 pddplink http://remusprites.carbonmade.com/ -text Sprite
 by Bleed;
-#N canvas 333 68 1002 543 guts 0;
+#N canvas 333 80 1002 543 guts 0;
 #X obj 155 292 * 6;
 #X obj 181 254 + 1;
 #X obj 155 342 pack;
@@ -449,7 +449,7 @@ by Bleed;
 #X obj 508 133 s \$0-flashlight;
 #X obj 109 342 v \$0-x;
 #X obj 208 342 v \$0-y;
-#X obj 675 135 r \$0-direction;
+#X obj 675 155 r \$0-direction;
 #X msg 471 156 bang;
 #N canvas 433 184 450 300 e 0;
 #X obj 198 135 line;
@@ -472,7 +472,7 @@ by Bleed;
 #X obj 149 20 inlet;
 #X obj 149 41 bang;
 #X obj 149 172 outlet;
-#X floatatom 97 133 5 0 0 0 - - -, f 5;
+#X floatatom 97 133 5 0 0 0 - - - 0 0 1, f 5;
 #X msg 149 91 80;
 #X obj 198 88 del 300;
 #X msg 198 113 80 \, 83 350;
@@ -490,10 +490,10 @@ by Bleed;
 #X obj 149 20 inlet;
 #X obj 149 41 bang;
 #X obj 149 172 outlet;
-#X floatatom 54 111 5 0 0 0 - - -, f 5;
+#X floatatom 54 111 5 0 0 0 - - - 0 0 1, f 5;
 #X msg 149 91 68;
-#X obj 77 32 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
--1;
+#X obj 77 32 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
 #X obj 198 90 del 300;
 #X msg 198 113 84 \, 87 350;
 #X connect 0 0 3 0;
@@ -512,7 +512,7 @@ by Bleed;
 #X obj 149 20 inlet;
 #X obj 149 41 bang;
 #X obj 149 172 outlet;
-#X floatatom 87 124 5 0 0 0 - - -, f 5;
+#X floatatom 87 124 5 0 0 0 - - - 0 0 1, f 5;
 #X msg 149 91 72;
 #X obj 198 90 del 300;
 #X msg 198 113 88 \, 91 350;
@@ -535,7 +535,7 @@ by Bleed;
 #X obj 472 398 t a;
 #X obj 480 207 s \$0-flashlight;
 #X msg 480 185 0;
-#X floatatom 320 304 5 0 0 0 Bullets: - -, f 5;
+#X floatatom 320 304 5 0 0 0 Bullets: - - 0 0 1, f 5;
 #X text 563 110 <- 'b' and 'f';
 #N canvas 822 126 450 300 set-direction 0;
 #X obj 206 27 inlet;
@@ -565,12 +565,12 @@ by Bleed;
 #X obj 188 197 loadbang;
 #X obj 181 223 float 40;
 #X obj 36 223 float 47;
-#X obj 797 75 loadbang;
-#N canvas 82 159 756 500 game-engine 0;
+#X obj 797 61 loadbang;
+#N canvas 82 171 756 500 game-engine 0;
 #X obj 37 14 inlet;
 #X obj 37 65 f;
 #X obj 67 65 + 1;
-#N canvas 345 330 596 300 clear 0;
+#N canvas 345 354 596 300 clear 0;
 #X obj 100 21 inlet;
 #X obj 226 23 iemguts/canvasdelete;
 #X msg 104 89 500;
@@ -674,8 +674,8 @@ connect 4 0 5 0 \, connect 5 0 6 0 \, connect 6 0 10 0 \, connect 6
 connect 10 0 8 0 \,;
 #X obj 337 55 b;
 #X obj 337 97 send music;
-#X obj 395 45 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
--1;
+#X obj 395 45 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
 #X obj 336 76 list append verse siren-fade;
 #X connect 0 0 5 0;
 #X connect 0 0 1 0;
@@ -725,8 +725,8 @@ connect 10 0 11 0 \,;
 #X obj 254 79 f 14;
 #X obj 347 58 b;
 #X obj 347 100 send music;
-#X obj 318 19 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
--1;
+#X obj 318 19 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
 #X obj 347 80 list append verse synthbass pluck1 simple-snare;
 #X msg 134 132 obj 190 239 float 0 \, obj 190 319 + 1 \, obj 190 149
 bng 50 250 50 0 empty empty empty 17 7 0 10 -262144 -1 -1 \, text 235
@@ -1013,8 +1013,8 @@ change it to 'X' for '1'... \, connect 4 0 10 0 \, connect 6 0 7 0
 #X obj 344 100 send music;
 #X obj 344 62 list append verse simple-bass simple-snare guitar-arpeggios
 pluck2;
-#X obj 441 33 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
--1;
+#X obj 441 33 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
 #X msg 134 132 obj 367 193 bng 48 250 50 0 empty empty empty 17 7 0
 10 -262144 -1 -1 \, obj 367 286 float 0 \, obj 367 321 == 0 \, text
 268 38 Level 10: I've Got Quantized Rhythm \, text 268 38 __________________________________
@@ -1125,8 +1125,8 @@ empty 17 7 0 10 -262144 -1 -1 \, connect 4 0 12 0 \, connect 5 0 21
 #X obj 362 109 send music;
 #X obj 362 79 list append chorus synthbass simple-snare guitar-arpeggios
 ;
-#X obj 429 41 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
--1;
+#X obj 429 41 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
 #X connect 0 0 5 0;
 #X connect 0 0 1 0;
 #X connect 0 0 6 0;
@@ -1250,8 +1250,8 @@ connect 20 0 22 1 \, connect 21 0 24 0 \, connect 21 1 12 0 \, connect
 pluck1;
 #X obj 362 44 b;
 #X obj 362 102 s music;
-#X obj 424 33 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
--1;
+#X obj 424 33 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
 #X connect 0 0 5 0;
 #X connect 0 0 1 0;
 #X connect 0 0 7 0;
@@ -1287,8 +1287,8 @@ connect 6 0 7 0 \, connect 7 0 8 0 \, connect 8 0 4 0 \, connect 9
 #X obj 268 51 b;
 #X obj 268 109 s music;
 #X obj 268 75 list append verse stepwise-fm;
-#X obj 318 48 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
--1;
+#X obj 318 48 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
 #X connect 0 0 5 0;
 #X connect 0 0 1 0;
 #X connect 0 0 6 0;
@@ -1365,8 +1365,8 @@ connect 14 0 16 1 \, connect 15 0 20 0 \, connect 15 1 17 0 \, connect
 \, connect 63 0 66 0 \, connect 64 0 57 0 \, connect 65 0 58 0 \,;
 #X obj 352 45 b;
 #X obj 352 103 s music;
-#X obj 402 42 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
--1;
+#X obj 402 42 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
 #X obj 352 69 list append shuffle siren-to-bass chorus pluck2 guitar-arpeggios
 ;
 #X connect 0 0 5 0;
@@ -1417,7 +1417,7 @@ connect 14 0 16 1 \, connect 15 0 20 0 \, connect 15 1 17 0 \, connect
 #X connect 32 6 33 0;
 #X connect 34 0 1 1;
 #X connect 35 0 20 0;
-#X restore 797 105 pd game-engine;
+#X restore 797 159 pd game-engine;
 #X obj 402 51 r bullets;
 #X obj 387 144 f;
 #X obj 387 165 - 1;
@@ -1577,24 +1577,24 @@ shooting the final [s the_answer] object;
 #X restore 36 36 pd key-navigation;
 #X text 85 480 <- sprite index number;
 #X obj 786 338 trigger anything anything;
-#X obj 249 43 cnv 15 78 65 empty empty empty 20 12 0 14 -237503 -66577
+#X obj 249 43 cnv 15 78 65 empty empty empty 20 12 0 14 #e4f8f8 #404040
 0;
 #N canvas 859 114 450 389 sfx 0;
 #X obj 58 29 receive sfx;
 #N canvas 369 139 803 429 tutD07 0;
 #X obj 466 149 s frequency;
 #X obj 550 149 s duration;
-#X floatatom 550 99 0 0 0 0 - - -;
+#X floatatom 550 99 0 0 0 0 - - - 0 0 1;
 #X obj 550 124 * 100;
 #X obj 466 124 mtof;
-#X floatatom 466 99 0 0 0 0 - - -;
+#X floatatom 466 99 0 0 0 0 - - - 0 0 1;
 #X text 588 89 duration in tenths;
 #X text 590 105 of a second;
 #X text 494 98 pitch;
 #X obj 59 37 partial 1 1 0.56 0;
 #X obj 466 44 loadbang;
-#X obj 319 267 bng 25 250 50 0 empty empty empty 0 -6 0 8 -262144 -1
--1;
+#X obj 319 267 bng 25 250 50 0 empty empty empty 0 -6 0 8 #fcfcfc #000000
+#000000 1;
 #X text 352 269 <-- click to play a note;
 #X obj 269 323 s trigger;
 #X obj 59 62 partial 0.67 0.9 0.56 1;
@@ -1646,7 +1646,7 @@ shooting the final [s the_answer] object;
 #X obj 96 92 vline~;
 #X msg 96 44 1;
 #X obj 124 44 delay;
-#X floatatom 96 -84 5 0 0 0 - - -, f 5;
+#X floatatom 96 -84 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 96 -32 /;
 #X msg 96 -53 1000 \$1;
 #X obj 96 -11 t b a;
@@ -1656,7 +1656,7 @@ shooting the final [s the_answer] object;
 #X obj 208 129 biquad~ 0 0 0 0 1;
 #X obj 193 156 +~;
 #X obj 42 268 outlet~;
-#X floatatom 140 -138 5 0 0 0 - - -, f 5;
+#X floatatom 140 -138 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 193 64 vline~;
 #X obj 193 177 *~ 0.48;
 #X obj 235 -147 t b a;
@@ -1696,7 +1696,7 @@ shooting the final [s the_answer] object;
 #X connect 24 0 13 0;
 #X connect 24 0 14 0;
 #X restore 200 138 pd ks;
-#X floatatom 200 89 5 0 0 0 - - -, f 5;
+#X floatatom 200 89 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 69 115 s got-a-bang;
 #X obj 58 70 route tgl bng bullet;
 #N canvas 715 120 385 507 ks 0;
@@ -1706,7 +1706,7 @@ shooting the final [s the_answer] object;
 #X obj 96 92 vline~;
 #X msg 96 44 1;
 #X obj 124 44 delay;
-#X floatatom 96 -84 5 0 0 0 - - -, f 5;
+#X floatatom 96 -84 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 96 -32 /;
 #X msg 96 -53 1000 \$1;
 #X obj 96 -11 t b a;
@@ -1720,7 +1720,7 @@ shooting the final [s the_answer] object;
 #X obj 193 99 vd~ buf5;
 #X msg 272 -121 \$3 \$1;
 #X obj 272 -97 -;
-#X floatatom 140 -138 5 0 0 0 - - -, f 5;
+#X floatatom 140 -138 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 193 64 vline~;
 #X obj 272 -31 -;
 #X obj 193 177 *~ 0.48;
@@ -1787,8 +1787,8 @@ shooting the final [s the_answer] object;
 #N canvas 220 49 792 592 sound 0;
 #X obj 459 92 f;
 #X obj 501 92 + 1;
-#X obj 459 16 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
-1;
+#X obj 459 16 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1 1;
 #X obj 196 253 r the_answer;
 #X obj 96 253 catch~ \$0-busl;
 #X obj 318 253 catch~ \$0-busr;
@@ -1803,7 +1803,7 @@ shooting the final [s the_answer] object;
 #X msg 156 294 5;
 #X obj 58 419 list-rot;
 #X obj 58 374 t a b;
-#X floatatom 8 230 5 0 0 0 - - -, f 5;
+#X floatatom 8 230 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 58 265 route 0 1 2 3;
 #X obj 85 515 del 140;
 #X obj 58 611 rev1~;
@@ -1835,7 +1835,7 @@ shooting the final [s the_answer] object;
 #X obj 111 230 vline~;
 #X msg 111 182 1;
 #X obj 151 182 delay;
-#X floatatom 191 54 5 0 0 0 - - -, f 5;
+#X floatatom 191 54 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 191 106 /;
 #X msg 191 85 1000 \$1;
 #X obj 191 127 t b a;
@@ -1888,7 +1888,7 @@ shooting the final [s the_answer] object;
 #X msg 256 294 5;
 #X obj 58 235 route 0 1;
 #X obj 214 8 r section;
-#X floatatom 338 271 5 0 0 0 - - -, f 5;
+#X floatatom 338 271 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 338 292 s section;
 #X obj 58 29 t a a;
 #X obj 139 162 f;
@@ -2009,7 +2009,7 @@ shooting the final [s the_answer] object;
 #N canvas 244 22 703 657 pluck1 0;
 #X msg 77 402 \$1 0 \$2 \$1 0 \$2 \$1 0 \$2 \$1 0 \$2 \$1 0 \$1 \$1
 ;
-#X msg 77 463 \$2;
+#X msg 77 463 \$3;
 #X msg 359 402 set \, adddollar \$1;
 #X obj 77 514 mtof;
 #X obj 158 92 mod 64;
@@ -2029,7 +2029,7 @@ shooting the final [s the_answer] object;
 #X msg 227 65 1;
 #X obj 293 117 delay;
 #X obj 333 31 /;
-#X floatatom 408 93 5 0 0 0 - - -, f 5;
+#X floatatom 408 93 5 0 0 0 - - - 0 0 1, f 5;
 #X msg 333 10 1000 \$1;
 #X obj 333 52 t b a;
 #X msg 293 138 0;
@@ -2073,7 +2073,7 @@ shooting the final [s the_answer] object;
 #X msg 217 332 36 35;
 #X msg 265 332 43 42;
 #X msg 314 332 45 43;
-#X floatatom 648 46 5 0 0 0 - - -, f 5;
+#X floatatom 648 46 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 648 67 s section;
 #X obj 158 164 sel 0;
 #X obj 158 219 f;
@@ -2174,7 +2174,7 @@ shooting the final [s the_answer] object;
 #X obj 142 123 + 1;
 #X msg 53 333 \$1 0 \$2 \$1 0 \$2 \$1 0 \$2 \$1 0 \$2 \$1 0 \$1 \$1
 ;
-#X msg 53 384 \$2;
+#X msg 53 384 \$3;
 #X obj 53 426 mtof;
 #X obj 54 256 route 0 1 2 3;
 #X obj 53 405 + 24;
@@ -2188,7 +2188,7 @@ shooting the final [s the_answer] object;
 #X msg 227 65 1;
 #X obj 293 117 delay;
 #X obj 333 31 /;
-#X floatatom 408 93 5 0 0 0 - - -, f 5;
+#X floatatom 408 93 5 0 0 0 - - - 0 0 1, f 5;
 #X msg 333 10 1000 \$1;
 #X obj 333 52 t b a;
 #X msg 293 138 0;
@@ -2364,7 +2364,7 @@ shooting the final [s the_answer] object;
 #X restore 541 170 pd simple-snare;
 #N canvas 115 68 1190 634 baseline 0;
 #X obj 326 343 phasor~;
-#X msg 326 186 \$6;
+#X msg 326 186 \$11;
 #X obj 326 227 mtof;
 #X obj 326 279 line~;
 #X obj 1065 87 + 1;
@@ -2383,7 +2383,7 @@ shooting the final [s the_answer] object;
 #X obj 325 37 list prepend 0;
 #X obj 325 58 route 0 1;
 #X obj 413 79 route 0 1 2 3;
-#X floatatom 558 -150 5 0 0 0 - - -, f 5;
+#X floatatom 558 -150 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 558 -129 s section;
 #X msg 414 118 36 48;
 #X msg 457 118 43 55;
@@ -2537,7 +2537,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X connect 72 0 11 0;
 #X restore 543 401 pd baseline;
 #N canvas 1 37 682 683 siren 0;
-#X msg 269 204 \$2;
+#X msg 269 204 \$3;
 #X obj 269 235 mtof;
 #X obj 269 287 line~;
 #X obj 479 152 + 1;
@@ -2548,14 +2548,14 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X obj 460 -87 r section;
 #X obj 269 23 list prepend 0;
 #X obj 269 44 route 0 1;
-#X floatatom 567 -89 5 0 0 0 - - -, f 5;
+#X floatatom 567 -89 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 567 -68 s section;
 #X obj 350 -37 sel 0;
 #X obj 350 -59 mod 64;
 #X obj 350 -2 f;
 #X msg 269 173 \$1 \$2 \$2 \$2;
 #X obj 269 -87 trigger anything anything;
-#X msg 789 274 \$2;
+#X msg 789 274 \$3;
 #X obj 789 298 mtof;
 #X obj 789 346 line~;
 #X obj 969 182 + 1;
@@ -2708,7 +2708,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X restore 599 314 pd siren;
 #N canvas 19 60 947 608 simple-bass 0;
 #X obj 195 273 phasor~;
-#X msg 195 166 \$6;
+#X msg 195 166 \$11;
 #X obj 195 197 mtof;
 #X obj 195 249 line~;
 #X msg 195 74 40 52;
@@ -2728,7 +2728,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X obj 195 2 list prepend 0;
 #X obj 195 23 route 0 1;
 #X obj 239 45 route 0 1 2 3;
-#X floatatom 63 -110 5 0 0 0 - - -, f 5;
+#X floatatom 63 -110 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 63 -89 s section;
 #X msg 239 74 36 48;
 #X msg 283 73 43 55;
@@ -2820,7 +2820,7 @@ adddollar 1 \, add2 0 0 0 0 0 0 0 0 0;
 #X restore 459 542 pd simple-bass;
 #N canvas 0 19 1366 684 stepwise-bass 0;
 #X obj 215 303 phasor~;
-#X msg 215 146 \$6;
+#X msg 215 146 \$11;
 #X obj 215 177 mtof;
 #X obj 215 229 line~;
 #X obj 565 13 + 1;
@@ -2838,7 +2838,7 @@ adddollar 1 \, add2 0 0 0 0 0 0 0 0 0;
 #X obj 412 -124 r section;
 #X obj 215 -38 list prepend 0;
 #X obj 467 30 route 0 1 2 3;
-#X floatatom 513 -120 5 0 0 0 - - -, f 5;
+#X floatatom 513 -120 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 513 -99 s section;
 #X obj 340 -63 sel 0;
 #X obj 340 -90 mod 64;
@@ -2899,7 +2899,7 @@ adddollar 1 \, add2 0 0 0 0 0 0 0 0 0;
 #X msg 477 285 40 68 68;
 #X msg 537 285 40 67 67;
 #X msg 596 285 40 66 66;
-#X floatatom 533 175 5 0 0 0 - - -, f 5;
+#X floatatom 533 175 5 0 0 0 - - - 0 0 1, f 5;
 #X msg 666 285 40 69 70;
 #X obj 103 124 f 2;
 #X obj 619 238 s \$0-stepwise-bass-go;
@@ -3047,7 +3047,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X restore 501 473 pd stepwise-bass;
 #N canvas 288 49 565 650 siren-to-bass 0;
 #X obj 200 380 phasor~;
-#X msg 75 179 \$2;
+#X msg 75 179 \$3;
 #X obj 200 264 mtof;
 #X obj 200 311 line~;
 #X msg 75 55 40 52;
@@ -3066,7 +3066,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X obj 75 12 list prepend 0;
 #X obj 75 33 route 0 1;
 #X obj 119 55 route 0 1 2 3;
-#X floatatom 373 -110 5 0 0 0 - - -, f 5;
+#X floatatom 373 -110 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 373 -89 s section;
 #X msg 120 84 36 48;
 #X msg 161 84 43 55;
@@ -3154,7 +3154,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X restore 529 422 pd siren-to-bass;
 #N canvas 440 34 584 635 siren-fade 0;
 #X obj 192 372 phasor~;
-#X msg 95 246 \$2;
+#X msg 95 246 \$3;
 #X obj 192 300 mtof;
 #X obj 192 348 line~;
 #X msg 95 109 40 52;
@@ -3174,7 +3174,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X obj 95 62 list prepend 0;
 #X obj 95 83 route 0 1;
 #X obj 139 109 route 0 1 2 3;
-#X floatatom 393 -80 5 0 0 0 - - -, f 5;
+#X floatatom 393 -80 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 393 -59 s section;
 #X msg 139 142 36 48;
 #X msg 183 142 43 55;
@@ -3274,7 +3274,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X restore 585 335 pd siren-fade;
 #N canvas 440 34 584 670 siren-fade-long 0;
 #X obj 192 372 phasor~;
-#X msg 95 246 \$2;
+#X msg 95 246 \$3;
 #X obj 192 300 mtof;
 #X obj 192 348 line~;
 #X msg 95 109 40 52;
@@ -3294,7 +3294,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X obj 95 62 list prepend 0;
 #X obj 95 83 route 0 1;
 #X obj 139 109 route 0 1 2 3;
-#X floatatom 393 -80 5 0 0 0 - - -, f 5;
+#X floatatom 393 -80 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 393 -59 s section;
 #X msg 139 142 36 48;
 #X msg 183 142 43 55;
@@ -3394,7 +3394,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X restore 571 356 pd siren-fade-long;
 #N canvas 440 34 584 670 siren-fade-single 0;
 #X obj 192 372 phasor~;
-#X msg 95 246 \$2;
+#X msg 95 246 \$3;
 #X obj 192 300 mtof;
 #X obj 192 348 line~;
 #X msg 95 109 40 52;
@@ -3414,7 +3414,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X obj 95 62 list prepend 0;
 #X obj 95 83 route 0 1;
 #X obj 139 109 route 0 1 2 3;
-#X floatatom 393 -80 5 0 0 0 - - -, f 5;
+#X floatatom 393 -80 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 393 -59 s section;
 #X msg 139 142 36 48;
 #X msg 183 142 43 55;
@@ -3541,7 +3541,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #N canvas 434 41 703 657 pluck-fade 0;
 #X msg 77 422 \$1 0 \$2 \$1 0 \$2 \$1 0 \$2 \$1 0 \$2 \$1 0 \$1 \$1
 ;
-#X msg 77 453 \$2;
+#X msg 77 453 \$3;
 #X msg 359 422 set \, adddollar \$1;
 #X obj 77 504 mtof;
 #X obj 158 112 mod 64;
@@ -3558,7 +3558,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X msg 227 65 1;
 #X obj 293 117 delay;
 #X obj 333 31 /;
-#X floatatom 408 93 5 0 0 0 - - -, f 5;
+#X floatatom 408 93 5 0 0 0 - - - 0 0 1, f 5;
 #X msg 333 10 1000 \$1;
 #X obj 333 52 t b a;
 #X msg 293 138 0;
@@ -3601,7 +3601,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X msg 217 352 36 35;
 #X msg 265 352 43 42;
 #X msg 314 352 45 43;
-#X floatatom 648 66 5 0 0 0 - - -, f 5;
+#X floatatom 648 66 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 648 87 s section;
 #X obj 158 184 sel 0;
 #X obj 158 239 f;
@@ -3701,7 +3701,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X restore 493 233 pd pluck-fade;
 #N canvas 0 19 797 634 level8-bass 0;
 #X obj 326 343 phasor~;
-#X msg 326 186 \$6;
+#X msg 326 186 \$11;
 #X obj 326 227 mtof;
 #X obj 326 279 line~;
 #X obj 645 127 + 1;
@@ -3719,7 +3719,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X obj 325 37 list prepend 0;
 #X obj 325 58 route 0 1;
 #X obj 413 79 route 0 1 2 3;
-#X floatatom 558 -150 5 0 0 0 - - -, f 5;
+#X floatatom 558 -150 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 558 -129 s section;
 #X obj 406 -67 sel 0;
 #X obj 466 -112 mod 64;
@@ -3826,7 +3826,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X obj 96 419 *~ 0.5;
 #X obj 303 419 *~ 0.5;
 #N canvas 76 51 1221 608 stepwise-osc 0;
-#X msg 215 146 \$6;
+#X msg 215 146 \$11;
 #X obj 215 177 mtof;
 #X obj 215 229 line~;
 #X obj 565 13 + 1;
@@ -3844,7 +3844,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X obj 412 -124 r section;
 #X obj 215 -38 list prepend 0;
 #X obj 467 30 route 0 1 2 3;
-#X floatatom 513 -120 5 0 0 0 - - -, f 5;
+#X floatatom 513 -120 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 513 -99 s section;
 #X obj 340 -63 sel 0;
 #X obj 340 -90 mod 64;
@@ -3904,7 +3904,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X msg 477 285 40 68 68;
 #X msg 537 285 40 67 67;
 #X msg 596 285 40 66 66;
-#X floatatom 533 175 5 0 0 0 - - -, f 5;
+#X floatatom 533 175 5 0 0 0 - - - 0 0 1, f 5;
 #X msg 666 285 40 69 70;
 #X obj 103 124 f 2;
 #X obj 619 238 s \$0-stepwise-bass-go;
@@ -3929,8 +3929,8 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X obj 215 345 clip~ -1 1;
 #X obj 279 216 v \$0-x;
 #X obj 266 168 metro 100;
-#X obj 254 144 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
-1;
+#X obj 254 144 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1 1;
 #X msg 274 287 \$1 100;
 #X obj 279 237 change;
 #X obj 279 258 / 300;
@@ -4113,7 +4113,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X connect 16 0 7 0;
 #X restore 674 191 pd shuffle;
 #N canvas 76 51 1221 608 stepwise-fm 0;
-#X msg 215 146 \$6;
+#X msg 215 146 \$11;
 #X obj 215 177 mtof;
 #X obj 215 229 line~;
 #X obj 565 13 + 1;
@@ -4131,7 +4131,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X obj 412 -124 r section;
 #X obj 215 -38 list prepend 0;
 #X obj 467 30 route 0 1 2 3;
-#X floatatom 513 -120 5 0 0 0 - - -, f 5;
+#X floatatom 513 -120 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 513 -99 s section;
 #X obj 340 -63 sel 0;
 #X obj 340 -90 mod 64;
@@ -4191,7 +4191,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X msg 477 285 40 68 68;
 #X msg 537 285 40 67 67;
 #X msg 596 285 40 66 66;
-#X floatatom 533 175 5 0 0 0 - - -, f 5;
+#X floatatom 533 175 5 0 0 0 - - - 0 0 1, f 5;
 #X msg 666 285 40 69 70;
 #X obj 103 124 f 2;
 #X obj 619 238 s \$0-stepwise-bass-go;
@@ -4235,10 +4235,10 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X obj 170 100 + 1;
 #X obj 130 121 * 1273;
 #X obj 130 213 outlet;
-#X floatatom 52 193 5 0 0 0 - - -, f 5;
-#X floatatom 46 132 5 0 0 0 - - -, f 5;
+#X floatatom 52 193 5 0 0 0 - - - 0 0 1, f 5;
+#X floatatom 46 132 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 130 142 mod 9000;
-#X floatatom 160 180 5 0 0 0 - - -, f 5;
+#X floatatom 160 180 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 130 60 b;
 #X connect 0 0 9 0;
 #X connect 1 0 2 0;
@@ -4386,7 +4386,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #N canvas 434 41 755 657 pluck-fade-long 0;
 #X msg 77 422 \$1 0 \$2 \$1 0 \$2 \$1 0 \$2 \$1 0 \$2 \$1 0 \$1 \$1
 ;
-#X msg 77 453 \$2;
+#X msg 77 453 \$3;
 #X msg 359 422 set \, adddollar \$1;
 #X obj 77 504 mtof;
 #X obj 158 112 mod 64;
@@ -4403,7 +4403,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X msg 227 65 1;
 #X obj 293 117 delay;
 #X obj 333 31 /;
-#X floatatom 408 93 5 0 0 0 - - -, f 5;
+#X floatatom 408 93 5 0 0 0 - - - 0 0 1, f 5;
 #X msg 333 10 1000 \$1;
 #X obj 333 52 t b a;
 #X msg 293 138 0;
@@ -4446,7 +4446,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X msg 217 352 36 35;
 #X msg 265 352 43 42;
 #X msg 314 352 45 43;
-#X floatatom 648 66 5 0 0 0 - - -, f 5;
+#X floatatom 648 66 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 648 87 s section;
 #X obj 158 184 sel 0;
 #X obj 158 239 f;
@@ -4613,12 +4613,15 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X obj 385 305 del 450;
 #X obj 620 203 del 600;
 #X obj 271 325 hsl 91 15 0 1 0 0 \$0-master \$0-from-nowhere Volume
-29 8 0 10 -237503 -1 -1 8450 1;
+29 8 0 10 #e4f8f8 #000000 #000000 0 1 0 1;
 #X obj 620 234 list;
 #X obj 620 255 route -1;
 #X msg 641 314 index;
 #X obj 641 335 objectinfo;
 #X obj 641 293 trigger bang anything;
+#X obj 797 86 delay 1;
+#X text 846 85 necessary in casethis subpatch isdeleted \, then undodeleted.
+preventscrashing;
 #X connect 0 0 2 0;
 #X connect 0 0 18 0;
 #X connect 1 0 3 0;
@@ -4667,7 +4670,7 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X connect 41 0 42 0;
 #X connect 42 0 1 0;
 #X connect 43 0 6 0;
-#X connect 44 0 45 0;
+#X connect 44 0 94 0;
 #X connect 46 0 47 1;
 #X connect 46 0 49 0;
 #X connect 47 0 48 0;
@@ -4726,37 +4729,22 @@ adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar 2 \, adddollar
 #X connect 92 0 27 0;
 #X connect 93 0 91 0;
 #X connect 93 1 92 1;
+#X connect 94 0 45 0;
 #X coords 0 -1 1 1 115 61 1 262 284;
 #X restore 734 61 pd guts;
 #X obj 734 15 struct foo;
-#X obj 91 157 bng 61 250 50 0 empty empty empty 17 7 0 10 -262144 -1
--1;
-#X obj 91 307 float 21;
-#X obj 91 407 +;
-#X obj 188 236 bng 61 350 50 0 empty empty empty 17 7 0 10 -262144
--1 -1;
-#X obj 91 547 send the_answer;
-#X obj 188 306 float 21;
-#X obj 91 507 select 42;
-#X floatatom 188 337 5 0 0 0 - - -, f 5;
-#X floatatom 104 474 5 0 0 0 - - -, f 5;
-#X text 142 406 <- This object adds two numbers. Like most objects
-in Pd the right inlet just stores the data. The object only outputs
-the sum when you send a number to the left or "hot" inlet.;
-#X text 229 26 Level 2: Add It Up;
-#X text 229 26 __________________;
-#X text 229 86 Click 'f' to turn on the flashlight. When you hit an
+#X obj 450 200 bng 61 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000 1;
+#X obj 450 370 float 42;
+#X obj 450 390 send the_answer;
+#X text 200 50 Use the arrow keys to move;
+#X text 200 80 Click 'f' to turn on the flashlight. When you hit an
 object that you can shoot you'll see an exclamation mark.;
-#X text 229 126 Click 'b' to shoot!;
-#X text 229 56 Use the arrow keys to move;
+#X text 200 120 Click 'b' to shoot!;
+#X text 200 20 Level 1: Send the Answer;
+#X text 200 20 ________________________;
 #X scalar foo \;;
 #X connect 2 0 0 0;
 #X connect 2 1 0 1;
 #X connect 4 0 5 0;
 #X connect 5 0 6 0;
-#X connect 6 0 10 0;
-#X connect 6 0 12 0;
-#X connect 7 0 9 0;
-#X connect 9 0 6 1;
-#X connect 9 0 11 0;
-#X connect 10 0 8 0;
