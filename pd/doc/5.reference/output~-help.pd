@@ -42,23 +42,23 @@ on this abstraction model \, resulting now in Pd-l2ork's version of
 13 -228856 -1 0;
 #X obj 1 46 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8 12
 0 13 -228856 -1 0;
-#X obj 80 -189 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 -228856
--162280 0;
-#X obj 80 -19 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 -228856
--162280 0;
-#X obj 80 -167 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 -228856
--162280 0;
+#X obj 80 -189 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 80 -19 cnv 17 3 17 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#646464 0;
+#X obj 80 -167 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 128 -189 signal;
 #X text 128 -167 signal;
-#X obj 80 -144 cnv 17 3 110 empty \$0-pddp.cnv.let.2 2 5 6 0 16 -228856
--162280 0;
+#X obj 80 -144 cnv 17 3 110 empty \$0-pddp.cnv.let.2 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 134 -144 float;
 #X text 127 -19 signal;
-#X obj 80 3 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 -228856
--162280 0;
+#X obj 80 3 cnv 17 3 17 empty \$0-pddp.cnv.let.1 1 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 127 4 signal;
-#X obj 80 24 cnv 17 3 17 empty \$0-pddp.cnv.let.2 2 5 6 0 16 -228856
--162280 0;
+#X obj 80 24 cnv 17 3 17 empty \$0-pddp.cnv.let.2 2 5 6 0 16 #dcdcdc
+#646464 0;
 #X text 133 25 float;
 #X text 178 -189 - incoming signal routed to left channel output,
 f 60;
