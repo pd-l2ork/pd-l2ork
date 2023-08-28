@@ -5,36 +5,12 @@ PD-L2ORK TODO:
     *Likely due to multiple screens?
   *Data structure game not allowing for the sprite to be selected after L2Ork Tweeter has been opened (most of the time).
   *Investigate weird zoom when selecting all objects in the game.pd and then pressing up creates a weird zoom.
+    *All of these appear to be Windows-specific and may have something to do with Windows not explicitly terminating dynamically allocated strings, which may result in a mangled message being sent to the front-end.
+      *TODO: get a printout of messages going to the front-end and check if the recent game.pd fix has any effect on this issue.
 
-*Deleting game.pd's main subpatch and undoing it crashes pd-l2ork.
-
-*doc/manuals/2.image: looks like on Windows lighting does not work always and destroying window in one of the early examples does not work.
-
-
-
-*Merge improved forbidden planet documentation patch (I03.resynthesis.pd in audio examples). DONE
-  *Investigate why this patch is not using vanilla DAC abstraction, instead of its improved "extended" version.
+*doc/manuals/2.image: looks like on Windows lighting does not work always and destroying window in one of the early examples does not work. This is obsolete documentation that should be ignored. Should we remove this altogether?
 
 *Explore what limits the hex color interpretation to also include alpha channel and support for it. Straightforward CSS works, so this is likely a backend limitation.
-
-*Consider changing netserver.c as is the case on the server computer:
-+++ b/externals/maxlib/netserver.c
-@@ -326,7 +326,7 @@ static void netserver_send(t_netserver *x, t_symbol *s, int
-argc, t_atom *argv)
-                        //sys_sockerror("netserver");
-                        if (x->x_log_pri >= LOG_ERR)
-                           post("netserver: could not send data to the client");
--                       x->x_fd_error[client]++;
-+                       //x->x_fd_error[client]++;
-                        if (x->x_fd_error[client] >= x->x_fd_error_threshold)
-                        {
-                                post("netserver: disconnecting client on the socket %d due to %d failed attempts to send packets", x->x_fd[i], x->x_fd_error_threshold);
-@@ -419,7 +419,7 @@ static void netserver_client_send(t_netserver *x, t_symbol *s, int argc, t_atom
-                        //sys_sockerror("netserver");
-                        if (x->x_log_pri >= LOG_ERR)
-                           post("netserver: could not send data to the client");
--                       x->x_fd_error[client - 1]++;
-+                       //x->x_fd_error[client - 1]++;
 
 *Figure out the OSX Big Sur issue that the user does not have a permission to run the application.
   *Appears to be related to opening the program from multiple accounts.
@@ -720,6 +696,29 @@ Add global "editable" flag. Figure out how to embed this into the patch that is 
 *Updated fluid~ to include gain.
 *Internationalize K12 menu.
 *Fixed fluid~ build on Windows (needed to include yet another silent lib to make it work, likely due to msys/mingw updates).
+*Deleting game.pd's main subpatch and undoing it crashes pd-l2ork.
+*Consider changing netserver.c as is the case on the server computer:
++++ b/externals/maxlib/netserver.c
+@@ -326,7 +326,7 @@ static void netserver_send(t_netserver *x, t_symbol *s, int
+argc, t_atom *argv)
+                        //sys_sockerror("netserver");
+                        if (x->x_log_pri >= LOG_ERR)
+                           post("netserver: could not send data to the client");
+-                       x->x_fd_error[client]++;
++                       //x->x_fd_error[client]++;
+                        if (x->x_fd_error[client] >= x->x_fd_error_threshold)
+                        {
+                                post("netserver: disconnecting client on the socket %d due to %d failed attempts to send packets", x->x_fd[i], x->x_fd_error_threshold);
+@@ -419,7 +419,7 @@ static void netserver_client_send(t_netserver *x, t_symbol *s, int argc, t_atom
+                        //sys_sockerror("netserver");
+                        if (x->x_log_pri >= LOG_ERR)
+                           post("netserver: could not send data to the client");
+-                       x->x_fd_error[client - 1]++;
++                       //x->x_fd_error[client - 1]++;
+  *Update: this does not appear to be necessary. Connectivity issues without this are so far exclusively due to bad connection.
+*Merge improved forbidden planet documentation patch (I03.resynthesis.pd in audio examples). DONE
+  *Investigate why this patch is not using vanilla DAC abstraction, instead of its improved "extended" version. This is because there is a different abstraction included in the 3.audio.examples, than the one in 5.reference. Will leave this as-is since the sizing is also affecting the visual organization of the patch content.
+
 
 
 
