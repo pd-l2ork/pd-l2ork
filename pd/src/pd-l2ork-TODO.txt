@@ -97,8 +97,6 @@ RPI 0.28.4 current RPi version.
     0.70.1 window close nw1 bug (see #7981 nwjs bug report).
   *Need to figure out what is slowing down nw2 on versions 0.42.3 and onward, so that we can get away from all the weird idiosyncrasies with window positioning and other issues.
 
-*Ubuntu 22.04 build: investigate iem16 build issues and gmerlin library support. 20.04 uses 1.16 automake and 2.69 autoconf. 22.04 uses 2.71 autoconf and ??? automake.
-
 *Submit patch to js external github.
 
 *Consider adding ability to display array name that is other than the internal name (e.g. so that we don't have to use $0, $1, _ etc. in the name).
@@ -141,6 +139,18 @@ RARE:
 
 *Space in path (e.g. username) makes installing apps in the user folder fail.
   *Tested and cannot reproduce. Looks like a permissions issue, perhaps?
+
+
+From old TODO:
+*array in s-env draws on top of cnv, which it shouldn't (requires redrawing of the entire GOP, do we really want to do this?--this should solve itself once we decide to update rather than redraw messages)
+
+*object synonyms do not instantiate until the main object has been instantiated (no solution--advise getting rid of aliases or making one monster startup setup routine)
+
+*Redesign main window interface?
+
+*add ability to custom name each instance of pd-l2ork (pd~?)
+
+*shared sends and receives among multiple instances?
 
 
 MAYBE:
@@ -718,6 +728,7 @@ argc, t_atom *argv)
   *Update: this does not appear to be necessary. Connectivity issues without this are so far exclusively due to bad connection.
 *Merge improved forbidden planet documentation patch (I03.resynthesis.pd in audio examples). DONE
   *Investigate why this patch is not using vanilla DAC abstraction, instead of its improved "extended" version. This is because there is a different abstraction included in the 3.audio.examples, than the one in 5.reference. Will leave this as-is since the sizing is also affecting the visual organization of the patch content.
+*Ubuntu 22.04 build: investigate iem16 build issues and gmerlin library support. 20.04 uses 1.16 automake and 2.69 autoconf. 22.04 uses 2.71 autoconf and 1.16.5 automake. This appears to not be a problem anymore with the latest git checkout as of 2023-08-29.
 
 
 
