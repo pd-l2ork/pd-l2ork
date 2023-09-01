@@ -1,5 +1,9 @@
 PD-L2ORK TODO:
 
+*Edit mode tooltips show when the patch is opened in non-edit mode.
+
+*Session loading in L2Ork Tweeter opens invalid folder on Ubuntu 22.04 suggesting something may be broken with the patch_name and dialog.
+
 *Windows only:
   *Investigate Gem not showing while L2Ork Tweeter is open.
     *Likely due to multiple screens?
