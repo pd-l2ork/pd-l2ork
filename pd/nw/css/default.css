@@ -526,7 +526,9 @@ text.activated {
    borders assigned to GOPs vs. objects inside it, such as numbox */
 .graph .gopborder {
     stroke: black;
-    fill: none;
+    /* changed this from none to make sure that even the empty,
+       transparent parts of the GOP rectangle trigger tooltips */
+    fill: rgba(0,0,0,0.0);
     stroke-width: 1px;
 }
 

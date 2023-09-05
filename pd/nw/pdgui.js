@@ -2622,13 +2622,17 @@ function canvas_set_editmode(cid, state) {
             var all_svg_g = patchsvg.getElementsByTagName('g');
             //post("..." + all_svg_g.length);
             for (var i = 0; i < all_svg_g.length; i++) {
-                //post("...g=" + all_svg_g[i]);
+                //post("...g=" + all_svg_g[i].getAttribute('id'));
                 var tooltip = "";
                 if (all_svg_g[i].getAttribute('tooltip'))
                     tooltip = all_svg_g[i].getAttribute('tooltip');
                 //post("...tooltip=<" + tooltip + ">");
                 if (all_svg_g[i].getElementsByTagName('title').length > 0) {
-                    all_svg_g[i].getElementsByTagName('title')[0].textContent = tooltip;
+                    // ico 2023-09-05: we need the last one since others are
+                    // embedded above this one in a sub-g. we later take care
+                    // of other embedded ones, via the all_svg_g.length above
+                    var last = all_svg_g[i].getElementsByTagName('title').length - 1;
+                    all_svg_g[i].getElementsByTagName('title')[last].textContent = tooltip;
                 }
             }
         } else {
@@ -2637,13 +2641,22 @@ function canvas_set_editmode(cid, state) {
             var all_svg_g = patchsvg.getElementsByTagName('g');
             //post("..." + all_svg_g.length);
             for (var i = 0; i < all_svg_g.length; i++) {
-                //post("...g=" + all_svg_g[i]);
+                //post("...g=" + all_svg_g[i].getAttribute('id'));
                 var tooltip = "";
                 if (all_svg_g[i].getAttribute('runtime_tooltip'))
                     tooltip = all_svg_g[i].getAttribute('runtime_tooltip');
-                //post("...tooltip=<" + tooltip + ">");
+                //post("...tooltip=<" + tooltip + "> length=" +
+                //    all_svg_g[i].getElementsByTagName('title').length);
                 if (all_svg_g[i].getElementsByTagName('title').length > 0) {
-                    all_svg_g[i].getElementsByTagName('title')[0].textContent = tooltip;
+                    for (var j = 0; j < all_svg_g[i].getElementsByTagName('title').length; j++) {
+                        //post("..." + j + ":current tooltip=<" +
+                        //    all_svg_g[i].getElementsByTagName('title')[j].textContent + ">");
+                    }
+                    // ico 2023-09-05: we need the last one since others are
+                    // embedded above this one in a sub-g. we later take care
+                    // of other embedded ones, via the all_svg_g.length above
+                    var last = all_svg_g[i].getElementsByTagName('title').length - 1;
+                    all_svg_g[i].getElementsByTagName('title')[last].textContent = tooltip;
                 }
             }
         }
