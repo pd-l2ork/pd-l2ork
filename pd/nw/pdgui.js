@@ -2669,10 +2669,12 @@ exports.canvas_set_editmode = canvas_set_editmode;
 function gui_canvas_set_editmode(cid, state) {
     canvas_set_editmode(cid, state);
     //post("gui_canvas_set_editmode " + state);
-    var k12_menu = patchwin[cid].window.document.
-        getElementById("k12_menu");
-    if (k12_menu.style.display == "block") {
-        toggle_k12_menu(cid, state);
+    if (patchwin[cid] !== null) {
+        var k12_menu = patchwin[cid].window.document.
+            getElementById("k12_menu");
+        if (k12_menu.style.display == "block") {
+            toggle_k12_menu(cid, state);
+        }
     }
 }
 
