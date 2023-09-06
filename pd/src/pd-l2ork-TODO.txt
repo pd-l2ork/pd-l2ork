@@ -732,6 +732,7 @@ argc, t_atom *argv)
   *Investigate why this patch is not using vanilla DAC abstraction, instead of its improved "extended" version. This is because there is a different abstraction included in the 3.audio.examples, than the one in 5.reference. Will leave this as-is since the sizing is also affecting the visual organization of the patch content.
 *Ubuntu 22.04 build: investigate iem16 build issues and gmerlin library support. 20.04 uses 1.16 automake and 2.69 autoconf. 22.04 uses 2.71 autoconf and 1.16.5 automake. This appears to not be a problem anymore with the latest git checkout as of 2023-08-29.
 *Fixed a bug where edit mode tooltips show when the patch is opened in non-edit mode. Improved CSS to ensure that tooltips show up on the entire surface of the GOP-enabled subpatch/abstraction that is displayed on a parent patch's canvas, including areas that are empty/transparent.
+*Fixed occassional bug where due to out-of-sequence gui_canvas_set_editmode call would not find a valid patchwin[cid]. Updated L2Orkmote-Tweeter benign bug.
 
 
 
