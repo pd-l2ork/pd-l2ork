@@ -940,3 +940,18 @@ alias axbrew='arch -x86_64 /usr/local/homebrew/bin/brew'
 alias ax='arch -x86_64'
 
 You can then use axbrew to install the required packages as described in the blog post, and ax make to compile Purr Data itself. Be warned, however, that brew will have to compile many packages you install from source, since ready-made binary packages for x86_64 aren't always available for the latest arm64 versions of macOS.
+
+
+
+
+GIT CONFIG AFTER CLONING:
+git remote set-url origin git@github.com:<Username>/<Project>.git
+
+Submodules: git submodule update --remote
+
+
+
+
+FLATPAK STUFF:
+pkg-config --variable pc_path pkg-config
+pkg-config --exists --print-errors gtk+-2.0

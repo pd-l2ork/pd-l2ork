@@ -498,6 +498,16 @@ endif
 endif
 	make -C $(externals_src)/disis PD_PATH=$(pd_src) pdbinpath=$(pd_src)/src CFLAGS="$(CFLAGS_ADD)"
 
+disis_flatpak:
+ifneq ($(OS_NAME),windows)
+ifneq ($(OS_NAME),darwin)
+	cd $(externals_src)/disis/cwiid && autoupdate && aclocal && autoconf && \
+		./configure --host=host --without-python --with-pkgmod="gtk+-3.0 gthread-2.0" && make
+endif
+endif
+	make -C $(externals_src)/disis PD_PATH=$(pd_src) pdbinpath=$(pd_src)/src CFLAGS="$(CFLAGS_ADD)"
+
+
 disis_install:
 	make -C $(externals_src)/disis \
 		DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" \
@@ -723,7 +733,8 @@ $(gem_src)/Gem.pd_linux: $(gem_src)/configure
 		cd $(gem_src) && ./configure \
 			CXXFLAGS="-DHAVE_S_STUFF_H $(CFLAGS_ADD)" \
 			--prefix=$(prefix) \
-			--with-pd=$(pd_src)
+			--with-pd=$(pd_src) \
+			--host=$(shell uname -m)-pc-linux-gnu
 	$(MAKE) $(GEM_MAKEFLAGS) -C $(gem_src)
 
 # Mac: This is still a bit experimental. At present, many of the window

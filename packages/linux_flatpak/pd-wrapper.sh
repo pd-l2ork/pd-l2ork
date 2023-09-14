@@ -1,3 +1,3 @@
 #!/bin/sh
 
-padsp -n "Pure Data (Flatpak)" pd-l2ork -oss $@
+padsp -n "Pd-L2Ork (Flatpak)" pd-l2ork -alsa $@
