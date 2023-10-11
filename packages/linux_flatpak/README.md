@@ -18,7 +18,7 @@ and install it in your 'user' Flatpak installation:
     flatpak install flathub org.freedesktop.Platform//22.08 org.freedesktop.Sdk//22.08
     (press Y to continue)
     git config --global --add protocol.file.allow always
-    export FLATPAK_BUILDER_N_JOBS=1 && flatpak-builder --verbose --install ./build net.pdl2ork.PdL2Ork.yml --force-clean --user > build.log 2>&1
+    flatpak-builder --verbose --install ./build net.pdl2ork.PdL2Ork.yml --force-clean --user > build.log 2>&1
 
 During development you can also run a build without installing it, like this:
 
