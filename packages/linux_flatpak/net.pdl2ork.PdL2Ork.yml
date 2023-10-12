@@ -88,7 +88,7 @@ modules:
   - |
     make prefix=/app \
          adaptive arraysize autotune bassemu boids comport creb cxc cyclone \
-         disis_flatpak earplug ekext ext13 fftease gem flatgui freeverb ggee hcs \
+         disis_flatpak earplug ekext ext13 fftease flatgui freeverb gem ggee hcs \
          iem_ambi iem_bin_ambi iemlib iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay \
          iem_roomsim iem_spec2 iem_tab jasch_lib loaders-libdir lyonpotpourri mapping \
          markex maxlib mjlib moonlib motex mrpeach pan pdcontainer pddp pdogg plugin pmpd \
