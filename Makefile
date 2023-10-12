@@ -158,6 +158,7 @@ clean:
 	cd Gem/ && test -f Makefile && make distclean || true
 	cd Gem/ && rm -f gemglutwindow.pd_linux Gem.pd_linux || true
 	rm -rf packages/*/build/
+	rm -rf packages/linux_flatpak/build packages/linux_flatpak/.flatpak_builder
 
 realclean:
 # This requires a working copy of the git repo.
