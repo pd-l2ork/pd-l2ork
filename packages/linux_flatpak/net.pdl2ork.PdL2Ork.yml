@@ -54,7 +54,7 @@ modules:
 # For Gem library
 - shared/glu-9.json
 # For fluid~ object
-- shared-modules/linux-audio/fluidsynth.json
+- shared-modules/linux-audio/fluidsynth2.json
 # For LADSPA support
 - shared-modules/linux-audio/ladspa.json
 # For pdlua
@@ -64,9 +64,8 @@ modules:
   buildsystem: simple
   subdir: externals
   build-commands:
-  - |
-    make prefix=/app LUA_LIBS="-L/app/lib -llua" \
-         pdlua
+    make prefix=/app LDFLAGS=-L/app/lib \
+         iemgui
   
   #make -j ${FLATPAK_BUILDER_N_JOBS}
 
@@ -82,6 +81,9 @@ modules:
 #    make prefix=/app LDFLAGS=-L/app/lib \
 #         fluid
 #  - |
+#    make prefix=/app LUA_LIBS="-L/app/lib -llua" \
+#         pdlua
+#  - |
 #    make DESTDIR=/ prefix=/app \
 #         adaptive_install arraysize_install autotune_install bassemu_install \
 #         boids_install comport_install creb_install cxc_install cyclone_install \
@@ -91,9 +93,9 @@ modules:
 #         iemguts_install iem_adaptfilt_install iemmatrix_install iemxmlrpc_install \
 #         iem_delay_install iem_roomsim_install iem_spec2_install iem_tab_install \
 #         jasch_lib_install loaders-libdir_install lyonpotpourri_install \
-#         mapping_install markex_install maxlib_install mjlib_install
+#         mapping_install markex_install maxlib_install mjlib_install \
 #         moonlib_install motex_install mrpeach_install \
-#         pan_install pdcontainer_install pddp_install pdogg_install \
+#         pan_install pdcontainer_install pddp_install pdlua_install pdogg_install \
 #         plugin_install pmpd_install rjlib_install sigpack_install smlib_install \
 #         tof_install unauthorized_install vbap_install windowing_install zexy_install
 
@@ -103,7 +105,6 @@ modules:
   #   iemgui -- requires a config.h that it doesn't have
   #   moocow -- fails to configure
   #   oscx -- fails to configure
-  #   pdlua -- requires Lua
 
   sources:
   - type: git
@@ -163,3 +164,5 @@ modules:
     path: net.pdl2ork.PdL2Ork.metainfo.xml
   - type: file
     path: net.pdl2ork.PdL2Ork.svg
+  - type: file
+    path: default.settings
