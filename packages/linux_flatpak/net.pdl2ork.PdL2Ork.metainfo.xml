@@ -34,8 +34,8 @@
   <screenshots>
     <screenshot type="default">
       <image type="source">screenshots/L2Ork-Tweeter.png</image>
-      <image type="source">K12-Demo.png</image>
-      <image type="source">Image-Help-File.png</image>
+      <image type="source">screenshots/K12-Demo.png</image>
+      <image type="source">screenshots/Image-Help-File.png</image>
     </screenshot>
   </screenshots>
   <developer_name>Ivica Ico Bukvic</developer_name>

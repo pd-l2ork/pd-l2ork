@@ -782,6 +782,8 @@ $(gem_src)/Gem.pd_darwin: $(gem_src)/configure
 		--with-pd=$(pd_src)
 	$(MAKE) $(GEM_MAKEFLAGS) -C $(gem_src)
 
+gem_config: $(gem_src)/configure
+
 gem: $(gem_src)/Gem.$(EXTENSION)
 
 gem_install: gem

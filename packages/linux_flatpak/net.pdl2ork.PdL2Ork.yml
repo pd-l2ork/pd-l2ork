@@ -64,9 +64,14 @@ modules:
   buildsystem: simple
   subdir: externals
   build-commands:
+  # run Gem configure, so that iemgui can build
+  - |
+    make prefix=/app \
+         make gem_config
+  - |
     make prefix=/app LDFLAGS=-L/app/lib \
          iemgui
-  
+
   #make -j ${FLATPAK_BUILDER_N_JOBS}
 
 #  - |
