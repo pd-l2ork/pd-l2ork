@@ -2435,16 +2435,18 @@ hdspm_mixer_clean:
 #------------------------------------------------------------------------------#
 # iemgui
 IEMGUI_NAME=iemgui
-IEMGUI_SRC := $(wildcard $(externals_src)/iem/iemgui/src/*.c)
+#IEMGUI_SRC := $(wildcard $(externals_src)/iem/iemgui/src/*.c)
+IEMGUI_SRC := iem/iemgui/src/iemgui.c iem/iemgui/src/room_sim_2d.c iem/iemgui/src/room_sim_3d.c
 IEMGUI_OBJ := $(IEMGUI_SRC:.c=.o)
-IEMGUI_TARTMP := $(wildcard $(externals_src)/iem/iemgui/src/*_*.c)
+#IEMGUI_TARTMP := $(wildcard $(externals_src)/iem/iemgui/src/*_*.c)
+IEMGUI_TARTMP := iem/iemgui/src/room_sim_2d.c iem/iemgui/src/room_sim_3d.c
 IEMGUI_TARGETS := $(IEMGUI_TARTMP:.c=.$(EXTENSION))
 IEMGUI_FLAGS := -DIEMGUI_SINGLE_OBJ
 
 iemgui: $(IEMGUI_TARGETS)
 
 $(IEMGUI_TARGETS) : %.$(EXTENSION) : %.o $(IEMGUI_OBJ)
-	$(CC) $(LDFLAGS) -o $*.$(EXTENSION) "$*.o" $(externals_src)/iem/iemgui/src/iemgui.o $(LIBS)
+	$(CC) $(LDFLAGS) $(IEMGUI_FLATPAK_LINKER_FLAGS) -o $*.$(EXTENSION) "$*.o" $(externals_src)/iem/iemgui/src/iemgui.o $(LIBS)
 	$(STRIP) $*.$(EXTENSION)
 	chmod 755 $*.$(EXTENSION)
 	rm -f -- "$*.o"
@@ -2460,7 +2462,9 @@ iemgui_install: iemgui
 		--license "GNU GPL" \
 		--version ""
 	install -p $(IEMGUI_TARGETS) $(DESTDIR)$(objectsdir)/$(IEMGUI_NAME)
-	install -p $(externals_src)/iem/iemgui/*.pd \
+	#install -p $(externals_src)/iem/iemgui/*.pd \
+	#	$(DESTDIR)$(objectsdir)/$(IEMGUI_NAME)
+	install -p $(externals_src)/iem/iemgui/room_sim*.pd \
 		$(DESTDIR)$(objectsdir)/$(IEMGUI_NAME)
 	install -p $(externals_src)/iem/iemgui/READ_ME.txt \
 		$(DESTDIR)$(objectsdir)/$(IEMGUI_NAME)/README.txt

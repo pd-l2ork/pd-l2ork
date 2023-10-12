@@ -53,12 +53,12 @@ modules:
 
 # For Gem library
 - shared/glu-9.json
-# For fluid~ object
-- shared-modules/linux-audio/fluidsynth2.json
-# For LADSPA support
-- shared-modules/linux-audio/ladspa.json
-# For pdlua
-- shared-modules/lua5.3/lua-5.3.5.json
+## For fluid~ object
+#- shared-modules/linux-audio/fluidsynth2.json
+## For LADSPA support
+#- shared-modules/linux-audio/ladspa.json
+## For pdlua
+#- shared-modules/lua5.3/lua-5.3.5.json
 
 - name: pd-externals
   buildsystem: simple
@@ -67,11 +67,11 @@ modules:
   # run Gem configure, so that iemgui can build
   - |
     make prefix=/app \
-         make gem_config
-  - |
-    make prefix=/app LDFLAGS=-L/app/lib \
-         iemgui
+         gem_configure
 
+  # for flathub, consider replacing make with this commented out version
+  # this needs to be tested. if it proves to work, we will be able to build
+  # with multiple cores in parallel.
   #make -j ${FLATPAK_BUILDER_N_JOBS}
 
 #  - |
@@ -82,12 +82,18 @@ modules:
 #         iem_roomsim iem_spec2 iem_tab jasch_lib loaders-libdir lyonpotpourri mapping \
 #         markex maxlib mjlib moonlib motex mrpeach pan pdcontainer pddp pdogg plugin pmpd \
 #         rjlib sigpack smlib tof unauthorized vbap windowing zexy
+#  # now onto more temperamental externals
 #  - |
 #    make prefix=/app LDFLAGS=-L/app/lib \
 #         fluid
 #  - |
+#    export IEMGUI_FLATPAK_LINKER_FLAGS="-Wl,--export-dynamic -shared" && \
+#         make prefix=/app LDFLAGS=-L/app/lib \
+#         iemgui
+#  - |
 #    make prefix=/app LUA_LIBS="-L/app/lib -llua" \
 #         pdlua
+#  # now let's install them
 #  - |
 #    make DESTDIR=/ prefix=/app \
 #         adaptive_install arraysize_install autotune_install bassemu_install \
@@ -97,7 +103,7 @@ modules:
 #         hcs_install iem_ambi_install iem_bin_ambi_install iemlib_install \
 #         iemguts_install iem_adaptfilt_install iemmatrix_install iemxmlrpc_install \
 #         iem_delay_install iem_roomsim_install iem_spec2_install iem_tab_install \
-#         jasch_lib_install loaders-libdir_install lyonpotpourri_install \
+#         iemgui_install jasch_lib_install loaders-libdir_install lyonpotpourri_install \
 #         mapping_install markex_install maxlib_install mjlib_install \
 #         moonlib_install motex_install mrpeach_install \
 #         pan_install pdcontainer_install pddp_install pdlua_install pdogg_install \
@@ -107,7 +113,6 @@ modules:
   # The following externals from the pd-l2ork repo are not built:
   #
   #   bsaylor  -- needs fftw
-  #   iemgui -- requires a config.h that it doesn't have
   #   moocow -- fails to configure
   #   oscx -- fails to configure
 
@@ -115,7 +120,7 @@ modules:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
 #    tag: '20230820'
-#    commit: cbe00609fc19213fac1cd6cee97039f59cf96195
+#    commit: 297ff44a2467a934366d193c7c0a76166318890d
 
 - name: pd-abstractions
   buildsystem: simple
