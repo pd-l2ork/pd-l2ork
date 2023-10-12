@@ -694,7 +694,7 @@ freeverb_clean:
 #------------------------------------------------------------------------------
 # GEM
 GEM_NAME = Gem
-$(gem_src)/configure:
+gem_prep:
 	cd $(gem_src) && ./autogen.sh
 	cd $(gem_src) && sed 's/Pure\ Data/Pd-L2Ork/g' configure > tmp && mv tmp configure && chmod 755 configure
 #	cd $(gem_src)/plugins && sed 's/DECKLINK\ //g' Makefile > tmp && mv tmp Makefile
@@ -707,7 +707,7 @@ else
 msys_prefix = /usr
 endif
 
-$(gem_src)/Gem.dll: $(gem_src)/configure
+$(gem_src)/Gem.dll: gem_prep
 	cd $(gem_src)/plugins && sed 's/SUBDIRS\ +=\ AVT//g' Makefile.am > tmp && mv tmp Makefile.am
 	cd $(gem_src)/plugins && sed 's/SUBDIRS\ +=\ HALCON//g' Makefile.am > tmp && mv tmp Makefile.am
 	cd $(gem_src)/plugins && sed 's/SUBDIRS\ +=\ NDI//g' Makefile.am > tmp && mv tmp Makefile.am
@@ -728,7 +728,7 @@ $(gem_src)/Gem.dll: $(gem_src)/configure
 		--with-pd=$(DESTDIR)
 	$(MAKE) $(GEM_MAKEFLAGS) -C $(gem_src)
 
-$(gem_src)/Gem.pd_linux: $(gem_src)/configure
+$(gem_src)/Gem.pd_linux: gem_prep
 	test -s $(gem_src)/Gem.pd_linux || \
 		cd $(gem_src) && ./configure \
 			CXXFLAGS="-DHAVE_S_STUFF_H $(CFLAGS_ADD)" \
@@ -765,7 +765,7 @@ endif
 # default gemmacoswindow which doesn't work for me, YMMV.
 gem_window = --with-sdl2 --with-sdl2-LIBS="-L$(usrlocal)/lib -lSDL2" --with-defaultwindow=gemglfw3window
 
-$(gem_src)/Gem.pd_darwin: $(gem_src)/configure
+$(gem_src)/Gem.pd_darwin: gem_prep
 	cd $(gem_src) && autoreconf -vim && ./configure \
 		CXXFLAGS="-DHAVE_S_STUFF_H $(CFLAGS_ADD)" \
 		--prefix=$(prefix) \
@@ -782,7 +782,12 @@ $(gem_src)/Gem.pd_darwin: $(gem_src)/configure
 		--with-pd=$(pd_src)
 	$(MAKE) $(GEM_MAKEFLAGS) -C $(gem_src)
 
-gem_config: $(gem_src)/configure
+gem_configure: gem_prep
+	cd $(gem_src) && ./configure \
+	CXXFLAGS="-DHAVE_S_STUFF_H $(CFLAGS_ADD)" \
+	--prefix=$(prefix) \
+	--with-pd=$(pd_src) \
+	--host=$(shell uname -m)-pc-linux-gnu
 
 gem: $(gem_src)/Gem.$(EXTENSION)
 
