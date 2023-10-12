@@ -34,7 +34,7 @@ EXTRA_DIST = partconv~.dsp partconv~.dsw partconv~.vcproj sse-conv.inc.c altivec
 #------------------------------------------------------------------------------#
 
 CFLAGS = -DPD -I"$(PD_INCLUDE)" -Wall -W -g
-LDFLAGS =  
+LDFLAGS =  $(BSAYLOR_FLATPAK_LDFLAGS)
 LIBS = -lm
 
 #------------------------------------------------------------------------------#
