@@ -52,7 +52,7 @@ modules:
 #    path: patch/no-rsync-during-install.patch
 
 # For Gem library
-- shared/glu-9.json
+#- shared/glu-9.json
 ## For fluid~ object
 #- shared-modules/linux-audio/fluidsynth2.json
 ## For LADSPA support
@@ -64,10 +64,15 @@ modules:
   buildsystem: simple
   subdir: externals
   build-commands:
-  # run Gem configure, so that iemgui can build
+  # run Gem configure, so that iemgui can build, since it depends on it
+  # currently disabled, since we build gem below before iemgui
+  #- |
+  #  make prefix=/app \
+  #       gem_configure
+
   - |
-    make prefix=/app \
-         gem_configure
+    export OSCX_FLATPAK_CONFIGURE_FLAGS="--host=$(shell uname -m)-pc-linux-gnu" && make prefix=/app \
+         oscx
 
   # for flathub, consider replacing make with this commented out version
   # this needs to be tested. if it proves to work, we will be able to build

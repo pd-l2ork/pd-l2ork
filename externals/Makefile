@@ -1454,11 +1454,11 @@ $(externals_src)/OSCx/configure: $(externals_src)/OSCx/configure.ac
 	cd $(externals_src)/OSCx && autoconf
 
 $(externals_src)/OSCx/Makefile: $(externals_src)/OSCx/Makefile.in
-	cd $(externals_src)/OSCx && ./configure
+	cd $(externals_src)/OSCx && ./configure $(OSCX_FLATPAK_CONFIGURE_FLAGS)
 $(externals_src)/OSCx/libOSC/Makefile: $(externals_src)/OSCx/libOSC/Makefile.in
-	cd $(externals_src)/OSCx && ./configure
+	cd $(externals_src)/OSCx && ./configure $(OSCX_FLATPAK_CONFIGURE_FLAGS)
 $(externals_src)/OSCx/src/Makefile: $(externals_src)/OSCx/src/Makefile.in
-	cd $(externals_src)/OSCx && ./configure
+	cd $(externals_src)/OSCx && ./configure $(OSCX_FLATPAK_CONFIGURE_FLAGS)
 
 $(externals_src)/OSCx/src/OSCroute.$(EXTENSION):  $(externals_src)/OSCx/configure \
 $(externals_src)/OSCx/Makefile
