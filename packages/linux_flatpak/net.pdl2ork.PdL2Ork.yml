@@ -80,10 +80,12 @@ modules:
   #  make prefix=/app \
   #       gem_configure
 
+  # original, local testing build uses simply
+  #make ...
   # for flathub, consider replacing make with this commented out version
   # this needs to be tested. if it proves to work, we will be able to build
   # with multiple cores in parallel.
-  #make -j ${FLATPAK_BUILDER_N_JOBS}
+  #make -j ${FLATPAK_BUILDER_N_JOBS} ...
 
   - |
     make prefix=/app \

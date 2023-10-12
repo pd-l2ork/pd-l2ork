@@ -1,0 +1,13 @@
+--- Makefile	2023-10-12 12:19:22.856832892 -0400
++++ Makefile	2023-10-12 12:19:15.289640188 -0400
+@@ -20,8 +20,8 @@
+ ifeq ($(luasrc),)
+ # compile with installed liblua
+ $(info ++++ NOTE: using installed lua)
+-luaflags = $(shell pkg-config --cflags lua)
+-lualibs = $(shell pkg-config --libs lua)
++luaflags = $(shell pkg-config --cflags lua5.3)
++lualibs = $(shell pkg-config --libs lua5.3)
+ else
+ # compile with Lua submodule
+ $(info ++++ NOTE: using lua submodule)

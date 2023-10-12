@@ -373,6 +373,7 @@ then
 	if [ $rpi -eq 0 ]
 	then
 		echo "installing desktop version..."
+		export PDLUA_PREP="cd pd-lua && patch -p0 < ../patches/pdlua.patch"
 		test -f debian/control.desktop && cp -f debian/control.desktop debian/control
 		test -f ../../l2ork_addons/flext/config-lnx-pd-gcc.txt.intel && cp -f ../../l2ork_addons/flext/config-lnx-pd-gcc.txt.intel ../../externals/grill/trunk/flext/buildsys/config-lnx-pd-gcc.txt
 	else

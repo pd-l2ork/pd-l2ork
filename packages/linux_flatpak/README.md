@@ -40,3 +40,19 @@ Once you've built the program, simply type:
     flatpak run net.pdl2ork.PdL2Ork
 
 Enjoy!
+
+## Notes for the devs
+
+You can ignore the following if you are not a Pd-L2Ork dev
+
+    git clone --branch=new-pr git@github.com:flathub/flathub.git net.pdl2ork.PdL2Ork
+    cd net.pdl2ork.PdL2Ork
+    git checkout -b net.pdl2ork.PdL2Ork
+    cp -r <path-to-pd-l2ork-git-folder>/packags/linux_flatpak/* .
+    rm -rf shared-modules/
+    git add *
+    git submodule add https://github.com/flathub/shared-modules.git
+    git commit -am "Initial commit"
+    git remote set-url origin git@github.com:pd-l2ork/net.pdl2ork.PdL2Ork.git
+    git push origin refs/heads/net.pdl2ork.PdL2Ork
+    git request-pull -p "Add net.pdl2ork.PdL2Ork" git@github.com:flathub/flathub.git new-pr
