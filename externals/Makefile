@@ -1343,7 +1343,8 @@ MOOCOW_BUILD=$(MOOCOW_DIR)/build.moo
 ##   maybe even exporting all variables by default...
 MOOCOW_MAKEFLAGS = \
 	CFLAGS="$(CFLAGS)" \
-	pd_src="$(pd_src)"
+	pd_src="$(pd_src)" \
+	$(MOOCOW_FLATPAK_FLAGS)
 
 $(externals_src)/moocow/extended/build.stamp:
 	$(MAKE) -C $(MOOCOW_DIR) $(MOOCOW_MAKEFLAGS) build.stamp \
@@ -1383,7 +1384,7 @@ moocow_clean:
 	$(MAKE) -C $(externals_src)/moocow/extended distclean
 	-rm -f -- $(MOOCOW_DIR)/*.bak
 	-rm -f -- $(MOOCOW_DIR)/*.*~
-	-rm -rf -- $(externals_src)/moocow/*/common/*
+	-rm -rf -- $(externals_src)/moocow/*/common
 	-rm -rf -- $(externals_src)/moocow/*/a.out.dSYM/*
 	cp -f $(MOOCOW_DIR)/../gfsm/gfsm/src/libgfsm/default/* $(MOOCOW_DIR)/../gfsm/gfsm/src/libgfsm/ 
 

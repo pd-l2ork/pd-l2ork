@@ -38,7 +38,8 @@ CONFIGURE_ARGS=\
 	LDFLAGS="$(LDFLAGS) -L$(pd_src)/src -L$(pd_src)/bin -L$(pd_src)/obj" \
 	--with-pd-include="$(pd_src)/src" \
 	--with-pd-dir="$(MOOCOW_BUILD)" \
-	--disable-dependency-tracking
+	--disable-dependency-tracking \
+	$(MOOCOW_FLATPAK_CONFIGURE)
 
 #	--with-pd-extdir="$(MOOCOW_BUILD)/externs"
 
