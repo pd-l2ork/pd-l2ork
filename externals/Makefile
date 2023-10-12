@@ -791,7 +791,7 @@ gem_configure: gem_prep
 
 gem: $(gem_src)/Gem.$(EXTENSION)
 
-gem_install: gem
+gem_install:
 	$(MAKE) -C $(gem_src) DESTDIR=$(DESTDIR) prefix=$(prefix) \
 		libdir=$(objectsdir) pkglibdir=$(objectsdir)/Gem install
 
