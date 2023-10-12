@@ -123,7 +123,8 @@ modules:
   - |
     make DESTDIR=/ prefix=/app \
          adaptive_install arraysize_install autotune_install bassemu_install \
-         boids_install comport_install creb_install cxc_install cyclone_install \
+         boids_install bsaylor_install \
+         comport_install creb_install cxc_install cyclone_install \
          disis_install earplug_install ekext_install ext13_install fftease_install \
          flatgui_install fluid_install freeverb_install gem_install ggee_install \
          hcs_install iem_ambi_install iem_bin_ambi_install iemlib_install \
@@ -131,7 +132,7 @@ modules:
          iem_delay_install iem_roomsim_install iem_spec2_install iem_tab_install \
          iemgui_install jasch_lib_install loaders-libdir_install lyonpotpourri_install \
          mapping_install markex_install maxlib_install mjlib_install \
-         moonlib_install motex_install mrpeach_install \
+         moocow_install moonlib_install motex_install mrpeach_install oscx_install \
          pan_install pdcontainer_install pddp_install pdlua_install pdogg_install \
          plugin_install pmpd_install rjlib_install sigpack_install smlib_install \
          tof_install unauthorized_install vbap_install windowing_install zexy_install
