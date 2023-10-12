@@ -13,3 +13,6 @@
 [submodule "Gem"]
 	path = Gem
 	url = https://github.com/umlaeute/Gem.git
+[submodule "packages/linux_flatpak/shared-modules"]
+	path = packages/linux_flatpak/shared-modules
+	url = https://github.com/flathub/shared-modules.git

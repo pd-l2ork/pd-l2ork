@@ -4,97 +4,106 @@ runtime-version: '22.08'
 sdk: org.freedesktop.Sdk
 default-branch: stable
 command: pd-wrapper.sh
-finish-args: [
-    # Display
-    '--share=ipc', '--socket=x11', '--socket=wayland', '--device=dri',
-    # Audio access
-    '--socket=pulseaudio',
-    # Filesystem access (pd doesn't yet work with portals)
-    '--filesystem=host',
-    # MIDI access (Flatpak doesn't yet support exposing only MIDI devices)
-    '--device=all'
-]
+finish-args:
+# Display
+  - --share=ipc
+  - --socket=x11
+  - --socket=wayland
+  - --device=dri
+# Audio
+  - --socket=pulseaudio
+  - --system-talk-name=org.freedesktop.RealtimeKit1
+  - --filesystem=xdg-run/pipewire-0
+# Filesystem access (pd doesn't yet work with portals)
+  - --filesystem=host
+# MIDI access (Flatpak doesn't yet support exposing only MIDI devices)
+  - --device=all
+# Linux Audio plugins
+  - --env=LADSPA_PATH=/app/extensions/Plugins/ladspa:/app/lib/ladspa
+add-extensions:
+  org.freedesktop.LinuxAudio.Plugins:
+    directory: extensions/Plugins
+    version: '22.08'
+    add-ld-path: lib
+    merge-dirs: ladspa
+    subdirectories: true
+    no-autodownload: true
+
+cleanup:
+  - /include/*
+  - /lib/pd-l2ork/Makefile.am
+  - /lib/pd-l2ork/README.txt
+  - /lib/pd-l2ork/bin/todo.txt
+  - /lib/pd-l2ork/bin/nw/credits.html
+
 modules:
-- name: pd-l2ork
-  buildsystem: autotools
-  subdir: pd/src
-  config-opts: [ '--enable-portaudio', '--enable-alsa', '--enable-oss' ]
-  sources:
-  - type: git
-    url: https://github.com/pd-l2ork/pd-l2ork/
-  #  tag: '20230820'
-  #  commit: cbe00609fc19213fac1cd6cee97039f59cf96195
-  #- type: patch
-  #  path: patch/build-api.patch
-  - type: patch
-    path: patch/no-rsync-during-install.patch
+#- name: pd-l2ork
+#  buildsystem: autotools
+#  subdir: pd/src
+#  config-opts: [ '--disable-portaudio', '--enable-alsa', '--disable-oss', '--enable-jack' ]
+#  sources:
+#  - type: git
+#    url: https://github.com/pd-l2ork/pd-l2ork/
+#  #  tag: '20230820'
+#  #  commit: cbe00609fc19213fac1cd6cee97039f59cf96195
+#  #- type: patch
+#  #  path: patch/build-api.patch
+#  - type: patch
+#    path: patch/no-rsync-during-install.patch
 
 # For Gem library
 - shared/glu-9.json
+# For fluid~ object
+- shared-modules/linux-audio/fluidsynth.json
+# For LADSPA support
+- shared-modules/linux-audio/ladspa.json
+# For pdlua
+- shared-modules/lua5.3/lua-5.3.5.json
 
 - name: pd-externals
   buildsystem: simple
   subdir: externals
   build-commands:
   - |
-    echo EXTERNALS-0 && make prefix=/app \
-         gem
-  - |
-    echo EXTERNALS-1 && make prefix=/app \
-         adaptive arraysize autotune bassemu boids comport creb cxc cyclone
-  - |
-    echo EXTERNALS-2 && make prefix=/app \
-         disis_flatpak earplug ekext ext13 fftease
-  - |
-    echo EXTERNALS-3 && make prefix=/app \
-         flatgui freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemguts iem_adaptfilt iemmatrix
-  - |
-    echo EXTERNALS-4 && make prefix=/app \
-         iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib loaders-libdir lyonpotpourri mapping
-  - |
-    echo EXTERNALS-5 && make prefix=/app \
-         markex maxlib mjlib moonlib motex mrpeach pan pdcontainer pddp pdogg plugin pmpd
-  - |
-    echo EXTERNALS-6 && make prefix=/app \
-         rjlib sigpack smlib tof unauthorized vbap windowing
-  - |
-    echo EXTERNALS-INSTALL-1 && make DESTDIR=/ prefix=/app \
-         adaptive_install arraysize_install autotune_install bassemu_install \
-         boids_install comport_install creb_install cxc_install cyclone_install
-  - |
-    echo EXTERNALS-INSTALL-2 && make DESTDIR=/ prefix=/app \
-         disis_install \
-         earplug_install ekext_install ext13_install fftease_install
-  - |
-    echo EXTERNALS-INSTALL-3 && make DESTDIR=/ prefix=/app \
-         flatgui_install freeverb_install ggee_install hcs_install \
-         iem_ambi_install iem_bin_ambi_install iemlib_install
-  - |
-    echo EXTERNALS-INSTALL-4 && make DESTDIR=/ prefix=/app \
-         iemguts_install iem_adaptfilt_install iemmatrix_install iemxmlrpc_install \
-         iem_delay_install iem_roomsim_install iem_spec2_install iem_tab_install
-  - |
-    echo EXTERNALS-INSTALL-5 && make DESTDIR=/ prefix=/app \
-         jasch_lib_install loaders-libdir_install lyonpotpourri_install \
-         mapping_install markex_install maxlib_install mjlib_install
-  - |
-    echo EXTERNALS-INSTALL-6 && make DESTDIR=/ prefix=/app \
-         moonlib_install motex_install mrpeach_install \
-         pan_install pdcontainer_install pddp_install pdogg_install
-  - |
-    echo EXTERNALS-INSTALL-7 && make DESTDIR=/ prefix=/app \
-         plugin_install pmpd_install rjlib_install sigpack_install smlib_install \
-         tof_install unauthorized_install vbap_install windowing_install
+    make prefix=/app LUA_LIBS="-L/app/lib -llua" \
+         pdlua
+  
+  #make -j ${FLATPAK_BUILDER_N_JOBS}
+
+#  - |
+#    make prefix=/app \
+#         adaptive arraysize autotune bassemu boids comport creb cxc cyclone \
+#         disis_flatpak earplug ekext ext13 fftease gem flatgui freeverb ggee hcs \
+#         iem_ambi iem_bin_ambi iemlib iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay \
+#         iem_roomsim iem_spec2 iem_tab jasch_lib loaders-libdir lyonpotpourri mapping \
+#         markex maxlib mjlib moonlib motex mrpeach pan pdcontainer pddp pdogg plugin pmpd \
+#         rjlib sigpack smlib tof unauthorized vbap windowing zexy
+#  - |
+#    make prefix=/app LDFLAGS=-L/app/lib \
+#         fluid
+#  - |
+#    make DESTDIR=/ prefix=/app \
+#         adaptive_install arraysize_install autotune_install bassemu_install \
+#         boids_install comport_install creb_install cxc_install cyclone_install \
+#         disis_install earplug_install ekext_install ext13_install fftease_install \
+#         flatgui_install fluid_install freeverb_install gem_install ggee_install \
+#         hcs_install iem_ambi_install iem_bin_ambi_install iemlib_install \
+#         iemguts_install iem_adaptfilt_install iemmatrix_install iemxmlrpc_install \
+#         iem_delay_install iem_roomsim_install iem_spec2_install iem_tab_install \
+#         jasch_lib_install loaders-libdir_install lyonpotpourri_install \
+#         mapping_install markex_install maxlib_install mjlib_install
+#         moonlib_install motex_install mrpeach_install \
+#         pan_install pdcontainer_install pddp_install pdogg_install \
+#         plugin_install pmpd_install rjlib_install sigpack_install smlib_install \
+#         tof_install unauthorized_install vbap_install windowing_install zexy_install
+
   # The following externals from the pd-l2ork repo are not built:
   #
   #   bsaylor  -- needs fftw
-  #   fluid - requires fluidsynth
   #   iemgui -- requires a config.h that it doesn't have
   #   moocow -- fails to configure
   #   oscx -- fails to configure
   #   pdlua -- requires Lua
-  #   zexy -- fails to configure
-  #   gem -- is also not included
 
   sources:
   - type: git

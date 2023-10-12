@@ -4,23 +4,12 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0+ and BSD-3-Clause</project_license>
   <name>Pd-L2Ork</name>
-  <summary>An open source visual programming language for multimedia</summary>
+  <summary>An open source visual programming language for multimedia, based on Pure Data</summary>
   <description>
     <p>
       This package contains Pd-L2Ork, which is a fork of Pure Data that
       bundles a lot of useful extensions, and brings a modern HTML5-based
       user interface.
-    </p>
-    <p>
-        <em>IMPORTANT</em>: Running Pure Data under Flatpak is experimental.
-        The following are known limitations.
-    </p>
-    <ul>
-      <li>Realtime priority cannot be used.</li>
-      <li>JACK audio backend cannot be used.</li>
-    </ul>
-    <p>
-      Packages from http://l2ork.music.vt.edu/main/make-your-own-l2ork/software/ do not have these limitations.
     </p>
     <p>
       Pure Data is an open source visual programming environment that runs on
@@ -44,15 +33,16 @@
   </description>
   <screenshots>
     <screenshot type="default">
-      <image type="source">http://l2ork.music.vt.edu/main/wp-content/uploads/2010/03/pd-l2ork-K12-1024x582.jpg</image>
+      <image type="source">TODO</image>
+      <image type="source">TODO</image>
     </screenshot>
   </screenshots>
-  <developer_name>The Pd-L2Ork developers</developer_name>
+  <developer_name>Ivica Ico Bukvic</developer_name>
   <launchable type="desktop-id">net.pdl2ork.PdL2Ork.desktop</launchable>
-  <url type="homepage">http://l2ork.music.vt.edu/main/make-your-own-l2ork/software/</url>
+  <url type="homepage">https://bit.ly/pd-l2ork</url>
   <url type="bugtracker">https://github.com/pd-l2ork/pd-l2ork/issues</url>
-  <content_rating type="oars-1.1" />
+  <content_rating type="oars-1.1"/>
   <releases>
-    <release version="2.10.0" date="2019-10-02" />
+    <release version="20230905" date="2023-10-11"/>
   </releases>
 </component>
