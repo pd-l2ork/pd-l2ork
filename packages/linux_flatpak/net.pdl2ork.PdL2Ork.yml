@@ -44,8 +44,8 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-  #  tag: '20230820'
-  #  commit: cbe00609fc19213fac1cd6cee97039f59cf96195
+    tag: '20231012'
+    commit: 27b66ed5efd4de7cb0fd7ad33cf46c60cb8201fc
   #- type: patch
   #  path: patch/build-api.patch
   - type: patch
@@ -142,8 +142,8 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-#    tag: '20230820'
-#    commit: 297ff44a2467a934366d193c7c0a76166318890d
+    tag: '20231012'
+    commit: 27b66ed5efd4de7cb0fd7ad33cf46c60cb8201fc
 
 - name: pd-abstractions
   buildsystem: simple
@@ -153,8 +153,8 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-#    tag: '20230820'
-#    commit: cbe00609fc19213fac1cd6cee97039f59cf96195
+    tag: '20231012'
+    commit: 27b66ed5efd4de7cb0fd7ad33cf46c60cb8201fc
 
 - name: pd-l2ork-integration
   buildsystem: simple
@@ -180,8 +180,8 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
- #   tag: '20230820'
- #   commit: cbe00609fc19213fac1cd6cee97039f59cf96195
+    tag: '20231012'
+    commit: 27b66ed5efd4de7cb0fd7ad33cf46c60cb8201fc
   - type: file
     # x86_64 for now only. Still waiting for a comparable arm7 version for RPi.
     url: https://dl.nwjs.io/v0.67.1/nwjs-v0.67.1-linux-x64.tar.gz

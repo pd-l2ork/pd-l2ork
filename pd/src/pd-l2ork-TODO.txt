@@ -956,7 +956,7 @@ FLATPAK STUFF:
 pkg-config --variable pc_path pkg-config
 pkg-config --exists --print-errors gtk+-2.0
 
-git clone --branch=new-pr git@github.com:flathub/flathub.git net.pdl2ork.PdL2Ork
+git clone --branch=new-pr git@github.com:pd-l2ork/net.pdl2ork.PdL2Ork.git
 cd net.pdl2ork.PdL2Ork
 git checkout -b net.pdl2ork.PdL2Ork
 cp -r <path-to-pd-l2ork-git-folder>/packags/linux_flatpak/* .
@@ -966,7 +966,13 @@ git submodule add https://github.com/flathub/shared-modules.git
 git commit -am "Initial commit"
 git remote set-url origin git@github.com:pd-l2ork/net.pdl2ork.PdL2Ork.git
 git show-refs
-git push origin refs/heads/net.pdl2ork.PdL2Ork
-git push origin refs/remotes/origin/new-pr
-git request-pull -p "Add net.pdl2ork.PdL2Ork" git@github.com:flathub/flathub.git new-pr
+git push -u origin net.pdl2ork.PdL2Ork
+<this will create a prompt for a pull request>
+[reqs]: https://docs.flathub.org/docs/for-app-authors/requirements
+[maint]: https://docs.flathub.org/docs/for-app-authors/maintanance
+[submission]: https://docs.flathub.org/docs/for-app-authors/submission
+
+git tag <tagname>
+git tag -d <tagname>
+git push --tags
 
