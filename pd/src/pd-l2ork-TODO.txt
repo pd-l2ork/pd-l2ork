@@ -2,6 +2,8 @@ PD-L2ORK TODO:
 
 *Session loading in L2Ork Tweeter opens invalid folder on Ubuntu 22.04 suggesting something may be broken with the patch_name and dialog.
 
+*On Linux (possibly other places), moving window to fit within the window, if called on the second screen, still opens on the first screen.
+
 *Windows only:
   *Investigate Gem not showing while L2Ork Tweeter is open.
     *Likely due to multiple screens?
@@ -46,11 +48,12 @@ PD-L2ORK TODO:
 
 *Port:
   *cyclone
-    *mousestate
-    *mousefilter
+    *mousestate (should be an abstaction?)
+    *mousefilter (should be an abstaction?)
     *active
     *comment
     *prob
+  *iemgui (all but room_sim_2d and room_sim_3d)
   *tof
     *breakpoints
     *breakpoints~

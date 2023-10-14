@@ -3,7 +3,7 @@ noaudioin: True
 naudioin: 0
 noaudioout: False
 naudioout: 1
-audiooutdev1: 2 2
+audiooutdev1: 4 2
 audiobuf: 100
 rate: 44100
 callback: 0
