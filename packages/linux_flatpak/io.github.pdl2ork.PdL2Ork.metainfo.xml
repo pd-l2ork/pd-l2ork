@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>net.pdl2ork.PdL2Ork</id>
+  <id>io.github.pdl2ork.PdL2Ork</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later AND BSD-3-Clause</project_license>
   <name>Pd-L2Ork</name>
@@ -45,7 +45,7 @@
     </screenshot>
   </screenshots>
   <developer_name>Ivica Ico Bukvic</developer_name>
-  <launchable type="desktop-id">net.pdl2ork.PdL2Ork.desktop</launchable>
+  <launchable type="desktop-id">io.github.pdl2ork.PdL2Ork.desktop</launchable>
   <url type="homepage">https://l2ork.music.vt.edu/main/make-your-own-l2ork/software/</url>
   <url type="bugtracker">https://github.com/pd-l2ork/pd-l2ork/issues</url>
   <content_rating type="oars-1.1"/>

@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Pd-L2Ork
 Comment=An open source visual programming language for multimedia
-Icon=net.pdl2ork.PdL2Ork
+Icon=io.github.pdl2ork.PdL2Ork
 Exec=pd-wrapper.sh
 Terminal=false
 Type=Application
