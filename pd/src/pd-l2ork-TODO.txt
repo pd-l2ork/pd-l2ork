@@ -2,7 +2,15 @@ PD-L2ORK TODO:
 
 *Session loading in L2Ork Tweeter opens invalid folder on Ubuntu 22.04 suggesting something may be broken with the patch_name and dialog.
 
-*On Linux (possibly other places), moving window to fit within the window, if called on the second screen, still opens on the first screen.
+*On Linux (possibly other places), moving window to fit within the window, if called on the second screen, still opens dialog on the first screen.
+
+*Fix flatpak to also include disis_gpio and disis_spi.
+
+*Update flatpak ID.
+
+*On Steam Deck scrolling with touch screen works with double tap and hold on the second tap, but not on L2Ork Tweeter. This may be in part because scrollbars are not showing, nor working.
+
+
 
 *Windows only:
   *Investigate Gem not showing while L2Ork Tweeter is open.
