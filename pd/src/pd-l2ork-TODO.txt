@@ -6,8 +6,6 @@ PD-L2ORK TODO:
 
 *Fix flatpak to also include disis_gpio and disis_spi.
 
-*Update flatpak ID.
-
 *On Steam Deck scrolling with touch screen works with double tap and hold on the second tap, but not on L2Ork Tweeter. This may be in part because scrollbars are not showing, nor working.
 
 
@@ -982,6 +980,8 @@ git push -u origin net.pdl2ork.PdL2Ork
 [reqs]: https://docs.flathub.org/docs/for-app-authors/requirements
 [maint]: https://docs.flathub.org/docs/for-app-authors/maintanance
 [submission]: https://docs.flathub.org/docs/for-app-authors/submission
+
+desktop-file-validate --no-hints net.pdl2ork.PdL2Ork.desktop
 
 git tag <tagname>
 git tag -d <tagname>
