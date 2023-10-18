@@ -1,7 +1,7 @@
 #N canvas 1119 496 354 367 10;
 #X obj 72 41 inlet;
-#X obj 149 146 ggee/image @pd_extra/K12/objects/math_number.png 1 0
-25 25 empty empty empty 110 99 1 0 10 #000000 0 -8 55 50 0 1 1;
+#X obj 148 146 ggee/image @pd_extra/K12/objects/math_number.png 1 0
+25 25 empty empty empty 109 99 0 0 10 #000000 0 -8 55 50 0 1 1;
 #X msg 170 252 \$1 10;
 #X obj 170 275 line~;
 #X obj 170 326 outlet~;

@@ -24,7 +24,7 @@
 #X obj 41 492 sprintf %s%d;
 #X obj 75 426 tosymbol;
 #X obj 41 514 tosymbol;
-#X symbolatom 41 534 3 0 0 0 - - - 0 0, f 3;
+#X symbolatom 41 534 4 0 0 0 - - - 0 0 1, f 4;
 #X obj 155 465 loadbang;
 #X msg 155 487 symbol C-0;
 #X connect 0 0 6 0;
@@ -66,4 +66,4 @@
 #X connect 24 0 25 0;
 #X connect 26 0 27 0;
 #X connect 27 0 25 0;
-#X coords 0 -1 1 1 20 16 2 41 534;
+#X coords 0 -1 1 1 21 16 2 41 534;

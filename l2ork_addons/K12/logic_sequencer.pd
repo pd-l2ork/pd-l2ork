@@ -7,117 +7,117 @@
 #X obj 275 56 select 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16;
 #X obj 275 36 int;
 #X obj 112 84 preset_node k12;
-#X obj 220 252 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
+#X obj 220 253 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
 empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1 0 1;
-#X obj 550 194 K12/float_2_midi_pitch;
-#X floatatom 220 234 3 0 0 0 - - - 0 0 1, f 3;
+#X obj 549 195 K12/float_2_midi_pitch;
+#X floatatom 220 235 3 0 0 0 - - - 0 0 1, f 3;
 #X msg 185 461 set \$1;
-#X obj 220 212 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 1 7 8 0
+#X obj 220 213 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 1 7 8 0
 10 #fcfcfc #f06c00 #000000 1;
 #X obj 112 104 preset_node k12;
-#X obj 242 252 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
+#X obj 242 253 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
 empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1 0 1;
-#X floatatom 242 234 3 0 0 0 - - - 0 0 1, f 3;
+#X floatatom 242 235 3 0 0 0 - - - 0 0 1, f 3;
 #X msg 207 461 set \$1;
-#X obj 242 212 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 2 7 8 0
+#X obj 242 213 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 2 7 8 0
 10 #fcfcfc #f06c00 #000000 1;
 #X obj 112 124 preset_node k12;
-#X obj 264 252 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
+#X obj 264 253 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
 empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1 0 1;
-#X floatatom 264 234 3 0 0 0 - - - 0 0 1, f 3;
+#X floatatom 264 235 3 0 0 0 - - - 0 0 1, f 3;
 #X msg 229 461 set \$1;
-#X obj 264 212 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 3 7 8 0
+#X obj 264 213 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 3 7 8 0
 10 #fcfcfc #f06c00 #000000 1;
 #X obj 112 144 preset_node k12;
-#X obj 286 252 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
+#X obj 286 253 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
 empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1 0 1;
-#X floatatom 286 234 3 0 0 0 - - - 0 0 1, f 3;
+#X floatatom 286 235 3 0 0 0 - - - 0 0 1, f 3;
 #X msg 251 461 set \$1;
-#X obj 286 212 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 4 7 8 0
+#X obj 286 213 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 4 7 8 0
 10 #fcfcfc #f06c00 #000000 1;
 #X obj 209 84 preset_node k12;
-#X obj 308 252 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
+#X obj 308 253 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
 empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1 0 1;
-#X floatatom 308 234 3 0 0 0 - - - 0 0 1, f 3;
+#X floatatom 308 235 3 0 0 0 - - - 0 0 1, f 3;
 #X msg 274 461 set \$1;
-#X obj 308 212 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 5 7 8 0
+#X obj 308 213 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 5 7 8 0
 10 #fcfcfc #f06c00 #000000 1;
 #X obj 209 104 preset_node k12;
-#X obj 330 252 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
+#X obj 330 253 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
 empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1 0 1;
-#X floatatom 330 234 3 0 0 0 - - - 0 0 1, f 3;
+#X floatatom 330 235 3 0 0 0 - - - 0 0 1, f 3;
 #X msg 296 461 set \$1;
-#X obj 330 212 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 6 7 8 0
+#X obj 330 213 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 6 7 8 0
 10 #fcfcfc #f06c00 #000000 1;
 #X obj 209 124 preset_node k12;
-#X obj 352 252 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
+#X obj 352 253 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
 empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1 0 1;
-#X floatatom 352 234 3 0 0 0 - - - 0 0 1, f 3;
+#X floatatom 352 235 3 0 0 0 - - - 0 0 1, f 3;
 #X msg 318 461 set \$1;
-#X obj 352 212 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 7 7 8 0
+#X obj 352 213 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 7 7 8 0
 10 #fcfcfc #f06c00 #000000 1;
 #X obj 209 144 preset_node k12;
-#X obj 374 252 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
+#X obj 374 253 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
 empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1 0 1;
-#X floatatom 374 234 3 0 0 0 - - - 0 0 1, f 3;
+#X floatatom 374 235 3 0 0 0 - - - 0 0 1, f 3;
 #X msg 340 461 set \$1;
-#X obj 374 212 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 8 7 8 0
+#X obj 374 213 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 8 7 8 0
 10 #fcfcfc #f06c00 #000000 1;
 #X obj 306 84 preset_node k12;
-#X obj 396 252 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
+#X obj 396 253 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
 empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1 0 1;
-#X floatatom 396 234 3 0 0 0 - - - 0 0 1, f 3;
+#X floatatom 396 235 3 0 0 0 - - - 0 0 1, f 3;
 #X msg 362 461 set \$1;
-#X obj 396 212 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 9 7 8 0
+#X obj 396 213 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 9 7 8 0
 10 #fcfcfc #f06c00 #000000 1;
 #X obj 306 104 preset_node k12;
-#X obj 418 252 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
+#X obj 418 253 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
 empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1 0 1;
-#X floatatom 418 234 3 0 0 0 - - - 0 0 1, f 3;
+#X floatatom 418 235 3 0 0 0 - - - 0 0 1, f 3;
 #X msg 384 461 set \$1;
-#X obj 418 212 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 10 4 8
+#X obj 418 213 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 10 4 8
 0 10 #fcfcfc #f06c00 #000000 1;
 #X obj 306 124 preset_node k12;
-#X obj 440 252 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
+#X obj 440 253 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
 empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1 0 1;
-#X floatatom 440 234 3 0 0 0 - - - 0 0 1, f 3;
+#X floatatom 440 235 3 0 0 0 - - - 0 0 1, f 3;
 #X msg 406 461 set \$1;
-#X obj 440 212 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 11 4 8
+#X obj 440 213 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 11 4 8
 0 10 #fcfcfc #f06c00 #000000 1;
 #X obj 306 144 preset_node k12;
-#X obj 462 252 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
+#X obj 462 253 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
 empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1 0 1;
-#X floatatom 462 234 3 0 0 0 - - - 0 0 1, f 3;
+#X floatatom 462 235 3 0 0 0 - - - 0 0 1, f 3;
 #X msg 428 461 set \$1;
-#X obj 462 212 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 12 4 8
+#X obj 462 213 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 12 4 8
 0 10 #fcfcfc #f06c00 #000000 1;
 #X obj 403 84 preset_node k12;
-#X obj 484 252 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
+#X obj 484 253 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
 empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1 0 1;
-#X floatatom 484 234 3 0 0 0 - - - 0 0 1, f 3;
+#X floatatom 484 235 3 0 0 0 - - - 0 0 1, f 3;
 #X msg 451 461 set \$1;
-#X obj 484 212 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 13 4 8
+#X obj 484 213 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 13 4 8
 0 10 #fcfcfc #f06c00 #000000 1;
 #X obj 403 104 preset_node k12;
-#X obj 506 252 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
+#X obj 506 253 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
 empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1 0 1;
-#X floatatom 506 234 3 0 0 0 - - - 0 0 1, f 3;
+#X floatatom 506 235 3 0 0 0 - - - 0 0 1, f 3;
 #X msg 473 461 set \$1;
-#X obj 506 212 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 14 4 8
+#X obj 506 213 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 14 4 8
 0 10 #fcfcfc #f06c00 #000000 1;
 #X obj 403 124 preset_node k12;
-#X obj 528 252 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
+#X obj 528 253 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
 empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1 0 1;
-#X floatatom 528 234 3 0 0 0 - - - 0 0 1, f 3;
+#X floatatom 528 235 3 0 0 0 - - - 0 0 1, f 3;
 #X msg 495 461 set \$1;
-#X obj 528 212 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 15 4 8
+#X obj 528 213 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 15 4 8
 0 10 #fcfcfc #f06c00 #000000 1;
 #X obj 403 144 preset_node k12;
-#X obj 550 252 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
+#X obj 550 253 vsl 20 128 0 127 0 0 \$0-slider-s-null \$0-slider-r-null
 empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1 0 1;
-#X floatatom 550 234 3 0 0 0 - - - 0 0 1, f 3;
+#X floatatom 550 235 3 0 0 0 - - - 0 0 1, f 3;
 #X msg 516 461 set \$1;
-#X obj 550 212 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 16 4 8
+#X obj 550 213 bng 20 100 50 0 \$0-bng-send \$0-bng-receive 16 4 8
 0 10 #fcfcfc #f06c00 #000000 1;
 #X connect 1 0 4 0;
 #X connect 3 0 10 0;
