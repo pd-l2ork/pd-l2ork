@@ -292,7 +292,7 @@
     "object":    "Objet",
     "object_tt": "Ajouter un Objet vide (dont vous taperez le nom) au canevas",
     "msgbox": "Message",
-    "msg_tt": "Ajouter un objet Message au canevas",
+    "msgbox_tt": "Ajouter un objet Message au canevas",
     "number":    "Nombre",
     "number_tt": "Ajouter un objet Nombre au canevas (pour taper, dérouler et afficher des nombres)",
     "symbol":    "Symbole",

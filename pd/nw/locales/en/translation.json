@@ -317,7 +317,7 @@
     "object": "Object",
     "object_tt": "Add an empty object box to the canvas",
     "msgbox": "Message",
-    "msg_tt": "Add a message box to the canvas",
+    "msgbox_tt": "Add a message box to the canvas",
     "number": "Number",
     "number_tt": "Add a box to type, scroll, and display a number on the canvas",
     "symbol": "Symbol",

@@ -293,7 +293,7 @@
     "object": "Objekt",
     "object_tt": "Füge dem Patch ein neues Objekt hinzu",
     "msgbox": "Nachricht",
-    "msg_tt": "Füge dem Patch eine Nachrichten-Box hinzu",
+    "msgbox_tt": "Füge dem Patch eine Nachrichten-Box hinzu",
     "number": "Zahl",
     "number_tt": "Füge dem Patch ein Feld zur Eingabe und Anzeige von Zahlen hinzu",
     "symbol": "Symbol",
