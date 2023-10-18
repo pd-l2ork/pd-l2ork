@@ -1,8 +1,7 @@
 PD-L2ORK TODO:
 
 *Session loading in L2Ork Tweeter opens invalid folder on Ubuntu 22.04 suggesting something may be broken with the patch_name and dialog.
-
-*Check if copying knob from one patch onto other causes error on OSX (it did consistently on the teaching station on 10/17/2023).
+  *Looks like nw.js bug.
 
 *On Linux (possibly other places), moving dialog popup to fit within the desktop, if called on the second screen, still opens dialog on the first screen.
 
@@ -871,9 +870,9 @@ TWEETER DONE:
 *0.74:
   *Version bump due to incremental changes that did not include version change, to prevent confusion with 0.73.
   *Inclusion of the Transcontinental Grapevine Score and Parts.
-*0.75: (IN PROGRESS)
+*0.75:
 *Fixed long-standing bug of session files not being properly saved.
-*Still need to fix shift+delete and shift+insert misbehaving via network.
+*Fixed long-standing bug with the tracker insert command that propagated differently on other clients.
 
 
 

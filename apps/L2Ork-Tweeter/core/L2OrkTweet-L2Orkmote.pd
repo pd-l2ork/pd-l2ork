@@ -376,7 +376,7 @@
 #X text 417 48 logic for detecting dsp status on startup;
 #X obj 527 91 delay 10;
 #X obj 341 248 hsl 40 15 0 1.5708 0 1 empty empty empty 12 6 0 10 #fcb46c
-#fc6418 #000000 3900 0 0 1;
+#fc6418 #000000 2500 0 0 1;
 #X obj 13 446 *~;
 #X obj 50 446 *~;
 #X obj 28 408 line~;
@@ -749,7 +749,7 @@
 #X restore 692 144 pd FLANGER;
 #X obj 429 426 \$1;
 #X obj 18 217 nbx 5 14 500 60000 0 1 null-s \$1-manual-loop-length
-ms 1 5 0 8 #fcb46c #000000 #000000 1900 256 1 0 1 0;
+ms 1 5 0 8 #fcb46c #000000 #000000 1500 256 1 0 1 0;
 #X text 287 231 PCH(u/d);
 #X obj 130 198 tgl 15 0 null-s \$1-delete-gui DELETE(del) 17 6 0 10
 #fcb46c #000000 #000000 0 1 1;
@@ -2157,28 +2157,34 @@ every time they changed a preset, f 32;
 #X obj 130 181 tgl 15 0 null-s \$1-insert-gui INSERT(~) 16 6 0 10 #fcb46c
 #000000 #000000 0 1 0;
 #N canvas 1243 410 450 369 insert-logic 0;
-#X obj 185 146 gate 1 0;
-#X obj 102 114 r \$0-toggle-local;
-#X obj 185 206 t f f;
-#X obj 251 239 s \$1-insert-key;
-#X obj 146 239 net-io \$1 insert;
-#X obj 283 93 sel 126;
-#X obj 230 93 sel 126;
-#X msg 230 118 1;
-#X msg 283 118 0;
-#X obj 230 68 key 1;
-#X obj 283 68 keyup 1;
+#X obj 200 104 gate 1 0;
+#X obj 117 72 r \$0-toggle-local;
+#X obj 200 164 t f f;
+#X obj 266 197 s \$1-insert-key;
+#X obj 161 197 net-io \$1 insert;
+#X obj 298 51 sel 126;
+#X obj 245 51 sel 126;
+#X msg 245 76 1;
+#X msg 298 76 0;
+#X obj 245 26 key 1;
+#X obj 298 26 keyup 1;
+#X msg 161 222 set \$1;
+#X obj 161 247 s \$1-insert-gui;
+#X text 46 280 if received over network \, just update the GUI's insert
+toggle accordingly \, the rest will be handled inside the tracker where
+we are inserting a note inside the coll char and coll data files.;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 2 0 4 0;
 #X connect 2 1 3 0;
-#X connect 4 0 2 0;
+#X connect 4 0 11 0;
 #X connect 5 0 8 0;
 #X connect 6 0 7 0;
 #X connect 7 0 0 1;
 #X connect 8 0 0 1;
 #X connect 9 0 6 0;
 #X connect 10 0 5 0;
+#X connect 11 0 12 0;
 #X restore 13 527 pd insert-logic \$1;
 #X obj 731 469 r override-access-all-buttons;
 #X msg 731 491 14;
