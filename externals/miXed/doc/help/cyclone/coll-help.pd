@@ -142,7 +142,6 @@ for Pd-l2ork version 2013.05.28;
 #X text 624 181 replace an item (silently):;
 #X msg 625 202 nsub 2 3 one;
 #X msg 640 243 sub 2 2 newer;
-#X text 18 21 comment;
 #X text 11 9 coll can associate indexes and symbols \, symbols can
 be used just like ints to operate on or re-trieve data:;
 #X connect 1 0 0 0;
