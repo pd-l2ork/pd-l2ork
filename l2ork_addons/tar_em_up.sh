@@ -373,7 +373,7 @@ then
 	if [ $rpi -eq 0 ]
 	then
 		echo "installing desktop version..."
-		if [[ $os="linux" ]]; then
+		if [[ $os == "linux" ]]; then
 			export PDLUA_PREP="cd pd-lua && patch -p0 < ../patches/pdlua.patch"
 		fi
 		test -f debian/control.desktop && cp -f debian/control.desktop debian/control
