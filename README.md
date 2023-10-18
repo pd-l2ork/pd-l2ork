@@ -180,6 +180,7 @@ Hard drive space required: *roughly 2 GB*
         brew install glfw
         brew install ninja
         brew install cmake
+        brew install lua
 
 3. Clone the Pd-L2Ork repository *(10 minutes)*
 
