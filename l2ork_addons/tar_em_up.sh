@@ -374,6 +374,7 @@ then
 	then
 		echo "installing desktop version..."
 		if [[ $os == "linux" ]]; then
+			cd ../../externals/pd-lua/ && git stash
 			export PDLUA_PREP="cd pd-lua && patch -p0 < ../patches/pdlua.patch"
 		fi
 		test -f debian/control.desktop && cp -f debian/control.desktop debian/control
