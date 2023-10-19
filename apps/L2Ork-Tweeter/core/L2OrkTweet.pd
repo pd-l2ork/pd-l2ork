@@ -32,7 +32,7 @@
 #X obj 18 199 tgl 15 0 null-s null-r LOOP(alt) 17 6 0 10 #fcb46c #000000
 #000000 0 1 1;
 #X obj 18 145 tgl 15 0 null-s \$1-manual-toggle-keyboard KEYBOARD(ctrl)
-17 6 0 10 #fc6418 #000000 #000000 1 1 1;
+17 6 0 10 #fc6418 #000000 #000000 0 1 1;
 #N canvas 793 437 450 278 REVERB 0;
 #X obj 75 181 freeverb~;
 #N canvas 3 75 470 252 reverb_levels 0;
@@ -1919,7 +1919,7 @@ every time they changed a preset, f 32;
 #X obj 712 445 t 12 0 0;
 #X obj 130 181 tgl 15 0 null-s \$1-insert-gui INSERT(~) 16 6 0 10 #fcb46c
 #000000 #000000 0 1 0;
-#N canvas 1243 398 450 369 insert-logic 0;
+#N canvas 1243 398 450 403 insert-logic 0;
 #X obj 197 106 gate 1 0;
 #X obj 114 74 r \$0-toggle-local;
 #X obj 197 166 t f f;
@@ -1931,23 +1931,25 @@ every time they changed a preset, f 32;
 #X msg 295 78 0;
 #X obj 242 28 key 1;
 #X obj 295 28 keyup 1;
-#X msg 158 224 set \$1;
-#X obj 158 249 s \$1-insert-gui;
-#X text 43 282 if received over network \, just update the GUI's insert
+#X text 43 312 if received over network \, just update the GUI's insert
 toggle accordingly \, the rest will be handled inside the tracker where
 we are inserting a note inside the coll char and coll data files.;
+#X msg 215 250 set \$1;
+#X obj 215 275 s \$1-insert-gui;
+#X obj 158 224 route bang;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 2 0 4 0;
 #X connect 2 1 3 0;
-#X connect 4 0 11 0;
+#X connect 4 0 14 0;
 #X connect 5 0 8 0;
 #X connect 6 0 7 0;
 #X connect 7 0 0 1;
 #X connect 8 0 0 1;
 #X connect 9 0 6 0;
 #X connect 10 0 5 0;
-#X connect 11 0 12 0;
+#X connect 12 0 13 0;
+#X connect 14 1 12 0;
 #X restore 13 527 pd insert-logic \$1;
 #X obj 731 469 r override-access-all-buttons;
 #X msg 731 491 14;
