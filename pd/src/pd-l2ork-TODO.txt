@@ -3,7 +3,9 @@ PD-L2ORK TODO:
 *Oof:
   *Stress-test Tweeter server session sharing.
 
-*Session loading in L2Ork Tweeter opens invalid folder on Ubuntu 22.04 suggesting something may be broken with the patch_name and dialog.
+*Check why pdlua object is not working on RPi (it compiles ok).
+
+*Opening file dialogs on Ubuntu 22.04, including various Tweeter dialogs opens recent files, or a wrong folder, suggesting something may be broken with the patch_name and dialog.
   *Looks like nw.js bug.
 
 *On Linux (possibly other places), moving dialog popup to fit within the desktop, if called on the second screen, still opens dialog on the first screen.
