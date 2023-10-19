@@ -48,8 +48,8 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20231014'
-    commit: 9d1f6c93d943fd4f9d6fea4308431bd7fd444ae3
+    tag: '20231019'
+    commit: ae7ffe61484a1667efd1fa7b11429d23dcd72eb0
   - type: patch
     path: patch/no-rsync-during-install.patch
 
@@ -144,8 +144,8 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20231014'
-    commit: 9d1f6c93d943fd4f9d6fea4308431bd7fd444ae3
+    tag: '20231019'
+    commit: ae7ffe61484a1667efd1fa7b11429d23dcd72eb0
 
 - name: rpi-externals
   buildsystem: simple
@@ -162,8 +162,8 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20231014'
-    commit: 9d1f6c93d943fd4f9d6fea4308431bd7fd444ae3
+    tag: '20231019'
+    commit: ae7ffe61484a1667efd1fa7b11429d23dcd72eb0
 
 - name: pd-abstractions
   buildsystem: simple
@@ -173,8 +173,8 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20231014'
-    commit: 9d1f6c93d943fd4f9d6fea4308431bd7fd444ae3
+    tag: '20231019'
+    commit: ae7ffe61484a1667efd1fa7b11429d23dcd72eb0
 
 - name: pd-l2ork-integration
   buildsystem: simple
@@ -209,8 +209,8 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20231014'
-    commit: 9d1f6c93d943fd4f9d6fea4308431bd7fd444ae3
+    tag: '20231019'
+    commit: ae7ffe61484a1667efd1fa7b11429d23dcd72eb0
   - type: file
     # x86_64 for now only. Still waiting for aarch64.
     url: https://dl.nwjs.io/v0.67.1/nwjs-sdk-v0.67.1-linux-x64.tar.gz
