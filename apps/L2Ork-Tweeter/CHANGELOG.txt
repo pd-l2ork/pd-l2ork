@@ -9,6 +9,9 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+10-19-2023 0.76
+*Reworked session saving logic and corrected the insert bugfix to ensure error-free operation.
+
 10-18-2023 0.75
 *Fixed long-standing bug of session files not being properly saved.
 *Fixed long-standing bug with the tracker insert command that propagated differently on other clients.
