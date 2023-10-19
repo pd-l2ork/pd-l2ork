@@ -1,4 +1,4 @@
-#N canvas 727 338 450 293 10;
+#N canvas 655 401 458 299 10;
 #X msg 106 44 bang;
 #X floatatom 158 43 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 254 180 print kalashnikov_done;
@@ -11,16 +11,20 @@
 #X obj 58 88 uzi 3;
 #X text 41 14 uzi aka kalashnikov is an easy way to serialize bangs
 ;
-#N canvas 463 219 494 344 META 0;
-#X text 12 145 HELP_PATCH_AUTHORS "pd meta" information added by Jonathan
-Wilkes for Pd version 0.42.;
-#X text 12 125 AUTHOR d13@klingt.org;
+#N canvas 463 234 390 270 META 0;
+#X text 12 185 AUTHOR d13@klingt.org;
 #X text 12 45 LICENSE GPL v2;
 #X text 12 25 KEYWORDS control filesystem;
-#X text 12 85 INLET_0 symbol bang;
-#X text 12 105 OUTLET_0 float;
 #X text 12 5 ALIAS uzi;
 #X text 12 65 DESCRIPTION an easy way to serialize bangs;
+#X text 12 85 INLET_0 bang;
+#X text 12 105 INLET_1 float;
+#X text 12 125 OUTLET_0 bang;
+#X text 12 145 OUTLET_1 float index;
+#X text 12 165 OUTLET_2 bang when done;
+#X text 12 205 HELP_PATCH_AUTHORS "pd meta" information added by Jonathan
+Wilkes for Pd version 0.42. Updated and corrected by IvicaIco Bukvic
+for Pd-L2Ork 2.0231e+07;
 #X restore 396 268 pd META;
 #X text 36 224 Note: unlike Max's [uzi] \, [ext13/uzi] doesn't send
 out any bangs if no argument is specified. Also \, the function of
