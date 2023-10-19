@@ -1009,6 +1009,13 @@ git push -u origin net.pdl2ork.PdL2Ork
 
 desktop-file-validate --no-hints net.pdl2ork.PdL2Ork.desktop
 
+Now that it is on flathub:
+Create fork of https://github.com/flathub/io.github.pd_l2ork.Pd_L2Ork with the same name on own repo
+git clone https://github.com/pd-l2ork/io.github.pd_l2ork.Pd_L2Ork.git
+git remote set-url origin git@github.com:pd-l2ork/io.github.pd_l2ork.Pd_L2Ork
+git push
+Create pull request via GUI by comparing across forks
+
 git tag <tagname>
 git tag -d <tagname>
 git push --tags
