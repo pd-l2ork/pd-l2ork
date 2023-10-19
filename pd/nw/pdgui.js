@@ -3253,7 +3253,9 @@ function set_window_finished_loading(cid, new_win) {
     // outside the visible desktop area and reposition them
     // accordingly
     //post("set_window_finished_loading " + new_win);
-    if (new_win === get_dialogwin(cid)) {
+    if (new_win === get_dialogwin(cid) && 
+            dialogwin[cid].window.document.
+                getElementById("titlebar_title") != null) {
         var object = dialogwin[cid].window.document.
             getElementById("titlebar_title").innerHTML.split(" ")[0]
             .replace('[','').replace(']','');
