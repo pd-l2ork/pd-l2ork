@@ -2231,12 +2231,22 @@ function canvas_menu_set_editable(cid, val) {
     editable[cid] = val;
     // update menu if this window is visible
     gui(cid).get_nw_window(function(nw_win) {
-        //post("...found window");
+        //post("...found window cid=" + cid);
         nw_win.window.set_menu_modals(cid, val);
     });
 }
 
 exports.canvas_menu_set_editable = canvas_menu_set_editable;
+
+function canvas_menu_get_editable(cid) {
+    if (editable[cid] != null) {
+        return editable[cid];
+    } else {
+        return true;
+    }
+}
+
+exports.canvas_menu_get_editable = canvas_menu_get_editable;
 
 function canvas_menuclose_callback(cid_for_dialog, cid, force) {
     // Hacky-- this should really be dir/filename here instead of

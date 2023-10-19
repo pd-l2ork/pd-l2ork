@@ -2162,16 +2162,20 @@ function toggle_put_menu(state) {
     }
 }
 
-function update_osx_k12_menu() {
+function update_osx_k12_menu(window) {
     if (pdgui.nw_os_is_osx) {
         if (pdgui.get_k12_mode())
         {
             //pdgui.post("osx k12");
             m.file.message.enabled = false;
+            m.file.save.enabled =
+                (pdgui.canvas_menu_get_editable(window) ? true : false);
+            m.file.saveas.enabled =
+                (pdgui.canvas_menu_get_editable(window) ? true : false);
 
             m.edit.paste_clipboard.enabled = false;
             m.edit.reselect.enabled = false;
-            m.edit.clear_console.enabled = false;
+            m.edit.clear_console.enabled = true;
             m.edit.encapsulate.enabled = false;
             m.edit.font.enabled = false;
             m.edit.find.enabled = false;
@@ -2220,8 +2224,67 @@ function update_osx_k12_menu() {
             m.help.forums.enabled = false;
             m.help.irc.enabled = false;
             m.help.devtools.enabled = false;
+        } else if (!pdgui.canvas_menu_get_editable(window)) {
+            //pdgui.post("osx not editable");
+            m.file.message.enabled = true;
+            m.file.save.enabled = false;
+            m.file.saveas.enabled = false;
+
+            m.edit.paste_clipboard.enabled = false;
+            m.edit.reselect.enabled = false;
+            m.edit.clear_console.enabled = true;
+            m.edit.encapsulate.enabled = false;
+            m.edit.font.enabled = false;
+            m.edit.find.enabled = false;
+            m.edit.findagain.enabled = false;
+            m.edit.finderror.enabled = false;
+
+            m.put.object.enabled = false;
+            m.put.message.enabled = false;
+            m.put.number.enabled = false;
+            m.put.symbol.enabled = false;
+            m.put.comment.enabled = false;
+            m.put.dropdown.enabled = false;
+            m.put.bang.enabled = false;
+            m.put.toggle.enabled = false;
+            m.put.number2.enabled = false;
+            m.put.vslider.enabled = false;
+            m.put.hslider.enabled = false;
+            m.put.knob.enabled = false;
+            m.put.vradio.enabled = false;
+            m.put.hradio.enabled = false;
+            m.put.vu.enabled = false;
+            m.put.cnv.enabled = false;
+            m.put.image.enabled = false;
+            //m.put.graph.enabled = false;
+            m.put.array.enabled = false;
+            m.put.k12_menu.enabled = false;
+
+            m.media.audio_on.enabled = true;
+            m.media.audio_off.enabled = true;
+            m.media.test.enabled = true;
+            m.media.loadmeter.enabled = true;
+
+            m.win.nextwin.enabled = true;
+            m.win.prevwin.enabled = true;
+            m.win.parentwin.enabled = true;
+            m.win.visible_ancestor.enabled = true;
+            m.win.pdwin.enabled = true;
+            m.win.abstractions.enabled = true;
+
+            m.help.about.enabled = true;
+            m.help.manual.enabled = true;
+            m.help.browser.enabled = true;
+            m.help.intro.enabled = true;
+            m.help.l2ork_list.enabled = true;
+            m.help.pd_list.enabled = true;
+            m.help.forums.enabled = true;
+            m.help.irc.enabled = true;
+            m.help.devtools.enabled = true;
         } else {
             //pdgui.post("osx normal");
+            m.file.save.enabled = true;
+            m.file.saveas.enabled = true;
             m.file.message.enabled = true;
 
             m.edit.paste_clipboard.enabled = true;
@@ -2305,7 +2368,7 @@ function set_edit_menu_modals(window, state) {
     if (m.edit.font)
         m.edit.font.enabled = state;
 
-    update_osx_k12_menu();
+    update_osx_k12_menu(window);
 }
 
 function set_menu_modals(window, state) {
@@ -2313,8 +2376,13 @@ function set_menu_modals(window, state) {
     // ico@vt.edu 2022-06-18: added context_state for patches that should
     // have select options disabled because the patch in question should
     // not be editable.
-    //pdgui.post("set_menu_modals window=" + window);
+    //pdgui.post("set_menu_modals window=" + window +
+    //    " pdgui.editable=" + pdgui.canvas_menu_get_editable(window));
     var context_state = state;
+    // this does not work
+    //if (process.platform === "darwin" && !pdgui.canvas_menu_get_editable(window)) {
+    //    context_state = false;
+    //}
     // ico@vt.edu 2022-11-30: the following disables
     // proper handling of the edit menu updates when
     // editable is toggled. Leaving here to see if there
@@ -2395,7 +2463,7 @@ function set_menu_modals(window, state) {
         m.win.pdwin.enabled = context_state;
     }
 
-    update_osx_k12_menu();
+    update_osx_k12_menu(window);
 }
 
 function set_editmode_checkbox(state) {
@@ -3259,7 +3327,7 @@ function nw_create_patch_window_menus(gui, name) {
     // ico@vt.edu 2022-12-13: toggle menu options on OSX
     // since (AFAICT) we cannot add/remove menu contents
     if (pdgui.nw_os_is_osx) {
-        update_osx_k12_menu();
+        update_osx_k12_menu(name);
     } 
 }
 
