@@ -761,6 +761,8 @@ argc, t_atom *argv)
 *Figured out why remote clients do not get all the data.
    *Requires trickling of data via the server. Otherwise some lines end up being dropped. Needs to be stress-tested.
 *Updated Windows icons.
+*Updated OSX icons.
+
 
 
 
