@@ -52,7 +52,7 @@
 #endif
 
 #define MAX_CONNECT  256	 /* maximum number of connections */
-#define INBUFSIZE    4096   /* size of receiving data buffer */
+#define INBUFSIZE    32768  /* size of receiving data buffer */
 
 /* message levels from syslog.h */
 #define LOG_EMERG       0       /* system is unusable */

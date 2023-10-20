@@ -48,7 +48,7 @@
 #define SOCKET_ERROR -1
 #endif
 
-#define INBUFSIZE 4096	/* maximum numbers of characters to read */
+#define INBUFSIZE 32768	/* maximum numbers of characters to read */
 
 /* ico@vt.edu 2021-09-07: define MSG_NOSIGNAL for Windows/Mac
    we use this to prevent the external and with it pd-l2ork from
@@ -57,7 +57,7 @@
 #define MSG_NOSIGNAL 0
 #endif
 
-static char *version = "netclient v0.3.1, written by Olaf Matthes <olaf.matthes@gmx.de>";
+static char *version = "netclient v0.4.0, written by Olaf Matthes <olaf.matthes@gmx.de>, improvements by Ivica Ico Bukvic <ico@vt.edu>";
 
 static t_class *netclient_class;
 static t_binbuf *inbinbuf;
