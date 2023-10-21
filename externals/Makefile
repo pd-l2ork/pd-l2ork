@@ -1624,6 +1624,7 @@ ifneq ($(OS_NAME),darwin)
 endif
 endif
 	make -C $(externals_src)/pd-lua LUA_CFLAGS="$(LUA_CFLAGS)" LUA_LIBS="$(LUA_LIBS)" PD_PATH="$(pd_src)" PD_LIB="$(pd_src)/src" CFLAGS="$(CFLAGS)" PDBINDIR=$(pd_src)/src
+	rm -f pd-lua/pdlua.o
 
 pdlua_install:
 	make -C $(externals_src)/pd-lua DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install

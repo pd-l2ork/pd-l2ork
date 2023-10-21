@@ -21,7 +21,7 @@ ifeq ($(luasrc),)
 # compile with installed liblua
 $(info ++++ NOTE: using installed lua)
 luaflags = $(shell (pkg-config --cflags lua5.4 || pkg-config --cflags lua5.3 || pkg-config --cflags lua5.2 || pkg-config --cflags lua) 2> /dev/null)
-lualibs = $(shell (pkg-config --cflags lua5.4 || pkg-config --cflags lua5.3 || pkg-config --cflags lua5.2 || pkg-config --cflags lua) 2> /dev/null)
+lualibs = $(shell (pkg-config --libs lua5.4 || pkg-config --libs lua5.3 || pkg-config --libs lua5.2 || pkg-config --libs lua) 2> /dev/null)
 else
 # compile with Lua submodule
 $(info ++++ NOTE: using lua submodule)
