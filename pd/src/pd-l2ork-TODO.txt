@@ -1020,5 +1020,10 @@ Create pull request via GUI by comparing across forks
 
 git tag <tagname>
 git tag -d <tagname>
+
+Add tag to remote repo:
 git push --tags
+
+Delete tag to remote repo:
+git push origin --delete <tagname>
 
