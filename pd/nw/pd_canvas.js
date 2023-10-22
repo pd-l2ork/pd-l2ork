@@ -457,7 +457,6 @@ var canvas_events = (function() {
         },
         events = {
             mousemove: function(evt) {
-                //var stopProp = 0;
                 //pdgui.post("x: " + evt.pageX + " y: " + evt.pageY +
                 //    " modifier: " + (evt.shiftKey + (pdgui.cmd_or_ctrl_key(evt) << 1)));
                 if (evt.type === "touchmove") {
@@ -487,10 +486,10 @@ var canvas_events = (function() {
                             //document.body.style.touchAction = 'none';
                             //document.getElementById("patchsvg").
                             //    style.touchAction = 'none';
-                            evt.preventDefault();
-                            //stopProp = 1;
+                            if (evt.cancelable) evt.preventDefault();
                         } else {
-                            // we are pinching
+                            // we are pinching in edit mode
+                            //pdgui.post("editmode pinch");
                             //document.body.style.overflow = 'visible';
                             //document.body.style.touchAction = 'auto';
                             //document.getElementById("patchsvg").
@@ -501,6 +500,15 @@ var canvas_events = (function() {
                         //document.body.style.touchAction = 'auto';
                         //document.getElementById("patchsvg").
                         //        style.touchAction = 'auto';
+                        //pdgui.post("runtime");
+                        if (evt.touches.length === 1 && pinch !== 1) {
+                            //pdgui.post("suppress scroll");
+                            //document.body.style.overflow = 'hidden';
+                            //document.body.style.touchAction = 'none';
+                            //document.getElementById("patchsvg").
+                            //    style.touchAction = 'none';
+                            if (evt.cancelable) evt.preventDefault();
+                        }
                     }
                 }
                 // ag: It seems possible to get fractional values here, which
@@ -516,11 +524,8 @@ var canvas_events = (function() {
                     (evt.shiftKey + (pdgui.cmd_or_ctrl_key(evt) << 1))
                 );
                 // Commented lines below due to interference with touch scroll behavior
-                //if (stopProp === 1) {
-                    //pdgui.post("stopProp");
-                    //evt.stopPropagation();
-                    //evt.preventDefault();
-                //}
+                //evt.stopPropagation();
+                //evt.preventDefault();
                 return false;
             },
             activatedmousemove: function(evt) {
@@ -569,7 +574,10 @@ var canvas_events = (function() {
                             //document.body.style.touchAction = 'none';
                             //document.getElementById("patchsvg").
                             //    style.touchAction = 'none';
-                            evt.preventDefault();
+                            // this works for everything except when you
+                            // are trying to move the canvas while
+                            // hovering over objects, like in Tweeter
+                            //evt.preventDefault();
                         } else {
                             //document.body.style.overflow = 'visible';
                             //document.body.style.touchAction = 'auto';
@@ -670,6 +678,7 @@ var canvas_events = (function() {
                         (evt.button + 1) || 1
                     );
                 } else {
+                    //pdgui.post("mousedown");
                     pdgui.pdsend(name, "mouse",
                         (pointer_x + svg_view.x),
                         (pointer_y + svg_view.y),
@@ -690,9 +699,9 @@ var canvas_events = (function() {
                 //    evt.pageX + " y: " + evt.pageY +
                 //    " button: " + (evt.button + 1));
                 if (evt.type === "touchend") {
-                    if (evt.touches.length === 0) {
-                        pinch = 0;
-                    }
+                    //pdgui.post("touchend " + Math.trunc(evt.changedTouches[0].pageX) +
+                    //    "," + Math.trunc(evt.changedTouches[0].pageY) +
+                    //    " touches=" + evt.touches.length);
                     if (target_is_popup(evt)) {
                         return;
                     }
@@ -727,7 +736,10 @@ var canvas_events = (function() {
                 evt.stopPropagation();
                 // this causes errors when letting go of double touch
                 // (a.k.a. pinch)
-                //evt.preventDefault();
+                if (evt.cancelable) evt.preventDefault();
+                if (evt.touches.length === 0) {
+                    pinch = 0;
+                }
             },
             keydown: function(evt) {
                 pdgui.keydown(name, evt);
