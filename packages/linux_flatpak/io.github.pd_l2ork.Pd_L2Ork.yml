@@ -16,6 +16,8 @@ finish-args:
   - --filesystem=home
 # MIDI access (Flatpak doesn't yet support exposing only MIDI devices)
   - --device=all
+# Share network access
+  - --share=network
 # Linux Audio plugins
   - --env=LADSPA_PATH=/app/extensions/Plugins/ladspa:/app/lib/ladspa
 add-extensions:
