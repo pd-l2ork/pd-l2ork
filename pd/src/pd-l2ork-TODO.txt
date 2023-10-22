@@ -763,6 +763,7 @@ argc, t_atom *argv)
 *Fixed OSX menu that allowed users to create objects from the menu even when the patch is not editable.
 *Fixed pdlua object not working on Linux.
 *Fixed issue with touch screens, namely on Steam Deck scrolling via touch screen was not working. We now have pinch serving also as a scroll option, while single touch is reserved for interacting with objects and/or selection (in edit mode).
+*Reworked and vastly improved the touch and pinch actions in both runtime and edit modes. In edit mode pinch is the only way to move/scroll the canvas, because touch on the canvas is the beginning of a selection box. In runtime mode, both single touch and drag and pinch can move/scroll the canvas, while pinch also continues to be able to zoom. In either mode touching objects, as well as in edit mode touch to start a selection box, prevent the scrolling unless the selection box exceeds the window area (and the scroll in that direction is possible). In edit mode touched objects can be moved and resized (if applicable), while in runtime mode, their values are affected/changed. This works regardless of the menu-based zoom or the pinch-based zoom (a.k.a. scaling).
 
 
 

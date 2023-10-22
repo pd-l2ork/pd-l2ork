@@ -61,6 +61,10 @@ var canvas_events = (function() {
         last_completed = -1, // last Tab completion (autocomplete)
         last_offset = -1, // offset of last Tab completion (autocomplete)
         last_yanked = "", // last yanked completion (to confirm deletion)
+        pinch = 0, // used for monitor for pinch action, so that we don't
+                   // erroneously call preventDefault when letting go and
+                   // for a moment having one finger (if both are not let
+                   // go at the same time)
         textbox = function () {
             return document.getElementById("new_object_textentry");
         },
@@ -453,9 +457,11 @@ var canvas_events = (function() {
         },
         events = {
             mousemove: function(evt) {
+                //var stopProp = 0;
                 //pdgui.post("x: " + evt.pageX + " y: " + evt.pageY +
                 //    " modifier: " + (evt.shiftKey + (pdgui.cmd_or_ctrl_key(evt) << 1)));
                 if (evt.type === "touchmove") {
+                    //pdgui.post("is touch " +  evt.touches.length);
                     if (target_is_popup(evt)) {
                         // ag: Presumably this is the confirmation popup, we
                         // don't want to do any special processing there at
@@ -475,11 +481,26 @@ var canvas_events = (function() {
                         // ico@vt.edu 2023-10-22: here we once again distinguish
                         // between single touch (which should disable scrolling)
                         // and double touch (a.k.a. pinch) and adjust accordingly
-                        if (evt.touches.length === 1) {
-                            document.body.style.overflow = 'hidden';
+                        if (evt.touches.length === 1 && pinch !== 1) {
+                            //pdgui.post("suppress scroll");
+                            //document.body.style.overflow = 'hidden';
+                            //document.body.style.touchAction = 'none';
+                            //document.getElementById("patchsvg").
+                            //    style.touchAction = 'none';
+                            evt.preventDefault();
+                            //stopProp = 1;
                         } else {
-                            document.body.style.overflow = 'visible';
+                            // we are pinching
+                            //document.body.style.overflow = 'visible';
+                            //document.body.style.touchAction = 'auto';
+                            //document.getElementById("patchsvg").
+                            //    style.touchAction = 'auto';
+                            return false;
                         }
+                    } else {
+                        //document.body.style.touchAction = 'auto';
+                        //document.getElementById("patchsvg").
+                        //        style.touchAction = 'auto';
                     }
                 }
                 // ag: It seems possible to get fractional values here, which
@@ -495,8 +516,11 @@ var canvas_events = (function() {
                     (evt.shiftKey + (pdgui.cmd_or_ctrl_key(evt) << 1))
                 );
                 // Commented lines below due to interference with touch scroll behavior
-                // evt.stopPropagation();
-                // evt.preventDefault();
+                //if (stopProp === 1) {
+                    //pdgui.post("stopProp");
+                    //evt.stopPropagation();
+                    //evt.preventDefault();
+                //}
                 return false;
             },
             activatedmousemove: function(evt) {
@@ -512,7 +536,7 @@ var canvas_events = (function() {
             },
             mousedown: function(evt) {
                 //pdgui.post("pdcanvas mousedown evt.Altkey=" +
-                //    evt.altKey + " tgt_is_canvas=" + target_is_canvasobj(evt));
+                //    evt.altKey + " tgt_is_canvas=" + target_is_canvas(evt));
                 // ico@vt.edu capture middle click for a different type of scroll
                 // currently disabled due to problem with scrollBy and zoom
                 /*if (evt.which == 2)
@@ -521,6 +545,7 @@ var canvas_events = (function() {
                     evt.preventDefault();                
                 }*/
                 if (evt.type === "touchstart") {
+                    //pdgui.post("touchstart " + evt.touches.length);
                     if (target_is_popup(evt)) {
                         return;
                     } else if (!target_is_canvas(evt)) {
@@ -540,10 +565,23 @@ var canvas_events = (function() {
                         // pinch/zoom/scroll event.
                         //pdgui.post("num touches=" + evt.touches.length);
                         if (evt.touches.length === 1) {
-                            document.body.style.overflow = 'hidden';
+                            //document.body.style.overflow = 'hidden';
+                            //document.body.style.touchAction = 'none';
+                            //document.getElementById("patchsvg").
+                            //    style.touchAction = 'none';
+                            evt.preventDefault();
                         } else {
-                            document.body.style.overflow = 'visible';
+                            //document.body.style.overflow = 'visible';
+                            //document.body.style.touchAction = 'auto';
+                            //document.getElementById("patchsvg").
+                            //    style.touchAction = 'auto';
+                            pinch = 1;
+                            return false;
                         }
+                    } else {
+                        //document.body.style.touchAction = 'auto';
+                        //document.getElementById("patchsvg").
+                        //    style.touchAction = 'auto';
                     }
                 }
                 let [pointer_x, pointer_y] = evt.type === "touchstart"
@@ -618,11 +656,26 @@ var canvas_events = (function() {
                 } else {
                     mod = (evt.shiftKey + (pdgui.cmd_or_ctrl_key(evt) << 1));
                 }
-                pdgui.pdsend(name, "mouse",
-                    (pointer_x + svg_view.x),
-                    (pointer_y + svg_view.y),
-                    b, mod
-                );
+                //pdgui.post("mousedown " + (pointer_x + svg_view.x) + "," +
+                //    (pointer_y + svg_view.y) + " " + b + " " + mod);
+                if (evt.type === "touchstart" && evt.touches.length === 2) {
+                    // if we have just added a second touch, meaning we are
+                    // wanting to pinch, we negate the first touchstart
+                    // to prevent doing an invisible selection at touchend
+                    //pdgui.post("override" + (pointer_x + svg_view.x) + "," +
+                    //(pointer_y + svg_view.y) + " " + ((evt.button + 1) || 1));
+                    pdgui.pdsend(name, "mouseup",
+                        (pointer_x + svg_view.x),
+                        (pointer_y + svg_view.y),
+                        (evt.button + 1) || 1
+                    );
+                } else {
+                    pdgui.pdsend(name, "mouse",
+                        (pointer_x + svg_view.x),
+                        (pointer_y + svg_view.y),
+                        b, mod
+                    );
+                }
                 // If Alt is pressed on a box_text, fake a keyup to prevent
                 // dangling temp runmode in case the click opens a subpatch.
                 if (evt.altKey && target_is_canvasobj(evt)) {
@@ -637,23 +690,44 @@ var canvas_events = (function() {
                 //    evt.pageX + " y: " + evt.pageY +
                 //    " button: " + (evt.button + 1));
                 if (evt.type === "touchend") {
+                    if (evt.touches.length === 0) {
+                        pinch = 0;
+                    }
                     if (target_is_popup(evt)) {
                         return;
                     }
                     // re-enable scrolling
                     document.body.style.overflow = 'visible';
+                    //pdgui.post("scale=" + window.visualViewport.scale);
+                    // ico@vt.edu 2023-10-22: only re-enable touch-based
+                    // scrolling if we are on pinch scale of 1. otherwise,
+                    // when trying to manipulate objects while scaled in
+                    // (this is different from the menu zoom options),
+                    // this would also cause canvas to move with finger
+                    // movement, making it impossible to manipulate objects
+                    // or their values
+                    //if (window.visualViewport.scale === 1) {
+                    // ONLY NEXT THREE LINES
+                    //    document.body.style.touchAction = 'auto';
+                    //    document.getElementById("patchsvg").
+                    //        style.touchAction = 'auto';
+                    //}
                 }
                 let [pointer_x, pointer_y] = evt.type === "touchend"
                     ? [Math.trunc(evt.changedTouches[0].pageX),
                        Math.trunc(evt.changedTouches[0].pageY)]
                     : [evt.pageX, evt.pageY];
+                //pdgui.post("mouseup " + (pointer_x + svg_view.x) + "," +
+                //    (pointer_y + svg_view.y) + " " + ((evt.button + 1) || 1));
                 pdgui.pdsend(name, "mouseup",
                     (pointer_x + svg_view.x),
                     (pointer_y + svg_view.y),
                     (evt.button + 1) || 1
                 );
                 evt.stopPropagation();
-                evt.preventDefault();
+                // this causes errors when letting go of double touch
+                // (a.k.a. pinch)
+                //evt.preventDefault();
             },
             keydown: function(evt) {
                 pdgui.keydown(name, evt);
@@ -1381,14 +1455,14 @@ var canvas_events = (function() {
             canvas_events.none();
 
             document.addEventListener("mousemove", events.mousemove, false);
-            document.addEventListener("touchmove", events.mousemove, false);
+            document.addEventListener("touchmove", events.mousemove, {passive:false});
             document.addEventListener("keydown", events.keydown, false);
             document.addEventListener("keypress", events.keypress, false);
             document.addEventListener("keyup", events.keyup, false);
             document.addEventListener("mousedown", events.mousedown, false);
-            document.addEventListener("touchstart", events.mousedown, false);
+            document.addEventListener("touchstart", events.mousedown, {passive:false});
             document.addEventListener("mouseup", events.mouseup, false);
-            document.addEventListener("touchend", events.mouseup, false);
+            document.addEventListener("touchend", events.mouseup, {passive:false});
             state = "normal";
             set_menu_modals(name, true);
         },
