@@ -1,8 +1,8 @@
 #N canvas 412 173 479 364 10;
-#X obj 19 1 cnv 16 40 16 empty pddp_dsp_canvas dsp 7 8 0 14 -233017
--33289 0;
+#X obj 19 1 cnv 16 40 16 empty pddp_dsp_canvas dsp 7 5 0 14 #e0e0e0
+#202020 0;
 #X obj 0 0 tgl 18 0 THIS_IS_HERE_TO_GET_RID_OF_THE_OUTLET GLOBAL_PDDP_DSP_TOGGLE
-empty 1 8 1 9 -233017 -33289 -33289 0 1;
+empty 1 8 1 9 #e0e0e0 #202020 #202020 0 1 1;
 #X obj 82 216 select 0 1;
 #X msg 115 238 76;
 #X msg 80 238 10;
