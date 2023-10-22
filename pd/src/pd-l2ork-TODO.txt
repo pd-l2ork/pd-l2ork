@@ -3,14 +3,10 @@ PD-L2ORK TODO:
 *Oof:
   *Stress-test Tweeter server session sharing.
 
-*Check why pdlua object is not working on RPi (it compiles ok).
-
 *Opening file dialogs on Ubuntu 22.04, including various Tweeter dialogs opens recent files, or a wrong folder, suggesting something may be broken with the patch_name and dialog.
   *Looks like nw.js bug.
 
 *On Linux (possibly other places), moving dialog popup to fit within the desktop, if called on the second screen, still opens dialog on the first screen.
-
-*On Steam Deck scrolling with touch screen works with double tap and hold on the second tap, but not on L2Ork Tweeter. This may be in part because scrollbars are not showing, nor working.
 
 
 
@@ -765,6 +761,8 @@ argc, t_atom *argv)
 *Updated OSX icons.
 *Refined flatpak svg icon.
 *Fixed OSX menu that allowed users to create objects from the menu even when the patch is not editable.
+*Fixed pdlua object not working on Linux.
+*Fixed issue with touch screens, namely on Steam Deck scrolling via touch screen was not working. We now have pinch serving also as a scroll option, while single touch is reserved for interacting with objects and/or selection (in edit mode).
 
 
 

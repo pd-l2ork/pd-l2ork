@@ -468,10 +468,18 @@ var canvas_events = (function() {
                         // selection-drag, for the same reasons we're
                         // suppressing it while touching an object (see
                         // mousedown, below). Note that to scroll in edit mode
-                        // you can just press the Ctrl/Cmd key while dragging,
-                        // which will also suppress the selection rectangle to
-                        // appear.
-                        document.body.style.overflow = 'hidden';
+                        // you can just press the Alt (used to be Ctrl/Cmd) key
+                        // while dragging, which will also suppress the selection
+                        // rectangle to appear.
+
+                        // ico@vt.edu 2023-10-22: here we once again distinguish
+                        // between single touch (which should disable scrolling)
+                        // and double touch (a.k.a. pinch) and adjust accordingly
+                        if (evt.touches.length === 1) {
+                            document.body.style.overflow = 'hidden';
+                        } else {
+                            document.body.style.overflow = 'visible';
+                        }
                     }
                 }
                 // ag: It seems possible to get fractional values here, which
@@ -523,7 +531,19 @@ var canvas_events = (function() {
                         // test whether we're touching anything but the canvas
                         // itself. So, to initiate a scroll using touch,
                         // you'll have to touch a blank spot on the canvas.
-                        document.body.style.overflow = 'hidden';
+
+                        // ico@vt.edu 2023-10-22: this is problematic because
+                        // some interfaces (like L2Ork Tweeter) are densely
+                        // packed, leaving no place to scroll over, so
+                        // we only disable this if there is only one touch
+                        // present, whereas two touches suggest
+                        // pinch/zoom/scroll event.
+                        //pdgui.post("num touches=" + evt.touches.length);
+                        if (evt.touches.length === 1) {
+                            document.body.style.overflow = 'hidden';
+                        } else {
+                            document.body.style.overflow = 'visible';
+                        }
                     }
                 }
                 let [pointer_x, pointer_y] = evt.type === "touchstart"
@@ -621,7 +641,7 @@ var canvas_events = (function() {
                         return;
                     }
                     // re-enable scrolling
-                    document.body.style.overflow = '';
+                    document.body.style.overflow = 'visible';
                 }
                 let [pointer_x, pointer_y] = evt.type === "touchend"
                     ? [Math.trunc(evt.changedTouches[0].pageX),
