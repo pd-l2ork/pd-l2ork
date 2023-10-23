@@ -487,13 +487,15 @@ var canvas_events = (function() {
                         // ico@vt.edu 2023-10-22: here we once again distinguish
                         // between single touch (which should disable scrolling)
                         // and double touch (a.k.a. pinch) and adjust accordingly
-                        if (evt.touches.length === 1 && pinch !== 1) {
+                        if (evt.touches.length === 1) {
                             //pdgui.post("suppress scroll");
                             //document.body.style.overflow = 'hidden';
                             //document.body.style.touchAction = 'none';
                             //document.getElementById("patchsvg").
                             //    style.touchAction = 'none';
-                            if (evt.cancelable) evt.preventDefault();
+                            if (pinch !== 1) {
+                                if (evt.cancelable) evt.preventDefault();
+                            }
                         } else {
                             // we are pinching in edit mode
                             //pdgui.post("editmode pinch");
@@ -508,12 +510,17 @@ var canvas_events = (function() {
                         //document.getElementById("patchsvg").
                         //        style.touchAction = 'auto';
                         //pdgui.post("runtime");
-                        if (evt.touches.length === 1 && pinch !== 1) {
+                        if (evt.touches.length === 1) {
                             //document.body.style.overflow = 'hidden';
                             //document.body.style.touchAction = 'none';
                             //document.getElementById("patchsvg").
                             //    style.touchAction = 'none';
-                            if (evt.cancelable) evt.preventDefault();
+                            if (pinch !== 1) {
+                                if (evt.cancelable) evt.preventDefault();
+                            }
+                        } else {
+                            // we are pinching in runtime mode
+                            return false;
                         }
                     }
                 }

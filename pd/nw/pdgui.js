@@ -2295,8 +2295,24 @@ function canvas_menuclose_callback(cid_for_dialog, cid, force) {
     // we actually need to disable the menubar items, too, but we haven't
     // done that yet.
     w.canvas_events.none();
+    // catch escape and properly restore canvas events, otherwise the
+    // default escape commands closes the dialog but does not restore
+    // them, leaving the patch in an inoperable state
+    doc.onkeydown = function(evt) {
+        //post("onkeydown=" + evt.keyCode + " ctrl=" +
+        //    evt.ctrlKey + " meta=" + evt.metaKey);
+        if (evt.keyCode === 27) { // escape
+            w.canvas_events.close_save_dialog();
+            w.canvas_events[w.canvas_events.get_previous_state()]();
+        }
+    };
     // go back to original zoom level so that dialog will show up
-    nw.zoomLevel = 0;
+    // this is no longer necessary
+    //nw.zoomLevel = 0;
+    // ico 2023-10-23: here we cannot reset the scale since it is a
+    // read-only variable
+    //post("resetting scale " + w.visualViewport.scale);
+    //w.visualViewport.scale = 1;
     // big workaround-- apparently the dialog placement algo and the nw.js
     // zoomLevel state change don't happen deterministically. So we set a
     // timeout to force the dialog to render after the zoomLevel change.
