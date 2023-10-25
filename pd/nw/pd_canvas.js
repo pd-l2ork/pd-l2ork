@@ -2372,7 +2372,7 @@ function update_osx_k12_menu(window) {
             m.win.prevwin.enabled = false;
             m.win.parentwin.enabled = false;
             m.win.visible_ancestor.enabled = false;
-            m.win.pdwin.enabled = false;
+            m.win.pdwin.enabled = true;
             m.win.abstractions.enabled = false;
 
             m.help.about.enabled = false;
