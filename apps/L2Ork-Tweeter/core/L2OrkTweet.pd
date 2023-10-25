@@ -284,7 +284,7 @@
 #X text 417 48 logic for detecting dsp status on startup;
 #X obj 527 91 delay 10;
 #X obj 341 248 hsl 40 15 0 1.5708 0 1 empty empty empty 12 6 0 10 #fcb46c
-#fc6418 #000000 2500 0 0 1;
+#fc6418 #000000 2997 0 0 1;
 #X obj 13 446 *~;
 #X obj 50 446 *~;
 #X obj 28 408 line~;
@@ -572,8 +572,8 @@
 #X coords 0 -1 1 1 68 106 1 156 42;
 #X restore 692 144 pd FLANGER;
 #X obj 429 426 \$1;
-#X obj 18 217 nbx 5 14 500 60000 0 1 null-s \$1-manual-loop-length
-ms 1 5 0 8 #fcb46c #000000 #000000 1500 256 1 0 1 0;
+#X obj 18 217 nbx 7 14 500 60000 0 1 null-s \$1-manual-loop-length
+ms 1 5 0 8 #fcb46c #000000 #000000 1550 256 1 0 1 0;
 #X text 287 231 PCH(u/d);
 #X obj 130 198 tgl 15 0 null-s \$1-delete-gui DELETE(del) 17 6 0 10
 #fcb46c #000000 #000000 0 1 1;
@@ -1968,7 +1968,7 @@ we are inserting a note inside the coll char and coll data files.;
 #X text 528 200 LVL;
 #X text 528 150 OVR;
 #X obj 1102 311 expr ($f1-0.1)*1.111111;
-#X text 72 216 LOOP LENGTH(shift+l/r);
+#X text 88 216 LOOP LENGTH(shift+l/r);
 #X symbolatom 93 233 21 0 0 0 - #0-username-r #0-username-s 1 0 1,
 f 21;
 #X text 1059 636 (c) 2020-3 Ivica Ico Bukvic ico.bukvic.net;
