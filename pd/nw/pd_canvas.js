@@ -2620,7 +2620,7 @@ function set_menu_modals(window, state) {
     if (m.win) {
         m.win.parentwin.enabled =
             (pdgui.get_k12_mode() === 1 ? false : true);
-        m.win.visible_ancestor.enabled = 
+        m.win.visible_ancestor.enabled =
             (pdgui.get_k12_mode() === 1 ? false : true);
         m.win.pdwin.enabled = true;
     }
