@@ -769,6 +769,7 @@ argc, t_atom *argv)
   *Further optimizations to the touch actions. Removed single touch scrolling, given the single touch's reserved action for interacting with objects.
   *More refinements to resolve lingering runtime issues. You can now being scroll by tapping with two fingers and then letting go of one to avoid zoom, while still being able to scroll. Tons of improvements for the dropdown touch logic and iemgui_label and scalehandle logic. label and scalehandle require a tap and then a tap and a drag due to current implementation's limitations. Given there are a number of other issues in terms of usability when working with advanced features in edit mode (e.g. resize), currently the touch support in edit mode is minimal. For this reason, touch mode should be regarded primarily as a runtime feature until it is revisited at a later date and its edit mode functionality expanded.
 *Code clean-up and refined menu close dialog to properly capture and support esc key.
+*Made Window menu shortcut for focusing on the Pd console always enabled.
 
 
 
