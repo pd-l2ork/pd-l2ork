@@ -2618,9 +2618,11 @@ function set_menu_modals(window, state) {
     }
 
     if (m.win) {
-        m.win.parentwin.enabled = context_state;
-        m.win.visible_ancestor.enabled = context_state;
-        m.win.pdwin.enabled = context_state;
+        m.win.parentwin.enabled =
+            (pdgui.get_k12_mode() === 1 ? false : true);
+        m.win.visible_ancestor.enabled = 
+            (pdgui.get_k12_mode() === 1 ? false : true);
+        m.win.pdwin.enabled = true;
     }
 
     update_osx_k12_menu(window);
