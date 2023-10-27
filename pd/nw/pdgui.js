@@ -1837,7 +1837,7 @@ exports.post = post;
 
 // print message to console from Pd-- don't add newline
 function gui_post(string, type) {
-    do_post(null, "", string, type, null);
+    do_post(null, "", string.replace(/\\/g,''), type, null);
 }
 
 function pd_error_select_by_id(objectid) {
