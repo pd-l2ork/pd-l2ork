@@ -156,7 +156,7 @@ lib_targets = loaders-libdir pddp
 INCREMENTAL = yes
 else ifeq ($(EMSCRIPTEN),yes)
 # original one used by the first iteration of PdWebParty: lib_targets = arraysize autotune bassemu boids bsaylor comport creb cxc earplug ekext ext13 freeverb ggee hcs iem_ambi iem_bin_ambi iemguts iem_adaptfilt iem_delay iem_roomsim iem_spec2 jasch_lib loaders-libdir mapping markex maxlib mjlib moonlib motex mrpeach pan pddp rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing
-lib_targets = arraysize autotune bassemu boids bsaylor comport creb cxc earplug ekext ext13 freeverb ggee hcs jasch_lib loaders-libdir mapping markex maxlib mjlib moonlib motex mrpeach pan pddp rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing
+lib_targets = arraysize autotune bassemu boids bsaylor comport creb cxc earplug ekext ext13 flatgui freeverb ggee hcs jasch_lib loaders-libdir mapping markex maxlib mjlib moonlib motex mrpeach pan pddp rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing
 # short one for quick building for debugging purposes (disabled by default):
 # lib_targets = maxlib
 else
@@ -577,16 +577,16 @@ fftease_clean:
 # FLATGUI
 #
 # Right now we're just building footils/knob and throwing it in the flatgui
-# external directory for compatibility
+# external directory
 #
 flatgui:
 	make -C $(externals_src)/footils/knob CFLAGS="$(CFLAGS)" \
 		PD_PATH=$(pd_src) pdbinpath=$(pd_src)/src \
-		PD_INCLUDE=$(pd_src)/src
+		PD_INCLUDE=$(pd_src)/src $(call set_em_flags)
 
 flatgui_install:
 	make -C $(externals_src)/footils/knob STRIP="$(STRIP)" \
-		DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+		DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 flatgui_clean:
 	make -C $(externals_src)/footils/knob clean

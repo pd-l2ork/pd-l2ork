@@ -71,7 +71,7 @@ typedef struct _knob            /* taken from Frank's modified g_all_guis.h */
 
 /* ----------------- forward declarations ----------------------- */
 
-static void knob_list(t_knob *x, t_symbol *s, int ac, t_atom *av);
+static void knob_list(void *z, t_symbol *s, int ac, t_atom *av);
 static void knob_draw_config(t_knob *x,t_glist *glist);
 static void knob_set(t_knob *x, t_floatarg f);
 static void knob_interactive(t_knob *x, t_floatarg f);
@@ -482,8 +482,9 @@ static void knob_click(t_knob *x, t_floatarg xpos, t_floatarg ypos,
     }
 }
 
-static void knob_list(t_knob *x, t_symbol *s, int ac, t_atom *av)
+static void knob_list(void *z, t_symbol *s, int ac, t_atom *av)
 {
+    t_knob *x = (t_knob*)z;
     if (ac == 2 && IS_A_FLOAT(av,0) && IS_A_SYMBOL(av,1))
     {
         // we allow shift to propagate in both focused modes 1 and 2
