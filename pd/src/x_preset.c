@@ -252,6 +252,10 @@ void glob_preset_node_list_check_loc_and_update(void)
     }
 }
 
+void glob_preset_node_list_seek_hub_msg(t_preset_hub *x){
+    glob_preset_node_list_seek_hub();
+}
+
 int glob_preset_hub_list_add(t_preset_hub *x)
 {
     if(PH_DEBUG) fprintf(stderr,"glob_preset_hub_list_add\n");
@@ -3150,7 +3154,7 @@ void preset_hub_setup(void)
        may not yet exist we do this using pre-loadbang call that is issued
        before other loadbangs, otherwise out-of-order loadbangs can issue
        preset recall before the preset has been properly configured */
-    class_addmethod(preset_hub_class, (t_method)glob_preset_node_list_seek_hub,
+    class_addmethod(preset_hub_class, (t_method)glob_preset_node_list_seek_hub_msg,
         gensym("pre-loadbang"), 0);
 
     class_addmethod(preset_hub_class, (t_method)preset_hub_recall,
