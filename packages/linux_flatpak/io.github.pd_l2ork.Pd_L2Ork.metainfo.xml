@@ -50,23 +50,33 @@
   <url type="bugtracker">https://github.com/pd-l2ork/pd-l2ork/issues</url>
   <content_rating type="oars-1.1"/>
   <releases>
-    <release version="20231023" type="stable" date="2023-10-23"/>
+    <release version="20231030" type="stable" date="2023-10-30">
+      <description>
+        <p>
+          Syncing with the latest release of the Pd-L2Ork with new features and bug-fixes.
+        </p>
+      </description>
+    </release>
+    <release version="20231023" type="stable" date="2023-10-23">
       <description>
         <p>
           Version bump with touchscreen navigation improvements and added permissions for networking.
         </p>
       </description>
-    <release version="20231021" type="stable" date="2023-10-21"/>
+    </release>
+    <release version="20231021" type="stable" date="2023-10-21">
       <description>
         <p>
           Version bump with latest bugfixes, updates, and L2Ork Tweeter v.0.76.
         </p>
       </description>
-    <release version="20231013" type="development" date="2023-10-13"/>
+    </release>
+    <release version="20231013" type="development" date="2023-10-13">
       <description>
         <p>
           Initial flathub release.
         </p>
       </description>
+    </release>
   </releases>
 </component>
