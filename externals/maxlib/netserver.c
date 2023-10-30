@@ -36,6 +36,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <math.h>
+#include <stdlib.h>
 #ifdef WIN32
 #include <io.h>
 #include <fcntl.h>
@@ -47,7 +48,6 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <unistd.h>
-#include <stdlib.h>
 #include <sys/time.h>
 #define SOCKET_ERROR -1
 #endif

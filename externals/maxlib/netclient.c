@@ -36,6 +36,7 @@
 #include <string.h>
 #include <pthread.h>
 #include <math.h>
+#include <stdlib.h>
 #ifdef WIN32
 #include <winsock.h>
 #else
