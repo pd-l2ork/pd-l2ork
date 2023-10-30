@@ -1,50 +1,52 @@
-#N canvas 588 300 727 566 12;
-#X obj 469 247 netclient;
-#X floatatom 41 452 5 0 0 0 - - - 0 0 1, f 5;
-#X floatatom 79 427 5 0 0 0 - - - 0 0 1, f 5;
-#X symbolatom 156 380 10 0 0 0 - - - 0 0 1, f 10;
-#X text 94 451 received data;
-#X text 132 427 number of connections;
-#X msg 41 72 print;
-#X floatatom 117 401 5 0 0 0 - - - 0 0 1, f 5;
-#X text 175 405 socket number;
-#X msg 95 197 broadcast hallo world!;
-#X text 270 197 send to all clients;
-#X text 130 33 written by Olaf Matthes <olaf.matthes@gmx.de>;
-#X obj 41 352 netserver 3000;
-#X text 129 138 send message to client no. 1;
-#X text 248 380 client's IP address;
-#X msg 490 174 connect localhost 3000;
-#X msg 503 201 disconnect;
-#X msg 469 142 send 23;
-#X floatatom 536 276 5 0 0 0 - - - 0 0 1, f 5;
-#X msg 75 109 send 380 17.3;
-#X floatatom 469 354 5 0 0 0 - - - 0 0 1, f 5;
-#X obj 592 339 print anything;
-#X obj 530 367 print list;
-#X obj 469 303 route float list;
-#X msg 90 160 client 1 23;
-#X text 196 109 "send <socketnumber> <data>";
-#X text 102 88 send message on specified socket;
-#X text 192 161 "client <clientnumber> <data>";
-#N canvas 844 482 439 268 META 0;
-#X text 14 32 LICENSE GPL v2;
-#X text 14 12 KEYWORDS control network;
-#X text 14 112 OUTLET_1 float;
-#X text 14 52 DESCRIPTION simple client that connects to netserver
-;
-#X text 14 92 OUTLET_0 list;
-#X text 14 172 AUTHOR Olaf Matthes <olaf.matthes@gmx.de> and Ivica
+#N canvas 569 360 712 571 12;
+#X obj 459 247 netclient;
+#X floatatom 24 470 5 0 0 0 - - - 0 0 1, f 5;
+#X floatatom 62 445 5 0 0 0 - - - 0 0 1, f 5;
+#X symbolatom 139 398 10 0 0 0 - - - 0 0 1, f 10;
+#X text 77 469 received data;
+#X text 115 445 number of connections;
+#X msg 24 70 print;
+#X floatatom 100 419 5 0 0 0 - - - 0 0 1, f 5;
+#X text 158 423 socket number;
+#X msg 78 195 broadcast hallo world!;
+#X text 253 195 send to all clients;
+#X text 113 31 written by Olaf Matthes <olaf.matthes@gmx.de>;
+#X obj 24 350 netserver 3000;
+#X text 112 136 send message to client no. 1;
+#X text 231 398 client's IP address;
+#X msg 480 174 connect localhost 3000;
+#X msg 493 201 disconnect;
+#X msg 459 142 send 23;
+#X floatatom 526 276 5 0 0 0 - - - 0 0 1, f 5;
+#X msg 58 107 send 380 17.3;
+#X floatatom 459 354 5 0 0 0 - - - 0 0 1, f 5;
+#X obj 582 339 print anything;
+#X obj 520 367 print list;
+#X obj 459 303 route float list;
+#X msg 73 158 client 1 23;
+#X text 179 107 "send <socketnumber> <data>";
+#X text 85 86 send message on specified socket;
+#X text 175 159 "client <clientnumber> <data>";
+#N canvas 762 591 448 302 META 0;
+#X text 14 41 LICENSE GPL v2;
+#X text 14 18 KEYWORDS control network;
+#X text 14 202 AUTHOR Olaf Matthes <olaf.matthes@gmx.de> and Ivica
 Ico Bukvic <ico@vt.edu>;
-#X text 14 208 HELP_PATCH_AUTHORS "pd meta" information added by Jonathan
+#X text 14 241 HELP_PATCH_AUTHORS "pd meta" information added by Jonathan
 Wilkes for Pd version 0.42. Help file updated by Ivica Ico Bukvic 2021
 ;
-#X text 14 132 OUTLET_2 float;
-#X text 14 152 OUTLET_3 symbol;
-#X text 14 72 INLET_0 broadcast client connect disconnect print send
+#X text 14 87 INLET_0 broadcast client connect disconnect print send
 ;
-#X restore 665 539 pd META;
-#N canvas 673 298 626 393 info_and_debugging 0;
+#X text 14 179 OUTLET_3 symbol: IP address of the client sending the
+packet;
+#X text 14 110 OUTLET_0 list: packet data;
+#X text 14 133 OUTLET_1 float: current number of connections;
+#X text 14 156 OUTLET_2 float: socket on which the packet was received
+;
+#X text 14 64 DESCRIPTION bidirectional TCP network server for Pd-L2Ork
+;
+#X restore 645 534 pd META;
+#N canvas 673 310 626 393 info_and_debugging 0;
 #X obj 36 350 outlet;
 #X text 261 254 outputs current netserver status into console;
 #X msg 56 104 alert;
@@ -68,17 +70,78 @@ quiet., f 79;
 #X connect 7 0 0 0;
 #X connect 8 0 0 0;
 #X connect 11 0 0 0;
-#X restore 115 237 pd info_and_debugging;
+#X restore 98 235 pd info_and_debugging;
 #X text 12 505 This example demonstrates how to set up a client/server
 connection. Data sent by the client gets received and displayed by
 the server imediately. Or just try it the other way round..., f 85
 ;
-#X text 130 51 improvements by Ivica Ico Bukvic <ico@vt.edu>;
-#X floatatom 122 270 5 0 0 0 - - - 0 0 1, f 5;
-#X msg 122 298 disconnect \$1;
-#X text 167 270 disconnect client using socket number;
-#X text 38 15 netserver :: simple client that connects to netserver
+#X text 113 49 improvements by Ivica Ico Bukvic <ico@vt.edu>;
+#X floatatom 105 268 5 0 0 0 - - - 0 0 1, f 5;
+#X msg 105 296 disconnect \$1;
+#X text 150 268 disconnect client using socket number;
+#N canvas 268 323 445 588 netserver_arguments 0;
+#X text 10 10 netserver accepts two arguments: 1) port on which server
+should receive connections2) OPTIONAL receiving buffer size exponent
+(default 15) Second argument stands for the exponent applied to the
+number 2 \, as network buffer always has to be a power of 2 \, and
+large numbers entered inside the object can get truncated by Pd-L2Ork.
+Therefore \, the default 15 translates to 2^15 \, or 32768 bytes. Valid
+numbers are between 12 and 26 \, or 4096 bytes (4KB) and 6.71089e+07
+bytes (or 64MB) Second argument is important if there are a lot of
+clients and/or a lot of network traffic. Because netserver handles
+messages in the Pd-L2Ork interrupt \, which by default happens every
+64 bytes of audio (timing will depend on the sampling rate). Because
+if this and the fact that internal buffer for storing incoming messages
+is circular in nature \, it is possible that the entire buffer size
+gets filled up \, which will result in data being lost and/or overwritten.
+This is even more true if there are so many messages being generated
+by a complex patch that during the interrupt \, netserver does not
+manage to handle all of its messages and starts falling behind the
+incoming data. The end result is \, once again \, lost data. Therefore
+\, increasing this second argument will be critical to ensuring brief
+bursts of a larger amount of data do not get partially lost \, or end-up
+overwriting some other data. Note that this second buffer is created
+per client. Therefore \, if you anticipate a lot of concurrent connections
+\, consider the memory footprint this may generate. Buffer exponent
+of 26 (64MB) * 256 clients (maximum currently supported by the netserver)
+\, would take up 16GB of computer's RAM!;
+#X restore 131 350 pd netserver_arguments;
+#N canvas 1274 222 445 732 netclient_arguments 0;
+#X text 10 10 netclient accepts two arguments: 1) OPTIONAL connection
+type (0=TCP \, non-zero=UDP \, default 0)2) OPTIONAL receiving buffer
+size exponent (default 15) Note that netserver only works with TCP
+packets \, so the use of UDP packets is provided here for legacy/compatibility
+purposes. Note also that while first argument is optional \, if you
+wish to provide second argument \, you will need to explicitly provide
+first one \, as well. In other words \, for a netclient to have a different
+buffer size exponent (in this case 22 \, instead of default 15) using
+TCP connection \, you should create [netclient 0 22]. [netclient
+22] will not work \, as it will only make the object attempt at using
+UDP connection \, as any non-zero value will be interpreted as a request
+for UDP (as opposed to TCP) connection. Second argument stands for
+the exponent applied to the number 2 \, as network buffer always has
+to be a power of 2 \, and large numbers entered inside the object can
+get truncated by Pd-L2Ork. Therefore \, the default 15 translates to
+2^15 \, or 32768 bytes. Valid numbers are between 12 and 26 \, or 4096
+bytes (4KB) and 6.71089e+07 bytes (or 64MB) Second argument is important
+if there are a lot of clients and/or a lot of network traffic. Because
+netserver handles messages in the Pd-L2Ork interrupt \, which by default
+happens every 64 bytes of audio (timing will depend on the sampling
+rate). Because if this and the fact that internal buffer for storing
+incoming messages is circular in nature \, it is possible that the
+entire buffer size gets filled up \, which will result in data being
+lost and/or overwritten. This is even more true if there are so many
+messages being generated by a complex patch that during the interrupt
+\, netserver does not manage to handle all of its messages and starts
+falling behind the incoming data. The end result is \, once again \,
+lost data. Therefore \, increasing this second argument will be critical
+to ensuring brief bursts of a larger amount of data do not get partially
+lost \, or end-up overwriting some other data.;
+#X restore 531 247 pd netclient_arguments;
+#X text 21 13 netserver :: bidirectional TCP network server for Pd-L2Ork
 ;
+#X text 568 275 connection status;
+#X text 579 302 received data;
 #X connect 0 0 23 0;
 #X connect 0 1 18 0;
 #X connect 6 0 12 0;

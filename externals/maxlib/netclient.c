@@ -57,7 +57,9 @@
 #define MSG_NOSIGNAL 0
 #endif
 
-static char *version = "netclient v0.4.0, written by Olaf Matthes <olaf.matthes@gmx.de>, improvements by Ivica Ico Bukvic <ico@vt.edu>";
+static char *version = "netclient v0.5 :: bidirectional network client for Pd-L2Ork\n"
+					   "             written by Olaf Matthes <olaf.matthes@gmx.de>\n"
+					   "			 improvements by Ivica Ico Bukvic <ico@vt.edu>";
 
 static t_class *netclient_class;
 static t_binbuf *inbinbuf;
@@ -74,9 +76,10 @@ typedef struct _netclient
 	int x_connectstate;
 	int x_port;
     int x_protocol;
-	char x_inbuf[INBUFSIZE];	/* circular message buffer for received data */
+	char* x_inbuf;	/* circular message buffer for received data */
 	int x_intail;
 	int x_inhead;
+	int x_bufsize;
 		/* multithread stuff */
 	pthread_t x_threadid;            /* id of child thread */
 	pthread_attr_t x_threadattr;     /* attributes of child thread */
@@ -237,18 +240,18 @@ static void netclient_send(t_netclient *x, t_symbol *s, int argc, t_atom *argv)
     sitting on the stack while the messages are getting passed. */
 static int netclient_doread(t_netclient *x)
 {
-    char messbuf[INBUFSIZE], *bp = messbuf;
+    char messbuf[x->x_bufsize], *bp = messbuf;
     int indx;
     int inhead = x->x_inhead;
     int intail = x->x_intail;
     char *inbuf = x->x_inbuf;
     if (intail == inhead) return (0);
-    for (indx = intail; indx != inhead; indx = (indx+1)&(INBUFSIZE-1))
+    for (indx = intail; indx != inhead; indx = (indx+1)&(x->x_bufsize-1))
     {
     	char c = *bp++ = inbuf[indx];
     	if (c == ';' && (!indx || inbuf[indx-1] != '\\'))
     	{
-    	    intail = (indx+1)&(INBUFSIZE-1);
+    	    intail = (indx+1)&(x->x_bufsize-1);
     	    binbuf_text(inbinbuf, messbuf, bp - messbuf);
     	    x->x_inhead = inhead;
     	    x->x_intail = intail;
@@ -289,7 +292,7 @@ static void netclient_rcv(t_netclient *x)
 		}
 		if(FD_ISSET(fd, &readset) || FD_ISSET(fd, &exceptset))
 		{
-			int readto = (x->x_inhead >= x->x_intail ? INBUFSIZE : x->x_intail-1);
+			int readto = (x->x_inhead >= x->x_intail ? x->x_bufsize : x->x_intail-1);
 
 			ret = recv(fd, x->x_inbuf + x->x_inhead, readto - x->x_inhead, 0);
 			if (ret < 0)
@@ -309,7 +312,7 @@ static void netclient_rcv(t_netclient *x)
 			else
 			{
     			x->x_inhead += ret;
-    			if (x->x_inhead >= INBUFSIZE) x->x_inhead = 0;
+    			if (x->x_inhead >= x->x_bufsize) x->x_inhead = 0;
     			while (netclient_doread(x))
 				{
 					/* output binbuf */
@@ -352,9 +355,23 @@ static void netclient_rcv(t_netclient *x)
 	else post("netclient: not connected");
 }
 
-static void *netclient_new(t_floatarg udpflag)
+static int isValid(t_floatarg num)
+{
+	if (floorf(num != num) || num < 12 || num > 26)
+		return 0;
+	return(1);
+}
+
+static void *netclient_new(t_floatarg udpflag, t_floatarg bufsize_pow)
 {
     t_netclient *x = (t_netclient *)pd_new(netclient_class);
+	/* assign buffer size for the circular buffer */
+	if (isValid(bufsize_pow))
+	   	x->x_bufsize = pow(2, (int)bufsize_pow);
+	else
+	   	x->x_bufsize = INBUFSIZE;
+    post("netclient buffer size: %d", x->x_bufsize);
+    x->x_inbuf = (char *)malloc(sizeof(char) * x->x_bufsize);
     x->x_outdata = outlet_new(&x->x_obj, &s_anything);	/* received data */
     x->x_outconnect = outlet_new(&x->x_obj, &s_float);	/* connection state */
     x->x_clock = clock_new(x, (t_method)netclient_tick);
@@ -378,6 +395,7 @@ static void netclient_free(t_netclient *x)
 	netclient_instance_count--;
     if(netclient_instance_count == 0)
         binbuf_free(inbinbuf);
+    free(x->x_inbuf);
 }
 
 #ifndef MAXLIB
@@ -385,7 +403,7 @@ void netclient_setup(void)
 {
     netclient_class = class_new(gensym("netclient"), (t_newmethod)netclient_new,
     	(t_method)netclient_free,
-    	sizeof(t_netclient), 0, A_DEFFLOAT, 0);
+    	sizeof(t_netclient), 0, A_DEFFLOAT, A_DEFFLOAT, 0);
     class_addmethod(netclient_class, (t_method)netclient_connect, gensym("connect"), A_SYMBOL, A_FLOAT, 0);
     class_addmethod(netclient_class, (t_method)netclient_disconnect, gensym("disconnect"), 0);
     class_addmethod(netclient_class, (t_method)netclient_send, gensym("send"), A_GIMME, 0);
@@ -399,7 +417,7 @@ void maxlib_netclient_setup(void)
 {
     netclient_class = class_new(gensym("maxlib_netclient"), (t_newmethod)netclient_new,
     	(t_method)netclient_free,
-    	sizeof(t_netclient), 0, A_DEFFLOAT, 0);
+    	sizeof(t_netclient), 0, A_DEFFLOAT, A_DEFFLOAT, 0);
 	class_addcreator((t_newmethod)netclient_new, gensym("netclient"), A_DEFFLOAT, 0);
     class_addmethod(netclient_class, (t_method)netclient_connect, gensym("connect"), A_SYMBOL, A_FLOAT, 0);
     class_addmethod(netclient_class, (t_method)netclient_disconnect, gensym("disconnect"), 0);

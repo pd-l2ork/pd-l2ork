@@ -72,10 +72,10 @@
 #endif
 
 static char *version = 
-   "netserver v0.4 :: bidirectional communication for Pd\n"
+   "netserver v0.5 :: bidirectional TCP network server for Pd-L2Ork\n"
    "             written by Olaf Matthes <olaf.matthes@gmx.de>\n"
    "             syslogging by Hans-Christoph Steiner <hans@eds.org>\n"
-   "             stability and functional improvements by Ivica Ico Bukvic <ico@vt.edu>";
+   "             improvements by Ivica Ico Bukvic <ico@vt.edu>";
 
 /* ----------------------------- netserver ------------------------- */
 
@@ -108,6 +108,7 @@ typedef struct _netserver
 	  t_int    x_sock_fd;
 	  t_int    x_connectsocket;
 	  t_int    x_nconnections;
+	  t_int	  x_bufsize;
 /* for syslog style logging priorities  */
 	  t_int    x_log_pri;
 } t_netserver;
@@ -118,6 +119,7 @@ typedef struct _netserver_socketreceiver
 	  int sr_inhead;
 	  int sr_intail;
 	  void *sr_owner;
+	  char *sr_messbuf;
 	  t_netserver_socketnotifier sr_notifier;
 	  t_netserver_socketreceivefn sr_socketreceivefn;
 } t_netserver_socketreceiver;
@@ -134,7 +136,9 @@ static t_netserver_socketreceiver *netserver_socketreceiver_new(void *owner, t_n
    x->sr_owner = owner;
    x->sr_notifier = notifier;
    x->sr_socketreceivefn = socketreceivefn;
-   if (!(x->sr_inbuf = malloc(INBUFSIZE))) bug("t_netserver_socketreceiver");
+   t_netserver *y = (t_netserver *)owner;
+   if (!(x->sr_messbuf = malloc((y->x_bufsize)))) bug("t_netserver_socketreceiver");
+   if (!(x->sr_inbuf = malloc((y->x_bufsize)))) bug("t_netserver_socketreceiver");
    return (x);
 }
 
@@ -162,20 +166,20 @@ static int SetSocketBlockingEnabled(int fd, int blocking)
    sitting on the stack while the messages are getting passed. */
 static int netserver_socketreceiver_doread(t_netserver_socketreceiver *x)
 {
-   char messbuf[INBUFSIZE], *bp = messbuf;
+   t_netserver *y = (t_netserver *)x->sr_owner;
+   char *bp = x->sr_messbuf;
    int indx;
    int inhead = x->sr_inhead;
    int intail = x->sr_intail;
    char *inbuf = x->sr_inbuf;
-   t_netserver *y = x->sr_owner;
    if (intail == inhead) return (0);
-   for (indx = intail; indx != inhead; indx = (indx+1)&(INBUFSIZE-1))
+   for (indx = intail; indx != inhead; indx = (indx+1)&(y->x_bufsize-1))
    {
 	  char c = *bp++ = inbuf[indx];
 	  if (c == ';' && (!indx || inbuf[indx-1] != '\\'))
 	  {
-		 intail = (indx+1)&(INBUFSIZE-1);
-		 binbuf_text(y->x_inbinbuf, messbuf, bp - messbuf);
+		 intail = (indx+1)&(y->x_bufsize-1);
+		 binbuf_text(y->x_inbinbuf, x->sr_messbuf, bp - x->sr_messbuf);
 		 x->sr_inhead = inhead;
 		 x->sr_intail = intail;
 		 return (1);
@@ -187,10 +191,9 @@ static int netserver_socketreceiver_doread(t_netserver_socketreceiver *x)
 static void netserver_socketreceiver_read(t_netserver_socketreceiver *x, int fd)
 {
    char *semi;
-   int readto = (x->sr_inhead >= x->sr_intail ? INBUFSIZE : x->sr_intail-1);
+   t_netserver *y = (t_netserver *)x->sr_owner;
+   int readto = (x->sr_inhead >= x->sr_intail ? y->x_bufsize : x->sr_intail-1);
    int ret;
-
-   t_netserver *y = x->sr_owner;
 
    y->x_sock_fd = fd;
 
@@ -200,7 +203,7 @@ static void netserver_socketreceiver_read(t_netserver_socketreceiver *x, int fd)
 	  if (y->x_log_pri >= LOG_ERR)
 		  post("netserver: dropped message");
 	  x->sr_inhead = x->sr_intail = 0;
-	  readto = INBUFSIZE;
+	  readto = y->x_bufsize;
    }
    else
    {
@@ -224,7 +227,7 @@ static void netserver_socketreceiver_read(t_netserver_socketreceiver *x, int fd)
 	  else
 	  {
 		 x->sr_inhead += ret;
-		 if (x->sr_inhead >= INBUFSIZE) x->sr_inhead = 0;
+		 if (x->sr_inhead >= y->x_bufsize) x->sr_inhead = 0;
 		 while (netserver_socketreceiver_doread(x))
 		 {
 			outlet_setstacklim();
@@ -238,7 +241,8 @@ static void netserver_socketreceiver_read(t_netserver_socketreceiver *x, int fd)
 
 static void netserver_socketreceiver_free(t_netserver_socketreceiver *x)
 {
-   free(x->sr_inbuf);
+	free(x->sr_inbuf);
+   free(x->sr_messbuf);
    freebytes(x, sizeof(*x));
 }
 
@@ -669,7 +673,14 @@ static void netserver_debug(t_netserver *x)
    x->x_log_pri = LOG_DEBUG;
 }
 
-static void *netserver_new(t_floatarg fportno)
+static int isValid(t_floatarg num)
+{
+	if (floorf(num != num) || num < 12 || num > 26)
+		return 0;
+	return(1);
+}
+
+static void *netserver_new(t_floatarg fportno, t_floatarg bufsize_pow)
 {
    t_netserver *x;
    int i;
@@ -679,6 +690,12 @@ static void *netserver_new(t_floatarg fportno)
    x = (t_netserver *)pd_new(netserver_class);
 /* set default debug message level */
    x->x_log_pri = LOG_CRIT;
+/* assign buffer size for the circular buffer */
+	if (isValid(bufsize_pow))
+   	x->x_bufsize = pow(2, (int)bufsize_pow);
+   else
+   	x->x_bufsize = INBUFSIZE;
+   post("netserver buffer size: %d", x->x_bufsize);
 /* create a socket */
    sockfd = socket(AF_INET, SOCK_STREAM, 0);
    if (x->x_log_pri >= LOG_NOTICE)
@@ -764,7 +781,7 @@ static void netserver_free(t_netserver *x)
 void netserver_setup(void)
 {
    netserver_class = class_new(gensym("netserver"),(t_newmethod)netserver_new, (t_method)netserver_free,
-							   sizeof(t_netserver), 0, A_DEFFLOAT, 0);
+							   sizeof(t_netserver), 0, A_DEFFLOAT, A_DEFFLOAT, 0);
    class_addmethod(netserver_class, (t_method)netserver_print, gensym("print"), 0);
    class_addmethod(netserver_class, (t_method)netserver_send, gensym("send"), A_GIMME, 0);
    class_addmethod(netserver_class, (t_method)netserver_client_send, gensym("client"), A_GIMME, 0);
@@ -793,7 +810,7 @@ void netserver_setup(void)
 void maxlib_netserver_setup(void)
 {
    netserver_class = class_new(gensym("maxlib_netserver"),(t_newmethod)netserver_new, (t_method)netserver_free,
-							   sizeof(t_netserver), 0, A_DEFFLOAT, 0);
+							   sizeof(t_netserver), 0, A_DEFFLOAT, A_DEFFLOAT, 0);
    class_addcreator((t_newmethod)netserver_new, gensym("netserver"), A_DEFFLOAT, 0);
    class_addmethod(netserver_class, (t_method)netserver_print, gensym("print"), 0);
    class_addmethod(netserver_class, (t_method)netserver_send, gensym("send"), A_GIMME, 0);
