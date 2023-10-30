@@ -35,6 +35,7 @@
 #include <sys/types.h>
 #include <string.h>
 #include <pthread.h>
+#include <math.h>
 #ifdef WIN32
 #include <winsock.h>
 #else

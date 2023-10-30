@@ -35,6 +35,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <pthread.h>
+#include <math.h>
 #ifdef WIN32
 #include <io.h>
 #include <fcntl.h>
