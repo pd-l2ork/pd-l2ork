@@ -9,10 +9,15 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
-10-19-2023 0.76
+30-10-2023 0.77
+*Expanded loop length box width to allow room for decimal values.
+*Updated netserver and netclient default buffer size from 32768 to 131072 (128KB).
+*Added coloring of the session panel when receiving remote request to save session (green for success and orange for receiving an incorrect number of lines).
+
+19-10-2023 0.76
 *Reworked session saving logic and corrected the insert bugfix to ensure error-free operation.
 
-10-18-2023 0.75
+18-10-2023 0.75
 *Fixed long-standing bug of session files not being properly saved.
 *Fixed long-standing bug with the tracker insert command that propagated differently on other clients.
 
