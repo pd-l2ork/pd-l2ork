@@ -61,7 +61,7 @@
 
 static char *version = "netclient v0.5 :: bidirectional network client for Pd-L2Ork\n"
 					   "             written by Olaf Matthes <olaf.matthes@gmx.de>\n"
-					   "			 improvements by Ivica Ico Bukvic <ico@vt.edu>";
+					   "             improvements by Ivica Ico Bukvic <ico@vt.edu>";
 
 static t_class *netclient_class;
 static t_binbuf *inbinbuf;
