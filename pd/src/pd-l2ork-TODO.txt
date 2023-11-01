@@ -1,5 +1,7 @@
 PD-L2ORK TODO:
 
+*Tooltips inside L2OrkTweet.pd (for instance) are still visible on certain (not all) objects when in runtime mode.
+
 *Opening meta subpatch inside any patch (here, specifically netserver-help.pd) and then closing it, and then reopening it again, keeps moving the patch window downwards. May be only affecting Linux, which also exhibits this problem when opening the main Pd-L2Ork window (see index.js for an ugly hack fix that works around this nwjs 0.67.1 bug).
 
 *Opening file dialogs on Ubuntu 22.04, including various Tweeter dialogs opens recent files, or a wrong folder, suggesting something may be broken with the patch_name and dialog.
