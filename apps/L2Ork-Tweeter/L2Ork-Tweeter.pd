@@ -522,6 +522,7 @@ bang;
 #X connect 24 1 25 0;
 #X connect 25 0 37 0;
 #X connect 26 0 12 0;
+#X connect 27 0 62 0;
 #X connect 29 0 34 0;
 #X connect 30 1 29 0;
 #X connect 31 0 32 0;
