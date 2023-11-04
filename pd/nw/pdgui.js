@@ -2654,11 +2654,11 @@ function canvas_set_editmode(cid, state) {
                     tooltip = all_svg_g[i].getAttribute('tooltip');
                 //post("...tooltip=<" + tooltip + ">");
                 if (all_svg_g[i].getElementsByTagName('title').length > 0) {
-                    // ico 2023-09-05: we need the last one since others are
-                    // embedded above this one in a sub-g. we later take care
-                    // of other embedded ones, via the all_svg_g.length above
-                    var last = all_svg_g[i].getElementsByTagName('title').length - 1;
-                    all_svg_g[i].getElementsByTagName('title')[last].textContent = tooltip;
+                    // ico 2023-11-04: we need the frist one since the subpatch
+                    // or an abstraction only has one tooltip that applies to
+                    // the entire object
+                    //var last = all_svg_g[i].getElementsByTagName('title').length - 1;
+                    all_svg_g[i].getElementsByTagName('title')[0].textContent = tooltip;
                 }
             }
         } else {
@@ -2672,17 +2672,18 @@ function canvas_set_editmode(cid, state) {
                 if (all_svg_g[i].getAttribute('runtime_tooltip'))
                     tooltip = all_svg_g[i].getAttribute('runtime_tooltip');
                 //post("...tooltip=<" + tooltip + "> length=" +
-                //    all_svg_g[i].getElementsByTagName('title').length);
+                //    all_svg_g[i].getElementsByTagName('title').length + " text=<" +
+                //    all_svg_g[i].getElementsByTagName('title').innerHTML + ">");
                 if (all_svg_g[i].getElementsByTagName('title').length > 0) {
                     for (var j = 0; j < all_svg_g[i].getElementsByTagName('title').length; j++) {
                         //post("..." + j + ":current tooltip=<" +
                         //    all_svg_g[i].getElementsByTagName('title')[j].textContent + ">");
                     }
-                    // ico 2023-09-05: we need the last one since others are
-                    // embedded above this one in a sub-g. we later take care
-                    // of other embedded ones, via the all_svg_g.length above
-                    var last = all_svg_g[i].getElementsByTagName('title').length - 1;
-                    all_svg_g[i].getElementsByTagName('title')[last].textContent = tooltip;
+                    // ico 2023-11-04: we need the frist one since the subpatch
+                    // or an abstraction only has one tooltip that applies to
+                    // the entire object
+                    //var last = all_svg_g[i].getElementsByTagName('title').length - 1;
+                    all_svg_g[i].getElementsByTagName('title')[0].textContent = tooltip;
                 }
             }
         }
