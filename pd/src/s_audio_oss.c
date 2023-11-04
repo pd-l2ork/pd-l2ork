@@ -660,7 +660,7 @@ int oss_send_dacs(void)
         for (dev = 0;dev < linux_nindevs; dev++) 
             if (linux_adcs[dev].d_space == 0)
         {
-            sys_microsleep(2000);
+            sys_microsleep();
             oss_calcspace();
             if (linux_adcs[dev].d_space != 0) continue;
 

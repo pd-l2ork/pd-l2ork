@@ -347,3 +347,38 @@ void u8_dec(char *s, int *i)
            isutf(s[--(*i)]) || --(*i));
 }
 
+
+/* srcsz = number of source characters, or -1 if 0-terminated
+   sz = size of dest buffer in bytes
+
+   returns # characters converted
+*/
+#ifdef _WIN32
+#include <windows.h>
+#endif
+int u8_nativetoutf8(char *dest, int sz, const char *src, int srcsz)
+{
+    int len;
+#ifdef _WIN32
+    int res;
+    wchar_t*wbuf = 0;
+    if(srcsz < 0) {
+        len = MultiByteToWideChar(CP_OEMCP, 0, src, srcsz, wbuf, 0);
+    } else {
+        len = (srcsz < sz)?srcsz:sz;
+    }
+    wbuf = getbytes(len * sizeof(*wbuf));
+    res = MultiByteToWideChar(CP_OEMCP, 0, src, srcsz, wbuf, len);
+    if(res) {
+        res = WideCharToMultiByte(CP_UTF8, 0, wbuf, len, dest, sz, 0, 0);
+    }
+    freebytes(wbuf, len * sizeof(*wbuf));
+    return (res)?len:0;
+#endif
+        /* on other systems, we use UTF-8 for everything, so this is a no-op */
+    if(srcsz < 0)
+        srcsz = strlen(src) + 1;
+    len = (srcsz < sz)?srcsz:sz;
+    strncpy(dest, src, len);
+    return len;
+}

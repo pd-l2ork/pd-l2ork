@@ -437,6 +437,16 @@ void sched_tick( void)
     sched_diddsp++;
 }
 
+int sched_get_sleepgrain( void)
+{
+    return (sys_sleepgrain > 0 ? sys_sleepgrain :
+        (sys_schedadvance/4 > 5000 ? 5000 : (sys_schedadvance/4 < 100 ? 100 :
+            sys_schedadvance/4)));
+}
+
+    /* old stuff for extern binary compatibility -- remove someday */
+int *get_sys_sleepgrain(void) {return(&sys_sleepgrain);}
+
 /*
 Here is Pd's "main loop."  This routine dispatches clock timeouts and DSP
 "ticks" deterministically, and polls for input from MIDI and the GUI.  If
@@ -560,7 +570,7 @@ static void m_pollingscheduler( void)
             {
                     /* if even that had nothing to do, sleep. */
                 if (timeforward != SENDDACS_SLEPT)
-                    sys_microsleep(sys_sleepgrain);
+                    sys_microsleep();
             }
 #if THREAD_LOCKING
             sys_lock();

@@ -254,9 +254,13 @@ static int sys_domicrosleep(int microsec, int pollem)
     }
 }
 
-void sys_microsleep(int microsec)
+    /* sleep (but if any incoming or to-gui sending to do, do that instead.)
+    Call with the PD instance lock UNSET - we set it here. */
+void sys_microsleep( void)
 {
-    sys_domicrosleep(microsec, 1);
+    sys_lock();
+    sys_domicrosleep(sched_get_sleepgrain(), 1);
+    sys_unlock();
 }
 
 #ifdef HAVE_UNISTD_H
