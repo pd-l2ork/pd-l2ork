@@ -3,6 +3,7 @@ PD-L2ORK TODO:
 *Tooltips inside L2OrkTweet.pd (for instance) are still visible on certain (not all) objects when in runtime mode.
 
 *Ported vanilla WASAPI driver for windows since MMIO is not anymore supported well on more recent computers running Win11. This change is causing a pause when the DSP is turned off via a patch message and then requested to be resumed. Need to investigate further...
+  *Test building on OSX and Linux.
 
 *Opening meta subpatch inside any patch (here, specifically netserver-help.pd) and then closing it, and then reopening it again, keeps moving the patch window downwards. May be only affecting Linux, which also exhibits this problem when opening the main Pd-L2Ork window (see index.js for an ugly hack fix that works around this nwjs 0.67.1 bug).
 
