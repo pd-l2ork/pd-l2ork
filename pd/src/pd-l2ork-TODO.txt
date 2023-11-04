@@ -1,7 +1,5 @@
 PD-L2ORK TODO:
 
-*Tooltips inside L2OrkTweet.pd (for instance) are still visible on certain (not all) objects when in runtime mode.
-
 *Ported vanilla WASAPI driver for windows since MMIO is not anymore supported well on more recent computers running Win11. This change is causing a pause when the DSP is turned off via a patch message and then requested to be resumed. Need to investigate further...
   *Test building on OSX and Linux.
 
@@ -780,6 +778,7 @@ argc, t_atom *argv)
 *Fixed flatgui/knob building inside emscripten. The build has been also tested on Linux. Still need to test OSX and Windows building. Note the changes necessary to be able to build a proper emscripten-ready external. Namely, the addition of the $(call set_em_flags) to the externals/Makefile, and repurposing of the autotune build script (since that one builds fine as an emscripten external) for the purpose of building the knob external.
 *Overhauled netclient and netserver to allow for an adjustable size of the receiving buffer. This should hopefully solve the issue of lost session data in L2Ork Tweeter once and for all (it will require a new version of Tweeter that uses a larger buffer than the current 32768 bytes). Updated documentation and tooltips (meta).
 *Reworked the dropdown logic to fix dropdown not disappearing, and allowing to have touch and slide across the dropdown to select the right option.
+*Improvements to the Help Browser: added back button to the, resized the search, added folder icon to folders, and provided notification when a folder is opened that has no browsable files (e.g. some of the pd-l2ork data structures folders have a bunch of images that the browser does not show).
 
 
 

@@ -383,7 +383,7 @@ function click_toc(dir) {
     doc_search();
 }
 
-var current_dir;
+var current_dir;    // this reflects the current folder absolute path
 
 function canonical_path(dir)
 {
@@ -421,7 +421,9 @@ function toc_bookmark_update(dir)
 
 function toc_bookmark_status(enabled) {
     document.getElementById("bookmark_indicator").style.
-	setProperty("opacity", enabled?"1.0":"0.5");
+	setProperty("opacity", enabled ? "1.0":"0.5");
+    document.getElementById("back_button").style.
+    setProperty("opacity", enabled ? "1.0":"0.5");
 }
 
 function display_toc() {
@@ -510,6 +512,8 @@ function display_directory_callback(err, files) {
                 };
                 //pdgui.post("......doc id=" + doc.id + " title=" + doc.title);
                 display_doc(doc);
+            } else {
+                document.getElementById("results").innerHTML = "<br>This folder contains no browsable files...";
             }
         });
     }
@@ -525,6 +529,34 @@ function display_directory(dir) {
     toc_bookmark_status(!is_doc);
 }
 
+function back_click() {
+    // go one step back
+    if (document.getElementById("back_button").style.opacity !== "1") {
+        //pdgui.post("back_click disabled, returning");
+        return;
+    }
+    var search_dir = pdgui.defunkify_windows_path(
+        path.join(
+            pdgui.get_lib_dir(), document.getElementById("search_text").value
+        )
+    );
+    /*
+    pdgui.post("current_dir=<" + current_dir + ">\nup_dir=<" + up_dir +
+        ">\nsearch_text=<" + pdgui.defunkify_windows_path(
+            path.join(pdgui.get_lib_dir(),
+                document.getElementById("search_text").value)) + ">"
+    );
+    */
+    if (current_dir === search_dir) {
+        //pdgui.post("back to toc");
+        clear_results();
+        display_toc(); 
+    } else {
+        var up_dir = current_dir.substring(0, current_dir.lastIndexOf('/'));
+        display_directory(pdgui.defunkify_windows_path(up_dir));
+    }
+}
+
 function file_browser_click() {
     // open the file browser on whatever directory we visited last, or the
     // doc directory by default
@@ -534,6 +566,10 @@ function file_browser_click() {
 }
 
 function bookmark_indicator_click() {
+    if (document.getElementById("bookmark_indicator").style.opacity !== "1") {
+        //pdgui.post("bookmark_indicator_click disabled, returning");
+        return;
+    }
     toggle_bookmark(current_dir);
 }
 
@@ -772,6 +808,7 @@ function toggle_find_bar() {
 // Adds (or deletes, if del is true) a bookmark to the toc.
 function do_bookmark(dirname, del)
 {
+    //pdgui.post("do_bookmark");
     if (current_dir === path.join(pdgui.get_lib_dir(), "doc")) {
 	/* We don't want to bookmark the doc directory. There's nothing
 	   interesting to see there anyway, and, since the toc also lives
@@ -960,7 +997,7 @@ function display_no_results() {
 
 function display_doc(doc) {
     // we get here only if we know we should be displaying something...
-    //pdgui.post("display doc " + doc.id);
+    //pdgui.post("display doc " + doc + " " + doc.id);
     var div = document.createElement("div"),
         a = document.createElement("a"),
         results_elem = document.getElementById("results"),
@@ -973,7 +1010,11 @@ function display_doc(doc) {
             pdgui.defunkify_windows_path(path.dirname(doc.id)) + "', '" +
             pdgui.defunkify_windows_path(path.basename(doc.id)) + "');"
     }
-    a.textContent = doc.title;
+    if (fs.lstatSync(doc.id).isDirectory()) {
+        a.innerHTML = doc.title + '<img style="vertical-align:middle;" src="folder.svg">';
+    } else {
+       a.textContent = doc.title;
+    }
     // set title to path for tooltip
     a.title = doc.id;
     header = document.createElement("h3");
@@ -1058,16 +1099,23 @@ function doc_search() {
   </head>
   <body class="search_body">
     <input type="file" id="file_browser" style="display: none;" onchange="file_browser_callback(this);"></input>
-    <form id="search_form" action="javascript:void(0);">
+    <form id="search_form" action="javascript:void(0);" size="">
       <input type="search"
              name="search_text"
              id="search_text"
              data-i18n="[title]search.search"
-             autocomplete="off">
+             autocomplete="off"
+             size="39">
+      <br>
       <input type="image" style="vertical-align:middle;"
              src="folder.svg"
              id="file_browser_button"
              data-i18n="[title]search.browse">
+      <a href="javascript:back_click();" id="back_button" style="text-decoration: none; color: gray; font-weight: bold;">
+        <b style="display: inline; font-size: 20px; position: relative; top: 3px; left: 1px;">
+          &#11178;
+        </b>
+      </a>
       <input type="image" style="vertical-align:middle;"
              src="bookmark.svg"
              id="bookmark_indicator"

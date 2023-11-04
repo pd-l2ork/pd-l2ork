@@ -9065,7 +9065,7 @@ exports.open_prefs = open_prefs;
 // dialog_search.html
 function open_search() {
     if (!dialogwin["search"]) {
-        create_window("search", "search", 300, 400, 20, 20, null);
+        create_window("search", "search", 350, 400, 20, 20, null);
     } else {
         dialog_raise("search");
     }
