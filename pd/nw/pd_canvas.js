@@ -621,6 +621,8 @@ var canvas_events = (function() {
                     ? [Math.trunc(evt.touches[0].pageX),
                        Math.trunc(evt.touches[0].pageY)]
                     : [evt.pageX, evt.pageY];
+                last_dropdown_menu_x = pointer_x;
+                last_dropdown_menu_y = pointer_y;
                 var target_id, resize_type;
                 if (target_is_scrollbar(evt)) {
                     return;
@@ -1331,7 +1333,8 @@ var canvas_events = (function() {
                 }
             },
             dropdown_menu_mousedown: function(evt) {
-                //pdgui.post("dropdown_menu_mousedown " + dropdown_mousedown);
+                //pdgui.post("dropdown_menu_mousedown " + dropdown_mousedown +
+                //  " evt.type=" + evt.type);
                 dropdown_mousedown = 1;
                 let [pointer_x, pointer_y] = evt.type === "touchstart"
                 ? [Math.trunc(evt.touches[0].pageX),
@@ -1378,24 +1381,34 @@ var canvas_events = (function() {
                 }
             },
             dropdown_menu_mouseup: function(evt) {
-                //pdgui.post("dropdown_menu_mouseup " + dropdown_mousedown);
+                //pdgui.post("dropdown_menu_mouseup " + dropdown_mousedown +
+                //  " evt.type=" + evt.type + " " + last_dropdown_menu_x + ","
+                //  + last_dropdown_menu_y);
+                var tgt = document.elementFromPoint(
+                    last_dropdown_menu_x, last_dropdown_menu_y);
                 var i, select_elem;
                 // This can be triggered if the user keeps the mouse down
                 // to highlight an element and releases the mouse button to
                 // choose that element
-                if (evt.target.parentNode
-                    && evt.target.parentNode.parentNode
-                    && evt.target.parentNode.parentNode.id === "dropdown_list") {
+                if (tgt.parentNode
+                    && tgt.parentNode.parentNode
+                    && tgt.parentNode.parentNode.id === "dropdown_list") {
                     //pdgui.post("...in the menu");
                     select_elem = document.querySelector("#dropdown_list");
                     dropdown_index_to_pd(select_elem);
                     select_elem.style.setProperty("display", "none");
                     canvas_events.normal();
-                } else if (evt.type === "touchend" && dropdown_mousedown == 1) {
+                } else if ((evt.type === "touchend" || evt.type === "mouseup")
+                        && dropdown_mousedown == 1) {
+                    //pdgui.post("...outside the menu");
                     dropdown_mousedown = 0;
                     select_elem = document.querySelector("#dropdown_list");
                     select_elem.style.setProperty("display", "none");
                     canvas_events.normal();                    
+                }
+                if (evt.type === "touchend") {
+                    //evt.stopPropagation();
+                    evt.preventDefault();
                 }
             },
             dropdown_menu_wheel: function(evt) {
@@ -1406,11 +1419,13 @@ var canvas_events = (function() {
                 last_dropdown_menu_y = Number.MIN_VALUE;
             },
             dropdown_menu_mousemove: function(evt) {
-                //pdgui.post("dropdown_menu_mousemove");
                 let [pointer_x, pointer_y] = evt.type === "touchmove"
                 ? [Math.trunc(evt.touches[0].pageX),
                    Math.trunc(evt.touches[0].pageY)]
                 : [evt.pageX, evt.pageY];
+                var tgt = document.elementFromPoint(pointer_x, pointer_y);
+                //pdgui.post("dropdown_menu_mousemove evt.type=" + 
+                //    evt.type + " x=" + pointer_x + " y=" + pointer_y);
                 // For whatever reason, Chromium decides to trigger the
                 // mousemove/mouseenter/mouseover events if the element
                 // underneath it changes (or for mousemove, if the element
@@ -1418,12 +1433,20 @@ var canvas_events = (function() {
                 // the mouse position the entire time to filter out the
                 // true mousemove events from the ones Chromium generates
                 // when a scroll event changes the element under the mouse.
+                //pdgui.post("last:" +
+                //    last_dropdown_menu_x + "," + last_dropdown_menu_y);
+                //pdgui.post(document.elementFromPoint(pointer_x, pointer_y));
+                var tgt = document.elementFromPoint(pointer_x, pointer_y);
+                //pdgui.post(tgt.parentNode);
+                //pdgui.post(tgt.parentNode.parentNode);
+                //pdgui.post(tgt.parentNode.parentNode.id);
                 if (pointer_x !== last_dropdown_menu_x
                     || pointer_y !== last_dropdown_menu_y) {
-                    if (evt.target.parentNode
-                        && evt.target.parentNode.parentNode
-                        && evt.target.parentNode.parentNode.id === "dropdown_list") {
-                        dropdown_highlight_elem(evt.target);
+                    if (tgt.parentNode
+                        && tgt.parentNode.parentNode
+                        && tgt.parentNode.parentNode.id === "dropdown_list") {
+                        //pdgui.post("highlight");
+                        dropdown_highlight_elem(tgt);
                     } else {
                         dropdown_clear_highlight();
                     }
