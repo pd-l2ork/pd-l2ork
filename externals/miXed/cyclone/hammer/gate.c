@@ -100,8 +100,10 @@ static void *gate_new(t_floatarg f1, t_floatarg f2)
     t_pd *proxy;
     if (nouts < GATE_MINOUTS)
 	nouts = GATE_DEFOUTS;
-    if (nouts > GATE_C74MAXOUTS)
+    if (nouts > GATE_C74MAXOUTS) {
+    nouts = GATE_C74MAXOUTS;
 	fittermax_rangewarning(gate_class, GATE_C74MAXOUTS, "outlets");
+    }
     nouts++;  /* for convenience (the cost is one pointer) */
     if (!(outs = (t_outlet **)getbytes(nouts * sizeof(*outs))))
 	return (0);
