@@ -948,8 +948,8 @@ also an object that sends MICI CC messages., f 50;
 #X text 24 162 TEST GAIN (dB);
 #X text 52 245 80;
 #X text 52 265 60;
-#X obj 111 192 vu 22 120 \$0-test-vu empty -1 -10 0 12 #404040 #000000
-0 0;
+#X obj 89 193 vu 22 120 \$0-test-vu empty -1 -10 0 10 #404040 #000000
+1 0;
 #X text 52 285 Off;
 #X text 595 241 09-16;
 #X text 595 260 17-24;
