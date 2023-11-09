@@ -1878,8 +1878,8 @@ and lengthquadruple click - everything (loop \, loop sync \, preset
 and main out and pan valuesshift + quadruple click - everything (loop
 \, loop sync \, preset \, main out \, and pan), f 82;
 #X restore 1338 3 pd supplemental-documentation;
-#N canvas 1555 88 150 167 widgets 0;
-#X obj 0 0 cnv 15 149 159 empty empty empty 20 12 0 14 #e0e0e0 #404040
+#N canvas 1555 88 147 182 widgets 0;
+#X obj 0 0 cnv 15 149 176 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
 #X text 12 105 PERFORMER:;
 #X text 12 12 CONDUCTOR:;
@@ -1889,4 +1889,6 @@ and main out and pan valuesshift + quadruple click - everything (loop
 Matrix;
 #X obj 13 53 pddplink admin/DISIS-Dante-Out-Controls.pd -text DISIS
 Dante Out;
+#X obj 12 144 pddplink widgets/sync-controls/Sync-Controls.pd -text
+Sync Controls;
 #X restore 1519 3 pd widgets;

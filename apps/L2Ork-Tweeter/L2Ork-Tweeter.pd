@@ -522,7 +522,6 @@ bang;
 #X connect 24 1 25 0;
 #X connect 25 0 37 0;
 #X connect 26 0 12 0;
-#X connect 27 0 62 0;
 #X connect 29 0 34 0;
 #X connect 30 1 29 0;
 #X connect 31 0 32 0;
@@ -1803,8 +1802,8 @@ LOCAL\ MAIN\ OUT -90 6 0 10 #80fc80 #008000 #ffffff 22800 1 0 1;
 #X text 1312 3 MAX;
 #X symbolatom 1478 42 21 0 0 0 - session-name-r session-name-s 1 0
 1, f 21;
-#N canvas 1555 88 150 167 widgets 0;
-#X obj 0 0 cnv 15 149 159 empty empty empty 20 12 0 14 #e0e0e0 #404040
+#N canvas 1555 88 147 182 widgets 0;
+#X obj 0 0 cnv 15 149 176 empty empty empty 20 12 0 14 #e0e0e0 #404040
 0;
 #X text 12 105 PERFORMER:;
 #X text 12 12 CONDUCTOR:;
@@ -1814,6 +1813,8 @@ LOCAL\ MAIN\ OUT -90 6 0 10 #80fc80 #008000 #ffffff 22800 1 0 1;
 Matrix;
 #X obj 13 53 pddplink admin/DISIS-Dante-Out-Controls.pd -text DISIS
 Dante Out;
+#X obj 12 144 pddplink widgets/sync-controls/Sync-Controls.pd -text
+Sync Controls;
 #X restore 1519 3 pd widgets;
 #N canvas 712 186 513 659 supplemental-documentation 0;
 #X obj 0 0 cnv 15 512 651 empty empty empty 20 12 0 14 #e0e0e0 #404040
