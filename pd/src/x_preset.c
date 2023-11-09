@@ -1754,8 +1754,8 @@ void preset_hub_read(t_preset_hub *x, t_symbol *filename)
     {
         post("warning: file node locations have not yet been initialized, "
              "suggesting this may be an older patch--to ensure file presets "
-             "continue to work as you edit your patch, please use initloc or "
-             "updateloc command before continuing to edit the patch");
+             "continue to work as you edit your patch, please use initfileloc "
+             "or updatefileloc command before continuing to edit the patch");
         no_was = 1;        
     }
 
@@ -2074,7 +2074,7 @@ void preset_hub_write(t_preset_hub *x, t_symbol *filename)
     if (!x->ph_init_file_loc)
     {
         pd_error(x, "file node locations have not yet been initialized--"
-                    "please use initloc or updateloc command before "
+                    "please use initfileloc or updatefileloc command before "
                     "saving the preset_hub data to a file");
         goto preset_hub_write_fail;        
     }
@@ -2093,7 +2093,7 @@ void preset_hub_write(t_preset_hub *x, t_symbol *filename)
             if (!phd->phd_pn_was_gl_loc_length)
             {
                 pd_error(x, "at least one uninitialized file node location found--"
-                            "please use initloc or updateloc command before "
+                            "please use initfileloc or updatefileloc command before "
                             "saving presets to a file");
                 goto preset_hub_write_fail;
             }
@@ -2193,8 +2193,8 @@ void preset_hub_readpreset(t_preset_hub *x, t_symbol *filename)
     {
         post("warning: file node locations have not yet been initialized, "
              "suggesting this may be an older patch--to ensure file presets "
-             "continue to work as you edit your patch, please use initloc or "
-             "updateloc command before continuing to edit the patch");
+             "continue to work as you edit your patch, please use initfileloc "
+             "or updatefileloc command before continuing to edit the patch");
         no_was = 1;        
     }
 
@@ -2525,7 +2525,7 @@ void preset_hub_writepreset(t_preset_hub *x, t_symbol *filename, float preset)
     if (!x->ph_init_file_loc)
     {
         pd_error(x, "file node locations have not yet been initialized--"
-                    "please use initloc or updateloc command before "
+                    "please use initfileloc or updatefileloc command before "
                     "saving a preset to a file");
         goto preset_hub_writepreset_fail;        
     }
@@ -2544,7 +2544,7 @@ void preset_hub_writepreset(t_preset_hub *x, t_symbol *filename, float preset)
             if (!phd->phd_pn_was_gl_loc_length)
             {
                 pd_error(x, "at least one uninitialized file node location found--"
-                            "please use initloc or updateloc command before "
+                            "please use initfileloc or updatefileloc command before "
                             "saving the preset hub data to a file");
                 goto preset_hub_writepreset_fail;
             }
