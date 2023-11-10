@@ -1159,7 +1159,7 @@ static void my_numbox_exclusive(t_my_numbox *x, t_floatarg f)
 
 static void my_numbox_focus(t_my_numbox *x, t_floatarg f)
 {
-    if ((int)f == 1)
+    if ((int)f == 1 && x->x_focused == 0)
     {
         if (glist_isvisible(glist_getcanvas(x->x_gui.x_glist)))
         {
@@ -1188,7 +1188,7 @@ static void my_numbox_focus(t_my_numbox *x, t_floatarg f)
             pd_error(x, "you can only focus iemgui numbox when it is visible");
         }
     }
-    else if ((int)f == 0)
+    else if ((int)f == 0 && x->x_focused > 0)
     {
         if (glist_isvisible(glist_getcanvas(x->x_gui.x_glist)))
         {
