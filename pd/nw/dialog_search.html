@@ -606,10 +606,13 @@ function file_browser_callback(elem) {
 
 function update_os_specific_layout() {
     // silly chromium/nwjs makes em width of a search box appear to be different
-    //pdgui.post(pdgui.nw_os_is_windows);
-    if (pdgui.nw_os_is_windows === 0) {
+    //pdgui.post(pdgui.nw_os_is_linux + " " + pdgui.nw_os_is_osx);
+    if (pdgui.nw_os_is_linux === 1) {
         document.getElementById("search_text").size = 37;
         document.getElementById("divider").style.setProperty("margin-top", "0px");
+    } else if (pdgui.nw_os_is_osx === 1) {
+        document.getElementById("search_text").size = 48;
+        document.getElementById("divider").style.setProperty("margin-top", "3px");
     }
 }
 
@@ -1142,11 +1145,11 @@ function doc_search() {
              id="file_browser_button"
              data-i18n="[title]search.browse">
       <a href="javascript:back_click();" id="back_button" style="text-decoration: none; color: gray; font-weight: bold;">
-        <b style="display: inline; font-size: 20px; position: relative; top: 3px; left: 1px;">
-          &#11178;
+        <b style="display: inline; font-size: 15px; position: relative; top: 3px; left: 1px;">
+          &#x25c0;
         </b>
       </a>
-      <input type="image" style="vertical-align:middle;"
+      <input type="image" style="vertical-align:middle; padding-top: 2px;"
              src="bookmark.svg"
              id="bookmark_indicator"
              data-i18n="[title]search.bookmark">
