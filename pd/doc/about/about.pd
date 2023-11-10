@@ -1,40 +1,42 @@
 #N struct cat float x float y;
-#N canvas 337 234 519 466 12;
-#N canvas 634 205 452 371 version 0;
+#N canvas 530 190 519 466 12;
+#N canvas 902 309 452 398 version 0;
 #X msg 61 51 l2ork_version;
 #X obj 61 76 pdinfo;
 #X obj 61 26 loadbang;
-#X obj 61 101 makefilename Pd-l2ork-%s;
-#X msg 61 126 label \$1;
-#X obj 61 151 s \$0-about_text;
-#X obj 250 77 pdinfo;
-#X obj 250 27 loadbang;
-#X msg 250 52 version;
-#X msg 250 102 \$1.\$2.\$3;
-#X msg 250 152 label \$1;
-#X obj 250 127 makefilename Pd-%s;
-#X obj 250 177 s \$0-vanilla_text;
-#X obj 61 236 pdinfo;
-#X obj 61 186 loadbang;
-#X msg 61 286 label \$1;
-#X msg 61 211 floatsize;
-#X obj 61 261 makefilename %d;
-#X obj 61 311 s \$0-precision_text;
+#X msg 61 151 label \$1;
+#X obj 61 176 s \$0-about_text;
+#X obj 290 77 pdinfo;
+#X obj 290 27 loadbang;
+#X msg 290 52 version;
+#X msg 290 102 \$1.\$2.\$3;
+#X msg 290 152 label \$1;
+#X obj 290 127 makefilename Pd-%s;
+#X obj 290 177 s \$0-vanilla_text;
+#X obj 61 276 pdinfo;
+#X obj 61 226 loadbang;
+#X msg 61 326 label \$1;
+#X msg 61 251 floatsize;
+#X obj 61 301 makefilename %d;
+#X obj 61 351 s \$0-precision_text;
+#X obj 61 126 tosymbol;
+#X obj 61 101 sprintf Pd-L2Ork v.%s;
 #X connect 0 0 1 0;
-#X connect 1 0 3 0;
+#X connect 1 0 19 0;
 #X connect 2 0 0 0;
 #X connect 3 0 4 0;
-#X connect 4 0 5 0;
-#X connect 6 0 9 0;
-#X connect 7 0 8 0;
-#X connect 8 0 6 0;
-#X connect 10 0 12 0;
-#X connect 11 0 10 0;
-#X connect 13 0 17 0;
-#X connect 14 0 16 0;
-#X connect 15 0 18 0;
-#X connect 16 0 13 0;
-#X connect 17 0 15 0;
+#X connect 5 0 8 0;
+#X connect 6 0 7 0;
+#X connect 7 0 5 0;
+#X connect 9 0 11 0;
+#X connect 10 0 9 0;
+#X connect 12 0 16 0;
+#X connect 13 0 15 0;
+#X connect 14 0 17 0;
+#X connect 15 0 12 0;
+#X connect 16 0 14 0;
+#X connect 18 0 3 0;
+#X connect 19 0 18 0;
 #X restore 18 426 pd version;
 #X text 18 87 A real-time graphical programming environment for live
 interactive computer music \, Pd-l2ork works on Linux \, Macintosh
@@ -51,8 +53,8 @@ is distributed under the same license as Pd. For additional info see:
 #X text 18 381 Reference documentation for Pd lives in:;
 #X obj 18 399 pddp/pddplink @pd_help/../1.manual/index.htm -text doc/1.manual/index.htm
 ;
-#X obj 18 32 cnv 15 482 33 empty \$0-about_text Pd-l2ork-2.16.0\ 20230808-rev.f8a16487
-67 12 0 18 #ff9f71 #000000 0;
+#X obj 18 29 cnv 15 482 33 empty \$0-about_text Pd-L2Ork\ v.20231030\ rev.b19affd2
+67 14 0 18 #ff9f71 #000000 0;
 #N canvas 430 372 450 323 cat 0;
 #X obj 16 180 draw sprite ./cat;
 #X obj 16 21 struct cat float x float y;
@@ -80,5 +82,5 @@ is distributed under the same license as Pd. For additional info see:
 #X text 18 304 Pd-L2Ork 2.x integrates elements of Purr-Data and merges
 it with the milestones achieved in the Pd-L2Ork 1.x and Pure-Data.
 It further introduces an array of new and unique features.;
-#X obj 9 9 ggee/image pd-l2ork-k12.png 0 0 78 78 empty empty empty
+#X obj 9 6 ggee/image pd-l2ork-k12.png 0 0 78 78 empty empty empty
 78 78 1 0 10 #000000 0 -8 12.5 12.5 0 1 1;
