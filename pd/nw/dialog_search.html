@@ -427,6 +427,9 @@ function toc_bookmark_status(enabled) {
 }
 
 function display_toc() {
+    document.getElementById("search_text").value = "";
+    document.getElementById("search_text").placeholder =
+        l("search.search_placeholder");
     var results_elem = document.getElementById("results"),
         div,
         a,
@@ -492,6 +495,7 @@ function display_directory_callback(err, files) {
         pdgui.post("Search Engine: " + err);
     } else {
         //pdgui.post("display_directory_callback " + files);
+        var displayed = 0;
         files.forEach(function (f, i, a) {
             doc_path = path.join(current_dir, f);
             /*
@@ -512,10 +516,12 @@ function display_directory_callback(err, files) {
                 };
                 //pdgui.post("......doc id=" + doc.id + " title=" + doc.title);
                 display_doc(doc);
-            } else {
-                document.getElementById("results").innerHTML = "<br>This folder contains no browsable files...";
+                displayed++;
             }
         });
+        if (displayed == 0) {
+             document.getElementById("results").innerHTML = "This folder contains no browsable files...";
+        }
     }
 }
 
@@ -535,11 +541,20 @@ function back_click() {
         //pdgui.post("back_click disabled, returning");
         return;
     }
-    var search_dir = pdgui.defunkify_windows_path(
-        path.join(
-            pdgui.get_lib_dir(), document.getElementById("search_text").value
-        )
-    );
+    var search_dir;
+    if (path.isAbsolute(document.getElementById("search_text").value)) {
+        //pdgui.post("path is absolute");
+        search_dir = pdgui.defunkify_windows_path(
+            document.getElementById("search_text").value
+        );
+    } else {
+        //pdgui.post("path is relative");
+        search_dir = pdgui.defunkify_windows_path(
+            path.join(
+                pdgui.get_lib_dir(), document.getElementById("search_text").value
+            )
+        );
+    }
     /*
     pdgui.post("current_dir=<" + current_dir + ">\nup_dir=<" + up_dir +
         ">\nsearch_text=<" + pdgui.defunkify_windows_path(
@@ -586,6 +601,15 @@ function file_browser_callback(elem) {
         dir = canonical_path(dir);
         dir = dir.length <= rel.length ? dir : rel;
         document.getElementById("search_text").value = dir;
+    }
+}
+
+function update_os_specific_layout() {
+    // silly chromium/nwjs makes em width of a search box appear to be different
+    //pdgui.post(pdgui.nw_os_is_windows);
+    if (pdgui.nw_os_is_windows === 0) {
+        document.getElementById("search_text").size = 37;
+        document.getElementById("divider").style.setProperty("margin-top", "0px");
     }
 }
 
@@ -1097,15 +1121,21 @@ function doc_search() {
 }
     </script>
   </head>
-  <body class="search_body">
+  <body class="search_body" onload="update_os_specific_layout();">
     <input type="file" id="file_browser" style="display: none;" onchange="file_browser_callback(this);"></input>
-    <form id="search_form" action="javascript:void(0);" size="">
+    <form id="search_form" action="javascript:void(0);" style="
+        padding: 7px;
+        position: fixed;
+        background: linear-gradient(-45deg, #ed5324, #c54d7a, #e9e9e9, #ffffff);
+        width: 100%;
+        margin: -8px;
+    ">
       <input type="search"
              name="search_text"
              id="search_text"
              data-i18n="[title]search.search"
              autocomplete="off"
-             size="39">
+             size="40">
       <br>
       <input type="image" style="vertical-align:middle;"
              src="folder.svg"
@@ -1120,8 +1150,14 @@ function doc_search() {
              src="bookmark.svg"
              id="bookmark_indicator"
              data-i18n="[title]search.bookmark">
+      <hr id="divider" style="
+        margin: -8px;
+        margin-top: 5px;
+    ">
     </form>
-    <div id="results">
+    <div id="results" style="
+        margin-top: 70px;
+    ">
     </div>
     <div id = "console_find" style="display:none;">
       <div>
