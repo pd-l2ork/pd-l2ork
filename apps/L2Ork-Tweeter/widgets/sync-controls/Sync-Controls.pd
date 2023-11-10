@@ -1,70 +1,7 @@
-#N canvas 6 9 219 281 10;
+#N canvas 6 25 219 281 10;
 #X obj 10 -10 preset_hub k12 1 %hidden%;
-#N canvas 645 150 588 845 guts 0;
+#N canvas 645 150 588 653 guts 0;
 #X obj 10 -22 preset_hub k12 1 %hidden%;
-#X obj 76 691 r l2ork-custom;
-#X msg 76 760 \; main-out-multiplier-r \$1;
-#X text 173 690 part for all performers;
-#N canvas 727 397 413 410 sync-w-tempo-to-at 0;
-#X obj 79 26 inlet;
-#X obj 79 51 route 1 2 3 4 5 6 7 8 9 10 11 12;
-#X obj 79 348 sync-w-tempo-to-at;
-#X obj 142 249 sync-w-tempo-to-at;
-#X obj 205 150 sync-w-tempo-to-at;
-#X obj 94 323 sync-w-tempo-to-at;
-#X obj 157 224 sync-w-tempo-to-at;
-#X obj 220 125 sync-w-tempo-to-at;
-#X obj 110 298 sync-w-tempo-to-at;
-#X obj 173 199 sync-w-tempo-to-at;
-#X obj 236 100 sync-w-tempo-to-at;
-#X obj 126 274 sync-w-tempo-to-at;
-#X obj 189 175 sync-w-tempo-to-at;
-#X obj 252 76 sync-w-tempo-to-at;
-#X text 121 25 <request-from-client-num 1-12>;
-#X connect 0 0 1 0;
-#X connect 1 0 2 0;
-#X connect 1 1 5 0;
-#X connect 1 2 8 0;
-#X connect 1 3 11 0;
-#X connect 1 4 3 0;
-#X connect 1 5 6 0;
-#X connect 1 6 9 0;
-#X connect 1 7 12 0;
-#X connect 1 8 4 0;
-#X connect 1 9 7 0;
-#X connect 1 10 10 0;
-#X connect 1 11 13 0;
-#X restore 388 738 pd sync-w-tempo-to-at;
-#N canvas 727 397 385 410 sync-to-at 0;
-#X obj 79 26 inlet;
-#X obj 79 51 route 1 2 3 4 5 6 7 8 9 10 11 12;
-#X text 121 25 <request-from-client-num 1-12>;
-#X obj 252 76 sync-to-at;
-#X obj 236 100 sync-to-at;
-#X obj 220 125 sync-to-at;
-#X obj 205 150 sync-to-at;
-#X obj 189 175 sync-to-at;
-#X obj 173 199 sync-to-at;
-#X obj 157 224 sync-to-at;
-#X obj 142 249 sync-to-at;
-#X obj 126 274 sync-to-at;
-#X obj 110 298 sync-to-at;
-#X obj 94 323 sync-to-at;
-#X obj 79 348 sync-to-at;
-#X connect 0 0 1 0;
-#X connect 1 0 14 0;
-#X connect 1 1 13 0;
-#X connect 1 2 12 0;
-#X connect 1 3 11 0;
-#X connect 1 4 10 0;
-#X connect 1 5 9 0;
-#X connect 1 6 8 0;
-#X connect 1 7 7 0;
-#X connect 1 8 6 0;
-#X connect 1 9 5 0;
-#X connect 1 10 4 0;
-#X connect 1 11 3 0;
-#X restore 284 738 pd sync-to-at;
 #X obj 256 21 loadbang;
 #X obj 256 207 s whatismyclientnum;
 #X symbolatom 117 23 20 0 0 0 - - - 0 0 1, f 20;
@@ -79,20 +16,20 @@
 #X connect 0 0 2 0;
 #X connect 2 0 1 0;
 #X restore 256 231 pd save-on-close;
-#X obj 275 181 preset_hub auc file %hidden% %node% 1 14 %was% 1 22
-%node% 2 30 19 %was% 2 54 19 %node% 2 30 20 %was% 2 54 20 %node% 2
-30 21 %was% 2 54 21 %node% 2 31 19 %was% 2 55 19 %node% 2 31 20 %was%
-2 55 20 %node% 2 31 21 %was% 2 55 21 %node% 2 32 19 %was% 2 56 19 %node%
-2 32 20 %was% 2 56 20 %node% 2 32 21 %was% 2 56 21 %node% 2 33 19 %was%
-2 57 19 %node% 2 33 20 %was% 2 57 20 %node% 2 33 21 %was% 2 57 21 %node%
-2 34 19 %was% 2 58 19 %node% 2 34 20 %was% 2 58 20 %node% 2 34 21 %was%
-2 58 21 %node% 2 35 19 %was% 2 59 19 %node% 2 35 20 %was% 2 59 20 %node%
-2 35 21 %was% 2 59 21 %node% 2 36 19 %was% 2 60 19 %node% 2 36 20 %was%
-2 60 20 %node% 2 36 21 %was% 2 60 21 %node% 2 37 19 %was% 2 61 19 %node%
-2 37 20 %was% 2 61 20 %node% 2 37 21 %was% 2 61 21 %node% 2 38 19 %was%
-2 62 19 %node% 2 38 20 %was% 2 62 20 %node% 2 38 21 %was% 2 62 21 %node%
-2 39 19 %was% 2 63 19 %node% 2 39 20 %was% 2 63 20 %node% 2 39 21 %was%
-2 63 21 %node% 2 12 1 %was% 2 20 1;
+#X obj 275 181 preset_hub auc file %hidden% %node% 1 9 %was% 1 14 %node%
+2 25 19 %was% 2 30 19 %node% 2 25 20 %was% 2 30 20 %node% 2 25 21 %was%
+2 30 21 %node% 2 26 19 %was% 2 31 19 %node% 2 26 20 %was% 2 31 20 %node%
+2 26 21 %was% 2 31 21 %node% 2 27 19 %was% 2 32 19 %node% 2 27 20 %was%
+2 32 20 %node% 2 27 21 %was% 2 32 21 %node% 2 28 19 %was% 2 33 19 %node%
+2 28 20 %was% 2 33 20 %node% 2 28 21 %was% 2 33 21 %node% 2 29 19 %was%
+2 34 19 %node% 2 29 20 %was% 2 34 20 %node% 2 29 21 %was% 2 34 21 %node%
+2 30 19 %was% 2 35 19 %node% 2 30 20 %was% 2 35 20 %node% 2 30 21 %was%
+2 35 21 %node% 2 31 19 %was% 2 36 19 %node% 2 31 20 %was% 2 36 20 %node%
+2 31 21 %was% 2 36 21 %node% 2 32 19 %was% 2 37 19 %node% 2 32 20 %was%
+2 37 20 %node% 2 32 21 %was% 2 37 21 %node% 2 33 19 %was% 2 38 19 %node%
+2 33 20 %was% 2 38 20 %node% 2 33 21 %was% 2 38 21 %node% 2 34 19 %was%
+2 39 19 %node% 2 34 20 %was% 2 39 20 %node% 2 34 21 %was% 2 39 21 %node%
+2 7 1 %was% 2 12 1;
 #X obj 317 21 preset_node auc;
 #X obj 417 21 r adv-user-ctrl-pass-r;
 #X obj 318 51 s adv-user-ctrl-pass-s;
@@ -142,11 +79,6 @@
 #X obj 288 498 t f 1;
 #X msg 226 458 0;
 #X obj 271 524 f;
-#X obj 76 715 route main-out-multiplier-r soundfile sync-to-at sync-w-tempo-to-at
-, f 70;
-#X obj 236 760 route 0 1;
-#X obj 261 783 s soundfile-start;
-#X obj 236 806 s soundfile-stop;
 #N canvas 808 359 383 413 editable 0;
 #X obj 19 19 loadbang;
 #X obj 161 125 keyname 1;
@@ -163,7 +95,7 @@
 #X obj 19 281 == 3;
 #X obj 19 306 sel 1;
 #X obj 19 331 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 0 1 1;
+#000000 1 1 1;
 #X text 19 92 ctrl+shift+alt toggles editability (alt being last!)
 ;
 #X obj 64 125 keyname 1;
@@ -200,63 +132,55 @@
 #X connect 20 0 17 0;
 #X connect 20 1 18 0;
 #X restore 256 255 pd editable;
-#X connect 1 0 63 0;
-#X connect 6 0 29 0;
-#X connect 8 0 16 0;
-#X connect 8 0 14 0;
-#X connect 10 0 11 0;
-#X connect 14 0 8 0;
-#X connect 15 0 8 0;
-#X connect 17 0 27 0;
-#X connect 18 0 25 0;
-#X connect 19 0 20 1;
+#X connect 1 0 24 0;
+#X connect 3 0 11 0;
+#X connect 3 0 9 0;
+#X connect 5 0 6 0;
+#X connect 9 0 3 0;
+#X connect 10 0 3 0;
+#X connect 12 0 22 0;
+#X connect 13 0 20 0;
+#X connect 14 0 15 1;
+#X connect 15 0 12 0;
+#X connect 16 0 12 1;
+#X connect 18 0 19 0;
+#X connect 19 0 21 0;
 #X connect 20 0 17 0;
-#X connect 21 0 17 1;
-#X connect 23 0 24 0;
-#X connect 24 0 26 0;
-#X connect 25 0 22 0;
-#X connect 25 1 19 0;
-#X connect 25 2 24 1;
-#X connect 26 0 17 0;
-#X connect 29 0 7 0;
-#X connect 29 1 42 0;
-#X connect 29 2 10 0;
-#X connect 40 0 59 0;
-#X connect 40 1 48 0;
-#X connect 41 0 13 0;
-#X connect 42 0 13 0;
-#X connect 48 0 49 0;
-#X connect 48 1 50 0;
-#X connect 48 2 51 0;
-#X connect 48 3 52 0;
-#X connect 48 4 53 0;
-#X connect 48 5 54 0;
-#X connect 48 6 55 0;
-#X connect 48 7 56 0;
-#X connect 48 8 57 0;
-#X connect 48 9 58 0;
-#X connect 48 10 61 0;
-#X connect 49 0 60 0;
-#X connect 50 0 60 0;
-#X connect 51 0 60 0;
-#X connect 52 0 60 0;
-#X connect 53 0 60 0;
-#X connect 54 0 60 0;
-#X connect 55 0 60 0;
-#X connect 56 0 60 0;
-#X connect 57 0 60 0;
-#X connect 58 0 60 0;
-#X connect 59 0 62 0;
-#X connect 60 0 62 1;
-#X connect 60 1 21 0;
-#X connect 61 0 21 0;
-#X connect 62 0 21 1;
-#X connect 63 0 2 0;
-#X connect 63 1 64 0;
-#X connect 63 2 5 0;
-#X connect 63 3 4 0;
-#X connect 64 0 66 0;
-#X connect 64 1 65 0;
+#X connect 20 1 14 0;
+#X connect 20 2 19 1;
+#X connect 21 0 12 0;
+#X connect 24 0 2 0;
+#X connect 24 1 37 0;
+#X connect 24 2 5 0;
+#X connect 35 0 54 0;
+#X connect 35 1 43 0;
+#X connect 36 0 8 0;
+#X connect 37 0 8 0;
+#X connect 43 0 44 0;
+#X connect 43 1 45 0;
+#X connect 43 2 46 0;
+#X connect 43 3 47 0;
+#X connect 43 4 48 0;
+#X connect 43 5 49 0;
+#X connect 43 6 50 0;
+#X connect 43 7 51 0;
+#X connect 43 8 52 0;
+#X connect 43 9 53 0;
+#X connect 43 10 56 0;
+#X connect 44 0 55 0;
+#X connect 45 0 55 0;
+#X connect 46 0 55 0;
+#X connect 47 0 55 0;
+#X connect 48 0 55 0;
+#X connect 49 0 55 0;
+#X connect 50 0 55 0;
+#X connect 51 0 55 0;
+#X connect 52 0 55 0;
+#X connect 53 0 55 0;
+#X connect 54 0 57 0;
+#X connect 55 0 57 1;
+#X connect 55 1 16 0;
+#X connect 56 0 16 0;
+#X connect 57 0 16 1;
 #X coords 0 -1 1 1 214 269 2 29 19;
 #X restore 2 2 pd guts;
-#X editable 0;

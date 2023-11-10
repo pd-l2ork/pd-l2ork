@@ -9,6 +9,14 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+09-11-2023 0.78
+*Introduced Sync-Controls supporting widget.
+*Reworked how sync is taking place across clients.
+*Bug-fixes pertaining to sync.
+*Optimized report sharing that now bypasses retriggering everything locally.
+*Made numeric options have exclusive focus.
+*Made more than 4 clicks still count as 4 clicks.
+
 30-10-2023 0.77
 *Expanded loop length box width to allow room for decimal values.
 *Updated netserver and netclient default buffer size from 32768 to 131072 (128KB).

@@ -1,12 +1,12 @@
-#N canvas 641 188 750 877 10;
+#N canvas 880 197 750 877 10;
 #X obj -40 130 preset_hub k12 1 %hidden%;
 #X obj 175 99 cnv 15 207 20 empty \$0-panel |01 -1 8 0 14 #888888 #fcfcfc
 0;
 #X obj 222 469 s chat-out;
 #X obj 230 102 nbx 8 15 0 60000 0 0 empty empty empty 1 -19 0 10 #fcb46c
-#000000 #000000 0 256 0 1 1 0;
+#000000 #000000 1 256 0 1 1 0;
 #X obj 356 102 tgl 15 0 empty empty empty -75 5 0 10 #fcb46c #000000
-#000000 0 1 1;
+#000000 1 1 1;
 #X obj 279 154 split 500 60000;
 #X obj 316 102 nbx 2 15 0 63 0 0 empty empty empty 0 -8 0 10 #fcb46c
 #000000 #000000 0 256 0 1 1 0;
@@ -47,13 +47,9 @@ to client (or length)4 = sync at which beat5 = admin password;
 #X obj 356 102 tgl 15 0 empty empty empty -75 5 0 10 #fcb46c #000000
 #000000 0 1 1;
 #X connect 3 0 7 0;
-#X connect 3 0 19 0;
-#X connect 4 0 12 0;
-#X connect 4 0 21 0;
 #X connect 5 0 23 0;
 #X connect 5 1 9 0;
 #X connect 6 0 16 3;
-#X connect 6 0 20 0;
 #X connect 7 0 13 0;
 #X connect 7 1 5 0;
 #X connect 8 0 10 1;
@@ -70,10 +66,10 @@ to client (or length)4 = sync at which beat5 = admin password;
 #X connect 18 0 2 0;
 #X connect 19 0 3 0;
 #X connect 20 0 6 0;
-#X connect 21 0 4 0;
+#X connect 21 0 37 0;
 #X connect 22 0 16 1;
 #X connect 23 0 16 2;
-#X connect 23 1 4 0;
+#X connect 23 1 37 0;
 #X connect 23 2 8 0;
 #X connect 24 0 14 0;
 #X connect 25 0 29 0;
@@ -88,4 +84,5 @@ to client (or length)4 = sync at which beat5 = admin password;
 #X connect 33 0 30 0;
 #X connect 34 0 36 0;
 #X connect 35 0 34 0;
+#X connect 37 0 12 0;
 #X coords 0 -1 1 1 209 21 2 174 99;

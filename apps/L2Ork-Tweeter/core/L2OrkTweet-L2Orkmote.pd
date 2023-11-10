@@ -22,11 +22,11 @@
 #X coords 0 1 100 0 140 51 1;
 #X restore 381 176 graph;
 #X obj 349 157 nbx 5 14 1 1e+37 0 1 null-s null-r ms 0 6 0 8 #fcb46c
-#000000 #000000 2000 256 1 0 1 0;
+#000000 #000000 2000 256 1 1 1 0;
 #X obj 409 157 nbx 5 14 0 99999 0 1 null-s null-r empty 0 -7 0 12 #fcb46c
-#000000 #000000 40 256 0 0 1 1;
+#000000 #000000 40 256 0 1 1 1;
 #X obj 469 157 nbx 5 14 1 9999 0 1 null-s null-r empty 0 -7 0 12 #fcb46c
-#000000 #000000 1000 256 0 0 1 1;
+#000000 #000000 1000 256 0 1 1 1;
 #X obj 18 234 tgl 15 0 null-s \$1-manual-toggle-tracker PLAY(tab) 17
 6 0 10 #fcb46c #000000 #000000 0 1 1;
 #X obj 18 199 tgl 15 0 null-s null-r LOOP(alt) 17 6 0 10 #fcb46c #000000
@@ -232,7 +232,7 @@
 #X obj 363 286 line~;
 #X obj 223 309 *~;
 #X obj 160 87 nbx 5 16 0.001 9999 0 1 empty empty ms 1 7 0 8 #fcb46c
-#000000 #000000 250 256 1 0 1 0;
+#000000 #000000 250 256 1 1 1 0;
 #X text 135 87 ms;
 #X obj 20 43 r~ \$0-in;
 #X obj 20 385 s~ \$0-echo-out;
@@ -605,7 +605,7 @@
 #X obj 35 182 line~;
 #X msg 35 161 \$1 10;
 #X obj 160 87 nbx 5 16 0.001 100 0 1 empty empty Hz 1 7 0 8 #fcb46c
-#000000 #000000 0.01 256 1 0 1 0;
+#000000 #000000 0.01 256 1 1 1 0;
 #X obj 20 43 r~ \$0-in;
 #X obj 48 271 delwrite~ \$0-delread_fl 2000;
 #X obj 223 271 vd~ \$0-delread_fl;
@@ -619,7 +619,7 @@
 #X obj 20 385 s~ \$0-flanger-out;
 #X obj 223 176 + 3;
 #X obj 160 128 nbx 5 16 0.001 50 0 1 empty empty ms 1 7 0 8 #fcb46c
-#000000 #000000 0.001 256 1 0 1 0;
+#000000 #000000 0.001 256 1 1 1 0;
 #X obj 223 309 *~ 0.9;
 #X obj 161 152 t b f;
 #X text 136 87 Hz;
@@ -749,7 +749,7 @@
 #X restore 692 144 pd FLANGER;
 #X obj 429 426 \$1;
 #X obj 18 217 nbx 7 14 500 60000 0 1 null-s \$1-manual-loop-length
-ms 1 5 0 8 #fcb46c #000000 #000000 1600 256 1 0 1 0;
+ms 1 5 0 8 #fcb46c #000000 #000000 1500 256 1 1 1 0;
 #X text 287 231 PCH(u/d);
 #X obj 130 198 tgl 15 0 null-s \$1-delete-gui DELETE(del) 17 6 0 10
 #fcb46c #000000 #000000 0 1 1;
@@ -773,7 +773,7 @@ ms 1 5 0 8 #fcb46c #000000 #000000 1600 256 1 0 1 0;
 #X msg 327 46 set \$1;
 #X obj 669 596 tosymbol;
 #X obj 468 649 s \$0-toggle-local;
-#N canvas 503 7 1264 965 tracker 0;
+#N canvas 513 127 1264 965 tracker 0;
 #X obj 115 261 coll key-diatonic-coll.txt;
 #C restore;
 #X obj 761 655 tosymbol;
@@ -1217,7 +1217,7 @@ become rather cpu intensive.;
 #X restore 379 28 pd l2orkmote-tracker-position-logic;
 #X obj 868 159 gate 1 0;
 #X obj 788 55 r \$0-toggle-local;
-#X obj 588 209 r \$1-tracker-override;
+#X obj 513 73 r \$1-tracker-override;
 #X connect 0 0 194 0;
 #X connect 1 0 196 0;
 #X connect 2 0 3 0;
@@ -1522,7 +1522,7 @@ become rather cpu intensive.;
 #X connect 217 0 188 0;
 #X connect 218 0 15 0;
 #X connect 219 0 218 0;
-#X connect 220 0 29 0;
+#X connect 220 0 110 0;
 #X restore 13 380 pd tracker \$1;
 #N canvas 597 148 1084 910 instrument 0;
 #X obj 357 669 osc~;
@@ -1888,7 +1888,7 @@ and scrub the timeline (in regular mode)., f 43;
 #X restore 17 68 pd loop-logic \$1;
 #X obj 146 24 +;
 #X obj 235 233 nbx 6 12 -192 192 0 1 null-s null-r empty 0 -7 0 9 #fcb46c
-#000000 #000000 -72 256 0 0 1 1;
+#000000 #000000 -72 256 0 1 1 1;
 #X obj 509 583 s \$1-instance-gui;
 #X msg 509 561 color \$1 0;
 #X obj 502 516 + 12;
@@ -2211,25 +2211,25 @@ f 21;
 #N canvas 41 406 639 460 local-copy-logic 0;
 #X obj 190 20 inlet;
 #X obj 252 81 r myclientnum;
-#X obj 193 410 s local-copyfrom;
+#X obj 191 410 s local-copyfrom;
 #X obj 217 81 f \$1;
 #X obj 340 20 keyname;
 #X obj 190 55 t b b;
 #X obj 217 106 !=;
 #X obj 145 139 gate 1 0;
 #X obj 208 200 counter;
-#X obj 193 279 f;
+#X obj 191 279 f;
 #X obj 145 200 delay 500;
 #X obj 379 53 sel Shift;
 #X msg 379 78 1;
 #X msg 430 78 0;
 #X obj 340 111 &&;
-#X obj 193 309 +;
-#X floatatom 193 334 5 0 0 0 - - - 0 0 1, f 5;
-#X obj 226 384 s local-copyfrom-mode;
+#X obj 191 309 +;
+#X floatatom 191 334 5 0 0 0 - - - 0 0 1, f 5;
+#X obj 224 384 s local-copyfrom-mode;
 #X text 86 55 only copy if we are trying to copy from a client other
 than ourselves, f 15;
-#X obj 193 384 f \$1;
+#X obj 191 384 f \$1;
 #X obj 461 265 f;
 #X obj 145 162 t b b b;
 #X obj 145 225 t 0 b b;
@@ -2237,7 +2237,7 @@ than ourselves, f 15;
 #X msg 434 304 color \$1 0;
 #X msg 434 200 10;
 #X obj 476 20 r \$1-instance-gui-color;
-#X obj 193 358 t b f b, f 8;
+#X obj 191 358 t b f b, f 8;
 #X obj 361 384 f \$1;
 #X obj 361 410 s local-copyfrom-client-num;
 #X obj 228 47 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
@@ -2248,6 +2248,8 @@ than ourselves, f 15;
 - triple click4 - quadruple click5 - shift + single click6 - shift
 + double click7 - shift + triple click8 - shift + quadruple click
 ;
+#X obj 208 225 nbx 5 14 0 4 0 0 empty empty empty 0 -8 0 10 #fcfcfc
+#000000 #000000 0 256 0 0 1 0;
 #X connect 0 0 5 0;
 #X connect 0 0 30 0;
 #X connect 1 0 6 1;
@@ -2258,7 +2260,7 @@ than ourselves, f 15;
 #X connect 5 1 3 0;
 #X connect 6 0 7 0;
 #X connect 7 0 21 0;
-#X connect 8 0 9 1;
+#X connect 8 0 34 0;
 #X connect 9 0 15 0;
 #X connect 10 0 22 0;
 #X connect 11 0 12 0;
@@ -2285,6 +2287,7 @@ than ourselves, f 15;
 #X connect 28 0 29 0;
 #X connect 31 0 6 1;
 #X connect 32 0 15 1;
+#X connect 34 0 9 1;
 #X restore 17 294 pd local-copy-logic \$1;
 #X obj 501 539 f;
 #X obj 501 604 s \$1-instance-gui-color;
@@ -2585,6 +2588,10 @@ empty -2 -8 0 10 #59a5f0 #ff0000 #000000 0 1 0 1;
 #X connect 5 0 4 0;
 #X connect 6 0 1 1;
 #X restore 928 510 pd l2orkmote-loop-logic;
+#X obj 1139 52 r \$1-loop-length;
+#X obj 967 5 r \$1-tracker-override;
+#X obj 967 30 t f f;
+#X msg 967 55 set \$1;
 #X connect 0 0 191 0;
 #X connect 7 0 86 0;
 #X connect 7 0 101 0;
@@ -2790,4 +2797,9 @@ empty -2 -8 0 10 #59a5f0 #ff0000 #000000 0 1 0 1;
 #X connect 218 0 13 0;
 #X connect 219 0 144 0;
 #X connect 220 0 14 0;
+#X connect 221 0 158 3;
+#X connect 222 0 223 0;
+#X connect 223 0 224 0;
+#X connect 223 1 169 3;
+#X connect 224 0 13 0;
 #X coords 0 -1 1 1 815 149 1 9 138;
