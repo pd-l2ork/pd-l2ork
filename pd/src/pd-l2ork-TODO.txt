@@ -3,7 +3,7 @@ PD-L2ORK TODO:
 *Investigate potential issue with preset_nodes getting all confused after the patch has been edited afterwards (even though patch cords are correctly connected, objects, like the one in Sync-Control.pd inside Tweeter, and more specifically length toggle, are not forwarding data like they should).
 
 *Ported vanilla WASAPI driver for windows since MMIO is not anymore supported well on more recent computers running Win11. This change is causing a pause when the DSP is turned off via a patch message and then requested to be resumed. Need to investigate further...
-  *Test building on OSX and Linux.
+  *Test on OSX audio layer (everything builds ok and works ok on Windows and Linux).
 
 *Opening meta subpatch inside any patch (here, specifically netserver-help.pd) and then closing it, and then reopening it again, keeps moving the patch window downwards. May be only affecting Linux, which also exhibits this problem when opening the main Pd-L2Ork window (see index.js for an ugly hack fix that works around this nwjs 0.67.1 bug).
 
@@ -788,6 +788,9 @@ argc, t_atom *argv)
 *Updated test tone patch to add metering info on the sound output.
 *L2Ork Tweeter 0.78 release (see the CHANGELOG.txt).
 *Refined preferences dialog with callbacks now properly updating and layout being more consistent.
+*Cosmetic improvement of the about patch.
+*Help Browser refinements for the OSX.
+*Fixed a bug with numbox where toggling interactive triggered an error.
 
 
 
