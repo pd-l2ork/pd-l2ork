@@ -47,29 +47,29 @@ nlah 1 %preset% 2 1 2 3 4 %node% 2 50 0 %preset% 0 0 %preset% 1 1 %preset%
 2 2;
 #X msg 78 74 store \$1;
 #X msg 78 124 recall \$1;
-#X floatatom 78 50 5 0 0 0 - - -, f 5;
-#X floatatom 78 100 5 0 0 0 - - -, f 5;
+#X floatatom 78 50 5 0 0 0 - - - 0 0 1, f 5;
+#X floatatom 78 100 5 0 0 0 - - - 0 0 1, f 5;
 #X msg 28 73 purge;
 #X msg 18 51 reset;
 #X msg 79 174 clear \$1;
-#X floatatom 79 150 5 0 0 0 - - -, f 5;
+#X floatatom 79 150 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 18 231 print hub_test_says;
 #X obj 186 309 preset_node test;
-#X floatatom 186 337 5 0 0 0 - - -, f 5;
+#X floatatom 186 337 5 0 0 0 - - - 0 0 1, f 5;
 #X msg 195 255 purge;
 #X msg 143 232 reset;
 #X msg 246 254 clearall \$1;
-#X floatatom 246 233 5 0 0 0 - - -, f 5;
-#X obj 377 50 cnv 15 156 279 empty empty empty 20 12 0 14 #e0e0e0 #404040
+#X floatatom 246 233 5 0 0 0 - - - 0 0 1, f 5;
+#X obj 377 50 cnv 15 156 279 empty empty empty 20 12 0 14 #bababa #404040
 0;
 #X msg 448 83 store \$1;
 #X msg 448 134 recall \$1;
-#X floatatom 448 59 5 0 0 0 - - -, f 5;
-#X floatatom 448 110 5 0 0 0 - - -, f 5;
+#X floatatom 448 59 5 0 0 0 - - - 0 0 1, f 5;
+#X floatatom 448 110 5 0 0 0 - - - 0 0 1, f 5;
 #X msg 396 82 purge;
 #X msg 387 60 reset;
 #X msg 448 184 clear \$1;
-#X floatatom 448 160 5 0 0 0 - - -, f 5;
+#X floatatom 448 160 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 387 217 preset_hub another %hidden% %node% 1 43 %preset% 0 -5.1
 %preset% 1 22 %preset% 2 1.001 %node% 2 50 2 %preset% 0 41 %preset%
 1 101 %preset% 2 7.13;
@@ -84,9 +84,9 @@ nlah 1 %preset% 2 1 2 3 4 %node% 2 50 0 %preset% 0 0 %preset% 1 1 %preset%
 #X msg 238 157 list 1 2 3 4;
 #N canvas 523 458 404 185 sub 0;
 #X obj 216 83 preset_node test;
-#X floatatom 216 106 5 0 0 0 - - -, f 5;
+#X floatatom 216 106 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 92 83 preset_node another;
-#X floatatom 92 105 5 0 0 0 - - -, f 5;
+#X floatatom 92 105 5 0 0 0 - - - 0 0 1, f 5;
 #X text 90 55 a preset in a subpatch;
 #X connect 0 0 1 0;
 #X connect 2 0 3 0;
@@ -104,7 +104,7 @@ of that patch's children (i.e. \, subpatches and abstractions).;
 #X obj 271 378 cnv 15 39 23 empty empty empty 20 12 0 14 #fcc4c4 #404040
 0;
 #X obj 275 382 hradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0;
+#000000 #000000 0 1;
 #X obj 52 378 cnv 15 36 25 empty empty empty 20 12 0 14 #fcc4c4 #404040
 0;
 #X msg 58 382 set;
@@ -131,12 +131,12 @@ same canvas as the abstraction:;
 0;
 #X msg 213 406 store \$1;
 #X obj 213 382 hradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0;
+#000000 #000000 0 1;
 #X msg 275 406 recall \$1;
 #X msg 92 382 set some_scope;
 #X obj 58 407 preset_node some_scope;
 #X obj 213 433 preset_hub %hidden%;
-#X floatatom 58 435 5 0 0 0 - - -, f 5;
+#X floatatom 58 435 5 0 0 0 - - - 0 0 1, f 5;
 #X text 19 275 Setting node scope via "set" message allows for dynamic
 scope switching. If you wish to set it to the default (also known as
 null or "") scope \, you should use empty "set" message. Notice in
@@ -170,7 +170,7 @@ hub);
 #X msg 308 284 set test;
 #X obj 381 293 cnv 15 44 27 empty empty empty 20 12 0 14 #c4dcdc #404040
 0;
-#X floatatom 387 298 5 0 0 0 - - -, f 5;
+#X floatatom 387 298 5 0 0 0 - - - 0 0 1, f 5;
 #X text 176 1173 - OPTIONAL scope for this preset (defaults to null
 or "");
 #X text 89 758 read;
