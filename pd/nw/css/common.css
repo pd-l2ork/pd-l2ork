@@ -112,3 +112,8 @@
     */
     text-shadow: -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff;
 }
+
+/* Configure labels to look like tabs */
+.prefs_tab + label {
+    margin-right: -16px;
+}

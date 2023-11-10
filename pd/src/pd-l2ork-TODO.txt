@@ -787,6 +787,7 @@ argc, t_atom *argv)
 *Fixed typos in the error output.
 *Updated test tone patch to add metering info on the sound output.
 *L2Ork Tweeter 0.78 release (see the CHANGELOG.txt).
+*Refined preferences dialog with callbacks now properly updating and layout being more consistent.
 
 
 

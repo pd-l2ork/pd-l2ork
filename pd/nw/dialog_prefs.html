@@ -44,7 +44,8 @@ select {
                id="audio_tab_radio"
                class="tab1 prefs_tab"
                checked="checked" />
-        <label for="audio_tab_radio" data-i18n="[title]prefs.heading.audio_tt">
+        <label for="audio_tab_radio" data-i18n="[title]prefs.heading.audio_tt"
+          style="margin-left: -9px;">
           <span data-i18n="prefs.heading.audio"></span>
         </label>
 
@@ -128,7 +129,7 @@ select {
                        onchange="attr_change(this);">
               </td>
             </tr>
-            <tr id="callback_container" class="hidden"
+            <tr id="callback_container"
                 data-i18n="[title]prefs.audio.callback_tt">
               <td>
                 <span data-i18n="prefs.audio.callback"></span>
@@ -153,11 +154,11 @@ select {
                 <span data-i18n="prefs.audio.input_title"></span>
               </td>
               <td>
-                <span data-i18n="prefs.audio.channels"></span>
+                <span data-i18n="prefs.audio.channels" style="margin-left: 4px;"></span>
               </td>
             </tr>
             <tr>
-              <td style="width: 80%">
+              <td style="width: 414px">
                 <select id="in1" onchange="dev_change(this);"></select>
               </td>
               <td>
@@ -165,12 +166,12 @@ select {
                   <input type="text"
                    id="inchans1"
                    name="inchans1"
-                   onchange="dev_change(this);">
+                   onchange="dev_change(this);" style="width: 4em;">
                 </label>
               </td>
             </tr>
             <tr>
-              <td style="width: 80%">
+              <td>
                 <select id="in2" onchange="dev_change(this);"></select>
               </td>
               <td>
@@ -178,12 +179,12 @@ select {
                   <input type="text"
                    id="inchans2"
                    name="inchans2"
-                   onchange="dev_change(this);">
+                   onchange="dev_change(this);" style="width: 4em;">
                 </label>
               </td>
             </tr>
             <tr>
-              <td style="width: 80%">
+              <td>
                 <select id="in3" onchange="dev_change(this);"></select>
               </td>
               <td>
@@ -191,12 +192,12 @@ select {
                   <input type="text"
                    id="inchans3"
                    name="inchans3"
-                   onchange="dev_change(this);">
+                   onchange="dev_change(this);" style="width: 4em;">
                 </label>
               </td>
             </tr>
             <tr>
-              <td style="width: 80%">
+              <td>
                 <select id="in4" onchange="dev_change(this);"></select>
               </td>
               <td>
@@ -204,7 +205,7 @@ select {
                   <input type="text"
                    id="inchans4"
                    name="inchans4"
-                   onchange="dev_change(this);">
+                   onchange="dev_change(this);" style="width: 4em;">
                 </label>
               </td>
             </tr>
@@ -213,11 +214,11 @@ select {
                 <span data-i18n="prefs.audio.output_title"></span>
               </td>
               <td style="padding-top: 10px;">
-                <span data-i18n="prefs.audio.channels"></span>
+                <span data-i18n="prefs.audio.channels" style="margin-left: 4px;"></span>
               </td>
             </tr>
             <tr>
-              <td style="width: 80%">
+              <td>
                 <select id="out1" onchange="dev_change(this);"></select>
               </td>
               <td>
@@ -225,12 +226,12 @@ select {
                   <input type="text"
                    id="outchans1"
                    name="outchans1"
-                   onchange="dev_change(this);">
+                   onchange="dev_change(this);" style="width: 4em;">
                 </label>
               </td>
             </tr>
             <tr>
-              <td style="width: 80%">
+              <td>
                 <select id="out2" onchange="dev_change(this);"></select>
               </td>
               <td>
@@ -238,12 +239,12 @@ select {
                   <input type="text"
                    id="outchans2"
                    name="outchans2"
-                   onchange="dev_change(this);">
+                   onchange="dev_change(this);" style="width: 4em;">
                 </label>
               </td>
             </tr>
             <tr>
-              <td style="width: 80%">
+              <td>
                 <select id="out3" onchange="dev_change(this);"></select>
               </td>
               <td>
@@ -251,12 +252,12 @@ select {
                   <input type="text"
                    id="outchans3"
                    name="outchans3"
-                   onchange="dev_change(this);">
+                   onchange="dev_change(this);" style="width: 4em;">
                 </label>
               </td>
             </tr>
             <tr>
-              <td style="width: 80%">
+              <td>
                 <select id="out4" onchange="dev_change(this);"></select>
               </td>
               <td>
@@ -264,7 +265,7 @@ select {
                   <input type="text"
                    id="outchans4"
                    name="outchans4"
-                   onchange="dev_change(this);">
+                   onchange="dev_change(this);" style="width: 4em;">
                 </label>
               </td>
             </tr>
@@ -300,7 +301,7 @@ select {
             <span data-i18n="[title]prefs.midi.input_title_tt">
               <span data-i18n="prefs.midi.input_title"></span>
             </span>
-            <table class="tab_settings" style="width: 100%;">
+            <table class="tab_settings" style="width: 500px;">
               <tr>
                 <td id="midilabel">1</td><td>
                   <select id="midi_in1" onchange="dev_change(this);"></select>
@@ -346,7 +347,7 @@ select {
             <span data-i18n="[title]prefs.midi.output_title_tt">
               <span data-i18n="prefs.midi.output_title"></span>
             </span>
-            <table class="tab_settings">
+            <table class="tab_settings" style="width: 500px;">
               <tr>
                 <td id="midilabel">1</td><td>
                   <select id="midi_out1" onchange="dev_change(this);"></select>
@@ -517,7 +518,7 @@ select {
               <input type="text"
                      id="startup_flags"
                      name="startup_flags"
-                     style="width: 96%">
+                     style="width: 95%">
             </label>
           </div>
         </div>
@@ -1047,9 +1048,13 @@ function audio_prefs_callback(attrs) {
     callback = get_attr("cancallback", attrs);
     //show the checkbox if the API allows
     if (callback !== -1) {
-        document.getElementById("callback_container")
-            .classList.remove("hidden");
+        document.getElementById("callback").disabled = false;
+            //.classList.remove("hidden");
         document.getElementById("callback").checked = !!callback;
+    } else {
+        document.getElementById("callback").checked = false;
+        document.getElementById("callback").disabled = true;
+            //.classList.add("hidden");
     }
 
     populate_devs("in", attrs);
