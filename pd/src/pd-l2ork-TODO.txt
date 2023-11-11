@@ -790,8 +790,9 @@ argc, t_atom *argv)
 *Cosmetic improvement of the about patch.
 *Help Browser refinements for the OSX.
 *Fixed a bug with numbox where toggling interactive triggered an error.
- *Cosmetic improvement of the help file colors to not clash with the 60-hz theme.
- 
+*Cosmetic improvement of the help file colors to not clash with the 60-hz theme.
+*Further bug-fixes and improvements to L2Ork Tweeter.
+
 
 
 
@@ -805,8 +806,6 @@ TWEETER TODO:
   Consider resetting keyboard modifiers on refocus?
 
 *Deal with sync issues when one user tries to sync with another using one of the mouse multiclick options that are invoked by clicking on the instrument/part number the user wishes to sync with.
-
-*In offline mode, enable keyboard and other input for multiple tracks. Consider using the mouse focus by utilizing invisible ggee/image to make focus switching easier.
 
 *When trying to load a pattern that does not exist (after having successfully loaded one that does), the main level goes to zero.
 
@@ -931,13 +930,18 @@ TWEETER DONE:
   *expanded loop length box width to allow room for decimal values.
   *TODO: update netserver and netclient default buffer size from 32768 to 131072 (128KB).
 *0.78:
-  *Introduced Sync-Controls supporting widget.
+  *Introduced Sync-Controls supporting widget. Users can now use F1-F10 to recall those via keyboard (the keyboard control needs to be toggled). This object currently requires a server operation as offline mode can be easily synced using multiclick option. The patch is available as part of the widgets subpatch.
   *Reworked how sync is taking place across clients.
   *Bug-fixes pertaining to sync.
   *Optimized report sharing that now bypasses retriggering everything locally.
   *Made numeric options have exclusive focus.
   *Made more than 4 clicks still count as 4 clicks.
-
+  *Reworked how inputs are disabled. Now we use interactive option available in pd-l2ork that prevents tampering with other user's parts, as doing so could potentially nudge parts out-of-sync, as well as cause a cascading array of challenges.
+  *Consolidated L2OrkTweet and L2OrkTweetDISIS into one patch for easier maintenance.
+  *Reworked offline mode to allow for concurrent use of multiple parts.
+  *Code clean-up.
+*In offline mode, enable keyboard and other input for multiple tracks. Consider using the mouse focus by utilizing invisible ggee/image to make focus switching easier.
+  *This was also resolved in 0.78.
 
 
 

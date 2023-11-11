@@ -5,7 +5,7 @@
 0;
 #X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.78\ by
 4 5 0 10 #6c6c6c #fcfcfc 0;
-#X obj 252 3 cnv 15 125 16 empty empty (c)\ 2020-2\ Released\ under\ the
+#X obj 252 3 cnv 15 125 16 empty empty (c)\ 2020-3\ Released\ under\ the
 4 6 0 10 #6c6c6c #fcfcfc 0;
 #X obj 4 24 cnv 15 280 41 empty empty empty 4 5 0 10 #6c6c6c #fcfcfc
 0;
@@ -1180,7 +1180,7 @@ f 25;
 #X obj 175 293 r nclients;
 #X obj 91 176 gate 1 0;
 #X floatatom 46 538 5 0 0 0 - - - 0 0 1, f 5;
-#X obj 104 675 s myclientnum;
+#X obj 105 675 s myclientnum;
 #X obj 91 268 f;
 #X obj 91 198 sel 1;
 #X obj 75 719 s override-myid;
@@ -1209,7 +1209,7 @@ f 25;
 #X obj 226 568 r myclientnum;
 #X obj 211 589 f;
 #X obj 211 610 sel -1;
-#X obj 89 697 s override-disconnect;
+#X obj 90 697 s override-disconnect;
 #X obj 160 423 s override-disconnect;
 #X obj 60 761 s override-access-all-buttons;
 #X obj 61 789 r myclientnum;

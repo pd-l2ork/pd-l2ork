@@ -10,12 +10,16 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
 09-11-2023 0.78
-*Introduced Sync-Controls supporting widget.
+*Introduced Sync-Controls supporting widget. Users can now use F1-F10 to recall those via keyboard (the keyboard control needs to be toggled). This object currently requires a server operation as offline mode can be easily synced using multiclick option. The patch is available as part of the widgets subpatch.
 *Reworked how sync is taking place across clients.
 *Bug-fixes pertaining to sync.
 *Optimized report sharing that now bypasses retriggering everything locally.
 *Made numeric options have exclusive focus.
 *Made more than 4 clicks still count as 4 clicks.
+*Reworked how inputs are disabled. Now we use interactive option available in pd-l2ork that prevents tampering with other user's parts, as doing so could potentially nudge parts out-of-sync, as well as cause a cascading array of challenges.
+*Consolidated L2OrkTweet and L2OrkTweetDISIS into one patch for easier maintenance.
+*Reworked offline mode to allow for concurrent use of multiple parts.
+*Code clean-up.
 
 30-10-2023 0.77
 *Expanded loop length box width to allow room for decimal values.
