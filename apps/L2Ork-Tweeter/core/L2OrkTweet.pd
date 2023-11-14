@@ -1786,8 +1786,8 @@ and scrub the timeline (in regular mode)., f 43;
 2 25 37 %node% 2 24 38 %was% 2 25 38 %node% 2 22 25 %was% 2 22 25 %node%
 2 22 26 %was% 2 22 26 %node% 2 22 27 %was% 2 22 27 %node% 2 17 9 %was%
 2 16 9 %node% 2 16 15 %was% 2 15 15 %node% 2 16 16 %was% 2 15 16 %node%
-2 164 17 %was% 2 164 17 %node% 2 164 4 %was% 2 164 4 %node% 1 167 %was%
-1 167 %node% 2 90 6 %was% 2 90 6;
+2 164 17 %was% 2 164 17 %node% 2 164 4 %was% 2 171 4 %node% 1 167 %was%
+1 174 %node% 2 90 6 %was% 2 95 6;
 #X obj 726 596 f;
 #N canvas 823 373 829 274 preset-logic 0;
 #X obj 334 109 patch_name 1;
