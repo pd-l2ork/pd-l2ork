@@ -50,6 +50,13 @@
   <url type="bugtracker">https://github.com/pd-l2ork/pd-l2ork/issues</url>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="20231110" type="stable" date="2023-11-10">
+      <description>
+        <p>
+          More bug-fixes, UI improvements, L2Ork Tweeter 0.78, and more. Additional details can be found in the project git's pd/src/pd-l2ork-TODO.txt and/or the commit history.
+        </p>
+      </description>
+    </release>
     <release version="20231030" type="stable" date="2023-10-30">
       <description>
         <p>
