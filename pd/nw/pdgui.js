@@ -6933,6 +6933,7 @@ function gui_drawnumber_vis(cid, parent_tag, tag, x, y, scale_x, scale_y,
 // 2 = moonlib/image
 var pd_cache = (function() {
     var d = {};
+    var bbox = {};
     return {
         free: function(key) {
             if (d.hasOwnProperty(key)) {
@@ -6943,9 +6944,19 @@ var pd_cache = (function() {
             d[key] = data;
             return data;
         },
+        set_svg_bbox: function(key, x, y, width, height) {
+            bbox[key] = [ x, y, width, height ];
+        },
         get: function(key) {
             if (d.hasOwnProperty(key)) {
                 return d[key];
+            } else {
+                return undefined;
+            }
+        },
+        get_svg_bbox: function(key) {
+            if (d.hasOwnProperty(key)) {
+                return bbox[key];
             } else {
                 return undefined;
             }
@@ -6959,6 +6970,7 @@ var pd_cache = (function() {
 exports.pd_cache = pd_cache;
 
 function gui_drawimage_new(obj_tag, file_path, canvasdir, flags) {
+    //post("gui_drawimage_new");
     var drawsprite = 1,
         drawimage_data = [], // array for base64 image data
         image_seq,
@@ -7059,29 +7071,37 @@ function gui_image_free_loaded_images(objType) {
 // assume "nw" (top-left corner) when tk_anchor is undefined, as this matches
 // the svg spec.
 function img_size_setter(cid, svg_image_tag, type, data, tk_anchor) {
-    //post("img_size_setter");
+    //post("img_size_setter " + type + " " + svg_image_tag);
     var img = new pd_window.window.Image(),
         w, h;
     img.onload = function() {
         w = this.width,
         h = this.height;
+        //post("img_size_setter onload " + svg_image_tag);
         configure_item(get_item(cid, svg_image_tag), {
             width: w,
             height: h,
             x: tk_anchor === "center" ? 0 - w/2 : 0,
-            y: tk_anchor === "center" ? 0 - h/2 : 0,
-            display: "block"
+            y: tk_anchor === "center" ? 0 - h/2 : 0
+        }); 
+        gui(cid).get_elem(svg_image_tag, function(e) {
+            if (e.getAttribute("type") !== "0") {
+                //post("img_size_setter -> moonlib -> block");
+                e.style.setProperty("display", "block");
+            }
         });
     };
     img.src = "data:image/" + type + ";base64," + data;
 }
 
 function img_size_resizable_setter(cid, svg_image_tag, type, data, tk_anchor, w, h, constrain) {
+    //post("img_size_resizable_setter " + type);
     var img = new pd_window.window.Image(),
         imgw, imgh;
     img.onload = function() {
         imgw = this.width,
         imgh = this.height;
+        //post("img_size_resizable_setter onload " + svg_image_tag);
         configure_item(get_item(cid, svg_image_tag), {
             width: w,
             height: h,
@@ -7089,13 +7109,19 @@ function img_size_resizable_setter(cid, svg_image_tag, type, data, tk_anchor, w,
             orig_height: imgh,
             x: tk_anchor === "center" ? 0 - w/2 : 0,
             y: tk_anchor === "center" ? 0 - h/2 : 0,
-            display: "block"
+        });
+        gui(cid).get_elem(svg_image_tag, function(e) {
+            if (e.getAttribute("type") !== "0") {
+                //post("img_size_resizable_setter -> moonlib -> block");
+                e.style.setProperty("display", "block");
+            }
         });
     };
     img.src = "data:image/" + type + ";base64," + data;
 }
 
 function gui_ggee_image_resize(cid, svg_image_tag, w, h, resizemode, constrain) {
+    //post("gui_ggee_image_resize");
     configure_item(get_item(cid, svg_image_tag+"image"), {
         preserveAspectRatio: constrain == 1 ? "xMinYMin meet" : "none",
         width: w,
@@ -7104,6 +7130,7 @@ function gui_ggee_image_resize(cid, svg_image_tag, w, h, resizemode, constrain) 
 }
 
 function gui_ggee_image_toggle_visible(cid, svg_image_tag, visible) {
+    //post("gui_ggee_image_toggle_visible " + visible);
     if (patchwin[cid])
     {
         configure_item(get_item(cid, svg_image_tag+"image"), {
@@ -7119,9 +7146,30 @@ function gui_ggee_image_alpha(cid, svg_image_tag, alpha) {
 }
 
 function gui_ggee_image_rotate(cid, svg_image_tag, angle, x, y) {
-    configure_item(get_item(cid, svg_image_tag+"image"), {
-        transform: "rotate(" + angle + "," + x + "," + y + ")"
-    }); 
+    //post("gui_ggee_image_rotate " + angle + " " + svg_image_tag+"image");
+    gui(cid).get_elem(svg_image_tag+"image", function(e) {
+        if (pd_cache.get(svg_image_tag).type === "svg") {
+            //post("...is svg");
+            var size = pd_cache.get_svg_bbox(svg_image_tag);
+            var scaleX = e.getAttribute("width") / size[2];
+            var scaleY = e.getAttribute("height") / size[3];
+            /*
+            post("scale " + scaleX + " " + scaleY + "\n" + 
+                (e.getAttribute("transform") !== null ?
+                    e.getAttribute("transform").split(" ")[0] : "") +
+                " scale(" + scaleX + " " + scaleY + ") translate(" +
+                -size[0] + " " + -size[1] + ")"
+                );
+            */
+            e.setAttribute("transform",
+                "rotate(" + angle + "," + x + "," + y + ")" +
+                " scale(" + scaleX + " " + scaleY + ")" +
+                " translate(" + -size[0] + " " + -size[1] + ")");
+        } else {
+            e.setAttribute("transform",
+                "rotate(" + angle + "," + x + "," + y + ")");
+        }
+    });
 }
 
 function gui_drawimage_vis(cid, x, y, obj, data, seqno, parent_tag) {
@@ -7230,9 +7278,54 @@ function gui_load_default_image(dummy_cid, key) {
 // different objects, so that when the last of that kind of the object
 // has been deleted, we can dispose of all such images
 function gui_load_image(cid, key, filepath, objtype) {
-    //post("gui_load_image " + filepath);
-    var data = fs.readFileSync(filepath,"base64"),
-        ext = path.extname(filepath);
+    //post("gui_load_image " + filepath + " " + key);
+    // ico 2023-11-15:
+    // since we now have both image for displaying images,
+    // and g (group) for displaying svg content, we need to
+    // check if we need to clear group and swap ids, as
+    // both are supposed to share the same id, but since
+    // ids are supposed to be unique, we prepend D (for
+    // disabled) to the one that is not being used. then,
+    // when loading a new file, here we check what needs to
+    // be updated and renamed, accordingly.
+    var ext = path.extname(filepath),
+        data = fs.readFileSync(filepath,
+            (ext.slice(1) === "svg" ? "" : "base64"));
+    if (ext.slice(1) === "svg") {
+        // we are loading svg
+        //post("SVG searching for " + key + "Dimage");
+        gui(cid).get_elem(key+"gobj", function(e) {
+            var f = e.querySelector("#" + key + "Dimage");
+            var g = e.querySelector("#" + key + "image");
+            if (f !== null && f.tagName === "g") {
+                //post("...whoa");
+                f.style.setProperty("visibility", "inherit");
+                f.style.setProperty("display", "none");
+                f.id = key + "image";
+                g.style.setProperty("visibility", "hidden");
+                g.style.setProperty("display", "none");
+                g.id = key + "Dimage";
+            }
+        });
+    } else {
+        // we are loading regular image
+        //post("REGULAR searching for " + key + "Dimage");
+        gui(cid).get_elem(key+"gobj", function(e) {
+            var f = e.querySelector("#" + key + "Dimage");
+            var g = e.querySelector("#" + key + "image");
+            if (f !== null && f.tagName === "image") {
+                //post("...whoa");
+                f.style.setProperty("visibility", "inherit");
+                f.style.setProperty("display", "none");
+                f.id = key + "image";
+                g.innerHTML = "";
+                g.style.setProperty("visibility", "hidden");
+                g.style.setProperty("display", "none");
+                g.id = key + "Dimage";
+            }
+        });
+    }
+    //post("gui_load_image data=" + data);
     pd_cache.set(key, {
         type: ext === ".jpeg" ? "jpg" : ext.slice(1),
         data: data,
@@ -7271,25 +7364,70 @@ function gui_moonlib_load_image(cid, key, filepath, callback, objtype) {
 function gui_gobj_draw_image(cid, tag, image_key, tk_anchor, w, h, constrain, type, isgop) {
     gui(cid).get_gobj(tag)
     .append(function(frag) {
-        //post("gui_gobj_draw_image type="+type+" isgop="+isgop);
-        var i = create_item(cid, "image", {
-            id: tag + "image",
-            preserveAspectRatio: constrain ? "xMinYMin meet" : "none",
-            display: "none"
-        });
-        i.setAttributeNS("http://www.w3.org/1999/xlink", "href",
-            "data:image/" + pd_cache.get(image_key).type + ";base64," +
-             pd_cache.get(image_key).data);
-        if (type === 0) {
-            img_size_resizable_setter(cid, tag+"image",
-                pd_cache.get(image_key).type, pd_cache.get(image_key).data,
-                tk_anchor, w, h, constrain);
+        //post("gui_gobj_draw_image type=" + type + " filetype=" +
+        //    pd_cache.get(image_key).type + " isgop=" + isgop);
+        if (pd_cache.get(image_key).type !== "svg") {
+            var i = create_item(cid, "image", {
+                id: tag + "image",
+                preserveAspectRatio: constrain ? "xMinYMin meet" : "none",
+                type: type
+            });
+            var j = create_item(cid, "g", {
+                id: tag + "Dimage",
+                class: "graphsvg",
+                type: type
+            });
+            i.style.setProperty("display", "none");
+            j.style.setProperty("display", "none");
+            j.style.setProperty("visibility", "hidden");
+            i.setAttributeNS("http://www.w3.org/1999/xlink", "href",
+                "data:image/" + pd_cache.get(image_key).type + ";base64,"
+                + pd_cache.get(image_key).data);
+            if (type === 0) {
+                img_size_resizable_setter(cid, tag+"image",
+                    pd_cache.get(image_key).type, pd_cache.get(image_key).data,
+                    tk_anchor, w, h, constrain);
+            } else {
+                img_size_setter(cid, tag+"image", pd_cache.get(image_key).type,
+                    pd_cache.get(image_key).data, tk_anchor);
+            }
+            frag.appendChild(j);
+            frag.appendChild(i);
+            return frag;
         } else {
-            img_size_setter(cid, tag+"image", pd_cache.get(image_key).type,
-                pd_cache.get(image_key).data, tk_anchor);
+            // this is an svg image
+            var size = pd_cache.get(image_key).get_svg_size;
+            var scale;
+            if (size !== undefined) {
+                scale = "scale(" + (w / size[0]) + " " + (h / size[1]) + ")";
+            } else {
+                scale = "scale(1 1)";
+            }
+
+            var i = create_item(cid, "g", {
+                id: tag + "image",
+                class: "graphsvg",
+                type: type
+            });
+            var j = create_item(cid, "image", {
+                id: tag + "Dimage",
+                preserveAspectRatio: constrain ? "xMinYMin meet" : "none",
+                type: type
+            });
+            i.style.setProperty("display", "none");
+            j.style.setProperty("display", "none");
+            j.style.setProperty("visibility", "hidden");
+            //i.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+            //i.style.setProperty("width", w);
+            //i.style.setProperty("height", h);
+            // set the svg data and get rid of the outer <svg> tag
+            i.innerHTML = pd_cache.get(image_key).data;
+            var svg = i.querySelector('svg');
+            svg.outerHTML = svg.innerHTML;
+            frag.appendChild(i);
+            frag.appendChild(j);
+            return frag;
         }
-        frag.appendChild(i);
-        return frag;
     });
 }
 
@@ -7301,17 +7439,27 @@ function gui_gobj_draw_image(cid, tag, image_key, tk_anchor, w, h, constrain, ty
 // and image_open functions call inside ggee/image.c file.
 function gui_ggee_image_display(cid, tag, vis) {
     // check if the image exists yet
-    //post("gui_ggee_image_display check=" + get_item(cid, tag+"image"));
+    //post("gui_ggee_image_display vis=" + vis +
+    //    " " + tag +
+    //    " check=" + get_item(cid, tag+"image"));
     if (check_cid(cid)) {
         if (get_item(cid, tag+"image") !== null) {
             if (vis === 1) {
+                /*
                 configure_item(get_item(cid, tag+"image"), {
                     display: "block"
                 });
+                */
+                get_item(cid, tag+"image").
+                    style.setProperty("display", "block");
             } else if (vis === 0) {
+                /*
                 configure_item(get_item(cid, tag+"image"), {
                     display: "none"
                 });
+                */
+                get_item(cid, tag+"image").
+                    style.setProperty("display", "none");
             }
         }
     }
@@ -7323,19 +7471,69 @@ function gui_ggee_image_display(cid, tag, vis) {
 // with the xpix and ypix corresponding to the true top-left corner
 // of the object's clickable area
 function gui_ggee_image_offset(cid, tag, image_key, xoffset, yoffset) {
-    configure_item(get_item(cid, tag+"image"), {
-        x: xoffset,
-        y: yoffset
-    });
+    //post("gui_ggee_image_offset " + pd_cache.get(image_key).type +
+    //    " " + tag + "image" + " key=" + image_key);
+    if (pd_cache.get(image_key).type !== "svg") {
+        configure_item(get_item(cid, tag+"image"), {
+            x: xoffset,
+            y: yoffset
+        });
+    } else {
+        // svg
+        gui(cid).get_elem(tag+"image", function(e) {
+            var size = pd_cache.get_svg_bbox(image_key);
+            //post("size=" + size.length + " " + size[0]);
+            //post("width=" + e.getAttribute("width") +
+            //    " height=" + e.getAttribute("height"));
+
+            //post("..." + e.getAttribute("transform"));
+            var scaleX = e.getAttribute("width") / size[2];
+            var scaleY = e.getAttribute("height") / size[3];
+            //post("...transform=" + e.getAttribute("transform"));
+
+            e.setAttribute("transform",
+                (e.getAttribute("transform") !== null ?
+                    e.getAttribute("transform").split(" ")[0] : "") +
+                " scale(" + scaleX + " " + scaleY + ") translate(" +
+                -size[0] + " " + -size[1] + ")");
+        });
+    }
 }
 
 function gui_image_size_callback(cid, key, callback) {
-    var img = new pd_window.Image(); // create an image in the pd_window context
-    img.onload = function() {
-        pdsend(callback, "_imagesize", this.width, this.height);
-    };
-    img.src = "data:image/" + pd_cache.get(key).type +
-        ";base64," + pd_cache.get(key).data;
+    //post("gui_image_size_callback " + pd_cache.get(key).type);
+    if (pd_cache.get(key).type !== "svg") {
+        var img = new pd_window.Image(); // create an image in the pd_window context
+        img.onload = function() {
+            //post("..." + this.width + "," + this.height);
+            pdsend(callback, "_imagesize", this.width, this.height);
+        };
+        img.src = "data:image/" + pd_cache.get(key).type +
+            ";base64," + pd_cache.get(key).data;
+    } else {
+        // sending svg info
+        // ico 2023-11-15: this is a painful way of getting
+        // default svg image size...
+        //post("gui_image_size_callback svg");
+        gui(cid).get_elem("svg_sizing", function(e) {
+            e.innerHTML = pd_cache.get(key).data;
+            var img = e.querySelector("svg");
+            var size = img.getBBox();
+            /*
+            post("..." +
+                Math.floor(size.x) + " " +
+                Math.floor(size.y) + " " +
+                Math.floor(size.width) + " " +
+                Math.floor(size.height));
+            */
+            pd_cache.set_svg_bbox(
+                key, size.x, size.y, size.width, size.height);
+            //post("sending _imagesize");
+            pdsend(callback, "_imagesize",
+                Math.floor(size.width), Math.floor(size.height));
+            e.innerHTML = "";
+        });
+    }
 }
 
 function gui_image_draw_border(cid, tag, x, y, w, h/*, imgw, imgh*/, onoff) {
@@ -7355,7 +7553,7 @@ function gui_image_draw_border(cid, tag, x, y, w, h/*, imgw, imgh*/, onoff) {
                     "m", 0, 0, -w, 0,
                     "m", 0, 0, 0, -h
                    ].join(" "),
-                visibility: "visible",
+                visibility: "inherit",
                 class: "image border"
             });
             frag.appendChild(b);
@@ -7382,7 +7580,7 @@ function gui_moonlib_image_draw_border(cid, tag, x, y, w, h, onoff) {
                     "m", 0, 0, -w, 0,
                     "m", 0, 0, 0, -h
                    ].join(" "),
-                visibility: "visible",
+                visibility: "inherit",
                 class: "image border"
             });
             frag.appendChild(b);
@@ -7394,14 +7592,14 @@ function gui_moonlib_image_draw_border(cid, tag, x, y, w, h, onoff) {
 function gui_image_toggle_border(cid, tag, state) {
     gui(cid).get_gobj(tag)
     .q(".border", {
-        visibility: state === 0 ? "hidden" : "visible"
+        visibility: state === 0 ? "hidden" : "inherit"
     });
 }
 
 function gui_image_update_border(cid, tag, w, h) {
-
+    //post("gui_image_update_border");
     gui(cid).get_gobj(tag, function(e) {
-        var a = e.querySelectorAll("path");
+        var a = e.querySelectorAll(".image.border");
         configure_item(a[0], {
             d: ["m", 0, 0, w, 0,
                 "m", 0, 0, 0, h,
@@ -7413,14 +7611,24 @@ function gui_image_update_border(cid, tag, w, h) {
 }
 
 // Switch the data for an existing svg image
+// this is shared by moonlib and ggee
 function gui_image_configure(cid, tag, image_key, tk_anchor) {
+    //post("gui_image_configure");
     gui(cid).get_elem(tag+"image", function(e) {
         if (pd_cache.get(image_key)) {
-            e.setAttributeNS("http://www.w3.org/1999/xlink", "href",
-                "data:image/" + pd_cache.get(image_key).type + ";base64," +
-                 pd_cache.get(image_key).data);
-            img_size_setter(cid, tag+"image", pd_cache.get(image_key).type,
-                pd_cache.get(image_key).data, tk_anchor);
+            if (pd_cache.get(image_key).type !== "svg") {
+                //post("...not svg");
+                e.setAttributeNS("http://www.w3.org/1999/xlink", "href",
+                    "data:image/" + pd_cache.get(image_key).type + ";base64," +
+                     pd_cache.get(image_key).data);
+                img_size_setter(cid, tag+"image", pd_cache.get(image_key).type,
+                    pd_cache.get(image_key).data, tk_anchor);
+            } else {
+                // set the svg data and get rid of the outer <svg> tag
+                e.innerHTML = pd_cache.get(image_key).data;
+                var svg = e.querySelector('svg');
+                svg.outerHTML = svg.innerHTML;
+            }
         } else {
             // need to change this to an actual error
             post("image: error: can't find image");

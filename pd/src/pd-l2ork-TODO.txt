@@ -2,7 +2,7 @@ PD-L2ORK TODO:
 
 *Investigate potential issue with preset_nodes getting all confused after the patch has been edited afterwards (even though patch cords are correctly connected, objects, like the one in Sync-Control.pd inside Tweeter, and more specifically length toggle, are not forwarding data like they should).
 
-*Ported vanilla WASAPI driver for windows since MMIO is not anymore supported well on more recent computers running Win11. This change is causing a pause when the DSP is turned off via a patch message and then requested to be resumed. Need to investigate further...
+*Investigate increase in crashes when manipulating ggee/image and working with Tweeter 0.78.
 
 *Opening meta subpatch inside any patch (here, specifically netserver-help.pd) and then closing it, and then reopening it again, keeps moving the patch window downwards. May be only affecting Linux, which also exhibits this problem when opening the main Pd-L2Ork window (see index.js for an ugly hack fix that works around this nwjs 0.67.1 bug).
 
@@ -792,6 +792,8 @@ argc, t_atom *argv)
 *Fixed a bug with numbox where toggling interactive triggered an error.
 *Cosmetic improvement of the help file colors to not clash with the 60-hz theme.
 *Further bug-fixes and improvements to L2Ork Tweeter.
+*Ported vanilla WASAPI driver for windows since MMIO is not anymore supported well on more recent computers running Win11. This change is causing a pause when the DSP is turned off via a patch message and then requested to be resumed. Looks like a driver issue.
+*Bunch of bug fixes and introduction of svg image support inside Pd-L2Ork's image object.
 
 
 

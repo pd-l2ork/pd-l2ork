@@ -151,7 +151,7 @@ static void image_drawme(t_gobj *client, t_glist *glist)
                 // the gui_ggee_image_display in pdgui.js checks if there is
                 // a valid object before trying to change ints configuration,
                 // so we don't have to do that here.
-                if (x->x_gop_spill)
+                if (1) // was if it was only gopspill
                     gui_vmess("gui_ggee_image_display", "xxi",
                         glist_getcanvas(glist), x, 0);
                 // ico@vt.edu 2021-10-08: here we need to convert the path
@@ -230,7 +230,7 @@ static void image_drawme(t_gobj *client, t_glist *glist)
                     (x->x_gop_spill ? -(x->x_adj_img_height/2 - x->x_gui.x_h/2) : 0)
                 );
             }
-            if (x->x_gop_spill)
+            if (1) // was if it was only gopspill
                 gui_vmess("gui_ggee_image_display", "xxi",
                     glist_getcanvas(glist), x, 1);
 
@@ -765,7 +765,7 @@ static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
     x->x_img_height = 0;
     t_symbol *fname = image_trytoopen(x);
     if (fname) {
-        if (x->x_gop_spill)
+        if (1) // was if it was only gopspill
             gui_vmess("gui_ggee_image_display", "xxi", 
                 glist_getcanvas(x->x_gui.x_glist), x, 0);
         // ico@vt.edu 2021-10-08: here we need to convert the path
