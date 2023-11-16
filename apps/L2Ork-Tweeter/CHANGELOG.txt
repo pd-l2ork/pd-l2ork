@@ -9,6 +9,10 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+16-11-2023 0.79
+*Fixed bug where Sync-Controls did not allow for decimal tempo value.
+*Fixed bug where L2OrkTweet was failing to update overdrive and instrument name.
+
 09-11-2023 0.78
 *Introduced Sync-Controls supporting widget. Users can now use F1-F10 to recall those via keyboard (the keyboard control needs to be toggled). This object currently requires a server operation as offline mode can be easily synced using multiclick option. The patch is available as part of the widgets subpatch.
 *Reworked how sync is taking place across clients.
