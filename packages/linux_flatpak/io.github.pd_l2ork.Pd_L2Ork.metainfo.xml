@@ -50,6 +50,13 @@
   <url type="bugtracker">https://github.com/pd-l2ork/pd-l2ork/issues</url>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="20231116" type="stable" date="2023-11-16">
+      <description>
+        <p>
+          Regression fixes in Tweeter (release 0.79), added SVG support to image object. Minor bug-fixes and improvements.
+        </p>
+      </description>
+    </release>
     <release version="20231110" type="stable" date="2023-11-10">
       <description>
         <p>
