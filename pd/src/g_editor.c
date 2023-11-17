@@ -288,7 +288,7 @@ int gobj_shouldvis(t_gobj *x, struct _glist *glist)
             ((t_glist *)ob)->gl_isgraph,
             glist->gl_goprect,
             (ob->te_type == T_TEXT ? 1:0));*/
-        if (sys_k12_mode && x->g_pd == preset_hub_class)
+        if (x->g_pd == preset_hub_class)
         {
             //fprintf(stderr, "glist_select do not select invised preset_hub "
             //                "in K12 mode\n");
@@ -502,7 +502,7 @@ void glist_select(t_glist *x, t_gobj *y)
 #ifdef PDL2ORK
         // exception: if we are in K12 mode and preset_hub is hidden,
         // do not select it
-        if (sys_k12_mode && y->g_pd == preset_hub_class)
+        if (y->g_pd == preset_hub_class)
         {
             //fprintf(stderr,"glist_select do not select invised preset_hub
             //in K12 mode\n");
@@ -667,7 +667,7 @@ void glist_selectall(t_glist *x)
 #ifdef PDL2ORK
             // exception: if we are in K12 mode and preset_hub is hidden,
             // do not select it
-            if (sys_k12_mode && y->g_pd == preset_hub_class)
+            if (y->g_pd == preset_hub_class)
             {
                 //fprintf(stderr,"glist_select do not select "
                 //               "invised preset_hub in K12 mode\n");
