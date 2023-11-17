@@ -2,7 +2,11 @@ PD-L2ORK TODO:
 
 *Investigate potential issue with preset_nodes getting all confused after the patch has been edited afterwards (even though patch cords are correctly connected, objects, like the one in Sync-Control.pd inside Tweeter, and more specifically length toggle, are not forwarding data like they should).
 
+*Clean up array modification via mouse so that only one point is affected, as opposed to several adjacent ones.
+  *Add bezier curve drawing ability to the arrays (currently displaying them as polygons).
+
 *Investigate increase in crashes when manipulating ggee/image and working with Tweeter 0.78.
+  *Could it have been the Sync-Controls.pd having erroneously 2 invisible k12 preset_hubs? No idea how this happened.
 
 *Opening meta subpatch inside any patch (here, specifically netserver-help.pd) and then closing it, and then reopening it again, keeps moving the patch window downwards. May be only affecting Linux, which also exhibits this problem when opening the main Pd-L2Ork window (see index.js for an ugly hack fix that works around this nwjs 0.67.1 bug).
 
@@ -128,8 +132,6 @@ RPI 0.28.4 current RPi version.
 *refine window heights for various dialogs, so that they always display fully on-screen. UPDATE: check if this has been fixed using latest nw.js (affects only Windows).
 
 *port shell object to Windows?
-
-*add bezier curve drawing ability to the arrays (currently displaying them as polygons).
 
 *fix inefficiency of the profuse console output.
 
@@ -794,6 +796,13 @@ argc, t_atom *argv)
 *Further bug-fixes and improvements to L2Ork Tweeter.
 *Ported vanilla WASAPI driver for windows since MMIO is not anymore supported well on more recent computers running Win11. This change is causing a pause when the DSP is turned off via a patch message and then requested to be resumed. Looks like a driver issue.
 *Bunch of bug fixes and introduction of svg image support inside Pd-L2Ork's image object.
+*Remove default preset for sync-controls Tweeter widget as it can overwrite user settings.
+*PdWebParty updates.
+*Disabled saving of verbose setting into the settings file.
+*Fixed bug where arduino_analog_in was not passing float point values.
+*Fixed regression where OSX was not able to cut/copy/paste inside a text object.
+*Made sure that the invisible preset_hub native to each patch is always invisible and unselectable/uneditable.
+*Fixed strange occurrence of 2 invisible preset_hub objects inside the patch. Could this have been a reason for some of the crashes?
 
 
 
