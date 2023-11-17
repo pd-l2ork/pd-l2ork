@@ -2536,12 +2536,12 @@ function set_edit_menu_modals(window, state) {
     // proper handling of the edit menu updates when
     // editable is toggled. Leaving here to see if there
     // are any regressions...
-    /*
+    
     // OSX needs to keep these enabled, otherwise the events won't trigger
     if (process.platform === "darwin") {
         state = true;
     }
-    */
+    
     m.edit.undo.enabled = state;
     m.edit.redo.enabled = state;
     m.edit.cut.enabled = state;
