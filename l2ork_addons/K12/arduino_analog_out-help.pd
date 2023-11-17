@@ -19,7 +19,7 @@ empty empty 48 50 1 0 10 #000000 0 -8 24 25 0 1 1;
 #X obj 7 40 K12/math_number;
 #X obj 7 404 K12/arduino_connect;
 #X obj 7 127 K12/arduino_analog_out;
-#X text 105 128 The Arcduino Analog Out object takes in the incoming
+#X text 105 128 The Arduino Analog Out object takes in the incoming
 analog data with a range betwen 0 and 1 and sends it to a desired Arduino
 digital pin that is PWM enabled (pins 3 \, 5 \, 6 \, 9 \, 10 \, and
 11 \, marked with ~) or if you want to control a servo motor \, you
