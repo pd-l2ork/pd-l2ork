@@ -836,8 +836,9 @@ void glob_savepreferences(t_pd *dummy)
     sys_putpreference("npath", buf1);
     sprintf(buf1, "%d", sys_usestdpath);
     sys_putpreference("standardpath", buf1);
-    sprintf(buf1, "%d", sys_verbose);
-    sys_putpreference("verbose", buf1);
+    // this should not be saved in the settings file
+    //sprintf(buf1, "%d", sys_verbose);
+    //sys_putpreference("verbose", buf1);
     
         /* startup */
     for (i = 0; 1; i++)
