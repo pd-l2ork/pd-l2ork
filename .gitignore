@@ -1,6 +1,7 @@
 *.o
 *.orig
 *.rej
+*.wasm
 *diff
 TAGS
 autom4te.cache

@@ -48,7 +48,7 @@ app.get("/api/patch", async (req, res) => {
   if (!valid)
   {
     try {
-      finalUrl = "http://localhost:3000/" + url;
+      finalUrl = `http://localhost:${PORT}/` + url;
       //console.log("2: trying " + finalUrl);
       new URL(finalUrl);
       valid = true;

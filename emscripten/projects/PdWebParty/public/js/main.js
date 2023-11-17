@@ -1,11 +1,7 @@
 const isMobile = (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
-const canvas = document.getElementById("canvas");
 const loading = document.getElementById("loading");
 const filter = document.getElementById("filter");
 let currentFile = "";
-let canvasWidth = 450;
-let canvasHeight = 300;
-let fontSize = 12;
 let subscribedData = {};
 
 // create an AudioContext
@@ -316,7 +312,8 @@ var Module = {
                             break;
                         case "vradio":
                         case "hradio":
-                            Module.pd.sendFloat(data.send, data.value);
+                            if(data.send)
+                                Module.pd.sendFloat(data.send, data.value);
                             break;
                     }
                 }
@@ -343,7 +340,8 @@ var Module = {
                         case "hradio":
                             data.value = Math.min(Math.max(Math.floor(value), 0), data.number - 1);
                             gui_radio_update_button(data);
-                            Module.pd.sendFloat(data.send, data.value);
+                            if(data.send)
+                                Module.pd.sendFloat(data.send, data.value);
                             break;
                     }
                 }
@@ -382,7 +380,8 @@ var Module = {
                         case "hradio":
                             data.value = Math.min(Math.max(Math.floor(list[0]), 0), data.number - 1);
                             gui_radio_update_button(data);
-                            Module.pd.sendFloat(data.send, data.value);
+                            if(data.send)
+                                Module.pd.sendFloat(data.send, data.value);
                             break;
                     }
                 }
@@ -1004,7 +1003,7 @@ function set_midiapi(val) {
 }
 
 //--------------------- gui handling ----------------------------
-function create_item(type, args) {
+function create_item(type, args, canvas) {
     var item = document.createElementNS("http://www.w3.org/2000/svg", type);
     if (args !== null) {
         configure_item(item, args);
@@ -1012,6 +1011,7 @@ function create_item(type, args) {
     canvas.appendChild(item);
     return item;
 }
+
 
 function configure_item(item, attributes) {
     // draw_vis from g_template sends attributes
@@ -1060,16 +1060,20 @@ function colfromload(col) { // decimal to hex color
 }
 
 function gui_subscribe(data) {
+    if(!data.receive)
+        return;
     if (data.receive in subscribedData) {
         subscribedData[data.receive].push(data);
     }
     else {
         subscribedData[data.receive] = [data];
+        Module.pd.subscribe(data.receive);
     }
-    Module.pd.subscribe(data.receive);
 }
 
 function gui_unsubscribe(data) {
+    if(!data.receive)
+        return;
     if (data.receive in subscribedData) {
         const len = subscribedData[data.receive].length;
         for (let i = 0; i < len; i++) {
@@ -1112,7 +1116,7 @@ function gui_text(data) {
     }
 }
 
-function gui_mousepoint(e) { // transforms the mouse position
+function gui_mousepoint(e, canvas) { // transforms the mouse position
     let point = canvas.createSVGPoint();
     point.x = e.clientX;
     point.y = e.clientY;
@@ -1180,7 +1184,8 @@ function gui_bng_update_circle(data) {
 
 function gui_bng_onmousedown(data) {
     gui_bng_update_circle(data);
-    Module.pd.sendBang(data.send);
+    if(data.send)
+        Module.pd.sendBang(data.send);
 }
 
 // tgl
@@ -1248,7 +1253,8 @@ function gui_tgl_update_cross(data) {
 function gui_tgl_onmousedown(data) {
     data.value = data.value ? 0 : data.default_value;
     gui_tgl_update_cross(data);
-    Module.pd.sendFloat(data.send, data.value);
+    if(data.send)
+        Module.pd.sendFloat(data.send, data.value);
 }
 
 // silder: vsl, hsl
@@ -1404,11 +1410,12 @@ function gui_slider_bang(data) {
     if (out < 1.0e-10 && out > -1.0e-10) {
         out = 0;
     }
-    Module.pd.sendFloat(data.send, out);
+    if(data.send)
+        Module.pd.sendFloat(data.send, out);
 }
 
 function gui_slider_onmousedown(data, e, id) {
-    const p = gui_mousepoint(e);
+    const p = gui_mousepoint(e, data.canvas);
     if (!data.steady_on_click) {
         if (data.type === "vsl") {
             data.value = Math.max(Math.min(100 * (data.height + data.y_pos - p.y), (data.height - 1) * 100), 0);
@@ -1429,7 +1436,7 @@ function gui_slider_onmousedown(data, e, id) {
 function gui_slider_onmousemove(e, id) {
     if (id in touches) {
         const { data, point, value } = touches[id];
-        const p = gui_mousepoint(e);
+        const p = gui_mousepoint(e, data.canvas);
         if (data.type === "vsl") {
             data.value = Math.max(Math.min(value + (point.y - p.y) * 100, (data.height - 1) * 100), 0);
         }
@@ -1516,10 +1523,10 @@ function gui_radio_lines_buttons(data, is_creating) {
         if (data.type === "vradio") {
             if (is_creating) {
                 if (i) {
-                    const line = create_item("line", gui_radio_line(data, x1, yi, x1 + d, yi, i));
+                    const line = create_item("line", gui_radio_line(data, x1, yi, x1 + d, yi, i), data.canvas);
                     data.lines.push(line);
                 }
-                const button = create_item("rect", gui_radio_button(data, x1 + s, yi + s, x1 + d - s, yi + d - s, i, on === i));
+                const button = create_item("rect", gui_radio_button(data, x1 + s, yi + s, x1 + d - s, yi + d - s, i, on === i), data.canvas);
                 data.buttons.push(button);
             }
             else {
@@ -1533,10 +1540,10 @@ function gui_radio_lines_buttons(data, is_creating) {
         else {
             if (is_creating) {
                 if (i) {
-                    const line = create_item("line", gui_radio_line(data, xi, y1, xi, y1 + d, i));
+                    const line = create_item("line", gui_radio_line(data, xi, y1, xi, y1 + d, i), data.canvas);
                     data.lines.push(line);
                 }
-                const button = create_item("rect", gui_radio_button(data, xi + s, y1 + s, xi + d - s, yi + d - s, i, on === i));
+                const button = create_item("rect", gui_radio_button(data, xi + s, y1 + s, xi + d - s, yi + d - s, i, on === i), data.canvas);
                 data.buttons.push(button);
             }
             else {
@@ -1577,7 +1584,7 @@ function gui_radio_update_button(data) {
 }
 
 function gui_radio_onmousedown(data, e) {
-    const p = gui_mousepoint(e);
+    const p = gui_mousepoint(e, data.canvas);
     if (data.type === "vradio") {
         data.value = Math.floor((p.y - data.y_pos) / data.size);
     }
@@ -1585,7 +1592,134 @@ function gui_radio_onmousedown(data, e) {
         data.value = Math.floor((p.x - data.x_pos) / data.size);
     }
     gui_radio_update_button(data);
-    Module.pd.sendFloat(data.send, data.value);
+    if(data.send)
+        Module.pd.sendFloat(data.send, data.value);
+}
+
+//knob
+function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
+    var angleInRadians = (angleInDegrees-90) * Math.PI / 180.0;
+
+    return {
+        x: centerX + (radius * Math.cos(angleInRadians)),
+        y: centerY + (radius * Math.sin(angleInRadians))
+    };
+}
+  
+function describeArc(x, y, radius, startAngle, endAngle){
+    var start = polarToCartesian(x, y, radius, endAngle);
+    var end = polarToCartesian(x, y, radius, startAngle);
+
+    var largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+    var d = [
+        "M", start.x, start.y, 
+        "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y
+    ].join(" ");
+
+    return d;       
+}
+
+function gui_knob_vto_gui(data) {
+    if(data.logarithmic)
+        return (Math.log10(data.value) - Math.log10(data.minimum)) / Math.log10(data.maximum/data.minimum);
+    else
+        return (data.value - data.minimum) / (data.maximum - data.minimum)
+}
+  
+function gui_knob_text(data) {
+    return gui_text(data);
+}
+
+function gui_knob_clicktarget(data) {
+    return {
+        x: data.x_pos,
+        y: data.y_pos,
+        width: data.size_x,
+        height: data.size_y,
+        fill: "#00000000"
+    }
+}
+
+function gui_knob_circle(data) {
+    return {
+        stroke: "black",
+        fill: "none",
+        "stroke-width": data.off_width,
+        "d": describeArc(data.x_pos + data.size_x/2, data.y_pos + data.size_y/2, data.size_x/2 - 1, 193, 528)
+    };
+}
+
+function gui_knob_line(data) {
+    let endPos = polarToCartesian(data.size_x/2, data.size_y/2, data.size_x/2, 193 + gui_knob_vto_gui(data) * (528 - 193));
+    return { // indicator
+        "stroke-width": data.dial_width,
+        stroke: data.fg_color,
+        x1: data.x_pos + data.size_x/2,
+        x2: data.x_pos + endPos.x,
+        y1: data.y_pos + data.size_y/2,
+        y2: data.y_pos + endPos.y
+    }
+}
+function gui_knob_extracircle(data) {
+    return {
+        "knob_w": data.size_x,
+        fill: "none",
+        stroke: data.bg_color,
+        "stroke-width": data.on_width,
+        "d": describeArc(data.x_pos + data.size_x/2, data.y_pos + data.size_y/2, data.size_x/2 - 1, 193, 193 + gui_knob_vto_gui(data) * (528 - 193)),
+    }
+}
+
+
+const gui_knob_touches = {};
+function gui_knob_onmousedown(data, e, id) {
+    const p = gui_mousepoint(e, data.canvas);
+    if (!data.steady_on_click) {
+        //Convert absolute coordinates to coordinates inside the knob (so that we can find the angle and calculate the desired value)
+        let rx = p.x - data.x_pos - data.size_x/2, 
+            ry = p.y - data.y_pos - data.size_y/2;
+        //Find the angle of the mouse relative to the center of the knob
+        let theta = Math.asin(ry / (rx**2 + ry**2) ** .5) * 180 / Math.PI;
+        //Clamp the angle to 0 - 336 and convert that to a value between minimum and maximum. 
+        let factor = Math.min(Math.max(rx > 0 ? 258 + theta : 78 - theta, 0), 336) / 336;
+        if(data.logarithmic)
+            data.value = Math.pow(10, Math.log10(data.minimum) + factor * (Math.log10(data.maximum/data.minimum)));
+        else
+            data.value = data.minimum + factor * (data.maximum - data.minimum);
+        
+        configure_item(data.extracircle, gui_knob_extracircle(data));
+        configure_item(data.line, gui_knob_line(data));
+        if(data.send)
+            Module.pd.sendFloat(data.send, data.value);
+    }
+    gui_knob_touches[id] = {
+        data: data,
+        point: p,
+        value: data.value
+    };
+}
+
+function gui_knob_onmousemove(e, id) {
+    if (id in gui_knob_touches) {
+        const { data, point, value } = gui_knob_touches[id];
+        const p = gui_mousepoint(e, data.canvas);
+        if(data.logarithmic)
+            data.value = Math.pow(10,Math.log10(value) + (point.y - p.y) / data.size_y * Math.log10(data.maximum/data.minimum));
+        else
+            data.value = value + (point.y - p.y) / data.size_y * (data.maximum - data.minimum);
+        data.value = Math.max(Math.min(data.value,data.maximum),data.minimum);
+
+        configure_item(data.extracircle, gui_knob_extracircle(data));
+        configure_item(data.line, gui_knob_line(data));
+        if(data.send)
+            Module.pd.sendFloat(data.send, data.value);
+    }
+}
+
+function gui_knob_onmouseup(id) {
+    if (id in gui_knob_touches) {
+        delete gui_knob_touches[id];
+    }
 }
 
 // drag events
@@ -1594,18 +1728,21 @@ if (isMobile) {
         e = e || window.event;
         for (const touch of e.changedTouches) {
             gui_slider_onmousemove(touch, touch.identifier);
+            gui_knob_onmousemove(touch, touch.identifier);
         }
     });
     window.addEventListener("touchend", function (e) {
         e = e || window.event;
         for (const touch of e.changedTouches) {
             gui_slider_onmouseup(touch.identifier);
+            gui_knob_onmouseup(touch.identifier);
         }
     });
     window.addEventListener("touchcancel", function (e) {
         e = e || window.event;
         for (const touch of e.changedTouches) {
             gui_slider_onmouseup(touch.identifier);
+            gui_knob_onmouseup(touch.identifier);
         }
     });
 }
@@ -1613,12 +1750,15 @@ else {
     window.addEventListener("mousemove", function (e) {
         e = e || window.event;
         gui_slider_onmousemove(e, 0);
+        gui_knob_onmousemove(e, 0);
     });
     window.addEventListener("mouseup", function (e) {
         gui_slider_onmouseup(0);
+        gui_knob_onmouseup(0);
     });
     window.addEventListener("mouseleave", function (e) {
         gui_slider_onmouseup(0);
+        gui_knob_onmouseup(0);
     });
 }
 
@@ -1747,7 +1887,7 @@ function pd_fontsize_to_gui_fontsize(fontsize) {
     return gobj_fontsize_kludge(fontsize, "gui");
 }
 
-function gui_text_text(data, line_index) {
+function gui_text_text(data, line_index, fontSize) {
     const left_margin = 2;
     const fmap = font_height_map();
     const font_height = fmap[fontSize] * (line_index + 1);
@@ -1764,38 +1904,107 @@ function gui_text_text(data, line_index) {
 }
 
 //--------------------- patch handling ----------------------------
-function openPatch(content, filename) {
-    console.log(`patch: ${filename}`);
-    let maxNumInChannels = 0;
-    let canvasLevel = 0; // 0: no canvas, 1: main canvas, 2~: subcanvases
-    let id = 0; // gui id
-    while (canvas.lastChild) { // clear svg
-        canvas.removeChild(canvas.lastChild);
-    }
+async function openPatch(content, filename) {
+    console.log(`Loading Patch: ${filename}`);
+    
+    let rootCanvas = document.getElementById('canvas');
+    while (rootCanvas.lastChild) // clear svg
+        rootCanvas.removeChild(rootCanvas.lastChild);
+        
     Module.pd.unsubscribeAll();
-    for (const source in subscribedData) {
-        delete subscribedData[source];
-    }
-    const lines = content.split(";\n");
-    for (let line of lines) {
-        line = line.replace(/[\r\n]+/g, " ").trim(); // remove newlines & carriage returns
-        const args = line.split(" ");
-        const type = args.slice(0, 2).join(" ");
-        switch (type) {
+    subscribedData = {};
+    
+    let maxNumInChannels = 0;
+    let nextId = 0;    //This is used to assign sequential IDs to gui objects so that their subscriptions can be managed
+    let nextCanvas = { //This is used to initialize a new canvas when we arrive at a #N canvas line. The canvas must be
+                       //initialized beforehand since we receive its information when loading a file, not when reading the #N canvas line.
+        canvas: rootCanvas,
+        guiObjects: [], //Will hold the GUI object data in the current canvas, used to reassign sends/receives when wires are read.
+        graph: 1,
+        fontSize: 12,
+        id: 0,          //ID of the current canvas (used to uniquely assign wire names)
+        objId: -1,      //Next objectID for the current canvas (used in conjunction with guiObjects to keep track of objects for assigning wires)
+    };
+    let canvasStack = [];   //Used to store parent canvases while working on a child canvas
+    let currentCanvas = {}; //The current canvas being rendered
+    let lines = content.split(";\n");
+
+    for (let i=0; i < lines.length; i++) {
+        //Some lexical lines are split between two physical lines in the file, so we must remove all newlines
+        //Then we split by " " to seperate the line into arguments
+        let args = lines[i].replace(/[\r\n]+/g, " ").trim().split(" ");
+        //Sometimes, we need a space in an argument, and this is signified by "\ ".
+        //Therefore, we must combines the arguments which end with a \ and re-add the whitespace
+        for(let i=0;i<args.length;i++)
+            while(args[i].endsWith("\\"))
+                args.splice(i,2,`${args[i].slice(0,-1)} ${args[i+1]}`);
+
+        //Now we switch based on the type of line (first two arguments)
+        switch (args.slice(0,2).join(' ')) {
             case "#N canvas":
-                canvasLevel++;
-                if (canvasLevel === 1 && args.length === 7) { // should be called only once
-                    canvasWidth = parseInt(args[4]);
-                    canvasHeight = parseInt(args[5]);
-                    fontSize = parseInt(args[6]);
-                    canvas.setAttributeNS(null, "viewBox", `0 0 ${canvasWidth} ${canvasHeight}`);
-                    console.log(`canvas size: ${canvasWidth}x${canvasHeight}`);
+                if(canvasStack.length == 0) {
+                    nextCanvas.canvas.setAttributeNS(null, "viewBox", `0 0 ${+args[4]} ${+args[5]}`);
+                } else {
+                    currentCanvas.objId++;
+                    nextCanvas.group = create_item('g', {id: `gobj_${nextId++}`}, currentCanvas.canvas);
+                    nextCanvas.canvas = document.createElementNS("http://www.w3.org/2000/svg", 'svg');
+                    configure_item(nextCanvas.canvas, {id: `svg_${nextId++}`});
+                }
+                nextCanvas.fontSize = +args[args.length - 1] || currentCanvas.fontSize;
+                canvasStack.push(currentCanvas);
+                currentCanvas = nextCanvas;
+                nextCanvas = JSON.parse(JSON.stringify(currentCanvas));;
+                nextCanvas.id++;
+
+                break;
+            case "#X coords":
+                if(args.length > 8) {
+                    currentCanvas.showTitle = +args[8] == 1;
+                    currentCanvas.coords = {
+                        left: args[2],
+                        top: args[3],
+                        right: args[4],
+                        bottom: args[5],
+                    }       
+                    configure_item(currentCanvas.group, {width: +args[6], height: +args[7]});
+                    configure_item(currentCanvas.canvas, {width: +args[6], height: +args[7]});
+                    if(+args[8] > 0) {
+                        currentCanvas.border = create_item('rect', {
+                            width: +args[6] - 1,
+                            height: +args[7] - 1,
+                            fill: 'none',
+                            stroke: 'black',
+                            id: `border_${nextId++}`
+                        }, currentCanvas.group);
+                        currentCanvas.canvas.setAttributeNS(null, "viewBox", `${+args[9]} ${+args[10]} ${+args[6]} ${+args[7]}`);
+
+                    } else
+                        currentCanvas.group.style.display = 'none';
                 }
                 break;
             case "#X restore":
-                canvasLevel--;
+                if(args.length > 3) {
+                    configure_item(currentCanvas.canvas, {x: +args[2], y: +args[3]});
+                    configure_item(currentCanvas.border, {x: +args[2] + .5, y: +args[3] + .5})
+                    if(currentCanvas.showTitle) {
+                        console.log(currentCanvas.fontSize);
+                        let text = create_item("text", gui_text_text({
+                            x_pos: +args[2],
+                            y_pos: +args[3],
+                            id: `title_${nextId++}`
+                        }, 0, currentCanvas.fontSize), currentCanvas.group);
+                        text.textContent = args.slice(4).join(' ');
+                    }
+                    currentCanvas.group.appendChild(currentCanvas.canvas);
+                    currentCanvas = canvasStack.pop();
+                }
+                break;
+            case "#X gopspill":
+                if(+args[2] == 1)
+                    currentCanvas.canvas.style.overflow='visible';
                 break;
             case "#X obj":
+                currentCanvas.objId++;
                 if (args.length > 4) {
                     switch (args[4]) {
                         case "adc~":
@@ -1812,7 +2021,7 @@ function openPatch(content, filename) {
                             }
                             break;
                         case "bng":
-                            if (canvasLevel === 1 && args.length >= 19 && args[9] !== "empty" && args[10] !== "empty") {
+                            if (args.length >= 19) {
                                 const data = {};
                                 data.x_pos = parseInt(args[2]);
                                 data.y_pos = parseInt(args[3]);
@@ -1821,8 +2030,8 @@ function openPatch(content, filename) {
                                 data.hold = parseInt(args[6]);
                                 data.interrupt = parseInt(args[7]);
                                 data.init = parseInt(args[8]);
-                                data.send = args[9];
-                                data.receive = args[10];
+                                data.send = args[9] === "empty" ? null : args[9];
+                                data.receive = args[10] === "empty" ? null : args[10];
                                 data.label = args[11] === "empty" ? "" : args[11];
                                 data.x_off = parseInt(args[12]);
                                 data.y_off = parseInt(args[13]);
@@ -1831,12 +2040,13 @@ function openPatch(content, filename) {
                                 data.bg_color = isNaN(args[16]) ? args[16] : parseInt(args[16]);
                                 data.fg_color = isNaN(args[17]) ? args[17] : parseInt(args[17]);
                                 data.label_color = isNaN(args[18]) ? args[18] : parseInt(args[18]);
-                                data.id = `${data.type}_${id++}`;
+                                data.id = `${data.type}_${nextId++}`;
+                                data.canvas = currentCanvas.canvas;
 
                                 // create svg
-                                data.rect = create_item("rect", gui_bng_rect(data));
-                                data.circle = create_item("circle", gui_bng_circle(data));
-                                data.text = create_item("text", gui_bng_text(data));
+                                data.rect = create_item("rect", gui_bng_rect(data), data.canvas);
+                                data.circle = create_item("circle", gui_bng_circle(data), data.canvas);
+                                data.text = create_item("text", gui_bng_text(data), data.canvas);
                                 data.text.textContent = data.label;
 
                                 // handle event
@@ -1855,18 +2065,19 @@ function openPatch(content, filename) {
                                 }
                                 // subscribe receiver
                                 gui_subscribe(data);
+                                currentCanvas.guiObjects[currentCanvas.objId] = data;
                             }
                             break;
                         case "tgl":
-                            if (canvasLevel === 1 && args.length >= 19 && args[7] !== "empty" && args[8] !== "empty") {
+                            if (args.length >= 19) {
                                 const data = {};
                                 data.x_pos = parseInt(args[2]);
                                 data.y_pos = parseInt(args[3]);
                                 data.type = args[4];
                                 data.size = parseInt(args[5]);
                                 data.init = parseInt(args[6]);
-                                data.send = args[7];
-                                data.receive = args[8];
+                                data.send = args[7] === "empty" ? null : args[7];
+                                data.receive = args[8] === "empty" ? null : args[8];
                                 data.label = args[9] === "empty" ? "" : args[9];
                                 data.x_off = parseInt(args[10]);
                                 data.y_off = parseInt(args[11]);
@@ -1878,13 +2089,14 @@ function openPatch(content, filename) {
                                 data.init_value = parseFloat(args[17]);
                                 data.default_value = parseFloat(args[18]);
                                 data.value = data.init && data.init_value ? data.default_value : 0;
-                                data.id = `${data.type}_${id++}`;
+                                data.id = `${data.type}_${nextId++}`;
+                                data.canvas = currentCanvas.canvas;
 
                                 // create svg
-                                data.rect = create_item("rect", gui_tgl_rect(data));
-                                data.cross1 = create_item("polyline", gui_tgl_cross1(data));
-                                data.cross2 = create_item("polyline", gui_tgl_cross2(data));
-                                data.text = create_item("text", gui_tgl_text(data));
+                                data.rect = create_item("rect", gui_tgl_rect(data), data.canvas);
+                                data.cross1 = create_item("polyline", gui_tgl_cross1(data), data.canvas);
+                                data.cross2 = create_item("polyline", gui_tgl_cross2(data), data.canvas);
+                                data.text = create_item("text", gui_tgl_text(data), data.canvas);
                                 data.text.textContent = data.label;
 
                                 // handle event
@@ -1900,11 +2112,12 @@ function openPatch(content, filename) {
                                 }
                                 // subscribe receiver
                                 gui_subscribe(data);
+                                currentCanvas.guiObjects[currentCanvas.objId] = data;
                             }
                             break;
                         case "vsl":
                         case "hsl":
-                            if (canvasLevel === 1 && args.length >= 23 && args[11] !== "empty" && args[12] !== "empty") {
+                            if (args.length >= 23) {
                                 const data = {};
                                 data.x_pos = parseInt(args[2]);
                                 data.y_pos = parseInt(args[3]);
@@ -1915,8 +2128,8 @@ function openPatch(content, filename) {
                                 data.top = parseInt(args[8]);
                                 data.log = parseInt(args[9]);
                                 data.init = parseInt(args[10]);
-                                data.send = args[11];
-                                data.receive = args[12];
+                                data.send = args[11] === "empty" ? null : args[11];
+                                data.receive = args[12] === "empty" ? null : args[12];
                                 data.label = args[13] === "empty" ? "" : args[13];
                                 data.x_off = parseInt(args[14]);
                                 data.y_off = parseInt(args[15]);
@@ -1928,12 +2141,13 @@ function openPatch(content, filename) {
                                 data.default_value = parseFloat(args[21]);
                                 data.steady_on_click = parseFloat(args[22]);
                                 data.value = data.init ? data.default_value : 0;
-                                data.id = `${data.type}_${id++}`;
+                                data.id = `${data.type}_${nextId++}`;
+                                data.canvas = currentCanvas.canvas;
 
                                 // create svg
-                                data.rect = create_item("rect", gui_slider_rect(data));
-                                data.indicator = create_item("line", gui_slider_indicator(data));
-                                data.text = create_item("text", gui_slider_text(data));
+                                data.rect = create_item("rect", gui_slider_rect(data), data.canvas);
+                                data.indicator = create_item("line", gui_slider_indicator(data), data.canvas);
+                                data.text = create_item("text", gui_slider_text(data), data.canvas);
                                 data.text.textContent = data.label;
 
                                 // handle event
@@ -1954,11 +2168,12 @@ function openPatch(content, filename) {
                                 }
                                 // subscribe receiver
                                 gui_subscribe(data);
+                                currentCanvas.guiObjects[currentCanvas.objId] = data;
                             }
                             break;
                         case "vradio":
                         case "hradio":
-                            if (canvasLevel === 1 && args.length >= 20 && args[9] !== "empty" && args[10] !== "empty") {
+                            if (args.length >= 20) {
                                 const data = {};
                                 data.x_pos = parseInt(args[2]);
                                 data.y_pos = parseInt(args[3]);
@@ -1967,8 +2182,8 @@ function openPatch(content, filename) {
                                 data.new_old = parseInt(args[6]);
                                 data.init = parseInt(args[7]);
                                 data.number = parseInt(args[8]) || 1;
-                                data.send = args[9];
-                                data.receive = args[10];
+                                data.send = args[9] === "empty" ? null : args[9];
+                                data.receive = args[10] === "empty" ? null : args[10];
                                 data.label = args[11] === "empty" ? "" : args[11];
                                 data.x_off = parseInt(args[12]);
                                 data.y_off = parseInt(args[13]);
@@ -1979,12 +2194,13 @@ function openPatch(content, filename) {
                                 data.label_color = isNaN(args[18]) ? args[18] : parseInt(args[18]);
                                 data.default_value = parseFloat(args[19]);
                                 data.value = data.init ? data.default_value : 0;
-                                data.id = `${data.type}_${id++}`;
+                                data.id = `${data.type}_${nextId++}`;
+                                data.canvas = currentCanvas.canvas;
 
                                 // create svg
-                                data.rect = create_item("rect", gui_radio_rect(data));
+                                data.rect = create_item("rect", gui_radio_rect(data), data.canvas);
                                 gui_radio_create_lines_buttons(data);
-                                data.text = create_item("text", gui_radio_text(data));
+                                data.text = create_item("text", gui_radio_text(data), data.canvas);
                                 data.text.textContent = data.label;
 
                                 // handle event
@@ -2004,10 +2220,77 @@ function openPatch(content, filename) {
                                 }
                                 // subscribe receiver
                                 gui_subscribe(data);
+                                currentCanvas.guiObjects[currentCanvas.objId] = data;
+                            }
+                            break;
+                        case "flatgui/knob":
+                            if (args.length >= 26) {
+                                const data = {};
+                                data.x_pos = parseInt(args[2]);
+                                data.y_pos = parseInt(args[3]);
+                                data.type = args[4];
+                                data.size_x = parseInt(args[5]);
+                                data.size_y = parseInt(args[6]);
+                                data.minimum = parseInt(args[7]);
+                                data.maximum = parseInt(args[8]);
+
+                                data.logarithmic = parseInt(args[9]);
+                                data.init = parseInt(args[10]);
+                
+                                data.send = args[11] === "empty" ? null : args[11];
+                                data.receive = args[12] === "empty" ? null : args[12];
+                                data.label = args[13] === "empty" ? "" : args[13];
+                                data.x_off = parseInt(args[14]);
+                                data.y_off = parseInt(args[15]);
+                                data.font = parseInt(args[16]);
+                                data.fontsize = parseInt(args[17]);
+                                data.bg_color = isNaN(args[18]) ? args[18] : parseInt(args[18]);
+                                data.fg_color = isNaN(args[19]) ? args[19] : parseInt(args[19]);
+                                data.label_color = isNaN(args[20]) ? args[20] : parseInt(args[20]);
+                                data.default_value = parseFloat(args[21]);
+                                data.steady_on_click = parseFloat(args[22]);
+                                data.interactive = parseFloat(args[23]);
+                                data.dial_width = parseFloat(args[24]);
+                                data.off_width = parseFloat(args[25]);
+                                data.on_width = parseFloat(args[26]);
+                                data.value = data.init ? data.default_value : 0;
+                                data.id = `${data.type}_${nextId++}`;
+                                data.canvas = currentCanvas.canvas;
+
+
+                                data.circle = create_item("path", gui_knob_circle(data), data.canvas);
+                                data.line = create_item("line", gui_knob_line(data), data.canvas);
+                                data.extracircle = create_item("path", gui_knob_extracircle(data), data.canvas);
+                                data.text = create_item("text", gui_knob_text(data), data.canvas);
+                                data.clicktarget = create_item("rect", gui_knob_clicktarget(data), data.canvas);
+                                data.text.textContent = data.label;
+
+                                // handle event
+                                if(data.interactive) {
+                                    if (isMobile) {
+                                        data.clicktarget.addEventListener("touchstart", function (e) {
+                                            e = e || window.event;
+                                            for (const touch of e.changedTouches) {
+                                                gui_knob_onmousedown(data, touch, touch.identifier);
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        data.clicktarget.addEventListener("mousedown", function (e) {
+                                            e = e || window.event;
+                                            gui_knob_onmousedown(data, e, 0);
+                                        });
+                                    }
+                                }
+
+                                // subscribe receiver
+                                gui_subscribe(data);
+                                currentCanvas.guiObjects[currentCanvas.objId] = data;
+
                             }
                             break;
                         case "cnv":
-                            if (canvasLevel === 1 && args.length >= 18 && args[8] !== "empty" && args[9] !== "empty") {
+                            if (args.length >= 18) {
                                 const data = {};
                                 data.x_pos = parseInt(args[2]);
                                 data.y_pos = parseInt(args[3]);
@@ -2015,8 +2298,8 @@ function openPatch(content, filename) {
                                 data.size = parseInt(args[5]);
                                 data.width = parseInt(args[6]);
                                 data.height = parseInt(args[7]);
-                                data.send = args[8];
-                                data.receive = args[9];
+                                data.send = args[8] === "empty" ? null : args[8];
+                                data.receive = args[9] === "empty" ? null : args[9];
                                 data.label = args[10] === "empty" ? "" : args[10];
                                 data.x_off = parseInt(args[11]);
                                 data.y_off = parseInt(args[12]);
@@ -2025,28 +2308,44 @@ function openPatch(content, filename) {
                                 data.bg_color = isNaN(args[15]) ? args[15] : parseInt(args[15]);
                                 data.label_color = isNaN(args[16]) ? args[16] : parseInt(args[16]);
                                 data.unknown = parseFloat(args[17]);
-                                data.id = `${data.type}_${id++}`;
+                                data.id = `${data.type}_${nextId++}`;
+                                data.canvas = currentCanvas.canvas;
 
                                 // create svg
-                                data.visible_rect = create_item("rect", gui_cnv_visible_rect(data));
-                                data.selectable_rect = create_item("rect", gui_cnv_selectable_rect(data));
-                                data.text = create_item("text", gui_cnv_text(data));
+                                data.visible_rect = create_item("rect", gui_cnv_visible_rect(data), data.canvas);
+                                data.selectable_rect = create_item("rect", gui_cnv_selectable_rect(data), data.canvas);
+                                data.text = create_item("text", gui_cnv_text(data), data.canvas);
                                 data.text.textContent = data.label;
 
                                 // subscribe receiver
                                 gui_subscribe(data);
                             }
                             break;
+
+                        default: //If we don't have an explicit handling for the object, it's possible that it is an external patch load
+                            //We want to load patch data from the same folder as our current patch, just with a different filename at the end.
+                            let data = await getPatchData(`${(new URLSearchParams(window.location.search)).get('url').split('/').slice(0,-1).join('/')}${args[4]}.pd`);
+                            //If the data starts with a #, it is a patch. Otherwise, either the patch does not exist, or this is a non-gui object, and in either case we can ignore it.
+                            if(data.content.charAt(0) == '#') {
+                                //We must add an #X restore at the end to undo the #N canvas at the beginning
+                                lines.splice(i,1,...data.content.split(';\n'),`#X restore ${args[2]} ${args[3]} ${args[4]}`);
+                                //Since we removed the line that we just processed, our subpatch starts at line i, so we have to process line i again.
+                                i--;
+                                currentCanvas.objId--;
+                            }
+                            break;
                     }
                 }
                 break;
             case "#X text":
+                currentCanvas.objId++;
                 if (args.length > 4) {
                     const data = {};
                     data.type = args[1];
                     data.x_pos = parseInt(args[2]);
                     data.y_pos = parseInt(args[3]);
                     data.comment = [];
+                    data.canvas = currentCanvas;
                     const lines = args.slice(4).join(" ").replace(/ \\,/g, ",").replace(/\\; /g, ";\n").replace(/ ;/g, ";").split("\n");
                     for (const line of lines) {
                         const lines = line.match(/.{1,60}(\s|$)/g);
@@ -2054,23 +2353,63 @@ function openPatch(content, filename) {
                             data.comment.push(line.trim());
                         }
                     }
-                    data.id = `${data.type}_${id++}`;
+                    data.id = `${data.type}_${nextId++}`;
 
                     // create svg
                     data.texts = [];
                     for (let i = 0; i < data.comment.length; i++) {
-                        const text = create_item("text", gui_text_text(data, i));
+                        const text = create_item("text", gui_text_text(data, i, currentCanvas.fontSize), currentCanvas.canvas);
                         text.textContent = data.comment[i];
                         data.texts.push(text);
                     }
                 }
                 break;
+            case "#X connect":
+                if (args.length > 5) {
+                    //First we generate a unique name for our wireless send/receive, just in case we need to make one.
+                    //We first try to use the existing send/receive names of the objects, so that their existing connections don't break.
+                    //Otherwise, we generate a name based off of the arguments of the connect (which will be unique)
+                    let connectionName = 
+                        currentCanvas.guiObjects[args[2]]?.send ||
+                        currentCanvas.guiObjects[args[4]]?.receive ||
+                        `__WIRE_${currentCanvas.id}_${args[2]}_${args[3]}_${args[4]}_${args[5]}`;
+                        
+                    if( currentCanvas.guiObjects[args[2]] && !currentCanvas.guiObjects[args[4]]) {
+                        //If the sender is a gui object, and the receiver is not, we must add a receive object so that the
+                        //sender can send wirelessly. Then we connect the receive object to the receiver, and the sender wirelessly to the receive object
+                        lines.splice(i--,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${currentCanvas.objId + 1} 0 ${args[4]} ${args[5]}`)
+                        currentCanvas.guiObjects[args[2]].send = connectionName;
+                    }
+                    if(!currentCanvas.guiObjects[args[2]] && currentCanvas.guiObjects[args[4]]) {
+                        //If the receiver is a gui object, and the sender is not, we must add a send object so that the receiver
+                        //can receive wirelessly. Then we connect the send object to the sender, and the receiver wirelessly to the send object
+                        lines.splice(i--,1,`#X obj 0 0 s ${connectionName}`,`#X connect ${args[2]} ${args[3]} ${currentCanvas.objId + 1} 0`);
+                        currentCanvas.guiObjects[args[4]].receive = connectionName;
+                        gui_subscribe(currentCanvas.guiObjects[args[4]]);
+                    }
+                    if(currentCanvas.guiObjects[args[2]]&&currentCanvas.guiObjects[args[4]]) {
+                        //If both the sender and receiver are gui objects, we can directly set their sends and receives
+                        //Theoretically, they should only have 1 input/output, so the input/output id should always be 0
+                        if(args[3] === '0' && args[5] === '0') {
+                            if(currentCanvas.guiObjects[args[2]].send && currentCanvas.guiObjects[args[4]].receive) {
+                                //If both objects are already transmitting/receiving wirelessly, one of them is going to get overwritten
+                                //by this algorithm. I need to implement multi-receive to fix this.
+                                console.error('Multi-Receive not implemented, connection not made');
+                            } else {
+                                currentCanvas.guiObjects[args[2]].send = connectionName;
+                                currentCanvas.guiObjects[args[4]].receive = connectionName;
+                                gui_subscribe(currentCanvas.guiObjects[args[4]]);
+                            }
+                        } else
+                            console.warn('Ignoring invalid wired connections between GUI Objects');
+                    }
+                }
         }
     }
-    if (!canvasLevel) {
-        alert("The main canvas not found in the pd file.");
-        return;
-    }
+
+    if (nextCanvas.id == 0)
+        return alert("The main canvas not found in the pd file.");
+
     if (maxNumInChannels) {
         if (Module.pd.init(maxNumInChannels, Module.pd.getNumOutChannels(), Module.pd.getSampleRate(), Module.pd.getTicksPerBuffer())) {
             // print obtained settings
@@ -2088,10 +2427,10 @@ function openPatch(content, filename) {
             return;
         }
     }
-    const uint8Array = new TextEncoder().encode(content);
-    FS.createDataFile("/", filename, uint8Array, true, true, true);
-    currentFile = filename;
-    Module.pd.openPatch(currentFile, "/");
+
+    //Next we load our modified lines into the backend of pd-l2ork
+    FS.createDataFile("/", filename, new TextEncoder().encode(lines.join(';\n')), true, true, true);
+    Module.pd.openPatch(filename, "/");
     pdsend("pd dsp 1");
 }
 
