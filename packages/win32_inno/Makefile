@@ -189,6 +189,8 @@ ifneq ($(LIGHT),yes)
 	install -p $(DESTDIR)/extra/lyonpotpourri/liblyonpotpourri.dll $(DESTDIR)$(bindir)
 # fftease also uses a shared lib...
 	install -p $(DESTDIR)/extra/fftease/libfftease.dll $(DESTDIR)$(bindir)
+# install dummy disis_wiimote since that object does not compile on Windows
+	install -p $(cvs_root_dir)/externals/disis/non-linux/disis_wiimote.pd $(DESTDIR)/extra/
 endif
 
 

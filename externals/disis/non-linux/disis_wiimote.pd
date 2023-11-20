@@ -1,0 +1,12 @@
+#N canvas 727 397 407 151 10;
+#X obj -30 -30 preset_hub k12 1 %hidden%;
+#X obj 25 24 loadbang;
+#X obj 25 100 print;
+#X obj 251 100 inlet;
+#X obj 292 100 outlet;
+#X obj 339 100 outlet;
+#X msg 25 49 disis_wiimote is a dummy object on OSX and Windows as
+the external at this point in time works only with the Linux bluetooth
+stack.;
+#X connect 1 0 6 0;
+#X connect 6 0 2 0;
