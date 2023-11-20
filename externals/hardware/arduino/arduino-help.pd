@@ -1,4 +1,4 @@
-#N canvas 89 22 674 563 10;
+#N canvas 89 22 674 608 10;
 #N canvas 233 472 466 316 INSTALL-NOTES 0;
 #X text 39 201 [comport] \, from pd-cvs/externals/iem/comport;
 #X text 39 185 [arduino] \, from pd-cvs/externals/hardware/arduino
@@ -24,25 +24,33 @@ start.;
 #X text 72 97 I/O the individual pins:;
 #X text 20 22 NOTE: don't forget to set pins to output mode first!
 ;
-#X obj 40 194 cnv 15 100 22 empty empty empty 20 12 0 14 -253938 -66577
+#X obj 40 194 cnv 15 100 22 empty empty empty 20 12 0 14 #f4fcc4 #404040
 0;
 #X msg 49 197 digital 13 0;
-#X obj 168 134 tgl 15 0 empty empty 7 4 -6 1 12 -233017 -1 -1 0 1;
-#X obj 185 134 tgl 15 0 empty empty 8 4 -6 1 12 -233017 -1 -1 0 1;
-#X obj 202 134 tgl 15 0 empty empty 9 4 -6 1 12 -233017 -1 -1 0 1;
-#X obj 219 134 tgl 15 0 empty empty 10 0 -6 1 12 -233017 -1 -1 0 1
-;
-#X obj 236 134 tgl 15 0 empty empty 11 0 -6 1 12 -233017 -1 -1 0 1
-;
-#X obj 253 134 tgl 15 0 empty empty 12 0 -6 1 12 -233017 -1 -1 0 1
-;
-#X obj 270 134 tgl 15 0 empty empty 13 0 -6 1 12 -233017 -1 -1 0 1
-;
-#X obj 83 134 tgl 15 0 empty empty 2 4 -6 1 12 -233017 -1 -1 0 1;
-#X obj 100 134 tgl 15 0 empty empty 3 4 -6 1 12 -233017 -1 -1 0 1;
-#X obj 117 134 tgl 15 0 empty empty 5 4 -6 1 12 -233017 -1 -1 0 1;
-#X obj 134 134 tgl 15 0 empty empty 6 4 -6 1 12 -233017 -1 -1 0 1;
-#X obj 151 134 tgl 15 0 empty empty 7 4 -6 1 12 -233017 -1 -1 0 1;
+#X obj 168 134 tgl 15 0 empty empty 7 4 -6 1 12 #e0e0e0 #000000 #000000
+0 1 1;
+#X obj 185 134 tgl 15 0 empty empty 8 4 -6 1 12 #e0e0e0 #000000 #000000
+0 1 1;
+#X obj 202 134 tgl 15 0 empty empty 9 4 -6 1 12 #e0e0e0 #000000 #000000
+0 1 1;
+#X obj 219 134 tgl 15 0 empty empty 10 0 -6 1 12 #e0e0e0 #000000 #000000
+0 1 1;
+#X obj 236 134 tgl 15 0 empty empty 11 0 -6 1 12 #e0e0e0 #000000 #000000
+0 1 1;
+#X obj 253 134 tgl 15 0 empty empty 12 0 -6 1 12 #e0e0e0 #000000 #000000
+0 1 1;
+#X obj 270 134 tgl 15 0 empty empty 13 0 -6 1 12 #e0e0e0 #000000 #000000
+0 1 1;
+#X obj 83 134 tgl 15 0 empty empty 2 4 -6 1 12 #e0e0e0 #000000 #000000
+0 1 1;
+#X obj 100 134 tgl 15 0 empty empty 3 4 -6 1 12 #e0e0e0 #000000 #000000
+0 1 1;
+#X obj 117 134 tgl 15 0 empty empty 5 4 -6 1 12 #e0e0e0 #000000 #000000
+0 1 1;
+#X obj 134 134 tgl 15 0 empty empty 6 4 -6 1 12 #e0e0e0 #000000 #000000
+0 1 1;
+#X obj 151 134 tgl 15 0 empty empty 7 4 -6 1 12 #e0e0e0 #000000 #000000
+0 1 1;
 #N canvas 474 328 810 360 generate 0;
 #X obj 49 24 inlet;
 #X obj 89 24 inlet;
@@ -107,19 +115,21 @@ start.;
 #X connect 30 0 29 0;
 #X connect 30 1 29 0;
 #X restore 49 158 pd generate digital out messages;
-#X obj 319 109 tgl 25 0 empty empty ALL 2 12 0 12 -262144 -1 -1 0 1
-;
-#X obj 319 70 tgl 15 0 empty empty empty 0 -6 0 8 -225271 -1 -1 0 16383
-;
+#X obj 319 109 tgl 25 0 empty empty ALL 2 12 0 12 #fcfcfc #000000 #000000
+0 1 1;
+#X obj 319 70 tgl 15 0 empty empty empty 0 -6 0 8 #d8fcd8 #000000 #000000
+0 16383 1;
 #X obj 319 88 metro 100;
 #X obj 49 280 send \$0-arduino;
 #X text 143 197 <-- this is the message format;
 #X text 181 69 strobe all pins -->;
-#X obj 49 134 tgl 15 0 empty empty 0 3 -6 1 12 -260818 -1 -1 0 1;
-#X obj 66 134 tgl 15 0 empty empty 1 3 -6 1 12 -260818 -1 -1 0 1;
-#X obj 49 134 cnv 15 15 15 empty empty Rx 1 10 0 11 -128992 -86277
+#X obj 49 134 tgl 15 0 empty empty 0 3 -6 1 12 #fcac44 #000000 #000000
+0 1 1;
+#X obj 66 134 tgl 15 0 empty empty 1 3 -6 1 12 #fcac44 #000000 #000000
+0 1 1;
+#X obj 49 134 cnv 15 15 15 empty empty Rx 1 10 0 11 #7c7c7c #541010
 0;
-#X obj 66 134 cnv 15 15 15 empty empty Tx 1 10 0 11 -128992 -13381
+#X obj 66 134 cnv 15 15 15 empty empty Tx 1 10 0 11 #7c7c7c #0c4410
 0;
 #X obj 49 510 send \$0-arduino;
 #X text 38 311 You can also send digital messages 8-bits at a time
@@ -175,27 +185,37 @@ to the ground \, you will get random values (0 or 1) - to avoid that
 ;
 #X obj 114 89 route digital;
 #X obj 114 112 route 0 1 2 3 4 5 6 7 8 9 10 11 12 13;
-#X obj 145 134 tgl 15 0 empty empty 2 4 23 1 12 -232448 -1 -1 0 1;
-#X obj 162 134 tgl 15 0 empty empty 3 4 23 1 12 -232448 -1 -1 0 1;
-#X obj 179 134 tgl 15 0 empty empty 4 4 23 1 12 -232448 -1 -1 0 1;
-#X obj 196 134 tgl 15 0 empty empty 5 4 23 1 12 -232448 -1 -1 0 1;
-#X obj 213 134 tgl 15 0 empty empty 6 4 23 1 12 -232448 -1 -1 0 1;
-#X obj 230 134 tgl 15 0 empty empty 7 4 23 1 12 -232448 -1 -1 0 1;
-#X obj 247 134 tgl 15 0 empty empty 8 4 23 1 12 -232448 -1 -1 0 1;
-#X obj 264 134 tgl 15 0 empty empty 9 4 23 1 12 -232448 -1 -1 0 1;
-#X obj 281 134 tgl 15 0 empty empty 10 0 23 1 12 -232448 -1 -1 0 1
-;
-#X obj 298 134 tgl 15 0 empty empty 11 0 23 1 12 -232448 -1 -1 0 1
-;
-#X obj 315 134 tgl 15 0 empty empty 12 0 23 1 12 -232448 -1 -1 0 1
-;
-#X obj 332 134 tgl 15 0 empty empty 13 0 23 1 12 -232448 -1 -1 0 1
-;
-#X obj 111 134 tgl 15 0 empty empty 0 4 23 1 12 -232448 -1 -1 0 1;
-#X obj 128 134 tgl 15 0 empty empty 1 4 23 1 12 -232448 -1 -1 0 1;
-#X obj 111 134 cnv 15 15 15 empty empty Rx 1 10 0 11 -128992 -86277
+#X obj 145 134 tgl 15 0 empty empty 2 4 23 1 12 #e0bcfc #000000 #000000
+0 1 1;
+#X obj 162 134 tgl 15 0 empty empty 3 4 23 1 12 #e0bcfc #000000 #000000
+0 1 1;
+#X obj 179 134 tgl 15 0 empty empty 4 4 23 1 12 #e0bcfc #000000 #000000
+0 1 1;
+#X obj 196 134 tgl 15 0 empty empty 5 4 23 1 12 #e0bcfc #000000 #000000
+0 1 1;
+#X obj 213 134 tgl 15 0 empty empty 6 4 23 1 12 #e0bcfc #000000 #000000
+0 1 1;
+#X obj 230 134 tgl 15 0 empty empty 7 4 23 1 12 #e0bcfc #000000 #000000
+0 1 1;
+#X obj 247 134 tgl 15 0 empty empty 8 4 23 1 12 #e0bcfc #000000 #000000
+0 1 1;
+#X obj 264 134 tgl 15 0 empty empty 9 4 23 1 12 #e0bcfc #000000 #000000
+0 1 1;
+#X obj 281 134 tgl 15 0 empty empty 10 0 23 1 12 #e0bcfc #000000 #000000
+0 1 1;
+#X obj 298 134 tgl 15 0 empty empty 11 0 23 1 12 #e0bcfc #000000 #000000
+0 1 1;
+#X obj 315 134 tgl 15 0 empty empty 12 0 23 1 12 #e0bcfc #000000 #000000
+0 1 1;
+#X obj 332 134 tgl 15 0 empty empty 13 0 23 1 12 #e0bcfc #000000 #000000
+0 1 1;
+#X obj 111 134 tgl 15 0 empty empty 0 4 23 1 12 #e0bcfc #000000 #000000
+0 1 1;
+#X obj 128 134 tgl 15 0 empty empty 1 4 23 1 12 #e0bcfc #000000 #000000
+0 1 1;
+#X obj 111 134 cnv 15 15 15 empty empty Rx 1 10 0 11 #7c7c7c #541010
 0;
-#X obj 128 134 cnv 15 15 15 empty empty Tx 1 10 0 11 -128992 -13381
+#X obj 128 134 cnv 15 15 15 empty empty Tx 1 10 0 11 #7c7c7c #0c4410
 0;
 #X text 12 134 (serial port)->;
 #X connect 0 0 6 0;
@@ -217,20 +237,20 @@ to the ground \, you will get random values (0 or 1) - to avoid that
 #N canvas 268 170 441 343 ANALOG-INPUT 0;
 #X obj 121 70 r \$0-arduino-out;
 #X obj 121 108 spigot 0;
-#X obj 183 105 tgl 20 0 empty empty empty 0 -6 0 8 -258699 -1 -1 0
-1;
+#X obj 183 105 tgl 20 0 empty empty empty 0 -6 0 8 #fc2828 #000000
+#000000 0 1 1;
 #X text 30 24 Analog Inputs of the Arduino-Board:;
 #X text 211 107 <- enable analog inputs;
 #X text 25 283 NOTE: connect the analog pins that you don't use to
 the ground \, if you want to avoid flickering of the values !;
-#X floatatom 22 226 5 0 0 3 a0 - -;
-#X floatatom 68 226 5 0 0 3 a1 - -;
-#X floatatom 114 226 5 0 0 3 a2 - -;
-#X floatatom 160 226 5 0 0 3 a3 - -;
-#X floatatom 206 226 5 0 0 3 a4 - -;
-#X floatatom 252 226 5 0 0 3 a5 - -;
-#X floatatom 298 226 5 0 0 3 a6 - -;
-#X floatatom 344 226 5 0 0 3 a7 - -;
+#X floatatom 22 226 5 0 0 3 a0 - - 0 0 1, f 5;
+#X floatatom 68 226 5 0 0 3 a1 - - 0 0 1, f 5;
+#X floatatom 114 226 5 0 0 3 a2 - - 0 0 1, f 5;
+#X floatatom 160 226 5 0 0 3 a3 - - 0 0 1, f 5;
+#X floatatom 206 226 5 0 0 3 a4 - - 0 0 1, f 5;
+#X floatatom 252 226 5 0 0 3 a5 - - 0 0 1, f 5;
+#X floatatom 298 226 5 0 0 3 a6 - - 0 0 1, f 5;
+#X floatatom 344 226 5 0 0 3 a7 - - 0 0 1, f 5;
 #X obj 121 147 route analog;
 #X obj 121 169 route 0 1 2 3 4 5 6 7;
 #N canvas 0 22 499 396 display 0;
@@ -300,15 +320,15 @@ the ground \, if you want to avoid flickering of the values !;
 #X text 16 17 Analog Output \, PWM (Pulse Width Modulation);
 #X msg 21 189 pwm 9 \$1;
 #X obj 24 168 hsl 150 17 0 1 0 0 empty empty PWM_control_(0-1) -2 -6
-1 10 -260818 -1 -1 0 1;
+1 10 #fcac44 #000000 #000000 0 1 0 1;
 #X obj 21 258 s \$0-arduino;
 #X text 29 215 disable PWM:;
 #X obj 192 168 hsl 150 17 0 1 0 0 empty empty PWM_control_(0-1) -2
--6 1 10 -260818 -1 -1 0 1;
+-6 1 10 #fcac44 #000000 #000000 0 1 0 1;
 #X obj 189 258 s \$0-arduino;
 #X text 197 215 disable PWM:;
 #X obj 354 168 hsl 150 17 0 1 0 0 empty empty PWM_control_(0-1) -2
--6 1 10 -260818 -1 -1 0 1;
+-6 1 10 #fcac44 #000000 #000000 0 1 0 1;
 #X obj 351 258 s \$0-arduino;
 #X text 359 215 disable PWM:;
 #X text 21 133 PIN9:;
@@ -343,7 +363,7 @@ input and output \, as descriped in the following sub-patches:;
 #X text 191 461 <- example of Analog Output;
 #X text 259 30 Arduino Interface For PD;
 #X text 286 4 ::::_PDUINO_::::;
-#X text 476 490 2006 \, released under GNU GPL \; Gerda Strobl \, Georg
+#X text 302 567 2006 \, released under GNU GPL \; Gerda Strobl \, Georg
 Holzmann;
 #X text 111 221 <- list devices;
 #X obj 337 264 send \$0-arduino;
@@ -354,8 +374,8 @@ Holzmann;
 #X msg 147 65 version;
 #X msg 207 65 info;
 #X obj 146 177 route version;
-#X floatatom 146 245 5 0 0 0 - - -;
-#X floatatom 251 245 5 0 0 0 - - -;
+#X floatatom 146 245 5 0 0 0 - - - 0 0 1, f 5;
+#X floatatom 251 245 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 146 146 receive \$0-arduino-out;
 #X obj 147 107 send \$0-arduino;
 #X obj 146 221 unpack float float;
@@ -375,21 +395,21 @@ Holzmann;
 #X obj 59 266 trigger bang anything;
 #X obj 201 286 list;
 #X obj 60 61 tgl 15 0 junk_to_hide_inlet junk_to_hide_outlet 0 5 9
-1 12 -262130 -1 -1 0 1;
+1 12 #fcfcc4 #000000 #000000 0 1 1;
 #X obj 75 61 tgl 15 0 junk_to_hide_inlet junk_to_hide_outlet 1 5 9
-1 12 -262130 -1 -1 0 1;
+1 12 #fcfcc4 #000000 #000000 0 1 1;
 #X obj 90 61 tgl 15 0 junk_to_hide_inlet junk_to_hide_outlet 2 5 9
-1 12 -262130 -1 -1 0 1;
+1 12 #fcfcc4 #000000 #000000 0 1 1;
 #X obj 105 61 tgl 15 0 junk_to_hide_inlet junk_to_hide_outlet 3 5 9
-1 12 -262130 -1 -1 0 1;
+1 12 #fcfcc4 #000000 #000000 0 1 1;
 #X obj 120 61 tgl 15 0 junk_to_hide_inlet junk_to_hide_outlet 4 5 9
-1 12 -262130 -1 -1 0 1;
+1 12 #fcfcc4 #000000 #000000 0 1 1;
 #X obj 135 61 tgl 15 0 junk_to_hide_inlet junk_to_hide_outlet 5 5 9
-1 12 -262130 -1 -1 0 1;
+1 12 #fcfcc4 #000000 #000000 0 1 1;
 #X obj 150 61 tgl 15 0 junk_to_hide_inlet junk_to_hide_outlet 6 5 9
-1 12 -262130 -1 -1 0 1;
+1 12 #fcfcc4 #000000 #000000 0 1 1;
 #X obj 165 61 tgl 15 0 junk_to_hide_inlet junk_to_hide_outlet 7 5 9
-1 12 -262130 -1 -1 0 1;
+1 12 #fcfcc4 #000000 #000000 0 1 1;
 #X msg 59 210 analogIns \$1 \$2;
 #X msg 35 106 0 \$1;
 #X msg 70 106 1 \$1;
@@ -431,11 +451,11 @@ Holzmann;
 #X obj 59 266 trigger bang anything;
 #X obj 201 286 list;
 #X obj 60 61 tgl 15 0 junk_to_hide_inlet ARDUINO_TEST_RESET 0 5 9 1
-12 -260736 -1 -1 0 1;
+12 #fca4fc #000000 #000000 0 1 1;
 #X obj 75 61 tgl 15 0 junk_to_hide_inlet ARDUINO_TEST_RESET 1 5 9 1
-12 -260736 -1 -1 0 1;
+12 #fca4fc #000000 #000000 0 1 1;
 #X obj 90 61 tgl 15 0 junk_to_hide_inlet ARDUINO_TEST_RESET 2 5 9 1
-12 -260736 -1 -1 0 1;
+12 #fca4fc #000000 #000000 0 1 1;
 #X msg 35 106 0 \$1;
 #X msg 70 106 1 \$1;
 #X msg 105 106 2 \$1;
@@ -463,8 +483,8 @@ digital it is controller per 8-pin "port".;
 #X connect 6 0 4 0;
 #X restore 49 533 pd SWITCHING-INPUTS;
 #X msg 358 241 digital 13 \$1;
-#X obj 358 223 tgl 15 0 empty empty empty 0 -6 0 8 -262144 -1 -1 0
-1;
+#X obj 358 223 tgl 15 0 empty empty empty 0 -6 0 8 #fcfcfc #000000
+#000000 0 1 1;
 #X obj 476 70 arduino 1;
 #X msg 58 220 devices;
 #X text 92 194 <- info for current connection;
@@ -473,7 +493,7 @@ digital it is controller per 8-pin "port".;
 #X msg 31 149 open 1;
 #N canvas 0 22 467 240 ver 0;
 #X obj 250 100 cnv 15 145 17 empty \$0-version_cnv empty 4 10 0 12
--203904 -1 0;
+#c4c4fc #000000 0;
 #X obj 23 157 send \$0-version_cnv;
 #X msg 23 132 label \$1;
 #X obj 23 52 zexy/makesymbol firmata_version_%s.%s;
@@ -499,11 +519,11 @@ digital it is controller per 8-pin "port".;
 #X msg 357 189 pinMode 13 output;
 #N canvas 213 217 432 341 SERVO 0;
 #X obj 52 224 hsl 150 17 0 1 0 0 empty empty Servo_control_(0-1) -2
--6 1 10 -260818 -1 -1 0 1;
+-6 1 10 #fcac44 #000000 #000000 0 1 0 1;
 #X obj 49 274 s \$0-arduino;
 #X text 27 141 disable PWM:;
 #X obj 260 224 hsl 150 17 0 1 0 0 empty empty Servo_control_(0-1) -2
--6 1 10 -260818 -1 -1 0 1;
+-6 1 10 #fcac44 #000000 #000000 0 1 0 1;
 #X obj 257 274 s \$0-arduino;
 #X text 235 141 disable PWM:;
 #X text 19 119 PIN9:;
