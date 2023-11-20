@@ -1,6 +1,6 @@
 PD-L2ORK TODO:
 
-*Window list is not working.
+*Window list in the Windows menu is not displaying currently open windows/patches.
 
 *Investigate potential issue with preset_nodes getting all confused after the patch has been edited afterwards (even though patch cords are correctly connected, objects, like the one in Sync-Control.pd inside Tweeter, and more specifically length toggle, are not forwarding data like they should).
 
