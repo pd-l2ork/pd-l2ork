@@ -804,6 +804,7 @@ argc, t_atom *argv)
       *SOLUTION: No, this was something that just got triggered inside Windows. All this was solved by removing joc and rethinking how the cursor capture happens when you have a single array (whether inside GOP or a data structure array, like the one found in all_about_arrays help patch in a data structures subpatch), versus when you have multiple arrays in the same GOP (in which case targetable area is smaller).
   *Having a polygon array with 7 points and point array with 5 points in the same GOP truncates polygon array to 6 points and stretches point array across the entire GOP width. FIXED
   *Fix array dialog. DONE
+*Made autocomplete use prefixes by default. This is considered experimental until the idea is further tested.
 
 
 
