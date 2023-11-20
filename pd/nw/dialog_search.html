@@ -609,7 +609,7 @@ function update_os_specific_layout() {
     //pdgui.post(pdgui.nw_os_is_linux + " " + pdgui.nw_os_is_osx);
     if (pdgui.nw_os_is_linux === 1) {
         document.getElementById("search_text").size = 47;
-        document.getElementById("divider").style.setProperty("margin-top", "0px");
+        //document.getElementById("divider").style.setProperty("margin-top", "0px");
         document.getElementById("backarrow").style.setProperty("top", "0px");
     } else if (pdgui.nw_os_is_osx === 1) {
         document.getElementById("search_text").size = 48;
@@ -1156,7 +1156,7 @@ function doc_search() {
              data-i18n="[title]search.bookmark">
       <hr id="divider" style="
         margin: -8px;
-        margin-top: 5px;
+        margin-top: 0px;
     ">
     </form>
     <div id="results" style="
