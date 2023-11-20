@@ -680,8 +680,9 @@ EXTERN int canvas_path_iterate(t_canvas *x, t_canvas_path_iterator fun,
 
 /* ---- functions on canvasses as objects  --------------------- */
 
-EXTERN void canvas_fattenforscalars(t_canvas *x,
-    int *x1, int *y1, int *x2, int *y2);
+// ico 2023-11-19: this is unused and vanilla 0.54.1 does not have it, either
+//EXTERN void canvas_fattenforscalars(t_canvas *x,
+//    int *x1, int *y1, int *x2, int *y2);
 EXTERN void canvas_visforscalars(t_canvas *x, t_glist *glist, int vis);
 EXTERN int canvas_clicksub(t_canvas *x, int xpix, int ypix, int shift,
     int alt, int dbl, int doit);
@@ -702,7 +703,7 @@ EXTERN void array_resize(t_array *x, int n);
 EXTERN void array_free(t_array *x);
 EXTERN void array_redraw(t_array *a, t_glist *glist);
 EXTERN void array_resize_and_redraw(t_array *array, t_glist *glist, int n);
-extern int array_joc; /* for "jump on click" array inside a graph */
+//extern int array_joc; /* for "jump on click" array inside a graph */
 
 /* --------------------- gpointers and stubs ---------------- */
 EXTERN t_gstub *gstub_new(t_glist *gl, t_array *a);

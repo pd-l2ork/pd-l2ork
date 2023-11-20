@@ -135,7 +135,7 @@ struct _garray
     t_symbol *x_realname;   /* expanded name (symbol we're bound to) */
     char x_usedindsp;       /* true if some DSP routine is using this */
     char x_saveit;          /* true if we should save this with parent */
-    char x_joc;             /* true if we should "jump on click" in a graph */
+    //char x_joc;             /* true if we should "jump on click" in a graph */
     char x_hidename;        /* don't print name above graph */
     int x_style;            /* so much simpler to keep it here */
     t_symbol *x_send;       /* send_changed hook */
@@ -267,10 +267,10 @@ int garray_getname(t_garray *x, t_symbol **namep)
 }
 
     /* find out if array elements should "jump on click" in a graph */
-int garray_joc(t_garray *x)
+/*int garray_joc(t_garray *x)
 {
     return (x->x_joc);
-}
+}*/
 
     /* get a garray's containing glist */
 t_glist *garray_getglist(t_garray *x)
@@ -363,8 +363,16 @@ static int garray_get_largest_array(t_garray *x)
             //}
         }
     }
-    //fprintf(stderr, "has_poly=%d has_other=%d | total_poly=%d total_other=%d | n_array=%d | pre-length=%d ",
-    //        has_poly, has_other, total_poly, total_other, n_array, length);
+    /*
+    // ico 2023-11-19: while this may have been necessary before
+    // now it actually only causes problems. I will keep the code
+    // here for a bit longer until I am sure that the arrays
+    // and data structures (including data structures that have
+    // built-in arrays, are now taken care of. If this indeed
+    // works, as expected, LATER we can vastly simplify this whole
+    // function...
+    post("has_poly=%d has_other=%d | total_poly=%d total_other=%d | n_array=%d | pre-length=%d ",
+            has_poly, has_other, total_poly, total_other, n_array, length);
     if (has_poly && !has_other)
     {
         if (total_other)
@@ -375,7 +383,8 @@ static int garray_get_largest_array(t_garray *x)
         if (total_poly)
             length++;
     }
-    //fprintf(stderr, "post-lenght=%d\n", length);
+    post("post-length=%d", length);
+    */
     return(length);
 }
 
@@ -492,7 +501,7 @@ t_garray *graph_array(t_glist *gl, t_symbol *s, int argc, t_atom *argv)
     saveit = ((flags & 1) != 0);
     x = graph_scalar(gl, name, templatesym, fill, outline, saveit);
     x->x_hidename = ((flags & 8) >> 3);
-    x->x_joc = ((flags & 16) >> 4);
+    //x->x_joc = ((flags & 16) >> 4);
     x->x_style = style;
 
     if (n <= 0)
@@ -568,7 +577,7 @@ int garray_properties(t_garray *x, t_symbol **gfxstubp, t_symbol **namep,
     /* still don't understand this filestyle business... */
     int filestyle = (x->x_style == 0 ? PLOTSTYLE_POLY :
         (x->x_style == 1 ? PLOTSTYLE_POINTS : x->x_style));
-    int flags = x->x_saveit + 2 * filestyle + 8 * x->x_hidename + 16 * x->x_joc;
+    int flags = x->x_saveit + 2 * filestyle + 8 * x->x_hidename/* + 16 * x->x_joc*/;
 
     if (x->x_name->s_name[0] == '$')
     {
@@ -714,7 +723,7 @@ void garray_arraydialog(t_garray *x, t_symbol *s, int argc, t_atom *argv)
         */
 
         int hidename = ((flags & 8) >> 3);
-        int joc = ((flags & 16) >> 4);
+        //int joc = ((flags & 16) >> 4);
 
         /*t_float stylewas = template_getfloat(
         template_findbyname(x->x_scalar->sc_template),
@@ -772,7 +781,7 @@ void garray_arraydialog(t_garray *x, t_symbol *s, int argc, t_atom *argv)
         x->x_send = gensym(buf);
 
         garray_setsaveit(x, (saveit != 0));
-        x->x_joc = joc;
+        //x->x_joc = joc;
         x->x_hidename = hidename;
         x->x_fillcolor = fill;
         x->x_outlinecolor = outline;
@@ -918,12 +927,14 @@ void array_getcoordinate(t_glist *glist,
         *xp1 = *xp1 - 4;
         *xp2 = *xp2 + 4;
         if (wpix < 8) wpix = 8;
+        //post("increase margin");
     }
     *wp = wpix;
-    //post("array_getcoordinate x1=%f x2=%f", *xp1, *xp2);
+    //post("array_getcoordinate x1=%f x2=%f wp=%f glist_topixels=%d",
+    //    *xp1, *xp2, wpix, glist_topixels);
 }
 
-extern int array_joc; /* from g_canvas.h */
+//extern int array_joc; /* from g_canvas.h */
 static t_float array_motion_xcumulative;
 static t_float array_motion_ycumulative;
 static t_fielddesc *array_motion_xfield;
@@ -1101,8 +1112,10 @@ static int array_doclick_element(t_array *array, t_glist *glist,
             (t_word *)((char *)(array->a_vec) + i * elemsize),
             elemtemplate, 0, array,
             glist, usexloc, useyloc,
-            xpix, ypix, shift, alt, dbl, doit))
+            xpix, ypix, shift, alt, dbl, doit)) {
+                //post("...hit -> scalar_doclick");
                 return (hit);
+            }
     }
     return (0);
 }
@@ -1118,7 +1131,7 @@ int array_doclick(t_array *array, t_glist *glist, t_scalar *sc, t_array *ap,
     //post("array_doclick linewidth=%f xloc=%f xinc=%f yloc=%f xpix=%d ypix=%d doit=%d", linewidth, xloc, xinc, yloc, xpix, ypix, doit);
     t_canvas *elemtemplatecanvas;
     t_template *elemtemplate;
-    int elemsize, yonset, wonset, xonset, i;
+    int elemsize, yonset, wonset, xonset, i, clickable_width;
 
     if (!array_getfields(elemtemplatesym, &elemtemplatecanvas,
         &elemtemplate, &elemsize, xfield, yfield, wfield,
@@ -1138,12 +1151,27 @@ int array_doclick(t_array *array, t_glist *glist, t_scalar *sc, t_array *ap,
             // array_getcoordinate
             // so that the smallest hitbox is always at least 8x8--check with
             // all_about_arrays.pd inside custom scalars in an array
-            if (pwpix < 8)
-                pwpix = 8;
+            // ico 2023-11-19: removed this as it causes densely packed arrays
+            // to have multiple points affected by a single click. However,
+            // when we have more than one array inside the same canvas, we need
+            // to give some flexibility. Otherwise, it is near impossible to
+            // hit points inside the array.
+            if (canvas_hasarray(glist) > 1) pwpix = 4;
+            //if (pwpix < 8)
+            //    pwpix = 8;
 
-            if (xpix >= (int)pxpix1-pwpix && xpix <= (int)pxpix2+pwpix &&
-                ((array_joc) ||
-                 (ypix >= pypix-pwpix && ypix <= pypix+pwpix)))
+            //post("has %d arrays pwpix=%f width=%f",
+            //    canvas_hasarray(glist), pwpix, pxpix2 - pxpix1);
+            clickable_width = (int)((pxpix2 - pxpix1) / 2);
+            if (xpix >= (int)pxpix1-clickable_width &&
+                    xpix <= (int)pxpix2+clickable_width &&
+                // if we have multiple arrays in the same window, make array
+                // mouse click restrictive, so that both can be clicked,
+                // otherwise make entire canvas/gop's y axis clickable)
+                (canvas_hasarray(glist) > 1 ?
+                    (ypix >= pypix-pwpix && ypix <= pypix+pwpix) : 1)
+                /*((array_joc) ||
+                 (ypix >= pypix-pwpix && ypix <= pypix+pwpix))*/)
             {
                 best = i;
                 break;
@@ -1152,8 +1180,9 @@ int array_doclick(t_array *array, t_glist *glist, t_scalar *sc, t_array *ap,
         //post("best=%f", best);
         /* this is the arbitrary radius away from the actual object's
            center, originally 8 */
-        if (best == -1 && (array_joc == 0))
+        if (best == -1 /*&& (array_joc == 0)*/)
         {
+            //post("best == -1 and !joc");
             //fprintf(stderr,"best > 8\n");
             if (scalarvis != 0)
             {
@@ -1181,6 +1210,7 @@ int array_doclick(t_array *array, t_glist *glist, t_scalar *sc, t_array *ap,
                 dy = 100;
         }
         else dy2 = dy3 = 100;
+        //post("dy=%d dy2=%d dy3=%d", dy, dy2, dy3);
 #if 0 // this doesn't seem to be used anywhere -ag
         int dx;
         int hit = 0;
@@ -1201,12 +1231,15 @@ int array_doclick(t_array *array, t_glist *glist, t_scalar *sc, t_array *ap,
             array_motion_fatten = -1;
             //fprintf(stderr,"B\n");
         }
-        else if (!array_joc)
+        else
+            array_motion_fatten = 1;
+        /*else if (!array_joc)
         {
             array_motion_fatten = 1;
             //fprintf(stderr,"C\n");
-        }
-        if (doit || (glob_lmclick && array_joc))
+        }*/
+        //post("fatten=%d", array_motion_fatten);
+        if (doit/* || (glob_lmclick && array_joc)*/)
         {
             char *elem = (char *)array->a_vec;
             array_motion_elemsize = elemsize;
@@ -1265,6 +1298,7 @@ int array_doclick(t_array *array, t_glist *glist, t_scalar *sc, t_array *ap,
                 array_motion_lastx = i;
                 array_motion_xperpix *= (xinc == 0 ? 1 : 1./xinc);
             }
+            /*
             if (array_motion_fatten)
             {
                 //fprintf(stderr, "   motion_fatten\n");
@@ -1274,7 +1308,8 @@ int array_doclick(t_array *array, t_glist *glist, t_scalar *sc, t_array *ap,
                         (t_word *)(elem + i * elemsize), 1);
                 array_motion_yperpix *= -array_motion_fatten;
             }
-            else if (yonset >= 0)
+            else */
+            if (yonset >= 0)
             {
                 //fprintf(stderr, "   yonset >=0\n");
                 array_motion_yfield = yfield;
@@ -1523,8 +1558,8 @@ void garray_save(t_gobj *z, t_binbuf *b)
 
     binbuf_addv(b, "sssisiss;", gensym("#X"), gensym("array"),
         x->x_name, array->a_n, &s_float,
-        x->x_saveit + 2 * filestyle + 8*x->x_hidename +
-        16 * x->x_joc, x->x_fillcolor, x->x_outlinecolor);
+        x->x_saveit + 2 * filestyle + 8*x->x_hidename /*+
+        16 * x->x_joc*/, x->x_fillcolor, x->x_outlinecolor);
     garray_savecontentsto(x, b);
 }
 

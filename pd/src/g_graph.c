@@ -15,8 +15,8 @@ to this file... */
 #include <stdio.h>
 #include <string.h>
 
-extern int array_joc;
-int garray_joc(t_garray *x);
+//extern int array_joc;
+//int garray_joc(t_garray *x);
 
 /* ---------------------- forward definitions ----------------- */
 
@@ -195,7 +195,7 @@ int canvas_setdeleting(t_canvas *x, int flag)
     return (ret);
 }
 
-    /* check if canvas has an array and return 1, otherwise return 0
+    /* check if canvas has an array and return number of arrays
     this is used to prevent creation of new objects in an array window */
 int canvas_hasarray(t_canvas *x)
 {
@@ -205,8 +205,7 @@ int canvas_hasarray(t_canvas *x)
     {
         if (pd_class(&g->g_pd) == garray_class) 
         {
-            hasarray = 1;
-            break;
+            hasarray++;
         }
         g = g->g_next;
     }
@@ -1971,7 +1970,9 @@ static int graph_click(t_gobj *z, struct _glist *glist,
                 // use doit = 0, just to see if we are within the hitbox
                 // then we act on the topmost garray below after the
                 // passthrough call.
-                array_joc = garray_joc((t_garray *)y);
+                // ico 2023-11-19: disabling joc everywhere since
+                // it is not needed anymore
+                //array_joc = 0; //garray_joc((t_garray *)y);
                 if (gobj_click(y, x, xpix, ypix, shift, alt, 0, 0))
                 {
                     clickme = y;
@@ -2026,11 +2027,11 @@ static int graph_click(t_gobj *z, struct _glist *glist,
                 //post("...clickme");
                 canvas_setcursor(glist_getcanvas(x), clickreturned);
             }
-            else if (!array_joc)
+            /*else if (!array_joc)
             {
                 //post("...!array_joc");
                 canvas_setcursor(glist_getcanvas(x), CURSOR_RUNMODE_NOTHING);
-            }
+            }*/
         }
         return (clickreturned); 
     }

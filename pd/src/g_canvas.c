@@ -27,7 +27,7 @@ to be different but are now unified except for some fossilized names.) */
 t_garray *array_garray;
 t_class *preset_hub_class;
 t_class *preset_node_class;
-int array_joc;
+//int array_joc;
 
 extern int do_not_redraw;
 extern void canvas_drawconnection(t_canvas *x, int lx1, int ly1, int lx2, int ly2, t_int tag, int issignal);

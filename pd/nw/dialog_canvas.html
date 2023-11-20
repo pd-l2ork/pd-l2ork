@@ -199,13 +199,6 @@
               <span data-i18n="canvas.prop.array_save"></span>
             </label>
             <br/>
-            <label class="array-jump"
-                   data-i18n="[title]canvas.prop.array_jump_tt">
-              <input onchange="flag_change(this);"
-                     type="checkbox" name="array_jump" value="on">
-              <span data-i18n="canvas.prop.array_jump"></span>
-            </label>
-            <br/>
 
             <span style="position: relative; top: 4px;" data-i18n="canvas.prop.array_style"></span>
             <br/>
@@ -391,10 +384,6 @@ function flag_change(elem) {
             flag &= ~(1 << 1); // ... and style bit 1 ...
             flag += (2 * value); // set them
             break;
-        case "array_jump":
-            flag &= ~(1 << 4);
-            flag += (16 * value);
-            break;
     }
     array_attr.array_flags = flag;
 }
@@ -480,9 +469,6 @@ function array_choose(array_index) {
                     // save contents
                     elem = document.getElementsByName("array_save")[0];
                     elem.checked = (value & 1) != 0;
-                    // jump on click
-                    elem = document.getElementsByName("array_jump")[0];
-                    elem.checked = (value & 16) != 0;
                     // draw style
                     style_opts = document.getElementsByName("array_style");
                     style_index = (value & 6) >> 1;

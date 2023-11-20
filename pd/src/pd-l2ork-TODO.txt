@@ -1,9 +1,10 @@
 PD-L2ORK TODO:
 
+*Window list is not working.
+
 *Investigate potential issue with preset_nodes getting all confused after the patch has been edited afterwards (even though patch cords are correctly connected, objects, like the one in Sync-Control.pd inside Tweeter, and more specifically length toggle, are not forwarding data like they should).
 
-*Clean up array modification via mouse so that only one point is affected, as opposed to several adjacent ones.
-  *Add bezier curve drawing ability to the arrays (currently displaying them as polygons).
+*Add bezier curve drawing ability to the arrays (currently displaying them as polygons).
 
 *Investigate increase in crashes when manipulating ggee/image and working with Tweeter 0.78.
   *Could it have been the Sync-Controls.pd having erroneously 2 invisible k12 preset_hubs? No idea how this happened.
@@ -18,17 +19,6 @@ PD-L2ORK TODO:
   *Consider porting the whole front-end to electron instead (SIGH...).
 
 *Touch interface is greatly limited in edit mode. Handles are too small and behavior inconsistent. iemgui label needs to be tapped, then moved (at least we now take the entire handle to treat it as xy movable). cnv has a very narrow and invisible area for selection. GOP frame is probably also too narrow for per-axis dragging. Changing width of a text object does not work consistently, likely due to redrawing of the object (unlike iemguis that update their properties without redrawing). Editmode and right-click menu are inaccessible. etc.
-
-
-
-*Windows only:
-  *Investigate Gem not showing while L2Ork Tweeter is open.
-    *Likely due to multiple screens?
-  *Data structure game not allowing for the sprite to be selected after L2Ork Tweeter has been opened (most of the time).
-  *Investigate weird zoom when selecting all objects in the game.pd and then pressing up creates a weird zoom.
-    *All of these appear to be Windows-specific and may have something to do with Windows not explicitly terminating dynamically allocated strings, which may result in a mangled message being sent to the front-end.
-      *TODO: get a printout of messages going to the front-end and check if the recent game.pd fix has any effect on this issue.
-    *Looks also like it may be linked to the Windows version of the nwjs 0.67.1.
 
 *doc/manuals/2.image: looks like on Windows lighting does not work always and destroying window in one of the early examples does not work. This is obsolete documentation that should be ignored. Should we remove this altogether?
 
@@ -803,6 +793,17 @@ argc, t_atom *argv)
 *Fixed regression where OSX was not able to cut/copy/paste inside a text object.
 *Made sure that the invisible preset_hub native to each patch is always invisible and unselectable/uneditable.
 *Fixed strange occurrence of 2 invisible preset_hub objects inside the patch. Could this have been a reason for some of the crashes?
+*Refined browser search bar margins on Windows.
+*Clean up array modification via mouse so that only one point is affected, as opposed to several adjacent ones. DONE
+  *Figure out why on Windows the bbox for arrays gets corrupt after several patches have been opened. See test.pd where if the parent patch array does not have joc (jump-on-click) enabled, the subpatch data structure is editable. Otherwise, the the subpatch data structure has a wrong bbox and is therefore not selectable and selecting all and displacing causes weird zoom/behavior. This is all also noted in the following TODO items that are now grouped here.
+    *Data structure game not allowing for the sprite to be selected after L2Ork Tweeter has been opened (most of the time).
+    *Investigate weird zoom when selecting all objects in the game.pd and then pressing up creates a weird zoom.
+      *All of these appear to be Windows-specific and may have something to do with Windows not explicitly terminating dynamically allocated strings, which may result in a mangled message being sent to the front-end.
+        *TODO: get a printout of messages going to the front-end and check if the recent game.pd fix has any effect on this issue.
+    *Looks also like it may be linked to the Windows version of the nwjs 0.67.1?
+      *SOLUTION: No, this was something that just got triggered inside Windows. All this was solved by removing joc and rethinking how the cursor capture happens when you have a single array (whether inside GOP or a data structure array, like the one found in all_about_arrays help patch in a data structures subpatch), versus when you have multiple arrays in the same GOP (in which case targetable area is smaller).
+  *Having a polygon array with 7 points and point array with 5 points in the same GOP truncates polygon array to 6 points and stretches point array across the entire GOP width. FIXED
+  *Fix array dialog. DONE
 
 
 

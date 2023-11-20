@@ -408,7 +408,7 @@ void scalar_getbasexy(t_scalar *x, t_float *basex, t_float *basey)
     *basey = template_getfloat(template, gensym("y"), x->sc_vec, 0);
 }
 
-extern int array_joc;
+//extern int array_joc;
 
 extern void template_notifyforscalar(t_template *template, t_glist *owner,
     t_scalar *sc, t_symbol *s, int argc, t_atom *argv);
@@ -460,7 +460,7 @@ static void scalar_getgrouprect(t_glist *owner, t_glist *groupcanvas,
 static void scalar_getrect(t_gobj *z, t_glist *owner,
     int *xp1, int *yp1, int *xp2, int *yp2)
 {
-    //post("scalar_getrect joc=%d", array_joc);
+    //post("scalar_getrect");// joc=%d", array_joc);
     t_scalar *x = (t_scalar *)z;
 
     t_template *template = template_findbyname(x->sc_template);
@@ -474,11 +474,11 @@ static void scalar_getrect(t_gobj *z, t_glist *owner,
     // with "jump on click" enabled TODO: test for other regressions
     // (there should not be any
     // provided the global variable array_joc is properly maintained)
-    if (glist_istoplevel(owner) && array_joc)
+    /*if (glist_istoplevel(owner) && array_joc)
     {
         x1 = -0x7fffffff, y1 = -0x7fffffff, x2 = 0x7fffffff, y2 = 0x7fffffff;
     }
-    else
+    else*/
     {
         scalar_getbasexy(x, &basex, &basey);
             /* if someone deleted the template canvas, we're just a point */
@@ -569,7 +569,7 @@ static void scalar_getrect(t_gobj *z, t_glist *owner,
 
     /*
     post("COMPUTED FINAL scalar_getrect "
-        "x1 %g y1 %g x2 %g y2 %g\n",
+        "x1 %f y1 %f x2 %f y2 %f",
         screenx1,
         screeny1,
         screenx2,
@@ -1383,6 +1383,7 @@ int scalar_doclick(t_word *data, t_template *template, t_scalar *sc,
 
     if (templatecanvas)
     {
+        //post("scalar_doclick -> groupclick");
         if (!(obj = templatecanvas->gl_list)) return 0;
         hit = scalar_groupclick(templatecanvas, data, template, sc, ap,
                     owner, xloc, yloc, xpix, ypix,

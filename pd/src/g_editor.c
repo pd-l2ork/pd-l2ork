@@ -86,7 +86,7 @@ extern t_class *text_class;
 //    int *xp2, int *yp2);
 // ico 2021-11-16: from s_file.c
 extern int sys_curved_cords;
-extern int garray_joc(t_garray *x);
+//extern int garray_joc(t_garray *x);
 
 static int canvas_find_index1, canvas_find_index2, canvas_find_wholeword,
            canvas_num_found = 0;
@@ -3996,7 +3996,7 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
                     // use doit = 0, just to see if we are within the hitbox
                     // then we act on the topmost garray below after the
                     // passthrough call.
-                    array_joc = garray_joc((t_garray *)y);
+                    //array_joc = garray_joc((t_garray *)y);
                     if (gobj_click(y, x, xpos, ypos, shiftmod,
                         (altmod && (!x->gl_edit)) || ctrlmod, 0, 0))
                     {
