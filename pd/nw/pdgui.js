@@ -452,6 +452,7 @@ function add_doc_details_to_index(filename, data) {
 // GB: This does an initial scan of help patches, recording filename, title and
 // parent dir, without looking at the meta data.
 function add_doc_to_index(err, filename, stat) {
+    //post("add_doc_to_index " + err + " " + filename + " " + stat);
     if (!err) {
         if (filename.slice(-8) === "-help.pd") {
             try {
@@ -460,10 +461,18 @@ function add_doc_to_index(err, filename, stat) {
                     "id": filename,
                     "title": title
                 })
+                // ico 2023-11-20: EXPERIMENTAL addition of prefix to
+                // objects that are not in the extra path to ensure they
+                // are successfully created regardless the pd-l2ork's
+                // path option
+                let completion_title = defunkify_windows_path(filename).
+                                       replace(lib_dir + "/extra/", "").
+                                       slice(0, -8);;
+                //post("completion_title=" + completion_title);
                 if (obj_exact_match(title).length===0) {
                     completion_index.add({
                         "occurrences" : 0,
-                        "title" : title,
+                        "title" : completion_title,
                         "args" : []
                     });
                 }
@@ -708,6 +717,7 @@ exports.build_index = build_index;
 
 // normally, this doesn't actually rebuild the index, it just clears it, so
 // that it will be rebuilt the next time the help browser is opened
+// then, there is the force option, that also rebuilds it right away
 function rebuild_index(force)
 {
     //post("rebuild_index force=" + force);
