@@ -2,12 +2,13 @@ PD-L2ORK TODO:
 
 *Window list in the Windows menu is not displaying currently open windows/patches.
 
-*Investigate potential issue with preset_nodes getting all confused after the patch has been edited afterwards (even though patch cords are correctly connected, objects, like the one in Sync-Control.pd inside Tweeter, and more specifically length toggle, are not forwarding data like they should).
+*Investigate potential issue with preset_nodes and/or patch connections getting all confused after the patch has been edited afterwards (even though patch cords are visually correctly connected, objects, like the one in Sync-Control.pd inside Tweeter, and more specifically length toggle, are not forwarding data like they should).
 
 *Add bezier curve drawing ability to the arrays (currently displaying them as polygons).
 
 *Investigate increase in crashes when manipulating ggee/image and working with Tweeter 0.78.
   *Could it have been the Sync-Controls.pd having erroneously 2 invisible k12 preset_hubs? No idea how this happened.
+    *Looks like this has vastly improved the stability. However, opening and closing L2OrkTweet patch still crashes sometimes.
 
 *Opening meta subpatch inside any patch (here, specifically netserver-help.pd) and then closing it, and then reopening it again, keeps moving the patch window downwards. May be only affecting Linux, which also exhibits this problem when opening the main Pd-L2Ork window (see index.js for an ugly hack fix that works around this nwjs 0.67.1 bug).
 
@@ -811,7 +812,7 @@ argc, t_atom *argv)
 
 
 TWEETER TODO:
-*REGRESSION: with the latest changes, solo does not work in offline mode.
+*Deal with sync issues when one user tries to sync with another using one of the mouse multiclick options that are invoked by clicking on the instrument/part number the user wishes to sync with.
 
 *Still need to figure out how to prevent heavy network traffic from causing dropouts. May just want to implement a server-side message that disallows further connections? What if someone gets disconnected?
 
@@ -820,8 +821,6 @@ TWEETER TODO:
 *Del is by default also moving pattern?
   No. Just when the shift is held and focus lost is when things break down.
   Consider resetting keyboard modifiers on refocus?
-
-*Deal with sync issues when one user tries to sync with another using one of the mouse multiclick options that are invoked by clicking on the instrument/part number the user wishes to sync with.
 
 *When trying to load a pattern that does not exist (after having successfully loaded one that does), the main level goes to zero.
 
@@ -958,6 +957,12 @@ TWEETER DONE:
   *Code clean-up.
 *In offline mode, enable keyboard and other input for multiple tracks. Consider using the mouse focus by utilizing invisible ggee/image to make focus switching easier.
   *This was also resolved in 0.78.
+*0.79:
+  *Fixed bug where Sync-Controls did not allow for decimal tempo value.
+  *Fixed bug where L2OrkTweet was failing to update overdrive and instrument name.
+*0.80:
+  *Fixed regression where solo did not work in offline mode. Now, when user clicks on another part to enable solo, they also automatically switch to that part being their primary. For group soloing users will want to use future event automation.
+  *Set the stage for future automation by introducing offline-messages receive in network-io subpatch.
 
 
 

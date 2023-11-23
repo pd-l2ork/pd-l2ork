@@ -9,6 +9,10 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+23-11-2023 0.80
+*Fixed regression where solo did not work in offline mode. Now, when user clicks on another part to enable solo, they also automatically switch to that part being their primary. For group soloing users will want to use future event automation.
+*Set the stage for future automation by introducing offline-messages receive in network-io subpatch.
+
 16-11-2023 0.79
 *Fixed bug where Sync-Controls did not allow for decimal tempo value.
 *Fixed bug where L2OrkTweet was failing to update overdrive and instrument name.
