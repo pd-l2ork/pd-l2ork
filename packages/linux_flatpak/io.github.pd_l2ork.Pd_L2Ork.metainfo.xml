@@ -50,6 +50,13 @@
   <url type="bugtracker">https://github.com/pd-l2ork/pd-l2ork/issues</url>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="20231129" type="stable" date="2023-11-29">
+      <description>
+        <p>
+          Exclusive focus fixes (affects gatom, numbox), Tweeter 0.80 with numerous bug-fixes and improvements (see Tweeter CHANGELOG.txt for more info).
+        </p>
+      </description>
+    </release>
     <release version="20231121" type="stable" date="2023-11-21">
       <description>
         <p>
