@@ -10871,9 +10871,58 @@ exports.restore_apps = restore_apps;
 // LATER: consider using this for other purposes, as well
 var gobj_grabbed = {};
 
-function gui_gobj_grabbed(cid, val) {
+// ico 2023-11-29: way to keep global state of modifiers
+// so that when we release focus we send the latest state
+// to pd (this is an issue if an object was focused with
+// exclusive focus enabled, in which case, the release
+// of these modifiers may be passed only onto the focused
+// object and pd will then be stuck thinking that they
+// continue to be pressed)
+var grab_shift = 0;
+var grab_ctrl = 0;
+var grab_alt = 0;
+var grab_exclusive = 0;
+
+function gui_gobj_grabbed(cid, val, exclusive, ctrl, alt, shift) {
     gobj_grabbed[cid] = val;
     //post("gui_gobj_grabbed "+cid+" "+gobj_grabbed[cid]);
+    //post("gui_gobj_grabbed " + val + " shift=" + grab_shift
+    //     + " ctrl=" + grab_ctrl + " alt=" + grab_alt);
+    if (val) {
+        grab_ctrl = ctrl;
+        grab_alt = alt;
+        grab_shift = shift;
+        grab_exclusive = exclusive;
+    }
+    // now send fake ctrl + alt + shift command to pd
+    // to ensure its awareness of keypresses is in sync
+    // this is because if an object like gatom has had
+    // an exclusive focus, then the shift keyup would
+    // have been sent only to that object, not the entire
+    // pd.
+    if (!val && grab_exclusive) {
+        if (grab_alt !== alt) {
+            if (alt === 1) {
+                pdsend(cid, "key", 1, "Alt", shift, 1, 0);
+            } else {
+                pdsend(cid, "key", 0, "Alt", shift, 1, 0);
+            }
+        }
+        if (grab_ctrl !== ctrl) {
+            if (ctrl === 1) {
+                pdsend(cid, "key", 1, "Control", shift, 1, 0);
+            } else {
+                pdsend(cid, "key", 0, "Control", shift, 1, 0);
+            }
+        }
+        if (grab_shift !== shift) {
+            if (shift === 1) {
+                pdsend(cid, "key", 1, "Shift", shift, 1, 0);
+            } else {
+                pdsend(cid, "key", 0, "Shift", shift, 1, 0);
+            }
+        }
+    }
 }
 
 exports.gui_gobj_grabbed = gui_gobj_grabbed;

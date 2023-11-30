@@ -410,20 +410,30 @@ void glist_retext(t_glist *glist, t_text *y)
 // exclusive flag only applies to keyboard events (keyfn and keynameafn)
 // as of right now I cannot think of a scenario where mouse motion should be
 // exclusive to a single object.
+// 2023-11-29 ico: here we also reference g_editor.c's global states of keys
+// this allows us to update key states in case grab was exclusive, which
+// may have caused some of the key releases to be lost to the general pd
+// state, as they were only forwarded to the object with exclusive focus
+extern int glob_shift;
+extern int glob_ctrl;
+extern int glob_alt;
+
 void glist_grab(t_glist *x, t_gobj *y, t_glistmotionfn motionfn, t_glistkeyfn keyfn,
     t_glistkeynameafn keynameafn, int xpos, int ypos, int exclusive)
 {
-    //fprintf(stderr,"glist_grab\n");
+    //post("glist_grab exclusive=%d", exclusive);
     t_glist *x2 = glist_getcanvas(x);
     if (motionfn)
     {
         x2->gl_editor->e_onmotion = MA_PASSOUT;
-        gui_vmess("gui_gobj_grabbed", "xi", x, 1);
+        gui_vmess("gui_gobj_grabbed", "xiiiii", x, 1,
+            exclusive, glob_ctrl, glob_alt, glob_shift);
     }
     else
     {
         x2->gl_editor->e_onmotion = 0;
-        gui_vmess("gui_gobj_grabbed", "xi", x, 0);
+        gui_vmess("gui_gobj_grabbed", "xiiiii", x, 0,
+            exclusive, glob_ctrl, glob_alt, glob_shift);
     }
     x2->gl_editor->e_grab = y;
     x2->gl_editor->e_motionfn = motionfn;
@@ -434,7 +444,8 @@ void glist_grab(t_glist *x, t_gobj *y, t_glistmotionfn motionfn, t_glistkeyfn ke
     x2->gl_editor->exclusive = exclusive;
 }
 
-// change glist_grab exclusive flag separate from the rest
+// change glist_grab exclusive flag separately
+// from the rest of the glist_grab vars
 // only do so if e_grab is not null
 //  1 = enable exclusive focus
 //  0 = disable exclusive focus
