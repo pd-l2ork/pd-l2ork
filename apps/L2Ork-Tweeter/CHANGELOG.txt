@@ -9,9 +9,13 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
-23-11-2023 0.80
+29-11-2023 0.80
 *Fixed regression where solo did not work in offline mode. Now, when user clicks on another part to enable solo, they also automatically switch to that part being their primary. For group soloing users will want to use future event automation.
 *Set the stage for future automation by introducing offline-messages receive in network-io subpatch.
+*Fixed imperfect sync issues when one user tries to sync with another using one of the mouse multiclick options that are invoked by clicking on the instrument/part number the user wishes to sync with.
+*Del is by default also moving pattern?
+  No. Just when the shift is held and focus lost is when things break down.
+  Consider resetting keyboard modifiers on refocus? No. This was a bug fixed on 2023-11-29 that pertained to exclusive focus of gatoms, where shift release was not received by pd because it was only passed onto the gatom with exclusive focus.
 
 16-11-2023 0.79
 *Fixed bug where Sync-Controls did not allow for decimal tempo value.

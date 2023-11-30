@@ -44,8 +44,8 @@ f 37;
 0;
 #X obj 549 30 nbx 4 15 1 9999 0 0 \$0-store-loop \$0-store-loop-r empty
 -64 5 0 12 #fcb46c #000000 #000000 1 256 0 1 1 0;
-#X obj 549 45 nbx 4 15 1 9999 0 0 \$0-recall-loop \$0-recall-loop-r
-empty -64 5 0 12 #80fc80 #000000 #000000 1 256 0 1 1 0;
+#X obj 549 45 nbx 4 15 1 9999 0 1 \$0-recall-loop \$0-recall-loop-r
+empty -64 5 0 12 #80fc80 #000000 #000000 11 256 0 1 1 0;
 #X obj 414 30 cnv 8 10 8 empty empty STORE\ LOOP\ (shift+1-0) -1 5
 0 10 #6c6c6c #fcfcfc 0;
 #X obj 408 45 cnv 8 10 8 empty empty RECALL\ LOOP\ (shift+q-p) -1 5
@@ -1610,23 +1610,23 @@ delay and did a proper bug fix for version 0.76., f 31;
 #X connect 9 0 6 0;
 #X connect 10 0 1 0;
 #X restore 283 52 pd version;
-#N canvas 876 180 894 714 local-copy-logic 0;
+#N canvas 640 196 894 714 local-copy-logic 0;
 #X obj 22 22 r local-copyfrom-mode;
 #X obj 210 22 r local-copyfrom-data;
 #X obj 210 125 route 0;
 #X obj 210 47 list trim;
-#X obj 235 453 list prepend;
-#X obj 304 429 r myclientnum;
-#X obj 235 476 s network-in;
+#X obj 139 447 list prepend;
+#X obj 208 425 r myclientnum;
+#X obj 139 469 s network-in;
 #X floatatom 22 47 5 0 0 0 - - - 0 0 1, f 5;
-#X obj 118 381 route preset;
-#X obj 199 381 route preset-all;
-#X obj 304 381 route loop;
-#X obj 373 381 route loop-all;
-#X obj 118 359 gate 1 0;
-#X obj 199 359 gate 1 0;
-#X obj 304 359 gate 1 0;
-#X obj 373 359 gate 1 0;
+#X obj 22 381 route preset;
+#X obj 103 381 route preset-all;
+#X obj 208 381 route loop;
+#X obj 297 381 route loop-all;
+#X obj 22 359 gate 1 0;
+#X obj 103 359 gate 1 0;
+#X obj 208 359 gate 1 0;
+#X obj 297 359 gate 1 0;
 #X obj 156 220 t 1 0 0 0;
 #X obj 217 220 t 0 0 1 0;
 #X obj 278 220 t 1 0 1 0;
@@ -1652,7 +1652,7 @@ only for clients other than our own., f 46;
 #X obj 400 220 t 0 0 1 1 b;
 #X msg 647 637 \; \$1-copyfrom-tracker-position \$2;
 #X msg 776 566 \$1;
-#X obj 518 267 r local-copyfrom-client-num;
+#X obj 520 267 r local-copyfrom-client-num;
 #X text 49 545 Copyfrom modes: 1 - single click - loop-all only (sync)2
 - double click - loop3 - triple click - loop+loop-all4 - quadruple
 click - everything5 - shift + single click - preset6 - shift + double
@@ -1667,6 +1667,13 @@ click - preset-all only7 - shift + triple click - preset+preset-all8
 #X obj 776 522 > 1;
 #X obj 716 465 t a a a;
 #X obj 776 588 route float;
+#X obj 324 425 r local-copyfrom-client-num;
+#X obj 342 447 r myclientnum;
+#X obj 297 403 route tracker-time;
+#X obj 297 425 t b;
+#X obj 297 447 f;
+#X obj 297 469 pack 0 0;
+#X msg 297 491 \; \$1-copyfrom-tracker-position \$2;
 #X connect 0 0 7 0;
 #X connect 1 0 3 0;
 #X connect 2 1 15 1;
@@ -1680,7 +1687,7 @@ click - preset-all only7 - shift + triple click - preset+preset-all8
 #X connect 8 0 4 0;
 #X connect 9 0 4 0;
 #X connect 10 0 4 0;
-#X connect 11 0 4 0;
+#X connect 11 0 47 0;
 #X connect 12 0 8 0;
 #X connect 13 0 9 0;
 #X connect 14 0 10 0;
@@ -1745,6 +1752,12 @@ click - preset-all only7 - shift + triple click - preset+preset-all8
 #X connect 43 1 41 1;
 #X connect 43 2 40 0;
 #X connect 44 0 29 1;
+#X connect 45 0 49 1;
+#X connect 46 0 50 1;
+#X connect 47 0 48 0;
+#X connect 48 0 49 0;
+#X connect 49 0 50 0;
+#X connect 50 0 51 0;
 #X restore 153 52 pd local-copy-logic;
 #N canvas 727 338 450 252 init 0;
 #X obj 24 84 tosymbol;
