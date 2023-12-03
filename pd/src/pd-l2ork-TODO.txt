@@ -3,6 +3,8 @@ PD-L2ORK TODO:
 *Implement Windows list in the Windows menu.
 
 *Investigate potential issue with preset_nodes and/or patch connections getting all confused after the patch has been edited afterwards (even though patch cords are visually correctly connected, objects, like the one in Sync-Control.pd inside Tweeter, and more specifically length toggle, are not forwarding data like they should).
+  *Explore if "select all" also selects invisible preset_hub k12, which could explain how two of them found their way into sync-control patch (select all, cut, paste into a new patch that already has it).
+    *No, this should not be a problem since glist_select filters selection of the preset_hub.
 
 *Add bezier curve drawing ability to the arrays (currently displaying them as polygons).
 

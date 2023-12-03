@@ -500,12 +500,12 @@ void glist_select(t_glist *x, t_gobj *y)
     {
         //fprintf(stderr,"have editor\n");
 #ifdef PDL2ORK
-        // exception: if we are in K12 mode and preset_hub is hidden,
+        // exception: if preset_hub is hidden,
         // do not select it
         if (y->g_pd == preset_hub_class)
         {
-            //fprintf(stderr,"glist_select do not select invised preset_hub
-            //in K12 mode\n");
+            //fprintf(stderr,"glist_select do not select invised
+            // preset_hub\n");
             t_preset_hub *ph = (t_preset_hub *)y;
             if (ph->ph_invis > 0) return;
         }
