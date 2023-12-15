@@ -4,6 +4,78 @@ const filter = document.getElementById("filter");
 let currentFile = "";
 let subscribedData = {};
 
+//CONSTANTS IMPORTED FROM g_vumeter.c, lines 25-61
+let vu_colors = [
+    16579836, 10526880, 4210752, 16572640, 16572608,
+    16579784, 14220504, 14220540, 14476540, 16308476,
+    14737632, 8158332, 2105376, 16525352, 16559172,
+    15263784, 1370132, 2684148, 3952892, 16003312,
+    12369084, 6316128, 0, 9177096, 5779456,
+    7874580, 2641940, 17488, 5256, 5767248
+];
+let vu_valmap =
+[
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+    4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+    5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+    6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
+    7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
+    8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+    9, 9, 9, 9, 9,10,10,10,10,10,
+    11,11,11,11,11,12,12,12,12,12,
+    13,13,13,13,14,14,14,14,15,15,
+    15,15,16,16,16,16,17,17,17,18,
+    18,18,19,19,19,20,20,20,21,21,
+    22,22,23,23,24,24,25,26,27,28,
+    29,30,31,32,33,33,34,34,35,35,
+    36,36,37,37,37,38,38,38,39,39,
+    39,39,39,39,40,40
+];
+let vu_colmap =
+[
+    0,17,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,
+    15,15,15,15,15,15,15,15,15,15,14,14,13,13,13,13,13,13,13,13,13,13,13,19,19,19
+];
+let vu_scale_str = [
+    "<-99", "-50", "-30", "-20", "-12", "-6",
+      "-2", "-0dB",  "+2",  "+6",">+12",  "",
+];
+let object_types = [
+    '#X obj',
+    '#N canvas',
+    '#X text',
+    '#X msg',
+    '#X floatatom',
+    '#X symbolatom',
+    '#X dropdown'
+];
+//END CONSTANTS
+
+
+
+//For Arrays/Graphs/Data Structures
+//
+//low - The coordinate on the low end of screenspace (top or left)
+//high - The coordinate on the high end of screenspace (bottom or right)
+//span - The distance in screenspace between low and high (width or height)
+//coord/screen - the coordinate to convert (x or y)
+function coordToScreen(low, high, span, coord) {
+    let raw = (coord - Math.min(low, high)) * (span + 2) / Math.abs(low - high);
+    return Math.round(high > low ? raw : span - raw);
+}
+function screenToCoord(low, high, span, screen) {
+    let raw = high > low ? screen : span - screen;
+    return raw * Math.abs(low - high) / (span + 2) + Math.min(low, high);   
+}
+
 // create an AudioContext
 const audioContextList = [];
 (function () {
@@ -326,6 +398,7 @@ var Module = {
                     switch (data.type) {
                         case "bng":
                             gui_bng_update_circle(data);
+                            Module.pd.sendBang(data.send);
                             break;
                         case "tgl":
                             data.value = value;
@@ -340,6 +413,19 @@ var Module = {
                         case "hradio":
                             data.value = Math.min(Math.max(Math.floor(value), 0), data.number - 1);
                             gui_radio_update_button(data);
+                            if(data.send)
+                                Module.pd.sendFloat(data.send, data.value);
+                            break;
+                        case "flatgui/knob":
+                            data.value = Math.max(Math.min(value,data.maximum),data.minimum);
+                            configure_item(data.extracircle, gui_knob_extracircle(data));
+                            configure_item(data.line, gui_knob_line(data));
+                            if(data.send)
+                                Module.pd.sendFloat(data.send, data.value);
+                            break;
+                        case "vu":
+                            data.value = value;
+                            gui_vumeter_update_bars(data);
                             if(data.send)
                                 Module.pd.sendFloat(data.send, data.value);
                             break;
@@ -380,6 +466,15 @@ var Module = {
                         case "hradio":
                             data.value = Math.min(Math.max(Math.floor(list[0]), 0), data.number - 1);
                             gui_radio_update_button(data);
+                            if(data.send)
+                                Module.pd.sendFloat(data.send, data.value);
+                            break;
+                        case "vu":
+                            if(list[0] !== 0 || list[1] === 0)
+                                data.value = list[0];
+                            data.peak = list[1];
+                            gui_vumeter_update_bars(data);
+                            configure_item(data.line, gui_vumeter_line(data));
                             if(data.send)
                                 Module.pd.sendFloat(data.send, data.value);
                             break;
@@ -1003,12 +1098,15 @@ function set_midiapi(val) {
 }
 
 //--------------------- gui handling ----------------------------
-function create_item(type, args, canvas) {
+function create_item(type, args, canvas, before) {
     var item = document.createElementNS("http://www.w3.org/2000/svg", type);
     if (args !== null) {
         configure_item(item, args);
     }
-    canvas.appendChild(item);
+    if(before)
+        canvas.insertBefore(before, item);
+    else
+        canvas.appendChild(item);
     return item;
 }
 
@@ -1060,30 +1158,33 @@ function colfromload(col) { // decimal to hex color
 }
 
 function gui_subscribe(data) {
-    if(!data.receive)
-        return;
-    if (data.receive in subscribedData) {
-        subscribedData[data.receive].push(data);
-    }
-    else {
-        subscribedData[data.receive] = [data];
-        Module.pd.subscribe(data.receive);
+    for(let receive of data.receive) {
+        if (receive in subscribedData) {
+            if(!subscribedData[receive].find(sub=>sub.id === data.id))
+                subscribedData[receive].push(data);
+        }
+        else {
+            subscribedData[receive] = [data];
+            Module.pd.subscribe(receive);
+        }
     }
 }
 
 function gui_unsubscribe(data) {
     if(!data.receive)
         return;
-    if (data.receive in subscribedData) {
-        const len = subscribedData[data.receive].length;
-        for (let i = 0; i < len; i++) {
-            if (subscribedData[data.receive][i].id === data.id) {
-                Module.pd.unsubscribe(data.receive);
-                subscribedData[data.receive].splice(i, 1);
-                if (!subscribedData[data.receive].length) {
-                    delete subscribedData[data.receive];
+    for(let receive of data.receive) {
+        if (receive in subscribedData) {
+            const len = subscribedData[receive].length;
+            for (let i = 0; i < len; i++) {
+                if (subscribedData[receive][i].id === data.id) {
+                    subscribedData[receive].splice(i, 1);
+                    if (!subscribedData[receive].length) {
+                        Module.pd.unsubscribe(receive);
+                        delete subscribedData[receive];
+                    }
+                    break;
                 }
-                break;
             }
         }
     }
@@ -1722,6 +1823,125 @@ function gui_knob_onmouseup(id) {
     }
 }
 
+
+//VuMeter
+function gui_vumeter_box(data) {
+    return {
+        x: data.x_pos,
+        y: data.y_pos,
+        width: data.width,
+        height: data.height,
+        stroke: '#000',
+        fill: data.bg_color,
+        id: data.id + '_box',
+    };
+}
+function gui_vumeter_col(i) {
+    return `#${vu_colors[vu_colmap[vu_colmap.length - i - 2]].toString(16)}`;
+}
+function gui_vumeter_unitheight(data) {
+    return ((data.height - 2) / (vu_colmap.length - 3));
+}
+function gui_vumeter_index(value) {
+    return vu_valmap[Math.round((Math.min(12,Math.max(-100,value)) + 100) * 2)];
+}
+function gui_vumeter_bars(data) {
+    let result = [];
+    let unitHeight = gui_vumeter_unitheight(data);
+    let index = gui_vumeter_index(data.value);
+    for(let i = 1; i < vu_colmap.length - 2; i++) {
+        result.push({
+            x1: data.x_pos + data.width * .25 + 1,
+            x2: data.x_pos + data.width * .75,
+            y1: data.y_pos + unitHeight * (i - .5), 
+            y2: data.y_pos + unitHeight * (i - .5),
+            stroke: gui_vumeter_col(i),
+            'stroke-width': unitHeight - 1,
+            id: `${data.id}_bar_${i}`,
+            opacity: vu_colmap.length - i - 2 <= index ? 1 : 0
+        });
+    }
+    return result;
+}
+function gui_vumeter_update_bars(data) {
+    let bars = gui_vumeter_bars(data);
+    for(let i=0; i<bars.length; i++)
+        configure_item(data.bars[i], bars[i]);
+}
+function gui_vumeter_line(data) {
+    let index = vu_colmap.length - 2 - gui_vumeter_index(data.peak);
+    let unitHeight = gui_vumeter_unitheight(data);
+    return {
+        x1: data.x_pos + 1,
+        y1: data.y_pos + unitHeight * (index - .5),
+        x2: data.x_pos + data.width - 1,
+        y2: data.y_pos + unitHeight * (index - .5),
+        stroke: gui_vumeter_col(index),
+        "stroke-width": unitHeight - 1,
+        id: `${data.id}_line`
+    }
+}
+function gui_vumeter_scale(data) {
+    let result = [];
+    let unitHeight = gui_vumeter_unitheight(data);
+    for(let i = 0; i < (vu_colmap.length - 2) / 4; i++) {
+        result.push({
+            x: data.x_pos + data.width + 3,
+            y: data.y_pos + unitHeight * i * 4 + 1,
+            "font-family": iemgui_fontfamily(data.font),
+            "font-weight": "normal",
+            "font-size": `${data.fontsize}px`,
+            fill: '#000',
+            transform: `translate(0, ${data.fontsize / 2 * 0.6})`, // note: modified
+            id: `${data.id}_scale_${i}`,
+            class: 'unclickable',
+            textContent: vu_scale_str[Math.ceil((vu_colmap.length - 2) / 4) - i - 1]
+        });
+    }
+    return result;
+}
+function gui_vumeter_label(data) {
+    return gui_text(data);
+}
+
+
+//Arrays
+const gui_array_touches = {};
+function gui_array_onmousedown(data, e, id) {
+    let p = gui_mousepoint(e, data.canvas);
+    let x = Math.floor(screenToCoord(data.coords.l, data.coords.r, data.coords.w, p.x)) + 1;
+    let y = screenToCoord(data.coords.t, data.coords.b, data.coords.h, p.y);
+    if((data.jumpOnClick || Math.abs(p.y - coordToScreen(data.coords.t, data.coords.b, data.coords.h, data.nums[x])) < 2) && x < data.nums.length - 1) {
+        data.nums[x] = Math.max(Math.min(data.coords.t, data.coords.b), Math.min(Math.max(data.coords.t, data.coords.b), y));
+        data.lastx = x;
+        data.redraw();
+        if(!gui_array_touches[id])
+            gui_array_touches[id] = [];
+        gui_array_touches[id].push(data);
+    }
+}
+function gui_array_onmousemove(e, id) {
+    if(id in gui_array_touches) {
+        for(let data of gui_array_touches[id]) {
+            let p = gui_mousepoint(e, data.canvas);
+            p.x = Math.floor(screenToCoord(data.coords.l, data.coords.r, data.coords.w, p.x)) + 1;
+            p.y = screenToCoord(data.coords.t, data.coords.b, data.coords.h, p.y);
+            let start = data.lastx;
+            let end = Math.min(data.nums.length - 1, Math.max(0, p.x));
+            let refy = (start == data.nums.length - 1 && end >= start) ? p.y : data.nums[data.lastx];
+            for(let i = Math.min(start, end); i <= Math.max(start,end); i++)
+                data.nums[i] = Math.max(Math.min(data.coords.t, data.coords.b), Math.min(Math.max(data.coords.t, data.coords.b), (refy + (p.y - refy) * (Math.abs(i - start) / Math.max(1,Math.abs(end - start))))));
+            data.lastx = end;
+            data.redraw();
+        }
+    }
+}
+function gui_array_onmouseup(id) {
+    if(id in gui_array_touches) {
+        delete gui_array_touches[id];
+    }
+}
+
 // drag events
 if (isMobile) {
     window.addEventListener("touchmove", function (e) {
@@ -1729,6 +1949,7 @@ if (isMobile) {
         for (const touch of e.changedTouches) {
             gui_slider_onmousemove(touch, touch.identifier);
             gui_knob_onmousemove(touch, touch.identifier);
+            gui_array_onmousemove(touch, touch.identifier);
         }
     });
     window.addEventListener("touchend", function (e) {
@@ -1736,6 +1957,7 @@ if (isMobile) {
         for (const touch of e.changedTouches) {
             gui_slider_onmouseup(touch.identifier);
             gui_knob_onmouseup(touch.identifier);
+            gui_array_onmouseup(touch.identifier);
         }
     });
     window.addEventListener("touchcancel", function (e) {
@@ -1743,6 +1965,7 @@ if (isMobile) {
         for (const touch of e.changedTouches) {
             gui_slider_onmouseup(touch.identifier);
             gui_knob_onmouseup(touch.identifier);
+            gui_array_onmouseup(touch.identifier);
         }
     });
 }
@@ -1751,14 +1974,17 @@ else {
         e = e || window.event;
         gui_slider_onmousemove(e, 0);
         gui_knob_onmousemove(e, 0);
+        gui_array_onmousemove(e, 0);
     });
     window.addEventListener("mouseup", function (e) {
         gui_slider_onmouseup(0);
         gui_knob_onmouseup(0);
+        gui_array_onmouseup(0);
     });
     window.addEventListener("mouseleave", function (e) {
         gui_slider_onmouseup(0);
         gui_knob_onmouseup(0);
+        gui_array_onmouseup(0);
     });
 }
 
@@ -1922,22 +2148,29 @@ async function openPatch(content, filename) {
         guiObjects: [], //Will hold the GUI object data in the current canvas, used to reassign sends/receives when wires are read.
         graph: 1,
         fontSize: 12,
+        coordObjs: [],
+        args: [],
+        arrays: [],
         id: 0,          //ID of the current canvas (used to uniquely assign wire names)
         objId: -1,      //Next objectID for the current canvas (used in conjunction with guiObjects to keep track of objects for assigning wires)
     };
     let canvasStack = [];   //Used to store parent canvases while working on a child canvas
     let currentCanvas = {}; //The current canvas being rendered
     let lines = content.split(";\n");
-
-    for (let i=0; i < lines.length; i++) {
+    currentCanvas.objId--;
+    for (let i = 0; i < lines.length; i++) {
         //Some lexical lines are split between two physical lines in the file, so we must remove all newlines
         //Then we split by " " to seperate the line into arguments
-        let args = lines[i].replace(/[\r\n]+/g, " ").trim().split(" ");
+        //We also replace escaped $ with real $ since $ has no meaning on the web version
+        let args = lines[i].replace(/[\r\n]+/g, " ").trim().split(',')[0].replace(/\\\$/g,'$').split(" ");
         //Sometimes, we need a space in an argument, and this is signified by "\ ".
         //Therefore, we must combines the arguments which end with a \ and re-add the whitespace
         for(let i=0;i<args.length;i++)
             while(args[i].endsWith("\\"))
                 args.splice(i,2,`${args[i].slice(0,-1)} ${args[i+1]}`);
+
+        if(object_types.find(type=>lines[i].startsWith(type)))
+            currentCanvas.objId++;
 
         //Now we switch based on the type of line (first two arguments)
         switch (args.slice(0,2).join(' ')) {
@@ -1945,29 +2178,57 @@ async function openPatch(content, filename) {
                 if(canvasStack.length == 0) {
                     nextCanvas.canvas.setAttributeNS(null, "viewBox", `0 0 ${+args[4]} ${+args[5]}`);
                 } else {
-                    currentCanvas.objId++;
                     nextCanvas.group = create_item('g', {id: `gobj_${nextId++}`}, currentCanvas.canvas);
+                    nextCanvas.group.style.display = 'none';
                     nextCanvas.canvas = document.createElementNS("http://www.w3.org/2000/svg", 'svg');
                     configure_item(nextCanvas.canvas, {id: `svg_${nextId++}`});
                 }
                 nextCanvas.fontSize = +args[args.length - 1] || currentCanvas.fontSize;
                 canvasStack.push(currentCanvas);
                 currentCanvas = nextCanvas;
-                nextCanvas = JSON.parse(JSON.stringify(currentCanvas));;
+                //We need to Parse and Stringify so that we get a deep copy, not just a reference. Otherwise, everything will break
+                nextCanvas = JSON.parse(JSON.stringify(currentCanvas)); 
                 nextCanvas.id++;
 
                 break;
             case "#X coords":
-                if(args.length > 8) {
+                if(args.length > 8 && canvasStack.length > 1) {
                     currentCanvas.showTitle = +args[8] == 1;
                     currentCanvas.coords = {
-                        left: args[2],
-                        top: args[3],
-                        right: args[4],
-                        bottom: args[5],
-                    }       
+                        l: +args[2],
+                        t: +args[3],
+                        r: +args[4],
+                        b: +args[5],
+                        w: +args[6] - 2,
+                        h: +args[7] - 2
+                    }
+
+                    let coordObjs = currentCanvas.coordObjs;
+                    if(coordObjs.length) {
+                        currentCanvas.clicktarget = create_item('rect', {x: 0, y: 0, width: currentCanvas.coords.w, height: currentCanvas.coords.h, fill: '#00000000'}, currentCanvas.canvas);
+                        if (isMobile) {
+                            currentCanvas.clicktarget.addEventListener("touchstart", function (e) {
+                                e = e || window.event;
+                                for (const touch of e.changedTouches)
+                                    for(let coordObj of coordObjs)
+                                        coordObj.onmousedown(coordObj, touch, touch.identifier);
+                            });
+                        }
+                        else {
+                            currentCanvas.clicktarget.addEventListener("mousedown", function (e) {
+                                e = e || window.event;
+                                for(let coordObj of coordObjs)
+                                    coordObj.onmousedown(coordObj, e, 0);
+                            });
+                        }
+                    }
+
+                    for(let coordObj of coordObjs) {
+                        coordObj.setCoords(currentCanvas.coords);
+                        coordObj.redraw();
+                    }
                     configure_item(currentCanvas.group, {width: +args[6], height: +args[7]});
-                    configure_item(currentCanvas.canvas, {width: +args[6], height: +args[7]});
+                    configure_item(currentCanvas.canvas, {width: +args[6] - 2, height: +args[7] - 2});
                     if(+args[8] > 0) {
                         currentCanvas.border = create_item('rect', {
                             width: +args[6] - 1,
@@ -1976,26 +2237,51 @@ async function openPatch(content, filename) {
                             stroke: 'black',
                             id: `border_${nextId++}`
                         }, currentCanvas.group);
-                        currentCanvas.canvas.setAttributeNS(null, "viewBox", `${+args[9]} ${+args[10]} ${+args[6]} ${+args[7]}`);
-
-                    } else
-                        currentCanvas.group.style.display = 'none';
+                        currentCanvas.group.style.display = 'block';
+                        currentCanvas.canvas.setAttributeNS(null, "viewBox", `${+args[9] || 0} ${+args[10] || 0} ${+args[6]} ${+args[7]}`);
+                    }
                 }
                 break;
             case "#X restore":
                 if(args.length > 3) {
-                    configure_item(currentCanvas.canvas, {x: +args[2], y: +args[3]});
+                    configure_item(currentCanvas.canvas, {x: +args[2] + 1, y: +args[3] + 1});
                     configure_item(currentCanvas.border, {x: +args[2] + .5, y: +args[3] + .5})
+                    if(currentCanvas.arrays.length > 0)
+                        currentCanvas.group.appendChild(currentCanvas.canvas);
                     if(currentCanvas.showTitle) {
-                        console.log(currentCanvas.fontSize);
-                        let text = create_item("text", gui_text_text({
-                            x_pos: +args[2],
-                            y_pos: +args[3],
-                            id: `title_${nextId++}`
-                        }, 0, currentCanvas.fontSize), currentCanvas.group);
-                        text.textContent = args.slice(4).join(' ');
+                        if(currentCanvas.arrays.length > 1) {
+                            for(let i = 0; i < currentCanvas.arrays.length; i++) {
+                                let legend = create_item("rect", {
+                                    x: +args[2] + 4,
+                                    y: +args[3] + 3.9 + 13 * i,
+                                    width: 10,
+                                    height: 10,
+                                    fill: currentCanvas.arrays[i].color,
+                                    stroke: '#000',
+                                    id: `title_legend_${nextId}_${i}`
+                                }, currentCanvas.group)
+                                let text = create_item("text", gui_text_text({
+                                    x_pos: +args[2] + 17,
+                                    y_pos: +args[3] - 1.5,
+                                    id: `title_${nextId}_${i}`,
+                                }, i, currentCanvas.fontSize), currentCanvas.group);
+                                text.textContent = currentCanvas.arrays[i].name;
+                                nextId++;
+                            }
+                        } else  {
+                            let text = create_item("text", gui_text_text({
+                                x_pos: +args[2],
+                                y_pos: +args[3],
+                                id: `title_${nextId++}`
+                            }, 0, currentCanvas.fontSize), currentCanvas.group);
+                            if(currentCanvas.arrays.length)
+                                text.textContent = currentCanvas.arrays[0].name;
+                            else
+                                text.textContent = args.slice(4).join(' ');
+                        }
                     }
-                    currentCanvas.group.appendChild(currentCanvas.canvas);
+                    if(currentCanvas.arrays.length == 0)
+                        currentCanvas.group.appendChild(currentCanvas.canvas);
                     currentCanvas = canvasStack.pop();
                 }
                 break;
@@ -2004,7 +2290,9 @@ async function openPatch(content, filename) {
                     currentCanvas.canvas.style.overflow='visible';
                 break;
             case "#X obj":
-                currentCanvas.objId++;
+                for(let i = 0; i < currentCanvas.args.length; i++)
+                    args = args.map(arg => arg.replace(new RegExp(`(?<!\\\\)\\$${i+1}`,`g`),currentCanvas.args[i]));
+                lines[i] = args.join` `;
                 if (args.length > 4) {
                     switch (args[4]) {
                         case "adc~":
@@ -2031,7 +2319,7 @@ async function openPatch(content, filename) {
                                 data.interrupt = parseInt(args[7]);
                                 data.init = parseInt(args[8]);
                                 data.send = args[9] === "empty" ? null : args[9];
-                                data.receive = args[10] === "empty" ? null : args[10];
+                                data.receive = args[10] === "empty" ? [] : [args[10]];
                                 data.label = args[11] === "empty" ? "" : args[11];
                                 data.x_off = parseInt(args[12]);
                                 data.y_off = parseInt(args[13]);
@@ -2077,7 +2365,7 @@ async function openPatch(content, filename) {
                                 data.size = parseInt(args[5]);
                                 data.init = parseInt(args[6]);
                                 data.send = args[7] === "empty" ? null : args[7];
-                                data.receive = args[8] === "empty" ? null : args[8];
+                                data.receive = args[8] === "empty" ? [] : [args[8]];
                                 data.label = args[9] === "empty" ? "" : args[9];
                                 data.x_off = parseInt(args[10]);
                                 data.y_off = parseInt(args[11]);
@@ -2129,7 +2417,7 @@ async function openPatch(content, filename) {
                                 data.log = parseInt(args[9]);
                                 data.init = parseInt(args[10]);
                                 data.send = args[11] === "empty" ? null : args[11];
-                                data.receive = args[12] === "empty" ? null : args[12];
+                                data.receive = args[12] === "empty" ? [] : [args[12]];
                                 data.label = args[13] === "empty" ? "" : args[13];
                                 data.x_off = parseInt(args[14]);
                                 data.y_off = parseInt(args[15]);
@@ -2183,7 +2471,7 @@ async function openPatch(content, filename) {
                                 data.init = parseInt(args[7]);
                                 data.number = parseInt(args[8]) || 1;
                                 data.send = args[9] === "empty" ? null : args[9];
-                                data.receive = args[10] === "empty" ? null : args[10];
+                                data.receive = args[10] === "empty" ? [] : [args[10]];
                                 data.label = args[11] === "empty" ? "" : args[11];
                                 data.x_off = parseInt(args[12]);
                                 data.y_off = parseInt(args[13]);
@@ -2238,7 +2526,7 @@ async function openPatch(content, filename) {
                                 data.init = parseInt(args[10]);
                 
                                 data.send = args[11] === "empty" ? null : args[11];
-                                data.receive = args[12] === "empty" ? null : args[12];
+                                data.receive = args[12] === "empty" ? [] : [args[12]];
                                 data.label = args[13] === "empty" ? "" : args[13];
                                 data.x_off = parseInt(args[14]);
                                 data.y_off = parseInt(args[15]);
@@ -2253,14 +2541,14 @@ async function openPatch(content, filename) {
                                 data.dial_width = parseFloat(args[24]);
                                 data.off_width = parseFloat(args[25]);
                                 data.on_width = parseFloat(args[26]);
-                                data.value = data.init ? data.default_value : 0;
+                                data.value = data.init ? data.default_value : data.minimum;
                                 data.id = `${data.type}_${nextId++}`;
                                 data.canvas = currentCanvas.canvas;
 
 
                                 data.circle = create_item("path", gui_knob_circle(data), data.canvas);
-                                data.line = create_item("line", gui_knob_line(data), data.canvas);
                                 data.extracircle = create_item("path", gui_knob_extracircle(data), data.canvas);
+                                data.line = create_item("line", gui_knob_line(data), data.canvas);
                                 data.text = create_item("text", gui_knob_text(data), data.canvas);
                                 data.clicktarget = create_item("rect", gui_knob_clicktarget(data), data.canvas);
                                 data.text.textContent = data.label;
@@ -2289,6 +2577,48 @@ async function openPatch(content, filename) {
 
                             }
                             break;
+                        case "vu":
+                            if (args.length >= 17) {
+                                const data = {};
+                                data.x_pos = +args[2];
+                                data.y_pos = +args[3];
+                                data.type = args[4];
+                                data.width = +args[5];
+                                data.height = +args[6];
+                                data.receive = args[7] === 'empty' ? [] : [args[7]];
+                                data.label = args[8] === 'empty' ? '' : args[8];
+                                data.x_off = +args[9];
+                                data.y_off = +args[10];
+                                data.font = +args[11];
+                                data.fontsize = +args[12];
+                                data.bg_color= isNaN(args[13]) ? args[13] : parseInt(args[13]);
+                                data.label_color = isNaN(args[14]) ? args[14] : parseInt(args[14]);
+                                data.scale = +args[15];
+                                data.unknown = +args[16];
+                                data.id = `${data.type}_${nextId++}`;
+                                data.canvas = currentCanvas.canvas;
+                                data.value = 0;
+                                data.peak = -101
+
+                                //create svg
+                                data.box = create_item('rect', gui_vumeter_box(data), data.canvas);
+                                data.text = create_item('text', gui_vumeter_label(data), data.canvas);
+                                data.text.textContent = data.label;
+                                data.line = create_item('line', gui_vumeter_line(data), data.canvas);
+                                data.bars = [];
+                                for(let bar of gui_vumeter_bars(data)) {
+                                    data.bars.push(create_item('line', bar, data.canvas));
+                                }
+                                data.scale = [];
+                                for(let line of gui_vumeter_scale(data)) {
+                                    data.scale.push(create_item('text', line, data.canvas));
+                                    data.scale[data.scale.length - 1].textContent = line.textContent;
+                                }
+
+                                gui_subscribe(data);
+                                currentCanvas.guiObjects[currentCanvas.objId] = data;
+
+                            }
                         case "cnv":
                             if (args.length >= 18) {
                                 const data = {};
@@ -2299,7 +2629,7 @@ async function openPatch(content, filename) {
                                 data.width = parseInt(args[6]);
                                 data.height = parseInt(args[7]);
                                 data.send = args[8] === "empty" ? null : args[8];
-                                data.receive = args[9] === "empty" ? null : args[9];
+                                data.receive = args[9] === "empty" ? [] : [args[9]];
                                 data.label = args[10] === "empty" ? "" : args[10];
                                 data.x_off = parseInt(args[11]);
                                 data.y_off = parseInt(args[12]);
@@ -2324,10 +2654,11 @@ async function openPatch(content, filename) {
 
                         default: //If we don't have an explicit handling for the object, it's possible that it is an external patch load
                             //We want to load patch data from the same folder as our current patch, just with a different filename at the end.
-                            let data = await getPatchData(`${(new URLSearchParams(window.location.search)).get('url').split('/').slice(0,-1).join('/')}${args[4]}.pd`);
+                            let data = await getPatchData(`${((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')}/${args[4]}.pd`);
                             //If the data starts with a #, it is a patch. Otherwise, either the patch does not exist, or this is a non-gui object, and in either case we can ignore it.
                             if(data.content.charAt(0) == '#') {
                                 //We must add an #X restore at the end to undo the #N canvas at the beginning
+                                nextCanvas.args = args.slice(5);
                                 lines.splice(i,1,...data.content.split(';\n'),`#X restore ${args[2]} ${args[3]} ${args[4]}`);
                                 //Since we removed the line that we just processed, our subpatch starts at line i, so we have to process line i again.
                                 i--;
@@ -2337,8 +2668,86 @@ async function openPatch(content, filename) {
                     }
                 }
                 break;
+            case "#X array":
+                if(args.length > 7) {
+                    currentCanvas.arrays.push({
+                        name: args[2],
+                        color: args[7],
+                    });
+                    let data = {}
+                    data.type = args[1];
+                    data.name = args[2];
+                    data.size = +args[3];
+                    data.valtype = args[4];
+                    data.jumpOnClick = +args[5] > 15;
+                    data.displayMode = Math.floor((+args[5] % 16) / 2);
+                    //displayMode:
+                    //0 - polygon
+                    //1 - points
+                    //2 - bezier curve
+                    //3 - bar graph
+                    data.fillColor = args[6];
+                    data.outlineColor = args[7];
+                    data.id = `array_${nextId++}`;
+                    data.canvas = currentCanvas.canvas;
+                    if(lines[i+1].startsWith('#A '))
+                        data.nums = lines[++i].replace(/\n/g,' ').split(' ').slice(1).map(num=>+num);
+                    else
+                        data.nums = (new Array(data.size)).fill(0);
+                    data.path = create_item('path', {id: data.id, stroke:data.outlineColor, "stroke-width": "1", fill: 'none'}, data.canvas);
+                    data.setCoords = coords => {
+                        data.coords = coords;
+                    }
+                    data.redraw = () => {
+                        let path = data.displayMode % 2 ? '' : 'M ';
+                        let c = data.coords;
+                        let lastX = -1;
+                        for(let i = 0; i < data.nums.length - 1; i++) {
+                            let curX = coordToScreen(c.l,c.r,c.w,i);
+                            if(curX != lastX) {
+                                lastX = curX;
+                                if(data.displayMode == 0 || data.displayMode == 2)
+                                    path += `${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i+1])} `;
+                                if(data.displayMode == 1)
+                                    path += `M ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i+1])} H ${coordToScreen(c.l,c.r,c.w,i+1) - 1} V ${coordToScreen(c.t,c.b,c.h,data.nums[i+1])+1} H ${curX} Z `;
+                                if(data.displayMode == 3)
+                                    path += `M ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i+1])} H ${coordToScreen(c.l,c.r,c.w,i+1)} V ${c.h + 2} H ${curX} Z `;
+                            }
+                        }
+                        if(data.displayMode == 3)
+                            configure_item(data.path, {fill: data.fillColor});
+                        configure_item(data.path,{d: path});
+                    }
+                    data.onmousedown = gui_array_onmousedown;
+                    data.onmouseup = gui_array_onmouseup;
+                    data.onmousemove = gui_array_onmousemove;
+
+
+                    data.clicktarget = create_item('rect', { 
+                        x:0, 
+                        y:0, 
+                        fill: '#00000000'
+                    }, data.canvas);
+
+                    if (isMobile) {
+                        data.clicktarget.addEventListener("touchstart", function (e) {
+                            e = e || window.event;
+                            for (const touch of e.changedTouches) {
+                                gui_array_onmousedown(data, touch, touch.identifier);
+                            }
+                        });
+                    }
+                    else {
+                        data.clicktarget.addEventListener("mousedown", function (e) {
+                            e = e || window.event;
+                            gui_array_onmousedown(data, e, 0);
+                        });
+                    }
+
+                    currentCanvas.coordObjs.push(data);                    
+                }
+                break;
             case "#X text":
-                currentCanvas.objId++;
                 if (args.length > 4) {
                     const data = {};
                     data.type = args[1];
@@ -2346,7 +2755,7 @@ async function openPatch(content, filename) {
                     data.y_pos = parseInt(args[3]);
                     data.comment = [];
                     data.canvas = currentCanvas;
-                    const lines = args.slice(4).join(" ").replace(/ \\,/g, ",").replace(/\\; /g, ";\n").replace(/ ;/g, ";").split("\n");
+                    const lines = args.slice(4).join(" ").replace(/ \\,/g, ",").replace(/\\; /g, ";\n").replace(/ ;/g, ";").replace(//,'\n').split("\n");
                     for (const line of lines) {
                         const lines = line.match(/.{1,60}(\s|$)/g);
                         for (const line of lines) {
@@ -2364,6 +2773,68 @@ async function openPatch(content, filename) {
                     }
                 }
                 break;
+            case "#X msg":
+                if(args.length > 3) {
+                    const data = {};
+                    data.type = args[1];
+                    data.x_pos = +args[2];
+                    data.y_pos = +args[3];
+                    data.text = args.slice(4).join(' ');
+                    data.id = `${data.type}_${nextId++}`;
+                    data.objId = currentCanvas.objId;
+                    data.receive = [];
+                    data.send = 'test';
+                    data.canvas = currentCanvas.canvas;
+
+                    let nextObjId = currentCanvas.objId, nextSlot = i, depth = 0;
+                    for(;lines[nextSlot].startsWith('#X connect') == false || depth > 0; nextSlot++) {
+                        if(object_types.find(type=>lines[nextSlot].startsWith(type)) && depth == 0)
+                            nextObjId++;
+                        if(lines[nextSlot].startsWith('#N canvas'))
+                            depth++;
+                        if(lines[nextSlot].startsWith('#X restore'))
+                            depth--;
+                    }
+                    lines.splice(nextSlot, 0, `#X obj 0 0 r msg_${data.objId}`,`#X connect ${nextObjId} 0 ${currentCanvas.objId} 0`);
+
+                    //create svg
+                    data.svgText = create_item("text", {
+                        transform: `translate(2.5)`,
+                        x: data.x_pos,
+                        y: data.y_pos + font_height_map()[currentCanvas.fontSize] + gobj_font_y_kludge(currentCanvas.fontSize),
+                        "shape-rendering": "crispEdges",
+                        "font-size": pd_fontsize_to_gui_fontsize(currentCanvas.fontSize) + "px",
+                        "font-weight": "normal",
+                        id: `${data.id}_text`,
+                        class: "unclickable",
+                    }, rootCanvas);
+                    data.svgText.textContent = data.text;
+                    
+                    let width = data.svgText.getComputedTextLength() + 5, height = font_height_map()[currentCanvas.fontSize] + 4;
+                    data.border = create_item('path', {
+                        id: data.id,
+                        stroke:'#00000000',
+                        "stroke-width": "1",
+                        fill: '#d9d9d9',
+                        d: `M ${data.x_pos} ${data.y_pos} h ${width+4} l -4 4 v ${height-8} l 4 4 H ${data.x_pos} V ${data.y_pos}`
+                    }, data.canvas);
+                    try {
+                        rootCanvas.removeChild(data.svgText);
+                        currentCanvas.canvas.appendChild(data.svgText);
+                    } catch (e) {}
+
+                    if (isMobile) {
+                        data.border.addEventListener("touchstart", function (e) {
+                            Module.pd.sendBang(`msg_${data.objId}`);
+                        });
+                    }
+                    else {
+                        data.border.addEventListener("mousedown", function (e) {
+                            Module.pd.sendBang(`msg_${data.objId}`);
+                        });
+                    }
+                }
+                break;
             case "#X connect":
                 if (args.length > 5) {
                     //First we generate a unique name for our wireless send/receive, just in case we need to make one.
@@ -2371,41 +2842,56 @@ async function openPatch(content, filename) {
                     //Otherwise, we generate a name based off of the arguments of the connect (which will be unique)
                     let connectionName = 
                         currentCanvas.guiObjects[args[2]]?.send ||
-                        currentCanvas.guiObjects[args[4]]?.receive ||
                         `__WIRE_${currentCanvas.id}_${args[2]}_${args[3]}_${args[4]}_${args[5]}`;
                         
                     if( currentCanvas.guiObjects[args[2]] && !currentCanvas.guiObjects[args[4]]) {
                         //If the sender is a gui object, and the receiver is not, we must add a receive object so that the
                         //sender can send wirelessly. Then we connect the receive object to the receiver, and the sender wirelessly to the receive object
-                        lines.splice(i--,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${currentCanvas.objId + 1} 0 ${args[4]} ${args[5]}`)
-                        currentCanvas.guiObjects[args[2]].send = connectionName;
+                        if(args[3] == '0') {
+                            lines.splice(i+1,0,`#X obj 0 0 r ${connectionName}`,`#X connect ${currentCanvas.objId + 1} 0 ${args[4]} ${args[5]}`)
+                            currentCanvas.guiObjects[args[2]].send = connectionName;
+                        } else
+                            console.warn('Ignoring unsupported wired connection (Code A)'); //This should never happen
                     }
-                    if(!currentCanvas.guiObjects[args[2]] && currentCanvas.guiObjects[args[4]]) {
+                    if(!currentCanvas.guiObjects[args[2]] && currentCanvas.guiObjects[args[4]] && args[5] === '0') {
                         //If the receiver is a gui object, and the sender is not, we must add a send object so that the receiver
                         //can receive wirelessly. Then we connect the send object to the sender, and the receiver wirelessly to the send object
-                        lines.splice(i--,1,`#X obj 0 0 s ${connectionName}`,`#X connect ${args[2]} ${args[3]} ${currentCanvas.objId + 1} 0`);
-                        currentCanvas.guiObjects[args[4]].receive = connectionName;
+                        lines.splice(i+1,0,`#X obj 0 0 s ${connectionName}`,`#X connect ${args[2]} ${args[3]} ${currentCanvas.objId + 1} 0`);
+                        currentCanvas.guiObjects[args[4]].receive.push(connectionName);
                         gui_subscribe(currentCanvas.guiObjects[args[4]]);
                     }
-                    if(currentCanvas.guiObjects[args[2]]&&currentCanvas.guiObjects[args[4]]) {
+                    if(currentCanvas.guiObjects[args[2]] && currentCanvas.guiObjects[args[4]] && args[5] === '0') {
                         //If both the sender and receiver are gui objects, we can directly set their sends and receives
                         //Theoretically, they should only have 1 input/output, so the input/output id should always be 0
-                        if(args[3] === '0' && args[5] === '0') {
-                            if(currentCanvas.guiObjects[args[2]].send && currentCanvas.guiObjects[args[4]].receive) {
-                                //If both objects are already transmitting/receiving wirelessly, one of them is going to get overwritten
-                                //by this algorithm. I need to implement multi-receive to fix this.
-                                console.error('Multi-Receive not implemented, connection not made');
-                            } else {
-                                currentCanvas.guiObjects[args[2]].send = connectionName;
-                                currentCanvas.guiObjects[args[4]].receive = connectionName;
-                                gui_subscribe(currentCanvas.guiObjects[args[4]]);
-                            }
+                        if(args[3] === '0') {
+                            currentCanvas.guiObjects[args[2]].send = connectionName;
+                            currentCanvas.guiObjects[args[4]].receive.push(connectionName);
+                            gui_subscribe(currentCanvas.guiObjects[args[4]]);
                         } else
-                            console.warn('Ignoring invalid wired connections between GUI Objects');
+                            console.warn('Ignoring unsupported wired connection (Code B)')
+                    }
+                    if(args[5] !== '0' && currentCanvas.guiObjects[args[4]]) {
+                        if(args[5] === '1') {
+                            lines.splice(i+1,0,
+                                `#X obj 0 0 pack`,
+                                `#X obj 0 0 t b a`,
+                                `#X obj 0 0 s ${connectionName}`,
+                                `#X connect ${currentCanvas.objId + 2} 0 ${currentCanvas.objId + 1} 0`,
+                                `#X connect ${currentCanvas.objId + 2} 1 ${currentCanvas.objId + 1} 1`,
+                                `#X connect ${currentCanvas.objId + 1} 0 ${currentCanvas.objId + 3} 0`,
+                                `#X connect ${args[2]} ${args[3]} ${currentCanvas.objId + 2} 0`
+                            );
+                            currentCanvas.guiObjects[args[4]].receive.push(connectionName);
+                            gui_subscribe(currentCanvas.guiObjects[args[4]]);
+                        } else
+                            console.warn('Ignoring unsupported wired connection (Code C');
                     }
                 }
         }
     }
+
+    document.getElementById('loadingstage').innerHTML=`Starting PD Engine`;
+    await new Promise(resolve => setTimeout(resolve, 10));
 
     if (nextCanvas.id == 0)
         return alert("The main canvas not found in the pd file.");
@@ -2453,11 +2939,15 @@ function uploadPatch(file) {
     reader.readAsArrayBuffer(file);
 }
 
+
+let cachedData = {};
 async function getPatchData(url) {
-    const options = { method: "GET" };
-    const res = await fetch(`/api/patch/?url=${url}`, options);
-    const json = await res.json();
-    return json;
+    if(!cachedData[url]) {
+
+        document.getElementById('loadingstage').innerHTML=`Fetching ${url.slice(0,-3)}`;
+        cachedData[url] = await (await fetch(`/api/patch/?url=${url}`,{method: 'GET'})).json();
+    }
+    return cachedData[url];
 }
 
 // called after Module.mainInit() is called
@@ -2488,8 +2978,8 @@ async function init() {
         loading.style.display = "none";
         return;
     }
+    await openPatch(content, filename);
     loading.style.display = "none";
-    openPatch(content, filename);
 }
 
 // drag & drop file uploading
