@@ -384,6 +384,7 @@ var Module = {
                         case "tgl":
                             data.value = data.value ? 0 : data.default_value;
                             gui_tgl_update_cross(data);
+                            gui_send('Float', data.send, data.value);
                             break;
                         case "vsl":
                         case "hsl":
@@ -417,7 +418,10 @@ var Module = {
                             break;
                         case "tgl":
                             data.value = value;
+                            if(value != 0)
+                                data.default_value = value;
                             gui_tgl_update_cross(data);
+                            gui_send('Float', data.send, data.value);
                             break;
                         case "vsl":
                         case "hsl":
@@ -483,7 +487,10 @@ var Module = {
                             break;
                         case "tgl":
                             data.value = list[0];
+                            if(list[0] != 0)
+                                data.default_value = list[0];
                             gui_tgl_update_cross(data);
+                            gui_send('Float', data.send, data.value);
                             break;
                         case "vsl":
                         case "hsl":
@@ -537,7 +544,7 @@ var Module = {
                                     break;
                                 case "receive":
                                     gui_unsubscribe(data);
-                                    data.receive = list[0];
+                                    data.receive[0] = list[0];
                                     gui_subscribe(data);
                                     break;
                                 case "label":
@@ -575,6 +582,9 @@ var Module = {
                                     configure_item(data.circle, gui_bng_circle(data));
                                     configure_item(data.text, gui_bng_text(data));
                                     break;
+                                case "interactive":
+                                    data.interactive = list[0];
+                                    break;
                                 default:
                                     gui_bng_update_circle(data);
                             }
@@ -598,7 +608,7 @@ var Module = {
                                     break;
                                 case "receive":
                                     gui_unsubscribe(data);
-                                    data.receive = list[0];
+                                    data.receive[0] = list[0];
                                     gui_subscribe(data);
                                     break;
                                 case "label":
@@ -645,6 +655,9 @@ var Module = {
                                     data.value = data.default_value;
                                     gui_tgl_update_cross(data);
                                     break;
+                                case "interactive":
+                                    data.interactive = list[0];
+                                    break;
                             }
                             break;
                         case "vsl":
@@ -686,7 +699,7 @@ var Module = {
                                     break;
                                 case "receive":
                                     gui_unsubscribe(data);
-                                    data.receive = list[0];
+                                    data.receive[0] = list[0];
                                     gui_subscribe(data);
                                     break;
                                 case "label":
@@ -728,6 +741,9 @@ var Module = {
                                 case "set":
                                     gui_slider_set(data, list[0]);
                                     break;
+                                case "interactive":
+                                    data.interactive = list[0];
+                                    break;
                             }
                             break;
                         case "vradio":
@@ -758,7 +774,7 @@ var Module = {
                                     break;
                                 case "receive":
                                     gui_unsubscribe(data);
-                                    data.receive = list[0];
+                                    data.receive[0] = list[0];
                                     gui_subscribe(data);
                                     break;
                                 case "label":
@@ -801,6 +817,9 @@ var Module = {
                                     data.value = Math.min(Math.max(Math.floor(list[0]), 0), data.number - 1);
                                     gui_radio_update_button(data);
                                     break;
+                                case "interactive":
+                                    data.interactive = list[0];
+                                    break;
                             }
                             break;
                         case "cnv":
@@ -825,7 +844,7 @@ var Module = {
                                     break;
                                 case "receive":
                                     gui_unsubscribe(data);
-                                    data.receive = list[0];
+                                    data.receive[0] = list[0];
                                     gui_subscribe(data);
                                     break;
                                 case "label":
@@ -1005,6 +1024,9 @@ var Module = {
                                     data.height = Math.max(0,list[1]);
                                     data.height = gui_vumeter_unitheight(data) * (vu_colmap.length - 3);
                                     break;
+                                case "scale":
+                                    data.showScale = list[0];
+                                    break;
                                 case "label_pos":
                                     data.x_off = list[0];
                                     data.y_off = list[1];
@@ -1023,6 +1045,7 @@ var Module = {
                                 case "color":
                                     data.bg_color = list[0];
                                     data.label_color = list[1];
+                                    console.log(list);
                                     break;
                                 case "pos":
                                     data.x_pos = list[0];
@@ -1034,6 +1057,87 @@ var Module = {
                                     break;
                             }
                             gui_vumeter_render(data);
+                            break;
+                        case "ggee/image":
+                            switch(symbol) {
+                                case "visible":
+                                    data.visible = list[0];
+                                    break;
+                                case "click":
+                                    data.clickBehavior = list[0];
+                                    break;
+                                case "alpha":
+                                    data.opacity = list[0];
+                                    break;
+                                case "color":
+                                    data.label_color = list[0];
+                                    break;
+                                case "pos":
+                                    data.x_pos = list[0];
+                                    data.y_pos = list[1];
+                                    break;
+                                case "delta":
+                                    data.x_pos += list[0];
+                                    data.y_pos += list[1];
+                                    break;
+                                case "label":
+                                    data.label = list[0];
+                                    break;
+                                case "label_font":
+                                    data.font = list[0];
+                                    data.fontsize = list[1];
+                                    break;
+                                case "label_pos":
+                                    data.x_off = list[0];
+                                    data.y_off = list[1];
+                                    break;
+                                case "open":
+                                    data.src = list[0];
+                                    break;
+                                case "gopspill_size":
+                                    data.borderWidth = list[0];
+                                    data.borderHeight = list[1];
+                                    break;
+                                case "gopspill":
+                                    data.gopSpill = list[0];
+                                    if(!data.gopSpill) {
+                                        data.borderWidth = data.imageWidth;
+                                        data.borderHeight = data.imageHeight;
+                                    }
+                                    break;
+                                case "receive":
+                                    data.receive[0] = list[0];
+                                    break;
+                                case "send":
+                                    data.send[0] = list[0];
+                                    break;
+                                case "rotate":
+                                    data.rotation = list[0];
+                                    if(list.length > 1) {
+                                        data.x_origin = list[1];
+                                        data.y_origin = list[2];
+                                    }
+                                    break;
+                                case "set":
+                                    data.src = gui_image_keys[list[0]];
+                                    break;
+                                case "load":
+                                    gui_image_keys[list[0]] = list[1];
+                                    break;
+                                case "constrain":
+                                    data.constrain = list[0];
+                                    break;
+                                case "size":
+                                    data.imageWidth = list[0];
+                                    data.imageHeight = list[1];
+                                    break;
+                                case "reset":
+                                    data.imageWidth = data.imageNaturalWidth;
+                                    data.imageHeight = data.imageNaturalHeight;
+                                    break;
+                                
+                            }
+                            data.render(data);
                             break;
                     }
                 }
@@ -1153,6 +1257,106 @@ var Module = {
     }
 };
 
+Module['preRun'].push(function() {
+    // Intercept file reads
+    FS.open = function (path, flags, mode) {
+        let isNetworkCandidate = !['wasm','so','pd','pat'].map(ext=>('' + path).endsWith(ext)).find(matches => matches == true) && (('' + path).startsWith('/pd-l2ork-web') == false);
+        if (path === "") {
+            throw new FS.ErrnoError(44)
+        }
+        flags = typeof flags == "string" ? FS_modeStringToFlags(flags) : flags;
+        mode = typeof mode == "undefined" ? 438 : mode;
+        if (flags & 64) {
+            mode = mode & 4095 | 32768
+        } else {
+            mode = 0
+        }
+        var node;
+        if (typeof path == "object") {
+            node = path
+        } else {
+            path = PATH.normalize(path);
+            try {
+                var lookup = FS.lookupPath(path, {
+                    follow: !(flags & 131072)
+                });
+                node = lookup.node
+                
+            } catch (e) {
+                if(isNetworkCandidate) {
+                    const request = new XMLHttpRequest();
+                    request.open("GET", ((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')+path, false); // `false` makes the request synchronous
+                    request.send();
+
+                    if (request.status === 200) {
+                        let folder = path.split('/').slice(0,-1).join('/'), filename = path.split('/').slice(-1)[0];
+                        folder += '/';
+                        FS.createPath('/', folder);
+                        let file = FS.createDataFile(folder,filename, request.response, true, true, true);
+                        var lookup = FS.lookupPath(path, {
+                            follow: !(flags & 131072)
+                        });
+                        node = lookup.node
+
+                    }
+                }
+            }
+        }
+        var created = false;
+        if (flags & 64) {
+            if (node) {
+                if (flags & 128) {
+                    throw new FS.ErrnoError(20)
+                }
+            } else {
+                node = FS.mknod(path, mode, 0);
+                created = true
+            }
+        }
+        if (!node) {
+            throw new FS.ErrnoError(44)
+        }
+        if (FS.isChrdev(node.mode)) {
+            flags &= ~512
+        }
+        if (flags & 65536 && !FS.isDir(node.mode)) {
+            throw new FS.ErrnoError(54)
+        }
+        if (!created) {
+            var errCode = FS.mayOpen(node, flags);
+            if (errCode) {
+                throw new FS.ErrnoError(errCode)
+            }
+        }
+        if (flags & 512 && !created) {
+            FS.truncate(node, 0)
+        }
+        flags &= ~(128 | 512 | 131072);
+        var stream = FS.createStream({
+            node: node,
+            path: FS.getPath(node),
+            flags: flags,
+            seekable: true,
+            position: 0,
+            stream_ops: node.stream_ops,
+            ungotten: [],
+            error: false
+        });
+        if (stream.stream_ops.open) {
+            stream.stream_ops.open(stream)
+        }
+        if (Module["logReadFiles"] && !(flags & 1)) {
+            if (!FS.readFiles)
+                FS.readFiles = {};
+            if (!(path in FS.readFiles)) {
+                FS.readFiles[path] = 1
+            }
+        }
+        return stream;
+    }
+});
+
+
 //--------------------- pdgui.js ----------------------------
 
 function pdsend() {
@@ -1164,7 +1368,7 @@ function pdsend() {
             Module.pd.addSymbol(array[i]);
         }
         else {
-            Module.pd.addFloat(parseFloat(array[i]));
+            Module.pd.addFloat(+array[i]);
         }
     }
     Module.pd.finishMessage(array[0], array[1]);
@@ -1238,6 +1442,7 @@ function pd_receive_command_buffer(data) {
 }
 
 function perfect_parser(data, cbuf, sel_array) {
+    console.log(data,cbuf,sel_array);
     var i, len, selector, args;
     len = data.length;
     for (i = 0; i < len; i++) {
@@ -1357,6 +1562,8 @@ function colfromload(col) { // decimal to hex color
 
 function gui_subscribe(data) {
     for(let receive of data.receive) {
+        if(!receive)
+            continue;
         if (receive in subscribedData) {
             if(!subscribedData[receive].find(sub=>sub.id === data.id))
                 subscribedData[receive].push(data);
@@ -1389,9 +1596,26 @@ function gui_unsubscribe(data) {
 }
 
 function gui_send(type, destinations, value) {
-    for(let destination of destinations)
-        if(destination)
-            value === undefined ? Module.pd['send'+type](destination) : Module.pd['send'+type](destination, value);
+    if(type === 'List') {
+        for(let destination of destinations) {
+            if(destination) {
+                Module.pd.startMessage(value.length);
+                for(let val of value) {
+                    if(typeof val === 'number')
+                        Module.pd.addFloat(val);
+                    else if(typeof val === 'string')
+                        Module.pd.addSymbol(val);
+                    else
+                        return console.error('Invalid value in list, not sent!');
+                }
+                Module.pd.finishList(destination);
+            }
+        }
+    }
+    else
+        for(let destination of destinations)
+            if(destination)
+                value === undefined ? Module.pd['send'+type](destination) : Module.pd['send'+type](destination, value);
 }
 
 // common
@@ -1410,7 +1634,7 @@ function gui_rect(data) {
 function gui_text(data) {
     return {
         x: data.x_pos + data.x_off,
-        y: data.y_pos + data.y_off,
+        y: data.y_pos + data.y_off + data.fontsize / 5,
         "font-family": iemgui_fontfamily(data.font),
         "font-weight": "normal",
         "font-size": `${data.fontsize}px`,
@@ -1426,6 +1650,12 @@ function gui_mousepoint(e, canvas) { // transforms the mouse position
     point.x = e.clientX;
     point.y = e.clientY;
     point = point.matrixTransform(canvas.getScreenCTM().inverse());
+    return point;
+}
+function gui_roundedmousepoint(e, canvas) {
+    let point = gui_mousepoint(e, canvas);
+    point.x = Math.round(point.x);
+    point.y = Math.round(point.y);
     return point;
 }
 
@@ -1597,8 +1827,8 @@ function gui_slider_indicator_points(data) {
     let p4 = 0;
     if (data.type === "vsl") {
         //y1 -= 2; // note: modified
-        y2 += 3;
-        r = y2 - 3 - (data.value + 50) / 100;
+        y2 += 5;
+        r = y2 - 2.5 - (data.value + 50) / 100;
         p1 = x1 + 2 * 0.75; // note: modified
         p2 = r;
         p3 = x2 - 2 * 0.75; // note: modified
@@ -1606,7 +1836,7 @@ function gui_slider_indicator_points(data) {
     }
     else {
         //x1 -= 3; // note: modified
-        r = x1 + 3 + (data.value + 50) / 100;
+        r = x1 + 2.5 + (data.value + 50) / 100;
         p1 = r;
         p2 = y1 + 2 * 0.75; // note: modified
         p3 = r;
@@ -2039,8 +2269,9 @@ function gui_link_open(link) {
     else if(link.slice(-3) == '.pd') {
         if(link.startsWith('/'))
             window.open(`${window.location.origin}/?url=${link}`);
-        else
-            window.open(`${window.location.origin}/?url=${window.location.href.split('url=')[1].split('/').slice(0,-2)}/${link}`);
+        else { 
+            window.open(`${window.location.origin}/?url=${window.location.href.split('url=')[1].split('/').slice(0,-1)}/${link}`);
+        }
     }
     else
         window.open(link);
@@ -2136,9 +2367,8 @@ function gui_vumeter_render(data) {
     let scales = gui_vumeter_scale(data);
     for(let i=0; i<data.scale.length; i++)
         configure_item(data.scale[i], scales[i]);
-    if(!data.showScale)
-        for(let scale of data.scale)
-            configure_item(scale, {display: 'none'});
+    for(let scale of data.scale)
+        configure_item(scale, {display: data.showScale ? 'block' : 'none'});
 }
 
 //Arrays
@@ -2384,17 +2614,83 @@ function gui_nbx_losefocus(data) {
 }
 
 
+//Image
+
+const gui_image_touches = {};
+let gui_image_keys = {};
+function gui_image_onmousedown(data, e, id) {
+    const p = gui_roundedmousepoint(e, data.canvas);
+    gui_image_touches[id] = {
+        data: data,
+        p,
+    };
+    if(data.clickBehavior === 1)
+        gui_send('Bang', data.send);
+    if(data.clickBehavior === 2)
+        gui_send('List', data.send, [1, data.x_pos, data.y_pos, p.x - data.x_pos, p.y - data.y_pos]);
+}
+function gui_image_onmousemove(e, id) {
+    if (id in gui_image_touches) {
+        const { data } = gui_image_touches[id];
+        const p = gui_roundedmousepoint(e, data.canvas);
+        gui_image_touches[id].p = p;
+        if(data.clickBehavior === 2)
+            gui_send('List', data.send, [1, data.x_pos, data.y_pos, p.x - data.x_pos, p.y - data.y_pos]);
+    }
+}
+function gui_image_onmouseup(id) {
+    if (id in gui_image_touches) {
+        const { data, p } = gui_image_touches[id];
+        if(data.clickBehavior === 2)
+            gui_send('List', data.send, [0, data.x_pos, data.y_pos, p.x - data.x_pos, p.y - data.y_pos]);
+        delete gui_image_touches[id];
+    }
+}
+
+// window
+
+const gui_window_touches = {};
+function gui_window_onmousedown(data, e, id) {
+    const p = gui_roundedmousepoint(e, document.getElementById('canvas'));
+    gui_window_touches[id] = {
+        data: data,
+        start_mouse: p,
+        start_window: {
+            x: data.window_x,
+            y: data.window_y
+        }
+    };
+}
+function gui_window_onmousemove(e, id) {
+    if (id in gui_window_touches) {
+        const { data, start_mouse, start_window } = gui_window_touches[id];
+        const p = gui_roundedmousepoint(e, document.getElementById('canvas'));
+        data.window_x = start_window.x + p.x - start_mouse.x;
+        data.window_y = start_window.y + p.y - start_mouse.y;
+        data.updateWindow();
+    }
+}
+function gui_window_onmouseup(id) {
+    if (id in gui_window_touches)
+        delete gui_window_touches[id];
+}
+
+
 // keyboard events
 let keyboardFocus = { data: null, exclusive: false, current: false};
-let keyboardListeners = [];
+let inputListeners = [];
 let keyDown = {}
 function onKeyDown(e) {
     if(keyboardFocus.data?.onKeyDown)
         keyboardFocus.data.onKeyDown(keyboardFocus.data, e);
     if(keyboardFocus.exclusive == false) {
         keyDown[e.key] = true;
-        for(let listener of keyboardListeners)
-            listener.onKeyDown(e);
+        for(let listener of inputListeners) {
+            if(listener.onKeyDown)
+                listener.onKeyDown(e);
+            if(listener.onKeyUp && e.repeat)
+                listener.onKeyUp(e);
+        }
     }
 }
 function onKeyUp(e) {
@@ -2402,8 +2698,9 @@ function onKeyUp(e) {
         keyboardFocus.data.onKeyUp(keyboardFocus.data, e);
     if(keyboardFocus.exclusive == false) {
         keyDown[e.key] = false;
-        for(let listener of keyboardListeners)
-            listener.onKeyUp(e);
+        for(let listener of inputListeners)
+            if(listener.onKeyUp)
+                listener.onKeyUp(e);
     }
 }
 function setKeyboardFocus(data, exclusive) {
@@ -2420,6 +2717,25 @@ function setKeyboardFocus(data, exclusive) {
     keyboardFocus.exclusive = exclusive;
     keyboardFocus.current = true;
 }
+function onMouseDown(e) {
+    if(keyboardFocus.current == false)
+        setKeyboardFocus(null, false);
+    keyboardFocus.current = false;
+
+    for(let listener of inputListeners)
+        if(listener.onMouseDown)
+            listener.onMouseDown(e);
+}
+function onMouseUp(e) {
+    for(let listener of inputListeners)
+        if(listener.onMouseUp)
+            listener.onMouseUp(e);
+}
+function onMouseMove(e) {
+    for(let listener of inputListeners)
+        if(listener.onMouseMove)
+            listener.onMouseMove(e);
+}
 
 // drag events
 if (isMobile) {
@@ -2431,6 +2747,8 @@ if (isMobile) {
             gui_array_onmousemove(touch, touch.identifier);
             gui_atom_onmousemove(touch, touch.identifier);
             gui_nbx_onmousemove(touch, touch.identifier);
+            gui_image_onmousemove(touch, touch.identifier);
+            gui_window_onmousemove(touch, touch.identifier);
         }
     });
     window.addEventListener("touchend", function (e) {
@@ -2441,6 +2759,8 @@ if (isMobile) {
             gui_array_onmouseup(touch.identifier);
             gui_atom_onmouseup(touch.identifier);
             gui_nbx_onmouseup(touch.identifier);
+            gui_image_onmouseup(touch.identifier);
+            gui_window_onmouseup(touch.identifier);
         }
     });
     window.addEventListener("touchcancel", function (e) {
@@ -2450,7 +2770,9 @@ if (isMobile) {
             gui_knob_onmouseup(touch.identifier);
             gui_array_onmouseup(touch.identifier);
             gui_atom_onmouseup(touch.identifier);
-            gui_nbx_onmousedown(touch.identifier);
+            gui_nbx_onmouseup(touch.identifier);
+            gui_image_onmouseup(touch.identifier);
+            gui_window_onmouseup(touch.identifier);
         }
     });
 }
@@ -2462,6 +2784,8 @@ else {
         gui_array_onmousemove(e, 0);
         gui_atom_onmousemove(e,0);
         gui_nbx_onmousemove(e,0);
+        gui_image_onmousemove(e,0);
+        gui_window_onmousemove(e,0);
     });
     window.addEventListener("mouseup", function (e) {
         gui_slider_onmouseup(0);
@@ -2469,6 +2793,8 @@ else {
         gui_array_onmouseup(0);
         gui_atom_onmouseup(0);
         gui_nbx_onmouseup(0);
+        gui_image_onmouseup(0);
+        gui_window_onmouseup(0);
     });
     window.addEventListener("mouseleave", function (e) {
         gui_slider_onmouseup(0);
@@ -2476,6 +2802,8 @@ else {
         gui_array_onmouseup(0);
         gui_atom_onmouseup(0);
         gui_nbx_onmouseup(0);
+        gui_image_onmouseup(0);
+        gui_window_onmouseup(0);
     });
 }
 
@@ -2623,15 +2951,17 @@ function gui_text_text(data, line_index, fontSize) {
 //--------------------- patch handling ----------------------------
 async function openPatch(content, filename) {
     console.log(`Loading Patch: ${filename}`);
+
     document.removeEventListener('keydown', onKeyDown);
     document.removeEventListener('keyup', onKeyUp);
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mousedown', onMouseDown);
+    document.removeEventListener('mouseup', onMouseUp);
     document.addEventListener('keydown', onKeyDown);
     document.addEventListener('keyup', onKeyUp);
-    document.addEventListener('mousedown', () => {
-        if(keyboardFocus.current == false)
-            setKeyboardFocus(null, false);
-        keyboardFocus.current = false;
-    });
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mousedown', onMouseDown);
+    document.addEventListener('mouseup', onMouseUp);
     
     let rootCanvas = document.getElementById('canvas');
     while (rootCanvas.lastChild) // clear svg
@@ -2646,7 +2976,6 @@ async function openPatch(content, filename) {
                        //initialized beforehand since we receive its information when loading a file, not when reading the #N canvas line.
         canvas: rootCanvas,
         guiObjects: [], //Will hold the GUI object data in the current canvas, used to reassign sends/receives when wires are read.
-        graph: 1,
         fontSize: 12,
         coordObjs: [],
         args: [],
@@ -2693,8 +3022,7 @@ async function openPatch(content, filename) {
         //If we are looking at something that can be connected with a wire, increment the wire counter
         if(object_types.find(type=>lines[i].startsWith(type)))
             currentCanvas.objId++;
-        
-        lines[i] = args.join` `;
+        lines[i] = args.join(' ').replace(/,/g,'\\,')+(argParts.length > 1 ? ','+argParts.slice(1).map(arg=>arg.replace(/,/g,'\\,')).join(',') : '');
         //Now we switch based on the type of line (first two arguments)
         switch (args.slice(0,2).join(' ')) {
             case "#N canvas":
@@ -2707,6 +3035,8 @@ async function openPatch(content, filename) {
                     configure_item(nextCanvas.canvas, {id: `svg_${nextId++}`});
                 }
                 nextCanvas.fontSize = +args[args.length - 1] || currentCanvas.fontSize;
+                nextCanvas.size = { w: +args[4], h: +args[5]};
+                nextCanvas.pos = { x: +args[2], y: +args[3]};
                 canvasStack.push(currentCanvas);
                 if(!nextCanvas.instance)
                     nextCanvas.instance = canvasStack[canvasStack.length - 1].instance;
@@ -2722,6 +3052,7 @@ async function openPatch(content, filename) {
             case "#X coords":
                 if(args.length > 8 && canvasStack.length > 1) {
                     currentCanvas.showTitle = +args[8] == 1;
+                    currentCanvas.showBox = +args[8] == 0;
                     currentCanvas.coords = {
                         l: +args[2],
                         t: +args[3],
@@ -2755,9 +3086,9 @@ async function openPatch(content, filename) {
                         coordObj.setCoords(currentCanvas.coords);
                         coordObj.redraw();
                     }
-                    configure_item(currentCanvas.group, {width: +args[6], height: +args[7]});
-                    configure_item(currentCanvas.canvas, {width: +args[6] + 1, height: +args[7] - 1});
                     if(+args[8] > 0) {
+                        configure_item(currentCanvas.group, {width: +args[6], height: +args[7]});
+                        configure_item(currentCanvas.canvas, {width: +args[6] + 1, height: +args[7] - 1});
                         currentCanvas.border = create_item('rect', {
                             width: +args[6] - 1,
                             height: +args[7] - 1,
@@ -2767,15 +3098,26 @@ async function openPatch(content, filename) {
                         }, currentCanvas.group);
                         currentCanvas.group.style.display = 'block';
                         currentCanvas.canvas.setAttributeNS(null, "viewBox", `${+args[9] || 0} ${+args[10] || 0} ${+args[6]} ${+args[7]}`);
+                    } else {
+                        configure_item(currentCanvas.group, {width: currentCanvas.size.w, height: currentCanvas.size.h});
+                        configure_item(currentCanvas.canvas, {width: currentCanvas.size.w + 1, height: currentCanvas.size.h - 1});
+                        currentCanvas.border = create_item('rect', {
+                            width: currentCanvas.size.w - 1,
+                            height: currentCanvas.size.h - 1,
+                            fill: 'none',
+                            stroke: 'black',
+                            id: `border_${nextId++}`
+                        }, currentCanvas.group);
+                        currentCanvas.canvas.setAttributeNS(null, "viewBox", `0 0 ${+currentCanvas.size.w} ${+currentCanvas.size.h}`);
                     }
                 }
                 break;
             case "#X restore":
                 if(args.length > 3) {
-                    configure_item(currentCanvas.canvas, {x: +args[2] - 1, y: +args[3] + 1});
-                    configure_item(currentCanvas.border, {x: +args[2] + .5, y: +args[3] + .5})
                     if(currentCanvas.arrays.length > 0)
                         currentCanvas.group.appendChild(currentCanvas.canvas);
+                    configure_item(currentCanvas.canvas, {x: +args[2] - 1, y: +args[3] + 1});
+                    configure_item(currentCanvas.border, {x: +args[2] + .5, y: +args[3] + .5});
                     if(currentCanvas.showTitle) {
                         if(currentCanvas.arrays.length > 1) {
                             for(let i = 0; i < currentCanvas.arrays.length; i++) {
@@ -2807,6 +3149,136 @@ async function openPatch(content, filename) {
                             else
                                 text.textContent = args.slice(4).join(' ');
                         }
+                    } else if(currentCanvas.showBox !== false) {
+                        let data = {};
+                        data.x_pos = +args[2];
+                        data.y_pos = +args[3];
+                        data.window_x = currentCanvas.pos.x - canvasStack[1].pos.x;
+                        data.window_y = currentCanvas.pos.y - canvasStack[1].pos.y;
+                        data.name = args.slice(4).join(' ');
+                        data.group = currentCanvas.group;
+                        data.canvas = currentCanvas.canvas;
+                        data.current = currentCanvas;
+                        data.id = `patch_${nextId++}`;
+
+                        data.text = create_item('text', {
+                            'font-size': pd_fontsize_to_gui_fontsize(canvasStack.at(-1).fontSize) + 'px',
+                            'font-weight': 'normal',
+                            'shape-rendering': 'crispEdges',
+                            transform: `translate(2.5,0)`,
+                            fill: 'white',
+                            x: data.x_pos,
+                            y: data.y_pos + font_height_map()[canvasStack.at(-1).fontSize] + gobj_font_y_kludge(canvasStack.at(-1).fontSize),
+                            id: `${data.id}_text`,
+                            class: 'unclickable'
+                        }, rootCanvas);
+                        data.text.textContent = data.name;
+
+                        data.rect = create_item('rect', {
+                            id: data.id,
+                            fill: '#666766',
+                            x: data.x_pos,
+                            y: data.y_pos,
+                            width: data.text.getComputedTextLength() + 5,
+                            height: font_height_map()[canvasStack.at(-1).fontSize] + 4
+                        }, canvasStack.at(-1).canvas);
+
+                        data.background = create_item('rect', {
+                            id: `${data.id}_background`,
+                            fill: '#9E9E9E',
+                            width: currentCanvas.size.w - 1,
+                            height: currentCanvas.size.h - 1,
+                        }, currentCanvas.group);
+
+                        data.titleRect = create_item('rect', {
+                            id: `${data.id}_title`,
+                            fill: '#4F4F4F',
+                            width: currentCanvas.size.w,
+                            height: 15,
+                        }, currentCanvas.group);
+                        
+
+                        data.titleText = create_item("text", {
+                            'font-size': pd_fontsize_to_gui_fontsize(10) + 'px',
+                            'font-weight': 'normal',
+                            'shape-rendering': 'crispEdges',
+                            transform: `translate(2.5,0)`,
+                            fill: 'white',
+                            id: `title_${nextId++}`,
+                            class: 'unclickable'
+                        }, currentCanvas.group);
+                        data.titleText.textContent = args.slice(5).join(' ');
+
+                        data.closeBtn = create_item('path', {
+                            stroke: 'red',
+                            "stroke-width": '1',
+                            id: `${data.id}_btn`
+                        }, currentCanvas.group)
+                        data.closeRect = create_item('rect', {
+                            fill: 'black',
+                            opacity: 0,
+                            width: 15,
+                            height: 15,
+                        }, currentCanvas.group)
+
+                        rootCanvas.removeChild(data.text);
+                        canvasStack.at(-1).canvas.appendChild(data.text);
+                        canvasStack.at(-1).canvas.removeChild(currentCanvas.group);
+
+                        data.updateWindow = () => {
+                            configure_item(data.background, {
+                                x: data.window_x + .5,
+                                y: data.window_y + .5
+                            });
+                            configure_item(data.titleRect, {
+                                x: data.window_x,
+                                y: data.window_y + .5 - 15
+                            });
+                            configure_item(data.titleText, {
+                                x: data.window_x,
+                                y: data.window_y - 15.5 + font_height_map()[10] + gobj_font_y_kludge(10),
+                            });
+                            configure_item(data.closeRect, {
+                                x: data.window_x + data.current.size.w - 15,
+                                y: data.window_y - 14.5
+                            })
+                            configure_item(data.closeBtn, {
+                                d: `M ${data.window_x + data.current.size.w - 13} ${data.window_y + .5 - 13} l 11 11 m 0 -11 l -11 11`,
+                            })
+                            configure_item(data.canvas, {x:  data.window_x - 1, y: data.window_y + 1});
+                            configure_item(data.current.border, {x: data.window_x + .5, y: data.window_y + .5});
+                        }
+                        data.updateWindow();
+                        
+                        if (isMobile) {
+                            data.rect.addEventListener("touchstart", function (e) {
+                                rootCanvas.appendChild(data.group);
+                                data.group.style.display = 'block';
+                            });
+                            data.closeRect.addEventListener("mousedown", function (e) {
+                                rootCanvas.removeChild(data.group);
+                                data.group.style.display = 'none';
+                            });
+                            data.titleRect.addEventListener("touchstart", function (e) {
+                                e = e || window.event;
+                                for (const touch of e.changedTouches) {
+                                    gui_window_onmousedown(data, touch, touch.identifier);
+                                }
+                            });
+                        }
+                        else {
+                            data.rect.addEventListener("mousedown", function (e) {
+                                rootCanvas.appendChild(data.group);
+                                data.group.style.display = 'block';
+                            });
+                            data.closeRect.addEventListener("mousedown", function (e) {
+                                rootCanvas.removeChild(data.group);
+                                data.group.style.display = 'none';
+                            });
+                            data.titleRect.addEventListener('mousedown', function (e) {
+                                gui_window_onmousedown(data,e,0);
+                            });
+                        }
                     }
                     if(currentCanvas.arrays.length == 0)
                         currentCanvas.group.appendChild(currentCanvas.canvas);
@@ -2826,7 +3298,7 @@ async function openPatch(content, filename) {
                             }
                             for (let i = 5; i < args.length; i++) {
                                 if (!isNaN(args[i])) {
-                                    const numInChannels = parseInt(args[i]);
+                                    const numInChannels = +args[i];
                                     if (numInChannels > maxNumInChannels) {
                                         maxNumInChannels = numInChannels > 2 ? 2 : numInChannels;
                                     }
@@ -2834,25 +3306,26 @@ async function openPatch(content, filename) {
                             }
                             break;
                         case "bng":
-                            if (args.length >= 19) {
+                            if (args.length >= 20) {
                                 const data = {};
-                                data.x_pos = parseInt(args[2]);
-                                data.y_pos = parseInt(args[3]);
+                                data.x_pos = +args[2];
+                                data.y_pos = +args[3];
                                 data.type = args[4];
-                                data.size = parseInt(args[5]);
-                                data.hold = parseInt(args[6]);
-                                data.interrupt = parseInt(args[7]);
-                                data.init = parseInt(args[8]);
+                                data.size = +args[5];
+                                data.hold = +args[6];
+                                data.interrupt = +args[7];
+                                data.init = +args[8];
                                 data.send = args[9] === "empty" ? [null] : [args[9]];
-                                data.receive = args[10] === "empty" ? [] : [args[10]];
+                                data.receive = args[10] === "empty" ? [null] : [args[10]];
                                 data.label = args[11] === "empty" ? "" : args[11];
-                                data.x_off = parseInt(args[12]);
-                                data.y_off = parseInt(args[13]);
-                                data.font = parseInt(args[14]);
-                                data.fontsize = parseInt(args[15]);
-                                data.bg_color = isNaN(args[16]) ? args[16] : parseInt(args[16]);
-                                data.fg_color = isNaN(args[17]) ? args[17] : parseInt(args[17]);
-                                data.label_color = isNaN(args[18]) ? args[18] : parseInt(args[18]);
+                                data.x_off = +args[12];
+                                data.y_off = +args[13];
+                                data.font = +args[14];
+                                data.fontsize = +args[15];
+                                data.bg_color = isNaN(args[16]) ? args[16] : +args[16];
+                                data.fg_color = isNaN(args[17]) ? args[17] : +args[17];
+                                data.label_color = isNaN(args[18]) ? args[18] : +args[18];
+                                data.interactive = +args[19];
                                 data.id = `${data.type}_${nextId++}`;
                                 data.canvas = currentCanvas.canvas;
 
@@ -2868,12 +3341,14 @@ async function openPatch(content, filename) {
                                 data.hold_timer = null;
                                 if (isMobile) {
                                     data.rect.addEventListener("touchstart", function () {
-                                        gui_bng_onmousedown(data);
+                                        if(data.interactive)
+                                            gui_bng_onmousedown(data);
                                     });
                                 }
                                 else {
                                     data.rect.addEventListener("mousedown", function () {
-                                        gui_bng_onmousedown(data);
+                                        if(data.interactive)
+                                            gui_bng_onmousedown(data);
                                     });
                                 }
                                 // subscribe receiver
@@ -2882,25 +3357,26 @@ async function openPatch(content, filename) {
                             }
                             break;
                         case "tgl":
-                            if (args.length >= 19) {
+                            if (args.length >= 20) {
                                 const data = {};
-                                data.x_pos = parseInt(args[2]);
-                                data.y_pos = parseInt(args[3]);
+                                data.x_pos = +args[2];
+                                data.y_pos = +args[3];
                                 data.type = args[4];
-                                data.size = parseInt(args[5]);
-                                data.init = parseInt(args[6]);
+                                data.size = +args[5];
+                                data.init = +args[6];
                                 data.send = args[7] === "empty" ? [null] : [args[7]];
-                                data.receive = args[8] === "empty" ? [] : [args[8]];
+                                data.receive = args[8] === "empty" ? [null] : [args[8]];
                                 data.label = args[9] === "empty" ? "" : args[9];
-                                data.x_off = parseInt(args[10]);
-                                data.y_off = parseInt(args[11]);
-                                data.font = parseInt(args[12]);
-                                data.fontsize = parseInt(args[13]);
-                                data.bg_color = isNaN(args[14]) ? args[14] : parseInt(args[14]);
-                                data.fg_color = isNaN(args[15]) ? args[15] : parseInt(args[15]);
-                                data.label_color = isNaN(args[16]) ? args[16] : parseInt(args[16]);
-                                data.init_value = parseFloat(args[17]);
-                                data.default_value = parseFloat(args[18]);
+                                data.x_off = +args[10];
+                                data.y_off = +args[11];
+                                data.font = +args[12];
+                                data.fontsize = +args[13];
+                                data.bg_color = isNaN(args[14]) ? args[14] : +args[14];
+                                data.fg_color = isNaN(args[15]) ? args[15] : +args[15];
+                                data.label_color = isNaN(args[16]) ? args[16] : +args[16];
+                                data.init_value = +args[17];
+                                data.default_value = +args[18];
+                                data.interactive = +args[19];
                                 data.value = data.init && data.init_value ? data.default_value : 0;
                                 data.id = `${data.type}_${nextId++}`;
                                 data.canvas = currentCanvas.canvas;
@@ -2915,12 +3391,14 @@ async function openPatch(content, filename) {
                                 // handle event
                                 if (isMobile) {
                                     data.rect.addEventListener("touchstart", function () {
-                                        gui_tgl_onmousedown(data);
+                                        if(data.interactive)
+                                            gui_tgl_onmousedown(data);
                                     });
                                 }
                                 else {
                                     data.rect.addEventListener("mousedown", function () {
-                                        gui_tgl_onmousedown(data);
+                                        if(data.interactive)
+                                            gui_tgl_onmousedown(data);
                                     });
                                 }
                                 // subscribe receiver
@@ -2930,29 +3408,30 @@ async function openPatch(content, filename) {
                             break;
                         case "vsl":
                         case "hsl":
-                            if (args.length >= 23) {
+                            if (args.length >= 25) {
                                 const data = {};
-                                data.x_pos = parseInt(args[2]);
-                                data.y_pos = parseInt(args[3]);
+                                data.x_pos = +args[2];
+                                data.y_pos = +args[3];
                                 data.type = args[4];
-                                data.width = parseInt(args[5]);
-                                data.height = parseInt(args[6]);
-                                data.bottom = parseInt(args[7]);
-                                data.top = parseInt(args[8]);
-                                data.log = parseInt(args[9]);
-                                data.init = parseInt(args[10]);
+                                data.width = +args[5];
+                                data.height = +args[6];
+                                data.bottom = +args[7];
+                                data.top = +args[8];
+                                data.log = +args[9];
+                                data.init = +args[10];
                                 data.send = args[11] === "empty" ? [null] : [args[11]];
-                                data.receive = args[12] === "empty" ? [] : [args[12]];
+                                data.receive = args[12] === "empty" ? [null] : [args[12]];
                                 data.label = args[13] === "empty" ? "" : args[13];
-                                data.x_off = parseInt(args[14]);
-                                data.y_off = parseInt(args[15]);
-                                data.font = parseInt(args[16]);
-                                data.fontsize = parseInt(args[17]);
-                                data.bg_color = isNaN(args[18]) ? args[18] : parseInt(args[18]);
-                                data.fg_color = isNaN(args[19]) ? args[19] : parseInt(args[19]);
-                                data.label_color = isNaN(args[20]) ? args[20] : parseInt(args[20]);
-                                data.default_value = parseFloat(args[21]);
-                                data.steady_on_click = parseFloat(args[22]);
+                                data.x_off = +args[14];
+                                data.y_off = +args[15];
+                                data.font = +args[16];
+                                data.fontsize = +args[17];
+                                data.bg_color = isNaN(args[18]) ? args[18] : +args[18];
+                                data.fg_color = isNaN(args[19]) ? args[19] : +args[19];
+                                data.label_color = isNaN(args[20]) ? args[20] : +args[20];
+                                data.default_value = +args[21];
+                                data.steady_on_click = +args[22];
+                                data.interactive = +args[24];
                                 data.value = data.init ? data.default_value : 0;
                                 data.id = `${data.type}_${nextId++}`;
                                 data.canvas = currentCanvas.canvas;
@@ -2962,21 +3441,25 @@ async function openPatch(content, filename) {
                                 data.indicator = create_item("line", gui_slider_indicator(data), data.canvas);
                                 data.text = create_item("text", gui_slider_text(data), data.canvas);
                                 data.text.textContent = data.label;
+                                console.log('======');
+                                console.log(data.label);
+                                console.log(data.label.charCodeAt(0));
 
                                 // handle event
                                 gui_slider_check_minmax(data);
                                 if (isMobile) {
                                     data.rect.addEventListener("touchstart", function (e) {
                                         e = e || window.event;
-                                        for (const touch of e.changedTouches) {
-                                            gui_slider_onmousedown(data, touch, touch.identifier);
-                                        }
+                                        if(data.interactive)
+                                            for (const touch of e.changedTouches)
+                                                gui_slider_onmousedown(data, touch, touch.identifier);
                                     });
                                 }
                                 else {
                                     data.rect.addEventListener("mousedown", function (e) {
                                         e = e || window.event;
-                                        gui_slider_onmousedown(data, e, 0);
+                                        if(data.interactive)
+                                            gui_slider_onmousedown(data, e, 0);
                                     });
                                 }
                                 // subscribe receiver
@@ -2986,26 +3469,27 @@ async function openPatch(content, filename) {
                             break;
                         case "vradio":
                         case "hradio":
-                            if (args.length >= 20) {
+                            if (args.length >= 21) {
                                 const data = {};
-                                data.x_pos = parseInt(args[2]);
-                                data.y_pos = parseInt(args[3]);
+                                data.x_pos = +args[2];
+                                data.y_pos = +args[3];
                                 data.type = args[4];
-                                data.size = parseInt(args[5]);
-                                data.new_old = parseInt(args[6]);
-                                data.init = parseInt(args[7]);
-                                data.number = parseInt(args[8]) || 1;
+                                data.size = +args[5];
+                                data.new_old = +args[6];
+                                data.init = +args[7];
+                                data.number = +args[8] || 1;
                                 data.send = args[9] === "empty" ? [null] : [args[9]];
-                                data.receive = args[10] === "empty" ? [] : [args[10]];
+                                data.receive = args[10] === "empty" ? [null] : [args[10]];
                                 data.label = args[11] === "empty" ? "" : args[11];
-                                data.x_off = parseInt(args[12]);
-                                data.y_off = parseInt(args[13]);
-                                data.font = parseInt(args[14]);
-                                data.fontsize = parseInt(args[15]);
-                                data.bg_color = isNaN(args[16]) ? args[16] : parseInt(args[16]);
-                                data.fg_color = isNaN(args[17]) ? args[17] : parseInt(args[17]);
-                                data.label_color = isNaN(args[18]) ? args[18] : parseInt(args[18]);
-                                data.default_value = parseFloat(args[19]);
+                                data.x_off = +args[12];
+                                data.y_off = +args[13];
+                                data.font = +args[14];
+                                data.fontsize = +args[15];
+                                data.bg_color = isNaN(args[16]) ? args[16] : +args[16];
+                                data.fg_color = isNaN(args[17]) ? args[17] : +args[17];
+                                data.label_color = isNaN(args[18]) ? args[18] : +args[18];
+                                data.default_value = +args[19];
+                                data.interactive = +args[20];
                                 data.value = data.init ? data.default_value : 0;
                                 data.id = `${data.type}_${nextId++}`;
                                 data.canvas = currentCanvas.canvas;
@@ -3020,15 +3504,16 @@ async function openPatch(content, filename) {
                                 if (isMobile) {
                                     data.rect.addEventListener("touchstart", function (e) {
                                         e = e || window.event;
-                                        for (const touch of e.changedTouches) {
-                                            gui_radio_onmousedown(data, touch);
-                                        }
+                                        if(data.interactive)
+                                            for (const touch of e.changedTouches)
+                                                gui_radio_onmousedown(data, touch);
                                     });
                                 }
                                 else {
                                     data.rect.addEventListener("mousedown", function (e) {
                                         e = e || window.event;
-                                        gui_radio_onmousedown(data, e);
+                                        if(data.interactive)
+                                            gui_radio_onmousedown(data, e);
                                     });
                                 }
                                 // subscribe receiver
@@ -3039,33 +3524,33 @@ async function openPatch(content, filename) {
                         case "flatgui/knob":
                             if (args.length >= 26) {
                                 const data = {};
-                                data.x_pos = parseInt(args[2]);
-                                data.y_pos = parseInt(args[3]);
+                                data.x_pos = +args[2];
+                                data.y_pos = +args[3];
                                 data.type = args[4];
-                                data.size_x = parseInt(args[5]);
-                                data.size_y = parseInt(args[6]);
-                                data.minimum = parseInt(args[7]);
-                                data.maximum = parseInt(args[8]);
+                                data.size_x = +args[5];
+                                data.size_y = +args[6];
+                                data.minimum = +args[7];
+                                data.maximum = +args[8];
 
-                                data.logarithmic = parseInt(args[9]);
-                                data.init = parseInt(args[10]);
+                                data.logarithmic = +args[9];
+                                data.init = +args[10];
                 
                                 data.send = args[11] === "empty" ? [null] : [args[11]];
-                                data.receive = args[12] === "empty" ? [] : [args[12]];
+                                data.receive = args[12] === "empty" ? [null] : [args[12]];
                                 data.label = args[13] === "empty" ? "" : args[13];
-                                data.x_off = parseInt(args[14]);
-                                data.y_off = parseInt(args[15]);
-                                data.font = parseInt(args[16]);
-                                data.fontsize = parseInt(args[17]);
-                                data.bg_color = isNaN(args[18]) ? args[18] : parseInt(args[18]);
-                                data.fg_color = isNaN(args[19]) ? args[19] : parseInt(args[19]);
-                                data.label_color = isNaN(args[20]) ? args[20] : parseInt(args[20]);
-                                data.default_value = parseFloat(args[21]);
-                                data.steady_on_click = parseFloat(args[22]);
-                                data.interactive = parseFloat(args[23]);
-                                data.dial_width = parseFloat(args[24]);
-                                data.off_width = parseFloat(args[25]);
-                                data.on_width = parseFloat(args[26]);
+                                data.x_off = +args[14];
+                                data.y_off = +args[15];
+                                data.font = +args[16];
+                                data.fontsize = +args[17];
+                                data.bg_color = isNaN(args[18]) ? args[18] : +args[18];
+                                data.fg_color = isNaN(args[19]) ? args[19] : +args[19];
+                                data.label_color = isNaN(args[20]) ? args[20] : +args[20];
+                                data.default_value = +args[21];
+                                data.steady_on_click = +args[22];
+                                data.interactive = +args[23];
+                                data.dial_width = +args[24];
+                                data.off_width = +args[25];
+                                data.on_width = +args[26];
                                 data.value = data.init ? data.default_value : data.minimum;
                                 data.id = `${data.type}_${nextId++}`;
                                 data.canvas = currentCanvas.canvas;
@@ -3108,14 +3593,14 @@ async function openPatch(content, filename) {
                                 data.width = +args[5];
                                 data.height = +args[6];
                                 data.send = [];
-                                data.receive = args[7] === 'empty' ? [] : [args[7]];
+                                data.receive = args[7] === 'empty' ? [null] : [args[7]];
                                 data.label = args[8] === 'empty' ? '' : args[8];
                                 data.x_off = +args[9];
                                 data.y_off = +args[10];
                                 data.font = +args[11];
                                 data.fontsize = +args[12];
-                                data.bg_color= isNaN(args[13]) ? args[13] : parseInt(args[13]);
-                                data.label_color = isNaN(args[14]) ? args[14] : parseInt(args[14]);
+                                data.bg_color= isNaN(args[13]) ? args[13] : +args[13];
+                                data.label_color = isNaN(args[14]) ? args[14] : +args[14];
                                 data.showScale = +args[15];
                                 data.unknown = +args[16];
                                 data.id = `${data.type}_${nextId++}`;
@@ -3156,7 +3641,7 @@ async function openPatch(content, filename) {
                                 data.link = args.slice(5).join(' ');
                                 data.visible = true;
                                 data.canvas = currentCanvas.canvas;
-                                data.receive = [];
+                                data.receive = [null];
                                 data.id = `${data.type}_${nextId++}`;
 
                                 if(data.link.includes(' -box')) {
@@ -3172,7 +3657,7 @@ async function openPatch(content, filename) {
 
                                 data.svgText = create_item("text", {
                                     x: data.x_pos,
-                                    y: data.y_pos + font_height_map()[currentCanvas.fontSize] + gobj_font_y_kludge(currentCanvas.fontSize) - 2.5,
+                                    y: data.y_pos + font_height_map()[currentCanvas.fontSize] + gobj_font_y_kludge(currentCanvas.fontSize),
                                     "shape-rendering": "crispEdges",
                                     "font-size": pd_fontsize_to_gui_fontsize(currentCanvas.fontSize) + "px",
                                     "font-weight": "normal",
@@ -3210,10 +3695,10 @@ async function openPatch(content, filename) {
                                 data.logarithmic = +args[9];
                                 data.init = +args[10];
                                 data.send = args[11] === "empty" ? [null] : [args[11]];
-                                data.receive = args[12] === "empty" ? [] : [args[12]];
+                                data.receive = args[12] === "empty" ? [null] : [args[12]];
                                 data.label = args[13] === "empty" ? "" : args[13];
                                 data.x_off = +args[14];
-                                data.y_off = +args[15] + +args[17]/5;
+                                data.y_off = +args[15];
                                 data.font = +args[16];
                                 data.fontsize = +args[17];
                                 data.bg_color= isNaN(args[18]) ? args[18] : +args[18];
@@ -3251,7 +3736,9 @@ async function openPatch(content, filename) {
                                     'font-size': data.height * .9 + 'px'
                                 })
 
-                                width = (data.height * .9 * 25 * data.width) / 36 + (data.height / 2) + 4;
+
+                                data.svgText.textContent = new Array(+data.width + 1).fill('A').join('');
+                                width = data.svgText.getComputedTextLength() + 5;
                                 data.border = create_item('path', {
                                     id: `${data.id}_border`,
                                     stroke: '#000000',
@@ -3300,22 +3787,22 @@ async function openPatch(content, filename) {
                         case "cnv":
                             if (args.length >= 18) {
                                 const data = {};
-                                data.x_pos = parseInt(args[2]);
-                                data.y_pos = parseInt(args[3]);
+                                data.x_pos = +args[2];
+                                data.y_pos = +args[3];
                                 data.type = args[4];
-                                data.size = parseInt(args[5]);
-                                data.width = parseInt(args[6]);
-                                data.height = parseInt(args[7]);
+                                data.size = +args[5];
+                                data.width = +args[6];
+                                data.height = +args[7];
                                 data.send = args[8] === "empty" ? [null] : [args[8]];
-                                data.receive = args[9] === "empty" ? [] : [args[9]];
+                                data.receive = args[9] === "empty" ? [null] : [args[9]];
                                 data.label = args[10] === "empty" ? "" : args[10];
-                                data.x_off = parseInt(args[11]);
-                                data.y_off = parseInt(args[12]);
-                                data.font = parseInt(args[13]);
-                                data.fontsize = parseInt(args[14]);
-                                data.bg_color = isNaN(args[15]) ? args[15] : parseInt(args[15]);
-                                data.label_color = isNaN(args[16]) ? args[16] : parseInt(args[16]);
-                                data.unknown = parseFloat(args[17]);
+                                data.x_off = +args[11];
+                                data.y_off = +args[12];
+                                data.font = +args[13];
+                                data.fontsize = +args[14];
+                                data.bg_color = isNaN(args[15]) ? args[15] : +args[15];
+                                data.label_color = isNaN(args[16]) ? args[16] : +args[16];
+                                data.unknown = +args[17];
                                 data.id = `${data.type}_${nextId++}`;
                                 data.canvas = currentCanvas.canvas;
 
@@ -3329,6 +3816,216 @@ async function openPatch(content, filename) {
                                 gui_subscribe(data);
                             }
                             break;
+                            
+                        case "ggee/image":
+                            if(args.length >= 26) {
+                                let data = {};
+                                data.x_pos = +args[2];
+                                data.y_pos = +args[3];
+                                data.type = args[4];
+                                data.src = args[5];
+                                data.gopSpill = +args[6];
+                                data.clickBehavior = +args[7];
+                                data.borderWidth = +args[8];
+                                data.borderHeight = +args[9];
+                                data.send = args[10] === "empty" ? [null] : [args[10]];
+                                data.receive = args[11] === "empty" ? [null] : [args[11]];
+                                data.label = args[12] === "empty" ? "" : args[12];
+                                data.imageWidth = +args[13];
+                                data.imageCurrentWidth = +args[13];
+                                data.imageHeight = +args[14];
+                                data.imageCurrentHeight = +args[14];
+                                data.constrain = +args[15]; // 0 - None, 1 - Image, 2 - Current
+                                data.font = +args[16];
+                                data.fontsize = +args[17];
+                                data.label_color = args[18];
+                                data.x_off = +args[19];
+                                data.y_off = +args[20];
+                                data.x_origin = +args[21];
+                                data.y_origin = +args[22];
+                                data.rotation = +args[23];
+                                data.visible = +args[24];
+                                data.opacity = +args[25];
+                                data.id = `${data.type}_${nextId++}`;
+                                data.canvas = currentCanvas.canvas;
+
+                                data.image = create_item("image", {}, currentCanvas.canvas);
+                                data.border = create_item("rect", {}, currentCanvas.canvas);
+                                data.text = create_item("text", gui_text(data), currentCanvas.canvas);
+
+                                data.render = async(data) => {
+                                    await new Promise((Resolve)=>{
+                                        let i = new Image();
+                                        i.src = data.src;
+                                        i.onload = e => {
+                                            data.imageNaturalWidth = i.naturalWidth;
+                                            data.imageNaturalHeight = i.naturalHeight;
+                                            Resolve(true);
+                                        }
+                                    });
+                                    if(data.constrain == 1)
+                                        data.imageHeight = data.imageWidth * (data.imageNaturalHeight / data.imageNaturalWidth);
+                                    if(data.constrain == 2)
+                                        data.imageHeight = data.imageWidth * (data.imageCurrentHeight / data.imageCurrentWidth);
+                                    if(data.gopSpill) {
+                                        data.borderWidth = Math.min(data.imageWidth, data.borderWidth);
+                                        data.borderHeight = Math.min(data.imageHeight, data.borderHeight);
+                                    } else {
+                                        data.borderWidth = data.imageWidth;
+                                        data.borderHeight = data.imageHeight;
+                                    }
+                                    configure_item(data.image, {
+                                        x: data.x_pos - (data.imageWidth - data.borderWidth) / 2,
+                                        y: data.y_pos - (data.imageHeight - data.borderHeight) / 2,
+                                        transform: `rotate(${data.rotation}, ${data.x_pos + data.x_origin}, ${data.y_pos + data.y_origin})`,
+                                        width: data.imageWidth,
+                                        height: data.imageHeight,
+                                        href: data.src,
+                                        opacity: data.visible ? data.opacity : '0',
+                                        id: `${data.id}_image`,
+                                        preserveAspectRatio: "none",
+                                        class: 'unclickable'
+                                    });
+                                    configure_item(data.border, {
+                                        x: data.x_pos,
+                                        y: data.y_pos,
+                                        width: data.borderWidth,
+                                        height: data.borderHeight,
+                                        stroke: 'red',
+                                        fill: 'red',
+                                        opacity: '0',
+                                        id: `${data.id}_border`,
+                                        class: (data.clickBehavior === 3 || data.clickBehavior === 0) ? "unclickable" : ''
+                                    });
+                                    configure_item(data.text, gui_text(data));
+                                    data.text.textContent = data.label;
+                                }
+                                data.render(data);
+
+                                data.contains = p => p.x > data.x_pos && p.y > data.y_pos && p.x < data.x_pos + data.borderWidth && p.y < data.y_pos + data.borderHeight;
+
+                                inputListeners.push({
+                                    onMouseDown: e => {
+                                        let p = gui_roundedmousepoint(e, data.canvas);
+                                        if(data.clickBehavior === 3 && data.contains(p))
+                                            gui_send('List', data.send, [1, data.x_pos, data.y_pos, p.x - data.x_pos, p.y - data.y_pos]);
+                                    },
+                                    onMouseUp: e => {
+                                        let p = gui_roundedmousepoint(e, data.canvas);
+                                        if(data.clickBehavior === 3 && data.contains(p))
+                                            gui_send('List', data.send, [-1, data.x_pos, data.y_pos, p.x - data.x_pos, p.y - data.y_pos]);
+                                    },
+                                    onMouseMove: e => {
+                                        let p = gui_roundedmousepoint(e, data.canvas);
+                                        if(data.clickBehavior === 3 && data.contains(p))
+                                            gui_send('List', data.send, [0, data.x_pos, data.y_pos, p.x - data.x_pos, p.y - data.y_pos]);
+                                    },
+                                });
+
+                                if (isMobile) {
+                                    data.border.addEventListener("touchstart", function (e) {
+                                        e = e || window.event;
+                                        for (const touch of e.changedTouches) {
+                                            gui_image_onmousedown(data, touch, touch.identifier);
+                                        }
+                                    });
+                                }
+                                else {
+                                    data.border.addEventListener("mousedown", function (e) {
+                                        gui_image_onmousedown(data, e, 0);
+                                    });
+                                }
+
+                                currentCanvas.guiObjects[currentCanvas.objId] = data;
+                            }
+                            break;
+                        case "key": {
+                            let data = {};
+                            data.repeat = args[5] === '1';
+                            data.send = [null];
+                            currentCanvas.guiObjects[currentCanvas.objId] = data;
+                            inputListeners.push({
+                                onKeyDown: (e) => {
+                                    if(e.repeat === false || data.repeat === true)
+                                        gui_send('Float',data.send, e.key.length == 1 ? e.key.charCodeAt(0) : e.keyCode);
+                                }
+                            })
+                            break;
+                        }
+                        case "keyup": {
+                            let data = {};
+                            data.repeat = args[5] === '1';
+                            data.send = [null];
+                            currentCanvas.guiObjects[currentCanvas.objId] = data;
+                            inputListeners.push({
+                                onKeyUp: (e) => {
+                                    if(e.repeat === false || data.repeat === true)
+                                        gui_send('Float',data.send, e.key.length == 1 ? e.key.charCodeAt(0) : e.keyCode);
+                                }
+                            })
+                            break;
+                        }
+                        case "keyname": {
+                            let data = {};
+                            data.repeat = args[5] === '1';
+                            data.send = [null];
+                            data.auxSend = [[null]];
+                            currentCanvas.guiObjects[currentCanvas.objId] = data;
+                            inputListeners.push({
+                                onKeyDown: e => {
+                                    if(e.repeat === false || data.repeat === true) {
+                                        gui_send('Float', data.send, 1);
+                                        gui_send('Symbol', data.auxSend[0], e.key);
+                                    }
+                                },
+                                onKeyUp: e => {
+                                    if(e.repeat === false || data.repeat === true) {
+                                        gui_send('Float', data.send, 0);
+                                        gui_send('Symbol', data.auxSend[0], e.key);
+                                    }
+                                }
+                            })
+                            break;
+                        }
+                        case "legacy_mousemotion": {
+                            let data = {};
+                            data.send = [null];
+                            data.auxSend = [[null]];
+                            data.canvas = currentCanvas.canvas;
+                            currentCanvas.guiObjects[currentCanvas.objId] = data;
+                            inputListeners.push({
+                                onMouseMove: e => {
+                                    let p = gui_roundedmousepoint(e, data.canvas);
+                                    gui_send('Float', data.send, p.x);
+                                    gui_send('Float', data.auxSend[0], p.y);
+                                }
+                            })
+                            break;
+                        }
+                        case "legacy_mouseclick": {
+                            let data = {};
+                            data.send = [null];
+                            data.auxSend = [[null],[null],[null]];
+                            data.canvas = currentCanvas.canvas;
+                            currentCanvas.guiObjects[currentCanvas.objId] = data;
+                            inputListeners.push({
+                                onMouseDown: e => {
+                                    let p = gui_roundedmousepoint(e, data.canvas);
+                                    gui_send('Float', data.send, 1);
+                                    gui_send('Float', data.auxSend[0], e.which);
+                                    gui_send('Float', data.auxSend[1], p.x);
+                                    gui_send('Float', data.auxSend[2], p.y);
+                                },
+                                onMouseUp: e => {
+                                    let p = gui_roundedmousepoint(e, data.canvas);
+                                    gui_send('Float', data.send, 0);
+                                    gui_send('Float', data.auxSend[0], e.which);
+                                    gui_send('Float', data.auxSend[1], p.x);
+                                    gui_send('Float', data.auxSend[2], p.y);
+                                }
+                            })
+                            break;
+                        }
                         default: //If we don't have an explicit handling for the object, it's possible that it is an external patch load
                             //We want to load patch data from the same folder as our current patch, just with a different filename at the end.
                             let data = await getPatchData(`${((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')}/${args[4]}.pd`);
@@ -3337,7 +4034,7 @@ async function openPatch(content, filename) {
                                 //We must add an #X restore at the end to undo the #N canvas at the beginning
                                 nextCanvas.args = args.slice(5);
                                 nextCanvas.instance = ++nextInstance;
-                                lines.splice(i,1,...data.content.split(';\n'),`#X restore ${args[2]} ${args[3]} ${args[4]}`);
+                                lines.splice(i,1,...data.content.split(';\n').slice(0,-1),`#X restore ${args[2]} ${args[3]} ${args[4]}`);
                                 //Since we removed the line that we just processed, our subpatch starts at line i, so we have to process line i again.
                                 i--;
                                 currentCanvas.objId--;
@@ -3422,20 +4119,20 @@ async function openPatch(content, filename) {
                         });
                     }
 
-                    currentCanvas.coordObjs.push(data);                    
+                    currentCanvas.coordObjs.push(data);
                 }
                 break;
             case "#X text":
                 if (args.length > 4) {
                     const data = {};
                     data.type = args[1];
-                    data.x_pos = parseInt(args[2]);
-                    data.y_pos = parseInt(args[3]);
+                    data.x_pos = +args[2];
+                    data.y_pos = +args[3];
                     data.comment = [];
                     data.canvas = currentCanvas;
-                    const lines = args.slice(4).join(" ").replace(/ \\,/g, ",").replace(/\\; /g, ";\n").replace(/ ;/g, ";").replace(//,'\n').split("\n");
+                    const lines = args.slice(4).join(" ").replace(/ \\,/g, ",").replace(/\\; /g, ";\n").replace(/ ;/g, ";").replace(//g,'\n').split("\n");
                     for (const line of lines) {
-                        const lines = line.match(/.{1,60}(\s|$)/g);
+                        const lines = line.match(new RegExp(`.{1,${widthOverride || 100}}(\\s|$)`,'g')) || [];
                         for (const line of lines) {
                             data.comment.push(line.trim());
                         }
@@ -3460,7 +4157,7 @@ async function openPatch(content, filename) {
                     data.text = args.slice(4).join(' ').replace(/ \\;/g,';\n').replace(/ ,/g,',').replace(/\\\$/g,'$');
                     data.id = `${data.type}_${nextId++}`;
                     data.objId = currentCanvas.objId;
-                    data.receive = [];
+                    data.receive = [null];
                     data.send = [null];
                     data.clickSend = `msg_${currentCanvas.id}_${data.objId}`
                     data.canvas = currentCanvas.canvas;
@@ -3547,7 +4244,7 @@ async function openPatch(content, filename) {
                     data.max = +args[6];
                     data.labelSide = +args[7];
                     data.label = args[8] === "-" ? "" : args[8];
-                    data.receive = args[9] === "-" ? [] : [args[9]];
+                    data.receive = args[9] === "-" ? [null] : [args[9]];
                     data.send = args[10] === "-" ? [null] : [args[10]];
                     data.exclusive = +args[11];
                     data.typedMinMax = +args[12];
@@ -3574,7 +4271,7 @@ async function openPatch(content, filename) {
                     }, rootCanvas);
                     data.svgText.textContent = new Array(+data.width).fill('A').join('');
                     
-                    let width = data.svgText.getComputedTextLength() + 5, height = font_height_map()[currentCanvas.fontSize] + 4;
+                    let width = data.svgText.getComputedTextLength() + 2.5, height = font_height_map()[currentCanvas.fontSize] + 4;
                     data.border = create_item('path', {
                         id: data.id,
                         stroke:'#d9d9d9',
@@ -3637,6 +4334,9 @@ async function openPatch(content, filename) {
                         if(args[3] == '0') {
                             lines.splice(i+1,0,`#X obj 0 0 r ${connectionName}`,`#X connect ${currentCanvas.objId + 1} 0 ${args[4]} ${args[5]}`)
                             currentCanvas.guiObjects[args[2]].send.push(connectionName);
+                        } else if(currentCanvas.guiObjects[args[2]].auxSend) {
+                            lines.splice(i+1,0,`#X obj 0 0 r ${connectionName}`,`#X connect ${currentCanvas.objId + 1} 0 ${args[4]} ${args[5]}`)
+                            currentCanvas.guiObjects[args[2]].auxSend[+args[3] - 1].push(connectionName);
                         } else
                             console.warn('Ignoring unsupported wired connection (Code A)'); //This should never happen
                     }
@@ -3654,9 +4354,14 @@ async function openPatch(content, filename) {
                             currentCanvas.guiObjects[args[2]].send.push(connectionName);
                             currentCanvas.guiObjects[args[4]].receive.push(connectionName);
                             gui_subscribe(currentCanvas.guiObjects[args[4]]);
-                        } else
+                        } else if(currentCanvas.guiObjects[args[2]].auxSend) {
+                            currentCanvas.guiObjects[args[2]].auxSend[+args[3] - 1].push(connectionName);
+                            currentCanvas.guiObjects[args[4]].receive.push(connectionName);
+                            gui_subscribe(currentCanvas.guiObjects[args[4]]);
+                        }
+                        else
                             console.warn('Ignoring unsupported wired connection (Code B)')
-                    }
+                        }
                     if(args[5] !== '0' && currentCanvas.guiObjects[args[4]]) {
                         if(args[5] === '1') {
                             lines.splice(i+1,0,
