@@ -68,12 +68,12 @@ let object_types = [
 //span - The distance in screenspace between low and high (width or height)
 //coord/screen - the coordinate to convert (x or y)
 function coordToScreen(low, high, span, coord) {
-    let raw = (coord - Math.min(low, high)) * (span + 2) / Math.abs(low - high);
+    let raw = (coord - Math.min(low, high)) * span / Math.abs(low - high);
     return Math.round(high > low ? raw : span - raw);
 }
 function screenToCoord(low, high, span, screen) {
     let raw = high > low ? screen : span - screen;
-    return raw * Math.abs(low - high) / (span + 2) + Math.min(low, high);   
+    return (raw) * Math.abs(low - high) / span + Math.min(low, high);   
 }
 
 // create an AudioContext
@@ -380,6 +380,7 @@ var Module = {
                     switch (data.type) {
                         case "bng":
                             gui_bng_update_circle(data);
+                            gui_send('Bang', data.send)
                             break;
                         case "tgl":
                             data.value = data.value ? 0 : data.default_value;
@@ -402,6 +403,9 @@ var Module = {
                         case "pddplink":
                         case "pddp/pddplink":
                             gui_link_open(data.link);
+                            break;
+                        case "flatgui/knob":
+                            gui_send('Float', data.send, data.value);
                             break;
                     }
                 }
@@ -525,6 +529,9 @@ var Module = {
             if (source in subscribedData) {
                 for (const data of subscribedData[source]) {
                     switch (data.type) {
+                        case "patch":
+                            data.setVisibility(list[0]);
+                            break;
                         case "bng":
                             switch (symbol) {
                                 case "size":
@@ -1045,7 +1052,6 @@ var Module = {
                                 case "color":
                                     data.bg_color = list[0];
                                     data.label_color = list[1];
-                                    console.log(list);
                                     break;
                                 case "pos":
                                     data.x_pos = list[0];
@@ -1138,6 +1144,60 @@ var Module = {
                                 
                             }
                             data.render(data);
+                            break;
+                        case "array":
+                            switch(symbol) {
+                                case "data":
+                                    if(data.drawTimeout)
+                                        clearTimeout(data.drawTimeout);
+                                    let start = list[0] * 10000 - 1, initialLength = data.nums.length;
+                                    for(let i = 1; i < list.length; i++)
+                                        data.nums[i + start] = list[i];
+                                    if(initialLength < data.nums.length)
+                                        data.resize(data.nums.length);
+                                    data.drawTimeout = setTimeout(data.redraw, 16);
+                                    break;
+                                case "rename":
+                                    for(let label of data.canvasData.labels)
+                                    if(label.textContent == data.receive[0])
+                                        label.textContent = list[0];
+
+                                    gui_unsubscribe(data);
+                                    data.receive[0] = list[0];
+                                    gui_subscribe(data);
+                                    data.name = list[0];
+                                    data.redraw();
+                                    break;
+                                case "bounds":
+                                    data.canvasData.coords.t = list[1];
+                                    data.canvasData.coords.b = list[3];
+                                    for(let coordObj of data.canvasData.coordObjs) {
+                                        coordObj.setCoords(data.canvasData.coords);
+                                        coordObj.redraw();
+                                    }
+                                    break;
+                                case "xticks":
+                                    data.canvasData.coords.xticks.start = list[0];
+                                    data.canvasData.coords.xticks.interval = list[1];
+                                    data.canvasData.coords.xticks.big = list[2];
+                                    gui_canvas_drawTicks(data.canvasData);
+                                    break;
+                                case "yticks":
+                                    data.canvasData.coords.yticks.start = list[0];
+                                    data.canvasData.coords.yticks.interval = list[1];
+                                    data.canvasData.coords.yticks.big = list[2];
+                                    gui_canvas_drawTicks(data.canvasData);
+                                    break;
+                                case "xlabel":
+                                    break;
+                                case "ylabel":
+                                    break;
+                                case "resize":
+                                    if(list[0] >= 0)
+                                        data.resize(list[0]);
+                                    break;
+
+                            }
                             break;
                     }
                 }
@@ -1286,18 +1346,13 @@ Module['preRun'].push(function() {
                 if(isNetworkCandidate) {
                     const request = new XMLHttpRequest();
                     request.open("GET", ((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')+path, false); // `false` makes the request synchronous
+                    request.overrideMimeType('text/plain; charset=x-user-defined'); // Set MIME type for binary data
                     request.send();
-
                     if (request.status === 200) {
-                        let folder = path.split('/').slice(0,-1).join('/'), filename = path.split('/').slice(-1)[0];
-                        folder += '/';
+                        let folder = path.split('/').slice(0,-1).join('/') + '/';
                         FS.createPath('/', folder);
-                        let file = FS.createDataFile(folder,filename, request.response, true, true, true);
-                        var lookup = FS.lookupPath(path, {
-                            follow: !(flags & 131072)
-                        });
-                        node = lookup.node
-
+                        FS.createDataFile(folder, path.split('/').slice(-1)[0], request.response, true, true, true);
+                        node = FS.lookupPath(path, { follow: !(flags & 131072) }).node;
                     }
                 }
             }
@@ -1596,26 +1651,37 @@ function gui_unsubscribe(data) {
 }
 
 function gui_send(type, destinations, value) {
-    if(type === 'List') {
-        for(let destination of destinations) {
-            if(destination) {
-                Module.pd.startMessage(value.length);
-                for(let val of value) {
+    for(let destination of destinations) {
+        if(destination) {
+            if(type === 'List') {
+                if(destination) {
+                    Module.pd.startMessage(value.length);
+                    for(let val of value) {
+                        if(typeof val === 'number')
+                            Module.pd.addFloat(val);
+                        else if(typeof val === 'string')
+                            Module.pd.addSymbol(val);
+                        else
+                            return console.error('Invalid value in list, not sent!');
+                    }
+                    Module.pd.finishList(destination);
+                }
+            }
+            else if(type === 'Message') {
+                Module.pd.startMessage(value);
+                for(let val of value.slice(1)) {
                     if(typeof val === 'number')
                         Module.pd.addFloat(val);
                     else if(typeof val === 'string')
                         Module.pd.addSymbol(val);
                     else
-                        return console.error('Invalid value in list, not sent!');
+                        return console.error('Invalid value in message, not sent!');
                 }
-                Module.pd.finishList(destination);
-            }
+                Module.pd.finishMessage(destination, value[0]);
+            } else
+                value === undefined ? Module.pd['send'+type](destination) : Module.pd['send'+type](destination, value);
         }
     }
-    else
-        for(let destination of destinations)
-            if(destination)
-                value === undefined ? Module.pd['send'+type](destination) : Module.pd['send'+type](destination, value);
 }
 
 // common
@@ -2373,6 +2439,43 @@ function gui_vumeter_render(data) {
 
 //Arrays
 const gui_array_touches = {};
+function gui_canvas_drawTicks(data) {
+    let xPath = '';
+    for(let i = Math.floor((data.coords.l - data.coords.xticks.start) / data.coords.xticks.interval ); data.coords.xticks.start + data.coords.xticks.interval * i < data.coords.r; i++)
+        if([data.coords.l, data.coords.r].includes(data.coords.xticks.start + data.coords.xticks.interval * i) == false)
+            xPath += `
+                    M ${coordToScreen(data.coords.l, data.coords.r, data.coords.w, data.coords.xticks.start + data.coords.xticks.interval * i)} ${coordToScreen(data.coords.t, data.coords.b, data.coords.h, data.coords.b)} 
+                    v ${(i % data.coords.xticks.big) ? -2 : -4}
+                    M ${coordToScreen(data.coords.l, data.coords.r, data.coords.w, data.coords.xticks.start + data.coords.xticks.interval * i)} ${coordToScreen(data.coords.t, data.coords.b, data.coords.h, data.coords.t)} 
+                    v ${(i % data.coords.xticks.big) ? 2 : 4}
+                `;
+    if(data.xTicks)
+        data.canvas.removeChild(data.xTicks);
+    data.xTicks = create_item("path", {
+        stroke: "black",
+        fill: "none",
+        "stroke-width": 1,
+        d: xPath
+    }, data.canvas);
+
+    let yPath = '';
+    for(let i = Math.floor((data.coords.t - data.coords.yticks.start) / data.coords.yticks.interval ); data.coords.yticks.start + data.coords.yticks.interval * i < data.coords.b; i++)
+        if([data.coords.t, data.coords.b].includes(data.coords.yticks.start + data.coords.yticks.interval * i) == false)
+            yPath += `
+                    M ${coordToScreen(data.coords.l, data.coords.r, data.coords.w, data.coords.r)} ${coordToScreen(data.coords.t, data.coords.b, data.coords.h, data.coords.yticks.start + data.coords.yticks.interval * i)} 
+                    h ${(i % data.coords.yticks.big) ? -2 : -4}
+                    M ${coordToScreen(data.coords.l, data.coords.r, data.coords.w, data.coords.l)} ${coordToScreen(data.coords.t, data.coords.b, data.coords.h, data.coords.yticks.start + data.coords.yticks.interval * i)} 
+                    h ${(i % data.coords.yticks.big) ? 2 : 4}
+                `;
+    if(data.yTicks)
+        data.canvas.removeChild(data.yTicks);
+    data.yTicks = create_item("path", {
+        stroke: "black",
+        fill: "none",
+        "stroke-width": 1,
+        d: yPath
+    }, data.canvas);
+}
 function gui_array_onmousedown(data, e, id) {
     let p = gui_mousepoint(e, data.canvas);
     let x = Math.floor(screenToCoord(data.coords.l, data.coords.r, data.coords.w, p.x)) + 1;
@@ -2380,6 +2483,7 @@ function gui_array_onmousedown(data, e, id) {
     if((data.jumpOnClick || Math.abs(p.y - coordToScreen(data.coords.t, data.coords.b, data.coords.h, data.nums[x])) < 2) && x < data.nums.length - 1) {
         data.nums[x] = Math.max(Math.min(data.coords.t, data.coords.b), Math.min(Math.max(data.coords.t, data.coords.b), y));
         data.lastx = x;
+        gui_send("List", [data.receive[0]], [x, data.nums[x]]);
         data.redraw();
         if(!gui_array_touches[id])
             gui_array_touches[id] = [];
@@ -2401,6 +2505,13 @@ function gui_array_onmousemove(e, id) {
                 for(let i = Math.min(start, end); i <= Math.max(start,end); i++)
                     data.nums[i] = Math.max(Math.min(data.coords.t, data.coords.b), Math.min(Math.max(data.coords.t, data.coords.b), (refy + (p.y - refy) * (Math.abs(i - start) / Math.max(1,Math.abs(end - start))))));
             data.lastx = end;
+
+            let nums = [];
+            nums.push(Math.min(start, end));
+            for(let i = Math.min(start,end); i <= Math.max(start,end); i++)
+                nums.push(data.nums[i]);
+            gui_send("List",[data.receive[0]], nums);
+
             data.redraw();
         }
     }
@@ -2951,6 +3062,7 @@ function gui_text_text(data, line_index, fontSize) {
 //--------------------- patch handling ----------------------------
 async function openPatch(content, filename) {
     console.log(`Loading Patch: ${filename}`);
+    document.title=filename;
 
     document.removeEventListener('keydown', onKeyDown);
     document.removeEventListener('keyup', onKeyUp);
@@ -2980,6 +3092,7 @@ async function openPatch(content, filename) {
         coordObjs: [],
         args: [],
         arrays: [],
+        labels: [],
         instance: 1003,
         id: 0,          //ID of the current canvas (used to uniquely assign wire names)
         objId: -1,      //Next objectID for the current canvas (used in conjunction with guiObjects to keep track of objects for assigning wires)
@@ -3040,8 +3153,10 @@ async function openPatch(content, filename) {
                 canvasStack.push(currentCanvas);
                 if(!nextCanvas.instance)
                     nextCanvas.instance = canvasStack[canvasStack.length - 1].instance;
-                if(!nextCanvas.args)
+                if(!nextCanvas.args) {
                     nextCanvas.args = canvasStack[canvasStack.length - 1].args;
+                    nextCanvas.argsInherited = true;
+                }
                 currentCanvas = nextCanvas;
                 //We need to Parse and Stringify so that we get a deep copy, not just a reference. Otherwise, everything will break
                 nextCanvas = JSON.parse(JSON.stringify(currentCanvas));
@@ -3059,7 +3174,9 @@ async function openPatch(content, filename) {
                         r: +args[4],
                         b: +args[5],
                         w: +args[6],
-                        h: +args[7]
+                        h: +args[7],
+                        xticks: {},
+                        yticks: {},
                     }
 
                     let coordObjs = currentCanvas.coordObjs;
@@ -3088,7 +3205,7 @@ async function openPatch(content, filename) {
                     }
                     if(+args[8] > 0) {
                         configure_item(currentCanvas.group, {width: +args[6], height: +args[7]});
-                        configure_item(currentCanvas.canvas, {width: +args[6] + 1, height: +args[7] - 1});
+                        configure_item(currentCanvas.canvas, {width: +args[6] - 1, height: +args[7] - 1});
                         currentCanvas.border = create_item('rect', {
                             width: +args[6] - 1,
                             height: +args[7] - 1,
@@ -3100,7 +3217,7 @@ async function openPatch(content, filename) {
                         currentCanvas.canvas.setAttributeNS(null, "viewBox", `${+args[9] || 0} ${+args[10] || 0} ${+args[6]} ${+args[7]}`);
                     } else {
                         configure_item(currentCanvas.group, {width: currentCanvas.size.w, height: currentCanvas.size.h});
-                        configure_item(currentCanvas.canvas, {width: currentCanvas.size.w + 1, height: currentCanvas.size.h - 1});
+                        configure_item(currentCanvas.canvas, {width: currentCanvas.size.w, height: currentCanvas.size.h});
                         currentCanvas.border = create_item('rect', {
                             width: currentCanvas.size.w - 1,
                             height: currentCanvas.size.h - 1,
@@ -3115,8 +3232,8 @@ async function openPatch(content, filename) {
             case "#X restore":
                 if(args.length > 3) {
                     if(currentCanvas.arrays.length > 0)
-                        currentCanvas.group.appendChild(currentCanvas.canvas);
-                    configure_item(currentCanvas.canvas, {x: +args[2] - 1, y: +args[3] + 1});
+                        currentCanvas.group.insertBefore(currentCanvas.canvas, currentCanvas.border);
+                    configure_item(currentCanvas.canvas, {x: +args[2] + .5, y: +args[3]});
                     configure_item(currentCanvas.border, {x: +args[2] + .5, y: +args[3] + .5});
                     if(currentCanvas.showTitle) {
                         if(currentCanvas.arrays.length > 1) {
@@ -3136,6 +3253,7 @@ async function openPatch(content, filename) {
                                     id: `title_${nextId}_${i}`,
                                 }, i, currentCanvas.fontSize), currentCanvas.group);
                                 text.textContent = currentCanvas.arrays[i].name;
+                                currentCanvas.labels.push(text);
                                 nextId++;
                             }
                         } else  {
@@ -3148,14 +3266,17 @@ async function openPatch(content, filename) {
                                 text.textContent = currentCanvas.arrays[0].name;
                             else
                                 text.textContent = args.slice(4).join(' ');
+                            currentCanvas.labels.push(text);
                         }
                     } else if(currentCanvas.showBox !== false) {
                         let data = {};
+                        data.type = 'patch';
                         data.x_pos = +args[2];
                         data.y_pos = +args[3];
                         data.window_x = currentCanvas.pos.x - canvasStack[1].pos.x;
                         data.window_y = currentCanvas.pos.y - canvasStack[1].pos.y;
-                        data.name = args.slice(4).join(' ');
+                        data.name = [...args,...(currentCanvas.argsInherited ? [] : currentCanvas.args)].slice(4).join(' ');
+                        data.receive = [args[4] == 'pd' ? `pd-${args.slice(5).join(' ')}` : `pd-${args.slice(4).join(' ')}.pd`];
                         data.group = currentCanvas.group;
                         data.canvas = currentCanvas.canvas;
                         data.current = currentCanvas;
@@ -3182,19 +3303,20 @@ async function openPatch(content, filename) {
                             width: data.text.getComputedTextLength() + 5,
                             height: font_height_map()[canvasStack.at(-1).fontSize] + 4
                         }, canvasStack.at(-1).canvas);
+                        currentCanvas.canvas.style.overflow='hidden';
+
+                        data.titleRect = create_item('rect', {
+                            id: `${data.id}_title`,
+                            fill: '#4F4F4F',
+                            width: currentCanvas.size.w + 2,
+                            height: currentCanvas.size.h + 16,
+                        }, currentCanvas.group);
 
                         data.background = create_item('rect', {
                             id: `${data.id}_background`,
                             fill: '#9E9E9E',
                             width: currentCanvas.size.w - 1,
                             height: currentCanvas.size.h - 1,
-                        }, currentCanvas.group);
-
-                        data.titleRect = create_item('rect', {
-                            id: `${data.id}_title`,
-                            fill: '#4F4F4F',
-                            width: currentCanvas.size.w,
-                            height: 15,
                         }, currentCanvas.group);
                         
 
@@ -3231,7 +3353,7 @@ async function openPatch(content, filename) {
                                 y: data.window_y + .5
                             });
                             configure_item(data.titleRect, {
-                                x: data.window_x,
+                                x: data.window_x - .5,
                                 y: data.window_y + .5 - 15
                             });
                             configure_item(data.titleText, {
@@ -3239,25 +3361,36 @@ async function openPatch(content, filename) {
                                 y: data.window_y - 15.5 + font_height_map()[10] + gobj_font_y_kludge(10),
                             });
                             configure_item(data.closeRect, {
-                                x: data.window_x + data.current.size.w - 15,
+                                x: data.window_x + data.current.size.w - 14.5,
                                 y: data.window_y - 14.5
                             })
                             configure_item(data.closeBtn, {
                                 d: `M ${data.window_x + data.current.size.w - 13} ${data.window_y + .5 - 13} l 11 11 m 0 -11 l -11 11`,
                             })
-                            configure_item(data.canvas, {x:  data.window_x - 1, y: data.window_y + 1});
-                            configure_item(data.current.border, {x: data.window_x + .5, y: data.window_y + .5});
+                            configure_item(data.canvas, {
+                                x:  data.window_x + .5,
+                                y: data.window_y + .5,
+                                width: data.current.size.w,
+                                height: data.current.size.h
+                            });
+                            data.canvas.style.overflow = "hidden";
                         }
+                        data.setVisibility = visibility => {
+                            if(visibility)
+                                rootCanvas.appendChild(data.group);
+                            else
+                                rootCanvas.removeChild(data.group);
+                            data.group.style.display = visibility ? 'block' : 'none';
+                        }
+
                         data.updateWindow();
                         
                         if (isMobile) {
                             data.rect.addEventListener("touchstart", function (e) {
-                                rootCanvas.appendChild(data.group);
-                                data.group.style.display = 'block';
+                                data.setVisibility(true);
                             });
                             data.closeRect.addEventListener("mousedown", function (e) {
-                                rootCanvas.removeChild(data.group);
-                                data.group.style.display = 'none';
+                                data.setVisibility(false);
                             });
                             data.titleRect.addEventListener("touchstart", function (e) {
                                 e = e || window.event;
@@ -3268,17 +3401,17 @@ async function openPatch(content, filename) {
                         }
                         else {
                             data.rect.addEventListener("mousedown", function (e) {
-                                rootCanvas.appendChild(data.group);
-                                data.group.style.display = 'block';
+                                data.setVisibility(true);
                             });
                             data.closeRect.addEventListener("mousedown", function (e) {
-                                rootCanvas.removeChild(data.group);
-                                data.group.style.display = 'none';
+                                data.setVisibility(false);
                             });
                             data.titleRect.addEventListener('mousedown', function (e) {
                                 gui_window_onmousedown(data,e,0);
                             });
                         }
+
+                        gui_subscribe(data);
                     }
                     if(currentCanvas.arrays.length == 0)
                         currentCanvas.group.appendChild(currentCanvas.canvas);
@@ -3441,9 +3574,6 @@ async function openPatch(content, filename) {
                                 data.indicator = create_item("line", gui_slider_indicator(data), data.canvas);
                                 data.text = create_item("text", gui_slider_text(data), data.canvas);
                                 data.text.textContent = data.label;
-                                console.log('======');
-                                console.log(data.label);
-                                console.log(data.label.charCodeAt(0));
 
                                 // handle event
                                 gui_slider_check_minmax(data);
@@ -4053,6 +4183,8 @@ async function openPatch(content, filename) {
                     data.type = args[1];
                     data.name = args[2];
                     data.size = +args[3];
+                    data.receive = [data.name];
+                    data.send = [null];
                     data.valtype = args[4];
                     data.jumpOnClick = +args[5] > 15;
                     data.displayMode = Math.floor((+args[5] % 16) / 2);
@@ -4065,28 +4197,45 @@ async function openPatch(content, filename) {
                     data.outlineColor = args[7];
                     data.id = `array_${nextId++}`;
                     data.canvas = currentCanvas.canvas;
+                    data.canvasData = currentCanvas;
                     if(lines[i+1].startsWith('#A '))
-                        data.nums = lines[++i].replace(/\n/g,' ').split(' ').slice(1).map(num=>+num);
+                        data.nums = lines[i+1].replace(/\n/g,' ').split(' ').slice(1).map(num=>+num);
                     else
                         data.nums = (new Array(data.size)).fill(0);
                     data.path = create_item('path', {id: data.id, stroke:data.outlineColor, "stroke-width": "1", fill: 'none'}, data.canvas);
                     data.setCoords = coords => {
                         data.coords = coords;
                     }
+                    data.resize = size => {
+                        if(size > data.nums.length)
+                            data.nums = [...data.nums, ...(new Array(size - data.nums.length)).fill(0)];
+                        else
+                            data.nums = data.nums.slice(0,size);
+                        data.redraw();
+
+                        let smallestArr = data.canvasData.coordObjs.reduce((p, c) => p < c.nums.length ? c.nums.length : p, 0);
+                        data.canvasData.coords.l = 0;
+                        data.canvasData.coords.r = smallestArr - 1;
+                        for(let coordObj of data.canvasData.coordObjs) {
+                            coordObj.setCoords(data.canvasData.coords);
+                            coordObj.redraw();
+                        }
+                        gui_canvas_drawTicks(data.canvasData);
+                    }
                     data.redraw = () => {
                         let path = data.displayMode % 2 ? '' : 'M ';
                         let c = data.coords;
                         let lastX = -1;
-                        for(let i = 0; i < data.nums.length - 1; i++) {
+                        for(let i = 0; i < data.nums.length; i++) {
                             let curX = coordToScreen(c.l,c.r,c.w,i);
                             if(curX != lastX) {
                                 lastX = curX;
                                 if(data.displayMode == 0 || data.displayMode == 2)
-                                    path += `${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i+1])} `;
+                                    path += `${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} `;
                                 if(data.displayMode == 1)
-                                    path += `M ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i+1])} H ${coordToScreen(c.l,c.r,c.w,i+1) - 1} V ${coordToScreen(c.t,c.b,c.h,data.nums[i+1])+1} H ${curX} Z `;
+                                    path += `M ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} H ${coordToScreen(c.l,c.r,c.w,i) - 1} V ${coordToScreen(c.t,c.b,c.h,data.nums[i])+1} H ${curX} Z `;
                                 if(data.displayMode == 3)
-                                    path += `M ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i+1])} H ${coordToScreen(c.l,c.r,c.w,i+1)} V ${c.h + 2} H ${curX} Z `;
+                                    path += `M ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} H ${coordToScreen(c.l,c.r,c.w,i + 1)} V ${c.h} H ${curX} Z `;
                             }
                         }
                         if(data.displayMode == 3)
@@ -4120,6 +4269,8 @@ async function openPatch(content, filename) {
                     }
 
                     currentCanvas.coordObjs.push(data);
+                    currentCanvas.guiObjects[currentCanvas.objId] = data;
+                    gui_subscribe(data);
                 }
                 break;
             case "#X text":
@@ -4154,7 +4305,7 @@ async function openPatch(content, filename) {
                     data.type = args[1];
                     data.x_pos = +args[2];
                     data.y_pos = +args[3];
-                    data.text = args.slice(4).join(' ').replace(/ \\;/g,';\n').replace(/ ,/g,',').replace(/\\\$/g,'$');
+                    data.text = args.slice(4).join(' ').replace(/\\\; /g,';\n').replace(/ ,/g,',').replace(/\\\$/g,'$');
                     data.id = `${data.type}_${nextId++}`;
                     data.objId = currentCanvas.objId;
                     data.receive = [null];
@@ -4239,7 +4390,7 @@ async function openPatch(content, filename) {
                     data.type = args[1];
                     data.x_pos = +args[2];
                     data.y_pos = +args[3];
-                    data.width = +args[4];
+                    data.width = Math.max(2,+args[4]);
                     data.min = +args[5];
                     data.max = +args[6];
                     data.labelSide = +args[7];
@@ -4332,10 +4483,10 @@ async function openPatch(content, filename) {
                         //If the sender is a gui object, and the receiver is not, we must add a receive object so that the
                         //sender can send wirelessly. Then we connect the receive object to the receiver, and the sender wirelessly to the receive object
                         if(args[3] == '0') {
-                            lines.splice(i+1,0,`#X obj 0 0 r ${connectionName}`,`#X connect ${currentCanvas.objId + 1} 0 ${args[4]} ${args[5]}`)
+                            lines.splice(i,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++currentCanvas.objId} 0 ${args[4]} ${args[5]}`)
                             currentCanvas.guiObjects[args[2]].send.push(connectionName);
                         } else if(currentCanvas.guiObjects[args[2]].auxSend) {
-                            lines.splice(i+1,0,`#X obj 0 0 r ${connectionName}`,`#X connect ${currentCanvas.objId + 1} 0 ${args[4]} ${args[5]}`)
+                            lines.splice(i,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++currentCanvas.objId} 0 ${args[4]} ${args[5]}`)
                             currentCanvas.guiObjects[args[2]].auxSend[+args[3] - 1].push(connectionName);
                         } else
                             console.warn('Ignoring unsupported wired connection (Code A)'); //This should never happen
@@ -4343,7 +4494,7 @@ async function openPatch(content, filename) {
                     if(!currentCanvas.guiObjects[args[2]] && currentCanvas.guiObjects[args[4]] && args[5] === '0') {
                         //If the receiver is a gui object, and the sender is not, we must add a send object so that the receiver
                         //can receive wirelessly. Then we connect the send object to the sender, and the receiver wirelessly to the send object
-                        lines.splice(i+1,0,`#X obj 0 0 s ${connectionName}`,`#X connect ${args[2]} ${args[3]} ${currentCanvas.objId + 1} 0`);
+                        lines.splice(i,1,`#X obj 0 0 s ${connectionName}`,`#X connect ${args[2]} ${args[3]} ${++currentCanvas.objId} 0`);
                         currentCanvas.guiObjects[args[4]].receive.push(connectionName);
                         gui_subscribe(currentCanvas.guiObjects[args[4]]);
                     }
@@ -4364,7 +4515,7 @@ async function openPatch(content, filename) {
                         }
                     if(args[5] !== '0' && currentCanvas.guiObjects[args[4]]) {
                         if(args[5] === '1') {
-                            lines.splice(i+1,0,
+                            lines.splice(i,1,
                                 `#X obj 0 0 pack`,
                                 `#X obj 0 0 t b a`,
                                 `#X obj 0 0 s ${connectionName}`,
@@ -4373,6 +4524,7 @@ async function openPatch(content, filename) {
                                 `#X connect ${currentCanvas.objId + 1} 0 ${currentCanvas.objId + 3} 0`,
                                 `#X connect ${args[2]} ${args[3]} ${currentCanvas.objId + 2} 0`
                             );
+                            currentCanvas.objId++;
                             currentCanvas.guiObjects[args[4]].receive.push(connectionName);
                             gui_subscribe(currentCanvas.guiObjects[args[4]]);
                         } else
@@ -4406,7 +4558,6 @@ async function openPatch(content, filename) {
         }
     }
 
-    console.log(lines.join(';\n'));
     //Next we load our modified lines into the backend of pd-l2ork
     FS.createDataFile("/", filename, new TextEncoder().encode(lines.join(';\n')), true, true, true);
     Module.pd.openPatch(filename, "/");
@@ -4437,7 +4588,7 @@ let cachedData = {};
 async function getPatchData(url) {
     if(!cachedData[url]) {
         document.getElementById('loadingstage').innerHTML=`Fetching ${url.slice(0,-3)}`;
-        cachedData[url] = await (await fetch(`/api/patch/?url=${url}`,{method: 'GET'})).json();
+        cachedData[url] = await (await fetch(`/api/patch/?url=${encodeURIComponent(url)}`,{method: 'GET'})).json();
     }
     return cachedData[url];
 }
