@@ -1151,14 +1151,16 @@ var Module = {
                                     if(data.drawTimeout)
                                         clearTimeout(data.drawTimeout);
                                     let start = list[0] * 10000 - 1, initialLength = data.nums.length;
+                                    let top = Math.max(data.coords.t, data.coords.b);
+                                    let bot = Math.min(data.coords.t, data.coords.b);
                                     for(let i = 1; i < list.length; i++)
-                                        data.nums[i + start] = list[i];
+                                        data.nums[i + start] = list[i] > top ? top : (list[i] < bot ? bot : list[i]);
                                     if(initialLength < data.nums.length)
                                         data.resize(data.nums.length);
                                     data.drawTimeout = setTimeout(data.redraw, 16);
                                     break;
                                 case "rename":
-                                    for(let label of data.canvasData.labels)
+                                    for(let label of data.layer.labels)
                                     if(label.textContent == data.receive[0])
                                         label.textContent = list[0];
 
@@ -1169,28 +1171,34 @@ var Module = {
                                     data.redraw();
                                     break;
                                 case "bounds":
-                                    data.canvasData.coords.t = list[1];
-                                    data.canvasData.coords.b = list[3];
-                                    for(let coordObj of data.canvasData.coordObjs) {
-                                        coordObj.setCoords(data.canvasData.coords);
-                                        coordObj.redraw();
-                                    }
+                                    data.layer.dimensions.coords.t = list[1];
+                                    data.layer.dimensions.coords.b = list[3];
+                                    gui_canvas_drawTicks(data.layer);
+                                    gui_canvas_drawLabels(data.layer);
+                                    for(let array of data.layer.arrays)
+                                        array.setCoords(data.layer.dimensions.coords);
                                     break;
                                 case "xticks":
-                                    data.canvasData.coords.xticks.start = list[0];
-                                    data.canvasData.coords.xticks.interval = list[1];
-                                    data.canvasData.coords.xticks.big = list[2];
-                                    gui_canvas_drawTicks(data.canvasData);
+                                    data.layer.dimensions.coords.xticks.start = list[0];
+                                    data.layer.dimensions.coords.xticks.interval = list[1];
+                                    data.layer.dimensions.coords.xticks.big = list[2];
+                                    gui_canvas_drawTicks(data.layer);
                                     break;
                                 case "yticks":
-                                    data.canvasData.coords.yticks.start = list[0];
-                                    data.canvasData.coords.yticks.interval = list[1];
-                                    data.canvasData.coords.yticks.big = list[2];
-                                    gui_canvas_drawTicks(data.canvasData);
+                                    data.layer.dimensions.coords.yticks.start = list[0];
+                                    data.layer.dimensions.coords.yticks.interval = list[1];
+                                    data.layer.dimensions.coords.yticks.big = list[2];
+                                    gui_canvas_drawTicks(data.layer);
                                     break;
                                 case "xlabel":
+                                    data.layer.dimensions.coords.xlabels.pos = list[0];
+                                    data.layer.dimensions.coords.xlabels.labels = list.slice(1);
+                                    gui_canvas_drawLabels(data.layer);
                                     break;
                                 case "ylabel":
+                                    data.layer.dimensions.coords.ylabels.pos = list[0];
+                                    data.layer.dimensions.coords.ylabels.labels = list.slice(1);
+                                    gui_canvas_drawLabels(data.layer);
                                     break;
                                 case "resize":
                                     if(list[0] >= 0)
@@ -1557,13 +1565,10 @@ function set_midiapi(val) {
 }
 
 //--------------------- gui handling ----------------------------
-function create_item(type, args, canvas, before) {
+function create_item(type, args, canvas) {
     var item = document.createElementNS("http://www.w3.org/2000/svg", type);
-    if (args !== null) {
+    if (args !== null)
         configure_item(item, args);
-    }
-    if(before)
-        canvas.insertBefore(before, item);
     else
         canvas.appendChild(item);
     return item;
@@ -2440,14 +2445,15 @@ function gui_vumeter_render(data) {
 //Arrays
 const gui_array_touches = {};
 function gui_canvas_drawTicks(data) {
+    let coords = data.dimensions.coords;
     let xPath = '';
-    for(let i = Math.floor((data.coords.l - data.coords.xticks.start) / data.coords.xticks.interval ); data.coords.xticks.start + data.coords.xticks.interval * i < data.coords.r; i++)
-        if([data.coords.l, data.coords.r].includes(data.coords.xticks.start + data.coords.xticks.interval * i) == false)
+    for(let i = Math.floor((coords.l - coords.xticks.start) / coords.xticks.interval ); coords.xticks.start + coords.xticks.interval * i < coords.r; i++)
+        if([coords.l, coords.r].includes(coords.xticks.start + coords.xticks.interval * i) == false)
             xPath += `
-                    M ${coordToScreen(data.coords.l, data.coords.r, data.coords.w, data.coords.xticks.start + data.coords.xticks.interval * i)} ${coordToScreen(data.coords.t, data.coords.b, data.coords.h, data.coords.b)} 
-                    v ${(i % data.coords.xticks.big) ? -2 : -4}
-                    M ${coordToScreen(data.coords.l, data.coords.r, data.coords.w, data.coords.xticks.start + data.coords.xticks.interval * i)} ${coordToScreen(data.coords.t, data.coords.b, data.coords.h, data.coords.t)} 
-                    v ${(i % data.coords.xticks.big) ? 2 : 4}
+                    M ${coordToScreen(coords.l, coords.r, coords.w, coords.xticks.start + coords.xticks.interval * i)} ${coordToScreen(coords.t, coords.b, coords.h, coords.b)} 
+                    v ${(i % coords.xticks.big) ? -2 : -4}
+                    M ${coordToScreen(coords.l, coords.r, coords.w, coords.xticks.start + coords.xticks.interval * i)} ${coordToScreen(coords.t, coords.b, coords.h, coords.t)} 
+                    v ${(i % coords.xticks.big) ? 2 : 4}
                 `;
     if(data.xTicks)
         data.canvas.removeChild(data.xTicks);
@@ -2459,13 +2465,13 @@ function gui_canvas_drawTicks(data) {
     }, data.canvas);
 
     let yPath = '';
-    for(let i = Math.floor((data.coords.t - data.coords.yticks.start) / data.coords.yticks.interval ); data.coords.yticks.start + data.coords.yticks.interval * i < data.coords.b; i++)
-        if([data.coords.t, data.coords.b].includes(data.coords.yticks.start + data.coords.yticks.interval * i) == false)
+    for(let i = Math.floor((coords.t - coords.yticks.start) / coords.yticks.interval ); coords.yticks.start + coords.yticks.interval * i < coords.b; i++)
+        if([coords.t, coords.b].includes(coords.yticks.start + coords.yticks.interval * i) == false)
             yPath += `
-                    M ${coordToScreen(data.coords.l, data.coords.r, data.coords.w, data.coords.r)} ${coordToScreen(data.coords.t, data.coords.b, data.coords.h, data.coords.yticks.start + data.coords.yticks.interval * i)} 
-                    h ${(i % data.coords.yticks.big) ? -2 : -4}
-                    M ${coordToScreen(data.coords.l, data.coords.r, data.coords.w, data.coords.l)} ${coordToScreen(data.coords.t, data.coords.b, data.coords.h, data.coords.yticks.start + data.coords.yticks.interval * i)} 
-                    h ${(i % data.coords.yticks.big) ? 2 : 4}
+                    M ${coordToScreen(coords.l, coords.r, coords.w, coords.r)} ${coordToScreen(coords.t, coords.b, coords.h, coords.yticks.start + coords.yticks.interval * i)} 
+                    h ${(i % coords.yticks.big) ? -2 : -4}
+                    M ${coordToScreen(coords.l, coords.r, coords.w, coords.l)} ${coordToScreen(coords.t, coords.b, coords.h, coords.yticks.start + coords.yticks.interval * i)} 
+                    h ${(i % coords.yticks.big) ? 2 : 4}
                 `;
     if(data.yTicks)
         data.canvas.removeChild(data.yTicks);
@@ -2476,6 +2482,49 @@ function gui_canvas_drawTicks(data) {
         d: yPath
     }, data.canvas);
 }
+function gui_canvas_drawLabels(data) {
+    let coords = data.dimensions.coords;
+
+    if(!data.xLabels)
+        data.xLabels = [];
+    while(data.xLabels.length)
+        data.canvas.removeChild(data.xLabels.pop());
+    for(let label of coords.xlabels.labels) {
+        data.xLabels.push(create_item("text", {
+            x: coordToScreen(coords.l, coords.r, coords.w, label) - data.fontSize * .3,
+            y: coordToScreen(coords.t, coords.b, coords.h, coords.xlabels.pos) + data.fontSize * 1.5,
+            "font-family": iemgui_fontfamily(0),
+            "font-weight": "normal",
+            "font-size": `${data.fontSize}px`,
+            fill: 'black',
+            id: `${data.id}_xlabel_${label}`,
+            class: "unclickable"
+        }, data.canvas));
+        data.xLabels.at(-1).textContent = label;
+    }
+
+    if(!data.yLabels)
+        data.yLabels = [];
+    while(data.yLabels.length)
+        data.canvas.removeChild(data.yLabels.pop());
+    for(let label of coords.ylabels.labels) {
+        let labelText = create_item("text", {
+            y: coordToScreen(coords.t, coords.b, coords.h, label) + data.fontSize * .3,
+            "font-family": iemgui_fontfamily(0),
+            "font-weight": "normal",
+            "font-size": `${data.fontSize}px`,
+            fill: 'black',
+            id: `${data.id}_ylabel_${label}`,
+            class: "unclickable"
+        }, data.canvas);
+        labelText.textContent = label;
+        configure_item(labelText, {
+            x: coordToScreen(coords.l, coords.r, coords.w, coords.ylabels.pos) - labelText.getComputedTextLength(),
+        });
+        data.yLabels.push(labelText);
+    }
+}
+
 function gui_array_onmousedown(data, e, id) {
     let p = gui_mousepoint(e, data.canvas);
     let x = Math.floor(screenToCoord(data.coords.l, data.coords.r, data.coords.w, p.x)) + 1;
@@ -2765,19 +2814,19 @@ function gui_window_onmousedown(data, e, id) {
     const p = gui_roundedmousepoint(e, document.getElementById('canvas'));
     gui_window_touches[id] = {
         data: data,
-        start_mouse: p,
-        start_window: {
-            x: data.window_x,
-            y: data.window_y
+        startMouse: p,
+        startWindow: {
+            x: data.windowX,
+            y: data.windowY
         }
     };
 }
 function gui_window_onmousemove(e, id) {
     if (id in gui_window_touches) {
-        const { data, start_mouse, start_window } = gui_window_touches[id];
+        const { data, startMouse, startWindow } = gui_window_touches[id];
         const p = gui_roundedmousepoint(e, document.getElementById('canvas'));
-        data.window_x = start_window.x + p.x - start_mouse.x;
-        data.window_y = start_window.y + p.y - start_mouse.y;
+        data.windowX = startWindow.x + p.x - startMouse.x;
+        data.windowY = startWindow.y + p.y - startMouse.y;
         data.updateWindow();
     }
 }
@@ -3061,6 +3110,7 @@ function gui_text_text(data, line_index, fontSize) {
 
 //--------------------- patch handling ----------------------------
 async function openPatch(content, filename) {
+
     console.log(`Loading Patch: ${filename}`);
     document.title=filename;
 
@@ -3083,26 +3133,19 @@ async function openPatch(content, filename) {
     subscribedData = {};
     
     let maxNumInChannels = 0;
-    let nextId = 0;    //This is used to assign sequential IDs to gui objects so that their subscriptions can be managed
-    let nextCanvas = { //This is used to initialize a new canvas when we arrive at a #N canvas line. The canvas must be
-                       //initialized beforehand since we receive its information when loading a file, not when reading the #N canvas line.
-        canvas: rootCanvas,
-        guiObjects: [], //Will hold the GUI object data in the current canvas, used to reassign sends/receives when wires are read.
-        fontSize: 12,
-        coordObjs: [],
-        args: [],
-        arrays: [],
-        labels: [],
-        instance: 1003,
-        id: 0,          //ID of the current canvas (used to uniquely assign wire names)
-        objId: -1,      //Next objectID for the current canvas (used in conjunction with guiObjects to keep track of objects for assigning wires)
-    };
-    let nextInstance = 1003;
-    let canvasStack = [];   //Used to store parent canvases while working on a child canvas
-    let currentCanvas = {}; //The current canvas being rendered
+    let nextHTMLID = 0;       //This is used to assign unique IDs to gui objects so that their subscriptions can be managed
+    let nextPatchID = 1003;   //This is used to assign patch IDs to subpatches (which will be collapsed by the web parser)
+    let nextLayerID = 0;      //This is used to assign unique IDs to layers to keep track of their objects
+    let nextArgs = [];        //This is used to pass arguments from abstractions which are collapsed by the web parser
+    let layers = [ { } ];   //Holds all the layers currently being processed. Used as a stack.
     let lines = content.split(";\n");
-    currentCanvas.objId--;
+    for(let i = 0; i < lines.length; i++) {
+        while(lines[i].endsWith('\\'))
+            lines.splice(i,2,`${lines[i].slice(0,-1)};\n${lines[i+1]}`);
+    }
     for (let i = 0; i < lines.length; i++) {
+        let layer = layers.at(-1); //Shortcut for the current layer being processed so we aren't always writing layers.at(-1)
+
         //Some lexical lines are split between two physical lines in the file, so we must remove all newlines
         //Then we split by " " to seperate the line into arguments
         //We also replace escaped $ with real $ since $ has no meaning on the web version
@@ -3122,53 +3165,59 @@ async function openPatch(content, filename) {
         //This is espeically important since we flatten all the canvases for compatibility with the emscriptem pd-l2ork
         //Symbolatoms use #0 instead of $0, so we have two cases
         if(args.slice(0,2).join(' ') == '#X symbolatom')
-            args = args.map(arg => arg.replace(new RegExp(`(?<!\\\\)\\#0`,`g`),currentCanvas.instance));
+            args = args.map(arg => arg.replace(new RegExp(`(?<!\\\\)\\#0`,`g`),layer.patchID));
         else
-            args = args.map(arg => arg.replace(new RegExp(`(?<!\\\\)\\\\\\$0`,`g`),currentCanvas.instance));
+            args = args.map(arg => arg.replace(new RegExp(`(?<!\\\\)\\\\\\$0`,`g`),layer.patchID));
 
         //If an object is not a message, we also process the $1+, filling in with the current canvas' arguments
         //This is especially important since we flatten all the canvases for compatibility with the emscriptem pd-l2ork
         if(args.slice(0,2).join(' ') != '#X msg')
-            for(let i = 0; i < currentCanvas.args?.length; i++)
-                    args = args.map(arg => arg.replace(new RegExp(`(?<!\\\\)\\\\\\$${i+1}`,`g`),currentCanvas.args[i]));
+            for(let i = 0; i < layer.args?.length; i++)
+                    args = args.map(arg => arg.replace(new RegExp(`(?<!\\\\)\\\\\\$${i+1}`,`g`),layer.args[i]));
 
         //If we are looking at something that can be connected with a wire, increment the wire counter
         if(object_types.find(type=>lines[i].startsWith(type)))
-            currentCanvas.objId++;
+            layer.nextGUIID++;
         lines[i] = args.join(' ').replace(/,/g,'\\,')+(argParts.length > 1 ? ','+argParts.slice(1).map(arg=>arg.replace(/,/g,'\\,')).join(',') : '');
         //Now we switch based on the type of line (first two arguments)
         switch (args.slice(0,2).join(' ')) {
             case "#N canvas":
-                if(canvasStack.length == 0) {
-                    nextCanvas.canvas.setAttributeNS(null, "viewBox", `0 0 ${+args[4]} ${+args[5]}`);
-                } else {
-                    nextCanvas.group = create_item('g', {id: `gobj_${nextId++}`}, currentCanvas.canvas);
-                    nextCanvas.group.style.display = 'none';
-                    nextCanvas.canvas = document.createElementNS("http://www.w3.org/2000/svg", 'svg');
-                    configure_item(nextCanvas.canvas, {id: `svg_${nextId++}`});
-                }
-                nextCanvas.fontSize = +args[args.length - 1] || currentCanvas.fontSize;
-                nextCanvas.size = { w: +args[4], h: +args[5]};
-                nextCanvas.pos = { x: +args[2], y: +args[3]};
-                canvasStack.push(currentCanvas);
-                if(!nextCanvas.instance)
-                    nextCanvas.instance = canvasStack[canvasStack.length - 1].instance;
-                if(!nextCanvas.args) {
-                    nextCanvas.args = canvasStack[canvasStack.length - 1].args;
-                    nextCanvas.argsInherited = true;
-                }
-                currentCanvas = nextCanvas;
-                //We need to Parse and Stringify so that we get a deep copy, not just a reference. Otherwise, everything will break
-                nextCanvas = JSON.parse(JSON.stringify(currentCanvas));
-                delete nextCanvas.instance;
-                delete nextCanvas.args;
-                nextCanvas.id++;
+                layers.push({
+                    arrays: [],
+                    guiObjects: [],
+                    labels: [],
+                    nextGUIID: -1,
+                    canvas: layers.length > 1 ? document.createElementNS('http://www.w3.org/2000/svg', 'svg') : rootCanvas,
+                    fontSize: (Number.isNaN(+args[6]) ? null : +args[6]) || layer.fontSize,
+                    dimensions: {
+                        windowX: +args[2],
+                        windowY: +args[3],
+                        width: +args[4],
+                        height: +args[5]
+                    },
+                    config: {
+                        showLabel: false,
+                        showHandle: false,
+                    },
+                    patchID: Number.isNaN(+args[6]) ? layer.patchID : nextPatchID++,
+                    args: nextArgs ? nextArgs : layer.args,
+                    argsInherited: nextArgs ? true : false,
+                    id: nextLayerID++,
+                    HTMLID: nextHTMLID++
+                });
+                nextArgs = null;
+                layer = layers.at(-1);
+                configure_item(layer.canvas, {
+                    viewBox: `0 0 ${layer.dimensions.width} ${layer.dimensions.height}`,
+                    "shape-rendering": "crispEdges",
+                    id: layers.length == 2 ? 'canvas' : `${layer.HTMLID}_svg`
+                });
                 break;
             case "#X coords":
-                if(args.length > 8 && canvasStack.length > 1) {
-                    currentCanvas.showTitle = +args[8] == 1;
-                    currentCanvas.showBox = +args[8] == 0;
-                    currentCanvas.coords = {
+                if(args.length > 8 && layers.length > 2) {
+                    layer.showLabel = +args[8] == 1 && layer.patchID == layers.at(-2).patchID;
+                    layer.showContents = +args[8] > 0;
+                    layer.dimensions.coords = {
                         l: +args[2],
                         t: +args[3],
                         r: +args[4],
@@ -3177,222 +3226,225 @@ async function openPatch(content, filename) {
                         h: +args[7],
                         xticks: {},
                         yticks: {},
-                    }
-
-                    let coordObjs = currentCanvas.coordObjs;
-                    if(coordObjs.length) {
-                        currentCanvas.clicktarget = create_item('rect', {x: 0, y: 0, width: currentCanvas.coords.w, height: currentCanvas.coords.h, fill: '#00000000'}, currentCanvas.canvas);
-                        if (isMobile) {
-                            currentCanvas.clicktarget.addEventListener("touchstart", function (e) {
-                                e = e || window.event;
-                                for (const touch of e.changedTouches)
-                                    for(let coordObj of coordObjs)
-                                        coordObj.onmousedown(coordObj, touch, touch.identifier);
-                            });
-                        }
-                        else {
-                            currentCanvas.clicktarget.addEventListener("mousedown", function (e) {
-                                e = e || window.event;
-                                for(let coordObj of coordObjs)
-                                    coordObj.onmousedown(coordObj, e, 0);
-                            });
-                        }
-                    }
-
-                    for(let coordObj of coordObjs) {
-                        coordObj.setCoords(currentCanvas.coords);
-                        coordObj.redraw();
-                    }
-                    if(+args[8] > 0) {
-                        configure_item(currentCanvas.group, {width: +args[6], height: +args[7]});
-                        configure_item(currentCanvas.canvas, {width: +args[6] - 1, height: +args[7] - 1});
-                        currentCanvas.border = create_item('rect', {
-                            width: +args[6] - 1,
-                            height: +args[7] - 1,
-                            fill: 'none',
-                            stroke: 'black',
-                            id: `border_${nextId++}`
-                        }, currentCanvas.group);
-                        currentCanvas.group.style.display = 'block';
-                        currentCanvas.canvas.setAttributeNS(null, "viewBox", `${+args[9] || 0} ${+args[10] || 0} ${+args[6]} ${+args[7]}`);
-                    } else {
-                        configure_item(currentCanvas.group, {width: currentCanvas.size.w, height: currentCanvas.size.h});
-                        configure_item(currentCanvas.canvas, {width: currentCanvas.size.w, height: currentCanvas.size.h});
-                        currentCanvas.border = create_item('rect', {
-                            width: currentCanvas.size.w - 1,
-                            height: currentCanvas.size.h - 1,
-                            fill: 'none',
-                            stroke: 'black',
-                            id: `border_${nextId++}`
-                        }, currentCanvas.group);
-                        currentCanvas.canvas.setAttributeNS(null, "viewBox", `0 0 ${+currentCanvas.size.w} ${+currentCanvas.size.h}`);
-                    }
+                        xlabels: { labels: [] },
+                        ylabels: { labels: [] },
+                    };
+                    layer.dimensions.contentX = +args[9] || 0;
+                    layer.dimensions.contentY = +args[10] || 0;
+                }
+                break;
+            case "#X gopspill":
+                if(+args[2] == 1) {
+                    layer.canvas.style.overflow = 'visible';
+                    layer.spill = true;
                 }
                 break;
             case "#X restore":
                 if(args.length > 3) {
-                    if(currentCanvas.arrays.length > 0)
-                        currentCanvas.group.insertBefore(currentCanvas.canvas, currentCanvas.border);
-                    configure_item(currentCanvas.canvas, {x: +args[2] + .5, y: +args[3]});
-                    configure_item(currentCanvas.border, {x: +args[2] + .5, y: +args[3] + .5});
-                    if(currentCanvas.showTitle) {
-                        if(currentCanvas.arrays.length > 1) {
-                            for(let i = 0; i < currentCanvas.arrays.length; i++) {
-                                let legend = create_item("rect", {
-                                    x: +args[2] + 4,
-                                    y: +args[3] + 3.9 + 13 * i,
-                                    width: 10,
-                                    height: 10,
-                                    fill: currentCanvas.arrays[i].color,
-                                    stroke: '#000',
-                                    id: `title_legend_${nextId}_${i}`
-                                }, currentCanvas.group)
-                                let text = create_item("text", gui_text_text({
-                                    x_pos: +args[2] + 17,
-                                    y_pos: +args[3] - 1.5,
-                                    id: `title_${nextId}_${i}`,
-                                }, i, currentCanvas.fontSize), currentCanvas.group);
-                                text.textContent = currentCanvas.arrays[i].name;
-                                currentCanvas.labels.push(text);
-                                nextId++;
+                    layer.dimensions.inlineX = +args[2];
+                    layer.dimensions.inlineY = +args[3];
+                    layer.name = [...args,...(layer.argsInherited ? [] : layer.args)].slice(4).join(' ');
+                    if(layer.showContents) {
+                        configure_item(layer.canvas, {
+                            viewBox: `${layer.dimensions.contentX} ${layer.dimensions.contentY} ${layer.dimensions.coords.w} ${layer.dimensions.coords.h}`,
+                            width: layer.dimensions.coords.w,
+                            height: layer.dimensions.coords.h,
+                            x: layer.dimensions.inlineX,
+                            y: layer.dimensions.inlineY,
+                        });
+                        if(!layer.spill)
+                            layers.at(-2).canvas.appendChild(layer.canvas);
+                        layer.border = create_item('rect', {
+                            x: layer.dimensions.inlineX,
+                            y: layer.dimensions.inlineY,
+                            width: layer.dimensions.coords.w,
+                            height: layer.dimensions.coords.h,
+                            stroke: 'black',
+                            fill: 'none',
+                            'stroke-width': 1,
+                            id: `${layer.HTMLID}_border`
+                        }, layers.at(-2).canvas);
+                        if(layer.spill)
+                            layers.at(-2).canvas.appendChild(layer.canvas);
+
+
+                        if(layer.arrays.length) {
+                            let arrays = layer.arrays; // It is important to make a copy since these functions will be called
+                                                       // after layer has gone out of scope and been replaced
+                            configure_item(layer.border, { fill: '#00000000' });
+                            layer.canvas.style.overflow = 'visible';
+                            if (isMobile) {
+                                layer.border.addEventListener("touchstart", function (e) {
+                                    for (const touch of (e || window.event).changedTouches)
+                                        for(let array of arrays)
+                                            array.onmousedown(array, touch, touch.identifier);
+                                });
                             }
-                        } else  {
-                            let text = create_item("text", gui_text_text({
-                                x_pos: +args[2],
-                                y_pos: +args[3],
-                                id: `title_${nextId++}`
-                            }, 0, currentCanvas.fontSize), currentCanvas.group);
-                            if(currentCanvas.arrays.length)
-                                text.textContent = currentCanvas.arrays[0].name;
-                            else
-                                text.textContent = args.slice(4).join(' ');
-                            currentCanvas.labels.push(text);
+                            else {
+                                layer.border.addEventListener("mousedown", function (e) {
+                                    for(let array of arrays)
+                                        array.onmousedown(array, e || window.event, 0);
+                                });
+                            }
                         }
-                    } else if(currentCanvas.showBox !== false) {
+                        for(let array of layer.arrays)
+                            array.setCoords(layer.dimensions.coords);
+
+                        if(layer.showLabel) {
+                            if(layer.arrays.length > 1) {
+                                for(let i = 0; i < layer.arrays.length; i++) {
+                                    create_item("rect", {
+                                        x: layer.dimensions.contentX + 4,
+                                        y: layer.dimensions.contentY + 3.9 + 13 * i,
+                                        width: 10,
+                                        height: 10,
+                                        fill: layer.arrays[i].outlineColor,
+                                        stroke: '#000',
+                                        id: `title_legend_${nextHTMLID}_${i}`
+                                    }, layer.canvas)
+                                    let text = create_item("text", gui_text_text({
+                                        x_pos: layer.dimensions.contentX + 17,
+                                        y_pos: layer.dimensions.contentY - 1.5,
+                                        id: `title_${nextHTMLID}_${i}`,
+                                    }, i, layer.fontSize), layer.canvas);
+                                    text.textContent = layer.arrays[i].name;
+                                    layer.labels.push(text);
+                                    nextHTMLID++;
+                                }
+                            } else {
+                                let text = create_item("text", gui_text_text({
+                                    x_pos: layer.dimensions.contentX,
+                                    y_pos: layer.dimensions.contentY,
+                                    id: `title_${nextHTMLID++}`
+                                }, 0, layer.fontSize), layer.canvas);
+                                if(layer.arrays.length)
+                                    text.textContent = layer.arrays[0].name;
+                                else
+                                    text.textContent = args.slice(4).join(' ');
+                                layer.labels.push(text);
+                            }
+                        }
+                    } else if(layers.at(-2).showContents !== true) {
+                        let parentLayer = layers.at(-2);
                         let data = {};
                         data.type = 'patch';
-                        data.x_pos = +args[2];
-                        data.y_pos = +args[3];
-                        data.window_x = currentCanvas.pos.x - canvasStack[1].pos.x;
-                        data.window_y = currentCanvas.pos.y - canvasStack[1].pos.y;
-                        data.name = [...args,...(currentCanvas.argsInherited ? [] : currentCanvas.args)].slice(4).join(' ');
+                        data.windowX = layer.dimensions.windowX - layers.at(-2).dimensions.windowX;
+                        data.windowY = layer.dimensions.windowY - layers.at(-2).dimensions.windowY;
                         data.receive = [args[4] == 'pd' ? `pd-${args.slice(5).join(' ')}` : `pd-${args.slice(4).join(' ')}.pd`];
-                        data.group = currentCanvas.group;
-                        data.canvas = currentCanvas.canvas;
-                        data.current = currentCanvas;
-                        data.id = `patch_${nextId++}`;
+                        data.canvas = layer.canvas;
+                        data.layer = layer;
+                        data.id = `patch_${nextHTMLID++}`;
 
-                        data.text = create_item('text', {
-                            'font-size': pd_fontsize_to_gui_fontsize(canvasStack.at(-1).fontSize) + 'px',
-                            'font-weight': 'normal',
-                            'shape-rendering': 'crispEdges',
+                        data.handleText = create_item('text', {
+                            'font-size':  pd_fontsize_to_gui_fontsize(parentLayer.fontSize) + 'px',
                             transform: `translate(2.5,0)`,
                             fill: 'white',
-                            x: data.x_pos,
-                            y: data.y_pos + font_height_map()[canvasStack.at(-1).fontSize] + gobj_font_y_kludge(canvasStack.at(-1).fontSize),
+                            x: layer.dimensions.inlineX,
+                            y: layer.dimensions.inlineY + font_height_map()[parentLayer.fontSize] + gobj_font_y_kludge(parentLayer.fontSize),
                             id: `${data.id}_text`,
                             class: 'unclickable'
                         }, rootCanvas);
-                        data.text.textContent = data.name;
+                        data.handleText.textContent = args.slice(4).join(' ');
 
-                        data.rect = create_item('rect', {
+                        data.handleRect = create_item('rect', {
                             id: data.id,
                             fill: '#666766',
-                            x: data.x_pos,
-                            y: data.y_pos,
-                            width: data.text.getComputedTextLength() + 5,
-                            height: font_height_map()[canvasStack.at(-1).fontSize] + 4
-                        }, canvasStack.at(-1).canvas);
-                        currentCanvas.canvas.style.overflow='hidden';
+                            x: layer.dimensions.inlineX,
+                            y: layer.dimensions.inlineY,
+                            width: data.handleText.getComputedTextLength() + 5,
+                            height: font_height_map()[parentLayer.fontSize] + 4
+                        }, parentLayer.canvas);
 
-                        data.titleRect = create_item('rect', {
-                            id: `${data.id}_title`,
+                        rootCanvas.removeChild(data.handleText);
+                        parentLayer.canvas.appendChild(data.handleText);
+
+                        data.windowGroup = create_item('g', {
+                            id: `${data.id}_windowGroup`
+                        }, rootCanvas);
+
+                        data.windowRect = create_item('rect', {
+                            id: `${data.id}_windowRect`,
                             fill: '#4F4F4F',
-                            width: currentCanvas.size.w + 2,
-                            height: currentCanvas.size.h + 16,
-                        }, currentCanvas.group);
+                            width: layer.dimensions.width + 2,
+                            height: layer.dimensions.height + 16,
+                        }, data.windowGroup);
 
-                        data.background = create_item('rect', {
-                            id: `${data.id}_background`,
+                        data.windowBackground = create_item('rect', {
+                            id: `${data.id}_windowBackground`,
                             fill: '#9E9E9E',
-                            width: currentCanvas.size.w - 1,
-                            height: currentCanvas.size.h - 1,
-                        }, currentCanvas.group);
+                            width: layer.dimensions.width,
+                            height: layer.dimensions.height,
+                        }, data.windowGroup);
                         
 
-                        data.titleText = create_item("text", {
+                        data.windowText = create_item("text", {
                             'font-size': pd_fontsize_to_gui_fontsize(10) + 'px',
-                            'font-weight': 'normal',
-                            'shape-rendering': 'crispEdges',
                             transform: `translate(2.5,0)`,
                             fill: 'white',
-                            id: `title_${nextId++}`,
+                            id: `${data.id}_windowText`,
                             class: 'unclickable'
-                        }, currentCanvas.group);
-                        data.titleText.textContent = args.slice(5).join(' ');
+                        }, data.windowGroup);
+                        data.windowText.textContent = args.slice(5).join(' ');
 
                         data.closeBtn = create_item('path', {
                             stroke: 'red',
                             "stroke-width": '1',
                             id: `${data.id}_btn`
-                        }, currentCanvas.group)
+                        }, data.windowGroup)
                         data.closeRect = create_item('rect', {
                             fill: 'black',
                             opacity: 0,
                             width: 15,
                             height: 15,
-                        }, currentCanvas.group)
+                        }, data.windowGroup);
 
-                        rootCanvas.removeChild(data.text);
-                        canvasStack.at(-1).canvas.appendChild(data.text);
-                        canvasStack.at(-1).canvas.removeChild(currentCanvas.group);
 
                         data.updateWindow = () => {
-                            configure_item(data.background, {
-                                x: data.window_x + .5,
-                                y: data.window_y + .5
+                            configure_item(data.windowBackground, {
+                                x: data.windowX + 1,
+                                y: data.windowY
                             });
-                            configure_item(data.titleRect, {
-                                x: data.window_x - .5,
-                                y: data.window_y + .5 - 15
+                            configure_item(data.windowRect, {
+                                x: data.windowX,
+                                y: data.windowY - 15
                             });
-                            configure_item(data.titleText, {
-                                x: data.window_x,
-                                y: data.window_y - 15.5 + font_height_map()[10] + gobj_font_y_kludge(10),
+                            configure_item(data.windowText, {
+                                x: data.windowX,
+                                y: data.windowY - 16 + font_height_map()[10] + gobj_font_y_kludge(10),
                             });
                             configure_item(data.closeRect, {
-                                x: data.window_x + data.current.size.w - 14.5,
-                                y: data.window_y - 14.5
+                                x: data.windowX + data.layer.dimensions.width - 15,
+                                y: data.windowY - 15
                             })
                             configure_item(data.closeBtn, {
-                                d: `M ${data.window_x + data.current.size.w - 13} ${data.window_y + .5 - 13} l 11 11 m 0 -11 l -11 11`,
+                                d: `M ${data.windowX + data.layer.dimensions.width - 13} ${data.windowY - 13} l 11 11 m 0 -11 l -11 11`,
                             })
                             configure_item(data.canvas, {
-                                x:  data.window_x + .5,
-                                y: data.window_y + .5,
-                                width: data.current.size.w,
-                                height: data.current.size.h
+                                x:  data.windowX + 1,
+                                y: data.windowY + 1,
+                                width: data.layer.dimensions.width,
+                                height: data.layer.dimensions.height
                             });
                             data.canvas.style.overflow = "hidden";
                         }
                         data.setVisibility = visibility => {
-                            if(visibility)
-                                rootCanvas.appendChild(data.group);
-                            else
-                                rootCanvas.removeChild(data.group);
-                            data.group.style.display = visibility ? 'block' : 'none';
+                            rootCanvas.removeChild(data.windowGroup);
+                            rootCanvas.appendChild(data.windowGroup);
+                            data.windowGroup.style.display = visibility ? 'block' : 'none';
                         }
 
                         data.updateWindow();
+                        data.setVisibility(false);
+                        data.windowGroup.appendChild(layer.canvas);
                         
                         if (isMobile) {
-                            data.rect.addEventListener("touchstart", function (e) {
+                            data.handleRect.addEventListener("touchstart", function (e) {
                                 data.setVisibility(true);
                             });
                             data.closeRect.addEventListener("mousedown", function (e) {
                                 data.setVisibility(false);
                             });
-                            data.titleRect.addEventListener("touchstart", function (e) {
+                            data.windowRect.addEventListener("touchstart", function (e) {
                                 e = e || window.event;
                                 for (const touch of e.changedTouches) {
                                     gui_window_onmousedown(data, touch, touch.identifier);
@@ -3400,27 +3452,21 @@ async function openPatch(content, filename) {
                             });
                         }
                         else {
-                            data.rect.addEventListener("mousedown", function (e) {
+                            data.handleRect.addEventListener("mousedown", function (e) {
                                 data.setVisibility(true);
                             });
                             data.closeRect.addEventListener("mousedown", function (e) {
                                 data.setVisibility(false);
                             });
-                            data.titleRect.addEventListener('mousedown', function (e) {
+                            data.windowRect.addEventListener('mousedown', function (e) {
                                 gui_window_onmousedown(data,e,0);
                             });
                         }
 
                         gui_subscribe(data);
                     }
-                    if(currentCanvas.arrays.length == 0)
-                        currentCanvas.group.appendChild(currentCanvas.canvas);
-                    currentCanvas = canvasStack.pop();
+                    layers.pop();
                 }
-                break;
-            case "#X gopspill":
-                if(+args[2] == 1)
-                    currentCanvas.canvas.style.overflow='visible';
                 break;
             case "#X obj":
                 if (args.length > 4) {
@@ -3459,8 +3505,8 @@ async function openPatch(content, filename) {
                                 data.fg_color = isNaN(args[17]) ? args[17] : +args[17];
                                 data.label_color = isNaN(args[18]) ? args[18] : +args[18];
                                 data.interactive = +args[19];
-                                data.id = `${data.type}_${nextId++}`;
-                                data.canvas = currentCanvas.canvas;
+                                data.id = `${data.type}_${nextHTMLID++}`;
+                                data.canvas = layer.canvas;
 
                                 // create svg
                                 data.rect = create_item("rect", gui_bng_rect(data), data.canvas);
@@ -3486,7 +3532,7 @@ async function openPatch(content, filename) {
                                 }
                                 // subscribe receiver
                                 gui_subscribe(data);
-                                currentCanvas.guiObjects[currentCanvas.objId] = data;
+                                layer.guiObjects[layer.nextGUIID] = data;
                             }
                             break;
                         case "tgl":
@@ -3511,8 +3557,8 @@ async function openPatch(content, filename) {
                                 data.default_value = +args[18];
                                 data.interactive = +args[19];
                                 data.value = data.init && data.init_value ? data.default_value : 0;
-                                data.id = `${data.type}_${nextId++}`;
-                                data.canvas = currentCanvas.canvas;
+                                data.id = `${data.type}_${nextHTMLID++}`;
+                                data.canvas = layer.canvas;
 
                                 // create svg
                                 data.rect = create_item("rect", gui_tgl_rect(data), data.canvas);
@@ -3536,7 +3582,7 @@ async function openPatch(content, filename) {
                                 }
                                 // subscribe receiver
                                 gui_subscribe(data);
-                                currentCanvas.guiObjects[currentCanvas.objId] = data;
+                                layer.guiObjects[layer.nextGUIID] = data;
                             }
                             break;
                         case "vsl":
@@ -3566,8 +3612,8 @@ async function openPatch(content, filename) {
                                 data.steady_on_click = +args[22];
                                 data.interactive = +args[24];
                                 data.value = data.init ? data.default_value : 0;
-                                data.id = `${data.type}_${nextId++}`;
-                                data.canvas = currentCanvas.canvas;
+                                data.id = `${data.type}_${nextHTMLID++}`;
+                                data.canvas = layer.canvas;
 
                                 // create svg
                                 data.rect = create_item("rect", gui_slider_rect(data), data.canvas);
@@ -3594,7 +3640,7 @@ async function openPatch(content, filename) {
                                 }
                                 // subscribe receiver
                                 gui_subscribe(data);
-                                currentCanvas.guiObjects[currentCanvas.objId] = data;
+                                layer.guiObjects[layer.nextGUIID] = data;
                             }
                             break;
                         case "vradio":
@@ -3621,8 +3667,8 @@ async function openPatch(content, filename) {
                                 data.default_value = +args[19];
                                 data.interactive = +args[20];
                                 data.value = data.init ? data.default_value : 0;
-                                data.id = `${data.type}_${nextId++}`;
-                                data.canvas = currentCanvas.canvas;
+                                data.id = `${data.type}_${nextHTMLID++}`;
+                                data.canvas = layer.canvas;
 
                                 // create svg
                                 data.rect = create_item("rect", gui_radio_rect(data), data.canvas);
@@ -3648,7 +3694,7 @@ async function openPatch(content, filename) {
                                 }
                                 // subscribe receiver
                                 gui_subscribe(data);
-                                currentCanvas.guiObjects[currentCanvas.objId] = data;
+                                layer.guiObjects[layer.nextGUIID] = data;
                             }
                             break;
                         case "flatgui/knob":
@@ -3682,8 +3728,8 @@ async function openPatch(content, filename) {
                                 data.off_width = +args[25];
                                 data.on_width = +args[26];
                                 data.value = data.init ? data.default_value : data.minimum;
-                                data.id = `${data.type}_${nextId++}`;
-                                data.canvas = currentCanvas.canvas;
+                                data.id = `${data.type}_${nextHTMLID++}`;
+                                data.canvas = layer.canvas;
 
                                 data.circle = create_item("path", gui_knob_circle(data), data.canvas);
                                 data.extracircle = create_item("path", gui_knob_extracircle(data), data.canvas);
@@ -3710,7 +3756,7 @@ async function openPatch(content, filename) {
 
                                 // subscribe receiver
                                 gui_subscribe(data);
-                                currentCanvas.guiObjects[currentCanvas.objId] = data;
+                                layer.guiObjects[layer.nextGUIID] = data;
 
                             }
                             break;
@@ -3733,8 +3779,8 @@ async function openPatch(content, filename) {
                                 data.label_color = isNaN(args[14]) ? args[14] : +args[14];
                                 data.showScale = +args[15];
                                 data.unknown = +args[16];
-                                data.id = `${data.type}_${nextId++}`;
-                                data.canvas = currentCanvas.canvas;
+                                data.id = `${data.type}_${nextHTMLID++}`;
+                                data.canvas = layer.canvas;
                                 data.value = 0;
                                 data.peak = -101
 
@@ -3757,7 +3803,7 @@ async function openPatch(content, filename) {
                                         configure_item(scale, {display: 'none'});
 
                                 gui_subscribe(data);
-                                currentCanvas.guiObjects[currentCanvas.objId] = data;
+                                layer.guiObjects[layer.nextGUIID] = data;
 
                             }
                             break;
@@ -3770,9 +3816,9 @@ async function openPatch(content, filename) {
                                 data.type = args[4];
                                 data.link = args.slice(5).join(' ');
                                 data.visible = true;
-                                data.canvas = currentCanvas.canvas;
+                                data.canvas = layer.canvas;
                                 data.receive = [null];
-                                data.id = `${data.type}_${nextId++}`;
+                                data.id = `${data.type}_${nextHTMLID++}`;
 
                                 if(data.link.includes(' -box')) {
                                     data.visible = false;
@@ -3787,9 +3833,9 @@ async function openPatch(content, filename) {
 
                                 data.svgText = create_item("text", {
                                     x: data.x_pos,
-                                    y: data.y_pos + font_height_map()[currentCanvas.fontSize] + gobj_font_y_kludge(currentCanvas.fontSize),
+                                    y: data.y_pos + font_height_map()[layer.fontSize] + gobj_font_y_kludge(layer.fontSize),
                                     "shape-rendering": "crispEdges",
-                                    "font-size": pd_fontsize_to_gui_fontsize(currentCanvas.fontSize) + "px",
+                                    "font-size": pd_fontsize_to_gui_fontsize(layer.fontSize) + "px",
                                     "font-weight": "normal",
                                     display: data.visible ? 'block' : 'none',
                                     fill: '#0000ff',
@@ -3809,7 +3855,7 @@ async function openPatch(content, filename) {
                                 }
 
                                 gui_subscribe(data);
-                                currentCanvas.guiObjects[currentCanvas.objId] = data;
+                                layer.guiObjects[layer.nextGUIID] = data;
                             }
                             break;
                         case "nbx":
@@ -3841,9 +3887,8 @@ async function openPatch(content, filename) {
                                 data.exclusive = +args[24];
                                 data.interactive = +args[25];
                                 data.arrowUpdate = +args[26];
-                                data.id = `${data.type}_${nextId++}`;
-                                data.objId = currentCanvas.objId;
-                                data.canvas = currentCanvas.canvas;
+                                data.id = `${data.type}_${nextHTMLID++}`;
+                                data.canvas = layer.canvas;
             
                                 data.regex = /^-?[\d]*\.?[\d]*e?[\d]*/;
                                 data.onKeyDown = gui_nbx_keydown;
@@ -3887,7 +3932,7 @@ async function openPatch(content, filename) {
                                 gui_nbx_settext(data, '' + data.value);
                                 try {
                                     rootCanvas.removeChild(data.svgText);
-                                    currentCanvas.canvas.appendChild(data.svgText);
+                                    layer.canvas.appendChild(data.svgText);
                                 } catch (e) {}
 
                                 
@@ -3911,7 +3956,7 @@ async function openPatch(content, filename) {
                                 }
             
                                 gui_subscribe(data);
-                                currentCanvas.guiObjects[currentCanvas.objId] = data;
+                                layer.guiObjects[layer.nextGUIID] = data;
                             }
                             break;
                         case "cnv":
@@ -3933,8 +3978,8 @@ async function openPatch(content, filename) {
                                 data.bg_color = isNaN(args[15]) ? args[15] : +args[15];
                                 data.label_color = isNaN(args[16]) ? args[16] : +args[16];
                                 data.unknown = +args[17];
-                                data.id = `${data.type}_${nextId++}`;
-                                data.canvas = currentCanvas.canvas;
+                                data.id = `${data.type}_${nextHTMLID++}`;
+                                data.canvas = layer.canvas;
 
                                 // create svg
                                 data.visible_rect = create_item("rect", gui_cnv_visible_rect(data), data.canvas);
@@ -3976,12 +4021,12 @@ async function openPatch(content, filename) {
                                 data.rotation = +args[23];
                                 data.visible = +args[24];
                                 data.opacity = +args[25];
-                                data.id = `${data.type}_${nextId++}`;
-                                data.canvas = currentCanvas.canvas;
+                                data.id = `${data.type}_${nextHTMLID++}`;
+                                data.canvas = layer.canvas;
 
-                                data.image = create_item("image", {}, currentCanvas.canvas);
-                                data.border = create_item("rect", {}, currentCanvas.canvas);
-                                data.text = create_item("text", gui_text(data), currentCanvas.canvas);
+                                data.image = create_item("image", {}, layer.canvas);
+                                data.border = create_item("rect", {}, layer.canvas);
+                                data.text = create_item("text", gui_text(data), layer.canvas);
 
                                 data.render = async(data) => {
                                     await new Promise((Resolve)=>{
@@ -4066,14 +4111,14 @@ async function openPatch(content, filename) {
                                     });
                                 }
 
-                                currentCanvas.guiObjects[currentCanvas.objId] = data;
+                                layer.guiObjects[layer.nextGUIID] = data;
                             }
                             break;
                         case "key": {
                             let data = {};
                             data.repeat = args[5] === '1';
                             data.send = [null];
-                            currentCanvas.guiObjects[currentCanvas.objId] = data;
+                            layer.guiObjects[layer.nextGUIID] = data;
                             inputListeners.push({
                                 onKeyDown: (e) => {
                                     if(e.repeat === false || data.repeat === true)
@@ -4086,7 +4131,7 @@ async function openPatch(content, filename) {
                             let data = {};
                             data.repeat = args[5] === '1';
                             data.send = [null];
-                            currentCanvas.guiObjects[currentCanvas.objId] = data;
+                            layer.guiObjects[layer.nextGUIID] = data;
                             inputListeners.push({
                                 onKeyUp: (e) => {
                                     if(e.repeat === false || data.repeat === true)
@@ -4100,7 +4145,7 @@ async function openPatch(content, filename) {
                             data.repeat = args[5] === '1';
                             data.send = [null];
                             data.auxSend = [[null]];
-                            currentCanvas.guiObjects[currentCanvas.objId] = data;
+                            layer.guiObjects[layer.nextGUIID] = data;
                             inputListeners.push({
                                 onKeyDown: e => {
                                     if(e.repeat === false || data.repeat === true) {
@@ -4121,8 +4166,8 @@ async function openPatch(content, filename) {
                             let data = {};
                             data.send = [null];
                             data.auxSend = [[null]];
-                            data.canvas = currentCanvas.canvas;
-                            currentCanvas.guiObjects[currentCanvas.objId] = data;
+                            data.canvas = layer.canvas;
+                            layer.guiObjects[layer.nextGUIID] = data;
                             inputListeners.push({
                                 onMouseMove: e => {
                                     let p = gui_roundedmousepoint(e, data.canvas);
@@ -4136,8 +4181,8 @@ async function openPatch(content, filename) {
                             let data = {};
                             data.send = [null];
                             data.auxSend = [[null],[null],[null]];
-                            data.canvas = currentCanvas.canvas;
-                            currentCanvas.guiObjects[currentCanvas.objId] = data;
+                            data.canvas = layer.canvas;
+                            layer.guiObjects[layer.nextGUIID] = data;
                             inputListeners.push({
                                 onMouseDown: e => {
                                     let p = gui_roundedmousepoint(e, data.canvas);
@@ -4162,12 +4207,11 @@ async function openPatch(content, filename) {
                             //If the data starts with a #, it is a patch. Otherwise, either the patch does not exist, or this is a non-gui object, and in either case we can ignore it.
                             if(data.content.charAt(0) == '#') {
                                 //We must add an #X restore at the end to undo the #N canvas at the beginning
-                                nextCanvas.args = args.slice(5);
-                                nextCanvas.instance = ++nextInstance;
+                                nextArgs = args.length > 5 ? args.slice(5) : null;
                                 lines.splice(i,1,...data.content.split(';\n').slice(0,-1),`#X restore ${args[2]} ${args[3]} ${args[4]}`);
                                 //Since we removed the line that we just processed, our subpatch starts at line i, so we have to process line i again.
                                 i--;
-                                currentCanvas.objId--;
+                                layer.nextGUIID--;
                             }
                             break;
                     }
@@ -4175,10 +4219,6 @@ async function openPatch(content, filename) {
                 break;
             case "#X array":
                 if(args.length > 7) {
-                    currentCanvas.arrays.push({
-                        name: args[2],
-                        color: args[7],
-                    });
                     let data = {}
                     data.type = args[1];
                     data.name = args[2];
@@ -4195,16 +4235,23 @@ async function openPatch(content, filename) {
                     //3 - bar graph
                     data.fillColor = args[6];
                     data.outlineColor = args[7];
-                    data.id = `array_${nextId++}`;
-                    data.canvas = currentCanvas.canvas;
-                    data.canvasData = currentCanvas;
+                    data.id = `array_${nextHTMLID++}`;
+                    data.canvas = layer.canvas;
+                    data.layer = layer;
                     if(lines[i+1].startsWith('#A '))
                         data.nums = lines[i+1].replace(/\n/g,' ').split(' ').slice(1).map(num=>+num);
                     else
                         data.nums = (new Array(data.size)).fill(0);
-                    data.path = create_item('path', {id: data.id, stroke:data.outlineColor, "stroke-width": "1", fill: 'none'}, data.canvas);
+                    data.path = create_item('path', {
+                        id: data.id,
+                        stroke: data.outlineColor,
+                        "stroke-width": "1",
+                        "shape-rendering": "auto",
+                        fill: 'none'
+                    }, data.canvas);
                     data.setCoords = coords => {
                         data.coords = coords;
+                        data.redraw();
                     }
                     data.resize = size => {
                         if(size > data.nums.length)
@@ -4213,14 +4260,13 @@ async function openPatch(content, filename) {
                             data.nums = data.nums.slice(0,size);
                         data.redraw();
 
-                        let smallestArr = data.canvasData.coordObjs.reduce((p, c) => p < c.nums.length ? c.nums.length : p, 0);
-                        data.canvasData.coords.l = 0;
-                        data.canvasData.coords.r = smallestArr - 1;
-                        for(let coordObj of data.canvasData.coordObjs) {
-                            coordObj.setCoords(data.canvasData.coords);
-                            coordObj.redraw();
-                        }
-                        gui_canvas_drawTicks(data.canvasData);
+                        let smallestArr = data.layer.arrays.reduce((p, c) => p < c.nums.length ? c.nums.length : p, 0);
+                        data.layer.dimensions.coords.l = 0;
+                        data.layer.dimensions.coords.r = smallestArr - 1;
+                        for(let array of data.layer.arrays)
+                            array.setCoords(data.layer.dimensions.coords);
+                        gui_canvas_drawTicks(data.layer);
+                        gui_canvas_drawLabels(data.layer);
                     }
                     data.redraw = () => {
                         let path = data.displayMode % 2 ? '' : 'M ';
@@ -4234,7 +4280,7 @@ async function openPatch(content, filename) {
                                     path += `${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} `;
                                 if(data.displayMode == 1)
                                     path += `M ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} H ${coordToScreen(c.l,c.r,c.w,i) - 1} V ${coordToScreen(c.t,c.b,c.h,data.nums[i])+1} H ${curX} Z `;
-                                if(data.displayMode == 3)
+                                if(data.displayMode == 3 && i+1 <= c.r)
                                     path += `M ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} H ${coordToScreen(c.l,c.r,c.w,i + 1)} V ${c.h} H ${curX} Z `;
                             }
                         }
@@ -4246,30 +4292,8 @@ async function openPatch(content, filename) {
                     data.onmouseup = gui_array_onmouseup;
                     data.onmousemove = gui_array_onmousemove;
 
-
-                    data.clicktarget = create_item('rect', { 
-                        x:0, 
-                        y:0, 
-                        fill: '#00000000'
-                    }, data.canvas);
-
-                    if (isMobile) {
-                        data.clicktarget.addEventListener("touchstart", function (e) {
-                            e = e || window.event;
-                            for (const touch of e.changedTouches) {
-                                gui_array_onmousedown(data, touch, touch.identifier);
-                            }
-                        });
-                    }
-                    else {
-                        data.clicktarget.addEventListener("mousedown", function (e) {
-                            e = e || window.event;
-                            gui_array_onmousedown(data, e, 0);
-                        });
-                    }
-
-                    currentCanvas.coordObjs.push(data);
-                    currentCanvas.guiObjects[currentCanvas.objId] = data;
+                    layer.arrays.push(data);
+                    layer.guiObjects[layer.nextGUIID] = data;
                     gui_subscribe(data);
                 }
                 break;
@@ -4280,40 +4304,39 @@ async function openPatch(content, filename) {
                     data.x_pos = +args[2];
                     data.y_pos = +args[3];
                     data.comment = [];
-                    data.canvas = currentCanvas;
+                    data.canvas = layer;
                     const lines = args.slice(4).join(" ").replace(/ \\,/g, ",").replace(/\\; /g, ";\n").replace(/ ;/g, ";").replace(//g,'\n').split("\n");
                     for (const line of lines) {
-                        const lines = line.match(new RegExp(`.{1,${widthOverride || 100}}(\\s|$)`,'g')) || [];
+                        const lines = line.match(new RegExp(`.{1,${widthOverride || 60}}(\\s|$)`,'g')) || [];
                         for (const line of lines) {
                             data.comment.push(line.trim());
                         }
                     }
-                    data.id = `${data.type}_${nextId++}`;
+                    data.id = `${data.type}_${nextHTMLID++}`;
 
                     // create svg
                     data.texts = [];
                     for (let i = 0; i < data.comment.length; i++) {
-                        const text = create_item("text", gui_text_text(data, i, currentCanvas.fontSize), currentCanvas.canvas);
+                        const text = create_item("text", gui_text_text(data, i, layer.fontSize), layer.canvas);
                         text.textContent = data.comment[i];
                         data.texts.push(text);
                     }
                 }
                 break;
             case "#X msg":
-                if(args.length > 3 && canvasStack.length == 1) {
+                if(args.length > 3 && layer.id == 0) {
                     const data = {};
                     data.type = args[1];
                     data.x_pos = +args[2];
                     data.y_pos = +args[3];
                     data.text = args.slice(4).join(' ').replace(/\\\; /g,';\n').replace(/ ,/g,',').replace(/\\\$/g,'$');
-                    data.id = `${data.type}_${nextId++}`;
-                    data.objId = currentCanvas.objId;
+                    data.id = `${data.type}_${nextHTMLID++}`;
                     data.receive = [null];
                     data.send = [null];
-                    data.clickSend = `msg_${currentCanvas.id}_${data.objId}`
-                    data.canvas = currentCanvas.canvas;
+                    data.clickSend = `msg_${layer.id}_${layer.nextGUIID}`
+                    data.canvas = layer.canvas;
 
-                    let nextObjId = currentCanvas.objId, nextSlot = i, depth = 0;
+                    let nextObjId = layer.nextGUIID, nextSlot = i, depth = 0;
                     for(;lines[nextSlot].startsWith('#X connect') == false || depth > 0; nextSlot++) {
                         if(object_types.find(type=>lines[nextSlot].startsWith(type)) && depth == 0)
                             nextObjId++;
@@ -4322,11 +4345,11 @@ async function openPatch(content, filename) {
                         if(lines[nextSlot].startsWith('#X restore'))
                             depth--;
                     }
-                    lines.splice(nextSlot, 0, `#X obj 0 0 r ${data.clickSend}`,`#X connect ${nextObjId} 0 ${currentCanvas.objId} 0`);
+                    lines.splice(nextSlot, 0, `#X obj 0 0 r ${data.clickSend}`,`#X connect ${nextObjId} 0 ${layer.nextGUIID} 0`);
 
                     //create svg
                     data.sizeText = create_item("text", {
-                        "font-size": pd_fontsize_to_gui_fontsize(currentCanvas.fontSize) + "px",
+                        "font-size": pd_fontsize_to_gui_fontsize(layer.fontSize) + "px",
                         id: `${data.id}_size`,
                         class: "unclickable",
                     }, rootCanvas);
@@ -4343,20 +4366,20 @@ async function openPatch(content, filename) {
                     data.render = (data) => {
                         let textLines = data.text.split('\n');
                         data.sizeText.textContent = new Array(+widthOverride || Math.max(2,textLines.reduce((p,c)=>c.length>p?c.length:p,0))).fill('A').join('');
-                        let width = data.sizeText.getComputedTextLength() + 5, height = font_height_map()[currentCanvas.fontSize] * textLines.length + 4;
+                        let width = data.sizeText.getComputedTextLength() + 5, height = font_height_map()[layer.fontSize] * textLines.length + 4;
                         configure_item(data.border, {d: `M ${data.x_pos} ${data.y_pos} h ${width+4} l -4 4 v ${height-8} l 4 4 H ${data.x_pos} V ${data.y_pos}`}); 
                         for(let i = 0; i < textLines.length; i++) {
                             if(!data.svgText[i]) {
                                 data.svgText.push(create_item("text", {
-                                    transform: `translate(2.5,${font_height_map()[currentCanvas.fontSize] * i})`,
+                                    transform: `translate(2.5,${font_height_map()[layer.fontSize] * i})`,
                                     x: data.x_pos,
-                                    y: data.y_pos + font_height_map()[currentCanvas.fontSize] + gobj_font_y_kludge(currentCanvas.fontSize),
+                                    y: data.y_pos + font_height_map()[layer.fontSize] + gobj_font_y_kludge(layer.fontSize),
                                     "shape-rendering": "crispEdges",
-                                    "font-size": pd_fontsize_to_gui_fontsize(currentCanvas.fontSize) + "px",
+                                    "font-size": pd_fontsize_to_gui_fontsize(layer.fontSize) + "px",
                                     "font-weight": "normal",
                                     id: `${data.id}_text_${i}`,
                                     class: "unclickable",
-                                }, currentCanvas.canvas));
+                                }, layer.canvas));
                             }
                             data.svgText[i].textContent = textLines[i];
                         }
@@ -4400,9 +4423,8 @@ async function openPatch(content, filename) {
                     data.exclusive = +args[11];
                     data.typedMinMax = +args[12];
                     data.interactive = +args[13];
-                    data.id = `${data.type}_${nextId++}`;
-                    data.objId = currentCanvas.objId;
-                    data.canvas = currentCanvas.canvas;
+                    data.id = `${data.type}_${nextHTMLID++}`;
+                    data.canvas = layer.canvas;
 
                     data.value = data.type === 'floatatom' ? 0 : 'symbol';
                     data.lastNonZero = 1;
@@ -4413,16 +4435,16 @@ async function openPatch(content, filename) {
                     data.svgText = create_item("text", {
                         transform: `translate(1.5)`,
                         x: data.x_pos,
-                        y: data.y_pos + font_height_map()[currentCanvas.fontSize] + gobj_font_y_kludge(currentCanvas.fontSize),
+                        y: data.y_pos + font_height_map()[layer.fontSize] + gobj_font_y_kludge(layer.fontSize),
                         "shape-rendering": "crispEdges",
-                        "font-size": pd_fontsize_to_gui_fontsize(currentCanvas.fontSize) + "px",
+                        "font-size": pd_fontsize_to_gui_fontsize(layer.fontSize) + "px",
                         "font-weight": "normal",
                         id: `${data.id}_text`,
                         class: "unclickable",
                     }, rootCanvas);
                     data.svgText.textContent = new Array(+data.width).fill('A').join('');
                     
-                    let width = data.svgText.getComputedTextLength() + 2.5, height = font_height_map()[currentCanvas.fontSize] + 4;
+                    let width = data.svgText.getComputedTextLength() + 2.5, height = font_height_map()[layer.fontSize] + 4;
                     data.border = create_item('path', {
                         id: data.id,
                         stroke:'#d9d9d9',
@@ -4434,7 +4456,7 @@ async function openPatch(content, filename) {
                     gui_atom_settext(data, '' + data.value);
                     try {
                         rootCanvas.removeChild(data.svgText);
-                        currentCanvas.canvas.appendChild(data.svgText);
+                        layer.canvas.appendChild(data.svgText);
                     } catch (e) {}
 
                     // LabelSide
@@ -4444,9 +4466,9 @@ async function openPatch(content, filename) {
                     // 3 - Bottom
                     data.labelText = create_item("text", {
                         x: data.x_pos,
-                        y: data.y_pos + (data.labelSide < 2 ? font_height_map()[currentCanvas.fontSize] : 0) - 3,
+                        y: data.y_pos + (data.labelSide < 2 ? font_height_map()[layer.fontSize] : 0) - 3,
                         'shape-rendering': 'crispEdges',
-                        'font-size': pd_fontsize_to_gui_fontsize(currentCanvas.fontSize) + 'px',
+                        'font-size': pd_fontsize_to_gui_fontsize(layer.fontSize) + 'px',
                         id: `${data.id}_label`,
                         class: 'unclickable',
                     }, data.canvas);
@@ -4471,62 +4493,62 @@ async function openPatch(content, filename) {
                     }
 
                     gui_subscribe(data);
-                    currentCanvas.guiObjects[currentCanvas.objId] = data;
+                    layer.guiObjects[layer.nextGUIID] = data;
                 }
                 break;
             case "#X connect":
                 if (args.length > 5) {
                     //We generate a name based off of the arguments of the connect (which will be unique)
-                    let connectionName = `__WIRE_${currentCanvas.id}_${args[2]}_${args[3]}_${args[4]}_${args[5]}`;
+                    let connectionName = `__WIRE_${layer.id}_${args[2]}_${args[3]}_${args[4]}_${args[5]}`;
                         
-                    if( currentCanvas.guiObjects[args[2]] && !currentCanvas.guiObjects[args[4]]) {
+                    if( layer.guiObjects[args[2]] && !layer.guiObjects[args[4]]) {
                         //If the sender is a gui object, and the receiver is not, we must add a receive object so that the
                         //sender can send wirelessly. Then we connect the receive object to the receiver, and the sender wirelessly to the receive object
                         if(args[3] == '0') {
-                            lines.splice(i,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++currentCanvas.objId} 0 ${args[4]} ${args[5]}`)
-                            currentCanvas.guiObjects[args[2]].send.push(connectionName);
-                        } else if(currentCanvas.guiObjects[args[2]].auxSend) {
-                            lines.splice(i,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++currentCanvas.objId} 0 ${args[4]} ${args[5]}`)
-                            currentCanvas.guiObjects[args[2]].auxSend[+args[3] - 1].push(connectionName);
+                            lines.splice(i,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++layer.nextGUIID} 0 ${args[4]} ${args[5]}`)
+                            layer.guiObjects[args[2]].send.push(connectionName);
+                        } else if(layer.guiObjects[args[2]].auxSend) {
+                            lines.splice(i,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++layer.nextGUIID} 0 ${args[4]} ${args[5]}`)
+                            layer.guiObjects[args[2]].auxSend[+args[3] - 1].push(connectionName);
                         } else
                             console.warn('Ignoring unsupported wired connection (Code A)'); //This should never happen
                     }
-                    if(!currentCanvas.guiObjects[args[2]] && currentCanvas.guiObjects[args[4]] && args[5] === '0') {
+                    if(!layer.guiObjects[args[2]] && layer.guiObjects[args[4]] && args[5] === '0') {
                         //If the receiver is a gui object, and the sender is not, we must add a send object so that the receiver
                         //can receive wirelessly. Then we connect the send object to the sender, and the receiver wirelessly to the send object
-                        lines.splice(i,1,`#X obj 0 0 s ${connectionName}`,`#X connect ${args[2]} ${args[3]} ${++currentCanvas.objId} 0`);
-                        currentCanvas.guiObjects[args[4]].receive.push(connectionName);
-                        gui_subscribe(currentCanvas.guiObjects[args[4]]);
+                        lines.splice(i,1,`#X obj 0 0 s ${connectionName}`,`#X connect ${args[2]} ${args[3]} ${++layer.nextGUIID} 0`);
+                        layer.guiObjects[args[4]].receive.push(connectionName);
+                        gui_subscribe(layer.guiObjects[args[4]]);
                     }
-                    if(currentCanvas.guiObjects[args[2]] && currentCanvas.guiObjects[args[4]] && args[5] === '0') {
+                    if(layer.guiObjects[args[2]] && layer.guiObjects[args[4]] && args[5] === '0') {
                         //If both the sender and receiver are gui objects, we can directly set their sends and receives
                         //Theoretically, they should only have 1 input/output, so the input/output id should always be 0
                         if(args[3] === '0') {
-                            currentCanvas.guiObjects[args[2]].send.push(connectionName);
-                            currentCanvas.guiObjects[args[4]].receive.push(connectionName);
-                            gui_subscribe(currentCanvas.guiObjects[args[4]]);
-                        } else if(currentCanvas.guiObjects[args[2]].auxSend) {
-                            currentCanvas.guiObjects[args[2]].auxSend[+args[3] - 1].push(connectionName);
-                            currentCanvas.guiObjects[args[4]].receive.push(connectionName);
-                            gui_subscribe(currentCanvas.guiObjects[args[4]]);
+                            layer.guiObjects[args[2]].send.push(connectionName);
+                            layer.guiObjects[args[4]].receive.push(connectionName);
+                            gui_subscribe(layer.guiObjects[args[4]]);
+                        } else if(layer.guiObjects[args[2]].auxSend) {
+                            layer.guiObjects[args[2]].auxSend[+args[3] - 1].push(connectionName);
+                            layer.guiObjects[args[4]].receive.push(connectionName);
+                            gui_subscribe(layer.guiObjects[args[4]]);
                         }
                         else
                             console.warn('Ignoring unsupported wired connection (Code B)')
                         }
-                    if(args[5] !== '0' && currentCanvas.guiObjects[args[4]]) {
+                    if(args[5] !== '0' && layer.guiObjects[args[4]]) {
                         if(args[5] === '1') {
                             lines.splice(i,1,
                                 `#X obj 0 0 pack`,
                                 `#X obj 0 0 t b a`,
                                 `#X obj 0 0 s ${connectionName}`,
-                                `#X connect ${currentCanvas.objId + 2} 0 ${currentCanvas.objId + 1} 0`,
-                                `#X connect ${currentCanvas.objId + 2} 1 ${currentCanvas.objId + 1} 1`,
-                                `#X connect ${currentCanvas.objId + 1} 0 ${currentCanvas.objId + 3} 0`,
-                                `#X connect ${args[2]} ${args[3]} ${currentCanvas.objId + 2} 0`
+                                `#X connect ${layer.nextGUIID + 2} 0 ${layer.nextGUIID + 1} 0`,
+                                `#X connect ${layer.nextGUIID + 2} 1 ${layer.nextGUIID + 1} 1`,
+                                `#X connect ${layer.nextGUIID + 1} 0 ${layer.nextGUIID + 3} 0`,
+                                `#X connect ${args[2]} ${args[3]} ${layer.nextGUIID + 2} 0`
                             );
-                            currentCanvas.objId++;
-                            currentCanvas.guiObjects[args[4]].receive.push(connectionName);
-                            gui_subscribe(currentCanvas.guiObjects[args[4]]);
+                            layer.nextGUIID++;
+                            layer.guiObjects[args[4]].receive.push(connectionName);
+                            gui_subscribe(layer.guiObjects[args[4]]);
                         } else
                             console.warn('Ignoring unsupported wired connection (Code C');
                     }
@@ -4537,7 +4559,7 @@ async function openPatch(content, filename) {
     document.getElementById('loadingstage').innerHTML=`Starting PD Engine`;
     await new Promise(resolve => setTimeout(resolve, 10));
 
-    if (nextCanvas.id == 0)
+    if (nextLayerID == 0)
         return alert("The main canvas not found in the pd file.");
 
     if (maxNumInChannels) {
