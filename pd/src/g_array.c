@@ -9,6 +9,9 @@
 #include "g_canvas.h"
 #include <math.h>
 #include <ctype.h>
+#ifdef __EMSCRIPTEN__
+#include "z_hooks.h"
+#endif
 
 extern int glob_lmclick;
 
@@ -1647,7 +1650,21 @@ static void garray_doredraw(t_gobj *client, t_glist *glist)
 
 void garray_redraw(t_garray *x)
 {
-    //post("garray_redraw");
+
+#ifdef __EMSCRIPTEN__
+#define BLOCK_SIZE 10000
+    int yonset, i, elemsize;
+    t_array *array = garray_getarray_floatonly(x, &yonset, &elemsize);
+    t_atom data[BLOCK_SIZE+1];
+    for(int block = 0; block <= array->a_n / BLOCK_SIZE; block++) {
+        int c = BLOCK_SIZE * (block + 1) > array->a_n ? array->a_n % BLOCK_SIZE : BLOCK_SIZE;
+        SETFLOAT(data, block);
+        for(int i = 0; i < c; i++)
+            SETFLOAT(data+i+1, *((t_float *)((char *)array->a_vec + elemsize * (i + BLOCK_SIZE * block)) + yonset));
+        (*libpd_messagehook)(x->x_realname->s_name, "data", c + 1, data);
+    }
+#endif
+
     if (glist_isvisible(x->x_glist))
     {
         // ico@vt.edu 2022-12-07: save latest contents into our
