@@ -1569,8 +1569,7 @@ function create_item(type, args, canvas) {
     var item = document.createElementNS("http://www.w3.org/2000/svg", type);
     if (args !== null)
         configure_item(item, args);
-    else
-        canvas.appendChild(item);
+    canvas.appendChild(item);
     return item;
 }
 
