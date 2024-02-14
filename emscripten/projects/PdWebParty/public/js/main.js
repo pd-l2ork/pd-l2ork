@@ -407,6 +407,9 @@ var Module = {
                         case "flatgui/knob":
                             gui_send('Float', data.send, data.value);
                             break;
+                        case "dropdown":
+                            gui_dropdown_send(data);
+                            break;
                     }
                 }
             }
@@ -456,6 +459,11 @@ var Module = {
                         case "nbx":
                             data.value = value;
                             gui_nbx_update(data);
+                            break;
+                        case "dropdown":
+                            data.selectedOption = Math.max(0, Math.min(data.options.length - 1, value));
+                            data.render();
+                            gui_dropdown_send(data);
                             break;
                     }
                 }
@@ -518,6 +526,11 @@ var Module = {
                         case "nbx":
                             data.value = list[0];
                             gui_nbx_update(data);
+                            break;
+                        case "dropdown":
+                            data.selectedOption = Math.max(0, Math.min(data.options.length - 1, list[0]));
+                            data.render();
+                            gui_dropdown_send(data);
                             break;
 
                     }
@@ -1205,6 +1218,18 @@ var Module = {
                                         data.resize(list[0]);
                                     break;
 
+                            }
+                            break;
+                        case "dropdown":
+                            switch(symbol) {
+                                case "names":
+                                    data.options = list;
+                                    data.render();
+                                    break;
+                                case "set":
+                                    data.selectedOption = Math.max(0, Math.min(data.options.length - 1, list[0]));
+                                    data.render();
+                                    break;
                             }
                             break;
                     }
@@ -2665,6 +2690,33 @@ function gui_atom_losefocus(data) {
     gui_atom_settext(data, '' + data.value);
 }
 
+//dropdown
+let gui_dropdown_dropdowns = [];
+function gui_dropdown_onmousedown(data, e, id) {
+    data.showOptions = true;
+    data.render();
+}
+function gui_dropdown_send(data) {
+    gui_send(data.outputValue && (typeof data.options[data.selectedOption] === 'string') ? 'Symbol' : 'Float', data.send, data.outputValue ? data.options[data.selectedOption] : data.selectedOption);
+}
+function gui_dropdown_option_onmousedown(data, i, e, id) {
+    data.selectedOption = i;
+    data.showOptions = false;
+    data.render();
+    gui_dropdown_send(data);
+}
+function gui_dropdown_option_onmousemove(e, id) {
+    for(let dropdown of gui_dropdown_dropdowns) {
+        for(let option of dropdown.optionsGUI) {
+            let bounds = option.box.getBoundingClientRect();
+            if( e.pageX > bounds.left && e.pageX < bounds.right && e.pageY > bounds.top && e.pageY < bounds.bottom )
+                configure_item(option.box, { fill: "#c3c3c3"});
+            else
+                configure_item(option.box, { fill: "#eeeeee"});
+        }
+    }
+}
+
 
 //nbx
 let gui_nbx_touches = {};
@@ -2945,6 +2997,7 @@ else {
         gui_nbx_onmousemove(e,0);
         gui_image_onmousemove(e,0);
         gui_window_onmousemove(e,0);
+        gui_dropdown_option_onmousemove(e, 0);
     });
     window.addEventListener("mouseup", function (e) {
         gui_slider_onmouseup(0);
@@ -3929,10 +3982,8 @@ async function openPatch(content, filename) {
                                 }, data.canvas);
             
                                 gui_nbx_settext(data, '' + data.value);
-                                try {
-                                    rootCanvas.removeChild(data.svgText);
-                                    layer.canvas.appendChild(data.svgText);
-                                } catch (e) {}
+                                rootCanvas.removeChild(data.svgText);
+                                layer.canvas.appendChild(data.svgText);
 
                                 
                                 data.labelText = create_item("text", gui_text(data), data.canvas);
@@ -4248,6 +4299,10 @@ async function openPatch(content, filename) {
                         "shape-rendering": "auto",
                         fill: 'none'
                     }, data.canvas);
+                    if(layer.arrays.length) {
+                        data.canvas.removeChild(data.path);
+                        data.canvas.insertBefore(data.path, layer.arrays[0].path);
+                    }
                     data.setCoords = coords => {
                         data.coords = coords;
                         data.redraw();
@@ -4453,10 +4508,8 @@ async function openPatch(content, filename) {
                     }, data.canvas);
 
                     gui_atom_settext(data, '' + data.value);
-                    try {
-                        rootCanvas.removeChild(data.svgText);
-                        layer.canvas.appendChild(data.svgText);
-                    } catch (e) {}
+                    rootCanvas.removeChild(data.svgText);
+                    layer.canvas.appendChild(data.svgText);
 
                     // LabelSide
                     // 0 - Left
@@ -4493,6 +4546,160 @@ async function openPatch(content, filename) {
 
                     gui_subscribe(data);
                     layer.guiObjects[layer.nextGUIID] = data;
+                }
+                break;
+            case "#X dropdown":
+                if(args.length >= 11) {
+                    const data = {};
+                    data.x_pos = +args[2];
+                    data.y_pos = +args[3];
+                    data.width = +args[4];
+                    data.outputValue = +args[5];
+                    //args[6], not sure what its for?
+                    data.labelSide = +args[7];
+                    //0 - Left
+                    //1 - Right
+                    //2 - Top
+                    //3 - Bottom
+                    data.label = args[8] === '-' ? '' : args[8];
+                    data.receive = args[9] === '-' ? [null] : [args[9]];
+                    data.send = args[10] === '-' ? [null] : [args[10]];
+                    data.options = [
+                        "symbol",
+                        "float",
+                        "bang",
+                        "list"
+                    ];
+                    data.selectedOption = 0;
+                    data.canvas = layer.canvas;
+                    data.type = 'dropdown';
+                    data.id = `${data.type}_${nextHTMLID}`;
+
+                    data.svgText = create_item("text", {
+                        transform: `translate(1.5)`,
+                        x: data.x_pos,
+                        y: data.y_pos + font_height_map()[layer.fontSize] + gobj_font_y_kludge(layer.fontSize),
+                        "shape-rendering": "crispEdges",
+                        "font-size": pd_fontsize_to_gui_fontsize(layer.fontSize) + "px",
+                        "font-weight": "normal",
+                        id: `${data.id}_text`,
+                        class: "unclickable",
+                    }, rootCanvas);
+
+                    data.box = create_item('path', {
+                        id: `${data.id}_box`,
+                        stroke: '#d9d9d9',
+                        "stroke-width": "0",
+                        fill: '#d9d9d9'
+                    }, data.canvas);
+                    data.triangle = create_item('path', {
+                        id: `${data.id}_triangle`,
+                        stroke: data.outputValue ? 'none' : 'black',
+                        "stroke-width": "1",
+                        fill: data.outputValue ? 'black' : 'none'
+                    }, data.canvas);
+                    rootCanvas.removeChild(data.svgText);
+                    layer.canvas.appendChild(data.svgText);
+
+                    data.labelText = create_item("text", {
+                        x: data.x_pos,
+                        y: data.y_pos + (data.labelSide < 2 ? font_height_map()[layer.fontSize] : 0) - 3,
+                        'shape-rendering': 'crispEdges',
+                        'font-size': pd_fontsize_to_gui_fontsize(layer.fontSize) + 'px',
+                        id: `${data.id}_label`,
+                        class: 'unclickable',
+                    }, data.canvas);
+                    data.labelText.textContent = data.label;
+
+                    data.optionsRect = create_item('rect', {
+                        x: data.x_pos,
+                        y: data.y_pos + font_height_map()[layer.fontSize]*1.5 - 2.5,
+                        fill: "#C3C3C3",
+                        id: `${data.id}_options_rect`,
+                    }, data.canvas);
+                    data.optionsGUI = [];
+
+                    data.render = () => {
+                        let optionOffset = font_height_map()[layer.fontSize]*1.5 - 2.5;
+                        let optionHeight = font_height_map()[layer.fontSize]*2 - 3.5;
+
+                        data.svgText.textContent = new Array(+data.width == 0 ? data.options.reduce((p, c) => c.length > p ? c.length : p, 0) : data.width).fill('A').join('');
+                        let width = data.svgText.getComputedTextLength() + 15, height = font_height_map()[layer.fontSize] + 4;
+                        configure_item(data.box, { d: `M ${data.x_pos} ${data.y_pos} h ${width-4} l 4 4 v ${height-8} l -4 4 H ${data.x_pos} V ${data.y_pos}` } );
+                        configure_item(data.triangle, { d: `M ${data.x_pos + width - 9} ${data.y_pos + 7} l 6 0 l -3 5 l -3 -5` });
+                        if(data.labelSide == 0)
+                            configure_item(data.labelText, {transform: `translate(-${data.labelText.getComputedTextLength()})`});
+                        if(data.labelSide == 1)
+                            configure_item(data.labelText, {transform: `translate(${width+1})`});
+                        data.svgText.textContent = data.options[data.selectedOption];
+
+                        configure_item(data.optionsRect, {
+                            width,
+                            height: optionHeight * data.options.length + 1
+                        });
+                        data.canvas.removeChild(data.optionsRect);
+                        data.canvas.appendChild(data.optionsRect);
+                        data.optionsRect.style.display = data.showOptions ? 'block' : 'none';
+                        while(data.optionsGUI.length) {
+                            let {box, text} = data.optionsGUI.pop();
+                            layer.canvas.removeChild(box);
+                            layer.canvas.removeChild(text);
+                        }
+                        if(data.showOptions) {
+                            for(let i=0; i<data.options.length; i++) {
+                                let box = create_item('rect', {
+                                    x: data.x_pos + 1,
+                                    y: data.y_pos + optionOffset + optionHeight * i,
+                                    width: width - 2,
+                                    height: optionHeight,
+                                    fill: '#eeeeee'
+                                }, data.canvas);
+                                let text = create_item('text', {
+                                    x: data.x_pos + 6,
+                                    y: data.y_pos + font_height_map()[layer.fontSize] * 1.5 - 3.5 + optionOffset + optionHeight * i,
+                                    'shape-rendering': 'crispEdges',
+                                    'font-size': pd_fontsize_to_gui_fontsize(layer.fontSize) + 'px',
+                                    id: `${data.id}_label`,
+                                    class: 'unclickable',
+                                }, data.canvas);
+                                text.textContent = data.options[i];
+
+                                let option = i; // necessary to create local variable because i will get overwritten
+                                if (isMobile) {
+                                    box.addEventListener("touchstart", function (e) {
+                                        e = e || window.event;
+                                        for (const touch of e.changedTouches)
+                                            gui_dropdown_option_onmousedown(data, i, touch, touch.identifier);
+                                    });
+                                }
+                                else {
+                                    box.addEventListener("mousedown", function (e) {
+                                        gui_dropdown_option_onmousedown(data, i, e, 0);
+                                    });
+                                }
+                                data.optionsGUI.push({box, text});
+                            }
+                        }
+                    }
+
+                    data.render();
+
+                    if (isMobile) {
+                        data.box.addEventListener("touchstart", function (e) {
+                            e = e || window.event;
+                            for (const touch of e.changedTouches)
+                                gui_dropdown_onmousedown(data, touch, touch.identifier);
+                        });
+                    }
+                    else {
+                        data.box.addEventListener("mousedown", function (e) {
+                            gui_dropdown_onmousedown(data, e, 0);
+                        });
+                    }
+
+                    gui_subscribe(data);
+                    layer.guiObjects[layer.nextGUIID] = data;
+                    gui_dropdown_dropdowns.push(data);
                 }
                 break;
             case "#X connect":
