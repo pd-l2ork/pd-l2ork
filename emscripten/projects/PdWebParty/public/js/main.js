@@ -542,6 +542,35 @@ var Module = {
             if (source in subscribedData) {
                 for (const data of subscribedData[source]) {
                     switch (data.type) {
+                        case "msg":
+                            switch(symbol) {
+                                case "set":
+                                    if(list.length == 1 && list[0] === 0)
+                                        data.text = '';
+                                    else
+                                        data.text = list.join(' ');
+                                    break;
+                                case "add":
+                                    data.text += list.join(' ')+';\n';
+                                    break;
+                                case "add2":
+                                    data.text += list.join(' ');
+                                    break;
+                                case "addcomma":
+                                    data.text += ',';
+                                    break;
+                                case "addsemi":
+                                    data.text += ';\n';
+                                    break;
+                                case "adddollar":
+                                    data.text += ' $'+list[0];
+                                    break;
+                                case "adddollsym":
+                                    data.text += ' $'+list[0];
+                                    break;
+                            }
+                            data.render(data);
+                            break;
                         case "patch":
                             data.setVisibility(list[0]);
                             break;
@@ -2553,7 +2582,7 @@ function gui_array_onmousedown(data, e, id) {
     let p = gui_mousepoint(e, data.canvas);
     let x = Math.floor(screenToCoord(data.coords.l, data.coords.r, data.coords.w, p.x)) + 1;
     let y = screenToCoord(data.coords.t, data.coords.b, data.coords.h, p.y);
-    if((data.jumpOnClick || Math.abs(p.y - coordToScreen(data.coords.t, data.coords.b, data.coords.h, data.nums[x])) < 2) && x < data.nums.length - 1) {
+    if(x < data.nums.length - 1) {
         data.nums[x] = Math.max(Math.min(data.coords.t, data.coords.b), Math.min(Math.max(data.coords.t, data.coords.b), y));
         data.lastx = x;
         gui_send("List", [data.receive[0]], [x, data.nums[x]]);
@@ -3321,21 +3350,35 @@ async function openPatch(content, filename) {
 
 
                         if(layer.arrays.length) {
-                            let arrays = layer.arrays; // It is important to make a copy since these functions will be called
-                                                       // after layer has gone out of scope and been replaced
+                            // It is important to make a copy since these functions will be called
+                            // after layer has gone out of scope and been replaced
+                            let {dimensions, canvas, arrays} = layer;
+
                             configure_item(layer.border, { fill: '#00000000' });
                             layer.canvas.style.overflow = 'visible';
                             if (isMobile) {
                                 layer.border.addEventListener("touchstart", function (e) {
+                                    let p = gui_mousepoint(e, canvas);
+                                    let x = Math.floor(screenToCoord(dimensions.coords.l, dimensions.coords.r, dimensions.coords.w, p.x));
+                                    let y = screenToCoord(dimensions.coords.t, dimensions.coords.b, dimensions.coords.h, p.y);
+                                    let array, min = Infinity;
+                                    for(let a of arrays)
+                                        if(a.nums.length > x && Math.abs(a.nums[x] - y) < min)
+                                            min = Math.abs(a.nums[x] - y), array = a;
                                     for (const touch of (e || window.event).changedTouches)
-                                        for(let array of arrays)
-                                            array.onmousedown(array, touch, touch.identifier);
+                                        array.onmousedown(array, touch, touch.identifier);
                                 });
                             }
                             else {
                                 layer.border.addEventListener("mousedown", function (e) {
-                                    for(let array of arrays)
-                                        array.onmousedown(array, e || window.event, 0);
+                                    let p = gui_mousepoint(e, canvas);
+                                    let x = Math.floor(screenToCoord(dimensions.coords.l, dimensions.coords.r, dimensions.coords.w, p.x));
+                                    let y = screenToCoord(dimensions.coords.t, dimensions.coords.b, dimensions.coords.h, p.y);
+                                    let array, min = Infinity;
+                                    for(let a of arrays)
+                                        if(a.nums.length > x && Math.abs(a.nums[x] - y) < min)
+                                            min = Math.abs(a.nums[x] - y), array = a;
+                                    array.onmousedown(array, e || window.event, 0);
                                 });
                             }
                         }
@@ -4276,7 +4319,7 @@ async function openPatch(content, filename) {
                     data.receive = [data.name];
                     data.send = [null];
                     data.valtype = args[4];
-                    data.jumpOnClick = +args[5] > 15;
+                    //args[5] is jumpOnClick, which is unused in the web version
                     data.displayMode = Math.floor((+args[5] % 16) / 2);
                     //displayMode:
                     //0 - polygon
@@ -4333,7 +4376,7 @@ async function openPatch(content, filename) {
                                 if(data.displayMode == 0 || data.displayMode == 2)
                                     path += `${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} `;
                                 if(data.displayMode == 1)
-                                    path += `M ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} H ${coordToScreen(c.l,c.r,c.w,i) - 1} V ${coordToScreen(c.t,c.b,c.h,data.nums[i])+1} H ${curX} Z `;
+                                    path += `M ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} H ${coordToScreen(c.l,c.r,c.w,i + 1) - 1} V ${coordToScreen(c.t,c.b,c.h,data.nums[i])+1} H ${curX} Z `;
                                 if(data.displayMode == 3 && i+1 <= c.r)
                                     path += `M ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} H ${coordToScreen(c.l,c.r,c.w,i + 1)} V ${c.h} H ${curX} Z `;
                             }
@@ -4386,6 +4429,7 @@ async function openPatch(content, filename) {
                     data.text = args.slice(4).join(' ').replace(/\\\; /g,';\n').replace(/ ,/g,',').replace(/\\\$/g,'$');
                     data.id = `${data.type}_${nextHTMLID++}`;
                     data.receive = [null];
+                    data.shortCircuit = false;
                     data.send = [null];
                     data.clickSend = `msg_${layer.id}_${layer.nextGUIID}`
                     data.canvas = layer.canvas;
@@ -4399,7 +4443,7 @@ async function openPatch(content, filename) {
                         if(lines[nextSlot].startsWith('#X restore'))
                             depth--;
                     }
-                    lines.splice(nextSlot, 0, `#X obj 0 0 r ${data.clickSend}`,`#X connect ${nextObjId} 0 ${layer.nextGUIID} 0`);
+                    lines.splice(nextSlot, 0, `#X obj 0 0 r ${data.clickSend}`,`#X connect ${nextObjId} 0 ${layer.nextGUIID} 0 __IGNORE__`);
 
                     //create svg
                     data.sizeText = create_item("text", {
@@ -4458,6 +4502,8 @@ async function openPatch(content, filename) {
                         });
                     }
 
+                    layer.guiObjects[layer.nextGUIID] = data;
+                    gui_subscribe(data);
                 }
                 break;
             case "#X floatatom":
@@ -4704,29 +4750,36 @@ async function openPatch(content, filename) {
                 break;
             case "#X connect":
                 if (args.length > 5) {
+                    if(args[6] === '__IGNORE__')
+                        break;
                     //We generate a name based off of the arguments of the connect (which will be unique)
                     let connectionName = `__WIRE_${layer.id}_${args[2]}_${args[3]}_${args[4]}_${args[5]}`;
-                        
-                    if( layer.guiObjects[args[2]] && !layer.guiObjects[args[4]]) {
+                    let dontSplice = false;    
+
+                    if( layer.guiObjects[args[2]] && (!layer.guiObjects[args[4]] || layer.guiObjects[args[4]].shortCircuit === false)) {
                         //If the sender is a gui object, and the receiver is not, we must add a receive object so that the
                         //sender can send wirelessly. Then we connect the receive object to the receiver, and the sender wirelessly to the receive object
+                        dontSplice = true;
                         if(args[3] == '0') {
-                            lines.splice(i,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++layer.nextGUIID} 0 ${args[4]} ${args[5]}`)
+                            lines.splice(i,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++layer.nextGUIID} 0 ${args[4]} ${args[5]} __IGNORE__`)
                             layer.guiObjects[args[2]].send.push(connectionName);
+                            i++;
                         } else if(layer.guiObjects[args[2]].auxSend) {
-                            lines.splice(i,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++layer.nextGUIID} 0 ${args[4]} ${args[5]}`)
+                            lines.splice(i,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++layer.nextGUIID} 0 ${args[4]} ${args[5]} __IGNORE__`)
                             layer.guiObjects[args[2]].auxSend[+args[3] - 1].push(connectionName);
+                            i++;
                         } else
                             console.warn('Ignoring unsupported wired connection (Code A)'); //This should never happen
                     }
-                    if(!layer.guiObjects[args[2]] && layer.guiObjects[args[4]] && args[5] === '0') {
+                    if((!layer.guiObjects[args[2]] || layer.guiObjects[args[2]].shortCircuit === false) && layer.guiObjects[args[4]] && args[5] === '0') {
                         //If the receiver is a gui object, and the sender is not, we must add a send object so that the receiver
                         //can receive wirelessly. Then we connect the send object to the sender, and the receiver wirelessly to the send object
-                        lines.splice(i,1,`#X obj 0 0 s ${connectionName}`,`#X connect ${args[2]} ${args[3]} ${++layer.nextGUIID} 0`);
+                        lines.splice(i,dontSplice ? 0 : 1,`#X obj 0 0 s ${connectionName}`,`#X connect ${args[2]} ${args[3]} ${++layer.nextGUIID} 0 __IGNORE__`);
                         layer.guiObjects[args[4]].receive.push(connectionName);
                         gui_subscribe(layer.guiObjects[args[4]]);
+                        i += dontSplice ? 2 : 1;
                     }
-                    if(layer.guiObjects[args[2]] && layer.guiObjects[args[4]] && args[5] === '0') {
+                    if(layer.guiObjects[args[2]] && layer.guiObjects[args[4]] && args[5] === '0' && layer.guiObjects[args[2]].shortCircuit !== false && layer.guiObjects[args[4]].shortCircuit !== false) {
                         //If both the sender and receiver are gui objects, we can directly set their sends and receives
                         //Theoretically, they should only have 1 input/output, so the input/output id should always be 0
                         if(args[3] === '0') {
