@@ -3,6 +3,8 @@ const loading = document.getElementById("loading");
 const filter = document.getElementById("filter");
 let currentFile = "";
 let subscribedData = {};
+let searchPaths = ['/'];
+let fileCache = {};
 
 //CONSTANTS IMPORTED FROM g_vumeter.c, lines 25-61
 let vu_colors = [
@@ -1406,15 +1408,23 @@ Module['preRun'].push(function() {
                 
             } catch (e) {
                 if(isNetworkCandidate) {
-                    const request = new XMLHttpRequest();
-                    request.open("GET", ((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')+path, false); // `false` makes the request synchronous
-                    request.overrideMimeType('text/plain; charset=x-user-defined'); // Set MIME type for binary data
-                    request.send();
-                    if (request.status === 200) {
-                        let folder = path.split('/').slice(0,-1).join('/') + '/';
-                        FS.createPath('/', folder);
-                        FS.createDataFile(folder, path.split('/').slice(-1)[0], request.response, true, true, true);
-                        node = FS.lookupPath(path, { follow: !(flags & 131072) }).node;
+                    if(fileCache[path])
+                        node = fileCache[path];
+                    else {
+                        for(let searchPath of searchPaths) {
+                            const request = new XMLHttpRequest();
+                            request.open("GET", ((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')+'/'+searchPath.slice(0,-1)+path, false); // `false` makes the request synchronous
+                            request.overrideMimeType('text/plain; charset=x-user-defined'); // Set MIME type for binary data
+                            request.send();
+                            if (request.status === 200) {
+                                let folder = path.split('/').slice(0,-1).join('/') + '/';
+                                FS.createPath('/', folder);
+                                FS.createDataFile(folder, path.split('/').slice(-1)[0], request.response, true, true, true);
+                                fileCache[path] = FS.lookupPath(path, { follow: !(flags & 131072) }).node;
+                                node = fileCache[path];
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -4296,12 +4306,15 @@ async function openPatch(content, filename) {
                         }
                         default: //If we don't have an explicit handling for the object, it's possible that it is an external patch load
                             //We want to load patch data from the same folder as our current patch, just with a different filename at the end.
-                            let data = await getPatchData(`${((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')}/${args[4]}.pd`);
+                            let result = (await Promise.all(searchPaths.map(path => getPatchData(`${((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')}/${path}${args[4]}.pd`)))).find(result => result.content.charAt(0)=='#');
+                            let path = args[4].split('/').slice(0,-1).join('/')+'/';
+                            if(!searchPaths.includes(path))
+                                searchPaths.push(path);
                             //If the data starts with a #, it is a patch. Otherwise, either the patch does not exist, or this is a non-gui object, and in either case we can ignore it.
-                            if(data.content.charAt(0) == '#') {
+                            if(result) {
                                 //We must add an #X restore at the end to undo the #N canvas at the beginning
                                 nextArgs = args.length > 5 ? args.slice(5) : null;
-                                lines.splice(i,1,...data.content.split(';\n').slice(0,-1),`#X restore ${args[2]} ${args[3]} ${args[4]}`);
+                                lines.splice(i,1,...result.content.split(';\n').slice(0,-1),`#X restore ${args[2]} ${args[3]} ${args[4]}`);
                                 //Since we removed the line that we just processed, our subpatch starts at line i, so we have to process line i again.
                                 i--;
                                 layer.nextGUIID--;
