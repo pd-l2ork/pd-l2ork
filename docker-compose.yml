@@ -1,0 +1,14 @@
+version: '3'
+services:
+  pdwebparty:
+    build: 
+      context: .
+      dockerfile: pdwebparty.Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+    volumes:
+      - ./emscripten/projects/PdWebParty/public:/PdWebParty/public/patches:ro
+    restart: unless-stopped
+    container_name: pdwebparty
