@@ -407,6 +407,9 @@ var Module = {
                         case "flatgui/knob":
                             gui_send('Float', data.send, data.value);
                             break;
+                        case "dropdown":
+                            gui_dropdown_send(data);
+                            break;
                     }
                 }
             }
@@ -456,6 +459,11 @@ var Module = {
                         case "nbx":
                             data.value = value;
                             gui_nbx_update(data);
+                            break;
+                        case "dropdown":
+                            data.selectedOption = Math.max(0, Math.min(data.options.length - 1, value));
+                            data.render();
+                            gui_dropdown_send(data);
                             break;
                     }
                 }
@@ -519,6 +527,11 @@ var Module = {
                             data.value = list[0];
                             gui_nbx_update(data);
                             break;
+                        case "dropdown":
+                            data.selectedOption = Math.max(0, Math.min(data.options.length - 1, list[0]));
+                            data.render();
+                            gui_dropdown_send(data);
+                            break;
 
                     }
                 }
@@ -529,6 +542,35 @@ var Module = {
             if (source in subscribedData) {
                 for (const data of subscribedData[source]) {
                     switch (data.type) {
+                        case "msg":
+                            switch(symbol) {
+                                case "set":
+                                    if(list.length == 1 && list[0] === 0)
+                                        data.text = '';
+                                    else
+                                        data.text = list.join(' ');
+                                    break;
+                                case "add":
+                                    data.text += list.join(' ')+';\n';
+                                    break;
+                                case "add2":
+                                    data.text += list.join(' ');
+                                    break;
+                                case "addcomma":
+                                    data.text += ',';
+                                    break;
+                                case "addsemi":
+                                    data.text += ';\n';
+                                    break;
+                                case "adddollar":
+                                    data.text += ' $'+list[0];
+                                    break;
+                                case "adddollsym":
+                                    data.text += ' $'+list[0];
+                                    break;
+                            }
+                            data.render(data);
+                            break;
                         case "patch":
                             data.setVisibility(list[0]);
                             break;
@@ -1205,6 +1247,18 @@ var Module = {
                                         data.resize(list[0]);
                                     break;
 
+                            }
+                            break;
+                        case "dropdown":
+                            switch(symbol) {
+                                case "names":
+                                    data.options = list;
+                                    data.render();
+                                    break;
+                                case "set":
+                                    data.selectedOption = Math.max(0, Math.min(data.options.length - 1, list[0]));
+                                    data.render();
+                                    break;
                             }
                             break;
                     }
@@ -2528,7 +2582,7 @@ function gui_array_onmousedown(data, e, id) {
     let p = gui_mousepoint(e, data.canvas);
     let x = Math.floor(screenToCoord(data.coords.l, data.coords.r, data.coords.w, p.x)) + 1;
     let y = screenToCoord(data.coords.t, data.coords.b, data.coords.h, p.y);
-    if((data.jumpOnClick || Math.abs(p.y - coordToScreen(data.coords.t, data.coords.b, data.coords.h, data.nums[x])) < 2) && x < data.nums.length - 1) {
+    if(x < data.nums.length - 1) {
         data.nums[x] = Math.max(Math.min(data.coords.t, data.coords.b), Math.min(Math.max(data.coords.t, data.coords.b), y));
         data.lastx = x;
         gui_send("List", [data.receive[0]], [x, data.nums[x]]);
@@ -2663,6 +2717,33 @@ function gui_atom_losefocus(data) {
     configure_item(data.svgText, {fill: '#000000'});
     delete data.dirtyValue;
     gui_atom_settext(data, '' + data.value);
+}
+
+//dropdown
+let gui_dropdown_dropdowns = [];
+function gui_dropdown_onmousedown(data, e, id) {
+    data.showOptions = true;
+    data.render();
+}
+function gui_dropdown_send(data) {
+    gui_send(data.outputValue && (typeof data.options[data.selectedOption] === 'string') ? 'Symbol' : 'Float', data.send, data.outputValue ? data.options[data.selectedOption] : data.selectedOption);
+}
+function gui_dropdown_option_onmousedown(data, i, e, id) {
+    data.selectedOption = i;
+    data.showOptions = false;
+    data.render();
+    gui_dropdown_send(data);
+}
+function gui_dropdown_option_onmousemove(e, id) {
+    for(let dropdown of gui_dropdown_dropdowns) {
+        for(let option of dropdown.optionsGUI) {
+            let bounds = option.box.getBoundingClientRect();
+            if( e.pageX > bounds.left && e.pageX < bounds.right && e.pageY > bounds.top && e.pageY < bounds.bottom )
+                configure_item(option.box, { fill: "#c3c3c3"});
+            else
+                configure_item(option.box, { fill: "#eeeeee"});
+        }
+    }
 }
 
 
@@ -2945,6 +3026,7 @@ else {
         gui_nbx_onmousemove(e,0);
         gui_image_onmousemove(e,0);
         gui_window_onmousemove(e,0);
+        gui_dropdown_option_onmousemove(e, 0);
     });
     window.addEventListener("mouseup", function (e) {
         gui_slider_onmouseup(0);
@@ -3268,21 +3350,35 @@ async function openPatch(content, filename) {
 
 
                         if(layer.arrays.length) {
-                            let arrays = layer.arrays; // It is important to make a copy since these functions will be called
-                                                       // after layer has gone out of scope and been replaced
+                            // It is important to make a copy since these functions will be called
+                            // after layer has gone out of scope and been replaced
+                            let {dimensions, canvas, arrays} = layer;
+
                             configure_item(layer.border, { fill: '#00000000' });
                             layer.canvas.style.overflow = 'visible';
                             if (isMobile) {
                                 layer.border.addEventListener("touchstart", function (e) {
+                                    let p = gui_mousepoint(e, canvas);
+                                    let x = Math.floor(screenToCoord(dimensions.coords.l, dimensions.coords.r, dimensions.coords.w, p.x));
+                                    let y = screenToCoord(dimensions.coords.t, dimensions.coords.b, dimensions.coords.h, p.y);
+                                    let array, min = Infinity;
+                                    for(let a of arrays)
+                                        if(a.nums.length > x && Math.abs(a.nums[x] - y) < min)
+                                            min = Math.abs(a.nums[x] - y), array = a;
                                     for (const touch of (e || window.event).changedTouches)
-                                        for(let array of arrays)
-                                            array.onmousedown(array, touch, touch.identifier);
+                                        array.onmousedown(array, touch, touch.identifier);
                                 });
                             }
                             else {
                                 layer.border.addEventListener("mousedown", function (e) {
-                                    for(let array of arrays)
-                                        array.onmousedown(array, e || window.event, 0);
+                                    let p = gui_mousepoint(e, canvas);
+                                    let x = Math.floor(screenToCoord(dimensions.coords.l, dimensions.coords.r, dimensions.coords.w, p.x));
+                                    let y = screenToCoord(dimensions.coords.t, dimensions.coords.b, dimensions.coords.h, p.y);
+                                    let array, min = Infinity;
+                                    for(let a of arrays)
+                                        if(a.nums.length > x && Math.abs(a.nums[x] - y) < min)
+                                            min = Math.abs(a.nums[x] - y), array = a;
+                                    array.onmousedown(array, e || window.event, 0);
                                 });
                             }
                         }
@@ -3929,10 +4025,8 @@ async function openPatch(content, filename) {
                                 }, data.canvas);
             
                                 gui_nbx_settext(data, '' + data.value);
-                                try {
-                                    rootCanvas.removeChild(data.svgText);
-                                    layer.canvas.appendChild(data.svgText);
-                                } catch (e) {}
+                                rootCanvas.removeChild(data.svgText);
+                                layer.canvas.appendChild(data.svgText);
 
                                 
                                 data.labelText = create_item("text", gui_text(data), data.canvas);
@@ -4225,7 +4319,7 @@ async function openPatch(content, filename) {
                     data.receive = [data.name];
                     data.send = [null];
                     data.valtype = args[4];
-                    data.jumpOnClick = +args[5] > 15;
+                    //args[5] is jumpOnClick, which is unused in the web version
                     data.displayMode = Math.floor((+args[5] % 16) / 2);
                     //displayMode:
                     //0 - polygon
@@ -4248,6 +4342,10 @@ async function openPatch(content, filename) {
                         "shape-rendering": "auto",
                         fill: 'none'
                     }, data.canvas);
+                    if(layer.arrays.length) {
+                        data.canvas.removeChild(data.path);
+                        data.canvas.insertBefore(data.path, layer.arrays[0].path);
+                    }
                     data.setCoords = coords => {
                         data.coords = coords;
                         data.redraw();
@@ -4278,7 +4376,7 @@ async function openPatch(content, filename) {
                                 if(data.displayMode == 0 || data.displayMode == 2)
                                     path += `${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} `;
                                 if(data.displayMode == 1)
-                                    path += `M ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} H ${coordToScreen(c.l,c.r,c.w,i) - 1} V ${coordToScreen(c.t,c.b,c.h,data.nums[i])+1} H ${curX} Z `;
+                                    path += `M ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} H ${coordToScreen(c.l,c.r,c.w,i + 1) - 1} V ${coordToScreen(c.t,c.b,c.h,data.nums[i])+1} H ${curX} Z `;
                                 if(data.displayMode == 3 && i+1 <= c.r)
                                     path += `M ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} H ${coordToScreen(c.l,c.r,c.w,i + 1)} V ${c.h} H ${curX} Z `;
                             }
@@ -4331,6 +4429,7 @@ async function openPatch(content, filename) {
                     data.text = args.slice(4).join(' ').replace(/\\\; /g,';\n').replace(/ ,/g,',').replace(/\\\$/g,'$');
                     data.id = `${data.type}_${nextHTMLID++}`;
                     data.receive = [null];
+                    data.shortCircuit = false;
                     data.send = [null];
                     data.clickSend = `msg_${layer.id}_${layer.nextGUIID}`
                     data.canvas = layer.canvas;
@@ -4344,7 +4443,7 @@ async function openPatch(content, filename) {
                         if(lines[nextSlot].startsWith('#X restore'))
                             depth--;
                     }
-                    lines.splice(nextSlot, 0, `#X obj 0 0 r ${data.clickSend}`,`#X connect ${nextObjId} 0 ${layer.nextGUIID} 0`);
+                    lines.splice(nextSlot, 0, `#X obj 0 0 r ${data.clickSend}`,`#X connect ${nextObjId} 0 ${layer.nextGUIID} 0 __IGNORE__`);
 
                     //create svg
                     data.sizeText = create_item("text", {
@@ -4403,6 +4502,8 @@ async function openPatch(content, filename) {
                         });
                     }
 
+                    layer.guiObjects[layer.nextGUIID] = data;
+                    gui_subscribe(data);
                 }
                 break;
             case "#X floatatom":
@@ -4453,10 +4554,8 @@ async function openPatch(content, filename) {
                     }, data.canvas);
 
                     gui_atom_settext(data, '' + data.value);
-                    try {
-                        rootCanvas.removeChild(data.svgText);
-                        layer.canvas.appendChild(data.svgText);
-                    } catch (e) {}
+                    rootCanvas.removeChild(data.svgText);
+                    layer.canvas.appendChild(data.svgText);
 
                     // LabelSide
                     // 0 - Left
@@ -4495,31 +4594,192 @@ async function openPatch(content, filename) {
                     layer.guiObjects[layer.nextGUIID] = data;
                 }
                 break;
+            case "#X dropdown":
+                if(args.length >= 11) {
+                    const data = {};
+                    data.x_pos = +args[2];
+                    data.y_pos = +args[3];
+                    data.width = +args[4];
+                    data.outputValue = +args[5];
+                    //args[6], not sure what its for?
+                    data.labelSide = +args[7];
+                    //0 - Left
+                    //1 - Right
+                    //2 - Top
+                    //3 - Bottom
+                    data.label = args[8] === '-' ? '' : args[8];
+                    data.receive = args[9] === '-' ? [null] : [args[9]];
+                    data.send = args[10] === '-' ? [null] : [args[10]];
+                    data.options = [
+                        "symbol",
+                        "float",
+                        "bang",
+                        "list"
+                    ];
+                    data.selectedOption = 0;
+                    data.canvas = layer.canvas;
+                    data.type = 'dropdown';
+                    data.id = `${data.type}_${nextHTMLID}`;
+
+                    data.svgText = create_item("text", {
+                        transform: `translate(1.5)`,
+                        x: data.x_pos,
+                        y: data.y_pos + font_height_map()[layer.fontSize] + gobj_font_y_kludge(layer.fontSize),
+                        "shape-rendering": "crispEdges",
+                        "font-size": pd_fontsize_to_gui_fontsize(layer.fontSize) + "px",
+                        "font-weight": "normal",
+                        id: `${data.id}_text`,
+                        class: "unclickable",
+                    }, rootCanvas);
+
+                    data.box = create_item('path', {
+                        id: `${data.id}_box`,
+                        stroke: '#d9d9d9',
+                        "stroke-width": "0",
+                        fill: '#d9d9d9'
+                    }, data.canvas);
+                    data.triangle = create_item('path', {
+                        id: `${data.id}_triangle`,
+                        stroke: data.outputValue ? 'none' : 'black',
+                        "stroke-width": "1",
+                        fill: data.outputValue ? 'black' : 'none'
+                    }, data.canvas);
+                    rootCanvas.removeChild(data.svgText);
+                    layer.canvas.appendChild(data.svgText);
+
+                    data.labelText = create_item("text", {
+                        x: data.x_pos,
+                        y: data.y_pos + (data.labelSide < 2 ? font_height_map()[layer.fontSize] : 0) - 3,
+                        'shape-rendering': 'crispEdges',
+                        'font-size': pd_fontsize_to_gui_fontsize(layer.fontSize) + 'px',
+                        id: `${data.id}_label`,
+                        class: 'unclickable',
+                    }, data.canvas);
+                    data.labelText.textContent = data.label;
+
+                    data.optionsRect = create_item('rect', {
+                        x: data.x_pos,
+                        y: data.y_pos + font_height_map()[layer.fontSize]*1.5 - 2.5,
+                        fill: "#C3C3C3",
+                        id: `${data.id}_options_rect`,
+                    }, data.canvas);
+                    data.optionsGUI = [];
+
+                    data.render = () => {
+                        let optionOffset = font_height_map()[layer.fontSize]*1.5 - 2.5;
+                        let optionHeight = font_height_map()[layer.fontSize]*2 - 3.5;
+
+                        data.svgText.textContent = new Array(+data.width == 0 ? data.options.reduce((p, c) => c.length > p ? c.length : p, 0) : data.width).fill('A').join('');
+                        let width = data.svgText.getComputedTextLength() + 15, height = font_height_map()[layer.fontSize] + 4;
+                        configure_item(data.box, { d: `M ${data.x_pos} ${data.y_pos} h ${width-4} l 4 4 v ${height-8} l -4 4 H ${data.x_pos} V ${data.y_pos}` } );
+                        configure_item(data.triangle, { d: `M ${data.x_pos + width - 9} ${data.y_pos + 7} l 6 0 l -3 5 l -3 -5` });
+                        if(data.labelSide == 0)
+                            configure_item(data.labelText, {transform: `translate(-${data.labelText.getComputedTextLength()})`});
+                        if(data.labelSide == 1)
+                            configure_item(data.labelText, {transform: `translate(${width+1})`});
+                        data.svgText.textContent = data.options[data.selectedOption];
+
+                        configure_item(data.optionsRect, {
+                            width,
+                            height: optionHeight * data.options.length + 1
+                        });
+                        data.canvas.removeChild(data.optionsRect);
+                        data.canvas.appendChild(data.optionsRect);
+                        data.optionsRect.style.display = data.showOptions ? 'block' : 'none';
+                        while(data.optionsGUI.length) {
+                            let {box, text} = data.optionsGUI.pop();
+                            layer.canvas.removeChild(box);
+                            layer.canvas.removeChild(text);
+                        }
+                        if(data.showOptions) {
+                            for(let i=0; i<data.options.length; i++) {
+                                let box = create_item('rect', {
+                                    x: data.x_pos + 1,
+                                    y: data.y_pos + optionOffset + optionHeight * i,
+                                    width: width - 2,
+                                    height: optionHeight,
+                                    fill: '#eeeeee'
+                                }, data.canvas);
+                                let text = create_item('text', {
+                                    x: data.x_pos + 6,
+                                    y: data.y_pos + font_height_map()[layer.fontSize] * 1.5 - 3.5 + optionOffset + optionHeight * i,
+                                    'shape-rendering': 'crispEdges',
+                                    'font-size': pd_fontsize_to_gui_fontsize(layer.fontSize) + 'px',
+                                    id: `${data.id}_label`,
+                                    class: 'unclickable',
+                                }, data.canvas);
+                                text.textContent = data.options[i];
+
+                                let option = i; // necessary to create local variable because i will get overwritten
+                                if (isMobile) {
+                                    box.addEventListener("touchstart", function (e) {
+                                        e = e || window.event;
+                                        for (const touch of e.changedTouches)
+                                            gui_dropdown_option_onmousedown(data, i, touch, touch.identifier);
+                                    });
+                                }
+                                else {
+                                    box.addEventListener("mousedown", function (e) {
+                                        gui_dropdown_option_onmousedown(data, i, e, 0);
+                                    });
+                                }
+                                data.optionsGUI.push({box, text});
+                            }
+                        }
+                    }
+
+                    data.render();
+
+                    if (isMobile) {
+                        data.box.addEventListener("touchstart", function (e) {
+                            e = e || window.event;
+                            for (const touch of e.changedTouches)
+                                gui_dropdown_onmousedown(data, touch, touch.identifier);
+                        });
+                    }
+                    else {
+                        data.box.addEventListener("mousedown", function (e) {
+                            gui_dropdown_onmousedown(data, e, 0);
+                        });
+                    }
+
+                    gui_subscribe(data);
+                    layer.guiObjects[layer.nextGUIID] = data;
+                    gui_dropdown_dropdowns.push(data);
+                }
+                break;
             case "#X connect":
                 if (args.length > 5) {
+                    if(args[6] === '__IGNORE__')
+                        break;
                     //We generate a name based off of the arguments of the connect (which will be unique)
                     let connectionName = `__WIRE_${layer.id}_${args[2]}_${args[3]}_${args[4]}_${args[5]}`;
-                        
-                    if( layer.guiObjects[args[2]] && !layer.guiObjects[args[4]]) {
+                    let dontSplice = false;    
+
+                    if( layer.guiObjects[args[2]] && (!layer.guiObjects[args[4]] || layer.guiObjects[args[4]].shortCircuit === false)) {
                         //If the sender is a gui object, and the receiver is not, we must add a receive object so that the
                         //sender can send wirelessly. Then we connect the receive object to the receiver, and the sender wirelessly to the receive object
+                        dontSplice = true;
                         if(args[3] == '0') {
-                            lines.splice(i,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++layer.nextGUIID} 0 ${args[4]} ${args[5]}`)
+                            lines.splice(i,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++layer.nextGUIID} 0 ${args[4]} ${args[5]} __IGNORE__`)
                             layer.guiObjects[args[2]].send.push(connectionName);
+                            i++;
                         } else if(layer.guiObjects[args[2]].auxSend) {
-                            lines.splice(i,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++layer.nextGUIID} 0 ${args[4]} ${args[5]}`)
+                            lines.splice(i,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++layer.nextGUIID} 0 ${args[4]} ${args[5]} __IGNORE__`)
                             layer.guiObjects[args[2]].auxSend[+args[3] - 1].push(connectionName);
+                            i++;
                         } else
                             console.warn('Ignoring unsupported wired connection (Code A)'); //This should never happen
                     }
-                    if(!layer.guiObjects[args[2]] && layer.guiObjects[args[4]] && args[5] === '0') {
+                    if((!layer.guiObjects[args[2]] || layer.guiObjects[args[2]].shortCircuit === false) && layer.guiObjects[args[4]] && args[5] === '0') {
                         //If the receiver is a gui object, and the sender is not, we must add a send object so that the receiver
                         //can receive wirelessly. Then we connect the send object to the sender, and the receiver wirelessly to the send object
-                        lines.splice(i,1,`#X obj 0 0 s ${connectionName}`,`#X connect ${args[2]} ${args[3]} ${++layer.nextGUIID} 0`);
+                        lines.splice(i,dontSplice ? 0 : 1,`#X obj 0 0 s ${connectionName}`,`#X connect ${args[2]} ${args[3]} ${++layer.nextGUIID} 0 __IGNORE__`);
                         layer.guiObjects[args[4]].receive.push(connectionName);
                         gui_subscribe(layer.guiObjects[args[4]]);
+                        i += dontSplice ? 2 : 1;
                     }
-                    if(layer.guiObjects[args[2]] && layer.guiObjects[args[4]] && args[5] === '0') {
+                    if(layer.guiObjects[args[2]] && layer.guiObjects[args[4]] && args[5] === '0' && layer.guiObjects[args[2]].shortCircuit !== false && layer.guiObjects[args[4]].shortCircuit !== false) {
                         //If both the sender and receiver are gui objects, we can directly set their sends and receives
                         //Theoretically, they should only have 1 input/output, so the input/output id should always be 0
                         if(args[3] === '0') {
