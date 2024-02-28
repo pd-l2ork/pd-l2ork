@@ -829,6 +829,8 @@ TWEETER TODO:
 
 *Copying another part in offline mode disassociates the user from any part, making them unable to do anything even with the keyboard enabled. May also affect the online mode. Temporary fix: (re)select part you wish to control.
 
+*Looks like offline session saving saves 1910 lines, whereas online 1884. Why?
+
 *When trying to load a pattern that does not exist (after having successfully loaded one that does), the main level goes to zero.
 
 
