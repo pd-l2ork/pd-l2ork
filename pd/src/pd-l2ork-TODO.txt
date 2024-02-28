@@ -1,5 +1,9 @@
 PD-L2ORK TODO:
 
+*Toggling VU meter scale (text labels with levels next to the VU meter) off and back on, results in incorrectly drawn scale.
+
+*Explore how to enable sending of messages to the front-end for the message and array objects.
+
 *Implement Windows list in the Windows menu.
 
 *Investigate potential issue with preset_nodes and/or patch connections getting all confused after the patch has been edited afterwards (even though patch cords are visually correctly connected, objects, like the one in Sync-Control.pd inside Tweeter, and more specifically length toggle, are not forwarding data like they should).
@@ -820,6 +824,10 @@ TWEETER TODO:
 *Still need to figure out how to prevent heavy network traffic from causing dropouts. May just want to implement a server-side message that disallows further connections? What if someone gets disconnected?
 
 *Offer a way to deal with different keyboards (some keys are not in the same place, see the ELSE approach and new objects that deal with this)
+
+*Adding too many numbers in a row on the track they get truncated into a number with an exponent. Looks like a iemgui label parsing issue.
+
+*Copying another part in offline mode disassociates the user from any part, making them unable to do anything even with the keyboard enabled. May also affect the online mode. Temporary fix: (re)select part you wish to control.
 
 *When trying to load a pattern that does not exist (after having successfully loaded one that does), the main level goes to zero.
 
