@@ -6,6 +6,15 @@ let subscribedData = {};
 let searchPaths = ['/'];
 let fileCache = {};
 
+//Files that need to be short-circuited for cyclone
+//If they are symlinked during the build process, emscripten bundler resolves the symlinks and 
+//copies them into main.data multiple times, adding ~120MB to main.data and making the page take 
+//a long time to load. Instead, the files are listed here, and are symlinked using the FS.symlink
+//function in emscriptens internal filesystem. The real cyclone files are Hammer.wasm and Sickle.wasm.
+//All of these files will be symlinked to those two files.
+let hammerFiles = ['Append.wasm','bangbang.wasm','match.wasm','spell.wasm','Borax.wasm','bondo.wasm','maximum.wasm','split.wasm','Bucket.wasm','buddy.wasm','mean.wasm','spray.wasm','Clip.wasm','capture.wasm','midiflush.wasm','sprintf.wasm','Decode.wasm','cartopol.wasm','midiformat.wasm','substitute.wasm','Histo.wasm','coll.wasm','midiparse.wasm','sustain.wasm','comment.wasm','minimum.wasm','switch.wasm','cosh.wasm','mousefilter.wasm','tanh.wasm','counter.wasm','mtr.wasm','testmess.wasm','cycle.wasm','next.wasm','thresh.wasm','MouseState.wasm','dbtoa.wasm','offer.wasm','tosymbol.wasm','Peak.wasm','decide.wasm','onebang.wasm','universal.wasm','Table.wasm','drunk.wasm','past.wasm','urn.wasm','TogEdge.wasm','flush.wasm','xbendin.wasm','Trough.wasm','forward.wasm','poltocar.wasm','xbendin2.wasm','Uzi.wasm','fromsymbol.wasm','pong.wasm','xbendout.wasm','accum.wasm','funbuff.wasm','prepend.wasm','xbendout2.wasm','acos.wasm','funnel.wasm','prob.wasm','xnotein.wasm','active.wasm','gate.wasm','pv.wasm','xnoteout.wasm','allhammers.wasm','grab.wasm','round.wasm','zl.wasm','anal.wasm','hammer.wasm','seq.wasm','asin.wasm','iter.wasm','sinh.wasm','loadmess.wasm','speedlim.wasm'];
+let sickleFiles = ['Clip.wasm','framedelta.wasm','Line.wasm','index.wasm','kink.wasm','linedrive.wasm','log.wasm','lookup.wasm','Scope.wasm','lores.wasm','matrix.wasm','Snapshot.wasm','maximum.wasm','abs.wasm','minimum.wasm','acos.wasm','minmax.wasm','acosh.wasm','mstosamps.wasm','allpass.wasm','onepole.wasm','allsickles.wasm','overdrive.wasm','asin.wasm','peakamp.wasm','asinh.wasm','peek.wasm','atan.wasm','phasewrap.wasm','atan2.wasm','pink.wasm','atanh.wasm','play.wasm','atodb.wasm','poke.wasm','average.wasm','poltocar.wasm','avg.wasm','pong.wasm','bitand.wasm','pow.wasm','bitnot.wasm','rampsmooth.wasm','bitor.wasm','rand.wasm','bitshift.wasm','record.wasm','bitxor.wasm','reson.wasm','buffir.wasm','round.wasm','capture.wasm','sah.wasm','cartopol.wasm','sampstoms.wasm','change.wasm','sickle.wasm','click.wasm','sinh.wasm','comb.wasm','sinx.wasm','cosh.wasm','slide.wasm','cosx.wasm','spike.wasm','count.wasm','svf.wasm','curve.wasm','tanh.wasm','tanx.wasm','cycle.wasm','train.wasm','dbtoa.wasm','trapezoid.wasm','delay.wasm','triangle.wasm','delta.wasm','trunc.wasm','deltaclip.wasm','vectral.wasm','edge.wasm','wave.wasm','frameaccum.wasm','zerox.wasm'];
+
 //CONSTANTS IMPORTED FROM g_vumeter.c, lines 25-61
 let vu_colors = [
     16579836, 10526880, 4210752, 16572640, 16572608,
@@ -1381,7 +1390,15 @@ var Module = {
     }
 };
 
+
 Module['preRun'].push(function() {
+
+    //Cyclone shenanigans
+    for(let file of hammerFiles)
+        FS.symlink('/pd-l2ork-web/extra/cyclone/Hammer.wasm', `/pd-l2ork-web/extra/cyclone/${file}`);
+    for(let file of sickleFiles.filter(f=>!hammerFiles.includes(f)))
+        FS.symlink('/pd-l2ork-web/extra/cyclone/Sickle.wasm', `/pd-l2ork-web/extra/cyclone/${file}`);
+
     // Intercept file reads
     FS.open = function (path, flags, mode) {
         let isNetworkCandidate = !['wasm','so','pd','pat'].map(ext=>('' + path).endsWith(ext)).find(matches => matches == true) && (('' + path).startsWith('/pd-l2ork-web') == false);
