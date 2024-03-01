@@ -156,7 +156,7 @@ lib_targets = loaders-libdir pddp
 INCREMENTAL = yes
 else ifeq ($(EMSCRIPTEN),yes)
 # original one used by the first iteration of PdWebParty: lib_targets = arraysize autotune bassemu boids bsaylor comport creb cxc earplug ekext ext13 freeverb ggee hcs iem_ambi iem_bin_ambi iemguts iem_adaptfilt iem_delay iem_roomsim iem_spec2 jasch_lib loaders-libdir mapping markex maxlib mjlib moonlib motex mrpeach pan pddp rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing
-lib_targets = arraysize autotune bassemu boids bsaylor comport creb cxc earplug ekext ext13 flatgui freeverb ggee hcs jasch_lib loaders-libdir mapping markex maxlib mjlib moonlib motex mrpeach pan pddp rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing
+lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone earplug ekext ext13 fftease flatgui freeverb ggee hcs jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moonlib motex mrpeach oscx pan pddp rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing
 # short one for quick building for debugging purposes (disabled by default):
 # lib_targets = maxlib
 else
@@ -474,6 +474,7 @@ cxc_clean:
 
 # AG: this external provides no sane way to pass custom CFLAGS, so we abuse
 # WARN_CFLAGS for that purpose.
+ifeq ($(EMSCRIPTEN),no)
 cyclone:
 	make -C $(externals_src)/miXed/cyclone -f Makefile.libdir \
 		PD_PATH=$(pd_src) PD_INCLUDE=$(DESTDIR)$(includedir) WARN_CFLAGS="-Wall -W -Wstrict-prototypes -Wno-unused -Wno-parentheses -Wno-switch $(CFLAGS_ADD)"
@@ -486,6 +487,37 @@ cyclone_install:
 cyclone_clean:
 	make -C $(externals_src)/miXed/cyclone -f Makefile.libdir \
 		clean
+else
+CYCLONE_NAME := cyclone
+CYCLONE_FLAGS := -s -I${CYCLONE_PATH}/cyclone -I$(externals_src)/miXed/shared -D__linux__ -DUNIX -fPIC
+CYCLONE_PATH := $(externals_src)/miXed/
+CYCLONE_HAMMER := $(wildcard $(externals_src)/miXed/cyclone/hammer/*.c)
+CYCLONE_SICKLE := $(wildcard $(externals_src)/miXed/cyclone/sickle/*.c)
+CYCLONE_SHARED_SRC := \
+	$(wildcard $(externals_src)/miXed/shared/common/*.c)\
+	$(wildcard $(externals_src)/miXed/shared/sickle/*.c)\
+	$(wildcard $(externals_src)/miXed/shared/hammer/*.c)\
+	$(externals_src)/miXed/shared/unstable/forky.c $(externals_src)/miXed/shared/unstable/fragile.c\
+	$(externals_src)/miXed/shared/unstable/fringe.c $(externals_src)/miXed/shared/unstable/loader.c
+
+cyclone: $(CYCLONE_PATH)/bin/Hammer.wasm $(CYCLONE_PATH)/bin/Sickle.wasm
+
+$(CYCLONE_PATH)/bin/Hammer.wasm:
+	$(CC) $(CFLAGS) $(CYCLONE_FLAGS) -o $(CYCLONE_PATH)/bin/Hammer.wasm $(CYCLONE_SHARED_SRC) $(CYCLONE_HAMMER)
+
+$(CYCLONE_PATH)/bin/Sickle.wasm:
+	$(CC) $(CFLAGS) $(CYCLONE_FLAGS) -o $(CYCLONE_PATH)/bin/Sickle.wasm $(CYCLONE_SHARED_SRC) $(CYCLONE_SICKLE)
+
+cyclone_templates: cyclone
+	install -d $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)
+	install -p $(wildcard $(CYCLONE_PATH)/bin/*.wasm) $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)
+
+cyclone_install: cyclone_templates
+
+cyclone_clean:
+	rm ${CYCLONE_PATH}/bin/*.wasm
+	rm $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)/*.wasm
+endif
 
 #------------------------------------------------------------------------------#
 # DISIS
@@ -549,7 +581,13 @@ ext13_clean:
 FFTEASE_NAME=fftease
 
 fftease:
-	make -C $(externals_src)/$(FFTEASE_NAME) PD_PATH=$(pd_src) CFLAGS="$(CFLAGS_ADD)"
+ifeq ($(EMSCRIPTEN),yes)
+	sed -i 's/--enable-new-dtags/-Bsymbolic/g' $(externals_src)/$(FFTEASE_NAME)/Makefile
+endif
+	make -C $(externals_src)/$(FFTEASE_NAME) $(call set_em_flags) PD_PATH=$(pd_src) CFLAGS="$(CFLAGS_ADD)"
+ifeq ($(EMSCRIPTEN),yes)
+	sed -i 's/-Bsymbolic/--enable-new-dtags/g' $(externals_src)/$(FFTEASE_NAME)/Makefile
+endif
 
 fftease_install:
 	#make -C $(externals_src)/$(FFTEASE_NAME) DESTDIR="$(DESTDIR)" \
@@ -561,8 +599,10 @@ fftease_install:
 	install -p $(externals_src)/$(FFTEASE_NAME)/fftease32-helpfiles/sound/*.* \
 		$(DESTDIR)$(objectsdir)/$(FFTEASE_NAME)/sound
 	# copy the meta file and the shared lib
+ifneq ($(EMSCRIPTEN),yes)
 	install -p $(externals_src)/$(FFTEASE_NAME)/libfftease* \
 		$(DESTDIR)$(objectsdir)/$(FFTEASE_NAME)
+endif
 	# license and readme
 	install -p $(externals_src)/$(FFTEASE_NAME)/*.txt \
 		$(DESTDIR)$(objectsdir)/$(FFTEASE_NAME)
@@ -1246,7 +1286,13 @@ LYON_SRC=lyonpotpourri
 LYON_DEST=lyonpotpourri
 
 lyonpotpourri:
-	make -C $(externals_src)/$(LYON_SRC) PD_PATH=$(pd_src) CFLAGS="$(CFLAGS_ADD)"
+ifeq ($(EMSCRIPTEN),yes)
+	sed -i 's/--enable-new-dtags/-Bsymbolic/g' $(externals_src)/$(LYON_SRC)/Makefile
+endif
+	make -C $(externals_src)/$(LYON_SRC) $(call set_em_flags) PD_PATH=$(pd_src) CFLAGS="$(CFLAGS_ADD)"
+ifeq ($(EMSCRIPTEN),yes)
+	sed -i 's/-Bsymbolic/--enable-new-dtags/g' $(externals_src)/$(LYON_SRC)/Makefile
+endif
 
 lyonpotpourri_install:
 	#make -C $(externals_src)/$(LYON_SRC) DESTDIR="$(DESTDIR)" \
@@ -1451,6 +1497,7 @@ mrpeach_clean:
 #----------------------------------------------------------------------------
 # OSCx
 OSCX_NAME=oscx
+ifneq ($(EMSCRIPTEN),yes)
 $(externals_src)/OSCx/configure: $(externals_src)/OSCx/configure.ac
 	cd $(externals_src)/OSCx && autoconf
 
@@ -1491,6 +1538,41 @@ oscx_clean:
 	-rm $(externals_src)/OSCx/Makefile
 	-rm $(externals_src)/OSCx/configure
 	-rm -f -- $(cvs_root_dir)/externals/OSCx/*/Makefile
+else
+OSCX_SRC := $(wildcard $(externals_src)/OSCx/src/*.c)
+OSCX_OBJECTS := $(OSCX_SRC:.c=.o)
+OSCX_FLAGS := -I$(externals_src)/OSCx/libOSC -D__APPLE__ -I${externals_src}/OSCx/libOSC -I${externals_src}/OSCx/src
+OSCX_TARGETS := $(OSCX_SRC:.c=.$(EXTENSION))
+OSCX_FIRST := $(externals_src)/OSCx/first
+
+oscx: $(OSCX_FIRST) $(OSCX_TARGETS)
+
+$(OSCX_FIRST):
+	$(CC) $(CFLAGS) -I$(externals_src)/OSCx/libOSC -I${externals_src}/OSCx/libOSC -I${externals_src}/OSCx/src -o $(externals_src)/OSCx/src/dumpOSC.o -c $(externals_src)/OSCx/src/dumpOSC.c && touch $(OSCX_FIRST)
+
+$(OSCX_OBJECTS): $(OSCX_SRC) 
+	$(CC) $(CFLAGS) $(OSCX_FLAGS) -o "$*.o" -c "$*.c"
+
+$(OSCX_TARGETS): $(OSCX_FIRST) $(OSCX_OBJECTS)
+	$(CC) $(LDFLAGS) -o "$*.$(EXTENSION)" "$*.o" $(LIBS)
+	$(STRIP) $*.$(EXTENSION)
+	chmod 755 "$*.$(EXTENSION)"
+	
+oscx_clean:
+	rm -f $(OSCX_TARGETS)
+	rm -f $(OSCX_OBJECTS)
+	rm -f $(OSCX_FIRST)
+
+oscx_install: $(OSCX_TARGETS)
+	install -d $(DESTDIR)$(objectsdir)/$(OSCX_NAME)
+	$(scripts_src)/generate-libdir-metafile.sh $(DESTDIR)$(objectsdir) $(OSCX_NAME) \
+		--author "<jdl@xdv.org>" \
+		--license "BSD" \
+		--description "objects for working with OpenSoundControl"
+	install -p $(externals_src)/OSCx/src/*.$(EXTENSION) $(DESTDIR)$(objectsdir)/$(OSCX_NAME)
+	install -p $(externals_src)/OSCx/doc/*.* $(DESTDIR)$(objectsdir)/$(OSCX_NAME)
+endif 
+
 
 
 
@@ -2176,6 +2258,19 @@ ADAPTIVE_SRC := $(wildcard $(externals_src)/grh/adaptive/src/*.c)
 ADAPTIVE_OBJECTS := $(ADAPTIVE_SRC:.c=.o)
 ADAPTIVE_FLAGS := -DADAPTIVE_SINGLE_OBJ
 ADAPTIVE_TMP := $(wildcard $(externals_src)/grh/adaptive/src/*lms*.c)
+ifeq ($(EMSCRIPTEN),yes)
+ADAPTIVE_TARGETS := $(ADAPTIVE_SRC:.c=.$(EXTENSION))
+
+adaptive: $(ADAPTIVE_SRC:.c=.$(EXTENSION))
+
+$(ADAPTIVE_OBJECTS): $(ADAPTIVE_SRC)
+	$(CC) $(CFLAGS) $(ADAPTIVE_FLAGS) -o "$*.o" -c "$*.c"
+
+$(ADAPTIVE_TARGETS): $(ADAPTIVE_OBJECTS)
+	$(CC) $(LDFLAGS) -o "$*.$(EXTENSION)" "$*.o"  $(LIBS)
+	$(STRIP) $*.$(EXTENSION)
+	chmod 755 "$*.$(EXTENSION)"
+else
 ADAPTIVE_TARGETS := $(ADAPTIVE_TMP:.c=.$(EXTENSION))
 
 adaptive: $(ADAPTIVE_TARGETS)
@@ -2188,6 +2283,7 @@ $(ADAPTIVE_TARGETS) : %.$(EXTENSION) : %.o $(ADAPTIVE_OBJECTS)
 
 $(ADAPTIVE_OBJECTS) : %.o : %.c
 	$(CC) $(CFLAGS) $(ADAPTIVE_FLAGS) -o "$*.o" -c "$*.c"
+endif
 
 adaptive_install: adaptive
 	install -d $(DESTDIR)$(objectsdir)/$(ADAPTIVE_NAME)
