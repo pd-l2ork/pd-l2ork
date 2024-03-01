@@ -529,7 +529,7 @@ ifneq ($(OS_NAME),darwin)
 endif
 endif
 	make -C $(externals_src)/disis PD_PATH=$(pd_src) pdbinpath=$(pd_src)/src CFLAGS="$(CFLAGS_ADD)"
-	
+
 disis_flatpak:
 ifneq ($(OS_NAME),windows)
 ifneq ($(OS_NAME),darwin)
@@ -2257,6 +2257,7 @@ ADAPTIVE_NAME=adaptive
 ADAPTIVE_SRC := $(wildcard $(externals_src)/grh/adaptive/src/*.c)
 ADAPTIVE_OBJECTS := $(ADAPTIVE_SRC:.c=.o)
 ADAPTIVE_FLAGS := -DADAPTIVE_SINGLE_OBJ
+ADAPTIVE_TMP := $(wildcard $(externals_src)/grh/adaptive/src/*lms*.c)
 ifeq ($(EMSCRIPTEN),yes)
 ADAPTIVE_TARGETS := $(ADAPTIVE_SRC:.c=.$(EXTENSION))
 

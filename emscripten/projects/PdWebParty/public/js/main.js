@@ -1390,7 +1390,6 @@ var Module = {
     }
 };
 
-
 Module['preRun'].push(function() {
 
     //Cyclone shenanigans
