@@ -156,7 +156,7 @@ lib_targets = loaders-libdir pddp
 INCREMENTAL = yes
 else ifeq ($(EMSCRIPTEN),yes)
 # original one used by the first iteration of PdWebParty: lib_targets = arraysize autotune bassemu boids bsaylor comport creb cxc earplug ekext ext13 freeverb ggee hcs iem_ambi iem_bin_ambi iemguts iem_adaptfilt iem_delay iem_roomsim iem_spec2 jasch_lib loaders-libdir mapping markex maxlib mjlib moonlib motex mrpeach pan pddp rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing
-lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone earplug ekext ext13 fftease flatgui freeverb ggee hcs jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moonlib motex mrpeach oscx pan pddp rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing
+lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone earplug ekext ext13 fftease flatgui freeverb ggee hcs jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moonlib motex mrpeach oscx pan pddp pdogg rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing
 # short one for quick building for debugging purposes (disabled by default):
 # lib_targets = maxlib
 else
@@ -502,7 +502,10 @@ CYCLONE_SHARED_SRC := \
 
 cyclone: $(CYCLONE_PATH)/bin/Hammer.wasm $(CYCLONE_PATH)/bin/Sickle.wasm
 
-$(CYCLONE_PATH)/bin/Hammer.wasm:
+$(externals_src)/miXed/cyclone/hammer/atodb.c.ignore: 
+	mv $(externals_src)/miXed/cyclone/hammer/atodb.c $(externals_src)/miXed/cyclone/hammer/atodb.c.ignore
+
+$(CYCLONE_PATH)/bin/Hammer.wasm: $(externals_src)/miXed/cyclone/hammer/atodb.c.ignore
 	$(CC) $(CFLAGS) $(CYCLONE_FLAGS) -o $(CYCLONE_PATH)/bin/Hammer.wasm $(CYCLONE_SHARED_SRC) $(CYCLONE_HAMMER)
 
 $(CYCLONE_PATH)/bin/Sickle.wasm:
@@ -517,6 +520,7 @@ cyclone_install: cyclone_templates
 cyclone_clean:
 	rm ${CYCLONE_PATH}/bin/*.wasm
 	rm $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)/*.wasm
+	mv $(externals_src)/miXed/cyclone/hammer/atodb.c.ignore $(externals_src)/miXed/cyclone/hammer/atodb.c
 endif
 
 #------------------------------------------------------------------------------#
@@ -1543,17 +1547,17 @@ OSCX_SRC := $(wildcard $(externals_src)/OSCx/src/*.c)
 OSCX_OBJECTS := $(OSCX_SRC:.c=.o)
 OSCX_FLAGS := -I$(externals_src)/OSCx/libOSC -D__APPLE__ -I${externals_src}/OSCx/libOSC -I${externals_src}/OSCx/src
 OSCX_TARGETS := $(OSCX_SRC:.c=.$(EXTENSION))
-OSCX_FIRST := $(externals_src)/OSCx/first
 
-oscx: $(OSCX_FIRST) $(OSCX_TARGETS)
+oscx: $(OSCX_TARGETS)
 
-$(OSCX_FIRST):
-	$(CC) $(CFLAGS) -I$(externals_src)/OSCx/libOSC -I${externals_src}/OSCx/libOSC -I${externals_src}/OSCx/src -o $(externals_src)/OSCx/src/dumpOSC.o -c $(externals_src)/OSCx/src/dumpOSC.c && touch $(OSCX_FIRST)
+$(OSCX_OBJECTS): $(OSCX_SRC)
+	@if [ "$(notdir $*)" = "dumpOSC" ]; then \
+		$(CC) $(CFLAGS) -I$(externals_src)/OSCx/libOSC -I$(externals_src)/OSCx/libOSC -I$(externals_src)/OSCx/src -o "$*.o" -c "$*.c"; \
+	else \
+		$(CC) $(CFLAGS) $(OSCX_FLAGS) -o "$*.o" -c "$*.c"; \
+	fi
 
-$(OSCX_OBJECTS): $(OSCX_SRC) 
-	$(CC) $(CFLAGS) $(OSCX_FLAGS) -o "$*.o" -c "$*.c"
-
-$(OSCX_TARGETS): $(OSCX_FIRST) $(OSCX_OBJECTS)
+$(OSCX_TARGETS): $(OSCX_OBJECTS)
 	$(CC) $(LDFLAGS) -o "$*.$(EXTENSION)" "$*.o" $(LIBS)
 	$(STRIP) $*.$(EXTENSION)
 	chmod 755 "$*.$(EXTENSION)"
@@ -1561,7 +1565,6 @@ $(OSCX_TARGETS): $(OSCX_FIRST) $(OSCX_OBJECTS)
 oscx_clean:
 	rm -f $(OSCX_TARGETS)
 	rm -f $(OSCX_OBJECTS)
-	rm -f $(OSCX_FIRST)
 
 oscx_install: $(OSCX_TARGETS)
 	install -d $(DESTDIR)$(objectsdir)/$(OSCX_NAME)
@@ -1718,10 +1721,14 @@ pdlua_clean:
 #------------------------------------------------------------------------------#
 # PDOGG
 pdogg:
+ifneq ($(EMSCRIPTEN),yes)
 	make -C $(externals_src)/pdogg PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
+else
+	make -C $(externals_src)/pdogg PD_PATH=$(pd_src) CFLAGS="$(CFLAGS) -s USE_OGG=1 -s USE_VORBIS=1" OPT_CFLAGS="-funroll-loops -fomit-frame-pointer" LDFLAGS="$(LDFLAGS) -s USE_OGG=1 -s USE_VORBIS=1 -lvorbis" ALL_LIBS="" LIBS="$(LIBS)" CC="$(CC)" CXX="$(CXX)" EXTENSION="$(EXTENSION)"
+endif
 
 pdogg_install:
-	make -C $(externals_src)/pdogg DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/pdogg DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" $(call set_em_flags) install
 
 pdogg_clean:
 	make -C $(externals_src)/pdogg clean

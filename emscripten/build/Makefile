@@ -40,7 +40,7 @@ build: $(SRC_FILES) $(DESTDIR)
 # use this to clear the cache
 #	emcc  --cache ./emcc-cache --clear-cache
 	emcc $(CFLAGS) -s MAIN_MODULE=1 --bind -o $(TARGET) $(SRC_FILES) \
-	-s USE_SDL=2 -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s ALLOW_MEMORY_GROWTH=1 \
+	-s USE_SDL=2 -s USE_OGG=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s ALLOW_MEMORY_GROWTH=1 \
 	-s FORCE_FILESYSTEM=1 -s EXPORTED_RUNTIME_METHODS=FS \
 	--preload-file $(DESTDIR) $(LDFLAGS) --cache ./emcc-cache
 	ln -svf $(EM_PATH)/build/pd-l2ork-web/extra $(EM_PATH)/projects/PdWebParty/public/@pd_extra

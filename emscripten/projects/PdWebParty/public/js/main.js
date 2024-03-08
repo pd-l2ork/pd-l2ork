@@ -1429,7 +1429,7 @@ Module['preRun'].push(function() {
                     else {
                         for(let searchPath of searchPaths) {
                             const request = new XMLHttpRequest();
-                            request.open("GET", ((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')+'/'+searchPath.slice(0,-1)+path, false); // `false` makes the request synchronous
+                            request.open("GET", window.location.origin+'/'+((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')+'/'+searchPath.slice(0,-1)+path, false); // `false` makes the request synchronous
                             request.overrideMimeType('text/plain; charset=x-user-defined'); // Set MIME type for binary data
                             request.send();
                             if (request.status === 200) {
@@ -4785,7 +4785,7 @@ async function openPatch(content, filename) {
                     let connectionName = `__WIRE_${layer.id}_${args[2]}_${args[3]}_${args[4]}_${args[5]}`;
                     let dontSplice = false;    
 
-                    if( layer.guiObjects[args[2]] && (!layer.guiObjects[args[4]] || layer.guiObjects[args[4]].shortCircuit === false)) {
+                    if(layer.guiObjects[args[2]] && ((!layer.guiObjects[args[4]] && layer.guiObjects[args[2]].shortCircuit !== false) || layer.guiObjects[args[4]]?.shortCircuit === false)) {
                         //If the sender is a gui object, and the receiver is not, we must add a receive object so that the
                         //sender can send wirelessly. Then we connect the receive object to the receiver, and the sender wirelessly to the receive object
                         dontSplice = true;
@@ -4822,7 +4822,7 @@ async function openPatch(content, filename) {
                         }
                         else
                             console.warn('Ignoring unsupported wired connection (Code B)')
-                        }
+                    }
                     if(args[5] !== '0' && layer.guiObjects[args[4]]) {
                         if(args[5] === '1') {
                             lines.splice(i,1,
