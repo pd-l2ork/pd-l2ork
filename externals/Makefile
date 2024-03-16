@@ -156,7 +156,7 @@ lib_targets = loaders-libdir pddp
 INCREMENTAL = yes
 else ifeq ($(EMSCRIPTEN),yes)
 # original one used by the first iteration of PdWebParty: lib_targets = arraysize autotune bassemu boids bsaylor comport creb cxc earplug ekext ext13 freeverb ggee hcs iem_ambi iem_bin_ambi iemguts iem_adaptfilt iem_delay iem_roomsim iem_spec2 jasch_lib loaders-libdir mapping markex maxlib mjlib moonlib motex mrpeach pan pddp rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing
-lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone earplug ekext ext13 fftease flatgui freeverb ggee hcs jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moonlib motex mrpeach oscx pan pddp pdogg rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing
+lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui freeverb ggee hcs iemlib iemgui iemguts jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moonlib motex mrpeach oscx pan pdcontainer pddp pdogg rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing
 # short one for quick building for debugging purposes (disabled by default):
 # lib_targets = maxlib
 else
@@ -527,6 +527,7 @@ endif
 
 #------------------------------------------------------------------------------#
 # DISIS
+ifneq ($(EMSCRIPTEN),yes)
 disis:
 ifneq ($(OS_NAME),windows)
 ifneq ($(OS_NAME),darwin)
@@ -558,6 +559,13 @@ ifneq ($(OS_NAME),darwin)
 endif
 endif
 	make -C $(externals_src)/disis clean
+else
+disis:
+
+disis_install:
+	install -d $(DESTDIR)$(objectsdir)/disis
+	install -p $(externals_src)/disis/*.pd $(DESTDIR)$(objectsdir)/disis
+endif
 
 #------------------------------------------------------------------------------#
 # EKEXT
@@ -1010,6 +1018,13 @@ hidin_clean:
 	-rm -f -- $(externals_src)/olafmatt/hidin/*.*~
 
 
+#------------------------------------------------------------------------------#
+# General IEM flags
+ifeq ($(EMSCRIPTEN),yes)
+IEM_FLAGS=-D__linux__ -Wno-incompatible-pointer-types
+else
+IEM_FLAGS=-O2
+endif
 
 #------------------------------------------------------------------------------#
 # IEM_AMBI
@@ -1127,6 +1142,13 @@ IEMGUTS_NAME=iemguts
 IEMGUTS_OBJECTS := $(wildcard $(externals_src)/iem/iemguts/src/*.c)
 iemguts: $(IEMGUTS_OBJECTS:.c=.$(EXTENSION))
 
+ifeq ($(EMSCRIPTEN),yes)
+$(IEMGUTS_OBJECTS:.c=.o) : $(IEMGUTS_OBJECTS)
+	$(CC) $(CFLAGS) $(IEM_FLAGS) -funroll-loops -fomit-frame-pointer -fno-tree-vectorize -fno-strict-aliasing -o "$*.o" -c "$*.c"
+
+$(IEMGUTS_OBJECTS:.c=.$(EXTENSION)) : $(IEMGUTS_OBJECTS:.c=.o)
+	$(CC) $(LDFLAGS) $(IEM_FLAGS) -o "$*.${EXTENSION}" "$*.o"
+endif
 
 iemguts_install: iemguts
 	install -d $(DESTDIR)$(objectsdir)/$(IEMGUTS_NAME)
@@ -1160,7 +1182,7 @@ IEMLIB_SRC := $(wildcard $(externals_src)/iemlib/iemlib1/src/*[^1].c) $(wildcard
 
 IEMLIB_OBJECTS := $(IEMLIB_SRC:.c=.o)
 $(IEMLIB_OBJECTS) : %.o : %.c
-	$(CC) -I$(externals_src)/iemlib/include $(CFLAGS) -O2 -funroll-loops -fomit-frame-pointer -fno-tree-vectorize -fno-strict-aliasing -o "$*.o" -c "$*.c"
+	$(CC) -I$(externals_src)/iemlib/include $(CFLAGS) $(IEM_FLAGS) -funroll-loops -fomit-frame-pointer -fno-tree-vectorize -fno-strict-aliasing -o "$*.o" -c "$*.c"
 
 iemlib: $(IEMLIB_SRC:.c=.$(EXTENSION))
 
@@ -2234,7 +2256,11 @@ $(PDCONTAINER_TARGETS) : %.$(EXTENSION) : $(PDCONTAINER_OBJ)
 #	rm -f -- "$*.o"
 
 $(PDCONTAINER_OBJ) : %.o : %.cpp
+ifeq ($(EMSCRIPTEN),yes)
+	$(CXX) $(CXXFLAGS) -DPDCONTAINER_SINGLE_OBJECT $(PDCONTAINER_INCLUDE) -std=c++98 -o "$*.o" -c "$*.cpp"
+else
 	$(CXX) $(CXXFLAGS) -DPDCONTAINER_SINGLE_OBJECT $(PDCONTAINER_INCLUDE) -o "$*.o" -c "$*.cpp"
+endif
 
 pdcontainer_install: pdcontainer
 	install -d $(DESTDIR)$(objectsdir)/$(PDCONTAINER_NAME)
@@ -2557,6 +2583,7 @@ IEMGUI_FLAGS := -DIEMGUI_SINGLE_OBJ
 
 iemgui: $(IEMGUI_TARGETS)
 
+ifeq ($(EMSCRIPTEN),no)
 $(IEMGUI_TARGETS) : %.$(EXTENSION) : %.o $(IEMGUI_OBJ)
 	$(CC) $(LDFLAGS) $(IEMGUI_FLATPAK_LINKER_FLAGS) -o $*.$(EXTENSION) "$*.o" $(externals_src)/iem/iemgui/src/iemgui.o $(LIBS)
 	$(STRIP) $*.$(EXTENSION)
@@ -2565,6 +2592,13 @@ $(IEMGUI_TARGETS) : %.$(EXTENSION) : %.o $(IEMGUI_OBJ)
 
 $(IEMGUI_OBJ) : %.o : %.c
 	$(CC) $(CFLAGS) $(IEMGUI_FLAGS) -o "$*.o" -c "$*.c"
+else
+$(IEMGUI_OBJ): $(IEMGUI_SRC)
+	$(CC) $(CFLAGS) $(IEM_FLAGS) $(IEMGUI_FLAGS) -o "$*.o" -c "$*.c"
+
+$(IEMGUI_TARGETS): $(IEMGUI_OBJ)
+	$(CC) $(LDFLAGS) $(IEM_FLAGS) $(IEMGUI_FLAGS) -o $*.$(EXTENSION) $*.o $(externals_src)/iem/iemgui/src/iemgui.o $(LIBS)
+endif
 
 iemgui_install: iemgui
 	install -d $(DESTDIR)$(objectsdir)/$(IEMGUI_NAME)

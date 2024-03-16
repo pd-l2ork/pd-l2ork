@@ -237,7 +237,11 @@ void *autotune_new(t_symbol *s, int argc, t_atom *argv);
 void autotune_free(t_autotune *x);	
 void autotune_init(t_autotune *x, unsigned long sr);
 t_int *autotune_perform(t_int *w);
+#ifndef __EMSCRIPTEN__
 void autotune_dsp(t_autotune *x, t_signal **sp, short *count);
+#else
+void autotune_dsp(t_autotune *x, t_signal **sp);
+#endif
 void autotune_assist(t_autotune *x, void *b, long m, long a, char *s);
 //void autotune_setparam(t_autotune *x, t_symbol *m, short argc, t_atom *argv);
 void autotune_list(t_autotune *x, t_symbol *m, short argc, t_atom *argv);
@@ -541,7 +545,11 @@ void autotune_init(t_autotune *x,unsigned long sr)
 // DSP Methods PD //
 //*********************//
 
+#ifndef __EMSCRIPTEN__
 void autotune_dsp(t_autotune *x, t_signal **sp, short *count)
+#else
+void autotune_dsp(t_autotune *x, t_signal **sp)
+#endif
 {
 	clock_delay(x->clock, 0.);
 	

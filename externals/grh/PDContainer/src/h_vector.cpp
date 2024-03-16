@@ -13,6 +13,15 @@
 
 #include "include/HVector.h"
 
+#if defined(PDCONTAINER_SINGLE_OBJECT)
+// for PD-Extended
+extern "C" {
+#endif
+#ifdef __EMSCRIPTEN__
+#define A_EMPTY A_NULL
+#else
+#define A_EMPTY A_EMPTY
+#endif
 
 static t_class *h_vector_class;
 static t_class *proxy_class;
@@ -456,11 +465,6 @@ static void *h_vector_free(t_h_vector *x)
   return (void *)x;
 }
 
-#if defined(PDCONTAINER_SINGLE_OBJECT)
-// for PD-Extended
-extern "C" {
-#endif
-
 void h_vector_setup(void) 
 {
   // the object class
@@ -482,25 +486,25 @@ void h_vector_setup(void)
   class_addmethod(h_vector_class, (t_method)h_vector_get, 
 		  gensym("get"), A_GIMME, 0);
   class_addmethod(h_vector_class, (t_method)h_vector_pop_back, 
-		  gensym("popback"), A_DEFFLOAT, 0);
+		  gensym("popback"), A_EMPTY, 0);
   class_addmethod(h_vector_class, (t_method)h_vector_remove, 
 		  gensym("remove"), A_GIMME, 0);
   class_addmethod(h_vector_class, (t_method)h_vector_resize, 
 		  gensym("resize"), A_GIMME , 0);
   class_addmethod(h_vector_class, (t_method)h_vector_getsize, 
-		  gensym("getsize"), A_DEFFLOAT , 0);
+		  gensym("getsize"), A_EMPTY , 0);
   class_addmethod(h_vector_class, (t_method)h_vector_set_namespace, 
 		  gensym("namespace"), A_DEFSYMBOL , 0);
   class_addmethod(h_vector_class, (t_method)h_vector_get_namespace, 
-		  gensym("getnamespace"), A_DEFFLOAT, 0);
+		  gensym("getnamespace"), A_EMPTY, 0);
   class_addmethod(h_vector_class, (t_method)h_vector_getall,
-		  gensym("getall"), A_DEFFLOAT, 0);
+		  gensym("getall"), A_EMPTY, 0);
   class_addmethod(h_vector_class, (t_method)h_vector_print,
-		  gensym("print"), A_DEFFLOAT, 0);
+		  gensym("print"), A_EMPTY, 0);
   class_addmethod(h_vector_class, (t_method)h_vector_clear,  
-		  gensym("clear"), A_DEFFLOAT, 0);
+		  gensym("clear"), A_EMPTY, 0);
   class_addmethod(h_vector_class, (t_method)h_vector_clear_all,  
-		  gensym("clearall"), A_DEFFLOAT, 0);
+		  gensym("clearall"), A_EMPTY, 0);
   class_addmethod(h_vector_class, (t_method)h_vector_save, 
 		  gensym("save"), A_DEFSYMBOL, 0);
   class_addmethod(h_vector_class, (t_method)h_vector_read, 
@@ -515,7 +519,7 @@ void h_vector_setup(void)
 		  gensym("readatXML"), A_GIMME, 0);
 
   // without an argument the following two methods wont work ??? why?? because of c++?
-  class_addmethod(h_vector_class, (t_method)h_vector_help, gensym("help"),A_DEFFLOAT, 0);
+  class_addmethod(h_vector_class, (t_method)h_vector_help, gensym("help"),A_EMPTY, 0);
 }
 
 #if defined(PDCONTAINER_SINGLE_OBJECT)

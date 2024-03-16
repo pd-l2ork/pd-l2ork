@@ -13,6 +13,15 @@
 
 #include "include/HQueue.h"
 
+#if defined(PDCONTAINER_SINGLE_OBJECT)
+// for PD-Extended
+extern "C" {
+#endif
+#ifdef __EMSCRIPTEN__
+#define A_EMPTY A_NULL
+#else
+#define A_EMPTY A_DEFFLOAT
+#endif
 
 static t_class *h_queue_class;
 
@@ -136,11 +145,6 @@ static void *h_queue_free(t_h_queue *x)
   return (void *)x;
 }
 
-#if defined(PDCONTAINER_SINGLE_OBJECT)
-// for PD-Extended
-extern "C" {
-#endif
-
 void h_queue_setup(void) 
 {
   // the object class
@@ -151,22 +155,22 @@ void h_queue_setup(void)
   class_addmethod(h_queue_class, (t_method)h_queue_push, 
 		  gensym("push"), A_GIMME, 0);
   class_addmethod(h_queue_class, (t_method)h_queue_pop, 
-		  gensym("pop"), A_DEFFLOAT, 0);
+		  gensym("pop"), A_EMPTY, 0);
   class_addmethod(h_queue_class, (t_method)h_queue_front, 
-		  gensym("front"), A_DEFFLOAT, 0);
+		  gensym("front"), A_EMPTY, 0);
   class_addmethod(h_queue_class, (t_method)h_queue_getsize, 
-		  gensym("getsize"), A_DEFFLOAT , 0);
+		  gensym("getsize"), A_EMPTY , 0);
   class_addmethod(h_queue_class, (t_method)h_queue_set_namespace, 
 		  gensym("namespace"), A_DEFSYMBOL , 0);
   class_addmethod(h_queue_class, (t_method)h_queue_get_namespace, 
-		  gensym("getnamespace"), A_DEFFLOAT, 0);
+		  gensym("getnamespace"), A_EMPTY, 0);
   class_addmethod(h_queue_class, (t_method)h_queue_clear,  
-		  gensym("clear"), A_DEFFLOAT, 0);
+		  gensym("clear"), A_EMPTY, 0);
   class_addmethod(h_queue_class, (t_method)h_queue_clear_all,  
-		  gensym("clearall"), A_DEFFLOAT, 0);
+		  gensym("clearall"), A_EMPTY, 0);
 
   // without an argument the following two methods wont work ??? why?? because of c++?
-  class_addmethod(h_queue_class, (t_method)h_queue_help, gensym("help"),A_DEFFLOAT, 0);
+  class_addmethod(h_queue_class, (t_method)h_queue_help, gensym("help"),A_EMPTY, 0);
 }
 
 #if defined(PDCONTAINER_SINGLE_OBJECT)

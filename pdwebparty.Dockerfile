@@ -3,7 +3,7 @@ FROM emscripten/emsdk AS builder
 WORKDIR /pd-l2ork/
 RUN apt-get update && apt-get upgrade -y && apt-get install -y autoconf
 COPY . .
-RUN cd emscripten; make
+RUN cd emscripten; make clean; make
 
 # Create container used to run PdWebParty (without the bloat of all the build tools)
 FROM node:current-alpine
