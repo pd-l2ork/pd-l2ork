@@ -4868,42 +4868,45 @@ async function openPatch(content, filename) {
                         break;
                     //We generate a name based off of the arguments of the connect (which will be unique)
                     let connectionName = `__WIRE_${layer.id}_${args[2]}_${args[3]}_${args[4]}_${args[5]}`;
-                    let dontSplice = false;    
+                    if(layer.guiObjects[args[4]]?.shortCircuit === false)
+                        connectionName = layer.guiObjects[args[4]].clickSend;
 
-                    if(layer.guiObjects[args[2]] && ((!layer.guiObjects[args[4]] && layer.guiObjects[args[2]].shortCircuit !== false) || layer.guiObjects[args[4]]?.shortCircuit === false)) {
+                    if(layer.guiObjects[args[2]] && !layer.guiObjects[args[4]]) {
                         //If the sender is a gui object, and the receiver is not, we must add a receive object so that the
                         //sender can send wirelessly. Then we connect the receive object to the receiver, and the sender wirelessly to the receive object
-                        dontSplice = true;
                         if(args[3] == '0') {
-                            lines.splice(i,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++layer.nextGUIID} 0 ${args[4]} ${args[5]} __IGNORE__`)
+                            if(layer.guiObjects[args[2]]?.shortCircuit !== false)
+                                lines.splice(i++,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++layer.nextGUIID} 0 ${args[4]} ${args[5]} __IGNORE__`)
                             layer.guiObjects[args[2]].send.push(connectionName);
-                            i++;
                         } else if(layer.guiObjects[args[2]].auxSend) {
-                            lines.splice(i,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++layer.nextGUIID} 0 ${args[4]} ${args[5]} __IGNORE__`)
+                            if(layer.guiObjects[args[2]]?.shortCircuit !== false)
+                                lines.splice(i++,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++layer.nextGUIID} 0 ${args[4]} ${args[5]} __IGNORE__`)
                             layer.guiObjects[args[2]].auxSend[+args[3] - 1].push(connectionName);
-                            i++;
                         } else
                             console.warn('Ignoring unsupported wired connection (Code A)'); //This should never happen
                     }
                     if((!layer.guiObjects[args[2]] || layer.guiObjects[args[2]].shortCircuit === false) && layer.guiObjects[args[4]] && args[5] === '0') {
                         //If the receiver is a gui object, and the sender is not, we must add a send object so that the receiver
                         //can receive wirelessly. Then we connect the send object to the sender, and the receiver wirelessly to the send object
-                        lines.splice(i,dontSplice ? 0 : 1,`#X obj 0 0 s ${connectionName}`,`#X connect ${args[2]} ${args[3]} ${++layer.nextGUIID} 0 __IGNORE__`);
+                        lines.splice(i++,1,`#X obj 0 0 s ${connectionName}`,`#X connect ${args[2]} ${args[3]} ${++layer.nextGUIID} 0 __IGNORE__`);
                         layer.guiObjects[args[4]].receive.push(connectionName);
                         gui_subscribe(layer.guiObjects[args[4]]);
-                        i += dontSplice ? 2 : 1;
                     }
-                    if(layer.guiObjects[args[2]] && layer.guiObjects[args[4]] && args[5] === '0' && layer.guiObjects[args[2]].shortCircuit !== false && layer.guiObjects[args[4]].shortCircuit !== false) {
+                    if(layer.guiObjects[args[2]] && layer.guiObjects[args[4]] && args[5] === '0' && layer.guiObjects[args[2]].shortCircuit !== false) {
                         //If both the sender and receiver are gui objects, we can directly set their sends and receives
                         //Theoretically, they should only have 1 input/output, so the input/output id should always be 0
                         if(args[3] === '0') {
                             layer.guiObjects[args[2]].send.push(connectionName);
-                            layer.guiObjects[args[4]].receive.push(connectionName);
-                            gui_subscribe(layer.guiObjects[args[4]]);
+                            if(layer.guiObjects[args[4]].shortCircuit !== false) {
+                                layer.guiObjects[args[4]].receive.push(connectionName);
+                                gui_subscribe(layer.guiObjects[args[4]]);
+                            }
                         } else if(layer.guiObjects[args[2]].auxSend) {
                             layer.guiObjects[args[2]].auxSend[+args[3] - 1].push(connectionName);
-                            layer.guiObjects[args[4]].receive.push(connectionName);
-                            gui_subscribe(layer.guiObjects[args[4]]);
+                            if(layer.guiObjects[args[4]].shortCircuit !== false) {
+                                layer.guiObjects[args[4]].receive.push(connectionName);
+                                gui_subscribe(layer.guiObjects[args[4]]);
+                            }
                         }
                         else
                             console.warn('Ignoring unsupported wired connection (Code B)')
@@ -4925,6 +4928,7 @@ async function openPatch(content, filename) {
                         } else
                             console.warn('Ignoring unsupported wired connection (Code C');
                     }
+                    console.log(layer.guiObjects[args[2]],layer.guiObjects[args[4]]);
                 }
         }
     }
