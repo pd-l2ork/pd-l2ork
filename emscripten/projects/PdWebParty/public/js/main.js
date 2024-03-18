@@ -4405,17 +4405,10 @@ async function openPatch(content, filename) {
                             break;
                         }
                         default: //If we don't have an explicit handling for the object, it's possible that it is an external patch load 
-                        //We want to load patch data from the same folder as our current patch, just with a different filename at the end.
-                            // let result = (await Promise.all(searchPaths.map(path => getPatchData(`${((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')}/${path}${args[4]}.pd`)))).find(result => result.content.charAt(0)=='#');
-                            // let path = args[4].split('/').slice(0,-1).join('/')+'/';
-                            // if(!searchPaths.includes(path))
-                            //     searchPaths.push(path);
-                            let result = abstractions[args[4]];
-                            //If the data starts with a #, it is a patch. Otherwise, either the patch does not exist, or this is a non-gui object, and in either case we can ignore it.
-                            if(result) {
+                            if(args[4] in abstractions) {
                                 //We must add an #X restore at the end to undo the #N canvas at the beginning
                                 nextArgs = args.length > 5 ? args.slice(5) : null;
-                                lines.splice(i,1,...result.split(';\n').slice(0,-1),`#X restore ${args[2]} ${args[3]} ${args[4]}`);
+                                lines.splice(i,1,...abstractions[args[4]].split(';\n').slice(0,-1),`#X restore ${args[2]} ${args[3]} ${args[4]}`);
                                 //Since we removed the line that we just processed, our subpatch starts at line i, so we have to process line i again.
                                 i--;
                                 layer.nextGUIID--;
@@ -4928,7 +4921,6 @@ async function openPatch(content, filename) {
                         } else
                             console.warn('Ignoring unsupported wired connection (Code C');
                     }
-                    console.log(layer.guiObjects[args[2]],layer.guiObjects[args[4]]);
                 }
         }
     }
