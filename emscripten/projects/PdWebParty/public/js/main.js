@@ -3374,6 +3374,7 @@ async function openPatch(content, filename) {
                 }
                 layers.push({
                     arrays: [],
+                    messages: [],
                     guiObjects: [],
                     labels: [],
                     nextGUIID: -1,
@@ -3435,6 +3436,11 @@ async function openPatch(content, filename) {
                     layer.dimensions.inlineY = +args[3];
                     layer.name = [...args,...(layer.argsInherited ? [] : layer.args)].slice(4).join(' ');
                     if(layer.showContents) {
+                        for(let message of layer.messages) {
+                            for(let text of message.svgText)
+                                configure_item(text, {display: "none"});
+                            configure_item(message.border, {display: "none"});
+                        }
                         configure_item(layer.canvas, {
                             viewBox: `${layer.dimensions.contentX} ${layer.dimensions.contentY} ${layer.dimensions.coords.w} ${layer.dimensions.coords.h}`,
                             width: layer.dimensions.coords.w,
@@ -4528,7 +4534,7 @@ async function openPatch(content, filename) {
                 }
                 break;
             case "#X msg":
-                if(args.length > 3 && !layer.showContents) {
+                if(args.length > 3) {
                     const data = {};
                     data.type = args[1];
                     data.x_pos = +args[2];
@@ -4540,6 +4546,7 @@ async function openPatch(content, filename) {
                     data.send = [null];
                     data.clickSend = `msg_${layer.id}_${layer.nextGUIID}`
                     data.canvas = layer.canvas;
+                    layer.messages.push(data);
 
                     let nextObjId = layer.nextGUIID, nextSlot = i, depth = 0;
                     for(;lines[nextSlot].startsWith('#X connect') == false || depth > 0; nextSlot++) {
@@ -4925,7 +4932,7 @@ async function openPatch(content, filename) {
         }
     }
 
-    document.getElementById('loadingstage').innerHTML=`Starting PD Engine`;
+    document.getElementById('loadingstage').innerHTML=`Starting Pd-L2Ork Engine`;
     await new Promise(resolve => setTimeout(resolve, 10));
 
     if (nextLayerID == 0)
