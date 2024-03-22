@@ -17,11 +17,6 @@
 // for PD-Extended
 extern "C" {
 #endif
-#ifdef __EMSCRIPTEN__
-#define A_EMPTY A_NULL
-#else
-#define A_EMPTY A_DEFFLOAT
-#endif
 
 static t_class *h_map_class;
 static t_class *proxy_class;
@@ -366,21 +361,21 @@ void h_map_setup(void)
   class_addmethod(h_map_class, (t_method)h_map_remove, 
 		  gensym("remove"), A_GIMME , 0);
   class_addmethod(h_map_class, (t_method)h_map_getsize, 
-		  gensym("getsize"), A_EMPTY , 0);
+		  gensym("getsize"), A_NULL , 0);
   class_addmethod(h_map_class, (t_method)h_map_set_namespace, 
 		  gensym("namespace"), A_DEFSYMBOL , 0);
   class_addmethod(h_map_class, (t_method)h_map_get_namespace, 
-		  gensym("getnamespace"), A_EMPTY, 0);
+		  gensym("getnamespace"), A_NULL, 0);
   class_addmethod(h_map_class, (t_method)h_map_keys,
-		  gensym("keys"), A_EMPTY, 0);
+		  gensym("keys"), A_NULL, 0);
   class_addmethod(h_map_class, (t_method)h_map_values,
-		  gensym("values"), A_EMPTY, 0);
+		  gensym("values"), A_NULL, 0);
   class_addmethod(h_map_class, (t_method)h_map_print,
-		  gensym("print"), A_EMPTY, 0);
+		  gensym("print"), A_NULL, 0);
   class_addmethod(h_map_class, (t_method)h_map_clear,  
-		  gensym("clear"), A_EMPTY, 0);
+		  gensym("clear"), A_NULL, 0);
   class_addmethod(h_map_class, (t_method)h_map_clear_all,  
-		  gensym("clearall"), A_EMPTY, 0);
+		  gensym("clearall"), A_NULL, 0);
   class_addmethod(h_map_class, (t_method)h_map_save, 
 		  gensym("save"), A_DEFSYMBOL , 0);
   class_addmethod(h_map_class, (t_method)h_map_save_xml, 
@@ -391,7 +386,7 @@ void h_map_setup(void)
 		  gensym("readXML"), A_DEFSYMBOL , 0);
 
   // without an argument the following two methods wont work ??? why?? because of c++?
-  class_addmethod(h_map_class, (t_method)h_map_help, gensym("help"),A_EMPTY, 0);
+  class_addmethod(h_map_class, (t_method)h_map_help, gensym("help"),A_NULL, 0);
 }
 
 #if defined(PDCONTAINER_SINGLE_OBJECT)

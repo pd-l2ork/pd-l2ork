@@ -17,11 +17,6 @@
 // for PD-Extended
 extern "C" {
 #endif
-#ifdef __EMSCRIPTEN__
-#define A_EMPTY A_NULL
-#else
-#define A_EMPTY A_DEFFLOAT
-#endif
 
 static t_class *h_list_class;
 
@@ -412,17 +407,17 @@ void h_list_setup(void)
   class_addmethod(h_list_class, (t_method)h_list_push_back, 
 		  gensym("pushback"), A_GIMME, 0);
   class_addmethod(h_list_class, (t_method)h_list_pop_back, 
-		  gensym("popback"), A_EMPTY, 0);
+		  gensym("popback"), A_NULL, 0);
   class_addmethod(h_list_class, (t_method)h_list_push_front, 
 		  gensym("pushfront"), A_GIMME, 0);
   class_addmethod(h_list_class, (t_method)h_list_pop_front, 
-		  gensym("popfront"), A_EMPTY, 0);
+		  gensym("popfront"), A_NULL, 0);
   class_addmethod(h_list_class, (t_method)h_list_back, 
-		  gensym("back"), A_EMPTY, 0);
+		  gensym("back"), A_NULL, 0);
   class_addmethod(h_list_class, (t_method)h_list_front, 
-		  gensym("front"), A_EMPTY, 0);
+		  gensym("front"), A_NULL, 0);
   class_addmethod(h_list_class, (t_method)h_list_get, 
-		  gensym("get"), A_EMPTY, 0);
+		  gensym("get"), A_NULL, 0);
   class_addmethod(h_list_class, (t_method)h_list_insert, 
 		  gensym("insert"), A_GIMME, 0);
   class_addmethod(h_list_class, (t_method)h_list_modify, 
@@ -430,39 +425,39 @@ void h_list_setup(void)
   class_addmethod(h_list_class, (t_method)h_list_remove, 
 		  gensym("remove"), A_GIMME, 0);
   class_addmethod(h_list_class, (t_method)h_list_delete, 
-		  gensym("delete"), A_EMPTY, 0);
+		  gensym("delete"), A_NULL, 0);
   class_addmethod(h_list_class, (t_method)h_list_getsize, 
-		  gensym("getsize"), A_EMPTY , 0);
+		  gensym("getsize"), A_NULL , 0);
   class_addmethod(h_list_class, (t_method)h_list_get_iter_pos, 
-		  gensym("getiter"), A_EMPTY , 0);
+		  gensym("getiter"), A_NULL , 0);
   class_addmethod(h_list_class, (t_method)h_list_set_iter_pos, 
-		  gensym("setiter"), A_EMPTY , 0);
+		  gensym("setiter"), A_NULL , 0);
   class_addmethod(h_list_class, (t_method)h_list_begin, 
-		  gensym("begin"), A_EMPTY, 0);
+		  gensym("begin"), A_NULL, 0);
   class_addmethod(h_list_class, (t_method)h_list_end, 
-		  gensym("end"), A_EMPTY, 0);
+		  gensym("end"), A_NULL, 0);
   class_addmethod(h_list_class, (t_method)h_list_next, 
-		  gensym("next"), A_EMPTY, 0);
+		  gensym("next"), A_NULL, 0);
   class_addmethod(h_list_class, (t_method)h_list_last, 
-		  gensym("last"), A_EMPTY, 0);
+		  gensym("last"), A_NULL, 0);
   class_addmethod(h_list_class, (t_method)h_list_unique, 
-		  gensym("unique"), A_EMPTY, 0);
+		  gensym("unique"), A_NULL, 0);
   class_addmethod(h_list_class, (t_method)h_list_reverse, 
-		  gensym("reverse"), A_EMPTY, 0);
+		  gensym("reverse"), A_NULL, 0);
   class_addmethod(h_list_class, (t_method)h_list_sort, 
-		  gensym("sort"), A_EMPTY, 0);
+		  gensym("sort"), A_NULL, 0);
   class_addmethod(h_list_class, (t_method)h_list_set_namespace, 
 		  gensym("namespace"), A_DEFSYMBOL , 0);
   class_addmethod(h_list_class, (t_method)h_list_get_namespace, 
-		  gensym("getnamespace"), A_EMPTY, 0);
+		  gensym("getnamespace"), A_NULL, 0);
   class_addmethod(h_list_class, (t_method)h_list_clear,  
-		  gensym("clear"), A_EMPTY, 0);
+		  gensym("clear"), A_NULL, 0);
   class_addmethod(h_list_class, (t_method)h_list_clear_all,  
-		  gensym("clearall"), A_EMPTY, 0);
+		  gensym("clearall"), A_NULL, 0);
   class_addmethod(h_list_class, (t_method)h_list_getall,
-		  gensym("getall"), A_EMPTY, 0);
+		  gensym("getall"), A_NULL, 0);
   class_addmethod(h_list_class, (t_method)h_list_print,
-		  gensym("print"), A_EMPTY, 0);
+		  gensym("print"), A_NULL, 0);
   class_addmethod(h_list_class, (t_method)h_list_save, 
 		  gensym("save"), A_DEFSYMBOL , 0);
   class_addmethod(h_list_class, (t_method)h_list_read, 
@@ -473,7 +468,7 @@ void h_list_setup(void)
 		  gensym("readXML"), A_DEFSYMBOL , 0);
 
   // without an argument the following two methods wont work ??? why?? because of c++?
-  class_addmethod(h_list_class, (t_method)h_list_help, gensym("help"),A_EMPTY, 0);
+  class_addmethod(h_list_class, (t_method)h_list_help, gensym("help"),A_NULL, 0);
 }
 
 #if defined(PDCONTAINER_SINGLE_OBJECT)

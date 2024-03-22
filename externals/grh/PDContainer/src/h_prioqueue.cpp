@@ -17,11 +17,6 @@
 // for PD-Extended
 extern "C" {
 #endif
-#ifdef __EMSCRIPTEN__
-#define A_EMPTY A_NULL
-#else
-#define A_EMPTY A_EMPTY
-#endif
 
 static t_class *h_prioqueue_class;
 static t_class *proxy_class;
@@ -240,22 +235,22 @@ void h_prioqueue_setup(void)
 		  gensym("push"), A_GIMME, 0);
   class_addanything(proxy_class, (t_method)h_prioqueue_value); // the right inlet
   class_addmethod(h_prioqueue_class, (t_method)h_prioqueue_pop, 
-		  gensym("pop"), A_EMPTY, 0);
+		  gensym("pop"), A_NULL, 0);
   class_addmethod(h_prioqueue_class, (t_method)h_prioqueue_top, 
-		  gensym("top"), A_EMPTY, 0);
+		  gensym("top"), A_NULL, 0);
   class_addmethod(h_prioqueue_class, (t_method)h_prioqueue_getsize, 
-		  gensym("getsize"), A_EMPTY , 0);
+		  gensym("getsize"), A_NULL , 0);
   class_addmethod(h_prioqueue_class, (t_method)h_prioqueue_set_namespace, 
 		  gensym("namespace"), A_DEFSYMBOL , 0);
   class_addmethod(h_prioqueue_class, (t_method)h_prioqueue_get_namespace, 
-		  gensym("getnamespace"), A_EMPTY, 0);
+		  gensym("getnamespace"), A_NULL, 0);
   class_addmethod(h_prioqueue_class, (t_method)h_prioqueue_clear,  
-		  gensym("clear"), A_EMPTY, 0);
+		  gensym("clear"), A_NULL, 0);
   class_addmethod(h_prioqueue_class, (t_method)h_prioqueue_clear_all,  
-		  gensym("clearall"), A_EMPTY, 0);
+		  gensym("clearall"), A_NULL, 0);
 
   // without an argument the following two methods wont work ??? why?? because of c++?
-  class_addmethod(h_prioqueue_class, (t_method)h_prioqueue_help, gensym("help"),A_EMPTY, 0);
+  class_addmethod(h_prioqueue_class, (t_method)h_prioqueue_help, gensym("help"),A_NULL, 0);
 }
 
 #if defined(PDCONTAINER_SINGLE_OBJECT)

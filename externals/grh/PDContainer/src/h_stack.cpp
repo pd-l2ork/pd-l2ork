@@ -17,11 +17,6 @@
 // for PD-Extended
 extern "C" {
 #endif
-#ifdef __EMSCRIPTEN__
-#define A_EMPTY A_NULL
-#else
-#define A_EMPTY A_EMPTY
-#endif
 
 static t_class *h_stack_class;
 
@@ -155,22 +150,22 @@ void h_stack_setup(void)
   class_addmethod(h_stack_class, (t_method)h_stack_push, 
 		  gensym("push"), A_GIMME, 0);
   class_addmethod(h_stack_class, (t_method)h_stack_pop, 
-		  gensym("pop"), A_EMPTY, 0);
+		  gensym("pop"), A_NULL, 0);
   class_addmethod(h_stack_class, (t_method)h_stack_top, 
-		  gensym("top"), A_EMPTY, 0);
+		  gensym("top"), A_NULL, 0);
   class_addmethod(h_stack_class, (t_method)h_stack_getsize, 
-		  gensym("getsize"), A_EMPTY , 0);
+		  gensym("getsize"), A_NULL , 0);
   class_addmethod(h_stack_class, (t_method)h_stack_set_namespace, 
 		  gensym("namespace"), A_DEFSYMBOL , 0);
   class_addmethod(h_stack_class, (t_method)h_stack_get_namespace, 
-		  gensym("getnamespace"), A_EMPTY, 0);
+		  gensym("getnamespace"), A_NULL, 0);
   class_addmethod(h_stack_class, (t_method)h_stack_clear,  
-		  gensym("clear"), A_EMPTY, 0);
+		  gensym("clear"), A_NULL, 0);
   class_addmethod(h_stack_class, (t_method)h_stack_clear_all,  
-		  gensym("clearall"), A_EMPTY, 0);
+		  gensym("clearall"), A_NULL, 0);
 
   // without an argument the following two methods wont work ??? why?? because of c++?
-  class_addmethod(h_stack_class, (t_method)h_stack_help, gensym("help"),A_EMPTY, 0);
+  class_addmethod(h_stack_class, (t_method)h_stack_help, gensym("help"),A_NULL, 0);
 }
 
 #if defined(PDCONTAINER_SINGLE_OBJECT)
