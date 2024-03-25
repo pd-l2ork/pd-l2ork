@@ -210,8 +210,8 @@ VOLUME_NAME = $(PACKAGE_NAME)
 dmg:
 # change permissions to the nwjs to ensure it can run on accounts other
 # than the one that installed it system-wide
-  chmod -R 755 "$(BUILD_BASE)/Pd-L2Ork.app/Contents/Frameworks/nwjs Framework.framework/Versions/Current/*"
-  chmod 755 "$(BUILD_BASE)/Pd-L2Ork.app/Contents/MacOS/nwjs"
+	chmod -R 755 "$(BUILD_BASE)/Pd-L2Ork.app/Contents/Frameworks/nwjs Framework.framework/Versions/Current/*"
+	chmod 755 "$(BUILD_BASE)/Pd-L2Ork.app/Contents/MacOS/nwjs"
 # ico@vt.edu 2022-10-10: sign the app, so that we can get the mic/camera
 # permission prompts
 	codesign --deep --sign "-" --entitlements "$(CWD)/pd-l2ork.entitlements" "$(BUILD_BASE)/Pd-L2Ork.app"
