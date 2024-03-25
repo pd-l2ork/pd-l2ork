@@ -45,7 +45,7 @@ This is a Pd-L2Ork implementation and further development of the [PdWebParty] (h
 		cd emscripten/projects/PdWebParty
 		npm start
 
-6. For a default test patch, point your web browser to http://pdwebparty-server-address:3000. For a specific patch hosted on the same server use http://pdwebparty-server-address:3000?url=path-to-patch/patchname.pd (no path is necessary if you are referencing a patch in the docroot which should be in the emscripten/projects/PdWebParty/public/ folder). You can also use the full address for the url parameter, e.g. http://pdwebparty-server-address:3000?url=http://server-address-that-hosts-the-patch:3000/patchname.pd to point to a patch located on another server.
+6. For a default test patch, point your web browser to http://pdwebparty-server-address:3000. For a specific patch hosted on the same server use http://pdwebparty-server-address:3000?url=path-to-patch/patchname.pd (no path is necessary if you are referencing a patch in the docroot which should be in the emscripten/projects/PdWebParty/public/ folder). You can also use the full address for the url parameter, e.g. http://pdwebparty-server-address:3000?url=http://server-address-that-hosts-the-patch/path-to-patch/patchname.pd to point to a patch located on another server.
 
 ## Future Work
 - Check for access to supporting files both locally and remotely.
