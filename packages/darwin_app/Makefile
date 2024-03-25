@@ -100,6 +100,10 @@ endif
 	# package.json to be inside $DESTDIR. So all the rest of the
 	# supporting GUI files must be there, too
 	-mv $(NWFILES) $(DESTDIR)
+	# change permissions to the nwjs to ensure it can run on accounts other
+	# than the one that installed it system-wide
+	chmod -R 755 "$(BUILD_BASE)/Pd-L2Ork.app/Contents/Frameworks/nwjs Framework.framework/Versions/Current/"
+	chmod 755 "$(BUILD_BASE)/Pd-L2Ork.app/Contents/MacOS/nwjs"
 	# remove the extra nw.js binary
 	rm -rf $(DESTDIR)/nw
 	# remove the broken pd-l2ork symlink from bin/
@@ -208,10 +212,6 @@ package: dmg
 
 VOLUME_NAME = $(PACKAGE_NAME)
 dmg:
-# change permissions to the nwjs to ensure it can run on accounts other
-# than the one that installed it system-wide
-	chmod -R 755 "$(BUILD_BASE)/Pd-L2Ork.app/Contents/Frameworks/nwjs Framework.framework/Versions/Current/*"
-	chmod 755 "$(BUILD_BASE)/Pd-L2Ork.app/Contents/MacOS/nwjs"
 # ico@vt.edu 2022-10-10: sign the app, so that we can get the mic/camera
 # permission prompts
 	codesign --deep --sign "-" --entitlements "$(CWD)/pd-l2ork.entitlements" "$(BUILD_BASE)/Pd-L2Ork.app"
