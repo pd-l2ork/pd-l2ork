@@ -19,10 +19,10 @@ INSTALL_PATH = $(EM_PATH)/projects/pd-l2ork-web
 DESTDIR = $(BUILD_PATH)/pd-l2ork-web/
 objectsdir = extra/
 WARN_FLAGS = -Wall -W -Wno-unused-parameter
-EM_FLAGS = -s SIDE_MODULE=1 -O3 -fsanitize=address
+EM_FLAGS = -s SIDE_MODULE=1 -O3
 TYPE = Release
 ifeq ($(DEBUG), true)
-    EM_FLAGS = -s SIDE_MODULE=1 -g -fsanitize=address
+    EM_FLAGS = -s SIDE_MODULE=1 -g
     TYPE = Debug
 endif
 CFLAGS = -DPD -I$(PD_PATH)/src $(WARN_FLAGS) $(EM_FLAGS)

@@ -1,4 +1,5 @@
 const isMobile = (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
 const loading = document.getElementById("loading");
 const filter = document.getElementById("filter");
 let currentFile = "";
@@ -68,6 +69,26 @@ let object_types = [
     '#X symbolatom',
     '#X dropdown'
 ];
+let known_objects = [
+    'adc~',
+    'bng',
+    'tgl',
+    'vsl',
+    'hsl',
+    'vradio',
+    'hradio',
+    'flatgui/knob',
+    'vu',
+    'pddplink',
+    'pddp/pddplink',
+    'nbx',
+    'cnv',
+    'key',
+    'keyup',
+    'keyname',
+    'legacy_mousemotion',
+    'legacy_mouseclick'
+  ]
 //END CONSTANTS
 
 
@@ -1795,12 +1816,25 @@ function gui_text(data) {
     }
 }
 
-function gui_mousepoint(e, canvas) { // transforms the mouse position
-    let point = canvas.createSVGPoint();
-    point.x = e.clientX;
-    point.y = e.clientY;
-    point = point.matrixTransform(canvas.getScreenCTM().inverse());
-    return point;
+function gui_mousepoint(e, canvas, precise) { // transforms the mouse position
+    // If we are on firefox, we have to do shenanigans...
+    // First, getScreenCTM only scales, doesnt offset on firefox, for some ungodly reason.
+    // Next, firefox refuses to give us the x/y coordinates of the top-left of an svg element.
+    // It just returns 0/0 for all svg elements. So, we find the border of the canvas and
+    // use it instead to update the CTM. As long as it works, don't question it.
+    // However, this only works reliable for arrays, as other things don't have borders as the
+    // next element. So, if we don't find a border, we just pretent like this coordinate is correct.
+    // This is fine, though, as arrays are the only things that need absolute mouse positions.
+    // Numboxes / knobs / etc. just use relative from where it started.
+    let CTM = canvas.getScreenCTM();
+    if(isFirefox) {
+        let border = canvas.parentNode.childNodes[[...canvas.parentNode.childNodes].indexOf(canvas)+1];
+        if(border.id?.endsWith('border')) {
+            CTM.e = border.getBoundingClientRect().x;
+            CTM.f = border.getBoundingClientRect().y;
+        }
+    }
+    return (new DOMPointReadOnly(e.clientX, e.clientY)).matrixTransform(CTM.inverse());
 }
 function gui_roundedmousepoint(e, canvas) {
     let point = gui_mousepoint(e, canvas);
@@ -1824,6 +1858,7 @@ function gui_bng_circle(data) {
         r: r,
         fill: "none",
         id: `${data.id}_circle`,
+        "shape-rendering": "auto",
         class: "border unclickable"
     }
 }
@@ -2111,19 +2146,27 @@ function gui_slider_onmousedown(data, e, id) {
     touches[id] = {
         data: data,
         point: p,
+        shift: keyDown['Shift'],
         value: data.value
     };
 }
 
 function gui_slider_onmousemove(e, id) {
     if (id in touches) {
+        const p = gui_mousepoint(e, touches[id].data.canvas);
+        if(keyDown['Shift'] != touches[id].shift) {
+            touches[id].point = p;
+            touches[id].value = touches[id].data.value
+            touches[id].shift = keyDown['Shift'];
+        }
+
         const { data, point, value } = touches[id];
-        const p = gui_mousepoint(e, data.canvas);
+        const factor = keyDown['Shift'] ? .01 : 1;
         if (data.type === "vsl") {
-            data.value = Math.max(Math.min(value + (point.y - p.y) * 100, (data.height - 1) * 100), 0);
+            data.value = Math.max(Math.min(value + factor * (point.y - p.y) * 100, (data.height - 1) * 100), 0);
         }
         else {
-            data.value = Math.max(Math.min(value + (p.x - point.x) * 100, (data.width - 1) * 100), 0);
+            data.value = Math.max(Math.min(value + factor * (p.x - point.x) * 100, (data.width - 1) * 100), 0);
         }
         gui_slider_update_indicator(data);
         gui_slider_bang(data);
@@ -2326,6 +2369,7 @@ function gui_knob_circle(data) {
         stroke: "black",
         fill: "none",
         "stroke-width": data.off_width,
+        "shape-rendering": "auto",
         "d": describeArc(data.x_pos + data.size_x/2, data.y_pos + data.size_y/2, data.size_x/2 - 1, 193, 528)
     };
 }
@@ -2347,6 +2391,7 @@ function gui_knob_extracircle(data) {
         fill: "none",
         stroke: colfromload(data.bg_color),
         "stroke-width": data.on_width,
+        "shape-rendering": "auto",
         "d": describeArc(data.x_pos + data.size_x/2, data.y_pos + data.size_y/2, data.size_x/2 - 1, 193, 193 + gui_knob_vto_gui(data) * (528 - 193)),
     }
 }
@@ -2386,18 +2431,26 @@ function gui_knob_onmousedown(data, e, id) {
     gui_knob_touches[id] = {
         data: data,
         point: p,
+        shift: keyDown['Shift'],
         value: data.value
     };
 }
 
 function gui_knob_onmousemove(e, id) {
     if (id in gui_knob_touches) {
+        let p = gui_mousepoint(e, gui_knob_touches[id].data.canvas);
+        if(keyDown['Shift'] != gui_knob_touches[id].shift) {
+            gui_knob_touches[id].point = p;
+            gui_knob_touches[id].value = gui_knob_touches[id].data.value;
+            gui_knob_touches[id].shift = keyDown['Shift'];
+        }
+
         const { data, point, value } = gui_knob_touches[id];
-        const p = gui_mousepoint(e, data.canvas);
+        const factor = keyDown['Shift'] ? .01 : 1;
         if(data.logarithmic)
-            data.value = Math.pow(10,Math.log10(value) + (point.y - p.y) / data.size_y * Math.log10(data.maximum/data.minimum));
+            data.value = Math.pow(10,Math.log10(value) + factor * (point.y - p.y) / data.size_y * Math.log10(data.maximum/data.minimum));
         else
-            data.value = value + (point.y - p.y) / data.size_y * (data.maximum - data.minimum);
+            data.value = value + factor * (point.y - p.y) / data.size_y * (data.maximum - data.minimum);
         data.value = Math.max(Math.min(data.value,data.maximum),data.minimum);
 
         configure_item(data.extracircle, gui_knob_extracircle(data));
@@ -2702,9 +2755,6 @@ function gui_atom_onmouseup(id) {
         delete gui_atom_touches[id];
 }
 function gui_atom_settext(data, text) {
-
-
-    
     if(data.dirtyValue === undefined && data.type === 'floatatom')
         data.svgText.textContent = (Math.round(+text).toString().length > +data.width) ? (data.value > 0 ? '+' : '-') : text.slice(0, +data.width);
     else
@@ -2962,8 +3012,8 @@ function onKeyDown(e) {
 function onKeyUp(e) {
     if(keyboardFocus.data?.onKeyUp)
         keyboardFocus.data.onKeyUp(keyboardFocus.data, e);
+    keyDown[e.key] = false;
     if(keyboardFocus.exclusive == false) {
-        keyDown[e.key] = false;
         for(let listener of inputListeners)
             if(listener.onKeyUp)
                 listener.onKeyUp(e);
@@ -3217,9 +3267,30 @@ function gui_text_text(data, line_index, fontSize) {
 
 //--------------------- patch handling ----------------------------
 async function openPatch(content, filename) {
-
     console.log(`Loading Patch: ${filename}`);
     document.title=filename;
+
+    document.getElementById('loadingstage').innerHTML=`Fetching Dependancies`;
+    await new Promise(Resolve => setTimeout(Resolve, 10));
+    let abstractions = {};
+    let fetchAbstractions = async(content, path) => {
+        let missingAbstractions = [... new Set(content.split(';\n').filter( line => line.startsWith('#X obj') && !known_objects.includes(line.split(' ')[4]) ).map( line => line.split(' ')[4]))];
+        let abstractionData = await Promise.all(missingAbstractions.map(async(obj) => (await getPatchData(`${((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')}/${path}${obj}.pd`))));
+        let promises = [];
+        for(let abstraction in missingAbstractions) {
+            if(abstractionData[abstraction].content.startsWith('#') && !abstractions[missingAbstractions[abstraction]]) {
+                abstractions[missingAbstractions[abstraction]] = abstractionData[abstraction].content;
+                promises.push(fetchAbstractions(abstractionData[abstraction].content, missingAbstractions[abstraction].split('/').slice(0,-1).join('/')+'/'));
+            }
+        }
+        await Promise.all(promises);
+    }
+    await fetchAbstractions(content,'/');
+
+    document.getElementById('loadingstage').innerHTML=`Parsing Patch`;
+    await new Promise(Resolve => setTimeout(Resolve, 10));
+
+    let start = Date.now();
 
     document.removeEventListener('keydown', onKeyDown);
     document.removeEventListener('keyup', onKeyUp);
@@ -3245,11 +3316,11 @@ async function openPatch(content, filename) {
     let nextLayerID = 0;      //This is used to assign unique IDs to layers to keep track of their objects
     let nextArgs = [];        //This is used to pass arguments from abstractions which are collapsed by the web parser
     let layers = [ { } ];   //Holds all the layers currently being processed. Used as a stack.
-    let lines = content.split(";\n");
-    for(let i = 0; i < lines.length; i++) {
+
+    let lines = content.split(';\n');
+    for(let i = 0; i < lines.length; i++)
         while(lines[i].endsWith('\\'))
             lines.splice(i,2,`${lines[i].slice(0,-1)};\n${lines[i+1]}`);
-    }
     for (let i = 0; i < lines.length; i++) {
         let layer = layers.at(-1); //Shortcut for the current layer being processed so we aren't always writing layers.at(-1)
 
@@ -3280,7 +3351,8 @@ async function openPatch(content, filename) {
         //This is especially important since we flatten all the canvases for compatibility with the emscriptem pd-l2ork
         if(args.slice(0,2).join(' ') != '#X msg')
             for(let i = 0; i < layer.args?.length; i++)
-                    args = args.map(arg => arg.replace(new RegExp(`(?<!\\\\)\\\\\\$${i+1}`,`g`),layer.args[i]));
+                for(let arg = 0; arg < args.length; arg++)
+                    args[arg] = args[arg].replace(new RegExp(`(?<!\\\\)\\\\\\$${i+1}`,`g`),layer.args[i]);
 
         //If we are looking at something that can be connected with a wire, increment the wire counter
         if(object_types.find(type=>lines[i].startsWith(type)))
@@ -3289,8 +3361,20 @@ async function openPatch(content, filename) {
         //Now we switch based on the type of line (first two arguments)
         switch (args.slice(0,2).join(' ')) {
             case "#N canvas":
+                if(layers.length > 25) {
+                    console.error('Max layer depth exceeded, ignoring further layers');
+                    let depth = 0;
+                    for(;lines[i].startsWith('#X restore') == false || depth > 0; i++) {
+                        if(lines[i].startsWith('#N canvas'))
+                            depth++;
+                        if(lines[i].startsWith('#X restore'))
+                            depth--;
+                    }
+                    break;
+                }
                 layers.push({
                     arrays: [],
+                    messages: [],
                     guiObjects: [],
                     labels: [],
                     nextGUIID: -1,
@@ -3352,6 +3436,11 @@ async function openPatch(content, filename) {
                     layer.dimensions.inlineY = +args[3];
                     layer.name = [...args,...(layer.argsInherited ? [] : layer.args)].slice(4).join(' ');
                     if(layer.showContents) {
+                        for(let message of layer.messages) {
+                            for(let text of message.svgText)
+                                configure_item(text, {display: "none"});
+                            configure_item(message.border, {display: "none"});
+                        }
                         configure_item(layer.canvas, {
                             viewBox: `${layer.dimensions.contentX} ${layer.dimensions.contentY} ${layer.dimensions.coords.w} ${layer.dimensions.coords.h}`,
                             width: layer.dimensions.coords.w,
@@ -3384,15 +3473,16 @@ async function openPatch(content, filename) {
                             layer.canvas.style.overflow = 'visible';
                             if (isMobile) {
                                 layer.border.addEventListener("touchstart", function (e) {
-                                    let p = gui_mousepoint(e, canvas);
-                                    let x = Math.floor(screenToCoord(dimensions.coords.l, dimensions.coords.r, dimensions.coords.w, p.x));
-                                    let y = screenToCoord(dimensions.coords.t, dimensions.coords.b, dimensions.coords.h, p.y);
-                                    let array, min = Infinity;
-                                    for(let a of arrays)
-                                        if(a.nums.length > x && Math.abs(a.nums[x] - y) < min)
-                                            min = Math.abs(a.nums[x] - y), array = a;
-                                    for (const touch of (e || window.event).changedTouches)
+                                    for (const touch of (e || window.event).changedTouches) {
+                                        let p = gui_mousepoint(touch, canvas);
+                                        let x = Math.floor(screenToCoord(dimensions.coords.l, dimensions.coords.r, dimensions.coords.w, p.x));
+                                        let y = screenToCoord(dimensions.coords.t, dimensions.coords.b, dimensions.coords.h, p.y);
+                                        let array, min = Infinity;
+                                        for(let a of arrays)
+                                            if(a.nums.length > x && Math.abs(a.nums[x] - y) < min)
+                                                min = Math.abs(a.nums[x] - y), array = a;
                                         array.onmousedown(array, touch, touch.identifier);
+                                    }
                                 });
                             }
                             else {
@@ -4289,7 +4379,7 @@ async function openPatch(content, filename) {
                             layer.guiObjects[layer.nextGUIID] = data;
                             inputListeners.push({
                                 onMouseMove: e => {
-                                    let p = gui_roundedmousepoint(e, data.canvas);
+                                    let p = gui_roundedmousepoint(e, rootCanvas);
                                     gui_send('Float', data.send, p.x);
                                     gui_send('Float', data.auxSend[0], p.y);
                                 }
@@ -4304,14 +4394,14 @@ async function openPatch(content, filename) {
                             layer.guiObjects[layer.nextGUIID] = data;
                             inputListeners.push({
                                 onMouseDown: e => {
-                                    let p = gui_roundedmousepoint(e, data.canvas);
+                                    let p = gui_roundedmousepoint(e, rootCanvas);
                                     gui_send('Float', data.send, 1);
                                     gui_send('Float', data.auxSend[0], e.which);
                                     gui_send('Float', data.auxSend[1], p.x);
                                     gui_send('Float', data.auxSend[2], p.y);
                                 },
                                 onMouseUp: e => {
-                                    let p = gui_roundedmousepoint(e, data.canvas);
+                                    let p = gui_roundedmousepoint(e, rootCanvas);
                                     gui_send('Float', data.send, 0);
                                     gui_send('Float', data.auxSend[0], e.which);
                                     gui_send('Float', data.auxSend[1], p.x);
@@ -4320,17 +4410,11 @@ async function openPatch(content, filename) {
                             })
                             break;
                         }
-                        default: //If we don't have an explicit handling for the object, it's possible that it is an external patch load
-                            //We want to load patch data from the same folder as our current patch, just with a different filename at the end.
-                            let result = (await Promise.all(searchPaths.map(path => getPatchData(`${((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')}/${path}${args[4]}.pd`)))).find(result => result.content.charAt(0)=='#');
-                            let path = args[4].split('/').slice(0,-1).join('/')+'/';
-                            if(!searchPaths.includes(path))
-                                searchPaths.push(path);
-                            //If the data starts with a #, it is a patch. Otherwise, either the patch does not exist, or this is a non-gui object, and in either case we can ignore it.
-                            if(result) {
+                        default: //If we don't have an explicit handling for the object, it's possible that it is an external patch load 
+                            if(args[4] in abstractions) {
                                 //We must add an #X restore at the end to undo the #N canvas at the beginning
                                 nextArgs = args.length > 5 ? args.slice(5) : null;
-                                lines.splice(i,1,...result.content.split(';\n').slice(0,-1),`#X restore ${args[2]} ${args[3]} ${args[4]}`);
+                                lines.splice(i,1,...abstractions[args[4]].split(';\n').slice(0,-1),`#X restore ${args[2]} ${args[3]} ${args[4]}`);
                                 //Since we removed the line that we just processed, our subpatch starts at line i, so we have to process line i again.
                                 i--;
                                 layer.nextGUIID--;
@@ -4368,7 +4452,7 @@ async function openPatch(content, filename) {
                         id: data.id,
                         stroke: data.outlineColor,
                         "stroke-width": "1",
-                        "shape-rendering": "auto",
+                        "shape-rendering": "crispEdges",
                         fill: 'none'
                     }, data.canvas);
                     if(layer.arrays.length) {
@@ -4404,7 +4488,7 @@ async function openPatch(content, filename) {
                                 lastX = curX;
                                 if(data.displayMode == 0 || data.displayMode == 2)
                                     path += `${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} `;
-                                if(data.displayMode == 1)
+                                if(data.displayMode == 1 && i+1 <= c.r)
                                     path += `M ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} H ${coordToScreen(c.l,c.r,c.w,i + 1) - 1} V ${coordToScreen(c.t,c.b,c.h,data.nums[i])+1} H ${curX} Z `;
                                 if(data.displayMode == 3 && i+1 <= c.r)
                                     path += `M ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} H ${coordToScreen(c.l,c.r,c.w,i + 1)} V ${c.h} H ${curX} Z `;
@@ -4450,7 +4534,7 @@ async function openPatch(content, filename) {
                 }
                 break;
             case "#X msg":
-                if(args.length > 3 && layer.id == 0) {
+                if(args.length > 3) {
                     const data = {};
                     data.type = args[1];
                     data.x_pos = +args[2];
@@ -4462,6 +4546,7 @@ async function openPatch(content, filename) {
                     data.send = [null];
                     data.clickSend = `msg_${layer.id}_${layer.nextGUIID}`
                     data.canvas = layer.canvas;
+                    layer.messages.push(data);
 
                     let nextObjId = layer.nextGUIID, nextSlot = i, depth = 0;
                     for(;lines[nextSlot].startsWith('#X connect') == false || depth > 0; nextSlot++) {
@@ -4783,42 +4868,45 @@ async function openPatch(content, filename) {
                         break;
                     //We generate a name based off of the arguments of the connect (which will be unique)
                     let connectionName = `__WIRE_${layer.id}_${args[2]}_${args[3]}_${args[4]}_${args[5]}`;
-                    let dontSplice = false;    
+                    if(layer.guiObjects[args[4]]?.shortCircuit === false)
+                        connectionName = layer.guiObjects[args[4]].clickSend;
 
-                    if(layer.guiObjects[args[2]] && ((!layer.guiObjects[args[4]] && layer.guiObjects[args[2]].shortCircuit !== false) || layer.guiObjects[args[4]]?.shortCircuit === false)) {
+                    if(layer.guiObjects[args[2]] && !layer.guiObjects[args[4]]) {
                         //If the sender is a gui object, and the receiver is not, we must add a receive object so that the
                         //sender can send wirelessly. Then we connect the receive object to the receiver, and the sender wirelessly to the receive object
-                        dontSplice = true;
                         if(args[3] == '0') {
-                            lines.splice(i,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++layer.nextGUIID} 0 ${args[4]} ${args[5]} __IGNORE__`)
+                            if(layer.guiObjects[args[2]]?.shortCircuit !== false)
+                                lines.splice(i++,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++layer.nextGUIID} 0 ${args[4]} ${args[5]} __IGNORE__`)
                             layer.guiObjects[args[2]].send.push(connectionName);
-                            i++;
                         } else if(layer.guiObjects[args[2]].auxSend) {
-                            lines.splice(i,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++layer.nextGUIID} 0 ${args[4]} ${args[5]} __IGNORE__`)
+                            if(layer.guiObjects[args[2]]?.shortCircuit !== false)
+                                lines.splice(i++,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++layer.nextGUIID} 0 ${args[4]} ${args[5]} __IGNORE__`)
                             layer.guiObjects[args[2]].auxSend[+args[3] - 1].push(connectionName);
-                            i++;
                         } else
                             console.warn('Ignoring unsupported wired connection (Code A)'); //This should never happen
                     }
                     if((!layer.guiObjects[args[2]] || layer.guiObjects[args[2]].shortCircuit === false) && layer.guiObjects[args[4]] && args[5] === '0') {
                         //If the receiver is a gui object, and the sender is not, we must add a send object so that the receiver
                         //can receive wirelessly. Then we connect the send object to the sender, and the receiver wirelessly to the send object
-                        lines.splice(i,dontSplice ? 0 : 1,`#X obj 0 0 s ${connectionName}`,`#X connect ${args[2]} ${args[3]} ${++layer.nextGUIID} 0 __IGNORE__`);
+                        lines.splice(i++,1,`#X obj 0 0 s ${connectionName}`,`#X connect ${args[2]} ${args[3]} ${++layer.nextGUIID} 0 __IGNORE__`);
                         layer.guiObjects[args[4]].receive.push(connectionName);
                         gui_subscribe(layer.guiObjects[args[4]]);
-                        i += dontSplice ? 2 : 1;
                     }
-                    if(layer.guiObjects[args[2]] && layer.guiObjects[args[4]] && args[5] === '0' && layer.guiObjects[args[2]].shortCircuit !== false && layer.guiObjects[args[4]].shortCircuit !== false) {
+                    if(layer.guiObjects[args[2]] && layer.guiObjects[args[4]] && args[5] === '0' && layer.guiObjects[args[2]].shortCircuit !== false) {
                         //If both the sender and receiver are gui objects, we can directly set their sends and receives
                         //Theoretically, they should only have 1 input/output, so the input/output id should always be 0
                         if(args[3] === '0') {
                             layer.guiObjects[args[2]].send.push(connectionName);
-                            layer.guiObjects[args[4]].receive.push(connectionName);
-                            gui_subscribe(layer.guiObjects[args[4]]);
+                            if(layer.guiObjects[args[4]].shortCircuit !== false) {
+                                layer.guiObjects[args[4]].receive.push(connectionName);
+                                gui_subscribe(layer.guiObjects[args[4]]);
+                            }
                         } else if(layer.guiObjects[args[2]].auxSend) {
                             layer.guiObjects[args[2]].auxSend[+args[3] - 1].push(connectionName);
-                            layer.guiObjects[args[4]].receive.push(connectionName);
-                            gui_subscribe(layer.guiObjects[args[4]]);
+                            if(layer.guiObjects[args[4]].shortCircuit !== false) {
+                                layer.guiObjects[args[4]].receive.push(connectionName);
+                                gui_subscribe(layer.guiObjects[args[4]]);
+                            }
                         }
                         else
                             console.warn('Ignoring unsupported wired connection (Code B)')
@@ -4844,7 +4932,7 @@ async function openPatch(content, filename) {
         }
     }
 
-    document.getElementById('loadingstage').innerHTML=`Starting PD Engine`;
+    document.getElementById('loadingstage').innerHTML=`Starting Pd-L2Ork Engine`;
     await new Promise(resolve => setTimeout(resolve, 10));
 
     if (nextLayerID == 0)
@@ -4870,8 +4958,15 @@ async function openPatch(content, filename) {
 
     //Next we load our modified lines into the backend of pd-l2ork
     FS.createDataFile("/", filename, new TextEncoder().encode(lines.join(';\n')), true, true, true);
-    Module.pd.openPatch(filename, "/");
-    pdsend("pd dsp 1");
+    console.log('Parse time: '+(Date.now() - start)+'ms');
+    try {
+        Module.pd.openPatch(filename, "/");
+        pdsend("pd dsp 1");
+    } catch (e) {
+        alert("Failed to start PD engine!");
+        console.error(e.stack);
+        return;
+    }
 }
 
 function uploadPatch(file) {
@@ -4896,10 +4991,8 @@ function uploadPatch(file) {
 
 let cachedData = {};
 async function getPatchData(url) {
-    if(!cachedData[url]) {
-        document.getElementById('loadingstage').innerHTML=`Fetching ${url.slice(0,-3)}`;
+    if(!cachedData[url])
         cachedData[url] = await (await fetch(`/api/patch/?url=${encodeURIComponent(url)}`,{method: 'GET'})).json();
-    }
     return cachedData[url];
 }
 

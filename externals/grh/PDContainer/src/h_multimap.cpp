@@ -13,6 +13,10 @@
 
 #include "include/HMultiMap.h"
 
+#if defined(PDCONTAINER_SINGLE_OBJECT)
+// for PD-Extended
+extern "C" {
+#endif
 
 static t_class *h_multimap_class;
 static t_class *proxy_class;
@@ -335,11 +339,6 @@ static void *h_multimap_free(t_h_multimap *x)
   return (void *)x;
 }
 
-#if defined(PDCONTAINER_SINGLE_OBJECT)
-// for PD-Extended
-extern "C" {
-#endif
-
 void h_multimap_setup(void) 
 {
   h_multimap_class = class_new(gensym("h_multimap"), (t_newmethod)h_multimap_new,
@@ -358,21 +357,21 @@ void h_multimap_setup(void)
   class_addmethod(h_multimap_class, (t_method)h_multimap_remove, 
 		  gensym("remove"), A_GIMME , 0);
   class_addmethod(h_multimap_class, (t_method)h_multimap_getsize, 
-		  gensym("getsize"), A_DEFFLOAT , 0);
+		  gensym("getsize"), A_NULL , 0);
   class_addmethod(h_multimap_class, (t_method)h_multimap_set_namespace, 
 		  gensym("namespace"), A_DEFSYMBOL , 0);
   class_addmethod(h_multimap_class, (t_method)h_multimap_get_namespace, 
-		  gensym("getnamespace"), A_DEFFLOAT, 0);
+		  gensym("getnamespace"), A_NULL, 0);
   class_addmethod(h_multimap_class, (t_method)h_multimap_keys,
-		  gensym("keys"), A_DEFFLOAT, 0);
+		  gensym("keys"), A_NULL, 0);
   class_addmethod(h_multimap_class, (t_method)h_multimap_values,
-		  gensym("values"), A_DEFFLOAT, 0);
+		  gensym("values"), A_NULL, 0);
   class_addmethod(h_multimap_class, (t_method)h_multimap_print,
-		  gensym("print"), A_DEFFLOAT, 0);
+		  gensym("print"), A_NULL, 0);
   class_addmethod(h_multimap_class, (t_method)h_multimap_clear,  
-		  gensym("clear"), A_DEFFLOAT, 0);
+		  gensym("clear"), A_NULL, 0);
   class_addmethod(h_multimap_class, (t_method)h_multimap_clear_all,  
-		  gensym("clearall"), A_DEFFLOAT, 0);
+		  gensym("clearall"), A_NULL, 0);
   class_addmethod(h_multimap_class, (t_method)h_multimap_save, 
 		  gensym("save"), A_DEFSYMBOL , 0);
   class_addmethod(h_multimap_class, (t_method)h_multimap_save_xml, 
@@ -384,7 +383,7 @@ void h_multimap_setup(void)
 
   // without an argument the following two methods wont work ??? why?? because of c++?
   class_addmethod(h_multimap_class, (t_method)h_multimap_help, 
-		  gensym("help"),A_DEFFLOAT, 0);
+		  gensym("help"),A_NULL, 0);
 }
 
 #if defined(PDCONTAINER_SINGLE_OBJECT)

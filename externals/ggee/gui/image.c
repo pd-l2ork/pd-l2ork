@@ -112,7 +112,11 @@ t_symbol *image_trytoopen(t_image* x)
     }
 }
 
+#ifndef __EMSCRIPTEN__
 extern char *gobj_vis_gethelpname(t_gobj *z, char *namebuf);
+#else
+extern void gobj_vis_gethelpname(t_gobj *z, char *namebuf);
+#endif
 
 static void image_drawme(t_gobj *client, t_glist *glist)
 {

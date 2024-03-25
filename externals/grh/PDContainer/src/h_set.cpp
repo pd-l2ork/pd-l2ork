@@ -13,6 +13,10 @@
 
 #include "include/HSet.h"
 
+#if defined(PDCONTAINER_SINGLE_OBJECT)
+// for PD-Extended
+extern "C" {
+#endif
 
 static t_class *h_set_class;
 
@@ -205,11 +209,6 @@ static void *h_set_free(t_h_set *x)
   return (void *)x;
 }
 
-#if defined(PDCONTAINER_SINGLE_OBJECT)
-// for PD-Extended
-extern "C" {
-#endif
-
 void h_set_setup(void) 
 {
   // the object class
@@ -224,19 +223,19 @@ void h_set_setup(void)
   class_addmethod(h_set_class, (t_method)h_set_remove, 
 		  gensym("remove"), A_GIMME , 0);
   class_addmethod(h_set_class, (t_method)h_set_getsize, 
-		  gensym("getsize"), A_DEFFLOAT , 0);
+		  gensym("getsize"), A_NULL , 0);
   class_addmethod(h_set_class, (t_method)h_set_set_namespace, 
 		  gensym("namespace"), A_DEFSYMBOL , 0);
   class_addmethod(h_set_class, (t_method)h_set_get_namespace, 
-		  gensym("getnamespace"), A_DEFFLOAT, 0);
+		  gensym("getnamespace"), A_NULL, 0);
   class_addmethod(h_set_class, (t_method)h_set_getall,
-		  gensym("getall"), A_DEFFLOAT, 0);
+		  gensym("getall"), A_NULL, 0);
   class_addmethod(h_set_class, (t_method)h_set_print,
-		  gensym("print"), A_DEFFLOAT, 0);
+		  gensym("print"), A_NULL, 0);
   class_addmethod(h_set_class, (t_method)h_set_clear,  
-		  gensym("clear"), A_DEFFLOAT, 0);
+		  gensym("clear"), A_NULL, 0);
   class_addmethod(h_set_class, (t_method)h_set_clear_all,  
-		  gensym("clearall"), A_DEFFLOAT, 0);
+		  gensym("clearall"), A_NULL, 0);
   class_addmethod(h_set_class, (t_method)h_set_save, 
 		  gensym("save"), A_DEFSYMBOL , 0);
   class_addmethod(h_set_class, (t_method)h_set_read, 
@@ -247,7 +246,7 @@ void h_set_setup(void)
 		  gensym("readXML"), A_DEFSYMBOL , 0);
 
   // without an argument the following two methods wont work ??? why?? because of c++?
-  class_addmethod(h_set_class, (t_method)h_set_help, gensym("help"),A_DEFFLOAT, 0);
+  class_addmethod(h_set_class, (t_method)h_set_help, gensym("help"),A_NULL, 0);
 }
 
 #if defined(PDCONTAINER_SINGLE_OBJECT)

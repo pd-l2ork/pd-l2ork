@@ -13,6 +13,10 @@
 
 #include "include/HMultiSet.h"
 
+#if defined(PDCONTAINER_SINGLE_OBJECT)
+// for PD-Extended
+extern "C" {
+#endif
 
 static t_class *h_multiset_class;
 
@@ -205,11 +209,6 @@ static void *h_multiset_free(t_h_multiset *x)
   return (void *)x;
 }
 
-#if defined(PDCONTAINER_SINGLE_OBJECT)
-// for PD-Extended
-extern "C" {
-#endif
-
 void h_multiset_setup(void) 
 {
   // the object class
@@ -224,19 +223,19 @@ void h_multiset_setup(void)
   class_addmethod(h_multiset_class, (t_method)h_multiset_remove, 
 		  gensym("remove"), A_GIMME , 0);
   class_addmethod(h_multiset_class, (t_method)h_multiset_getsize, 
-		  gensym("getsize"), A_DEFFLOAT , 0);
+		  gensym("getsize"), A_NULL , 0);
   class_addmethod(h_multiset_class, (t_method)h_multiset_set_namespace, 
 		  gensym("namespace"), A_DEFSYMBOL , 0);
   class_addmethod(h_multiset_class, (t_method)h_multiset_get_namespace, 
-		  gensym("getnamespace"), A_DEFFLOAT, 0);
+		  gensym("getnamespace"), A_NULL, 0);
   class_addmethod(h_multiset_class, (t_method)h_multiset_getall,
-		  gensym("getall"), A_DEFFLOAT, 0);
+		  gensym("getall"), A_NULL, 0);
   class_addmethod(h_multiset_class, (t_method)h_multiset_print,
-		  gensym("print"), A_DEFFLOAT, 0);
+		  gensym("print"), A_NULL, 0);
   class_addmethod(h_multiset_class, (t_method)h_multiset_clear,  
-		  gensym("clear"), A_DEFFLOAT, 0);
+		  gensym("clear"), A_NULL, 0);
   class_addmethod(h_multiset_class, (t_method)h_multiset_clear_all,  
-		  gensym("clearall"), A_DEFFLOAT, 0);
+		  gensym("clearall"), A_NULL, 0);
   class_addmethod(h_multiset_class, (t_method)h_multiset_save, 
 		  gensym("save"), A_DEFSYMBOL , 0);
   class_addmethod(h_multiset_class, (t_method)h_multiset_read, 
@@ -247,7 +246,7 @@ void h_multiset_setup(void)
 		  gensym("readXML"), A_DEFSYMBOL , 0);
 
   // without an argument the following two methods wont work ??? why?? because of c++?
-  class_addmethod(h_multiset_class, (t_method)h_multiset_help, gensym("help"),A_DEFFLOAT, 0);
+  class_addmethod(h_multiset_class, (t_method)h_multiset_help, gensym("help"),A_NULL, 0);
 }
 
 #if defined(PDCONTAINER_SINGLE_OBJECT)
