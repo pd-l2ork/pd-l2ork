@@ -45,7 +45,7 @@ This is a Pd-L2Ork implementation and further development of the [PdWebParty] (h
 		cd emscripten/projects/PdWebParty
 		npm start
 
-6. Point your web browser to http://<server-address>:3000?url=<patchname.pd>. You can also use the full address for the url parameter, e.g. http://<server-address>:3000?url=http://<server-address>:3000/<patchname.pd>, or point to a patch located on another server.
+6. Point your web browser to http://pdwebparty-server-address:3000?url=patchname.pd. You can also use the full address for the url parameter, e.g. http://pdwebparty-server-address:3000?url=http://server-address-that-hosts-the-patch:3000/patchname.pd, or point to a patch located on another server.
 
 ## Future Work
 - Check for access to supporting files both locally and remotely.
