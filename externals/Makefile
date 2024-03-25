@@ -474,7 +474,7 @@ cxc_clean:
 
 # AG: this external provides no sane way to pass custom CFLAGS, so we abuse
 # WARN_CFLAGS for that purpose.
-ifeq ($(EMSCRIPTEN),no)
+ifneq ($(EMSCRIPTEN),yes)
 cyclone:
 	make -C $(externals_src)/miXed/cyclone -f Makefile.libdir \
 		PD_PATH=$(pd_src) PD_INCLUDE=$(DESTDIR)$(includedir) WARN_CFLAGS="-Wall -W -Wstrict-prototypes -Wno-unused -Wno-parentheses -Wno-switch $(CFLAGS_ADD)"
@@ -2583,7 +2583,7 @@ IEMGUI_FLAGS := -DIEMGUI_SINGLE_OBJ
 
 iemgui: $(IEMGUI_TARGETS)
 
-ifeq ($(EMSCRIPTEN),no)
+ifneq ($(EMSCRIPTEN),yes)
 $(IEMGUI_TARGETS) : %.$(EXTENSION) : %.o $(IEMGUI_OBJ)
 	$(CC) $(LDFLAGS) $(IEMGUI_FLATPAK_LINKER_FLAGS) -o $*.$(EXTENSION) "$*.o" $(externals_src)/iem/iemgui/src/iemgui.o $(LIBS)
 	$(STRIP) $*.$(EXTENSION)
