@@ -1,6 +1,6 @@
-#N canvas 116 127 477 213 12;
-#X obj 11 9 l2orkmote/l2orkmote;
-#N canvas 167 545 345 89 guts 0;
+#N canvas 116 127 473 213 12;
+#X obj 87 9 l2orkmote/l2orkmote;
+#N canvas 167 545 306 89 guts 0;
 #N canvas 635 351 612 634 states 0;
 #X obj 22 24 r l2orkmote-left-arm-pitch-forward;
 #X obj 22 49 > 0.75;
@@ -222,7 +222,7 @@ output before 3;
 #X obj 98 345 expr if($f1<=-360 \, -360 \, \\$f1);
 #X obj 98 374 expr if($f1>=36000 \, 36000 \, \\$f1);
 #X obj 78 480 nbx 5 14 1 999 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 7 256 0 0 1 0;
+#000000 #000000 1 256 0 0 1 0;
 #X obj 98 318 accum;
 #X obj 39 101 gate 2 1;
 #X obj 39 35 r l2orkmote-left-hand-mode;
@@ -388,14 +388,14 @@ output before 3;
 #X msg 858 671 12;
 #X obj 858 720 +;
 #X obj 858 749 nbx 5 14 -192 192 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 192 256 0 0 1 0;
+#000000 #000000 0 256 0 0 1 0;
 #X obj 416 395 t f f;
 #X msg 968 671 -12;
 #X obj 551 615 t f f;
 #X obj 858 775 s l2orkmote-set-octave;
 #X obj 1264 156 expr \\$f1/200+0.5;
 #X obj 1264 185 nbx 5 14 0 1 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0.52 256 0 0 1 0;
+#000000 #000000 0 256 0 0 1 0;
 #X obj 1177 269 s l2orkmote-flanger-mod-amp;
 #X obj 1240 375 r l2orkmote-right-joystick-centered;
 #X obj 1240 659 + 1;
@@ -549,7 +549,7 @@ output before 3;
 #X obj 104 406 s l2orkmote-right-hand-roll-mode-4;
 #X obj 118 297 s l2orkmote-right-hand-roll-mode-5;
 #X obj 522 266 nbx 5 14 0 1.5708 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0.911344 256 0 0 1 0;
+#000000 #000000 0 256 0 0 1 0;
 #X obj 522 318 s l2orkmote-pan;
 #X obj 132 269 s l2orkmote-right-hand-roll-mode-6;
 #X obj 522 237 expr (-$f1/3+0.5)*1.5708;
@@ -571,7 +571,7 @@ output before 3;
 #X obj 104 380 change;
 #X obj 104 328 expr (-$f1/3+0.5);
 #X obj 523 407 nbx 5 14 -1 1 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 1 256 0 0 1 0;
+#000000 #000000 0 256 0 0 1 0;
 #X obj 523 430 expr int((($f1*-1)+1)*31.5);
 #X obj 523 378 r l2orkmote-right-hand-roll-mode-1;
 #X obj 523 517 s l2orkmote-hover-location;
@@ -785,13 +785,24 @@ hover mode \, here \, we need to watch the execution order., f 37
 #X connect 9 2 8 0;
 #X connect 10 0 1 0;
 #X restore 327 17 pd rh-buttons-mode-1;
-#X restore 107 27 pd forwards;
-#X restore 152 33 pd guts;
+#X restore 106 27 pd forwards;
+#N canvas 727 397 450 300 picker 0;
+#X obj 68 85 loadbang;
+#X obj 68 175 s pick-l2orkmote-r;
+#X obj 257 38 r pick-l2orkmote-s;
+#X msg 68 114 names Any A B C D E F G H I J K L M N O, f 17;
+#X obj 257 67 print;
+#X connect 0 0 3 0;
+#X connect 2 0 4 0;
+#X connect 3 0 1 0;
+#X restore 197 27 pd picker;
+#X restore 290 34 pd guts;
 #X obj 11 62 cnv 15 123 110 empty l2orkmote-pitch-display c 29 42 0
 96 #edb5b5 #404040 0;
 #X obj 130 61 nbx 4 111 -192 228 0 0 empty l2orkmote-pitch-number-display
 NOTE\ PITCH -116 7 0 10 #edb5b5 #000000 #000000 0 256 3 0 0 0;
-#N canvas 595 69 789 989 tweeter-l2orkmote-documentation 0;
+#X text 230 9 Tweeter L2Orkmote Interface v.0.3;
+#N canvas 595 69 789 989 documentation 0;
 #X text 14 17 BOTH HANDS must be not facing downwards (in relaxed state)
 in order for the input to work. this allows the user to type with one
 hand if they need to do something on the laptop without making unwanted
@@ -830,7 +841,7 @@ loop (combined with joystick \, activates when the button is released
 \, OR if you hold button 1 it is continually making changes as you
 move joystick \; releasing with joystick being set to middle clears
 the loop)button 4 = select instrument (combine with joystick \, activates
-when the button is released \, OR if you hold button 1 it is continually
+when the button is released \, OR if you hold button 2 it is continually
 making changes as you move joystick)joystick = clockwise and counter-clockwise
 instrument and loop selection (used with buttons 3 and 4)hand pitch
 = instrument overdrive level (only when enabled when the button 2 is
@@ -839,6 +850,8 @@ pitch is above 0.75 or above 67.5 degree angle \, or typically facing
 upwards):no buttons = main out adjustment and loop controls mode (see
 right hand info below)button 1 = flangerbutton 2 = echobutton 3
 = dry outbutton 4 = reverb, f 108;
-#X restore 210 33 pd tweeter-l2orkmote-documentation;
-#X text 284 177 (c) Ivica Ico Bukvic 2022;
-#X text 153 10 Tweeter L2Orkmote Interface v.0.2.0;
+#X restore 348 34 pd documentation;
+#X dropdown 12 32 6 1 0 0 - pick-l2orkmote-r pick-l2orkmote-s, f 6
+;
+#X text 14 9 SELECT:;
+#X text 243 177 (c) Ivica Ico Bukvic 2022 \, 2024;

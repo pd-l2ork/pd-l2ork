@@ -9,6 +9,15 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+26-03-2024 0.81
+*Fixed a long-standing bug where session saving missed some of the data (upped the number of data points from 1884 to waiting for the 1st part's reverb type output, which appears to be the safest way to identify the end of the stream). TODO: why is the output size varied under certain circumstances (so far we've seen 1884, 1918, and 1922).
+*Separated audio files from patches for Transcontinental Grapevine and 8-bit Petal to save space.
+*Updated Transcontinental Grapevine work, including fixing folder names and file organization.
+*Added Territorio Prismatico and 8-bit Petal works.
+*Added missing L2Orkmote abstraction.
+*Fixed L2Orkmote bugs and refined control mapping.
+*Reworked L2Orkmote pairing logic, so that it is not dependent on the old LAN-based pairing.
+
 29-11-2023 0.80
 *Fixed regression where solo did not work in offline mode. Now, when user clicks on another part to enable solo, they also automatically switch to that part being their primary. For group soloing users will want to use future event automation.
 *Set the stage for future automation by introducing offline-messages receive in network-io subpatch.

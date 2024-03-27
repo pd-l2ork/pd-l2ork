@@ -3,7 +3,7 @@
 0;
 #X obj 4 2 cnv 15 1630 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.80\ by
+#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.81\ by
 4 5 0 10 #6c6c6c #fcfcfc 0;
 #X obj 252 3 cnv 15 125 16 empty empty (c)\ 2020-3\ Released\ under\ the
 4 6 0 10 #6c6c6c #fcfcfc 0;
@@ -1477,21 +1477,20 @@ broadcast via internet (if connected) upon loading a session, f 42
 #X obj 221 754 list prepend;
 #X obj 172 619 t b;
 #X obj 57 205 route report;
-#X obj 96 432 list prepend;
-#X obj 165 251 counter;
+#X obj 96 432 list prepend, f 14;
+#X obj 177 251 counter;
 #X obj 57 184 gate 1 0;
 #X obj 57 145 t b 0;
 #X obj 102 34 r local-report-response;
-#X obj 165 274 t f f;
-#X obj 126 229 t b l b;
-#X msg 192 321 1;
 #X obj 26 378 gate 1 0;
 #X obj 26 403 t b 0;
 #X obj 618 226 t b 0;
-#X obj 192 296 sel 1884;
-#X text 105 346 REMINDER: update the 1884 value in case more variables
-are added later. this allows for deterministic session saving. Removed
-delay and did a proper bug fix for version 0.76., f 31;
+#X obj 126 229 t b l l b;
+#X obj 160 274 route 1;
+#X obj 160 297 route reverb-type;
+#X msg 160 320 1;
+#X text 133 350 1 reverb-type is the last message that is received
+\, so we monitor for it to know when to save the file, f 24;
 #X connect 0 0 8 1;
 #X connect 0 2 61 0;
 #X connect 1 0 15 0;
@@ -1503,7 +1502,7 @@ delay and did a proper bug fix for version 0.76., f 31;
 #X connect 8 0 42 0;
 #X connect 8 1 63 0;
 #X connect 10 0 16 0;
-#X connect 11 0 78 0;
+#X connect 11 0 75 0;
 #X connect 12 0 2 0;
 #X connect 12 1 1 0;
 #X connect 12 2 15 1;
@@ -1569,25 +1568,25 @@ delay and did a proper bug fix for version 0.76., f 31;
 #X connect 64 0 65 1;
 #X connect 65 0 27 0;
 #X connect 66 0 65 0;
-#X connect 67 1 74 0;
+#X connect 67 1 76 0;
 #X connect 68 0 0 0;
-#X connect 69 0 73 0;
+#X connect 69 0 68 1;
 #X connect 70 0 67 0;
 #X connect 71 0 11 1;
 #X connect 71 1 70 0;
 #X connect 72 0 70 1;
-#X connect 73 0 68 1;
-#X connect 73 1 79 0;
-#X connect 74 0 76 1;
-#X connect 74 1 68 0;
-#X connect 74 2 69 0;
-#X connect 75 0 76 0;
-#X connect 76 0 77 0;
-#X connect 77 0 71 0;
-#X connect 77 1 76 0;
-#X connect 78 0 17 0;
-#X connect 78 1 11 0;
-#X connect 79 0 75 0;
+#X connect 73 0 74 0;
+#X connect 74 0 71 0;
+#X connect 74 1 73 0;
+#X connect 75 0 17 0;
+#X connect 75 1 11 0;
+#X connect 76 0 73 1;
+#X connect 76 1 68 0;
+#X connect 76 2 77 0;
+#X connect 76 3 69 0;
+#X connect 77 0 78 0;
+#X connect 78 0 79 0;
+#X connect 79 0 73 0;
 #X restore 359 52 pd load-save-session;
 #N canvas 245 505 450 324 version 0;
 #X obj 177 51 loadbang;
@@ -1600,7 +1599,7 @@ delay and did a proper bug fix for version 0.76., f 31;
 #X text 99 75 DEBUG;
 #X obj 177 168 sprintf L2Ork Tweeter v.%.02f by;
 #X obj 177 193 tosymbol;
-#X msg 177 76 0.8;
+#X msg 177 76 0.81;
 #X connect 0 0 10 0;
 #X connect 1 0 8 0;
 #X connect 1 1 2 0;

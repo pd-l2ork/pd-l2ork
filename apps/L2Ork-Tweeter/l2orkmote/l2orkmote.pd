@@ -1,13 +1,13 @@
 #N canvas 72 166 1311 565 10;
 #X obj 199 359 disis_wiimote_legacy;
 #X obj 199 17 bng 40 250 50 0 empty l2orkmote-pair-button PAIR 8 20
-0 10 #28f4f4 #202020 #202020 1;
+0 10 #fc2828 #202020 #202020 1;
 #X msg 266 338 disconnect;
 #X obj 266 297 gate 1 0;
 #X msg 316 408 reportAcceleration \$1 \, reportExpansion \$1 \, togglePassthrough
 \$1, f 22;
 #X obj 210 318 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 1 1 1;
+#000000 0 1 1;
 #X obj 210 338 metro 25;
 #N canvas 566 54 638 521 l2ork_wiimote_connect 0;
 #X obj 41 143 shell;
@@ -72,15 +72,15 @@
 #X connect 27 0 26 0;
 #X restore 199 136 pd l2ork_wiimote_connect;
 #X obj 241 17 bng 40 250 50 0 l2orkmote-left-plus-calibrate l2orkmote-left-plus-calibrate-button
-LEFT 8 20 0 10 #14e814 #202020 #202020 1;
+LEFT 8 20 0 10 #202020 #202020 #fcfcfc 1;
 #X msg 199 246 connect \$1;
 #X obj 199 226 tosymbol;
 #X obj 283 17 bng 40 250 50 0 l2orkmote-right-plus-calibrate l2orkmote-right-plus-calibrate-button
-RIGHT 5 20 0 10 #14e814 #202020 #202020 1;
+RIGHT 5 20 0 10 #202020 #202020 #fcfcfc 1;
 #X obj 266 317 t b;
 #X obj 813 359 disis_wiimote_legacy;
 #X obj 824 318 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 1 1 1;
+#000000 0 1 1;
 #X obj 824 338 metro 25;
 #X msg 930 408 reportAcceleration \$1 \, reportExpansion \$1 \, togglePassthrough
 \$1, f 22;
@@ -103,7 +103,7 @@ RIGHT 5 20 0 10 #14e814 #202020 #202020 1;
 #X obj 70 182 average 2;
 #X obj 70 101 unpack 0 0 0;
 #X obj 70 204 nbx 5 14 -1 1 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 -0.0208333 256 0 0 1 0;
+#000000 #000000 0 256 0 0 1 0;
 #X obj 70 47 inlet;
 #X text 70 244 lower arm forward pitch -1 to 1;
 #X obj 70 69 t l l;
@@ -362,7 +362,7 @@ RIGHT 5 20 0 10 #14e814 #202020 #202020 1;
 #X obj 71 101 unpack 0 0 0;
 #X obj 71 69 t l l;
 #X obj 71 402 nbx 5 14 -2.5 2.5 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0.387048 256 0 0 1 0;
+#000000 #000000 0 256 0 0 1 0;
 #X obj 71 478 > 0.4;
 #X obj 108 478 > 1;
 #X obj 133 478 > 1.75;
@@ -450,7 +450,7 @@ RIGHT 5 20 0 10 #14e814 #202020 #202020 1;
 #X obj 388 215 pow 0.4;
 #X obj 389 627 gate 1 1;
 #X obj 449 333 nbx 5 14 0 1e+37 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0.004657 256 0 0 1 0;
+#000000 #000000 0 256 0 0 1 0;
 #X obj 388 194 average 2;
 #X obj 388 279 t f f f;
 #X obj 434 419 moses 1;
@@ -669,7 +669,7 @@ RIGHT 5 20 0 10 #14e814 #202020 #202020 1;
 #X obj 71 101 unpack 0 0 0;
 #X obj 71 69 t l l;
 #X obj 71 402 nbx 5 14 -2.5 2.5 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 1.61 256 0 0 1 0;
+#000000 #000000 0 256 0 0 1 0;
 #X obj 71 478 > 0.4;
 #X obj 108 478 > 1;
 #X obj 133 478 > 1.75;
@@ -726,7 +726,7 @@ RIGHT 5 20 0 10 #14e814 #202020 #202020 1;
 #X obj 70 182 average 2;
 #X obj 70 101 unpack 0 0 0;
 #X obj 70 204 nbx 5 14 -1 1 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 -0.0588235 256 0 0 1 0;
+#000000 #000000 0 256 0 0 1 0;
 #X obj 70 47 inlet;
 #X obj 70 69 t l l;
 #X text 70 244 lower hand forward pitch -1 to 1;
@@ -847,7 +847,7 @@ RIGHT 5 20 0 10 #14e814 #202020 #202020 1;
 #X obj 70 182 average 2;
 #X obj 70 101 unpack 0 0 0;
 #X obj 70 204 nbx 5 14 -1 1 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 -0.0384615 256 0 0 1 0;
+#000000 #000000 0 256 0 0 1 0;
 #X obj 70 47 inlet;
 #X text 70 244 lower arm forward pitch -1 to 1;
 #X obj 70 69 t l l;
@@ -1099,7 +1099,7 @@ RIGHT 5 20 0 10 #14e814 #202020 #202020 1;
 #X obj 70 182 average 2;
 #X obj 70 101 unpack 0 0 0;
 #X obj 70 204 nbx 5 14 -1 1 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 -0.489796 256 0 0 1 0;
+#000000 #000000 0 256 0 0 1 0;
 #X obj 70 47 inlet;
 #X obj 70 69 t l l;
 #X text 70 244 lower hand forward pitch -1 to 1;
@@ -1150,7 +1150,7 @@ RIGHT 5 20 0 10 #14e814 #202020 #202020 1;
 #X obj 388 209 pow 0.4;
 #X obj 389 621 gate 1 1;
 #X obj 449 327 nbx 5 14 0 1e+37 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0.00449109 256 0 0 1 0;
+#000000 #000000 0 256 0 0 1 0;
 #X obj 388 188 average 2;
 #X obj 388 273 t f f f;
 #X obj 434 413 moses 1;
@@ -1526,7 +1526,7 @@ RIGHT 5 20 0 10 #14e814 #202020 #202020 1;
 #X msg 226 279 1;
 #X msg 199 279 0;
 #X obj 54 418 nbx 5 14 -1 1 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 1 256 0 0 1 0;
+#000000 #000000 0 256 0 0 1 0;
 #X obj 14 367 sel 0;
 #X obj 199 346 s l2orkmote-left-plus-connection;
 #X obj 297 385 change -1;
@@ -1690,7 +1690,7 @@ if($f2>$f3 \, 2 \, 1)))) \, 0) \; if(sqrt(pow($f2 \, 2)+pow($f1 \,
 #X obj 71 81 unpack 0 0 0;
 #X obj 71 49 t l l;
 #X obj 71 392 nbx 5 14 -2.5 2.5 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 -2.36516 256 0 0 1 0;
+#000000 #000000 0 256 0 0 1 0;
 #X obj 71 468 > 0.4;
 #X obj 108 468 > 1;
 #X obj 133 468 > 1.75;
@@ -1755,7 +1755,7 @@ if($f2>$f3 \, 2 \, 1)))) \, 0) \; if(sqrt(pow($f2 \, 2)+pow($f1 \,
 #X obj 71 81 unpack 0 0 0;
 #X obj 71 49 t l l;
 #X obj 71 392 nbx 5 14 -2.5 2.5 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 -1.52553 256 0 0 1 0;
+#000000 #000000 0 256 0 0 1 0;
 #X obj 71 468 > 0.4;
 #X obj 108 468 > 1;
 #X obj 133 468 > 1.75;
@@ -1826,7 +1826,7 @@ if($f2>$f3 \, 2 \, 1)))) \, 0) \; if(sqrt(pow($f2 \, 2)+pow($f1 \,
 #X msg 226 303 1;
 #X msg 199 303 0;
 #X obj 54 442 nbx 5 14 -1 1 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 -1 256 0 0 1 0;
+#000000 #000000 0 256 0 0 1 0;
 #X obj 14 391 sel 0;
 #X obj 297 409 change -1;
 #X obj 54 185 expr if(abs($f2) >= abs($f1) \, \\$f2 \, \\$f1);
@@ -1981,14 +1981,14 @@ if($f2>$f3 \, 2 \, 1)))) \, 0) \; if(sqrt(pow($f2 \, 2)+pow($f1 \,
 #X restore 913 521 pd l2orkmote_right_plus_direction;
 #X obj 199 67 t b -1 b 0;
 #X obj 1013 171 pddplink L2OrkmoteAPI.txt;
-#X text 1013 33 L2Orkmote abstraction version 1.0by Ivica Ico Bukvic
-(c) 2019ico.bukvic.netl2ork.icat.vt.eduAPI information is found
-in~/L2Ork/PD/Abstractions/L2OrkmoteAPI.txtYou can also access it
-by clicking on thelink below.;
 #X obj 25 318 l2orkmote-receive message 1;
 #X obj 637 318 l2orkmote-receive message 2;
 #X obj 373 386 s l2orkmote-left-connection;
 #X obj 987 386 s l2orkmote-right-connection;
+#X text 1013 33 L2Orkmote abstraction version 1.0by Ivica Ico Bukvic
+(c) 2019ico.bukvic.netl2ork.icat.vt.eduAPI information is found
+inL2OrkmoteAPI.txtYou can also access it by clicking on thelink
+below.;
 #X connect 0 0 36 0;
 #X connect 0 1 31 0;
 #X connect 0 1 33 0;
@@ -2045,12 +2045,12 @@ by clicking on thelink below.;
 #X connect 20 0 14 0;
 #X connect 20 0 17 0;
 #X connect 20 0 40 2;
-#X connect 20 0 59 0;
+#X connect 20 0 58 0;
 #X connect 21 0 4 0;
 #X connect 21 0 19 0;
 #X connect 21 0 5 0;
 #X connect 21 0 40 0;
-#X connect 21 0 58 0;
+#X connect 21 0 57 0;
 #X connect 22 0 13 0;
 #X connect 23 0 24 0;
 #X connect 24 0 22 0;
@@ -2073,6 +2073,6 @@ by clicking on thelink below.;
 #X connect 53 2 3 1;
 #X connect 53 2 23 1;
 #X connect 53 3 19 1;
-#X connect 56 0 0 0;
-#X connect 57 0 13 0;
+#X connect 55 0 0 0;
+#X connect 56 0 13 0;
 #X coords 0 -1 1 1 128 44 2 197 15;
