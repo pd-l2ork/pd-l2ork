@@ -1,0 +1,231 @@
+#N canvas 674 263 870 615 10;
+#X obj 19 419 cnv 15 296 170 empty empty empty 20 12 0 14 #c4c4c4 #404040
+0;
+#X msg 19 38 chat admin p:l2orklicious l2ork-sync-all;
+#X obj 19 394 s chat-out;
+#X obj 76 317 tgl 27 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1 1;
+#X obj 35 442 r l2ork-custom;
+#X msg 35 511 \; main-out-multiplier-r \$1;
+#X obj 195 511 sel 0 1;
+#X obj 195 557 s intro-stop;
+#X obj 214 534 s intro-start;
+#X msg 108 327 0;
+#X text 161 431 part for all performers;
+#N canvas 1208 192 450 300 (subpatch) 0;
+#X array grapevine-L 2.4091e+06 float 0 black black;
+#X coords 0 1 2.4091e+06 -1 88 59 1;
+#X scroll 1;
+#X editable 0;
+#X restore 455 20 graph;
+#X obj 435 113 soundfiler;
+#N canvas 1066 397 450 300 (subpatch) 0;
+#X array grapevine-R 2.4091e+06 float 0 black black;
+#X coords 0 1 2.4091e+06 -1 88 59 1;
+#X scroll 1;
+#X editable 0;
+#X restore 545 20 graph;
+#X obj 640 236 line~;
+#X obj 654 436 dac~;
+#X obj 584 296 tabread~ grapevine-L;
+#X obj 724 296 tabread~ grapevine-R;
+#X msg 640 211 0 \, 54628 54628;
+#X obj 601 360 vline~;
+#X obj 724 396 *~;
+#X obj 584 396 *~;
+#X obj 601 164 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000 1;
+#X obj 492 137 print soundfiler;
+#X msg 435 88 read grapevine.wav grapevine-L grapevine-R;
+#X obj 376 41 loadbang;
+#X msg 376 88 \; pd dsp 1;
+#X obj 452 352 ==~ 1;
+#X obj 452 375 edge~;
+#X msg 594 488 chat admin p:l2orklicious l2ork-sync-all;
+#X msg 479 525 chat admin p:l2orklicious l2ork-custom main-out-multiplier-r
+\$1;
+#X obj 479 450 line 0 10;
+#X obj 479 475 pow 2;
+#X obj 479 500 * 101;
+#X obj 594 572 s chat-out;
+#X msg 56 367 chat admin p:l2orklicious l2ork-custom intro \$1;
+#X obj 56 246 tgl 27 0 empty empty empty 17 7 0 10 #ffadad #000000
+#000000 0 1 1;
+#X obj 601 139 r intro-start;
+#X obj 497 190 r intro-stop;
+#X msg 497 252 0 100;
+#X obj 452 329 vline~;
+#X obj 601 189 t b b b;
+#X msg 479 425 \$1 5000;
+#X obj 479 398 t 1 b;
+#X obj 56 280 t f b;
+#X text 84 246 start/stop intro;
+#X obj 37 178 hradio 15 0 0 3 empty empty empty 0 -8 0 10 #fcfcfc #000000
+#000000 0 1;
+#X msg 200 217 chat admin p:l2orklicious l2ork-inst-level-list-at 12
+63 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1, f 37;
+#N canvas 1003 545 340 254 load_session 0;
+#X obj 20 20 inlet;
+#X obj 20 216 outlet;
+#X msg 20 191 chat admin p:l2orklicious l2ork-load \$1;
+#X obj 20 160 tosymbol;
+#X msg 20 115 grapevine-start;
+#X msg 132 115 grapevine-mid;
+#X msg 232 115 grapevine-end;
+#X obj 20 45 sel 0 1 2;
+#X connect 0 0 7 0;
+#X connect 2 0 1 0;
+#X connect 3 0 2 0;
+#X connect 4 0 3 0;
+#X connect 5 0 3 0;
+#X connect 6 0 3 0;
+#X connect 7 0 4 0;
+#X connect 7 1 5 0;
+#X connect 7 2 6 0;
+#X restore 37 201 pd load_session;
+#X text 85 177 load saved grapevine session;
+#X text 200 197 mute all on downbeat of the part 12;
+#X obj 452 307 gate 1 0;
+#X obj 452 288 tgl 15 0 empty empty empty 17 7 0 10 #ffadad #000000
+#000000 0 1 1;
+#X text 332 270 enable on master patch;
+#X msg 601 321 0.75 \, 0 7804 46824;
+#X msg 120 293 chat admin p:l2orklicious l2ork-disconnect \$1;
+#X floatatom 120 270 5 0 0 0 - - - 0 0 1, f 5;
+#X text 156 270 disconnect user;
+#N canvas 87 497 657 473 sync-to-at 0;
+#X obj 446 52 inlet;
+#X obj 463 167 r;
+#X msg 480 143 set \$1-tracker-sync;
+#X obj 463 216 ==, f 11;
+#X obj 463 241 sel 1;
+#X obj 463 191 change -1;
+#X obj 446 76 unpack 0 0 0;
+#X obj 463 401 s;
+#X obj 502 401 s;
+#X obj 211 294 t f f;
+#X obj 515 113 t f f;
+#X obj 463 317 f, f 14;
+#X obj 463 266 t b 0, f 11;
+#X text 39 77 sync-to-at <clientnum 1-12> <sync-to-client-num 1-12>
+<time 0-63>, f 66;
+#X msg 211 343 symbol \$1-tracker-override;
+#X msg 238 317 symbol \$1-tracker-position-override;
+#X obj 463 342 t 1 0 f;
+#X connect 0 0 6 0;
+#X connect 1 0 5 0;
+#X connect 2 0 1 1;
+#X connect 3 0 4 0;
+#X connect 4 0 12 0;
+#X connect 5 0 3 0;
+#X connect 6 0 9 0;
+#X connect 6 1 2 0;
+#X connect 6 2 10 0;
+#X connect 9 0 14 0;
+#X connect 9 1 15 0;
+#X connect 10 0 3 1;
+#X connect 10 1 11 1;
+#X connect 11 0 16 0;
+#X connect 12 0 11 0;
+#X connect 12 1 2 0;
+#X connect 14 0 7 1;
+#X connect 15 0 8 1;
+#X connect 16 0 7 0;
+#X connect 16 1 7 0;
+#X connect 16 2 8 0;
+#X restore 209 489 pd sync-to-at;
+#X obj 35 466 route main-out-multiplier-r intro sync-to-at;
+#X text 326 572 transcontinental grapevine (c) 2022-3;
+#X msg 19 15 chat admin p:l2orklicious l2ork-custom sync-to-at 5 12
+0;
+#X obj 640 261 *~ 44.1;
+#X text 655 19 39.02 -fade in tweeter46.824-recording xfade out start54.628-next
+phrase starts15.608-is one loop (2 phrases) 7.804-is for most tweeter
+loops;
+#X obj 539 230 f;
+#X msg 539 252 1 \, 0 100 \$1;
+#X obj 431 180 nbx 5 14 -1e+37 1e+37 0 1 empty empty empty 0 -8 0 10
+#ffadad #000000 #000000 39020 256 0 0 1 0;
+#X text 326 418 * 39020ms is the default delay. however \, that is
+only valid if the patch is running close to the server. otherwise \,
+3 x average ping should be subtracted to compensate for message travel
+time between this client and server., f 23;
+#X text 376 162 delay in ms \, see * below;
+#X text 140 327 adjust main out level on all clients;
+#X msg 28 62 chat admin p:l2orklicious l2ork-inst-level-at 10 47 1
+, f 16;
+#X msg 142 62 chat admin p:l2orklicious l2ork-inst-level-at 2 0 10
+\, chat admin p:l2orklicious l2ork-inst-level-at 11 63 10 \, chat admin
+p:l2orklicious l2ork-inst-level-at 4 0 5, f 37;
+#N canvas 727 397 412 139 session-sync 0;
+#X text 30 40 (REQUIRES L2Ork Tweeter Teacher!);
+#X msg 30 60 \; session-sync-offset 0 \; load-session-network-sync
+l2ork-grapevine-take-2-6.1;
+#X text 30 23 load sync from saved grapevine sessions (currently unused)
+;
+#X restore 37 150 pd session-sync;
+#X text 367 15 sync part 5;
+#X text 28 121 part 10 (bass) up;
+#X text 142 134 parts 2 \, 5 \, and 11 up (drop);
+#X obj 376 62 t b b;
+#X connect 1 0 2 0;
+#X connect 3 0 31 0;
+#X connect 4 0 59 0;
+#X connect 6 0 7 0;
+#X connect 6 1 8 0;
+#X connect 9 0 31 0;
+#X connect 12 1 23 0;
+#X connect 14 0 62 0;
+#X connect 16 0 21 0;
+#X connect 17 0 20 0;
+#X connect 18 0 14 0;
+#X connect 19 0 21 1;
+#X connect 19 0 20 1;
+#X connect 20 0 15 1;
+#X connect 21 0 15 0;
+#X connect 22 0 41 0;
+#X connect 24 0 12 0;
+#X connect 25 0 76 0;
+#X connect 27 0 28 0;
+#X connect 28 1 43 0;
+#X connect 29 0 34 0;
+#X connect 30 0 34 0;
+#X connect 31 0 32 0;
+#X connect 32 0 33 0;
+#X connect 33 0 30 0;
+#X connect 35 0 2 0;
+#X connect 36 0 44 0;
+#X connect 37 0 22 0;
+#X connect 38 0 39 0;
+#X connect 39 0 19 0;
+#X connect 39 0 51 1;
+#X connect 40 0 27 0;
+#X connect 41 0 54 0;
+#X connect 41 1 64 0;
+#X connect 41 2 18 0;
+#X connect 42 0 31 0;
+#X connect 43 0 42 0;
+#X connect 43 1 29 0;
+#X connect 44 0 35 0;
+#X connect 44 1 9 0;
+#X connect 46 0 48 0;
+#X connect 47 0 2 0;
+#X connect 48 0 2 0;
+#X connect 51 0 40 0;
+#X connect 52 0 51 0;
+#X connect 54 0 19 0;
+#X connect 55 0 2 0;
+#X connect 56 0 55 0;
+#X connect 59 0 5 0;
+#X connect 59 1 6 0;
+#X connect 59 2 58 0;
+#X connect 61 0 2 0;
+#X connect 62 0 17 0;
+#X connect 62 0 16 0;
+#X connect 64 0 65 0;
+#X connect 65 0 51 1;
+#X connect 66 0 64 1;
+#X connect 70 0 2 0;
+#X connect 71 0 2 0;
+#X connect 76 0 26 0;
+#X connect 76 1 24 0;

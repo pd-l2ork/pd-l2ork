@@ -1,0 +1,119 @@
+#N canvas 10 467 455 615 10;
+#X obj 19 419 cnv 15 296 170 empty empty empty 20 12 0 14 #c4c4c4 #404040
+0;
+#X msg 19 38 chat admin p:l2orklicious l2ork-sync-all;
+#X obj 19 394 s chat-out;
+#X obj 35 442 r l2ork-custom;
+#X msg 35 511 \; main-out-multiplier-r \$1;
+#X obj 195 511 sel 0 1;
+#X obj 195 557 s intro-stop;
+#X obj 214 534 s intro-start;
+#X text 161 431 part for all performers;
+#X obj 37 239 hradio 15 0 0 3 empty empty empty 0 -8 0 10 #fcfcfc #000000
+#000000 0 1;
+#X msg 160 287 chat admin p:l2orklicious l2ork-inst-level-list-at 12
+63 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1, f 37;
+#N canvas 782 403 340 289 load_session 0;
+#X obj 20 20 inlet;
+#X obj 20 236 outlet;
+#X msg 20 211 chat admin p:l2orklicious l2ork-load \$1;
+#X obj 20 180 tosymbol;
+#X obj 20 45 sel 0 1 2;
+#X msg 54 141 canada-hosts-mario;
+#X msg 37 114 canada-mid;
+#X msg 20 85 canada-start-24-3;
+#X connect 0 0 4 0;
+#X connect 2 0 1 0;
+#X connect 3 0 2 0;
+#X connect 4 0 7 0;
+#X connect 4 1 6 0;
+#X connect 4 2 5 0;
+#X connect 5 0 3 0;
+#X connect 6 0 3 0;
+#X connect 7 0 3 0;
+#X restore 37 262 pd load_session;
+#X text 160 267 mute all on downbeat of the part 12;
+#X msg 80 363 chat admin p:l2orklicious l2ork-disconnect \$1;
+#X floatatom 80 340 5 0 0 0 - - - 0 0 1, f 5;
+#X text 116 340 disconnect user;
+#N canvas 87 497 657 473 sync-to-at 0;
+#X obj 446 52 inlet;
+#X obj 463 167 r;
+#X msg 480 143 set \$1-tracker-sync;
+#X obj 463 216 ==, f 11;
+#X obj 463 241 sel 1;
+#X obj 463 191 change -1;
+#X obj 446 76 unpack 0 0 0;
+#X obj 463 401 s;
+#X obj 502 401 s;
+#X obj 211 294 t f f;
+#X obj 515 113 t f f;
+#X obj 463 317 f, f 14;
+#X obj 463 266 t b 0, f 11;
+#X text 39 77 sync-to-at <clientnum 1-12> <sync-to-client-num 1-12>
+<time 0-63>, f 66;
+#X msg 211 343 symbol \$1-tracker-override;
+#X msg 238 317 symbol \$1-tracker-position-override;
+#X obj 463 342 t 1 0 f;
+#X connect 0 0 6 0;
+#X connect 1 0 5 0;
+#X connect 2 0 1 1;
+#X connect 3 0 4 0;
+#X connect 4 0 12 0;
+#X connect 5 0 3 0;
+#X connect 6 0 9 0;
+#X connect 6 1 2 0;
+#X connect 6 2 10 0;
+#X connect 9 0 14 0;
+#X connect 9 1 15 0;
+#X connect 10 0 3 1;
+#X connect 10 1 11 1;
+#X connect 11 0 16 0;
+#X connect 12 0 11 0;
+#X connect 12 1 2 0;
+#X connect 14 0 7 1;
+#X connect 15 0 8 1;
+#X connect 16 0 7 0;
+#X connect 16 1 7 0;
+#X connect 16 2 8 0;
+#X restore 209 489 pd sync-to-at;
+#X obj 35 466 route main-out-multiplier-r intro sync-to-at;
+#X msg 19 15 chat admin p:l2orklicious l2ork-custom sync-to-at 5 12
+0;
+#X msg 28 62 chat admin p:l2orklicious l2ork-inst-level-at 10 47 1
+, f 16;
+#N canvas 727 397 412 139 session-sync 0;
+#X text 30 40 (REQUIRES L2Ork Tweeter Teacher!);
+#X msg 30 60 \; session-sync-offset 0 \; load-session-network-sync
+l2ork-grapevine-take-2-6.1;
+#X text 30 23 load sync from saved grapevine sessions (currently unused)
+;
+#X restore 37 150 pd session-sync;
+#X text 367 15 sync part 5;
+#X text 28 121 part 10 (bass) up;
+#X text 85 238 load saved sessions (start \, mid \, end);
+#X msg 142 62 chat admin p:l2orklicious l2ork-inst-level-at 10 40 0.1
+, f 45;
+#X msg 142 95 chat admin p:l2orklicious l2ork-inst-level-at 3 60 0.1
+, f 45;
+#X text 142 127 parts 3 and 10 ending;
+#X text 142 187 part 10 starts 3rd section;
+#X msg 142 155 chat admin p:l2orklicious l2ork-inst-level-at 10 63
+2, f 45;
+#X connect 1 0 2 0;
+#X connect 3 0 17 0;
+#X connect 5 0 6 0;
+#X connect 5 1 7 0;
+#X connect 9 0 11 0;
+#X connect 10 0 2 0;
+#X connect 11 0 2 0;
+#X connect 13 0 2 0;
+#X connect 14 0 13 0;
+#X connect 17 0 4 0;
+#X connect 17 1 5 0;
+#X connect 17 2 16 0;
+#X connect 18 0 2 0;
+#X connect 19 0 2 0;
+#X connect 24 0 2 0;
+#X connect 25 0 2 0;
+#X connect 28 0 2 0;
