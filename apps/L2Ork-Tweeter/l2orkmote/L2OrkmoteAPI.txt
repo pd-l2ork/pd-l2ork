@@ -1,4 +1,4 @@
-L2Orkmote API by Ivica Ico Bukvic (c) 2019
+L2Orkmote API by Ivica Ico Bukvic (c) 2019-2024
 l2ork.icat.vt.edu | ico.bukvic.net
 
 
@@ -6,7 +6,7 @@ l2ork.icat.vt.edu | ico.bukvic.net
 
 
 === CHANGELOG ===
-1.1.0 2024-03-26 TODO
+1.1.0 2024-03-26
 *Figure out how to automate which L2Orkmote you are connecting to. IN PROGRESS
 	*Cannot use whatismywiimote, as that will disable WiFi
 	*Offer discover option
