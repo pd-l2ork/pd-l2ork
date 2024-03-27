@@ -1,0 +1,501 @@
+L2Orkmote API by Ivica Ico Bukvic (c) 2019
+l2ork.icat.vt.edu | ico.bukvic.net
+
+
+
+
+
+=== CHANGELOG ===
+1.1.0 2024-03-26 TODO
+*Figure out how to automate which L2Orkmote you are connecting to. IN PROGRESS
+	*Cannot use whatismywiimote, as that will disable WiFi
+	*Offer discover option
+
+*Disable clearing out the loop OR find another way to do so. Dead space in the middle becomes the commit area.
+	*Letting go of the button does nothing.
+
+*Left hand jolt now becomes clearing of the loop (backspace)
+
+*Switching order on the left hand buttons in mode 1 (1 stays, 3 and 4 become 2 become 3, and 4 stops being used and we use joystick dislocation instead of it--see the last point below in this section).
+	*Be able to change both loop and instrument at the same time (holding 2 and 3 together).
+
+	*Fix documentation for continual changing of instrument to be button 2, not 1 (reconsider this, if necessary and possible).
+
+	*Instead of holding 2 on the left hand in mode 1 to adjust overdrive level, use joystick dislocation from the center without any buttons pressed
+
+*Reverb presets 3 and 4 are reversed
+
+*Transposing down (button 2) also repositions the timebar location (it shouldn't)
+
+Nice to have:
+*Rumble that corresponds with loop notes
+*Share L2Orkmote red slider position over network
+
+
+1.0.2 2022-09-05
+Added l2orkmote-left/right-joystick-centered to allow for users to detect when the joystick is not being moved
+
+1.0.1 2019-10-21
+Added l2orkmote-left/right-button-raw, l2orkmote-left/right-joystick-horizontal-raw, and l2orkmote-left/right-joystick-vertical-raw, and fixed a bug on the right hand accelerometer x send
+
+1.0.0 2019-10-14
+Initial release
+
+
+
+
+
+=== INTRODUCTION ===
+
+All L2Orkmote abstraction sends and receives are hierarchical in their design, starting with l2orkmote, followed by the identification of hand, and then specific item and (if applicable subitem). Calls defined as "receives" are the ones that L2Orkmote can receive and can be used to alter its behavior. Calls defined as "sends" are data that L2Orkmote is outputting to be utilized by the user's patch.
+
+When pairing, the L2Orkmote by default attempts to perfectly pair with the L2Ork station which is contingent on the L2Ork station being networked using the L2Ork Wired Connection profile. If the L2Orkmote fails to detect the network connection it automatically falls back onto the discover mode and reflects that in the pair icon colors. Before pairing, make sure that your bluetooth is enabled and, if possible, the L2Ork Wired Network active and connected.
+
+When disconnected the PAIR button is red, while LEFT and RIGHT buttons are black. Once the PAIR button is clicked, it turns yellow suggesting the connection is being initiated, followed by the LEFT button turning yellow, which suggests, the left L2Orkmote is first to be paired. To pair, press the red sync button found next to the battery pack of the Wiimote component of the L2Orkmote that is worn on user's lower arm. If L2Ork pairing is possible, it should complete within a few seconds. Otherwise, the system will fall back onto the discover mode which may take up to 10 seconds to connect. If a connection fails, the PAIR button will turn red and LEFT will revert to black, and the connection process will move onto the RIGHT L2Orkmote. If the RIGHT L2Orkmote connection fails, the GUI will revert to its disconnected mode (PAIR button red and the rest black). If one of the two L2Orkmotes is successfully connected, either LEFT or RIGHT button will change color (depending which L2Orkmote has successfully connected), while the PAIR button will turn light GREEN (for L2Ork pairing), or CYAN (if the L2Orkmote was connected in discover mode). The LEFT and RIGHT buttons, when connected, will be either yellow, suggesting the connected L2Orkmote lacks the gyro (a.k.a. Plus) calibration, or green, suggesting the calibration file was successfully found. In the event there is no calibration file located in ~/L2Ork/PD/Abstractions/ folder, clicking on the LEFT and/or RIGHT will calibrate the L2Orkmote. To calibrate, hold the L2Orkmote still with a hand facing forward and still. When calibrating, it may be easier to rest the hand onto a surface. In the event both L2Orkmotes have successfully connected, the PAIR button will be either darker GREEN or CYAN, depending if the connections were made via L2Ork pairing or discover mode. If a L2Orkmote disconnects, the disconnect color will be reflected on the GUI buttons. To disconnect and immediately reconnect simply click on the PAIR button. No explicit disconnection is necessary when closing the patch.
+
+The L2Orkmote outputs data every 25ms to allow for finely grained control. Higher rates are unnecessary as the bluetooth stack and the device design appears not to be designed to provide higher resolution, which may result in repeat values to be outputted by the polled disis_wiimote object.
+
+
+
+
+
+=== RECEIVES ===
+
+
+* Overview
+
+l2orkmote-hand-swap (0/1)
+l2orkmote-joystick-mirror (0/1)
+l2orkmote-left/right-plus-calibrate (bang)
+l2orkmote-left/right-plus-calibrate-file-present (0/1)
+l2orkmote-left/right-message (many)
+l2orkmote-left/right-reset-joystick-additive-offset (float)
+l2orkmote-pair-button (bang)
+l2orkmote-plus-direction-absolute-modifier (1/2)
+
+
+* Description
+
+l2orkmote-hand-swap (0/1)
+Swaps left and right L2Orkmote operation for the user. Swapping left/right does not affect the clockwise/counterclockwise operation of the joystick. 0 keeps it as originally assigned, while 1 changes it to the opposite (e.g. left hand is assigned right hand's output). This option is useful for dealing with handedness.
+
+l2orkmote-joystick-mirror (0/1)
+Swaps between clockwise and counterclockwise operation of both joysticks. 0 keeps it as originally assigned, while 1 changes it to the opposite. This option is useful for dealing with handedness.
+
+l2orkmote-left-plus-calibrate (bang)
+Signal generated by the L2Orkmote GUI that can be also used to calibrate the plus gyro of the left L2Orkmote.
+
+l2orkmote-left-plus-calibrate-file-present (0/1)
+Reports whether L2Orkmote has located a motion plus calibration file located in ~/L2Ork/PD/Abstractions folder, 1 for yes and 0 for no.
+
+l2orkmote-left-message (many)
+Send custom messages to the disis_wiimote object managing the left L2Orkmote connection. Depending on whether the l2orkmote-hand-swap is enabled, this object points to either the left L2Orkmote (swap off, default) or the right L2Orkmote (swap on). See disis_wiimote-help.pd for more info.
+
+l2orkmote-left-reset-joystick-additive-offset (float)
+Resets the offset used in l2orkmote_left_joystick_angle_clockwise/counterclockwise_analog/six/twelve_additive* family of sends to a desired value. See those sends for more info.
+
+l2orkmote-pair-button (bang)
+Signal generated by the L2Orkmote GUI that can be also used to connect L2Orkmotes. The system automatically either does perfect pairing or falls back onto the discovery mode in case it does not detect the default L2Ork environment.
+
+l2orkmote-plus-direction-absolute-modifier (1/2)
+Select whether you wish to use arm roll or hand roll of both L2Orkmotes to calculate absolute direction of the L2Orkmote's movement. By default the L2Orkmote's gyro detects movement upwards as a direction in which the joystick points, regardless of the hand and arm rotation. This value allows for the l2orkmote-left-plus-direction-absolute-4/8 to always interpret upwards and other directions to be absolute (e.g. upwards is always upward regardless of the hand or arm rotation) by factoring in either arm (1, default) or hand (2) rotation. Please note that the l2orkmote-left/right-plus-direction-absolute-analog relies only on the hand roll.
+
+l2orkmote-right-plus-calibrate (bang)
+Signal generated by the L2Orkmote GUI that can be also used to calibrate the plus gyro of the right L2Orkmote.
+
+l2orkmote-right-plus-calibrate-file-present (0/1)
+Reports whether L2Orkmote has located a motion plus calibration file located in ~/L2Ork/PD/Abstractions folder, 1 for yes and 0 for no.
+
+l2orkmote-right-message (many)
+Send custom messages to the disis_wiimote object managing the right L2Orkmote connection. See disis_wiimote-help.pd for more info. Depending on whether the l2orkmote-hand-swap is enabled, this object points to either the right L2Orkmote (swap off, default) or the left L2Orkmote (swap on).
+
+l2orkmote-right-reset-joystick-additive-offset (float)
+Resets the offset used in l2orkmote_right_joystick_angle_clockwise/counterclockwise_analog/six/twelve_additive* family of sends to a desired value. See those sends for more info.
+
+
+
+
+
+=== SENDS ===
+
+
+* Overview
+
+l2orkmote-left/right-arm-accel-x (approx. -5 to 5)
+l2orkmote-left/right-arm-accel-y (approx. -5 to 5)
+l2orkmote-left/right-arm-accel-z (approx. -5 to 5)
+l2orkmote-left/right-arm-jolt (bang)
+l2orkmote-left/right-arm-pitch-forward (-1 to 1)
+l2orkmote-left/right-arm-roll (-2.5 to 2.5)
+l2orkmote-left/right-button-1 (0/1)
+l2orkmote-left/right-button-2 (0/1)
+l2orkmote-left/right-button-3 (0/1)
+l2orkmote-left/right-button-4 (0/1)
+l2orkmote-left/right-button-all (0/1)
+l2orkmote-left/right-button-raw (float)
+l2orkmote-left/right-connect (bang)
+l2orkmote-left/right-connection (0/1)
+l2orkmote-left/right-hand-accel-x (approx. -5 to 5)
+l2orkmote-left/right-hand-accel-y (approx. -5 to 5)
+l2orkmote-left/right-hand-accel-z (approx. -5 to 5)
+l2orkmote-left/right-hand-jolt (bang)
+l2orkmote-left/right-hand-pitch-forward (-1 to 1)
+l2orkmote-left/right-hand-roll (-2.5 to 2.5)
+l2orkmote-left/right-joystick-angle-clockwise-analog (0-359)
+l2orkmote-left/right-joystick-angle-clockwise-analog-additive (float)
+l2orkmote-left/right-joystick-angle-clockwise-analog-6 (0-5)
+l2orkmote-left/right-joystick-angle-clockwise-analog-6-additive (float)
+l2orkmote-left/right-joystick-angle-clockwise-analog-12 (0-11)
+l2orkmote-left/right-joystick-angle-clockwise-analog-12-additive (float)
+l2orkmote-left/right-joystick-angle-counterclockwise-analog (0-359)
+l2orkmote-left/right-joystick-angle-counterclockwise-analog-additive (float)
+l2orkmote-left/right-joystick-angle-counterclockwise-analog-6 (0-5)
+l2orkmote-left/right-joystick-angle-counterclockwise-analog-6-additive (float)
+l2orkmote-left/right-joystick-angle-counterclockwise-analog-12 (0-11)
+l2orkmote-left/right-joystick-angle-counter-clockwise-12-additive (float)
+l2orkmote-left/right-joystick-centered (0/1)
+l2orkmote-left/right-joystick-horizontal (-127 to 127*)
+l2orkmote-left/right-joystick-horizontal-raw (0-255*)
+l2orkmote-left/right-joystick-vertical (-127 to 127*)
+l2orkmote-left/right-joystick-vertical-raw (0-255*)
+l2orkmote-left/right-plus-calibrate-button (bang)
+l2orkmote-left/right-plus-connection (0/1)
+l2orkmote-left/right-plus-direction-absolute-4 (-1 to 4)
+l2orkmote-left/right-plus-direction-absolute-8 (-1 to 7)
+l2orkmote-left/right-plus-direction-absolute-analog (-1 to 359)
+l2orkmote-left/right-plus-direction-relative-4 (-1 to 4)
+l2orkmote-left/right-plus-direction-relative-8 (-1 to 7)
+l2orkmote-left/right-plus-direction-relative-analog (-1 to 359)
+l2orkmote-left/right-plus-horizontal (-8192 or 8192*)
+l2orkmote-left/right-plus-motion (-1 to 1)
+l2orkmote-left/right-plus-vertical (-8192 or 8192*)
+l2orkmote-left/right-plus-roll (-8192 or 8192*)
+
+
+* Left L2Orkmote Sends Description
+
+l2orkmote-left-arm-accel-x (approx. -5 to 5)
+Provides raw X axis accelerometer component of the left arm component of the L2Orkmote. It is synonymous to the Wiimote accelerometer output.
+
+l2orkmote-left-arm-accel-y (approx. -5 to 5)
+Provides raw Y axis accelerometer component of the left arm component of the L2Orkmote. It is synonymous to the Wiimote accelerometer output.
+
+l2orkmote-left-arm-accel-z (approx. -5 to 5)
+Provides raw Z axis accelerometer component of the left arm component of the L2Orkmote. It is synonymous to the Wiimote accelerometer output.
+
+l2orkmote-left-arm-jolt (bang)
+Outputs bang whenever a sudden drum-like jolt is sensed by the left arm accelerometer. This one is typically triggered by a sudden and small forward arm movement or jolt stemming from the shoulder.
+
+l2orkmote-left-arm-pitch-forward (-1 to 1)
+Provides current pitch of the left arm component of the L2Orkmote with -1 being completely down, 0 being horizontal, and 1 being completely vertical pointing up. It only accurately measures the pitch with the arm facing forward in respect to the torso. The accelerometer values are ignored during jolts and sudden movements that may provide inaccurate readouts.
+
+l2orkmote-left-arm-roll (-2.5 to 2.5)
+Provides current left arm roll within the reasonable range ranging from twisting left with the joystick pointing to the left (with hand's index facing forward), to default horizontal with the joystick pointing upwards), to hand and arm being twisted clockwise with the joystick pointing downwards.
+
+l2orkmote-left-button-1 (0/1)
+Sends 1 whenever the index finger button is pressed and 0 when it is released. Outputs only when the state has changed.
+
+l2orkmote-left-button-2 (0/1)
+Sends 1 whenever the middle finger button is pressed and 0 when it is released. Outputs only when the state has changed.
+
+l2orkmote-left-button-3 (0/1)
+Sends 1 whenever the ring finger button is pressed and 0 when it is released. Outputs only when the state has changed.
+
+l2orkmote-left-button-4 (0/1)
+Sends 1 whenever the little finger button is pressed and 0 when it is released. Outputs only when the state has changed.
+
+l2orkmote-left-button-all (0/1)
+Convenience send that reports when all 4 buttons are pressed on the left L2Orkmote.
+
+l2orkmote-left-button-raw (float)
+A binary op friendly output of button activity on the left L2Orkmote based on the Wiimote's output. Sends 0 for no button pressed, 1 for button 4, 2 for button 3, 4 for button 2 , and 8 for button 1, as well as their additions. For instance, buttons 4 and 3 pressed together will result in an output of 3, while all four buttons pressed will result in output being 15.
+
+l2orkmote-left-connection (0/1)
+Reports whether the left L2Orkmote is connected (1) or not (0).
+
+l2orkmote-left-hand-accel-x (approx. -5 to 5)
+Provides raw X axis accelerometer component of the left hand component of the L2Orkmote. It is synonymous to the Nunchuk accelerometer output.
+
+l2orkmote-left-hand-accel-y (approx. -5 to 5)
+Provides raw Y axis accelerometer component of the left hand component of the L2Orkmote. It is synonymous to the Nunchuk accelerometer output.
+
+l2orkmote-left-hand-accel-z (approx. -5 to 5)
+Provides raw Z axis accelerometer component of the left hand component of the L2Orkmote. It is synonymous to the Nunchuk accelerometer output.
+
+l2orkmote-left-hand-jolt (bang)
+Outputs bang whenever a sudden drum-like jolt is sensed by the left hand accelerometer. This one is typically triggered by a sudden and small hand movement or jolt stemming from the wrist with the palm facing the ground.
+
+l2orkmote-left-hand-roll (-2.5 to 2.5)
+Provides current left hand roll within the reasonable range ranging from twisting left with the joystick pointing to the left (with hand's index facing forward), to default horizontal with the joystick pointing upwards), to hand and arm being twisted clockwise with the joystick pointing downwards.
+
+l2orkmote-left-hand-pitch-forward (-1 to 1)
+Provides current pitch of the left hand component of the L2Orkmote with -1 being completely down, 0 being horizontal, and 1 being completely vertical pointing up. It only accurately measures the pitch with the hand facing forward in respect to the torso.
+
+l2orkmote-left-joystick-angle-clockwise-analog (0-359)
+Outputs the left joystick's clockwise angle in degrees with joystick up being 0, right being 90, bottom, 180, and left 270. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-left-joystick-angle-clockwise-analog-additive (float)
+Outputs the left joystick's angle in degrees with joystick up being 0, right being 90, bottom, 180, and left 270, and adds to every complete circle in each direction. For instance, when moving the joystick clockwise, after making a full circle and arriving to 359 immediately to the left from the top, the move to top and top-right will make it 360, 361, etc. The same is true for the opposite direction. The triggering area for addition is from 300 to 60 degrees, so jumping up a full circle can be accomplished by going to the center then to the top-left, sliding to top-right, and going back to the center. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-left-joystick-angle-clockwise-analog-6 (0-5)
+Outputs the left joystick's angle in degrees with joystick up being 0, and the rest of the circle split into 5 more states for a total of 6 positions (0-6) ordered clockwise that match notches in the joystick's movement area edges. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-left-joystick-angle-clockwise-analog-6-additive (float)
+Outputs the left joystick's angle in degrees with joystick up being 0, and the rest of the circle split into 5 more states for a total of 6 positions (0-6) ordered clockwise, and adds to every complete circle in each direction. For instance, when moving the joystick clockwise, after making a full circle and arriving to 5 immediately to the left from the top, the move to top and top-right will make it 6, 7 etc. The same is true for the opposite direction. The triggering area for addition is from 300 to 60 degrees, so jumping up a full circle can be accomplished by going to the center then to the top-left, sliding to top-right, and going back to the center. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-left-joystick-angle-clockwise-analog-12 (0-11)
+Outputs the left joystick's angle in degrees with joystick up being 0, and the rest of the circle split into 11 more states for a total of 12 positions (0-11) ordered clockwise. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-left-joystick-angle-clockwise-analog-12-additive (float)
+Outputs the left joystick's angle in degrees with joystick up being 0, and the rest of the circle split into 11 more states for a total of 12 positions (0-11) ordered clockwise, and adds to every complete circle in each direction. For instance, when moving the joystick clockwise, after making a full circle and arriving to 11 immediately to the left from the top, the move to top and top-right will make it 12, 13 etc. The same is true for the opposite direction. The triggering area for addition is from 300 to 60 degrees, so jumping up a full circle can be accomplished by going to the center then to the top-left, sliding to top-right, and going back to the center. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-left-joystick-angle-counterclockwise-analog (0-359)
+Outputs the left joystick's counterclockwise angle in degrees with joystick up being 0, left being 90, bottom, 180, and right 270. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-left-joystick-angle-counterclockwise-analog-additive (float)
+Outputs the left joystick's angle in degrees with joystick up being 0, left being 90, bottom, 180, and right 270, and adds to every complete circle in each direction. For instance, when moving the joystick counterclockwise, after making a full circle and arriving to 359 immediately to the right from the top, the move to top and top-left will make it 360, 361, etc. The same is true for the opposite direction. The triggering area for addition is from 300 to 60 degrees, so jumping up a full circle can be accomplished by going to the center then to the top-right, sliding to top-left, and going back to the center. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-left-joystick-angle-counterclockwise-analog-6 (0-5)
+Outputs the left joystick's angle in degrees with joystick up being 0, and the rest of the circle split into 5 more states for a total of 6 positions (0-6) ordered counterclockwise that match notches in the joystick's movement area edges. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-left-joystick-angle-counterclockwise-analog-6-additive (float)
+Outputs the left joystick's angle in degrees with joystick up being 0, and the rest of the circle split into 5 more states for a total of 6 positions (0-6) ordered counterclockwise, and adds to every complete circle in each direction. For instance, when moving the joystick counterclockwise, after making a full circle and arriving to 5 immediately to the right from the top, the move to top and top-left will make it 6, 7 etc. The same is true for the opposite direction. The triggering area for addition is from 300 to 60 degrees, so jumping up a full circle can be accomplished by going to the center then to the top-right, sliding to top-left, and going back to the center. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-left-joystick-angle-counterclockwise-analog-12 (0-11)
+Outputs the left joystick's angle in degrees with joystick up being 0, and the rest of the circle split into 11 more states for a total of 12 positions (0-11) ordered counterclockwise. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-left-joystick-angle-counter-clockwise-analog-12-additive (float)
+Outputs the left joystick's angle in degrees with joystick up being 0, and the rest of the circle split into 11 more states for a total of 12 positions (0-11) ordered counterclockwise, and adds to every complete circle in each direction. For instance, when moving the joystick counterclockwise, after making a full circle and arriving to 11 immediately to the right from the top, the move to top and top-left will make it 12, 13 etc. The same is true for the opposite direction. The triggering area for addition is from 300 to 60 degrees, so jumping up a full circle can be accomplished by going to the center then to the top-right, sliding to top-left, and going back to the center. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-left-joystick-centered (0/1)
+Reports whether the left L2Orkmote's joystick is centered (1) or not (0).
+
+l2orkmote-left-joystick-horizontal (-127 to 127*)
+Outputs left joystick's horizontal offset from the center with 0 being no offset and positive values pointing to the right. *Due to varying calibration values and/or wear and tear of the joystick sensor, the offset may be close to 0 but not necessarily zero, so implementing a dead space of +-5 is advised. Also, edge values are not achievable due to the joystick's opening restricting its movement.
+
+l2orkmote-left-joystick-horizontal-raw (0-255*)
+Outputs left L2Orkmote joystick's raw horizontal position with values ranging from 0 to 255 and with the center being approximately 127 and positive values pointing to the right. *Due to varying calibration values and/or wear and tear of the joystick sensor, the center may be close to 127 but not necessarily 127, so implementing a dead space of +-5 is advised. Also, edge values are not achievable due to the joystick's opening restricting its movement.
+
+l2orkmote-left-joystick-vertical (-127 to 127*)
+Outputs left joystick's vertical offset from the center with 0 being no offset and positive values pointing to the top. *Due to varying calibration values and/or wear and tear of the joystick sensor, the offset may be close to 0 but not necessarily zero, so implementing a dead space of +-5 is advised. Also, edge values are not achievable due to the joystick's opening restricting its movement.
+
+l2orkmote-left-joystick-vertical-raw (0-255*)
+Outputs left L2Orkmote joystick's raw vertical position with values ranging from 0 to 255 and with the center being approximately 127 and positive values pointing to the top. *Due to varying calibration values and/or wear and tear of the joystick sensor, the center may be close to 127 but not necessarily 127, so implementing a dead space of +-5 is advised. Also, edge values are not achievable due to the joystick's opening restricting its movement.
+
+l2orkmote-left-plus-calibrate-button (bang)
+Requests calibration of the plus extension on the left L2Orkmote and updates the GUI accordingly.
+
+l2orkmote-left-plus-connection (0/1)
+Indicates whether the left L2Orkmote is connected (1) or not (0).
+
+l2orkmote-left-plus-direction-absolute-4 (-1 to 4)
+Reports 5 possible states of the left L2Orkmote's motion, as reported by the plus extension, regardless of the hand or arm orientation. This functionality requires the plus extension to be calibrated (see l2orkmote-left-plus-calibrate-button). -1 reports no significant motion, 0 reports upwards motion, 1 rightwards, 2 downwards, and 3 leftwards. It is best to combine it with the l2orkmote-left-plus-motion.
+
+l2orkmote-left-plus-direction-absolute-8 (-1 to 7)
+Reports 9 possible states of the left L2Orkmote's motion, as reported by the plus extension, regardless of the hand or arm orientation. This functionality requires the plus extension to be calibrated (see l2orkmote-left-plus-calibrate-button). -1 reports no significant motion, 0 reports upwards motion, 1 up-right, 2 right, 3 down-right, 4 downwards, 5 down-left, 6 leftwards, and 7 up-left. It is best to combine it with l2orkmote-left-plus-motion.
+
+l2orkmote-left-plus-direction-absolute-analog (-1 to 359)
+Reports approximate degree angle of the left L2Orkmote's motion, as reported by the plus extension, regardless of the hand or arm orientation. This functionality requires the plus extension to be calibrated (see l2orkmote-left-plus-calibrate-button). -1 reports no significant motion, while 0-359 reports direction clockwise facing forward. For instance, 0 degrees suggests upwards direction, 45 suggests up-right direction, while 180 downwards. It is best to combine it with l2orkmote-left-plus-motion.
+
+l2orkmote-left-plus-direction-relative-4 (-1 to 4)
+Reports 5 possible states of the left L2Orkmote's motion, as reported by the plus extension, with upwards always facing the direction joystick points towards (with hand's index facing forward). This functionality requires the plus extension to be calibrated (see l2orkmote-left-plus-calibrate-button). -1 reports no significant motion, 0 reports upwards motion, 1 rightwards, 2 downwards, and 3 leftwards. It is best to combine it with the l2orkmote-left-plus-motion.
+
+l2orkmote-left-plus-direction-relative-8 (-1 to 7)
+Reports 9 possible states of the left L2Orkmote's motion, as reported by the plus extension, with upwards always facing the direction joystick points towards (with hand's index facing forward). This functionality requires the plus extension to be calibrated (see l2orkmote-left-plus-calibrate-button). -1 reports no significant motion, 0 reports upwards motion, 1 up-right, 2 right, 3 down-right, 4 downwards, 5 down-left, 6 leftwards, and 7 up-left. It is best to combine it with the l2orkmote-left-plus-motion.
+
+l2orkmote-left-plus-direction-relative-analog (-1 to 359)
+Reports approximate degree angle of the left L2Orkmote's motion, as reported by the plus extension, with upwards always facing the direction joystick points towards (with hand's index facing forward). This functionality requires the plus extension to be calibrated (see l2orkmote-left-plus-calibrate-button). -1 reports no significant motion, while 0-359 reports direction clockwise facing forward. For instance, 0 degrees suggests upwards direction, 45 suggests up-right direction, while 180 downwards. It is best to combine it with l2orkmote-left-plus-motion.
+
+l2orkmote-left-plus-horizontal (-8192 or 8192*)
+Reports left L2Orkmote plus extension's horizontal raw motion with 0 suggesting no motion and positive values suggesting rightward motion. This functionality requires the plus extension to be calibrated (see l2orkmote-left-plus-calibrate-button). *Due to the imperfection of the calibration process and/or wear and tear of the joystick sensor, the offset may be close to 0 but not necessarily zero, so implementing a dead space of +-100 or more is advised.
+
+l2orkmote-left-plus-motion (-1 to 1)
+Reports cumulative motion speed of the left L2Orkmote, as reported by the plus extension. 0 suggests no motion. Motion in either right and/or down directions yield positive values, while left and top directions produce negative values, allowing for optional phase shifts in instrument implementation. Provides dead zone to remove minimal motion and has a high enough resolution to enable tremolo-like effects.
+
+l2orkmote-left-plus-vertical (-8192 or 8192*)
+Reports left L2Orkmote plus extension's vertical raw motion with 0 suggesting no motion and positive values suggesting downward motion. This functionality requires the plus extension to be calibrated (see l2orkmote-left-plus-calibrate-button). *Due to the imperfection of the calibration process and/or wear and tear of the joystick sensor, the offset may be close to 0 but not necessarily zero, so implementing a dead space of +-100 or more is advised.
+
+l2orkmote-left-plus-roll (-8192 or 8192*)
+Reports left L2Orkmote plus extension's roll raw motion with 0 suggesting no motion and positive values suggesting clockwise motion. This functionality requires the plus extension to be calibrated (see l2orkmote-left-plus-calibrate-button). *Due to the imperfection of the calibration process and/or wear and tear of the joystick sensor, the offset may be close to 0 but not necessarily zero, so implementing a dead space of +-100 or more is advised.
+
+
+* Right L2Orkmote Description
+
+l2orkmote-right-arm-accel-x (approx. -5 to 5)
+Provides raw X axis accelerometer component of the right arm component of the L2Orkmote. It is synonymous to the Wiimote accelerometer output.
+
+l2orkmote-right-arm-accel-y (approx. -5 to 5)
+Provides raw Y axis accelerometer component of the right arm component of the L2Orkmote. It is synonymous to the Wiimote accelerometer output.
+
+l2orkmote-right-arm-accel-z (approx. -5 to 5)
+Provides raw Z axis accelerometer component of the right arm component of the L2Orkmote. It is synonymous to the Wiimote accelerometer output.
+
+l2orkmote-right-arm-jolt (bang)
+Outputs bang whenever a sudden drum-like jolt is sensed by the right arm accelerometer. This one is typically triggered by a sudden and small forward arm movement or jolt stemming from the shoulder.
+
+l2orkmote-right-arm-pitch-forward (-1 to 1)
+Provides current pitch of the right arm component of the L2Orkmote with -1 being completely down, 0 being horizontal, and 1 being completely vertical pointing up. It only accurately measures the pitch with the arm facing forward in respect to the torso. The accelerometer values are ignored during jolts and sudden movements that may provide inaccurate readouts.
+
+l2orkmote-right-arm-roll (-2.5 to 2.5)
+Provides current right arm roll within the reasonable range ranging from twisting right with the joystick pointing to the right (with hand's index facing forward), to default horizontal with the joystick pointing upwards), to hand and arm being twisted clockwise with the joystick pointing downwards.
+
+l2orkmote-right-button-1 (0/1)
+Sends 1 whenever the index finger button is pressed and 0 when it is released. Outputs only when the state has changed.
+
+l2orkmote-right-button-2 (0/1)
+Sends 1 whenever the middle finger button is pressed and 0 when it is released. Outputs only when the state has changed.
+
+l2orkmote-right-button-3 (0/1)
+Sends 1 whenever the ring finger button is pressed and 0 when it is released. Outputs only when the state has changed.
+
+l2orkmote-right-button-4 (0/1)
+Sends 1 whenever the little finger button is pressed and 0 when it is released. Outputs only when the state has changed.
+
+l2orkmote-right-button-all (0/1)
+Convenience send that reports when all 4 buttons are pressed on the right L2Orkmote.
+
+l2orkmote-right-button-raw (float)
+A binary op friendly output of button activity on the right L2Orkmote based on the Wiimote's output. Sends 0 for no button pressed, 1 for button 4, 2 for button 3, 4 for button 2 , and 8 for button 1, as well as their additions. For instance, buttons 4 and 3 pressed together will result in an output of 3, while all four buttons pressed will result in output being 15.
+
+l2orkmote-right-connection (0/1)
+Reports whether the right L2Orkmote is connected (1) or not (0).
+
+l2orkmote-right-hand-accel-x (approx. -5 to 5)
+Provides raw X axis accelerometer component of the right hand component of the L2Orkmote. It is synonymous to the Nunchuk accelerometer output.
+
+l2orkmote-right-hand-accel-y (approx. -5 to 5)
+Provides raw Y axis accelerometer component of the right hand component of the L2Orkmote. It is synonymous to the Nunchuk accelerometer output.
+
+l2orkmote-right-hand-accel-z (approx. -5 to 5)
+Provides raw Z axis accelerometer component of the right hand component of the L2Orkmote. It is synonymous to the Nunchuk accelerometer output.
+
+l2orkmote-right-hand-jolt (bang)
+Outputs bang whenever a sudden drum-like jolt is sensed by the right hand accelerometer. This one is typically triggered by a sudden and small hand movement or jolt stemming from the wrist with the palm facing the ground.
+
+l2orkmote-right-hand-roll (-2.5 to 2.5)
+Provides current right hand roll within the reasonable range ranging from twisting right with the joystick pointing to the right (with hand's index facing forward), to default horizontal with the joystick pointing upwards), to hand and arm being twisted clockwise with the joystick pointing downwards.
+
+l2orkmote-right-hand-pitch-forward (-1 to 1)
+Provides current pitch of the right hand component of the L2Orkmote with -1 being completely down, 0 being horizontal, and 1 being completely vertical pointing up. It only accurately measures the pitch with the hand facing forward in respect to the torso.
+
+l2orkmote-right-joystick-angle-clockwise-analog (0-359)
+Outputs the right joystick's clockwise angle in degrees with joystick up being 0, right being 90, bottom, 180, and left 270. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-right-joystick-angle-clockwise-analog-additive (float)
+Outputs the right joystick's angle in degrees with joystick up being 0, right being 90, bottom, 180, and left 270, and adds to every complete circle in each direction. For instance, when moving the joystick clockwise, after making a full circle and arriving to 359 immediately to the left from the top, the move to top and top-right will make it 360, 361, etc. The same is true for the opposite direction. The triggering area for addition is from 300 to 60 degrees, so jumping up a full circle can be accomplished by going to the center then to the top-left, sliding to top-right, and going back to the center. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-right-joystick-angle-clockwise-analog-6 (0-5)
+Outputs the right joystick's angle in degrees with joystick up being 0, and the rest of the circle split into 5 more states for a total of 6 positions (0-6) ordered clockwise that match notches in the joystick's movement area edges. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-right-joystick-angle-clockwise-analog-6-additive (float)
+Outputs the right joystick's angle in degrees with joystick up being 0, and the rest of the circle split into 5 more states for a total of 6 positions (0-6) ordered clockwise, and adds to every complete circle in each direction. For instance, when moving the joystick clockwise, after making a full circle and arriving to 5 immediately to the left from the top, the move to top and top-right will make it 6, 7 etc. The same is true for the opposite direction. The triggering area for addition is from 300 to 60 degrees, so jumping up a full circle can be accomplished by going to the center then to the top-left, sliding to top-right, and going back to the center. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-right-joystick-angle-clockwise-analog-12 (0-11)
+Outputs the right joystick's angle in degrees with joystick up being 0, and the rest of the circle split into 11 more states for a total of 12 positions (0-11) ordered clockwise. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-right-joystick-angle-clockwise-analog-12-additive (float)
+Outputs the right joystick's angle in degrees with joystick up being 0, and the rest of the circle split into 11 more states for a total of 12 positions (0-11) ordered clockwise, and adds to every complete circle in each direction. For instance, when moving the joystick clockwise, after making a full circle and arriving to 11 immediately to the left from the top, the move to top and top-right will make it 12, 13 etc. The same is true for the opposite direction. The triggering area for addition is from 300 to 60 degrees, so jumping up a full circle can be accomplished by going to the center then to the top-left, sliding to top-right, and going back to the center. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-right-joystick-angle-counterclockwise-analog (0-359)
+Outputs the right joystick's counterclockwise angle in degrees with joystick up being 0, right being 90, bottom, 180, and left 270. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-right-joystick-angle-counterclockwise-analog-additive (float)
+Outputs the right joystick's angle in degrees with joystick up being 0, left being 90, bottom, 180, and right 270, and adds to every complete circle in each direction. For instance, when moving the joystick counterclockwise, after making a full circle and arriving to 359 immediately to the right from the top, the move to top and top-left will make it 360, 361, etc. The same is true for the opposite direction. The triggering area for addition is from 300 to 60 degrees, so jumping up a full circle can be accomplished by going to the center then to the top-right, sliding to top-left, and going back to the center. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-right-joystick-angle-counterclockwise-analog-6 (0-5)
+Outputs the right joystick's angle in degrees with joystick up being 0, and the rest of the circle split into 5 more states for a total of 6 positions (0-6) ordered counterclockwise that match notches in the joystick's movement area edges. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-right-joystick-angle-counterclockwise-analog-6-additive (float)
+Outputs the right joystick's angle in degrees with joystick up being 0, and the rest of the circle split into 5 more states for a total of 6 positions (0-6) ordered counterclockwise, and adds to every complete circle in each direction. For instance, when moving the joystick counterclockwise, after making a full circle and arriving to 5 immediately to the right from the top, the move to top and top-left will make it 6, 7 etc. The same is true for the opposite direction. The triggering area for addition is from 300 to 60 degrees, so jumping up a full circle can be accomplished by going to the center then to the top-right, sliding to top-left, and going back to the center. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-right-joystick-angle-counterclockwise-analog-12 (0-11)
+Outputs the right joystick's angle in degrees with joystick up being 0, and the rest of the circle split into 11 more states for a total of 12 positions (0-11) ordered counterclockwise. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-right-joystick-angle-counter-clockwise-analog-12-additive (float)
+Outputs the right joystick's angle in degrees with joystick up being 0, and the rest of the circle split into 11 more states for a total of 12 positions (0-11) ordered counterclockwise, and adds to every complete circle in each direction. For instance, when moving the joystick counterclockwise, after making a full circle and arriving to 11 immediately to the right from the top, the move to top and top-left will make it 12, 13 etc. The same is true for the opposite direction. The triggering area for addition is from 300 to 60 degrees, so jumping up a full circle can be accomplished by going to the center then to the top-right, sliding to top-left, and going back to the center. You can use the [int] object to limit values to whole numbers.
+
+l2orkmote-right-joystick-centered (0/1)
+Reports whether the right L2Orkmote's joystick is centered (1) or not (0).
+
+l2orkmote-right-joystick-horizontal (-127 to 127*)
+Outputs right joystick's horizontal offset from the center with 0 being no offset and positive values pointing to the right. *Due to varying calibration values and/or wear and tear of the joystick sensor, the offset may be close to 0 but not necessarily zero, so implementing a dead space of +-5 is advised. Also, edge values are not achievable due to the joystick's opening restricting its movement.
+
+l2orkmote-right-joystick-horizontal-raw (0-255*)
+Outputs right L2Orkmote joystick's raw horizontal position with values ranging from 0 to 255 and with the center being approximately 127 and positive values pointing to the right. *Due to varying calibration values and/or wear and tear of the joystick sensor, the center may be close to 127 but not necessarily 127, so implementing a dead space of +-5 is advised. Also, edge values are not achievable due to the joystick's opening restricting its movement.
+
+l2orkmote-right-joystick-vertical (-127 to 127*)
+Outputs right joystick's vertical offset from the center with 0 being no offset and positive values pointing to the top. *Due to varying calibration values and/or wear and tear of the joystick sensor, the offset may be close to 0 but not necessarily zero, so implementing a dead space of +-5 is advised. Also, edge values are not achievable due to the joystick's opening restricting its movement.
+
+l2orkmote-right-joystick-vertical-raw (0-255*)
+Outputs right L2Orkmote joystick's raw vertical position with values ranging from 0 to 255 and with the center being approximately 127 and positive values pointing to the top. *Due to varying calibration values and/or wear and tear of the joystick sensor, the center may be close to 127 but not necessarily 127, so implementing a dead space of +-5 is advised. Also, edge values are not achievable due to the joystick's opening restricting its movement.
+
+l2orkmote-right-plus-calibrate-button (bang)
+Requests calibration of the plus extension on the right L2Orkmote and updates the GUI accordingly.
+
+l2orkmote-right-plus-connection (0/1)
+Indicates whether the right L2Orkmote is connected (1) or not (0).
+
+l2orkmote-right-plus-direction-absolute-4 (-1 to 4)
+Reports 5 possible states of the right L2Orkmote's motion, as reported by the plus extension, regardless of the hand or arm orientation. This functionality requires the plus extension to be calibrated (see l2orkmote-right-plus-calibrate-button). -1 reports no significant motion, 0 reports upwards motion, 1 rightwards, 2 downwards, and 3 leftwards. It is best to combine it with the l2orkmote-right-plus-motion.
+
+l2orkmote-right-plus-direction-absolute-8 (-1 to 7)
+Reports 9 possible states of the right L2Orkmote's motion, as reported by the plus extension, regardless of the hand or arm orientation. This functionality requires the plus extension to be calibrated (see l2orkmote-right-plus-calibrate-button). -1 reports no significant motion, 0 reports upwards motion, 1 up-right, 2 right, 3 down-right, 4 downwards, 5 down-left, 6 leftwards, and 7 up-left. It is best to combine it with l2orkmote-right-plus-motion.
+
+l2orkmote-right-plus-direction-absolute-analog (-1 to 359)
+Reports approximate degree angle of the right L2Orkmote's motion, as reported by the plus extension, regardless of the hand or arm orientation. This functionality requires the plus extension to be calibrated (see l2orkmote-right-plus-calibrate-button). -1 reports no significant motion, while 0-359 reports direction clockwise facing forward. For instance, 0 degrees suggests upwards direction, 45 suggests up-right direction, while 180 downwards. It is best to combine it with l2orkmote-right-plus-motion.
+
+l2orkmote-right-plus-direction-relative-4 (-1 to 4)
+Reports 5 possible states of the right L2Orkmote's motion, as reported by the plus extension, with upwards always facing the direction joystick points towards (with hand's index facing forward). This functionality requires the plus extension to be calibrated (see l2orkmote-right-plus-calibrate-button). -1 reports no significant motion, 0 reports upwards motion, 1 rightwards, 2 downwards, and 3 leftwards. It is best to combine it with the l2orkmote-right-plus-motion.
+
+l2orkmote-right-plus-direction-relative-8 (-1 to 7)
+Reports 9 possible states of the right L2Orkmote's motion, as reported by the plus extension, with upwards always facing the direction joystick points towards (with hand's index facing forward). This functionality requires the plus extension to be calibrated (see l2orkmote-right-plus-calibrate-button). -1 reports no significant motion, 0 reports upwards motion, 1 up-right, 2 right, 3 down-right, 4 downwards, 5 down-left, 6 leftwards, and 7 up-left. It is best to combine it with the l2orkmote-right-plus-motion.
+
+l2orkmote-right-plus-direction-relative-analog (-1 to 359)
+Reports approximate degree angle of the right L2Orkmote's motion, as reported by the plus extension, with upwards always facing the direction joystick points towards (with hand's index facing forward). This functionality requires the plus extension to be calibrated (see l2orkmote-right-plus-calibrate-button). -1 reports no significant motion, while 0-359 reports direction clockwise facing forward. For instance, 0 degrees suggests upwards direction, 45 suggests up-right direction, while 180 downwards. It is best to combine it with l2orkmote-right-plus-motion.
+
+l2orkmote-right-plus-horizontal (-8192 or 8192*)
+Reports right L2Orkmote plus extension's horizontal raw motion with 0 suggesting no motion and positive values suggesting rightward motion. This functionality requires the plus extension to be calibrated (see l2orkmote-right-plus-calibrate-button). *Due to the imperfection of the calibration process and/or wear and tear of the joystick sensor, the offset may be close to 0 but not necessarily zero, so implementing a dead space of +-100 or more is advised.
+
+l2orkmote-right-plus-motion (-1 to 1)
+Reports cumulative motion speed of the right L2Orkmote, as reported by the plus extension. 0 suggests no motion. Motion in either left and/or down directions yield positive values, while right and top directions produce negative values, allowing for optional phase shifts in instrument implementation. Provides dead zone to remove minimal motion and has a high enough resolution to enable tremolo-like effects.
+
+l2orkmote-right-plus-vertical (-8192 or 8192*)
+Reports right L2Orkmote plus extension's vertical raw motion with 0 suggesting no motion and positive values suggesting downward motion. This functionality requires the plus extension to be calibrated (see l2orkmote-right-plus-calibrate-button). *Due to the imperfection of the calibration process and/or wear and tear of the joystick sensor, the offset may be close to 0 but not necessarily zero, so implementing a dead space of +-100 or more is advised.
+
+l2orkmote-right-plus-roll (-8192 or 8192*)
+Reports right L2Orkmote plus extension's roll raw motion with 0 suggesting no motion and positive values suggesting counterclockwise motion. This functionality requires the plus extension to be calibrated (see l2orkmote-right-plus-calibrate-button). *Due to the imperfection of the calibration process and/or wear and tear of the joystick sensor, the offset may be close to 0 but not necessarily zero, so implementing a dead space of +-100 or more is advised.
+
+
+
+
+
+=== INTERNAL AND EXTERNAL SENDS THAT SHOULD *NOT* BE USED DIRECTLY ===
+
+
+* Overview
+
+l2ork-init-monitor-ip (bang)
+l2ork_wii_jolt_filter_report_hit (bang)
+l2orkmote-left/right-connect (bang)
+l2orkmote-left/right-plus-calibrate (bang)
+
+
+* Description
+
+l2orkmote-left-connect (bang)
+Initiates connection when trying to calibrate motion plus on a disconnected left L2Orkmote. Use l2orkmote-left-calibrate-button instead, to maintain visual sync.
+
+l2orkmote-left-plus-calibrate (bang)
+Requests calibration of the plus extension on the left L2Orkmote. It should be avoided as it bypasses visual input on the GUI.
+
+l2orkmote-right-connect (bang)
+Initiates connection when trying to calibrate motion plus on a disconnected right L2Orkmote. Use l2orkmote-right-calibrate-button instead, to maintain visual sync.
+
+l2orkmote-right-plus-calibrate (bang)
+Requests calibration of the plus extension on the right L2Orkmote. It should be avoided as it bypasses visual input on the GUI.
+
+l2ork-init-monitor-ip (bang)
+Reserved for interacting with l2ork_monitor abstraction that appropriately registers a L2Ork station, makes it visible on the network, and allows for networked messages between stations.
+
+l2ork_wii_jolt_filter_report_hit (bang)
+Included in the jolt detection abstraction. Its use here is discouraged as there is no way to distinguish between the left and right hands.

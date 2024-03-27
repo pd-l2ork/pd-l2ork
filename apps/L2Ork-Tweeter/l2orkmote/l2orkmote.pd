@@ -9,7 +9,7 @@
 #X obj 210 318 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 0 1 1;
 #X obj 210 338 metro 25;
-#N canvas 566 54 638 521 l2ork_wiimote_connect 0;
+#N canvas 566 54 638 521 l2ork_wiimote_connect 1;
 #X obj 41 143 shell;
 #X obj 41 32 inlet;
 #X obj 41 266 outlet;
@@ -19,7 +19,7 @@
 #X obj 87 266 outlet;
 #X obj 134 436 outlet;
 #X obj 41 222 route left right;
-#X msg 197 356 discover;
+#X msg 198 356 discover;
 #X msg 134 356 discover;
 #X obj 134 288 delay 500;
 #X obj 134 266 t b b 2, f 22;
