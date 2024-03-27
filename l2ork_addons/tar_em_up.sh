@@ -262,11 +262,9 @@ if [[ $os == "win" || $os == "win64" ]]; then
 	if [ ! -d "../pd/lib" ]; then
 		mkdir ../pd/lib
 		#wget http://www.steinberg.net/sdk_downloads/asiosdk2.3.zip this one is 301-ing
-		wget https://www.steinberg.net/asiosdk
-		mv asiosdk asiosdk2.3.zip
-		unzip asiosdk2.3.zip
-		mv asiosdk_* ASIOSDK2.3
-		unzip asiosdk2.3.zip
+		wget --no-check-certificate https://download.steinberg.net/sdk_downloads/asiosdk_2.3.3_2019-06-14.zip
+		unzip asiosdk_2.3.3_2019-06-14.zip
+		mv asiosdk_2.3.3_2019-06-14 ASIOSDK2.3
 		mv ASIOSDK2.3 ../pd/lib
 	fi
 fi
