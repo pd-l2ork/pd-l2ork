@@ -1,15 +1,15 @@
-#N canvas 72 166 1311 565 10;
+#N canvas 503 161 1311 565 10;
 #X obj 199 359 disis_wiimote_legacy;
 #X obj 199 17 bng 40 250 50 0 empty l2orkmote-pair-button PAIR 8 20
-0 10 #fc2828 #202020 #202020 1;
+0 10 #d8fcd8 #202020 #202020 1;
 #X msg 266 338 disconnect;
 #X obj 266 297 gate 1 0;
 #X msg 316 408 reportAcceleration \$1 \, reportExpansion \$1 \, togglePassthrough
 \$1, f 22;
 #X obj 210 318 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 0 1 1;
+#000000 1 1 1;
 #X obj 210 338 metro 25;
-#N canvas 566 54 638 521 l2ork_wiimote_connect 1;
+#N canvas 566 54 638 521 l2ork_wiimote_connect 0;
 #X obj 41 143 shell;
 #X obj 41 32 inlet;
 #X obj 41 266 outlet;
@@ -72,7 +72,7 @@
 #X connect 27 0 26 0;
 #X restore 199 136 pd l2ork_wiimote_connect;
 #X obj 241 17 bng 40 250 50 0 l2orkmote-left-plus-calibrate l2orkmote-left-plus-calibrate-button
-LEFT 8 20 0 10 #202020 #202020 #fcfcfc 1;
+LEFT 8 20 0 10 #14e814 #202020 #202020 1;
 #X msg 199 246 connect \$1;
 #X obj 199 226 tosymbol;
 #X obj 283 17 bng 40 250 50 0 l2orkmote-right-plus-calibrate l2orkmote-right-plus-calibrate-button
@@ -103,7 +103,7 @@ RIGHT 5 20 0 10 #202020 #202020 #fcfcfc 1;
 #X obj 70 182 average 2;
 #X obj 70 101 unpack 0 0 0;
 #X obj 70 204 nbx 5 14 -1 1 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0 256 0 0 1 0;
+#000000 #000000 -0.0833333 256 0 0 1 0;
 #X obj 70 47 inlet;
 #X text 70 244 lower arm forward pitch -1 to 1;
 #X obj 70 69 t l l;
@@ -362,7 +362,7 @@ RIGHT 5 20 0 10 #202020 #202020 #fcfcfc 1;
 #X obj 71 101 unpack 0 0 0;
 #X obj 71 69 t l l;
 #X obj 71 402 nbx 5 14 -2.5 2.5 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0 256 0 0 1 0;
+#000000 #000000 2.5 256 0 0 1 0;
 #X obj 71 478 > 0.4;
 #X obj 108 478 > 1;
 #X obj 133 478 > 1.75;
@@ -414,7 +414,7 @@ RIGHT 5 20 0 10 #202020 #202020 #fcfcfc 1;
 #X connect 23 1 25 0;
 #X connect 26 0 10 0;
 #X restore 393 477 pd l2orkmote_left_arm_roll;
-#N canvas 137 14 567 683 l2orkmote_left_jolt 0;
+#N canvas 137 64 567 683 l2orkmote_left_jolt 0;
 #X obj 18 16 inlet;
 #X obj 18 37 unpack 0 0 0;
 #X floatatom 18 172 5 0 0 0 - - - 0 0 1, f 5;
@@ -578,7 +578,7 @@ RIGHT 5 20 0 10 #202020 #202020 #fcfcfc 1;
 #X connect 14 0 4 0;
 #X connect 15 0 7 0;
 #X restore 52 521 pd l2orkmote_left_accelerometers_raw;
-#N canvas 314 64 485 531 l2orkmote-left-buttons 0;
+#N canvas 314 76 485 531 l2orkmote-left-buttons 1;
 #X obj 20 23 inlet;
 #X obj 277 23 inlet;
 #X obj 20 45 unpack 0 0;
@@ -669,7 +669,7 @@ RIGHT 5 20 0 10 #202020 #202020 #fcfcfc 1;
 #X obj 71 101 unpack 0 0 0;
 #X obj 71 69 t l l;
 #X obj 71 402 nbx 5 14 -2.5 2.5 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0 256 0 0 1 0;
+#000000 #000000 0.352309 256 0 0 1 0;
 #X obj 71 478 > 0.4;
 #X obj 108 478 > 1;
 #X obj 133 478 > 1.75;
@@ -726,7 +726,7 @@ RIGHT 5 20 0 10 #202020 #202020 #fcfcfc 1;
 #X obj 70 182 average 2;
 #X obj 70 101 unpack 0 0 0;
 #X obj 70 204 nbx 5 14 -1 1 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0 256 0 0 1 0;
+#000000 #000000 1 256 0 0 1 0;
 #X obj 70 47 inlet;
 #X obj 70 69 t l l;
 #X text 70 244 lower hand forward pitch -1 to 1;
@@ -1526,7 +1526,7 @@ RIGHT 5 20 0 10 #202020 #202020 #fcfcfc 1;
 #X msg 226 279 1;
 #X msg 199 279 0;
 #X obj 54 418 nbx 5 14 -1 1 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0 256 0 0 1 0;
+#000000 #000000 1 256 0 0 1 0;
 #X obj 14 367 sel 0;
 #X obj 199 346 s l2orkmote-left-plus-connection;
 #X obj 297 385 change -1;
