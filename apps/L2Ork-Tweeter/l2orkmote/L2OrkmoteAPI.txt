@@ -7,30 +7,7 @@ l2ork.icat.vt.edu | ico.bukvic.net
 
 === CHANGELOG ===
 1.1.0 2024-03-26
-*Figure out how to automate which L2Orkmote you are connecting to. IN PROGRESS
-	*Cannot use whatismywiimote, as that will disable WiFi
-	*Offer discover option
-
-*Disable clearing out the loop OR find another way to do so. Dead space in the middle becomes the commit area.
-	*Letting go of the button does nothing.
-
-*Left hand jolt now becomes clearing of the loop (backspace)
-
-*Switching order on the left hand buttons in mode 1 (1 stays, 3 and 4 become 2 become 3, and 4 stops being used and we use joystick dislocation instead of it--see the last point below in this section).
-	*Be able to change both loop and instrument at the same time (holding 2 and 3 together).
-
-	*Fix documentation for continual changing of instrument to be button 2, not 1 (reconsider this, if necessary and possible).
-
-	*Instead of holding 2 on the left hand in mode 1 to adjust overdrive level, use joystick dislocation from the center without any buttons pressed
-
-*Reverb presets 3 and 4 are reversed
-
-*Transposing down (button 2) also repositions the timebar location (it shouldn't)
-
-Nice to have:
-*Rumble that corresponds with loop notes
-*Share L2Orkmote red slider position over network
-
+*Changed the way users pick their l2orkmote, so that we don't have to rely on the LAN connectivity (Tweeter may need to rely on WiFi). Now you can provide a capital letter name of the station (e.g. A, B, C, etc.) or "Any" for discover mode.
 
 1.0.2 2022-09-05
 Added l2orkmote-left/right-joystick-centered to allow for users to detect when the joystick is not being moved

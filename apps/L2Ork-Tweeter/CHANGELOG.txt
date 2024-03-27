@@ -16,7 +16,13 @@ CHANGELOG (Date Format: DD-MM-YYYY)
 *Added Territorio Prismatico and 8-bit Petal works.
 *Added missing L2Orkmote abstraction.
 *Fixed L2Orkmote bugs and refined control mapping.
-*Reworked L2Orkmote pairing logic, so that it is not dependent on the old LAN-based pairing.
+  *Made middle dead (default) space of the left hand joystick area a commit command when activating different presets and loops. Letting go of the buttons 2 and 3 that control modification of presets and loops now does nothing.
+  *Clearing of the loop (backspace) is now possible by the left hand jolt without any buttons pressed.
+  *Switched the order on the left hand buttons in mode 1 to prioritize loop and preset changing (1 stays the same, 3 and 4 become 2 and 3, while 4 now serves as a continual change of presets and loops without requiring for the joystick to be re-centered on every commit).
+  *Ensured that user is able to change both loop and instrument at the same time (holding 2 and 3 together).
+  *Instead of holding 2 on the left hand in mode 1 to adjust the overdrive level, the new configuration now uses hand pitch in combination with joystick off-center dislocation without any buttons pressed.
+  *Fixed a bug where transposing down (button 2 on the right hand) also erroneously repositioned the timebar location.
+  *Documentation updates.
 
 29-11-2023 0.80
 *Fixed regression where solo did not work in offline mode. Now, when user clicks on another part to enable solo, they also automatically switch to that part being their primary. For group soloing users will want to use future event automation.

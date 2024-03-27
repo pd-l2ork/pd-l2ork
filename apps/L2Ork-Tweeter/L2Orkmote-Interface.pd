@@ -1,7 +1,7 @@
-#N canvas 86 78 473 213 12;
-#X obj 87 9 l2orkmote/l2orkmote;
-#N canvas 167 557 306 89 guts 0;
-#N canvas 635 363 612 634 states 0;
+#N canvas 86 104 473 208 12;
+#X obj 11 9 l2orkmote/l2orkmote;
+#N canvas 167 605 214 78 guts 0;
+#N canvas 635 375 612 634 states 0;
 #X obj 22 24 r l2orkmote-left-arm-pitch-forward;
 #X obj 22 49 > 0.75;
 #X obj 22 74 change;
@@ -67,8 +67,8 @@
 #X connect 27 0 28 0;
 #X connect 28 0 5 0;
 #X restore 29 27 pd states;
-#N canvas 97 746 505 256 forwards 0;
-#N canvas 565 416 925 535 lh-buttons 0;
+#N canvas 97 782 505 256 forwards 0;
+#N canvas 425 325 925 535 lh-buttons 0;
 #X obj 481 29 r l2orkmote-left-button-3;
 #X obj 670 29 r l2orkmote-left-button-4;
 #X obj 103 29 r l2orkmote-left-button-1;
@@ -91,9 +91,6 @@ are coupled and buttons 3 and 4 are coupled. this means whenever user
 presses button 1 \, button 2 will also output value even if it is the
 same. button 2 will output always before 1 and button 4 will always
 output before 3;
-#X obj 44 378 s l2orkmote-left-button-1-only-forward-mode-1;
-#X obj 44 320 r l2orkmote-left-button-raw;
-#X obj 44 349 == 8;
 #X connect 0 0 9 1;
 #X connect 1 0 10 1;
 #X connect 2 0 5 1;
@@ -110,8 +107,6 @@ output before 3;
 #X connect 9 1 13 0;
 #X connect 10 0 16 0;
 #X connect 10 1 15 0;
-#X connect 19 0 20 0;
-#X connect 20 0 18 0;
 #X restore 21 17 pd lh-buttons;
 #N canvas 802 444 951 502 rh-buttons 0;
 #X obj 113 29 r l2orkmote-right-button-1;
@@ -204,7 +199,7 @@ output before 3;
 #X connect 2 0 5 0;
 #X connect 5 1 1 1;
 #X restore 21 77 pd lh-hand-pitch;
-#N canvas 243 101 912 940 lh-joystick 0;
+#N canvas 243 113 912 940 lh-joystick 0;
 #X obj 33 133 sel -1;
 #X obj 86 68 r l2orkmote-left-joystick-angle-clockwise-analog;
 #X obj 72 450 expr int($f1/36)+1;
@@ -225,7 +220,7 @@ output before 3;
 #X obj 92 344 expr if($f1<=-360 \, -360 \, \\$f1);
 #X obj 92 373 expr if($f1>=36000 \, 36000 \, \\$f1);
 #X obj 72 479 nbx 5 14 1 999 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 5 256 0 0 1 0;
+#000000 #000000 1 256 0 0 1 0;
 #X obj 92 317 accum;
 #X obj 33 100 gate 2 1;
 #X obj 33 34 r l2orkmote-left-hand-mode;
@@ -255,8 +250,8 @@ output before 3;
 #X obj 216 676 gate 2 1;
 #X obj 378 455 r l2orkmote-left-button-2-mode-1;
 #X obj 648 455 r l2orkmote-left-button-3-mode-1;
-#X obj 434 656 r l2orkmote-left-button-1-mode-1;
 #X obj 72 721 t b -1 b;
+#X obj 434 656 r l2orkmote-left-button-4-mode-1;
 #X connect 0 1 11 0;
 #X connect 1 0 19 1;
 #X connect 2 0 17 0;
@@ -303,7 +298,7 @@ output before 3;
 #X connect 36 1 6 1;
 #X connect 37 0 38 0;
 #X connect 38 0 8 0;
-#X connect 39 0 48 0;
+#X connect 39 0 47 0;
 #X connect 40 0 34 0;
 #X connect 41 0 42 0;
 #X connect 42 0 39 0;
@@ -313,13 +308,13 @@ output before 3;
 #X connect 44 0 3 1;
 #X connect 45 0 25 0;
 #X connect 46 0 26 0;
-#X connect 47 0 31 0;
-#X connect 48 0 29 1;
-#X connect 48 1 40 0;
-#X connect 48 2 5 0;
-#X connect 48 2 8 0;
+#X connect 47 0 29 1;
+#X connect 47 1 40 0;
+#X connect 47 2 5 0;
+#X connect 47 2 8 0;
+#X connect 48 0 31 0;
 #X restore 21 137 pd lh-joystick;
-#N canvas 216 80 1637 950 rh-joystick 0;
+#N canvas 216 104 1637 950 rh-joystick 0;
 #X obj 79 625 expr int($f1/30);
 #X obj 184 97 r l2orkmote-right-joystick-angle-clockwise-analog;
 #X obj 79 538 +;
@@ -387,14 +382,14 @@ output before 3;
 #X msg 858 671 12;
 #X obj 858 720 +;
 #X obj 858 749 nbx 5 14 -192 192 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 -192 256 0 0 1 0;
+#000000 #000000 0 256 0 0 1 0;
 #X obj 416 395 t f f;
 #X msg 968 671 -12;
 #X obj 551 615 t f f;
 #X obj 858 775 s l2orkmote-set-octave;
 #X obj 1264 156 expr \\$f1/200+0.5;
 #X obj 1264 185 nbx 5 14 0 1 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0.52 256 0 0 1 0;
+#000000 #000000 0 256 0 0 1 0;
 #X obj 1177 269 s l2orkmote-flanger-mod-amp;
 #X obj 1240 375 r l2orkmote-right-joystick-centered;
 #X obj 1240 659 + 1;
@@ -548,7 +543,7 @@ output before 3;
 #X obj 104 406 s l2orkmote-right-hand-roll-mode-4;
 #X obj 118 297 s l2orkmote-right-hand-roll-mode-5;
 #X obj 522 266 nbx 5 14 0 1.5708 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0.100635 256 0 0 1 0;
+#000000 #000000 0 256 0 0 1 0;
 #X obj 522 318 s l2orkmote-pan;
 #X obj 132 269 s l2orkmote-right-hand-roll-mode-6;
 #X obj 522 237 expr (-$f1/3+0.5)*1.5708;
@@ -557,7 +552,7 @@ output before 3;
 #X obj 579 127 r l2orkmote-right-button-3-mode-1;
 #X obj 522 98 r l2orkmote-right-hand-roll-mode-5;
 #X obj 132 216 nbx 5 14 0 1 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0.0161811 256 0 0 1 0;
+#000000 #000000 0 256 0 0 1 0;
 #X obj 132 239 change;
 #X obj 522 289 change;
 #X obj 132 187 expr (-$f1/3+0.5);
@@ -570,7 +565,7 @@ output before 3;
 #X obj 104 380 change;
 #X obj 104 328 expr (-$f1/3+0.5);
 #X obj 523 407 nbx 5 14 -1 1 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 1 256 0 0 1 0;
+#000000 #000000 0 256 0 0 1 0;
 #X obj 523 430 expr int((($f1*-1)+1)*31.5);
 #X obj 523 378 r l2orkmote-right-hand-roll-mode-1;
 #X obj 523 517 s l2orkmote-hover-location;
@@ -800,23 +795,13 @@ hover mode \, here \, we need to watch the execution order., f 37
 #X connect 2 0 0 1;
 #X restore 21 167 pd lh-jolt;
 #X restore 106 27 pd forwards;
-#N canvas 727 397 450 300 picker 0;
-#X obj 68 85 loadbang;
-#X obj 68 175 s pick-l2orkmote-r;
-#X obj 257 38 r pick-l2orkmote-s;
-#X msg 68 114 names Any A B C D E F G H I J K L M N O, f 17;
-#X obj 257 67 print;
-#X connect 0 0 3 0;
-#X connect 2 0 4 0;
-#X connect 3 0 1 0;
-#X restore 197 27 pd picker;
 #X restore 290 34 pd guts;
 #X obj 11 62 cnv 15 123 110 empty l2orkmote-pitch-display c 29 42 0
-96 #edb5b5 #404040 0;
+96 #edb5b5 #000000 0;
 #X obj 130 61 nbx 4 111 -192 228 0 0 empty l2orkmote-pitch-number-display
 NOTE\ PITCH -116 7 0 10 #edb5b5 #000000 #000000 0 256 3 0 0 0;
 #X text 230 9 Tweeter L2Orkmote Interface v.0.3;
-#N canvas 594 65 789 989 documentation 0;
+#N canvas 586 69 789 989 documentation 0;
 #X text 14 17 BOTH HANDS must be not facing downwards (in relaxed state)
 in order for the input to work. this allows the user to type with one
 hand if they need to do something on the laptop without making unwanted
@@ -851,9 +836,9 @@ reverberant), f 108;
 0.5 or roughly -60 to 45 degrees):button 1 = toggle instrument level
 on/offbutton 2 = select loop (combined with joystick \, activates
 when the joystick is released back to the center \, OR if you hold
-button 1 it is continually making changes as you move joystick)button
+button 4 it is continually making changes as you move joystick)button
 3 = select instrument (combine with joystick \, activates when the
-joystick is released back to the center \, OR if you hold button 1
+joystick is released back to the center \, OR if you hold button 4
 it is continually making changes as you move joystick)joystick = when
 no buttons are pressed and joystick is off-center against any edge
 \, the pitch adjusts instrument level \; when used with buttons 2 or
@@ -865,7 +850,4 @@ enabled when the button 2 is pressed)roll = modifies mod amp (+-100%)#2
 loop controls mode (see right hand info below)button 1 = flangerbutton
 2 = echobutton 3 = dry outbutton 4 = reverb, f 108;
 #X restore 348 34 pd documentation;
-#X dropdown 12 32 6 1 0 0 - pick-l2orkmote-r pick-l2orkmote-s, f 6
-;
-#X text 14 9 SELECT:;
 #X text 243 177 (c) Ivica Ico Bukvic 2022 \, 2024;
