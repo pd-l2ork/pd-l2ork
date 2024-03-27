@@ -2,8 +2,6 @@ PD-L2ORK TODO:
 
 *Toggling VU meter scale (text labels with levels next to the VU meter) off and back on, results in incorrectly drawn scale.
 
-*Explore how to enable sending of messages to the front-end for the message and array objects.
-
 *Implement Windows list in the Windows menu.
 
 *Investigate potential issue with preset_nodes and/or patch connections getting all confused after the patch has been edited afterwards (even though patch cords are visually correctly connected, objects, like the one in Sync-Control.pd inside Tweeter, and more specifically length toggle, are not forwarding data like they should).
@@ -30,9 +28,6 @@ PD-L2ORK TODO:
 *doc/manuals/2.image: looks like on Windows lighting does not work always and destroying window in one of the early examples does not work. This is obsolete documentation that should be ignored. Should we remove this altogether?
 
 *Explore what limits the hex color interpretation to also include alpha channel and support for it. Straightforward CSS works, so this is likely a backend limitation.
-
-*Figure out the OSX Big Sur issue that the user does not have a permission to run the application.
-  *Appears to be related to opening the program from multiple accounts.
 
 *Consider porting AG version of cyclone editor (what are the differences?).
 
@@ -816,11 +811,15 @@ argc, t_atom *argv)
 *Fixed a bug where exclusive focus did not reset mod key states (ctrl, alt, shift),
 resulting in unexpected stuck keys.
   *Solved a bug in Tweeter that was caused by this.
+*Series of iterative improvements to the PdWebParty.
+*Refinements to the OSX building process to allow for support of multi-user environments.
 
 
 
 
 TWEETER TODO:
+*Consider adding networked repositioning of the red cursor in the L2Orkmote-Tweeter, so that both users and audience can see what is everyone doing.
+
 *Still need to figure out how to prevent heavy network traffic from causing dropouts. May just want to implement a server-side message that disallows further connections? What if someone gets disconnected?
 
 *Offer a way to deal with different keyboards (some keys are not in the same place, see the ELSE approach and new objects that deal with this)
@@ -829,7 +828,7 @@ TWEETER TODO:
 
 *Copying another part in offline mode disassociates the user from any part, making them unable to do anything even with the keyboard enabled. May also affect the online mode. Temporary fix: (re)select part you wish to control.
 
-*Looks like offline session saving saves 1910 lines, whereas online 1884. Why?
+*Looks like offline session saving saves as many as 1922 lines, whereas online 1884. Why? Still unknown. There is a hopefully stable fix for this, but it does not yet answer the why.
 
 *When trying to load a pattern that does not exist (after having successfully loaded one that does), the main level goes to zero.
 
@@ -976,6 +975,20 @@ TWEETER DONE:
   *Del is by default also moving pattern?
     No. Just when the shift is held and focus lost is when things break down.
     Consider resetting keyboard modifiers on refocus? No. This was a bug fixed on 2023-11-29 that pertained to exclusive focus of gatoms, where shift release was not received by pd because it was only passed onto the gatom with exclusive focus.
+*0.81:
+  *Fixed a long-standing bug where session saving missed some of the data (upped the number of data points from 1884 to waiting for the 1st part's reverb type output, which appears to be the safest way to identify the end of the stream). TODO: why is the output size varied under certain circumstances (so far we've seen 1884, 1918, and 1922).
+  *Separated audio files from patches for Transcontinental Grapevine and 8-bit Petal to save space.
+  *Updated Transcontinental Grapevine work, including fixing folder names and file organization.
+  *Added Territorio Prismatico and 8-bit Petal works.
+  *Added missing L2Orkmote abstraction.
+  *Fixed L2Orkmote bugs and refined control mapping.
+    *Made middle dead (default) space of the left hand joystick area a commit command when activating different presets and loops. Letting go of the buttons 2 and 3 that control modification of presets and loops now does nothing.
+    *Clearing of the loop (backspace) is now possible by the left hand jolt without any buttons pressed.
+    *Switched the order on the left hand buttons in mode 1 to prioritize loop and preset changing (1 stays the same, 3 and 4 become 2 and 3, while 4 now serves as a continual change of presets and loops without requiring for the joystick to be re-centered on every commit).
+    *Ensured that user is able to change both loop and instrument at the same time (holding 2 and 3 together).
+    *Instead of holding 2 on the left hand in mode 1 to adjust the overdrive level, the new configuration now uses hand pitch in combination with joystick off-center dislocation without any buttons pressed.
+    *Fixed a bug where transposing down (button 2 on the right hand) also erroneously repositioned the timebar location.
+    *Documentation updates.
 
 
 
