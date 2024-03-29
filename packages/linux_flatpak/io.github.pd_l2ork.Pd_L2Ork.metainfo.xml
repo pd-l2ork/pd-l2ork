@@ -15,7 +15,7 @@
       the other way around. Hence, some of the most advanced content
       created in Pd-L2Ork may not run well, or at all on other Pure Data
       variants. Pd-L2Ork is a brainchild of the Virginia Tech Linux
-      Laptop Orchestra (L2Ork, https://l2ork.music.vt.edu).
+      Laptop Orchestra (L2Ork).
     </p>
     <p>
       Pure Data is an open source visual programming environment that runs on
@@ -40,7 +40,11 @@
   <screenshots>
     <screenshot type="default">
       <image type="source">https://l2ork.music.vt.edu/data/pd-l2ork/screenshots/L2Ork-Tweeter.png</image>
+    </screenshot>
+    <screenshot>
       <image type="source">https://l2ork.music.vt.edu/data/pd-l2ork/screenshots/K12-Demo.png</image>
+    </screenshot>
+    <screenshot>
       <image type="source">https://l2ork.music.vt.edu/data/pd-l2ork/screenshots/Image-Help-File.png</image>
     </screenshot>
   </screenshots>
@@ -50,6 +54,13 @@
   <url type="bugtracker">https://github.com/pd-l2ork/pd-l2ork/issues</url>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="20240329" type="stable" date="2024-03-29">
+      <description>
+        <p>
+          Minor bug fixes to the core, major updates to L2Ork Tweeter (version 0.81, see CHANGELOG.txt for more info) and PdWebParty.
+        </p>
+      </description>
+    </release>
     <release version="20231129" type="stable" date="2023-11-29">
       <description>
         <p>
