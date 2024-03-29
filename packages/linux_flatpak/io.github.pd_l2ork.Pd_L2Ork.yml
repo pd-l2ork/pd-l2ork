@@ -207,6 +207,8 @@ modules:
   - cp -rf l2ork_addons/K12/icons-large/* /app/lib/pd-l2ork/bin/K12-icons/
   # add arduino library
   - cp -rf externals/hardware/arduino /app/lib/pd-l2ork/extra/
+  # add plugins folder
+  - install -d /app/extensions/Plugins
 
   sources:
   - type: git
