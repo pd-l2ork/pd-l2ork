@@ -156,7 +156,7 @@ lib_targets = loaders-libdir pddp
 INCREMENTAL = yes
 else ifeq ($(EMSCRIPTEN),yes)
 # original one used by the first iteration of PdWebParty: lib_targets = arraysize autotune bassemu boids bsaylor comport creb cxc earplug ekext ext13 freeverb ggee hcs iem_ambi iem_bin_ambi iemguts iem_adaptfilt iem_delay iem_roomsim iem_spec2 jasch_lib loaders-libdir mapping markex maxlib mjlib moonlib motex mrpeach pan pddp rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing
-lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui freeverb ggee hcs iemlib iemgui iemguts jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moonlib motex mrpeach oscx pan pdcontainer pddp pdogg rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing
+lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui flatspace freeverb ggee hcs iemlib iemgui iemguts jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moonlib motex mrpeach oscx pan pdcontainer pddp pdogg rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing zexy
 # short one for quick building for debugging purposes (disabled by default):
 # lib_targets = maxlib
 else
@@ -221,8 +221,9 @@ all $(patsubst %, %_install,$(LIB_TARGETS))
 #==============================================================================#
 
 FLATSPACE_NAME=flatspace
-FLATSPACE_OBJECTS := $(wildcard $(externals_src)/build/src/*.c)
 
+ifneq ($(EMSCRIPTEN),yes)
+FLATSPACE_OBJECTS := $(wildcard $(externals_src)/build/src/*.c)
 flatspace: $(FLATSPACE_OBJECTS:.c=.$(EXTENSION))
 
 flatspace_install: flatspace $(objectsdir)
@@ -253,6 +254,20 @@ flatspace_install: flatspace $(objectsdir)
 			$(externals_src)/plugin~/*.pd \
 			$(externals_src)/rhythm_estimator/*.p? \
 				$(DESTDIR)$(objectsdir)/$(FLATSPACE_NAME)
+else
+FLATSPACE_OBJECTS = $(externals_src)/build/src/s2l.c
+flatspace: $(FLATSPACE_OBJECTS:.c=.$(EXTENSION))
+$(FLATSPACE_OBJECTS:.c=.$(EXTENSION)): $(FLATSPACE_OBJECTS:.c=.o)
+	$(CC) $(LDFLAGS) -o "$*.$(EXTENSION)" "$*.o" $(LIBS)
+
+$(FLATSPACE_OBJECTS:.c=.o): $(FLATSPACE_OBJECTS)
+	$(CC) $(CFLAGS) -o "$*.o" -c "$*.c"
+
+flatspace_install: flatspace $(objectsdir)
+	install -d $(DESTDIR)$(objectsdir)/$(FLATSPACE_NAME)
+	install -p $(FLATSPACE_OBJECTS:.c=.$(EXTENSION)) $(DESTDIR)$(objectsdir)/$(FLATSPACE_NAME)
+endif
+
 
 
 flatspace_clean:
@@ -2219,6 +2234,7 @@ windowing_clean:
 
 #------------------------------------------------------------------------------#
 # Zexy
+ifneq ($(EMSCRIPTEN),yes)
 ZEXY_NAME = zexy
 zexy_src := $(externals_src)/$(ZEXY_NAME)
 
@@ -2233,6 +2249,31 @@ zexy_clean:
 	cd $(externals_src)/zexy
 	-$(MAKE) -C $(externals_src)/zexy clean
 	-rm -f -- $(externals_src)/zexy/src/*.o
+else
+ZEXY_NAME = zexy
+ZEXY_SRC := $(wildcard $(externals_src)/zexy/src/*.c)
+ZEXY_OBJECTS := $(ZEXY_SRC:.c=.o)
+ZEXY_TARGETS := $(ZEXY_SRC:.c=.$(EXTENSION))
+ZEXY_FLAGS := 
+
+zexy: $(ZEXY_TARGETS)
+
+$(ZEXY_OBJECTS): $(ZEXY_SRC)
+	$(CC) $(CFLAGS) $(ZEXY_FLAGS) -o "$*.o" -c "$*.c";
+
+$(ZEXY_TARGETS): $(ZEXY_OBJECTS)
+	$(CC) $(LDFLAGS) -o "$*.$(EXTENSION)" "$*.o" $(LIBS)
+	$(STRIP) $*.$(EXTENSION)
+	chmod 755 "$*.$(EXTENSION)"
+	
+zexy_clean:
+	rm -f $(ZEXY_TARGETS)
+	rm -f $(ZEXY_OBJECTS)
+
+zexy_install: zexy
+	install -d $(DESTDIR)$(objectsdir)/$(ZEXY_NAME)
+	install -p $(externals_src)/zexy/src/*.$(EXTENSION) $(DESTDIR)$(objectsdir)/$(ZEXY_NAME)
+endif
 
 
 
