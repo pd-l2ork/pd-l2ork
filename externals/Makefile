@@ -255,7 +255,7 @@ flatspace_install: flatspace $(objectsdir)
 			$(externals_src)/rhythm_estimator/*.p? \
 				$(DESTDIR)$(objectsdir)/$(FLATSPACE_NAME)
 else
-FLATSPACE_OBJECTS = $(externals_src)/build/src/s2l.c
+FLATSPACE_OBJECTS = $(externals_src)/build/src/s2l.c $(externals_src)/build/src/l2i.c $(externals_src)/build/src/l2s.c
 flatspace: $(FLATSPACE_OBJECTS:.c=.$(EXTENSION))
 $(FLATSPACE_OBJECTS:.c=.$(EXTENSION)): $(FLATSPACE_OBJECTS:.c=.o)
 	$(CC) $(LDFLAGS) -o "$*.$(EXTENSION)" "$*.o" $(LIBS)
