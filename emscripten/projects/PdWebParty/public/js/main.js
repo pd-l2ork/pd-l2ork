@@ -4952,7 +4952,7 @@ async function openPatch(content, filename) {
     if (nextLayerID == 0)
         return alert("The main canvas not found in the pd file.");
 
-            if (maxNumInChannels) {
+    if (maxNumInChannels) {
         if (Module.pd.init(maxNumInChannels, Module.pd.getNumOutChannels(), Module.pd.getSampleRate(), Module.pd.getTicksPerBuffer())) {
             // print obtained settings
             console.log("Pd-l2Ork: successfully reinitialized");
