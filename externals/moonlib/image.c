@@ -92,7 +92,7 @@ static const char *image_get_filename(t_image *x, char *file)
 //                 race condition between front-end and back-end)
 // firsttime == 2, also do a load of the image
 
-extern char *gobj_vis_gethelpname(t_gobj *z, char *namebuf);
+extern void gobj_vis_gethelpname(t_gobj *z, char *namebuf);
 
 static void image_drawme(t_image *x, t_glist *glist, int firsttime)
 {

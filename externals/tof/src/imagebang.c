@@ -163,11 +163,7 @@ static int imagebang_click(t_imagebang *x, struct _glist *glist,
     return (1);
 }
 
-#ifndef __EMSCRIPTEN__
-extern char *gobj_vis_gethelpname(t_gobj *z, char *namebuf);
-#else
 extern void gobj_vis_gethelpname(t_gobj *z, char *namebuf);
-#endif
 
 static void imagebang_drawme(t_imagebang *x, t_glist *glist, int firsttime)
 {

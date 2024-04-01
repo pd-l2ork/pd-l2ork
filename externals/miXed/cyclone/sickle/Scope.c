@@ -890,7 +890,7 @@ static void scope_revis(t_scope *x, t_canvas *cv)
 	scope_drawmono(x, cv);
 }
 
-extern char *gobj_vis_gethelpname(t_gobj *z, char *namebuf);
+extern void gobj_vis_gethelpname(t_gobj *z, char *namebuf);
 
 static void scope_vis(t_gobj *z, t_glist *glist, int vis)
 {

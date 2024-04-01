@@ -14,7 +14,7 @@ let fileCache = {};
 //function in emscriptens internal filesystem. The real cyclone files are Hammer.wasm and Sickle.wasm.
 //All of these files will be symlinked to those two files.
 let hammerFiles = ['Append.wasm','bangbang.wasm','match.wasm','spell.wasm','Borax.wasm','bondo.wasm','maximum.wasm','split.wasm','Bucket.wasm','buddy.wasm','mean.wasm','spray.wasm','Clip.wasm','capture.wasm','midiflush.wasm','sprintf.wasm','Decode.wasm','cartopol.wasm','midiformat.wasm','substitute.wasm','Histo.wasm','coll.wasm','midiparse.wasm','sustain.wasm','comment.wasm','minimum.wasm','switch.wasm','cosh.wasm','mousefilter.wasm','tanh.wasm','counter.wasm','mtr.wasm','testmess.wasm','cycle.wasm','next.wasm','thresh.wasm','MouseState.wasm','dbtoa.wasm','offer.wasm','tosymbol.wasm','Peak.wasm','decide.wasm','onebang.wasm','universal.wasm','Table.wasm','drunk.wasm','past.wasm','urn.wasm','TogEdge.wasm','flush.wasm','xbendin.wasm','Trough.wasm','forward.wasm','poltocar.wasm','xbendin2.wasm','Uzi.wasm','fromsymbol.wasm','pong.wasm','xbendout.wasm','accum.wasm','funbuff.wasm','prepend.wasm','xbendout2.wasm','acos.wasm','funnel.wasm','prob.wasm','xnotein.wasm','active.wasm','gate.wasm','pv.wasm','xnoteout.wasm','allhammers.wasm','grab.wasm','round.wasm','zl.wasm','anal.wasm','hammer.wasm','seq.wasm','asin.wasm','iter.wasm','sinh.wasm','loadmess.wasm','speedlim.wasm'];
-let sickleFiles = ['Clip.wasm','framedelta.wasm','Line.wasm','index.wasm','kink.wasm','linedrive.wasm','log.wasm','lookup.wasm','Scope.wasm','lores.wasm','matrix.wasm','Snapshot.wasm','maximum.wasm','abs.wasm','minimum.wasm','acos.wasm','minmax.wasm','acosh.wasm','mstosamps.wasm','allpass.wasm','onepole.wasm','allsickles.wasm','overdrive.wasm','asin.wasm','peakamp.wasm','asinh.wasm','peek.wasm','atan.wasm','phasewrap.wasm','atan2.wasm','pink.wasm','atanh.wasm','play.wasm','atodb.wasm','poke.wasm','average.wasm','poltocar.wasm','avg.wasm','pong.wasm','bitand.wasm','pow.wasm','bitnot.wasm','rampsmooth.wasm','bitor.wasm','rand.wasm','bitshift.wasm','record.wasm','bitxor.wasm','reson.wasm','buffir.wasm','round.wasm','capture.wasm','sah.wasm','cartopol.wasm','sampstoms.wasm','change.wasm','sickle.wasm','click.wasm','sinh.wasm','comb.wasm','sinx.wasm','cosh.wasm','slide.wasm','cosx.wasm','spike.wasm','count.wasm','svf.wasm','curve.wasm','tanh.wasm','tanx.wasm','cycle.wasm','train.wasm','dbtoa.wasm','trapezoid.wasm','delay.wasm','triangle.wasm','delta.wasm','trunc.wasm','deltaclip.wasm','vectral.wasm','edge.wasm','wave.wasm','frameaccum.wasm','zerox.wasm'];
+let sickleFiles = ['abs~.wasm', 'bitand~.wasm', 'cosx~.wasm', 'kink~.wasm', 'minmax~.wasm', 'rampsmooth~.wasm', 'Snapshot~.wasm', 'acos~.wasm', 'bitnot~.wasm', 'count~.wasm', 'Line~.wasm', 'mstosamps~.wasm', 'rand~.wasm', 'spike~.wasm', 'acosh~.wasm', 'bitor~.wasm', 'curve~.wasm', 'linedrive~.wasm', 'onepole~.wasm', 'record~.wasm', 'svf~.wasm', 'allpass~.wasm', 'bitshift~.wasm', 'log~.wasm', 'overdrive~.wasm', 'reson~.wasm', 'tanh~.wasm', 'allsickles~.wasm', 'bitxor~.wasm', 'cycle~.wasm', 'lookup~.wasm', 'peakamp~.wasm', 'round~.wasm', 'tanx~.wasm', 'asin~.wasm', 'buffir~.wasm', 'dbtoa~.wasm', 'lores~.wasm', 'peek~.wasm', 'sah~.wasm', 'train~.wasm', 'asinh~.wasm', 'capture~.wasm', 'delay~.wasm', 'phasewrap~.wasm', 'sampstoms~.wasm', 'trapezoid~.wasm', 'atan2~.wasm', 'cartopol~.wasm', 'delta~.wasm', 'pink~.wasm', 'Scope~.wasm', 'triangle~.wasm', 'atan~.wasm', 'change~.wasm', 'deltaclip~.wasm', 'play~.wasm', 'trunc~.wasm', 'atanh~.wasm', 'click~.wasm', 'edge~.wasm', 'poke~.wasm', 'sickle~.wasm', 'vectral~.wasm', 'atodb~.wasm', 'Clip~.wasm', 'frameaccum~.wasm', 'matrix~.wasm', 'poltocar~.wasm', 'sinh~.wasm', 'wave~.wasm', 'average~.wasm', 'comb~.wasm', 'framedelta~.wasm', 'maximum~.wasm', 'pong~.wasm', 'sinx~.wasm', 'zerox~.wasm', 'avg~.wasm', 'cosh~.wasm', 'index~.wasm', 'minimum~.wasm', 'pow~.wasm', 'slide~.wasm'];
 
 //CONSTANTS IMPORTED FROM g_vumeter.c, lines 25-61
 let vu_colors = [
@@ -3283,6 +3283,7 @@ async function openPatch(content, filename) {
                 promises.push(fetchAbstractions(abstractionData[abstraction].content, missingAbstractions[abstraction].split('/').slice(0,-1).join('/')+'/'));
             }
         }
+        searchPaths = [...new Set([...searchPaths, path])];
         await Promise.all(promises);
     }
     await fetchAbstractions(content,'/');
@@ -3357,7 +3358,7 @@ async function openPatch(content, filename) {
         //If we are looking at something that can be connected with a wire, increment the wire counter
         if(object_types.find(type=>lines[i].startsWith(type)))
             layer.nextGUIID++;
-        lines[i] = args.join(' ').replace(/,/g,'\\,')+(argParts.length > 1 ? ','+argParts.slice(1).map(arg=>arg.replace(/,/g,'\\,')).join(',') : '');
+        lines[i] = args.map(arg => arg.replace(/ /g,'\\ ')).join(' ').replace(/,/g,'\\,')+(argParts.length > 1 ? ','+argParts.slice(1).map(arg=>arg.replace(/,/g,'\\,')).join(',') : '');
         //Now we switch based on the type of line (first two arguments)
         switch (args.slice(0,2).join(' ')) {
             case "#N canvas":
@@ -4359,18 +4360,31 @@ async function openPatch(content, filename) {
                                 onKeyDown: e => {
                                     if(e.repeat === false || data.repeat === true) {
                                         gui_send('Float', data.send, 1);
-                                        gui_send('Symbol', data.auxSend[0], e.key);
+                                        if(e.key.match(/^F\d$/) && keyDown['Shift'])
+                                            gui_send('Symbol', data.auxSend[0], "Shift"+e.key);
+                                        else
+                                            gui_send('Symbol', data.auxSend[0], e.key);
                                     }
                                 },
                                 onKeyUp: e => {
                                     if(e.repeat === false || data.repeat === true) {
                                         gui_send('Float', data.send, 0);
-                                        gui_send('Symbol', data.auxSend[0], e.key);
+                                        if(e.key.match(/^F\d$/) && keyDown['Shift'])
+                                            gui_send('Symbol', data.auxSend[0], "Shift"+e.key);
+                                        else
+                                            gui_send('Symbol', data.auxSend[0], e.key);
                                     }
                                 }
                             })
                             break;
                         }
+                        case "preset_node":
+                            //Putting this here just to be able to ignore it when creating connections to silence the warnings
+                            //This does NOT implement preset_nodes
+                            layer.guiObjects[layer.nextGUIID] = {
+                                type: 'preset_node'
+                            }
+                            break;
                         case "legacy_mousemotion": {
                             let data = {};
                             data.send = [null];
@@ -4864,7 +4878,7 @@ async function openPatch(content, filename) {
                 break;
             case "#X connect":
                 if (args.length > 5) {
-                    if(args[6] === '__IGNORE__')
+                    if(args[6] === '__IGNORE__' || layer.guiObjects[args[4]]?.type == 'preset_node' || layer.guiObjects[args[2]]?.type == 'preset_node')
                         break;
                     //We generate a name based off of the arguments of the connect (which will be unique)
                     let connectionName = `__WIRE_${layer.id}_${args[2]}_${args[3]}_${args[4]}_${args[5]}`;
