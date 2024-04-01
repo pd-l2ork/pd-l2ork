@@ -129,11 +129,7 @@ static void helplink_activate(t_gobj *z, t_glist *glist, int state)
     }
 }
 
-#ifndef __EMSCRIPTEN__
-extern char *gobj_vis_gethelpname(t_gobj *z, char *namebuf);
-#else
 extern void gobj_vis_gethelpname(t_gobj *z, char *namebuf);
-#endif
 
 static void helplink_vis(t_gobj *z, t_glist *glist, int vis)
 {

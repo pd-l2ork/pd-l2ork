@@ -136,7 +136,7 @@ static void pianoroll_draw_update(t_pianoroll *x, t_glist *glist)
     }
 }
 
-extern char *gobj_vis_gethelpname(t_gobj *z, char *namebuf);
+extern void gobj_vis_gethelpname(t_gobj *z, char *namebuf);
 
 static void pianoroll_draw_innards(t_pianoroll *x, t_glist *glist)
 {
