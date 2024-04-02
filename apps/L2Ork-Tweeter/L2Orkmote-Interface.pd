@@ -1,7 +1,7 @@
-#N canvas 86 104 473 208 12;
-#X obj 11 9 l2orkmote/l2orkmote;
-#N canvas 167 605 214 78 guts 0;
-#N canvas 635 375 612 634 states 0;
+#N canvas 82 71 473 249 12;
+#X obj 216 126 l2orkmote/l2orkmote;
+#N canvas 167 665 214 78 guts 0;
+#N canvas 635 399 612 634 states 0;
 #X obj 22 24 r l2orkmote-left-arm-pitch-forward;
 #X obj 22 49 > 0.75;
 #X obj 22 74 change;
@@ -31,9 +31,11 @@
 #X obj 22 124 t f b f;
 #X msg 279 502 1;
 #X obj 279 534 change;
+#X floatatom 110 140 5 0 0 0 - - - 0 0 1, f 5;
 #X connect 0 0 1 0;
 #X connect 1 0 2 0;
 #X connect 2 0 3 0;
+#X connect 2 0 29 0;
 #X connect 3 0 26 0;
 #X connect 6 0 11 0;
 #X connect 7 0 12 0;
@@ -67,8 +69,8 @@
 #X connect 27 0 28 0;
 #X connect 28 0 5 0;
 #X restore 29 27 pd states;
-#N canvas 97 782 505 256 forwards 0;
-#N canvas 425 325 925 535 lh-buttons 0;
+#N canvas 97 802 505 256 forwards 0;
+#N canvas 425 337 925 535 lh-buttons 0;
 #X obj 481 29 r l2orkmote-left-button-3;
 #X obj 670 29 r l2orkmote-left-button-4;
 #X obj 103 29 r l2orkmote-left-button-1;
@@ -220,7 +222,7 @@ output before 3;
 #X obj 92 344 expr if($f1<=-360 \, -360 \, \\$f1);
 #X obj 92 373 expr if($f1>=36000 \, 36000 \, \\$f1);
 #X obj 72 479 nbx 5 14 1 999 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 1 256 0 0 1 0;
+#000000 #000000 22 256 0 0 1 0;
 #X obj 92 317 accum;
 #X obj 33 100 gate 2 1;
 #X obj 33 34 r l2orkmote-left-hand-mode;
@@ -314,7 +316,7 @@ output before 3;
 #X connect 47 2 8 0;
 #X connect 48 0 31 0;
 #X restore 21 137 pd lh-joystick;
-#N canvas 216 104 1637 950 rh-joystick 0;
+#N canvas 216 108 1637 950 rh-joystick 0;
 #X obj 79 625 expr int($f1/30);
 #X obj 184 97 r l2orkmote-right-joystick-angle-clockwise-analog;
 #X obj 79 538 +;
@@ -382,21 +384,21 @@ output before 3;
 #X msg 858 671 12;
 #X obj 858 720 +;
 #X obj 858 749 nbx 5 14 -192 192 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0 256 0 0 1 0;
+#000000 #000000 -48 256 0 0 1 0;
 #X obj 416 395 t f f;
 #X msg 968 671 -12;
 #X obj 551 615 t f f;
 #X obj 858 775 s l2orkmote-set-octave;
 #X obj 1264 156 expr \\$f1/200+0.5;
 #X obj 1264 185 nbx 5 14 0 1 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0 256 0 0 1 0;
-#X obj 1177 269 s l2orkmote-flanger-mod-amp;
+#000000 #000000 0.52 256 0 0 1 0;
+#X obj 1177 330 s l2orkmote-flanger-mod-amp;
 #X obj 1240 375 r l2orkmote-right-joystick-centered;
 #X obj 1240 659 + 1;
 #X obj 1240 686 gate 2 2;
 #X obj 266 896 s l2orkmote-pitch-number-display;
 #X obj 79 704 t f f f;
-#X obj 1177 239 * 100;
+#X obj 1177 238 * 100;
 #X obj 1317 514 moses 1;
 #X obj 1415 650 metro 50;
 #X obj 1383 551 t b 1;
@@ -410,7 +412,7 @@ output before 3;
 #X obj 936 561 sel 1;
 #X obj 528 131 r l2orkmote-right-button-4-mode-1;
 #X obj 826 442 t f f;
-#X obj 1235 300 s l2orkmote-dry-amp;
+#X obj 1211 300 s l2orkmote-dry-amp;
 #X text 643 424 was -6120 -6120;
 #X text 643 511 was 6840 6840;
 #X obj 551 556 expr \\$f1/180;
@@ -421,6 +423,121 @@ output before 3;
 #X obj 936 590 t b b;
 #X obj 826 590 t b b;
 #X obj 826 632 s l2orkmote-get-octave;
+#X obj 1280 208 r l2orkmote-right-joystick-centered;
+#X obj 1280 238 == 0;
+#X obj 1211 273 gate 1 0;
+#N canvas 510 121 837 892 mode-5 0;
+#X obj 68 107 inlet;
+#X obj 68 149 sel -1;
+#X obj 69 232 loadbang;
+#X msg 69 261 0;
+#X obj 30 28 r l2orkmote-right-button-raw;
+#X obj 54 364 expr int(($f1+10)/36)%10+1;
+#X obj 54 393 t f f;
+#X obj 86 440 s l2orkmote-tempo-step-display;
+#X obj 360 678 +, f 8;
+#X obj 380 476 accum;
+#X obj 360 225 t f b f f;
+#X obj 420 336 sel 0;
+#X obj 420 258 expr if(int($f2)<=359 && int($f2)>300 && int($f1)>=0
+&& int($f1)<60 \, 360 \, 0) \; if (int($f2)>=0 && int($f2)<60 && int($f1)<=359
+&& int($f1)>300 \, -360 \, 0);
+#X msg 310 530 set \$1;
+#X obj 410 711 loadbang;
+#X msg 410 740 0;
+#X obj 360 199 gate 1 1;
+#X obj 30 57 t f f;
+#X obj 54 201 gate 1 1;
+#X obj 520 340 r l2orkmote-right-button-raw;
+#X obj 360 640 * 1;
+#X obj 30 149 == 8;
+#X obj 360 107 < 8;
+#X msg 520 397 5;
+#X msg 564 397 10;
+#X msg 609 397 25;
+#X obj 520 368 sel 4 2 6 0, f 26;
+#X msg 654 397 1;
+#X text 710 369 button 2 is 4button 3 is 2both are 6none are 0;
+#X floatatom 310 290 5 0 0 0 - - - 0 0 1, f 5;
+#X obj 380 505 / 10;
+#X obj 380 563 expr if($f1>=216000 \, 216000 \, \\$f1);
+#X obj 380 534 expr if($f1<=1764 \, 1764 \, \\$f1);
+#X obj 380 592 * 10;
+#X obj 452 439 * 1;
+#X obj 154 201 gate 1 1;
+#X obj 217 259 delay 250;
+#X msg 217 287 color #EDB5B5 #000000 #000000, f 7;
+#X msg 154 287 color #EDB5B5 #FF0000 #000000, f 7;
+#X obj 360 740 t f f;
+#X floatatom 360 814 18 0 0 0 - - - 0 0 1, f 18;
+#X obj 360 785 expr int($f1/36)-int($f2/36);
+#X obj 360 844 s l2orkmote-change-loop-length;
+#X msg 33 470 \; \$1-activate bang;
+#X obj 33 440 f;
+#X obj 154 232 t b b b;
+#X connect 0 0 1 0;
+#X connect 1 0 35 1;
+#X connect 1 1 18 1;
+#X connect 1 1 16 1;
+#X connect 2 0 3 0;
+#X connect 3 0 5 0;
+#X connect 4 0 17 0;
+#X connect 5 0 6 0;
+#X connect 6 0 44 1;
+#X connect 6 1 7 0;
+#X connect 8 0 39 0;
+#X connect 9 0 30 0;
+#X connect 10 0 29 0;
+#X connect 10 0 20 0;
+#X connect 10 1 9 0;
+#X connect 10 2 12 1;
+#X connect 10 3 12 0;
+#X connect 11 1 34 0;
+#X connect 12 0 11 0;
+#X connect 12 1 11 0;
+#X connect 13 0 9 0;
+#X connect 14 0 15 0;
+#X connect 15 0 41 0;
+#X connect 16 0 10 0;
+#X connect 17 0 21 0;
+#X connect 17 1 22 0;
+#X connect 18 0 5 0;
+#X connect 19 0 26 0;
+#X connect 20 0 8 0;
+#X connect 21 0 18 0;
+#X connect 21 0 35 0;
+#X connect 22 0 16 0;
+#X connect 23 0 20 1;
+#X connect 23 0 34 1;
+#X connect 24 0 20 1;
+#X connect 24 0 34 1;
+#X connect 25 0 20 1;
+#X connect 25 0 34 1;
+#X connect 26 0 23 0;
+#X connect 26 1 24 0;
+#X connect 26 2 25 0;
+#X connect 26 3 27 0;
+#X connect 27 0 20 1;
+#X connect 27 0 34 1;
+#X connect 30 0 32 0;
+#X connect 31 0 33 0;
+#X connect 32 0 31 0;
+#X connect 33 0 8 1;
+#X connect 33 0 13 0;
+#X connect 34 0 9 1;
+#X connect 35 0 45 0;
+#X connect 36 0 37 0;
+#X connect 37 0 7 0;
+#X connect 38 0 7 0;
+#X connect 39 0 41 1;
+#X connect 39 1 41 0;
+#X connect 40 0 42 0;
+#X connect 41 0 40 0;
+#X connect 44 0 43 0;
+#X connect 45 0 44 0;
+#X connect 45 1 38 0;
+#X connect 45 2 36 0;
+#X restore 155 155 pd mode-5;
 #X connect 0 0 71 0;
 #X connect 1 0 16 1;
 #X connect 2 0 0 0;
@@ -443,6 +560,7 @@ output before 3;
 #X connect 14 0 15 0;
 #X connect 15 0 0 0;
 #X connect 16 0 6 0;
+#X connect 16 4 99 0;
 #X connect 17 0 16 0;
 #X connect 18 0 19 0;
 #X connect 19 0 20 0;
@@ -459,7 +577,7 @@ output before 3;
 #X connect 30 0 29 0;
 #X connect 30 1 22 0;
 #X connect 31 2 72 0;
-#X connect 31 4 85 0;
+#X connect 31 5 98 1;
 #X connect 32 0 31 0;
 #X connect 33 0 64 0;
 #X connect 35 0 40 0;
@@ -532,6 +650,9 @@ output before 3;
 #X connect 93 1 61 0;
 #X connect 94 0 95 0;
 #X connect 94 1 57 0;
+#X connect 96 0 97 0;
+#X connect 97 0 98 0;
+#X connect 98 0 85 0;
 #X restore 181 137 pd rh-joystick;
 #N canvas 826 300 935 630 rh-roll 0;
 #X obj 132 54 r l2orkmote-right-hand-roll;
@@ -543,7 +664,7 @@ output before 3;
 #X obj 104 406 s l2orkmote-right-hand-roll-mode-4;
 #X obj 118 297 s l2orkmote-right-hand-roll-mode-5;
 #X obj 522 266 nbx 5 14 0 1.5708 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0 256 0 0 1 0;
+#000000 #000000 1.5708 256 0 0 1 0;
 #X obj 522 318 s l2orkmote-pan;
 #X obj 132 269 s l2orkmote-right-hand-roll-mode-6;
 #X obj 522 237 expr (-$f1/3+0.5)*1.5708;
@@ -557,15 +678,15 @@ output before 3;
 #X obj 522 289 change;
 #X obj 132 187 expr (-$f1/3+0.5);
 #X obj 90 464 nbx 5 14 0 1 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0 256 0 0 1 0;
+#000000 #000000 0.359136 256 0 0 1 0;
 #X obj 90 487 change;
 #X obj 90 435 expr (-$f1/3+0.5);
 #X obj 104 357 nbx 5 14 0 1 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0 256 0 0 1 0;
+#000000 #000000 0.548114 256 0 0 1 0;
 #X obj 104 380 change;
 #X obj 104 328 expr (-$f1/3+0.5);
 #X obj 523 407 nbx 5 14 -1 1 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0 256 0 0 1 0;
+#000000 #000000 1 256 0 0 1 0;
 #X obj 523 430 expr int((($f1*-1)+1)*31.5);
 #X obj 523 378 r l2orkmote-right-hand-roll-mode-1;
 #X obj 523 517 s l2orkmote-hover-location;
@@ -656,7 +777,7 @@ hover mode \, here \, we need to watch the execution order., f 37
 #X connect 10 0 4 0;
 #X connect 11 0 5 0;
 #X restore 327 47 pd rh-buttons-mode-2;
-#N canvas 871 584 375 228 rh-buttons-mode-5 0;
+#N canvas 871 608 375 228 rh-buttons-mode-5 0;
 #X obj 56 114 gate 1 0;
 #X obj 56 172 s l2orkmote-dry-instrument-level;
 #X obj 56 23 r l2orkmote-right-button-1-mode-5;
@@ -674,20 +795,20 @@ hover mode \, here \, we need to watch the execution order., f 37
 #X connect 1 0 2 0;
 #X connect 2 1 3 0;
 #X restore 181 167 pd rh-jolt;
-#N canvas 137 432 543 459 rh-hand-pitch 0;
+#N canvas 137 444 543 459 rh-hand-pitch 0;
 #X obj 104 108 moses -0.849;
 #X obj 104 59 r l2orkmote-right-hand-pitch-forward;
 #X obj 214 108 r l2orkmote-right-hand-mode;
 #X obj 132 150 gate 6 1;
-#X obj 146 367 s l2orkmote-right-hand-pitch-forward-mode-2;
-#X obj 160 337 s l2orkmote-right-hand-pitch-forward-mode-3;
-#X obj 174 247 s l2orkmote-right-hand-pitch-forward-mode-4;
-#X obj 160 281 nbx 5 14 -0.7 0.5 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0 256 0 0 1 0;
-#X obj 160 305 expr (pow(($f1+0.7)/1.2 \, 2)*100)+0.001;
-#X obj 174 188 nbx 5 14 -0.7 0.5 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0 256 0 0 1 0;
-#X obj 174 212 expr (pow(($f1+0.7)/1.2 \, 4)*9999)+0.001;
+#X obj 146 364 s l2orkmote-right-hand-pitch-forward-mode-2;
+#X obj 162 334 s l2orkmote-right-hand-pitch-forward-mode-3;
+#X obj 178 241 s l2orkmote-right-hand-pitch-forward-mode-4;
+#X obj 162 281 nbx 5 14 -0.7 0.5 0 0 empty empty empty 0 -8 0 10 #fcfcfc
+#000000 #000000 0.0816327 256 0 0 1 0;
+#X obj 162 305 expr (pow(($f1+0.7)/1.2 \, 2)*100)+0.001;
+#X obj 178 188 nbx 5 14 -0.7 0.5 0 0 empty empty empty 0 -8 0 10 #fcfcfc
+#000000 #000000 -0.112245 256 0 0 1 0;
+#X obj 178 212 expr (pow(($f1+0.7)/1.2 \, 4)*9999)+0.001;
 #X connect 0 1 3 1;
 #X connect 1 0 0 0;
 #X connect 2 0 3 0;
@@ -707,10 +828,10 @@ hover mode \, here \, we need to watch the execution order., f 37
 #X obj 164 247 s l2orkmote-right-arm-pitch-forward-mode-4;
 #X obj 150 340 s l2orkmote-right-arm-pitch-forward-mode-3;
 #X obj 150 286 nbx 5 14 -0.7 0.5 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0 256 0 0 1 0;
+#000000 #000000 0.346154 256 0 0 1 0;
 #X obj 150 310 expr (pow(($f1+0.7)/1.2 \, 2)*50)+0.001;
 #X obj 164 191 nbx 5 14 -0.7 0.5 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0 256 0 0 1 0;
+#000000 #000000 0.0961538 256 0 0 1 0;
 #X obj 164 215 expr (pow(($f1+0.7)/1.2 \, 0.5)*0.998)+0.001;
 #X connect 0 1 2 1;
 #X connect 1 0 2 0;
@@ -722,7 +843,7 @@ hover mode \, here \, we need to watch the execution order., f 37
 #X connect 8 0 9 0;
 #X connect 9 0 4 0;
 #X restore 181 107 pd rh-arm-pitch;
-#N canvas 858 475 490 410 rh-buttons-mode-6 0;
+#N canvas 1190 340 490 410 rh-buttons-mode-6 0;
 #X obj 48 40 r l2orkmote-right-button-1-mode-6;
 #X obj 153 98 r l2orkmote-right-button-3-mode-6;
 #X obj 101 69 r l2orkmote-right-button-2-mode-6;
@@ -795,18 +916,35 @@ hover mode \, here \, we need to watch the execution order., f 37
 #X connect 2 0 0 1;
 #X restore 21 167 pd lh-jolt;
 #X restore 106 27 pd forwards;
-#X restore 290 34 pd guts;
-#X obj 11 62 cnv 15 123 110 empty l2orkmote-pitch-display c 29 42 0
+#X restore 216 173 pd guts;
+#X obj 11 7 cnv 15 123 110 empty l2orkmote-pitch-display c 29 42 0
 96 #edb5b5 #000000 0;
-#X obj 130 61 nbx 4 111 -192 228 0 0 empty l2orkmote-pitch-number-display
+#X obj 130 6 nbx 4 111 -192 228 0 0 empty l2orkmote-pitch-number-display
 NOTE\ PITCH -116 7 0 10 #edb5b5 #000000 #000000 0 256 3 0 0 0;
-#X text 230 9 Tweeter L2Orkmote Interface v.0.3;
-#N canvas 586 69 789 989 documentation 0;
-#X text 14 17 BOTH HANDS must be not facing downwards (in relaxed state)
+#N canvas 556 66 880 987 documentation 0;
+#X text 14 4 BOTH HANDS must be not facing downwards (in relaxed state)
 in order for the input to work. this allows the user to type with one
 hand if they need to do something on the laptop without making unwanted
 sound., f 108;
-#X text 14 391 #1 (mode 1) RIGHT (when the pitch is between -0.7 and
+#X text 14 40 #1 (mode 1) LEFT (when the pitch is between -0.7 and
+0.5 or roughly -60 to 45 degrees):button 1 = toggle instrument level
+on/offbutton 2 = select loop (combined with joystick \, activates
+when the joystick is released back to the center \, OR if you hold
+button 4 it is continually making changes as you move joystick)button
+3 = select instrument (combine with joystick \, activates when the
+joystick is released back to the center \, OR if you hold button 4
+it is continually making changes as you move joystick)joystick = when
+no buttons are pressed and joystick is off-center against any edge
+\, the pitch adjusts instrument level \; when used with buttons 2 or
+3 (or both 2 and 3) \, it enables clockwise and counter-clockwise instrument
+and loop selectionhand pitch = instrument overdrive level (only when
+enabled when the button 2 is pressed)roll = modifies mod amp (+-100%)#2
+(mode 2) LEFT (when the pitch is above 0.75 or above 67.5 degree angle
+\, or typically facing upwards):no buttons = main out adjustment and
+loop controls mode (see right hand info below)button 1 = flangerbutton
+2 = echobutton 3 = loop lengthbutton 4 = reverb and dry out, f 121
+;
+#X text 14 319 #1 (mode 1) RIGHT (when the pitch is between -0.7 and
 0.5 or roughly -60 to 45 degrees):button 1 = add a note (if joystick
 is off-center) or delete a note (if joystick is centered) at hover
 location OR transpose octave up (if button 4 also pressed & held before)button
@@ -827,27 +965,21 @@ can be used in an arc \, as well \, for more precise positoning) (0-100)#2.2
 (mode 4) Left hand button 2 is pressed:roll = echo levelhand pitch
 = echo delay (0.001-9999ms \, may need to be made exponential for finer
 tuning of the low end)arm pitch = echo feedback (0-0.999)#2.3 (mode
-5) Left hand button 3 is pressed:button 1 = joystick dry instrument
-out (l/r \, can be used in an arc \, as well \, for more precise positoning)roll
-= panning*#2.4 (mode 6) Left hand button 4 is pressed:roll = reverb
-levelbuttons 1-4 = reverb mode (1 = least reverberant \, 4 = most
-reverberant), f 108;
-#X text 14 68 #1 (mode 1) LEFT (when the pitch is between -0.7 and
-0.5 or roughly -60 to 45 degrees):button 1 = toggle instrument level
-on/offbutton 2 = select loop (combined with joystick \, activates
-when the joystick is released back to the center \, OR if you hold
-button 4 it is continually making changes as you move joystick)button
-3 = select instrument (combine with joystick \, activates when the
-joystick is released back to the center \, OR if you hold button 4
-it is continually making changes as you move joystick)joystick = when
-no buttons are pressed and joystick is off-center against any edge
-\, the pitch adjusts instrument level \; when used with buttons 2 or
-3 (or both 2 and 3) \, it enables clockwise and counter-clockwise instrument
-and loop selectionhand pitch = instrument overdrive level (only when
-enabled when the button 2 is pressed)roll = modifies mod amp (+-100%)#2
-(mode 2) LEFT (when the pitch is above 0.75 or above 67.5 degree angle
-\, or typically facing upwards):no buttons = main out adjustment and
-loop controls mode (see right hand info below)button 1 = flangerbutton
-2 = echobutton 3 = dry outbutton 4 = reverb, f 108;
-#X restore 348 34 pd documentation;
-#X text 243 177 (c) Ivica Ico Bukvic 2022 \, 2024;
+5) Left hand button 3 is pressed:joystick = loop length adjustment
+(clockwise and counter-clockwise) \, when used with the button 1 it
+allows for a selection of sync controls widget presets 1-10 (one full
+circle) that activate on the joystick releasebutton 1 = enables selection
+of sync controls 1-10 (see joystick above)buttons 2-3 = adjustment
+of the loop length change increment (no button increments by 1 \, button
+2 increments by 5 \, button 3 increments by 10 \, buttons 2+3 increment
+by 25)roll = panning*#2.4 (mode 6) Left hand button 4 is pressed:roll
+= reverb levelbutton 1 = joystick dry instrument out (l/r \, MUST
+be used in an arc \, as well \, center does not register)buttons 1-4
+= reverb mode (1 = least reverberant \, 4 = most reverberant), f 121
+;
+#X restore 274 173 pd documentation;
+#X text 250 217 (c) Ivica Ico Bukvic 2022-2024;
+#X text 230 195 Tweeter L2Orkmote Interface v.0.4;
+#X obj 11 125 nbx 2 111 -192 228 0 0 empty l2orkmote-tempo-step-display
+SYNC\ CONTROL\ PRESET 3 8 0 10 #edb5b5 #000000 #000000 1 256 3 0 0
+0;

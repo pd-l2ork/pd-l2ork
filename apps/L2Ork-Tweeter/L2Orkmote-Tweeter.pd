@@ -1,9 +1,9 @@
-#N canvas 132 50 1637 977 10;
+#N canvas 132 64 1637 977 10;
 #X obj 0 0 cnv 15 1637 973 empty empty empty 5 7 0 10 #444444 #fcfcfc
 0;
 #X obj 4 2 cnv 15 1630 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.81\ by
+#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.82\ by
 4 5 0 10 #6c6c6c #fcfcfc 0;
 #X obj 252 3 cnv 15 125 16 empty empty (c)\ 2020-3\ Released\ under\ the
 4 6 0 10 #6c6c6c #fcfcfc 0;
@@ -70,7 +70,7 @@ empty -5 -9 0 10 #80fc80 #008080 #fcfcfc 1;
 ;
 #X obj 437 3 pddp/pddplink https://www.gnu.org/licenses/gpl-3.0.en.html
 -text GPL v3 License;
-#N canvas 769 596 502 153 core 0;
+#N canvas 769 608 502 153 core 0;
 #N canvas 139 262 861 614 loop-logic 0;
 #X obj 506 413 r myclientnum;
 #X obj 101 566 forward null;
@@ -1588,7 +1588,7 @@ broadcast via internet (if connected) upon loading a session, f 42
 #X connect 78 0 79 0;
 #X connect 79 0 73 0;
 #X restore 359 52 pd load-save-session;
-#N canvas 245 505 450 324 version 0;
+#N canvas 245 517 450 324 version 0;
 #X obj 177 51 loadbang;
 #X obj 177 101 t f f;
 #X obj 204 125 s version;
@@ -1599,7 +1599,7 @@ broadcast via internet (if connected) upon loading a session, f 42
 #X text 99 75 DEBUG;
 #X obj 177 168 sprintf L2Ork Tweeter v.%.02f by;
 #X obj 177 193 tosymbol;
-#X msg 177 76 0.81;
+#X msg 177 76 0.82;
 #X connect 0 0 10 0;
 #X connect 1 0 8 0;
 #X connect 1 1 2 0;

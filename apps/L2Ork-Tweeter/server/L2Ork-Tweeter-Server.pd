@@ -1,4 +1,4 @@
-#N canvas 179 65 1544 979 10;
+#N canvas 179 77 1544 979 10;
 #X floatatom 300 90 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 1238 290 text define clients;
 #X floatatom 738 74 5 0 0 0 - - - 0 0 1, f 5;
@@ -1023,7 +1023,7 @@ guest because either the slot is already occupied \, or all slots are
 taken, f 67;
 #X obj 448 38 netserver 9002 17, f 73;
 #X text 1240 905 (c) 2020-3 Ivica Ico Bukvic ico.bukvic.net;
-#X msg 232 741 0.81;
+#X msg 232 741 0.82;
 #X connect 0 0 76 0;
 #X connect 0 0 115 0;
 #X connect 2 0 174 0;
