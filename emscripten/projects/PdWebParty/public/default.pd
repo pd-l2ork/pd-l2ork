@@ -1,5 +1,5 @@
 #N canvas 72 76 300 500 10;
-#X obj 0 0 cnv 15 300 550 cnv-s cnv-r PdWebParty 80 24 0 24 #606060
+#X obj 0 0 cnv 15 300 550 cnv-s cnv-r WebPdL2Ork 75 24 0 24 #606060
 #fcfcfc 0;
 #N canvas 460 282 878 533 sound 0;
 #X obj 84 488 dac~;
@@ -245,21 +245,23 @@
 #404040 0;
 #X obj 70 310 cnv 15 15 15 show7-s show7-r empty 20 12 0 14 #fcfcfc
 #404040 0;
-#X text 11 140 Sharing:;
-#X text 11 155 - Upload your patch somewhere on the internet;
-#X text 21 200 https://l2ork.music.vt.edu:3000/?url=LINK;
-#X text 11 80 - GUI objects should have send/receive names.;
+#X text 11 132 Sharing:;
+#X text 11 147 - Upload your patch somewhere on the internet;
 #X obj 24 260 bng 120 125 50 0 button-s button-r button 26 60 0 20
 #c4fcc4 #00fc04 #0c4410 1;
 #X obj 156 260 tgl 120 0 toggle-s toggle-r toggle 24 60 0 20 #fcc4c4
 #fc0400 #541010 0 1 1;
-#X text 11 95 - [bng] \, [tgl] \, [vsl] \, [hsl] \, [vradio] \,;
-#X text 11 110 [hradio] \, [cnv] \, and comment are supported.;
-#X text 11 65 - Drag & Drop your pd patch here to upload.;
 #X text 11 49 Running:;
 #X obj 24 391 hsl 247 28 175 75 0 0 hslider-s hslider-r Slider 94 14
 0 16 #c4c4fc #101054 #101054 12300 1 0 1;
 #X obj 24 430 hradio 28 1 0 9 hradio-s hradio-r empty 90 14 0 18 #e0c4fc
 #2c004c #000000 4 1;
-#X text 21 170 (e.g. Patchstorage) and put the download;
-#X text 21 185 LINK to:;
+#X text 21 162 (e.g. Patchstorage) and put the download;
+#X text 21 177 LINK to:;
+#X text 11 80 - To run locally stored patches:;
+#X text 21 192 https://l2ork.music.vt.edu:3000?url=LINK;
+#X text 21 96 https://l2ork.music.vt.edu:3000?url=/PATH/PATCHNAME.pd
+;
+#X text 11 220 PdL2OrkWeb supports all GUI objects that shipwith Pd-L2Ork
+and are not deprecated;
+#X text 11 65 - Welcome to the WebPdL2Ork Pd-L2Ork instance;
