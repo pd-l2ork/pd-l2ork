@@ -3,7 +3,7 @@
 2, 12 insert 0;
 3, 12 username Ico;
 4, 12 inst-name Synth\ Bass;
-5, 12 overdrive 4.39984;
+5, 12 overdrive 4.77723;
 6, 12 loop-length 7804;
 7, 12 octave -12;
 8, 12 modulator 0;
@@ -14,7 +14,8 @@
 13, 12 carrier 0;
 14, 12 keyboard 0;
 15, 12 loop 1;
-16, 12 ae 0 0.0980377 0.117645 0.15686 0.15686 0.215683 0.235291 0.274506
+16, 12 delete 0;
+17, 12 ae 0 0.0980377 0.117645 0.15686 0.15686 0.215683 0.235291 0.274506
 0.294113 0.313721 0.372543 0.392151 0.450974 0.450974 0.470581 0.509796
 0.549011 0.588226 0.607834 0.607834 0.607834 0.607834 0.607834 0.607834
 0.607834 0.607834 0.607834 0.607834 0.607834 0.607834 0.607834 0.607834
@@ -24,158 +25,158 @@
 0.196075 0.15686 0.137253 0.117645 0.0784302 0.0588226 0.0392151 0.0392151
 0.0196075 0.0196075 0.0196075 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
-17, 12 me 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+18, 12 me 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 0 0 0 0 0 0 0 0 0 0 0 0.0235293 0.017647 0.0117647 0.00588234 4.84288e-09
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
-18, 12 tracker-time 64 40 1;
-19, 12 tracker-char 0 g;
-20, 12 tracker-char 1  ;
-21, 12 tracker-char 2  ;
-22, 12 tracker-char 3  ;
-23, 12 tracker-char 4 g;
-24, 12 tracker-char 5  ;
-25, 12 tracker-char 6  ;
-26, 12 tracker-char 7  ;
-27, 12 tracker-char 8 g;
-28, 12 tracker-char 9  ;
-29, 12 tracker-char 10  ;
-30, 12 tracker-char 11  ;
-31, 12 tracker-char 12 g;
-32, 12 tracker-char 13  ;
-33, 12 tracker-char 14  ;
-34, 12 tracker-char 15  ;
-35, 12 tracker-char 16 n;
-36, 12 tracker-char 17  ;
-37, 12 tracker-char 18  ;
-38, 12 tracker-char 19  ;
-39, 12 tracker-char 20 n;
-40, 12 tracker-char 21  ;
-41, 12 tracker-char 22  ;
-42, 12 tracker-char 23  ;
-43, 12 tracker-char 24 n;
-44, 12 tracker-char 25  ;
-45, 12 tracker-char 26  ;
-46, 12 tracker-char 27  ;
-47, 12 tracker-char 28 n;
-48, 12 tracker-char 29  ;
-49, 12 tracker-char 30  ;
-50, 12 tracker-char 31  ;
-51, 12 tracker-char 32 l;
-52, 12 tracker-char 33  ;
-53, 12 tracker-char 34  ;
-54, 12 tracker-char 35  ;
-55, 12 tracker-char 36 l;
-56, 12 tracker-char 37  ;
-57, 12 tracker-char 38  ;
-58, 12 tracker-char 39  ;
-59, 12 tracker-char 40 l;
-60, 12 tracker-char 41  ;
-61, 12 tracker-char 42  ;
-62, 12 tracker-char 43  ;
-63, 12 tracker-char 44 l;
-64, 12 tracker-char 45  ;
-65, 12 tracker-char 46  ;
-66, 12 tracker-char 47  ;
-67, 12 tracker-char 48 m;
-68, 12 tracker-char 49  ;
-69, 12 tracker-char 50  ;
-70, 12 tracker-char 51  ;
-71, 12 tracker-char 52 m;
-72, 12 tracker-char 53  ;
-73, 12 tracker-char 54  ;
-74, 12 tracker-char 55  ;
-75, 12 tracker-char 56 m;
-76, 12 tracker-char 57  ;
-77, 12 tracker-char 58  ;
-78, 12 tracker-char 59  ;
-79, 12 tracker-char 60 m;
-80, 12 tracker-char 61  ;
-81, 12 tracker-char 62  ;
-82, 12 tracker-char 63  ;
-83, 12 tracker-char 64  ;
-84, 12 tracker-data 0 54;
-85, 12 tracker-data 1 0;
-86, 12 tracker-data 2 0;
-87, 12 tracker-data 3 0;
-88, 12 tracker-data 4 54;
-89, 12 tracker-data 5 0;
-90, 12 tracker-data 6 0;
-91, 12 tracker-data 7 0;
-92, 12 tracker-data 8 54;
-93, 12 tracker-data 9 0;
-94, 12 tracker-data 10 0;
-95, 12 tracker-data 11 0;
-96, 12 tracker-data 12 54;
-97, 12 tracker-data 13 0;
-98, 12 tracker-data 14 0;
-99, 12 tracker-data 15 0;
-100, 12 tracker-data 16 57;
-101, 12 tracker-data 17 0;
-102, 12 tracker-data 18 0;
-103, 12 tracker-data 19 0;
-104, 12 tracker-data 20 57;
-105, 12 tracker-data 21 0;
-106, 12 tracker-data 22 0;
-107, 12 tracker-data 23 0;
-108, 12 tracker-data 24 57;
-109, 12 tracker-data 25 0;
-110, 12 tracker-data 26 0;
-111, 12 tracker-data 27 0;
-112, 12 tracker-data 28 57;
-113, 12 tracker-data 29 0;
-114, 12 tracker-data 30 0;
-115, 12 tracker-data 31 0;
-116, 12 tracker-data 32 61;
-117, 12 tracker-data 33 0;
-118, 12 tracker-data 34 0;
-119, 12 tracker-data 35 0;
-120, 12 tracker-data 36 61;
-121, 12 tracker-data 37 0;
-122, 12 tracker-data 38 0;
-123, 12 tracker-data 39 0;
-124, 12 tracker-data 40 61;
-125, 12 tracker-data 41 0;
-126, 12 tracker-data 42 0;
-127, 12 tracker-data 43 0;
-128, 12 tracker-data 44 61;
-129, 12 tracker-data 45 0;
-130, 12 tracker-data 46 0;
-131, 12 tracker-data 47 0;
-132, 12 tracker-data 48 59;
-133, 12 tracker-data 49 0;
-134, 12 tracker-data 50 0;
-135, 12 tracker-data 51 0;
-136, 12 tracker-data 52 59;
-137, 12 tracker-data 53 0;
-138, 12 tracker-data 54 0;
-139, 12 tracker-data 55 0;
-140, 12 tracker-data 56 59;
-141, 12 tracker-data 57 0;
-142, 12 tracker-data 58 0;
-143, 12 tracker-data 59 0;
-144, 12 tracker-data 60 59;
-145, 12 tracker-data 61 0;
-146, 12 tracker-data 62 0;
-147, 12 tracker-data 63 0;
-148, 12 tracker-data 64 0;
-149, 12 flanger-ms 0.001;
-150, 12 flanger-mod-amp 12.963;
-151, 12 flanger-amp 0;
-152, 12 flanger-hz 1.001;
-153, 12 out-pan 0.765262;
-154, 12 out-amp 53.5088;
-155, 12 echo-ms 121.25;
-156, 12 echo-fb 0.7585;
-157, 12 echo-amp 0;
-158, 12 dry-amp 0.342593;
-159, 12 reverb-amp 1;
-160, 12 reverb-type 1;
+19, 12 tracker-time 1 115.162 1;
+20, 12 tracker-char 0 g;
+21, 12 tracker-char 1  ;
+22, 12 tracker-char 2  ;
+23, 12 tracker-char 3  ;
+24, 12 tracker-char 4 g;
+25, 12 tracker-char 5  ;
+26, 12 tracker-char 6  ;
+27, 12 tracker-char 7  ;
+28, 12 tracker-char 8 g;
+29, 12 tracker-char 9  ;
+30, 12 tracker-char 10  ;
+31, 12 tracker-char 11  ;
+32, 12 tracker-char 12 g;
+33, 12 tracker-char 13  ;
+34, 12 tracker-char 14  ;
+35, 12 tracker-char 15  ;
+36, 12 tracker-char 16 n;
+37, 12 tracker-char 17  ;
+38, 12 tracker-char 18  ;
+39, 12 tracker-char 19  ;
+40, 12 tracker-char 20 n;
+41, 12 tracker-char 21  ;
+42, 12 tracker-char 22  ;
+43, 12 tracker-char 23  ;
+44, 12 tracker-char 24 n;
+45, 12 tracker-char 25  ;
+46, 12 tracker-char 26  ;
+47, 12 tracker-char 27  ;
+48, 12 tracker-char 28 n;
+49, 12 tracker-char 29  ;
+50, 12 tracker-char 30  ;
+51, 12 tracker-char 31  ;
+52, 12 tracker-char 32 l;
+53, 12 tracker-char 33  ;
+54, 12 tracker-char 34  ;
+55, 12 tracker-char 35  ;
+56, 12 tracker-char 36 l;
+57, 12 tracker-char 37  ;
+58, 12 tracker-char 38  ;
+59, 12 tracker-char 39  ;
+60, 12 tracker-char 40 l;
+61, 12 tracker-char 41  ;
+62, 12 tracker-char 42  ;
+63, 12 tracker-char 43  ;
+64, 12 tracker-char 44 l;
+65, 12 tracker-char 45  ;
+66, 12 tracker-char 46  ;
+67, 12 tracker-char 47  ;
+68, 12 tracker-char 48 m;
+69, 12 tracker-char 49  ;
+70, 12 tracker-char 50  ;
+71, 12 tracker-char 51  ;
+72, 12 tracker-char 52 m;
+73, 12 tracker-char 53  ;
+74, 12 tracker-char 54  ;
+75, 12 tracker-char 55  ;
+76, 12 tracker-char 56 m;
+77, 12 tracker-char 57  ;
+78, 12 tracker-char 58  ;
+79, 12 tracker-char 59  ;
+80, 12 tracker-char 60 m;
+81, 12 tracker-char 61  ;
+82, 12 tracker-char 62  ;
+83, 12 tracker-char 63  ;
+84, 12 tracker-char 64  ;
+85, 12 tracker-data 0 54;
+86, 12 tracker-data 1 0;
+87, 12 tracker-data 2 0;
+88, 12 tracker-data 3 0;
+89, 12 tracker-data 4 54;
+90, 12 tracker-data 5 0;
+91, 12 tracker-data 6 0;
+92, 12 tracker-data 7 0;
+93, 12 tracker-data 8 54;
+94, 12 tracker-data 9 0;
+95, 12 tracker-data 10 0;
+96, 12 tracker-data 11 0;
+97, 12 tracker-data 12 54;
+98, 12 tracker-data 13 0;
+99, 12 tracker-data 14 0;
+100, 12 tracker-data 15 0;
+101, 12 tracker-data 16 57;
+102, 12 tracker-data 17 0;
+103, 12 tracker-data 18 0;
+104, 12 tracker-data 19 0;
+105, 12 tracker-data 20 57;
+106, 12 tracker-data 21 0;
+107, 12 tracker-data 22 0;
+108, 12 tracker-data 23 0;
+109, 12 tracker-data 24 57;
+110, 12 tracker-data 25 0;
+111, 12 tracker-data 26 0;
+112, 12 tracker-data 27 0;
+113, 12 tracker-data 28 57;
+114, 12 tracker-data 29 0;
+115, 12 tracker-data 30 0;
+116, 12 tracker-data 31 0;
+117, 12 tracker-data 32 61;
+118, 12 tracker-data 33 0;
+119, 12 tracker-data 34 0;
+120, 12 tracker-data 35 0;
+121, 12 tracker-data 36 61;
+122, 12 tracker-data 37 0;
+123, 12 tracker-data 38 0;
+124, 12 tracker-data 39 0;
+125, 12 tracker-data 40 61;
+126, 12 tracker-data 41 0;
+127, 12 tracker-data 42 0;
+128, 12 tracker-data 43 0;
+129, 12 tracker-data 44 61;
+130, 12 tracker-data 45 0;
+131, 12 tracker-data 46 0;
+132, 12 tracker-data 47 0;
+133, 12 tracker-data 48 59;
+134, 12 tracker-data 49 0;
+135, 12 tracker-data 50 0;
+136, 12 tracker-data 51 0;
+137, 12 tracker-data 52 59;
+138, 12 tracker-data 53 0;
+139, 12 tracker-data 54 0;
+140, 12 tracker-data 55 0;
+141, 12 tracker-data 56 59;
+142, 12 tracker-data 57 0;
+143, 12 tracker-data 58 0;
+144, 12 tracker-data 59 0;
+145, 12 tracker-data 60 59;
+146, 12 tracker-data 61 0;
+147, 12 tracker-data 62 0;
+148, 12 tracker-data 63 0;
+149, 12 tracker-data 64 0;
+150, 12 flanger-ms 0.001;
+151, 12 flanger-mod-amp 12.963;
+152, 12 flanger-amp 0;
+153, 12 flanger-hz 1.001;
+154, 12 out-pan 0.765262;
+155, 12 out-amp 53.5088;
+156, 12 echo-ms 121.25;
+157, 12 echo-fb 0.7585;
+158, 12 echo-amp 0;
+159, 12 dry-amp 0.342593;
+160, 12 reverb-amp 1;
+161, 12 reverb-type 1;
 162, 11 hover 0;
 163, 11 insert 0;
 164, 11 username Justy;
 165, 11 inst-name Synth\ Bass;
-166, 11 overdrive 11;
+166, 11 overdrive 0;
 167, 11 loop-length 7804;
 168, 11 octave 0;
 169, 11 modulator 0;
@@ -184,7 +185,7 @@
 172, 11 note-dur 250;
 173, 11 solo 0;
 174, 11 carrier 0;
-175, 11 keyboard 0;
+175, 11 keyboard 1;
 176, 11 loop 1;
 177, 11 delete 0;
 178, 11 ae 0.294117 0.294117 0.313725 0.333332 0.333332 0.35294 0.392156
@@ -202,7 +203,7 @@
 0 0 0 0 0 0 0 0 0 0 0 0.0235293 0.017647 0.0117647 0.00588234 4.84288e-09
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
-180, 11 tracker-time 19 84.8125 1;
+180, 11 tracker-time 1 115.162 1;
 181, 11 tracker-char 0 g;
 182, 11 tracker-char 1  ;
 183, 11 tracker-char 2 0;
@@ -347,47 +348,33 @@
 322, 10 insert 0;
 323, 10 username Joaquin;
 324, 10 inst-name Synth\ Bass;
-325, 10 overdrive 4.16946;
+325, 10 overdrive 6.18013;
 326, 10 loop-length 7804;
 327, 10 octave -12;
 328, 10 modulator 0;
-329, 10 mod-amp 68;
-330, 10 harmonicity 5;
-331, 10 note-dur 490;
+329, 10 mod-amp 313;
+330, 10 harmonicity 32;
+331, 10 note-dur 1000;
 332, 10 solo 0;
 333, 10 carrier 0;
 334, 10 keyboard 1;
 335, 10 loop 1;
 336, 10 delete 0;
-337, 10 ae -6.64343e-08 0.37255 0.7451 0.784316 0.784316 0.784316
-0.882356 0.862748 0.84314 0.823532 0.823532 0.803924 0.784316 0.784316
-0.784316 0.784316 0.764708 0.764708 0.764708 0.764708 0.764708 0.7451
-0.7451 0.7451 0.7451 0.7451 0.7451 0.7451 0.7451 0.738564 0.732028
-0.725492 0.725492 0.725492 0.705884 0.705884 0.705884 0.705884 0.705884
-0.705884 0.69608 0.686276 0.686276 0.676472 0.666668 0.647061 0.627453
-0.627453 0.627453 0.588237 0.578433 0.568629 0.558825 0.549021 0.529413
-0.490197 0.480393 0.470589 0.460786 0.450982 0.441178 0.431374 0.411766
-0.392158 0.385622 0.379086 0.37255 0.362746 0.352942 0.346406 0.33987
-0.333334 0.313726 0.313726 0.30719 0.300654 0.294118 0.27451 0.254903
-0.254903 0.254903 0.254903 0.235295 0.215687 0.196079 0.176471 0.156863
-0.147059 0.137255 0.111111 0.104575 0.0980394 0.0784315 0.0588236 0.0392157
-0.0294117 0.0196078 0.0130718 0.00653592 1.5522e-10 1.5522e-10 1.5522e-10
-1.5522e-10;
-338, 10 me -4.65661e-10 0.00980389 0.138889 0.267975 0.39706 0.526145
-0.655231 0.784316 0.764708 0.764708 0.7451 0.7451 0.7451 0.7451 0.735296
-0.725492 0.718956 0.71242 0.705884 0.705884 0.705884 0.705884 0.705884
-0.699348 0.692812 0.686276 0.686276 0.676472 0.666669 0.666669 0.666669
-0.666669 0.666669 0.666669 0.666669 0.647061 0.637257 0.627453 0.627453
-0.627453 0.617649 0.607845 0.607845 0.594773 0.581701 0.568629 0.558825
-0.549021 0.539217 0.529413 0.522877 0.516341 0.509805 0.503269 0.496733
-0.490197 0.490197 0.490197 0.47059 0.450982 0.450982 0.450982 0.450982
-0.411766 0.411766 0.411766 0.398694 0.385622 0.37255 0.362746 0.352942
-0.343138 0.333334 0.328432 0.32353 0.318628 0.313726 0.274511 0.267975
-0.261439 0.254903 0.245099 0.235295 0.225491 0.215687 0.205883 0.196079
-0.186275 0.176471 0.137255 0.132353 0.127451 0.122549 0.117647 0.104575
-0.0915034 0.0784315 0.0686275 0.0588236 0.0392157 0.0196078 0.0130719
-0.00653593 -1.5522e-10 0 0 0 0 0 0 0;
-339, 10 tracker-time 19 84.8125 1;
+337, 10 ae 0 0.0980377 0.117645 0.15686 0.15686 0.215683 0.235291
+0.274506 0.294113 0.313721 0.372543 0.392151 0.450974 0.450974 0.470581
+0.509796 0.549011 0.588226 0.607834 0.607834 0.607834 0.607834 0.607834
+0.607834 0.607834 0.607834 0.607834 0.607834 0.607834 0.607834 0.607834
+0.607834 0.607834 0.607834 0.607834 0.607834 0.588226 0.588226 0.588226
+0.588226 0.549011 0.549011 0.509796 0.480385 0.470581 0.450974 0.450974
+0.431366 0.392151 0.372543 0.343132 0.313721 0.274506 0.254898 0.235291
+0.215683 0.196075 0.15686 0.137253 0.117645 0.0784302 0.0588226 0.0392151
+0.0392151 0.0196075 0.0196075 0.0196075 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+338, 10 me 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0.0235293 0.017647 0.0117647 0.00588234 4.84288e-09
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+339, 10 tracker-time 1 115.162 1;
 340, 10 tracker-char 0 g;
 341, 10 tracker-char 1  ;
 342, 10 tracker-char 2  ;
@@ -519,16 +506,16 @@
 468, 10 tracker-data 63 0;
 469, 10 tracker-data 64 0;
 470, 10 flanger-ms 0.001;
-471, 10 flanger-mod-amp 0;
-472, 10 flanger-amp 0.148148;
+471, 10 flanger-mod-amp 12.963;
+472, 10 flanger-amp 0;
 473, 10 flanger-hz 1.001;
 474, 10 out-pan 0.765262;
-475, 10 out-amp 52.6316;
-476, 10 echo-ms 33.25;
-477, 10 echo-fb 0;
-478, 10 echo-amp 0.212963;
-479, 10 dry-amp 1;
-480, 10 reverb-amp 0.722222;
+475, 10 out-amp 53.5088;
+476, 10 echo-ms 121.25;
+477, 10 echo-fb 0.7585;
+478, 10 echo-amp 0;
+479, 10 dry-amp 0.342593;
+480, 10 reverb-amp 1;
 481, 10 reverb-type 1;
 482, 9 hover 0;
 483, 9 insert 0;
@@ -737,7 +724,7 @@
 0.078125 0.0625 0.0546875 0.046875 0.03125 0.03125 0.015625 0.015625
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 0 0 0 0 0 0 0 0 0 0 0;
-659, 8 tracker-time 19 84.8125 1;
+659, 8 tracker-time 1 115.162 1;
 660, 8 tracker-char 0  ;
 661, 8 tracker-char 1  ;
 662, 8 tracker-char 2  ;
@@ -1055,7 +1042,7 @@
 960, 6 insert 0;
 961, 6 username Jacob;
 962, 6 inst-name Marimba_Dialing;
-963, 6 overdrive 5.01514;
+963, 6 overdrive 5.95613;
 964, 6 loop-length 7804;
 965, 6 octave 12;
 966, 6 modulator 2;
@@ -1089,7 +1076,7 @@
 0.264709 0.254905 0.235298 0.225494 0.176475 0.176475 0.176475 0.156867
 0.156867 0.156867 0.13726 0.117652 0.107848 0.0784371 0.0196145 0 0
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
-977, 6 tracker-time 19 84.8125 1;
+977, 6 tracker-time 1 115.162 1;
 978, 6 tracker-char 0 /;
 979, 6 tracker-char 1 u;
 980, 6 tracker-char 2 /;
@@ -1234,7 +1221,7 @@
 1119, 5 insert 0;
 1120, 5 username lane;
 1121, 5 inst-name 8bit\ dreams;
-1122, 5 overdrive 1.8803;
+1122, 5 overdrive 2.08746;
 1123, 5 loop-length 3902;
 1124, 5 octave 24;
 1125, 5 modulator 2;
@@ -1259,7 +1246,7 @@
 0.0588255 0.039217 0.0196085 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
-1136, 5 tracker-time 37 23.8438 1;
+1136, 5 tracker-time 1 54.1932 1;
 1137, 5 tracker-char 0 /;
 1138, 5 tracker-char 1  ;
 1139, 5 tracker-char 2  ;
@@ -1273,7 +1260,7 @@
 1147, 5 tracker-char 10  ;
 1148, 5 tracker-char 11  ;
 1149, 5 tracker-char 12 m;
-1150, 5 tracker-char 13 \;;
+1150, 5 tracker-char 13  ;
 1151, 5 tracker-char 14  ;
 1152, 5 tracker-char 15  ;
 1153, 5 tracker-char 16  ;
@@ -1283,13 +1270,13 @@
 1157, 5 tracker-char 20 l;
 1158, 5 tracker-char 21  ;
 1159, 5 tracker-char 22  ;
-1160, 5 tracker-char 23 \;;
+1160, 5 tracker-char 23  ;
 1161, 5 tracker-char 24  ;
 1162, 5 tracker-char 25  ;
 1163, 5 tracker-char 26  ;
 1164, 5 tracker-char 27  ;
 1165, 5 tracker-char 28 m;
-1166, 5 tracker-char 29 \;;
+1166, 5 tracker-char 29  ;
 1167, 5 tracker-char 30  ;
 1168, 5 tracker-char 31  ;
 1169, 5 tracker-char 32  ;
@@ -1313,7 +1300,7 @@
 1187, 5 tracker-char 50  ;
 1188, 5 tracker-char 51  ;
 1189, 5 tracker-char 52 m;
-1190, 5 tracker-char 53 \;;
+1190, 5 tracker-char 53  ;
 1191, 5 tracker-char 54  ;
 1192, 5 tracker-char 55  ;
 1193, 5 tracker-char 56 /;
@@ -1321,7 +1308,7 @@
 1195, 5 tracker-char 58  ;
 1196, 5 tracker-char 59  ;
 1197, 5 tracker-char 60 \;;
-1198, 5 tracker-char 61 \;;
+1198, 5 tracker-char 61  ;
 1199, 5 tracker-char 62  ;
 1200, 5 tracker-char 63  ;
 1201, 5 tracker-char 64  ;
@@ -1338,7 +1325,7 @@
 1212, 5 tracker-data 10 0;
 1213, 5 tracker-data 11 0;
 1214, 5 tracker-data 12 59;
-1215, 5 tracker-data 13 63;
+1215, 5 tracker-data 13 0;
 1216, 5 tracker-data 14 0;
 1217, 5 tracker-data 15 0;
 1218, 5 tracker-data 16 0;
@@ -1348,13 +1335,13 @@
 1222, 5 tracker-data 20 61;
 1223, 5 tracker-data 21 0;
 1224, 5 tracker-data 22 0;
-1225, 5 tracker-data 23 63;
+1225, 5 tracker-data 23 0;
 1226, 5 tracker-data 24 0;
 1227, 5 tracker-data 25 0;
 1228, 5 tracker-data 26 0;
 1229, 5 tracker-data 27 0;
 1230, 5 tracker-data 28 59;
-1231, 5 tracker-data 29 63;
+1231, 5 tracker-data 29 0;
 1232, 5 tracker-data 30 0;
 1233, 5 tracker-data 31 0;
 1234, 5 tracker-data 32 0;
@@ -1378,7 +1365,7 @@
 1252, 5 tracker-data 50 0;
 1253, 5 tracker-data 51 0;
 1254, 5 tracker-data 52 59;
-1255, 5 tracker-data 53 63;
+1255, 5 tracker-data 53 0;
 1256, 5 tracker-data 54 0;
 1257, 5 tracker-data 55 0;
 1258, 5 tracker-data 56 64;
@@ -1386,7 +1373,7 @@
 1260, 5 tracker-data 58 0;
 1261, 5 tracker-data 59 0;
 1262, 5 tracker-data 60 63;
-1263, 5 tracker-data 61 63;
+1263, 5 tracker-data 61 0;
 1264, 5 tracker-data 62 0;
 1265, 5 tracker-data 63 0;
 1266, 5 tracker-data 64 0;
@@ -1394,7 +1381,7 @@
 1268, 5 flanger-mod-amp 33.3333;
 1269, 5 flanger-amp 0;
 1270, 5 flanger-hz 0.001;
-1271, 5 out-pan 0.483323;
+1271, 5 out-pan 0.765262;
 1272, 5 out-amp 39.4737;
 1273, 5 echo-ms 485;
 1274, 5 echo-fb 0.80475;
@@ -1434,7 +1421,7 @@
 0.03125 0.015625 0.015625 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 0 0;
-1297, 4 tracker-time 19 84.8125 1;
+1297, 4 tracker-time 1 115.162 1;
 1298, 4 tracker-char 0 c;
 1299, 4 tracker-char 1  ;
 1300, 4 tracker-char 2  ;
@@ -1577,11 +1564,11 @@
 1437, 4 dry-amp 0.805556;
 1438, 4 reverb-amp 0.759259;
 1439, 4 reverb-type 1;
-1440, 3 hover 0;
+1440, 3 hover 1;
 1441, 3 insert 0;
 1442, 3 username Lauti;
 1443, 3 inst-name pad\ high\ melody;
-1444, 3 overdrive 4.32315;
+1444, 3 overdrive 5.10124;
 1445, 3 loop-length 7804;
 1446, 3 octave 20;
 1447, 3 modulator 0;
@@ -1608,7 +1595,7 @@
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.50525e-07 3.0105e-07 4.51575e-07
 6.021e-07 0.0392151 0.0392151 0 0 0 0 0 0 0 0 0.0443337 0.0426287 0.0409237
 0.0392187 0.0392187 0.0392187 0.0392187;
-1458, 3 tracker-time 19 84.8125 1;
+1458, 3 tracker-time 1 115.162 1;
 1459, 3 tracker-char 0 0;
 1460, 3 tracker-char 1  ;
 1461, 3 tracker-char 2  ;
@@ -1743,7 +1730,7 @@
 1590, 3 flanger-mod-amp 9.25926;
 1591, 3 flanger-amp 0;
 1592, 3 flanger-hz 3.001;
-1593, 3 out-pan 1.24858;
+1593, 3 out-pan 1.19858;
 1594, 3 out-amp 42.1053;
 1595, 3 echo-ms 1000;
 1596, 3 echo-fb 0.481;
@@ -1755,7 +1742,7 @@
 1602, 2 insert 0;
 1603, 2 username Rohin;
 1604, 2 inst-name electrikick;
-1605, 2 overdrive 0;
+1605, 2 overdrive 11;
 1606, 2 loop-length 7804;
 1607, 2 octave -12;
 1608, 2 modulator 3;
@@ -1764,9 +1751,9 @@
 1611, 2 note-dur 299;
 1612, 2 solo 0;
 1613, 2 carrier 0;
-1614, 2 keyboard 0;
+1614, 2 keyboard 1;
 1615, 2 loop 1;
-1616, 2 delete 0;
+1616, 2 delete 2;
 1617, 2 ae 1 0.960784 0.980392 0.980392 0.980392 0.980392 0.976996
 0.969652 0.962307 0.954963 0.947619 0.940274 0.920667 0.881451 0.822628
 0.80302 0.763804 0.744197 0.704981 0.665766 0.646158 0.587334 0.567727
@@ -1780,7 +1767,7 @@
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 0 0 0 0 0 0 0 0;
-1619, 2 tracker-time 19 84.8125 1;
+1619, 2 tracker-time 1 115.162 1;
 1620, 2 tracker-char 0 z;
 1621, 2 tracker-char 1  ;
 1622, 2 tracker-char 2  ;
@@ -1956,7 +1943,7 @@
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 0;
-1778, 1 tracker-time 19 84.8125 1;
+1778, 1 tracker-time 1 115.162 1;
 1779, 1 tracker-char 0 g;
 1780, 1 tracker-char 1  ;
 1781, 1 tracker-char 2 g;
@@ -2021,79 +2008,79 @@
 1840, 1 tracker-char 61  ;
 1841, 1 tracker-char 62  ;
 1842, 1 tracker-char 63  ;
-1843, 1 tracker-data 0 54;
-1844, 1 tracker-data 1 0;
-1845, 1 tracker-data 2 54;
-1846, 1 tracker-data 3 0;
-1847, 1 tracker-data 4 54;
-1848, 1 tracker-data 5 0;
-1849, 1 tracker-data 6 54;
-1850, 1 tracker-data 7 0;
-1851, 1 tracker-data 8 54;
-1852, 1 tracker-data 9 0;
-1853, 1 tracker-data 10 54;
-1854, 1 tracker-data 11 0;
-1855, 1 tracker-data 12 54;
-1856, 1 tracker-data 13 0;
-1857, 1 tracker-data 14 0;
-1858, 1 tracker-data 15 0;
-1859, 1 tracker-data 16 57;
-1860, 1 tracker-data 17 0;
-1861, 1 tracker-data 18 57;
-1862, 1 tracker-data 19 57;
-1863, 1 tracker-data 20 57;
-1864, 1 tracker-data 21 0;
-1865, 1 tracker-data 22 0;
-1866, 1 tracker-data 23 0;
-1867, 1 tracker-data 24 57;
-1868, 1 tracker-data 25 0;
-1869, 1 tracker-data 26 57;
-1870, 1 tracker-data 27 57;
-1871, 1 tracker-data 28 57;
-1872, 1 tracker-data 29 0;
-1873, 1 tracker-data 30 0;
-1874, 1 tracker-data 31 0;
-1875, 1 tracker-data 32 61;
-1876, 1 tracker-data 33 0;
-1877, 1 tracker-data 34 0;
-1878, 1 tracker-data 35 0;
-1879, 1 tracker-data 36 61;
-1880, 1 tracker-data 37 0;
-1881, 1 tracker-data 38 0;
-1882, 1 tracker-data 39 0;
-1883, 1 tracker-data 40 61;
-1884, 1 tracker-data 41 0;
-1885, 1 tracker-data 42 0;
-1886, 1 tracker-data 43 0;
-1887, 1 tracker-data 44 61;
-1888, 1 tracker-data 45 0;
-1889, 1 tracker-data 46 0;
-1890, 1 tracker-data 47 0;
-1891, 1 tracker-data 48 59;
-1892, 1 tracker-data 49 0;
-1893, 1 tracker-data 50 0;
-1894, 1 tracker-data 51 0;
-1895, 1 tracker-data 52 59;
-1896, 1 tracker-data 53 0;
-1897, 1 tracker-data 54 0;
-1898, 1 tracker-data 55 0;
-1899, 1 tracker-data 56 59;
-1900, 1 tracker-data 57 0;
-1901, 1 tracker-data 58 0;
-1902, 1 tracker-data 59 0;
-1903, 1 tracker-data 60 59;
-1904, 1 tracker-data 61 0;
-1905, 1 tracker-data 62 0;
-1906, 1 tracker-data 63 0;
-1907, 1 flanger-ms 0.001;
-1908, 1 flanger-mod-amp 12.963;
-1909, 1 flanger-amp 0.518519;
-1910, 1 flanger-hz 1.001;
-1911, 1 out-pan 0.926369;
-1912, 1 out-amp 19.2982;
-1913, 1 echo-ms 121.25;
-1914, 1 echo-fb 0.9065;
-1915, 1 echo-amp 1;
-1916, 1 dry-amp 0;
-1917, 1 reverb-amp 0.388889;
-1918, 1 reverb-type 0;
+1843, 1 tracker-char 64  ;
+1844, 1 tracker-data 0 54;
+1845, 1 tracker-data 1 0;
+1846, 1 tracker-data 2 54;
+1847, 1 tracker-data 3 0;
+1848, 1 tracker-data 4 54;
+1849, 1 tracker-data 5 0;
+1850, 1 tracker-data 6 54;
+1851, 1 tracker-data 7 0;
+1852, 1 tracker-data 8 54;
+1853, 1 tracker-data 9 0;
+1854, 1 tracker-data 10 54;
+1855, 1 tracker-data 11 0;
+1856, 1 tracker-data 12 54;
+1857, 1 tracker-data 13 0;
+1858, 1 tracker-data 14 0;
+1859, 1 tracker-data 15 0;
+1860, 1 tracker-data 16 57;
+1861, 1 tracker-data 17 0;
+1862, 1 tracker-data 18 57;
+1863, 1 tracker-data 19 57;
+1864, 1 tracker-data 20 57;
+1865, 1 tracker-data 21 0;
+1866, 1 tracker-data 22 0;
+1867, 1 tracker-data 23 0;
+1868, 1 tracker-data 24 57;
+1869, 1 tracker-data 25 0;
+1870, 1 tracker-data 26 57;
+1871, 1 tracker-data 27 57;
+1872, 1 tracker-data 28 57;
+1873, 1 tracker-data 29 0;
+1874, 1 tracker-data 30 0;
+1875, 1 tracker-data 31 0;
+1876, 1 tracker-data 32 61;
+1877, 1 tracker-data 33 0;
+1878, 1 tracker-data 34 0;
+1879, 1 tracker-data 35 0;
+1880, 1 tracker-data 36 61;
+1881, 1 tracker-data 37 0;
+1882, 1 tracker-data 38 0;
+1883, 1 tracker-data 39 0;
+1884, 1 tracker-data 40 61;
+1885, 1 tracker-data 41 0;
+1886, 1 tracker-data 42 0;
+1887, 1 tracker-data 43 0;
+1888, 1 tracker-data 44 61;
+1889, 1 tracker-data 45 0;
+1890, 1 tracker-data 46 0;
+1891, 1 tracker-data 47 0;
+1892, 1 tracker-data 48 59;
+1893, 1 tracker-data 49 0;
+1894, 1 tracker-data 50 0;
+1895, 1 tracker-data 51 0;
+1896, 1 tracker-data 52 59;
+1897, 1 tracker-data 53 0;
+1898, 1 tracker-data 54 0;
+1899, 1 tracker-data 55 0;
+1900, 1 tracker-data 56 59;
+1901, 1 tracker-data 57 0;
+1902, 1 tracker-data 58 0;
+1903, 1 tracker-data 59 0;
+1904, 1 tracker-data 60 59;
+1905, 1 tracker-data 61 0;
+1906, 1 tracker-data 62 0;
+1907, 1 tracker-data 63 0;
+1908, 1 tracker-data 64 0;
+1909, 1 flanger-ms 0.001;
+1910, 1 flanger-mod-amp 12.963;
+1911, 1 flanger-amp 0.518519;
+1912, 1 flanger-hz 1.001;
+1913, 1 out-pan 0.926369;
+1914, 1 out-amp 19.2982;
+1915, 1 echo-ms 121.25;
+1916, 1 echo-fb 0.9065;
+1917, 1 echo-amp 1;
+1918, 1 dry-amp 0;
