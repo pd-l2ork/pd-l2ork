@@ -37,7 +37,7 @@ STRIP = echo
 .PHONY: all libpd externals extra $(extras) abstractions doc build project clean
 
 # removed projects until this part is reviewed and revised. namely, we don't need
-# dialogs and css for the PdWebParty, but will need those later when we focus on
+# dialogs and css for the WebPdL2ork, but will need those later when we focus on
 # the full in-browser editor implementation.
 all: libpd externals extra abstractions doc build
 

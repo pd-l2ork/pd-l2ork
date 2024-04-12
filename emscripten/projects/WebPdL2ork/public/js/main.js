@@ -5039,7 +5039,7 @@ async function openPatch(content, filename) {
                                 `#X obj 5 45 outlet`,
                                 `#X connect 0 0 1 0 `,
                                 `#X connect 0 0 3 0`,
-                                `#X connect 0 2 3 0`,
+                                `#X connect 2 0 3 0`,
                                 `#X restore 0 0 pd ${connectionName}`,
                                 `#X connect ${args[2]} ${args[3]} ${layer.nextGUIID + 1} 0 __IGNORE__`);
                             layer.guiObjects[args[4]].send.push(`${connectionName}_feedback`);

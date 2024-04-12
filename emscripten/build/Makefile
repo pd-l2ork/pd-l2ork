@@ -43,11 +43,11 @@ build: $(SRC_FILES) $(DESTDIR)
 	-s USE_SDL=2 -s USE_OGG=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s ALLOW_MEMORY_GROWTH=1 \
 	-s FORCE_FILESYSTEM=1 -s EXPORTED_RUNTIME_METHODS=FS \
 	--preload-file $(DESTDIR) $(LDFLAGS) --cache ./emcc-cache
-	ln -svf $(EM_PATH)/build/pd-l2ork-web/extra $(EM_PATH)/projects/PdWebParty/public/@pd_extra
+	ln -svf $(EM_PATH)/build/pd-l2ork-web/extra $(EM_PATH)/projects/WebPdL2ork/public/@pd_extra
 	@echo "emscripten build succeeded!"
 
 install: $(OUTPUT_FILES)
-	cp main* $(EM_PATH)/projects/PdWebParty/public/emscripten/
+	cp main* $(EM_PATH)/projects/WebPdL2ork/public/emscripten/
 	@echo "emscripten install succeeded!"
 
 $(OUTPUT_FILES): %: $(INSTALL_PATH)
@@ -55,5 +55,5 @@ $(OUTPUT_FILES): %: $(INSTALL_PATH)
 
 clean:
 	rm -f $(OUTPUT_FILES)
-	rm -f $(EM_PATH)/projects/PdWebParty/public/emscripten/main*
-	rm -f $(EM_PATH)/projects/PdWebParty/public/@pd_extra
+	rm -f $(EM_PATH)/projects/WebPdL2ork/public/emscripten/main*
+	rm -f $(EM_PATH)/projects/WebPdL2ork/public/@pd_extra

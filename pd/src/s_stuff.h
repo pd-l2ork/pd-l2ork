@@ -36,7 +36,7 @@ t_symbol *sys_decodedialog(t_symbol *s);
 
 /* s_file.c */
 // do not load preferences and recent files if using emscripten
-// LATER: distinguish between PdWebParty emscripten and full online editor
+// LATER: distinguish between WebPdL2ork emscripten and full online editor
 #ifndef __EMSCRIPTEN__
 void sys_loadpreferences( void);
 void sys_savepreferences( void);
@@ -47,7 +47,7 @@ extern t_symbol *sys_flags;
 
 #define MAX_RECENT_FILES 8
 // do not load preferences and recent files if using emscripten
-// LATER: distinguish between PdWebParty emscripten and full online editor
+// LATER: distinguish between WebPdL2ork emscripten and full online editor
 #ifndef __EMSCRIPTEN__
 void sys_load_recent_files(void);
 void sys_save_recent_files(void);
