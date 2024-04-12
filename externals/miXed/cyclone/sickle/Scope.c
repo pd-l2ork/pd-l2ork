@@ -19,6 +19,10 @@
 #include "common/fitter.h"
 #include "unstable/forky.h"
 #include "sickle/sic.h"
+#ifdef __EMSCRIPTEN__
+#include "z_hooks.h"
+int next_scope_id = 0;
+#endif
 
 #ifdef KRZYSZCZ
 //#define SCOPE_DEBUG
@@ -108,6 +112,9 @@ typedef struct _scope
     t_pd      *x_handle;
     int	      scale_offset_x;
     int       scale_offset_y;
+#ifdef __EMSCRIPTEN__
+    int       scope_id;
+#endif
 } t_scope;
 
 typedef struct _scopehandle
@@ -1007,6 +1014,19 @@ static void scope_setxymode(t_scope *x, int xymode)
 
 static void scope_tick(t_scope *x)
 {
+#ifdef __EMSCRIPTEN__
+#define BLOCK_SIZE 10000
+    char cbuf[9];
+    sprintf(cbuf, "scope_%d", x->scope_id);
+
+    t_atom data[BLOCK_SIZE+1];
+    for(int block = 0; block <= x->x_bufsize / BLOCK_SIZE; block++) {
+        int c = BLOCK_SIZE * (block + 1) > x->x_bufsize ? x->x_bufsize % BLOCK_SIZE : BLOCK_SIZE;
+        for(int i=0; i<c; i++)
+            SETFLOAT(data + i + 1, x->x_ybuffer[i + block * BLOCK_SIZE]);
+        (*libpd_messagehook)(cbuf, "data", c + 1, data);
+    }
+#endif
     t_canvas *cv;
     if (!x->x_frozen && (cv = scope_isvisible(x)))
     {
@@ -1136,6 +1156,10 @@ static void *scope_new(t_symbol *s, int ac, t_atom *av)
 
     x->scale_offset_x = 0;
     x->scale_offset_y = 0;
+
+#ifdef __EMSCRIPTEN__
+    x->scope_id = ++next_scope_id;
+#endif
 
     return (x);
 }

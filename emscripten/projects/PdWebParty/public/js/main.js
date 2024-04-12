@@ -15,6 +15,7 @@ let fileCache = {};
 //All of these files will be symlinked to those two files.
 let hammerFiles = ['Append.wasm','bangbang.wasm','match.wasm','spell.wasm','Borax.wasm','bondo.wasm','maximum.wasm','split.wasm','Bucket.wasm','buddy.wasm','mean.wasm','spray.wasm','Clip.wasm','capture.wasm','midiflush.wasm','sprintf.wasm','Decode.wasm','cartopol.wasm','midiformat.wasm','substitute.wasm','Histo.wasm','coll.wasm','midiparse.wasm','sustain.wasm','comment.wasm','minimum.wasm','switch.wasm','cosh.wasm','mousefilter.wasm','tanh.wasm','counter.wasm','mtr.wasm','testmess.wasm','cycle.wasm','next.wasm','thresh.wasm','MouseState.wasm','dbtoa.wasm','offer.wasm','tosymbol.wasm','Peak.wasm','decide.wasm','onebang.wasm','universal.wasm','Table.wasm','drunk.wasm','past.wasm','urn.wasm','TogEdge.wasm','flush.wasm','xbendin.wasm','Trough.wasm','forward.wasm','poltocar.wasm','xbendin2.wasm','Uzi.wasm','fromsymbol.wasm','pong.wasm','xbendout.wasm','accum.wasm','funbuff.wasm','prepend.wasm','xbendout2.wasm','acos.wasm','funnel.wasm','prob.wasm','xnotein.wasm','active.wasm','gate.wasm','pv.wasm','xnoteout.wasm','allhammers.wasm','grab.wasm','round.wasm','zl.wasm','anal.wasm','hammer.wasm','seq.wasm','asin.wasm','iter.wasm','sinh.wasm','loadmess.wasm','speedlim.wasm'];
 let sickleFiles = ['abs~.wasm', 'bitand~.wasm', 'cosx~.wasm', 'kink~.wasm', 'minmax~.wasm', 'rampsmooth~.wasm', 'Snapshot~.wasm', 'acos~.wasm', 'bitnot~.wasm', 'count~.wasm', 'Line~.wasm', 'mstosamps~.wasm', 'rand~.wasm', 'spike~.wasm', 'acosh~.wasm', 'bitor~.wasm', 'curve~.wasm', 'linedrive~.wasm', 'onepole~.wasm', 'record~.wasm', 'svf~.wasm', 'allpass~.wasm', 'bitshift~.wasm', 'log~.wasm', 'overdrive~.wasm', 'reson~.wasm', 'tanh~.wasm', 'allsickles~.wasm', 'bitxor~.wasm', 'cycle~.wasm', 'lookup~.wasm', 'peakamp~.wasm', 'round~.wasm', 'tanx~.wasm', 'asin~.wasm', 'buffir~.wasm', 'dbtoa~.wasm', 'lores~.wasm', 'peek~.wasm', 'sah~.wasm', 'train~.wasm', 'asinh~.wasm', 'capture~.wasm', 'delay~.wasm', 'phasewrap~.wasm', 'sampstoms~.wasm', 'trapezoid~.wasm', 'atan2~.wasm', 'cartopol~.wasm', 'delta~.wasm', 'pink~.wasm', 'Scope~.wasm', 'triangle~.wasm', 'atan~.wasm', 'change~.wasm', 'deltaclip~.wasm', 'play~.wasm', 'trunc~.wasm', 'atanh~.wasm', 'click~.wasm', 'edge~.wasm', 'poke~.wasm', 'sickle~.wasm', 'vectral~.wasm', 'atodb~.wasm', 'Clip~.wasm', 'frameaccum~.wasm', 'matrix~.wasm', 'poltocar~.wasm', 'sinh~.wasm', 'wave~.wasm', 'average~.wasm', 'comb~.wasm', 'framedelta~.wasm', 'maximum~.wasm', 'pong~.wasm', 'sinx~.wasm', 'zerox~.wasm', 'avg~.wasm', 'cosh~.wasm', 'index~.wasm', 'minimum~.wasm', 'pow~.wasm', 'slide~.wasm'];
+let nextScopeID = 0;
 
 //CONSTANTS IMPORTED FROM g_vumeter.c, lines 25-61
 let vu_colors = [
@@ -784,7 +785,7 @@ var Module = {
                                     gui_subscribe(data);
                                     break;
                                 case "label":
-                                    data.label = list[0] === "empty" ? "" : list[0];
+                                    data.label = list[0] === "empty" ? "" : list[0].replace(/�/g, ' ​');
                                     data.text.textContent = data.label;
                                     break;
                                 case "label_pos":
@@ -1293,6 +1294,42 @@ var Module = {
                                     break;
                             }
                             break;
+                        case "Scope~":
+                            switch(symbol) {
+                                case "data":
+                                    if(data.drawTimeout)
+                                        clearTimeout(data.drawTimeout);
+                                    let start = list[0] * 10000 - 1;
+                                    for(let i = 1; i < list.length; i++)
+                                        data.nums[i + start] = list[i];
+                                    data.drawTimeout = setTimeout(data.redraw, 16);
+                                    break;
+                                case "range":
+                                    data.min = list[0];
+                                    data.max = list[1];
+                                    break;
+                                case "frgb":
+                                    data.fgr = list[0];
+                                    data.fgg = list[1];
+                                    data.fgb = list[2];
+                                    configure_item(data.path, {
+                                        stroke: `#${(data.fgr).toString(16).padStart(2,'0')}${(data.fgg).toString(16).padStart(2,'0')}${(data.fgb).toString(16).padStart(2,'0')}`
+                                    });
+                                    break;
+                                case "brgb":
+                                    data.bgr = list[0];
+                                    data.bgg = list[1];
+                                    data.bgb = list[2];
+                                    configure_item(data.box, {
+                                        fill: `#${(data.bgr).toString(16).padStart(2,'0')}${(data.bgg).toString(16).padStart(2,'0')}${(data.bgb).toString(16).padStart(2,'0')}`
+                                    });
+                                    break;
+                                case "bufsize":
+                                    data.bufsize = list[0];
+                                    gui_send("Message", [data.backendReceive], ["bufsize", list[0]]);
+                                    break;
+
+                            }
                     }
                 }
             }
@@ -1829,7 +1866,9 @@ function gui_mousepoint(e, canvas, precise) { // transforms the mouse position
     let CTM = canvas.getScreenCTM();
     if(isFirefox) {
         let border = canvas.parentNode.childNodes[[...canvas.parentNode.childNodes].indexOf(canvas)+1];
-        if(border.id?.endsWith('border')) {
+        if(!border?.id?.endsWith('border'))
+            border = canvas.parentNode.childNodes[[...canvas.parentNode.childNodes].indexOf(canvas)-1]
+        if(border?.id?.endsWith('border')) {
             CTM.e = border.getBoundingClientRect().x;
             CTM.f = border.getBoundingClientRect().y;
         }
@@ -3001,11 +3040,11 @@ function onKeyDown(e) {
         keyboardFocus.data.onKeyDown(keyboardFocus.data, e);
     if(keyboardFocus.exclusive == false) {
         keyDown[e.key] = true;
-        for(let listener of inputListeners) {
-            if(listener.onKeyDown)
-                listener.onKeyDown(e);
+        for(let listener of inputListeners.sort((a,b) => (b.priority || 0) - (a.priority || 0))) {
             if(listener.onKeyUp && e.repeat)
                 listener.onKeyUp(e);
+            if(listener.onKeyDown)
+                listener.onKeyDown(e);
         }
     }
 }
@@ -3014,7 +3053,7 @@ function onKeyUp(e) {
         keyboardFocus.data.onKeyUp(keyboardFocus.data, e);
     keyDown[e.key] = false;
     if(keyboardFocus.exclusive == false) {
-        for(let listener of inputListeners)
+        for(let listener of inputListeners.sort((a,b) => (b.priority || 0) - (a.priority || 0)))
             if(listener.onKeyUp)
                 listener.onKeyUp(e);
     }
@@ -3377,6 +3416,7 @@ async function openPatch(content, filename) {
                     arrays: [],
                     messages: [],
                     guiObjects: [],
+                    objects: [],
                     labels: [],
                     nextGUIID: -1,
                     canvas: layers.length > 1 ? document.createElementNS('http://www.w3.org/2000/svg', 'svg') : rootCanvas,
@@ -3682,6 +3722,7 @@ async function openPatch(content, filename) {
                 break;
             case "#X obj":
                 if (args.length > 4) {
+                    layer.objects[layer.nextGUIID] = args[4];
                     switch (args[4]) {
                         case "adc~":
                             if (!maxNumInChannels) {
@@ -3812,7 +3853,7 @@ async function openPatch(content, filename) {
                                 data.init = +args[10];
                                 data.send = args[11] === "empty" ? [null] : [args[11]];
                                 data.receive = args[12] === "empty" ? [null] : [args[12]];
-                                data.label = args[13] === "empty" ? "" : args[13];
+                                data.label = args[13] === "empty" ? "" : args[13].replace(/�/g, ' ​');
                                 data.x_off = +args[14];
                                 data.y_off = +args[15];
                                 data.font = +args[16];
@@ -4324,6 +4365,98 @@ async function openPatch(content, filename) {
                                 layer.guiObjects[layer.nextGUIID] = data;
                             }
                             break;
+                        case "Scope~":
+                            if(args.length > 22) {
+                                let data = {};
+                                data.x_pos = +args[2];
+                                data.y_pos = +args[3];
+                                data.type = args[4];
+                                data.width = +args[5];
+                                data.height = +args[6];
+                                data.period = +args[7];
+                                // 8 unused
+                                data.bufsize = +args[9];
+                                data.min = +args[10];
+                                data.max = +args[11];
+                                data.delay = +args[12];
+                                // 13 unused
+                                data.trigmode = +args[14];
+                                data.triglevel = +args[15];
+                                data.fgr = +args[16];
+                                data.fgg = +args[17];
+                                data.fgb = +args[18];
+                                data.bgr = +args[19];
+                                data.bgg = +args[20];
+                                data.bgb = +args[21];
+                                // 22 unused
+                                data.receive = [`scope_${++nextScopeID}`];
+                                data.id = `${data.type}_${nextHTMLID++}`;
+                                data.backendReceive = `${data.id}_backend`;
+                                data.nums = [];
+                                data.canvas = layer.canvas;
+
+                                let nextObjId = layer.nextGUIID, nextSlot = i, depth = 0;
+                                for(;lines[nextSlot].startsWith('#X connect') == false || depth > 0; nextSlot++) {
+                                    if(object_types.find(type=>lines[nextSlot].startsWith(type)) && depth == 0)
+                                        nextObjId++;
+                                    if(lines[nextSlot].startsWith('#N canvas'))
+                                        depth++;
+                                    if(lines[nextSlot].startsWith('#X restore'))
+                                        depth--;
+                                }
+                                lines.splice(nextSlot, 0, `#X obj 0 0 r ${data.backendReceive}`,`#X connect ${nextObjId} 0 ${layer.nextGUIID} 0 __IGNORE__`);
+                                
+                                data.box = create_item('rect', {
+                                    x: data.x_pos,
+                                    y: data.y_pos,
+                                    width: data.width,
+                                    height: data.height,
+                                    stroke: 'black',
+                                    fill: `#${(data.bgr).toString(16).padStart(2,'0')}${(data.bgg).toString(16).padStart(2,'0')}${(data.bgb).toString(16).padStart(2,'0')}`,
+                                    id: `${data.id}_box`
+                                }, layer.canvas);
+                                data.lines = [];
+                                for(let i=0; i<3; i++) {
+                                    data.lines.push(create_item('line', {
+                                        x1: data.x_pos,
+                                        y1: data.y_pos + (data.height / 4) * (i + 1),
+                                        x2: data.x_pos + data.width - 1,
+                                        y2: data.y_pos + (data.height / 4) * (i + 1),
+                                        stroke: 'black',
+                                        id: `${data.id}_hline_${i}`
+                                    }, layer.canvas));
+                                }
+                                for(let i=0; i<7; i++) {
+                                    data.lines.push(create_item('line', {
+                                        x1: data.x_pos + (data.width / 8) * (i + 1),
+                                        y1: data.y_pos,
+                                        x2: data.x_pos + (data.width / 8) * (i + 1),
+                                        y2: data.y_pos + data.height - 1,
+                                        stroke: 'black',
+                                        id: `${data.id}_vline_${i}`
+                                    }, layer.canvas));
+                                }
+
+                                data.path = create_item('path', {
+                                    stroke: `#${(data.fgr).toString(16).padStart(2,'0')}${(data.fgg).toString(16).padStart(2,'0')}${(data.fgb).toString(16).padStart(2,'0')}`,
+                                    "stroke-width": "1",
+                                    "shape-rendering": "auto",
+                                    fill: 'none',
+                                    id: `${data.id}_path`
+                                }, layer.canvas);
+
+                                data.redraw = () => {
+                                    let path = 'M ';
+                                    for(let i=0; i<data.nums.length; i++)
+                                        path += `${data.x_pos + i * data.width / data.nums.length} ${data.y_pos + (data.max - data.nums[i]) * data.height / (data.max - data.min)} `;
+                                    configure_item(data.path, {d: path});
+                                }
+
+                                layer.guiObjects[layer.nextGUIID] = data;
+
+                                gui_subscribe(data);
+                            }
+                            break;
                         case "key": {
                             let data = {};
                             data.repeat = args[5] === '1';
@@ -4332,8 +4465,9 @@ async function openPatch(content, filename) {
                             inputListeners.push({
                                 onKeyDown: (e) => {
                                     if(e.repeat === false || data.repeat === true)
-                                        gui_send('Float',data.send, e.key.length == 1 ? e.key.charCodeAt(0) : e.keyCode);
-                                }
+                                        gui_send('Float',data.send, e.key.length == 1 ? e.key.charCodeAt(0) : 0);
+                                },
+                                priority: 5
                             })
                             break;
                         }
@@ -4345,8 +4479,9 @@ async function openPatch(content, filename) {
                             inputListeners.push({
                                 onKeyUp: (e) => {
                                     if(e.repeat === false || data.repeat === true)
-                                        gui_send('Float',data.send, e.key.length == 1 ? e.key.charCodeAt(0) : e.keyCode);
-                                }
+                                        gui_send('Float',data.send, e.key.length == 1 ? e.key.charCodeAt(0) : 0);
+                                },
+                                priority: 5
                             })
                             break;
                         }
@@ -4359,32 +4494,25 @@ async function openPatch(content, filename) {
                             inputListeners.push({
                                 onKeyDown: e => {
                                     if(e.repeat === false || data.repeat === true) {
-                                        gui_send('Float', data.send, 1);
                                         if(e.key.match(/^F\d$/) && keyDown['Shift'])
                                             gui_send('Symbol', data.auxSend[0], "Shift"+e.key);
                                         else
                                             gui_send('Symbol', data.auxSend[0], e.key);
+                                        gui_send('Float', data.send, 1);
                                     }
                                 },
                                 onKeyUp: e => {
                                     if(e.repeat === false || data.repeat === true) {
-                                        gui_send('Float', data.send, 0);
                                         if(e.key.match(/^F\d$/) && keyDown['Shift'])
                                             gui_send('Symbol', data.auxSend[0], "Shift"+e.key);
                                         else
                                             gui_send('Symbol', data.auxSend[0], e.key);
+                                        gui_send('Float', data.send, 0);
                                     }
                                 }
                             })
                             break;
                         }
-                        case "preset_node":
-                            //Putting this here just to be able to ignore it when creating connections to silence the warnings
-                            //This does NOT implement preset_nodes
-                            layer.guiObjects[layer.nextGUIID] = {
-                                type: 'preset_node'
-                            }
-                            break;
                         case "legacy_mousemotion": {
                             let data = {};
                             data.send = [null];
@@ -4394,8 +4522,8 @@ async function openPatch(content, filename) {
                             inputListeners.push({
                                 onMouseMove: e => {
                                     let p = gui_roundedmousepoint(e, rootCanvas);
-                                    gui_send('Float', data.send, p.x);
                                     gui_send('Float', data.auxSend[0], p.y);
+                                    gui_send('Float', data.send, p.x);
                                 }
                             })
                             break;
@@ -4409,17 +4537,17 @@ async function openPatch(content, filename) {
                             inputListeners.push({
                                 onMouseDown: e => {
                                     let p = gui_roundedmousepoint(e, rootCanvas);
-                                    gui_send('Float', data.send, 1);
                                     gui_send('Float', data.auxSend[0], e.which);
                                     gui_send('Float', data.auxSend[1], p.x);
                                     gui_send('Float', data.auxSend[2], p.y);
+                                    gui_send('Float', data.send, 1);
                                 },
                                 onMouseUp: e => {
                                     let p = gui_roundedmousepoint(e, rootCanvas);
-                                    gui_send('Float', data.send, 0);
                                     gui_send('Float', data.auxSend[0], e.which);
                                     gui_send('Float', data.auxSend[1], p.x);
                                     gui_send('Float', data.auxSend[2], p.y);
+                                    gui_send('Float', data.send, 0);
                                 }
                             })
                             break;
@@ -4427,7 +4555,7 @@ async function openPatch(content, filename) {
                         default: //If we don't have an explicit handling for the object, it's possible that it is an external patch load 
                             if(args[4] in abstractions) {
                                 //We must add an #X restore at the end to undo the #N canvas at the beginning
-                                nextArgs = args.length > 5 ? args.slice(5) : null;
+                                nextArgs = args.length > 5 ? args.slice(5) : [0];
                                 lines.splice(i,1,...abstractions[args[4]].split(';\n').slice(0,-1),`#X restore ${args[2]} ${args[3]} ${args[4]}`);
                                 //Since we removed the line that we just processed, our subpatch starts at line i, so we have to process line i again.
                                 i--;
@@ -4466,7 +4594,7 @@ async function openPatch(content, filename) {
                         id: data.id,
                         stroke: data.outlineColor,
                         "stroke-width": "1",
-                        "shape-rendering": "crispEdges",
+                        "shape-rendering": "auto",
                         fill: 'none'
                     }, data.canvas);
                     if(layer.arrays.length) {
@@ -4878,7 +5006,7 @@ async function openPatch(content, filename) {
                 break;
             case "#X connect":
                 if (args.length > 5) {
-                    if(args[6] === '__IGNORE__' || layer.guiObjects[args[4]]?.type == 'preset_node' || layer.guiObjects[args[2]]?.type == 'preset_node')
+                    if(args[6] === '__IGNORE__' || layer.objects[args[2]]?.endsWith('~'))
                         break;
                     //We generate a name based off of the arguments of the connect (which will be unique)
                     let connectionName = `__WIRE_${layer.id}_${args[2]}_${args[3]}_${args[4]}_${args[5]}`;
@@ -4888,7 +5016,7 @@ async function openPatch(content, filename) {
                     if(layer.guiObjects[args[2]] && !layer.guiObjects[args[4]]) {
                         //If the sender is a gui object, and the receiver is not, we must add a receive object so that the
                         //sender can send wirelessly. Then we connect the receive object to the receiver, and the sender wirelessly to the receive object
-                        if(args[3] == '0') {
+                                                if(args[3] == '0') {
                             if(layer.guiObjects[args[2]]?.shortCircuit !== false)
                                 lines.splice(i++,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++layer.nextGUIID} 0 ${args[4]} ${args[5]} __IGNORE__`)
                             layer.guiObjects[args[2]].send.push(connectionName);
@@ -4902,7 +5030,22 @@ async function openPatch(content, filename) {
                     if((!layer.guiObjects[args[2]] || layer.guiObjects[args[2]].shortCircuit === false) && layer.guiObjects[args[4]] && args[5] === '0') {
                         //If the receiver is a gui object, and the sender is not, we must add a send object so that the receiver
                         //can receive wirelessly. Then we connect the send object to the sender, and the receiver wirelessly to the send object
-                        lines.splice(i++,1,`#X obj 0 0 s ${connectionName}`,`#X connect ${args[2]} ${args[3]} ${++layer.nextGUIID} 0 __IGNORE__`);
+                        if(layer.objects[args[2]] === 'preset_node') {
+                            lines.splice(i--, 1, 
+                                `#N canvas 0 0 0 0 ${connectionName} 1`,
+                                `#X obj 5 10 inlet`,
+                                `#X obj 60 45 s ${connectionName}`,
+                                `#X obj 115 45 r ${connectionName}_feedback`,
+                                `#X obj 5 45 outlet`,
+                                `#X connect 0 0 1 0 `,
+                                `#X connect 0 0 3 0`,
+                                `#X connect 0 2 3 0`,
+                                `#X restore 0 0 pd ${connectionName}`,
+                                `#X connect ${args[2]} ${args[3]} ${layer.nextGUIID + 1} 0 __IGNORE__`);
+                            layer.guiObjects[args[4]].send.push(`${connectionName}_feedback`);
+                        } else {
+                            lines.splice(i++,1,`#X obj 0 0 s ${connectionName}`,`#X connect ${args[2]} ${args[3]} ${++layer.nextGUIID} 0 __IGNORE__`);
+                        }
                         layer.guiObjects[args[4]].receive.push(connectionName);
                         gui_subscribe(layer.guiObjects[args[4]]);
                     }
