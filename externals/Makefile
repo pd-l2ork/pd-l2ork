@@ -155,7 +155,7 @@ ifeq ($(LIGHT),yes)
 lib_targets = loaders-libdir pddp
 INCREMENTAL = yes
 else ifeq ($(EMSCRIPTEN),yes)
-# original one used by the first iteration of PdWebParty: lib_targets = arraysize autotune bassemu boids bsaylor comport creb cxc earplug ekext ext13 freeverb ggee hcs iem_ambi iem_bin_ambi iemguts iem_adaptfilt iem_delay iem_roomsim iem_spec2 jasch_lib loaders-libdir mapping markex maxlib mjlib moonlib motex mrpeach pan pddp rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing
+# original one used by the first iteration of WebPdL2ork: lib_targets = arraysize autotune bassemu boids bsaylor comport creb cxc earplug ekext ext13 freeverb ggee hcs iem_ambi iem_bin_ambi iemguts iem_adaptfilt iem_delay iem_roomsim iem_spec2 jasch_lib loaders-libdir mapping markex maxlib mjlib moonlib motex mrpeach pan pddp rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing
 lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui flatspace freeverb ggee hcs iemlib iemgui iemguts jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moonlib motex mrpeach oscx pan pdcontainer pddp pdogg rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing zexy
 # short one for quick building for debugging purposes (disabled by default):
 # lib_targets = maxlib
