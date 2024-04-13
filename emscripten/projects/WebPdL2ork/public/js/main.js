@@ -5016,7 +5016,7 @@ async function openPatch(content, filename) {
                     if(layer.guiObjects[args[2]] && !layer.guiObjects[args[4]]) {
                         //If the sender is a gui object, and the receiver is not, we must add a receive object so that the
                         //sender can send wirelessly. Then we connect the receive object to the receiver, and the sender wirelessly to the receive object
-                                                if(args[3] == '0') {
+                        if(args[3] == '0') {
                             if(layer.guiObjects[args[2]]?.shortCircuit !== false)
                                 lines.splice(i++,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++layer.nextGUIID} 0 ${args[4]} ${args[5]} __IGNORE__`)
                             layer.guiObjects[args[2]].send.push(connectionName);
@@ -5039,7 +5039,7 @@ async function openPatch(content, filename) {
                                 `#X obj 5 45 outlet`,
                                 `#X connect 0 0 1 0 `,
                                 `#X connect 0 0 3 0`,
-                                `#X connect 0 2 3 0`,
+                                `#X connect 2 0 3 0`,
                                 `#X restore 0 0 pd ${connectionName}`,
                                 `#X connect ${args[2]} ${args[3]} ${layer.nextGUIID + 1} 0 __IGNORE__`);
                             layer.guiObjects[args[4]].send.push(`${connectionName}_feedback`);

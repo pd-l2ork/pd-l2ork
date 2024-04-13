@@ -260,7 +260,7 @@ static void envgen_shownum(t_envgen *x, t_glist* glist)
     clock_delay(x->w.numclock,700);
 }
 
-extern char *gobj_vis_gethelpname(t_gobj *z, char *namebuf);
+extern void gobj_vis_gethelpname(t_gobj *z, char *namebuf);
 
 static void envgen_create(t_envgen *x, t_glist *glist)
 {

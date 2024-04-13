@@ -383,7 +383,7 @@ int sys_main(int argc, char **argv)
         if (!strcmp(argv[i], "-noprefs"))
             noprefs = 1;
 // do not load preferences and recent files if using emscripten
-// LATER: distinguish between PdWebParty emscripten and full online editor
+// LATER: distinguish between WebPdL2ork emscripten and full online editor
 #ifndef __EMSCRIPTEN__
     if (!noprefs)
         sys_loadpreferences();                  /* load default settings */

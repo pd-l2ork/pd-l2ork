@@ -1,14 +1,14 @@
 version: '3'
 services:
-  pdwebparty:
+  webpdl2ork:
     build: 
       context: .
-      dockerfile: pdwebparty.Dockerfile
+      dockerfile: webpdl2ork.Dockerfile
     ports:
       - "3000:3000"
     environment:
       - PORT=3000
     volumes:
-      - ./emscripten/projects/PdWebParty/public:/PdWebParty/public/patches:ro
+      - ./emscripten/projects/WebPdL2ork/public:/WebPdL2ork/public/patches:ro
     restart: unless-stopped
-    container_name: pdwebparty
+    container_name: webpdl2ork

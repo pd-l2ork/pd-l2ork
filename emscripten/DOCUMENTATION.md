@@ -7,7 +7,7 @@ Zack Lee <cuinjune@gmail.com>
 With contributions from Jonathan Wilkes and Albert Graef
 
 # Overview
-This is a Pd-L2Ork implementation and further development of the [PdWebParty] (https://github.com/cuinjune/PdWebParty) poject, originally introduced as part of the Google Summer of Code. PdWebParty is a system for automatic generation of embeddable library from the code snippets made in the Pd-L2Ork visual programming environment. The end goal is to add the ability to run Pd-L2Ork patches in a web browser. Significant work has been done towards this goal, but there are still changes left to be made to add this functionality to Pd-L2Ork. The rest of this file is a guide for users (particularly those who aim to deploy their own PdWebParty servers), as well as future developers on how to continue working on this project.
+WebPdL2ork is a Pd-L2Ork implementation and further development of the [PdWebParty] (https://github.com/cuinjune/PdWebParty) poject, originally introduced as part of the Google Summer of Code. WebPdL2ork is a system for automatic generation of embeddable library from the code snippets made in the Pd-L2Ork visual programming environment. The end goal is to add the ability to run Pd-L2Ork patches in a web browser. Significant work has been done towards this goal, but there are still changes left to be made to add this functionality to Pd-L2Ork. The rest of this file is a guide for users (particularly those who aim to deploy their own WebPdL2ork servers), as well as future developers on how to continue working on this project.
 
 ## Build Guide
 1. Install emscripten SDK (requires git, instructions tested on Linux, please see https://emscripten.org/docs/getting_started/downloads.html#installation-instructions for instructions for other platforms). These instructions assume that you are ok installing emsdk in your ~/Downloads folder:
@@ -34,18 +34,18 @@ This is a Pd-L2Ork implementation and further development of the [PdWebParty] (h
 
 3. Install the nvm server by following online instruction (see https://github.com/itp-dwd/2020-spring/blob/master/guides/installing-nodejs.md) OR reference the pd-l2ork one (https://l2ork.music.vt.edu:3000). Below is the key command (note that the version may change):
 
-		cd emscripten/projects/PdWebParty
+		cd emscripten/projects/WebPdL2ork
 		curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash
 		npm install dependencies
 
-4. Copy your patch to the [emscripten/build/PdWebParty/public](./build/PdWebParty/public) folder.
+4. Copy your patch to the [emscripten/build/WebPdL2ork/public](./build/WebPdL2ork/public) folder.
 
 5. Start the server:
 
-		cd emscripten/projects/PdWebParty
+		cd emscripten/projects/WebPdL2ork
 		npm start
 
-6. For a default test patch, point your web browser to http://pdwebparty-server-address:3000. For a specific patch hosted on the same server use http://pdwebparty-server-address:3000?url=path-to-patch/patchname.pd (no path is necessary if you are referencing a patch in the docroot which should be in the emscripten/projects/PdWebParty/public/ folder). You can also use the full address for the url parameter, e.g. http://pdwebparty-server-address:3000?url=http://server-address-that-hosts-the-patch/path-to-patch/patchname.pd to point to a patch located on another server.
+6. For a default test patch, point your web browser to http://webpdl2ork-server-address:3000. For a specific patch hosted on the same server use http://webpdl2ork-server-address:3000?url=path-to-patch/patchname.pd (no path is necessary if you are referencing a patch in the docroot which should be in the emscripten/projects/WebPdL2ork/public/ folder). You can also use the full address for the url parameter, e.g. http://webpdl2ork-server-address:3000?url=http://server-address-that-hosts-the-patch/path-to-patch/patchname.pd to point to a patch located on another server.
 
 ## Future Work
 - Check for access to supporting files both locally and remotely.
