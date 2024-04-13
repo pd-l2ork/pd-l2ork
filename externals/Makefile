@@ -504,7 +504,7 @@ cyclone_clean:
 		clean
 else
 CYCLONE_NAME := cyclone
-CYCLONE_FLAGS := -s -I${CYCLONE_PATH}/cyclone -I$(externals_src)/miXed/shared -D__linux__ -DUNIX -fPIC
+CYCLONE_FLAGS := -s -I${CYCLONE_PATH}/cyclone -I$(pd_src)/../libpd/libpd_wrapper -I$(externals_src)/miXed/shared -D__linux__ -DUNIX -fPIC
 CYCLONE_PATH := $(externals_src)/miXed/
 CYCLONE_HAMMER := $(wildcard $(externals_src)/miXed/cyclone/hammer/*.c)
 CYCLONE_SICKLE := $(wildcard $(externals_src)/miXed/cyclone/sickle/*.c)
