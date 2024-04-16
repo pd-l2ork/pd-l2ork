@@ -262,6 +262,6 @@
 #X text 21 192 https://l2ork.music.vt.edu:3000?url=LINK;
 #X text 21 96 https://l2ork.music.vt.edu:3000?url=/PATH/PATCHNAME.pd
 ;
-#X text 11 220 PdL2OrkWeb supports all GUI objects that shipwith Pd-L2Ork
+#X text 11 220 WebPdL2Ork supports all GUI objects that shipwith Pd-L2Ork
 and are not deprecated;
 #X text 11 65 - Welcome to the WebPdL2Ork Pd-L2Ork instance;
