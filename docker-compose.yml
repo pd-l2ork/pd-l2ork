@@ -9,6 +9,6 @@ services:
     environment:
       - PORT=3000
     volumes:
-      - ./emscripten/projects/WebPdL2ork/public:/WebPdL2ork/public/patches:ro
+      - ./emscripten/projects/WebPdL2Ork/public:/WebPdL2Ork/public/patches:ro
     restart: unless-stopped
     container_name: webpdl2ork
