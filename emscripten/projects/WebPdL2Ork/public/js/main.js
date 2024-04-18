@@ -3311,6 +3311,7 @@ async function openPatch(content, filename) {
 
     document.getElementById('loadingstage').innerHTML=`Fetching Dependancies`;
     await new Promise(Resolve => setTimeout(Resolve, 10));
+    let start = Date.now();
     let abstractions = {};
     let fetchAbstractions = async(content, path) => {
         let missingAbstractions = [... new Set(content.split(';\n').filter( line => line.startsWith('#X obj') && !known_objects.includes(line.split(' ')[4]) ).map( line => line.split(' ')[4]))];
@@ -3328,9 +3329,10 @@ async function openPatch(content, filename) {
     await fetchAbstractions(content,'/');
 
     document.getElementById('loadingstage').innerHTML=`Parsing Patch`;
+    console.log('Fetch time: '+(Date.now() - start)+'ms');
     await new Promise(Resolve => setTimeout(Resolve, 10));
-
-    let start = Date.now();
+    
+    start = Date.now();
 
     document.removeEventListener('keydown', onKeyDown);
     document.removeEventListener('keyup', onKeyUp);

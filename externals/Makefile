@@ -517,13 +517,12 @@ CYCLONE_SHARED_SRC := \
 
 cyclone: $(CYCLONE_PATH)/bin/Hammer.wasm $(CYCLONE_PATH)/bin/Sickle.wasm
 
-$(externals_src)/miXed/cyclone/hammer/atodb.c.ignore: 
+$(CYCLONE_PATH)/bin/Hammer.wasm:
 	mv $(externals_src)/miXed/cyclone/hammer/atodb.c $(externals_src)/miXed/cyclone/hammer/atodb.c.ignore
-
-$(CYCLONE_PATH)/bin/Hammer.wasm: $(externals_src)/miXed/cyclone/hammer/atodb.c.ignore
 	touch $(externals_src)/miXed/cyclone/hammer/atodb.c
 	$(CC) $(CFLAGS) $(CYCLONE_FLAGS) -o $(CYCLONE_PATH)/bin/Hammer.wasm $(CYCLONE_SHARED_SRC) $(CYCLONE_HAMMER)
 	rm $(externals_src)/miXed/cyclone/hammer/atodb.c
+	mv $(externals_src)/miXed/cyclone/hammer/atodb.c.ignore $(externals_src)/miXed/cyclone/hammer/atodb.c
 
 $(CYCLONE_PATH)/bin/Sickle.wasm:
 	$(CC) $(CFLAGS) $(CYCLONE_FLAGS) -o $(CYCLONE_PATH)/bin/Sickle.wasm $(CYCLONE_SHARED_SRC) $(CYCLONE_SICKLE)
