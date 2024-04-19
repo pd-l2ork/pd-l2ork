@@ -1398,7 +1398,7 @@ var Module = {
         var numInChannels = 0; // supported values: 0, 1, 2
         var numOutChannels = 2; // supported values: 1, 2
         var sampleRate = 44100; // might change depending on browser/system
-        var ticksPerBuffer = 32; // supported values: 4, 8, 16, 32, 64, 128, 256
+        var ticksPerBuffer = 64; // supported values: 4, 8, 16, 32, 64, 128, 256
 
         // open audio devices, init pd
         if (pd.init(numInChannels, numOutChannels, sampleRate, ticksPerBuffer)) {
@@ -2759,6 +2759,13 @@ function gui_atom_onmousedown(data, e, id) {
             }
             gui_atom_update(data);
         } else {
+            if(data.type !== 'floatatom') {
+                if(keyDown['Shift'])
+                    data.dirtyValue = data.value;
+                else
+                    data.dirtyValue = '';
+                gui_atom_settext(data, data.dirtyValue + (new Array(Math.max(0,3 - data.dirtyValue.length))).fill('.').join(''));
+            }
             setKeyboardFocus(data, data.exclusive);
             configure_item(data.svgText, {fill: '#ff0000'});
             if(data.type === 'floatatom') {
@@ -2808,6 +2815,15 @@ function gui_atom_keydown(data, e) {
     if(e.key === 'Enter') {
         gui_atom_commit(data);
         gui_atom_settext(data, '' + data.value);
+        
+        configure_item(data.svgText, {
+            'font-weight': 'bold',
+        });
+        setTimeout(() => {
+            configure_item(data.svgText, {
+                'font-weight': 'normal',
+            });
+        }, 100);
     }
 
     if(data.dirtyValue !== undefined)
@@ -4467,7 +4483,7 @@ async function openPatch(content, filename) {
                             inputListeners.push({
                                 onKeyDown: (e) => {
                                     if(e.repeat === false || data.repeat === true)
-                                        gui_send('Float',data.send, e.key.length == 1 ? e.key.charCodeAt(0) : 0);
+                                        gui_send('Float',data.send, e.key.length == 1 ? e.key.charCodeAt(0) : (e.keyCode == 27 ? 27 : 0));
                                 },
                                 priority: 5
                             })
@@ -4498,8 +4514,10 @@ async function openPatch(content, filename) {
                                     if(e.repeat === false || data.repeat === true) {
                                         if(e.key.match(/^F\d$/) && keyDown['Shift'])
                                             gui_send('Symbol', data.auxSend[0], "Shift"+e.key);
+                                        else if(e.key.match(/^Arrow/) && keyDown['Shift'])
+                                            gui_send('Symbol', data.auxSend[0], "Shift"+e.key.replace(/Arrow/, ''));
                                         else
-                                            gui_send('Symbol', data.auxSend[0], e.key);
+                                            gui_send('Symbol', data.auxSend[0], e.key.replace(/Backspace/, 'BackSpace').replace(/Arrow/,''));
                                         gui_send('Float', data.send, 1);
                                     }
                                 },
@@ -4507,8 +4525,10 @@ async function openPatch(content, filename) {
                                     if(e.repeat === false || data.repeat === true) {
                                         if(e.key.match(/^F\d$/) && keyDown['Shift'])
                                             gui_send('Symbol', data.auxSend[0], "Shift"+e.key);
+                                        else if(e.key.match(/^Arrow/) && keyDown['Shift'])
+                                            gui_send('Symbol', data.auxSend[0], "Shift"+e.key.replace(/Arrow/, ''));
                                         else
-                                            gui_send('Symbol', data.auxSend[0], e.key);
+                                            gui_send('Symbol', data.auxSend[0], e.key.replace(/Backspace/, 'BackSpace').replace(/Arrow/,''));
                                         gui_send('Float', data.send, 0);
                                     }
                                 }
