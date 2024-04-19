@@ -8,6 +8,7 @@ services:
       - "3000:3000"
     environment:
       - PORT=3000
+      - PATCH_PATH=public/patches
     volumes:
       - ./emscripten/projects/WebPdL2Ork/public:/WebPdL2Ork/public/patches:ro
     restart: unless-stopped

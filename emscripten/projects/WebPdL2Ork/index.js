@@ -1,83 +1,53 @@
-////////////////////////////////////////////////////////////////////////////////
-// server
-////////////////////////////////////////////////////////////////////////////////
 const http = require("http");
 const https = require("https");
-const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
 const PORT = process.env.PORT || 3000;
+const PATCH_PATH = process.env.PATCH_PATH || 'public';
 
-// handle data in a nice way
+// Body parsing for GET paramaters
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// static path
-const publicPath = path.resolve(`${__dirname}/public`);
-const emscriptenPath = path.resolve(`${publicPath}/emscripten`);
-const URL = require("url").URL;
+// File search paths
+app.use(express.static("public"));
+app.use(express.static("public/emscripten"));
+app.use(express.static(PATCH_PATH));
 
-// set your static server
-app.use(express.static(publicPath));
-app.use(express.static(emscriptenPath));
-
-// views
+// Main views
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "views/index.html"));
+  res.sendFile(`${__dirname}/views/index.html`);
 });
 
-// api
+// Fetching patches
 app.get("/api/patch", async (req, res) => {
-  const url = req.query.url;
-  let client = http;
-  if (url.toString().indexOf("https") === 0) {
-    client = https;
-  }
-  let finalUrl = url;
-  let valid = false;
-  let error_type = null;
+  let url = req.query.url;
+  let client = url.toString().includes("https") ? https : http;
   try {
-    //console.log("1: trying " + finalUrl);
-    new URL(finalUrl);
-    valid = true;
+    url = new URL(url);
   } catch (err) {
-    error_type = err;
-    console.error("Pd-L2Ork Server: invalid URL, trying local file...");
-  }
-  if (!valid)
-  {
     try {
-      finalUrl = `http://localhost:${PORT}/` + url;
-      //console.log("2: trying " + finalUrl);
-      new URL(finalUrl);
-      valid = true;
-      console.log("Pd-L2Ork Server: local file successfully opened.")
-    } catch (err2) {
-      error_type = err2;
-      console.error("Pd-L2Ork Server: invalid local file.");
+      url = new URL(`http://localhost:${PORT}/` + url);
+    } catch (err) {
+      res.json({ error: 'Invalid Patch' });
+      return;
     }
   }
-  if (valid) {
-    client.get(finalUrl, (_res) => {
-      let chunks = [];
-      // a chunk of data has been recieved.
-      _res.on("data", (chunk) => {
-        chunks.push(chunk);
-      });
-      // the whole response has been received.
-      _res.on("end", () => {
-        const buf = Buffer.concat(chunks);
-        const content = buf.toString("utf-8");
-        res.json({ content: content });
-      });
-    }).on("error", (err) => {
-      res.json({ error: err });
+  client.get(url, (_res) => {
+    let chunks = [];
+    // a chunk of data has been recieved.
+    _res.on("data", (chunk) => {
+      chunks.push(chunk);
     });
-  } else {
-    res.json({ error: error_type });
-  }
-});
+    // the whole response has been received.
+    _res.on("end", () => {
+      res.json({ content: Buffer.concat(chunks).toString("utf-8") });
+    });
+  }).on("error", (err) => {
+    res.json({ error: err });
+  });
+})
 
 // start listening
 app.listen(PORT, () => {

@@ -1398,7 +1398,7 @@ var Module = {
         var numInChannels = 0; // supported values: 0, 1, 2
         var numOutChannels = 2; // supported values: 1, 2
         var sampleRate = 44100; // might change depending on browser/system
-        var ticksPerBuffer = 32; // supported values: 4, 8, 16, 32, 64, 128, 256
+        var ticksPerBuffer = 64; // supported values: 4, 8, 16, 32, 64, 128, 256
 
         // open audio devices, init pd
         if (pd.init(numInChannels, numOutChannels, sampleRate, ticksPerBuffer)) {
@@ -2759,6 +2759,13 @@ function gui_atom_onmousedown(data, e, id) {
             }
             gui_atom_update(data);
         } else {
+            if(data.type !== 'floatatom') {
+                if(keyDown['Shift'])
+                    data.dirtyValue = data.value;
+                else
+                    data.dirtyValue = '';
+                gui_atom_settext(data, data.dirtyValue + (new Array(Math.max(0,3 - data.dirtyValue.length))).fill('.').join(''));
+            }
             setKeyboardFocus(data, data.exclusive);
             configure_item(data.svgText, {fill: '#ff0000'});
             if(data.type === 'floatatom') {
@@ -2808,6 +2815,15 @@ function gui_atom_keydown(data, e) {
     if(e.key === 'Enter') {
         gui_atom_commit(data);
         gui_atom_settext(data, '' + data.value);
+        
+        configure_item(data.svgText, {
+            'font-weight': 'bold',
+        });
+        setTimeout(() => {
+            configure_item(data.svgText, {
+                'font-weight': 'normal',
+            });
+        }, 100);
     }
 
     if(data.dirtyValue !== undefined)
@@ -3311,6 +3327,7 @@ async function openPatch(content, filename) {
 
     document.getElementById('loadingstage').innerHTML=`Fetching Dependancies`;
     await new Promise(Resolve => setTimeout(Resolve, 10));
+    let start = Date.now();
     let abstractions = {};
     let fetchAbstractions = async(content, path) => {
         let missingAbstractions = [... new Set(content.split(';\n').filter( line => line.startsWith('#X obj') && !known_objects.includes(line.split(' ')[4]) ).map( line => line.split(' ')[4]))];
@@ -3328,9 +3345,10 @@ async function openPatch(content, filename) {
     await fetchAbstractions(content,'/');
 
     document.getElementById('loadingstage').innerHTML=`Parsing Patch`;
+    console.log('Fetch time: '+(Date.now() - start)+'ms');
     await new Promise(Resolve => setTimeout(Resolve, 10));
-
-    let start = Date.now();
+    
+    start = Date.now();
 
     document.removeEventListener('keydown', onKeyDown);
     document.removeEventListener('keyup', onKeyUp);
@@ -4465,7 +4483,7 @@ async function openPatch(content, filename) {
                             inputListeners.push({
                                 onKeyDown: (e) => {
                                     if(e.repeat === false || data.repeat === true)
-                                        gui_send('Float',data.send, e.key.length == 1 ? e.key.charCodeAt(0) : 0);
+                                        gui_send('Float',data.send, e.key.length == 1 ? e.key.charCodeAt(0) : (e.keyCode == 27 ? 27 : 0));
                                 },
                                 priority: 5
                             })
@@ -4496,8 +4514,10 @@ async function openPatch(content, filename) {
                                     if(e.repeat === false || data.repeat === true) {
                                         if(e.key.match(/^F\d$/) && keyDown['Shift'])
                                             gui_send('Symbol', data.auxSend[0], "Shift"+e.key);
+                                        else if(e.key.match(/^Arrow/) && keyDown['Shift'])
+                                            gui_send('Symbol', data.auxSend[0], "Shift"+e.key.replace(/Arrow/, ''));
                                         else
-                                            gui_send('Symbol', data.auxSend[0], e.key);
+                                            gui_send('Symbol', data.auxSend[0], e.key.replace(/Backspace/, 'BackSpace').replace(/Arrow/,''));
                                         gui_send('Float', data.send, 1);
                                     }
                                 },
@@ -4505,8 +4525,10 @@ async function openPatch(content, filename) {
                                     if(e.repeat === false || data.repeat === true) {
                                         if(e.key.match(/^F\d$/) && keyDown['Shift'])
                                             gui_send('Symbol', data.auxSend[0], "Shift"+e.key);
+                                        else if(e.key.match(/^Arrow/) && keyDown['Shift'])
+                                            gui_send('Symbol', data.auxSend[0], "Shift"+e.key.replace(/Arrow/, ''));
                                         else
-                                            gui_send('Symbol', data.auxSend[0], e.key);
+                                            gui_send('Symbol', data.auxSend[0], e.key.replace(/Backspace/, 'BackSpace').replace(/Arrow/,''));
                                         gui_send('Float', data.send, 0);
                                     }
                                 }
@@ -5031,6 +5053,9 @@ async function openPatch(content, filename) {
                         //If the receiver is a gui object, and the sender is not, we must add a send object so that the receiver
                         //can receive wirelessly. Then we connect the send object to the sender, and the receiver wirelessly to the send object
                         if(layer.objects[args[2]] === 'preset_node') {
+                            // This is for preset nodes, it tricks them into thinking that they are physically connected to an object.
+                            // It creates a dummy canvas which is then connected to the preset node in the same way as the original
+                            // object, and also puts wireless sends and receives inside that canvas to interact with the GUI object.
                             lines.splice(i--, 1, 
                                 `#N canvas 0 0 0 0 ${connectionName} 1`,
                                 `#X obj 5 10 inlet`,

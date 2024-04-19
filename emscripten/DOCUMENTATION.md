@@ -1,15 +1,42 @@
 # Authors (listed alphabetically)
-Drew Bowman <drewb00@vt.edu>
-Ivica Ico Bukvic <ico@vt.edu>
-William Furgerson <williamfurgerson@vt.edu>
-Zack Lee <cuinjune@gmail.com>
+Drew Bowman <drewb00@vt.edu>  
+Ivica Ico Bukvic <ico@vt.edu>  
+William Furgerson <williamfurgerson@vt.edu>  
+Zack Lee <cuinjune@gmail.com>  
 
 With contributions from Jonathan Wilkes and Albert Graef
 
 # Overview
 WebPdL2Ork is a Pd-L2Ork implementation and further development of the [PdWebParty] (https://github.com/cuinjune/PdWebParty) poject, originally introduced as part of the Google Summer of Code. WebPdL2Ork is a system for automatic generation of embeddable library from the code snippets made in the Pd-L2Ork visual programming environment. The end goal is to add the ability to run Pd-L2Ork patches in a web browser. Significant work has been done towards this goal, but there are still changes left to be made to add this functionality to Pd-L2Ork. The rest of this file is a guide for users (particularly those who aim to deploy their own WebPdL2Ork servers), as well as future developers on how to continue working on this project.
 
-## Build Guide
+# Build Guide
+
+WebPdL2Ork can be built in two ways: natively, and through docker. The docker build is much easier to set up, and is recommended for most use cases.
+
+## Docker Build
+
+1. Install docker and docker-compose (through whatever means are appropriate for your OS)
+
+2. Build the docker container from this repository:
+
+```bash
+cd <pd-l2ork-git-folder>
+docker-compose build
+```
+
+3. Run the docker container:
+
+```bash
+docker-compose up
+```
+
+Note that you can run the container in the background by using `docker-compose up -d`
+
+Configuration for the patch bind mount and port are in `docker-compose.yml`
+
+
+## Native Build
+
 1. Install emscripten SDK (requires git, instructions tested on Linux, please see https://emscripten.org/docs/getting_started/downloads.html#installation-instructions for instructions for other platforms). These instructions assume that you are ok installing emsdk in your ~/Downloads folder:
 
 		cd ~/Downloads
@@ -45,9 +72,17 @@ WebPdL2Ork is a Pd-L2Ork implementation and further development of the [PdWebPar
 		cd emscripten/projects/WebPdL2Ork
 		npm start
 
-6. For a default test patch, point your web browser to http://webpdl2ork-server-address:3000. For a specific patch hosted on the same server use http://webpdl2ork-server-address:3000?url=path-to-patch/patchname.pd (no path is necessary if you are referencing a patch in the docroot which should be in the emscripten/projects/WebPdL2Ork/public/ folder). You can also use the full address for the url parameter, e.g. http://webpdl2ork-server-address:3000?url=http://server-address-that-hosts-the-patch/path-to-patch/patchname.pd to point to a patch located on another server.
+# Usage
 
-## Future Work
+- For a default test patch, point your web browser to http://webpdl2ork-server-address:port/
+	- The port can be overriden using the PORT environment variable. It defaults to 3000. For example, use `PORT=80 npm run start` to run WebPdL2Ork on port 80 instead of port 3000.
+- For a specific patch hosted on the same server use http://webpdl2ork-server-address:port?url=path-to-patch/patchname.pd 
+	- The patch path is relative to the PATCH_PATH environment variable, which itself is relative to the location of index.js (the WebPdL2Ork folder), and defaults to "public". All patches in the public folder will be accessible no matter the value of PATCH_PATH, but PATCH_PATH can be set to another folder to make that folder accessible as well. For example, use `PATCH_PATH=/path/to/patches npm run start` to tell WebPdL2Ork to look in `/path/to/patches` for patches.
+	- Note: In the docker build, PATH_PATH is set to public/patches, since in docker that is where the host public folder gets mounted to. However, this has no visible effect, as to add a patch from the host machine you still drop it into the public folder (unless you override the bind mount). For docker, it is recommended to override the bind mount instead of overriding PATCH_PATH.
+- For a patch hosted on another server use http://webpdl2ork-server-address:port?url=http://server-address-that-hosts-the-patch/path-to-patch/patchname.pd 
+
+# Future Work
+
 - Check for access to supporting files both locally and remotely.
 - Fix building of libraries that old version supported but the current one doesn't (see externals/Makefile).
 - After resolving the previous issues, if ther are stil problems, figure out what is preventing the support of more complex patches (e.g. Phase-Cancellation-Emscripten.pd).
