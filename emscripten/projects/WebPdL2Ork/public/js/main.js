@@ -5053,6 +5053,9 @@ async function openPatch(content, filename) {
                         //If the receiver is a gui object, and the sender is not, we must add a send object so that the receiver
                         //can receive wirelessly. Then we connect the send object to the sender, and the receiver wirelessly to the send object
                         if(layer.objects[args[2]] === 'preset_node') {
+                            // This is for preset nodes, it tricks them into thinking that they are physically connected to an object.
+                            // It creates a dummy canvas which is then connected to the preset node in the same way as the original
+                            // object, and also puts wireless sends and receives inside that canvas to interact with the GUI object.
                             lines.splice(i--, 1, 
                                 `#N canvas 0 0 0 0 ${connectionName} 1`,
                                 `#X obj 5 10 inlet`,
