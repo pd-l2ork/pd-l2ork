@@ -75,9 +75,9 @@ Configuration for the patch bind mount and port are in `docker-compose.yml`
 # Usage
 
 - For a default test patch, point your web browser to http://webpdl2ork-server-address:port/
-	- The port can be overriden using the PORT environment variable. It defaults to 3000.
+	- The port can be overriden using the PORT environment variable. It defaults to 3000. For example, use `PORT=80 npm run start` to run WebPdL2Ork on port 80 instead of port 3000.
 - For a specific patch hosted on the same server use http://webpdl2ork-server-address:port?url=path-to-patch/patchname.pd 
-	- The patch path is relative to the PATCH_PATH environment variable, which itself is relative to the location of index.js (the WebPdL2Ork folder), and defaults to "public". All patches in the public folder will be accessible no matter the value of PATCH_PATH, but PATCH_PATH can be set to another folder to make that folder accessible as well. 
+	- The patch path is relative to the PATCH_PATH environment variable, which itself is relative to the location of index.js (the WebPdL2Ork folder), and defaults to "public". All patches in the public folder will be accessible no matter the value of PATCH_PATH, but PATCH_PATH can be set to another folder to make that folder accessible as well. For example, use `PATCH_PATH=/path/to/patches npm run start` to tell WebPdL2Ork to look in `/path/to/patches` for patches.
 	- Note: In the docker build, PATH_PATH is set to public/patches, since in docker that is where the host public folder gets mounted to. However, this has no visible effect, as to add a patch from the host machine you still drop it into the public folder (unless you override the bind mount). For docker, it is recommended to override the bind mount instead of overriding PATCH_PATH.
 - For a patch hosted on another server use http://webpdl2ork-server-address:port?url=http://server-address-that-hosts-the-patch/path-to-patch/patchname.pd 
 
