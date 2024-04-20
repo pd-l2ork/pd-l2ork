@@ -1,0 +1,3 @@
+SUBSYSTEM=="input", GROUP="input", MODE="660"
+KERNEL=="uinput", GROUP="input", MODE="660"
+SUBSYSTEM=="leds", ACTION=="add", DRIVERS=="wiimote", RUN+="/bin/sh -c 'chgrp input /sys%p/brightness'", RUN+="/bin/sh -c 'chmod g+w /sys%p/brightness'"
