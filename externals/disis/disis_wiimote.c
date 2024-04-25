@@ -1,3 +1,118 @@
+// ===================================================================
+// Wiimote external for Puredata by Ivica Ico Bukvic and William Furgerson
+// Based on work by Mike Wozniewki (Feb 2007), www.mikewoz.com
+//
+// ===================================================================
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+// ===================================================================
+
+//  ChangeLog:
+//  2008-04-14 Florian Krebs 
+//  * adapt wiimote external for the actual version of cwiid (0.6.00)
+
+//  ChangeLog:
+//  2009-06-09 DISIS (Michael Hawthorne <rustmik2@gmail.com> & Ivica Ico Bukvic <ico@vt.edu>)
+//  http://disis.music.vt.edu
+//  * Bug-fixes (connecting and disconnecting crashes)
+//  * Multithreaded implementation to prevent wiimote from starving PD audio thread
+//  * Bang implementation to allow for better data rate control
+//  * Updated help file
+
+//  v 0.6.3 Changelog:
+//  2009-10-05 DISIS (Ivica Ico Bukvic <ico@vt.edu>)
+//  http://disis.music.vt.edu
+//  * Total rewrite of the threaded design and tons of clean-up
+
+//  v0.6.4 Changelog:
+//  2010-03-21 DISIS (Ivica Ico Bukvic <ico@vt.edu>)
+//  http://disis.music.vt.edu
+//  * Reworked signalling system to use clock_delay()
+
+//  v0.6.5 Changelog:
+//  2010-09-15 DISIS (Ivica Ico Bukvic <ico@vt.edu>)
+//  http://disis.music.vt.edu
+//  * Added motionplus support
+//	* Squashed bugs where expansion was not recognized on connect
+//	* Fixed incorrect calibration on connect
+//	* Other minor bugs'n'fixes
+
+//  v0.6.6 Changelog:
+//  2011-04-13 DISIS (Ivica Ico Bukvic <ico@vt.edu>)
+//  http://disis.music.vt.edu
+//  * Fixed bug where only one IR source was visible/accessible
+//	* Improved redundancy check for Rumble and LED actions
+
+//  v0.7.0 Changelog:
+//  2012-02-12 DISIS (Ivica Ico Bukvic <ico@vt.edu)
+//  http://disis.music.vt.edu
+//  * Improved build system
+//  * Made wiimote limit dynamic
+//	* Added ability to dynamically (re)connect motionplus after connecting wiimote
+//	* Added support for balance board and classic (classic needs testing)
+//  * Consolidated data output to one outlet and provided legacy L2Ork abstraction
+
+//  v0.8.0 Changelog:
+//  2012-03-04 DISIS (Ivica Ico Bukvic <ico@vt.edu)
+//  http://disis.music.vt.edu
+//	* Added dynamic polling to libcwiid for automatic detection of extensions
+//	* External retains its state even after wiimote is disconnected so upon reconnecting
+//	  it is not necessary to reenable various outputs
+
+//  v0.9.0 Changelog:
+//  2012-04-10 DISIS (Ivica Ico Bukvic <ico@vt.edu)
+//  http://disis.music.vt.edu
+//	* Added support for passthrough mode (MPlus&Nunchuk)
+//	* Improved motionplus detection logic (implemented directly into cwiid lib)
+
+//  v0.9.1 Changelog:
+//  2012-04-11 DISIS (Ivica Ico Bukvic <ico@vt.edu)
+//  http://disis.music.vt.edu
+//	* Added support for detecting disconnection due to wiimote running out of battery (requires polling status in pd)
+
+//  v1.0.0 Changelog:
+//  2012-04-28 DISIS (Ivica Ico Bukvic <ico@vt.edu)
+//  http://disis.music.vt.edu
+//	* Added support for Plus+Classic
+
+//  v1.0.1 Changelog:
+//  2012-05-22 DISIS (Ivica Ico Bukvic <ico@vt.edu)
+//  http://disis.music.vt.edu
+//	* Added PDL2ORK define to distinguish features available only in pd-l2ork
+
+//  v1.0.2 Changelog:
+//  2012-10-27 DISIS (Ivica Ico Bukvic <ico@vt.edu)
+//  http://disis.music.vt.edu
+//	* Improved involuntary disconnection detection (e.g. due to low battery)
+//	* Cleaned up pd-l2ork console messages
+//	* Improved disconnect logic to allow re-enabling of settings upon reconnection
+
+//  v1.0.3 Changelog:
+//  2013-03-23 DISIS (Ivica Ico Bukvic <ico@vt.edu)
+//  http://disis.music.vt.edu
+//	* Made sure that the involuntary disconnection detection (e.g. due to low battery) does get reported by showing appropriate connection status from the rightmost outlet
+
+//  v1.0.4 Changelog:
+//  2013-03-29 DISIS (Ivica Ico Bukvic <ico@vt.edu)
+//  http://disis.music.vt.edu
+//	* Added explicit connection reporting even if it fails to connect (for use in GUI displays to reflect the connection pending)
+
+//  v2.0.0 Changelog:
+//  2024-04-25 DISIS (William Furgerson <williamfurgerson@vt.edu)
+//  * Replaced CWIID with the more modern xwiimote library
+//  * Rewrote disis_wiimote using new library
+
 #include <m_pd.h>
 #include <pthread.h>
 #include <poll.h>
@@ -153,7 +268,7 @@ static void pd_wiimote_polling_thread(t_wiimote *x) {
 				}
 
 				pd_wiimote_status(x);
-				
+
 				return;
 			case XWII_EVENT_WATCH:
 				xwii_iface_close(x->xwii_interface, xwii_iface_opened(x->xwii_interface));
