@@ -329,8 +329,8 @@ static void pd_wiimote_polling_thread(t_wiimote *x) {
 			case XWII_EVENT_IR:
 				for(int i=0; i<4; i++) {
 					SETFLOAT(x->ir_atoms[i], i);
-					SETFLOAT(x->ir_atoms[i] + 1, event.v.abs[0].x);
-					SETFLOAT(x->ir_atoms[i] + 2, event.v.abs[0].y);
+					SETFLOAT(x->ir_atoms[i] + 1, event.v.abs[i].x);
+					SETFLOAT(x->ir_atoms[i] + 2, event.v.abs[i].y);
 					SETFLOAT(x->ir_atoms[i] + 3, 1024);
 				}
 				break;
