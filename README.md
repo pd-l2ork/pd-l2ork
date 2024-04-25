@@ -114,7 +114,7 @@ Hard drive space required: *roughly 2.5 GB*
    that none of them will be installed until you specify correct replacement
    library or remove the missing libraries from this list.
 
-        sudo apt-get install bison flex automake libasound2-dev \
+        sudo apt-get install bison flex autoconf automake libasound2-dev \
              libjack-jackd2-dev libtool libbluetooth-dev libgl1-mesa-dev \
              libglu1-mesa-dev libglew-dev libmagick++-dev libftgl-dev \
              libgmerlin-dev libgmerlin-avdec-dev libavifile-0.7-dev \
