@@ -125,6 +125,11 @@ static void pd_wiimote_polling_thread(t_wiimote *x) {
 				fds[1].fd = -1;
 				fds[1].events = 0;
 				fds_num = 1;
+				x->is_connected = false;
+				if (pthread_mutex_unlock(&x->polling_mutex)) {
+					post("Mutex unlock error (polling mutex) - Deadlock warning\n");
+				}
+				return;
 				break;
 			case XWII_EVENT_WATCH:
 				xwii_iface_close(x->xwii_interface, xwii_iface_opened(x->xwii_interface));
