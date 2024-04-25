@@ -145,6 +145,10 @@ Hard drive space required: *roughly 2.5 GB*
    `make install` to install the software, and `make uninstall` to remove it
    again.
 
+5. If you plan on using the wiimote connectivity of pd-l2ork, make sure to reboot  
+   your machine before attempting to connect a wiimote, so that pd-l2ork's udev
+   rules can take effect.
+
 #### OSX 64-bit using Homebrew
 
 Time to build: *50 minutes to 1.5 hours*  

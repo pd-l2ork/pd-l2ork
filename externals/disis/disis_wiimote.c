@@ -93,7 +93,7 @@ static void pd_wiimote_polling_thread(t_wiimote *x) {
 	fds_num = 2;
 
 	if(xwii_iface_watch(x->xwii_interface, true)) {
-		post("Error: Cannot initialize hotplug watch descriptor\n");
+		post("Error: Cannot initialize hotplug watch descriptor");
     }
 
     while(true) {
@@ -101,36 +101,39 @@ static void pd_wiimote_polling_thread(t_wiimote *x) {
 		if (ret < 0) {
 			if (errno != EINTR) {
 				ret = -errno;
-				post("Error: Cannot poll fds\n");
+				post("Error: Cannot poll fds");
 				break;
 			}
 		}
 
 		if (pthread_mutex_lock(&x->polling_mutex)) {
-			post("Mutex lock error (polling mutex)\n");
+			post("Mutex lock error (polling mutex)");
 			break;
 		}
 		
 		ret = xwii_iface_dispatch(x->xwii_interface, &event, sizeof(event));
 		if (ret) {
 			if (ret != -EAGAIN) {
-				post("Error: Read failed\n");
+				post("Error: Read failed");
 				break;
 			}
 		} else  {
 			int mask = 0, buttonsBitfield = 0;
 			switch (event.type) {
 			case XWII_EVENT_GONE:
-				post("Info: Device gone\n");
-				fds[1].fd = -1;
-				fds[1].events = 0;
-				fds_num = 1;
+				post("Info: Device gone");
+
 				x->is_connected = false;
+
+				xwii_iface_unref(x->xwii_interface);
+
+				pd_wiimote_status(x);
+				
 				if (pthread_mutex_unlock(&x->polling_mutex)) {
-					post("Mutex unlock error (polling mutex) - Deadlock warning\n");
+					post("Mutex unlock error (polling mutex) - Deadlock warning!");
 				}
+
 				return;
-				break;
 			case XWII_EVENT_WATCH:
 				xwii_iface_close(x->xwii_interface, xwii_iface_opened(x->xwii_interface));
 				xwii_iface_open(x->xwii_interface, xwii_iface_available(x->xwii_interface));
@@ -228,27 +231,27 @@ static void pd_wiimote_polling_thread(t_wiimote *x) {
 				break;
 			case XWII_EVENT_CLASSIC_CONTROLLER_KEY:
 			case XWII_EVENT_CLASSIC_CONTROLLER_MOVE:
-                post("Warning: Classic controller not implemented\n");
+                post("Warning: Classic controller not implemented");
 				break;
 			case XWII_EVENT_BALANCE_BOARD:
-                post("Warning: Balance board not implemented\n");
+                post("Warning: Balance board not implemented");
 				break;
 			case XWII_EVENT_PRO_CONTROLLER_KEY:
 			case XWII_EVENT_PRO_CONTROLLER_MOVE:
-                post("Warning: Pro controller not implemented\n");
+                post("Warning: Pro controller not implemented");
 				break;
 			case XWII_EVENT_GUITAR_KEY:
 			case XWII_EVENT_GUITAR_MOVE:
-                post("Warning: Guitar controller not implemented\n");
+                post("Warning: Guitar controller not implemented");
 				break;
 			case XWII_EVENT_DRUMS_KEY:
 			case XWII_EVENT_DRUMS_MOVE:
-                post("Warning: Drums controller not implemented\n");
+                post("Warning: Drums controller not implemented");
 				break;
 			}
 		}
 		if (pthread_mutex_unlock(&x->polling_mutex)) {
-			post("Mutex unlock error (polling mutex) - Deadlock warning\n");
+			post("Mutex unlock error (polling mutex) - Deadlock warning");
 		}
     }
 
@@ -256,16 +259,16 @@ static void pd_wiimote_polling_thread(t_wiimote *x) {
 
 static void pd_wiimote_setRumble(t_wiimote *x, t_floatarg f) {
     if (pthread_mutex_lock(&x->polling_mutex)) {
-        post("Mutex lock error (polling mutex)\n");
+        post("Mutex lock error (polling mutex)");
         return;
     }
 
     if(xwii_iface_rumble(x->xwii_interface, f)) {
-        post("Error: Cannot toggle rumble motor\n");
+        post("Error: Cannot toggle rumble motor");
     }
 
     if (pthread_mutex_unlock(&x->polling_mutex)) {
-        post("Mutex unlock error (polling mutex) - Deadlock warning\n");
+        post("Mutex unlock error (polling mutex) - Deadlock warning");
     }
 }
 
@@ -291,7 +294,7 @@ static void pd_wiimote_togglePassthrough(t_wiimote *x, t_floatarg f) {
 
 static void pd_wiimote_setLED(t_wiimote *x, t_floatarg f) {
     if (pthread_mutex_lock(&x->polling_mutex)) {
-        post("Mutex lock error (polling mutex)\n");
+        post("Mutex lock error (polling mutex)");
         return;
     }
 
@@ -315,13 +318,13 @@ static void pd_wiimote_setLED(t_wiimote *x, t_floatarg f) {
 	}
 
     if (pthread_mutex_unlock(&x->polling_mutex)) {
-        post("Mutex unlock error (polling mutex) - Deadlock warning\n");
+        post("Mutex unlock error (polling mutex) - Deadlock warning");
     }
 }
 
 static void pd_wiimote_status(t_wiimote *x) {
 	 if (pthread_mutex_lock(&x->polling_mutex)) {
-        post("Mutex lock error (polling mutex)\n");
+        post("Mutex lock error (polling mutex)");
         return;
     }
 
@@ -336,7 +339,7 @@ static void pd_wiimote_status(t_wiimote *x) {
     outlet_float(x->outlet_status, x->is_connected);
 
     if (pthread_mutex_unlock(&x->polling_mutex)) {
-        post("Mutex unlock error (polling mutex) - Deadlock warning\n");
+        post("Mutex unlock error (polling mutex) - Deadlock warning");
     }
 }
 
@@ -349,7 +352,7 @@ static void pd_wiimote_doBang(t_wiimote *x) {
 
 
     if (pthread_mutex_lock(&x->polling_mutex)) {
-        post("Mutex lock error (polling mutex)\n");
+        post("Mutex lock error (polling mutex)");
         return;
     }
 
@@ -417,22 +420,22 @@ static void pd_wiimote_doBang(t_wiimote *x) {
 	}
 
     if (pthread_mutex_unlock(&x->polling_mutex)) {
-        post("Mutex unlock error (polling mutex) - Deadlock warning\n");
+        post("Mutex unlock error (polling mutex) - Deadlock warning");
     }
 }
 
 static void pd_wiimote_doDisconnect(t_wiimote *x) {
     if(!x->is_connected) {
-        post("Not connected to a wiimote!\n");
+        post("Not connected to a wiimote!");
         return;
     }
 
     if(pthread_cancel(x->polling_thread)) {
-        post("Failed to stop polling thread!\n");
+        post("Failed to stop polling thread!");
     }
 
     if(pthread_join(x->polling_thread, NULL)) {
-        post("Failed to join polling thread!\n");
+        post("Failed to join polling thread!");
     }
 
 	xwii_iface_unref(x->xwii_interface);
@@ -444,13 +447,13 @@ static void pd_wiimote_doDisconnect(t_wiimote *x) {
 static void pd_wiimote_doConnect(t_wiimote *x, t_symbol *dongaddr) {
 
     if(x->is_connected) {
-        post("Already connected to another wiimote!\n");
+        post("Already connected to another wiimote!");
         return;
     }
 
 	struct xwii_monitor *monitor = xwii_monitor_new(false,false);
 	if(!monitor) {
-		post("Cannot create xwii monitor!\n");
+		post("Cannot create xwii monitor!");
 		return;
 	}
 
@@ -512,19 +515,19 @@ static void pd_wiimote_doConnect(t_wiimote *x, t_symbol *dongaddr) {
         device = xwii_monitor_poll(monitor);
 
 	if(!device) {
-		post("Cannot find wiimote!\n");
+		post("Cannot find wiimote!");
 		return;
 	}
 
 	if(xwii_iface_new(&x->xwii_interface, device)) {
 		free(device);
-		post("Cannot create xwii interface!\n");
+		post("Cannot create xwii interface!");
 		return;
 	}
 	free(device);
 
 	if(xwii_iface_open(x->xwii_interface, xwii_iface_available(x->xwii_interface) | XWII_IFACE_WRITABLE)) {
-		post("Cannot open xwii interface!\n");
+		post("Cannot open xwii interface!");
 		return;
 	}
 
@@ -532,13 +535,13 @@ static void pd_wiimote_doConnect(t_wiimote *x, t_symbol *dongaddr) {
 	// spawn threads for actions known to cause sample drop-outs
 	if(pthread_mutex_init(&x->polling_mutex, NULL)) {
 		pd_wiimote_doDisconnect(x);
-		post("Cannot initialize mutex!\n");
+		post("Cannot initialize mutex!");
 		return;
 	}
 
 	if(pthread_create(&x->polling_thread, NULL, (void*)&pd_wiimote_polling_thread, x)) {
 		pd_wiimote_doDisconnect(x);
-		post("Cannot create polling thread!\n");
+		post("Cannot create polling thread!");
 		return;
 	}
 
@@ -549,7 +552,7 @@ static void pd_wiimote_doConnect(t_wiimote *x, t_symbol *dongaddr) {
     x->is_connected = true;
 
 	pd_wiimote_status(x);
-    post("Connected to wiimote!\n");
+    post("Connected to wiimote!");
 }
 
 static void pd_wiimote_discover(t_wiimote *x) {
@@ -632,7 +635,7 @@ static void* pd_wiimote_new(t_symbol *s, int argc, t_atom *argv) {
 
 static void pd_wiimote_calibrate(t_wiimote *x) {
     if (pthread_mutex_lock(&x->polling_mutex)) {
-        post("Mutex lock error (polling mutex)\n");
+        post("Mutex lock error (polling mutex)");
         return;
     }
 
@@ -649,7 +652,7 @@ static void pd_wiimote_calibrate(t_wiimote *x) {
 	x->mp_ar_calibration_atoms[2] = x->mp_ar_atoms[2];
 
     if (pthread_mutex_unlock(&x->polling_mutex)) {
-        post("Mutex unlock error (polling mutex) - Deadlock warning\n");
+        post("Mutex unlock error (polling mutex) - Deadlock warning");
     }
 }
 
