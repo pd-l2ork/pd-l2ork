@@ -218,7 +218,7 @@ builddir = $(firstword $(wildcard packages/*/build))
 ifneq ($(builddir),)
 manifest = etc/bash_completion.d/pd-l2ork $(prefix:/%=%)/include/pd-l2ork $(prefix:/%=%)/lib/pd-l2ork $(patsubst $(builddir)/%,%, $(wildcard $(builddir)/$(prefix:/%=%)/bin/*) $(shell find $(builddir)/usr/share -type f))
 ifeq ($(os),Linux)
-manifest = $(manifest) etc/udev/rules.d/80-disis_wiimote.rules
+manifest += etc/udev/rules.d/80-disis_wiimote.rules
 endif
 endif
 
