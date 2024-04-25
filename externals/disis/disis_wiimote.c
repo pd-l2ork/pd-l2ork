@@ -80,6 +80,27 @@ static void pd_wiimote_debug(t_wiimote *x) {
 	else 			   post("Extension:    OFF");
 }
 
+static void pd_wiimote_status(t_wiimote *x) {
+	 if (pthread_mutex_lock(&x->polling_mutex)) {
+        post("Mutex lock error (polling mutex)");
+        return;
+    }
+
+	if(x->is_connected) {
+		uint8_t battery;
+		t_atom ap[1];
+		xwii_iface_get_battery(x->xwii_interface, &battery);
+		SETFLOAT(ap+0, battery);
+		outlet_anything(x->outlet_data, gensym("battery"), 1, ap);
+	}
+
+    outlet_float(x->outlet_status, x->is_connected);
+
+    if (pthread_mutex_unlock(&x->polling_mutex)) {
+        post("Mutex unlock error (polling mutex) - Deadlock warning");
+    }
+}
+
 static void pd_wiimote_polling_thread(t_wiimote *x) {
     int fds_num = 2, ret;
     struct pollfd fds[2];
@@ -316,27 +337,6 @@ static void pd_wiimote_setLED(t_wiimote *x, t_floatarg f) {
 			}
 		}
 	}
-
-    if (pthread_mutex_unlock(&x->polling_mutex)) {
-        post("Mutex unlock error (polling mutex) - Deadlock warning");
-    }
-}
-
-static void pd_wiimote_status(t_wiimote *x) {
-	 if (pthread_mutex_lock(&x->polling_mutex)) {
-        post("Mutex lock error (polling mutex)");
-        return;
-    }
-
-	if(x->is_connected) {
-		uint8_t battery;
-		t_atom ap[1];
-		xwii_iface_get_battery(x->xwii_interface, &battery);
-		SETFLOAT(ap+0, battery);
-		outlet_anything(x->outlet_data, gensym("battery"), 1, ap);
-	}
-
-    outlet_float(x->outlet_status, x->is_connected);
 
     if (pthread_mutex_unlock(&x->polling_mutex)) {
         post("Mutex unlock error (polling mutex) - Deadlock warning");
