@@ -8,6 +8,10 @@ away before the panel does... */
 #include "config.h"
 
 #include "m_pd.h"
+#ifdef UNIX
+#include "tinyfd/tinyfiledialogs.h"
+#include <pthread.h>
+#endif
 #include "g_canvas.h"
 #include <stdio.h>
 #include <string.h>
@@ -233,6 +237,115 @@ static void gfxstub_setup(void)
         gensym("end"), 0);
     class_addmethod(gfxstub_class, (t_method)gfxstub_cancel,
         gensym("cancel"), 0);
+}
+
+/* -------------------------- file dialog ------------------------------ */
+#define FILEDIALOG_OPEN 0
+#define FILEDIALOG_SAVE 1
+
+static t_class *filedialog_class;
+
+typedef struct _filedialog
+{
+    t_object x_obj;
+    t_symbol *x_s;
+} t_filedialog;
+
+static void *filedialog_new( void)
+{
+    char buf[50];
+    t_filedialog *x = (t_filedialog *)pd_new(filedialog_class);
+    sprintf(buf, "d%zx", (t_uint)x);
+    x->x_s = gensym(buf);
+    pd_bind(&x->x_obj.ob_pd, x->x_s);
+    gui_vmess("file_dialog_obj", "s", x->x_s->s_name);
+    return (x);
+}
+
+static void filedialog_free(t_filedialog *x)
+{
+    pd_unbind(&x->x_obj.ob_pd, x->x_s);
+}
+
+#ifdef UNIX
+// Currently, the built-in NW.js file dialog works find on Windows and Mac, just not on some linux distributions.
+// The tool tinyfd is completely cross platform, so it will also work on Windows and Mac, but since we are using
+// threading to prevent blocking the UI and Audio, this code is not currently cross playform. In the future,
+// if nw.js fixes their issues, this code can be removed and the #else can be used for all platforms. On the
+// other hand, if nw.js's dialog breaks on MacOS or Windows, this code could be used on those platforms, with
+// some minor adjustments to the threading.
+struct filedialog_state
+{
+    char* callback_name;
+    char* working_dir;
+    int mode;
+};
+
+static void filedialog_thread(struct filedialog_state *args)
+{
+
+    // Get a file path from the system file picker
+    char* result;
+    if(args->mode == FILEDIALOG_OPEN)
+        result = tinyfd_openFileDialog("Choose a File", args->working_dir, 0, NULL, NULL, 0);
+    else
+        result = tinyfd_saveFileDialog("Choose a Location", args->working_dir, 0, NULL, NULL);
+
+    // Trigger the callback for whatever object requested a file dialog
+    if(result != NULL)
+        gui_vmess("file_dialog_callback", "ss", args->callback_name, result);
+
+    // Free the memory we used;
+    if(args->working_dir != NULL)
+        free(args->working_dir);
+    free(args);
+
+    pthread_exit(NULL);
+    
+}
+
+static void filedialog_perform(int mode, t_symbol *callback_name, t_symbol *initial_dir)
+{
+    // Builds the arguments to be passed to the worker thread
+    struct filedialog_state *args = malloc(sizeof(struct filedialog_state));
+    args->callback_name = callback_name->s_name;
+    args->mode = mode;
+    if(initial_dir != NULL && initial_dir->s_name != NULL && strlen(initial_dir->s_name) != 0)
+        args->working_dir = strcpy(malloc(strlen(initial_dir->s_name) * sizeof(char)), initial_dir->s_name);
+    else
+        args->working_dir = NULL;
+
+    // Spawns and detaches the worker thread
+    pthread_t thread;
+    pthread_create(&thread, NULL, filedialog_thread, args);
+    pthread_detach(&thread);
+}
+#else
+static void filedialog_perform(int mode, t_symbol *callback_name, t_symbol *initial_dir)
+{;
+    gui_vmess("file_dialog", "xsss", NULL, mode == FILEDIALOG_OPEN ? "open" : "close", callback_name->s_name, initial_dir->s_name);
+}
+#endif
+
+static void filedialog_trigger(t_filedialog *x, t_symbol *mode, t_symbol *callback_name, t_symbol *initial_dir)
+{
+    filedialog_perform(strcmp(mode->s_name, "open") == 0 ? FILEDIALOG_OPEN : FILEDIALOG_SAVE, callback_name, initial_dir);
+}
+
+static void filedialog_setup(void)
+{
+    filedialog_class = class_new(gensym("filedialog"),
+        (t_newmethod)filedialog_new, (t_method)filedialog_free,
+        sizeof(t_filedialog), 0, 0);
+    class_addmethod(filedialog_class, (t_method)filedialog_trigger,
+        gensym("trigger"), A_DEFSYMBOL, A_DEFSYMBOL, A_DEFSYMBOL, 0);
+
+    // We will create exactly one filedialog object, for the purpose
+    // of receiving messages from pdgui.js that will select the proper
+    // platform-specific file dialog code. On Windows and Mac, file dialogs
+    // are passed back to pdgui.js to handle, on Linux, they are handled
+    // in C.
+    t_filedialog *x = filedialog_new();
 }
 
 /* -------------------------- openpanel ------------------------------ */
@@ -746,6 +859,7 @@ static void pdcontrol_setup(void)
 void x_gui_setup(void)
 {
     gfxstub_setup();
+    filedialog_setup();
     openpanel_setup();
     savepanel_setup();
     key_setup();

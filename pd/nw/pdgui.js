@@ -8791,10 +8791,9 @@ exports.raise_pd_window= gui_raise_pd_window;
 
 // Openpanel and Savepanel
 
-var file_dialog_target;
+var file_dialog_object;
 
 function file_dialog(cid, type, target, start_path) {
-    file_dialog_target = target;
     var query_string = (type === "open" ?
                         "openpanelSpan" : "savepanelSpan"),
         input_span,
@@ -8839,7 +8838,7 @@ function file_dialog(cid, type, target, start_path) {
     // And add an event handler for the callback
     input_elem.onchange = function() {
         // reset value so that we can open the same file twice
-        file_dialog_callback(this.value);
+        file_dialog_callback(target, this.value);
         this.value = null;
         console.log("openpanel/savepanel called");
     };
@@ -8849,25 +8848,39 @@ function file_dialog(cid, type, target, start_path) {
     );
 }
 
+exports.file_dialog = file_dialog;
+
+function file_dialog_obj(obj) {
+    file_dialog_object = obj;
+}
+
+exports.file_dialog_obj = file_dialog_obj;
+
 // ico@vt.edu 2021-10-31: we expose open and save panels
 // for the coll and other cyclone objects
 
 function gui_openpanel(cid, target, path) {
     //post("gui_openpanel "+cid+" "+target+" "+path);
-    file_dialog(cid, "open", target, path);
+    path = path || "./";
+    if(!path.endsWith('/'))
+        path += '/';
+    pdsend(file_dialog_object, "trigger", "open", target, path);
 }
 
 exports.gui_openpanel = gui_openpanel;
 
 function gui_savepanel(cid, target, path) {
-    file_dialog(cid, "save", target, path);
+    path = path || "./";
+    if(!path.endsWith('/'))
+        path += '/';
+    pdsend(file_dialog_object, "trigger", "save", target, path || "./");
 }
 
 exports.gui_savepanel = gui_savepanel;
 
-function file_dialog_callback(file_string) {
-    pdsend(file_dialog_target, "callback",
-        enquote(defunkify_windows_path(file_string)));
+function file_dialog_callback(target, file) {
+    pdsend(target, "callback",
+        enquote(defunkify_windows_path(file)));
 }
 
 exports.file_dialog_callback = file_dialog_callback;
