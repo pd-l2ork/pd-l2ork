@@ -8,10 +8,19 @@ away before the panel does... */
 #include "config.h"
 
 #include "m_pd.h"
-// #ifdef UNIX
+
+// The built in NWJS filedialog is currently broken on some linux builds.
+// it has been replaced with tinyfiledialogs, a native C library which
+// works on all platforms. In the case that NWJS fixes their issues,
+// this compiler directive can be enabled to revert to the default NWJS
+// file dialogs without having to change any other code. This directive
+// can also be used if there is a specific platform that has issues with
+// tinyfiledialogs. By setting -DUSE_NWJS_FILEDIALOGS, the built in
+// file dialogs will be used.
+#ifndef USE_NWJS_FILEDIALOGS
 #include "tinyfd/tinyfiledialogs.h"
 #include <pthread.h>
-// #endif
+#endif
 #include "g_canvas.h"
 #include <stdio.h>
 #include <string.h>
@@ -267,7 +276,7 @@ static void filedialog_free(t_filedialog *x)
     pd_unbind(&x->x_obj.ob_pd, x->x_s);
 }
 
-// #ifdef UNIX
+#ifndef USE_NWJS_FILEDIALOGS
 // Currently, the built-in NW.js file dialog works find on Windows and Mac, just not on some linux distributions.
 // The tool tinyfd is completely cross platform, so it will also work on Windows and Mac, but since we are using
 // threading to prevent blocking the UI and Audio, this code is not currently cross playform. In the future,
@@ -320,12 +329,12 @@ static void filedialog_perform(int mode, t_symbol *callback_name, t_symbol *init
     pthread_create(&thread, NULL, filedialog_thread, args);
     pthread_detach(&thread);
 }
-// #else
-// static void filedialog_perform(int mode, t_symbol *callback_name, t_symbol *initial_dir)
-// {;
-//     gui_vmess("file_dialog", "xsss", NULL, mode == FILEDIALOG_OPEN ? "open" : "close", callback_name->s_name, initial_dir->s_name);
-// }
-// #endif
+#else
+static void filedialog_perform(int mode, t_symbol *callback_name, t_symbol *initial_dir)
+{
+    gui_vmess("file_dialog", "xsss", NULL, mode == FILEDIALOG_OPEN ? "open" : "close", callback_name->s_name, initial_dir->s_name);
+}
+#endif
 
 static void filedialog_trigger(t_filedialog *x, t_symbol *mode, t_symbol *callback_name, t_symbol *initial_dir)
 {
