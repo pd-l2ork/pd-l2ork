@@ -293,6 +293,16 @@ struct filedialog_state
 static void filedialog_thread(struct filedialog_state *args)
 {
 
+#ifdef _WIN32
+    // Fix paths for windows because windows is dumb
+    char* str = args->working_dir;
+    while (*str != '\0') {
+        if (*str == '/')
+            *str = '\\';
+        str++;
+    }
+#endif
+
     // Get a file path from the system file picker
     char* result;
     if(args->mode == FILEDIALOG_OPEN)
