@@ -3370,7 +3370,7 @@ function gui_text_text(data, line_index, fontSize) {
 //--------------------- patch handling ----------------------------
 async function openPatch(content, filename) {
     console.log(`Loading Patch: ${filename}`);
-    document.title=filename;
+    document.title=`WebPdL2Ork: ${filename}`;
 
     document.getElementById('loadingstage').innerHTML=`Fetching Dependencies`;
     await new Promise(Resolve => setTimeout(Resolve, 10));

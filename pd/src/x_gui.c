@@ -22,6 +22,7 @@ away before the panel does... */
 #include <pthread.h>
 #endif
 #include "g_canvas.h"
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -336,8 +337,8 @@ static void filedialog_perform(int mode, t_symbol *callback_name, t_symbol *init
 
     // Spawns and detaches the worker thread
     pthread_t thread;
-    pthread_create(&thread, NULL, filedialog_thread, args);
-    pthread_detach(&thread);
+    pthread_create(&thread, NULL, (void*)filedialog_thread, args);
+    pthread_detach(thread);
 }
 #else
 static void filedialog_perform(int mode, t_symbol *callback_name, t_symbol *initial_dir)
