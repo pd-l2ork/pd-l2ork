@@ -109,6 +109,40 @@ function screenToCoord(low, high, span, screen) {
     return (raw) * Math.abs(low - high) / span + Math.min(low, high);   
 }
 
+//For Clipboard interaction
+async function pasteTextFromClipboard() {
+    if(navigator.clipboard) {
+        return await navigator.clipboard.readText().catch( err => {
+            console.error("Failed to paste text: ", err);
+            return "";
+        });
+    } else
+        console.error("Paste is not available on an http connection");
+}
+
+function copyTextToClipboard(text) {
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).catch(err => 
+            console.error('Failed to copy text: ', err)
+        );
+    } else {
+        var textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.top = "0";
+        textArea.style.left = "0";
+        textArea.style.position = "fixed";
+
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        if(!document.execCommand('copy'))
+            console.error('Failed to copy text to clipboard');
+
+        document.body.removeChild(textArea);
+    }
+}
+
 // create an AudioContext
 const audioContextList = [];
 (function () {
@@ -2807,6 +2841,19 @@ function gui_atom_settext(data, text) {
         data.svgText.textContent = text.length > +data.width ? text.slice(0, +data.width - 1) + '>' : text;
 }
 function gui_atom_keydown(data, e) {
+    if(e.key === 'v' && (keyDown['Control'] || keyDown['Meta'])) {
+        pasteTextFromClipboard().then(text => {
+            data.dirtyValue = (data.dirtyValue || '') + text;
+            if(data.dirtyValue !== undefined)
+                gui_atom_settext(data, data.dirtyValue + (new Array(Math.max(0,3 - data.dirtyValue.length))).fill('.').join(''));
+        })
+        return;
+    }
+    if(e.key === 'c' && (keyDown['Control'] || keyDown['Meta'])) {
+        copyTextToClipboard(data.dirtyValue);
+        return;
+    }
+
     if(e.key.length == 1)
         if(e.key.match(data.regex))
             data.dirtyValue = (data.dirtyValue || '') + e.key;
@@ -3325,7 +3372,7 @@ async function openPatch(content, filename) {
     console.log(`Loading Patch: ${filename}`);
     document.title=filename;
 
-    document.getElementById('loadingstage').innerHTML=`Fetching Dependancies`;
+    document.getElementById('loadingstage').innerHTML=`Fetching Dependencies`;
     await new Promise(Resolve => setTimeout(Resolve, 10));
     let start = Date.now();
     let abstractions = {};
