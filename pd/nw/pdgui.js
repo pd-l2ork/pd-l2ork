@@ -8862,8 +8862,9 @@ exports.file_dialog_obj = file_dialog_obj;
 function gui_openpanel(cid, target, path) {
     //post("gui_openpanel "+cid+" "+target+" "+path);
     path = path || "./";
-    if(!path.endsWith('/'))
-        path += '/';
+    if(nw_os_is_osx)
+        if(!path.endsWith('/'))
+            path += '/';
     pdsend(file_dialog_object, "trigger", "open", target, path);
 }
 
@@ -8871,8 +8872,6 @@ exports.gui_openpanel = gui_openpanel;
 
 function gui_savepanel(cid, target, path) {
     path = path || "./";
-    if(!path.endsWith('/'))
-        path += '/';
     pdsend(file_dialog_object, "trigger", "save", target, path || "./");
 }
 
