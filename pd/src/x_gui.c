@@ -331,7 +331,7 @@ static void filedialog_perform(int mode, t_symbol *callback_name, t_symbol *init
     args->callback_name = callback_name->s_name;
     args->mode = mode;
     if(initial_dir != NULL && initial_dir->s_name != NULL && strlen(initial_dir->s_name) != 0)
-        args->working_dir = strcpy(malloc(strlen(initial_dir->s_name) * sizeof(char)), initial_dir->s_name);
+        args->working_dir = strcpy(malloc((strlen(initial_dir->s_name) + 1) * sizeof(char)), initial_dir->s_name);
     else
         args->working_dir = NULL;
 

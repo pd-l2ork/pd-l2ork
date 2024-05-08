@@ -8872,6 +8872,9 @@ exports.gui_openpanel = gui_openpanel;
 
 function gui_savepanel(cid, target, path) {
     path = path || "./";
+    if(nw_os_is_linux)
+        if(!path.endsWith('/'))
+            path += '/';
     pdsend(file_dialog_object, "trigger", "save", target, path || "./");
 }
 
@@ -10792,6 +10795,7 @@ function gui_osx_dialog_appearance(id)
 // functions for copying apps folder into the user folder
 var fs = require('fs');
 var path = require('path');
+const { isDataView } = require('util/types');
 
 function copyFileSync( source, target ) {
 
