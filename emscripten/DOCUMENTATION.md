@@ -88,8 +88,8 @@ Configuration for the patch bind mount and port are in `docker-compose.yml`
 By default WebPdL2Ork is served over http. To enable https support (required for pasting into a patch, microphone access, and some other functionality), follow these steps:
 
 1. Build the webpdl2ork docker container, using the instructions above.
-2. Comment the `- "3000:80"` line in the webpdl2ork container in `docker-compose.yml`
-3. Uncomment the `- "3000:443"` line in the nginx-proxy container in `docker-compose.yml`. If you want to expose pd-l2ork on another port other than 3000, you can change this line to reflect that.
+2. Comment the `ports: ` line and the `- "3000:80"` line in the webpdl2ork container in `docker-compose.yml`
+3. Uncomment the two commented lines in the nginx-proxy container in `docker-compose.yml`. If you want to expose pd-l2ork on another port other than 3000, you can change the line that has `3000` to reflect that.
 4. Set the `VIRTUAL_HOST` environment variable for the webpdl2ork container to match the domain name you are using.
 5. Place your certiciates in the `certs` directory in the root folder of this repository. The certificates should be named as `my.domain.name.crt` and `my.domain.name.key`, assuming that the server is available under `my.domain.name`.
 

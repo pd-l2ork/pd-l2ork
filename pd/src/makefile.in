@@ -219,6 +219,7 @@ install: all
 
 local-clean:	
 	-rm -f -- $(OBJ)
+	-rm -f ../obj/tinyfd/*
 	-rm -f ../obj/* $(PDEXEC) $(BIN_DIR)/pdsend \
 	    $(BIN_DIR)/pdreceive $(BIN_DIR)/pd-watchdog m_stamp.c
 	-rm -f -- *~
