@@ -10795,7 +10795,6 @@ function gui_osx_dialog_appearance(id)
 // functions for copying apps folder into the user folder
 var fs = require('fs');
 var path = require('path');
-const { isDataView } = require('util/types');
 
 function copyFileSync( source, target ) {
 
