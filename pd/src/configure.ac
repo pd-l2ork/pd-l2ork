@@ -356,6 +356,11 @@ then echo -n
 else mkdir ../obj
 fi
 
+if test -d ../obj/tinyfd
+then echo -n
+else mkdir ../obj/tinyfd
+fi
+
 if test -d ../bin
 then echo -n
 else mkdir ../bin

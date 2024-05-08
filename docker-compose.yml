@@ -1,15 +1,24 @@
-version: '3'
 services:
   webpdl2ork:
     build: 
       context: .
       dockerfile: webpdl2ork.Dockerfile
     ports:
-      - "3000:3000"
+      - "3000:80" # Serve without proxy
     environment:
-      - PORT=3000
+      - PORT=80
       - PATCH_PATH=public/patches
+      - VIRTUAL_HOST=l2ork.music.vt.edu # Sets the domain name being used for pd-l2ork
     volumes:
-      - ./emscripten/projects/WebPdL2Ork/public:/WebPdL2Ork/public/patches:ro
+      - ./emscripten/projects/WebPdL2Ork/public:/WebPdL2Ork/public/patches:ro # The first path sets the folder where patches will be loaded from
     restart: unless-stopped
     container_name: webpdl2ork
+  nginx:
+    image: nginxproxy/nginx-proxy:alpine
+    # ports:
+    #   - "3000:443" # Serve using https (requires certificates)
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./certs:/etc/nginx/certs
+    restart: unless-stopped
+    container_name: nginx-proxy

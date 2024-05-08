@@ -73,7 +73,7 @@ ORIGDIR=pd-$(LIBRARY_NAME:~=)_$(LIBRARY_VERSION)
 UNAME := $(shell uname -s)
 ifeq ($(UNAME),Darwin)
   CPU := $(shell uname -p)
-  ifeq ($(CPU),arm) # iPhone/iPod Touch
+  ifeq ($(CPU),arm-iphone) # iPhone/iPod Touch
     SOURCES += $(SOURCES_iphoneos)
     EXTENSION = pd_darwin
     OS = iphoneos
@@ -104,7 +104,7 @@ ifeq ($(UNAME),Darwin)
       SOURCES += $(SOURCES_iphoneos)
     endif
     CFLAGS += $(FAT_FLAGS) -fPIC -I/sw/include
-    LDFLAGS += $(FAT_FLAGS) -bundle -undefined dynamic_lookup -L/sw/lib
+    LDFLAGS += $(FAT_FLAGS) -bundle -undefined dynamic_lookup -L/sw/lib -L/opt/homebrew/lib
     # if the 'pd' binary exists, check the linking against it to aid with stripping
     LDFLAGS += $(shell test -e $(PD_PATH)/bin/pd && echo -bundle_loader $(PD_PATH)/bin/pd)
     LIBS += -lc 

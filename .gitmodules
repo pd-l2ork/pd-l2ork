@@ -16,3 +16,6 @@
 [submodule "packages/linux_flatpak/shared-modules"]
 	path = packages/linux_flatpak/shared-modules
 	url = https://github.com/flathub/shared-modules.git
+[submodule "pd/src/tinyfd"]
+	path = pd/src/tinyfd
+	url = https://github.com/LazyJazz/tinyfiledialogs

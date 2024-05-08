@@ -80,7 +80,7 @@ PD_FILES = \
     ../pd/src/s_midi.c ../pd/src/s_midi_dummy.c \
     ../pd/src/s_path.c ../pd/src/s_print.c ../pd/src/s_utf8.c \
     ../pd/src/x_acoustics.c ../pd/src/x_arithmetic.c ../pd/src/x_array.c \
-    ../pd/src/x_connective.c ../pd/src/x_gui.c ../pd/src/x_interface.c \
+    ../pd/src/x_connective.c ../pd/src/x_gui.c ../pd/src/tinyfd/tinyfiledialogs.c ../pd/src/x_interface.c \
     ../pd/src/x_list.c ../pd/src/x_midi.c ../pd/src/x_misc.c \
     ../pd/src/x_net.c ../pd/src/x_preset.c ../pd/src/x_scalar.c \
     ../pd/src/x_text.c ../pd/src/x_time.c ../pd/src/x_vexp.c \
