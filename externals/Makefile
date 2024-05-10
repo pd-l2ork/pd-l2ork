@@ -160,7 +160,7 @@ lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc
 # short one for quick building for debugging purposes (disabled by default):
 # lib_targets = maxlib
 else
-lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui fluid freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemgui iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moocow moonlib motex mrpeach oscx pan pdcontainer pddp pdogg plugin pmpd rjlib sigpack smlib tof unauthorized vbap windowing zexy
+lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui fluid freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemgui iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib js loaders-libdir lyonpotpourri mapping markex maxlib mjlib moocow moonlib motex mrpeach oscx pan pdcontainer pddp pdogg plugin pmpd rjlib sigpack smlib tof unauthorized vbap windowing zexy
 ifneq ($(OS_NAME),darwin)
 ifneq ($(shell uname -m),arm64)
 # pdlua crashes the arm build of pd-l2ork on arm based macbooks, so we don't include it in that case
@@ -1650,7 +1650,7 @@ pddp_clean:
 #------------------------------------------------------------------------------#
 # pdjs
 
-pdjs:
+js:
 ifeq ($(OS_NAME),windows)
 	cd $(externals_src)/pdjs-win/v8 && unzip -u lib.zip
 	cd $(externals_src)/pdjs-win \
@@ -1681,7 +1681,7 @@ else
 endif
 endif
 
-pdjs_install:
+js_install:
 	install -d $(DESTDIR)$(objectsdir)/js
 ifeq ($(OS_NAME),windows)
 	install -p $(externals_src)/pdjs-win/binaries/x86-windows/js.$(EXTENSION) \
@@ -1717,7 +1717,7 @@ else
 endif
 endif
 
-pdjs_clean:
+js_clean:
 ifeq ($(OS_NAME),windows)
 	cd $(externals_src)/pdjs-win \
 		&& /mingw32/bin/cmake --build out/build/x86-mingw-Debug --target clean
