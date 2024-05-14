@@ -3101,8 +3101,8 @@ let keyDown = {}
 function onKeyDown(e) {
     if(keyboardFocus.data?.onKeyDown)
         keyboardFocus.data.onKeyDown(keyboardFocus.data, e);
+    keyDown[e.key] = true;
     if(keyboardFocus.exclusive == false) {
-        keyDown[e.key] = true;
         for(let listener of inputListeners.sort((a,b) => (b.priority || 0) - (a.priority || 0))) {
             if(listener.onKeyUp && e.repeat)
                 listener.onKeyUp(e);
