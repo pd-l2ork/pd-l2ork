@@ -3099,6 +3099,7 @@ let keyboardFocus = { data: null, exclusive: false, current: false};
 let inputListeners = [];
 let keyDown = {}
 function onKeyDown(e) {
+    e.preventDefault();
     if(keyboardFocus.data?.onKeyDown)
         keyboardFocus.data.onKeyDown(keyboardFocus.data, e);
     keyDown[e.key] = true;
@@ -3112,6 +3113,7 @@ function onKeyDown(e) {
     }
 }
 function onKeyUp(e) {
+    e.preventDefault();
     if(keyboardFocus.data?.onKeyUp)
         keyboardFocus.data.onKeyUp(keyboardFocus.data, e);
     keyDown[e.key] = false;
@@ -4559,7 +4561,7 @@ async function openPatch(content, filename) {
                             inputListeners.push({
                                 onKeyDown: e => {
                                     if(e.repeat === false || data.repeat === true) {
-                                        if(e.key.match(/^F\d$/) && keyDown['Shift'])
+                                        if(e.key.match(/^F\d+$/) && keyDown['Shift'])
                                             gui_send('Symbol', data.auxSend[0], "Shift"+e.key);
                                         else if(e.key.match(/^Arrow/) && keyDown['Shift'])
                                             gui_send('Symbol', data.auxSend[0], "Shift"+e.key.replace(/Arrow/, ''));
@@ -4570,7 +4572,7 @@ async function openPatch(content, filename) {
                                 },
                                 onKeyUp: e => {
                                     if(e.repeat === false || data.repeat === true) {
-                                        if(e.key.match(/^F\d$/) && keyDown['Shift'])
+                                        if(e.key.match(/^F\d+$/) && keyDown['Shift'])
                                             gui_send('Symbol', data.auxSend[0], "Shift"+e.key);
                                         else if(e.key.match(/^Arrow/) && keyDown['Shift'])
                                             gui_send('Symbol', data.auxSend[0], "Shift"+e.key.replace(/Arrow/, ''));
