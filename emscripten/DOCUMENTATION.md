@@ -89,9 +89,14 @@ By default WebPdL2Ork is served over http. To enable https support (required for
 
 1. Build the webpdl2ork docker container, using the instructions above.
 2. Comment the `ports: ` line and the `- "3000:80"` line in the webpdl2ork container in `docker-compose.yml`
-3. Uncomment the two commented lines in the nginx-proxy container in `docker-compose.yml`. If you want to expose pd-l2ork on another port other than 3000, you can change the line that has `3000` to reflect that.
+3. Uncomment the two commented lines in the nginx-proxy container in `docker-compose.yml`. If you want to expose pd-l2ork on another port other than 3000, you can change the line that has `3000` to reflect that. Be careful with indentation, make sure that they are indented in the same was as the other configuration options in this section.
 4. Set the `VIRTUAL_HOST` environment variable for the webpdl2ork container to match the domain name you are using.
 5. Place your certiciates in the `certs` directory in the root folder of this repository. The certificates should be named as `my.domain.name.crt` and `my.domain.name.key`, assuming that the server is available under `my.domain.name`.
+	- If your certificates are in pem format, you can convert them using the following commands:
+	```bash
+	openssl x509 -in your-cert.pem -out my.domain.name.crt
+	openssl pkey -in your-privkey.pem -out my.domain.name.key
+	```
 
 # Future Work
 
