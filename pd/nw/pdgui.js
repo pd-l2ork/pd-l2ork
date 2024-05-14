@@ -5035,7 +5035,7 @@ function gui_text_new(cid, tag, type, isselected, left_margin,
 
     var classname = (type === "broken" ? "broken " : "") + "box_text";
     if (type === "atom") {
-        classname = "box_text data atom";
+        classname = "cut copy paste box_text data atom";
     }
     if (is_toplevel === 1) {
         classname = classname + " toplevel";
@@ -5791,7 +5791,7 @@ function gui_numbox_draw_text(cid, tag, text, font_size, color, xpos,
             "font-size": font_size,
             fill: color,
             id: tag + "text",
-            class: (is_toplevel === 1 ? "toplevel" : "")
+            class: "cut copy paste" + (is_toplevel === 1 ? " toplevel" : "")
         }),
         text_node = w.document.createTextNode(text);
         svg_text.appendChild(text_node);

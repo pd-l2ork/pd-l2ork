@@ -2838,7 +2838,8 @@ function nw_create_patch_window_menus(gui, name) {
                 // gatoms will belong to the class atom, while number2 will have
                 // parent object that will belong to the class iemgui
                 if (activated_gobj[0].classList.contains("atom"))
-                    clipboard.set(activated_gobj[0].textContent, 'text');
+                    clipboard.set(activated_gobj[0].
+                        getElementsByClassName("copy")[0].textContent, 'text');
                 else if (activated_gobj[0].parentNode.classList.contains("iemgui")) {
                     var output = activated_gobj[0].textContent.replace('>', '');
                     clipboard.set(output, 'text');
