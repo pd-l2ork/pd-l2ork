@@ -2842,16 +2842,17 @@ function nw_create_patch_window_menus(gui, name) {
                     document.execCommand("cut");
                 }
             } else if (pdgui.gui_is_gobj_grabbed(name)) {
-                // ico@vt.edu 2021-10-08: copying contents of a grabbed object
+                // ico@vt.edu 2021-10-08: cutting contents of a grabbed object
                 //pdgui.post("gobj_grabbed copy");
                 var clipboard = nw.Clipboard.get();
                 var activated_gobj =
                     document.getElementsByClassName("activated");
-                // currently we only support copying from gatoms and number2
+                // currently we only support cutting from gatoms and number2
                 // gatoms will belong to the class atom, while number2 will have
                 // parent object that will belong to the class iemgui
                 if (activated_gobj[0].classList.contains("atom"))
-                    clipboard.set(activated_gobj[0].textContent, 'text');
+                    clipboard.set(activated_gobj[0].
+                        getElementsByClassName("cut")[0].textContent, 'text');
                 else if (activated_gobj[0].parentNode.classList.contains("iemgui")) {
                     var output = activated_gobj[0].textContent.replace('>', '');
                     clipboard.set(output, 'text');
@@ -2885,7 +2886,8 @@ function nw_create_patch_window_menus(gui, name) {
                 // gatoms will belong to the class atom, while number2 will have
                 // parent object that will belong to the class iemgui
                 if (activated_gobj[0].classList.contains("atom"))
-                    clipboard.set(activated_gobj[0].textContent, 'text');
+                    clipboard.set(activated_gobj[0].
+                        getElementsByClassName("copy")[0].textContent, 'text');
                 else if (activated_gobj[0].parentNode.classList.contains("iemgui")) {
                     var output = activated_gobj[0].textContent.replace('>', '');
                     clipboard.set(output, 'text');
