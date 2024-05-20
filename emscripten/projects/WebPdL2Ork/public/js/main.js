@@ -116,8 +116,10 @@ async function pasteTextFromClipboard() {
             console.error("Failed to paste text: ", err);
             return "";
         });
-    } else
-        console.error("Paste is not available on an http connection");
+    } else {
+        alert("Paste is only available over a secure connection");
+        return "";
+    }
 }
 
 function copyTextToClipboard(text) {
@@ -2851,6 +2853,12 @@ function gui_atom_keydown(data, e) {
     }
     if(e.key === 'c' && (keyDown['Control'] || keyDown['Meta'])) {
         copyTextToClipboard(data.dirtyValue);
+        return;
+    }
+    if(e.key === 'x' && (keyDown['Control'] || keyDown['Meta'])) {
+        copyTextToClipboard(data.dirtyValue);
+        data.dirtyValue = '';
+        gui_atom_settext(data, data.dirtyValue + (new Array(Math.max(0,3 - data.dirtyValue.length))).fill('.').join(''));
         return;
     }
 
