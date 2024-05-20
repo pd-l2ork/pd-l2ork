@@ -116,8 +116,10 @@ async function pasteTextFromClipboard() {
             console.error("Failed to paste text: ", err);
             return "";
         });
-    } else
-        console.error("Paste is not available on an http connection");
+    } else {
+        alert("Paste is only available over a secure connection");
+        return "";
+    }
 }
 
 function copyTextToClipboard(text) {
@@ -2853,6 +2855,12 @@ function gui_atom_keydown(data, e) {
         copyTextToClipboard(data.dirtyValue);
         return;
     }
+    if(e.key === 'x' && (keyDown['Control'] || keyDown['Meta'])) {
+        copyTextToClipboard(data.dirtyValue);
+        data.dirtyValue = '';
+        gui_atom_settext(data, data.dirtyValue + (new Array(Math.max(0,3 - data.dirtyValue.length))).fill('.').join(''));
+        return;
+    }
 
     if(e.key.length == 1)
         if(e.key.match(data.regex))
@@ -3099,10 +3107,11 @@ let keyboardFocus = { data: null, exclusive: false, current: false};
 let inputListeners = [];
 let keyDown = {}
 function onKeyDown(e) {
+    e.preventDefault();
     if(keyboardFocus.data?.onKeyDown)
         keyboardFocus.data.onKeyDown(keyboardFocus.data, e);
+    keyDown[e.key] = true;
     if(keyboardFocus.exclusive == false) {
-        keyDown[e.key] = true;
         for(let listener of inputListeners.sort((a,b) => (b.priority || 0) - (a.priority || 0))) {
             if(listener.onKeyUp && e.repeat)
                 listener.onKeyUp(e);
@@ -3112,6 +3121,7 @@ function onKeyDown(e) {
     }
 }
 function onKeyUp(e) {
+    e.preventDefault();
     if(keyboardFocus.data?.onKeyUp)
         keyboardFocus.data.onKeyUp(keyboardFocus.data, e);
     keyDown[e.key] = false;
@@ -4559,7 +4569,7 @@ async function openPatch(content, filename) {
                             inputListeners.push({
                                 onKeyDown: e => {
                                     if(e.repeat === false || data.repeat === true) {
-                                        if(e.key.match(/^F\d$/) && keyDown['Shift'])
+                                        if(e.key.match(/^F\d+$/) && keyDown['Shift'])
                                             gui_send('Symbol', data.auxSend[0], "Shift"+e.key);
                                         else if(e.key.match(/^Arrow/) && keyDown['Shift'])
                                             gui_send('Symbol', data.auxSend[0], "Shift"+e.key.replace(/Arrow/, ''));
@@ -4570,7 +4580,7 @@ async function openPatch(content, filename) {
                                 },
                                 onKeyUp: e => {
                                     if(e.repeat === false || data.repeat === true) {
-                                        if(e.key.match(/^F\d$/) && keyDown['Shift'])
+                                        if(e.key.match(/^F\d+$/) && keyDown['Shift'])
                                             gui_send('Symbol', data.auxSend[0], "Shift"+e.key);
                                         else if(e.key.match(/^Arrow/) && keyDown['Shift'])
                                             gui_send('Symbol', data.auxSend[0], "Shift"+e.key.replace(/Arrow/, ''));
