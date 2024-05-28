@@ -1686,12 +1686,21 @@ ifeq ($(OS_NAME),windows)
 		$(DESTDIR)/$(objectsdir)/js
 endif
 ifeq ($(OS_NAME),darwin)
+ifeq ($(shell uname -m),arm64)
+	install -p $(externals_src)/pdjs/binaries/arm64-macos/js.$(EXTENSION) \
+		$(DESTDIR)/$(objectsdir)/js
+	install -p $(externals_src)/pdjs/binaries/arm64-macos/*.pd \
+		$(DESTDIR)/$(objectsdir)/js
+	install -p $(externals_src)/pdjs/binaries/arm64-macos/*.js \
+		$(DESTDIR)/$(objectsdir)/js
+else
 	install -p $(externals_src)/pdjs/binaries/x64-macos/js.$(EXTENSION) \
 		$(DESTDIR)/$(objectsdir)/js
 	install -p $(externals_src)/pdjs/binaries/x64-macos/*.pd \
 		$(DESTDIR)/$(objectsdir)/js
 	install -p $(externals_src)/pdjs/binaries/x64-macos/*.js \
 		$(DESTDIR)/$(objectsdir)/js
+endif
 endif
 ifeq ($(OS_NAME),linux)
 ifeq ($(CPU),arm)
