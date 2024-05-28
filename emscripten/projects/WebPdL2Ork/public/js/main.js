@@ -2996,6 +2996,26 @@ function gui_nbx_keydown(data, e) {
         clearTimeout(data.focusTimeout);
         data.focusTimeout = setTimeout(setKeyboardFocus, 3000, null);
     }
+    
+    if(e.key === 'v' && (keyDown['Control'] || keyDown['Meta'])) {
+        pasteTextFromClipboard().then(text => {
+            data.dirtyValue = (data.dirtyValue || '') + text;
+            if(data.dirtyValue !== undefined)
+                gui_atom_settext(data, data.dirtyValue + (new Array(Math.max(0,3 - data.dirtyValue.length))).fill('.').join(''));
+        })
+        return;
+    }
+    if(e.key === 'c' && (keyDown['Control'] || keyDown['Meta'])) {
+        copyTextToClipboard(data.dirtyValue);
+        return;
+    }
+    if(e.key === 'x' && (keyDown['Control'] || keyDown['Meta'])) {
+        copyTextToClipboard(data.dirtyValue);
+        data.dirtyValue = '';
+        gui_atom_settext(data, data.dirtyValue + (new Array(Math.max(0,3 - data.dirtyValue.length))).fill('.').join(''));
+        return;
+    }
+
     if(e.key.length == 1)
         if(e.key.match(data.regex))
             data.dirtyValue = (data.dirtyValue || '') + e.key;
