@@ -1,5 +1,7 @@
 PD-L2ORK TODO:
 
+*Update pdjs to use a more recent version of v8 (this might fix arm macbook errors, as pdjs currently does not work properly on apple silicon)
+
 *Toggling VU meter scale (text labels with levels next to the VU meter) off and back on, results in incorrectly drawn scale.
 
 *Implement Windows list in the Windows menu.
