@@ -156,7 +156,7 @@ lib_targets = loaders-libdir pddp
 INCREMENTAL = yes
 else ifeq ($(EMSCRIPTEN),yes)
 # original one used by the first iteration of WebPdL2Ork: lib_targets = arraysize autotune bassemu boids bsaylor comport creb cxc earplug ekext ext13 freeverb ggee hcs iem_ambi iem_bin_ambi iemguts iem_adaptfilt iem_delay iem_roomsim iem_spec2 jasch_lib loaders-libdir mapping markex maxlib mjlib moonlib motex mrpeach pan pddp rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing
-lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui flatspace freeverb ggee hcs iemlib iemgui iemguts jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moonlib motex mrpeach oscx pan pdcontainer pddp pdogg rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing zexy
+lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui fluid flatspace freeverb ggee hcs iemlib iemgui iemguts jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moonlib motex mrpeach oscx pan pdcontainer pddp pdogg rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing zexy
 # short one for quick building for debugging purposes (disabled by default):
 # lib_targets = maxlib
 else
@@ -735,6 +735,34 @@ flib_clean:
 #------------------------------------------------------------------------------#
 # FLUID~
 
+ifeq ($(EMSCRIPTEN),yes)
+FLUID_PATH := $(externals_src)/fluid~
+FLUID_LIBPATH := $(FLUID_PATH)/fluidsynth-emscripten/build
+
+fluid: $(FLUID_PATH)/fluid~.wasm
+
+$(FLUID_PATH)/fluid~.wasm: $(FLUID_LIBPATH)/src/libfluidsynth.a
+	$(CC) $(CFLAGS) -I$(FLUID_LIBPATH)/include -I$(FLUID_LIBPATH)/../include $(FLUID_LIBPATH)/src/libfluidsynth.a $(FLUID_PATH)/fluid~.c -o $(FLUID_PATH)/fluid~.wasm
+
+$(FLUID_LIBPATH)/src/libfluidsynth.a: $(FLUID_PATH)/fluidsynth-emscripten/README.md
+	mkdir -p $(externals_src)/fluid~/fluidsynth-emscripten/build 
+	cd $(externals_src)/fluid~/fluidsynth-emscripten/build && emcmake cmake -Denable-oss=off -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=off .. && emmake make
+
+$(FLUID_PATH)/fluidsynth-emscripten/README.md:
+	git clone https://github.com/jet2jet/fluidsynth-emscripten $(externals_src)/fluid~/fluidsynth-emscripten
+
+fluid_install: fluid
+	install -d $(DESTDIR)$(objectsdir)/fluid~
+	install -p $(FLUID_PATH)/fluid~.wasm $(DESTDIR)$(objectsdir)/fluid~/fluid~.wasm
+	install -d $(DESTDIR)$(objectsdir)/soundfonts
+	install -p $(FLUID_PATH)/soundfonts/* $(DESTDIR)$(objectsdir)/soundfonts
+
+fluid_clean:
+	rm -rf $(FLUID_LIBPATH)/..
+	rm -rf $(FLUID_PATH)/fluid~.o
+	rm -rf $(FLUID_PATH)/fluid~.wasm
+
+else
 fluid:
 	make -C $(externals_src)/fluid~ PD_PATH=$(pd_src) \
 		pdbinpath=$(pd_src)/src CFLAGS="$(CFLAGS_ADD) -I$(usrlocal)/include" LDFLAGS="$(LDFLAGS)"
@@ -746,6 +774,7 @@ fluid_install:
 
 fluid_clean:
 	make -C $(externals_src)/fluid~ clean
+endif
 
 #------------------------------------------------------------------------------#
 # FREEVERB
