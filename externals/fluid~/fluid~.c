@@ -50,7 +50,7 @@ static void fluid_tilde_free(t_fluid_tilde *x)
     if (x->x_settings) delete_fluid_settings(x->x_settings);
 }
 
-static void fluid_help(void)
+static void fluid_help(t_fluid_tilde *x)
 {
     const char * helptext =
         "fluid~: a soundfont external for Pd and Max/MSP\n"
@@ -537,7 +537,7 @@ void fluid_tilde_setup(void)
 
     // Simulate Flext's help message
     class_addmethod(fluid_tilde_class, (t_method)fluid_help, gensym("help"),
-        0);
+        A_NULL, 0);
 
     class_addmethod(fluid_tilde_class,
         (t_method)fluid_tilde_dsp, gensym("dsp"), A_CANT, 0);

@@ -741,7 +741,7 @@ FLUID_LIBPATH := $(FLUID_PATH)/fluidsynth-emscripten/build
 
 fluid: $(FLUID_PATH)/fluid~.wasm
 
-$(FLUID_PATH)/fluid~.wasm: $(FLUID_LIBPATH)/src/libfluidsynth.a
+$(FLUID_PATH)/fluid~.wasm: $(FLUID_LIBPATH)/src/libfluidsynth.a $(FLUID_PATH)/fluid~.c
 	$(CC) $(CFLAGS) -I$(FLUID_LIBPATH)/include -I$(FLUID_LIBPATH)/../include $(FLUID_LIBPATH)/src/libfluidsynth.a $(FLUID_PATH)/fluid~.c -o $(FLUID_PATH)/fluid~.wasm
 
 $(FLUID_LIBPATH)/src/libfluidsynth.a: $(FLUID_PATH)/fluidsynth-emscripten/README.md
