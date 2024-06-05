@@ -4720,17 +4720,24 @@ async function openPatch(content, filename) {
                         gui_canvas_drawLabels(data.layer);
                     }
                     data.redraw = () => {
-                        let path = data.displayMode % 2 ? '' : 'M ';
+                        let path = data.displayMode == 0 ? 'M ' : '';
                         let c = data.coords;
                         let lastX = -1;
+                        let bezierFactor = 0.4;
                         for(let i = 0; i < data.nums.length; i++) {
                             let curX = coordToScreen(c.l,c.r,c.w,i);
                             if(curX != lastX) {
                                 lastX = curX;
-                                if(data.displayMode == 0 || data.displayMode == 2)
+                                if(data.displayMode == 0)
                                     path += `${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} `;
                                 if(data.displayMode == 1 && i+1 <= c.r)
                                     path += `M ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} H ${coordToScreen(c.l,c.r,c.w,i + 1) - 1} V ${coordToScreen(c.t,c.b,c.h,data.nums[i])+1} H ${curX} Z `;
+                                if(data.displayMode == 2) {
+                                    if(i == 0 || i > c.r)
+                                        path += `M ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} `;
+                                    else
+                                        path += `S ${coordToScreen(c.l,c.r,c.w,i - bezierFactor)} ${Math.min(c.h, Math.max(0, coordToScreen(c.t,c.b,c.h,(1+bezierFactor)*data.nums[i] - bezierFactor*data.nums[i+1])))} ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} `;
+                                }
                                 if(data.displayMode == 3 && i+1 <= c.r)
                                     path += `M ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} H ${coordToScreen(c.l,c.r,c.w,i + 1)} V ${c.h} H ${curX} Z `;
                             }
