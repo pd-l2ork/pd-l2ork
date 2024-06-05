@@ -2,8 +2,6 @@ PD-L2ORK TODO:
 
 *Update pdjs to use a more recent version of v8 (this might fix arm macbook errors, as pdjs currently does not work properly on apple silicon)
 
-*Toggling VU meter scale (text labels with levels next to the VU meter) off and back on, results in incorrectly drawn scale.
-
 *Implement Windows list in the Windows menu.
 
 *Investigate potential issue with preset_nodes and/or patch connections getting all confused after the patch has been edited afterwards (even though patch cords are visually correctly connected, objects, like the one in Sync-Control.pd inside Tweeter, and more specifically length toggle, are not forwarding data like they should).
@@ -17,10 +15,6 @@ PD-L2ORK TODO:
     *Looks like this has vastly improved the stability. However, opening and closing L2OrkTweet patch still crashes sometimes.
 
 *Opening meta subpatch inside any patch (here, specifically netserver-help.pd) and then closing it, and then reopening it again, keeps moving the patch window downwards. May be only affecting Linux, which also exhibits this problem when opening the main Pd-L2Ork window (see index.js for an ugly hack fix that works around this nwjs 0.67.1 bug).
-
-*Opening file dialogs on Ubuntu 22.04, including various Tweeter dialogs opens recent files, or a wrong folder, suggesting something may be broken with the patch_name and dialog.
-  *Looks like nw.js bug.
-  *Consider porting the whole front-end to electron instead (SIGH...).
 
 *On Linux (possibly other places), moving dialog popup to fit within the desktop, if called on the second screen, still opens dialog on the first screen.
   *Consider porting the whole front-end to electron instead (SIGH...).
@@ -182,6 +176,8 @@ LATER:
 
 
 PD-L2ORK DONE:
+*Opening file dialogs on Ubuntu 22.04, including various Tweeter dialogs opens recent files, or a wrong folder, suggesting something may be broken with the patch_name and dialog.
+*Toggling VU meter scale (text labels with levels next to the VU meter) off and back on, results in incorrectly drawn scale.
 *Add focus/commit to numbox2
 *Add output option whenever an arrow up/down is pressed on the numbox2 while it is activated (with or without shift)
 *Add interactive flag to gatoms and all iemguis that can be interacted with (gatom, tgl, bng, number2, vslider, hslider, vradio, hradio, knob, mknob)

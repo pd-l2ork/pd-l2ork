@@ -476,6 +476,8 @@ static void vu_scale(t_vu *x, t_floatarg fscale)
     }
     if(!x->x_scale && scale)
     {
+        int x1=text_xpix(&x->x_gui.x_obj, x->x_gui.x_glist);
+        int y1=text_ypix(&x->x_gui.x_obj, x->x_gui.x_glist);
         int end=text_xpix(&x->x_gui.x_obj,
             x->x_gui.x_glist)+x->x_gui.x_w+4;
         int k1=x->x_led_size+1, k2=IEM_VU_STEPS+1, k3=k1/2;
@@ -494,7 +496,7 @@ static void vu_scale(t_vu *x, t_floatarg fscale)
                     gui_vmess("gui_vumeter_draw_text", "xxsiisiiiis",
                         canvas, x, cbuf,
                         end+1, yyy+k3+2, iemgui_vu_scale_str[i/4],
-                        i, end, yyy, x->x_gui.x_fontsize,
+                        i, x1, y1-3, x->x_gui.x_fontsize,
                         sys_fontweight);
                 }
             }
@@ -503,7 +505,7 @@ static void vu_scale(t_vu *x, t_floatarg fscale)
             gui_vmess("gui_vumeter_draw_text", "xxsiisiiiis",
                 canvas, x, cbuf,
                 end+1, yyy+k3+2, iemgui_vu_scale_str[i/4],
-                i, end, yyy, x->x_gui.x_fontsize,
+                i, x1, y1-3, x->x_gui.x_fontsize,
                 sys_fontweight);
         }
     }
