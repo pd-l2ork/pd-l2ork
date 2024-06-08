@@ -8,8 +8,6 @@ PD-L2ORK TODO:
   *Explore if "select all" also selects invisible preset_hub k12, which could explain how two of them found their way into sync-control patch (select all, cut, paste into a new patch that already has it).
     *No, this should not be a problem since glist_select filters selection of the preset_hub.
 
-*Add bezier curve drawing ability to the arrays (currently displaying them as polygons).
-
 *Investigate increase in crashes when manipulating ggee/image and working with Tweeter 0.78.
   *Could it have been the Sync-Controls.pd having erroneously 2 invisible k12 preset_hubs? No idea how this happened.
     *Looks like this has vastly improved the stability. However, opening and closing L2OrkTweet patch still crashes sometimes.
@@ -176,6 +174,7 @@ LATER:
 
 
 PD-L2ORK DONE:
+*Add bezier curve drawing ability to the arrays (currently displaying them as polygons).
 *Opening file dialogs on Ubuntu 22.04, including various Tweeter dialogs opens recent files, or a wrong folder, suggesting something may be broken with the patch_name and dialog.
 *Toggling VU meter scale (text labels with levels next to the VU meter) off and back on, results in incorrectly drawn scale.
 *Add focus/commit to numbox2
