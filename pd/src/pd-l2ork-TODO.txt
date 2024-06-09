@@ -174,9 +174,6 @@ LATER:
 
 
 PD-L2ORK DONE:
-*Add bezier curve drawing ability to the arrays (currently displaying them as polygons).
-*Opening file dialogs on Ubuntu 22.04, including various Tweeter dialogs opens recent files, or a wrong folder, suggesting something may be broken with the patch_name and dialog.
-*Toggling VU meter scale (text labels with levels next to the VU meter) off and back on, results in incorrectly drawn scale.
 *Add focus/commit to numbox2
 *Add output option whenever an arrow up/down is pressed on the numbox2 while it is activated (with or without shift)
 *Add interactive flag to gatoms and all iemguis that can be interacted with (gatom, tgl, bng, number2, vslider, hslider, vradio, hradio, knob, mknob)
@@ -810,6 +807,9 @@ resulting in unexpected stuck keys.
   *Solved a bug in Tweeter that was caused by this.
 *Series of iterative improvements to the PdWebParty.
 *Refinements to the OSX building process to allow for support of multi-user environments.
+*Add bezier curve drawing ability to the arrays (currently displaying them as polygons).
+*Opening file dialogs on Ubuntu 22.04, including various Tweeter dialogs opens recent files, or a wrong folder, suggesting something may be broken with the patch_name and dialog.
+*Toggling VU meter scale (text labels with levels next to the VU meter) off and back on, results in incorrectly drawn scale.
 
 
 
