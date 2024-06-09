@@ -49,7 +49,7 @@ BUILDSRC_OS_NAME = $(OS_NAME)
 
 WARN_FLAGS = -Wall -W -Wno-unused-parameter
 CFLAGS = -DPD -D__USE_MINGW_ANSI_STDIO=1 -I$(pd_src)/src $(WARN_FLAGS) $(DEBUG_CFLAGS) $(CFLAGS_ADD) -I$(gem_src)/src
-LDFLAGS =  
+LDFLAGS = 
 LIBS = -lm
 
 # emscripten
@@ -541,12 +541,14 @@ endif
 
 #------------------------------------------------------------------------------#
 # DISIS
+XWIIMOTE_PATH := $(externals_src)/disis/xwiimote/lib
 ifneq ($(EMSCRIPTEN),yes)
 disis:
 ifneq ($(OS_NAME),windows)
 ifneq ($(OS_NAME),darwin)
-	cd $(externals_src)/disis/cwiid && aclocal && autoconf && \
-		./configure --without-python && make
+	$(CC) -c -fPIC $(XWIIMOTE_PATH)/core.c -o $(XWIIMOTE_PATH)/core.o -D'XWII__EXPORT=__attribute__((visibility("default")))' 
+	$(CC) -c -fPIC $(XWIIMOTE_PATH)/monitor.c -o $(XWIIMOTE_PATH)/monitor.o -D'XWII__EXPORT=__attribute__((visibility("default")))' 
+	ar rcs $(XWIIMOTE_PATH)/libxwiimote.a $(XWIIMOTE_PATH)/*.o
 endif
 endif
 	make -C $(externals_src)/disis PD_PATH=$(pd_src) pdbinpath=$(pd_src)/src CFLAGS="$(CFLAGS_ADD)"
@@ -554,8 +556,9 @@ endif
 disis_flatpak:
 ifneq ($(OS_NAME),windows)
 ifneq ($(OS_NAME),darwin)
-	cd $(externals_src)/disis/cwiid && autoupdate && aclocal && autoconf && \
-		./configure --host=host --without-python --with-pkgmod="gtk+-3.0 gthread-2.0" && make
+	$(CC) -c -fPIC $(XWIIMOTE_PATH)/core.c -o $(XWIIMOTE_PATH)/core.o -D'XWII__EXPORT=__attribute__((visibility("default")))' 
+	$(CC) -c -fPIC $(XWIIMOTE_PATH)/monitor.c -o $(XWIIMOTE_PATH)/monitor.o -D'XWII__EXPORT=__attribute__((visibility("default")))' 
+	ar rcs $(XWIIMOTE_PATH)/libxwiimote.a $(XWIIMOTE_PATH)/*.o
 endif
 endif
 	make -C $(externals_src)/disis PD_PATH=$(pd_src) pdbinpath=$(pd_src)/src CFLAGS="$(CFLAGS_ADD)"
@@ -569,7 +572,9 @@ disis_install:
 disis_clean:
 ifneq ($(OS_NAME),windows)
 ifneq ($(OS_NAME),darwin)
-	make -C $(externals_src)/disis/cwiid clean
+	rm $(XWIIMOTE_PATH)/libxwiimote.a
+	rm $(XWIIMOTE_PATH)/core.o
+	rm $(XWIIMOTE_PATH)/monitor.o
 endif
 endif
 	make -C $(externals_src)/disis clean

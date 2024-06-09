@@ -152,6 +152,8 @@ endif
 	install -d $(DESTDIR)/etc/init.d
 	install -p -m0644 $(scripts_src)/debian/init.d/pd-l2ork \
 		$(DESTDIR)/etc/init.d/
+	install -d $(DESTDIR)/etc/udev/rules.d
+	install -p -m0644 $(packages_src)/../externals/disis/80-disis_wiimote.rules $(DESTDIR)/etc/udev/rules.d/80-disis_wiimote.rules
 # default prefs file
 	install -d $(DESTDIR)/etc/pd-l2ork
 	ln -s -f $(libpddir)/default.settings \
