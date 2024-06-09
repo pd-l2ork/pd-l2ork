@@ -74,12 +74,29 @@ Configuration for the patch bind mount and port are in `docker-compose.yml`
 
 # Usage
 
+## Opening Patches
+
 - For a default test patch, point your web browser to http://webpdl2ork-server-address:port/
 	- The port can be overriden using the PORT environment variable. It defaults to 3000. For example, use `PORT=80 npm run start` to run WebPdL2Ork on port 80 instead of port 3000.
 - For a specific patch hosted on the same server use http://webpdl2ork-server-address:port?url=path-to-patch/patchname.pd 
 	- The patch path is relative to the PATCH_PATH environment variable, which itself is relative to the location of index.js (the WebPdL2Ork folder), and defaults to "public". All patches in the public folder will be accessible no matter the value of PATCH_PATH, but PATCH_PATH can be set to another folder to make that folder accessible as well. For example, use `PATCH_PATH=/path/to/patches npm run start` to tell WebPdL2Ork to look in `/path/to/patches` for patches.
 	- Note: In the docker build, PATH_PATH is set to public/patches, since in docker that is where the host public folder gets mounted to. However, this has no visible effect, as to add a patch from the host machine you still drop it into the public folder (unless you override the bind mount). For docker, it is recommended to override the bind mount instead of overriding PATCH_PATH.
 - For a patch hosted on another server use http://webpdl2ork-server-address:port?url=http://server-address-that-hosts-the-patch/path-to-patch/patchname.pd 
+
+## HTTPS Support
+
+By default WebPdL2Ork is served over http. To enable https support (required for pasting into a patch, microphone access, and some other functionality), follow these steps:
+
+1. Build the webpdl2ork docker container, using the instructions above.
+2. Comment the `ports: ` line and the `- "3000:80"` line in the webpdl2ork container in `docker-compose.yml`
+3. Uncomment the two commented lines in the nginx-proxy container in `docker-compose.yml`. If you want to expose pd-l2ork on another port other than 3000, you can change the line that has `3000` to reflect that. Be careful with indentation, make sure that they are indented in the same was as the other configuration options in this section.
+4. Set the `VIRTUAL_HOST` environment variable for the webpdl2ork container to match the domain name you are using.
+5. Place your certiciates in the `certs` directory in the root folder of this repository. The certificates should be named as `my.domain.name.crt` and `my.domain.name.key`, assuming that the server is available under `my.domain.name`.
+	- If your certificates are in pem format, you can convert them using the following commands:
+	```bash
+	openssl x509 -in your-cert.pem -out my.domain.name.crt
+	openssl pkey -in your-privkey.pem -out my.domain.name.key
+	```
 
 # Future Work
 

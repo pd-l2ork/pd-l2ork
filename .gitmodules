@@ -16,3 +16,6 @@
 [submodule "externals/disis/xwiimote"]
 	path = externals/disis/xwiimote
 	url = https://github.com/xwiimote/xwiimote
+[submodule "pd/src/tinyfd"]
+	path = pd/src/tinyfd
+	url = https://github.com/LazyJazz/tinyfiledialogs

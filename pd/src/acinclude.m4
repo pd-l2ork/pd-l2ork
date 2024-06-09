@@ -346,7 +346,7 @@ case "$host_os" in
 		;;
   mingw*)	       PWLIB_OSTYPE=mingw ;
 		           STDCCFLAGS="$STDCCFLAGS -mms-bitfields" ;
-		           ENDLDLIBS="-lwinmm -lwsock32 -lsnmpapi -lmpr -lcomdlg32 -lgdi32 -lavicap32" ;
+		           ENDLDLIBS="-lwinmm -lwsock32 -lsnmpapi -lmpr -lcomdlg32 -lgdi32 -lavicap32 -lcomdlg32 -lole32" ;
 		;;
   * )		       PWLIB_OSTYPE="$host_os" ;
 		           AC_MSG_WARN("OS $PWLIB_OSTYPE not recognized - proceed with caution!") ;

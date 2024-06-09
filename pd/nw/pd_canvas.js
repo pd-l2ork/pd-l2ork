@@ -1886,11 +1886,36 @@ var canvas_events = (function() {
 
             // Cut event
             document.addEventListener("cut", function(evt) {
-                // This event doesn't currently get called because the
-                // nw menubar receives the event and doesn't propagate
-                // to the DOM. But if we add the ability to toggle menubar
-                // display, we might need to rely on this listener.
-                pdgui.pdsend(name, "cut");
+                // On OSX, this event gets triggered when we're editing
+                // inside an object/message box, including activated objects.
+                // ico@vt.edu 2021-10-20: we don't need the search part since
+                // that one for some reason works just fine on OSX (see
+                // m.edit.copy above)
+                if (pdgui.gui_is_gobj_grabbed(name)) {
+                    // ico@vt.edu 2021-10-08: cutting contents of a grabbed object
+                    //pdgui.post("gobj_grabbed copy");
+                    var clipboard = nw.Clipboard.get();
+                    var activated_gobj =
+                        document.getElementsByClassName("activated");
+                    // currently we only support cutting from gatoms and number2
+                    // gatoms will belong to the class atom, while number2 will have
+                    // parent object that will belong to the class iemgui
+                    if (activated_gobj[0].classList.contains("atom"))
+                        clipboard.set(activated_gobj[0].textContent, 'text');
+                    else if (activated_gobj[0].parentNode.classList.contains("iemgui")) {
+                        var output = activated_gobj[0].textContent.replace('>', '');
+                        clipboard.set(output, 'text');
+                    }
+                    for (var i = 0; i < clipboard.get('text').length; i++) {
+                        // Send backspace
+                        pdgui.canvas_sendkey(name, 1, 0, 8, 0);
+                        pdgui.canvas_sendkey(name, 0, 0, 8, 0);
+                    }
+                } else if (canvas_events.get_state() === "normal") {
+                    // So, we only forward the copy message to Pd if we're in a
+                    // "normal" canvas state
+                    pdgui.pdsend(name, "cut");
+                }
             });
 
             // Copy event
@@ -2816,6 +2841,29 @@ function nw_create_patch_window_menus(gui, name) {
                 if (document.getSelection()) {
                     document.execCommand("cut");
                 }
+            } else if (pdgui.gui_is_gobj_grabbed(name)) {
+                // ico@vt.edu 2021-10-08: cutting contents of a grabbed object
+                //pdgui.post("gobj_grabbed copy");
+                var clipboard = nw.Clipboard.get();
+                var activated_gobj =
+                    document.getElementsByClassName("activated");
+                // currently we only support cutting from gatoms and number2
+                // gatoms will belong to the class atom, while number2 will have
+                // parent object that will belong to the class iemgui
+                if (activated_gobj[0].classList.contains("atom"))
+                    clipboard.set(activated_gobj[0].
+                        getElementsByClassName("cut")[0].textContent, 'text');
+                else if (activated_gobj[0].parentNode.classList.contains("iemgui")) {
+                    var output = activated_gobj[0].textContent.replace('>', '');
+                    clipboard.set(output, 'text');
+                }
+                for (var i = 0; i < clipboard.get('text').length; i++) {
+                    // Backspace
+                    pdgui.canvas_sendkey(name, 1, 0, 8, 0);
+                    pdgui.canvas_sendkey(name, 0, 0, 8, 0);
+                }
+            } else {
+                pdgui.pdsend(name, "cut");
             }
         }
     });
@@ -2838,7 +2886,8 @@ function nw_create_patch_window_menus(gui, name) {
                 // gatoms will belong to the class atom, while number2 will have
                 // parent object that will belong to the class iemgui
                 if (activated_gobj[0].classList.contains("atom"))
-                    clipboard.set(activated_gobj[0].textContent, 'text');
+                    clipboard.set(activated_gobj[0].
+                        getElementsByClassName("copy")[0].textContent, 'text');
                 else if (activated_gobj[0].parentNode.classList.contains("iemgui")) {
                     var output = activated_gobj[0].textContent.replace('>', '');
                     clipboard.set(output, 'text');

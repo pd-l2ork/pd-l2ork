@@ -6216,6 +6216,100 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
 
             gui_end_vmess();
         }
+        else if (style == PLOTSTYLE_BEZ)
+        {
+            int ndrawn = 0;
+
+            gui_start_vmess("gui_plot_vis", "xii", glist_getcanvas(glist), basex, basey);
+            gui_start_array();
+
+            float bezierFactor = 0.4;
+            
+            for(int i=0; i< nelem; i++) {
+                int ixpix, inextx, render;
+
+                if (xonset >= 0)
+                {
+                    usexloc = xloc + *(t_float *)((elem + elemsize * i) + xonset);
+                    ixpix = fielddesc_cvttocoord(xfielddesc, usexloc);
+                    inextx = ixpix + 2;
+                    /* we use 'render' as a stopgap to choose whether
+                       or not to draw this point in the trace. For
+                       templates that have an x field we always render */
+                    render = 1;
+                }
+                else
+                {
+                    usexloc = xsum;
+                    xsum += xinc;
+                    ixpix = (int)(glist_xtopixels(glist, fielddesc_cvttocoord(xfielddesc, usexloc)));
+                    inextx = (int)(glist_xtopixels(glist, fielddesc_cvttocoord(xfielddesc, xsum)));
+
+                    /* For y-only templates, we only render the point
+                       if its at a different x-coordinate than the
+                       previous one. (For example, if you try to fit
+                       a 44,100 point array into a 100 pixel wide
+                       graph.) We're doing the scaling on the GUI side,
+                       but we must still use glist_xtopixels in order
+                       to test for a new x-pixel value. */
+                    render = ixpix != inextx;
+                }
+
+                t_float yval, nyval;
+                if(yonset < 0) {
+                    yval = 0;
+                    nyval = 0;
+                } else {
+                    yval = yloc + *(t_float*)((elem + elemsize * i) + yonset);
+                    nyval = yloc + *(t_float*)((elem + elemsize * (i + 1)) + yonset);
+                }
+
+                if (i == 0 || i == nelem-1 || render)
+                {
+                    ixpix = fielddesc_cvttocoord(xfielddesc, usexloc);
+                    if(i == 0) {
+                        gui_s("M");
+                    } else {
+                        gui_s("S");
+                        gui_f((float)ixpix - bezierFactor);
+                        gui_f((1.f+bezierFactor)*yval - bezierFactor*nyval);
+                    }
+                    gui_i(ixpix);
+                    gui_f(yval);
+
+                    ndrawn++;
+                }
+                if (ndrawn > 2000 || ixpix >= 3000) break;
+            }
+
+            gui_end_array();
+
+            /* stroke and fill */
+            gui_start_array();
+            gui_s("fill");
+            gui_s("none");
+
+            gui_s("stroke");
+            gui_s(symoutline->s_name);
+
+            gui_s("stroke-width");
+            gui_f(1);
+            gui_s("vector-effect");
+            gui_s("non-scaling-stroke");
+            gui_end_array();
+
+            /* tags */
+            gui_start_array();
+            char pbuf[MAXPDSTRING];
+            char tbuf[MAXPDSTRING];
+            sprintf(pbuf, "dgroup%zx.%zx", (t_int)x->x_canvas, (t_int)data);
+            sprintf(tbuf, ".x%zx.x%zx.template%zx", (t_int)glist_getcanvas(glist), (t_int)glist, (t_int)data);
+            gui_s(pbuf);
+            gui_s(pbuf);
+            gui_end_array();
+
+            gui_end_vmess();
+        }
         else /* polygon style */
         {
             //char outline[20];

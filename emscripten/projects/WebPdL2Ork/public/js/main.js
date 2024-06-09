@@ -109,6 +109,42 @@ function screenToCoord(low, high, span, screen) {
     return (raw) * Math.abs(low - high) / span + Math.min(low, high);   
 }
 
+//For Clipboard interaction
+async function pasteTextFromClipboard() {
+    if(navigator.clipboard) {
+        return await navigator.clipboard.readText().catch( err => {
+            console.error("Failed to paste text: ", err);
+            return "";
+        });
+    } else {
+        alert("Paste is only available over a secure connection");
+        return "";
+    }
+}
+
+function copyTextToClipboard(text) {
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).catch(err => 
+            console.error('Failed to copy text: ', err)
+        );
+    } else {
+        var textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.top = "0";
+        textArea.style.left = "0";
+        textArea.style.position = "fixed";
+
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        if(!document.execCommand('copy'))
+            console.error('Failed to copy text to clipboard');
+
+        document.body.removeChild(textArea);
+    }
+}
+
 // create an AudioContext
 const audioContextList = [];
 (function () {
@@ -2807,6 +2843,25 @@ function gui_atom_settext(data, text) {
         data.svgText.textContent = text.length > +data.width ? text.slice(0, +data.width - 1) + '>' : text;
 }
 function gui_atom_keydown(data, e) {
+    if(e.key === 'v' && (keyDown['Control'] || keyDown['Meta'])) {
+        pasteTextFromClipboard().then(text => {
+            data.dirtyValue = (data.dirtyValue || '') + text;
+            if(data.dirtyValue !== undefined)
+                gui_atom_settext(data, data.dirtyValue + (new Array(Math.max(0,3 - data.dirtyValue.length))).fill('.').join(''));
+        })
+        return;
+    }
+    if(e.key === 'c' && (keyDown['Control'] || keyDown['Meta'])) {
+        copyTextToClipboard(data.dirtyValue);
+        return;
+    }
+    if(e.key === 'x' && (keyDown['Control'] || keyDown['Meta'])) {
+        copyTextToClipboard(data.dirtyValue);
+        data.dirtyValue = '';
+        gui_atom_settext(data, data.dirtyValue + (new Array(Math.max(0,3 - data.dirtyValue.length))).fill('.').join(''));
+        return;
+    }
+
     if(e.key.length == 1)
         if(e.key.match(data.regex))
             data.dirtyValue = (data.dirtyValue || '') + e.key;
@@ -2941,6 +2996,26 @@ function gui_nbx_keydown(data, e) {
         clearTimeout(data.focusTimeout);
         data.focusTimeout = setTimeout(setKeyboardFocus, 3000, null);
     }
+    
+    if(e.key === 'v' && (keyDown['Control'] || keyDown['Meta'])) {
+        pasteTextFromClipboard().then(text => {
+            data.dirtyValue = (data.dirtyValue || '') + text;
+            if(data.dirtyValue !== undefined)
+                gui_atom_settext(data, data.dirtyValue + (new Array(Math.max(0,3 - data.dirtyValue.length))).fill('.').join(''));
+        })
+        return;
+    }
+    if(e.key === 'c' && (keyDown['Control'] || keyDown['Meta'])) {
+        copyTextToClipboard(data.dirtyValue);
+        return;
+    }
+    if(e.key === 'x' && (keyDown['Control'] || keyDown['Meta'])) {
+        copyTextToClipboard(data.dirtyValue);
+        data.dirtyValue = '';
+        gui_atom_settext(data, data.dirtyValue + (new Array(Math.max(0,3 - data.dirtyValue.length))).fill('.').join(''));
+        return;
+    }
+
     if(e.key.length == 1)
         if(e.key.match(data.regex))
             data.dirtyValue = (data.dirtyValue || '') + e.key;
@@ -3052,10 +3127,11 @@ let keyboardFocus = { data: null, exclusive: false, current: false};
 let inputListeners = [];
 let keyDown = {}
 function onKeyDown(e) {
+    e.preventDefault();
     if(keyboardFocus.data?.onKeyDown)
         keyboardFocus.data.onKeyDown(keyboardFocus.data, e);
+    keyDown[e.key] = true;
     if(keyboardFocus.exclusive == false) {
-        keyDown[e.key] = true;
         for(let listener of inputListeners.sort((a,b) => (b.priority || 0) - (a.priority || 0))) {
             if(listener.onKeyUp && e.repeat)
                 listener.onKeyUp(e);
@@ -3065,6 +3141,7 @@ function onKeyDown(e) {
     }
 }
 function onKeyUp(e) {
+    e.preventDefault();
     if(keyboardFocus.data?.onKeyUp)
         keyboardFocus.data.onKeyUp(keyboardFocus.data, e);
     keyDown[e.key] = false;
@@ -3323,9 +3400,9 @@ function gui_text_text(data, line_index, fontSize) {
 //--------------------- patch handling ----------------------------
 async function openPatch(content, filename) {
     console.log(`Loading Patch: ${filename}`);
-    document.title=filename;
+    document.title=`WebPdL2Ork: ${filename}`;
 
-    document.getElementById('loadingstage').innerHTML=`Fetching Dependancies`;
+    document.getElementById('loadingstage').innerHTML=`Fetching Dependencies`;
     await new Promise(Resolve => setTimeout(Resolve, 10));
     let start = Date.now();
     let abstractions = {};
@@ -4512,7 +4589,7 @@ async function openPatch(content, filename) {
                             inputListeners.push({
                                 onKeyDown: e => {
                                     if(e.repeat === false || data.repeat === true) {
-                                        if(e.key.match(/^F\d$/) && keyDown['Shift'])
+                                        if(e.key.match(/^F\d+$/) && keyDown['Shift'])
                                             gui_send('Symbol', data.auxSend[0], "Shift"+e.key);
                                         else if(e.key.match(/^Arrow/) && keyDown['Shift'])
                                             gui_send('Symbol', data.auxSend[0], "Shift"+e.key.replace(/Arrow/, ''));
@@ -4523,7 +4600,7 @@ async function openPatch(content, filename) {
                                 },
                                 onKeyUp: e => {
                                     if(e.repeat === false || data.repeat === true) {
-                                        if(e.key.match(/^F\d$/) && keyDown['Shift'])
+                                        if(e.key.match(/^F\d+$/) && keyDown['Shift'])
                                             gui_send('Symbol', data.auxSend[0], "Shift"+e.key);
                                         else if(e.key.match(/^Arrow/) && keyDown['Shift'])
                                             gui_send('Symbol', data.auxSend[0], "Shift"+e.key.replace(/Arrow/, ''));
@@ -4643,17 +4720,24 @@ async function openPatch(content, filename) {
                         gui_canvas_drawLabels(data.layer);
                     }
                     data.redraw = () => {
-                        let path = data.displayMode % 2 ? '' : 'M ';
+                        let path = data.displayMode == 0 ? 'M ' : '';
                         let c = data.coords;
                         let lastX = -1;
+                        let bezierFactor = 0.4;
                         for(let i = 0; i < data.nums.length; i++) {
                             let curX = coordToScreen(c.l,c.r,c.w,i);
                             if(curX != lastX) {
                                 lastX = curX;
-                                if(data.displayMode == 0 || data.displayMode == 2)
+                                if(data.displayMode == 0)
                                     path += `${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} `;
                                 if(data.displayMode == 1 && i+1 <= c.r)
                                     path += `M ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} H ${coordToScreen(c.l,c.r,c.w,i + 1) - 1} V ${coordToScreen(c.t,c.b,c.h,data.nums[i])+1} H ${curX} Z `;
+                                if(data.displayMode == 2) {
+                                    if(i == 0 || i > c.r)
+                                        path += `M ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} `;
+                                    else
+                                        path += `S ${coordToScreen(c.l,c.r,c.w,i - bezierFactor)} ${Math.min(c.h, Math.max(0, coordToScreen(c.t,c.b,c.h,(1+bezierFactor)*data.nums[i] - bezierFactor*data.nums[i+1])))} ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} `;
+                                }
                                 if(data.displayMode == 3 && i+1 <= c.r)
                                     path += `M ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} H ${coordToScreen(c.l,c.r,c.w,i + 1)} V ${c.h} H ${curX} Z `;
                             }
