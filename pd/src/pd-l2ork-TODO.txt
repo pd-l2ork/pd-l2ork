@@ -2,6 +2,8 @@ PD-L2ORK TODO:
 
 *Update pdjs to use a more recent version of v8 (this might fix arm macbook errors, as pdjs currently does not work properly on apple silicon)
 
+*Figure out why comments and the end of Tweeter track with lots of numbers converts to scientific notation.
+
 *Implement Windows list in the Windows menu.
 
 *Investigate potential issue with preset_nodes and/or patch connections getting all confused after the patch has been edited afterwards (even though patch cords are visually correctly connected, objects, like the one in Sync-Control.pd inside Tweeter, and more specifically length toggle, are not forwarding data like they should).
@@ -807,6 +809,9 @@ resulting in unexpected stuck keys.
   *Solved a bug in Tweeter that was caused by this.
 *Series of iterative improvements to the PdWebParty.
 *Refinements to the OSX building process to allow for support of multi-user environments.
+*Many more improvements to the WebPdL2Ork (new name).
+*Made WebPdL2Ork support https.
+*Fixed regression where atom and number2 copy/paste did not work. LATER: consider also adding cut option.
 *Add bezier curve drawing ability to the arrays (currently displaying them as polygons).
 *Opening file dialogs on Ubuntu 22.04, including various Tweeter dialogs opens recent files, or a wrong folder, suggesting something may be broken with the patch_name and dialog.
 *Toggling VU meter scale (text labels with levels next to the VU meter) off and back on, results in incorrectly drawn scale.
@@ -816,6 +821,9 @@ resulting in unexpected stuck keys.
 
 TWEETER TODO:
 *Consider adding networked repositioning of the red cursor in the L2Orkmote-Tweeter, so that both users and audience can see what is everyone doing.
+
+*Add number of lines to the saved session, so that when it is being saved locally (via the global request to save the session using teacher interface) and broadcast to all, the remote copies are ensured to have all the data.
+  *Add the nlines as the last line in the session file?
 
 *Still need to figure out how to prevent heavy network traffic from causing dropouts. May just want to implement a server-side message that disallows further connections? What if someone gets disconnected?
 
