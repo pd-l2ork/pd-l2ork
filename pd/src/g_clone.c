@@ -51,6 +51,7 @@ typedef struct _out
 typedef struct _clone
 {
     t_object x_obj;
+    t_canvas *x_canvas; /* owning canvas */
     int x_n;            /* number of copies */
     t_copy *x_vec;      /* the copies */
     int x_nin;
@@ -176,6 +177,22 @@ static void clone_in_fwd(t_in *x, t_symbol *s, int argc, t_atom *argv)
         typedmess(&x->i_pd, s, argc, argv);
     else
         pd_error(x->i_owner, "clone-inlet: no method for 'fwd'");
+}
+
+static void clone_setn(t_clone *, t_floatarg);
+
+static void clone_in_resize(t_in *x, t_floatarg f)
+{
+    int i, oldn = x->i_owner->x_n;
+        /* We need to send closebangs to old instances. Currently,
+        this is done in clone_freeinstance(), but later we would
+        rather do it here, see comment in clone_loadbang() */
+    canvas_setcurrent(x->i_owner->x_canvas);
+    clone_setn(x->i_owner, f);
+    canvas_unsetcurrent(x->i_owner->x_canvas);
+        /* send loadbangs to new instances */
+    for (i = oldn; i < x->i_owner->x_n; i++)
+        canvas_loadbang(x->i_owner->x_vec[i].c_gl);
 }
 
 static void clone_out_anything(t_out *x, t_symbol *s, int argc, t_atom *argv)
@@ -394,6 +411,7 @@ static void *clone_new(t_symbol *s, int argc, t_atom *argv)
     t_clone *x = (t_clone *)pd_new(clone_class);
     t_canvas *c;
     int wantn, dspstate, i;
+    x->x_canvas = canvas_getcurrent();
     t_out *outvec;
     x->x_invec = 0;
     x->x_outvec = 0;
@@ -531,6 +549,8 @@ void clone_setup(void)
         A_FLOAT, A_FLOAT, 0);
     class_addmethod(clone_in_class, (t_method)clone_in_fwd, gensym("fwd"),
         A_GIMME, 0);
+    class_addmethod(clone_in_class, (t_method)clone_in_resize, gensym("resize"),
+        A_FLOAT, 0);
     class_addlist(clone_in_class, (t_method)clone_in_list);
 
     clone_out_class = class_new(gensym("clone-outlet"), 0, 0,
