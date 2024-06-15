@@ -1494,7 +1494,7 @@ Module['preRun'].push(function() {
 
     // Intercept file reads
     FS.open = function (path, flags, mode) {
-        let isNetworkCandidate = !['wasm','so','pat'].map(ext=>('' + path).endsWith(ext)).find(matches => matches == true) && (('' + path).startsWith('/pd-l2ork-web') == false);
+        let isNetworkCandidate = !['wasm','so','pat','pd'].map(ext=>('' + path).endsWith(ext)).find(matches => matches == true) && (('' + path).startsWith('/pd-l2ork-web') == false);
         if (path === "") {
             throw new FS.ErrnoError(44)
         }
