@@ -1494,7 +1494,7 @@ Module['preRun'].push(function() {
 
     // Intercept file reads
     FS.open = function (path, flags, mode) {
-        let isNetworkCandidate = !['wasm','so','pd','pat'].map(ext=>('' + path).endsWith(ext)).find(matches => matches == true) && (('' + path).startsWith('/pd-l2ork-web') == false);
+        let isNetworkCandidate = !['wasm','so','pat'].map(ext=>('' + path).endsWith(ext)).find(matches => matches == true) && (('' + path).startsWith('/pd-l2ork-web') == false);
         if (path === "") {
             throw new FS.ErrnoError(44)
         }
@@ -5258,7 +5258,7 @@ function uploadPatch(file) {
 let cachedData = {};
 async function getPatchData(url) {
     if(!cachedData[url])
-        cachedData[url] = await (await fetch(`/api/patch/?url=${encodeURIComponent(url)}`,{method: 'GET'})).json();
+        cachedData[url] = await (await fetch(`/api/patch/?url=${encodeURIComponent(url.replace(/[^/]+\/+..\/+/g,''))}`,{method: 'GET'})).json();
     return cachedData[url];
 }
 
