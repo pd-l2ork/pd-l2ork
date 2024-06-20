@@ -4,8 +4,8 @@ services:
     build: 
       context: .
       dockerfile: webpdl2ork.Dockerfile
-    ports:
-      - "3000:80" # Serve without proxy
+    #ports:
+    #  - "3000:80" # Serve without proxy
     environment:
       - PORT=80
       - PATCH_PATH=public/patches
@@ -16,8 +16,8 @@ services:
     container_name: webpdl2ork
   nginx:
     image: nginxproxy/nginx-proxy:alpine
-    #ports:
-    #  - "3000:443" # Serve using https (requires certificates)
+    ports:
+      - "3000:443" # Serve using https (requires certificates)
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ./certs:/etc/nginx/certs
