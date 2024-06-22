@@ -1,5 +1,4 @@
-const http = require("http");
-const https = require("https");
+const axios = require("axios");
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
@@ -22,32 +21,64 @@ app.get("/", (req, res) => {
 
 // Fetching patches
 app.get("/api/patch", async (req, res) => {
-  let url = req.query.url;
-  let client = url.toString().includes("https") ? https : http;
-  try {
-    url = new URL(url);
-  } catch (err) {
+  let urls = req.query.url;
+  if(typeof urls === 'string')
+    urls = [urls];
+
+  res.json(Object.fromEntries(await Promise.all(urls.map(url => new Promise(Resolve => {
+    let purl;
     try {
-      url = new URL(`http://localhost:${PORT}/` + url);
+      purl = new URL(url);
     } catch (err) {
-      res.json({ error: 'Invalid Patch' });
-      return;
+      try {
+        purl = new URL(`http://localhost:${PORT}/` + url);
+      } catch (err) {
+        res.json({ error: 'Invalid Patch' });
+        return;
+      }
     }
-  }
-  client.get(url, (_res) => {
-    let chunks = [];
-    // a chunk of data has been recieved.
-    _res.on("data", (chunk) => {
-      chunks.push(chunk);
+    axios.get(purl).then(response => {
+      Resolve([url, response.data]);
+    }).catch(error => {
+      Resolve([url, '']);
     });
-    // the whole response has been received.
-    _res.on("end", () => {
-      res.json({ content: Buffer.concat(chunks).toString("utf-8") });
+  })))));
+});
+
+app.get("/api/file", async (req, res) => {
+
+  let urls = req.query.url;
+  if(typeof urls === 'string')
+    urls = [urls];
+
+  const result = (await Promise.all(urls.map(url => new Promise(Resolve => {
+    let purl;
+    try {
+      purl = new URL(url);
+    } catch (err) {
+      try {
+        purl = new URL(`http://localhost:${PORT}/` + url);
+      } catch (err) {
+        res.json({ error: 'Invalid Patch' });
+        return;
+      }
+    }
+    axios({
+      method: 'GET',
+      url: purl.href, 
+      responseType: 'arraybuffer',
+    }).then(response => {
+      Resolve(response.data);
+    }).catch(error => {
+      Resolve(null);
     });
-  }).on("error", (err) => {
-    res.json({ error: err });
-  });
-})
+  })))).find(result => result !== null);
+
+  if(result)
+    res.send(result);
+  else
+    res.sendStatus(204);
+});
 
 // start listening
 app.listen(PORT, () => {

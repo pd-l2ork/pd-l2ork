@@ -1521,19 +1521,17 @@ Module['preRun'].push(function() {
                     if(fileCache[path])
                         node = fileCache[path];
                     else {
-                        for(let searchPath of searchPaths) {
-                            const request = new XMLHttpRequest();
-                            request.open("GET", window.location.origin+'/'+((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')+'/'+searchPath.slice(0,-1)+path, false); // `false` makes the request synchronous
-                            request.overrideMimeType('text/plain; charset=x-user-defined'); // Set MIME type for binary data
-                            request.send();
-                            if (request.status === 200) {
-                                let folder = path.split('/').slice(0,-1).join('/') + '/';
-                                FS.createPath('/', folder);
-                                FS.createDataFile(folder, path.split('/').slice(-1)[0], request.response, true, true, true);
-                                fileCache[path] = FS.lookupPath(path, { follow: !(flags & 131072) }).node;
-                                node = fileCache[path];
-                                break;
-                            }
+                        const request = new XMLHttpRequest();
+                        const base = ((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')+'/';
+                        request.open('GET', (window.location.origin+'/api/file?url=') + searchPaths.map(searchPath => encodeURIComponent(base + searchPath.slice(0,-1)+path)).join('&url='), false);
+                        request.overrideMimeType('text/plain; charset=x-user-defined'); // Set MIME type for binary data
+                        request.send();
+                        if (request.status === 200) {
+                            let folder = path.split('/').slice(0,-1).join('/') + '/';
+                            FS.createPath('/', folder);
+                            FS.createDataFile(folder, path.split('/').slice(-1)[0], request.response, true, true, true);
+                            fileCache[path] = FS.lookupPath(path, { follow: !(flags & 131072) }).node;
+                            node = fileCache[path];
                         }
                     }
                 }
@@ -3408,12 +3406,12 @@ async function openPatch(content, filename) {
     let abstractions = {};
     let fetchAbstractions = async(content, path) => {
         let missingAbstractions = [... new Set(content.split(';\n').filter( line => line.startsWith('#X obj') && !known_objects.includes(line.split(' ')[4]) ).map( line => line.split(' ')[4]))];
-        let abstractionData = await Promise.all(missingAbstractions.map(async(obj) => (await getPatchData(`${((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')}/${path}${obj}.pd`))));
+        let abstractionData = await getPatchDatas(missingAbstractions.map(obj => `${((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')}/${path}${obj}.pd`));
         let promises = [];
         for(let abstraction in missingAbstractions) {
-            if(abstractionData[abstraction].content.startsWith('#') && !abstractions[missingAbstractions[abstraction]]) {
-                abstractions[missingAbstractions[abstraction]] = abstractionData[abstraction].content;
-                promises.push(fetchAbstractions(abstractionData[abstraction].content, missingAbstractions[abstraction].split('/').slice(0,-1).join('/')+'/'));
+            if(abstractionData[abstraction].startsWith('#') && !abstractions[missingAbstractions[abstraction]]) {
+                abstractions[missingAbstractions[abstraction]] = abstractionData[abstraction];
+                promises.push(fetchAbstractions(abstractionData[abstraction], missingAbstractions[abstraction].split('/').slice(0,-1).join('/')+'/'));
             }
         }
         searchPaths = [...new Set([...searchPaths, path])];
@@ -5257,9 +5255,16 @@ function uploadPatch(file) {
 
 let cachedData = {};
 async function getPatchData(url) {
-    if(!cachedData[url])
-        cachedData[url] = await (await fetch(`/api/patch/?url=${encodeURIComponent(url)}`,{method: 'GET'})).json();
-    return cachedData[url];
+    return (await getPatchDatas([url]))[0];
+}
+async function getPatchDatas(urls) {
+    let missingPatches = urls.filter(url => cachedData[url] === undefined);
+    await fetch(`/api/patch/?url=${missingPatches.map(url => encodeURIComponent(url.replace(/[^/]+\/+..\/+/g,''))).join('&url=')}`).then(async(result) => {
+        const data = await result.json();
+        for(let patch in data)
+            cachedData[patch] = data[patch];
+    });
+    return urls.map(url => cachedData[url]);
 }
 
 // called after Module.mainInit() is called
@@ -5273,14 +5278,11 @@ async function init() {
     }
     if (patchURL) {
         filename = patchURL.split("/").pop();
-        const patchData = await getPatchData(patchURL);
-        if (patchData.error) {
+        content = await getPatchData(patchURL);
+        if(!content.startsWith('#')) {
             alert(`Failed to access the file ${patchURL}`);
             loading.style.display = "none";
             return;
-        }
-        else {
-            content = patchData.content;
         }
     }
     if (!content) {
