@@ -39,3 +39,4 @@ CVS
 .DS_Store
 *.dmg
 .vscode/
+logs
