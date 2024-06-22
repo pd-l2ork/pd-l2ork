@@ -21,5 +21,6 @@ services:
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ./certs:/etc/nginx/certs
+      - ./logs:/var/log/nginx
     restart: unless-stopped
     container_name: nginx-proxy
