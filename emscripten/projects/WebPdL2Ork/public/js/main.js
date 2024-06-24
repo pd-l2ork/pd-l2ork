@@ -3148,7 +3148,7 @@ function onKeyDown(e) {
     }
 }
 function onKeyUp(e) {
-    e.preventDefault();
+    e.preventDefault?.();
     if(keyboardFocus.data?.onKeyUp)
         keyboardFocus.data.onKeyUp(keyboardFocus.data, e);
     keyDown[e.key] = false;
