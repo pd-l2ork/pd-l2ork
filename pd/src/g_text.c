@@ -1103,13 +1103,6 @@ static void gatom_list(t_gatom *x, t_symbol *s, int argc, t_atom *argv)
     //post("gatom_list <%s>", s->s_name);
     if (!argc)
         gatom_bang(x);
-    else if (argc == 1)
-    {
-    	if (argv->a_type == A_FLOAT)
-        	gatom_float(x, argv->a_w.w_float);
-    	else if (argv->a_type == A_SYMBOL)
-        	gatom_symbol(x, argv->a_w.w_symbol);
-    }
     /* ico@vt.edu 20200904 like g_numbox.c, here we hijack list to capture
        keyname keypresses, so that we can use shift+backspace to delete
        entire text */
@@ -1153,7 +1146,13 @@ static void gatom_list(t_gatom *x, t_symbol *s, int argc, t_atom *argv)
             }
         }
     }
-    else pd_error(x, "gatom_list: need float or symbol");
+    else
+    {
+    	if (argv->a_type == A_FLOAT)
+        	gatom_float(x, argv->a_w.w_float);
+    	else if (argv->a_type == A_SYMBOL)
+        	gatom_symbol(x, argv->a_w.w_symbol);
+    }
 }
 
 static void gatom_motion(void *z, t_floatarg dx, t_floatarg dy)

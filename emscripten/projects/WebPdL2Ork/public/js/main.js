@@ -1783,10 +1783,19 @@ function iemgui_fontfamily(font) {
     return family;
 }
 
-function colfromload(col) { // decimal to hex color
+function colfromload(col, legacy) { // decimal to hex color
     if (typeof col === "string")
         return col;
     col = col >= 0 ? vu_colors[col] : -1 - col;
+
+    let bitsPerChannel = legacy === true ? 6 : 8;
+
+    const r = (col & ((1 << bitsPerChannel) - 1)) << (8 - bitsPerChannel);
+    const g = (col & ((1 << (bitsPerChannel * 2)) - 1)) << (8 - bitsPerChannel) * 2;
+    const b = (col & ((1 << (bitsPerChannel * 3)) - 1)) << (8 - bitsPerChannel) * 3;
+
+    col = r | g | b;
+
     // col = ((col & 0x3f000) << 6) | ((col & 0xfc0) << 4) | ((col & 0x3f) << 2);
     return "#" + ("000000" + col.toString(16)).slice(-6);
 }
@@ -1867,7 +1876,7 @@ function gui_rect(data) {
         y: data.y_pos,
         width: data.size,
         height: data.size,
-        fill: colfromload(data.bg_color),
+        fill: colfromload(data.bg_color, data.legacy),
         id: `${data.id}_rect`,
         class: "border clickable"
     }
@@ -1880,7 +1889,7 @@ function gui_text(data) {
         "font-family": iemgui_fontfamily(data.font),
         "font-weight": "normal",
         "font-size": `${data.fontsize}px`,
-        fill: colfromload(data.label_color),
+        fill: colfromload(data.label_color, data.legacy),
         transform: `translate(0, ${data.fontsize / 2 * 0.6})`, // note: modified
         id: `${data.id}_text`,
         class: "unclickable"
@@ -1944,7 +1953,7 @@ function gui_bng_update_circle(data) {
     if (data.flashed) {
         data.flashed = false;
         configure_item(data.circle, {
-            fill: colfromload(data.fg_color),
+            fill: colfromload(data.fg_color, data.legacy),
         });
         if (data.interrupt_timer) {
             clearTimeout(data.interrupt_timer);
@@ -1960,7 +1969,7 @@ function gui_bng_update_circle(data) {
     else {
         data.flashed = true;
         configure_item(data.circle, {
-            fill: colfromload(data.fg_color),
+            fill: colfromload(data.fg_color, data.legacy),
         });
     }
     if (data.hold_timer) {
@@ -1998,7 +2007,7 @@ function gui_tgl_cross1(data) {
     const points = [p1, p2, p3, p4].join(" ");
     return {
         points: points,
-        stroke: colfromload(data.fg_color),
+        stroke: colfromload(data.fg_color, data.legacy),
         "stroke-width": w,
         fill: "none",
         display: data.value ? "inline" : "none",
@@ -2020,7 +2029,7 @@ function gui_tgl_cross2(data) {
     const points = [p1, p2, p3, p4].join(" ");
     return {
         points: points,
-        stroke: colfromload(data.fg_color),
+        stroke: colfromload(data.fg_color, data.legacy),
         "stroke-width": w,
         fill: "none",
         display: data.value ? "inline" : "none",
@@ -2067,7 +2076,7 @@ function gui_slider_rect(data) {
         y: y,
         width: width,
         height: height,
-        fill: colfromload(data.bg_color),
+        fill: colfromload(data.bg_color, data.legacy),
         id: `${data.id}_rect`,
         class: "border clickable"
     }
@@ -2115,7 +2124,7 @@ function gui_slider_indicator(data) {
         y1: p.y1,
         x2: p.x2,
         y2: p.y2,
-        stroke: colfromload(data.fg_color),
+        stroke: colfromload(data.fg_color, data.legacy),
         "stroke-width": 3,
         fill: "none",
         id: `${data.id}_indicator`,
@@ -2267,7 +2276,7 @@ function gui_radio_rect(data) {
         y: data.y_pos,
         width: width,
         height: height,
-        fill: colfromload(data.bg_color),
+        fill: colfromload(data.bg_color, data.legacy),
         id: `${data.id}_rect`,
         class: "border clickable"
     }
@@ -2290,8 +2299,8 @@ function gui_radio_button(data, p1, p2, p3, p4, button_index, state) {
         y: p2,
         width: p3 - p1,
         height: p4 - p2,
-        fill: colfromload(data.fg_color),
-        stroke: colfromload(data.fg_color),
+        fill: colfromload(data.fg_color, data.legacy),
+        stroke: colfromload(data.fg_color, data.legacy),
         display: state ? "inline" : "none",
         id: `${data.id}_button_${button_index}`,
         class: "unclickable"
@@ -2374,8 +2383,8 @@ function gui_radio_update_button(data) {
         display: "none"
     });
     configure_item(data.buttons[data.value], {
-        fill: colfromload(data.fg_color),
-        stroke: colfromload(data.fg_color),
+        fill: colfromload(data.fg_color, data.legacy),
+        stroke: colfromload(data.fg_color, data.legacy),
         display: "inline"
     });
     data.drawn = data.value;
@@ -2451,7 +2460,7 @@ function gui_knob_line(data) {
     let endPos = polarToCartesian(data.size_x/2, data.size_y/2, data.size_x/2, 193 + gui_knob_vto_gui(data) * (528 - 193));
     return { // indicator
         "stroke-width": data.dial_width,
-        stroke: colfromload(data.fg_color),
+        stroke: colfromload(data.fg_color, data.legacy),
         x1: data.x_pos + data.size_x/2,
         x2: data.x_pos + endPos.x,
         y1: data.y_pos + data.size_y/2,
@@ -2462,7 +2471,7 @@ function gui_knob_extracircle(data) {
     return {
         "knob_w": data.size_x,
         fill: "none",
-        stroke: colfromload(data.bg_color),
+        stroke: colfromload(data.bg_color, data.legacy),
         "stroke-width": data.on_width,
         "shape-rendering": "auto",
         "d": describeArc(data.x_pos + data.size_x/2, data.y_pos + data.size_y/2, data.size_x/2 - 1, 193, 193 + gui_knob_vto_gui(data) * (528 - 193)),
@@ -2562,7 +2571,7 @@ function gui_vumeter_box(data) {
         width: data.width,
         height: data.height,
         stroke: '#000',
-        fill: colfromload(data.bg_color),
+        fill: colfromload(data.bg_color, data.legacy),
         id: data.id + '_box',
     };
 }
@@ -3261,8 +3270,8 @@ function gui_cnv_visible_rect(data) {
         y: data.y_pos,
         width: data.width,
         height: data.height,
-        fill: colfromload(data.bg_color),
-        stroke: colfromload(data.bg_color),
+        fill: colfromload(data.bg_color, data.legacy),
+        stroke: colfromload(data.bg_color, data.legacy),
         id: `${data.id}_visible_rect`,
         class: "unclickable"
     }
@@ -3275,7 +3284,7 @@ function gui_cnv_selectable_rect(data) {
         width: data.size,
         height: data.size,
         fill: "none",
-        stroke: colfromload(data.bg_color),
+        stroke: colfromload(data.bg_color, data.legacy),
         id: `${data.id}_selectable_rect`,
         class: "unclickable"
     }
@@ -3405,13 +3414,18 @@ async function openPatch(content, filename) {
     let start = Date.now();
     let abstractions = {};
     let fetchAbstractions = async(content, path) => {
+        let declares = content.split(';\n').filter(line => line.startsWith('#X declare')).map(declare => declare.slice(11).match(/-\w+ [^ ]+/g).filter(directive => directive.startsWith("-path")).map(directive => directive.split(' ')[1])).flat();
+        let paths = [path, ...declares.map(declare => declare.startsWith('/')?declare:`${path}${declare}/`)];
         let missingAbstractions = [... new Set(content.split(';\n').filter( line => line.startsWith('#X obj') && !known_objects.includes(line.split(' ')[4]) ).map( line => line.split(' ')[4]))];
-        let abstractionData = await getPatchDatas(missingAbstractions.map(obj => `${((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')}/${path}${obj}.pd`));
+        let abstractionData = await getPatchDatas(missingAbstractions.map(obj => paths.map(path => `${((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')}/${path}${obj}.pd`)).flat());
         let promises = [];
         for(let abstraction in missingAbstractions) {
-            if(abstractionData[abstraction].startsWith('#') && !abstractions[missingAbstractions[abstraction]]) {
-                abstractions[missingAbstractions[abstraction]] = abstractionData[abstraction];
-                promises.push(fetchAbstractions(abstractionData[abstraction], missingAbstractions[abstraction].split('/').slice(0,-1).join('/')+'/'));
+            for(let i=0; i<paths.length; i++) {
+                if(abstractionData[abstraction*paths.length + i].startsWith('#') && !abstractions[missingAbstractions[abstraction]]) {
+                    abstractions[missingAbstractions[abstraction]] = abstractionData[abstraction*paths.length + i];
+                    promises.push(fetchAbstractions(abstractionData[abstraction*paths.length + i], paths[i]+missingAbstractions[abstraction].split('/').slice(0,-1).join('/')+'/'));
+                    break;
+                }
             }
         }
         searchPaths = [...new Set([...searchPaths, path])];
@@ -3449,6 +3463,7 @@ async function openPatch(content, filename) {
     let nextLayerID = 0;      //This is used to assign unique IDs to layers to keep track of their objects
     let nextArgs = [];        //This is used to pass arguments from abstractions which are collapsed by the web parser
     let layers = [ { } ];   //Holds all the layers currently being processed. Used as a stack.
+    let windowSizeStack = [];
 
     let lines = content.split(';\n');
     for(let i = 0; i < lines.length; i++)
@@ -3508,6 +3523,7 @@ async function openPatch(content, filename) {
                 layers.push({
                     arrays: [],
                     messages: [],
+                    handles: [],
                     guiObjects: [],
                     objects: [],
                     labels: [],
@@ -3575,6 +3591,8 @@ async function openPatch(content, filename) {
                                 configure_item(text, {display: "none"});
                             configure_item(message.border, {display: "none"});
                         }
+                        for(let handle of layer.handles)
+                            configure_item(handle, {display: 'none'});
                         configure_item(layer.canvas, {
                             viewBox: `${layer.dimensions.contentX} ${layer.dimensions.contentY} ${layer.dimensions.coords.w} ${layer.dimensions.coords.h}`,
                             width: layer.dimensions.coords.w,
@@ -3669,12 +3687,12 @@ async function openPatch(content, filename) {
                                 layer.labels.push(text);
                             }
                         }
-                    } else if(layers.at(-2).showContents !== true) {
+                    } else {
                         let parentLayer = layers.at(-2);
                         let data = {};
                         data.type = 'patch';
-                        data.windowX = layer.dimensions.windowX - layers.at(-2).dimensions.windowX;
-                        data.windowY = layer.dimensions.windowY - layers.at(-2).dimensions.windowY;
+                        data.windowX = Math.max(0, Math.min(layers[1].dimensions.width - layer.dimensions.width, layer.dimensions.windowX - layers.at(-2).dimensions.windowX));
+                        data.windowY = Math.max(15, Math.min(layers[1].dimensions.height - layer.dimensions.height, layer.dimensions.windowY - layers.at(-2).dimensions.windowY));
                         data.receive = [args[4] == 'pd' ? `pd-${args.slice(5).join(' ')}` : `pd-${args.slice(4).join(' ')}.pd`];
                         data.canvas = layer.canvas;
                         data.layer = layer;
@@ -3702,6 +3720,7 @@ async function openPatch(content, filename) {
 
                         rootCanvas.removeChild(data.handleText);
                         parentLayer.canvas.appendChild(data.handleText);
+                        parentLayer.handles.push(data.handleText, data.handleRect);
 
                         data.windowGroup = create_item('g', {
                             id: `${data.id}_windowGroup`
@@ -3776,6 +3795,15 @@ async function openPatch(content, filename) {
                             rootCanvas.removeChild(data.windowGroup);
                             rootCanvas.appendChild(data.windowGroup);
                             data.windowGroup.style.display = visibility ? 'block' : 'none';
+
+                            if(visibility == true)
+                                windowSizeStack.push({id: data.id, width: data.layer.dimensions.width, height: data.layer.dimensions.height + 15});
+                            else
+                                windowSizeStack = windowSizeStack.filter(window => window.id !== data.id);
+                            if(windowSizeStack.length)
+                                configure_item(rootCanvas, {
+                                    viewBox: `0 0 ${Math.max(...windowSizeStack.map(window => window.width))} ${Math.max(...windowSizeStack.map(window => window.height))}`,
+                                })
                         }
 
                         data.updateWindow();
@@ -3831,7 +3859,7 @@ async function openPatch(content, filename) {
                             }
                             break;
                         case "bng":
-                            if (args.length >= 20) {
+                            if (args.length >= 19) {
                                 const data = {};
                                 data.x_pos = +args[2];
                                 data.y_pos = +args[3];
@@ -3850,7 +3878,8 @@ async function openPatch(content, filename) {
                                 data.bg_color = isNaN(args[16]) ? args[16] : +args[16];
                                 data.fg_color = isNaN(args[17]) ? args[17] : +args[17];
                                 data.label_color = isNaN(args[18]) ? args[18] : +args[18];
-                                data.interactive = +args[19];
+                                data.interactive = +args[19] || true;
+                                data.legacy = args.length < 20;
                                 data.id = `${data.type}_${nextHTMLID++}`;
                                 data.canvas = layer.canvas;
 
@@ -3879,10 +3908,11 @@ async function openPatch(content, filename) {
                                 // subscribe receiver
                                 gui_subscribe(data);
                                 layer.guiObjects[layer.nextGUIID] = data;
-                            }
+                            } else
+                                console.error('Invalid bng object:', args);
                             break;
                         case "tgl":
-                            if (args.length >= 20) {
+                            if (args.length >= 19) {
                                 const data = {};
                                 data.x_pos = +args[2];
                                 data.y_pos = +args[3];
@@ -3901,7 +3931,8 @@ async function openPatch(content, filename) {
                                 data.label_color = isNaN(args[16]) ? args[16] : +args[16];
                                 data.init_value = +args[17];
                                 data.default_value = +args[18];
-                                data.interactive = +args[19];
+                                data.interactive = +args[19] || true;
+                                data.legacy = args.length < 20;
                                 data.value = data.init && data.init_value ? data.default_value : 0;
                                 data.id = `${data.type}_${nextHTMLID++}`;
                                 data.canvas = layer.canvas;
@@ -3929,11 +3960,12 @@ async function openPatch(content, filename) {
                                 // subscribe receiver
                                 gui_subscribe(data);
                                 layer.guiObjects[layer.nextGUIID] = data;
-                            }
+                            } else
+                                console.error('Invalid tgl object:', args);
                             break;
                         case "vsl":
                         case "hsl":
-                            if (args.length >= 25) {
+                            if (args.length >= 23) {
                                 const data = {};
                                 data.x_pos = +args[2];
                                 data.y_pos = +args[3];
@@ -3955,8 +3987,9 @@ async function openPatch(content, filename) {
                                 data.fg_color = isNaN(args[19]) ? args[19] : +args[19];
                                 data.label_color = isNaN(args[20]) ? args[20] : +args[20];
                                 data.default_value = +args[21];
-                                data.steady_on_click = +args[22];
-                                data.interactive = +args[24];
+                                data.steady_on_click = +args[22] || true;
+                                data.interactive = +args[24] || true;
+                                data.legacy = args.length < 24;
                                 data.value = data.init ? data.default_value : 0;
                                 data.id = `${data.type}_${nextHTMLID++}`;
                                 data.canvas = layer.canvas;
@@ -3987,7 +4020,8 @@ async function openPatch(content, filename) {
                                 // subscribe receiver
                                 gui_subscribe(data);
                                 layer.guiObjects[layer.nextGUIID] = data;
-                            }
+                            } else
+                                console.error('Invalid slider object:', args);
                             break;
                         case "vradio":
                         case "hradio":
@@ -4041,7 +4075,8 @@ async function openPatch(content, filename) {
                                 // subscribe receiver
                                 gui_subscribe(data);
                                 layer.guiObjects[layer.nextGUIID] = data;
-                            }
+                            } else
+                                console.error('Invalid radio object:', args);
                             break;
                         case "flatgui/knob":
                             if (args.length >= 26) {
@@ -4104,7 +4139,8 @@ async function openPatch(content, filename) {
                                 gui_subscribe(data);
                                 layer.guiObjects[layer.nextGUIID] = data;
 
-                            }
+                            } else
+                                console.error('Invalid knob object:', args);
                             break;
                         case "vu":
                             if (args.length >= 17) {
@@ -4151,7 +4187,8 @@ async function openPatch(content, filename) {
                                 gui_subscribe(data);
                                 layer.guiObjects[layer.nextGUIID] = data;
 
-                            }
+                            } else
+                                console.error('Invalid vu object:', args);
                             break;
                         case "pddplink":
                         case "pddp/pddplink":
@@ -4202,7 +4239,8 @@ async function openPatch(content, filename) {
 
                                 gui_subscribe(data);
                                 layer.guiObjects[layer.nextGUIID] = data;
-                            }
+                            } else
+                                console.error('Invalid pddplink object:', args);
                             break;
                         case "nbx":
                             if (args.length >= 27) {
@@ -4301,7 +4339,8 @@ async function openPatch(content, filename) {
             
                                 gui_subscribe(data);
                                 layer.guiObjects[layer.nextGUIID] = data;
-                            }
+                            } else
+                                console.error('Invalid nbx object:', args);
                             break;
                         case "cnv":
                             if (args.length >= 18) {
@@ -4333,7 +4372,8 @@ async function openPatch(content, filename) {
 
                                 // subscribe receiver
                                 gui_subscribe(data);
-                            }
+                            } else
+                                console.error('Invalid cnv object:', args);
                             break;
                             
                         case "ggee/image":
@@ -4456,7 +4496,8 @@ async function openPatch(content, filename) {
                                 }
 
                                 layer.guiObjects[layer.nextGUIID] = data;
-                            }
+                            } else
+                                console.error('Invalid ggee/image object:', args);
                             break;
                         case "Scope~":
                             if(args.length > 22) {
@@ -4548,7 +4589,8 @@ async function openPatch(content, filename) {
                                 layer.guiObjects[layer.nextGUIID] = data;
 
                                 gui_subscribe(data);
-                            }
+                            } else
+                                console.error('Invalid scope object:', args);
                             break;
                         case "key": {
                             let data = {};
@@ -4663,7 +4705,7 @@ async function openPatch(content, filename) {
                 }
                 break;
             case "#X array":
-                if(args.length > 7) {
+                if(args.length > 5) {
                     let data = {}
                     data.type = args[1];
                     data.name = args[2];
@@ -4678,8 +4720,8 @@ async function openPatch(content, filename) {
                     //1 - points
                     //2 - bezier curve
                     //3 - bar graph
-                    data.fillColor = args[6];
-                    data.outlineColor = args[7];
+                    data.fillColor = args[6] || '#000';
+                    data.outlineColor = args[7] || '#000';
                     data.id = `array_${nextHTMLID++}`;
                     data.canvas = layer.canvas;
                     data.layer = layer;
@@ -4751,7 +4793,8 @@ async function openPatch(content, filename) {
                     layer.arrays.push(data);
                     layer.guiObjects[layer.nextGUIID] = data;
                     gui_subscribe(data);
-                }
+                } else
+                    console.error('Invalid array:', args);
                 break;
             case "#X text":
                 if (args.length > 4) {
@@ -4777,7 +4820,8 @@ async function openPatch(content, filename) {
                         text.textContent = data.comment[i];
                         data.texts.push(text);
                     }
-                }
+                } else
+                    console.error('Invalid text:', args);
                 break;
             case "#X msg":
                 if(args.length > 3) {
@@ -4785,7 +4829,7 @@ async function openPatch(content, filename) {
                     data.type = args[1];
                     data.x_pos = +args[2];
                     data.y_pos = +args[3];
-                    data.text = args.slice(4).join(' ').replace(/\\\; /g,';\n').replace(/ ,/g,',').replace(/\\\$/g,'$');
+                    data.text = args.slice(4).join(' ').replace(/( )?\\\; /g,';\n').replace(/ ,/g,',').replace(/\\\$/g,'$');
                     data.id = `${data.type}_${nextHTMLID++}`;
                     data.receive = [null];
                     data.shortCircuit = false;
@@ -4811,6 +4855,7 @@ async function openPatch(content, filename) {
                         id: `${data.id}_size`,
                         class: "unclickable",
                     }, rootCanvas);
+                    rootCanvas.removeChild(data.sizeText);
                     data.svgText = [];
 
                     
@@ -4823,8 +4868,10 @@ async function openPatch(content, filename) {
 
                     data.render = (data) => {
                         let textLines = data.text.split('\n');
+                        rootCanvas.appendChild(data.sizeText);
                         data.sizeText.textContent = new Array(+widthOverride || Math.max(2,textLines.reduce((p,c)=>c.length>p?c.length:p,0))).fill('A').join('');
                         let width = data.sizeText.getComputedTextLength() + 5, height = font_height_map()[layer.fontSize] * textLines.length + 4;
+                        rootCanvas.removeChild(data.sizeText);
                         configure_item(data.border, {d: `M ${data.x_pos} ${data.y_pos} h ${width+4} l -4 4 v ${height-8} l 4 4 H ${data.x_pos} V ${data.y_pos}`}); 
                         for(let i = 0; i < textLines.length; i++) {
                             if(!data.svgText[i]) {
@@ -4864,25 +4911,26 @@ async function openPatch(content, filename) {
 
                     layer.guiObjects[layer.nextGUIID] = data;
                     gui_subscribe(data);
-                }
+                } else
+                    console.error('Invalid msg:', args);
                 break;
             case "#X floatatom":
             case "#X symbolatom":
-                if (args.length > 13) {
+                if (args.length > 3) {
                     const data = {};
                     data.type = args[1];
                     data.x_pos = +args[2];
                     data.y_pos = +args[3];
-                    data.width = Math.max(2,+args[4]);
-                    data.min = +args[5];
-                    data.max = +args[6];
-                    data.labelSide = +args[7];
-                    data.label = args[8] === "-" ? "" : args[8];
-                    data.receive = args[9] === "-" ? [null] : [args[9]];
-                    data.send = args[10] === "-" ? [null] : [args[10]];
-                    data.exclusive = +args[11];
-                    data.typedMinMax = +args[12];
-                    data.interactive = +args[13];
+                    data.width = Math.max(2,+args[4]) || 3;
+                    data.min = +args[5] || 0;
+                    data.max = +args[6] || 0;
+                    data.labelSide = +args[7] || 0;
+                    data.label = (args[8] === "-" ? "" : args[8]) || "";
+                    data.receive = (args[9] === "-" ? [null] : [args[9]]) || [null];
+                    data.send = (args[10] === "-" ? [null] : [args[10]]) || [null];
+                    data.exclusive = +args[11] || false;
+                    data.typedMinMax = +args[12] || false;
+                    data.interactive = +args[13] || true;
                     data.id = `${data.type}_${nextHTMLID++}`;
                     data.canvas = layer.canvas;
 
@@ -4929,12 +4977,14 @@ async function openPatch(content, filename) {
                         'font-size': pd_fontsize_to_gui_fontsize(layer.fontSize) + 'px',
                         id: `${data.id}_label`,
                         class: 'unclickable',
-                    }, data.canvas);
+                    }, rootCanvas);
                     data.labelText.textContent = data.label;
                     if(data.labelSide == 0)
                         configure_item(data.labelText, {transform: `translate(-${data.labelText.getComputedTextLength()})`});
                     if(data.labelSide == 1)
                         configure_item(data.labelText, {transform: `translate(${width+1})`});
+                    rootCanvas.removeChild(data.labelText);
+                    layer.canvas.appendChild(data.labelText);
 
                     if (isMobile) {
                         data.border.addEventListener("touchstart", function (e) {
@@ -4952,7 +5002,8 @@ async function openPatch(content, filename) {
 
                     gui_subscribe(data);
                     layer.guiObjects[layer.nextGUIID] = data;
-                }
+                } else
+                    console.error('Invalid atom:', args);
                 break;
             case "#X dropdown":
                 if(args.length >= 11) {
@@ -5106,7 +5157,8 @@ async function openPatch(content, filename) {
                     gui_subscribe(data);
                     layer.guiObjects[layer.nextGUIID] = data;
                     gui_dropdown_dropdowns.push(data);
-                }
+                } else
+                    console.error('Invalid dropdown:', args);
                 break;
             case "#X connect":
                 if (args.length > 5) {
@@ -5196,6 +5248,8 @@ async function openPatch(content, filename) {
         }
     }
 
+    windowSizeStack.push({id: '', width: layers[1].dimensions.width, height: layers[1].dimensions.height});
+
     document.getElementById('loadingstage').innerHTML=`Starting Pd-L2Ork Engine`;
     await new Promise(resolve => setTimeout(resolve, 10));
 
@@ -5258,12 +5312,17 @@ async function getPatchData(url) {
     return (await getPatchDatas([url]))[0];
 }
 async function getPatchDatas(urls) {
+    urls = urls.map(url => url.replace(/[^/]+\/+..\/+/g,''));
     let missingPatches = urls.filter(url => cachedData[url] === undefined);
-    await fetch(`/api/patch/?url=${missingPatches.map(url => encodeURIComponent(url.replace(/[^/]+\/+..\/+/g,''))).join('&url=')}`).then(async(result) => {
-        const data = await result.json();
-        for(let patch in data)
-            cachedData[patch] = data[patch];
-    });
+    let promises = [];
+    while(missingPatches.length) {
+        promises.push(fetch(`/api/patch/?url=${missingPatches.splice(0,100).map(url => encodeURIComponent(url)).join('&url=')}`).then(async(result) => {
+            const data = await result.json();
+            for(let patch in data)
+                cachedData[patch] = data[patch];
+        }));
+    }
+    await Promise.all(promises);
     return urls.map(url => cachedData[url]);
 }
 
