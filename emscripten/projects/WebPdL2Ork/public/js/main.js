@@ -4724,6 +4724,7 @@ async function openPatch(content, filename) {
                     data.outlineColor = args[7] || '#000';
                     data.id = `array_${nextHTMLID++}`;
                     data.canvas = layer.canvas;
+                    data.legacy = args.length < 7
                     data.layer = layer;
                     if(lines[i+1].startsWith('#A '))
                         data.nums = lines[i+1].replace(/\n/g,' ').split(' ').slice(1).map(num=>+num);
