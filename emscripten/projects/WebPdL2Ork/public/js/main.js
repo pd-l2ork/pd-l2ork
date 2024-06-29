@@ -3168,11 +3168,16 @@ function setKeyboardFocus(data, exclusive) {
     }
     if(keyboardFocus?.data?.onLoseFocus)
         keyboardFocus.data.onLoseFocus(keyboardFocus.data);
+    if(data !== null)
+        document.getElementById('keyboardTrigger').focus();
+    else
+        document.getElementById('keyboardTrigger').blur();
     keyboardFocus.data = data;
     keyboardFocus.exclusive = exclusive;
     keyboardFocus.current = true;
 }
 function onMouseDown(e) {
+    e.preventDefault?.();
     if(keyboardFocus.current == false)
         setKeyboardFocus(null, false);
     keyboardFocus.current = false;
@@ -3182,6 +3187,7 @@ function onMouseDown(e) {
             listener.onMouseDown(e);
 }
 function onMouseUp(e) {
+    e.preventDefault?.();
     for(let listener of inputListeners)
         if(listener.onMouseUp)
             listener.onMouseUp(e);
@@ -4530,7 +4536,7 @@ async function openPatch(content, filename) {
                                 data.canvas = layer.canvas;
 
                                 let nextObjId = layer.nextGUIID, nextSlot = i, depth = 0;
-                                for(;lines[nextSlot].startsWith('#X connect') == false || depth > 0; nextSlot++) {
+                                for(;(lines[nextSlot] && lines[nextSlot].startsWith('#X connect') == false && lines[nextSlot].startsWith('#X restore') == false) || depth > 0; nextSlot++) {
                                     if(object_types.find(type=>lines[nextSlot].startsWith(type)) && depth == 0)
                                         nextObjId++;
                                     if(lines[nextSlot].startsWith('#N canvas'))
@@ -4840,7 +4846,7 @@ async function openPatch(content, filename) {
                     layer.messages.push(data);
 
                     let nextObjId = layer.nextGUIID, nextSlot = i, depth = 0;
-                    for(;lines[nextSlot].startsWith('#X connect') == false || depth > 0; nextSlot++) {
+                    for(;(lines[nextSlot] && lines[nextSlot].startsWith('#X connect') == false && lines[nextSlot].startsWith('#X restore') == false) || depth > 0; nextSlot++) {
                         if(object_types.find(type=>lines[nextSlot].startsWith(type)) && depth == 0)
                             nextObjId++;
                         if(lines[nextSlot].startsWith('#N canvas'))
