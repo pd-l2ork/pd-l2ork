@@ -1,8 +1,8 @@
-const isMobile = (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
 const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
 const loading = document.getElementById("loading");
 const filter = document.getElementById("filter");
-let currentFile = "";
+let currentFile = '';
+let previousValue = '';
 let subscribedData = {};
 let searchPaths = ['/'];
 let fileCache = {};
@@ -107,6 +107,20 @@ function coordToScreen(low, high, span, coord) {
 function screenToCoord(low, high, span, screen) {
     let raw = high > low ? screen : span - screen;
     return (raw) * Math.abs(low - high) / span + Math.min(low, high);   
+}
+function addInteractionStartEvent(target, func) {
+    target.addEventListener('mousedown', e => e.preventDefault() || func(e, 0));
+    target.addEventListener('touchstart', e => e.preventDefault() || [...(e || window.event).changedTouches].forEach(touch => func(touch, touch.identifier)));
+}
+function addInteractionMoveEvent(target, func) {
+    target.addEventListener('mousemove', e => e.preventDefault() || func(e, 0));
+    target.addEventListener('touchmove', e => e.preventDefault() || [...(e || window.event).changedTouches].forEach(touch => func(touch, touch.identifier)));
+}
+function addInteractionEndEvent(target,func) {
+    target.addEventListener('mouseup', e => e.preventDefault() || func(e, 0));
+    target.addEventListener('mouseleave', e => e.preventDefault() || func(e, 0));
+    target.addEventListener('touchend', e => e.preventDefault() || [...(e || window.event).changedTouches].forEach(touch => func(touch, touch.identifier)));
+    target.addEventListener('touchcancel', e => e.preventDefault() || [...(e || window.event).changedTouches].forEach(touch => func(touch, touch.identifier)));
 }
 
 //For Clipboard interaction
@@ -1523,9 +1537,10 @@ Module['preRun'].push(function() {
                     else {
                         const request = new XMLHttpRequest();
                         const base = ((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')+'/';
-                        request.open('GET', (window.location.origin+'/api/file?url=') + searchPaths.map(searchPath => encodeURIComponent(base + searchPath.slice(0,-1)+path)).join('&url='), false);
+                        request.open('POST', window.location.origin+'/api/file', false);
+                        request.setRequestHeader('content-type','application/json')
                         request.overrideMimeType('text/plain; charset=x-user-defined'); // Set MIME type for binary data
-                        request.send();
+                        request.send(JSON.stringify({urls:searchPaths.map(searchPath => base + searchPath.slice(0,-1)+path)}));
                         if (request.status === 200) {
                             let folder = path.split('/').slice(0,-1).join('/') + '/';
                             FS.createPath('/', folder);
@@ -1896,7 +1911,7 @@ function gui_text(data) {
     }
 }
 
-function gui_mousepoint(e, canvas, precise) { // transforms the mouse position
+function gui_mousepoint(e, canvas) { // transforms the mouse position
     // If we are on firefox, we have to do shenanigans...
     // First, getScreenCTM only scales, doesnt offset on firefox, for some ungodly reason.
     // Next, firefox refuses to give us the x/y coordinates of the top-left of an svg element.
@@ -3199,75 +3214,41 @@ function onMouseMove(e) {
 }
 
 // drag events
-if (isMobile) {
-    window.addEventListener("touchmove", function (e) {
-        e = e || window.event;
-        for (const touch of e.changedTouches) {
-            gui_slider_onmousemove(touch, touch.identifier);
-            gui_knob_onmousemove(touch, touch.identifier);
-            gui_array_onmousemove(touch, touch.identifier);
-            gui_atom_onmousemove(touch, touch.identifier);
-            gui_nbx_onmousemove(touch, touch.identifier);
-            gui_image_onmousemove(touch, touch.identifier);
-            gui_window_onmousemove(touch, touch.identifier);
-        }
-    });
-    window.addEventListener("touchend", function (e) {
-        e = e || window.event;
-        for (const touch of e.changedTouches) {
-            gui_slider_onmouseup(touch.identifier);
-            gui_knob_onmouseup(touch.identifier);
-            gui_array_onmouseup(touch.identifier);
-            gui_atom_onmouseup(touch.identifier);
-            gui_nbx_onmouseup(touch.identifier);
-            gui_image_onmouseup(touch.identifier);
-            gui_window_onmouseup(touch.identifier);
-        }
-    });
-    window.addEventListener("touchcancel", function (e) {
-        e = e || window.event;
-        for (const touch of e.changedTouches) {
-            gui_slider_onmouseup(touch.identifier);
-            gui_knob_onmouseup(touch.identifier);
-            gui_array_onmouseup(touch.identifier);
-            gui_atom_onmouseup(touch.identifier);
-            gui_nbx_onmouseup(touch.identifier);
-            gui_image_onmouseup(touch.identifier);
-            gui_window_onmouseup(touch.identifier);
-        }
-    });
-}
-else {
-    window.addEventListener("mousemove", function (e) {
-        e = e || window.event;
-        gui_slider_onmousemove(e, 0);
-        gui_knob_onmousemove(e, 0);
-        gui_array_onmousemove(e, 0);
-        gui_atom_onmousemove(e,0);
-        gui_nbx_onmousemove(e,0);
-        gui_image_onmousemove(e,0);
-        gui_window_onmousemove(e,0);
-        gui_dropdown_option_onmousemove(e, 0);
-    });
-    window.addEventListener("mouseup", function (e) {
-        gui_slider_onmouseup(0);
-        gui_knob_onmouseup(0);
-        gui_array_onmouseup(0);
-        gui_atom_onmouseup(0);
-        gui_nbx_onmouseup(0);
-        gui_image_onmouseup(0);
-        gui_window_onmouseup(0);
-    });
-    window.addEventListener("mouseleave", function (e) {
-        gui_slider_onmouseup(0);
-        gui_knob_onmouseup(0);
-        gui_array_onmouseup(0);
-        gui_atom_onmouseup(0);
-        gui_nbx_onmouseup(0);
-        gui_image_onmouseup(0);
-        gui_window_onmouseup(0);
-    });
-}
+addInteractionStartEvent(document, event => onMouseDown(event));
+addInteractionMoveEvent(window, (event, identifier) => {
+    gui_nbx_onmousemove(event, identifier);
+    gui_atom_onmousemove(event, identifier);
+    gui_knob_onmousemove(event, identifier);
+    gui_array_onmousemove(event, identifier);
+    gui_image_onmousemove(event, identifier);
+    gui_window_onmousemove(event, identifier);
+    gui_slider_onmousemove(event, identifier);
+    onMouseMove(event);
+});
+addInteractionEndEvent(window, (event, identifier) => {
+    gui_nbx_onmouseup(identifier);
+    gui_atom_onmouseup(identifier);
+    gui_knob_onmouseup(identifier);
+    gui_array_onmouseup(identifier);
+    gui_image_onmouseup(identifier);
+    gui_window_onmouseup(identifier);
+    gui_slider_onmouseup(identifier);
+    onMouseUp(event);
+});
+document.addEventListener('keydown', onKeyDown);
+document.addEventListener('keyup', onKeyUp);
+document.getElementById('keyboardTrigger').addEventListener('input', event => {
+    const firstDifference = previousValue.split('').findIndex((chr, index) => event.target.value.charAt(index) !== chr);
+    const removals = firstDifference === -1 ? 0 : previousValue.length - firstDifference;
+    const missing = event.target.value.slice(previousValue.length - removals);
+
+    previousValue = previousValue.slice(0, previousValue.length - removals) + missing;
+
+    for(let key of [...Array(removals).fill('Backspace'), ...missing]) {
+        onKeyDown(new KeyboardEvent('keydown', {key}));
+        onKeyUp(new KeyboardEvent('keyup', {key}));
+    }
+});
 
 // cnv
 function gui_cnv_visible_rect(data) {
@@ -3444,17 +3425,6 @@ async function openPatch(content, filename) {
     await new Promise(Resolve => setTimeout(Resolve, 10));
     
     start = Date.now();
-
-    document.removeEventListener('keydown', onKeyDown);
-    document.removeEventListener('keyup', onKeyUp);
-    document.removeEventListener('mousemove', onMouseMove);
-    document.removeEventListener('mousedown', onMouseDown);
-    document.removeEventListener('mouseup', onMouseUp);
-    document.addEventListener('keydown', onKeyDown);
-    document.addEventListener('keyup', onKeyUp);
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mousedown', onMouseDown);
-    document.addEventListener('mouseup', onMouseUp);
     
     let rootCanvas = document.getElementById('canvas');
     while (rootCanvas.lastChild) // clear svg
@@ -3629,32 +3599,16 @@ async function openPatch(content, filename) {
 
                             configure_item(layer.border, { fill: '#00000000' });
                             layer.canvas.style.overflow = 'visible';
-                            if (isMobile) {
-                                layer.border.addEventListener("touchstart", function (e) {
-                                    for (const touch of (e || window.event).changedTouches) {
-                                        let p = gui_mousepoint(touch, canvas);
-                                        let x = Math.floor(screenToCoord(dimensions.coords.l, dimensions.coords.r, dimensions.coords.w, p.x));
-                                        let y = screenToCoord(dimensions.coords.t, dimensions.coords.b, dimensions.coords.h, p.y);
-                                        let array, min = Infinity;
-                                        for(let a of arrays)
-                                            if(a.nums.length > x && Math.abs(a.nums[x] - y) < min)
-                                                min = Math.abs(a.nums[x] - y), array = a;
-                                        array.onmousedown(array, touch, touch.identifier);
-                                    }
-                                });
-                            }
-                            else {
-                                layer.border.addEventListener("mousedown", function (e) {
-                                    let p = gui_mousepoint(e, canvas);
-                                    let x = Math.floor(screenToCoord(dimensions.coords.l, dimensions.coords.r, dimensions.coords.w, p.x));
-                                    let y = screenToCoord(dimensions.coords.t, dimensions.coords.b, dimensions.coords.h, p.y);
-                                    let array, min = Infinity;
-                                    for(let a of arrays)
-                                        if(a.nums.length > x && Math.abs(a.nums[x] - y) < min)
-                                            min = Math.abs(a.nums[x] - y), array = a;
-                                    array.onmousedown(array, e || window.event, 0);
-                                });
-                            }
+                            addInteractionStartEvent(layer.border, (event, identifier) => {
+                                let p = gui_mousepoint(event, canvas);
+                                let x = Math.floor(screenToCoord(dimensions.coords.l, dimensions.coords.r, dimensions.coords.w, p.x));
+                                let y = screenToCoord(dimensions.coords.t, dimensions.coords.b, dimensions.coords.h, p.y);
+                                let array, min = Infinity;
+                                for(let a of arrays)
+                                    if(a.nums.length > x && Math.abs(a.nums[x] - y) < min)
+                                        min = Math.abs(a.nums[x] - y), array = a;
+                                array.onmousedown(array, event, identifier);
+                            });
                         }
                         for(let array of layer.arrays)
                             array.setCoords(layer.dimensions.coords);
@@ -3816,31 +3770,11 @@ async function openPatch(content, filename) {
                         data.setVisibility(false);
                         data.windowGroup.appendChild(layer.canvas);
                         
-                        if (isMobile) {
-                            data.handleRect.addEventListener("touchstart", function (e) {
-                                data.setVisibility(true);
-                            });
-                            data.closeRect.addEventListener("mousedown", function (e) {
-                                data.setVisibility(false);
-                            });
-                            data.windowRect.addEventListener("touchstart", function (e) {
-                                e = e || window.event;
-                                for (const touch of e.changedTouches) {
-                                    gui_window_onmousedown(data, touch, touch.identifier);
-                                }
-                            });
-                        }
-                        else {
-                            data.handleRect.addEventListener("mousedown", function (e) {
-                                data.setVisibility(true);
-                            });
-                            data.closeRect.addEventListener("mousedown", function (e) {
-                                data.setVisibility(false);
-                            });
-                            data.windowRect.addEventListener('mousedown', function (e) {
-                                gui_window_onmousedown(data,e,0);
-                            });
-                        }
+                        addInteractionStartEvent(data.handleRect, () => data.setVisibility(true));
+                        addInteractionStartEvent(data.closeRect, () => data.setVisibility(false));
+                        addInteractionStartEvent(data.windowRect, (event, identifier) => {
+                            gui_window_onmousedown(data, event, identifier);
+                        });
 
                         gui_subscribe(data);
                     }
@@ -3899,18 +3833,9 @@ async function openPatch(content, filename) {
                                 data.flashed = false;
                                 data.interrupt_timer = null;
                                 data.hold_timer = null;
-                                if (isMobile) {
-                                    data.rect.addEventListener("touchstart", function () {
-                                        if(data.interactive)
-                                            gui_bng_onmousedown(data);
-                                    });
-                                }
-                                else {
-                                    data.rect.addEventListener("mousedown", function () {
-                                        if(data.interactive)
-                                            gui_bng_onmousedown(data);
-                                    });
-                                }
+
+                                addInteractionStartEvent(data.rect, () => data.interactive && gui_bng_onmousedown(data));
+
                                 // subscribe receiver
                                 gui_subscribe(data);
                                 layer.guiObjects[layer.nextGUIID] = data;
@@ -3951,18 +3876,8 @@ async function openPatch(content, filename) {
                                 data.text.textContent = data.label;
 
                                 // handle event
-                                if (isMobile) {
-                                    data.rect.addEventListener("touchstart", function () {
-                                        if(data.interactive)
-                                            gui_tgl_onmousedown(data);
-                                    });
-                                }
-                                else {
-                                    data.rect.addEventListener("mousedown", function () {
-                                        if(data.interactive)
-                                            gui_tgl_onmousedown(data);
-                                    });
-                                }
+                                addInteractionStartEvent(data.rect, () => data.interactive && gui_tgl_onmousedown(data));
+
                                 // subscribe receiver
                                 gui_subscribe(data);
                                 layer.guiObjects[layer.nextGUIID] = data;
@@ -4008,21 +3923,10 @@ async function openPatch(content, filename) {
 
                                 // handle event
                                 gui_slider_check_minmax(data);
-                                if (isMobile) {
-                                    data.rect.addEventListener("touchstart", function (e) {
-                                        e = e || window.event;
-                                        if(data.interactive)
-                                            for (const touch of e.changedTouches)
-                                                gui_slider_onmousedown(data, touch, touch.identifier);
-                                    });
-                                }
-                                else {
-                                    data.rect.addEventListener("mousedown", function (e) {
-                                        e = e || window.event;
-                                        if(data.interactive)
-                                            gui_slider_onmousedown(data, e, 0);
-                                    });
-                                }
+                                addInteractionStartEvent(data.rect, (event, identifier) => {
+                                    gui_slider_onmousedown(data, event, identifier);
+                                });
+
                                 // subscribe receiver
                                 gui_subscribe(data);
                                 layer.guiObjects[layer.nextGUIID] = data;
@@ -4063,21 +3967,11 @@ async function openPatch(content, filename) {
                                 data.text.textContent = data.label;
 
                                 // handle event
-                                if (isMobile) {
-                                    data.rect.addEventListener("touchstart", function (e) {
-                                        e = e || window.event;
-                                        if(data.interactive)
-                                            for (const touch of e.changedTouches)
-                                                gui_radio_onmousedown(data, touch);
-                                    });
-                                }
-                                else {
-                                    data.rect.addEventListener("mousedown", function (e) {
-                                        e = e || window.event;
-                                        if(data.interactive)
-                                            gui_radio_onmousedown(data, e);
-                                    });
-                                }
+                                addInteractionStartEvent(data.rect, event => {
+                                    if(data.interactive)
+                                        gui_radio_onmousedown(data, event);
+                                });
+
                                 // subscribe receiver
                                 gui_subscribe(data);
                                 layer.guiObjects[layer.nextGUIID] = data;
@@ -4126,20 +4020,9 @@ async function openPatch(content, filename) {
                                 data.text.textContent = data.label;
 
                                 // handle event
-                                if (isMobile) {
-                                    data.clicktarget.addEventListener("touchstart", function (e) {
-                                        e = e || window.event;
-                                        for (const touch of e.changedTouches) {
-                                            gui_knob_onmousedown(data, touch, touch.identifier);
-                                        }
-                                    });
-                                }
-                                else {
-                                    data.clicktarget.addEventListener("mousedown", function (e) {
-                                        e = e || window.event;
-                                        gui_knob_onmousedown(data, e, 0);
-                                    });
-                                }
+                                addInteractionStartEvent(data.clicktarget, (event, identifier) => {
+                                    gui_knob_onmousedown(data, event, identifier);
+                                });
 
                                 // subscribe receiver
                                 gui_subscribe(data);
@@ -4232,16 +4115,7 @@ async function openPatch(content, filename) {
                                 }, data.canvas);
                                 data.svgText.textContent = data.text;
 
-                                if (isMobile) {
-                                    data.svgText.addEventListener("touchstart", function (e) {
-                                        gui_link_open(data.link);
-                                    });
-                                }
-                                else {
-                                    data.svgText.addEventListener("mousedown", function (e) {
-                                        gui_link_open(data.link);
-                                    });
-                                }
+                                addInteractionStartEvent(data.svgText, () => gui_link_open(data.link));
 
                                 gui_subscribe(data);
                                 layer.guiObjects[layer.nextGUIID] = data;
@@ -4322,26 +4196,13 @@ async function openPatch(content, filename) {
                                 gui_nbx_settext(data, '' + data.value);
                                 rootCanvas.removeChild(data.svgText);
                                 layer.canvas.appendChild(data.svgText);
-
-                                
+                    
                                 data.labelText = create_item("text", gui_text(data), data.canvas);
                                 data.labelText.textContent = data.label;
             
-                                
-            
-                                if (isMobile) {
-                                    data.border.addEventListener("touchstart", function (e) {
-                                        e = e || window.event;
-                                        for (const touch of e.changedTouches) {
-                                            gui_nbx_onmousedown(data, touch, touch.identifier);
-                                        }
-                                    });
-                                }
-                                else {
-                                    data.border.addEventListener("mousedown", function (e) {
-                                        gui_nbx_onmousedown(data, e, 0);
-                                    });
-                                }
+                                addInteractionStartEvent(data.border, (event, identifier) => {
+                                    gui_nbx_onmousedown(data, event, identifier);
+                                });
             
                                 gui_subscribe(data);
                                 layer.guiObjects[layer.nextGUIID] = data;
@@ -4487,19 +4348,9 @@ async function openPatch(content, filename) {
                                     },
                                 });
 
-                                if (isMobile) {
-                                    data.border.addEventListener("touchstart", function (e) {
-                                        e = e || window.event;
-                                        for (const touch of e.changedTouches) {
-                                            gui_image_onmousedown(data, touch, touch.identifier);
-                                        }
-                                    });
-                                }
-                                else {
-                                    data.border.addEventListener("mousedown", function (e) {
-                                        gui_image_onmousedown(data, e, 0);
-                                    });
-                                }
+                                addInteractionStartEvent(data.border, (event, identifier) => {
+                                    gui_image_onmousedown(data, event, identifier);
+                                });
 
                                 layer.guiObjects[layer.nextGUIID] = data;
                             } else
@@ -4536,7 +4387,7 @@ async function openPatch(content, filename) {
                                 data.canvas = layer.canvas;
 
                                 let nextObjId = layer.nextGUIID, nextSlot = i, depth = 0;
-                                for(;(lines[nextSlot] && lines[nextSlot].startsWith('#X connect') == false && lines[nextSlot].startsWith('#X restore') == false) || depth > 0; nextSlot++) {
+                                for(;(lines[nextSlot] !== undefined && lines[nextSlot].startsWith('#X connect') == false && lines[nextSlot].startsWith('#X restore') == false) || depth > 0; nextSlot++) {
                                     if(object_types.find(type=>lines[nextSlot].startsWith(type)) && depth == 0)
                                         nextObjId++;
                                     if(lines[nextSlot].startsWith('#N canvas'))
@@ -4846,7 +4697,7 @@ async function openPatch(content, filename) {
                     layer.messages.push(data);
 
                     let nextObjId = layer.nextGUIID, nextSlot = i, depth = 0;
-                    for(;(lines[nextSlot] && lines[nextSlot].startsWith('#X connect') == false && lines[nextSlot].startsWith('#X restore') == false) || depth > 0; nextSlot++) {
+                    for(;(lines[nextSlot] !== undefined && lines[nextSlot].startsWith('#X connect') == false && lines[nextSlot].startsWith('#X restore') == false) || depth > 0; nextSlot++) {
                         if(object_types.find(type=>lines[nextSlot].startsWith(type)) && depth == 0)
                             nextObjId++;
                         if(lines[nextSlot].startsWith('#N canvas'))
@@ -4901,20 +4752,11 @@ async function openPatch(content, filename) {
 
                     data.render(data);
                     
-                    if (isMobile) {
-                        data.border.addEventListener("touchstart", function (e) {
-                            gui_send('Bang', [data.clickSend]);
-                            configure_item(data.border,{"stroke-width":"4"});
-                            setTimeout(()=>configure_item(data.border,{"stroke-width":"0"}), 100);
-                        });
-                    }
-                    else {
-                        data.border.addEventListener("mousedown", function (e) {
-                            gui_send('Bang', [data.clickSend]);
-                            configure_item(data.border,{"stroke-width":"4"});
-                            setTimeout(()=>configure_item(data.border,{"stroke-width":"0"}), 100);
-                        });
-                    }
+                    addInteractionStartEvent(data.border, () => {
+                        gui_send('Bang', [data.clickSend]);
+                        configure_item(data.border,{"stroke-width":"4"});
+                        setTimeout(()=>configure_item(data.border,{"stroke-width":"0"}), 100);
+                    });
 
                     layer.guiObjects[layer.nextGUIID] = data;
                     gui_subscribe(data);
@@ -4993,19 +4835,9 @@ async function openPatch(content, filename) {
                     rootCanvas.removeChild(data.labelText);
                     layer.canvas.appendChild(data.labelText);
 
-                    if (isMobile) {
-                        data.border.addEventListener("touchstart", function (e) {
-                            e = e || window.event;
-                            for (const touch of e.changedTouches) {
-                                gui_atom_onmousedown(data, touch, touch.identifier);
-                            }
-                        });
-                    }
-                    else {
-                        data.border.addEventListener("mousedown", function (e) {
-                            gui_atom_onmousedown(data, e, 0);
-                        });
-                    }
+                    addInteractionStartEvent(data.border, (event, identifier) => {
+                        gui_atom_onmousedown(data, event, event.identifier);
+                    });
 
                     gui_subscribe(data);
                     layer.guiObjects[layer.nextGUIID] = data;
@@ -5129,18 +4961,9 @@ async function openPatch(content, filename) {
                                 text.textContent = data.options[i];
 
                                 let option = i; // necessary to create local variable because i will get overwritten
-                                if (isMobile) {
-                                    box.addEventListener("touchstart", function (e) {
-                                        e = e || window.event;
-                                        for (const touch of e.changedTouches)
-                                            gui_dropdown_option_onmousedown(data, i, touch, touch.identifier);
-                                    });
-                                }
-                                else {
-                                    box.addEventListener("mousedown", function (e) {
-                                        gui_dropdown_option_onmousedown(data, i, e, 0);
-                                    });
-                                }
+                                addInteractionStartEvent(box, (event, identifier) => {
+                                    gui_dropdown_option_onmousedown(data, option, event, identifier);
+                                });
                                 data.optionsGUI.push({box, text});
                             }
                         }
@@ -5148,18 +4971,9 @@ async function openPatch(content, filename) {
 
                     data.render();
 
-                    if (isMobile) {
-                        data.box.addEventListener("touchstart", function (e) {
-                            e = e || window.event;
-                            for (const touch of e.changedTouches)
-                                gui_dropdown_onmousedown(data, touch, touch.identifier);
-                        });
-                    }
-                    else {
-                        data.box.addEventListener("mousedown", function (e) {
-                            gui_dropdown_onmousedown(data, e, 0);
-                        });
-                    }
+                    addInteractionStartEvent(data.box, (event, identifier) => {
+                        gui_dropdown_onmousedown(data, event, identifier);
+                    });
 
                     gui_subscribe(data);
                     layer.guiObjects[layer.nextGUIID] = data;
@@ -5321,15 +5135,18 @@ async function getPatchData(url) {
 async function getPatchDatas(urls) {
     urls = urls.map(url => url.replace(/[^/]+\/+..\/+/g,''));
     let missingPatches = urls.filter(url => cachedData[url] === undefined);
-    let promises = [];
-    while(missingPatches.length) {
-        promises.push(fetch(`/api/patch/?url=${missingPatches.splice(0,100).map(url => encodeURIComponent(url)).join('&url=')}`).then(async(result) => {
-            const data = await result.json();
-            for(let patch in data)
-                cachedData[patch] = data[patch];
-        }));
-    }
-    await Promise.all(promises);
+    let data = await fetch('/api/patch', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ urls: missingPatches }),
+    }).then(result => result.json());
+    
+    for(let patch in data)
+        cachedData[patch] = data[patch];
+
     return urls.map(url => cachedData[url]);
 }
 

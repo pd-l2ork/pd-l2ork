@@ -154,15 +154,17 @@ ifeq ($(LIGHT),yes)
 # minimal set of extensions for the "light" build
 lib_targets = loaders-libdir pddp
 INCREMENTAL = yes
-else ifeq ($(EMSCRIPTEN),yes)
-# original one used by the first iteration of WebPdL2Ork: lib_targets = arraysize autotune bassemu boids bsaylor comport creb cxc earplug ekext ext13 freeverb ggee hcs iem_ambi iem_bin_ambi iemguts iem_adaptfilt iem_delay iem_roomsim iem_spec2 jasch_lib loaders-libdir mapping markex maxlib mjlib moonlib motex mrpeach pan pddp rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing
-lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui fluid flatspace freeverb ggee hcs iemlib iemgui iemguts jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moonlib motex mrpeach oscx pan pdcontainer pddp pdogg rjlib plugin pmpd sigpack smlib tof unauthorized vbap windowing zexy
-# short one for quick building for debugging purposes (disabled by default):
-# lib_targets = maxlib
 else
-lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui fluid freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemgui iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib js loaders-libdir lyonpotpourri mapping markex maxlib mjlib moocow moonlib motex mrpeach oscx pan pdcontainer pddp pdlua pdogg plugin pmpd rjlib sigpack smlib tof unauthorized vbap windowing zexy
+lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui fluid freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemgui iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moocow moonlib motex mrpeach oscx pan pdcontainer pddp pdogg plugin pmpd rjlib sigpack smlib tof unauthorized vbap windowing zexy
 endif
 
+# Emscriptem needs flatspace for some objects, wheras normal PD has them builtin
+# Additionally, the pdjs and pdlua externals are currently not supported in emscripten.
+ifeq ($(EMSCRIPTEN),yes)
+lib_targets += flatspace
+else
+lib_targets += js pdlua
+endif
 
 # NEW (IN-PROGRESS): flext
 
@@ -504,7 +506,7 @@ cyclone_clean:
 		clean
 else
 CYCLONE_NAME := cyclone
-CYCLONE_FLAGS := -s -I${CYCLONE_PATH}/cyclone -I$(pd_src)/../libpd/libpd_wrapper -I$(externals_src)/miXed/shared -D__linux__ -DUNIX -fPIC
+CYCLONE_FLAGS := -s -I${CYCLONE_PATH}/cyclone -I$(pd_src)/../libpd/libpd_wrapper -I$(externals_src)/miXed/shared -DUNIX -fPIC
 CYCLONE_PATH := $(externals_src)/miXed/
 CYCLONE_HAMMER := $(wildcard $(externals_src)/miXed/cyclone/hammer/*.c)
 CYCLONE_SICKLE := $(wildcard $(externals_src)/miXed/cyclone/sickle/*.c)
@@ -1068,11 +1070,6 @@ hidin_clean:
 
 #------------------------------------------------------------------------------#
 # General IEM flags
-ifeq ($(EMSCRIPTEN),yes)
-IEM_FLAGS=-D__linux__ -Wno-incompatible-pointer-types
-else
-IEM_FLAGS=-O2
-endif
 
 #------------------------------------------------------------------------------#
 # IEM_AMBI
@@ -1190,14 +1187,6 @@ IEMGUTS_NAME=iemguts
 IEMGUTS_OBJECTS := $(wildcard $(externals_src)/iem/iemguts/src/*.c)
 iemguts: $(IEMGUTS_OBJECTS:.c=.$(EXTENSION))
 
-ifeq ($(EMSCRIPTEN),yes)
-$(IEMGUTS_OBJECTS:.c=.o) : $(IEMGUTS_OBJECTS)
-	$(CC) $(CFLAGS) $(IEM_FLAGS) -funroll-loops -fomit-frame-pointer -fno-tree-vectorize -fno-strict-aliasing -o "$*.o" -c "$*.c"
-
-$(IEMGUTS_OBJECTS:.c=.$(EXTENSION)) : $(IEMGUTS_OBJECTS:.c=.o)
-	$(CC) $(LDFLAGS) $(IEM_FLAGS) -o "$*.${EXTENSION}" "$*.o"
-endif
-
 iemguts_install: iemguts
 	install -d $(DESTDIR)$(objectsdir)/$(IEMGUTS_NAME)
 	$(scripts_src)/generate-libdir-metafile.sh $(DESTDIR)$(objectsdir) $(IEMGUTS_NAME) \
@@ -1230,7 +1219,7 @@ IEMLIB_SRC := $(wildcard $(externals_src)/iemlib/iemlib1/src/*[^1].c) $(wildcard
 
 IEMLIB_OBJECTS := $(IEMLIB_SRC:.c=.o)
 $(IEMLIB_OBJECTS) : %.o : %.c
-	$(CC) -I$(externals_src)/iemlib/include $(CFLAGS) $(IEM_FLAGS) -funroll-loops -fomit-frame-pointer -fno-tree-vectorize -fno-strict-aliasing -o "$*.o" -c "$*.c"
+	$(CC) -I$(externals_src)/iemlib/include $(CFLAGS) -O2 -funroll-loops -fomit-frame-pointer -fno-tree-vectorize -fno-strict-aliasing -o "$*.o" -c "$*.c"
 
 iemlib: $(IEMLIB_SRC:.c=.$(EXTENSION))
 
@@ -2296,7 +2285,7 @@ ZEXY_NAME = zexy
 ZEXY_SRC := $(wildcard $(externals_src)/zexy/src/*.c)
 ZEXY_OBJECTS := $(ZEXY_SRC:.c=.o)
 ZEXY_TARGETS := $(ZEXY_SRC:.c=.$(EXTENSION))
-ZEXY_FLAGS := 
+ZEXY_FLAGS := -DZ_WANT_LPT=0
 
 zexy: $(ZEXY_TARGETS)
 
@@ -2559,6 +2548,7 @@ IEMTAB_FLAGS := -DIEMTAB_SINGLE_OBJ
 
 iem_tab: $(IEMTAB_TARGETS)
 
+ifneq ($(EMSCRIPTEN),yes)
 $(IEMTAB_TARGETS) : %.$(EXTENSION) : %.o $(IEMTAB_OBJ)
 	$(CC) $(LDFLAGS) -o $*.$(EXTENSION) "$*.o" $(externals_src)/iem/iem_tab/src/iem_tab.o $(LIBS)
 	$(STRIP) $*.$(EXTENSION)
@@ -2567,6 +2557,13 @@ $(IEMTAB_TARGETS) : %.$(EXTENSION) : %.o $(IEMTAB_OBJ)
 
 $(IEMTAB_OBJ) : %.o : %.c
 	$(CC) $(CFLAGS) $(IEMTAB_FLAGS) -o "$*.o" -c "$*.c"
+else
+$(IEMTAB_OBJ): $(IEMTAB_SRC)
+	$(CC) $(CFLAGS) $(IEMTAB_FLAGS) -o "$*.o" -c "$*.c"
+
+$(IEMTAB_TARGETS): $(IEMTAB_OBJ)
+	$(CC) $(LDFLAGS) $(IEMTAB_FLAGS) -o $*.$(EXTENSION) $*.o $(LIBS)
+endif
 
 iem_tab_install: iem_tab
 	install -d $(DESTDIR)$(objectsdir)/$(IEMTAB_NAME)
@@ -2677,10 +2674,10 @@ $(IEMGUI_OBJ) : %.o : %.c
 	$(CC) $(CFLAGS) $(IEMGUI_FLAGS) -o "$*.o" -c "$*.c"
 else
 $(IEMGUI_OBJ): $(IEMGUI_SRC)
-	$(CC) $(CFLAGS) $(IEM_FLAGS) $(IEMGUI_FLAGS) -o "$*.o" -c "$*.c"
+	$(CC) $(CFLAGS) $(IEMGUI_FLAGS) -o "$*.o" -c "$*.c"
 
 $(IEMGUI_TARGETS): $(IEMGUI_OBJ)
-	$(CC) $(LDFLAGS) $(IEM_FLAGS) $(IEMGUI_FLAGS) -o $*.$(EXTENSION) $*.o $(externals_src)/iem/iemgui/src/iemgui.o $(LIBS)
+	$(CC) $(LDFLAGS) $(IEMGUI_FLAGS) -o $*.$(EXTENSION) $*.o $(externals_src)/iem/iemgui/src/iemgui.o $(LIBS)
 endif
 
 iemgui_install: iemgui
