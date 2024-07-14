@@ -1,1 +1,7 @@
-@pd_extra
+*
+!js
+!emscripten
+!css
+!default.pd
+!favicon.ico
+!.gitignore

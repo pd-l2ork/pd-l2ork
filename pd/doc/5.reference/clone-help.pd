@@ -1,20 +1,20 @@
 #N canvas 155 58 847 810 12;
-#X floatatom 218 329 5 36 144 0 - - -, f 5;
+#X floatatom 218 329 5 36 144 0 - - - 0 0 1, f 5;
 #X obj 218 350 t b f;
 #X obj 218 374 f;
 #X obj 218 398 + 1;
 #X obj 218 422 mod 16;
 #X obj 218 446 pack;
-#X msg 327 422 next \$1;
-#X floatatom 327 402 5 36 144 0 - - -, f 5;
-#X floatatom 327 452 5 36 144 0 - - -, f 5;
-#X msg 327 471 this \$1;
-#X floatatom 326 499 5 36 144 0 - - -, f 5;
-#X msg 326 518 set \$1;
+#X msg 367 422 next \$1;
+#X floatatom 367 402 5 36 144 0 - - - 0 0 1, f 5;
+#X floatatom 367 452 5 36 144 0 - - - 0 0 1, f 5;
+#X msg 367 471 this \$1;
+#X floatatom 366 499 5 36 144 0 - - - 0 0 1, f 5;
+#X msg 366 518 set \$1;
 #X msg 80 397 vis 5 1;
 #X msg 79 425 vis 5 0;
-#X floatatom 325 545 5 36 144 0 - - -, f 5;
-#X msg 325 566 all \$1;
+#X floatatom 365 545 5 36 144 0 - - - 0 0 1, f 5;
+#X msg 365 566 all \$1;
 #X obj 178 662 ../3.audio.examples/output~;
 #X text 597 749 updated for Pd version 0.47;
 #X text 496 579 creation arguments:;
@@ -22,13 +22,13 @@
 #X text 14 632 (first copy only);
 #X text 67 351 open or close copy number 5:, f 14;
 #X text 276 326 A list beginning with a number dispatches the rest
-of the list as a message, f 23;
-#X text 403 392 "next" forwards a message to the next instance (incrementing
+of the list as a message, f 75;
+#X text 443 392 "next" forwards a message to the next instance (incrementing
 and repeating circularly)., f 33;
-#X text 407 445 "this" forwards a message to the previous instance
+#X text 447 445 "this" forwards a message to the previous instance
 sent to by "this" or "next", f 30;
-#X text 391 500 "set" sets the "next"/"this" counter;
-#X text 386 546 "all" broadcasts a message to all instances;
+#X text 431 500 "set" sets the "next"/"this" counter;
+#X text 426 546 "all" broadcasts a message to all instances;
 #X text 24 8 clone - make multiple copies of a patch;
 #X text 20 170 clone's inlets and outlets correspond to those of the
 contained patch \, and may be signal and/or control inlets and outlets.
@@ -54,6 +54,9 @@ using the "-x" option.), f 71;
 #X text 23 129 You can pass additional arguments to the copies that
 appear as \$2 and onward (or \$1 and onward with "-x" option)., f
 71;
+#X msg 285 405 resize \$1;
+#X floatatom 285 370 5 0 0 0 - - - 0 0 1, f 5;
+#X text 335 370 <-- resize the number of instances;
 #X connect 0 0 1 0;
 #X connect 1 0 2 0;
 #X connect 1 1 5 1;
@@ -74,3 +77,6 @@ appear as \$2 and onward (or \$1 and onward with "-x" option)., f
 #X connect 15 0 29 0;
 #X connect 29 0 16 0;
 #X connect 29 0 16 1;
+#X connect 35 0 29 0;
+#X connect 36 0 35 0;
+#X connect 36 0 4 1;
