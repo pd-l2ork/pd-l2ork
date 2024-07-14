@@ -1,8 +1,8 @@
-const isMobile = (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
 const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
 const loading = document.getElementById("loading");
 const filter = document.getElementById("filter");
-let currentFile = "";
+let currentFile = '';
+let previousValue = '';
 let subscribedData = {};
 let searchPaths = ['/'];
 let fileCache = {};
@@ -107,6 +107,20 @@ function coordToScreen(low, high, span, coord) {
 function screenToCoord(low, high, span, screen) {
     let raw = high > low ? screen : span - screen;
     return (raw) * Math.abs(low - high) / span + Math.min(low, high);   
+}
+function addInteractionStartEvent(target, func) {
+    target.addEventListener('mousedown', e => e.preventDefault() || func(e, 0));
+    target.addEventListener('touchstart', e => e.preventDefault() || [...(e || window.event).changedTouches].forEach(touch => func(touch, touch.identifier)));
+}
+function addInteractionMoveEvent(target, func) {
+    target.addEventListener('mousemove', e => e.preventDefault() || func(e, 0));
+    target.addEventListener('touchmove', e => e.preventDefault() || [...(e || window.event).changedTouches].forEach(touch => func(touch, touch.identifier)));
+}
+function addInteractionEndEvent(target,func) {
+    target.addEventListener('mouseup', e => e.preventDefault() || func(e, 0));
+    target.addEventListener('mouseleave', e => e.preventDefault() || func(e, 0));
+    target.addEventListener('touchend', e => e.preventDefault() || [...(e || window.event).changedTouches].forEach(touch => func(touch, touch.identifier)));
+    target.addEventListener('touchcancel', e => e.preventDefault() || [...(e || window.event).changedTouches].forEach(touch => func(touch, touch.identifier)));
 }
 
 //For Clipboard interaction
@@ -1521,19 +1535,18 @@ Module['preRun'].push(function() {
                     if(fileCache[path])
                         node = fileCache[path];
                     else {
-                        for(let searchPath of searchPaths) {
-                            const request = new XMLHttpRequest();
-                            request.open("GET", window.location.origin+'/'+((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')+'/'+searchPath.slice(0,-1)+path, false); // `false` makes the request synchronous
-                            request.overrideMimeType('text/plain; charset=x-user-defined'); // Set MIME type for binary data
-                            request.send();
-                            if (request.status === 200) {
-                                let folder = path.split('/').slice(0,-1).join('/') + '/';
-                                FS.createPath('/', folder);
-                                FS.createDataFile(folder, path.split('/').slice(-1)[0], request.response, true, true, true);
-                                fileCache[path] = FS.lookupPath(path, { follow: !(flags & 131072) }).node;
-                                node = fileCache[path];
-                                break;
-                            }
+                        const request = new XMLHttpRequest();
+                        const base = ((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')+'/';
+                        request.open('POST', window.location.origin+'/api/file', false);
+                        request.setRequestHeader('content-type','application/json')
+                        request.overrideMimeType('text/plain; charset=x-user-defined'); // Set MIME type for binary data
+                        request.send(JSON.stringify({urls:searchPaths.map(searchPath => base + searchPath.slice(0,-1)+path)}));
+                        if (request.status === 200) {
+                            let folder = path.split('/').slice(0,-1).join('/') + '/';
+                            FS.createPath('/', folder);
+                            FS.createDataFile(folder, path.split('/').slice(-1)[0], request.response, true, true, true);
+                            fileCache[path] = FS.lookupPath(path, { follow: !(flags & 131072) }).node;
+                            node = fileCache[path];
                         }
                     }
                 }
@@ -1785,10 +1798,19 @@ function iemgui_fontfamily(font) {
     return family;
 }
 
-function colfromload(col) { // decimal to hex color
+function colfromload(col, legacy) { // decimal to hex color
     if (typeof col === "string")
         return col;
     col = col >= 0 ? vu_colors[col] : -1 - col;
+
+    let bitsPerChannel = legacy === true ? 6 : 8;
+
+    const r = (col & ((1 << bitsPerChannel) - 1)) << (8 - bitsPerChannel);
+    const g = (col & ((1 << (bitsPerChannel * 2)) - 1)) << (8 - bitsPerChannel) * 2;
+    const b = (col & ((1 << (bitsPerChannel * 3)) - 1)) << (8 - bitsPerChannel) * 3;
+
+    col = r | g | b;
+
     // col = ((col & 0x3f000) << 6) | ((col & 0xfc0) << 4) | ((col & 0x3f) << 2);
     return "#" + ("000000" + col.toString(16)).slice(-6);
 }
@@ -1869,7 +1891,7 @@ function gui_rect(data) {
         y: data.y_pos,
         width: data.size,
         height: data.size,
-        fill: colfromload(data.bg_color),
+        fill: colfromload(data.bg_color, data.legacy),
         id: `${data.id}_rect`,
         class: "border clickable"
     }
@@ -1882,14 +1904,14 @@ function gui_text(data) {
         "font-family": iemgui_fontfamily(data.font),
         "font-weight": "normal",
         "font-size": `${data.fontsize}px`,
-        fill: colfromload(data.label_color),
+        fill: colfromload(data.label_color, data.legacy),
         transform: `translate(0, ${data.fontsize / 2 * 0.6})`, // note: modified
         id: `${data.id}_text`,
         class: "unclickable"
     }
 }
 
-function gui_mousepoint(e, canvas, precise) { // transforms the mouse position
+function gui_mousepoint(e, canvas) { // transforms the mouse position
     // If we are on firefox, we have to do shenanigans...
     // First, getScreenCTM only scales, doesnt offset on firefox, for some ungodly reason.
     // Next, firefox refuses to give us the x/y coordinates of the top-left of an svg element.
@@ -1946,7 +1968,7 @@ function gui_bng_update_circle(data) {
     if (data.flashed) {
         data.flashed = false;
         configure_item(data.circle, {
-            fill: colfromload(data.fg_color),
+            fill: colfromload(data.fg_color, data.legacy),
         });
         if (data.interrupt_timer) {
             clearTimeout(data.interrupt_timer);
@@ -1962,7 +1984,7 @@ function gui_bng_update_circle(data) {
     else {
         data.flashed = true;
         configure_item(data.circle, {
-            fill: colfromload(data.fg_color),
+            fill: colfromload(data.fg_color, data.legacy),
         });
     }
     if (data.hold_timer) {
@@ -2000,7 +2022,7 @@ function gui_tgl_cross1(data) {
     const points = [p1, p2, p3, p4].join(" ");
     return {
         points: points,
-        stroke: colfromload(data.fg_color),
+        stroke: colfromload(data.fg_color, data.legacy),
         "stroke-width": w,
         fill: "none",
         display: data.value ? "inline" : "none",
@@ -2022,7 +2044,7 @@ function gui_tgl_cross2(data) {
     const points = [p1, p2, p3, p4].join(" ");
     return {
         points: points,
-        stroke: colfromload(data.fg_color),
+        stroke: colfromload(data.fg_color, data.legacy),
         "stroke-width": w,
         fill: "none",
         display: data.value ? "inline" : "none",
@@ -2069,7 +2091,7 @@ function gui_slider_rect(data) {
         y: y,
         width: width,
         height: height,
-        fill: colfromload(data.bg_color),
+        fill: colfromload(data.bg_color, data.legacy),
         id: `${data.id}_rect`,
         class: "border clickable"
     }
@@ -2117,7 +2139,7 @@ function gui_slider_indicator(data) {
         y1: p.y1,
         x2: p.x2,
         y2: p.y2,
-        stroke: colfromload(data.fg_color),
+        stroke: colfromload(data.fg_color, data.legacy),
         "stroke-width": 3,
         fill: "none",
         id: `${data.id}_indicator`,
@@ -2269,7 +2291,7 @@ function gui_radio_rect(data) {
         y: data.y_pos,
         width: width,
         height: height,
-        fill: colfromload(data.bg_color),
+        fill: colfromload(data.bg_color, data.legacy),
         id: `${data.id}_rect`,
         class: "border clickable"
     }
@@ -2292,8 +2314,8 @@ function gui_radio_button(data, p1, p2, p3, p4, button_index, state) {
         y: p2,
         width: p3 - p1,
         height: p4 - p2,
-        fill: colfromload(data.fg_color),
-        stroke: colfromload(data.fg_color),
+        fill: colfromload(data.fg_color, data.legacy),
+        stroke: colfromload(data.fg_color, data.legacy),
         display: state ? "inline" : "none",
         id: `${data.id}_button_${button_index}`,
         class: "unclickable"
@@ -2376,8 +2398,8 @@ function gui_radio_update_button(data) {
         display: "none"
     });
     configure_item(data.buttons[data.value], {
-        fill: colfromload(data.fg_color),
-        stroke: colfromload(data.fg_color),
+        fill: colfromload(data.fg_color, data.legacy),
+        stroke: colfromload(data.fg_color, data.legacy),
         display: "inline"
     });
     data.drawn = data.value;
@@ -2453,7 +2475,7 @@ function gui_knob_line(data) {
     let endPos = polarToCartesian(data.size_x/2, data.size_y/2, data.size_x/2, 193 + gui_knob_vto_gui(data) * (528 - 193));
     return { // indicator
         "stroke-width": data.dial_width,
-        stroke: colfromload(data.fg_color),
+        stroke: colfromload(data.fg_color, data.legacy),
         x1: data.x_pos + data.size_x/2,
         x2: data.x_pos + endPos.x,
         y1: data.y_pos + data.size_y/2,
@@ -2464,7 +2486,7 @@ function gui_knob_extracircle(data) {
     return {
         "knob_w": data.size_x,
         fill: "none",
-        stroke: colfromload(data.bg_color),
+        stroke: colfromload(data.bg_color, data.legacy),
         "stroke-width": data.on_width,
         "shape-rendering": "auto",
         "d": describeArc(data.x_pos + data.size_x/2, data.y_pos + data.size_y/2, data.size_x/2 - 1, 193, 193 + gui_knob_vto_gui(data) * (528 - 193)),
@@ -2564,7 +2586,7 @@ function gui_vumeter_box(data) {
         width: data.width,
         height: data.height,
         stroke: '#000',
-        fill: colfromload(data.bg_color),
+        fill: colfromload(data.bg_color, data.legacy),
         id: data.id + '_box',
     };
 }
@@ -3141,7 +3163,7 @@ function onKeyDown(e) {
     }
 }
 function onKeyUp(e) {
-    e.preventDefault();
+    e.preventDefault?.();
     if(keyboardFocus.data?.onKeyUp)
         keyboardFocus.data.onKeyUp(keyboardFocus.data, e);
     keyDown[e.key] = false;
@@ -3161,11 +3183,16 @@ function setKeyboardFocus(data, exclusive) {
     }
     if(keyboardFocus?.data?.onLoseFocus)
         keyboardFocus.data.onLoseFocus(keyboardFocus.data);
+    if(data !== null)
+        document.getElementById('keyboardTrigger').focus();
+    else
+        document.getElementById('keyboardTrigger').blur();
     keyboardFocus.data = data;
     keyboardFocus.exclusive = exclusive;
     keyboardFocus.current = true;
 }
 function onMouseDown(e) {
+    e.preventDefault?.();
     if(keyboardFocus.current == false)
         setKeyboardFocus(null, false);
     keyboardFocus.current = false;
@@ -3175,6 +3202,7 @@ function onMouseDown(e) {
             listener.onMouseDown(e);
 }
 function onMouseUp(e) {
+    e.preventDefault?.();
     for(let listener of inputListeners)
         if(listener.onMouseUp)
             listener.onMouseUp(e);
@@ -3186,75 +3214,41 @@ function onMouseMove(e) {
 }
 
 // drag events
-if (isMobile) {
-    window.addEventListener("touchmove", function (e) {
-        e = e || window.event;
-        for (const touch of e.changedTouches) {
-            gui_slider_onmousemove(touch, touch.identifier);
-            gui_knob_onmousemove(touch, touch.identifier);
-            gui_array_onmousemove(touch, touch.identifier);
-            gui_atom_onmousemove(touch, touch.identifier);
-            gui_nbx_onmousemove(touch, touch.identifier);
-            gui_image_onmousemove(touch, touch.identifier);
-            gui_window_onmousemove(touch, touch.identifier);
-        }
-    });
-    window.addEventListener("touchend", function (e) {
-        e = e || window.event;
-        for (const touch of e.changedTouches) {
-            gui_slider_onmouseup(touch.identifier);
-            gui_knob_onmouseup(touch.identifier);
-            gui_array_onmouseup(touch.identifier);
-            gui_atom_onmouseup(touch.identifier);
-            gui_nbx_onmouseup(touch.identifier);
-            gui_image_onmouseup(touch.identifier);
-            gui_window_onmouseup(touch.identifier);
-        }
-    });
-    window.addEventListener("touchcancel", function (e) {
-        e = e || window.event;
-        for (const touch of e.changedTouches) {
-            gui_slider_onmouseup(touch.identifier);
-            gui_knob_onmouseup(touch.identifier);
-            gui_array_onmouseup(touch.identifier);
-            gui_atom_onmouseup(touch.identifier);
-            gui_nbx_onmouseup(touch.identifier);
-            gui_image_onmouseup(touch.identifier);
-            gui_window_onmouseup(touch.identifier);
-        }
-    });
-}
-else {
-    window.addEventListener("mousemove", function (e) {
-        e = e || window.event;
-        gui_slider_onmousemove(e, 0);
-        gui_knob_onmousemove(e, 0);
-        gui_array_onmousemove(e, 0);
-        gui_atom_onmousemove(e,0);
-        gui_nbx_onmousemove(e,0);
-        gui_image_onmousemove(e,0);
-        gui_window_onmousemove(e,0);
-        gui_dropdown_option_onmousemove(e, 0);
-    });
-    window.addEventListener("mouseup", function (e) {
-        gui_slider_onmouseup(0);
-        gui_knob_onmouseup(0);
-        gui_array_onmouseup(0);
-        gui_atom_onmouseup(0);
-        gui_nbx_onmouseup(0);
-        gui_image_onmouseup(0);
-        gui_window_onmouseup(0);
-    });
-    window.addEventListener("mouseleave", function (e) {
-        gui_slider_onmouseup(0);
-        gui_knob_onmouseup(0);
-        gui_array_onmouseup(0);
-        gui_atom_onmouseup(0);
-        gui_nbx_onmouseup(0);
-        gui_image_onmouseup(0);
-        gui_window_onmouseup(0);
-    });
-}
+addInteractionStartEvent(document, event => onMouseDown(event));
+addInteractionMoveEvent(window, (event, identifier) => {
+    gui_nbx_onmousemove(event, identifier);
+    gui_atom_onmousemove(event, identifier);
+    gui_knob_onmousemove(event, identifier);
+    gui_array_onmousemove(event, identifier);
+    gui_image_onmousemove(event, identifier);
+    gui_window_onmousemove(event, identifier);
+    gui_slider_onmousemove(event, identifier);
+    onMouseMove(event);
+});
+addInteractionEndEvent(window, (event, identifier) => {
+    gui_nbx_onmouseup(identifier);
+    gui_atom_onmouseup(identifier);
+    gui_knob_onmouseup(identifier);
+    gui_array_onmouseup(identifier);
+    gui_image_onmouseup(identifier);
+    gui_window_onmouseup(identifier);
+    gui_slider_onmouseup(identifier);
+    onMouseUp(event);
+});
+document.addEventListener('keydown', onKeyDown);
+document.addEventListener('keyup', onKeyUp);
+document.getElementById('keyboardTrigger').addEventListener('input', event => {
+    const firstDifference = previousValue.split('').findIndex((chr, index) => event.target.value.charAt(index) !== chr);
+    const removals = firstDifference === -1 ? 0 : previousValue.length - firstDifference;
+    const missing = event.target.value.slice(previousValue.length - removals);
+
+    previousValue = previousValue.slice(0, previousValue.length - removals) + missing;
+
+    for(let key of [...Array(removals).fill('Backspace'), ...missing]) {
+        onKeyDown(new KeyboardEvent('keydown', {key}));
+        onKeyUp(new KeyboardEvent('keyup', {key}));
+    }
+});
 
 // cnv
 function gui_cnv_visible_rect(data) {
@@ -3263,8 +3257,8 @@ function gui_cnv_visible_rect(data) {
         y: data.y_pos,
         width: data.width,
         height: data.height,
-        fill: colfromload(data.bg_color),
-        stroke: colfromload(data.bg_color),
+        fill: colfromload(data.bg_color, data.legacy),
+        stroke: colfromload(data.bg_color, data.legacy),
         id: `${data.id}_visible_rect`,
         class: "unclickable"
     }
@@ -3277,7 +3271,7 @@ function gui_cnv_selectable_rect(data) {
         width: data.size,
         height: data.size,
         fill: "none",
-        stroke: colfromload(data.bg_color),
+        stroke: colfromload(data.bg_color, data.legacy),
         id: `${data.id}_selectable_rect`,
         class: "unclickable"
     }
@@ -3407,13 +3401,18 @@ async function openPatch(content, filename) {
     let start = Date.now();
     let abstractions = {};
     let fetchAbstractions = async(content, path) => {
+        let declares = content.split(';\n').filter(line => line.startsWith('#X declare')).map(declare => declare.slice(11).match(/-\w+ [^ ]+/g).filter(directive => directive.startsWith("-path")).map(directive => directive.split(' ')[1])).flat();
+        let paths = [path, ...declares.map(declare => declare.startsWith('/')?declare:`${path}${declare}/`)];
         let missingAbstractions = [... new Set(content.split(';\n').filter( line => line.startsWith('#X obj') && !known_objects.includes(line.split(' ')[4]) ).map( line => line.split(' ')[4]))];
-        let abstractionData = await Promise.all(missingAbstractions.map(async(obj) => (await getPatchData(`${((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')}/${path}${obj}.pd`))));
+        let abstractionData = await getPatchDatas(missingAbstractions.map(obj => paths.map(path => `${((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')}/${path}${obj}.pd`)).flat());
         let promises = [];
         for(let abstraction in missingAbstractions) {
-            if(abstractionData[abstraction].content.startsWith('#') && !abstractions[missingAbstractions[abstraction]]) {
-                abstractions[missingAbstractions[abstraction]] = abstractionData[abstraction].content;
-                promises.push(fetchAbstractions(abstractionData[abstraction].content, missingAbstractions[abstraction].split('/').slice(0,-1).join('/')+'/'));
+            for(let i=0; i<paths.length; i++) {
+                if(abstractionData[abstraction*paths.length + i].startsWith('#') && !abstractions[missingAbstractions[abstraction]]) {
+                    abstractions[missingAbstractions[abstraction]] = abstractionData[abstraction*paths.length + i];
+                    promises.push(fetchAbstractions(abstractionData[abstraction*paths.length + i], paths[i]+missingAbstractions[abstraction].split('/').slice(0,-1).join('/')+'/'));
+                    break;
+                }
             }
         }
         searchPaths = [...new Set([...searchPaths, path])];
@@ -3426,17 +3425,6 @@ async function openPatch(content, filename) {
     await new Promise(Resolve => setTimeout(Resolve, 10));
     
     start = Date.now();
-
-    document.removeEventListener('keydown', onKeyDown);
-    document.removeEventListener('keyup', onKeyUp);
-    document.removeEventListener('mousemove', onMouseMove);
-    document.removeEventListener('mousedown', onMouseDown);
-    document.removeEventListener('mouseup', onMouseUp);
-    document.addEventListener('keydown', onKeyDown);
-    document.addEventListener('keyup', onKeyUp);
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mousedown', onMouseDown);
-    document.addEventListener('mouseup', onMouseUp);
     
     let rootCanvas = document.getElementById('canvas');
     while (rootCanvas.lastChild) // clear svg
@@ -3451,6 +3439,7 @@ async function openPatch(content, filename) {
     let nextLayerID = 0;      //This is used to assign unique IDs to layers to keep track of their objects
     let nextArgs = [];        //This is used to pass arguments from abstractions which are collapsed by the web parser
     let layers = [ { } ];   //Holds all the layers currently being processed. Used as a stack.
+    let windowSizeStack = [];
 
     let lines = content.split(';\n');
     for(let i = 0; i < lines.length; i++)
@@ -3510,6 +3499,7 @@ async function openPatch(content, filename) {
                 layers.push({
                     arrays: [],
                     messages: [],
+                    handles: [],
                     guiObjects: [],
                     objects: [],
                     labels: [],
@@ -3577,6 +3567,8 @@ async function openPatch(content, filename) {
                                 configure_item(text, {display: "none"});
                             configure_item(message.border, {display: "none"});
                         }
+                        for(let handle of layer.handles)
+                            configure_item(handle, {display: 'none'});
                         configure_item(layer.canvas, {
                             viewBox: `${layer.dimensions.contentX} ${layer.dimensions.contentY} ${layer.dimensions.coords.w} ${layer.dimensions.coords.h}`,
                             width: layer.dimensions.coords.w,
@@ -3607,32 +3599,16 @@ async function openPatch(content, filename) {
 
                             configure_item(layer.border, { fill: '#00000000' });
                             layer.canvas.style.overflow = 'visible';
-                            if (isMobile) {
-                                layer.border.addEventListener("touchstart", function (e) {
-                                    for (const touch of (e || window.event).changedTouches) {
-                                        let p = gui_mousepoint(touch, canvas);
-                                        let x = Math.floor(screenToCoord(dimensions.coords.l, dimensions.coords.r, dimensions.coords.w, p.x));
-                                        let y = screenToCoord(dimensions.coords.t, dimensions.coords.b, dimensions.coords.h, p.y);
-                                        let array, min = Infinity;
-                                        for(let a of arrays)
-                                            if(a.nums.length > x && Math.abs(a.nums[x] - y) < min)
-                                                min = Math.abs(a.nums[x] - y), array = a;
-                                        array.onmousedown(array, touch, touch.identifier);
-                                    }
-                                });
-                            }
-                            else {
-                                layer.border.addEventListener("mousedown", function (e) {
-                                    let p = gui_mousepoint(e, canvas);
-                                    let x = Math.floor(screenToCoord(dimensions.coords.l, dimensions.coords.r, dimensions.coords.w, p.x));
-                                    let y = screenToCoord(dimensions.coords.t, dimensions.coords.b, dimensions.coords.h, p.y);
-                                    let array, min = Infinity;
-                                    for(let a of arrays)
-                                        if(a.nums.length > x && Math.abs(a.nums[x] - y) < min)
-                                            min = Math.abs(a.nums[x] - y), array = a;
-                                    array.onmousedown(array, e || window.event, 0);
-                                });
-                            }
+                            addInteractionStartEvent(layer.border, (event, identifier) => {
+                                let p = gui_mousepoint(event, canvas);
+                                let x = Math.floor(screenToCoord(dimensions.coords.l, dimensions.coords.r, dimensions.coords.w, p.x));
+                                let y = screenToCoord(dimensions.coords.t, dimensions.coords.b, dimensions.coords.h, p.y);
+                                let array, min = Infinity;
+                                for(let a of arrays)
+                                    if(a.nums.length > x && Math.abs(a.nums[x] - y) < min)
+                                        min = Math.abs(a.nums[x] - y), array = a;
+                                array.onmousedown(array, event, identifier);
+                            });
                         }
                         for(let array of layer.arrays)
                             array.setCoords(layer.dimensions.coords);
@@ -3671,12 +3647,12 @@ async function openPatch(content, filename) {
                                 layer.labels.push(text);
                             }
                         }
-                    } else if(layers.at(-2).showContents !== true) {
+                    } else {
                         let parentLayer = layers.at(-2);
                         let data = {};
                         data.type = 'patch';
-                        data.windowX = layer.dimensions.windowX - layers.at(-2).dimensions.windowX;
-                        data.windowY = layer.dimensions.windowY - layers.at(-2).dimensions.windowY;
+                        data.windowX = Math.max(0, Math.min(layers[1].dimensions.width - layer.dimensions.width, layer.dimensions.windowX - layers.at(-2).dimensions.windowX));
+                        data.windowY = Math.max(15, Math.min(layers[1].dimensions.height - layer.dimensions.height, layer.dimensions.windowY - layers.at(-2).dimensions.windowY));
                         data.receive = [args[4] == 'pd' ? `pd-${args.slice(5).join(' ')}` : `pd-${args.slice(4).join(' ')}.pd`];
                         data.canvas = layer.canvas;
                         data.layer = layer;
@@ -3704,6 +3680,7 @@ async function openPatch(content, filename) {
 
                         rootCanvas.removeChild(data.handleText);
                         parentLayer.canvas.appendChild(data.handleText);
+                        parentLayer.handles.push(data.handleText, data.handleRect);
 
                         data.windowGroup = create_item('g', {
                             id: `${data.id}_windowGroup`
@@ -3778,37 +3755,26 @@ async function openPatch(content, filename) {
                             rootCanvas.removeChild(data.windowGroup);
                             rootCanvas.appendChild(data.windowGroup);
                             data.windowGroup.style.display = visibility ? 'block' : 'none';
+
+                            if(visibility == true)
+                                windowSizeStack.push({id: data.id, width: data.layer.dimensions.width, height: data.layer.dimensions.height + 15});
+                            else
+                                windowSizeStack = windowSizeStack.filter(window => window.id !== data.id);
+                            if(windowSizeStack.length)
+                                configure_item(rootCanvas, {
+                                    viewBox: `0 0 ${Math.max(...windowSizeStack.map(window => window.width))} ${Math.max(...windowSizeStack.map(window => window.height))}`,
+                                })
                         }
 
                         data.updateWindow();
                         data.setVisibility(false);
                         data.windowGroup.appendChild(layer.canvas);
                         
-                        if (isMobile) {
-                            data.handleRect.addEventListener("touchstart", function (e) {
-                                data.setVisibility(true);
-                            });
-                            data.closeRect.addEventListener("mousedown", function (e) {
-                                data.setVisibility(false);
-                            });
-                            data.windowRect.addEventListener("touchstart", function (e) {
-                                e = e || window.event;
-                                for (const touch of e.changedTouches) {
-                                    gui_window_onmousedown(data, touch, touch.identifier);
-                                }
-                            });
-                        }
-                        else {
-                            data.handleRect.addEventListener("mousedown", function (e) {
-                                data.setVisibility(true);
-                            });
-                            data.closeRect.addEventListener("mousedown", function (e) {
-                                data.setVisibility(false);
-                            });
-                            data.windowRect.addEventListener('mousedown', function (e) {
-                                gui_window_onmousedown(data,e,0);
-                            });
-                        }
+                        addInteractionStartEvent(data.handleRect, () => data.setVisibility(true));
+                        addInteractionStartEvent(data.closeRect, () => data.setVisibility(false));
+                        addInteractionStartEvent(data.windowRect, (event, identifier) => {
+                            gui_window_onmousedown(data, event, identifier);
+                        });
 
                         gui_subscribe(data);
                     }
@@ -3833,7 +3799,7 @@ async function openPatch(content, filename) {
                             }
                             break;
                         case "bng":
-                            if (args.length >= 20) {
+                            if (args.length >= 19) {
                                 const data = {};
                                 data.x_pos = +args[2];
                                 data.y_pos = +args[3];
@@ -3852,7 +3818,8 @@ async function openPatch(content, filename) {
                                 data.bg_color = isNaN(args[16]) ? args[16] : +args[16];
                                 data.fg_color = isNaN(args[17]) ? args[17] : +args[17];
                                 data.label_color = isNaN(args[18]) ? args[18] : +args[18];
-                                data.interactive = +args[19];
+                                data.interactive = +args[19] || true;
+                                data.legacy = args.length < 20;
                                 data.id = `${data.type}_${nextHTMLID++}`;
                                 data.canvas = layer.canvas;
 
@@ -3866,25 +3833,17 @@ async function openPatch(content, filename) {
                                 data.flashed = false;
                                 data.interrupt_timer = null;
                                 data.hold_timer = null;
-                                if (isMobile) {
-                                    data.rect.addEventListener("touchstart", function () {
-                                        if(data.interactive)
-                                            gui_bng_onmousedown(data);
-                                    });
-                                }
-                                else {
-                                    data.rect.addEventListener("mousedown", function () {
-                                        if(data.interactive)
-                                            gui_bng_onmousedown(data);
-                                    });
-                                }
+
+                                addInteractionStartEvent(data.rect, () => data.interactive && gui_bng_onmousedown(data));
+
                                 // subscribe receiver
                                 gui_subscribe(data);
                                 layer.guiObjects[layer.nextGUIID] = data;
-                            }
+                            } else
+                                console.error('Invalid bng object:', args);
                             break;
                         case "tgl":
-                            if (args.length >= 20) {
+                            if (args.length >= 19) {
                                 const data = {};
                                 data.x_pos = +args[2];
                                 data.y_pos = +args[3];
@@ -3903,7 +3862,8 @@ async function openPatch(content, filename) {
                                 data.label_color = isNaN(args[16]) ? args[16] : +args[16];
                                 data.init_value = +args[17];
                                 data.default_value = +args[18];
-                                data.interactive = +args[19];
+                                data.interactive = +args[19] || true;
+                                data.legacy = args.length < 20;
                                 data.value = data.init && data.init_value ? data.default_value : 0;
                                 data.id = `${data.type}_${nextHTMLID++}`;
                                 data.canvas = layer.canvas;
@@ -3916,26 +3876,17 @@ async function openPatch(content, filename) {
                                 data.text.textContent = data.label;
 
                                 // handle event
-                                if (isMobile) {
-                                    data.rect.addEventListener("touchstart", function () {
-                                        if(data.interactive)
-                                            gui_tgl_onmousedown(data);
-                                    });
-                                }
-                                else {
-                                    data.rect.addEventListener("mousedown", function () {
-                                        if(data.interactive)
-                                            gui_tgl_onmousedown(data);
-                                    });
-                                }
+                                addInteractionStartEvent(data.rect, () => data.interactive && gui_tgl_onmousedown(data));
+
                                 // subscribe receiver
                                 gui_subscribe(data);
                                 layer.guiObjects[layer.nextGUIID] = data;
-                            }
+                            } else
+                                console.error('Invalid tgl object:', args);
                             break;
                         case "vsl":
                         case "hsl":
-                            if (args.length >= 25) {
+                            if (args.length >= 23) {
                                 const data = {};
                                 data.x_pos = +args[2];
                                 data.y_pos = +args[3];
@@ -3957,8 +3908,9 @@ async function openPatch(content, filename) {
                                 data.fg_color = isNaN(args[19]) ? args[19] : +args[19];
                                 data.label_color = isNaN(args[20]) ? args[20] : +args[20];
                                 data.default_value = +args[21];
-                                data.steady_on_click = +args[22];
-                                data.interactive = +args[24];
+                                data.steady_on_click = +args[22] || true;
+                                data.interactive = +args[24] || true;
+                                data.legacy = args.length < 24;
                                 data.value = data.init ? data.default_value : 0;
                                 data.id = `${data.type}_${nextHTMLID++}`;
                                 data.canvas = layer.canvas;
@@ -3971,25 +3923,15 @@ async function openPatch(content, filename) {
 
                                 // handle event
                                 gui_slider_check_minmax(data);
-                                if (isMobile) {
-                                    data.rect.addEventListener("touchstart", function (e) {
-                                        e = e || window.event;
-                                        if(data.interactive)
-                                            for (const touch of e.changedTouches)
-                                                gui_slider_onmousedown(data, touch, touch.identifier);
-                                    });
-                                }
-                                else {
-                                    data.rect.addEventListener("mousedown", function (e) {
-                                        e = e || window.event;
-                                        if(data.interactive)
-                                            gui_slider_onmousedown(data, e, 0);
-                                    });
-                                }
+                                addInteractionStartEvent(data.rect, (event, identifier) => {
+                                    gui_slider_onmousedown(data, event, identifier);
+                                });
+
                                 // subscribe receiver
                                 gui_subscribe(data);
                                 layer.guiObjects[layer.nextGUIID] = data;
-                            }
+                            } else
+                                console.error('Invalid slider object:', args);
                             break;
                         case "vradio":
                         case "hradio":
@@ -4025,25 +3967,16 @@ async function openPatch(content, filename) {
                                 data.text.textContent = data.label;
 
                                 // handle event
-                                if (isMobile) {
-                                    data.rect.addEventListener("touchstart", function (e) {
-                                        e = e || window.event;
-                                        if(data.interactive)
-                                            for (const touch of e.changedTouches)
-                                                gui_radio_onmousedown(data, touch);
-                                    });
-                                }
-                                else {
-                                    data.rect.addEventListener("mousedown", function (e) {
-                                        e = e || window.event;
-                                        if(data.interactive)
-                                            gui_radio_onmousedown(data, e);
-                                    });
-                                }
+                                addInteractionStartEvent(data.rect, event => {
+                                    if(data.interactive)
+                                        gui_radio_onmousedown(data, event);
+                                });
+
                                 // subscribe receiver
                                 gui_subscribe(data);
                                 layer.guiObjects[layer.nextGUIID] = data;
-                            }
+                            } else
+                                console.error('Invalid radio object:', args);
                             break;
                         case "flatgui/knob":
                             if (args.length >= 26) {
@@ -4087,26 +4020,16 @@ async function openPatch(content, filename) {
                                 data.text.textContent = data.label;
 
                                 // handle event
-                                if (isMobile) {
-                                    data.clicktarget.addEventListener("touchstart", function (e) {
-                                        e = e || window.event;
-                                        for (const touch of e.changedTouches) {
-                                            gui_knob_onmousedown(data, touch, touch.identifier);
-                                        }
-                                    });
-                                }
-                                else {
-                                    data.clicktarget.addEventListener("mousedown", function (e) {
-                                        e = e || window.event;
-                                        gui_knob_onmousedown(data, e, 0);
-                                    });
-                                }
+                                addInteractionStartEvent(data.clicktarget, (event, identifier) => {
+                                    gui_knob_onmousedown(data, event, identifier);
+                                });
 
                                 // subscribe receiver
                                 gui_subscribe(data);
                                 layer.guiObjects[layer.nextGUIID] = data;
 
-                            }
+                            } else
+                                console.error('Invalid knob object:', args);
                             break;
                         case "vu":
                             if (args.length >= 17) {
@@ -4153,7 +4076,8 @@ async function openPatch(content, filename) {
                                 gui_subscribe(data);
                                 layer.guiObjects[layer.nextGUIID] = data;
 
-                            }
+                            } else
+                                console.error('Invalid vu object:', args);
                             break;
                         case "pddplink":
                         case "pddp/pddplink":
@@ -4191,20 +4115,12 @@ async function openPatch(content, filename) {
                                 }, data.canvas);
                                 data.svgText.textContent = data.text;
 
-                                if (isMobile) {
-                                    data.svgText.addEventListener("touchstart", function (e) {
-                                        gui_link_open(data.link);
-                                    });
-                                }
-                                else {
-                                    data.svgText.addEventListener("mousedown", function (e) {
-                                        gui_link_open(data.link);
-                                    });
-                                }
+                                addInteractionStartEvent(data.svgText, () => gui_link_open(data.link));
 
                                 gui_subscribe(data);
                                 layer.guiObjects[layer.nextGUIID] = data;
-                            }
+                            } else
+                                console.error('Invalid pddplink object:', args);
                             break;
                         case "nbx":
                             if (args.length >= 27) {
@@ -4280,30 +4196,18 @@ async function openPatch(content, filename) {
                                 gui_nbx_settext(data, '' + data.value);
                                 rootCanvas.removeChild(data.svgText);
                                 layer.canvas.appendChild(data.svgText);
-
-                                
+                    
                                 data.labelText = create_item("text", gui_text(data), data.canvas);
                                 data.labelText.textContent = data.label;
             
-                                
-            
-                                if (isMobile) {
-                                    data.border.addEventListener("touchstart", function (e) {
-                                        e = e || window.event;
-                                        for (const touch of e.changedTouches) {
-                                            gui_nbx_onmousedown(data, touch, touch.identifier);
-                                        }
-                                    });
-                                }
-                                else {
-                                    data.border.addEventListener("mousedown", function (e) {
-                                        gui_nbx_onmousedown(data, e, 0);
-                                    });
-                                }
+                                addInteractionStartEvent(data.border, (event, identifier) => {
+                                    gui_nbx_onmousedown(data, event, identifier);
+                                });
             
                                 gui_subscribe(data);
                                 layer.guiObjects[layer.nextGUIID] = data;
-                            }
+                            } else
+                                console.error('Invalid nbx object:', args);
                             break;
                         case "cnv":
                             if (args.length >= 18) {
@@ -4335,7 +4239,8 @@ async function openPatch(content, filename) {
 
                                 // subscribe receiver
                                 gui_subscribe(data);
-                            }
+                            } else
+                                console.error('Invalid cnv object:', args);
                             break;
                             
                         case "ggee/image":
@@ -4443,22 +4348,13 @@ async function openPatch(content, filename) {
                                     },
                                 });
 
-                                if (isMobile) {
-                                    data.border.addEventListener("touchstart", function (e) {
-                                        e = e || window.event;
-                                        for (const touch of e.changedTouches) {
-                                            gui_image_onmousedown(data, touch, touch.identifier);
-                                        }
-                                    });
-                                }
-                                else {
-                                    data.border.addEventListener("mousedown", function (e) {
-                                        gui_image_onmousedown(data, e, 0);
-                                    });
-                                }
+                                addInteractionStartEvent(data.border, (event, identifier) => {
+                                    gui_image_onmousedown(data, event, identifier);
+                                });
 
                                 layer.guiObjects[layer.nextGUIID] = data;
-                            }
+                            } else
+                                console.error('Invalid ggee/image object:', args);
                             break;
                         case "Scope~":
                             if(args.length > 22) {
@@ -4491,7 +4387,7 @@ async function openPatch(content, filename) {
                                 data.canvas = layer.canvas;
 
                                 let nextObjId = layer.nextGUIID, nextSlot = i, depth = 0;
-                                for(;lines[nextSlot].startsWith('#X connect') == false || depth > 0; nextSlot++) {
+                                for(;(lines[nextSlot] !== undefined && lines[nextSlot].startsWith('#X connect') == false && lines[nextSlot].startsWith('#X restore') == false) || depth > 0; nextSlot++) {
                                     if(object_types.find(type=>lines[nextSlot].startsWith(type)) && depth == 0)
                                         nextObjId++;
                                     if(lines[nextSlot].startsWith('#N canvas'))
@@ -4550,7 +4446,8 @@ async function openPatch(content, filename) {
                                 layer.guiObjects[layer.nextGUIID] = data;
 
                                 gui_subscribe(data);
-                            }
+                            } else
+                                console.error('Invalid scope object:', args);
                             break;
                         case "key": {
                             let data = {};
@@ -4665,7 +4562,7 @@ async function openPatch(content, filename) {
                 }
                 break;
             case "#X array":
-                if(args.length > 7) {
+                if(args.length > 5) {
                     let data = {}
                     data.type = args[1];
                     data.name = args[2];
@@ -4680,10 +4577,11 @@ async function openPatch(content, filename) {
                     //1 - points
                     //2 - bezier curve
                     //3 - bar graph
-                    data.fillColor = args[6];
-                    data.outlineColor = args[7];
+                    data.fillColor = args[6] || '#000';
+                    data.outlineColor = args[7] || '#000';
                     data.id = `array_${nextHTMLID++}`;
                     data.canvas = layer.canvas;
+                    data.legacy = args.length < 7
                     data.layer = layer;
                     if(lines[i+1].startsWith('#A '))
                         data.nums = lines[i+1].replace(/\n/g,' ').split(' ').slice(1).map(num=>+num);
@@ -4753,7 +4651,8 @@ async function openPatch(content, filename) {
                     layer.arrays.push(data);
                     layer.guiObjects[layer.nextGUIID] = data;
                     gui_subscribe(data);
-                }
+                } else
+                    console.error('Invalid array:', args);
                 break;
             case "#X text":
                 if (args.length > 4) {
@@ -4779,7 +4678,8 @@ async function openPatch(content, filename) {
                         text.textContent = data.comment[i];
                         data.texts.push(text);
                     }
-                }
+                } else
+                    console.error('Invalid text:', args);
                 break;
             case "#X msg":
                 if(args.length > 3) {
@@ -4787,7 +4687,7 @@ async function openPatch(content, filename) {
                     data.type = args[1];
                     data.x_pos = +args[2];
                     data.y_pos = +args[3];
-                    data.text = args.slice(4).join(' ').replace(/\\\; /g,';\n').replace(/ ,/g,',').replace(/\\\$/g,'$');
+                    data.text = args.slice(4).join(' ').replace(/( )?\\\; /g,';\n').replace(/ ,/g,',').replace(/\\\$/g,'$');
                     data.id = `${data.type}_${nextHTMLID++}`;
                     data.receive = [null];
                     data.shortCircuit = false;
@@ -4797,7 +4697,7 @@ async function openPatch(content, filename) {
                     layer.messages.push(data);
 
                     let nextObjId = layer.nextGUIID, nextSlot = i, depth = 0;
-                    for(;lines[nextSlot].startsWith('#X connect') == false || depth > 0; nextSlot++) {
+                    for(;(lines[nextSlot] !== undefined && lines[nextSlot].startsWith('#X connect') == false && lines[nextSlot].startsWith('#X restore') == false) || depth > 0; nextSlot++) {
                         if(object_types.find(type=>lines[nextSlot].startsWith(type)) && depth == 0)
                             nextObjId++;
                         if(lines[nextSlot].startsWith('#N canvas'))
@@ -4813,6 +4713,7 @@ async function openPatch(content, filename) {
                         id: `${data.id}_size`,
                         class: "unclickable",
                     }, rootCanvas);
+                    rootCanvas.removeChild(data.sizeText);
                     data.svgText = [];
 
                     
@@ -4825,8 +4726,10 @@ async function openPatch(content, filename) {
 
                     data.render = (data) => {
                         let textLines = data.text.split('\n');
+                        rootCanvas.appendChild(data.sizeText);
                         data.sizeText.textContent = new Array(+widthOverride || Math.max(2,textLines.reduce((p,c)=>c.length>p?c.length:p,0))).fill('A').join('');
                         let width = data.sizeText.getComputedTextLength() + 5, height = font_height_map()[layer.fontSize] * textLines.length + 4;
+                        rootCanvas.removeChild(data.sizeText);
                         configure_item(data.border, {d: `M ${data.x_pos} ${data.y_pos} h ${width+4} l -4 4 v ${height-8} l 4 4 H ${data.x_pos} V ${data.y_pos}`}); 
                         for(let i = 0; i < textLines.length; i++) {
                             if(!data.svgText[i]) {
@@ -4849,42 +4752,34 @@ async function openPatch(content, filename) {
 
                     data.render(data);
                     
-                    if (isMobile) {
-                        data.border.addEventListener("touchstart", function (e) {
-                            gui_send('Bang', [data.clickSend]);
-                            configure_item(data.border,{"stroke-width":"4"});
-                            setTimeout(()=>configure_item(data.border,{"stroke-width":"0"}), 100);
-                        });
-                    }
-                    else {
-                        data.border.addEventListener("mousedown", function (e) {
-                            gui_send('Bang', [data.clickSend]);
-                            configure_item(data.border,{"stroke-width":"4"});
-                            setTimeout(()=>configure_item(data.border,{"stroke-width":"0"}), 100);
-                        });
-                    }
+                    addInteractionStartEvent(data.border, () => {
+                        gui_send('Bang', [data.clickSend]);
+                        configure_item(data.border,{"stroke-width":"4"});
+                        setTimeout(()=>configure_item(data.border,{"stroke-width":"0"}), 100);
+                    });
 
                     layer.guiObjects[layer.nextGUIID] = data;
                     gui_subscribe(data);
-                }
+                } else
+                    console.error('Invalid msg:', args);
                 break;
             case "#X floatatom":
             case "#X symbolatom":
-                if (args.length > 13) {
+                if (args.length > 3) {
                     const data = {};
                     data.type = args[1];
                     data.x_pos = +args[2];
                     data.y_pos = +args[3];
-                    data.width = Math.max(2,+args[4]);
-                    data.min = +args[5];
-                    data.max = +args[6];
-                    data.labelSide = +args[7];
-                    data.label = args[8] === "-" ? "" : args[8];
-                    data.receive = args[9] === "-" ? [null] : [args[9]];
-                    data.send = args[10] === "-" ? [null] : [args[10]];
-                    data.exclusive = +args[11];
-                    data.typedMinMax = +args[12];
-                    data.interactive = +args[13];
+                    data.width = Math.max(2,+args[4]) || 3;
+                    data.min = +args[5] || 0;
+                    data.max = +args[6] || 0;
+                    data.labelSide = +args[7] || 0;
+                    data.label = (args[8] === "-" ? "" : args[8]) || "";
+                    data.receive = (args[9] === "-" ? [null] : [args[9]]) || [null];
+                    data.send = (args[10] === "-" ? [null] : [args[10]]) || [null];
+                    data.exclusive = +args[11] || false;
+                    data.typedMinMax = +args[12] || false;
+                    data.interactive = +args[13] || true;
                     data.id = `${data.type}_${nextHTMLID++}`;
                     data.canvas = layer.canvas;
 
@@ -4931,30 +4826,23 @@ async function openPatch(content, filename) {
                         'font-size': pd_fontsize_to_gui_fontsize(layer.fontSize) + 'px',
                         id: `${data.id}_label`,
                         class: 'unclickable',
-                    }, data.canvas);
+                    }, rootCanvas);
                     data.labelText.textContent = data.label;
                     if(data.labelSide == 0)
                         configure_item(data.labelText, {transform: `translate(-${data.labelText.getComputedTextLength()})`});
                     if(data.labelSide == 1)
                         configure_item(data.labelText, {transform: `translate(${width+1})`});
+                    rootCanvas.removeChild(data.labelText);
+                    layer.canvas.appendChild(data.labelText);
 
-                    if (isMobile) {
-                        data.border.addEventListener("touchstart", function (e) {
-                            e = e || window.event;
-                            for (const touch of e.changedTouches) {
-                                gui_atom_onmousedown(data, touch, touch.identifier);
-                            }
-                        });
-                    }
-                    else {
-                        data.border.addEventListener("mousedown", function (e) {
-                            gui_atom_onmousedown(data, e, 0);
-                        });
-                    }
+                    addInteractionStartEvent(data.border, (event, identifier) => {
+                        gui_atom_onmousedown(data, event, event.identifier);
+                    });
 
                     gui_subscribe(data);
                     layer.guiObjects[layer.nextGUIID] = data;
-                }
+                } else
+                    console.error('Invalid atom:', args);
                 break;
             case "#X dropdown":
                 if(args.length >= 11) {
@@ -5073,18 +4961,9 @@ async function openPatch(content, filename) {
                                 text.textContent = data.options[i];
 
                                 let option = i; // necessary to create local variable because i will get overwritten
-                                if (isMobile) {
-                                    box.addEventListener("touchstart", function (e) {
-                                        e = e || window.event;
-                                        for (const touch of e.changedTouches)
-                                            gui_dropdown_option_onmousedown(data, i, touch, touch.identifier);
-                                    });
-                                }
-                                else {
-                                    box.addEventListener("mousedown", function (e) {
-                                        gui_dropdown_option_onmousedown(data, i, e, 0);
-                                    });
-                                }
+                                addInteractionStartEvent(box, (event, identifier) => {
+                                    gui_dropdown_option_onmousedown(data, option, event, identifier);
+                                });
                                 data.optionsGUI.push({box, text});
                             }
                         }
@@ -5092,23 +4971,15 @@ async function openPatch(content, filename) {
 
                     data.render();
 
-                    if (isMobile) {
-                        data.box.addEventListener("touchstart", function (e) {
-                            e = e || window.event;
-                            for (const touch of e.changedTouches)
-                                gui_dropdown_onmousedown(data, touch, touch.identifier);
-                        });
-                    }
-                    else {
-                        data.box.addEventListener("mousedown", function (e) {
-                            gui_dropdown_onmousedown(data, e, 0);
-                        });
-                    }
+                    addInteractionStartEvent(data.box, (event, identifier) => {
+                        gui_dropdown_onmousedown(data, event, identifier);
+                    });
 
                     gui_subscribe(data);
                     layer.guiObjects[layer.nextGUIID] = data;
                     gui_dropdown_dropdowns.push(data);
-                }
+                } else
+                    console.error('Invalid dropdown:', args);
                 break;
             case "#X connect":
                 if (args.length > 5) {
@@ -5198,6 +5069,8 @@ async function openPatch(content, filename) {
         }
     }
 
+    windowSizeStack.push({id: '', width: layers[1].dimensions.width, height: layers[1].dimensions.height});
+
     document.getElementById('loadingstage').innerHTML=`Starting Pd-L2Ork Engine`;
     await new Promise(resolve => setTimeout(resolve, 10));
 
@@ -5257,9 +5130,24 @@ function uploadPatch(file) {
 
 let cachedData = {};
 async function getPatchData(url) {
-    if(!cachedData[url])
-        cachedData[url] = await (await fetch(`/api/patch/?url=${encodeURIComponent(url.replace(/[^/]+\/+..\/+/g,''))}`,{method: 'GET'})).json();
-    return cachedData[url];
+    return (await getPatchDatas([url]))[0];
+}
+async function getPatchDatas(urls) {
+    urls = urls.map(url => url.replace(/[^/]+\/+..\/+/g,''));
+    let missingPatches = urls.filter(url => cachedData[url] === undefined);
+    let data = await fetch('/api/patch', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ urls: missingPatches }),
+    }).then(result => result.json());
+    
+    for(let patch in data)
+        cachedData[patch] = data[patch];
+
+    return urls.map(url => cachedData[url]);
 }
 
 // called after Module.mainInit() is called
@@ -5273,14 +5161,11 @@ async function init() {
     }
     if (patchURL) {
         filename = patchURL.split("/").pop();
-        const patchData = await getPatchData(patchURL);
-        if (patchData.error) {
+        content = await getPatchData(patchURL);
+        if(!content.startsWith('#')) {
             alert(`Failed to access the file ${patchURL}`);
             loading.style.display = "none";
             return;
-        }
-        else {
-            content = patchData.content;
         }
     }
     if (!content) {

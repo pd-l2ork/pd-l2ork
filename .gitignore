@@ -40,5 +40,5 @@ CVS
 *.dmg
 .vscode/
 certs/*
-logs/*
 *.app
+logs
