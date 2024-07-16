@@ -1,2 +1,8 @@
 docker-compose.yml
 *.Dockerfile
+emscripten/projects/WebPdL2Ork/public/*
+!emscripten/projects/WebPdL2Ork/public/js
+!emscripten/projects/WebPdL2Ork/public/emscripten
+!emscripten/projects/WebPdL2Ork/public/css
+!emscripten/projects/WebPdL2Ork/public/default.pd
+!emscripten/projects/WebPdL2Ork/public/favicon.ico

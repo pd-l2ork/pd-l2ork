@@ -1,18 +1,23 @@
 const axios = require("axios");
 const express = require("express");
-const bodyParser = require("body-parser");
+const compression = require("compression");
 const app = express();
 const PORT = process.env.PORT || 3000;
 const PATCH_PATH = process.env.PATCH_PATH || 'public';
+const STATIC_OPTIONS = {
+  maxAge: process.env.DISABLE_CACHE ? undefined : '7d',
+};
 
-// Body parsing for GET paramaters
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+// Body parsing for JSON
+app.use(express.json());
+app.use(compression({ filter: () => true }));
 
 // File search paths
-app.use(express.static("public"));
-app.use(express.static("public/emscripten"));
-app.use(express.static(PATCH_PATH));
+// While it may seem like a good idea to change the order of these to have better prioritization of files (ie bind mount patches vs
+// baked patches, this completely breaks everything...)
+app.use(express.static("public", STATIC_OPTIONS));
+app.use(express.static("public/emscripten", STATIC_OPTIONS));
+app.use(express.static(PATCH_PATH, STATIC_OPTIONS));
 
 // Main views
 app.get("/", (req, res) => {
@@ -20,8 +25,8 @@ app.get("/", (req, res) => {
 });
 
 // Fetching patches
-app.get("/api/patch", async (req, res) => {
-  let urls = req.query.url;
+app.post("/api/patch", async (req, res) => {
+  let urls = req.body.urls;
   if(typeof urls === 'string')
     urls = [urls];
 
@@ -45,9 +50,8 @@ app.get("/api/patch", async (req, res) => {
   })))));
 });
 
-app.get("/api/file", async (req, res) => {
-
-  let urls = req.query.url;
+app.post("/api/file", async (req, res) => {
+  let urls = req.body.urls;
   if(typeof urls === 'string')
     urls = [urls];
 
