@@ -84,7 +84,7 @@ PD_FILES = \
     ../pd/src/x_list.c ../pd/src/x_midi.c ../pd/src/x_misc.c \
     ../pd/src/x_net.c ../pd/src/x_preset.c ../pd/src/x_scalar.c \
     ../pd/src/x_text.c ../pd/src/x_time.c ../pd/src/x_vexp.c \
-    ../pd/src/x_vexp_fun.c ../pd/src/x_vexp_if.c \
+    ../pd/src/x_vexp_fun.c ../pd/src/x_vexp_if.c ../pd/src/x_file.c \
     libpd_wrapper/s_libpdmidi.c libpd_wrapper/x_libpdreceive.c \
     libpd_wrapper/z_hooks.c libpd_wrapper/z_libpd.c
 

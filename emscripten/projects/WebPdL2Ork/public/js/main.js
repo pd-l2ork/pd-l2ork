@@ -1329,7 +1329,30 @@ var Module = {
                                     if(list[0] >= 0)
                                         data.resize(list[0]);
                                     break;
-
+                                case "edit":
+                                    data.editable = list[0];
+                                    break;
+                                case "style":
+                                    data.displayMode = list[0];
+                                    data.redraw();
+                                    break;
+                                case "width":
+                                    data.width = list[0];
+                                    data.redraw();
+                                    break;
+                                case "color": // Duplicated for pure-data compatibility
+                                case "outlinecolor":
+                                    data.outlineColor = list[0];
+                                    data.redraw();
+                                    break;
+                                case "fillcolor":
+                                    data.fillColor = list[0];
+                                    data.redraw();
+                                    break;
+                                case "vis":
+                                    data.visible = list[0];
+                                    data.redraw();
+                                    break;
                             }
                             break;
                         case "dropdown":
@@ -1798,21 +1821,19 @@ function iemgui_fontfamily(font) {
     return family;
 }
 
-function colfromload(col, legacy) { // decimal to hex color
+function colfromload(col) { // decimal to hex color
     if (typeof col === "string")
         return col;
-    col = col >= 0 ? vu_colors[col] : -1 - col;
 
-    let bitsPerChannel = legacy === true ? 6 : 8;
+    let bitsPerChannel = col >= 0 ? 8 : 6;
+
+    col = col >= 0 ? vu_colors[col] : -1 - col;
 
     const r = (col & ((1 << bitsPerChannel) - 1)) << (8 - bitsPerChannel);
     const g = (col & ((1 << (bitsPerChannel * 2)) - 1)) << (8 - bitsPerChannel) * 2;
     const b = (col & ((1 << (bitsPerChannel * 3)) - 1)) << (8 - bitsPerChannel) * 3;
 
-    col = r | g | b;
-
-    // col = ((col & 0x3f000) << 6) | ((col & 0xfc0) << 4) | ((col & 0x3f) << 2);
-    return "#" + ("000000" + col.toString(16)).slice(-6);
+    return "#" + (r | g | b).toString(16).slice(-6).padStart(6,'0');
 }
 
 function gui_subscribe(data) {
@@ -1891,7 +1912,7 @@ function gui_rect(data) {
         y: data.y_pos,
         width: data.size,
         height: data.size,
-        fill: colfromload(data.bg_color, data.legacy),
+        fill: colfromload(data.bg_color),
         id: `${data.id}_rect`,
         class: "border clickable"
     }
@@ -1904,7 +1925,7 @@ function gui_text(data) {
         "font-family": iemgui_fontfamily(data.font),
         "font-weight": "normal",
         "font-size": `${data.fontsize}px`,
-        fill: colfromload(data.label_color, data.legacy),
+        fill: colfromload(data.label_color),
         transform: `translate(0, ${data.fontsize / 2 * 0.6})`, // note: modified
         id: `${data.id}_text`,
         class: "unclickable"
@@ -1968,7 +1989,7 @@ function gui_bng_update_circle(data) {
     if (data.flashed) {
         data.flashed = false;
         configure_item(data.circle, {
-            fill: colfromload(data.fg_color, data.legacy),
+            fill: colfromload(data.fg_color),
         });
         if (data.interrupt_timer) {
             clearTimeout(data.interrupt_timer);
@@ -1984,7 +2005,7 @@ function gui_bng_update_circle(data) {
     else {
         data.flashed = true;
         configure_item(data.circle, {
-            fill: colfromload(data.fg_color, data.legacy),
+            fill: colfromload(data.fg_color),
         });
     }
     if (data.hold_timer) {
@@ -2022,7 +2043,7 @@ function gui_tgl_cross1(data) {
     const points = [p1, p2, p3, p4].join(" ");
     return {
         points: points,
-        stroke: colfromload(data.fg_color, data.legacy),
+        stroke: colfromload(data.fg_color),
         "stroke-width": w,
         fill: "none",
         display: data.value ? "inline" : "none",
@@ -2044,7 +2065,7 @@ function gui_tgl_cross2(data) {
     const points = [p1, p2, p3, p4].join(" ");
     return {
         points: points,
-        stroke: colfromload(data.fg_color, data.legacy),
+        stroke: colfromload(data.fg_color),
         "stroke-width": w,
         fill: "none",
         display: data.value ? "inline" : "none",
@@ -2091,7 +2112,7 @@ function gui_slider_rect(data) {
         y: y,
         width: width,
         height: height,
-        fill: colfromload(data.bg_color, data.legacy),
+        fill: colfromload(data.bg_color),
         id: `${data.id}_rect`,
         class: "border clickable"
     }
@@ -2139,7 +2160,7 @@ function gui_slider_indicator(data) {
         y1: p.y1,
         x2: p.x2,
         y2: p.y2,
-        stroke: colfromload(data.fg_color, data.legacy),
+        stroke: colfromload(data.fg_color),
         "stroke-width": 3,
         fill: "none",
         id: `${data.id}_indicator`,
@@ -2291,7 +2312,7 @@ function gui_radio_rect(data) {
         y: data.y_pos,
         width: width,
         height: height,
-        fill: colfromload(data.bg_color, data.legacy),
+        fill: colfromload(data.bg_color),
         id: `${data.id}_rect`,
         class: "border clickable"
     }
@@ -2314,8 +2335,8 @@ function gui_radio_button(data, p1, p2, p3, p4, button_index, state) {
         y: p2,
         width: p3 - p1,
         height: p4 - p2,
-        fill: colfromload(data.fg_color, data.legacy),
-        stroke: colfromload(data.fg_color, data.legacy),
+        fill: colfromload(data.fg_color),
+        stroke: colfromload(data.fg_color),
         display: state ? "inline" : "none",
         id: `${data.id}_button_${button_index}`,
         class: "unclickable"
@@ -2398,8 +2419,8 @@ function gui_radio_update_button(data) {
         display: "none"
     });
     configure_item(data.buttons[data.value], {
-        fill: colfromload(data.fg_color, data.legacy),
-        stroke: colfromload(data.fg_color, data.legacy),
+        fill: colfromload(data.fg_color),
+        stroke: colfromload(data.fg_color),
         display: "inline"
     });
     data.drawn = data.value;
@@ -2475,7 +2496,7 @@ function gui_knob_line(data) {
     let endPos = polarToCartesian(data.size_x/2, data.size_y/2, data.size_x/2, 193 + gui_knob_vto_gui(data) * (528 - 193));
     return { // indicator
         "stroke-width": data.dial_width,
-        stroke: colfromload(data.fg_color, data.legacy),
+        stroke: colfromload(data.fg_color),
         x1: data.x_pos + data.size_x/2,
         x2: data.x_pos + endPos.x,
         y1: data.y_pos + data.size_y/2,
@@ -2486,7 +2507,7 @@ function gui_knob_extracircle(data) {
     return {
         "knob_w": data.size_x,
         fill: "none",
-        stroke: colfromload(data.bg_color, data.legacy),
+        stroke: colfromload(data.bg_color),
         "stroke-width": data.on_width,
         "shape-rendering": "auto",
         "d": describeArc(data.x_pos + data.size_x/2, data.y_pos + data.size_y/2, data.size_x/2 - 1, 193, 193 + gui_knob_vto_gui(data) * (528 - 193)),
@@ -2586,7 +2607,7 @@ function gui_vumeter_box(data) {
         width: data.width,
         height: data.height,
         stroke: '#000',
-        fill: colfromload(data.bg_color, data.legacy),
+        fill: colfromload(data.bg_color),
         id: data.id + '_box',
     };
 }
@@ -2755,6 +2776,9 @@ function gui_canvas_drawLabels(data) {
 }
 
 function gui_array_onmousedown(data, e, id) {
+    if(!data.editable)
+        return;
+
     let p = gui_mousepoint(e, data.canvas);
     let x = Math.floor(screenToCoord(data.coords.l, data.coords.r, data.coords.w, p.x)) + 1;
     let y = screenToCoord(data.coords.t, data.coords.b, data.coords.h, p.y);
@@ -3257,8 +3281,8 @@ function gui_cnv_visible_rect(data) {
         y: data.y_pos,
         width: data.width,
         height: data.height,
-        fill: colfromload(data.bg_color, data.legacy),
-        stroke: colfromload(data.bg_color, data.legacy),
+        fill: colfromload(data.bg_color),
+        stroke: colfromload(data.bg_color),
         id: `${data.id}_visible_rect`,
         class: "unclickable"
     }
@@ -3271,7 +3295,7 @@ function gui_cnv_selectable_rect(data) {
         width: data.size,
         height: data.size,
         fill: "none",
-        stroke: colfromload(data.bg_color, data.legacy),
+        stroke: colfromload(data.bg_color),
         id: `${data.id}_selectable_rect`,
         class: "unclickable"
     }
@@ -3819,7 +3843,6 @@ async function openPatch(content, filename) {
                                 data.fg_color = isNaN(args[17]) ? args[17] : +args[17];
                                 data.label_color = isNaN(args[18]) ? args[18] : +args[18];
                                 data.interactive = +args[19] || true;
-                                data.legacy = args.length < 20;
                                 data.id = `${data.type}_${nextHTMLID++}`;
                                 data.canvas = layer.canvas;
 
@@ -3863,7 +3886,6 @@ async function openPatch(content, filename) {
                                 data.init_value = +args[17];
                                 data.default_value = +args[18];
                                 data.interactive = +args[19] || true;
-                                data.legacy = args.length < 20;
                                 data.value = data.init && data.init_value ? data.default_value : 0;
                                 data.id = `${data.type}_${nextHTMLID++}`;
                                 data.canvas = layer.canvas;
@@ -3910,7 +3932,6 @@ async function openPatch(content, filename) {
                                 data.default_value = +args[21];
                                 data.steady_on_click = +args[22] || true;
                                 data.interactive = +args[24] || true;
-                                data.legacy = args.length < 24;
                                 data.value = data.init ? data.default_value : 0;
                                 data.id = `${data.type}_${nextHTMLID++}`;
                                 data.canvas = layer.canvas;
@@ -4579,9 +4600,11 @@ async function openPatch(content, filename) {
                     //3 - bar graph
                     data.fillColor = args[6] || '#000';
                     data.outlineColor = args[7] || '#000';
+                    data.width = 1;
+                    data.visible = true;
+                    data.editable = true;
                     data.id = `array_${nextHTMLID++}`;
                     data.canvas = layer.canvas;
-                    data.legacy = args.length < 7
                     data.layer = layer;
                     if(lines[i+1].startsWith('#A '))
                         data.nums = lines[i+1].replace(/\n/g,' ').split(' ').slice(1).map(num=>+num);
@@ -4589,10 +4612,7 @@ async function openPatch(content, filename) {
                         data.nums = (new Array(data.size)).fill(0);
                     data.path = create_item('path', {
                         id: data.id,
-                        stroke: data.outlineColor,
-                        "stroke-width": "1",
                         "shape-rendering": "auto",
-                        fill: 'none'
                     }, data.canvas);
                     if(layer.arrays.length) {
                         data.canvas.removeChild(data.path);
@@ -4618,6 +4638,11 @@ async function openPatch(content, filename) {
                         gui_canvas_drawLabels(data.layer);
                     }
                     data.redraw = () => {
+                        if(!data.visible) {
+                            configure_item(data.path, { d: '' });
+                            return;
+                        }
+
                         let path = data.displayMode == 0 ? 'M ' : '';
                         let c = data.coords;
                         let lastX = -1;
@@ -4640,9 +4665,12 @@ async function openPatch(content, filename) {
                                     path += `M ${curX} ${coordToScreen(c.t,c.b,c.h,data.nums[i])} H ${coordToScreen(c.l,c.r,c.w,i + 1)} V ${c.h} H ${curX} Z `;
                             }
                         }
-                        if(data.displayMode == 3)
-                            configure_item(data.path, {fill: data.fillColor});
-                        configure_item(data.path,{d: path});
+                        configure_item(data.path, {
+                            d: path,
+                            stroke: colfromload(data.outlineColor),
+                            fill: data.displayMode == 3 ? colfromload(data.fillColor) : 'none',
+                            'stroke-width': data.displayMode == 3 ? 1 : data.width,
+                        });
                     }
                     data.onmousedown = gui_array_onmousedown;
                     data.onmouseup = gui_array_onmouseup;
@@ -4836,7 +4864,7 @@ async function openPatch(content, filename) {
                     layer.canvas.appendChild(data.labelText);
 
                     addInteractionStartEvent(data.border, (event, identifier) => {
-                        gui_atom_onmousedown(data, event, event.identifier);
+                        gui_atom_onmousedown(data, event, identifier);
                     });
 
                     gui_subscribe(data);

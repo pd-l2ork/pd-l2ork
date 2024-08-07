@@ -31,6 +31,16 @@
  *              - priority of ',' and '=' was switched ot fix the bug of using store "=" in
  *                functions with multiple arguments, which caused an error during execution.
  *              - The number of inlet and outlets (MAX_VARS) is now set at 100
+ *
+ *  Jan 2018, Version 0.56
+ *              -fexpr~ now accepts a float in its first input
+ *              -Added avg() and Avg() back to the list of functions
+ *
+ * Oct 2020, Version 0.57
+ *		- fixed a bug in fact()
+ *		- fixed the bad lvalue bug - "4 + 5 = 3" was not caught before
+ *		- fact() (factorial) now calculates and returns its value in double
+ *		- Added mtof(), mtof(), dbtorms(), rmstodb(), powtodb(), dbtopow()
  */
 
 /*
@@ -81,6 +91,7 @@ static struct ex_ex *ex_lex(struct expr *expr, long int *n);
 struct ex_ex *ex_match(struct ex_ex *eptr, long int op);
 struct ex_ex *ex_parse(struct expr *expr, struct ex_ex *iptr,
                                         struct ex_ex *optr, long int *argc);
+static int ex_checklval (struct ex_ex *eptr);
 struct ex_ex *ex_eval(struct expr *expr, struct ex_ex *eptr,
                                                 struct ex_ex *optr, int i);
 
@@ -287,7 +298,7 @@ expr_donew(struct expr *expr, int ac, t_atom *av)
                         goto error;
                 ret = ex_parse(expr,
                         list, expr->exp_stack[expr->exp_nexpr - 1], (long *)0);
-                if (!ret)
+                if (!ret || ex_checklval(expr->exp_stack[expr->exp_nexpr - 1]))
                         goto error;
                 fts_free(list);
         }
@@ -730,6 +741,35 @@ ex_parse(struct expr *x, struct ex_ex *iptr, struct ex_ex *optr, long int *argc)
                 optr->ex_end = eptr;
         return (eptr);
 }
+
+/*
+ * ex_checklval -- check the left value for all stores ('=')
+ *                 all left values should either be a variable or a table
+ *                 return 1 if syntax error
+ *                 return 0 on sucess
+ */
+
+static int
+ex_checklval(struct ex_ex *eptr)
+{
+        struct ex_ex *extmp;
+
+        extmp = eptr->ex_end;
+        while (eptr->ex_type && eptr != extmp) {
+				if (eptr->ex_type == ET_OP && eptr->ex_op == OP_STORE) {
+                        if (eptr[1].ex_type != ET_VAR &&
+                            eptr[1].ex_type != ET_SI &&
+                            eptr[1].ex_type != ET_TBL) {
+                                post("Bad left value: ");
+                                ex_print(eptr);
+                               return (1);
+                         }
+				}
+				eptr++;
+        }
+        return (0);
+}
+
 
 /*
  * this is the devide zero check for a a non devide operator
