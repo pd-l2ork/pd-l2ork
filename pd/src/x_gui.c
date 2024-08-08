@@ -251,7 +251,9 @@ static void gfxstub_setup(void)
 
 /* -------------------------- file dialog ------------------------------ */
 #define FILEDIALOG_OPEN 0
-#define FILEDIALOG_SAVE 1
+#define FILEDIALOG_OPENFOLDER 1
+#define FILEDIALOG_OPENMULTI 2
+#define FILEDIALOG_SAVE 3
 
 static t_class *filedialog_class;
 
@@ -308,6 +310,10 @@ static void filedialog_thread(struct filedialog_state *args)
     char* result;
     if(args->mode == FILEDIALOG_OPEN)
         result = tinyfd_openFileDialog("Choose a File", args->working_dir, 0, NULL, NULL, 0);
+    else if(args->mode == FILEDIALOG_OPENFOLDER)
+        result = tinyfd_selectFolderDialog("Choose a Folder", args->working_dir);
+    else if(args->mode == FILEDIALOG_OPENMULTI)
+        result = tinyfd_openFileDialog("Choose Files", args->working_dir, 0, NULL, NULL, 1);
     else
         result = tinyfd_saveFileDialog("Choose a Location", args->working_dir, 0, NULL, NULL);
 
@@ -343,13 +349,13 @@ static void filedialog_perform(int mode, t_symbol *callback_name, t_symbol *init
 #else
 static void filedialog_perform(int mode, t_symbol *callback_name, t_symbol *initial_dir)
 {
-    gui_vmess("file_dialog", "xsss", NULL, mode == FILEDIALOG_OPEN ? "open" : "close", callback_name->s_name, initial_dir->s_name);
+    gui_vmess("file_dialog", "xsss", NULL, mode == FILEDIALOG_SAVE ? "save" : "open", callback_name->s_name, initial_dir->s_name);
 }
 #endif
 
-static void filedialog_trigger(t_filedialog *x, t_symbol *mode, t_symbol *callback_name, t_symbol *initial_dir)
+static void filedialog_trigger(t_filedialog *x, t_float mode, t_symbol *callback_name, t_symbol *initial_dir)
 {
-    filedialog_perform(strcmp(mode->s_name, "open") == 0 ? FILEDIALOG_OPEN : FILEDIALOG_SAVE, callback_name, initial_dir);
+    filedialog_perform((int)mode, callback_name, initial_dir);
 }
 
 static void filedialog_setup(void)
@@ -358,7 +364,7 @@ static void filedialog_setup(void)
         (t_newmethod)filedialog_new, (t_method)filedialog_free,
         sizeof(t_filedialog), 0, 0);
     class_addmethod(filedialog_class, (t_method)filedialog_trigger,
-        gensym("trigger"), A_DEFSYMBOL, A_DEFSYMBOL, A_DEFSYMBOL, 0);
+        gensym("trigger"), A_FLOAT, A_DEFSYMBOL, A_DEFSYMBOL, 0);
 
     // We will create exactly one filedialog object, for the purpose
     // of receiving messages from pdgui.js that will select the proper
@@ -377,13 +383,15 @@ typedef struct _openpanel
     t_object x_obj;
     t_canvas *x_canvas;
     t_symbol *x_s;
+    int x_mode;
 } t_openpanel;
 
-static void *openpanel_new( void)
+static void *openpanel_new(t_floatarg mode)
 {
     char buf[50];
     t_openpanel *x = (t_openpanel *)pd_new(openpanel_class);
     x->x_canvas = canvas_getcurrent();
+    x->x_mode = (mode < 0 || mode > 2) ? 0 : mode;
     sprintf(buf, "d%zx", (t_uint)x);
     x->x_s = gensym(buf);
     pd_bind(&x->x_obj.ob_pd, x->x_s);
@@ -394,10 +402,11 @@ static void *openpanel_new( void)
 static void openpanel_symbol(t_openpanel *x, t_symbol *s)
 {
     char *path = (s && s->s_name) ? s->s_name : "$pd_opendir";
-    gui_vmess("gui_openpanel", "xss",
+    gui_vmess("gui_openpanel", "xssi",
         x->x_canvas,
         x->x_s->s_name,
-        path);
+        path,
+        x->x_mode);
 }
 
 static void openpanel_bang(t_openpanel *x)
@@ -405,9 +414,12 @@ static void openpanel_bang(t_openpanel *x)
     openpanel_symbol(x, &s_);
 }
 
-static void openpanel_callback(t_openpanel *x, t_symbol *s)
+static void openpanel_callback(t_openpanel *x, t_symbol *s, int argc, t_atom *argv)
 {
-    outlet_symbol(x->x_obj.ob_outlet, s);
+    if(x->x_mode != 2)
+        outlet_symbol(x->x_obj.ob_outlet, argv->a_w.w_symbol);
+    else
+        outlet_list(x->x_obj.ob_outlet, s, argc, argv);
 }
 
 
@@ -420,11 +432,11 @@ static void openpanel_setup(void)
 {
     openpanel_class = class_new(gensym("openpanel"),
         (t_newmethod)openpanel_new, (t_method)openpanel_free,
-        sizeof(t_openpanel), 0, 0);
+        sizeof(t_openpanel), 0, A_DEFFLOAT, 0);
     class_addbang(openpanel_class, openpanel_bang);
     class_addsymbol(openpanel_class, openpanel_symbol);
     class_addmethod(openpanel_class, (t_method)openpanel_callback,
-        gensym("callback"), A_SYMBOL, 0);
+        gensym("callback"), A_GIMME, 0);
 }
 
 /* -------------------------- savepanel ------------------------------ */

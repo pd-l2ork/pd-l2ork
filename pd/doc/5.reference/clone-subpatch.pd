@@ -14,12 +14,13 @@
 #X text 32 26 This is the subpatch for the clone help patch. It plays
 tones at pitches sent to its inlet.;
 #X obj 333 303 float \$1;
-#X obj 333 281 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
--1 -1;
+#X obj 333 281 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000 1;
 #X obj 333 325 print;
 #X text 129 306 You can access the instance number within the patch:
 , f 27;
 #X connect 0 0 8 0;
+#X connect 0 0 14 0;
 #X connect 1 0 3 0;
 #X connect 3 0 2 0;
 #X connect 4 0 5 0;

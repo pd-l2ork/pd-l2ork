@@ -8859,13 +8859,13 @@ exports.file_dialog_obj = file_dialog_obj;
 // ico@vt.edu 2021-10-31: we expose open and save panels
 // for the coll and other cyclone objects
 
-function gui_openpanel(cid, target, path) {
+function gui_openpanel(cid, target, path, mode) {
     //post("gui_openpanel "+cid+" "+target+" "+path);
     path = path || "./";
     if(nw_os_is_osx)
         if(!path.endsWith('/'))
             path += '/';
-    pdsend(file_dialog_object, "trigger", "open", target, path);
+    pdsend(file_dialog_object, "trigger", +mode, target, path);
 }
 
 exports.gui_openpanel = gui_openpanel;
@@ -8875,14 +8875,13 @@ function gui_savepanel(cid, target, path) {
     if(nw_os_is_linux)
         if(!path.endsWith('/'))
             path += '/';
-    pdsend(file_dialog_object, "trigger", "save", target, path || "./");
+    pdsend(file_dialog_object, "trigger", 3, target, path || "./");
 }
 
 exports.gui_savepanel = gui_savepanel;
 
-function file_dialog_callback(target, file) {
-    pdsend(target, "callback",
-        enquote(defunkify_windows_path(file)));
+function file_dialog_callback(target, files) {
+    pdsend(target, "callback", ...files.split('|').map(file => enquote(defunkify_windows_path(file))));
 }
 
 exports.file_dialog_callback = file_dialog_callback;

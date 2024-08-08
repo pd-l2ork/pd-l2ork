@@ -134,6 +134,7 @@ set(PD_SOURCES
     ../pd/src/x_connective.c
     ../pd/src/x_gui.c
     ../pd/src/tinyfd/tinyfiledialogs.c
+    ../pd/src/x_file.c
     ../pd/src/x_interface.c
     ../pd/src/x_list.c
     ../pd/src/x_midi.c

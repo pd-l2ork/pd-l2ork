@@ -675,7 +675,7 @@ EXTERN void mayer_realfft(int n, t_sample *real);
 EXTERN void mayer_realifft(int n, t_sample *real);
 
 EXTERN t_float *cos_table;
-#define LOGCOSTABSIZE 9
+#define LOGCOSTABSIZE 11
 #define COSTABSIZE (1<<LOGCOSTABSIZE)
 
 EXTERN int canvas_suspend_dsp(void);
