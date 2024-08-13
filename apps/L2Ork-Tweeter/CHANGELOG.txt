@@ -9,6 +9,10 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+13-08-2024 0.83
+*Introduced experimental fix for sync bug when clicking on another part.
+*Introduced experimental optimization for populating notes on the track.
+
 01-04-2024 0.82
 *Updated L2Orkmote functionality to:
   *Include tempo changes (see the documentation of the L2Orkmote-Interface.pd).

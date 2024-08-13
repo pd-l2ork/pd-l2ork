@@ -2,7 +2,7 @@
 #X obj 42 73 route \$1;
 #X obj 42 97 route \$2;
 #X text 99 97 select the right value;
-#X obj 42 613 outlet;
+#X obj 54 663 outlet;
 #X obj 397 30 inlet;
 #X obj 447 30 loadbang;
 #X obj 447 267 \$1;
@@ -27,11 +27,11 @@
 #X obj 462 448 route bang;
 #X floatatom 486 386 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 486 336 r network-status;
-#X obj 126 613 outlet;
-#X obj 99 573 t f b;
-#X text 178 561 optional second outlet cancels message to the engine
+#X obj 126 663 outlet;
+#X obj 54 623 t f b;
+#X text 178 650 optional second outlet cancels message to the engine
 (this is necessary for tracker's metro as it will move at least once
-before it receives 0 \, even in zero logical time), f 23;
+before it receives 0 \, even in zero logical time), f 33;
 #X obj 151 410 r local-report-request;
 #X obj 151 386 s local-report-response;
 #X obj 151 346 list prepend \$1;
@@ -57,9 +57,6 @@ when loading a session), f 24;
 #X obj 251 326 r override-access-all-buttons;
 #X msg 251 346 2;
 #X obj 42 121 route bang;
-#X obj 391 605 t 0 b 1;
-#X obj 397 137 t f f f;
-#X obj 391 640 gate 1 0;
 #X text 501 532 0.46 version introduces the new 5th argument included
 below \, which is used to copy preset or loop data to user's slot.
 this argument helps inform whether the data belongs to preset or loop.
@@ -85,20 +82,20 @@ this is used in 0.78 and onwards to allow sync-controls to work properly
 #X text 769 334 TODO: rework this mess since now Pd-L2Ork offersinteractive
 option for all GUIs used inside Tweeter;
 #X obj 161 435 r \$1-\$2-local-report-request;
-#X obj 615 395 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#000000 #000000 1;
-#X obj 615 418 s 2-loop-length-local-report-request;
-#X obj 397 109 f;
+#X obj 397 99 f;
+#X obj 397 127 t f f;
+#X obj 391 605 t 1 b 2;
+#X obj 54 595 gate 2 1;
 #X connect 0 0 1 0;
 #X connect 1 0 50 0;
-#X connect 4 0 68 0;
+#X connect 4 0 63 0;
 #X connect 5 0 6 0;
 #X connect 6 0 13 0;
 #X connect 9 0 0 0;
 #X connect 10 0 6 0;
 #X connect 10 0 0 1;
 #X connect 10 0 32 1;
-#X connect 10 0 57 1;
+#X connect 10 0 54 1;
 #X connect 12 0 16 0;
 #X connect 13 0 18 0;
 #X connect 14 0 8 0;
@@ -124,13 +121,13 @@ option for all GUIs used inside Tweeter;
 #X connect 32 0 34 0;
 #X connect 33 0 32 0;
 #X connect 34 0 31 0;
-#X connect 35 0 68 0;
+#X connect 35 0 63 0;
 #X connect 35 1 36 0;
 #X connect 36 0 37 0;
 #X connect 37 0 39 1;
 #X connect 37 1 38 1;
 #X connect 37 2 36 0;
-#X connect 38 0 28 0;
+#X connect 38 0 66 1;
 #X connect 39 0 33 0;
 #X connect 40 0 41 0;
 #X connect 41 0 42 0;
@@ -140,22 +137,21 @@ option for all GUIs used inside Tweeter;
 #X connect 46 0 38 0;
 #X connect 48 0 49 0;
 #X connect 49 0 17 0;
-#X connect 50 0 68 0;
+#X connect 50 0 63 0;
 #X connect 50 1 38 0;
-#X connect 51 0 53 0;
-#X connect 51 1 38 0;
-#X connect 51 2 53 0;
-#X connect 52 0 17 1;
-#X connect 52 1 36 1;
-#X connect 52 2 53 1;
-#X connect 53 0 59 0;
-#X connect 55 0 57 0;
-#X connect 56 0 51 0;
-#X connect 57 0 56 0;
-#X connect 59 0 60 0;
-#X connect 60 0 58 0;
-#X connect 62 0 38 1;
-#X connect 62 0 68 1;
-#X connect 65 0 35 0;
-#X connect 66 0 67 0;
-#X connect 68 0 52 0;
+#X connect 52 0 54 0;
+#X connect 53 0 65 0;
+#X connect 54 0 53 0;
+#X connect 56 0 57 0;
+#X connect 57 0 55 0;
+#X connect 59 0 38 1;
+#X connect 59 0 63 1;
+#X connect 62 0 35 0;
+#X connect 63 0 64 0;
+#X connect 64 0 17 1;
+#X connect 64 1 36 1;
+#X connect 65 0 66 0;
+#X connect 65 1 38 0;
+#X connect 65 2 66 0;
+#X connect 66 0 28 0;
+#X connect 66 1 56 0;

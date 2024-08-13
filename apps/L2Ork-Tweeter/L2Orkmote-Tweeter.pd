@@ -3,7 +3,7 @@
 0;
 #X obj 4 2 cnv 15 1630 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.82\ by
+#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.83\ by
 4 5 0 10 #6c6c6c #fcfcfc 0;
 #X obj 252 3 cnv 15 125 16 empty empty (c)\ 2020-3\ Released\ under\ the
 4 6 0 10 #6c6c6c #fcfcfc 0;
@@ -1599,7 +1599,7 @@ broadcast via internet (if connected) upon loading a session, f 42
 #X text 99 75 DEBUG;
 #X obj 177 168 sprintf L2Ork Tweeter v.%.02f by;
 #X obj 177 193 tosymbol;
-#X msg 177 76 0.82;
+#X msg 177 76 0.83;
 #X connect 0 0 10 0;
 #X connect 1 0 8 0;
 #X connect 1 1 2 0;
@@ -1652,7 +1652,7 @@ only for clients other than our own., f 46;
 #X msg 647 637 \; \$1-copyfrom-tracker-position \$2;
 #X msg 776 566 \$1;
 #X obj 520 267 r local-copyfrom-client-num;
-#X text 49 545 Copyfrom modes: 1 - single click - loop-all only (sync)2
+#X text 19 567 Copyfrom modes: 1 - single click - loop-all only (sync)2
 - double click - loop3 - triple click - loop+loop-all4 - quadruple
 click - everything5 - shift + single click - preset6 - shift + double
 click - preset-all only7 - shift + triple click - preset+preset-all8
@@ -1666,13 +1666,16 @@ click - preset-all only7 - shift + triple click - preset+preset-all8
 #X obj 776 522 > 1;
 #X obj 716 465 t a a a;
 #X obj 776 588 route float;
-#X obj 324 425 r local-copyfrom-client-num;
-#X obj 342 447 r myclientnum;
-#X obj 297 403 route tracker-time;
-#X obj 297 425 t b;
-#X obj 297 447 f;
-#X obj 297 469 pack 0 0;
-#X msg 297 491 \; \$1-copyfrom-tracker-position \$2;
+#X obj 324 475 r local-copyfrom-client-num;
+#X obj 342 497 r myclientnum;
+#X obj 297 475 t b;
+#X obj 297 497 f;
+#X obj 297 519 pack 0 0;
+#X msg 297 541 \; \$1-copyfrom-tracker-position \$2;
+#X obj 297 403 route tracker-time tracker;
+#X obj 297 452 gate 1 0;
+#X text 356 426 only seek sync ifplayback is enabled(track variable)
+;
 #X connect 0 0 7 0;
 #X connect 1 0 3 0;
 #X connect 2 1 15 1;
@@ -1686,7 +1689,7 @@ click - preset-all only7 - shift + triple click - preset+preset-all8
 #X connect 8 0 4 0;
 #X connect 9 0 4 0;
 #X connect 10 0 4 0;
-#X connect 11 0 47 0;
+#X connect 11 0 51 0;
 #X connect 12 0 8 0;
 #X connect 13 0 9 0;
 #X connect 14 0 10 0;
@@ -1751,12 +1754,14 @@ click - preset-all only7 - shift + triple click - preset+preset-all8
 #X connect 43 1 41 1;
 #X connect 43 2 40 0;
 #X connect 44 0 29 1;
-#X connect 45 0 49 1;
-#X connect 46 0 50 1;
+#X connect 45 0 48 1;
+#X connect 46 0 49 1;
 #X connect 47 0 48 0;
 #X connect 48 0 49 0;
 #X connect 49 0 50 0;
-#X connect 50 0 51 0;
+#X connect 51 0 52 1;
+#X connect 51 1 52 0;
+#X connect 52 0 47 0;
 #X restore 153 52 pd local-copy-logic;
 #N canvas 727 338 450 252 init 0;
 #X obj 24 84 tosymbol;
@@ -1819,7 +1824,7 @@ unnecessary error being printed into the console, f 27;
 #X obj 19 281 == 3;
 #X obj 19 306 sel 1;
 #X obj 19 331 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 1 1 1;
+#000000 0 1 1;
 #X text 19 92 ctrl+shift+alt toggles editability (alt being last!)
 ;
 #X obj 64 125 keyname 1;
@@ -1980,3 +1985,4 @@ Dante Out;
 #X obj 12 144 pddplink widgets/sync-controls/Sync-Controls.pd -text
 Sync Controls;
 #X restore 1519 3 pd widgets;
+#X editable 0;
