@@ -46,7 +46,7 @@ else()
         set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-Bsymbolic")
     endif()
 endif()
-add_definitions(-DPD=1 -DUSEAPI_DUMMY=1)
+add_definitions(-DPD=1 -DPD_INTERNAL=1 -DUSEAPI_DUMMY=1)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_MACOSX_RPATH ON)

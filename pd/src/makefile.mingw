@@ -55,7 +55,7 @@ LIBS = -lm -lws2_32 -lwinmm -lole32 -lpthread -lcomdlg32 -lole32
 OPT_CFLAGS = 
 
 WARN_CFLAGS = -Wall -W -Wstrict-prototypes -Wno-unused \
-    -Wno-unused-parameter -Wno-parentheses -Wno-switch
+    -Wno-unused-parameter -Wno-parentheses -Wno-switch -Wno-incompatible-pointer-types
 # Some old code in asio/ASIOSDK2/common/combase.h needs to be ignored,
 # we do this by setting the WINVER macro to min Windows XP aka 5.1.
 # Also, for SetDllDirectory() s_loader.c, we need a minium of Windows
