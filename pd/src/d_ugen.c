@@ -1379,6 +1379,8 @@ void dsp_add_copy(t_sample *in, t_sample *out, int n)
 
 t_int *scalarcopy_perform(t_int *w)
 {
+    if(!w[1])
+        return w + 4;
     t_float f = *(t_float *)(w[1]);
     t_sample *out = (t_sample *)(w[2]);
     int n = (int)(w[3]);
@@ -1389,6 +1391,8 @@ t_int *scalarcopy_perform(t_int *w)
 
 t_int *scalarcopy_perf8(t_int *w)
 {
+    if(!w[1])
+        return w + 4;
     t_float f = *(t_float *)(w[1]);
     t_sample *out = (t_sample *)(w[2]);
     int n = (int)(w[3]);
