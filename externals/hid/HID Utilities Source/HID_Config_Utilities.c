@@ -5,7 +5,7 @@
     
 	DRI: George Warner
 
-	Copyright:	Copyright © 2002 Apple Computer, Inc., All Rights Reserved
+	Copyright:	Copyright ï¿½ 2002 Apple Computer, Inc., All Rights Reserved
 
 	Disclaimer:	IMPORTANT:  This Apple software is supplied to you by Apple Computer, Inc.
 				("Apple") in consideration of your agreement to the following terms, and your
@@ -14,7 +14,7 @@
 				please do not use, install, modify or redistribute this Apple software.
 
 				In consideration of your agreement to abide by the following terms, and subject
-				to these terms, Apple grants you a personal, non-exclusive license, under AppleÕs
+				to these terms, Apple grants you a personal, non-exclusive license, under Appleï¿½s
 				copyrights in this original Apple software (the "Apple Software"), to use,
 				reproduce, modify and redistribute the Apple Software, with or without
 				modifications, in source and/or binary forms; provided that if you redistribute
@@ -82,7 +82,7 @@ unsigned char HIDConfigureAction (pRecDevice * ppDevice, pRecElement * ppElement
 		pDevice = HIDGetNextDevice (pDevice);
 	}
 	saveValueArray = (long *) malloc (sizeof (long) * numDevices * maxElements); // 2D array to save values
-	bzero(saveValueArray,sizeof (long) * numDevices * maxElements); // clear array
+	memset(saveValueArray, 0,sizeof (long) * numDevices * maxElements); // clear array
 
 	// store current values
 	deviceNum = 0;
@@ -168,7 +168,7 @@ void HIDSaveElementConfig (FILE * fileRef, pRecDevice pDevice, pRecElement pElem
 	if (HIDIsValidElement(pDevice,pElement))
 	{
 		// clear rec
-		bzero(&saveRec,sizeof(recSaveHID));
+		memset(&saveRec, 0,sizeof(recSaveHID));
 
 		saveRec.actionCookie = actionCookie;
 
@@ -379,8 +379,8 @@ Boolean HIDRestoreElementPref (CFStringRef keyCFStringRef, CFStringRef appCFStri
 						&searchDevice.vendorID, &searchDevice.productID, &searchDevice.locID, &searchDevice.usagePage, &searchDevice.usage, 
 						&searchElement.type, &searchElement.usagePage, &searchElement.usage, (long*) &searchElement.cookie);
 
-					if (9 == count)	// if we found all nine parametersÉ
-					{	// and can find a device & element that matches theseÉ
+					if (9 == count)	// if we found all nine parametersï¿½
+					{	// and can find a device & element that matches theseï¿½
 						if (HIDFindActionDeviceAndElement(&searchDevice, &searchElement,ppDevice, ppElement))
 						{
 							found = true;
