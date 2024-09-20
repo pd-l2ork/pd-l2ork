@@ -482,12 +482,14 @@ void glist_deselectline(t_glist *x)
 
 int glist_isselected(t_glist *x, t_gobj *y)
 {
+#ifndef __EMSCRIPTEN__
     if (x->gl_editor)
     {
         t_selection *sel;
         for (sel = x->gl_editor->e_selection; sel; sel = sel->sel_next)
             if (sel->sel_what == y) return (1);
     }
+#endif
     return (0);
 }
 
