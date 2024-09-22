@@ -56,6 +56,7 @@ void glob_recent_files(t_pd *dummy);
 void glob_add_recent_file(t_pd *dummy, t_symbol *s);
 void glob_clear_recent_files(t_pd *dummy);
 void glob_settracing(void *dummy, t_float f);
+void glob_fastforward(t_pd *ignore, t_floatarg f);
 
 void alsa_resync( void);
 
@@ -256,6 +257,8 @@ void glob_init(void)
         gensym("set-k12-mode"), A_DEFFLOAT, 0);
     class_addmethod(glob_pdobject, (t_method)glob_settracing,
          gensym("set-tracing"), A_FLOAT, 0);
+    class_addmethod(glob_pdobject, (t_method)glob_fastforward,
+         gensym("fast-forward"), A_FLOAT, 0);
     /* -------------- windows delete all registry keys in s_file.c ------------------ */
 #ifndef __EMSCRIPTEN__
     class_addmethod(glob_pdobject, (t_method)reinit_user_settings,

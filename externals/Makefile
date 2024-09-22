@@ -47,7 +47,7 @@ DEST_PATHS = BUILDLAYOUT_DIR=$(BUILDLAYOUT_DIR) \
 # this variable is to support old "win" directories, rather than "windows"
 BUILDSRC_OS_NAME = $(OS_NAME)
 
-WARN_FLAGS = -Wall -W -Wno-unused-parameter
+WARN_FLAGS = -Wall -W -Wno-unused-parameter -Wno-incompatible-pointer-types
 CFLAGS = -DPD -D__USE_MINGW_ANSI_STDIO=1 -I$(pd_src)/src $(WARN_FLAGS) $(DEBUG_CFLAGS) $(CFLAGS_ADD) -I$(gem_src)/src
 LDFLAGS = 
 LIBS = -lm
@@ -494,7 +494,7 @@ cxc_clean:
 ifneq ($(EMSCRIPTEN),yes)
 cyclone:
 	make -C $(externals_src)/miXed/cyclone -f Makefile.libdir \
-		PD_PATH=$(pd_src) PD_INCLUDE=$(DESTDIR)$(includedir) WARN_CFLAGS="-Wall -W -Wstrict-prototypes -Wno-unused -Wno-parentheses -Wno-switch $(CFLAGS_ADD)"
+		PD_PATH=$(pd_src) PD_INCLUDE=$(DESTDIR)$(includedir) WARN_CFLAGS="-Wall -W -Wstrict-prototypes -Wno-unused -Wno-parentheses -Wno-switch -Wno-incompatible-pointer-types $(CFLAGS_ADD)"
 
 cyclone_install:
 	make -C $(externals_src)/miXed/cyclone -f Makefile.libdir \
@@ -1354,7 +1354,7 @@ lyonpotpourri:
 ifeq ($(EMSCRIPTEN),yes)
 	sed -i 's/--enable-new-dtags/-Bsymbolic/g' $(externals_src)/$(LYON_SRC)/Makefile
 endif
-	make -C $(externals_src)/$(LYON_SRC) $(call set_em_flags) PD_PATH=$(pd_src) CFLAGS="$(CFLAGS_ADD)"
+	make -C $(externals_src)/$(LYON_SRC) $(call set_em_flags) PD_PATH=$(pd_src) CFLAGS="$(CFLAGS_ADD) -Wno-incompatible-pointer-types"
 ifeq ($(EMSCRIPTEN),yes)
 	sed -i 's/-Bsymbolic/--enable-new-dtags/g' $(externals_src)/$(LYON_SRC)/Makefile
 endif

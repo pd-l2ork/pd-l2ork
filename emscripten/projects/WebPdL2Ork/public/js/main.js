@@ -5011,7 +5011,7 @@ async function openPatch(content, filename) {
                 break;
             case "#X connect":
                 if (args.length > 5) {
-                    if(args[6] === '__IGNORE__' || layer.objects[args[2]]?.endsWith('~'))
+                    if(args[6] === '__IGNORE__')
                         break;
                     //We generate a name based off of the arguments of the connect (which will be unique)
                     let connectionName = `__WIRE_${layer.id}_${args[2]}_${args[3]}_${args[4]}_${args[5]}`;

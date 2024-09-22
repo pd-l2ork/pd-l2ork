@@ -39,6 +39,7 @@ static int isatty(int fd) {return 0;}
 #include <sys/time.h>
 #include <sys/mman.h>
 #include <sys/resource.h>
+#include <sys/stat.h>
 #endif
 
 #ifdef HAVE_BSTRING_H

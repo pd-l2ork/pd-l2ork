@@ -400,7 +400,7 @@ void dumpOSC_setup(void)
 		if((sockfd = socket(AF_UNIX, SOCK_DGRAM, 0)) < 0)
 				return sockfd;
 		
-		bzero((char *)&serv_addr, sizeof(serv_addr));
+		memset((char *)&serv_addr, 0, sizeof(serv_addr));
 		serv_addr.sun_family = AF_UNIX;
 		strcpy(serv_addr.sun_path, UNIXDG_PATH);
 		sprintf(serv_addr.sun_path+strlen(serv_addr.sun_path), "%d", chan);
@@ -448,7 +448,7 @@ static int initudp(int chan)
 	if((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
 			return sockfd;
 
-	bzero((char *)&serv_addr, sizeof(serv_addr));
+	memset((char *)&serv_addr, 0, sizeof(serv_addr));
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	serv_addr.sin_port = htons(chan);

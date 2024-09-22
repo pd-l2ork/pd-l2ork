@@ -5,7 +5,7 @@
     
 	DRI: George Warner
 
-	Copyright:	Copyright © 2002 Apple Computer, Inc., All Rights Reserved
+	Copyright:	Copyright ï¿½ 2002 Apple Computer, Inc., All Rights Reserved
 
 	Disclaimer:	IMPORTANT:  This Apple software is supplied to you by Apple Computer, Inc.
 				("Apple") in consideration of your agreement to the following terms, and your
@@ -14,7 +14,7 @@
 				please do not use, install, modify or redistribute this Apple software.
 
 				In consideration of your agreement to abide by the following terms, and subject
-				to these terms, Apple grants you a personal, non-exclusive license, under AppleÕs
+				to these terms, Apple grants you a personal, non-exclusive license, under Appleï¿½s
 				copyrights in this original Apple software (the "Apple Software"), to use,
 				reproduce, modify and redistribute the Apple Software, with or without
 				modifications, in source and/or binary forms; provided that if you redistribute
@@ -290,7 +290,7 @@ static void hid_AddElement (CFTypeRef refElement, pRecElement * ppElementCurrent
 		// it preserves the structure of the lements as collections have children and elements are siblings to each other
 
 		// clear record
-		bzero(pElement,sizeof(recElement));
+		memset(pElement, 0,sizeof(recElement));
 
 		// get element info
         pElement->type = elementType;
@@ -587,7 +587,7 @@ static pRecDevice hid_BuildDevice (io_object_t hidDevice)
         kern_return_t result = IORegistryEntryCreateCFProperties (hidDevice, &hidProperties, kCFAllocatorDefault, kNilOptions);
 
 		// clear record
-		bzero(pDevice, sizeof(recDevice));
+		memset(pDevice, 0, sizeof(recDevice));
 
         if ((result == KERN_SUCCESS) && (NULL != hidProperties))
         {
@@ -993,7 +993,7 @@ unsigned long HIDCreateOpenDeviceInterface (UInt32 hidDevice, pRecDevice pDevice
 			plugInResult = (*ppPlugInInterface)->QueryInterface (ppPlugInInterface,
 														CFUUIDGetUUIDBytes (kIOHIDDeviceInterfaceID), (void *) &(pDevice->interface));
 			if (S_OK != plugInResult)
-				HIDReportErrorNum ("CouldnÕt query HID class device interface from plugInInterface", plugInResult);
+				HIDReportErrorNum ("Couldnï¿½t query HID class device interface from plugInInterface", plugInResult);
 			IODestroyPlugInInterface (ppPlugInInterface); // replace (*ppPlugInInterface)->Release (ppPlugInInterface)
 		}
 		else

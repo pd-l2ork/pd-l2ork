@@ -118,6 +118,8 @@
 #include <poll.h>
 #include <errno.h>
 #include <string.h>
+#include <ctype.h>
+#include <unistd.h>
 #include "xwiimote/lib/xwiimote.h"
 
 /* Button flags */
