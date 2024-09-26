@@ -763,10 +763,6 @@ static t_msg *collcommon_doread(t_collcommon *cc, t_symbol *fn, t_canvas *cv, in
 		int nlines = collcommon_frombinbuf(cc, bb);
 		if (nlines > 0)
 		{
-			t_coll *x;
-			/* LATER consider making this more robust */
-			for (x = cc->c_refs; x; x = x->x_next)
-			//outlet_bang(x->x_filebangout);
 			cc->c_lastcanvas = cv;
 			cc->c_filename = fn;
 			m->m_flag |= 0x04;
