@@ -626,7 +626,7 @@ when message from server calls for a report (to sync other clients)
 #N canvas 312 268 941 599 timed-messages 0;
 #X obj 23 22 inlet;
 #X obj 470 167 r;
-#X msg 485 142 set \$1-tracker-sync;
+#X msg 487 142 set \$1-tracker-sync;
 #X obj 469 108 unpack 0 0 0, f 20;
 #X obj 470 217 ==, f 10;
 #X obj 470 319 f;
@@ -653,7 +653,7 @@ when message from server calls for a report (to sync other clients)
 #X obj 23 56 route inst-level inst-level-all inst-level-list, f 147
 ;
 #X obj 699 191 r;
-#X msg 714 166 set \$1-tracker-sync;
+#X msg 716 166 set \$1-tracker-sync;
 #X obj 699 241 ==, f 10;
 #X obj 699 266 sel 1;
 #X obj 699 291 t b 0, f 11;
