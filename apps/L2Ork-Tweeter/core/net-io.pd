@@ -1,157 +1,122 @@
-#N canvas 490 163 1200 748 10;
-#X obj 42 73 route \$1;
-#X obj 42 97 route \$2;
-#X text 99 97 select the right value;
-#X obj 54 663 outlet;
-#X obj 397 30 inlet;
-#X obj 447 30 loadbang;
-#X obj 447 267 \$1;
-#X text 515 243 only send network messages out if this is a local instance
-, f 30;
-#X obj 531 470 s client-out;
-#X obj 42 30 r network-in;
-#X obj 593 30 inlet;
-#X text 631 30 manually set instance;
-#X obj 474 218 r myclientnum;
-#X obj 447 289 == -1;
-#X obj 531 448 list prepend \$2;
-#X text 99 73 select the right client;
-#X obj 474 243 t b f;
-#X obj 352 375 gate 2 1;
-#X obj 447 312 + 1;
-#X obj 447 336 f;
-#X obj 352 400 t b b 0;
-#X floatatom 447 361 5 0 0 0 - - - 0 0 1, f 5;
-#X obj 486 361 + 1;
-#X obj 486 426 gate 2 1;
-#X obj 462 448 route bang;
-#X floatatom 486 386 5 0 0 0 - - - 0 0 1, f 5;
-#X obj 486 336 r network-status;
-#X obj 126 663 outlet;
-#X obj 54 623 t f b;
-#X text 178 650 optional second outlet cancels message to the engine
-(this is necessary for tracker's metro as it will move at least once
-before it receives 0 \, even in zero logical time), f 33;
-#X obj 151 410 r local-report-request;
-#X obj 151 386 s local-report-response;
-#X obj 151 346 list prepend \$1;
-#X obj 151 326 list prepend \$2;
-#X obj 151 366 list trim;
-#X obj 151 460 t b 1;
-#X obj 178 156 gate 1 0;
-#X obj 178 176 t f f 0;
-#X obj 99 548 f \$3;
-#X obj 151 268 gate 2 1;
-#X obj 112 156 loadbang;
-#X obj 112 177 \$4;
-#X obj 112 198 + 1;
-#X obj 112 240 moses 1;
-#X obj 112 219 moses 3;
-#X text 209 198 4th argument \, when set to 1 (default 0) \, disables
+#N canvas 453 124 893 835 10;
+#X obj 168 381 route \$1;
+#X obj 168 405 route \$2;
+#X text 225 405 select the right value;
+#X obj 74 792 outlet;
+#X obj 190 482 inlet;
+#X obj 616 353 loadbang;
+#X obj 616 425 \$1;
+#X text 616 303 only send network messages out if this is a local instance
+, f 21;
+#X obj 473 787 s client-out;
+#X obj 168 356 r network-in;
+#X obj 326 30 inlet;
+#X text 364 30 manually set instance;
+#X obj 643 376 r myclientnum;
+#X obj 616 447 == -1;
+#X obj 473 764 list prepend \$2;
+#X text 225 381 select the right client;
+#X obj 643 401 t b f;
+#X obj 616 469 + 1;
+#X obj 616 521 f;
+#X floatatom 473 710 5 0 0 0 - - - 0 0 1, f 5;
+#X obj 473 657 r network-status;
+#X obj 65 283 r local-report-request;
+#X obj 65 259 s local-report-response;
+#X obj 65 219 list prepend \$1;
+#X obj 65 189 list prepend \$2;
+#X obj 65 239 list trim;
+#X obj 169 586 f \$3;
+#X obj 65 141 gate 2 1;
+#X obj 26 29 loadbang;
+#X obj 26 50 \$4;
+#X obj 26 71 + 1;
+#X obj 26 113 moses 1;
+#X obj 26 92 moses 3;
+#X text 124 73 4th argument \, when set to 1 (default 0) \, disables
 the use of the local (e.g. tracker) variable for session saving purposes
 due to delay in timing the metro (based on the tracker-time variable)
 which prematurely starts tracker variable, f 32;
-#X obj 787 30 inlet;
-#X text 825 30 override the last known value (used for the from-tracker-time
-when loading a session), f 24;
-#X obj 251 326 r override-access-all-buttons;
-#X msg 251 346 2;
-#X obj 42 121 route bang;
-#X text 501 532 0.46 version introduces the new 5th argument included
+#X obj 508 30 inlet;
+#X text 210 653 0.46 version introduces the new 5th argument included
 below \, which is used to copy preset or loop data to user's slot.
 this argument helps inform whether the data belongs to preset or loop.
-, f 50;
-#X obj 391 530 r local-copyfrom;
-#X obj 391 580 sel 1;
-#X obj 391 555 == \$1;
-#X obj 391 714 s local-copyfrom-data;
-#X obj 391 665 list prepend \$2;
-#X obj 391 690 list prepend \$5;
-#X text 778 624 the [t b b 0] thing is designed to override local user
-messing with network user's settings since this wa designed before
-pd-l2ork had an option to ignore actions on gui objects. the gate above
-branches into two conditions. left is for recalling latest network-enabled
-data and by doing so overriding user input (since it should be disallowed)
-\, while the right has two options: do the same as incoming networked
-data because we are not connected and need to store latest data \,
-or forward to the network., f 67;
-#X obj 987 30 inlet;
-#X text 1025 30 set internal value without passing it via network.
-this is used in 0.78 and onwards to allow sync-controls to work properly
+, f 26;
+#X obj 381 468 r local-copyfrom;
+#X obj 381 518 sel 1;
+#X obj 381 493 == \$1;
+#X obj 111 768 s local-copyfrom-data;
+#X obj 111 719 list prepend \$2;
+#X obj 111 744 list prepend \$5;
+#X obj 732 30 inlet;
+#X obj 75 308 r \$1-\$2-local-report-request;
+#X obj 381 543 t 1 b 2;
+#X obj 74 639 gate 3 1, f 13;
+#X text 190 435 data input inlet, f 5;
+#X obj 473 741 gate 1 0;
+#X obj 415 710 gate 2 1;
+#X obj 35 498 t 1 b 3;
+#X obj 190 507 t f f;
+#X text 570 30 override the last known value and pass it along without
+sending it to the network (used by session-sync and sync-controls?
 , f 24;
-#X text 769 334 TODO: rework this mess since now Pd-L2Ork offersinteractive
-option for all GUIs used inside Tweeter;
-#X obj 161 435 r \$1-\$2-local-report-request;
-#X obj 397 99 f;
-#X obj 397 127 t f f;
-#X obj 391 605 t 1 b 2;
-#X obj 54 595 gate 2 1;
+#X text 770 30 set internal value without passing it via network.,
+f 15;
+#X obj 74 672 t f f;
+#X obj 508 55 t b f 1;
 #X connect 0 0 1 0;
-#X connect 1 0 50 0;
-#X connect 4 0 63 0;
+#X connect 1 0 26 0;
+#X connect 4 0 50 0;
 #X connect 5 0 6 0;
 #X connect 6 0 13 0;
 #X connect 9 0 0 0;
 #X connect 10 0 6 0;
 #X connect 10 0 0 1;
-#X connect 10 0 32 1;
-#X connect 10 0 54 1;
+#X connect 10 0 23 1;
+#X connect 10 0 38 1;
 #X connect 12 0 16 0;
-#X connect 13 0 18 0;
+#X connect 13 0 17 0;
 #X connect 14 0 8 0;
 #X connect 16 0 6 0;
 #X connect 16 1 13 1;
-#X connect 17 0 20 0;
-#X connect 17 1 23 1;
-#X connect 18 0 19 0;
-#X connect 19 0 17 0;
-#X connect 19 0 21 0;
+#X connect 17 0 18 0;
+#X connect 18 0 48 0;
+#X connect 19 0 47 0;
 #X connect 20 0 19 0;
-#X connect 20 1 38 0;
-#X connect 20 2 17 0;
-#X connect 22 0 25 0;
-#X connect 23 0 24 0;
-#X connect 23 1 14 0;
-#X connect 24 1 38 1;
-#X connect 25 0 23 0;
-#X connect 26 0 22 0;
-#X connect 28 0 3 0;
-#X connect 28 1 27 0;
-#X connect 30 0 35 0;
-#X connect 32 0 34 0;
-#X connect 33 0 32 0;
-#X connect 34 0 31 0;
-#X connect 35 0 63 0;
-#X connect 35 1 36 0;
-#X connect 36 0 37 0;
-#X connect 37 0 39 1;
-#X connect 37 1 38 1;
-#X connect 37 2 36 0;
-#X connect 38 0 66 1;
-#X connect 39 0 33 0;
+#X connect 21 0 49 0;
+#X connect 23 0 25 0;
+#X connect 24 0 23 0;
+#X connect 25 0 22 0;
+#X connect 26 0 45 1;
+#X connect 27 0 24 0;
+#X connect 28 0 29 0;
+#X connect 29 0 30 0;
+#X connect 30 0 32 0;
+#X connect 31 1 27 0;
+#X connect 32 0 31 0;
+#X connect 34 0 54 0;
+#X connect 36 0 38 0;
+#X connect 37 0 44 0;
+#X connect 38 0 37 0;
 #X connect 40 0 41 0;
-#X connect 41 0 42 0;
-#X connect 42 0 44 0;
-#X connect 43 1 39 0;
-#X connect 44 0 43 0;
-#X connect 46 0 38 0;
-#X connect 48 0 49 0;
-#X connect 49 0 17 0;
-#X connect 50 0 63 0;
-#X connect 50 1 38 0;
-#X connect 52 0 54 0;
-#X connect 53 0 65 0;
-#X connect 54 0 53 0;
-#X connect 56 0 57 0;
-#X connect 57 0 55 0;
-#X connect 59 0 38 1;
-#X connect 59 0 63 1;
-#X connect 62 0 35 0;
-#X connect 63 0 64 0;
-#X connect 64 0 17 1;
-#X connect 64 1 36 1;
-#X connect 65 0 66 0;
-#X connect 65 1 38 0;
-#X connect 65 2 66 0;
-#X connect 66 0 28 0;
-#X connect 66 1 56 0;
+#X connect 41 0 39 0;
+#X connect 42 0 26 1;
+#X connect 43 0 49 0;
+#X connect 44 0 45 0;
+#X connect 44 1 26 0;
+#X connect 44 2 45 0;
+#X connect 45 0 53 0;
+#X connect 45 1 40 0;
+#X connect 45 2 27 1;
+#X connect 47 0 14 0;
+#X connect 48 1 47 1;
+#X connect 49 0 45 0;
+#X connect 49 1 26 0;
+#X connect 49 2 45 0;
+#X connect 50 0 26 1;
+#X connect 50 1 48 1;
+#X connect 53 0 3 0;
+#X connect 53 1 48 1;
+#X connect 54 0 18 0;
+#X connect 54 1 26 0;
+#X connect 54 2 48 0;

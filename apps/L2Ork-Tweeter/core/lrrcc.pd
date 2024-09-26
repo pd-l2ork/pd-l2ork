@@ -1,0 +1,19 @@
+#N canvas 727 397 359 263 10;
+#X obj -30 -30 preset_hub k12 1 %hidden%;
+#X obj 74 46 inlet;
+#X obj 29 178 gate 1 0;
+#X obj 135 126 f;
+#X obj 152 71 r \$1-remote-user-gui-update;
+#X obj 29 203 outlet;
+#X text 111 167 output only local report datafrom connected clients
+\, so thatwe can ensure continued sync amongclients when a new client
+connectsand requests state of other clients;
+#X text 9 13 lrrcc--local report response from connected clients only
+;
+#X obj 74 71 t l b;
+#X connect 1 0 8 0;
+#X connect 2 0 5 0;
+#X connect 3 0 2 0;
+#X connect 4 0 3 1;
+#X connect 8 0 2 1;
+#X connect 8 1 3 0;
