@@ -822,10 +822,6 @@ static void js_menu_open(t_js* x)
             LPCTSTR errorText = error.ErrorMessage();
             pd_error(&x->x_obj, "%s: %s", x->path.c_str(), errorText);
         }
-        strcat(result, x->path.c_str());
-        strcat(result, " &");
-        post("js_menu_open result <" result ">");
-        system(result);
     }
 }
 #endif
