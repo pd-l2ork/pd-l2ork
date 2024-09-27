@@ -1,7 +1,7 @@
 #N canvas 453 124 893 835 10;
-#X obj 168 381 route \$1;
-#X obj 168 405 route \$2;
-#X text 225 405 select the right value;
+#X obj 169 381 route \$1;
+#X obj 169 405 route \$2;
+#X text 226 405 select the right value;
 #X obj 74 792 outlet;
 #X obj 190 482 inlet;
 #X obj 616 353 loadbang;
@@ -9,13 +9,13 @@
 #X text 616 303 only send network messages out if this is a local instance
 , f 21;
 #X obj 473 787 s client-out;
-#X obj 168 356 r network-in;
+#X obj 169 356 r network-in;
 #X obj 326 30 inlet;
 #X text 364 30 manually set instance;
 #X obj 643 376 r myclientnum;
 #X obj 616 447 == -1;
 #X obj 473 764 list prepend \$2;
-#X text 225 381 select the right client;
+#X text 226 381 select the right client;
 #X obj 643 401 t b f;
 #X obj 616 469 + 1;
 #X obj 616 521 f;

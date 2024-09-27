@@ -1015,19 +1015,14 @@ taken, f 67;
 #X msg 475 337 \$2;
 #X obj 43 349 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1;
-#N canvas 727 397 202 186 session-report-response 0;
+#N canvas 727 397 202 135 session-report-response 0;
 #X obj 23 16 r session-report-response;
-#X obj 23 41 zl slice 1;
-#X obj 23 93 list append;
-#X msg 23 67 send \$1;
-#X obj 23 118 list trim;
-#X obj 23 143 s server-out;
-#X connect 0 0 1 0;
-#X connect 1 0 3 0;
-#X connect 1 1 2 1;
-#X connect 2 0 4 0;
-#X connect 3 0 2 0;
-#X connect 4 0 5 0;
+#X obj 23 66 list trim;
+#X obj 23 91 s server-out;
+#X obj 23 41 list prepend send;
+#X connect 0 0 3 0;
+#X connect 1 0 2 0;
+#X connect 3 0 1 0;
 #X restore 43 435 pd session-report-response;
 #X obj 835 120 s session-report-response;
 #X obj 448 74 route whatismyid ping disconnect report session-report

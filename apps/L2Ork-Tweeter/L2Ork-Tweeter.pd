@@ -387,7 +387,7 @@ to keep its state in sync with the server (does not work for guests)
 #X obj 775 762 s silent-disconnect;
 #X obj 376 133 r silent-disconnect;
 #X msg 376 158 disconnect;
-#N canvas 249 193 1261 692 session-management 0;
+#N canvas 249 193 1038 692 session-management 0;
 #X obj 133 29 inlet;
 #X obj 32 29 r myclientnum;
 #X obj 32 54 != -1;
@@ -806,31 +806,24 @@ rest we pass through the l2ork-custom send;
 0;
 #X obj 409 499 route status connection server disconnect session loop-length
 at l2ork-custom session-report, f 92;
-#N canvas 343 124 559 662 session-report 0;
-#X obj 29 30 inlet;
-#X obj 59 230 gate 1 0;
-#X obj 133 129 s local-report-request;
-#X obj 133 154 r local-report-response;
-#X obj 29 423 gate 1 0;
-#X obj 251 381 route 1;
-#X obj 251 404 route reverb-type;
-#X msg 29 390 1;
-#X obj 59 280 route report session-title;
-#X obj 231 581 list trim;
-#X obj 231 556 list prepend session-report-response;
-#X obj 231 606 s chat-out;
-#X obj 29 79 t b b 1 0 b l;
-#X obj 466 129 unpack 0 0;
-#X text 176 68 requesting client's socket and id, f 19;
-#X obj 163 193 route;
-#X obj 231 506 list prepend;
-#X text 313 505 prepend receiver's socketdata \, so that the serverknows
+#N canvas 622 216 612 765 session-report 0;
+#X obj 25 27 inlet;
+#X obj 89 227 gate 1 0;
+#X obj 133 126 s local-report-request;
+#X obj 133 151 r local-report-response;
+#X obj 89 277 route report session-title;
+#X obj 341 688 list trim;
+#X obj 341 663 list prepend session-report-response;
+#X obj 341 713 s chat-out;
+#X obj 410 126 unpack 0 0;
+#X text 176 65 requesting client's socket and id, f 19;
+#X obj 163 190 route;
+#X obj 341 613 list prepend;
+#X text 423 612 prepend receiver's socketdata \, so that the serverknows
 where to send this;
-#X obj 212 333 t b l l;
-#X text 203 193 this filters properties ofthe client who just connectedas
+#X text 203 190 this filters properties ofthe client who just connectedas
 we don't want to impose onthem stale state data from this \, previously
 connected client;
-#X obj 29 448 t 0 0;
 #N canvas 727 397 367 544 send-connected-only 0;
 #X obj 90 33 inlet;
 #X obj 90 58 t l l;
@@ -877,33 +870,59 @@ connected client;
 #X connect 14 0 4 0;
 #X connect 15 0 4 0;
 #X connect 16 0 4 0;
-#X restore 212 307 pd send-connected-only;
-#X text 226 279 do we need routing for report here?;
-#X obj 59 255 list trim;
-#X connect 0 0 12 0;
-#X connect 1 0 23 0;
-#X connect 3 0 15 0;
-#X connect 4 0 20 0;
-#X connect 5 0 6 0;
-#X connect 6 0 7 0;
-#X connect 7 0 4 0;
-#X connect 8 2 21 0;
-#X connect 9 0 11 0;
-#X connect 10 0 9 0;
-#X connect 12 1 2 0;
-#X connect 12 2 1 0;
-#X connect 12 5 13 0;
-#X connect 13 0 16 1;
-#X connect 13 1 15 1;
-#X connect 15 1 1 1;
-#X connect 16 0 10 0;
-#X connect 18 0 4 1;
-#X connect 18 1 16 0;
-#X connect 18 2 5 0;
-#X connect 20 0 1 0;
-#X connect 20 1 4 0;
-#X connect 21 0 18 0;
-#X connect 23 0 8 0;
+#X restore 242 304 pd send-connected-only;
+#X text 256 266 do we need routing for report here?, f 19;
+#X obj 89 252 list trim;
+#X text 413 526 this is triggered whenthe last line has been sent
+;
+#X obj 25 76 t b b 1 l;
+#X obj 291 385 route tracker-time;
+#X obj 197 443 gate 2 1;
+#X obj 64 569 list trim;
+#X obj 85 476 list append;
+#X obj 85 500 t l l;
+#X obj 64 525 list;
+#X obj 64 547 list prepend server session sync-data;
+#X obj 242 329 t l l 2;
+#X msg 291 410 1;
+#X obj 291 360 zl slice 1;
+#X obj 25 445 t 0 0 b;
+#X text 87 342 we split tracker-time data from the rest \, so that
+the sync data arrives in a single message \, thus ensuring that all
+client data arrives at the same time, f 24;
+#X connect 0 0 18 0;
+#X connect 1 0 16 0;
+#X connect 3 0 10 0;
+#X connect 4 2 14 0;
+#X connect 5 0 7 0;
+#X connect 6 0 5 0;
+#X connect 8 0 11 1;
+#X connect 8 1 10 1;
+#X connect 10 1 1 1;
+#X connect 11 0 6 0;
+#X connect 14 0 26 0;
+#X connect 16 0 4 0;
+#X connect 18 0 29 0;
+#X connect 18 1 2 0;
+#X connect 18 2 1 0;
+#X connect 18 3 8 0;
+#X connect 19 0 27 0;
+#X connect 20 0 22 0;
+#X connect 20 1 11 0;
+#X connect 21 0 11 0;
+#X connect 22 0 23 0;
+#X connect 23 0 24 1;
+#X connect 23 1 22 1;
+#X connect 24 0 25 0;
+#X connect 25 0 21 0;
+#X connect 26 0 20 1;
+#X connect 26 1 28 0;
+#X connect 26 2 20 0;
+#X connect 27 0 20 0;
+#X connect 28 1 19 0;
+#X connect 29 0 1 0;
+#X connect 29 1 22 1;
+#X connect 29 2 24 0;
 #X restore 897 554 pd session-report;
 #X connect 0 0 1 0;
 #X connect 1 0 29 1;
