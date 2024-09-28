@@ -81,15 +81,7 @@ There are two maintained distributions of Pure Data:
 
 ### Downloads
 
-**Windows and OSX:**
-
 Releases are provided on the L2Ork's webpage:
-
-<http://l2ork.music.vt.edu/main/make-your-own-l2ork/software/>
-
-**Linux:**
-
-Releases for Debian/Ubuntu are provided on the L2Ork's webpage:
 
 <http://l2ork.music.vt.edu/main/make-your-own-l2ork/software/>
 
@@ -275,6 +267,7 @@ since it will usually contain spaces, making the build fail.
 8. Finally, build Pd-L2Ork *(45-80 minutes)*
 
         cd ~/pd-l2ork
+        git config --global http.sslverify "false"
         make
 
 9. Look in the top level source directory and double-click the setup file to

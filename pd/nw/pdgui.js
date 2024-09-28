@@ -9178,29 +9178,10 @@ function gui_data_dialog(did, data_string) {
         data_string);
 }
 
-// 2021-10-29 ico@vt.edu: used primarily for cyclone to store text
-// while opening a new window since we cannot append text until it
-// has fully loaded.
-var text_dialog_text = {};
-
-function gui_text_dialog_text_init(did) {
-    text_dialog_text[did] = "";
-}
-
 function gui_text_dialog_clear(did) {
     //post("gui_text_dialog_clear <"+text_dialog_text[did]+">");
     if (dialogwin[did]) {
         dialogwin[did].window.textarea_clear();
-    }
-}
-
-function gui_text_init_dialog_append(did, atom) {
-    text_dialog_text[did] += atom;
-}
-
-function gui_text_dialog_map(did) {
-    if (dialogwin[did]) {
-        dialogwin[did].window.textarea_append(text_dialog_text[did]);
     }
 }
 
