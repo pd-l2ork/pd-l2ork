@@ -831,7 +831,7 @@ static void js_menu_open(t_js* x)
 #ifdef __APPLE__
         strcat(result, "open -e ");
 #else
-        strcat(result, "geany ");
+        strcat(result, "xdg-open ");
 #endif
         strcat(result, x->path.c_str());
         strcat(result, " &");
