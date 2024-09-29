@@ -2262,26 +2262,26 @@ void glob_dsp(void *dummy, t_symbol *s, int argc, t_atom *argv)
 
 /******************* redrawing  data *********************/
 
-static int template_usestemplate(t_symbol *usersym, t_template *used)
+void *canvas_getblock(t_class *blockclass, t_canvas **canvasp)
 {
-    int i;
-    t_template *user = template_findbyname(usersym);
-    if (!user)
-        return (0);
-    if (user == used)
-        return (1);
-    for (i = 0; i < user->t_n; i++)
-        if (user->t_vec[i].ds_type == DT_ARRAY &&
-            template_usestemplate(user->t_vec[i].ds_fieldtemplate, used))
-                return (1);
-    return (0);
+    t_canvas *canvas = *canvasp;
+    t_gobj *g;
+    void *ret = 0;
+    for (g = canvas->gl_list; g; g = g->g_next)
+    {
+        if (g->g_pd == blockclass)
+            ret = g;
+    }
+    *canvasp = canvas->gl_owner;
+    return(ret);
 }
     
 /******************* redrawing  data *********************/
 
-    /* redraw all "scalars" that depend on a template, e.g., if a drawing
-     command is changed. Action = 0 to redraw, 1 to draw only, 2 to erase. */
-static void glist_doredrawfortemplate(t_template *template, t_glist *gl, int action)
+/* redraw all "scalars" (do this if a drawing command is changed.) 
+    LATER we'll use the "template" information to select which ones we
+    redraw.   Action = 0 for redraw, 1 for draw only, 2 for erase. */
+static void glist_redrawall(t_template *template, t_glist *gl, int action)
 {
     //fprintf(stderr,"glist_redrawall\n");
     t_gobj *g;
@@ -2292,8 +2292,7 @@ static void glist_doredrawfortemplate(t_template *template, t_glist *gl, int act
             ((template == template_findbyname(((t_scalar *)g)->sc_template))
             || template_has_elemtemplate(
                    template_findbyname(((t_scalar *)g)->sc_template),
-                       template)) &&
-            template_usestemplate(((t_scalar *)g)->sc_template, template))
+                       template)))
         {
             if (action == 1)
             {
@@ -2308,7 +2307,7 @@ static void glist_doredrawfortemplate(t_template *template, t_glist *gl, int act
             else scalar_redraw((t_scalar *)g, gl);
         }
         else if (g->g_pd == canvas_class)
-            glist_doredrawfortemplate((t_glist *)g, template, action);
+            glist_redrawall(template, (t_glist *)g, action);
     }
     if (glist_isselected(glist_getcanvas(gl), (t_gobj *)gl))
     {
@@ -2325,7 +2324,7 @@ void canvas_redrawallfortemplate(t_template *template, int action)
     t_canvas *x;
         /* find all root canvases */
     for (x = pd_this->pd_canvaslist; x; x = x->gl_next)
-        glist_doredrawfortemplate(x, template, action);
+        glist_redrawall(template, x, action);
 }
 
     /* find the template defined by a canvas, and redraw all elements
@@ -2334,9 +2333,25 @@ extern t_canvas *canvas_templatecanvas_forgroup(t_canvas *x);
 
 void canvas_redrawallfortemplatecanvas(t_canvas *x, int action)
 {
-    t_template *template = template_findbyname(canvas_makebindsym(x->gl_name));
-    if (template)
-        canvas_redrawallfortemplate(template, action);
+    //fprintf(stderr,"canvas_redrawallfortemplatecanvas\n");
+    t_gobj *g;
+    t_template *tmpl;
+    t_symbol *s1 = gensym("struct");
+    for (g = x->gl_list; g; g = g->g_next)
+    {
+        t_object *ob = pd_checkobject(&g->g_pd);
+        t_atom *argv;
+        if (!ob || ob->te_type != T_OBJECT ||
+            binbuf_getnatom(ob->te_binbuf) < 2)
+            continue;
+        argv = binbuf_getvec(ob->te_binbuf);
+        if (argv[0].a_type != A_SYMBOL || argv[1].a_type != A_SYMBOL
+            || argv[0].a_w.w_symbol != s1)
+                continue;
+        tmpl = template_findbyname(canvas_makebindsym(argv[1].a_w.w_symbol));
+        canvas_redrawallfortemplate(tmpl, action);
+    }
+    canvas_redrawallfortemplate(0, action);
 }
 
 /* ------------------------------- ab ------------------------ */
