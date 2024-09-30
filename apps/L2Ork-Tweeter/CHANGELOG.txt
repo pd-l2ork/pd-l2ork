@@ -9,9 +9,21 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
-13-08-2024 0.83
-*Fixed sync bug when clicking on another part to sync with them.
-*Introduced optimization for populating notes (text) on the track.
+30-09-2024 0.83
+*A major overhaul of the synchronization engine, bunch of bug fixes and optimizations, and smaller additions/improvements, including re-syncing of the works folder. Software updates include:
+  *reset all, session-sync, sync-controls, and click-to-sync controls now all ensure perfect sync across all the clients
+  *Introduced optimization for populating notes (text) on the track
+  *Reworked all net-io abstractions to simplify the patch and utilize interactive option
+  *Fixed tracker and time offset abstraction
+  *Fixed bug where after session loading auto-sync does not work
+  *Updated copyright message
+  *Implemented better session report that copies from one client, rather than polling all clients
+  *Fixed hiccup when a new client connects and ensured that everyone remains in sync due to disconnect or reconnect
+  *Optimized server-side session state pull by only pulling from the oldest connected client
+  *Refined tracker positioning and accuracy of placing new notes in hover mode
+*TODO:
+  *Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. Needs to be further tested.
+  *Update L2Orkmote version of Tweeter with changes made to Tweeter
 
 01-04-2024 0.82
 *Updated L2Orkmote functionality to:
