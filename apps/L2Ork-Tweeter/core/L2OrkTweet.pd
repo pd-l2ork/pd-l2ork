@@ -32,7 +32,7 @@
 #X obj 18 199 tgl 15 0 \$1-loop null-r LOOP(alt) 17 6 0 10 #fcb46c
 #000000 #000000 0 1 1;
 #X obj 18 145 tgl 15 0 \$1-toggle-keyboard \$1-manual-toggle-keyboard
-KEYBOARD(ctrl) 17 6 0 10 #fc6418 #000000 #000000 1 1 1;
+KEYBOARD(ctrl) 17 6 0 10 #fc6418 #000000 #000000 0 1 1;
 #N canvas 793 437 521 278 REVERB 0;
 #X obj 45 181 freeverb~;
 #N canvas 3 75 470 252 reverb_levels 0;
@@ -308,7 +308,7 @@ KEYBOARD(ctrl) 17 6 0 10 #fc6418 #000000 #000000 1 1 1;
 #X text 417 48 logic for detecting dsp status on startup;
 #X obj 527 91 delay 10;
 #X obj 341 248 hsl 40 15 0 1.5708 0 1 empty empty empty 12 6 0 10 #fcb46c
-#fc6418 #000000 3776 0 0 1;
+#fc6418 #000000 2500 0 0 1;
 #X obj 13 446 *~;
 #X obj 50 446 *~;
 #X obj 28 408 line~;
@@ -2286,7 +2286,7 @@ empty empty empty 773 25 0 0 10 #000000 0 -8 12.5 12.5 0 1 0;
 #X connect 10 0 8 0;
 #X connect 11 1 1 0;
 #X restore 43 318 pd hover-logic \$1;
-#X obj 1109 376 net-io \$1 hover;
+#X obj 1109 369 net-io \$1 hover;
 #N canvas 727 338 312 223 hover-logic 0;
 #X obj 124 165 outlet;
 #X obj 169 99 gate 1 0;
@@ -2383,12 +2383,12 @@ empty empty empty 773 25 0 0 10 #000000 0 -8 12.5 12.5 0 1 0;
 #X text 819 563 to ensure when (re)created the abstraction gets the
 main out levels, f 36;
 #X text 1251 620 L2OrkTweet;
-#X msg 1073 483 interactive \$1;
-#X obj 1073 463 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X msg 1091 448 interactive \$1;
+#X obj 1091 428 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1 1 1;
 #X obj 495 447 t f f, f 11;
 #X msg 566 489 1;
-#X obj 1073 441 r \$0-toggle-local;
+#X obj 1091 406 r \$0-toggle-local;
 #X obj 976 311 r myclientnum;
 #X obj 976 331 == \$1;
 #X obj 1003 371 + 1;
@@ -2409,13 +2409,11 @@ main out levels, f 36;
 #X obj 921 151 s \$1-carrier;
 #X obj 921 221 s \$1-modulator;
 #X obj 894 200 t f f;
-#X msg 1073 505 \; \$0-username-r interactive \$1 \; \$0-instrument-name-r
+#X msg 1091 470 \; \$0-username-r interactive \$1 \; \$0-instrument-name-r
 interactive \$1;
-#X obj 1184 463 \$1;
-#X obj 1184 441 loadbang;
-#X obj 1073 553 pack 0 0;
-#X msg 1073 575 \$2-amp-envelope edit \$1 \; \$2-mod-envelope edit
-\$1;
+#X obj 1035 470 \$1;
+#X obj 1035 448 loadbang;
+#X obj 1091 522 pack 0 0;
 #X obj 1076 74 r \$0-from-tracker-time;
 #X obj 940 74 r \$1-tracker-override;
 #N canvas 727 397 287 300 update-status-and-gui 0;
@@ -2437,6 +2435,11 @@ interactive \$1;
 #X obj 1157 15 r \$1-loop-length-override;
 #X text 50 257 . . . . . . . . . . . . . . . . . . . . . . . . . .
 . . .;
+#X obj 1035 496 t f f;
+#X msg 1091 571 \; \$2-amp-envelope edit \$1 \; \$2-mod-envelope edit
+\$1;
+#X obj 1035 522 > 0;
+#X obj 1091 549 gate 1 0;
 #X connect 0 0 147 0;
 #X connect 7 0 186 0;
 #X connect 8 0 189 0;
@@ -2551,7 +2554,7 @@ interactive \$1;
 #X connect 139 2 111 0;
 #X connect 140 0 78 0;
 #X connect 144 0 121 0;
-#X connect 148 0 197 0;
+#X connect 148 0 196 0;
 #X connect 149 0 152 0;
 #X connect 150 0 151 0;
 #X connect 152 0 149 0;
@@ -2614,9 +2617,14 @@ interactive \$1;
 #X connect 186 1 187 0;
 #X connect 189 0 115 0;
 #X connect 189 1 188 0;
-#X connect 191 0 193 1;
+#X connect 191 0 200 0;
 #X connect 192 0 191 0;
+#X connect 193 0 203 1;
+#X connect 194 0 126 2;
 #X connect 195 0 126 2;
-#X connect 196 0 126 2;
-#X connect 199 0 118 2;
+#X connect 198 0 118 2;
+#X connect 200 0 202 0;
+#X connect 200 1 193 1;
+#X connect 202 0 203 0;
+#X connect 203 0 201 0;
 #X coords 0 -1 1 1 815 149 1 9 138;
