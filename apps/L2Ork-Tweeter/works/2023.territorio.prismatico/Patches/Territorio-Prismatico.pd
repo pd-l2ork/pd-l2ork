@@ -21,7 +21,7 @@
 #X obj 20 45 sel 0 1 2;
 #X msg 54 141 canada-hosts-mario;
 #X msg 37 114 canada-mid;
-#X msg 20 85 canada-start-24-3;
+#X msg 20 85 canada-start-24-6;
 #X connect 0 0 4 0;
 #X connect 2 0 1 0;
 #X connect 3 0 2 0;
