@@ -78,6 +78,15 @@ static void arrayvec_testvec(t_arrayvec *v)
 static void arrayvec_set(t_arrayvec *v, int argc, t_atom *argv)
 {
     int i;
+    if (!argc)  /* unset */
+    {
+        for (i = 0; i < v->v_n; i++)
+        {
+            gpointer_unset(&v->v_vec[i].d_gp);
+            v->v_vec[i].d_symbol = &s_;
+        }
+        return;
+    }
     for (i = 0; i < v->v_n && i < argc; i++)
     {
         gpointer_unset(&v->v_vec[i].d_gp); /* reset the pointer */
@@ -465,12 +474,12 @@ static void tabread_tilde_setup(void)
 {
     tabread_tilde_class = class_new(gensym("tabread~"),
         (t_newmethod)tabread_tilde_new, (t_method)tabread_tilde_free,
-        sizeof(t_tabread_tilde), 0, A_DEFSYM, 0);
+        sizeof(t_tabread_tilde), CLASS_MULTICHANNEL, A_GIMME, 0);
     CLASS_MAINSIGNALIN(tabread_tilde_class, t_tabread_tilde, x_f);
     class_addmethod(tabread_tilde_class, (t_method)tabread_tilde_dsp,
         gensym("dsp"), A_CANT, 0);
     class_addmethod(tabread_tilde_class, (t_method)tabread_tilde_set,
-        gensym("set"), A_SYMBOL, 0);
+        gensym("set"), A_GIMME, 0);
 }
 
 /******************** tabread4~ ***********************/
