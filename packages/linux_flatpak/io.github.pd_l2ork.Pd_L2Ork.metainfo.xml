@@ -54,6 +54,13 @@
   <url type="bugtracker">https://github.com/pd-l2ork/pd-l2ork/issues</url>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="20240930" type="stable" date="2024-10-01">
+      <description>
+        <p>
+          Porting of Pd vanilla 0.48-0.54 features, bunch of bug fixes and improvements. Major overhaul of L2Ork Tweeter (version 0.83), and updates to WebPdL2Ork.
+        </p>
+      </description>
+    </release>
     <release version="20240329" type="stable" date="2024-03-29">
       <description>
         <p>
