@@ -85,7 +85,7 @@ ifeq ($(OS_NAME),linux)
   LIBS += -lc
   DYLIB_LDFLAGS = $(LDFLAGS)
   STRIP = strip --strip-unneeded -R .note -R .comment
-  CPU = $(findstring arm, $(shell uname -m))
+  CPU = $(findstring aarch64, $(shell uname -m))
 endif
 ifeq ($(OS_NAME),windows)
   BUILDSRC_OS_NAME = win
@@ -1684,7 +1684,7 @@ ifeq ($(OS_NAME),darwin)
 endif
 ifeq ($(OS_NAME),linux)
 	cd $(externals_src)/pdjs/v8 && unzip -u lib.zip
-ifeq ($(CPU),arm)
+ifeq ($(CPU),aarch64)
 	cd $(externals_src)/pdjs/v8/lib && ln -sf arm-linux $(shell uname -m)-linux
 	cd $(externals_src)/pdjs \
 		&& cmake -G Ninja -DVERSION=1.0 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=native-arm-linux.cmake \
@@ -1726,7 +1726,7 @@ else
 endif
 endif
 ifeq ($(OS_NAME),linux)
-ifeq ($(CPU),arm)
+ifeq ($(CPU),aarch64)
 	install -p $(externals_src)/pdjs/binaries/arm*-linux/js.$(EXTENSION) \
 		$(DESTDIR)/$(objectsdir)/js
 	install -p $(externals_src)/pdjs/binaries/arm*-linux/*.pd \
@@ -2045,7 +2045,7 @@ rtcmix_clean:
 
 sensel:
 ifeq ($(OS_NAME),linux)
-ifeq ($(CPU),arm)
+ifeq ($(CPU),aarch64)
 	cd $(externals_src)/sensel \
 		&& cp linux-arm-x86/* ./
 else
