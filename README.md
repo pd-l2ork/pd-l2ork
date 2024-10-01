@@ -119,7 +119,7 @@ Hard drive space required: *roughly 2.5 GB*
              portaudio19-dev liblua5.3-dev python3-dev libsmpeg0 libjpeg-dev \
              flite1-dev libgsm1-dev libgtk2.0-dev git libstk-dev wget \
              libfluidsynth-dev fluid-soundfont-gm byacc cmake ninja-build \
-             patchelf libtirpc-dev libnss3
+             patchelf libtirpc-dev libnss3 libudev-dev
 
 For Ubuntu <= 24.04, also install `gconf2`.
 
