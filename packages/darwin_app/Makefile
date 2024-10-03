@@ -214,8 +214,8 @@ VOLUME_NAME = $(PACKAGE_NAME)
 dmg:
 # ico@vt.edu 2022-10-10: sign the app, so that we can get the mic/camera
 # permission prompts
-	codesign --deep --sign "-" --entitlements "$(CWD)/pd-l2ork.entitlements" "$(BUILD_BASE)/Pd-L2Ork.app"
 	./sign-MacOSX-dependencies.sh $(PD_APP_CONTENTS)
+	codesign --deep --force --verify --sign "-" --entitlements "$(CWD)/pd-l2ork.entitlements" "$(BUILD_BASE)/Pd-L2Ork.app"
 	rm -f build.dmg
 	hdiutil create -format UDRW -fs HFS+ -srcfolder "$(BUILD_BASE)" \
 		-volname $(VOLUME_NAME) build.dmg
