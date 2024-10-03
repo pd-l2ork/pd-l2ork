@@ -50,7 +50,7 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20240930'
+    tag: '20241003'
     commit: eef154b973cb543d424a5be0bc407da46eb2666c
   - type: patch
     path: patch/no-rsync-during-install.patch
@@ -146,7 +146,7 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20240930'
+    tag: '20241003'
     commit: eef154b973cb543d424a5be0bc407da46eb2666c
 
 - name: rpi-externals
@@ -164,7 +164,7 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20240930'
+    tag: '20241003'
     commit: eef154b973cb543d424a5be0bc407da46eb2666c
 
 - name: pd-abstractions
@@ -175,7 +175,7 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20240930'
+    tag: '20241003'
     commit: eef154b973cb543d424a5be0bc407da46eb2666c
 
 - name: pd-l2ork-integration
@@ -213,7 +213,7 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20240930'
+    tag: '20241003'
     commit: eef154b973cb543d424a5be0bc407da46eb2666c
   - type: file
     # x86_64 for now only. Still waiting for aarch64.
