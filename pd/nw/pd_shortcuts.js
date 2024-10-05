@@ -52,6 +52,7 @@ exports.menu = {
   "msgbox": { key: "2", modifiers: cmd_or_ctrl },
   "number": { key: "3", modifiers: cmd_or_ctrl },
   "symbol": { key: "4", modifiers: cmd_or_ctrl },
+  "list": {key: "6", modifiers: cmd_or_ctrl },
   "comment": { key: "5", modifiers: cmd_or_ctrl },
   "dropdown": { key: "m", modifiers: cmd_or_ctrl + "+shift" },
   "bang": { key: "b", modifiers: cmd_or_ctrl + "+shift" },

@@ -297,6 +297,8 @@
     "number_tt": "Ajouter un objet Nombre au canevas (pour taper, dérouler et afficher des nombres)",
     "symbol":    "Symbole",
     "symbol_tt": "Ajouter un objet Symbole au canevas (pour affichage)",
+    "list": "Listes",
+    "list_tt": "Ajouter un objet Liste au canevas (pour affichage)",
     "comment":    "Commentaire",
     "comment_tt": "Ajouter un object Commentaire au canevas",
     "dropdown":    "Menu Dropdown",

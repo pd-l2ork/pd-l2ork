@@ -499,6 +499,12 @@ function create_menu(gui, type) {
             modifiers: shortcuts.menu.symbol.modifiers,
             tooltip: l("menu.symbol_tt")
         }));
+        put_menu.append(m.put.list = new gui.MenuItem({
+            label: l("menu.list"),
+            key: shortcuts.menu.list.key,
+            modifiers: shortcuts.menu.list.modifiers,
+            tooltip: l("menu.list_tt")
+        }));
         put_menu.append(m.put.comment = new gui.MenuItem({
             label: l("menu.comment"),
             key: shortcuts.menu.comment.key,

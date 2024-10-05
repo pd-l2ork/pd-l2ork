@@ -68,6 +68,7 @@ let object_types = [
     '#X msg',
     '#X floatatom',
     '#X symbolatom',
+    '#X listbox',
     '#X dropdown'
 ];
 let known_objects = [
@@ -483,6 +484,9 @@ var Module = {
                         case "symbolatom":
                             gui_send('Symbol', data.send, data.value);
                             break;
+                        case "listbox":
+                            gui_send('List', data.send, data.value);
+                            break;
                         case "pddplink":
                         case "pddp/pddplink":
                             gui_link_open(data.link);
@@ -539,6 +543,10 @@ var Module = {
                             data.value = value;
                             gui_atom_update(data);
                             break;
+                        case "listbox":
+                            data.value = [value];
+                            gui_atom_update(data);
+                            break;
                         case "nbx":
                             data.value = value;
                             gui_nbx_update(data);
@@ -562,6 +570,10 @@ var Module = {
                             break;
                         case "symbolatom":
                             data.value = symbol;
+                            gui_atom_update(data);
+                            break;
+                        case "listbox":
+                            data.value = [symbol];
                             gui_atom_update(data);
                             break;
                         case "pddp/pddplink":
@@ -615,7 +627,15 @@ var Module = {
                             data.render();
                             gui_dropdown_send(data);
                             break;
-
+                        case "floatatom":
+                        case "symbolatom":
+                            data.value = list[0];
+                            gui_atom_update(data);
+                            break;
+                        case "listbox":
+                            data.value = list;
+                            gui_atom_update(data);
+                            break;
                     }
                 }
             }
@@ -1020,6 +1040,7 @@ var Module = {
                             break;
                         case 'floatatom':
                         case 'symbolatom':
+                        case 'listbox':
                             switch(symbol) {
                                 case 'focus':
                                     if(list[0] && data.interactive)
@@ -1037,7 +1058,7 @@ var Module = {
                                         setKeyboardFocus(null, false);
                                     break;
                                 case 'set':
-                                    data.dirtyValue = '' + list[0];
+                                    data.dirtyValue = '' + (data.type === 'listbox' ? list.join(' ') : list[0]);
                                     let send = data.send;
                                     data.send = [];
                                     gui_atom_commit(data);
@@ -2827,8 +2848,8 @@ function gui_array_onmouseup(id) {
 
 let gui_atom_touches = {};
 function gui_atom_update(data) {
-    gui_atom_settext(data, '' + data.value);
-    gui_send(data.type === 'floatatom' ? 'Float' : 'Symbol', data.send, data.value);
+    gui_atom_settext(data, '' + (data.type === 'listbox' ? data.value.join(' ') : data.value));
+    gui_send({floatatom: 'Float', symbolatom: 'Symbol', listbox: 'List'}[data.type], data.send, data.value);
 }
 function gui_atom_onmousedown(data, e, id) {
     if(data.interactive) {
@@ -2843,7 +2864,7 @@ function gui_atom_onmousedown(data, e, id) {
         } else {
             if(data.type !== 'floatatom') {
                 if(keyDown['Shift'])
-                    data.dirtyValue = data.value;
+                    data.dirtyValue = data.type === 'symbolatom' ? data.value : data.value.join(' ');
                 else
                     data.dirtyValue = '';
                 gui_atom_settext(data, data.dirtyValue + (new Array(Math.max(0,3 - data.dirtyValue.length))).fill('.').join(''));
@@ -2915,7 +2936,6 @@ function gui_atom_keydown(data, e) {
         data.dirtyValue = (data.dirtyValue || '').slice(0,-1);
     if(e.key === 'Enter') {
         gui_atom_commit(data);
-        gui_atom_settext(data, '' + data.value);
         
         configure_item(data.svgText, {
             'font-weight': 'bold',
@@ -2932,15 +2952,17 @@ function gui_atom_keydown(data, e) {
 }
 function gui_atom_commit(data, mousing) {
     if(!data.dirtyValue)
-        data.dirtyValue = '' + data.value;
+        data.dirtyValue = '' + (data.type === 'listbox' ? data.value.join(' ') : data.value);
 
     if(data.type === 'floatatom') {
         data.value = Math.round(+(data.dirtyValue.match(data.regex)[0]) * 100000) / 100000;
         if(data.typedMinMax || mousing && !(data.min == 0 && data.max == 0))
             data.value = Math.max(data.min, Math.min(data.max, data.value));
     }
-    else
+    else if(data.type === 'symbolatom') {
         data.value = data.dirtyValue;
+    } else
+        data.value = data.dirtyValue.split(' ').map(atom => !isNaN(atom) ? +atom : atom);
 
     delete data.dirtyValue;
     gui_atom_update(data);
@@ -2948,7 +2970,7 @@ function gui_atom_commit(data, mousing) {
 function gui_atom_losefocus(data) {
     configure_item(data.svgText, {fill: '#000000'});
     delete data.dirtyValue;
-    gui_atom_settext(data, '' + data.value);
+    gui_atom_settext(data, '' + (data.type === 'listbox' ? data.value.join(' ') : data.value));
 }
 
 //dropdown
@@ -3173,7 +3195,8 @@ let keyboardFocus = { data: null, exclusive: false, current: false};
 let inputListeners = [];
 let keyDown = {}
 function onKeyDown(e) {
-    e.preventDefault();
+    if('Dead' != e.key)
+        e.preventDefault();
     if(keyboardFocus.data?.onKeyDown)
         keyboardFocus.data.onKeyDown(keyboardFocus.data, e);
     keyDown[e.key] = true;
@@ -4793,6 +4816,7 @@ async function openPatch(content, filename) {
                 break;
             case "#X floatatom":
             case "#X symbolatom":
+            case "#X listbox":
                 if (args.length > 3) {
                     const data = {};
                     data.type = args[1];
@@ -4811,7 +4835,7 @@ async function openPatch(content, filename) {
                     data.id = `${data.type}_${nextHTMLID++}`;
                     data.canvas = layer.canvas;
 
-                    data.value = data.type === 'floatatom' ? 0 : 'symbol';
+                    data.value = {floatatom: 0, symbolatom: 'symbol', listbox: []}[data.type];
                     data.lastNonZero = 1;
                     data.regex = data.type === 'floatatom' ? /^-?[\d]*\.?[\d]*e?[\d]*$/ : /^.*$/;
                     data.onKeyDown = gui_atom_keydown;

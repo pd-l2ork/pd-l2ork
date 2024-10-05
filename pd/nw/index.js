@@ -898,6 +898,7 @@ function nw_create_pd_window_menus(gui, w) {
         minit(pd_m.put.message, { enabled: false });
         minit(pd_m.put.number, { enabled: false });
         minit(pd_m.put.symbol, { enabled: false });
+        minit(pd_m.put.list, { enabled: false });
         minit(pd_m.put.comment, { enabled: false });
         minit(pd_m.put.dropdown, { enabled: false });
         minit(pd_m.put.bang, { enabled: false });

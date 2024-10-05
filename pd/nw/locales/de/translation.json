@@ -298,6 +298,8 @@
     "number_tt": "Füge dem Patch ein Feld zur Eingabe und Anzeige von Zahlen hinzu",
     "symbol": "Symbol",
     "symbol_tt": "Füge dem Patch ein Feld zur Eingabe und Anzeige von Symbolen hinzu",
+    "list": "List",
+    "list_tt": "Füge dem Patch ein Feld zur Eingabe und Anzeige von Listen hinzu",
     "comment": "Kommentar",
     "comment_tt": "Füge dem Patch einen Kommentar hinzu",
     "dropdown": "Dropdown",
