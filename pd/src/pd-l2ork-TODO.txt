@@ -815,6 +815,10 @@ resulting in unexpected stuck keys.
 *Add bezier curve drawing ability to the arrays (currently displaying them as polygons).
 *Opening file dialogs on Ubuntu 22.04, including various Tweeter dialogs opens recent files, or a wrong folder, suggesting something may be broken with the patch_name and dialog.
 *Toggling VU meter scale (text labels with levels next to the VU meter) off and back on, results in incorrectly drawn scale.
+*Improved file dialog opening and fixed segfaults on Windows.
+*Integrated William Fergurson's porting of pd vanilla objects up to version 0.54, with list box being the last object yet to be ported, plus addressing any lingering bugs as they arise.
+*Ported Albert Graef's implementation of coll text editor that makes it now work reliably.
+*WebPdL2Ork bug fixes.
 
 
 
@@ -994,6 +998,26 @@ TWEETER DONE:
     *Instead of holding 2 on the left hand in mode 1 to adjust the overdrive level, the new configuration now uses hand pitch in combination with joystick off-center dislocation without any buttons pressed.
     *Fixed a bug where transposing down (button 2 on the right hand) also erroneously repositioned the timebar location.
     *Documentation updates.
+0.82:
+*Updated L2Orkmote functionality to:
+  *Include tempo changes (see the documentation of the L2Orkmote-Interface.pd).
+  *Moved dry level adjustment to mode 6 (to allow room for tempo changes).
+  *Fixed bug where overdrive level from the previous release did not get updated correctly to reflect new control approach.
+0.83:
+*A major overhaul of the synchronization engine, bunch of bug fixes and optimizations, and smaller additions/improvements, including re-syncing of the works folder. Software updates include:
+  *reset all, session-sync, sync-controls, and click-to-sync controls now all ensure perfect sync across all the clients
+  *Introduced optimization for populating notes (text) on the track
+  *Reworked all net-io abstractions to simplify the patch and utilize interactive option
+  *Fixed tracker and time offset abstraction
+  *Fixed bug where after session loading auto-sync does not work
+  *Updated copyright message
+  *Implemented better session report that copies from one client, rather than polling all clients
+  *Fixed hiccup when a new client connects and ensured that everyone remains in sync due to disconnect or reconnect
+  *Optimized server-side session state pull by only pulling from the oldest connected client
+  *Refined tracker positioning and accuracy of placing new notes in hover mode
+*TODO:
+  *Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. Needs to be further tested.
+  *Update L2Orkmote version of Tweeter with changes made to Tweeter
 
 
 

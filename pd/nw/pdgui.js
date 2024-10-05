@@ -8860,12 +8860,12 @@ exports.file_dialog_obj = file_dialog_obj;
 // for the coll and other cyclone objects
 
 function gui_openpanel(cid, target, path, mode) {
-    //post("gui_openpanel "+cid+" "+target+" "+path);
     path = path || "./";
     if(nw_os_is_osx)
         if(!path.endsWith('/'))
             path += '/';
-    pdsend(file_dialog_object, "trigger", +mode, target, path);
+    //post("gui_openpanel "+cid+" "+mode+" "+target+" <"+path+">");
+    pdsend(file_dialog_object, "trigger", mode, target, path);
 }
 
 exports.gui_openpanel = gui_openpanel;
@@ -8875,7 +8875,7 @@ function gui_savepanel(cid, target, path) {
     if(nw_os_is_linux)
         if(!path.endsWith('/'))
             path += '/';
-    pdsend(file_dialog_object, "trigger", 3, target, path || "./");
+    pdsend(file_dialog_object, "trigger", 3, target, path);
 }
 
 exports.gui_savepanel = gui_savepanel;

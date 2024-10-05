@@ -1,46 +1,48 @@
-#N canvas 139 104 893 327 12;
-#X obj 357 29 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#N canvas 139 104 768 352 10;
+#X obj 303 30 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1;
-#X msg 390 108 compile;
-#X obj 244 296 print js;
-#X text 412 254 Load JavaScript file js-help.js;
-#X text 412 274 args are available through;
-#X text 412 294 property jsarguments in JS;
-#X obj 244 255 js js-help.js arg1 arg2;
-#X floatatom 394 145 5 0 0 0 - - - 0 0 1, f 5;
-#X msg 406 178 1 2 3;
-#X text 376 27 call function bang;
-#X text 437 142 call function msg_float;
-#X text 459 178 call function list;
-#X msg 142 134 setprop name test;
-#X msg 143 160 getprop name;
-#X text 25 132 set JS property;
-#X text 26 161 get JS property;
-#X msg 422 210 test x y z;
-#X text 509 210 call function test;
-#X text 41 28 https://github.com/mganss/pdjs;
-#X text 11 9 js: Build Pd Objects Using JavaScript;
-#N canvas 821 588 456 197 META 0;
-#X text 12 5 KEYWORDS javascript;
-#X text 12 45 DESCRIPTION build pd objects using javascript;
-#X text 12 85 LIBRARY external;
-#X text 12 105 AUTHOR Michael Ganss;
-#X text 12 125 WEBSITE http://github.com/mganss/pdjs;
-#X text 12 145 RELEASE_DATE 2021;
-#X text 12 165 HELP_PATCH_AUTHORS Michael Ganss. Edited by Ivica Ico
+#X msg 331 138 compile;
+#X obj 206 304 print js;
+#X text 350 268 Load JavaScript file js-help.js;
+#X text 350 285 args are available through;
+#X text 350 302 property jsarguments in JS;
+#X obj 206 269 js js-help.js arg1 arg2;
+#X floatatom 335 177 5 0 0 0 - - - 0 0 1, f 5;
+#X msg 345 205 1 2 3;
+#X text 319 28 call function bang;
+#X text 372 177 call function msg_float;
+#X text 390 205 call function list;
+#X msg 119 163 setprop name test;
+#X msg 120 188 getprop name;
+#X text 18 163 set JS property;
+#X text 19 188 get JS property;
+#X msg 359 232 test x y z;
+#X text 433 232 call function test;
+#X text 35 24 https://github.com/mganss/pdjs;
+#X text 9 8 js: Build Pd Objects Using JavaScript;
+#N canvas 838 501 403 180 META 0;
+#X text 10 4 KEYWORDS javascript;
+#X text 10 39 DESCRIPTION build pd objects using javascript;
+#X text 10 73 LIBRARY external;
+#X text 10 90 AUTHOR Michael Ganss;
+#X text 10 107 WEBSITE http://github.com/mganss/pdjs;
+#X text 10 124 RELEASE_DATE 2021;
+#X text 10 141 HELP_PATCH_AUTHORS Michael Ganss. Edited by Ivica Ico
 Bukvic., f 61;
-#X text 12 25 LICENSE BSD 3-Clause License;
-#X text 12 65 INLET_0 bang \, compile \, float \, getprop list \, open
+#X text 10 21 LICENSE BSD 3-Clause License;
+#X text 10 56 INLET_0 bang \, compile \, float \, getprop list \, open
 \, setprop;
-#X restore 826 296 pd META;
-#X msg 377 69 open;
-#X text 40 47 Improvements by Ivica Ico Bukvic;
-#X text 40 66 https://github.com/pd-l2ork/pd-l2ork;
-#X text 452 100 recompile source (useful when you change the file using
+#X restore 708 316 pd META;
+#X msg 320 59 open;
+#X text 34 40 Improvements by Ivica Ico Bukvic;
+#X text 34 57 https://github.com/pd-l2ork/pd-l2ork;
+#X text 384 138 recompile source (useful when you change the file using
 the external editor), f 47;
-#X text 417 59 open the source in external editor (editor is OS-specific
-\, Linux uses Geany \, OSX TextEdit \, and Windows Notepad or Notepad2)
-, f 65;
+#X text 354 59 open the source in external editor (text editor is OS-
+and user-specific \, depending what the user has set as their default
+.js file editor. IMPORTANT! Windows OS needs to have a systemw-wide
+default app set for opening .js files before this will work. thisoption
+is also accessible via the right-click action., f 65;
 #X connect 0 0 6 0;
 #X connect 1 0 6 0;
 #X connect 6 0 2 0;

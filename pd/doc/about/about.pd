@@ -1,5 +1,5 @@
 #N struct cat float x float y;
-#N canvas 530 190 519 466 12;
+#N canvas 716 289 519 466 12;
 #N canvas 902 309 452 398 version 0;
 #X msg 61 51 l2ork_version;
 #X obj 61 76 pdinfo;
@@ -9,7 +9,6 @@
 #X obj 290 77 pdinfo;
 #X obj 290 27 loadbang;
 #X msg 290 52 version;
-#X msg 290 102 \$1.\$2.\$3;
 #X msg 290 152 label \$1;
 #X obj 290 127 makefilename Pd-%s;
 #X obj 290 177 s \$0-vanilla_text;
@@ -21,22 +20,24 @@
 #X obj 61 351 s \$0-precision_text;
 #X obj 61 126 tosymbol;
 #X obj 61 101 sprintf Pd-L2Ork v.%s;
+#X msg 290 102 symbol \$1.\$2.\$3;
 #X connect 0 0 1 0;
-#X connect 1 0 19 0;
+#X connect 1 0 18 0;
 #X connect 2 0 0 0;
 #X connect 3 0 4 0;
-#X connect 5 0 8 0;
+#X connect 5 0 19 0;
 #X connect 6 0 7 0;
 #X connect 7 0 5 0;
-#X connect 9 0 11 0;
-#X connect 10 0 9 0;
-#X connect 12 0 16 0;
-#X connect 13 0 15 0;
-#X connect 14 0 17 0;
-#X connect 15 0 12 0;
-#X connect 16 0 14 0;
-#X connect 18 0 3 0;
-#X connect 19 0 18 0;
+#X connect 8 0 10 0;
+#X connect 9 0 8 0;
+#X connect 11 0 15 0;
+#X connect 12 0 14 0;
+#X connect 13 0 16 0;
+#X connect 14 0 11 0;
+#X connect 15 0 13 0;
+#X connect 17 0 3 0;
+#X connect 18 0 17 0;
+#X connect 19 0 9 0;
 #X restore 18 426 pd version;
 #X text 18 87 A real-time graphical programming environment for live
 interactive computer music \, Pd-l2ork works on Linux \, Macintosh
@@ -53,7 +54,7 @@ is distributed under the same license as Pd. For additional info see:
 #X text 18 381 Reference documentation for Pd lives in:;
 #X obj 18 399 pddp/pddplink @pd_help/../1.manual/index.htm -text doc/1.manual/index.htm
 ;
-#X obj 18 29 cnv 15 482 33 empty \$0-about_text Pd-L2Ork\ v.20231030\ rev.b19affd2
+#X obj 18 29 cnv 15 482 33 empty \$0-about_text Pd-L2Ork\ v.20240930\ rev.afe61d05c
 67 14 0 18 #ff9f71 #000000 0;
 #N canvas 430 372 450 323 cat 0;
 #X obj 16 180 draw sprite ./cat;
@@ -74,7 +75,7 @@ is distributed under the same license as Pd. For additional info see:
 #X connect 7 0 4 0;
 #X restore 454 426 pd cat;
 #X scalar cat 411 75 \;;
-#X obj 407 58 cnv 15 93 20 empty \$0-vanilla_text Pd-0.48.0 10 6 0
+#X obj 407 58 cnv 15 93 20 empty \$0-vanilla_text Pd-0.54.0 10 6 0
 14 #d0d0d0 #000000 0;
 #X obj 393 398 cnv 15 31 20 empty \$0-precision_text 32 10 7 0 14 #fcfcfc
 #000000 0;

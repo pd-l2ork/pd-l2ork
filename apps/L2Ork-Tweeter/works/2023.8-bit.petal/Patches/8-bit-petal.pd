@@ -11,7 +11,7 @@
 #X text 161 431 part for all performers;
 #X obj 37 178 hradio 15 0 0 3 empty empty empty 0 -8 0 10 #fcfcfc #000000
 #000000 0 1;
-#N canvas 1003 581 340 254 load_session 0;
+#N canvas 780 508 340 254 load_session 0;
 #X obj 20 20 inlet;
 #X obj 20 216 outlet;
 #X msg 20 191 chat admin p:l2orklicious l2ork-load \$1;
@@ -19,7 +19,7 @@
 #X obj 20 45 sel 0 1 2;
 #X msg 132 115 raye-mid;
 #X msg 240 115 raye-end;
-#X msg 20 115 raye-start-24-2;
+#X msg 20 115 raye-start-24-6;
 #X connect 0 0 4 0;
 #X connect 2 0 1 0;
 #X connect 3 0 2 0;

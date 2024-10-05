@@ -1,4 +1,4 @@
-#N canvas 70 64 385 688 10;
+#N canvas 27 35 385 688 10;
 #X obj -30 -30 preset_hub k12 1 %hidden%;
 #X obj 50 571 s offline-messages;
 #X msg 80 513 server at inst-level-all 1 0 0.1, f 37;
@@ -25,15 +25,15 @@ at inst-level 6 0 1 \, server at inst-level 7 0 1, f 37;
 #X obj 51 40 select 49 50 51;
 #X text 151 40 use keys 1 \, 2 \, and 3;
 #N canvas 109 363 271 244 autoload-session 0;
-#X obj 82 118 s session-name-s;
 #X msg 82 94 symbol coffin-dance;
 #X obj 55 141 s load-session;
 #X obj 55 45 loadbang;
 #X obj 55 70 t b b;
-#X connect 1 0 0 0;
-#X connect 3 0 4 0;
-#X connect 4 0 2 0;
-#X connect 4 1 1 0;
+#X obj 82 118 s session-name-r;
+#X connect 0 0 4 0;
+#X connect 2 0 3 0;
+#X connect 3 0 1 0;
+#X connect 3 1 0 0;
 #X restore 168 571 pd autoload-session;
 #X text 15 599 Coffin Dance MEME song (Astronomia by Vicetone & Tony
 Igy)Created and adapted by Ivica Ico Bukvic 2024 IMPORTANT! This

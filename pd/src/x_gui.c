@@ -263,7 +263,7 @@ typedef struct _filedialog
     t_symbol *x_s;
 } t_filedialog;
 
-static void *filedialog_new( void)
+static t_filedialog *filedialog_new( void)
 {
     char buf[50];
     t_filedialog *x = (t_filedialog *)pd_new(filedialog_class);
@@ -353,9 +353,21 @@ static void filedialog_perform(int mode, t_symbol *callback_name, t_symbol *init
 }
 #endif
 
-static void filedialog_trigger(t_filedialog *x, t_float mode, t_symbol *callback_name, t_symbol *initial_dir)
+static void filedialog_trigger(t_filedialog *x, t_symbol *s, int argc, t_atom *argv)
+    //t_float mode, t_symbol *callback_name, t_symbol *initial_dir)
 {
-    filedialog_perform((int)mode, callback_name, initial_dir);
+    //post("argc=%d", argc);
+    if (argc != 3) return;
+    /*
+    post ("filedialog_trigger %d <%s> <%s>",
+        (int)atom_getfloat(argv),
+        atom_getsymbol(argv+1)->s_name,
+        atom_getsymbol(argv+2)->s_name);
+    */
+    filedialog_perform((int)atom_getfloat(argv),
+        atom_getsymbol(argv+1),
+        atom_getsymbol(argv+2));
+    //filedialog_perform((int)mode, callback_name, initial_dir);
 }
 
 static void filedialog_setup(void)
@@ -364,7 +376,7 @@ static void filedialog_setup(void)
         (t_newmethod)filedialog_new, (t_method)filedialog_free,
         sizeof(t_filedialog), 0, 0);
     class_addmethod(filedialog_class, (t_method)filedialog_trigger,
-        gensym("trigger"), A_FLOAT, A_DEFSYMBOL, A_DEFSYMBOL, 0);
+        gensym("trigger"), A_GIMME, 0);
 
     // We will create exactly one filedialog object, for the purpose
     // of receiving messages from pdgui.js that will select the proper
