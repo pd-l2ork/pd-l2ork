@@ -1133,8 +1133,10 @@ static void gatom_list(t_gatom *x, t_symbol *s, int argc, t_atom *argv) {
     if(!argc)
         gatom_bang(x);
 
-    if(x->a_flavor == A_LIST)
+    if(x->a_flavor == A_LIST) {
         gatom_set(x, s, argc, argv);
+        gatom_bang(x);
+    }
     else if (argv->a_type == A_FLOAT)
         gatom_float(x, argv->a_w.w_float);
     else if (argv->a_type == A_SYMBOL)
