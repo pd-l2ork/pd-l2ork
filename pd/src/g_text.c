@@ -3163,7 +3163,9 @@ void text_drawborder(t_text *x, t_glist *glist,
             gui_vmess("gui_atom_draw_border", "xsiii",
                 glist_getcanvas(glist),
                 tag,
-                (is_dropdown(x) ? ((t_dropdown *)x)->a_outtype + 1 : 0),
+                (is_dropdown(x) ? ((t_dropdown *)x)->a_outtype + 1 : 
+                    (pd_class(&x->te_pd) == gatom_class ? 
+                        (((t_gatom*)x)->a_flavor == A_LIST ? 3 : 0) : 0)),
                 x2 - x1,
                 y2 - y1);
         }
@@ -3176,8 +3178,9 @@ void text_drawborder(t_text *x, t_glist *glist,
             gui_vmess("gui_atom_redraw_border", "xsiii",
                 glist_getcanvas(glist),
                 tag,
-                pd_class(&x->te_pd) == dropdown_class ?
-                    ((t_dropdown *)x)->a_outtype + 1 : 0,
+                (is_dropdown(x) ? ((t_dropdown *)x)->a_outtype + 1 : 
+                    (pd_class(&x->te_pd) == gatom_class ? 
+                        (((t_gatom*)x)->a_flavor == A_LIST ? 3 : 0) : 0)),
                 x2 - x1,
                 y2 - y1);
         }

@@ -4465,7 +4465,7 @@ function atom_border_points(width, height, is_dropdown) {
         .join(" ");
 }
 
-function atom_arrow_points(width, height) {
+function atom_arrow_points(width, height, type) {
     var m = height < 20 ? 1 : height / 12;
     return [width - (9 * m), height * 0.5 - Math.floor(1 * m),
         width - (3 * m), height * 0.5 - Math.floor(1 * m),
@@ -4474,6 +4474,7 @@ function atom_arrow_points(width, height) {
 }
 
 function gui_atom_draw_border(cid, tag, type, width, height) {
+    //post("gui_atom_draw_border type=" + type);
     gui(cid).get_gobj(tag)
     .append(function(frag) {
         var polygon = create_item(cid, "polygon", {
@@ -4486,7 +4487,7 @@ function gui_atom_draw_border(cid, tag, type, width, height) {
         });
            
         frag.appendChild(polygon);
-        if (type !== 0) { // dropdown
+        if (type > 0 && type < 3) { // dropdown
             // 1 = output index
             // 2 = output value
             // Let's make the two visually distinct so that the user can still
@@ -4509,7 +4510,7 @@ function gui_atom_redraw_border(cid, tag, type, width, height) {
     .q("polygon",  {
         points: atom_border_points(width, height, type !== 0) 
     });
-    if (type !== 0) {
+    if (type > 0 && type < 3) {
         gui(cid).get_gobj(tag)
         .q(".arrow", {
             points: atom_arrow_points(width, height)
