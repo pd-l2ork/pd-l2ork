@@ -1042,7 +1042,9 @@ static void gatom_set(t_gatom *x, t_symbol *s, int argc, t_atom *argv)
                 strcat(x->a_buf, atoms[i].a_w.w_symbol->s_name);
             if(atoms[i].a_type == A_FLOAT)
                 sprintf(x->a_buf + strlen(x->a_buf), "%f", atoms[i].a_w.w_float);
+            x->a_buf[strlen(x->a_buf)] = ' ';
         }
+        x->a_buf[strlen(x->a_buf) - 1] = 0;
     }
 }
 
@@ -1836,7 +1838,9 @@ void canvas_atom(t_glist *gl, t_atomtype type,
         binbuf_add(x->a_binbuf, 1, &at);
         x->a_text.te_width = 10;
     } else {
+        SETSYMBOL(&at, &s_);
         x->a_binbuf = binbuf_new();
+        binbuf_add(x->a_binbuf, 1, &at);
         x->a_text.te_width = 20;
     }
     x->a_binbufold = binbuf_duplicate(x->a_binbuf);
