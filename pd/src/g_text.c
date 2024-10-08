@@ -1130,6 +1130,11 @@ static void gatom_symbol(t_gatom *x, t_symbol *s)
     "nofirstin" flag, the standard list behavior gets confused. */
 static void gatom_list(t_gatom *x, t_symbol *s, int argc, t_atom *argv)
 {
+    if(x->a_flavor == A_LIST) {
+        gatom_set(x, s, argc, argv);
+        return;
+    }
+
     //post("gatom_list <%s>", s->s_name);
     t_atom *firstAtom = binbuf_getvec(x->a_binbuf);
     if (!argc)
@@ -1179,9 +1184,7 @@ static void gatom_list(t_gatom *x, t_symbol *s, int argc, t_atom *argv)
     }
     else
     {
-        if(x->a_flavor == A_LIST)
-            gatom_set(x, s, argc, argv);
-    	else if (argv->a_type == A_FLOAT)
+    	if (argv->a_type == A_FLOAT)
         	gatom_float(x, argv->a_w.w_float);
     	else if (argv->a_type == A_SYMBOL)
         	gatom_symbol(x, argv->a_w.w_symbol);
