@@ -372,12 +372,17 @@ function register_window_id(gfxstub, attributes) {
             .style.setProperty("display", "none");
         document.querySelector(".outtype")
             .style.setProperty("display", "none");
+        document.getElementById("dialog_header").innerHTML = "float atom";
         document.getElementById("titlebar_title").innerHTML =
-            "SymAtom Properties";
+            "Symbol Atom Properties";
     }
-    else if (attributes.name === "atom")
+    else if (attributes.name === "atom") {
         document.querySelector(".outtype")
             .style.setProperty("display", "none");
+        document.getElementById("dialog_header").innerHTML = "symbol atom";
+        document.getElementById("titlebar_title").innerHTML =
+            "Float Atom Properties";
+    }
     else if (attributes.name === "lbox") {
         document.querySelector(".draglo")
             .style.setProperty("display", "none");
@@ -386,8 +391,8 @@ function register_window_id(gfxstub, attributes) {
         document.querySelector(".outtype")
             .style.setProperty("display", "none");
         document.getElementById("titlebar_title").innerHTML =
-            "ListAtom Properties";
-        document.getElementById("dialog_header").innerHTML = "list box"
+            "List Atom Properties";
+        document.getElementById("dialog_header").innerHTML = "list atom";
     }
 
     // Hack... change incoming "-" to empty string
