@@ -1129,23 +1129,28 @@ static void gatom_symbol(t_gatom *x, t_symbol *s)
     gatom_bang(x);
 }
 
+static void gatom_list(t_gatom *x, t_symbol *s, int argc, t_atom *argv) {
+    if(!argc)
+        gatom_bang(x);
+
+    if(x->a_flavor == A_LIST)
+        gatom_set(x, s, argc, argv);
+    else if (argv->a_type == A_FLOAT)
+        gatom_float(x, argv->a_w.w_float);
+    else if (argv->a_type == A_SYMBOL)
+        gatom_symbol(x, argv->a_w.w_symbol);
+}
+
     /* We need a list method because, since there's both an "inlet" and a
     "nofirstin" flag, the standard list behavior gets confused. */
-static void gatom_list(t_gatom *x, t_symbol *s, int argc, t_atom *argv)
+static void gatom_keyname(t_gatom *x, t_symbol *s, int argc, t_atom *argv)
 {
-    if(x->a_flavor == A_LIST) {
-        gatom_set(x, s, argc, argv);
-        return;
-    }
-
-    //post("gatom_list <%s>", s->s_name);
+    //post("gatom_keyname <%s>", s->s_name);
     t_atom *firstAtom = binbuf_getvec(x->a_binbuf);
-    if (!argc)
-        gatom_bang(x);
     /* ico@vt.edu 20200904 like g_numbox.c, here we hijack list to capture
        keyname keypresses, so that we can use shift+backspace to delete
        entire text */
-    else if (argc == 2 && argv[0].a_type == A_FLOAT && argv[1].a_type == A_SYMBOL)
+    if (argc == 2 && argv[0].a_type == A_FLOAT && argv[1].a_type == A_SYMBOL)
     {
         //post("got keyname %s while grabbed\n", argv[1].a_w.w_symbol->s_name);
         if (!strcmp("Shift", argv[1].a_w.w_symbol->s_name))
@@ -1184,13 +1189,6 @@ static void gatom_list(t_gatom *x, t_symbol *s, int argc, t_atom *argv)
                 gatom_retext(x, 1, 0);
             }
         }
-    }
-    else
-    {
-    	if (argv->a_type == A_FLOAT)
-        	gatom_float(x, argv->a_w.w_float);
-    	else if (argv->a_type == A_SYMBOL)
-        	gatom_symbol(x, argv->a_w.w_symbol);
     }
 }
 
@@ -1536,7 +1534,7 @@ static void gatom_click(t_gatom *x,
             // with the vanilla gatom, based on its exclusive flag (default off),
             // so that we can match the rest of the behavior.
     	   	glist_grab(x->a_glist, &x->a_text.te_g, gatom_motion, gatom_key,
-    	        (t_glistkeynameafn)gatom_list, xpos, ypos, x->a_exclusive);
+    	        (t_glistkeynameafn)gatom_keyname, xpos, ypos, x->a_exclusive);
     	    //post("a_shift_clicked=%d", x->a_shift_clicked);
             x->a_shift_clicked = x->a_shift;
     	    	// second click wipes prior text
