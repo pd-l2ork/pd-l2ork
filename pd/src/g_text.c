@@ -1033,13 +1033,13 @@ static void gatom_set(t_gatom *x, t_symbol *s, int argc, t_atom *argv)
     if(x->a_flavor == A_FLOAT)
         x->a_buf[0] = 0;
     else if(x->a_flavor == A_SYMBOL)
-        strlcpy(x->a_buf, firstAtom->a_w.w_symbol->s_name, ATOMBUFSIZE);
+        strncpy(x->a_buf, firstAtom->a_w.w_symbol->s_name, ATOMBUFSIZE);
     else {
         x->a_buf[0] = 0;
         t_atom *atoms = binbuf_getvec(x->a_binbuf);
         for(int i = 0; i < binbuf_getnatom(x->a_binbuf); i++) {
             if(atoms[i].a_type == A_SYMBOL)
-                strlcpy(x->a_buf + strlen(x->a_buf), atoms[i].a_w.w_symbol->s_name, ATOMBUFSIZE - strlen(x->a_buf));
+                strncpy(x->a_buf + strlen(x->a_buf), atoms[i].a_w.w_symbol->s_name, ATOMBUFSIZE - strlen(x->a_buf));
             if(atoms[i].a_type == A_FLOAT)
                 sprintf(x->a_buf + strlen(x->a_buf), "%.*f", ATOMBUFSIZE - strlen(x->a_buf), atoms[i].a_w.w_float);
             if(strlen(x->a_buf) < ATOMBUFSIZE - 1) {
