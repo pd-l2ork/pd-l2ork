@@ -21,7 +21,7 @@
       <fieldset style="display: inline-block; margin-right: 4px;"> 
         <legend id="dialog_header"></legend>
 
-        <table class="pairs" style="display: inline-block; width: 232px;">
+        <table class="pairs" style="display: inline-block; width: 242px;">
           <tr class="width prop">
             <td>
               <label data-i18n="[title]gatom.prop.width_tt"> 
@@ -379,7 +379,7 @@ function register_window_id(gfxstub, attributes) {
         document.querySelector(".outtype")
             .style.setProperty("display", "none");
     else if (attributes.name === "lbox") {
-      document.querySelector(".draglo")
+        document.querySelector(".draglo")
             .style.setProperty("display", "none");
         document.querySelector(".limit")
             .style.setProperty("display", "none");
@@ -387,6 +387,7 @@ function register_window_id(gfxstub, attributes) {
             .style.setProperty("display", "none");
         document.getElementById("titlebar_title").innerHTML =
             "ListAtom Properties";
+        document.getElementById("dialog_header").innerHTML = "list box"
     }
 
     // Hack... change incoming "-" to empty string
