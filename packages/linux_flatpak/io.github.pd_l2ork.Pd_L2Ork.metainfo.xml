@@ -4,7 +4,7 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later AND BSD-3-Clause</project_license>
   <name>Pd-L2Ork</name>
-  <summary>An open source visual programming language for multimedia, based on Pure Data</summary>
+  <summary>Visual programming for multimedia</summary>
   <description>
     <p>
       This package contains Pd-L2Ork, which is a fork of Pure Data that
@@ -39,21 +39,35 @@
   </description>
   <screenshots>
     <screenshot type="default">
+      <caption>L2Ork Tweeter synchronous networked synth tracker built using Pd-L2Ork</caption>
       <image type="source">https://l2ork.music.vt.edu/data/pd-l2ork/screenshots/L2Ork-Tweeter.png</image>
     </screenshot>
     <screenshot>
+      <caption>Pd-L2Ork K12 mode for beginners</caption>
       <image type="source">https://l2ork.music.vt.edu/data/pd-l2ork/screenshots/K12-Demo.png</image>
     </screenshot>
     <screenshot>
+      <caption>Documentation for the image object</caption>
       <image type="source">https://l2ork.music.vt.edu/data/pd-l2ork/screenshots/Image-Help-File.png</image>
     </screenshot>
   </screenshots>
-  <developer_name>Ivica Ico Bukvic</developer_name>
+  <developer_name>L2Ork Dev Team</developer_name>
+  <branding>
+    <color type="primary" scheme_preference="light">#c4dcdc</color>
+    <color type="primary" scheme_preference="dark">#282828</color>
+  </branding>
   <launchable type="desktop-id">io.github.pd_l2ork.Pd_L2Ork.desktop</launchable>
   <url type="homepage">https://l2ork.music.vt.edu/main/make-your-own-l2ork/software/</url>
   <url type="bugtracker">https://github.com/pd-l2ork/pd-l2ork/issues</url>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="20241003" type="stable" date="2024-10-03">
+      <description>
+        <p>
+          Updated flatpak versioning and improved flathub formatting to better adhere to the listing quality standards.
+        </p>
+      </description>
+    </release>
     <release version="20240930" type="stable" date="2024-10-01">
       <description>
         <p>
