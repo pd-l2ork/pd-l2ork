@@ -1374,6 +1374,9 @@ var Module = {
                                     data.visible = list[0];
                                     data.redraw();
                                     break;
+                                case "edit":
+                                    data.editable = list[0];
+                                    break;
                             }
                             break;
                         case "dropdown":
@@ -3623,6 +3626,13 @@ async function openPatch(content, filename) {
                             x: layer.dimensions.inlineX,
                             y: layer.dimensions.inlineY,
                         });
+                        if(layer.arrayCanvas) {
+                            configure_item(layer.arrayCanvas, {
+                                viewBox: `${layer.dimensions.contentX} ${layer.dimensions.contentY} ${layer.dimensions.coords.w} ${layer.dimensions.coords.h}`,
+                                width: layer.dimensions.coords.w,
+                                height: layer.dimensions.coords.h,
+                            });
+                        }
                         if(!layer.spill)
                             layers.at(-2).canvas.appendChild(layer.canvas);
                         layer.border = create_item('rect', {
@@ -4633,13 +4643,20 @@ async function openPatch(content, filename) {
                         data.nums = lines[i+1].replace(/\n/g,' ').split(' ').slice(1).map(num=>+num);
                     else
                         data.nums = (new Array(data.size)).fill(0);
+                    if(!layer.arrayCanvas) {
+                        layer.arrayCanvas = create_item('svg', {
+                            viewBox: `0 0 ${layer.dimensions.width} ${layer.dimensions.height}`,
+                            "shape-rendering": "crispEdges",
+                            id: `${layer.HTMLID}_array_svg`
+                        }, layer.canvas);
+                    }
                     data.path = create_item('path', {
                         id: data.id,
                         "shape-rendering": "auto",
-                    }, data.canvas);
+                    }, layer.arrayCanvas);
                     if(layer.arrays.length) {
-                        data.canvas.removeChild(data.path);
-                        data.canvas.insertBefore(data.path, layer.arrays[0].path);
+                        layer.arrayCanvas.removeChild(data.path);
+                        layer.arrayCanvas.insertBefore(data.path, layer.arrays[0].path);
                     }
                     data.setCoords = coords => {
                         data.coords = coords;
