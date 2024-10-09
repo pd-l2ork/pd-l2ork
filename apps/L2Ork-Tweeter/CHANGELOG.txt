@@ -9,6 +9,15 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+09-10-2024 0.84
+*Fixed a bug where saving a session to online clients via the teacher interface misreported a number of lines saved
+*Fixed a bug where loading sessions does not erase old notes from the track (the problem were text files edited in notepad that automatically replace non-standard characters with spaces)
+*Implemented a workaround where every time a loop is loaded or before it is written, we erase a potential extra note (beat 64). LATER: consider exploring why this happened in the first place (potentially a leftover during the optimization of the tracker logic).
+*TODO:
+  *Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. Needs to be further tested.
+    *Also affects Teacher widget
+  *Update L2Orkmote version of Tweeter with changes made to Tweeter
+
 30-09-2024 0.83
 *A major overhaul of the synchronization engine, bunch of bug fixes and optimizations, and smaller additions/improvements, including re-syncing of the works folder. Software updates include:
   *reset all, session-sync, sync-controls, and click-to-sync controls now all ensure perfect sync across all the clients
@@ -21,9 +30,6 @@ CHANGELOG (Date Format: DD-MM-YYYY)
   *Fixed hiccup when a new client connects and ensured that everyone remains in sync due to disconnect or reconnect
   *Optimized server-side session state pull by only pulling from the oldest connected client
   *Refined tracker positioning and accuracy of placing new notes in hover mode
-*TODO:
-  *Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. Needs to be further tested.
-  *Update L2Orkmote version of Tweeter with changes made to Tweeter
 
 01-04-2024 0.82
 *Updated L2Orkmote functionality to:
