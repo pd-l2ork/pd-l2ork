@@ -1,6 +1,6 @@
 ## Pd-L2Ork
 
-maintainer:
+Maintainer:
 
 * Ivica Ico Bukvic <ico@vt.edu>
 
@@ -93,7 +93,7 @@ However, to make this work, you will most likely have to install some prerequisi
 
 #### Linux
 
-Time to build: *10 minutes light install, 45 minutes to 1.5 hours full install*
+Time to build: *10 minutes light install, 15 minutes to 1 hour full install*  
 Hard drive space required: *roughly 2.5 GB*
 
 1. Install the dependencies (please note that the packages may be named
