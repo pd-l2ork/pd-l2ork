@@ -177,7 +177,7 @@ if [ ! -d "../pd/nw/nw" ]; then
 		arch="armv7l"
 	fi
 
-	# for pinebook, probably also rpi 4
+	# for pinebook, also rpi 4 and newer
 	if [ `uname -m` == "aarch64" ]; then
 		arch="armv7l"
 	fi
@@ -219,9 +219,12 @@ if [ ! -d "../pd/nw/nw" ]; then
 	nwjs_url=https://dl.nwjs.io/${nwjs_version}/$nwjs_filename
 	# 2021-12-28 ico@vt.edu: override RPi settings with a newer nw.js
 	if [ $arch == "armv7l" ]; then
-		nwjs_url=https://github.com/LeonardLaszlo/nw.js-armv7-binaries/releases/download/v0.28.4/nwjs-sdk-v0.28.4-linux-arm.tar.gz
-		nwjs_filename=nwjs-sdk-v0.28.4-linux-arm.tar.gz
-		nwjs_dirname=nwjs-sdk-v0.28.4-linux-arm
+		# nwjs_url=https://github.com/LeonardLaszlo/nw.js-armv7-binaries/releases/download/v0.28.4/nwjs-sdk-v0.28.4-linux-arm.tar.gz
+		# nwjs_filename=nwjs-sdk-v0.28.4-linux-arm.tar.gz
+		# nwjs_dirname=nwjs-sdk-v0.28.4-linux-arm
+		nwjs_url=https://l2ork.music.vt.edu/data/pd-l2ork/nwjs-v0.60.1-linux-arm64.tar.gz
+		nwjs_filename=nwjs-v0.60.1-linux-arm64.tar.gz
+		nwjs_dirname=nwjs-v0.60.1-linux-arm64
 	fi
 	echo "Fetching the nwjs binary from"
 	echo "$nwjs_url"
@@ -247,10 +250,13 @@ if [ ! -d "../pd/nw/nw" ]; then
 		chmod 755 ../pd/nw/nw/nw
 	fi
 	rm $nwjs_filename
+	# ico@vt.edu 2024-10-10: revert the arch to the true uname -m since that is what we use below
+	arch=`uname -m`
 fi
 
 # ico@vt.edu 2022-11-10: ugly hack for the nwjs 0.67.1 that has wrong permissions set for Linux
-if [[ $os != "win" && $dmg == 0 ]]; then
+# ico@vt.edu 2024-10-10: however, don't do this for Raspberry Pi which uses 0.60.1
+if [[ $os != "win" && $dmg == 0 && $arch != "aarch64" ]]; then
 	cd ../pd/nw/nw/
 	chmod 755 chrome* minidump_stackwalk nacl* nw nwjc payload
 	cd ../../../l2ork_addons
