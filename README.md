@@ -1,6 +1,6 @@
 ## Pd-L2Ork
 
-maintainer:
+Maintainer:
 
 * Ivica Ico Bukvic <ico@vt.edu>
 
@@ -93,7 +93,7 @@ However, to make this work, you will most likely have to install some prerequisi
 
 #### Linux
 
-Time to build: *10 minutes light install, 45 minutes to 1.5 hours full install*
+Time to build: *10 minutes light install, 15-60 minutes full install*  
 Hard drive space required: *roughly 2.5 GB*
 
 1. Install the dependencies (please note that the packages may be named
@@ -121,15 +121,17 @@ Hard drive space required: *roughly 2.5 GB*
              libfluidsynth-dev fluid-soundfont-gm byacc cmake ninja-build \
              patchelf libtirpc-dev libnss3 libudev-dev
 
-For Ubuntu <= 24.04, also install `gconf2`.
+   For Ubuntu <= 24.04, also install `gconf2` by typing:
 
-2. Clone the Pd-L2Ork repository *(2 to 10 minutes)*
+        sudo apt-get install gconf2
+
+2. Clone the Pd-L2Ork repository
 
         git clone https://github.com/pd-l2ork/pd-l2ork.git
 
-3. Compile the code *(5 minutes [light] to 1.5 hours [full])*
+3. Compile the code
 
-   * to build only the core: `make light` *(5 minutes)*
+   * to build only the core: `make light`
    * to build the core and all externals: `make all` *(20 minutes to 1.5 hours)*
    * to build everything *except* Gem: `make incremental` *(10 to 20 minutes)*
 
@@ -145,13 +147,13 @@ For Ubuntu <= 24.04, also install `gconf2`.
 
 #### OSX 64-bit using Homebrew
 
-Time to build: *50 minutes to 1.5 hours*  
+Time to build: *30-60 minutes*  
 Hard drive space required: *roughly 2 GB*
 
-1. Install [Homebrew](https://brew.sh) *(15 minutes)*
+1. Install [Homebrew](https://brew.sh)  
    (asks for password twice-- once for command line tools, once for homebrew)
 
-2. Install the dependencies *(10 minutes)*:
+2. Install the dependencies:
 
         brew install wget
         brew install autoconf
@@ -180,7 +182,7 @@ Hard drive space required: *roughly 2 GB*
         brew install cmake
         brew install lua
 
-3. Clone the Pd-L2Ork repository *(10 minutes)*
+3. Clone the Pd-L2Ork repository
 
         git clone https://github.com/pd-l2ork/pd-l2ork.git
 
@@ -188,7 +190,7 @@ Hard drive space required: *roughly 2 GB*
 
         cd pd-l2ork
 
-5. Build the OSX app and the installer disk image (.dmg file) *(15 minutes)*
+5. Build the OSX app and the installer disk image (.dmg file)
 
         make
 
@@ -196,7 +198,7 @@ Hard drive space required: *roughly 2 GB*
 
 #### Windows 32-bit Using msys2
 
-Time to build: *roughly 1.5 hours--30 minutes of this is for Gem alone*  
+Time to build: *roughly 30-60 minutes--most of this is for Gem alone*  
 Hard drive space required to build: *rougly 2.5 GB*
 
 **Important note:** We recommend doing the build under your msys2 home
@@ -205,7 +207,7 @@ not have any spaces in it, which would otherwise cause trouble during the
 build. Never try using your Windows home directory for this purpose instead,
 since it will usually contain spaces, making the build fail.
 
-1. Download and install [msys2](https://msys2.github.io/) *(5 minutes)*  
+1. Download and install [msys2](https://msys2.github.io/)  
    There are two installers-- one for 32-bit Windows systems (i686) and one for
    64-bit Windows (x86_64). Be sure you know which
    [version](http://windows.microsoft.com/en-us/windows/32-bit-and-64-bit-windows)
@@ -213,15 +215,15 @@ since it will usually contain spaces, making the build fail.
    Note: don't run the shell after installation finishes. You'll do that
    manually in step 3.
 
-2. Download and install the [inno setup Quickstart Pack](http://www.jrsoftware.org/isdl.php) which includes the Script Editor *(5 minutes)*
+2. Download and install the [inno setup Quickstart Pack](http://www.jrsoftware.org/isdl.php) which includes the Script Editor
 
-3. Run the "MSYS2 MinGW 32-bit" shell *(less than a minute)*  
+3. Run the "MSYS2 MinGW 32-bit" shell  
    msys2 adds three Start Menu items for different "flavors" of shell:
     + MSYS2 MinGW __32-bit__ <- click this one!
     + MSYS2 MinGW 64-bit
     + MSYS2 MSYS
 
-4. Install the dependencies *(5-10 minutes)*  
+4. Install the dependencies  
    Once the shell opens, we need to install the dependencies for building
    Pd-L2Ork. First we need to update all the packages:
 
@@ -248,13 +250,13 @@ since it will usually contain spaces, making the build fail.
           mingw-w64-i686-ninja \
           mingw-w64-i686-glfw mingw-w64-i686-pcre
 
-5. Download the source code *(3-6 minutes)*  
+5. Download the source code  
    Issue the following command to create a new directory "pd-l2ork" and clone
    the repository to it:
 
         git clone https://github.com/pd-l2ork/pd-l2ork.git
 
-6. Enter the source directory *(less than a minute)*
+6. Enter the source directory
 
         cd pd-l2ork
 
@@ -264,7 +266,7 @@ since it will usually contain spaces, making the build fail.
         pacman -U mingw-w64-i686-dlfcn-1.2.0-1-any.pkg.tar.xz \
           mingw-w64-i686-binutils-2.39-3-any.pkg.tar.zst
 
-8. Finally, build Pd-L2Ork *(45-80 minutes)*
+8. Finally, build Pd-L2Ork
 
         cd ~/pd-l2ork
         git config --global http.sslverify "false"

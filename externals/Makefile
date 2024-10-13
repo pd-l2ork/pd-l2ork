@@ -1687,7 +1687,7 @@ ifeq ($(OS_NAME),linux)
 ifeq ($(CPU),aarch64)
 	cd $(externals_src)/pdjs/v8/lib && ln -sf arm-linux $(shell uname -m)-linux
 	cd $(externals_src)/pdjs \
-		&& cmake -G Ninja -DVERSION=1.0 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=native-arm-linux.cmake \
+		&& cmake -G Ninja -DVERSION=1.0 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=arm64-linux.cmake \
 			-B out/build/x64-linux-Debug/ -S . \
 		&& cmake --build out/build/x64-linux-Debug -- -v
 else
