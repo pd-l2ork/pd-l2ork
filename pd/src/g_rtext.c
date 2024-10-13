@@ -861,6 +861,30 @@ static int rtext_compare_special_chars(const char c)
         return 1;
 }
 
+    /* figure out which atom a click falls into if any; -1 if you
+    clicked on a space or something */
+int rtext_findatomfor(t_rtext *x, int xpos, int ypos)
+{
+    int w = xpos, h = ypos, indx, natom = 0, i, gotone = 0;
+        /* get byte index of character clicked on */
+    rtext_senditup(x, SEND_UPDATE, &w, &h, &indx);
+        /* search through for whitespace before that index */
+    for (i = 0; i <= indx; i++)
+    {
+        if (x->x_buf[i] == ';' || x->x_buf[i] == ',')
+            natom++, gotone = 0;
+        else if (x->x_buf[i] == ' ' || x->x_buf[i] == '\n')
+            gotone = 0;
+        else
+        {
+            if (!gotone)
+                natom++;
+            gotone = 1;
+        }
+    }
+    return (natom-1);
+}
+
 void rtext_key(t_rtext *x, int keynum, t_symbol *keysym)
 {
     //post("rtext_key %d %s", keynum, keysym->s_name);

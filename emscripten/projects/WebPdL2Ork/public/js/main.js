@@ -1389,6 +1389,9 @@ var Module = {
                                     data.selectedOption = Math.max(0, Math.min(data.options.length - 1, list[0]));
                                     data.render();
                                     break;
+                                case "interactive":
+                                    data.interactive = list[0];
+                                    break;
                             }
                             break;
                         case "Scope~":
@@ -2854,6 +2857,19 @@ function gui_atom_update(data) {
     gui_atom_settext(data, '' + (data.type === 'listbox' ? data.value.join(' ') : data.value));
     gui_send({floatatom: 'Float', symbolatom: 'Symbol', listbox: 'List'}[data.type], data.send, data.value);
 }
+function gui_atom_getindex(data, e) {
+    const text = data.svgText.textContent;
+    if(text.length == 0)
+        return -1;
+
+    const rect = data.svgText.getBoundingClientRect();
+    const charClicked = Math.floor((e.clientX - rect.x) / (rect.width / text.length));
+
+    if(text.charAt(charClicked) === ' ' || charClicked >= text.length)
+        return -1;
+
+    return data.svgText.textContent.slice(0, charClicked + 1).match(/ /g)?.length || 0;
+}
 function gui_atom_onmousedown(data, e, id) {
     if(data.interactive) {
         if(data.type === 'floatatom' && (keyDown['Meta'] || keyDown['Control'])) {
@@ -2870,15 +2886,16 @@ function gui_atom_onmousedown(data, e, id) {
                     data.dirtyValue = data.type === 'symbolatom' ? data.value : data.value.join(' ');
                 else
                     data.dirtyValue = '';
-                gui_atom_settext(data, data.dirtyValue + (new Array(Math.max(0,3 - data.dirtyValue.length))).fill('.').join(''));
             }
             setKeyboardFocus(data, data.exclusive);
             configure_item(data.svgText, {fill: '#ff0000'});
-            if(data.type === 'floatatom') {
+            if(data.type !== 'symbolatom') {
+                let index = data.type === 'floatatom' ? 0 : gui_atom_getindex(data, e);
                 gui_atom_touches[id] = {
                     data,
+                    index,
                     pos: gui_mousepoint(e, data.canvas),
-                    value: data.value,
+                    value: data.type === 'floatatom' ? data.value : data.value[index],
                     shift: keyDown['Shift']
                 }
             }
@@ -2890,16 +2907,28 @@ function gui_atom_onmousemove(e, id) {
         let curPos = gui_mousepoint(e, gui_atom_touches[id].data.canvas);
         if(keyDown['Shift'] != gui_atom_touches[id].shift) {
             gui_atom_touches[id].pos = curPos;
-            gui_atom_touches[id].value = gui_atom_touches[id].data.value
+            gui_atom_touches[id].value = gui_atom_touches[id].data.type === 'floatatom' ? gui_atom_touches[id].data.value : gui_atom_touches[id].data.value[gui_atom_touches[id].index]
             gui_atom_touches[id].shift = keyDown['Shift'];
         }
 
-        let {data, pos, value} = gui_atom_touches[id];
-        if(keyDown['Shift'])
-            data.dirtyValue = '' + (value - Math.round(curPos.y - pos.y) / 100);
-        else
-            data.dirtyValue = '' + (value - Math.round(curPos.y - pos.y));
-        gui_atom_commit(data, true);
+        let {data, pos, value, index} = gui_atom_touches[id];
+        if(data.type === 'floatatom') {
+            if(keyDown['Shift'])
+                data.dirtyValue = '' + (value - Math.round(curPos.y - pos.y) / 100);
+            else
+                data.dirtyValue = '' + (value - Math.round(curPos.y - pos.y));
+            data.value = data.value.replace(/(\.\d\d)(\d*)/, '$1');
+        }
+        else if(index !== -1 && !isNaN(data.value[index])) {
+            if(keyDown['Shift'])               
+                data.value[index] = '' + (value - Math.round(curPos.y - pos.y) / 100);
+            else
+                data.value[index] = '' + (value - Math.round(curPos.y - pos.y));
+            data.value[index] = data.value[index].replace(/(\.\d\d)(\d*)/, '$1');
+            data.dirtyValue = data.value.join(' ');
+        }
+        if(index !== -1 && (data.type === 'floatatom' || !isNaN(data.value[index])))
+            gui_atom_commit(data, true);
     }
 }
 function gui_atom_onmouseup(id) {
@@ -2979,6 +3008,9 @@ function gui_atom_losefocus(data) {
 //dropdown
 let gui_dropdown_dropdowns = [];
 function gui_dropdown_onmousedown(data, e, id) {
+    if(!data.interactive)
+        return;
+
     data.showOptions = true;
     data.render();
 }
@@ -3223,6 +3255,12 @@ function onKeyUp(e) {
                 listener.onKeyUp(e);
     }
 }
+
+window.onblur = () => {
+    for(key in keyDown)
+        keyDown[key] = false;
+};
+
 function setKeyboardFocus(data, exclusive) {
     for(let key in keyDown) {
         if(exclusive)
@@ -4929,6 +4967,7 @@ async function openPatch(content, filename) {
                     data.label = args[8] === '-' ? '' : args[8];
                     data.receive = args[9] === '-' ? [null] : [args[9]];
                     data.send = args[10] === '-' ? [null] : [args[10]];
+                    data.interactive = args[11] !== undefined ? +args[11] : 1;
                     data.options = [
                         "symbol",
                         "float",
@@ -4985,8 +5024,8 @@ async function openPatch(content, filename) {
                     data.optionsGUI = [];
 
                     data.render = () => {
-                        let optionOffset = font_height_map()[layer.fontSize]*1.5 - 2.5;
-                        let optionHeight = font_height_map()[layer.fontSize]*2 - 3.5;
+                        let optionOffset = font_height_map()[layer.fontSize]*1.5 - 3.5;
+                        let optionHeight = font_height_map()[layer.fontSize]*1.5 - 3.5;
 
                         data.svgText.textContent = new Array(+data.width == 0 ? data.options.reduce((p, c) => c.length > p ? c.length : p, 0) : data.width).fill('A').join('');
                         let width = data.svgText.getComputedTextLength() + 15, height = font_height_map()[layer.fontSize] + 4;
@@ -5021,7 +5060,7 @@ async function openPatch(content, filename) {
                                 }, data.canvas);
                                 let text = create_item('text', {
                                     x: data.x_pos + 6,
-                                    y: data.y_pos + font_height_map()[layer.fontSize] * 1.5 - 3.5 + optionOffset + optionHeight * i,
+                                    y: data.y_pos + font_height_map()[layer.fontSize] - 2 + optionOffset + optionHeight * i,
                                     'shape-rendering': 'crispEdges',
                                     'font-size': pd_fontsize_to_gui_fontsize(layer.fontSize) + 'px',
                                     id: `${data.id}_label`,
