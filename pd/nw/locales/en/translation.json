@@ -322,6 +322,8 @@
     "number_tt": "Add a box to type, scroll, and display a number on the canvas",
     "symbol": "Symbol",
     "symbol_tt": "Add a box to type and display a symbol on the canvas",
+    "list": "List",
+    "list_tt": "Add a box to type and display a list on the canvas",
     "comment": "Comment",
     "comment_tt": "Write a comment on the canvas",
     "dropdown": "Dropdown",

@@ -68,6 +68,7 @@ let object_types = [
     '#X msg',
     '#X floatatom',
     '#X symbolatom',
+    '#X listbox',
     '#X dropdown'
 ];
 let known_objects = [
@@ -483,6 +484,9 @@ var Module = {
                         case "symbolatom":
                             gui_send('Symbol', data.send, data.value);
                             break;
+                        case "listbox":
+                            gui_send('List', data.send, data.value);
+                            break;
                         case "pddplink":
                         case "pddp/pddplink":
                             gui_link_open(data.link);
@@ -539,6 +543,10 @@ var Module = {
                             data.value = value;
                             gui_atom_update(data);
                             break;
+                        case "listbox":
+                            data.value = [value];
+                            gui_atom_update(data);
+                            break;
                         case "nbx":
                             data.value = value;
                             gui_nbx_update(data);
@@ -562,6 +570,10 @@ var Module = {
                             break;
                         case "symbolatom":
                             data.value = symbol;
+                            gui_atom_update(data);
+                            break;
+                        case "listbox":
+                            data.value = [symbol];
                             gui_atom_update(data);
                             break;
                         case "pddp/pddplink":
@@ -615,7 +627,15 @@ var Module = {
                             data.render();
                             gui_dropdown_send(data);
                             break;
-
+                        case "floatatom":
+                        case "symbolatom":
+                            data.value = list[0];
+                            gui_atom_update(data);
+                            break;
+                        case "listbox":
+                            data.value = list;
+                            gui_atom_update(data);
+                            break;
                     }
                 }
             }
@@ -1020,6 +1040,7 @@ var Module = {
                             break;
                         case 'floatatom':
                         case 'symbolatom':
+                        case 'listbox':
                             switch(symbol) {
                                 case 'focus':
                                     if(list[0] && data.interactive)
@@ -1037,7 +1058,7 @@ var Module = {
                                         setKeyboardFocus(null, false);
                                     break;
                                 case 'set':
-                                    data.dirtyValue = '' + list[0];
+                                    data.dirtyValue = '' + (data.type === 'listbox' ? list.join(' ') : list[0]);
                                     let send = data.send;
                                     data.send = [];
                                     gui_atom_commit(data);
@@ -1353,6 +1374,9 @@ var Module = {
                                     data.visible = list[0];
                                     data.redraw();
                                     break;
+                                case "edit":
+                                    data.editable = list[0];
+                                    break;
                             }
                             break;
                         case "dropdown":
@@ -1364,6 +1388,9 @@ var Module = {
                                 case "set":
                                     data.selectedOption = Math.max(0, Math.min(data.options.length - 1, list[0]));
                                     data.render();
+                                    break;
+                                case "interactive":
+                                    data.interactive = list[0];
                                     break;
                             }
                             break;
@@ -2827,8 +2854,21 @@ function gui_array_onmouseup(id) {
 
 let gui_atom_touches = {};
 function gui_atom_update(data) {
-    gui_atom_settext(data, '' + data.value);
-    gui_send(data.type === 'floatatom' ? 'Float' : 'Symbol', data.send, data.value);
+    gui_atom_settext(data, '' + (data.type === 'listbox' ? data.value.join(' ') : data.value));
+    gui_send({floatatom: 'Float', symbolatom: 'Symbol', listbox: 'List'}[data.type], data.send, data.value);
+}
+function gui_atom_getindex(data, e) {
+    const text = data.svgText.textContent;
+    if(text.length == 0)
+        return -1;
+
+    const rect = data.svgText.getBoundingClientRect();
+    const charClicked = Math.floor((e.clientX - rect.x) / (rect.width / text.length));
+
+    if(text.charAt(charClicked) === ' ' || charClicked >= text.length)
+        return -1;
+
+    return data.svgText.textContent.slice(0, charClicked + 1).match(/ /g)?.length || 0;
 }
 function gui_atom_onmousedown(data, e, id) {
     if(data.interactive) {
@@ -2843,18 +2883,19 @@ function gui_atom_onmousedown(data, e, id) {
         } else {
             if(data.type !== 'floatatom') {
                 if(keyDown['Shift'])
-                    data.dirtyValue = data.value;
+                    data.dirtyValue = data.type === 'symbolatom' ? data.value : data.value.join(' ');
                 else
                     data.dirtyValue = '';
-                gui_atom_settext(data, data.dirtyValue + (new Array(Math.max(0,3 - data.dirtyValue.length))).fill('.').join(''));
             }
             setKeyboardFocus(data, data.exclusive);
             configure_item(data.svgText, {fill: '#ff0000'});
-            if(data.type === 'floatatom') {
+            if(data.type !== 'symbolatom') {
+                let index = data.type === 'floatatom' ? 0 : gui_atom_getindex(data, e);
                 gui_atom_touches[id] = {
                     data,
+                    index,
                     pos: gui_mousepoint(e, data.canvas),
-                    value: data.value,
+                    value: data.type === 'floatatom' ? data.value : data.value[index],
                     shift: keyDown['Shift']
                 }
             }
@@ -2866,16 +2907,28 @@ function gui_atom_onmousemove(e, id) {
         let curPos = gui_mousepoint(e, gui_atom_touches[id].data.canvas);
         if(keyDown['Shift'] != gui_atom_touches[id].shift) {
             gui_atom_touches[id].pos = curPos;
-            gui_atom_touches[id].value = gui_atom_touches[id].data.value
+            gui_atom_touches[id].value = gui_atom_touches[id].data.type === 'floatatom' ? gui_atom_touches[id].data.value : gui_atom_touches[id].data.value[gui_atom_touches[id].index]
             gui_atom_touches[id].shift = keyDown['Shift'];
         }
 
-        let {data, pos, value} = gui_atom_touches[id];
-        if(keyDown['Shift'])
-            data.dirtyValue = '' + (value - Math.round(curPos.y - pos.y) / 100);
-        else
-            data.dirtyValue = '' + (value - Math.round(curPos.y - pos.y));
-        gui_atom_commit(data, true);
+        let {data, pos, value, index} = gui_atom_touches[id];
+        if(data.type === 'floatatom') {
+            if(keyDown['Shift'])
+                data.dirtyValue = '' + (value - Math.round(curPos.y - pos.y) / 100);
+            else
+                data.dirtyValue = '' + (value - Math.round(curPos.y - pos.y));
+            data.value = data.value.replace(/(\.\d\d)(\d*)/, '$1');
+        }
+        else if(index !== -1 && !isNaN(data.value[index])) {
+            if(keyDown['Shift'])               
+                data.value[index] = '' + (value - Math.round(curPos.y - pos.y) / 100);
+            else
+                data.value[index] = '' + (value - Math.round(curPos.y - pos.y));
+            data.value[index] = data.value[index].replace(/(\.\d\d)(\d*)/, '$1');
+            data.dirtyValue = data.value.join(' ');
+        }
+        if(index !== -1 && (data.type === 'floatatom' || !isNaN(data.value[index])))
+            gui_atom_commit(data, true);
     }
 }
 function gui_atom_onmouseup(id) {
@@ -2915,7 +2968,6 @@ function gui_atom_keydown(data, e) {
         data.dirtyValue = (data.dirtyValue || '').slice(0,-1);
     if(e.key === 'Enter') {
         gui_atom_commit(data);
-        gui_atom_settext(data, '' + data.value);
         
         configure_item(data.svgText, {
             'font-weight': 'bold',
@@ -2932,15 +2984,17 @@ function gui_atom_keydown(data, e) {
 }
 function gui_atom_commit(data, mousing) {
     if(!data.dirtyValue)
-        data.dirtyValue = '' + data.value;
+        data.dirtyValue = '' + (data.type === 'listbox' ? data.value.join(' ') : data.value);
 
     if(data.type === 'floatatom') {
         data.value = Math.round(+(data.dirtyValue.match(data.regex)[0]) * 100000) / 100000;
         if(data.typedMinMax || mousing && !(data.min == 0 && data.max == 0))
             data.value = Math.max(data.min, Math.min(data.max, data.value));
     }
-    else
+    else if(data.type === 'symbolatom') {
         data.value = data.dirtyValue;
+    } else
+        data.value = data.dirtyValue.split(' ').map(atom => !isNaN(atom) ? +atom : atom);
 
     delete data.dirtyValue;
     gui_atom_update(data);
@@ -2948,12 +3002,15 @@ function gui_atom_commit(data, mousing) {
 function gui_atom_losefocus(data) {
     configure_item(data.svgText, {fill: '#000000'});
     delete data.dirtyValue;
-    gui_atom_settext(data, '' + data.value);
+    gui_atom_settext(data, '' + (data.type === 'listbox' ? data.value.join(' ') : data.value));
 }
 
 //dropdown
 let gui_dropdown_dropdowns = [];
 function gui_dropdown_onmousedown(data, e, id) {
+    if(!data.interactive)
+        return;
+
     data.showOptions = true;
     data.render();
 }
@@ -3173,7 +3230,8 @@ let keyboardFocus = { data: null, exclusive: false, current: false};
 let inputListeners = [];
 let keyDown = {}
 function onKeyDown(e) {
-    e.preventDefault();
+    if('Dead' != e.key)
+        e.preventDefault();
     if(keyboardFocus.data?.onKeyDown)
         keyboardFocus.data.onKeyDown(keyboardFocus.data, e);
     keyDown[e.key] = true;
@@ -3197,6 +3255,12 @@ function onKeyUp(e) {
                 listener.onKeyUp(e);
     }
 }
+
+window.onblur = () => {
+    for(key in keyDown)
+        keyDown[key] = false;
+};
+
 function setKeyboardFocus(data, exclusive) {
     for(let key in keyDown) {
         if(exclusive)
@@ -3600,6 +3664,13 @@ async function openPatch(content, filename) {
                             x: layer.dimensions.inlineX,
                             y: layer.dimensions.inlineY,
                         });
+                        if(layer.arrayCanvas) {
+                            configure_item(layer.arrayCanvas, {
+                                viewBox: `${layer.dimensions.contentX} ${layer.dimensions.contentY} ${layer.dimensions.coords.w} ${layer.dimensions.coords.h}`,
+                                width: layer.dimensions.coords.w,
+                                height: layer.dimensions.coords.h,
+                            });
+                        }
                         if(!layer.spill)
                             layers.at(-2).canvas.appendChild(layer.canvas);
                         layer.border = create_item('rect', {
@@ -4610,13 +4681,20 @@ async function openPatch(content, filename) {
                         data.nums = lines[i+1].replace(/\n/g,' ').split(' ').slice(1).map(num=>+num);
                     else
                         data.nums = (new Array(data.size)).fill(0);
+                    if(!layer.arrayCanvas) {
+                        layer.arrayCanvas = create_item('svg', {
+                            viewBox: `0 0 ${layer.dimensions.width} ${layer.dimensions.height}`,
+                            "shape-rendering": "crispEdges",
+                            id: `${layer.HTMLID}_array_svg`
+                        }, layer.canvas);
+                    }
                     data.path = create_item('path', {
                         id: data.id,
                         "shape-rendering": "auto",
-                    }, data.canvas);
+                    }, layer.arrayCanvas);
                     if(layer.arrays.length) {
-                        data.canvas.removeChild(data.path);
-                        data.canvas.insertBefore(data.path, layer.arrays[0].path);
+                        layer.arrayCanvas.removeChild(data.path);
+                        layer.arrayCanvas.insertBefore(data.path, layer.arrays[0].path);
                     }
                     data.setCoords = coords => {
                         data.coords = coords;
@@ -4793,6 +4871,7 @@ async function openPatch(content, filename) {
                 break;
             case "#X floatatom":
             case "#X symbolatom":
+            case "#X listbox":
                 if (args.length > 3) {
                     const data = {};
                     data.type = args[1];
@@ -4811,7 +4890,7 @@ async function openPatch(content, filename) {
                     data.id = `${data.type}_${nextHTMLID++}`;
                     data.canvas = layer.canvas;
 
-                    data.value = data.type === 'floatatom' ? 0 : 'symbol';
+                    data.value = {floatatom: 0, symbolatom: 'symbol', listbox: []}[data.type];
                     data.lastNonZero = 1;
                     data.regex = data.type === 'floatatom' ? /^-?[\d]*\.?[\d]*e?[\d]*$/ : /^.*$/;
                     data.onKeyDown = gui_atom_keydown;
@@ -4888,6 +4967,7 @@ async function openPatch(content, filename) {
                     data.label = args[8] === '-' ? '' : args[8];
                     data.receive = args[9] === '-' ? [null] : [args[9]];
                     data.send = args[10] === '-' ? [null] : [args[10]];
+                    data.interactive = args[11] !== undefined ? +args[11] : 1;
                     data.options = [
                         "symbol",
                         "float",
@@ -4944,8 +5024,8 @@ async function openPatch(content, filename) {
                     data.optionsGUI = [];
 
                     data.render = () => {
-                        let optionOffset = font_height_map()[layer.fontSize]*1.5 - 2.5;
-                        let optionHeight = font_height_map()[layer.fontSize]*2 - 3.5;
+                        let optionOffset = font_height_map()[layer.fontSize]*1.5 - 3.5;
+                        let optionHeight = font_height_map()[layer.fontSize]*1.5 - 3.5;
 
                         data.svgText.textContent = new Array(+data.width == 0 ? data.options.reduce((p, c) => c.length > p ? c.length : p, 0) : data.width).fill('A').join('');
                         let width = data.svgText.getComputedTextLength() + 15, height = font_height_map()[layer.fontSize] + 4;
@@ -4980,7 +5060,7 @@ async function openPatch(content, filename) {
                                 }, data.canvas);
                                 let text = create_item('text', {
                                     x: data.x_pos + 6,
-                                    y: data.y_pos + font_height_map()[layer.fontSize] * 1.5 - 3.5 + optionOffset + optionHeight * i,
+                                    y: data.y_pos + font_height_map()[layer.fontSize] - 2 + optionOffset + optionHeight * i,
                                     'shape-rendering': 'crispEdges',
                                     'font-size': pd_fontsize_to_gui_fontsize(layer.fontSize) + 'px',
                                     id: `${data.id}_label`,

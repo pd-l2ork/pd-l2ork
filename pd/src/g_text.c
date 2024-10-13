@@ -892,13 +892,15 @@ void canvas_msg(t_glist *gl, t_symbol *s, int argc, t_atom *argv)
 #define ATOM_LABELRIGHT 1
 #define ATOM_LABELUP 2
 #define ATOM_LABELDOWN 3
+#define A_LIST A_NULL /* fake atom type - use A_NULL for list 'flavor' */
 
 typedef struct _gatom
 {
     t_text a_text;
-    t_atom a_atom;           /* this holds the value and the type */
-    t_atom a_atomold;        /* this holds old value, used to reverting to
-                                when changing the number value using arrows */
+    t_binbuf* a_binbuf;
+    t_binbuf* a_binbufold;
+    int a_flavor;            /* type of gatom */
+    int a_dragindex;
     t_glist *a_glist;        /* owning glist */
     t_float a_toggle;        /* value to toggle to */
     t_float a_draghi;        /* high end of drag range */
@@ -1006,64 +1008,102 @@ static void gatom_retext(t_gatom *x, int senditup, int recolor)
     	x->a_shift = 0;
     }
     binbuf_clear(x->a_text.te_binbuf);
-    binbuf_add(x->a_text.te_binbuf, 1, &x->a_atom);
+    binbuf_add(x->a_text.te_binbuf, binbuf_getnatom(x->a_binbuf), binbuf_getvec(x->a_binbuf));
     if (senditup && glist_isvisible(x->a_glist))
         sys_queuegui(x, x->a_glist, gatom_redraw);
 }
 
 static void gatom_set(t_gatom *x, t_symbol *s, int argc, t_atom *argv)
 {
-    t_atom oldatom = x->a_atom;
-    int changed = 0;
-    if (!argc) return;
-    if (x->a_atom.a_type == A_FLOAT)
-        x->a_atom.a_w.w_float = atom_getfloat(argv),
-            changed = (x->a_atom.a_w.w_float != oldatom.a_w.w_float);
-    else if (x->a_atom.a_type == A_SYMBOL)
-        x->a_atom.a_w.w_symbol = atom_getsymbol(argv),
-            changed = (x->a_atom.a_w.w_symbol != oldatom.a_w.w_symbol);
-    if (changed)
-    {
-        if (x->a_atom.a_type == A_FLOAT && x->a_text.te_width == 1)
-            gatom_retext(x, 1, 1);
-        else
-            gatom_retext(x, 1, 0);
-        x->a_atomold = x->a_atom;
+    if(!argc) return;
+    t_atom *firstAtom = binbuf_getvec(x->a_binbuf);
+
+    if(x->a_flavor == A_FLOAT)
+        firstAtom->a_w.w_float = atom_getfloat(argv);
+    else if(x->a_flavor == A_SYMBOL)
+        firstAtom->a_w.w_symbol = atom_getsymbol(argv);
+    else {
+        binbuf_clear(x->a_binbuf);
+        binbuf_add(x->a_binbuf, argc, argv);
     }
-    if (x->a_atom.a_type == A_FLOAT)
-    {
+
+    gatom_retext(x, 1, x->a_flavor == A_FLOAT && x->a_text.te_width == 1);
+    binbuf_free(x->a_binbufold);
+    x->a_binbufold = binbuf_duplicate(x->a_binbuf);
+
+    if(x->a_flavor == A_FLOAT)
         x->a_buf[0] = 0;
-    } else {
-        strcpy(x->a_buf, x->a_atom.a_w.w_symbol->s_name);
+    else if(x->a_flavor == A_SYMBOL)
+        strncpy(x->a_buf, firstAtom->a_w.w_symbol->s_name, ATOMBUFSIZE);
+    else {
+        x->a_buf[0] = 0;
+        t_atom *atoms = binbuf_getvec(x->a_binbuf);
+        for(int i = 0; i < binbuf_getnatom(x->a_binbuf); i++) {
+            if(atoms[i].a_type == A_SYMBOL)
+                strncpy(x->a_buf + strlen(x->a_buf), atoms[i].a_w.w_symbol->s_name, ATOMBUFSIZE - strlen(x->a_buf) - 1);
+            if(atoms[i].a_type == A_FLOAT) {
+                if(ATOMBUFSIZE - strlen(x->a_buf) >= 10)
+                    sprintf(x->a_buf + strlen(x->a_buf), "%.6g", atoms[i].a_w.w_float);
+                else
+                    break;
+            }
+            if(strlen(x->a_buf) < ATOMBUFSIZE - 1) {
+                x->a_buf[strlen(x->a_buf) + 1] = 0;
+                x->a_buf[strlen(x->a_buf)] = ' ';
+            } else
+                break;
+        }
+        if(x->a_buf[strlen(x->a_buf) - 1] == ' ')
+            x->a_buf[strlen(x->a_buf) - 1] = 0;
     }
 }
 
 static void gatom_bang(t_gatom *x)
 {
-    if (x->a_atom.a_type == A_FLOAT)
+    t_atom *firstAtom = binbuf_getvec(x->a_binbuf);
+    if (x->a_flavor == A_FLOAT)
     {
         if (x->a_text.te_outlet)
-            outlet_float(x->a_text.te_outlet, x->a_atom.a_w.w_float);
+            outlet_float(x->a_text.te_outlet, firstAtom->a_w.w_float);
         if (*x->a_expanded_to->s_name && x->a_expanded_to->s_thing)
         {
             if (x->a_symto == x->a_symfrom)
                 pd_error(x,
                     "%s: atom with same send/receive name (infinite loop)",
                         x->a_symto->s_name);
-            else pd_float(x->a_expanded_to->s_thing, x->a_atom.a_w.w_float);
+            else pd_float(x->a_expanded_to->s_thing, firstAtom->a_w.w_float);
         }
     }
-    else if (x->a_atom.a_type == A_SYMBOL)
+    else if (x->a_flavor == A_SYMBOL)
     {
         if (x->a_text.te_outlet)
-            outlet_symbol(x->a_text.te_outlet, x->a_atom.a_w.w_symbol);
+            outlet_symbol(x->a_text.te_outlet, firstAtom->a_w.w_symbol);
         if (*x->a_symto->s_name && x->a_expanded_to->s_thing)
         {
             if (x->a_symto == x->a_symfrom)
                 pd_error(x,
                     "%s: atom with same send/receive name (infinite loop)",
                         x->a_symto->s_name);
-            else pd_symbol(x->a_expanded_to->s_thing, x->a_atom.a_w.w_symbol);
+            else pd_symbol(x->a_expanded_to->s_thing, firstAtom->a_w.w_symbol);
+        }
+    } else if(x->a_flavor == A_LIST) {
+        int argc = binbuf_getnatom(x->a_text.te_binbuf), i;
+        t_atom *argv = binbuf_getvec(x->a_text.te_binbuf);
+        for (i = 0; i < argc; i++)
+            if (argv[i].a_type != A_FLOAT && argv[i].a_type != A_SYMBOL)
+        {
+            pd_error(x, "list: only sends literal numbers and symbols");
+            return;
+        }
+        if (x->a_text.te_outlet)
+            outlet_list(x->a_text.te_outlet, &s_list, argc, argv);
+        if (*x->a_expanded_to->s_name && x->a_expanded_to->s_thing)
+        {
+            if (x->a_symto == x->a_symfrom)
+                pd_error(x,
+                    "%s: atom with same send/receive name (infinite loop)",
+                        x->a_symto->s_name);
+            else pd_list(x->a_expanded_to->s_thing, &s_list, argc, argv);
         }
     }
 }
@@ -1096,17 +1136,30 @@ static void gatom_symbol(t_gatom *x, t_symbol *s)
     gatom_bang(x);
 }
 
+static void gatom_list(t_gatom *x, t_symbol *s, int argc, t_atom *argv) {
+    if(!argc)
+        gatom_bang(x);
+
+    if(x->a_flavor == A_LIST) {
+        gatom_set(x, s, argc, argv);
+        gatom_bang(x);
+    }
+    else if (argv->a_type == A_FLOAT)
+        gatom_float(x, argv->a_w.w_float);
+    else if (argv->a_type == A_SYMBOL)
+        gatom_symbol(x, argv->a_w.w_symbol);
+}
+
     /* We need a list method because, since there's both an "inlet" and a
     "nofirstin" flag, the standard list behavior gets confused. */
-static void gatom_list(t_gatom *x, t_symbol *s, int argc, t_atom *argv)
+static void gatom_keyname(t_gatom *x, t_symbol *s, int argc, t_atom *argv)
 {
-    //post("gatom_list <%s>", s->s_name);
-    if (!argc)
-        gatom_bang(x);
+    //post("gatom_keyname <%s>", s->s_name);
+    t_atom *firstAtom = binbuf_getvec(x->a_binbuf);
     /* ico@vt.edu 20200904 like g_numbox.c, here we hijack list to capture
        keyname keypresses, so that we can use shift+backspace to delete
        entire text */
-    else if (argc == 2 && argv[0].a_type == A_FLOAT && argv[1].a_type == A_SYMBOL)
+    if (argc == 2 && argv[0].a_type == A_FLOAT && argv[1].a_type == A_SYMBOL)
     {
         //post("got keyname %s while grabbed\n", argv[1].a_w.w_symbol->s_name);
         if (!strcmp("Shift", argv[1].a_w.w_symbol->s_name))
@@ -1114,69 +1167,76 @@ static void gatom_list(t_gatom *x, t_symbol *s, int argc, t_atom *argv)
             x->a_shift = (int)argv[0].a_w.w_float;
             //post("...Shift %d", x->a_shift);
         }
-        if (x->a_atom.a_type == A_FLOAT && argv[0].a_w.w_float == 1)
+        if (x->a_flavor == A_FLOAT && argv[0].a_w.w_float == 1)
         {
             if (!strcmp("Up", argv[1].a_w.w_symbol->s_name))
             {
                 //fprintf(stderr,"...Up\n");
-                x->a_atom.a_w.w_float += 1;
+                firstAtom->a_w.w_float += 1;
                 //sprintf(x->a_buf, "%g", x->a_atom.a_w.w_float);
                 gatom_retext(x, 1, 0);
             }
             else if (!strcmp("ShiftUp", argv[1].a_w.w_symbol->s_name))
             {
                 //fprintf(stderr,"...ShiftUp\n");
-                x->a_atom.a_w.w_float += 0.01;
+                firstAtom->a_w.w_float += 0.01;
                 //sprintf(x->a_buf, "%g", x->a_atom.a_w.w_float);
                 gatom_retext(x, 1, 0);
             }
             if (!strcmp("Down", argv[1].a_w.w_symbol->s_name))
             {
                 //fprintf(stderr,"...Down\n");
-                x->a_atom.a_w.w_float -= 1;
+                firstAtom->a_w.w_float -= 1;
                 //sprintf(x->a_buf, "%g", x->a_atom.a_w.w_float);
                 gatom_retext(x, 1, 0);
             }
             else if (!strcmp("ShiftDown", argv[1].a_w.w_symbol->s_name))
             {
                 //fprintf(stderr,"...ShiftDown\n");
-                x->a_atom.a_w.w_float -= 0.01;
+                firstAtom->a_w.w_float -= 0.01;
                 //sprintf(x->a_buf, "%g", x->a_atom.a_w.w_float);
                 gatom_retext(x, 1, 0);
             }
         }
-    }
-    else
-    {
-    	if (argv->a_type == A_FLOAT)
-        	gatom_float(x, argv->a_w.w_float);
-    	else if (argv->a_type == A_SYMBOL)
-        	gatom_symbol(x, argv->a_w.w_symbol);
     }
 }
 
 static void gatom_motion(void *z, t_floatarg dx, t_floatarg dy)
 {
     t_gatom *x = (t_gatom *)z;
-    if (dy == 0) return;
-    if (x->a_atom.a_type == A_FLOAT)
+
+    if (x->a_flavor == A_FLOAT)
+        x->a_dragindex = 0;
+
+    if (x->a_flavor == A_SYMBOL || dy == 0 || x->a_dragindex == -1)
+        return;
+
+    t_atom *atom = &binbuf_getvec(x->a_binbuf)[x->a_dragindex];
+    double nval, trunc;
+    if (x->a_shift)
     {
-        if (x->a_shift)
-        {
-            double nval = x->a_atom.a_w.w_float - 0.01 * dy;
-            double trunc = 0.01 * (floor(100. * nval + 0.5));
-            if (trunc < nval + 0.0001 && trunc > nval - 0.0001) nval = trunc;
-            gatom_clipfloat(x, nval);
-        }
-        else
-        {
-            double nval = x->a_atom.a_w.w_float - dy;
-            double trunc = 0.01 * (floor(100. * nval + 0.5));
-            if (trunc < nval + 0.0001 && trunc > nval - 0.0001) nval = trunc;
-            trunc = floor(nval + 0.5);
-            if (trunc < nval + 0.001 && trunc > nval - 0.001) nval = trunc;
-            gatom_clipfloat(x, nval);
-        }
+        nval = atom->a_w.w_float - 0.01 * dy;
+        trunc = 0.01 * (floor(100. * nval + 0.5));
+        if (trunc < nval + 0.0001 && trunc > nval - 0.0001) nval = trunc;
+    }
+    else
+    {
+        nval = atom->a_w.w_float - dy;
+        trunc = 0.01 * (floor(100. * nval + 0.5));
+        if (trunc < nval + 0.0001 && trunc > nval - 0.0001) nval = trunc;
+        trunc = floor(nval + 0.5);
+        if (trunc < nval + 0.001 && trunc > nval - 0.001) nval = trunc;
+    }
+    if(x->a_flavor == A_FLOAT)
+        gatom_clipfloat(x, nval);
+    else {
+        SETFLOAT(atom, nval);
+        
+        t_binbuf *dup = binbuf_duplicate(x->a_binbuf);
+        gatom_set(x, &s_, binbuf_getnatom(dup), binbuf_getvec(dup));
+        binbuf_free(dup);
+
+        gatom_bang(x);
     }
 }
 
@@ -1209,7 +1269,7 @@ static void gatom_redraw_text_w_dots(t_gatom *x, char *sbuf)
             sprintf(sbuf, "...");
         else if (x->a_text.te_width == 2)
             sprintf(sbuf, "..");
-        else if (x->a_text.te_width == 1 && x->a_atom.a_type == A_SYMBOL)
+        else if (x->a_text.te_width == 1 && x->a_flavor != A_FLOAT)
             sprintf(sbuf, ".");
     }
     else if (strlen(x->a_buf) == 1)
@@ -1218,7 +1278,7 @@ static void gatom_redraw_text_w_dots(t_gatom *x, char *sbuf)
             sprintf(sbuf, "%s..", x->a_buf);
         else if (x->a_text.te_width == 2)
             sprintf(sbuf, "%s.", x->a_buf);
-        else if (x->a_text.te_width == 1 && x->a_atom.a_type == A_SYMBOL)
+        else if (x->a_text.te_width == 1 && x->a_flavor != A_FLOAT)
             sprintf(sbuf, x->a_buf);
     }
     else if (strlen(x->a_buf) == 2)
@@ -1227,7 +1287,7 @@ static void gatom_redraw_text_w_dots(t_gatom *x, char *sbuf)
             sprintf(sbuf, "%s.", x->a_buf);
         else if (x->a_text.te_width == 2)
             sprintf(sbuf, "%s", x->a_buf);
-        else if (x->a_text.te_width == 1 && x->a_atom.a_type == A_SYMBOL)
+        else if (x->a_text.te_width == 1 && x->a_flavor != A_FLOAT)
             sprintf(sbuf, x->a_buf); 
     }
     else
@@ -1237,6 +1297,7 @@ static void gatom_redraw_text_w_dots(t_gatom *x, char *sbuf)
 static void gatom_key(void *z, t_floatarg f)
 {
     t_gatom *x = (t_gatom *)z;
+    t_atom *firstAtom = binbuf_getvec(x->a_binbuf);
     int c = f;
     //post("gatom_key %f shift=%d strlen=%d <%s>", \
         f, x->a_shift, strlen(x->a_buf), x->a_buf);
@@ -1250,9 +1311,10 @@ static void gatom_key(void *z, t_floatarg f)
     	//post("gatom_key end <%s> <%s>", x->a_buf, x->a_atom.a_w.w_symbol->s_name);
     	//pd_unbind(&x->a_text.ob_pd, gensym("#keyname_a"));
     	//post("unbind <%s>", x->a_buf);
-        if (x->a_atom.a_type == A_FLOAT)
+        if (x->a_flavor == A_FLOAT)
         {
-            x->a_atom = x->a_atomold;
+            binbuf_clear(x->a_binbuf);
+            x->a_binbuf = binbuf_duplicate(x->a_binbufold);
             /* ico@vt.edu 2021-08-25: this has all kinds of problems due to
                conversion that adds bunch of unnecessary decimal points and
                makes appending cumbersome
@@ -1277,22 +1339,43 @@ static void gatom_key(void *z, t_floatarg f)
             x->a_buf[0] = 0;
             gatom_retext(x, 1, 1);
         }
-        else if (x->a_atom.a_type == A_SYMBOL)
+        else if (x->a_flavor == A_SYMBOL)
         {
             //post("gatom_key release");
             // ico@vt.edu 20200923: we also check for empty a_buf to ensure that
             // the ... is deleted. This was created when the object was originally
             // clicked on below, but only if the current gatom is symbol type and
             // is empty.
-            if (x->a_buf[0] == 0 || strcmp(x->a_buf, x->a_atom.a_w.w_symbol->s_name))
+            if (x->a_buf[0] == 0 || strcmp(x->a_buf, firstAtom->a_w.w_symbol->s_name))
             {
-                strcpy(x->a_buf, x->a_atom.a_w.w_symbol->s_name);
+                strcpy(x->a_buf, firstAtom->a_w.w_symbol->s_name);
                 gatom_retext(x, 1, 1);
                 //post("gatom_key buf=<%s> s_name=<%s>", x->a_buf,
                 //    x->a_atom.a_w.w_symbol->s_name);
             }
             else
                 gatom_retext(x, 0, 1);
+        } else if (x->a_flavor == A_LIST) {
+            x->a_buf[0] = 0;
+            t_atom *atoms = binbuf_getvec(x->a_binbuf);
+            for(int i = 0; i < binbuf_getnatom(x->a_binbuf); i++) {
+                if(atoms[i].a_type == A_SYMBOL)
+                    strncpy(x->a_buf + strlen(x->a_buf), atoms[i].a_w.w_symbol->s_name, ATOMBUFSIZE - strlen(x->a_buf) - 1);
+                if(atoms[i].a_type == A_FLOAT) {
+                    if(ATOMBUFSIZE - strlen(x->a_buf) >= 10)
+                        sprintf(x->a_buf + strlen(x->a_buf), "%.6g", atoms[i].a_w.w_float);
+                    else
+                        break;
+                }
+                if(strlen(x->a_buf) < ATOMBUFSIZE - 1) {
+                    x->a_buf[strlen(x->a_buf) + 1] = 0;
+                    x->a_buf[strlen(x->a_buf)] = ' ';
+                } else
+                    break;
+            }
+            if(x->a_buf[strlen(x->a_buf) - 1] == ' ')
+                x->a_buf[strlen(x->a_buf) - 1] = 0;
+            gatom_retext(x, 1, 1);
         }
         // ico 2023-11-29: here we need to getcanvas because the object
         // may be embedded inside a GOP.
@@ -1317,7 +1400,7 @@ static void gatom_key(void *z, t_floatarg f)
     }
     else if (c == '\n')
     {
-        if (x->a_atom.a_type == A_FLOAT) {
+        if (x->a_flavor == A_FLOAT) {
             t_float val;
             if (x->a_buf[0])
             {
@@ -1332,7 +1415,7 @@ static void gatom_key(void *z, t_floatarg f)
                             val = x->a_draghi;
                     }
                 }
-                x->a_atom.a_w.w_float = val;
+                firstAtom->a_w.w_float = val;
             }
             //sprintf(x->a_buf, "%f", x->a_atom.a_w.w_float);
             //post("got float f=<%f> s=<%s>", x->a_atom.a_w.w_float, x->a_buf);
@@ -1343,24 +1426,50 @@ static void gatom_key(void *z, t_floatarg f)
             // in the value accuracy
             x->a_buf[0] = 0;
         }
-        else if (x->a_atom.a_type == A_SYMBOL)
-			x->a_atom.a_w.w_symbol = gensym(x->a_buf);
-        else bug("gatom_key");
+        else if (x->a_flavor == A_SYMBOL) {
+            firstAtom->a_w.w_symbol = gensym(x->a_buf);
+        }
+        else if (x->a_flavor == A_LIST) {
+            char* curr = x->a_buf;
+            char* next = curr;
+            char* end = x->a_buf + strlen(x->a_buf);
+            t_atom at;
+            binbuf_clear(x->a_binbuf);
+            while(curr < end) {
+                t_float f = strtof(curr, &next);
+                if(*next == ' ' || *next == 0)
+                    SETFLOAT(&at, f);
+                else {
+                    while(*next != ' ' && *next != 0)
+                        next++;
+                    if(*next == ' ') {
+                        *next = 0;
+                        SETSYMBOL(&at, gensym(curr));
+                        *next = ' ';
+                    } else
+                        SETSYMBOL(&at, gensym(curr));
+                }
+                curr = next + 1;
+                binbuf_add(x->a_binbuf, 1, &at);
+            }
+        } else bug("gatom_key");
 
-        x->a_atomold = x->a_atom;
-        gatom_bang(x);
+        binbuf_clear(x->a_binbufold);
+        x->a_binbufold = binbuf_duplicate(x->a_binbuf);
         gatom_retext(x, 1, 0);
+        gatom_bang(x);
         /* ico@vt.edu 20200904: We prevent deleting of internal buffer,
 		   so that we can keep adding to the existing text unless we click
 		   the second time in which case we will always start with an
 		   empty symbol
 		*/
-		if (!x->a_shift_clicked)
-        	x->a_buf[0] = 0;
+		// if (!x->a_shift_clicked)
+        	// x->a_buf[0] = 0;
         t_rtext *y = glist_findrtext(x->a_glist, &x->a_text);
         if (y)
             gui_vmess("gui_highlight_obj_on_return", "xss",
                 glist_getcanvas(x->a_glist), rtext_gettag(y), "gatom");
+
         /* We want to keep grabbing the keyboard after hitting "Enter", so
            we're commenting the following out */
         //glist_grab(x->a_glist, 0, 0, 0, 0, 0, 0, 0);
@@ -1368,7 +1477,7 @@ static void gatom_key(void *z, t_floatarg f)
     else if (len < (ATOMBUFSIZE-1))
     {
             /* for numbers, only let reasonable characters through */
-        if ((x->a_atom.a_type == A_SYMBOL) ||
+        if ((x->a_flavor != A_FLOAT) ||
             (c >= '0' && c <= '9' || c == '.' || c == '-'
                 || c == 'e' || c == 'E'))
         {
@@ -1401,19 +1510,31 @@ redraw:
     glist_retext(x->a_glist, &x->a_text);
 }
 
+int rtext_findatomfor(t_rtext *x, int xpos, int ypos);
+
 static void gatom_click(t_gatom *x,
-    t_floatarg xpos, t_floatarg ypos, t_floatarg shift, t_floatarg ctrl,
+    int xpos, int ypos, int shift, t_floatarg ctrl,
     t_floatarg alt)
 {
+    if(x->a_flavor == A_LIST) {
+        int x1, y1, x2, y2, indx, argc = binbuf_getnatom(x->a_text.te_binbuf);
+        t_atom *argv = binbuf_getvec(x->a_text.te_binbuf);
+        gobj_getrect((t_gobj*)x, x->a_glist, &x1, &y1, &x2, &y2);
+        indx = rtext_findatomfor(glist_findrtext(x->a_glist, &x->a_text), xpos - x1, ypos - y1);
+        if (indx >= 0 && indx < argc && argv[indx].a_type == A_FLOAT)
+            x->a_dragindex = indx;
+        else x->a_dragindex = -1;
+    }
 	//post("gatom_click shift=%f x=%f y=%f ctrl=%f alt=%f x=%lx", \
         xpos, ypos, shift, ctrl, alt, x->a_glist);
     //pd_bind(&x->a_text.ob_pd, gensym("#keyname_a"));
 	//post("bind");
+    t_atom *firstAtom = binbuf_getvec(x->a_binbuf);
     if (x->a_click)
     {
-        if (x->a_text.te_width == 1 && x->a_atom.a_type == A_FLOAT)
+        if (x->a_text.te_width == 1 && x->a_flavor == A_FLOAT)
         {
-            gatom_float(x, (x->a_atom.a_w.w_float == 0));
+            gatom_float(x, (firstAtom->a_w.w_float == 0));
         }
         else
         {
@@ -1425,10 +1546,10 @@ static void gatom_click(t_gatom *x,
             // is addressed in the if statement immediately above
             if (alt)
             {
-                if (x->a_atom.a_type != A_FLOAT) return;
-                if (x->a_atom.a_w.w_float != 0)
+                if (x->a_flavor != A_FLOAT) return;
+                if (firstAtom->a_w.w_float != 0)
                 {
-                    x->a_toggle = x->a_atom.a_w.w_float;
+                    x->a_toggle = firstAtom->a_w.w_float;
                     gatom_float(x, 0);
                 }
                 else gatom_float(x, x->a_toggle);
@@ -1436,9 +1557,16 @@ static void gatom_click(t_gatom *x,
                 return;
             }
             x->a_shift = shift;
-            if (x->a_atom.a_type == A_SYMBOL &&
-                !strlen(x->a_atom.a_w.w_symbol->s_name))
+            if (x->a_flavor == A_SYMBOL && !strlen(firstAtom->a_w.w_symbol->s_name))
             {
+                char sbuf[ATOMBUFSIZE + 4];
+                t_atom at;
+                gatom_redraw_text_w_dots(x, &sbuf);
+                SETSYMBOL(&at, gensym(sbuf));
+                binbuf_clear(x->a_text.te_binbuf);
+                binbuf_add(x->a_text.te_binbuf, 1, &at);
+                glist_retext(x->a_glist, &x->a_text);
+            } else if(x->a_flavor == A_LIST && !strlen(x->a_buf)) {
                 char sbuf[ATOMBUFSIZE + 4];
                 t_atom at;
                 gatom_redraw_text_w_dots(x, &sbuf);
@@ -1458,7 +1586,7 @@ static void gatom_click(t_gatom *x,
             // with the vanilla gatom, based on its exclusive flag (default off),
             // so that we can match the rest of the behavior.
     	   	glist_grab(x->a_glist, &x->a_text.te_g, gatom_motion, gatom_key,
-    	        (t_glistkeynameafn)gatom_list, xpos, ypos, x->a_exclusive);
+    	        (t_glistkeynameafn)gatom_keyname, xpos, ypos, x->a_exclusive);
     	    //post("a_shift_clicked=%d", x->a_shift_clicked);
             x->a_shift_clicked = x->a_shift;
     	    	// second click wipes prior text
@@ -1622,10 +1750,10 @@ static void gatom_param(t_gatom *x, t_symbol *sel, int argc, t_atom *argv)
     x->a_wherelabel = ((int)wherelabel & 3);
     gatom_exclusive(x, exclusive);
     x->a_hard_limit = limit;
-    if (x->a_atom.a_type == A_FLOAT && limit)
+    if (x->a_flavor == A_FLOAT && limit)
     {
         t_atom at;
-        t_float f = x->a_atom.a_w.w_float;
+        t_float f = binbuf_getvec(x->a_binbuf)->a_w.w_float;
         if (x->a_draglo != 0 || x->a_draghi != 0)
         {
             if (f < x->a_draglo)
@@ -1740,7 +1868,7 @@ void canvas_atom(t_glist *gl, t_atomtype type,
     x->a_text.te_iemgui = 0;
     x->a_text.te_binbuf = binbuf_new();
     x->a_glist = gl;
-    x->a_atom.a_type = type;
+    x->a_flavor = type;
     x->a_toggle = 1;
     x->a_draglo = 0;
     x->a_draghi = 0;
@@ -1754,17 +1882,24 @@ void canvas_atom(t_glist *gl, t_atomtype type,
     x->a_click = 1;
     if (type == A_FLOAT)
     {
-        x->a_atom.a_w.w_float = 0;
-        x->a_text.te_width = 5;
         SETFLOAT(&at, 0);
+        x->a_binbuf = binbuf_new();
+        binbuf_add(x->a_binbuf, 1, &at);
+        x->a_text.te_width = 5;
     }
-    else
+    else if(type == A_SYMBOL)
     {
-        x->a_atom.a_w.w_symbol = &s_symbol;
-        x->a_text.te_width = 10;
         SETSYMBOL(&at, &s_symbol);
+        x->a_binbuf = binbuf_new();
+        binbuf_add(x->a_binbuf, 1, &at);
+        x->a_text.te_width = 10;
+    } else {
+        SETSYMBOL(&at, &s_);
+        x->a_binbuf = binbuf_new();
+        binbuf_add(x->a_binbuf, 1, &at);
+        x->a_text.te_width = 20;
     }
-    x->a_atomold = x->a_atom;
+    x->a_binbufold = binbuf_duplicate(x->a_binbuf);
     binbuf_add(x->a_text.te_binbuf, 1, &at);
     if (argc > 1)
         /* create from file. x, y, width, low-range, high-range, flags,
@@ -1797,8 +1932,7 @@ void canvas_atom(t_glist *gl, t_atomtype type,
         }
         x->a_expanded_to = canvas_realizedollar(x->a_glist, x->a_symto);
         if (x->a_symto == &s_)
-            outlet_new(&x->a_text,
-                x->a_atom.a_type == A_FLOAT ? &s_float: &s_symbol);
+            outlet_new(&x->a_text, x->a_flavor == A_FLOAT ? &s_float: (x->a_flavor == A_SYMBOL ? &s_symbol : &s_list));
         if (x->a_symfrom == &s_)
             inlet_new(&x->a_text, &x->a_text.te_pd, 0, 0);
         glist_add(gl, &x->a_text.te_g);
@@ -1807,8 +1941,7 @@ void canvas_atom(t_glist *gl, t_atomtype type,
     {
         int xpix, ypix, indx, nobj;
         canvas_howputnew(gl, &glob_autopatch_connectme, &xpix, &ypix, &indx, &nobj);
-        outlet_new(&x->a_text,
-            x->a_atom.a_type == A_FLOAT ? &s_float: &s_symbol);
+        outlet_new(&x->a_text, x->a_flavor == A_FLOAT ? &s_float: (x->a_flavor == A_SYMBOL ? &s_symbol : &s_list));
         inlet_new(&x->a_text, &x->a_text.te_pd, 0, 0);
         pd_vmess(&gl->gl_pd, gensym("editmode"), "i", 1);
         x->a_text.te_xpix = xpix;
@@ -1843,6 +1976,11 @@ void canvas_symbolatom(t_glist *gl, t_symbol *s, int argc, t_atom *argv)
     canvas_atom(gl, A_SYMBOL, s, argc, argv);
 }
 
+void canvas_listbox(t_glist *gl, t_symbol *s, int argc, t_atom *argv)
+{
+    canvas_atom(gl, A_LIST, s, argc, argv);
+}
+
 static void gatom_free(t_gatom *x)
 {
     if (*x->a_symfrom->s_name)
@@ -1864,7 +2002,7 @@ static void gatom_properties(t_gobj *z, t_glist *owner)
     gui_start_vmess("gui_gatom_dialog", "s",
         gfxstub_new2(&x->a_text.te_pd, x));
     gui_start_array();
-    gui_s("name");     gui_s(x->a_atom.a_type == A_FLOAT ? "atom" : "satom");
+    gui_s("name");     gui_s(x->a_flavor == A_FLOAT ? "atom" : (x->a_flavor == A_SYMBOL ? "satom" : "lbox"));
     gui_s("width");    gui_i(x->a_text.te_width);
     gui_s("draglo");   gui_f(x->a_draglo);
     gui_s("draghi");   gui_f(x->a_draghi);
@@ -1891,6 +2029,7 @@ typedef struct _dropdown
     t_float a_dummy;        /* dummy value */
     int a_outtype;           /* 0 = index, 1 = value */
     int a_output;           /* 0 = index, 1 = value */
+    int a_interactive;
     t_symbol *a_label;      /* symbol to show as label next to box */
     t_symbol *a_symfrom;    /* "receive" name -- bind ourselvs to this */
     t_symbol *a_symto;      /* "send" name -- send to this on output */
@@ -1980,6 +2119,16 @@ static void dropdown_names(t_dropdown *x, t_symbol *s, int argc, t_atom *argv)
         rtext_width(y), rtext_height(y), 0);
 }
 
+static void dropdown_interactive(t_dropdown *x, t_floatarg f) {
+    if ((int)f == 0 || (int)f == 1)
+    {
+        x->a_interactive = (int)f;
+        t_int properties = gfxstub_haveproperties((void *)x);
+        if (properties)
+            properties_set_field_int(properties, "interactive", x->a_interactive);
+    }
+}
+
 static void dropdown_bang(t_dropdown *x)
 {
     t_atom at;
@@ -2045,6 +2194,8 @@ static int dropdown_click(t_gobj *z, struct _glist *glist,
     int xpix, int ypix, int shift, int alt, int dbl, int doit)
 {
     t_dropdown *x = (t_dropdown *)z;
+    if(!x->a_interactive)
+        return 1;
     t_canvas *canvas = glist_getcanvas(glist);
     t_rtext *y = glist_findrtext(glist, (t_text *)x);
     if (doit)
@@ -2093,6 +2244,7 @@ static void dropdown_param(t_dropdown *x, t_symbol *sel, int argc, t_atom *argv)
     t_float wherelabel = atom_getfloatarg(4, argc, argv);
     t_symbol *symfrom = gatom_unescapit(atom_getsymbolarg(5, argc, argv));
     t_symbol *symto = gatom_unescapit(atom_getsymbolarg(6, argc, argv));
+    dropdown_interactive(x, atom_getfloatarg(8, argc, argv));
 
     gobj_vis(&x->a_text.te_g, x->a_glist, 0);
     if (!*symfrom->s_name && *x->a_symfrom->s_name)
@@ -2225,6 +2377,7 @@ void canvas_dropdown(t_glist *gl, t_symbol *s, int argc, t_atom *argv)
     x->a_symfrom = &s_;
     x->a_symto = x->a_expanded_to = &s_;
     x->a_index = 0;
+    x->a_interactive = argc > 9 ? atom_getfloatarg(9, argc, argv) : 1;
     x->a_names = binbuf_new();
     binbuf_addv(x->a_names, "ssss", &s_symbol, &s_float, &s_bang, &s_list);
     x->a_maxnamewidth = dropdown_names_getmaxwidth(x);
@@ -2323,6 +2476,7 @@ static void dropdown_properties(t_gobj *z, t_glist *owner)
     gui_s("label");    gui_s(gatom_escapit(x->a_label)->s_name);
     gui_s("receive_symbol");  gui_s(gatom_escapit(x->a_symfrom)->s_name);
     gui_s("send_symbol");     gui_s(gatom_escapit(x->a_symto)->s_name);
+    gui_s("interactive");     gui_i(x->a_interactive);
     gui_end_array();
     gui_end_vmess();
 }
@@ -2727,8 +2881,8 @@ static int text_click(t_gobj *z, struct _glist *glist,
                 gui_vmess("gui_gatom_activate", "xsi",
                     canvas, rtext_gettag(y), 1);
             }
-            gatom_click((t_gatom *)x, (t_floatarg)xpix, (t_floatarg)ypix,
-                (t_floatarg)shift, (t_floatarg)0, (t_floatarg)alt);
+            gatom_click((t_gatom *)x, xpix, ypix,
+                shift, (t_floatarg)0, (t_floatarg)alt);
         }
         return (1);
     }
@@ -2786,9 +2940,9 @@ void text_save(t_gobj *z, t_binbuf *b)
         //fprintf(stderr, "atom\n");
         if (pd_class(&x->te_pd) == gatom_class)
         {
-            t_atomtype t = ((t_gatom *)x)->a_atom.a_type;
+            t_atomtype t = ((t_gatom *)x)->a_flavor;
             t_symbol *sel = (t == A_SYMBOL ? gensym("symbolatom") :
-                (t == A_FLOAT ? gensym("floatatom") : gensym("intatom")));
+                (t == A_FLOAT ? gensym("floatatom") : gensym("listbox")));
             t_symbol *label = gatom_escapit(((t_gatom *)x)->a_label);
             t_symbol *symfrom = gatom_escapit(((t_gatom *)x)->a_symfrom);
             t_symbol *symto = gatom_escapit(((t_gatom *)x)->a_symto);
@@ -2808,12 +2962,13 @@ void text_save(t_gobj *z, t_binbuf *b)
             t_symbol *label = gatom_escapit(((t_dropdown *)x)->a_label);
             t_symbol *symfrom = gatom_escapit(((t_dropdown *)x)->a_symfrom);
             t_symbol *symto = gatom_escapit(((t_dropdown *)x)->a_symto);
-            binbuf_addv(b, "ssiiiiffsss", gensym("#X"), sel,
+            binbuf_addv(b, "ssiiiiffsssi", gensym("#X"), sel,
                 (int)x->te_xpix, (int)x->te_ypix, (int)x->te_width,
                 (int)((t_dropdown *)x)->a_outtype,
                 (double)((t_dropdown *)x)->a_dummy,
                 (double)((t_dropdown *)x)->a_wherelabel,
-                label, symfrom, symto);
+                label, symfrom, symto,
+                (int)((t_dropdown *)x)->a_interactive);
         }
     }
     else    
@@ -3077,7 +3232,9 @@ void text_drawborder(t_text *x, t_glist *glist,
             gui_vmess("gui_atom_draw_border", "xsiii",
                 glist_getcanvas(glist),
                 tag,
-                (is_dropdown(x) ? ((t_dropdown *)x)->a_outtype + 1 : 0),
+                (is_dropdown(x) ? ((t_dropdown *)x)->a_outtype + 1 : 
+                    (pd_class(&x->te_pd) == gatom_class ? 
+                        (((t_gatom*)x)->a_flavor == A_LIST ? 3 : 0) : 0)),
                 x2 - x1,
                 y2 - y1);
         }
@@ -3090,8 +3247,9 @@ void text_drawborder(t_text *x, t_glist *glist,
             gui_vmess("gui_atom_redraw_border", "xsiii",
                 glist_getcanvas(glist),
                 tag,
-                pd_class(&x->te_pd) == dropdown_class ?
-                    ((t_dropdown *)x)->a_outtype + 1 : 0,
+                (is_dropdown(x) ? ((t_dropdown *)x)->a_outtype + 1 : 
+                    (pd_class(&x->te_pd) == gatom_class ? 
+                        (((t_gatom*)x)->a_flavor == A_LIST ? 3 : 0) : 0)),
                 x2 - x1,
                 y2 - y1);
         }
@@ -3467,8 +3625,8 @@ void g_text_setup(void)
     class_addlist(gatom_class, gatom_list);
     class_addmethod(gatom_class, (t_method)gatom_set, gensym("set"),
         A_GIMME, 0);
-    class_addmethod(gatom_class, (t_method)gatom_click, gensym("click"),
-        A_FLOAT, A_FLOAT, A_FLOAT, A_FLOAT, A_FLOAT, 0);
+    // class_addmethod(gatom_class, (t_method)gatom_click, gensym("click"),
+    //     A_FLOAT, A_FLOAT, A_FLOAT, A_FLOAT, A_FLOAT, 0);
     class_addmethod(gatom_class, (t_method)gatom_param, gensym("param"),
         A_GIMME, 0);
     class_addmethod(gatom_class, (t_method)gatom_exclusive, gensym("exclusive"),
@@ -3495,6 +3653,8 @@ void g_text_setup(void)
         A_GIMME, 0);
     class_addmethod(dropdown_class, (t_method)dropdown_names, gensym("names"),
         A_GIMME, 0);
+    class_addmethod(dropdown_class, (t_method)dropdown_interactive, gensym("interactive"),
+        A_FLOAT, 0);
     //class_addmethod(dropdown_class, (t_method)dropdown_click, gensym("click"),
     //  A_FLOAT, A_FLOAT, A_FLOAT, A_FLOAT, A_FLOAT, 0);
     class_addmethod(dropdown_class, (t_method)dropdown_param, gensym("param"),

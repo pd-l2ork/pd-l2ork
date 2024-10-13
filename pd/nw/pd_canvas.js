@@ -2352,6 +2352,7 @@ function toggle_put_menu(state) {
         m.put.message.enabled = state;
         m.put.number.enabled = state;
         m.put.symbol.enabled = state;
+        m.put.list.enabled = state;
         m.put.comment.enabled = state;
         m.put.dropdown.enabled = state;
         m.put.bang.enabled = state;
@@ -2394,6 +2395,7 @@ function update_osx_k12_menu(window) {
             m.put.message.enabled = false;
             m.put.number.enabled = false;
             m.put.symbol.enabled = false;
+            m.put.list.enabled = false;
             m.put.comment.enabled = false;
             m.put.dropdown.enabled = false;
             m.put.bang.enabled = false;
@@ -2451,6 +2453,7 @@ function update_osx_k12_menu(window) {
             m.put.message.enabled = false;
             m.put.number.enabled = false;
             m.put.symbol.enabled = false;
+            m.put.list.enabled = false;
             m.put.comment.enabled = false;
             m.put.dropdown.enabled = false;
             m.put.bang.enabled = false;
@@ -2508,6 +2511,7 @@ function update_osx_k12_menu(window) {
             m.put.message.enabled = true;
             m.put.number.enabled = true;
             m.put.symbol.enabled = true;
+            m.put.list.enabled = true;
             m.put.comment.enabled = true;
             m.put.dropdown.enabled = true;
             m.put.bang.enabled = true;
@@ -2647,6 +2651,7 @@ function set_menu_modals(window, state) {
         m.put.message.enabled = context_state;
         m.put.number.enabled = context_state;
         m.put.symbol.enabled = context_state;
+        m.put.list.enabled = context_state;
         m.put.comment.enabled = context_state;
         m.put.dropdown.enabled = context_state;
         m.put.bang.enabled = context_state;
@@ -3253,6 +3258,14 @@ function nw_create_patch_window_menus(gui, name) {
                 pdgui.pdsend(name, "symbolatom 0");
             }
         });
+        minit(m.put.list, {
+            enabled: true,
+            click: function() {
+                update_live_box();
+                pdgui.pdsend(name, "dirty 1");
+                pdgui.pdsend(name, "listbox 0");
+            }
+        });
         minit(m.put.comment, {
             enabled: true,
             click: function() {
@@ -3539,6 +3552,7 @@ function nw_create_patch_window_menus(gui, name) {
             m.put.message.enabled = false;
             m.put.number.enabled = false;
             m.put.symbol.enabled = false;
+            m.put.list.enabled = false;
             m.put.comment.enabled = false;
             m.put.dropdown.enabled = false;
             m.put.bang.enabled = false;
