@@ -61,6 +61,13 @@
   <url type="bugtracker">https://github.com/pd-l2ork/pd-l2ork/issues</url>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="20241015" type="stable" date="2024-10-15">
+      <description>
+        <p>
+          Added support for aarch64.
+        </p>
+      </description>
+    </release>
     <release version="20241014" type="stable" date="2024-10-14">
       <description>
         <p>
