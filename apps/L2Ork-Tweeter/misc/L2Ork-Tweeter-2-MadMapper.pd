@@ -1,47 +1,83 @@
-#N canvas 148 253 753 256 10;
+#N canvas 732 40 753 249 10;
 #X obj -30 -30 preset_hub k12 1 %hidden%;
 #X obj 172 97 hsl 128 24 0 1 0 1 empty empty | 27 6 0 26 #fd7777 #000000
-#ff0000 3175 1 0 1;
+#ff0000 12700 1 0 1;
 #X obj 8 215 tgl 26 0 empty empty empty 17 7 0 10 #fcfcfc #000000 #000000
-1 1 1;
+0 1 1;
 #X obj 116 150 loadbang;
 #X msg 116 171 connect localhost 8010;
 #X msg 116 192 disconnect;
 #X obj 8 171 mrpeach/packOSC;
 #X obj 8 192 mrpeach/udpsend;
 #X obj 8 150 r to-mad-mapper;
-#N canvas 776 476 217 237 pulses 0;
-#X obj 17 43 core/ring-pulse 2 750 Quad-1;
-#X obj 17 23 core/ring-pulse 1 750 Quad-1;
-#X obj 17 63 core/ring-pulse 3 750 Quad-1;
-#X obj 17 83 core/ring-pulse 7 750 Quad-1;
-#X obj 17 103 core/ring-pulse 8 750 Quad-1;
-#X obj 17 123 core/ring-pulse 9 750 Quad-1;
-#X obj 17 143 core/ring-pulse 10 750 Quad-1;
-#X obj 17 163 core/ring-pulse 11 750 Quad-1;
-#X obj 17 183 core/ring-pulse 12 750 Quad-1;
+#N canvas 415 64 191 237 pulses 0;
+#X obj 17 183 core/ring-pulse 12 750 p9;
+#X obj 17 163 core/ring-pulse 11 750 p8;
+#X obj 17 143 core/ring-pulse 10 750 p7;
+#X obj 17 123 core/ring-pulse 9 750 p6;
+#X obj 17 103 core/ring-pulse 8 750 p5;
+#X obj 17 83 core/ring-pulse 7 750 p4;
+#X obj 17 63 core/ring-pulse 3 750 p3;
+#X obj 17 43 core/ring-pulse 2 750 p2;
+#X obj 17 23 core/ring-pulse 1 750 p1;
+#N canvas 57 67 348 226 pulse-debug 0;
+#X obj 179 26 tgl 26 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1 1;
+#X obj 179 79 metro;
+#X obj 179 104 t b b;
+#X obj 235 105 random 1000;
+#X obj 235 130 + 500;
+#X obj 179 170 s;
+#X floatatom 46 80 5 0 0 0 - - - 0 0 1, f 5;
+#X msg 46 104 \$1-note-generator;
+#X obj 46 129 tosymbol;
+#X connect 0 0 1 0;
+#X connect 1 0 2 0;
+#X connect 2 0 5 0;
+#X connect 2 1 3 0;
+#X connect 3 0 4 0;
+#X connect 4 0 1 1;
+#X connect 6 0 7 0;
+#X connect 7 0 8 0;
+#X connect 8 0 5 1;
+#X restore 17 209 pd pulse-debug;
 #X restore 8 129 pd pulses;
 #X obj 317 171 ../L2Ork-Tweeter-Lite;
-#N canvas 1354 492 404 300 explosion 0;
-#X obj 111 23 inlet;
-#X obj 111 243 s to-mad-mapper;
+#N canvas 926 562 451 434 explosion 0;
+#X obj 111 22 inlet;
+#X obj 111 393 s to-mad-mapper;
 #X obj 111 148 snapshot~;
-#X obj 49 58 loadbang;
+#X obj 49 22 loadbang;
 #X obj 49 113 metro 10;
 #X obj 111 113 Line~;
-#X msg 111 58 0 \, 1 2000 0 10000;
-#X msg 111 173 send /surfaces/Nuke_White_Out/opacity \$1;
-#X obj 271 24 inlet;
-#X obj 271 58 t 0;
-#X connect 0 0 6 0;
-#X connect 2 0 7 0;
+#X msg 111 363 send /surfaces/Nuke_White_Out/opacity \$1;
+#X obj 271 22 inlet;
+#X obj 271 78 t 0;
+#X msg 111 78 0 \, 1 2000 1 500 0 10000;
+#X obj 171 202 == 1;
+#X obj 171 227 change -1;
+#X obj 171 252 sel 1;
+#X obj 171 277 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000 1;
+#X obj 111 173 t f f;
+#X msg 171 300 \; video-opacity-r 0;
+#X obj 111 339 change -1;
+#X connect 0 0 9 0;
+#X connect 2 0 14 0;
 #X connect 3 0 4 0;
 #X connect 4 0 2 0;
 #X connect 5 0 2 0;
-#X connect 6 0 5 0;
-#X connect 7 0 1 0;
-#X connect 8 0 9 0;
-#X connect 9 0 5 1;
+#X connect 6 0 1 0;
+#X connect 7 0 8 0;
+#X connect 8 0 5 0;
+#X connect 9 0 5 0;
+#X connect 10 0 11 0;
+#X connect 11 0 12 0;
+#X connect 12 0 13 0;
+#X connect 13 0 15 0;
+#X connect 14 0 16 0;
+#X connect 14 1 10 0;
+#X connect 16 0 6 0;
 #X restore 70 129 pd explosion;
 #X obj 70 88 bng 35 250 50 0 empty empty BOOM 5 16 0 10 #fd7777 #000000
 #000000 1;
@@ -49,25 +85,25 @@
 #X text 200 78 1x;
 #X text 296 78 4x;
 #N canvas 727 397 450 300 reset-speed 0;
-#X msg 164 125 0.25;
 #X obj 164 150 outlet;
 #X obj 165 100 bng 15 250 50 0 empty empty RESET\ TO\ 1X 17 6 0 10
 #fd7777 #000000 #000000 1;
-#X connect 0 0 1 0;
+#X msg 164 125 0.999;
+#X connect 1 0 2 0;
 #X connect 2 0 0 0;
 #X coords 0 -1 1 1 94 24 2 160 96;
 #X restore 172 54 pd reset-speed;
 #N canvas 727 397 450 300 video-speed 0;
 #X obj 98 99 inlet;
-#X msg 98 122 send /media/fire_stipes.mov/play_speed \$1;
 #X obj 98 147 s to-mad-mapper;
-#X connect 0 0 1 0;
-#X connect 1 0 2 0;
+#X msg 98 122 send /medias/fire_stipes.mov/play_speed \$1;
+#X connect 0 0 2 0;
+#X connect 2 0 1 0;
 #X restore 172 129 pd video-speed;
 #X obj 115 107 bng 15 250 50 0 empty empty RESET 17 6 0 10 #fd7777
 #000000 #000000 1;
-#X obj 318 97 hsl 128 24 0 1 0 1 empty empty | 59 6 0 26 #fd7777 #000000
-#ff0000 6350 1 0 1;
+#X obj 318 97 hsl 128 24 0 0.5 0 1 empty empty | 59 6 0 26 #fd7777
+#000000 #ff0000 6350 1 0 1;
 #N canvas 727 397 450 300 video-saturation 0;
 #X obj 98 99 inlet;
 #X obj 98 147 s to-mad-mapper;
@@ -77,19 +113,19 @@
 #X restore 318 129 pd video-saturation;
 #X obj 464 97 hsl 128 24 0 1 0 1 empty empty | 59 6 0 26 #fd7777 #000000
 #ff0000 6350 1 0 1;
-#X obj 610 97 hsl 128 24 0 1 0 1 empty empty | 59 6 0 26 #fd7777 #000000
-#ff0000 6350 1 0 1;
+#X obj 610 97 hsl 128 24 0 1 0 1 empty video-opacity-r | 122 6 0 26
+#fd7777 #000000 #ff0000 0 1 0 1;
 #X text 635 101 VIDEO OPACITY;
 #X text 479 101 VIDEO BRIGHTNESS;
 #X text 333 101 VIDEO SATURATION;
 #N canvas 727 397 450 300 video-opacity 0;
-#X obj 122 104 inlet;
-#X obj 122 152 s to-mad-mapper;
-#X msg 122 127 send /surfaces/Fire/opacity \$1;
+#X obj 133 101 inlet;
+#X obj 133 165 s to-mad-mapper;
+#X msg 133 133 send /surfaces/Fire/opacity \$1;
 #X connect 0 0 2 0;
 #X connect 2 0 1 0;
 #X restore 610 129 pd video-opacity;
-#N canvas 727 397 450 300 video-brightness 0;
+#N canvas 744 344 450 300 video-brightness 0;
 #X obj 98 99 inlet;
 #X obj 98 145 s to-mad-mapper;
 #X msg 98 122 send /surfaces/Fire/FX/Color/Brightness \$1;
@@ -101,7 +137,7 @@
 #X obj 464 8 hsl 128 24 0 1 0 1 empty empty | 59 6 0 26 #fd7777 #000000
 #ff0000 6350 1 0 1;
 #X obj 610 8 hsl 128 24 0 1 0 1 empty empty | 59 6 0 26 #fd7777 #000000
-#ff0000 6350 1 0 1;
+#ff0000 12700 1 0 1;
 #N canvas 727 397 450 300 lava-saturation 0;
 #X obj 98 99 inlet;
 #X obj 98 147 s to-mad-mapper;
@@ -126,13 +162,32 @@
 #X text 637 12 LAVA OPACITY;
 #X text 483 12 LAVA BRIGHTNESS;
 #X text 337 12 LAVA SATURATION;
-#N canvas 727 397 450 203 TODO 0;
-#X text 40 32 TODO:adjust pulses' last argument (these should be also
-groups)make a group for all rings except those used around playersMake
-group of two fire videos named Fire (/surfaces/Fire/opacity \, /surfaces/Fire/FX/Color/Brightness
-\, send /surfaces/Fire/FX/Color/Saturation) Make group of all remaining
-lava elements;
-#X restore 8 8 pd TODO;
+#N canvas 727 397 273 238 TODO 0;
+#X text 29 24 TODO:map right players to right parts MAP:Tweeter
+(1-12) to MadMapper (p1-9)01 = p102 = p203 = p307 = p408 = p509
+= p610 = p711 = p812 = p9, f 35;
+#X restore 12 52 pd TODO;
+#N canvas 803 275 450 272 session-test 0;
+#X obj 236 218 s session-name-s;
+#X obj 142 218 s load-session;
+#X obj 142 126 t b b;
+#X msg 249 188 symbol slowbeat;
+#X obj 141 85 sel 1 0;
+#X obj 181 126 t b b;
+#X msg 236 151 symbol empty;
+#X obj 141 50 inlet;
+#X connect 2 0 1 0;
+#X connect 2 1 3 0;
+#X connect 3 0 0 0;
+#X connect 4 0 2 0;
+#X connect 4 1 5 0;
+#X connect 5 0 1 0;
+#X connect 5 1 6 0;
+#X connect 6 0 0 0;
+#X connect 7 0 4 0;
+#X restore 12 31 pd session-test;
+#X obj 12 12 tgl 15 0 empty empty TEST\ PULSES 17 7 0 10 #fcfcfc #000000
+#000000 0 1 1;
 #X connect 1 0 17 0;
 #X connect 3 0 4 0;
 #X connect 4 0 7 0;
@@ -149,3 +204,4 @@ lava elements;
 #X connect 28 0 31 0;
 #X connect 29 0 32 0;
 #X connect 30 0 33 0;
+#X connect 39 0 38 0;
