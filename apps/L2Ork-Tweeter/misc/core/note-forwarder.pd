@@ -1,0 +1,7 @@
+#N canvas 727 397 298 205 10;
+#X obj -30 -30 preset_hub k12 1 %hidden%;
+#X obj 94 52 r \$1-note-generator;
+#X obj 94 77 list prepend \$1;
+#X obj 94 102 outlet;
+#X connect 1 0 2 0;
+#X connect 2 0 3 0;
