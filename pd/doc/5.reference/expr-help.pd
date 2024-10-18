@@ -1,14 +1,14 @@
 #N canvas 433 38 555 619 10;
-#X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header expr 3 12 0 18 -204280
--1 0;
+#X obj 0 0 cnv 15 552 40 empty \$0-pddp.cnv.header expr 3 12 0 18 #c4dcdc
+#000000 0;
 #X obj 0 118 cnv 3 550 3 empty \$0-pddp.cnv.inlets inlets 8 12 0 13
--228856 -1 0;
+#dcdcdc #000000 0;
 #X obj 0 418 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
-13 -228856 -1 0;
+13 #dcdcdc #000000 0;
 #X obj 0 449 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8 12
-0 13 -228856 -1 0;
+0 13 #dcdcdc #000000 0;
 #X obj 0 537 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
-0 13 -228856 -1 0;
+0 13 #dcdcdc #000000 0;
 #X obj 78 127 cnv 17 3 153 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
 #646464 0;
 #X text 98 126 float;
@@ -19,26 +19,26 @@
 #646464 0;
 #X text 98 285 float;
 #X obj 514 11 expr;
-#X floatatom 87 50 0 0 0 0 - - -;
-#X floatatom 21 96 0 0 0 0 - - -;
+#X floatatom 87 50 0 0 0 0 - - - 0 0 1;
+#X floatatom 21 96 0 0 0 0 - - - 0 0 1;
 #X msg 21 50 bang;
-#X floatatom 87 96 0 0 0 0 - - -;
-#X floatatom 432 48 0 0 0 0 - - -;
-#X floatatom 432 95 0 0 0 0 - - -;
-#X obj 432 73 expr $f1 * $f2;
-#X floatatom 513 48 0 0 0 0 - - -;
-#X floatatom 185 49 0 0 0 0 - - -;
-#X floatatom 185 96 0 0 0 0 - - -;
-#X obj 185 74 expr sin(2 * 3.14159 * $f1 / 360);
+#X floatatom 87 96 0 0 0 0 - - - 0 0 1;
+#X floatatom 432 48 0 0 0 0 - - - 0 0 1;
+#X floatatom 432 95 0 0 0 0 - - - 0 0 1;
+#X obj 432 73 expr \\$f1 * \\$f2;
+#X floatatom 513 48 0 0 0 0 - - - 0 0 1;
+#X floatatom 185 49 0 0 0 0 - - - 0 0 1;
+#X floatatom 185 96 0 0 0 0 - - - 0 0 1;
+#X obj 185 74 expr sin(2 * 3.14159 * \\$f1 / 360);
 #X text 98 205 symbol;
 #X text 98 398 symbol;
 #X text 98 242 bang;
-#X obj 87 74 expr 2 + $f1;
+#X obj 87 74 expr 2 + \\$f1;
 #N canvas 96 45 428 436 expr_and_symbols 0;
-#X floatatom 24 177 0 0 0 0 - - -;
-#X floatatom 24 232 0 0 0 0 - - -;
+#X floatatom 24 177 0 0 0 0 - - - 0 0 1;
+#X floatatom 24 232 0 0 0 0 - - - 0 0 1;
 #N canvas 0 0 450 300 (subpatch) 0;
-#X array \$0-expr-array 515 float 3;
+#X array \$0-expr-array 515 float 3 black black;
 #A 0 -0.0122715 0 0.0122715 0.0245412 0.0368072 0.0490676 0.0613207
 0.0735645 0.0857972 0.0980171 0.110222 0.122411 0.134581 0.14673 0.158858
 0.170962 0.18304 0.19509 0.207111 0.219101 0.231058 0.24298 0.254865
@@ -112,47 +112,47 @@
 #X coords 0 1 515 -1 200 140 1;
 #X restore 24 279 graph;
 #X obj 240 366 loadbang;
-#X msg 240 388 \; expr-array2 sinesum 512 1;
-#X obj 99 156 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
--1;
+#X obj 99 156 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
 #X obj 99 176 symbol \$0-expr-array;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
-14 -204280 -1 0;
-#X obj 24 204 expr $s2[$f1];
-#X text 21 37 Symbolic arguments like $s1 \, $s2 \, and so on are currently
-used in [expr] to get the name of an array or table. You can also type
-the name of an array directly into [expr] \, but this is limited since
-\, for example \, a dash ("e.g. \, my-table") will get interpreted
-as an operator ("e.g. \, my minus table").;
+14 #c4dcdc #000000 0;
+#X obj 24 204 expr \\$s2[$f1];
+#X text 21 37 Symbolic arguments like \\$s1 \, \\$s2 \, and so on are
+currently used in [expr] to get the name of an array or table. You
+can also type the name of an array directly into [expr] \, but this
+is limited since \, for example \, a dash ("e.g. \, my-table") will
+get interpreted as an operator ("e.g. \, my minus table").;
 #X text 113 219 of the array will be clipped;
 #X text 113 204 index values outside the range;
 #X text 20 116 The following syntax outputs the y-value for the element
 specified by the left inlet.;
 #X text 118 154 click here first;
 #X text 8 2 [expr] Using Symbolic Arguments;
-#X connect 0 0 8 0;
-#X connect 3 0 4 0;
-#X connect 5 0 6 0;
-#X connect 6 0 8 1;
-#X connect 8 0 1 0;
+#X msg 240 388 \; \$0-expr-array sinesum 512 1;
+#X connect 0 0 7 0;
+#X connect 3 0 14 0;
+#X connect 4 0 5 0;
+#X connect 5 0 7 1;
+#X connect 7 0 1 0;
 #X restore 169 397 pd expr_and_symbols;
 #X obj 21 74 expr 1;
 #X text 168 426 - float is the only type of output.;
 #X obj 273 577 pddplink http://crca.ucsd.edu/~syadegar/expr.html;
 #X text 273 563 Expr family of objects by Shahrokh Yadegari;
 #N canvas 91 55 428 501 expr_weirdness 0;
-#X obj 42 98 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
--1;
-#X floatatom 42 143 5 0 0 0 - - -, f 5;
+#X obj 42 98 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
+#X floatatom 42 143 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
-14 -204280 -1 0;
+14 #c4dcdc #000000 0;
 #X obj 42 119 expr 8 / 6;
-#X obj 42 254 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
--1;
-#X floatatom 42 302 5 0 0 0 - - -, f 5;
-#X obj 42 331 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
--1;
-#X floatatom 42 379 5 0 0 0 - - -, f 5;
+#X obj 42 254 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
+#X floatatom 42 302 5 0 0 0 - - - 0 0 1, f 5;
+#X obj 42 331 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
+#X floatatom 42 379 5 0 0 0 - - - 0 0 1, f 5;
 #X text 19 166 This gets tricky \, because Pd strips unnecessary characters
 from a floating point number. Hence \, if you try to type "8.0 / 6.0"
 in the [expr] object above \, the decimal point and the following zero
@@ -167,9 +167,9 @@ interpret it as a symbol \, so no characters are stripped.;
 #X obj 42 355 expr 8.0/6.0;
 #X text 65 324 Removing the space between the numbers and the operator
 achieves the same thing.;
-#X obj 42 411 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
--1;
-#X floatatom 42 459 5 0 0 0 - - -, f 5;
+#X obj 42 411 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
+#X floatatom 42 459 5 0 0 0 - - - 0 0 1, f 5;
 #X text 19 410 3;
 #X text 65 410 Using the "float" function makes the float type explicit.
 ;
@@ -179,9 +179,9 @@ achieves the same thing.;
 where numbers without a decimal point are interpreted as integers.
 This can be the source of some confusion in Pd \, which uses floating
 point numbers exclusively.;
-#X obj 22 576 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
--1;
-#X floatatom 22 618 5 0 0 0 - - -, f 5;
+#X obj 22 576 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
+#X floatatom 22 618 5 0 0 0 - - - 0 0 1, f 5;
 #X text 19 486 Since float has priority over int \, the integer in
 example 3 is automatically converted to a float. Likewise \, using
 "6" instead of "6.0" in examples 1 and 2 would still give a floating
@@ -195,9 +195,9 @@ to specify a large number:;
 notation. But even if it did \, a float will lose precision in this
 calculation:;
 #X text 165 625 (Scroll down for the answer);
-#X obj 22 747 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
--1;
-#X floatatom 22 789 5 0 0 0 - - -, f 5;
+#X obj 22 747 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
+#X floatatom 22 789 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 22 767 expr int(123456789.0)%10;
 #X connect 0 0 3 0;
 #X connect 3 0 1 0;
@@ -217,7 +217,7 @@ calculation:;
 #X msg 395 48 3 4;
 #X text 183 350 1) a dollar-sign ($);
 #X text 166 285 - an extra inlet is added for each additional dollar-sign
-variable specified as a creation argument ($v2 \, $f3 \, etc.). Each
+variable specified as a creation argument ($v2 \, \\$f3 \, etc.). Each
 inlet accepts only one of the following: signal \, float \, or symbol.
 There may be at most nine variables in one [expr~] object. Each variable
 consists of:;
@@ -225,21 +225,22 @@ consists of:;
 or symbol);
 #X text 183 376 3) an inlet number (Note: inlet numbers start from
 one);
-#X text 168 205 - if the variable $s1 is used as an argument \, it
-will be replaced by the incoming symbol. (If $f1 \, $i1 \, and $s1
-are not used as arguments \, the symbol will trigger the output.);
-#X text 168 126 - if the variable $f1 (float) or $i1 (integer) is specified
-as an argument \, it will be replaced in the expression by the incoming
-value. The expression will then be evaluated and output. (Notes: You
-cannot use $f1 and $i1 in the same [expr] object. If $f1 \, $i1 \,
-and $s1 are not used as arguments \, an incoming float will trigger
-the output.);
+#X text 168 205 - if the variable \\$s1 is used as an argument \, it
+will be replaced by the incoming symbol. (If \\$f1 \, \\$i1 \, and
+\\$s1 are not used as arguments \, the symbol will trigger the output.)
+;
+#X text 168 126 - if the variable \\$f1 (float) or \\$i1 (integer)
+is specified as an argument \, it will be replaced in the expression
+by the incoming value. The expression will then be evaluated and output.
+(Notes: You cannot use \\$f1 and \\$i1 in the same [expr] object. If
+\\$f1 \, \\$i1 \, and \\$s1 are not used as arguments \, an incoming
+float will trigger the output.);
 #X text 168 243 - a bang will evaluate the expression with the last
 received values and trigger the output.;
 #X text 167 463 - the arguments themselves form the expression to evaluate.
 They may be floats or symbols \, including the special variables noted
-above ($i1 \, $f2 \, etc.). The operators and functions available for
-use in [expr~] are listed below:;
+above ($i1 \, \\$f2 \, etc.). The operators and functions available
+for use in [expr~] are listed below:;
 #X text 168 269 - a list will be distributed to the inlets of [expr].
 ;
 #X obj 170 516 pddp/pddplink all_about_expr_functions.pd -text all_about_expr_operators_and_functions
@@ -254,7 +255,7 @@ use in [expr~] are listed below:;
 #X obj 101 578 pddp/pddplink all_about_expr_multiline.pd -text expr_multiline
 ;
 #X obj 0 595 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
-14 -228856 -66577 0;
+14 #dcdcdc #404040 0;
 #N canvas 490 291 494 344 META 0;
 #X text 12 125 LIBRARY internal;
 #X text 12 165 WEBSITE http://crca.ucsd.edu/~msp/;
@@ -272,7 +273,7 @@ for Pd version 0.42.;
 #X restore 500 598 pd META;
 #N canvas 222 522 428 109 Related_objects 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
-14 -204280 -1 0;
+14 #c4dcdc #000000 0;
 #X obj 22 43 expr~;
 #X obj 62 43 fexpr~;
 #X text 7 2 [expr] Related Objects;

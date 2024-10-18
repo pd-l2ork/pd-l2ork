@@ -1,0 +1,25 @@
+#N canvas 727 397 450 274 10;
+#X obj -30 -30 preset_hub k12 1 %hidden%;
+#X obj 205 215 gemwin;
+#X msg 224 149 0 \, destroy;
+#X obj 31 149 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1 1;
+#X text 54 149 change background color;
+#X msg 31 177 color \$1 \$1 \$1 \$1;
+#X obj 205 40 key;
+#X obj 205 75 sel 32;
+#X obj 205 100 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1 1 1;
+#X obj 205 123 sel 1 0;
+#X obj 235 40 gemkeyboard;
+#X msg 205 177 reset \, dimen 1920 1200 \, create \, 1;
+#X connect 2 0 1 0;
+#X connect 3 0 5 0;
+#X connect 5 0 1 0;
+#X connect 6 0 7 0;
+#X connect 7 0 8 0;
+#X connect 8 0 9 0;
+#X connect 9 0 11 0;
+#X connect 9 1 2 0;
+#X connect 10 0 7 0;
+#X connect 11 0 1 0;

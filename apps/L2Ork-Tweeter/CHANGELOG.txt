@@ -13,6 +13,7 @@ CHANGELOG (Date Format: DD-MM-YYYY)
 *Fixed a bug where saving a session to online clients via the teacher interface misreported a number of lines saved
 *Fixed a bug where loading sessions does not erase old notes from the track (the problem were text files edited in notepad that automatically replace non-standard characters with spaces)
 *Implemented a workaround where every time a loop is loaded or before it is written, we erase a potential extra note (beat 64). LATER: consider exploring why this happened in the first place (potentially a leftover during the optimization of the tracker logic).
+*Implemented the newfound interactive option for the dropdown object.
 *TODO:
   *Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. Needs to be further tested.
     *Also affects Teacher widget
