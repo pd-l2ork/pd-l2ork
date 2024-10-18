@@ -32,7 +32,7 @@
 #X obj 18 199 tgl 15 0 \$1-loop null-r LOOP(alt) 17 6 0 10 #fcb46c
 #000000 #000000 0 1 1;
 #X obj 18 145 tgl 15 0 \$1-toggle-keyboard \$1-manual-toggle-keyboard
-KEYBOARD(ctrl) 17 6 0 10 #fc6418 #000000 #000000 1 1 1;
+KEYBOARD(ctrl) 17 6 0 10 #fc6418 #000000 #000000 0 1 1;
 #N canvas 793 437 521 278 REVERB 0;
 #N canvas 3 75 470 252 reverb_levels 0;
 #X msg 173 175 roomsize 0.98 \, wet 0.7 \, dry 0.5 \, width 0 \, damping
@@ -442,8 +442,8 @@ KEYBOARD(ctrl) 17 6 0 10 #fc6418 #000000 #000000 1 1 1;
 #X coords 0 -1 1 1 68 106 1 156 42;
 #X restore 692 144 pd FLANGER;
 #X obj 429 426 \$1;
-#X obj 18 217 nbx 7 14 500 60000 0 1 \$1-loop-length \$1-manual-loop-length
-ms 1 5 0 8 #fcb46c #000000 #000000 1700 256 1 1 1 0;
+#X obj 18 217 nbx 7 14 500 999999 0 1 \$1-loop-length \$1-manual-loop-length
+ms 1 5 0 8 #fcb46c #000000 #000000 1500 256 1 1 1 0;
 #X text 287 231 PCH(u/d);
 #X obj 130 198 tgl 15 0 null-s \$1-delete-gui DELETE(del) 17 6 0 10
 #fcb46c #000000 #000000 0 1 0;
@@ -1602,7 +1602,7 @@ button;
 9 #fcb46c #000000 #000000 -72 256 0 1 1 1;
 #X obj 502 516 + 12;
 #X obj 371 350 loadbang;
-#X obj 40 256 hsl 772 25 0 63.999 0 0 \$0-tracker-s \$0-tracker                                                                 
+#X obj 40 256 hsl 772 25 0 63.999 0 0 \$0-tracker-s \$0-tracker 0                                                               
 3 8 0 20 #84c0fc #fcfcfc #000000 602 0 0 1;
 #X obj 243 392 t f f;
 #X text 139 370 DEBUG;
@@ -2268,7 +2268,6 @@ interactive \$1;
 #X connect 160 0 119 0;
 #X connect 161 0 162 0;
 #X connect 165 0 13 0;
-#X connect 165 0 27 0;
 #X connect 165 0 14 0;
 #X connect 165 0 107 0;
 #X connect 165 0 149 0;
@@ -2281,6 +2280,7 @@ interactive \$1;
 #X connect 165 0 63 0;
 #X connect 165 0 8 0;
 #X connect 165 0 7 0;
+#X connect 165 0 27 0;
 #X connect 166 0 165 0;
 #X connect 166 0 190 0;
 #X connect 166 0 193 0;
