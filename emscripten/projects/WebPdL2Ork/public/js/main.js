@@ -3011,7 +3011,36 @@ function gui_dropdown_onmousedown(data, e, id) {
     if(!data.interactive)
         return;
 
-    data.showOptions = true;
+    data.showOptions = !data.showOptions;
+    if(data.showOptions)
+        setKeyboardFocus(data, data.exclusive);
+    data.render();
+    if(data.optionsGUI.length > 0)
+        configure_item(data.optionsGUI[0].box, { fill: '#c3c3c3' });
+}
+function gui_dropdown_onkeydown(data, e) {
+    const selected = data.optionsGUI.findIndex(option => option.box.getAttributeNS(null, 'fill') === '#c3c3c3');
+    if(selected === -1)
+        return;
+    
+    if(e.key === 'ArrowDown' && selected < data.optionsGUI.length - 1) {
+        configure_item(data.optionsGUI[selected].box, { fill: '#eeeeee' });
+        configure_item(data.optionsGUI[selected + 1].box, { fill: '#c3c3c3' });
+    }
+    if(e.key === 'ArrowUp' && selected > 0) {
+        configure_item(data.optionsGUI[selected].box, { fill: '#eeeeee' });
+        configure_item(data.optionsGUI[selected - 1].box, { fill: '#c3c3c3' });
+    }
+    if(e.key === 'Enter') {
+        data.selectedOption = selected;
+        data.showOptions = false;
+        data.render();
+        gui_dropdown_send(data);
+        setKeyboardFocus(null, false);
+    }
+}
+function gui_dropdown_onlosefocus(data) {
+    data.showOptions = false;
     data.render();
 }
 function gui_dropdown_send(data) {
@@ -3034,7 +3063,6 @@ function gui_dropdown_option_onmousemove(e, id) {
         }
     }
 }
-
 
 //nbx
 let gui_nbx_touches = {};
@@ -4968,6 +4996,7 @@ async function openPatch(content, filename) {
                     data.receive = args[9] === '-' ? [null] : [args[9]];
                     data.send = args[10] === '-' ? [null] : [args[10]];
                     data.interactive = args[11] !== undefined ? +args[11] : 1;
+                    data.exclusive = false;
                     data.options = [
                         "symbol",
                         "float",
@@ -4978,6 +5007,8 @@ async function openPatch(content, filename) {
                     data.canvas = layer.canvas;
                     data.type = 'dropdown';
                     data.id = `${data.type}_${nextHTMLID}`;
+                    data.onKeyDown = gui_dropdown_onkeydown;
+                    data.onLoseFocus = gui_dropdown_onlosefocus;
 
                     data.svgText = create_item("text", {
                         transform: `translate(1.5)`,
@@ -5072,6 +5103,7 @@ async function openPatch(content, filename) {
                                 addInteractionStartEvent(box, (event, identifier) => {
                                     gui_dropdown_option_onmousedown(data, option, event, identifier);
                                 });
+                                addInteractionMoveEvent(box, gui_dropdown_option_onmousemove);
                                 data.optionsGUI.push({box, text});
                             }
                         }
