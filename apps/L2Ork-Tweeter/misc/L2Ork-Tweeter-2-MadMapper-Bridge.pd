@@ -1,15 +1,14 @@
-#N canvas 638 17 621 223 10;
+#N canvas 638 17 621 248 10;
 #X declare -path core;
 #X obj -30 -30 preset_hub k12 1 %hidden%;
 #X obj 372 176 netsend;
-#X symbolatom 22 30 24 0 0 2 ADDRESS - - 0 0 1, f 24;
-#X obj 22 54 pack s 9999;
-#X msg 22 79 disconnect \, connect \$1 \$2;
-#X msg 22 132 disconnect;
+#X symbolatom 24 60 24 0 0 2 ADDRESS - - 0 0 1, f 24;
+#X obj 24 84 pack s 9999;
+#X msg 24 109 disconnect \, connect \$1 \$2;
+#X msg 24 152 disconnect;
 #X obj 191 28 note-forwarder 1;
 #X obj 248 176 declare -path core;
 #X obj 311 28 note-forwarder 2;
-#X obj 431 28 note-forwarder 2;
 #X obj 211 54 note-forwarder 4;
 #X obj 331 54 note-forwarder 5;
 #X obj 451 54 note-forwarder 6;
@@ -19,6 +18,12 @@
 #X obj 251 106 note-forwarder 10;
 #X obj 371 106 note-forwarder 11;
 #X obj 491 106 note-forwarder 12;
+#X obj 24 25 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
+#X obj 372 201 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1 1 1;
+#X obj 431 28 note-forwarder 3;
+#X connect 1 0 19 0;
 #X connect 2 0 3 0;
 #X connect 3 0 4 0;
 #X connect 4 0 1 0;
@@ -34,4 +39,5 @@
 #X connect 15 0 1 0;
 #X connect 16 0 1 0;
 #X connect 17 0 1 0;
-#X connect 18 0 1 0;
+#X connect 18 0 2 0;
+#X connect 20 0 1 0;
