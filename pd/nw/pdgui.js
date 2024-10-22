@@ -9341,7 +9341,6 @@ function gui_recent_files(dummy, recent_files_array) {
 
 function gui_audio_properties(gfxstub, sys_indevs, sys_outdevs,
     pd_indevs, pd_inchans, pd_outdevs, pd_outchans, audio_attrs) {
-    post("gui_audio_properties " + sys_outdevs);
     var attrs = audio_attrs.concat([
         "audio-apis", pd_apilist,
         "sys-indevs", sys_indevs,
