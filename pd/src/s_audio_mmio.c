@@ -783,6 +783,10 @@ void mmio_getdevs(char *indevlist, int *nindevs,
         WAVEINCAPS wicap;
         wRtn = waveInGetDevCaps(i, (LPWAVEINCAPS) &wicap, sizeof(wicap));
         sprintf(indevlist + i * devdescsize, (wRtn ? "???" : wicap.szPname));
+        if (strlen(wicap.szPname) == 31)
+        {
+            sprintf(indevlist + i * devdescsize + 31, "...\0");
+        } 
     }
 
     ndev = waveOutGetNumDevs();
@@ -794,5 +798,9 @@ void mmio_getdevs(char *indevlist, int *nindevs,
         WAVEOUTCAPS wocap;
         wRtn = waveOutGetDevCaps(i, (LPWAVEOUTCAPS) &wocap, sizeof(wocap));
         sprintf(outdevlist + i * devdescsize, (wRtn ? "???" : wocap.szPname));
+        if (strlen(wocap.szPname) == 31)
+        {
+            sprintf(outdevlist + i * devdescsize + 31, "...\0");
+        }     
     }
 }
