@@ -593,7 +593,7 @@ function file_browser_callback(elem) {
     if (doc !== "") {
         var defunkify = pdgui.defunkify_windows_path;
         var dir = path.dirname(doc);
-        pdgui.doc_open(defunkify(dir), defunkify(path.basename(doc)));
+        pdgui.doc_open(defunkify(dir), defunkify(path.basename(doc)), 1);
         display_directory(defunkify(dir));
         // update the search field accordingly; use a relative path if that
         // makes sense, and canonicalize
@@ -1036,7 +1036,7 @@ function display_doc(doc) {
     } else {
         a.href = "javascript: pdgui.doc_open('" +
             pdgui.defunkify_windows_path(path.dirname(doc.id)) + "', '" +
-            pdgui.defunkify_windows_path(path.basename(doc.id)) + "');"
+            pdgui.defunkify_windows_path(path.basename(doc.id)) + "', 1);"
     }
     if (fs.lstatSync(doc.id).isDirectory()) {
         a.innerHTML = doc.title + '<img style="vertical-align:middle;" src="folder.svg">';
@@ -1064,7 +1064,7 @@ function display_doc(doc) {
             if (ref_rel_objs[i]) {
                 let ref_rel_obj = "javascript: pdgui.doc_open('" +
                       pdgui.defunkify_windows_path(path.dirname(ref_rel_objs[i])) + "', '" +
-                      pdgui.defunkify_windows_path(path.basename(ref_rel_objs[i])) + "');";
+                      pdgui.defunkify_windows_path(path.basename(ref_rel_objs[i])) + "', 1);";
                 link_rel_obj = rel_obj.link(ref_rel_obj);
             }
             p_rel_objs.innerHTML += " " + link_rel_obj;

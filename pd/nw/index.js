@@ -949,19 +949,19 @@ function nw_create_pd_window_menus(gui, w) {
     });
     minit(pd_m.media.test, {
         click: function() {
-            pdgui.pd_doc_open("doc/7.stuff/tools", "testtone.pd");
+            pdgui.pd_doc_open("doc/7.stuff/tools", "testtone.pd", 1);
         }
     });
     minit(pd_m.media.loadmeter, {
         click: function() {
-            pdgui.pd_doc_open("doc/7.stuff/tools", "load-meter.pd");
+            pdgui.pd_doc_open("doc/7.stuff/tools", "load-meter.pd", 1);
         }
     });
 
     // Help sub-entries
     minit(pd_m.help.about, {
         click: function() {
-            pdgui.pd_doc_open("doc/about", "about.pd");
+            pdgui.pd_doc_open("doc/about", "about.pd", 1);
         }
     });
     minit(pd_m.help.manual, {
@@ -974,7 +974,7 @@ function nw_create_pd_window_menus(gui, w) {
     });
     minit(pd_m.help.intro, {
         click: function() {
-            pdgui.pd_doc_open("doc/5.reference", "help-intro.pd");
+            pdgui.pd_doc_open("doc/5.reference", "help-intro.pd", 1);
         }
     });
     minit(pd_m.help.l2ork_list, {
