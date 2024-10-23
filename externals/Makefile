@@ -163,7 +163,7 @@ endif
 ifeq ($(EMSCRIPTEN),yes)
 lib_targets += flatspace
 else
-lib_targets += js pdlua
+lib_targets += js pdlua flite
 endif
 
 # NEW (IN-PROGRESS): flext
@@ -2758,6 +2758,27 @@ earplug_install:
 
 earplug_clean:
 	make -C $(externals_src)/earplug~ clean
+
+
+
+#------------------------------------------------------------------------------#
+# FLITE
+FLITE_OBJECTS := $(wildcard $(externals_src)/pd-flite/*.c)
+
+flite:
+	cd $(externals_src)/pd-flite && \
+		git submodule update --init --recursive && \
+		make PDDIR=$(pd_src) PDBINDIR=$(pd_src)/src/
+
+flite_install: flite
+	install -d $(DESTDIR)$(objectsdir)/flite
+	install -p $(FLITE_OBJECTS:.c=.$(EXTENSION)) \
+		$(DESTDIR)$(objectsdir)/flite/
+	install -p $(externals_src)/pd-flite/*.pd \
+		$(DESTDIR)$(objectsdir)/flite/
+
+flite_clean:
+	cd $(externals_src)/pd-flite && make clean
 
 
 
