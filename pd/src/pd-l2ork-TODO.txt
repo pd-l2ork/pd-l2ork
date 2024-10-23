@@ -6,12 +6,6 @@ PD-L2ORK TODO:
     at HTMLDocument.text_mousedown (pd_canvas.js:829:27)
     *Attempted fixing this with an if check. Need to test.
 
-*Integrate pd-flite
-  https://github.com/Lucarda/pd-flite/
-  pacman -S mingw32/mingw-w64-i686-ntldd-git
-  pacman -S mingw64/mingw-w64-x86_64-ntldd-git
-  make PDDIR=../../pd PDBINDIR=../../pd/src/
-
 *Integrate pd-hidraw
   https://github.com/Lucarda/pd-hidraw
   git submodule update --init --recursive
@@ -20,6 +14,9 @@ PD-L2ORK TODO:
 
 *Integrate vstplugin~
   https://git.iem.at/pd/vstplugin
+
+*Integrate neuralnet
+  https://github.com/alexdrymonitis/neuralnet
 
 *Consider integrating Rich Text comments feature from Purr-Data
 
@@ -846,7 +843,7 @@ resulting in unexpected stuck keys.
 *WebPdL2Ork bug fixes.
 ...TODO...
 *Fixed foolin-around-007 special character issue.
-
+*Integrated pd-flite (need to test Linux and Mac)
 
 
 
@@ -1132,6 +1129,8 @@ git remote set-url origin git@github.com:<Username>/<Project>.git
 
 Submodules: git submodule update --remote
 
+Add submodule: git submodule add -- /url/of/sub1-folder/repo sub1-folder
+
 
 
 
@@ -1172,4 +1171,3 @@ git push --tags
 
 Delete tag to remote repo:
 git push origin --delete <tagname>
-

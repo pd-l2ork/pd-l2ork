@@ -248,7 +248,8 @@ since it will usually contain spaces, making the build fail.
           mingw-w64-i686-speex \
           rsync unzip wget mingw-w64-i686-cmake \
           mingw-w64-i686-ninja \
-          mingw-w64-i686-glfw mingw-w64-i686-pcre
+          mingw-w64-i686-glfw mingw-w64-i686-pcre \
+          mingw-w64-i686-ntldd-git
 
 5. Download the source code  
    Issue the following command to create a new directory "pd-l2ork" and clone
