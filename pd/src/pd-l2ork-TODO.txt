@@ -6,8 +6,6 @@ PD-L2ORK TODO:
     at HTMLDocument.text_mousedown (pd_canvas.js:829:27)
     *Attempted fixing this with an if check. Need to test.
 
-*Fix foolin-around-007 special character (Linux needed)
-
 *Integrate pd-flite
   https://github.com/Lucarda/pd-flite/
   pacman -S mingw32/mingw-w64-i686-ntldd-git
@@ -846,6 +844,8 @@ resulting in unexpected stuck keys.
 *Integrated William Fergurson's porting of pd vanilla objects up to version 0.54, with list box being the last object yet to be ported, plus addressing any lingering bugs as they arise.
 *Ported Albert Graef's implementation of coll text editor that makes it now work reliably.
 *WebPdL2Ork bug fixes.
+...TODO...
+*Fixed foolin-around-007 special character issue.
 
 
 
