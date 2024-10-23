@@ -23,6 +23,10 @@ PD-L2ORK TODO:
 *Integrate vstplugin~
   https://git.iem.at/pd/vstplugin
 
+*Consider integrating Rich Text comments feature from Purr-Data
+
+*Consider integrating #1756 pull request from vanilla that may improve the scheduler.
+
 *Update pdjs to use a more recent version of v8 (this might fix arm macbook errors, as pdjs currently does not work properly on apple silicon)
 
 *Figure out why comments and the end of Tweeter track with lots of numbers converts to scientific notation.
