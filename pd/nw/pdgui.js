@@ -864,7 +864,9 @@ function index_obj_completion(obj_or_msg, obj_or_msg_text) {
             let arg_result = arg_exact_match(title, arg);
             if (arg_result.length !== 0) {
                 arg_ref = arg_result[0].matches[1].refIndex;
-                arg_freq = obj_result[0].item.args[arg_ref].occurrences + 1;
+                if (arg_ref !== null) {
+                    arg_freq = obj_result[0].item.args[arg_ref].occurrences + 1;
+                }
             }
         }
     }
