@@ -6,6 +6,21 @@ PD-L2ORK TODO:
     at HTMLDocument.text_mousedown (pd_canvas.js:829:27)
     *Attempted fixing this with an if check. Need to test.
 
+*Integrate pd-flite
+  https://github.com/Lucarda/pd-flite/
+  pacman -S mingw32/mingw-w64-i686-ntldd-git
+  pacman -S mingw64/mingw-w64-x86_64-ntldd-git
+  make PDDIR=../../pd PDBINDIR=../../pd/src/
+
+*Integrate pd-hidraw
+  https://github.com/Lucarda/pd-hidraw
+  git submodule update --init --recursive
+  Linux: sudo apt install libudev-dev
+  make PDDIR=../../pd/ PDBINDIR=../../pd/src/
+
+*Integrate vstplugin~
+  https://git.iem.at/pd/vstplugin
+
 *Update pdjs to use a more recent version of v8 (this might fix arm macbook errors, as pdjs currently does not work properly on apple silicon)
 
 *Figure out why comments and the end of Tweeter track with lots of numbers converts to scientific notation.
