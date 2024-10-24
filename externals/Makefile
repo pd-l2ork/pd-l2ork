@@ -163,7 +163,7 @@ endif
 ifeq ($(EMSCRIPTEN),yes)
 lib_targets += flatspace
 else
-lib_targets += js pdlua flite
+lib_targets += js pdlua flite hidraw
 endif
 
 # NEW (IN-PROGRESS): flext
@@ -2781,6 +2781,27 @@ flite_install: flite
 
 flite_clean:
 	cd $(externals_src)/pd-flite && make clean
+
+
+
+#------------------------------------------------------------------------------#
+# HIDRAW
+HIDRAW_OBJECTS := $(wildcard $(externals_src)/pd-flite/*.c)
+
+hidraw:
+	cd $(externals_src)/pd-hidraw && \
+		git submodule update --init --recursive && \
+		make PDDIR=$(pd_src) PDBINDIR=$(pd_src)/src/
+
+hidraw_install: hidraw
+	install -d $(DESTDIR)$(objectsdir)/hidraw
+	install -p $(HIDRAW_OBJECTS:.c=.$(EXTENSION)) \
+		$(DESTDIR)$(objectsdir)/hidraw/
+	install -p $(externals_src)/pd-hidraw/*.pd \
+		$(DESTDIR)$(objectsdir)/hidraw/
+
+hidraw_clean:
+	cd $(externals_src)/pd-hidraw && make clean
 
 
 
