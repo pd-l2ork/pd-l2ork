@@ -7,10 +7,11 @@ PD-L2ORK TODO:
     *Attempted fixing this with an if check. Need to test.
 
 *Integrate pd-hidraw
-  https://github.com/Lucarda/pd-hidraw
-  git submodule update --init --recursive
-  Linux: sudo apt install libudev-dev
-  make PDDIR=../../pd/ PDBINDIR=../../pd/src/
+  Figure out how to fix the emscripten build
+  Test arm7 build
+
+*Test pd-lua and pd-flite builds on arm7
+
 
 *Integrate vstplugin~
   https://git.iem.at/pd/vstplugin
