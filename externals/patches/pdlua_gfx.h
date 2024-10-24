@@ -21,6 +21,10 @@
  *
  */
 
+#ifdef PDL2ORK
+#define PURR_DATA
+#endif
+
 #ifdef PURR_DATA
 
 // Port of the vanilla gfx interface to Purr Data. There are some differences
@@ -1282,7 +1286,7 @@ static int draw_text(lua_State* L) {
     int y = luaL_checknumber(L, 3);
     int w = luaL_checknumber(L, 4);
     int font_height = luaL_checknumber(L, 5);
-    font_height = sys_hostfontsize(font_height);
+    font_height = sys_hostfontsize(font_height, glist_getzoom(cnv));
 
     transform_point(gfx, &x, &y);
     transform_size(gfx, &w, &font_height);

@@ -1774,7 +1774,7 @@ LUA_LIBS = $(shell (pkg-config --libs lua5.4 || pkg-config --libs lua5.3 || pkg-
 
 pdlua:
 	cp -f patches/pdlua.c pd-lua/pdlua.c
-	cp -f patches/pdlua.c pd-lua/pdlua_gfx.h
+	cp -f patches/pdlua_gfx.h pd-lua/pdlua_gfx.h
 ifneq ($(OS_NAME),windows)
 ifneq ($(OS_NAME),darwin)
 	cp -f patches/pd-lua.Makefile pd-lua/Makefile
