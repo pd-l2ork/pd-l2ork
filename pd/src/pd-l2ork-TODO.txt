@@ -8,8 +8,6 @@ PD-L2ORK TODO:
 
 *Fix flite build on emscripten
 
-*Consider integrating Purr-Data extension to the intelligent patching
-
 *Integrate vstplugin~
   https://git.iem.at/pd/vstplugin
 
@@ -20,7 +18,7 @@ PD-L2ORK TODO:
 
 *Consider integrating #1756 pull request from vanilla that may improve the scheduler.
 
-*Update pdjs to use a more recent version of v8 (this might fix arm macbook errors, as pdjs currently does not work properly on apple silicon)
+*Update pdjs to use a more recent version of v8 (this might fix arm macbook errors, as pdjs currently does not work properly on apple silicon).
 
 *Figure out why comments and the end of Tweeter track with lots of numbers converts to scientific notation.
 
@@ -842,6 +840,8 @@ resulting in unexpected stuck keys.
 ...TODO...
 *Fixed foolin-around-007 special character issue.
 *Integrated pd-flite (need to test Linux and Mac)
+*Integrated Purr-Data extension to the intelligent patching
+
 
 
 
