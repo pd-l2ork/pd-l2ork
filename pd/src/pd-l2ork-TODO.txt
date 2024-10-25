@@ -7,11 +7,11 @@ PD-L2ORK TODO:
     *Attempted fixing this with an if check. Need to test.
 
 *Integrate pd-hidraw
-  Figure out how to fix the emscripten build
   Test arm7 build
 
-*Test pd-lua and pd-flite builds on arm7
+*Fix flite build on emscripten
 
+*Consider integrating Purr-Data extension to the intelligent patching
 
 *Integrate vstplugin~
   https://git.iem.at/pd/vstplugin
