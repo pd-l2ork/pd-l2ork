@@ -178,6 +178,8 @@ ifeq ($(OS_NAME),windows)
 else
   ifeq ($(OS_NAME),darwin)
 # on Mac OS X 10.6/Snow Leopard don't build hid since it needs Carbon
+# 2024-10-25 original hid has been completely removed and replaced by the
+# cross-platform hidraw
     ifeq ($(INCREMENTAL),yes)
 			lib_targets += pdp iem16 apple
     else
@@ -187,9 +189,9 @@ else
     # GNU/Linux, BSD, IRIX, etc. (we use exported variable INCREMENTAL to
     # avoid rebuilding entire Gem lib that takes a long time to compile)
     ifeq ($(INCREMENTAL),yes)
-	lib_targets += hid pdp iem16
+	lib_targets += pdp iem16
     else
-	lib_targets += gem pdp hid iem16
+	lib_targets += gem pdp iem16
     endif
   endif
 endif
