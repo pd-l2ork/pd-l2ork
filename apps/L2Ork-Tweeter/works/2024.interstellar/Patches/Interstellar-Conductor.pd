@@ -1,0 +1,98 @@
+#N canvas 1259 445 474 635 10;
+#X obj -30 -30 preset_hub k12 1 %hidden%;
+#X obj 28 158 s chat-out;
+#X obj 28 110 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
+#fcfcfc #000000 #000000 3415.43 256 0 0 1 0;
+#X msg 28 132 chat admin p:l2orklicious l2ork-length-all \$1;
+#X obj 28 57 line 100;
+#X text 88 56 tempo;
+#X msg 138 59 6000;
+#X msg 28 28 0 \, 0.5 30000;
+#X msg 28 218 chat admin p:l2orklicious l2ork-sync-all;
+#X obj 28 574 s chat-out;
+#X obj 46 378 hradio 15 0 0 4 empty empty empty 0 -8 0 10 #fcfcfc #000000
+#000000 0 1;
+#N canvas 780 508 600 276 load_session 1;
+#X obj 20 20 inlet;
+#X obj 20 216 outlet;
+#X msg 20 191 chat admin p:l2orklicious l2ork-load \$1;
+#X obj 20 160 tosymbol;
+#X obj 20 45 sel 0 1 2 3;
+#X msg 290 115 insterstellar-end;
+#X msg 420 115 insterstellar-end-stasis;
+#X msg 162 115 interstellar-mid;
+#X msg 20 115 interstellar-start-2;
+#X connect 0 0 4 0;
+#X connect 2 0 1 0;
+#X connect 3 0 2 0;
+#X connect 4 0 8 0;
+#X connect 4 1 7 0;
+#X connect 4 2 5 0;
+#X connect 4 3 6 0;
+#X connect 5 0 3 0;
+#X connect 6 0 3 0;
+#X connect 7 0 3 0;
+#X connect 8 0 3 0;
+#X restore 46 401 pd load_session;
+#X msg 129 473 chat admin p:l2orklicious l2ork-disconnect \$1;
+#X floatatom 129 450 5 0 0 0 - - - 0 0 1, f 5;
+#X text 165 450 disconnect user;
+#X msg 28 195 chat admin p:l2orklicious l2ork-custom sync-to-at 5 12
+0;
+#X msg 37 242 chat admin p:l2orklicious l2ork-inst-level-at 10 47 1
+, f 16;
+#N canvas 727 397 412 139 session-sync 0;
+#X text 30 40 (REQUIRES L2Ork Tweeter Teacher!);
+#X msg 30 60 \; session-sync-offset 0 \; load-session-network-sync
+l2ork-grapevine-take-2-6.1;
+#X text 30 23 load sync from saved grapevine sessions (currently unused)
+;
+#X restore 46 330 pd session-sync;
+#X text 376 195 sync part 5;
+#X text 37 301 part 10 (bass) up;
+#X text 67 501 args: start/stop(0/1) soundfile-num sync-to-part at-beat
+;
+#X msg 52 522 chat admin p:l2orklicious l2ork-custom soundfile 1 0
+11 8;
+#X msg 68 545 chat admin p:l2orklicious l2ork-custom soundfile 0 0
+11 7;
+#X msg 151 272 chat admin p:l2orklicious l2ork-inst-level-at 6 63 8
+, f 37;
+#X text 151 242 mute and unmute part 6 for the 2nd sectionbass and
+the final muting at the end;
+#X msg 151 307 chat admin p:l2orklicious l2ork-inst-level-at 6 63 0
+, f 37;
+#X text 46 357 load saved sessions;
+#X msg 174 59 stop;
+#X obj 138 11 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1;
+#X obj 138 34 t b b;
+#X obj 28 82 expr 6000-pow($f1 \, 0.8)*4500;
+#X text 224 340 ending;
+#X msg 224 360 chat admin p:l2orklicious l2ork-inst-level-list-at 10
+56 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.8 0.1 0.1, f 36;
+#X msg 224 407 chat admin p:l2orklicious l2ork-inst-level-list-at 10
+5 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1, f 36;
+#X connect 2 0 3 0;
+#X connect 3 0 1 0;
+#X connect 4 0 30 0;
+#X connect 6 0 2 0;
+#X connect 7 0 4 0;
+#X connect 8 0 9 0;
+#X connect 10 0 11 0;
+#X connect 11 0 9 0;
+#X connect 12 0 9 0;
+#X connect 13 0 12 0;
+#X connect 15 0 9 0;
+#X connect 16 0 9 0;
+#X connect 21 0 9 0;
+#X connect 22 0 9 0;
+#X connect 23 0 9 0;
+#X connect 25 0 9 0;
+#X connect 27 0 4 0;
+#X connect 28 0 29 0;
+#X connect 29 0 6 0;
+#X connect 29 1 27 0;
+#X connect 30 0 2 0;
+#X connect 32 0 9 0;
+#X connect 33 0 9 0;

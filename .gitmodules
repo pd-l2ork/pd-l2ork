@@ -19,3 +19,9 @@
 [submodule "pd/src/tinyfd"]
 	path = pd/src/tinyfd
 	url = https://github.com/LazyJazz/tinyfiledialogs
+[submodule "externals/pd-flite"]
+	path = externals/pd-flite
+	url = https://github.com/Lucarda/pd-flite.git
+[submodule "externals/pd-hidraw"]
+	path = externals/pd-hidraw
+	url = https://github.com/Lucarda/pd-hidraw.git

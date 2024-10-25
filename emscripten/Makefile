@@ -44,6 +44,7 @@ all: libpd externals extra abstractions doc build
 
 libpd: $(LIBPD_PATH)
 	@echo "Building $(TYPE)..."
+	cd ../ && git submodule update --init
 	cd ../pd/src && test -f config.h || (aclocal && autoconf && make -C ../../packages pd_emscripten)
 	cd $< && mkdir -p build && cd build && emcmake cmake .. -DPD_UTILS:BOOL=OFF -DCMAKE_BUILD_TYPE=$(TYPE) && emmake make
 

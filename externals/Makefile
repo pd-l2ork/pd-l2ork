@@ -163,7 +163,7 @@ endif
 ifeq ($(EMSCRIPTEN),yes)
 lib_targets += flatspace
 else
-lib_targets += js pdlua
+lib_targets += js pdlua flite hidraw
 endif
 
 # NEW (IN-PROGRESS): flext
@@ -178,6 +178,8 @@ ifeq ($(OS_NAME),windows)
 else
   ifeq ($(OS_NAME),darwin)
 # on Mac OS X 10.6/Snow Leopard don't build hid since it needs Carbon
+# 2024-10-25 original hid has been completely removed and replaced by the
+# cross-platform hidraw
     ifeq ($(INCREMENTAL),yes)
 			lib_targets += pdp iem16 apple
     else
@@ -187,9 +189,9 @@ else
     # GNU/Linux, BSD, IRIX, etc. (we use exported variable INCREMENTAL to
     # avoid rebuilding entire Gem lib that takes a long time to compile)
     ifeq ($(INCREMENTAL),yes)
-	lib_targets += hid pdp iem16
+	lib_targets += pdp iem16
     else
-	lib_targets += gem pdp hid iem16
+	lib_targets += gem pdp iem16
     endif
   endif
 endif
@@ -1773,6 +1775,8 @@ LUA_CFLAGS = $(shell (pkg-config --cflags lua5.4 || pkg-config --cflags lua5.3 |
 LUA_LIBS = $(shell (pkg-config --libs lua5.4 || pkg-config --libs lua5.3 || pkg-config --libs lua5.2 || pkg-config --libs lua) 2> /dev/null)
 
 pdlua:
+	cp -f patches/pdlua.c pd-lua/pdlua.c
+	cp -f patches/pdlua_gfx.h pd-lua/pdlua_gfx.h
 ifneq ($(OS_NAME),windows)
 ifneq ($(OS_NAME),darwin)
 	cp -f patches/pd-lua.Makefile pd-lua/Makefile
@@ -1781,7 +1785,7 @@ endif
 	rm -f pd-lua/pdlua.o
 	make -C $(externals_src)/pd-lua LUA_CFLAGS="$(LUA_CFLAGS)" LUA_LIBS="$(LUA_LIBS)" PD_PATH="$(pd_src)" PD_LIB="$(pd_src)/src" CFLAGS="$(CFLAGS)" PDBINDIR=$(pd_src)/src
 
-pdlua_install:
+pdlua_install: pdlua
 	make -C $(externals_src)/pd-lua DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
 
 pdlua_clean:
@@ -2758,6 +2762,48 @@ earplug_install:
 
 earplug_clean:
 	make -C $(externals_src)/earplug~ clean
+
+
+
+#------------------------------------------------------------------------------#
+# FLITE
+FLITE_OBJECTS := $(wildcard $(externals_src)/pd-flite/*.c)
+
+flite:
+	cd $(externals_src)/pd-flite && \
+		git submodule update --init --recursive && \
+		make PDDIR=$(pd_src) PDBINDIR=$(pd_src)/src/
+
+flite_install: flite
+	install -d $(DESTDIR)$(objectsdir)/flite
+	install -p $(FLITE_OBJECTS:.c=.$(EXTENSION)) \
+		$(DESTDIR)$(objectsdir)/flite/
+	install -p $(externals_src)/pd-flite/*.pd \
+		$(DESTDIR)$(objectsdir)/flite/
+
+flite_clean:
+	cd $(externals_src)/pd-flite && make clean
+
+
+
+#------------------------------------------------------------------------------#
+# HIDRAW
+HIDRAW_OBJECTS := $(wildcard $(externals_src)/pd-flite/*.c)
+
+hidraw:
+	cd $(externals_src)/pd-hidraw && \
+		git submodule update --init --recursive && \
+		make PDDIR=$(pd_src) PDBINDIR=$(pd_src)/src/
+
+hidraw_install: hidraw
+	install -d $(DESTDIR)$(objectsdir)/hidraw
+	install -p $(HIDRAW_OBJECTS:.c=.$(EXTENSION)) \
+		$(DESTDIR)$(objectsdir)/hidraw/
+	install -p $(externals_src)/pd-hidraw/*.pd \
+		$(DESTDIR)$(objectsdir)/hidraw/
+
+hidraw_clean:
+	cd $(externals_src)/pd-hidraw && make clean
 
 
 

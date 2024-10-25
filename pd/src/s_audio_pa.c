@@ -112,9 +112,10 @@ static pthread_cond_t pa_sem;
 #endif /* THREADSIGNAL */
 #endif  /* FAKEBLOCKING */
 
+static int initialized;
+
 static void pa_init(void)        /* Initialize PortAudio  */
 {
-    static int initialized;
     if (!initialized)
     {
 #ifdef __APPLE__
@@ -530,6 +531,15 @@ void pa_close_audio( void)
     pthread_cond_destroy(&pa_sem);
 #endif
 #endif
+}
+
+void pa_fini_audio(void)
+{
+    if (initialized) {
+        Pa_Terminate();
+        initialized = 0;
+        fprintf(stderr, "pa_fini_audio\n");
+    }
 }
 
 int pa_send_dacs(void)

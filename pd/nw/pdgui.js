@@ -864,7 +864,9 @@ function index_obj_completion(obj_or_msg, obj_or_msg_text) {
             let arg_result = arg_exact_match(title, arg);
             if (arg_result.length !== 0) {
                 arg_ref = arg_result[0].matches[1].refIndex;
-                arg_freq = obj_result[0].item.args[arg_ref].occurrences + 1;
+                if (arg_ref !== null) {
+                    arg_freq = obj_result[0].item.args[arg_ref].occurrences + 1;
+                }
             }
         }
     }
@@ -2875,7 +2877,7 @@ function open_textfile(target) {
 // Think about renaming this and pd_doc_open...
 
 // Open a file-- html, text, or Pd.
-function doc_open (dir, basename) {
+function doc_open (dir, basename, f) {
     // normalize to get rid of extra slashes, ".." and "."
     var norm_path = path.normalize(dir);
     if (basename.slice(-4) === ".txt"
@@ -2888,7 +2890,7 @@ function doc_open (dir, basename) {
 
     } else {
         pdsend("pd open", enquote(defunkify_windows_path(basename)),
-            enquote(defunkify_windows_path(norm_path)));
+            enquote(defunkify_windows_path(norm_path)), f?f:0);
         pdsend("pd add-recent-file",
             enquote(defunkify_windows_path(path.join(norm_path, basename))));
     }
@@ -2900,8 +2902,8 @@ function doc_open (dir, basename) {
 exports.doc_open = doc_open;
 
 // Open a file relative to the main directory where "doc/" and "extra/" live
-function pd_doc_open(dir, basename) {
-    doc_open(path.join(lib_dir, dir), basename);
+function pd_doc_open(dir, basename, f) {
+    doc_open(path.join(lib_dir, dir), basename, f);
 }
 
 exports.pd_doc_open = pd_doc_open;

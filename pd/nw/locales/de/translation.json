@@ -598,7 +598,9 @@
       "input_title": "Eingabe-Geräte",
       "input_title_tt": "Hardware-Geräte für die Audio-Eingabe von Pd",
       "output_title": "Ausgabe-Geräte",
-      "output_title_tt": "Hardware-Geräte für die Audio-Ausgabe von Pd"
+      "output_title_tt": "Hardware-Geräte für die Audio-Ausgabe von Pd",
+      "refresh_audiodevs": "Aktualisieren",
+      "refresh_audiodevs_tt": "Audio-Geräteliste aktualisieren"
     },
     "midi": {
       "api": "MIDI API",
@@ -610,7 +612,9 @@
       "input_title": "Eingabe-Geräte",
       "input_title_tt": "Hardware-Geräte für die MIDI-Eingabe von Pd",
       "output_title": "Ausgabe-Geräte",
-      "output_title_tt": "Hardware-Geräte für die MIDI-Ausgabe von Pd"
+      "output_title_tt": "Hardware-Geräte für die MIDI-Ausgabe von Pd",
+      "refresh_mididevs": "Aktualisieren",
+      "refresh_mididevs_tt": "MIDI-Geräteliste aktualisieren"
     },
     "ok": "Ok",
     "ok_tt": "Aktualisiere die Einstellungen und schließe den Dialog",

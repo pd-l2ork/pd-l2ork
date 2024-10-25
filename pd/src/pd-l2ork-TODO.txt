@@ -1,6 +1,24 @@
 PD-L2ORK TODO:
 
-*Update pdjs to use a more recent version of v8 (this might fix arm macbook errors, as pdjs currently does not work properly on apple silicon)
+*C:\Program Files (x8…rk\bin\pdgui.js:867 Uncaught TypeError: Cannot read properties of undefined (reading 'occurrences')
+    at Object.index_obj_completion (C:\Program Files (x86)\Pd-L2Ork\bin\pdgui.js:867:61)
+    at Object.create_obj (pd_canvas.js:1500:27)
+    at HTMLDocument.text_mousedown (pd_canvas.js:829:27)
+    *Attempted fixing this with an if check. Need to test.
+
+*Fix flite build on emscripten
+
+*Integrate vstplugin~
+  https://git.iem.at/pd/vstplugin
+
+*Integrate neuralnet
+  https://github.com/alexdrymonitis/neuralnet
+
+*Consider integrating Rich Text comments feature from Purr-Data
+
+*Consider integrating #1756 pull request from vanilla that may improve the scheduler.
+
+*Update pdjs to use a more recent version of v8 (this might fix arm macbook errors, as pdjs currently does not work properly on apple silicon).
 
 *Figure out why comments and the end of Tweeter track with lots of numbers converts to scientific notation.
 
@@ -819,6 +837,10 @@ resulting in unexpected stuck keys.
 *Integrated William Fergurson's porting of pd vanilla objects up to version 0.54, with list box being the last object yet to be ported, plus addressing any lingering bugs as they arise.
 *Ported Albert Graef's implementation of coll text editor that makes it now work reliably.
 *WebPdL2Ork bug fixes.
+...TODO...
+*Fixed foolin-around-007 special character issue.
+*Integrated pd-flite (need to test Linux and Mac)
+*Integrated Purr-Data extension to the intelligent patching
 
 
 
@@ -1105,6 +1127,8 @@ git remote set-url origin git@github.com:<Username>/<Project>.git
 
 Submodules: git submodule update --remote
 
+Add submodule: git submodule add -- /url/of/sub1-folder/repo sub1-folder
+
 
 
 
@@ -1145,4 +1169,3 @@ git push --tags
 
 Delete tag to remote repo:
 git push origin --delete <tagname>
-

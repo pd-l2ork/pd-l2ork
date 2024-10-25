@@ -116,7 +116,7 @@ Hard drive space required: *roughly 2.5 GB*
              swh-plugins mcp-plugins cmt blop omins rev-plugins \
              dssi-utils vco-plugins wah-plugins fil-plugins \
              mda-lv2 libmp3lame-dev libspeex-dev libgsl0-dev \
-             portaudio19-dev liblua5.3-dev python3-dev libsmpeg0 libjpeg-dev \
+             portaudio19-dev liblua5.4-dev python3-dev libsmpeg0 libjpeg-dev \
              flite1-dev libgsm1-dev libgtk2.0-dev git libstk-dev wget \
              libfluidsynth-dev fluid-soundfont-gm byacc cmake ninja-build \
              patchelf libtirpc-dev libnss3 libudev-dev
@@ -180,7 +180,6 @@ Hard drive space required: *roughly 2 GB*
         brew install glfw
         brew install ninja
         brew install cmake
-        brew install lua
 
 3. Clone the Pd-L2Ork repository
 
@@ -248,7 +247,8 @@ since it will usually contain spaces, making the build fail.
           mingw-w64-i686-speex \
           rsync unzip wget mingw-w64-i686-cmake \
           mingw-w64-i686-ninja \
-          mingw-w64-i686-glfw mingw-w64-i686-pcre
+          mingw-w64-i686-glfw mingw-w64-i686-pcre \
+          mingw-w64-i686-ntldd-git
 
 5. Download the source code  
    Issue the following command to create a new directory "pd-l2ork" and clone
