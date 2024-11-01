@@ -1778,9 +1778,9 @@ LUA_TARGET = $(externals_src)/pd-lua/pdlua.$(EXTENSION)
 pdlua: $(LUA_TARGET)
 
 $(LUA_TARGET):
-ifneq ($(OS_NAME),windows)
 	cp -f patches/pdlua.c pd-lua/pdlua.c
 	cp -f patches/pdlua_gfx.h pd-lua/pdlua_gfx.h
+ifneq ($(OS_NAME),windows)
 ifneq ($(OS_NAME),darwin)
 	cp -f patches/pd-lua.Makefile pd-lua/Makefile
 endif
