@@ -21,7 +21,7 @@ SRC_DIR = $(EM_PATH)/src
 SRC_FILES = $(SRC_DIR)/main.cpp $(SRC_DIR)/pd.cpp $(SRC_DIR)/js.cpp
 TARGET = main.html
 OUTPUT_FILES = $(TARGET) main.js main.wasm main.data
-CFLAGS = -I$(PD_PATH)/src -I$(LIBPD_PATH)/libpd_wrapper -O3 -fsanitize=address
+CFLAGS = -I$(PD_PATH)/src -I$(LIBPD_PATH)/libpd_wrapper -O3
 LDFLAGS = -L$(LIBPD_PATH)/libs -lpd -lm -sENVIRONMENT=web -sSTACK_SIZE=1048576
 ifeq ($(DEBUG), true)
     CFLAGS = -I$(PD_PATH)/src -I$(LIBPD_PATH)/libpd_wrapper -gsource-map -O0 -fsanitize=address

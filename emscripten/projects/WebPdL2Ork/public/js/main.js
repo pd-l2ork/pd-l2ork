@@ -4055,7 +4055,7 @@ async function openPatch(content, filename) {
                             break;
                         case "vradio":
                         case "hradio":
-                            if (args.length >= 21) {
+                            if (args.length >= 20) {
                                 const data = {};
                                 data.x_pos = +args[2];
                                 data.y_pos = +args[3];
@@ -4075,7 +4075,7 @@ async function openPatch(content, filename) {
                                 data.fg_color = isNaN(args[17]) ? args[17] : +args[17];
                                 data.label_color = isNaN(args[18]) ? args[18] : +args[18];
                                 data.default_value = +args[19];
-                                data.interactive = +args[20];
+                                data.interactive = args.length > 20 ? +args[20] : 1;
                                 data.value = data.init ? data.default_value : 0;
                                 data.id = `${data.type}_${nextHTMLID++}`;
                                 data.canvas = layer.canvas;
