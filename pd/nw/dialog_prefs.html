@@ -97,10 +97,22 @@ select {
                 <span data-i18n="prefs.audio.sr"></span>
               </td>
               <td>
+                <select id="rate" name="rate" onchange="rate_change(this)">
+                  <option value="11025">11,025</option>
+                  <option value="22050">22,050</option>
+                  <option value="44100">44,100</option>
+                  <option value="48000">48,000</option>
+                  <option value="88200">88,200</option>
+                  <option value="96000">96,000</option>
+                  <option value="192000">192,000</option>
+                  <option value="custom">Custom</option>
+                </select>
+              </td>
+              <td>
                 <input type="text"
-                       id="rate"
-                       name="rate"
-                       onchange="attr_change(this);">
+                       id="rate-custom"
+                       name="rate-custom"
+                       onchange="rate_custom_change(this)">
               </td>
             </tr>
             <tr data-i18n="[title]prefs.audio.blocksize_tt">
@@ -749,6 +761,17 @@ function attr_change(elem) {
     attr[attr.indexOf(id) + 1] = elem.value;
 }
 
+function rate_change(elem) {
+  document.getElementById("rate-custom").hidden = elem.value !== "custom";
+  if(elem.value === "custom")
+    document.getElementById("rate-custom").value = get_attr("rate", pd_audio_attrs);
+  pd_audio_attrs[pd_audio_attrs.indexOf("rate") + 1] = elem.value;
+}
+
+function rate_custom_change(elem) {
+  pd_audio_attrs[pd_audio_attrs.indexOf("rate") + 1] = elem.value;
+}
+
 function alsa_ports_change(elem, type) {
     var attr, dummy, i, len;
     attr = pd_midi_attrs;
@@ -1057,7 +1080,11 @@ function audio_prefs_callback(attrs) {
             attrs[attrs.indexOf("current-api") + 1]);
     }
 
-    document.getElementById("rate").value = get_attr("rate", attrs);
+    var rate = get_attr("rate", attrs);
+    var custom = ![11025, 22050, 44100, 48000, 88200, 96000, 192000].includes(rate);
+    document.getElementById("rate").value = custom ? "custom" : rate;
+    document.getElementById("rate-custom").hidden = !custom;
+    document.getElementById("rate-custom").value = rate;
     document.getElementById("blocksize").value = get_attr("blocksize", attrs);
     document.getElementById("advance").value = get_attr("advance", attrs);
 

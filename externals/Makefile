@@ -2933,7 +2933,7 @@ endif
 ifneq ($(EMSCRIPTEN), yes)
 hidraw:
 	cd $(externals_src)/pd-hidraw && \
-		rm *.o && \
+		rm -f *.o && \
 		git submodule update --init --recursive && \
 		make PDDIR=$(pd_src) PDBINDIR=$(pd_src)/src/
 
