@@ -20,7 +20,7 @@ DESTDIR = pd-l2ork-web
 SRC_DIR = $(EM_PATH)/src
 SRC_FILES = $(SRC_DIR)/main.cpp $(SRC_DIR)/pd.cpp $(SRC_DIR)/js.cpp
 TARGET = main.html
-OUTPUT_FILES = $(TARGET) main.js main.wasm main.data
+OUTPUT_FILES = $(TARGET) main.js main.wasm $(wildcard main-*.data)
 CFLAGS = -I$(PD_PATH)/src -I$(LIBPD_PATH)/libpd_wrapper -O3
 LDFLAGS = -L$(LIBPD_PATH)/libs -lpd -lm -sENVIRONMENT=web -sSTACK_SIZE=1048576
 ifeq ($(DEBUG), true)
@@ -42,7 +42,8 @@ build: $(SRC_FILES) $(DESTDIR)
 	emcc $(CFLAGS) -s MAIN_MODULE=1 --bind -o $(TARGET) $(SRC_FILES) \
 	-s USE_SDL=2 -s USE_OGG=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s ALLOW_MEMORY_GROWTH=1 \
 	-s FORCE_FILESYSTEM=1 -s EXPORTED_RUNTIME_METHODS=FS \
-	--preload-file $(DESTDIR) $(LDFLAGS) --cache ./emcc-cache
+	$(LDFLAGS) --cache ./emcc-cache
+	sh PackageFiles.sh $(DESTDIR) main.js
 	ln -svf $(EM_PATH)/build/pd-l2ork-web/extra $(EM_PATH)/projects/WebPdL2Ork/public/@pd_extra
 	@echo "emscripten build succeeded!"
 
