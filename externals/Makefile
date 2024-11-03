@@ -1780,11 +1780,6 @@ pdlua: $(LUA_TARGET)
 $(LUA_TARGET):
 	cp -f patches/pdlua.c pd-lua/pdlua.c
 	cp -f patches/pdlua_gfx.h pd-lua/pdlua_gfx.h
-ifneq ($(OS_NAME),windows)
-ifneq ($(OS_NAME),darwin)
-	cp -f patches/pd-lua.Makefile pd-lua/Makefile
-endif
-endif
 	rm -f pd-lua/pdlua.o
 	make -C $(externals_src)/pd-lua LUA_CFLAGS="$(LUA_CFLAGS)" LUA_LIBS="$(LUA_LIBS)" PD_PATH="$(pd_src)" PD_LIB="$(pd_src)/src" CFLAGS="$(CFLAGS)" PDBINDIR=$(pd_src)/src
 
@@ -2910,6 +2905,7 @@ $(FLITE)/cmu_us_%.flitevox:
 	curl --output $@ http://cmuflite.org/packed/flite-2.0/voices/cmu_us_$*.flitevox
 
 $(FLITE)/flite.$(EXTENSION): $(FLITE_OBJECTS)
+	cd $(FLITE) && git apply ../patches/flite.patch
 	$(CC) $(FLITE_OBJECTS) $(FLITE_FLAGS) $(FLITE)/flite.c $(LDFLAGS) $(CFLAGS) -o $(FLITE)/flite.$(EXTENSION) $(LIBS)
 	$(STRIP) $(FLITE)/flite.$(EXTENSION)
 	chmod 755 $(FLITE)/flite.$(EXTENSION)
