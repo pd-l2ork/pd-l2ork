@@ -2905,7 +2905,7 @@ $(FLITE)/cmu_us_%.flitevox:
 	curl --output $@ http://cmuflite.org/packed/flite-2.0/voices/cmu_us_$*.flitevox
 
 $(FLITE)/flite.$(EXTENSION): $(FLITE_OBJECTS)
-	cd $(FLITE) && git apply ../patches/flite.patch
+	cd $(FLITE) && git apply ../patches/flite.patch || true
 	$(CC) $(FLITE_OBJECTS) $(FLITE_FLAGS) $(FLITE)/flite.c $(LDFLAGS) $(CFLAGS) -o $(FLITE)/flite.$(EXTENSION) $(LIBS)
 	$(STRIP) $(FLITE)/flite.$(EXTENSION)
 	chmod 755 $(FLITE)/flite.$(EXTENSION)

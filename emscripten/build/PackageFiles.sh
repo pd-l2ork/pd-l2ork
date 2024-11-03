@@ -38,8 +38,8 @@ create_chunks() {
 }
 
 # Check for input arguments
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <directory>"
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <directory> <js to append to>"
     exit 1
 fi
 
