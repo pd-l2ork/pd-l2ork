@@ -155,7 +155,7 @@ ifeq ($(LIGHT),yes)
 lib_targets = loaders-libdir pddp
 INCREMENTAL = yes
 else
-lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui fluid freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemgui iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moocow moonlib motex mrpeach oscx pan pdcontainer pddp pdogg plugin pmpd rjlib sigpack smlib tof unauthorized vbap windowing zexy
+lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui flite fluid freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemgui iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moocow moonlib motex mrpeach oscx pan pdcontainer pddp pdogg plugin pmpd rjlib sigpack smlib tof unauthorized vbap windowing zexy
 endif
 
 # Emscriptem needs flatspace for some objects, wheras normal PD has them builtin
@@ -163,7 +163,7 @@ endif
 ifeq ($(EMSCRIPTEN),yes)
 lib_targets += flatspace
 else
-lib_targets += js pdlua flite hidraw
+lib_targets += js pdlua hidraw
 endif
 
 # NEW (IN-PROGRESS): flext
@@ -1773,20 +1773,18 @@ endif
 
 LUA_CFLAGS = $(shell (pkg-config --cflags lua5.4 || pkg-config --cflags lua5.3 || pkg-config --cflags lua5.2 || pkg-config --cflags lua) 2> /dev/null)
 LUA_LIBS = $(shell (pkg-config --libs lua5.4 || pkg-config --libs lua5.3 || pkg-config --libs lua5.2 || pkg-config --libs lua) 2> /dev/null)
+LUA_TARGET = $(externals_src)/pd-lua/pdlua.$(EXTENSION)
 
-pdlua:
+pdlua: $(LUA_TARGET)
+
+$(LUA_TARGET):
 	cp -f patches/pdlua.c pd-lua/pdlua.c
 	cp -f patches/pdlua_gfx.h pd-lua/pdlua_gfx.h
-ifneq ($(OS_NAME),windows)
-ifneq ($(OS_NAME),darwin)
-	cp -f patches/pd-lua.Makefile pd-lua/Makefile
-endif
-endif
 	rm -f pd-lua/pdlua.o
 	make -C $(externals_src)/pd-lua LUA_CFLAGS="$(LUA_CFLAGS)" LUA_LIBS="$(LUA_LIBS)" PD_PATH="$(pd_src)" PD_LIB="$(pd_src)/src" CFLAGS="$(CFLAGS)" PDBINDIR=$(pd_src)/src
 
 pdlua_install: pdlua
-	make -C $(externals_src)/pd-lua DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/pd-lua LUA_CFLAGS="$(LUA_CFLAGS)" LUA_LIBS="$(LUA_LIBS)" PD_PATH="$(pd_src)" PD_LIB="$(pd_src)/src" CFLAGS="$(CFLAGS)" PDBINDIR=$(pd_src)/src DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
 
 pdlua_clean:
 	make -C $(externals_src)/pd-lua clean
@@ -2767,10 +2765,12 @@ earplug_clean:
 
 #------------------------------------------------------------------------------#
 # FLITE
-FLITE_OBJECTS := $(wildcard $(externals_src)/pd-flite/*.c)
+FLITE = $(externals_src)/pd-flite/
+ifneq ($(EMSCRIPTEN), yes)
+FLITE_OBJECTS := $(wildcard $(FLITE)/*.c)
 
 flite:
-	cd $(externals_src)/pd-flite && \
+	cd $(FLITE) && \
 		git submodule update --init --recursive && \
 		make PDDIR=$(pd_src) PDBINDIR=$(pd_src)/src/
 
@@ -2778,32 +2778,203 @@ flite_install: flite
 	install -d $(DESTDIR)$(objectsdir)/flite
 	install -p $(FLITE_OBJECTS:.c=.$(EXTENSION)) \
 		$(DESTDIR)$(objectsdir)/flite/
-	install -p $(externals_src)/pd-flite/*.pd \
+	install -p $(FLITE)/*.pd \
 		$(DESTDIR)$(objectsdir)/flite/
 
 flite_clean:
-	cd $(externals_src)/pd-flite && make clean
+	cd $(FLITE) && make clean
+else
+FLITE_NAME = flite
+FLITE_DEP = $(FLITE)/deps/flite
+BUNDLED_FLITE = $(FLITE_DEP)
+FLITE_SRC = $(BUNDLED_FLITE)/lang/cmulex/cmu_lex.c \
+	 $(BUNDLED_FLITE)/lang/cmulex/cmu_lex_data.c \
+	 $(BUNDLED_FLITE)/lang/cmulex/cmu_lex_entries.c \
+	 $(BUNDLED_FLITE)/lang/cmulex/cmu_lts_model.c \
+	 $(BUNDLED_FLITE)/lang/cmulex/cmu_lts_rules.c \
+	 $(BUNDLED_FLITE)/lang/cmulex/cmu_postlex.c \
+	 $(BUNDLED_FLITE)/lang/cmu_grapheme_lang/cmu_grapheme_lang.c \
+	 $(BUNDLED_FLITE)/lang/cmu_grapheme_lang/cmu_grapheme_phoneset.c \
+	 $(BUNDLED_FLITE)/lang/cmu_grapheme_lang/cmu_grapheme_phrasing_cart.c \
+	 $(BUNDLED_FLITE)/lang/cmu_grapheme_lang/graph_gpos.c \
+	 $(BUNDLED_FLITE)/lang/cmu_grapheme_lex/cmu_grapheme_lex.c \
+	 $(BUNDLED_FLITE)/lang/cmu_grapheme_lex/grapheme_unitran_tables.c \
+	 $(BUNDLED_FLITE)/lang/cmu_indic_lang/cmu_indic_lang.c \
+	 $(BUNDLED_FLITE)/lang/cmu_indic_lang/cmu_indic_phoneset.c \
+	 $(BUNDLED_FLITE)/lang/cmu_indic_lang/cmu_indic_phrasing_cart.c \
+	 $(BUNDLED_FLITE)/lang/cmu_indic_lex/cmu_indic_lex.c \
+	 $(BUNDLED_FLITE)/lang/cmu_us_kal16/cmu_us_kal16.c \
+	 $(BUNDLED_FLITE)/lang/cmu_us_kal16/cmu_us_kal16_diphone.c \
+	 $(BUNDLED_FLITE)/lang/cmu_us_kal16/cmu_us_kal16_lpc.c \
+	 $(BUNDLED_FLITE)/lang/cmu_us_kal16/cmu_us_kal16_res.c \
+	 $(BUNDLED_FLITE)/lang/cmu_us_kal16/cmu_us_kal16_residx.c \
+	 $(BUNDLED_FLITE)/lang/cmu_us_kal/cmu_us_kal.c \
+	 $(BUNDLED_FLITE)/lang/cmu_us_kal/cmu_us_kal_diphone.c \
+	 $(BUNDLED_FLITE)/lang/cmu_us_kal/cmu_us_kal_lpc.c \
+	 $(BUNDLED_FLITE)/lang/cmu_us_kal/cmu_us_kal_res.c \
+	 $(BUNDLED_FLITE)/lang/cmu_us_kal/cmu_us_kal_residx.c \
+	 $(BUNDLED_FLITE)/lang/cmu_us_kal/cmu_us_kal_ressize.c \
+	 $(BUNDLED_FLITE)/lang/usenglish/usenglish.c \
+	 $(BUNDLED_FLITE)/lang/usenglish/us_aswd.c \
+	 $(BUNDLED_FLITE)/lang/usenglish/us_durz_cart.c \
+	 $(BUNDLED_FLITE)/lang/usenglish/us_dur_stats.c \
+	 $(BUNDLED_FLITE)/lang/usenglish/us_expand.c \
+	 $(BUNDLED_FLITE)/lang/usenglish/us_f0lr.c \
+	 $(BUNDLED_FLITE)/lang/usenglish/us_f0_model.c \
+	 $(BUNDLED_FLITE)/lang/usenglish/us_ffeatures.c \
+	 $(BUNDLED_FLITE)/lang/usenglish/us_gpos.c \
+	 $(BUNDLED_FLITE)/lang/usenglish/us_int_accent_cart.c \
+	 $(BUNDLED_FLITE)/lang/usenglish/us_int_tone_cart.c \
+	 $(BUNDLED_FLITE)/lang/usenglish/us_nums_cart.c \
+	 $(BUNDLED_FLITE)/lang/usenglish/us_phoneset.c \
+	 $(BUNDLED_FLITE)/lang/usenglish/us_phrasing_cart.c \
+	 $(BUNDLED_FLITE)/lang/usenglish/us_pos_cart.c \
+	 $(BUNDLED_FLITE)/lang/usenglish/us_text.c \
+	 $(BUNDLED_FLITE)/src/audio/au_none.c \
+	 $(BUNDLED_FLITE)/src/audio/audio.c \
+	 $(BUNDLED_FLITE)/src/audio/au_streaming.c \
+	 $(BUNDLED_FLITE)/src/cg/cst_cg.c \
+	 $(BUNDLED_FLITE)/src/cg/cst_cg_dump_voice.c \
+	 $(BUNDLED_FLITE)/src/cg/cst_cg_load_voice.c \
+	 $(BUNDLED_FLITE)/src/cg/cst_cg_map.c \
+	 $(BUNDLED_FLITE)/src/cg/cst_mlpg.c \
+	 $(BUNDLED_FLITE)/src/cg/cst_mlsa.c \
+	 $(BUNDLED_FLITE)/src/cg/cst_spamf0.c \
+	 $(BUNDLED_FLITE)/src/cg/cst_vc.c \
+	 $(BUNDLED_FLITE)/src/hrg/cst_ffeature.c \
+	 $(BUNDLED_FLITE)/src/hrg/cst_item.c \
+	 $(BUNDLED_FLITE)/src/hrg/cst_relation.c \
+	 $(BUNDLED_FLITE)/src/hrg/cst_rel_io.c \
+	 $(BUNDLED_FLITE)/src/hrg/cst_utterance.c \
+	 $(BUNDLED_FLITE)/src/lexicon/cst_lexicon.c \
+	 $(BUNDLED_FLITE)/src/lexicon/cst_lts.c \
+	 $(BUNDLED_FLITE)/src/lexicon/cst_lts_rewrites.c \
+	 $(BUNDLED_FLITE)/src/regex/cst_regex.c \
+	 $(BUNDLED_FLITE)/src/regex/regexp.c \
+	 $(BUNDLED_FLITE)/src/regex/regsub.c \
+	 $(BUNDLED_FLITE)/src/speech/cst_lpcres.c \
+	 $(BUNDLED_FLITE)/src/speech/cst_track.c \
+	 $(BUNDLED_FLITE)/src/speech/cst_track_io.c \
+	 $(BUNDLED_FLITE)/src/speech/cst_wave.c \
+	 $(BUNDLED_FLITE)/src/speech/cst_wave_io.c \
+	 $(BUNDLED_FLITE)/src/speech/cst_wave_utils.c \
+	 $(BUNDLED_FLITE)/src/speech/g721.c \
+	 $(BUNDLED_FLITE)/src/speech/g723_24.c \
+	 $(BUNDLED_FLITE)/src/speech/g723_40.c \
+	 $(BUNDLED_FLITE)/src/speech/g72x.c \
+	 $(BUNDLED_FLITE)/src/speech/rateconv.c \
+	 $(BUNDLED_FLITE)/src/stats/cst_cart.c \
+	 $(BUNDLED_FLITE)/src/stats/cst_ss.c \
+	 $(BUNDLED_FLITE)/src/stats/cst_viterbi.c \
+	 $(BUNDLED_FLITE)/src/synth/cst_ffeatures.c \
+	 $(BUNDLED_FLITE)/src/synth/cst_phoneset.c \
+	 $(BUNDLED_FLITE)/src/synth/cst_ssml.c \
+	 $(BUNDLED_FLITE)/src/synth/cst_synth.c \
+	 $(BUNDLED_FLITE)/src/synth/cst_utt_utils.c \
+	 $(BUNDLED_FLITE)/src/synth/cst_voice.c \
+	 $(BUNDLED_FLITE)/src/synth/flite.c \
+	 $(BUNDLED_FLITE)/src/utils/cst_alloc.c \
+	 $(BUNDLED_FLITE)/src/utils/cst_args.c \
+	 $(BUNDLED_FLITE)/src/utils/cst_endian.c \
+	 $(BUNDLED_FLITE)/src/utils/cst_error.c \
+	 $(BUNDLED_FLITE)/src/utils/cst_features.c \
+	 $(BUNDLED_FLITE)/src/utils/cst_file_stdio.c \
+	 $(BUNDLED_FLITE)/src/utils/cst_mmap_none.c \
+	 $(BUNDLED_FLITE)/src/utils/cst_socket.c \
+	 $(BUNDLED_FLITE)/src/utils/cst_string.c \
+	 $(BUNDLED_FLITE)/src/utils/cst_tokenstream.c \
+	 $(BUNDLED_FLITE)/src/utils/cst_url.c \
+	 $(BUNDLED_FLITE)/src/utils/cst_val.c \
+	 $(BUNDLED_FLITE)/src/utils/cst_val_const.c \
+	 $(BUNDLED_FLITE)/src/utils/cst_val_user.c \
+	 $(BUNDLED_FLITE)/src/utils/cst_wchar.c \
+	 $(BUNDLED_FLITE)/src/wavesynth/cst_clunits.c \
+	 $(BUNDLED_FLITE)/src/wavesynth/cst_diphone.c \
+	 $(BUNDLED_FLITE)/src/wavesynth/cst_reflpc.c \
+	 $(BUNDLED_FLITE)/src/wavesynth/cst_sigpr.c \
+	 $(BUNDLED_FLITE)/src/wavesynth/cst_sts.c \
+	 $(BUNDLED_FLITE)/src/wavesynth/cst_units.c
+FLITE_VOICES := $(shell echo $(FLITE)/cmu_us_{awb,rms,slt}.flitevox)
+FLITE_OBJECTS := $(FLITE_SRC:.c=.o)
+FLITE_TARGETS := $(FLITE_SRC:.c=.$(EXTENSION))
+FLITE_FLAGS := -I$(FLITE_DEP)/include -I$(FLITE_DEP)/lang/usenglish -I$(FLITE_DEP)/lang/cmulex -DCSST_AUDIO_NONE -DVERSION='"0.3.3"'
+
+flite: $(FLITE)/flite.$(EXTENSION) $(FLITE_VOICES)
+
+$(FLITE)/cmu_us_%.flitevox:
+	curl --output $@ http://cmuflite.org/packed/flite-2.0/voices/cmu_us_$*.flitevox
+
+$(FLITE)/flite.$(EXTENSION): $(FLITE_OBJECTS)
+	cd $(FLITE) && git apply ../patches/flite.patch || true
+	$(CC) $(FLITE_OBJECTS) $(FLITE_FLAGS) $(FLITE)/flite.c $(LDFLAGS) $(CFLAGS) -o $(FLITE)/flite.$(EXTENSION) $(LIBS)
+	$(STRIP) $(FLITE)/flite.$(EXTENSION)
+	chmod 755 $(FLITE)/flite.$(EXTENSION)
+
+$(FLITE_OBJECTS): $(FLITE_SRC)
+	$(CC) $(FLITE_FLAGS) $(CFLAGS) -o "$*.o" -c "$*.c";
+
+flite_install: flite
+	install -d $(DESTDIR)$(objectsdir)/$(FLITE_NAME)
+	install -p $(FLITE)/*.$(EXTENSION) $(DESTDIR)$(objectsdir)/$(FLITE_NAME)
+	install -p $(FLITE)/*.flitevox $(DESTDIR)$(objectsdir)/$(FLITE_NAME)
+
+flite_clean:
+	rm $(FLITE)/*.{o,$(EXTENSION)} $(FLITE_DEP)/*/*/*.{o,$(EXTENSION)}
+endif
 
 
 
 #------------------------------------------------------------------------------#
 # HIDRAW
-HIDRAW_OBJECTS := $(wildcard $(externals_src)/pd-flite/*.c)
-
+ifneq ($(EMSCRIPTEN), yes)
 hidraw:
 	cd $(externals_src)/pd-hidraw && \
+		rm -f *.o && \
 		git submodule update --init --recursive && \
 		make PDDIR=$(pd_src) PDBINDIR=$(pd_src)/src/
 
 hidraw_install: hidraw
 	install -d $(DESTDIR)$(objectsdir)/hidraw
-	install -p $(HIDRAW_OBJECTS:.c=.$(EXTENSION)) \
+	install -p $(externals_src)/pd-hidraw/hidraw.${EXTENSION} \
 		$(DESTDIR)$(objectsdir)/hidraw/
 	install -p $(externals_src)/pd-hidraw/*.pd \
 		$(DESTDIR)$(objectsdir)/hidraw/
 
 hidraw_clean:
 	cd $(externals_src)/pd-hidraw && make clean
+else
+# Currently unused, no direct access to hid devices in the browser
+# Leaving the build process here, in case anything changes in the future
+HIDRAW_NAME = hidraw
+HIDRAW = $(externals_src)/pd-hidraw
+HIDRAW_SRC := $(wildcard $(HIDRAW)/hidapi/hidapi/*.c)
+HIDRAW_OBJECTS := $(HIDRAW_SRC:.c=.o)
+HIDRAW_TARGETS := $(HIDRAW_SRC:.c=.$(EXTENSION))
+HIDRAW_FLAGS := -I$(externals_src)/pd-hidraw/hidapi/hidapi
+
+hidraw: $(HIDRAW_TARGETS) $(HIDRAW)/hidraw.$(EXTENSION)
+
+$(HIDRAW)/hidraw.$(EXTENSION):
+	$(CC) $(HIDRAW_TARGETS) $(HIDRAW_FLAGS) $(externals_src)/pd-hidraw/pd-hidraw.c $(LDFLAGS) $(CFLAGS) -o $(externals_src)/pd-hidraw/hidraw.$(EXTENSION) $(LIBS)
+	$(STRIP) $(externals_src)/pd-hidraw/hidraw.$(EXTENSION)
+	chmod 755 $(externals_src)/pd-hidraw/hidraw.$(EXTENSION)
+
+$(HIDRAW_OBJECTS): $(HIDRAW_SRC)
+	$(CC) $(CFLAGS) -o "$*.o" -c "$*.c";
+
+$(HIDRAW_TARGETS): $(HIDRAW_OBJECTS)
+	$(CC) $(LDFLAGS) -o "$*.$(EXTENSION)" "$*.o" $(LIBS)
+	$(STRIP) $*.$(EXTENSION)
+	chmod 755 "$*.$(EXTENSION)"
+	
+hidraw_clean:
+	rm -f $(HIDRAW_TARGETS)
+	rm -f $(HIDRAW_OBJECTS)
+
+hidraw_install: hidraw
+	install -d $(DESTDIR)$(objectsdir)/$(HIDRAW_NAME)
+	install -p $(externals_src)/pd-hidraw/*.$(EXTENSION) $(DESTDIR)$(objectsdir)/$(HIDRAW_NAME)
+endif
 
 
 

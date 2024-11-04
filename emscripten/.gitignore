@@ -1,3 +1,4 @@
 build/*
+!build/PackageFiles.sh
 package-lock.json
 log

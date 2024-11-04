@@ -1,0 +1,67 @@
+diff --git a/flite.c b/flite.c
+index 50b1d7b..f7f7db9 100644
+--- a/flite.c
++++ b/flite.c
+@@ -56,11 +56,11 @@
+  * Globals
+  *--------------------------------------------------------------------*/
+ 
+-cst_voice *register_cmu_us_awb();
+-cst_voice *register_cmu_us_kal();
+-cst_voice *register_cmu_us_kal16();
+-cst_voice *register_cmu_us_rms();
+-cst_voice *register_cmu_us_slt();
++cst_voice *register_cmu_us_awb(const char* voxdir);
++cst_voice *register_cmu_us_kal(const char* voxdir);
++cst_voice *register_cmu_us_kal16(const char* voxdir);
++cst_voice *register_cmu_us_rms(const char* voxdir);
++cst_voice *register_cmu_us_slt(const char* voxdir);
+ 
+ void usenglish_init(cst_voice *v);
+ cst_lexicon *cmulex_init(void);
+@@ -212,19 +212,31 @@ static void flite_voice(t_flite *x, t_symbol *vox) {
+   const char *voxstring = vox->s_name;
+   
+   if (!strcmp(voxstring, "awb")) {
+-    x->x_voice = register_cmu_us_awb();  
++    #ifndef __EMSCRIPTEN__
++    x->x_voice = register_cmu_us_awb("");
++    #else
++    flite_voice_file(x, gensym("/pd-l2ork-web/extra/flite/cmu_us_awb.flitevox"));
++    #endif
+   } 
+   else if (!strcmp(voxstring, "kal")) {
+-    x->x_voice = register_cmu_us_kal();     
++    x->x_voice = register_cmu_us_kal("");
+   }
+   else if (!strcmp(voxstring, "kal16")) {
+-    x->x_voice = register_cmu_us_kal16();   
++    x->x_voice = register_cmu_us_kal16("");
+   }
+   else if (!strcmp(voxstring, "rms")) {
+-    x->x_voice = register_cmu_us_rms();     
++    #ifndef __EMSCRIPTEN__
++    x->x_voice = register_cmu_us_rms("");
++    #else
++    flite_voice_file(x, gensym("/pd-l2ork-web/extra/flite/cmu_us_rms.flitevox"));
++    #endif
+   }
+   else if (!strcmp(voxstring, "slt")) {
+-    x->x_voice = register_cmu_us_slt();     
++    #ifndef __EMSCRIPTEN__
++    x->x_voice = register_cmu_us_slt("");
++    #else
++    flite_voice_file(x, gensym("/pd-l2ork-web/extra/flite/cmu_us_slt.flitevox"));
++    #endif    
+   } else {
+     pd_error(x,"flite: unknown voice '%s'. Possible voices are: 'awb', 'kal', 'kal16', 'rms' or 'slt'.", voxstring );
+     return; 
+@@ -692,7 +704,7 @@ static void *flite_new(t_symbol *ary)
+   x->x_bangout = outlet_new(&x->x_obj, &s_bang);
+   
+   // default voice  
+-  x->x_voice = register_cmu_us_kal16();
++  x->x_voice = register_cmu_us_kal16("");
+   
+   x->x_canvas = canvas_getcurrent();  
+   x->x_inprogress = 0; 

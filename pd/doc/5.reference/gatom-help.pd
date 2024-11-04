@@ -1,9 +1,9 @@
 #N canvas 224 64 556 902 10;
-#X obj 2 935 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
+#X obj 2 1115 cnv 15 552 21 empty \$0-pddp.cnv.footer empty 20 12 0
 14 #dcdcdc #404040 0;
 #X obj 2 0 cnv 15 552 40 empty \$0-pddp.cnv.header gatom 3 12 0 18
 #c4dcdc #000000 0;
-#X obj 2 231 cnv 3 550 3 empty \$0-pddp.cnv.inlets inlets 8 12 0 13
+#X obj 2 311 cnv 3 550 3 empty \$0-pddp.cnv.inlets inlets 8 12 0 13
 #dcdcdc #000000 0;
 #N canvas 486 289 386 262 META 0;
 #X text 12 115 LIBRARY internal;
@@ -11,7 +11,6 @@
 #X text 12 35 LICENSE SIBSD;
 #X text 12 95 OUTLET_0 float;
 #X text 12 175 RELEASE_DATE 1997;
-#X text 12 55 DESCRIPTION atom (number box and symbol box);
 #X text 12 5 KEYWORDS control storage GUI nonlocal symbol_op;
 #X text 12 135 AUTHOR Miller Puckette and Ivica Ico Bukvic;
 #X text 12 195 HELP_PATCH_AUTHORS Updated for Pd version 0.34. Jonathan
@@ -19,14 +18,15 @@ Wilkes revised the patch to conform to the PDDP template for Pd version
 0.42. Additional improvements by Ivica Ico Bukvic.;
 #X text 12 75 INLET_0 bang commit exclusive float focus list symbol
 set;
-#X restore 506 937 pd META;
-#X obj 2 637 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
+#X text 12 55 DESCRIPTION atom (number \, symbol \, and list box);
+#X restore 506 1117 pd META;
+#X obj 2 777 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
 13 #dcdcdc #000000 0;
-#X obj 2 711 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8 12
+#X obj 2 891 cnv 3 550 3 empty \$0-pddp.cnv.argument arguments 8 12
 0 13 #dcdcdc #000000 0;
-#X obj 2 740 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
+#X obj 2 920 cnv 3 550 3 empty \$0-pddp.cnv.more_info more_info 8 12
 0 13 #dcdcdc #000000 0;
-#X text 100 718 (none);
+#X text 100 898 (none);
 #N canvas 214 517 428 109 Related_objects 0;
 #X obj 1 1 cnv 15 425 20 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
@@ -37,22 +37,22 @@ set;
 #X obj 102 45 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
 #fcfcfc #000000 #000000 0 256 0 0 1 0;
 #X obj 169 42 drawnumber;
-#X restore 104 937 pd Related_objects;
-#X obj 80 240 cnv 17 3 335 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#X restore 104 1117 pd Related_objects;
+#X obj 80 320 cnv 17 3 405 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
 #646464 0;
-#X text 100 645 float;
-#X obj 80 646 cnv 17 3 60 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
+#X text 100 785 float;
+#X obj 80 786 cnv 17 3 90 empty \$0-pddp.cnv.let.0 0 5 6 0 16 #dcdcdc
 #646464 0;
 #X floatatom 403 9 5 0 0 0 - - - 0 0 1, f 5;
 #X floatatom 27 58 0 0 0 0 - - - 0 0 1;
 #X floatatom 27 96 0 0 0 0 - - - 0 0 1;
 #X msg 471 76 set 45;
 #X floatatom 471 104 0 0 0 0 - - - 0 0 1;
-#X text 100 239 bang;
-#X text 100 386 float;
-#X text 100 515 list;
-#X text 100 535 symbol;
-#X text 100 565 set;
+#X text 100 319 bang;
+#X text 100 466 float;
+#X text 100 615 list;
+#X text 100 655 symbol;
+#X text 100 705 set;
 #N canvas 98 96 468 652 Number_box_properties 0;
 #X obj 1 1 cnv 15 466 21 empty \$0-pddp.cnv.subheading empty 3 12 0
 14 #c4dcdc #000000 0;
@@ -109,8 +109,8 @@ want to use both \, see the [nbx] object:;
 #X floatatom 13 3 5 0 0 0 - - - 0 0 1, f 5;
 #X connect 27 0 31 0;
 #X connect 29 0 28 0;
-#X restore 104 911 pd Number_box_properties;
-#X obj 6 937 pddp/pddplink all_about_help_patches.pd -text Usage Guide
+#X restore 104 1091 pd Number_box_properties;
+#X obj 6 1117 pddp/pddplink all_about_help_patches.pd -text Usage Guide
 ;
 #X symbolatom 27 138 10 0 0 0 - - - 0 0 1, f 10;
 #X text 13 23 atom (number box and symbol box);
@@ -127,32 +127,21 @@ or enter one using the mouse and keyboard. Unlike a number box you
 cannot change the value by clicking and dragging.;
 #X text 98 174 The symbol box is called "Symbol" in the "Put" menu.
 ;
-#X text 170 239 - sends the current value to the outlet.;
+#X text 170 319 - sends the current value to the outlet.;
 #X msg 471 156 set foo;
 #X symbolatom 471 180 10 0 0 0 - - - 0 0 1, f 10;
-#X text 170 535 - symbol box only: an incoming symbol is displayed
-and output. (Number box will display and output zero.);
-#X text 170 386 - number box only: sets the current value and outputs
-it. (Symbol box will display 'float' and output 'symbol float'.);
-#X text 170 515 - a list will be truncated to the first item.;
-#X text 170 565 - displays the incoming value without outputting it
-(e.g. \, "set 23" will cause a number box to display 23). Sending a
-set message without a value does not change the current value of a
-number box or symbol box.;
-#X text 170 645 - number box only: outputs a float for each message
+#X text 170 785 - number box only: outputs a float for each message
 it receives (except set).;
-#X text 100 675 symbol;
-#X text 170 675 - symbol box only: outputs a symbol message for each
+#X text 100 815 symbol;
+#X text 170 815 - symbol box only: outputs a symbol message for each
 message it receives (except set).;
-#X text 102 877 Control-clicking (or command-clicking on a mac) toggles
+#X text 102 1057 Control-clicking (or command-clicking on a mac) toggles
 the value between 0 and the last nonzero value.;
-#X floatatom 62 883 5 0 0 0 - - - 0 0 1, f 5;
-#X text 102 744 You can shift-click a number box and drag to change
+#X floatatom 62 1063 5 0 0 0 - - - 0 0 1, f 5;
+#X text 102 924 You can shift-click a number box and drag to change
 the number by hundredths instead of ones.;
 #X text 63 118 The number box is called "Number" in the "Put" menu.
 ;
-#X text 69 197 To enter data simply click a number box or symbol box
-and begin typing. Then click "Enter" to finish and output it.;
 #N canvas 277 184 467 607 advanced_css_properties 0;
 #X obj 157 -307 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000 1;
@@ -214,9 +203,9 @@ info on the CSS commands \, visit:, f 75;
 #X connect 24 0 10 0;
 #X connect 25 0 24 0;
 #X connect 26 0 17 0;
-#X restore 256 911 pd advanced_css_properties;
-#X text 100 299 exclusive;
-#X text 170 299 - sets the exclusive keyboard focus on (1) or off (0
+#X restore 256 1091 pd advanced_css_properties;
+#X text 100 379 exclusive;
+#X text 170 379 - sets the exclusive keyboard focus on (1) or off (0
 \, default). With it set "on" when the user is typing into the gatom
 \, objects like key and keyname will receive no input until the user
 removes focus from the object by clicking outside of it.;
@@ -251,16 +240,16 @@ The same is true for both the number and symbol gatom., f 75;
 #X connect 9 0 10 0;
 #X connect 11 0 12 0;
 #X connect 11 1 13 0;
-#X restore 275 362 pd exclusive_focus;
-#X text 100 416 focus;
-#X text 170 416 - focuses (1) or removes focus (0) from the gatom \,
+#X restore 275 442 pd exclusive_focus;
+#X text 100 516 focus;
+#X text 170 516 - focuses (1) or removes focus (0) from the gatom \,
 effectively simulating the gatom being clicked on. Useful for enabling
 navigation between number boxes using keyboard.;
-#X text 100 256 commit;
-#X text 170 256 - simulates pressing enter while the object is focused
+#X text 100 336 commit;
+#X text 170 336 - simulates pressing enter while the object is focused
 \, which results in committing whatever values are currently entered
 \, or simply reiterating the last pressed value.;
-#X text 102 778 By default \, low and high limits (settable in properties)
+#X text 102 958 By default \, low and high limits (settable in properties)
 apply only to the mouse drags. Pd-L2Ork version also has the hard limit
 option that applies the same to the values entered via keyboard \,
 which are truncated upon committing them (by pressing enter or passing
@@ -274,7 +263,7 @@ version of the gatom.;
 #X msg 116 263 focus \$1;
 #X floatatom 116 297 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 116 232 tgl 23 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 0 1 1;
+#000000 1 1 1;
 #X obj 116 154 key;
 #X msg 180 263 commit;
 #X obj 116 179 sel 32 96;
@@ -306,13 +295,43 @@ part of the example below is entirely optional., f 75;
 #X connect 9 0 5 0;
 #X connect 9 1 7 0;
 #X connect 9 1 13 0;
-#X restore 420 911 pd gatom-focus;
-#X text 100 459 interactive;
-#X text 170 459 - allows user to specify if the object will respond
+#X restore 420 1091 pd gatom-focus;
+#X text 100 559 interactive;
+#X text 170 559 - allows user to specify if the object will respond
 to user clicks (1 or on by default). Disabling it (0) will ensure that
 the object is strictly there to display value that can be only altered
 via an incoming connnection.;
+#X listbox 245 9 20 0 0 0 - - - 0 0 1, f 20;
+#X text 373 9 and;
+#X listbox 25 200 20 0 0 0 - - - 0 0 1, f 20;
+#X listbox 25 234 20 0 0 0 - - - 0 0 1, f 20;
+#X msg 430 205 set a b c 1 2 3;
+#X listbox 430 235 20 0 0 0 - - - 0 0 1, f 20;
+#X text 155 200 A list box allows you to display multipleatoms (both
+symbols and floats). You canclick and drag numbers in the list to
+changethem as in number boxes.The list box is called "List" in the
+"Put" menu.;
+#X text 69 277 To enter data simply click a number \, symbol \, or
+list box and begin typing. Then click "Enter" to finish and output
+it.;
+#X text 170 615 - number/symbol boxes: truncate a list to the first
+item.- list box: sets the current value and outputs it.;
+#X text 170 705 - displays the incoming value without outputting it
+(e.g. \, "set 23" will cause a number box to display 23). Sending a
+set message without a value does not change the current value of a
+gatom box.;
+#X text 170 655 - symbol box: an incoming symbol is displayed and output.-
+number box: will display and output zero.- list box: will be treated
+as a 1-element list.;
+#X text 170 466 - number box: sets the current value and outputs it.-
+symbol box: will display 'float' and output 'symbol float'- list box:
+will be treated as a 1-element list;
+#X text 100 850 list;
+#X text 170 850 - list box only: outputs its list for each message
+it receives (except set).;
 #X connect 13 0 14 0;
 #X connect 15 0 16 0;
 #X connect 24 0 28 0;
 #X connect 33 0 34 0;
+#X connect 56 0 57 0;
+#X connect 58 0 59 0;
