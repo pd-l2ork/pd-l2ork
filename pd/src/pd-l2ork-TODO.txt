@@ -6,7 +6,16 @@ PD-L2ORK TODO:
     at HTMLDocument.text_mousedown (pd_canvas.js:829:27)
     *Attempted fixing this with an if check. Need to test.
 
-*Fix flite build on emscripten
+*Problems with bezier array redrawing inside and outside GOP.
+
+*Inability to select points in an array that has significantly more points than the width of the array.
+
+*unit-circle (or any other data structure in Pd-L2Ork data structure demos) does not work with GOP enabled.
+
+*opacity.pd (Pd-L2Ork data structures) makes pasting impossible once the patch has been animated.
+  pd_canvas.html: TypeError: Cannot read properties of undefined (reading 'classList')
+
+*knob nlets are off when copying and pasting left help patch knob.
 
 *Integrate vstplugin~
   https://git.iem.at/pd/vstplugin
@@ -841,6 +850,7 @@ resulting in unexpected stuck keys.
 *Fixed foolin-around-007 special character issue.
 *Integrated pd-flite (need to test Linux and Mac)
 *Integrated Purr-Data extension to the intelligent patching
+*Fix flite build on emscripten OK
 
 
 
