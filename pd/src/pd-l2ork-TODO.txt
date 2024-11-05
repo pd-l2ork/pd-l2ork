@@ -10,6 +10,8 @@ PD-L2ORK TODO:
 
 *Inability to select points in an array that has significantly more points than the width of the array.
 
+*Data structures in Pd-L2Ork Data Structure Demos (inside Help Browser) when clicked slightly dislocate down and left, suggesting there is a partial loss of the location upon clicking (check places where location is at a whole number rather than x.5 which is used in places because that curiously makes things less blurry).
+
 *unit-circle (or any other data structure in Pd-L2Ork data structure demos) does not work with GOP enabled.
 
 *opacity.pd (Pd-L2Ork data structures) makes pasting impossible once the patch has been animated.
