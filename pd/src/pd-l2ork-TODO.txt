@@ -13,6 +13,8 @@ PD-L2ORK TODO:
 *Data structures in Pd-L2Ork Data Structure Demos (inside Help Browser) when clicked slightly dislocate down and left, suggesting there is a partial loss of the location upon clicking (check places where location is at a whole number rather than x.5 which is used in places because that curiously makes things less blurry).
 
 *unit-circle (or any other data structure in Pd-L2Ork data structure demos) does not work with GOP enabled.
+  *This is actually not true. GOP setting has to be adjusted. That said, however, adjustment is really confusing if one mixes data structure with regular objects. Should we simply disable GOP on such mixed canvases?
+  *A derrivative bug is that when one resizes a GOP window with the data structure being visible (e.g. enable GOP and then set at the bottom values for bottom and right as 1000 and 900, so that unit-circle is visible), then resize the GOP frame. The data structure gets redrawn without being erased, becoming increasingly darker.
 
 *opacity.pd (Pd-L2Ork data structures) makes pasting impossible once the patch has been animated.
   pd_canvas.html: TypeError: Cannot read properties of undefined (reading 'classList')
