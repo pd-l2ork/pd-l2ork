@@ -6,7 +6,20 @@ PD-L2ORK TODO:
     at HTMLDocument.text_mousedown (pd_canvas.js:829:27)
     *Attempted fixing this with an if check. Need to test.
 
-*Fix flite build on emscripten
+*Problems with bezier array redrawing inside and outside GOP.
+
+*Inability to select points in an array that has significantly more points than the width of the array.
+
+*Data structures in Pd-L2Ork Data Structure Demos (inside Help Browser) when clicked slightly dislocate down and left, suggesting there is a partial loss of the location upon clicking (check places where location is at a whole number rather than x.5 which is used in places because that curiously makes things less blurry).
+
+*unit-circle (or any other data structure in Pd-L2Ork data structure demos) does not work with GOP enabled.
+  *This is actually not true. GOP setting has to be adjusted. That said, however, adjustment is really confusing if one mixes data structure with regular objects. Should we simply disable GOP on such mixed canvases?
+  *A derrivative bug is that when one resizes a GOP window with the data structure being visible (e.g. enable GOP and then set at the bottom values for bottom and right as 1000 and 900, so that unit-circle is visible), then resize the GOP frame. The data structure gets redrawn without being erased, becoming increasingly darker.
+
+*opacity.pd (Pd-L2Ork data structures) makes pasting impossible once the patch has been animated.
+  pd_canvas.html: TypeError: Cannot read properties of undefined (reading 'classList')
+
+*knob nlets are off when copying and pasting left help patch knob.
 
 *Integrate vstplugin~
   https://git.iem.at/pd/vstplugin
@@ -841,6 +854,7 @@ resulting in unexpected stuck keys.
 *Fixed foolin-around-007 special character issue.
 *Integrated pd-flite (need to test Linux and Mac)
 *Integrated Purr-Data extension to the intelligent patching
+*Fix flite build on emscripten OK
 
 
 
