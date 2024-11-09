@@ -213,6 +213,7 @@ static t_garray *graph_scalar(t_glist *gl, t_symbol *s, t_symbol *templatesym,
         fill, 1);
     template_setsymbol(template, gensym("outlinecolor"), x->x_scalar->sc_vec,
         outline, 1);
+    template_setfloat(template_findbyname(x->x_scalar->sc_template), gensym("linewidth"), x->x_scalar->sc_vec, 1, 0);
     glist_add(gl, &x->x_gobj);
     x->x_glist = gl;
     char buf[MAXPDSTRING];
