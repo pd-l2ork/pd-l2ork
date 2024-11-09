@@ -1170,6 +1170,7 @@ int array_doclick(t_array *array, t_glist *glist, t_scalar *sc, t_array *ap,
             //post("has %d arrays pwpix=%f width=%f",
             //    canvas_hasarray(glist), pwpix, pxpix2 - pxpix1);
             clickable_width = (int)((pxpix2 - pxpix1) / 2);
+            clickable_width = clickable_width < 1 ? 1 : clickable_width;
             if (xpix >= (int)pxpix1-clickable_width &&
                     xpix <= (int)pxpix2+clickable_width &&
                 // if we have multiple arrays in the same window, make array

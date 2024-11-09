@@ -6225,6 +6225,7 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
 
             float bezierFactor = 0.4;
             
+            xsum = xloc;
             for(int i=0; i< nelem; i++) {
                 int ixpix, inextx, render;
 
@@ -6266,15 +6267,15 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
 
                 if (i == 0 || i == nelem-1 || render)
                 {
-                    ixpix = fielddesc_cvttocoord(xfielddesc, usexloc);
+                    int pix = fielddesc_cvttocoord(xfielddesc, usexloc);
                     if(i == 0) {
                         gui_s("M");
                     } else {
                         gui_s("S");
-                        gui_f((float)ixpix - bezierFactor);
+                        gui_f((float)pix - bezierFactor);
                         gui_f((1.f+bezierFactor)*yval - bezierFactor*nyval);
                     }
-                    gui_i(ixpix);
+                    gui_i(pix);
                     gui_f(yval);
 
                     ndrawn++;
