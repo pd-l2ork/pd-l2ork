@@ -6020,7 +6020,6 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
     t_scalar *sc, t_word *data, t_template *template,
     t_float basex, t_float basey, t_array *parentarray, int tovis)
 {
-    printf("Drawing\n");
     //post("plot_vis %d %zx", tovis, (t_uint)z);
     t_plot *x = (t_plot *)z;
     int elemsize, yonset, wonset, xonset, i;
@@ -6219,7 +6218,6 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
         }
         else if (style == PLOTSTYLE_BEZ)
         {
-            printf("Drawing Bez\n");
             int ndrawn = 0;
 
             gui_start_vmess("gui_plot_vis", "xii", glist_getcanvas(glist), basex, basey);
@@ -6284,8 +6282,6 @@ static void plot_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
                 }
                 if (ndrawn > 2000 || ixpix >= 3000) break;
             }
-
-            printf("Bez drew %d of %d\n", ndrawn, nelem);
 
             gui_end_array();
 
