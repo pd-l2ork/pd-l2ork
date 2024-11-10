@@ -12,8 +12,6 @@ PD-L2ORK TODO:
 
 *Occasional nlets on message (when using temporary non-edit-mode using alt key) get stuck outside edit mode.
 
-*Need to disable autorepeat on Alt key when using it for temporary non-edit-mode as it keeps triggering getrect for objects (e.g. flatgui/knob).
-
 *Data structures in Pd-L2Ork Data Structure Demos (inside Help Browser) when clicked slightly dislocate down and left, suggesting there is a partial loss of the location upon clicking (check places where location is at a whole number rather than x.5 which is used in places because that curiously makes things less blurry).
 
 *unit-circle (or any other data structure in Pd-L2Ork data structure demos) does not work with GOP enabled.
