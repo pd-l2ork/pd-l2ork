@@ -10,8 +10,6 @@ PD-L2ORK TODO:
 
 *Inability to select points in an array that has significantly more points than the width of the array.
 
-*Occasional classList error in pd_canvas.html when cuting then pasting (need to track this one down).
-
 *Occasional nlets on message (when using temporary non-edit-mode using alt key) get stuck outside edit mode.
 
 *Need to disable autorepeat on Alt key when using it for temporary non-edit-mode as it keeps triggering getrect for objects (e.g. flatgui/knob).
@@ -23,7 +21,8 @@ PD-L2ORK TODO:
   *A derrivative bug is that when one resizes a GOP window with the data structure being visible (e.g. enable GOP and then set at the bottom values for bottom and right as 1000 and 900, so that unit-circle is visible), then resize the GOP frame. The data structure gets redrawn without being erased, becoming increasingly darker.
 
 *opacity.pd (Pd-L2Ork data structures) makes pasting impossible once the patch has been animated.
-  pd_canvas.html: TypeError: Cannot read properties of undefined (reading 'classList')
+  *pd_canvas.html: TypeError: Cannot read properties of undefined (reading 'classList')
+  *Occasional classList error in pd_canvas.html when cuting then pasting (need to track this one down--may be the same as the one above).
 
 *Integrate neuralnet
   https://github.com/alexdrymonitis/neuralnet
