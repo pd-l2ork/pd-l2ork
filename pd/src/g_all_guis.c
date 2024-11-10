@@ -1453,6 +1453,7 @@ void iemgui_draw_io(t_iemgui *x, int old_sr_flags)
                 canvas, tagbuf);
         }
     }
+    x->x_draw(x, x->x_glist, IEM_GUI_DRAW_MODE_IO);
 }
 
 void iemgui_io_draw_move(t_iemgui *x)

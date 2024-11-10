@@ -10,11 +10,16 @@
 #define IEM_SL_MINSIZE 2
 #define IEM_FONT_MINSIZE 4
 
+// ico@vt.edu 2024-11-10: added vanilla modes 4 and 6 and repuprosed
+// 6 for the knob object
 #define IEM_GUI_DRAW_MODE_UPDATE 0
 #define IEM_GUI_DRAW_MODE_MOVE   1
 #define IEM_GUI_DRAW_MODE_NEW    2
 #define IEM_GUI_DRAW_MODE_SELECT 3
+#define IEM_GUI_DRAW_MODE_ERASE  4 
 #define IEM_GUI_DRAW_MODE_CONFIG 5
+#define IEM_GUI_DRAW_MODE_IO     6 // offset nlets in objects that expand based
+                                   // on properties, like flatgui/knob
 
 #define IS_A_FLOAT(atom,index) ((atom+index)->a_type == A_FLOAT)
 #define IS_A_SYMBOL(atom,index) ((atom+index)->a_type == A_SYMBOL)

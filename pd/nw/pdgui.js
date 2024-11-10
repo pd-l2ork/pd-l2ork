@@ -8014,12 +8014,14 @@ function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
     // footils uses dial_w = 2 circle_w = 3 and frag_w = 4
     var xtra_w = 0;
     if (is_footils_knob) {
-        xtra_w = circle_w - 3;
-        if (frag_w - 4 > xtra_w) xtra_w = frag_w - 4;
-        if (xtra_w < -3) xtra_w = -3;
+        xtra_w = circle_w;
+        if (frag_w > xtra_w) xtra_w = frag_w;
+        xtra_w = xtra_w / 2;
+        if (xtra_w < 0) xtra_w = 0;
     }
     var w = size,
         h = size;
+    //post("gui_configure_mknob size=" + size + " w=" + xtra_w);
     var g = gui(cid).get_gobj(tag)
     .q(".border", {
         d: ["M", -xtra_w, -xtra_w, w+xtra_w, -xtra_w,
@@ -8027,7 +8029,7 @@ function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
             "M", -xtra_w, -xtra_w, -xtra_w, h+xtra_w,
             "M", w+xtra_w, -xtra_w, w+xtra_w, h+xtra_w
            ].join(" "),
-        fill: "none",
+        fill: "none"
     })
     .q("." + tag + "dial", { // indicator
         "stroke-width": dial_w,

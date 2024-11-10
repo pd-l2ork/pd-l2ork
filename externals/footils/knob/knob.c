@@ -79,6 +79,50 @@ static void knob_width(t_knob *x, t_symbol *s, int ac, t_atom *av);
 
 /* ---------------- widget helper functions --------------------- */
 
+static void knob_io_draw_move(t_knob *z)
+{
+    t_iemgui *x = &z->x_gui;
+    char tagbuf[MAXPDSTRING];
+    t_canvas *canvas=glist_getcanvas(x->x_glist);
+    t_class *c = pd_class((t_pd *)x);
+    int x1,y1,x2,y2;
+    c->c_wb->w_getrectfn((t_gobj *)x,canvas,&x1,&y1,&x2,&y2);
+    //iemgui_getrect_draw(x, &x1, &y1, &x2, &y2);
+
+    int xtra_w = z->x_circle_w;
+    if (z->x_frag_w > xtra_w) xtra_w = z->x_frag_w;
+    if (xtra_w < 0) xtra_w = 0;
+
+    //post("knob_io_draw_move %d %d | %d", z->x_circle_w, z->x_frag_w, xtra_w);
+
+    if (!iemgui_has_snd(x) && canvas == x->x_glist)
+    {
+        sprintf(tagbuf, "%so0", iem_get_tag(canvas, x));
+        gui_start_vmess("gui_configure_item", "xs",
+            canvas, tagbuf);
+        gui_start_array();
+        gui_s("x");
+        gui_i(-xtra_w/2);
+        gui_s("y");
+        gui_i(y2 - y1 - 2 - xtra_w/2);
+        gui_end_array();
+        gui_end_vmess();
+    }
+    if (!iemgui_has_rcv(x) && canvas == x->x_glist)
+    {
+        sprintf(tagbuf, "%si0", iem_get_tag(canvas, x));
+        gui_start_vmess("gui_configure_item", "xs",
+            canvas, tagbuf);
+        gui_start_array();
+        gui_s("x");
+        gui_i(-xtra_w/2);
+        gui_s("y");
+        gui_i(-xtra_w/2);
+        gui_end_array();
+        gui_end_vmess();
+    }
+}
+
 static void knob_draw_update(t_knob *x, t_glist *glist)
 {
     t_float normalized_value;
@@ -131,6 +175,7 @@ static void knob_draw_new(t_knob *x, t_glist *glist)
 
 static void knob_draw_config(t_knob *x,t_glist *glist)
 {
+    //post("knob_draw_config");
     t_canvas *canvas = glist_getcanvas(glist);
     char bcol[8], fcol[8], lcol[8];
 
@@ -151,10 +196,13 @@ static void knob_draw_config(t_knob *x,t_glist *glist)
         x->x_frag_w
     );
     knob_draw_update(x, glist);
+    knob_io_draw_move(x);
 }
 
-static void knob_draw(t_knob *x, t_glist *glist, int mode)
+static void knob_draw(t_iemgui *z, t_glist *glist, int mode)
 {
+    t_knob* x = (t_knob*)z;
+
     if(mode == IEM_GUI_DRAW_MODE_UPDATE)
         knob_draw_update(x, glist);
     else if(mode == IEM_GUI_DRAW_MODE_MOVE)
@@ -163,6 +211,8 @@ static void knob_draw(t_knob *x, t_glist *glist, int mode)
         knob_draw_new(x, glist);
     else if(mode == IEM_GUI_DRAW_MODE_CONFIG)
         knob_draw_config(x, glist);
+    else if(mode == IEM_GUI_DRAW_MODE_IO)
+        knob_io_draw_move(x);
 }
 
 /* ------------------------ knob widgetbehaviour----------------------------- */
@@ -173,14 +223,16 @@ static void knob_getrect(t_gobj *z, t_glist *glist,
 {
     t_knob* x = (t_knob*)z;
 
-    int xtra_w = x->x_circle_w - 3;
-    if (x->x_frag_w - 4 > xtra_w) xtra_w = x->x_frag_w - 4;
-    if (xtra_w < -3) xtra_w = -3;
+    int xtra_w = x->x_circle_w;
+    if (x->x_frag_w > xtra_w) xtra_w = x->x_frag_w;
+    //xtra_w = xtra_w / 2;
+    if (xtra_w < 0) xtra_w = 0;
 
-    *xp1 = text_xpix(&x->x_gui.x_obj, glist) - xtra_w;
-    *yp1 = text_ypix(&x->x_gui.x_obj, glist) - 2 - xtra_w;
+    *xp1 = text_xpix(&x->x_gui.x_obj, glist) - xtra_w/2;
+    *yp1 = text_ypix(&x->x_gui.x_obj, glist) - 2 - xtra_w/2;
     *xp2 = *xp1 + x->x_gui.x_h + xtra_w;
     *yp2 = *yp1 + x->x_gui.x_h + xtra_w;
+    //post("knob_getrect %d %d %d %d | %d", *xp1, *yp1, *xp2, *yp2, xtra_w);
 }
 
 static void knob_save(t_gobj *z, t_binbuf *b)
@@ -342,7 +394,7 @@ static void knob_dialog(t_knob *x, t_symbol *s, int argc, t_atom *argv)
     knob_set(x, x->x_val);
     iemgui_draw_config(&x->x_gui);
     iemgui_draw_io(&x->x_gui, sr_flags);
-    iemgui_io_draw_move(&x->x_gui);
+    knob_io_draw_move(&x->x_gui);
     scalehandle_draw(&x->x_gui);
     canvas_fixlinesfor(x->x_gui.x_glist, (t_text*)x);
 }
@@ -610,6 +662,8 @@ static void knob_width(t_knob *x, t_symbol *s, int ac, t_atom *av)
         x->x_frag_w = atom_getfloatarg(2, ac, av);
     //post("knob_width updated values %d %d %d", x->x_dial_w, x->x_circle_w, x->x_frag_w);
     knob_draw(x, x->x_gui.x_glist, IEM_GUI_DRAW_MODE_CONFIG);
+    //knob_io_draw_move(&x->x_gui);
+    canvas_fixlinesfor(x->x_gui.x_glist, (t_text*)x);
 }
 
 static void knob_color(t_knob *x, t_symbol *s, int ac, t_atom *av)
