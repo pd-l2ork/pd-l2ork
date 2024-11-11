@@ -213,6 +213,7 @@ static t_garray *graph_scalar(t_glist *gl, t_symbol *s, t_symbol *templatesym,
         fill, 1);
     template_setsymbol(template, gensym("outlinecolor"), x->x_scalar->sc_vec,
         outline, 1);
+    template_setfloat(template_findbyname(x->x_scalar->sc_template), gensym("linewidth"), x->x_scalar->sc_vec, 1, 0);
     glist_add(gl, &x->x_gobj);
     x->x_glist = gl;
     char buf[MAXPDSTRING];
@@ -1170,6 +1171,7 @@ int array_doclick(t_array *array, t_glist *glist, t_scalar *sc, t_array *ap,
             //post("has %d arrays pwpix=%f width=%f",
             //    canvas_hasarray(glist), pwpix, pxpix2 - pxpix1);
             clickable_width = (int)((pxpix2 - pxpix1) / 2);
+            clickable_width = clickable_width < 1 ? 1 : clickable_width;
             if (xpix >= (int)pxpix1-clickable_width &&
                     xpix <= (int)pxpix2+clickable_width &&
                 // if we have multiple arrays in the same window, make array
