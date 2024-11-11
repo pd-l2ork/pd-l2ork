@@ -6,10 +6,6 @@ PD-L2ORK TODO:
     at HTMLDocument.text_mousedown (pd_canvas.js:829:27)
     *Attempted fixing this with an if check. Need to test.
 
-*Problems with bezier array redrawing inside and outside GOP.
-
-*Inability to select points in an array that has significantly more points than the width of the array.
-
 *Occasional nlets on message (when using temporary non-edit-mode using alt key) get stuck outside edit mode.
 
 *Data structures in Pd-L2Ork Data Structure Demos (inside Help Browser) when clicked slightly dislocate down and left, suggesting there is a partial loss of the location upon clicking (check places where location is at a whole number rather than x.5 which is used in places because that curiously makes things less blurry).
@@ -860,6 +856,8 @@ resulting in unexpected stuck keys.
 *Integrated Purr-Data extension to the intelligent patching
 *Fix flite build on emscripten
 *Fixed a bug where knob nlets and selection box are off.
+*Fixed problems with bezier array redrawing inside and outside GOP.
+*Fixed a bug where user was unable to select points in an array that has significantly more points than the width of the array.
 
 
 
