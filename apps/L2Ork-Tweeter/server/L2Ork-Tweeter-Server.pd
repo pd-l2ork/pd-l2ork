@@ -1081,7 +1081,7 @@ of the client requesting report;
 #X msg 577 922 send \$1 myid \$1 \$2;
 #X obj 678 889 s get-uptime;
 #X obj 777 854 t b l l l 0;
-#X msg 232 741 0.84;
+#X msg 232 741 0.85;
 #X connect 0 0 68 0;
 #X connect 0 0 106 0;
 #X connect 2 0 162 0;

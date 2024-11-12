@@ -2,7 +2,7 @@
 #X obj -30 -30 preset_hub k12 1 %hidden%;
 #X obj 28 158 s chat-out;
 #X obj 28 110 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
-#fcfcfc #000000 #000000 3415.43 256 0 0 1 0;
+#fcfcfc #000000 #000000 0 256 0 0 1 0;
 #X msg 28 132 chat admin p:l2orklicious l2ork-length-all \$1;
 #X obj 28 57 line 100;
 #X text 88 56 tempo;
@@ -12,7 +12,7 @@
 #X obj 28 574 s chat-out;
 #X obj 46 378 hradio 15 0 0 4 empty empty empty 0 -8 0 10 #fcfcfc #000000
 #000000 0 1;
-#N canvas 780 508 600 276 load_session 1;
+#N canvas 780 508 600 276 load_session 0;
 #X obj 20 20 inlet;
 #X obj 20 216 outlet;
 #X msg 20 191 chat admin p:l2orklicious l2ork-load \$1;
