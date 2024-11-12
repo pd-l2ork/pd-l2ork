@@ -327,6 +327,9 @@ EXTERN void iemgui_draw_move(t_iemgui *x);
 EXTERN void iemgui_draw_erase(t_iemgui *x);
 EXTERN void wb_init(t_widgetbehavior *wb, t_getrectfn gr, t_clickfn cl); // rename this to iemgui_wb_init
 
+// added to allow externals to use this shortcut call for custom nlet drawing (e.g. flatgui/knob)
+EXTERN char *iem_get_tag(t_canvas *glist, t_iemgui *iem_obj);
+
 extern t_symbol *s_empty;
 EXTERN const char *selection_color;
 EXTERN const char *border_color;
