@@ -1187,3 +1187,15 @@ git push --tags
 
 Delete tag to remote repo:
 git push origin --delete <tagname>
+
+------------------
+
+Updating Flatpak:
+
+1) update metainfo.xml in packages/linux_flatpak
+2) push new commit and tag it with a desired git version (see tagging above)
+3) in the io.github.pd_l2ork.Pd_L2Ork repo sync it with the one on github (git pull)
+4) in the same repo update yml file to reference new tag and SHA of the latest commit (one made in step 2)
+5) git commit and push new change
+6) on the flathub repo create a pull request by comparing two branches (flatpak one and the pd-l2ork one)
+7) let the tests run and then merge the pull request. flathub page should autoupdate within 24 hours
