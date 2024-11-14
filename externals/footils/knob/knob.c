@@ -199,10 +199,8 @@ static void knob_draw_config(t_knob *x,t_glist *glist)
     knob_io_draw_move(x);
 }
 
-static void knob_draw(t_iemgui *z, t_glist *glist, int mode)
+static void knob_draw(t_knob* x, t_glist *glist, int mode)
 {
-    t_knob* x = (t_knob*)z;
-
     if(mode == IEM_GUI_DRAW_MODE_UPDATE)
         knob_draw_update(x, glist);
     else if(mode == IEM_GUI_DRAW_MODE_MOVE)
