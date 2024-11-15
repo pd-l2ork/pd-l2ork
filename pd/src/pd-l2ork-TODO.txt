@@ -10,6 +10,8 @@ PD-L2ORK TODO:
 
 *Inability to select points in an array that has significantly more points than the width of the array.
 
+*Occasional nlets on message (when using temporary non-edit-mode using alt key) get stuck outside edit mode.
+
 *Data structures in Pd-L2Ork Data Structure Demos (inside Help Browser) when clicked slightly dislocate down and left, suggesting there is a partial loss of the location upon clicking (check places where location is at a whole number rather than x.5 which is used in places because that curiously makes things less blurry).
 
 *unit-circle (or any other data structure in Pd-L2Ork data structure demos) does not work with GOP enabled.
@@ -17,15 +19,17 @@ PD-L2ORK TODO:
   *A derrivative bug is that when one resizes a GOP window with the data structure being visible (e.g. enable GOP and then set at the bottom values for bottom and right as 1000 and 900, so that unit-circle is visible), then resize the GOP frame. The data structure gets redrawn without being erased, becoming increasingly darker.
 
 *opacity.pd (Pd-L2Ork data structures) makes pasting impossible once the patch has been animated.
-  pd_canvas.html: TypeError: Cannot read properties of undefined (reading 'classList')
+  *pd_canvas.html: TypeError: Cannot read properties of undefined (reading 'classList')
+  *Occasional classList error in pd_canvas.html when cuting then pasting (need to track this one down--may be the same as the one above).
 
-*knob nlets are off when copying and pasting left help patch knob.
+*Integrate neuralnet
+  https://github.com/alexdrymonitis/neuralnet
 
 *Integrate vstplugin~
   https://git.iem.at/pd/vstplugin
 
-*Integrate neuralnet
-  https://github.com/alexdrymonitis/neuralnet
+*Integrate pd-ndi
+  https://github.com/gogo2/pd-ndi
 
 *Consider integrating Rich Text comments feature from Purr-Data
 
@@ -854,7 +858,8 @@ resulting in unexpected stuck keys.
 *Fixed foolin-around-007 special character issue.
 *Integrated pd-flite (need to test Linux and Mac)
 *Integrated Purr-Data extension to the intelligent patching
-*Fix flite build on emscripten OK
+*Fix flite build on emscripten
+*Fixed a bug where knob nlets and selection box are off.
 
 
 
