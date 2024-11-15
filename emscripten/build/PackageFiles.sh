@@ -45,5 +45,7 @@ fi
 
 # Start processing files in chunks
 create_chunks $1
-cat tmp-*.js >> $2
-rm tmp-*.js
+cat tmp-*.js >> tmp.js
+cat $2 >> tmp.js && rm $2 && mv tmp.js $2
+rm tmp*js
+
