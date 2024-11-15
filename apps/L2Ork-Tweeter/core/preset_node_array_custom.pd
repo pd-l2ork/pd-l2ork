@@ -14,7 +14,7 @@
 #X text 391 239 table size;
 #X obj 383 215 + 3;
 #X text 438 339 read out table to list;
-#X obj 383 194 expr size("$s1");
+#X obj 383 194 expr size($s1);
 #X obj 36 348 inlet;
 #X obj 383 173 symbol \$1;
 #X obj 368 339 tabread \$1;

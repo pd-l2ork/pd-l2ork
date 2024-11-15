@@ -3,7 +3,7 @@
 0;
 #X obj 3 3 cnv 15 420 19 empty empty empty 200 5 0 10 #6c6c6c #fcfcfc
 0;
-#X obj 4 5 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ Lite\ v.0.84\ by
+#X obj 4 5 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ Lite\ v.0.85\ by
 4 5 0 10 #6c6c6c #fcfcfc 0;
 #X obj 281 4 cnv 15 60 16 empty empty (c)\ 2024- 4 6 0 10 #6c6c6c #fcfcfc
 0;
@@ -1697,16 +1697,16 @@ broadcast via internet (if connected) upon loading a session, f 42
 #X msg 177 245 label \$1;
 #X text 99 75 DEBUG;
 #X obj 177 193 tosymbol;
-#X msg 177 76 0.84;
 #X obj 177 168 sprintf L2Ork Tweeter Lite v.%.02f by;
-#X connect 0 0 9 0;
-#X connect 1 0 10 0;
+#X msg 177 76 0.85;
+#X connect 0 0 10 0;
+#X connect 1 0 9 0;
 #X connect 1 1 2 0;
 #X connect 5 0 1 0;
 #X connect 6 0 3 0;
 #X connect 8 0 6 0;
-#X connect 9 0 1 0;
-#X connect 10 0 8 0;
+#X connect 9 0 8 0;
+#X connect 10 0 1 0;
 #X restore 283 52 pd version;
 #N canvas 876 192 894 714 local-copy-logic 0;
 #X obj 22 22 r local-copyfrom-mode;

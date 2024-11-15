@@ -6,10 +6,6 @@ PD-L2ORK TODO:
     at HTMLDocument.text_mousedown (pd_canvas.js:829:27)
     *Attempted fixing this with an if check. Need to test.
 
-*Problems with bezier array redrawing inside and outside GOP.
-
-*Inability to select points in an array that has significantly more points than the width of the array.
-
 *Occasional nlets on message (when using temporary non-edit-mode using alt key) get stuck outside edit mode.
 
 *Data structures in Pd-L2Ork Data Structure Demos (inside Help Browser) when clicked slightly dislocate down and left, suggesting there is a partial loss of the location upon clicking (check places where location is at a whole number rather than x.5 which is used in places because that curiously makes things less blurry).
@@ -50,6 +46,7 @@ PD-L2ORK TODO:
     *Looks like this has vastly improved the stability. However, opening and closing L2OrkTweet patch still crashes sometimes.
 
 *Opening meta subpatch inside any patch (here, specifically netserver-help.pd) and then closing it, and then reopening it again, keeps moving the patch window downwards. May be only affecting Linux, which also exhibits this problem when opening the main Pd-L2Ork window (see index.js for an ugly hack fix that works around this nwjs 0.67.1 bug).
+  *Does not affect Windows.
 
 *On Linux (possibly other places), moving dialog popup to fit within the desktop, if called on the second screen, still opens dialog on the first screen.
   *Consider porting the whole front-end to electron instead (SIGH...).
@@ -860,6 +857,8 @@ resulting in unexpected stuck keys.
 *Integrated Purr-Data extension to the intelligent patching
 *Fix flite build on emscripten
 *Fixed a bug where knob nlets and selection box are off.
+*Fixed problems with bezier array redrawing inside and outside GOP.
+*Fixed a bug where user was unable to select points in an array that has significantly more points than the width of the array.
 
 
 
@@ -1188,3 +1187,15 @@ git push --tags
 
 Delete tag to remote repo:
 git push origin --delete <tagname>
+
+------------------
+
+Updating Flatpak:
+
+1) update metainfo.xml in packages/linux_flatpak
+2) push new commit and tag it with a desired git version (see tagging above)
+3) in the io.github.pd_l2ork.Pd_L2Ork repo sync it with the one on github (git pull)
+4) in the same repo update yml file to reference new tag and SHA of the latest commit (one made in step 2)
+5) git commit and push new change
+6) on the flathub repo create a pull request by comparing two branches (flatpak one and the pd-l2ork one)
+7) let the tests run and then merge the pull request. flathub page should autoupdate within 24 hours

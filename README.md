@@ -97,10 +97,7 @@ Time to build: *10 minutes light install, 15-60 minutes full install*
 Hard drive space required: *roughly 2.5 GB*
 
 1. Install the dependencies (please note that the packages may be named
-   slightly differently for different Linux distributions; the given names are
-   for Debian/Ubuntu). If the command is successful, you will get a printout
-   on the terminal where command was invoked showing bunch of packages being
-   downloaded from the internet and then installed.
+   slightly differently (or use different versions) for different Linux distributions; the given names are for the Ubuntu version currently used by the VT L2Ork ensemble). If the command is successful, you will get a printout on the terminal where command was invoked showing bunch of packages being downloaded from the internet and then installed.
 
    IMPORTANT! If any of the libraries below are tagged as unavailable, note
    that none of them will be installed until you specify correct replacement
