@@ -2913,6 +2913,9 @@ $(FLITE)/flite.$(EXTENSION): $(FLITE_OBJECTS)
 $(FLITE_OBJECTS): $(FLITE_SRC)
 	$(CC) $(FLITE_FLAGS) $(CFLAGS) -o "$*.o" -c "$*.c";
 
+$(FLITE_SRC):
+	git submodule update --init --recursive
+
 flite_install: flite
 	install -d $(DESTDIR)$(objectsdir)/$(FLITE_NAME)
 	install -p $(FLITE)/*.$(EXTENSION) $(DESTDIR)$(objectsdir)/$(FLITE_NAME)
