@@ -50,9 +50,9 @@ libpd: $(LIBPD_PATH)
 
 
 externals: $(PD_L2ORK_DIR)/externals
-	make -C $< -j`nproc` EMSCRIPTEN="yes" WARN_FLAGS="$(WARN_FLAGS)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" CC="$(CC)" CXX="$(CXX)" CXXFLAGS="$(CXXFLAGS)" EXTENSION="$(EXTENSION)" STRIP="$(STRIP)"
+	make -C $< -j`nproc` SHELL="${SHELL}" EMSCRIPTEN="yes" WARN_FLAGS="$(WARN_FLAGS)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" CC="$(CC)" CXX="$(CXX)" CXXFLAGS="$(CXXFLAGS)" EXTENSION="$(EXTENSION)" STRIP="$(STRIP)"
 	mkdir -p $(DESTDIR)/$(objectsdir)
-	make -C $< -j`nproc` EMSCRIPTEN="yes" DESTDIR="$(DESTDIR)" EXTENSION="$(EXTENSION)" STRIP="$(STRIP)" objectsdir="$(objectsdir)" install
+	make -C $< -j`nproc` SHELL="${SHELL}" EMSCRIPTEN="yes" DESTDIR="$(DESTDIR)" EXTENSION="$(EXTENSION)" STRIP="$(STRIP)" objectsdir="$(objectsdir)" install
 
 extras = bob~ bonk~ choice fiddle~ loop~ lrshift~ pique sigmund~ stdout
 extra: $(extras)
