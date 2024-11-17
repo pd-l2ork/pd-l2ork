@@ -1,5 +1,5 @@
 # Build pd-l2ork using emsdk
-FROM emscripten/emsdk AS builder
+FROM emscripten/emsdk:3.1.71 AS builder
 WORKDIR /pd-l2ork/
 RUN apt-get update && apt-get upgrade -y && apt-get install -y autoconf pkgconf
 COPY . .
