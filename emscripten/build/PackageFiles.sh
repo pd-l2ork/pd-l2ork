@@ -3,7 +3,7 @@ FILE_PACKAGER=`dirname \`which emcc\``/tools/file_packager.py
 
 # Packages all files in a chunk into a .data file
 process_chunk() {
-    $FILE_PACKAGER main-$2.data --js-output=tmp-$2.js --preload $1 --quiet --no-node
+    $FILE_PACKAGER main-$2.data --js-output=main-$2.js --preload $1 --quiet --no-node --use-preload-plugins
 }
 
 # Function to list files into chunks
@@ -14,7 +14,7 @@ create_chunks() {
     local current_chunk=""
     local chunk_id=0
 
-    find "$input_dir" -type f | while IFS= read -r file; do
+    while IFS= read -r file; do
         file_size=$(stat -c%s "$file")
         
         # Check if adding this file would exceed the current chunk size
@@ -29,11 +29,11 @@ create_chunks() {
         # Add the file to the current chunk
         current_chunk+="$file "
         current_chunk_size=$((current_chunk_size + file_size))
-    done
+    done < <(find "$input_dir" -type f)
     
     # Process any remaining files in the last chunk
     if [ -n "$current_chunk" ]; then
-        process_chunk $current_chunk
+        process_chunk "$current_chunk" $chunk_id
     fi
 }
 
@@ -45,5 +45,5 @@ fi
 
 # Start processing files in chunks
 create_chunks $1
-cat tmp-*.js >> $2
-rm tmp-*.js
+cat main-*.js >> $2
+rm main-*.js
