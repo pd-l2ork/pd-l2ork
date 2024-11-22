@@ -3753,6 +3753,7 @@ async function openPatch(content, filename) {
                                         y_pos: layer.dimensions.contentY - 1.5,
                                         id: `title_${nextHTMLID}_${i}`,
                                     }, i, layer.fontSize), layer.canvas);
+                                    text.style['text-shadow'] ='-0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff';
                                     text.textContent = layer.arrays[i].name;
                                     layer.labels.push(text);
                                     nextHTMLID++;
@@ -3763,8 +3764,10 @@ async function openPatch(content, filename) {
                                     y_pos: layer.dimensions.contentY,
                                     id: `title_${nextHTMLID++}`
                                 }, 0, layer.fontSize), layer.canvas);
-                                if(layer.arrays.length)
+                                if(layer.arrays.length) {
                                     text.textContent = layer.arrays[0].name;
+                                    text.style['text-shadow'] ='-0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff';
+                                }
                                 else
                                     text.textContent = args.slice(4).join(' ');
                                 layer.labels.push(text);
