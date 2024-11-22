@@ -42,8 +42,6 @@ midiflush.c \
 midiformat.c \
 midiparse.c \
 minimum.c \
-mousefilter.c \
-MouseState.c \
 mtr.c \
 next.c \
 offer.c \

@@ -13,6 +13,7 @@ var l = pdgui.get_local_string;
 
 function nw_window_focus_callback(name) {
     pdgui.set_focused_patchwin(name);
+    pdgui.pdsend(name, "_focus", 1);
     // on OSX, update the menu on focus
     if (process.platform === "darwin") {
         nw_create_patch_window_menus(gui, canvas_events.get_id());
@@ -21,6 +22,7 @@ function nw_window_focus_callback(name) {
 
 function nw_window_blur_callback(name) {
     // Fake a mouseup event to keep from getting a dangling selection box
+    pdgui.pdsend(name, "_focus", 0);
     if (canvas_events.get_state() === "normal") {
         pdgui.pdsend(name, "mouseup_fake");
     }

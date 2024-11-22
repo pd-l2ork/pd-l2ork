@@ -106,9 +106,7 @@ HTREEFILEVEFL_SOURCES = \
 hammer/funbuff.c
 
 HGUI_SOURCES = \
-hammer/active.c \
-hammer/mousefilter.c \
-hammer/MouseState.c
+hammer/active.c
 
 HSEQ_SOURCES = \
 hammer/seq.c
