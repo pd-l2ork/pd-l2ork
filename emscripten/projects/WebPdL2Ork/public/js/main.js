@@ -855,7 +855,7 @@ var Module = {
                                     gui_subscribe(data);
                                     break;
                                 case "label":
-                                    data.label = list[0] === "empty" ? "" : list[0].replace(/�/g, ' ​');
+                                    data.label = list[0] === "empty" ? "" : list[0].replace(/�/g, '​ ​');
                                     data.text.textContent = data.label;
                                     break;
                                 case "label_pos":
