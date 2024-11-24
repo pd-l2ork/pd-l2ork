@@ -1226,6 +1226,26 @@ void canvas_set_editable(t_canvas *x, t_floatarg f)
 
 }
 
+static t_symbol *focus;
+static char focus_cnv[32];
+
+void canvas_broadcast_focus(t_canvas *x, t_floatarg f)
+{
+    //post("canvas_broadcast_focus %lx %d", x, (t_int)f);
+    if (!focus)
+    {
+        focus = gensym("_focus");
+    }
+    if (focus->s_thing) {
+        t_atom *vec = (t_atom *)getbytes(sizeof(t_atom) * 2);
+        sprintf(focus_cnv, ".x%zx.c", (t_uint)x);
+        SETSYMBOL(&vec[0], gensym(focus_cnv));
+        SETFLOAT(&vec[1], f);
+        pd_list(focus->s_thing, focus, 2, vec);
+        //pd_float(focus->s_thing, f);
+    }
+}
+
 void canvas_set_disableruntimepopup(t_canvas *x, t_floatarg f)
 {
     if ((int)f != 0 && (int)f != 1 || (int)f == x->gl_disableruntimepopup)
@@ -3872,6 +3892,8 @@ void g_canvas_setup(void)
         gensym("editable"), A_FLOAT, 0);
     class_addmethod(canvas_class, (t_method)canvas_set_disableruntimepopup,
         gensym("disable-popup"), A_FLOAT, 0);
+    class_addmethod(canvas_class, (t_method)canvas_broadcast_focus,
+        gensym("_focus"), A_FLOAT, 0);
 
 /* ---------------------- list handling ------------------------ */
     class_addmethod(canvas_class, (t_method)glist_clear, gensym("clear"),

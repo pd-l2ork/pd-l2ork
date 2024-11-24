@@ -17,6 +17,7 @@ static t_class *active_class;
 
 static void active_dofocus(t_active *x, t_symbol *s, t_floatarg f)
 {
+    //post("active_dofocus %s | %s %d", x->x_cvname->s_name, s->s_name, (int)f);
     if ((int)f)
     {
 	int on = (s == x->x_cvname);
@@ -27,9 +28,22 @@ static void active_dofocus(t_active *x, t_symbol *s, t_floatarg f)
 	outlet_float(((t_object *)x)->ob_outlet, x->x_on = 0);
 }
 
+#ifdef PDL2ORK
+static void active_pdl2ork_dofocus(t_active *x, t_symbol *s, int ac, t_atom *av)
+{
+    t_symbol *cnv = av[0].a_w.w_symbol;
+    t_floatarg f = av[1].a_w.w_float;
+    active_dofocus(x, cnv, f);
+}
+#endif
+
 static void active_free(t_active *x)
 {
+#ifdef PDL2ORK
+    pd_unbind(&x->x_ob.ob_pd, gensym("_focus"));
+#else
     hammergui_unbindfocus((t_pd *)x);
+#endif
 }
 
 static void *active_new(void)
@@ -40,7 +54,11 @@ static void *active_new(void)
     x->x_cvname = gensym(buf);
     x->x_on = 0;
     outlet_new((t_object *)x, &s_float);
+#ifdef PDL2ORK
+    pd_bind(&x->x_ob.ob_pd, gensym("_focus"));
+#else
     hammergui_bindfocus((t_pd *)x);
+#endif
     return (x);
 }
 
@@ -51,5 +69,8 @@ void active_setup(void)
 			     (t_method)active_free,
 			     sizeof(t_active), CLASS_NOINLET, 0);
     class_addmethod(active_class, (t_method)active_dofocus,
-		    gensym("_focus"), A_SYMBOL, A_FLOAT, 0);
+            gensym("_focus"), A_SYMBOL, A_FLOAT, 0);
+#ifdef PDL2ORK
+    class_addlist(active_class, active_pdl2ork_dofocus);
+#endif
 }

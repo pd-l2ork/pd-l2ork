@@ -6,6 +6,8 @@ PD-L2ORK TODO:
     at HTMLDocument.text_mousedown (pd_canvas.js:829:27)
     *Attempted fixing this with an if check. Need to test.
 
+*Figure out why comments and the end of Tweeter track with lots of numbers converts to scientific notation.
+
 *Opening file dialog on Linux Ubuntu 22.04 via keyboard shortcut creates up to 4 prompts in a row. Doing the same via menu option does not.
   *This is an xdg + Ubuntu bug that will be hopefully fixed upstream. The problem is that the new dialog is not focused.
 
@@ -19,9 +21,6 @@ PD-L2ORK TODO:
   *pd_canvas.html: TypeError: Cannot read properties of undefined (reading 'classList')
   *Occasional classList error in pd_canvas.html when cuting then pasting (need to track this one down--may be the same as the one above).
 
-*Integrate neuralnet
-  https://github.com/alexdrymonitis/neuralnet
-
 *Integrate vstplugin~
   https://git.iem.at/pd/vstplugin
 
@@ -31,10 +30,9 @@ PD-L2ORK TODO:
 *Consider integrating Rich Text comments feature from Purr-Data
 
 *Consider integrating #1756 pull request from vanilla that may improve the scheduler.
+  *This is super convoluted as the literal merge requires major changes to a lot of the code base. Merging this will require a more surgical approach that only merges relevant changes.
 
 *Update pdjs to use a more recent version of v8 (this might fix arm macbook errors, as pdjs currently does not work properly on apple silicon).
-
-*Figure out why comments and the end of Tweeter track with lots of numbers converts to scientific notation.
 
 *Implement Windows list in the Windows menu.
 
@@ -862,6 +860,8 @@ resulting in unexpected stuck keys.
 *Fixed a bug where knob nlets and selection box are off.
 *Fixed problems with bezier array redrawing inside and outside GOP.
 *Fixed a bug where user was unable to select points in an array that has significantly more points than the width of the array.
+*Added neuralnet external.
+*Included MouseState and mousefilter abstractions for cyclone's backwards compatibility, updated cyclone's active external to make it work with Pd-L2Ork.
 
 
 
@@ -1202,3 +1202,9 @@ Updating Flatpak:
 5) git commit and push new change
 6) on the flathub repo create a pull request by comparing two branches (flatpak one and the pd-l2ork one)
 7) let the tests run and then merge the pull request. flathub page should autoupdate within 24 hours
+
+------------------
+
+Adding submodule to the project:
+
+git submodule add -- https://github.com/alexdrymonitis/neuralnet.git externals/neuralnet

@@ -1,0 +1,19 @@
+#N canvas 472 438 502 427 12;
+#X obj -30 -30 preset_hub k12 1 %hidden%;
+#X obj 237 120 legacy_mouseclick;
+#X obj 127 380 outlet;
+#X obj 275 170 == 1;
+#X obj 237 240 gate 1 0;
+#X text 50 10 Compatibility abstraction for the Cyclone's mousefilterIco
+Bukvic 2024 <ico@vt.edu> Like legacy objects below \, this one only
+broadcasts mouse activity within the patch window;
+#X obj 237 269 == 0;
+#X obj 180 120 inlet;
+#X obj 127 340 gate 1 1;
+#X connect 1 0 4 1;
+#X connect 1 1 3 0;
+#X connect 3 0 4 0;
+#X connect 4 0 6 0;
+#X connect 6 0 8 0;
+#X connect 7 0 8 1;
+#X connect 8 0 2 0;

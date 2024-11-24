@@ -25,3 +25,6 @@
 [submodule "externals/pd-hidraw"]
 	path = externals/pd-hidraw
 	url = https://github.com/Lucarda/pd-hidraw.git
+[submodule "externals/neuralnet"]
+	path = externals/neuralnet
+	url = https://github.com/alexdrymonitis/neuralnet.git
