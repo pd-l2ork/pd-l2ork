@@ -5,34 +5,24 @@
  * WARRANTIES, see the file, "LICENSE.txt," in this distribution.  */
 
 void Append_setup(void);
-void append_setup(void);
 void Borax_setup(void);
-void borax_setup(void);
 void Bucket_setup(void);
-void bucket_setup(void);
 void Clip_setup(void);
-void clip_setup(void);
 void Decode_setup(void);
-void decode_setup(void);
 void Histo_setup(void);
-void histo_setup(void);
+#ifndef PDL2ORK
 void MouseState_setup(void);
-void mousestate_setup(void);
+#endif
 void Peak_setup(void);
-void peak_setup(void);
 void Table_setup(void);
 void TogEdge_setup(void);
-void togedge_setup(void);
 void Trough_setup(void);
-void trough_setup(void);
 void Uzi_setup(void);
-void uzi_setup(void);
 void accum_setup(void);
 void acos_setup(void);
 void active_setup(void);
 void anal_setup(void);
 void asin_setup(void);
-void atodb_setup(void);
 void bangbang_setup(void);
 void bondo_setup(void);
 void buddy_setup(void);
@@ -43,7 +33,6 @@ void comment_setup(void);
 void cosh_setup(void);
 void counter_setup(void);
 void cycle_setup(void);
-void dbtoa_setup(void);
 void decide_setup(void);
 void drunk_setup(void);
 void flush_setup(void);
@@ -54,7 +43,6 @@ void funnel_setup(void);
 void gate_setup(void);
 void grab_setup(void);
 void iter_setup(void);
-void loadmess_setup(void);
 void match_setup(void);
 void maximum_setup(void);
 void mean_setup(void);
@@ -62,7 +50,9 @@ void midiflush_setup(void);
 void midiformat_setup(void);
 void midiparse_setup(void);
 void minimum_setup(void);
+#ifndef PDL2ORK
 void mousefilter_setup(void);
+#endif
 void mtr_setup(void);
 void next_setup(void);
 void offer_setup(void);
@@ -72,7 +62,6 @@ void poltocar_setup(void);
 void prepend_setup(void);
 void prob_setup(void);
 void pv_setup(void);
-void round_setup(void);
 void seq_setup(void);
 void sinh_setup(void);
 void speedlim_setup(void);
@@ -100,34 +89,24 @@ void zl_setup(void);
 void allhammers_setup(void)
 {
     Append_setup();
-    append_setup();
     Borax_setup();
-    borax_setup();
     Bucket_setup();
-    bucket_setup();
     Clip_setup();
-    clip_setup();
     Decode_setup();
-    decode_setup();
     Histo_setup();
-    histo_setup();
+#ifndef PDL2ORK
     MouseState_setup();
-    mousestate_setup();
+#endif
     Peak_setup();
-    peak_setup();
     Table_setup();
     TogEdge_setup();
-    togedge_setup();
     Trough_setup();
-    trough_setup();
     Uzi_setup();
-    uzi_setup();
     accum_setup();
     acos_setup();
     active_setup();
     anal_setup();
     asin_setup();
-    atodb_setup();
     bangbang_setup();
     bondo_setup();
     buddy_setup();
@@ -138,7 +117,6 @@ void allhammers_setup(void)
     cosh_setup();
     counter_setup();
     cycle_setup();
-    dbtoa_setup();
     decide_setup();
     drunk_setup();
     flush_setup();
@@ -149,7 +127,6 @@ void allhammers_setup(void)
     gate_setup();
     grab_setup();
     iter_setup();
-    loadmess_setup();
     match_setup();
     maximum_setup();
     mean_setup();
@@ -157,7 +134,9 @@ void allhammers_setup(void)
     midiformat_setup();
     midiparse_setup();
     minimum_setup();
+#ifndef PDL2ORK
     mousefilter_setup();
+#endif
     mtr_setup();
     next_setup();
     offer_setup();
@@ -167,7 +146,6 @@ void allhammers_setup(void)
     prepend_setup();
     prob_setup();
     pv_setup();
-    round_setup();
     seq_setup();
     sinh_setup();
     speedlim_setup();
