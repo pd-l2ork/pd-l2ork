@@ -4,6 +4,8 @@
  * For information on usage and redistribution, and for a DISCLAIMER OF ALL
  * WARRANTIES, see the file, "LICENSE.txt," in this distribution.  */
 
+#include "m_pd.h"
+
 void Append_setup(void);
 void Borax_setup(void);
 void Bucket_setup(void);
