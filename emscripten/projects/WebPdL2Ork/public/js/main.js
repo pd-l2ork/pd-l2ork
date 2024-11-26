@@ -3410,6 +3410,19 @@ function gobj_font_y_kludge(fontsize) {
     }
 }
 
+function text_line_height_kludge(fontsize) {
+    var pd_fontsize = fontsize;
+    switch (pd_fontsize) {
+        case 8: return 11;
+        case 10: return 13;
+        case 12: return 16;
+        case 16: return 19;
+        case 24: return 29;
+        case 36: return 44;
+        default: return pd_fontsize + 2;
+    }
+}
+
 let font_engine_sanity = false;
 
 function set_font_engine_sanity() {
@@ -3489,6 +3502,110 @@ function gobj_fontsize_kludge(fontsize, return_type) {
 
 function pd_fontsize_to_gui_fontsize(fontsize) {
     return gobj_fontsize_kludge(fontsize, "gui");
+}
+
+function text_to_tspans(canvas, svg_text, text, type) {
+    var lines, i, isatom, len, tspan, fontsize, newtext, text_node;
+    // the type argument is optional, but it *will* be set when we're being
+    // called via rtext_senditup() in order to update an object text
+    var is_comment = type && type === "text";
+    var init_attr, style = {}, fill = null;
+    // Get fontsize (minus the trailing "px")
+    fontsize = svg_text.getAttribute("font-size").slice(0, -2);
+    var dy = text_line_height_kludge(+fontsize);
+    
+    function make_tspan(span) {
+        newtext = span;
+
+        if (is_comment) {
+            // tags can be escaped with <!tag>, show these as literals
+            newtext = newtext.replace(/<!([!a-z0-9#/]+)>/g, "<$1>");
+        }
+        if (newtext.length > 0) {
+            // find a way to abstract away the canvas array and the DOM here
+            var attr = init_attr;
+            if (fill) attr.fill = fill;
+            tspan = create_item("tspan", attr, canvas);
+            for (var x in style) tspan.style[x] = style[x];
+            text_node = document.createTextNode(newtext);
+            if (!/^\s*$/.test(newtext)) init_attr = {};
+            tspan.appendChild(text_node);
+            svg_text.appendChild(tspan);
+        }
+    }
+
+    isatom = 0;
+    lines = text.split("\n");
+    len = lines.length;
+    for (i = 0; i < len; i++) {
+        var spans = [lines[i]], tags = null;
+        init_attr = { dy: i==0 ? 0 : dy + "px", x: svg_text.getAttribute('x') };
+        delete style.visibility;
+        if (/^\s*$/.test(lines[i])) {
+            // ag: empty spans won't render correctly, so add something other
+            // than a blank and hide the contents of the tspan. See
+            // https://stackoverflow.com/a/58429593
+            style.visibility = "hidden";
+            spans[0] = ".";
+        } else if (is_comment) {
+            // split the text into individual spans and tags
+            spans = lines[i].split(/<[a-z0-9#/]+>/);
+            tags = lines[i].match(/<[a-z0-9#/]+>/g);
+        }
+        make_tspan(spans[0]);
+        if (tags) {
+            for (var j = 1, k = 0; j < spans.length; j++, k++) {
+                var tag = tags[k];
+                switch (tag) {
+                case "<b>":
+                    style.fontWeight = "bold";
+                    break;
+                case "</b>":
+                    delete style.fontWeight;
+                    break;
+                case "<i>":
+                    style.fontStyle = "italic";
+                    break;
+                case "</i>":
+                    delete style.fontStyle;
+                    break;
+                case "<s>":
+                    style.textDecoration = "line-through";
+                    break;
+                case "</s>":
+                    delete style.textDecoration;
+                    break;
+                case "<u>":
+                    style.textDecoration = "underline";
+                    break;
+                case "</u>":
+                    delete style.textDecoration;
+                    break;
+                case "<h>":
+                    style.fontSize = "120%";
+                    style.fontWeight = "bold";
+                    break;
+                case "</h>":
+                    delete style.fontSize;
+                    delete style.fontWeight;
+                    break;
+                default:
+                    // anything else is taken to be a color
+                    if (!tag.startsWith("</")) {
+                        fill = tag.slice(1, -1);
+                    } else if (fill === tag.slice(2, -1)) {
+                        fill = null;
+                    }
+                    break;
+                }
+                make_tspan(spans[j]);
+            }
+        }
+        // make sure that spaces properly show
+        tspan.style.setProperty("white-space", "normal");
+        if (isatom)
+            break;
+    }
 }
 
 function gui_text_text(data, line_index, fontSize) {
@@ -4809,12 +4926,8 @@ async function openPatch(content, filename) {
                     data.id = `${data.type}_${nextHTMLID++}`;
 
                     // create svg
-                    data.texts = [];
-                    for (let i = 0; i < data.comment.length; i++) {
-                        const text = create_item("text", gui_text_text(data, i, layer.fontSize), layer.canvas);
-                        text.textContent = data.comment[i];
-                        data.texts.push(text);
-                    }
+                    const text = create_item("text", gui_text_text(data, 0, layer.fontSize), layer.canvas);
+                    text_to_tspans(layer.canvas, text, data.comment.join('\n'), 'text');
                 } else
                     console.error('Invalid text:', args);
                 break;
