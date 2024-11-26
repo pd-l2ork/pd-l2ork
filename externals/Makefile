@@ -536,6 +536,7 @@ cyclone_templates: cyclone
 	install -p $(wildcard $(CYCLONE_PATH)/bin/*.wasm) $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)
 
 cyclone_install: cyclone_templates
+	install -p $(wildcard $(externals_src)/miXed/doc/help/cyclone/*.pd) $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)
 
 cyclone_clean:
 	rm ${CYCLONE_PATH}/bin/*.wasm
@@ -1223,9 +1224,12 @@ IEMLIB_OBJECTS := $(IEMLIB_SRC:.c=.o)
 $(IEMLIB_OBJECTS) : %.o : %.c
 	$(CC) -I$(externals_src)/iemlib/include $(CFLAGS) -O2 -funroll-loops -fomit-frame-pointer -fno-tree-vectorize -fno-strict-aliasing -o "$*.o" -c "$*.c"
 
+$(IEMLIB_SRC:.c=.$(EXTENSION)): $(IEMLIB_OBJECTS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(LIBS) -o "$*.$(EXTENSION)" "$*.o"
+
 iemlib: $(IEMLIB_SRC:.c=.$(EXTENSION))
 
-iemlib_install: iemlib
+iemlib_install:
 	install -d $(DESTDIR)$(objectsdir)/$(IEMLIB_NAME)
 	$(scripts_src)/generate-libdir-metafile.sh $(DESTDIR)$(objectsdir) $(IEMLIB_NAME) \
 		--description "a collection of objects written at IEM/KUG" \
@@ -2983,17 +2987,35 @@ endif
 #------------------------------------------------------------------------------#
 # NEURALNET
 
+ifneq ($(EMSCRIPTEN), yes)
 neuraln:
 	echo boo
 	cd $(externals_src)/neuralnet && \
 		rm -f *.o && \
 		git submodule update --init --recursive && \
 		make PDDIR=$(pd_src) PDBINDIR=$(pd_src)/src/
+else
+NEURAL_SRC=$(wildcard $(externals_src)/neuralnet/src/*.c)
+NEURAL_OBJ=$(NEURAL_SRC:.c=.o)
+NEURAL_TARGETS=$(NEURAL_SRC:.c=.$(EXTENSION))
 
-neuraln_install: neuralnet
+$(NEURAL_OBJ): $(NEURAL_SRC)
+	$(CC) $(CFLAGS) $(LIBS) -o "$*.o" "$*.c"
+
+$(NEURAL_TARGETS): $(NEURAL_OBJ)
+	$(CC) $(LDFLAGS) $(CFLAGS) $(LIBS) -o "$*.$(EXTENSION)" "$*.o"
+
+neuraln: $(NEURAL_TARGETS)
+endif
+
+neuraln_install: neuraln
 	install -d $(DESTDIR)$(objectsdir)/neuralnet
+ifneq ($(EMSCRIPTEN), yes)
 	install -p $(externals_src)/neuralnet/*.${EXTENSION} \
 		$(DESTDIR)$(objectsdir)/neuralnet/
+else
+	install -p $(NEURAL_TARGETS) $(DESTDIR)$(objectsdir)/neuralnet/
+endif
 	install -p $(externals_src)/neuralnet/*.pd \
 		$(DESTDIR)$(objectsdir)/neuralnet/
 	cp -rf $(externals_src)/neuralnet/examples \

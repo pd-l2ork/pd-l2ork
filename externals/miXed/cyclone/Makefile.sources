@@ -22,6 +22,7 @@ hammer/next.c \
 hammer/onebang.c \
 hammer/Peak.c \
 hammer/poltocar.c \
+hammer/round.c \
 hammer/sinh.c \
 hammer/split.c \
 hammer/sustain.c \
