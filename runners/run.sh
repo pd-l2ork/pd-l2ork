@@ -18,6 +18,11 @@ if [ $OS == "Linux" ]; then
     ensure_command docker-compose
     ensure_command docker
 
+    if [[ "$REPO" =~ ^git@([^:]+):(.+)$ ]]; then
+        REPO="https://${BASH_REMATCH[1]}/${BASH_REMATCH[2]}"
+    fi
+    REPO="${REPO%.git}"
+
     REPO=$REPO TOKEN=$TOKEN docker-compose up
 elif [ $OS == "Darwin" ]; then
     # TODO

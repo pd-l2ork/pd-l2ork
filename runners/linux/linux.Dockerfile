@@ -11,8 +11,6 @@ RUN /runner-bootstrap/bin/installdependencies.sh
 RUN useradd runner && adduser runner sudo && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 RUN mkdir /runner && chown -R runner:runner /runner-bootstrap /runner
 
-USER runner
-
 COPY entrypoint.sh /runner-bootstrap
 
 ENTRYPOINT [ "/runner-bootstrap/entrypoint.sh" ]
