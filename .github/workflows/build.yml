@@ -1,8 +1,8 @@
 name: Testing build pipelines
 
 on:
-  # push:
-    # branches: [ "master" ]
+  push:
+    branches: [ "build-pipelines" ]
   # pull_request:
     # branches: [ "master" ]
   workflow_dispatch:
