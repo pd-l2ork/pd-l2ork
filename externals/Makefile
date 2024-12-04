@@ -3000,7 +3000,7 @@ NEURAL_OBJ=$(NEURAL_SRC:.c=.o)
 NEURAL_TARGETS=$(NEURAL_SRC:.c=.$(EXTENSION))
 
 $(NEURAL_OBJ): $(NEURAL_SRC)
-	$(CC) $(CFLAGS) $(LIBS) -o "$*.o" "$*.c"
+	$(CC) $(CFLAGS) $(LIBS) -c -o "$*.o" "$*.c"
 
 $(NEURAL_TARGETS): $(NEURAL_OBJ)
 	$(CC) $(LDFLAGS) $(CFLAGS) $(LIBS) -o "$*.$(EXTENSION)" "$*.o"
