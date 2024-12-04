@@ -1,0 +1,23 @@
+version: "3"
+services:
+  linux:
+    build: 
+      context: linux
+      dockerfile: linux.Dockerfile
+    restart: unless-stopped
+    container_name: linux-runner
+    volumes:
+      - linux-runner-data:/runner
+    environment:
+      REPO: $REPO
+      TOKEN: $TOKEN
+
+volumes:
+  linux-runner-data:
+
+    
+  # windows:
+  #   build: 
+  #     context: .
+  #     dockerfile: linux.Dockerfile
+  #   restart: unless-stopped
