@@ -26,32 +26,62 @@ jobs:
         path: Pd-L2Ork.deb
         if-no-files-found: error
          
-  build-macos:
-    runs-on: macos-13
+  # build-macos:
+  #   runs-on: macos-latest
+  #   steps:
+  #   - name: deps
+  #     run: brew install wget autoconf automake libtool fftw python lua fluidsynth faac lame libvorbis speex gsl libquicktime sdl2 pkg-config gettext freetype2 ftgl jpeg libtiff sdl glfw ninja cmake
+  #   - uses: actions/checkout@v4
+  #     with:
+  #       submodules: 'recursive'
+  #   - name: make
+  #     run: make light
+  #   - name: rename
+  #     run: mv Pd-L2Ork-*.dmg Pd-L2Ork.dmg
+  #   - uses: actions/upload-artifact@v4
+  #     with:
+  #       name: dmg
+  #       path: Pd-L2Ork.dmg
+  #       if-no-files-found: error
+
+  build-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
     steps:
-    - name: deps
-      run: brew install wget autoconf automake libtool fftw python lua fluidsynth faac lame libvorbis speex gsl libquicktime sdl2 pkg-config gettext freetype2 ftgl jpeg libtiff sdl glfw ninja cmake
-    - uses: actions/checkout@v4
-      with:
-        submodules: 'recursive'
-    - name: make
-      run: make light
-    - name: rename
-      run: mv Pd-L2Ork-*.dmg Pd-L2Ork.dmg
-    - uses: actions/upload-artifact@v4
-      with:
-        name: deb
-        path: Pd-L2Ork.dmg
-        if-no-files-found: error
+      - uses: actions/checkout@v3
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: git mingw-w64-ucrt-x86_64-gcc autoconf automake git libtool make mingw-w64-i686-dlfcn mingw-w64-i686-fftw mingw-w64-i686-fluidsynth mingw-w64-i686-SDL2 mingw-w64-i686-ftgl mingw-w64-i686-fribidi mingw-w64-i686-ladspa-sdk mingw-w64-i686-lame mingw-w64-i686-libsndfile mingw-w64-i686-libvorbis mingw-w64-i686-lua mingw-w64-i686-toolchain mingw-w64-i686-libjpeg-turbo mingw-w64-i686-speex rsync unzip wget mingw-w64-i686-cmake mingw-w64-i686-ninja mingw-w64-i686-glfw mingw-w64-i686-pcre mingw-w64-i686-ntldd-git
+      - name: make
+        run: make light
+      - name: rename
+        run: mv Pd-L2Ork-*.exe Pd-L2Ork.exe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exe
+          path: Pd-L2Ork.exe
+          if-no-files-found: error
 
   create-release:
-    needs: [build-linux, build-macos]
+    needs: [build-linux, build-windows]
     runs-on: ubuntu-latest
     steps:
-    - name: Download artifact
+    - name: Download Linux Release
       uses: actions/download-artifact@v4
       with:
         name: deb
+    - name: Download Windows Release
+      uses: actions/download-artifact@v4
+      with:
+        name: exe
+    # - name: Download MacOS Release
+    #   uses: actions/download-artifact@v4
+    #   with:
+    #     name: dmg
     - name: Create GitHub Release
       id: create_release
       uses: actions/create-release@v1
@@ -62,7 +92,7 @@ jobs:
         release_name: "Release v${{ github.run_number }}"
         draft: false
         prerelease: false
-    - name: Upload Release Asset
+    - name: Upload Linux Release
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -71,3 +101,21 @@ jobs:
         asset_path: ./Pd-L2Ork.deb
         asset_name: Pd-L2Ork-${{ github.run_number }}.deb
         asset_content_type: application/vnd.debian.binary-package
+    - name: Upload Windows Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./Pd-L2Ork.exe
+        asset_name: Pd-L2Ork-${{ github.run_number }}.exe
+        asset_content_type: application/vnd.microsoft.portable-executable
+    # - name: Upload MacOS
+    #   uses: actions/upload-release-asset@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+    #     asset_path: ./Pd-L2Ork.dmg
+    #     asset_name: Pd-L2Ork-${{ github.run_number }}.dmg
+    #     asset_content_type: application/x-apple-diskimage
