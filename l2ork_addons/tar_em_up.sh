@@ -476,7 +476,7 @@ then
 		fi
 		cd ../../
 	# move OSX dmg installer
-	elif [ $dmg -gt 0 ]; then
+	elif [ $dmg -gt 0 -a $pkg -gt 0 ]; then
 		mv packages/darwin_app/Pd*.dmg .
 	elif [ $inno -gt 0 ]; then
 		if [[ $os == "win64" ]]; then
