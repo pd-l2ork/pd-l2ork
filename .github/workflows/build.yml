@@ -38,7 +38,7 @@ jobs:
       run: cd l2ork_addons && ./tar_em_up.sh -tkln
     - uses: QQxiaoming/create-dmg-action@v0.0.2
       with:
-        name: 'Pd-L2Ork.dmg'
+        name: 'Pd-L2Ork'
         srcdir: 'packages/darwin_app/build'
     - uses: actions/upload-artifact@v4
       with:
