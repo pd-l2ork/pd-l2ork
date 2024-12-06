@@ -69,7 +69,7 @@ jobs:
           if-no-files-found: error
 
   create-release:
-    needs: [build-linux, build-windows]
+    needs: [build-linux, build-windows, build-macos]
     runs-on: ubuntu-latest
     steps:
     - name: Download Linux Release
