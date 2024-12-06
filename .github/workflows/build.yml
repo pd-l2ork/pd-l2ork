@@ -53,11 +53,9 @@ jobs:
       - uses: actions/checkout@v3
       - uses: msys2/setup-msys2@v2
         with:
-          msystem: UCRT64
+          msystem: MINGW32
           update: true
           install: git mingw-w64-ucrt-x86_64-gcc autoconf automake git libtool make mingw-w64-i686-dlfcn mingw-w64-i686-fftw mingw-w64-i686-fluidsynth mingw-w64-i686-SDL2 mingw-w64-i686-ftgl mingw-w64-i686-fribidi mingw-w64-i686-ladspa-sdk mingw-w64-i686-lame mingw-w64-i686-libsndfile mingw-w64-i686-libvorbis mingw-w64-i686-lua mingw-w64-i686-toolchain mingw-w64-i686-libjpeg-turbo mingw-w64-i686-speex rsync unzip wget mingw-w64-i686-cmake mingw-w64-i686-ninja mingw-w64-i686-glfw mingw-w64-i686-pcre mingw-w64-i686-ntldd-git
-      - name: test
-        run: echo `uname | tr '[:upper:]' '[:lower:]'`
       - name: make
         run: make light
       - name: rename
