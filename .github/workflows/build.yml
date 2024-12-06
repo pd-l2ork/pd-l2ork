@@ -20,10 +20,12 @@ jobs:
         submodules: 'recursive'
     - name: make
       run: make light
+    - name: rename
+      run: mv Pd-L2Ork-*.deb Pd-L2Ork.deb
     - uses: actions/upload-artifact@v4
       with:
         name: deb
-        path: Pd-L2Ork-*.deb
+        path: Pd-L2Ork.deb
         if-no-files-found: error
 
   create-release:
@@ -50,7 +52,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./Pd-L2Ork-*.deb
+        asset_path: ./Pd-L2Ork.deb
         asset_name: Pd-L2Ork-${{ github.run_number }}.deb
         asset_content_type: application/vnd.debian.binary-package
         
