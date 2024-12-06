@@ -390,9 +390,11 @@ then
 		echo `pwd`
 		make install INCREMENTAL=$INCREMENTAL LIGHT=$LIGHT && make package
 	elif [[ $os == "osx" ]]; then
-		echo "Making OSX package (dmg)..."
-		echo `pwd`
-		make install INCREMENTAL=$INCREMENTAL LIGHT=$LIGHT && make package
+		if [[ $pkg -gt 0 ]]; then
+			echo "Making OSX package (dmg)..."
+			echo `pwd`
+			make install INCREMENTAL=$INCREMENTAL LIGHT=$LIGHT && make package
+		fi
 	else
 		# create images folder
 		mkdir -p ../../packages/linux_make/build$inst_dir/lib/pd-l2ork/extra/images

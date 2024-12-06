@@ -26,23 +26,25 @@ jobs:
         path: Pd-L2Ork.deb
         if-no-files-found: error
          
-  # build-macos:
-  #   runs-on: macos-latest
-  #   steps:
-  #   - name: deps
-  #     run: brew install wget autoconf automake libtool fftw python lua fluidsynth faac lame libvorbis speex gsl libquicktime sdl2 pkg-config gettext freetype2 ftgl jpeg libtiff sdl glfw ninja cmake
-  #   - uses: actions/checkout@v4
-  #     with:
-  #       submodules: 'recursive'
-  #   - name: make
-  #     run: make light
-  #   - name: rename
-  #     run: mv Pd-L2Ork-*.dmg Pd-L2Ork.dmg
-  #   - uses: actions/upload-artifact@v4
-  #     with:
-  #       name: dmg
-  #       path: Pd-L2Ork.dmg
-  #       if-no-files-found: error
+  build-macos:
+    runs-on: macos-latest
+    steps:
+    - name: deps
+      run: brew install wget autoconf automake libtool fftw python lua fluidsynth faac lame libvorbis speex gsl libquicktime sdl2 pkg-config gettext freetype2 ftgl jpeg libtiff sdl glfw ninja cmake
+    - uses: actions/checkout@v4
+      with:
+        submodules: 'recursive'
+    - name: make
+      run: cd l2ork_addons && ./tar_em_up.sh -tkln
+    - uses: QQxiaoming/create-dmg-action@v0.0.2
+      with:
+        name: 'Pd-L2Ork.dmg'
+        srcdir: 'packages/darwin_app/build'
+    - uses: actions/upload-artifact@v4
+      with:
+        name: dmg
+        path: Pd-L2Ork.dmg
+        if-no-files-found: error
 
   build-windows:
     runs-on: windows-latest
@@ -78,10 +80,10 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: exe
-    # - name: Download MacOS Release
-    #   uses: actions/download-artifact@v4
-    #   with:
-    #     name: dmg
+    - name: Download MacOS Release
+      uses: actions/download-artifact@v4
+      with:
+        name: dmg
     - name: Create GitHub Release
       id: create_release
       uses: actions/create-release@v1
@@ -110,12 +112,12 @@ jobs:
         asset_path: ./Pd-L2Ork.exe
         asset_name: Pd-L2Ork-${{ github.run_number }}.exe
         asset_content_type: application/vnd.microsoft.portable-executable
-    # - name: Upload MacOS
-    #   uses: actions/upload-release-asset@v1
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   with:
-    #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-    #     asset_path: ./Pd-L2Ork.dmg
-    #     asset_name: Pd-L2Ork-${{ github.run_number }}.dmg
-    #     asset_content_type: application/x-apple-diskimage
+    - name: Upload MacOS
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./Pd-L2Ork.dmg
+        asset_name: Pd-L2Ork-${{ github.run_number }}.dmg
+        asset_content_type: application/x-apple-diskimage
