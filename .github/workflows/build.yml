@@ -38,8 +38,8 @@ jobs:
       run: cd l2ork_addons && ./tar_em_up.sh -tkn
     - uses: L-Super/create-dmg-actions@v1.0.3
       with:
-        name: 'Pd-L2Ork'
-        srcdir: 'packages/darwin_app/build/pd-l2ork.app'
+        dmg_name: 'Pd-L2Ork'
+        src_dir: 'packages/darwin_app/build/pd-l2ork.app'
     - uses: actions/upload-artifact@v4
       with:
         name: dmg
