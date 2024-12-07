@@ -28,7 +28,7 @@ jobs:
         with:
           image_name: ${{ github.repository }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          dockerfile: ./pdl2ork.Dockerfile
+          dockerfile: ./webpdl2ork.Dockerfile
           image_tag: ${{ needs.version.outputs.version }}
 
   build-linux:
