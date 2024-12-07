@@ -27,9 +27,14 @@ jobs:
         uses: macbre/push-to-ghcr@master
         with:
           image_name: ${{ github.repository }}
+          image_tag: ${{ needs.version.outputs.version }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           dockerfile: ./webpdl2ork.Dockerfile
-          image_tag: ${{ needs.version.outputs.version }}
+      - name: tag latest
+        run: |
+          docker pull ghcr.io/${{ github.repository }}:${{ needs.version.outputs.version }}
+          docker tag ghcr.io/${{ github.repository }}:${{ needs.version.outputs.version }} ghcr.io/${{ github.repository }}:latest
+          docker push ghcr.io/${{ github.repository }}:latest
 
   build-linux:
     runs-on: ubuntu-24.04
