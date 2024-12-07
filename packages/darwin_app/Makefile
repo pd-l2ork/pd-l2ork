@@ -59,6 +59,8 @@ all:
 	$(MAKE) -C $(packages_src) $(DEST_PATHS)
 
 install: darwin_app
+	./sign-MacOSX-dependencies.sh $(PD_APP_CONTENTS)
+	codesign --deep --force --verify --sign "-" --entitlements "$(CWD)/pd-l2ork.entitlements" "$(BUILD_BASE)/Pd-L2Ork.app"
 
 #------------------------------------------------------------------------------#
 darwin_app: darwin_app_core rpi_install extended_install darwin_app_embed_libs
@@ -214,10 +216,8 @@ VOLUME_NAME = $(PACKAGE_NAME)
 dmg:
 # ico@vt.edu 2022-10-10: sign the app, so that we can get the mic/camera
 # permission prompts
-	./sign-MacOSX-dependencies.sh $(PD_APP_CONTENTS)
-	codesign --deep --force --verify --sign "-" --entitlements "$(CWD)/pd-l2ork.entitlements" "$(BUILD_BASE)/Pd-L2Ork.app"
 	rm -f build.dmg
-	hdiutil create -format UDRW -fs HFS+ -srcfolder "$(BUILD_BASE)" \
+	hdiutil create -verbose -format UDRW -fs HFS+ -srcfolder "$(BUILD_BASE)" \
 		-volname $(VOLUME_NAME) build.dmg
 # detach one with the same name first
 	-hdiutil detach "/Volumes/$(VOLUME_NAME)"

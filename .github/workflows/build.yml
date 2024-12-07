@@ -1,0 +1,121 @@
+name: Build Release
+
+on:
+  push:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-24.04
+    steps:
+    - name: deps
+      run: sudo apt-get install git unzip bison flex autoconf automake libasound2-dev libjack-jackd2-dev libtool libbluetooth-dev libgl1-mesa-dev libglu1-mesa-dev libglew-dev libmagick++-dev libftgl-dev libgmerlin-dev libgmerlin-avdec-dev libavifile-0.7-dev libmpeg3-dev libquicktime-dev libv4l-dev libraw1394-dev libdc1394-dev rsync libfftw3-dev libvorbis-dev ladspa-sdk dssi-dev tap-plugins invada-studio-plugins-ladspa blepvco swh-plugins mcp-plugins cmt blop omins rev-plugins dssi-utils vco-plugins wah-plugins fil-plugins mda-lv2 libmp3lame-dev libspeex-dev libgsl0-dev portaudio19-dev liblua5.3-dev python3-dev libsmpeg0 libjpeg-dev flite1-dev libgsm1-dev libgtk2.0-dev git libstk-dev wget libfluidsynth-dev fluid-soundfont-gm byacc cmake ninja-build patchelf libtirpc-dev libnss3 libudev-dev
+    - uses: actions/checkout@v4
+      with:
+        submodules: 'recursive'
+    - name: make
+      run: make
+    - name: rename
+      run: mv Pd-L2Ork-*.deb Pd-L2Ork.deb
+    - uses: actions/upload-artifact@v4
+      with:
+        name: deb
+        path: Pd-L2Ork.deb
+        if-no-files-found: error
+         
+  build-macos:
+    runs-on: macos-latest
+    steps:
+    - name: deps
+      run: brew install wget autoconf automake libtool fftw python lua fluidsynth faac lame libvorbis speex gsl libquicktime sdl2 pkg-config gettext freetype2 ftgl jpeg libtiff sdl glfw ninja cmake
+    - uses: actions/checkout@v4
+      with:
+        submodules: 'recursive'
+    - name: make
+      run: cd l2ork_addons && ./tar_em_up.sh -tkn
+    - uses: L-Super/create-dmg-actions@v1.0.3
+      with:
+        dmg_name: 'Pd-L2Ork'
+        src_dir: 'packages/darwin_app/build/pd-l2ork.app'
+    - uses: actions/upload-artifact@v4
+      with:
+        name: dmg
+        path: Pd-L2Ork.dmg
+        if-no-files-found: error
+
+  build-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW32
+          update: true
+          install: git mingw-w64-ucrt-x86_64-gcc autoconf automake git libtool make mingw-w64-i686-dlfcn mingw-w64-i686-fftw mingw-w64-i686-fluidsynth mingw-w64-i686-SDL2 mingw-w64-i686-ftgl mingw-w64-i686-fribidi mingw-w64-i686-ladspa-sdk mingw-w64-i686-lame mingw-w64-i686-libsndfile mingw-w64-i686-libvorbis mingw-w64-i686-lua mingw-w64-i686-toolchain mingw-w64-i686-libjpeg-turbo mingw-w64-i686-speex rsync unzip wget mingw-w64-i686-cmake mingw-w64-i686-ninja mingw-w64-i686-glfw mingw-w64-i686-pcre mingw-w64-i686-ntldd-git
+      - name: make
+        run: make
+      - name: rename
+        run: mv Pd-L2Ork-*.exe Pd-L2Ork.exe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exe
+          path: Pd-L2Ork.exe
+          if-no-files-found: error
+
+  create-release:
+    needs: [build-linux, build-windows, build-macos]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download Linux Release
+      uses: actions/download-artifact@v4
+      with:
+        name: deb
+    - name: Download Windows Release
+      uses: actions/download-artifact@v4
+      with:
+        name: exe
+    - name: Download MacOS Release
+      uses: actions/download-artifact@v4
+      with:
+        name: dmg
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: "v${{ github.run_number }}"
+        release_name: "Release v${{ github.run_number }}"
+        draft: false
+        prerelease: false
+    - name: Upload Linux Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./Pd-L2Ork.deb
+        asset_name: Pd-L2Ork-${{ github.run_number }}.deb
+        asset_content_type: application/vnd.debian.binary-package
+    - name: Upload Windows Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./Pd-L2Ork.exe
+        asset_name: Pd-L2Ork-${{ github.run_number }}.exe
+        asset_content_type: application/vnd.microsoft.portable-executable
+    - name: Upload MacOS
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./Pd-L2Ork.dmg
+        asset_name: Pd-L2Ork-${{ github.run_number }}.dmg
+        asset_content_type: application/x-apple-diskimage
