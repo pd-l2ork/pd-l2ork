@@ -1,11 +1,28 @@
 name: Build Release
 
+env:
+  DOCKER_IMAGE_NAME: webpdl2ork
+  DOCKER_REGISTRY_URL: ghcr.io
+  VERSION: v${{ github.run_number }}
+
 on:
   push:
     branches: [ "master" ]
   workflow_dispatch:
 
 jobs:
+  docker_publish:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: build and push
+        uses: macbre/push-to-ghcr@master
+        with:
+          image_name: ${{ github.repository }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          dockerfile: ./pdl2ork.Dockerfile
+          image_tag: $VERSION
+
   build-linux:
     runs-on: ubuntu-24.04
     steps:
@@ -88,8 +105,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: "v${{ github.run_number }}"
-        release_name: "Release v${{ github.run_number }}"
+        tag_name: $VERSION
+        release_name: Release $VERSION
         draft: false
         prerelease: false
     - name: Upload Linux Release
@@ -99,7 +116,7 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./Pd-L2Ork.deb
-        asset_name: Pd-L2Ork-${{ github.run_number }}.deb
+        asset_name: Pd-L2Ork-$VERSION.deb
         asset_content_type: application/vnd.debian.binary-package
     - name: Upload Windows Release
       uses: actions/upload-release-asset@v1
@@ -108,7 +125,7 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./Pd-L2Ork.exe
-        asset_name: Pd-L2Ork-${{ github.run_number }}.exe
+        asset_name: Pd-L2Ork-$VERSION.exe
         asset_content_type: application/vnd.microsoft.portable-executable
     - name: Upload MacOS
       uses: actions/upload-release-asset@v1
@@ -117,5 +134,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./Pd-L2Ork.dmg
-        asset_name: Pd-L2Ork-${{ github.run_number }}.dmg
+        asset_name: Pd-L2Ork-$VERSION.dmg
         asset_content_type: application/x-apple-diskimage
