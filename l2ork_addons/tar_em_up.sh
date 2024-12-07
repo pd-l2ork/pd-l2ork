@@ -390,10 +390,11 @@ then
 		echo `pwd`
 		make install INCREMENTAL=$INCREMENTAL LIGHT=$LIGHT && make package
 	elif [[ $os == "osx" ]]; then
+		echo "Making OSX package (dmg)..."
+		echo `pwd`
+		make install INCREMENTAL=$INCREMENTAL LIGHT=$LIGHT
 		if [[ $pkg -gt 0 ]]; then
-			echo "Making OSX package (dmg)..."
-			echo `pwd`
-			make install INCREMENTAL=$INCREMENTAL LIGHT=$LIGHT && make package
+			make package
 		fi
 	else
 		# create images folder
