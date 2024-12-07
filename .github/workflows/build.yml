@@ -1,4 +1,4 @@
-name: Testing build pipelines
+name: Build Release
 
 on:
   push:
