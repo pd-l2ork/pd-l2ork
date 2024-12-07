@@ -1,27 +1,35 @@
 name: Build Release
 
-env:
-  DOCKER_IMAGE_NAME: webpdl2ork
-  DOCKER_REGISTRY_URL: ghcr.io
-  VERSION: v${{ github.run_number }}
-
 on:
   push:
     branches: [ "master" ]
   workflow_dispatch:
 
 jobs:
+  version:
+    runs-on: ubuntu-20.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set Version
+        id: version
+        run: echo "version=$(date +%Y%m%d)-rev.$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
   docker_publish:
     runs-on: ubuntu-20.04
+    needs: version
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
       - name: build and push
         uses: macbre/push-to-ghcr@master
         with:
           image_name: ${{ github.repository }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           dockerfile: ./pdl2ork.Dockerfile
-          image_tag: $VERSION
+          image_tag: ${{ needs.version.outputs.version }}
 
   build-linux:
     runs-on: ubuntu-24.04
@@ -84,7 +92,7 @@ jobs:
           if-no-files-found: error
 
   create-release:
-    needs: [build-linux, build-windows, build-macos]
+    needs: [build-linux, build-windows, build-macos, version]
     runs-on: ubuntu-latest
     steps:
     - name: Download Linux Release
@@ -105,8 +113,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: $VERSION
-        release_name: Release $VERSION
+        tag_name: ${{ needs.version.outputs.version }}
+        release_name: Release ${{ needs.version.outputs.version }}
         draft: false
         prerelease: false
     - name: Upload Linux Release
@@ -116,7 +124,7 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./Pd-L2Ork.deb
-        asset_name: Pd-L2Ork-$VERSION.deb
+        asset_name: Pd-L2Ork-${{ needs.version.outputs.version }}.deb
         asset_content_type: application/vnd.debian.binary-package
     - name: Upload Windows Release
       uses: actions/upload-release-asset@v1
@@ -125,7 +133,7 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./Pd-L2Ork.exe
-        asset_name: Pd-L2Ork-$VERSION.exe
+        asset_name: Pd-L2Ork-${{ needs.version.outputs.version }}.exe
         asset_content_type: application/vnd.microsoft.portable-executable
     - name: Upload MacOS
       uses: actions/upload-release-asset@v1
@@ -134,5 +142,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./Pd-L2Ork.dmg
-        asset_name: Pd-L2Ork-$VERSION.dmg
+        asset_name: Pd-L2Ork-${{ needs.version.outputs.version }}.dmg
         asset_content_type: application/x-apple-diskimage
