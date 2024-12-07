@@ -1219,15 +1219,16 @@ iemguts_clean:
 IEMLIB_NAME=iemlib
 # omit the lib files and iem_mp3 (for patent reasons :( )
 IEMLIB_SRC := $(wildcard $(externals_src)/iemlib/iemlib1/src/*[^1].c) $(wildcard $(externals_src)/iemlib/iemlib2/src/*[^2].c)  $(wildcard $(externals_src)/iemlib/iem_t3_lib/src/t3_*.c)  $(wildcard $(externals_src)/iemlib/alias/*.c)
-
 IEMLIB_OBJECTS := $(IEMLIB_SRC:.c=.o)
+IEMLIB_TARGETS := $(IEMLIB_SRC:.c=.$(EXTENSION))
+
 $(IEMLIB_OBJECTS) : %.o : %.c
 	$(CC) -I$(externals_src)/iemlib/include $(CFLAGS) -O2 -funroll-loops -fomit-frame-pointer -fno-tree-vectorize -fno-strict-aliasing -o "$*.o" -c "$*.c"
 
-$(IEMLIB_SRC:.c=.$(EXTENSION)): $(IEMLIB_OBJECTS)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(LIBS) -o "$*.$(EXTENSION)" "$*.o"
+$(IEMLIB_TARGETS): $(IEMLIB_OBJECTS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(LIBS) -o "$@" "$(@:.$(EXTENSION)=.o)"
 
-iemlib: $(IEMLIB_SRC:.c=.$(EXTENSION))
+iemlib: $(IEMLIB_TARGETS)
 
 iemlib_install:
 	install -d $(DESTDIR)$(objectsdir)/$(IEMLIB_NAME)
