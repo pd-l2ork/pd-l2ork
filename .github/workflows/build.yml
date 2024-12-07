@@ -17,7 +17,7 @@ jobs:
       with:
         submodules: 'recursive'
     - name: make
-      run: make light
+      run: make
     - name: rename
       run: mv Pd-L2Ork-*.deb Pd-L2Ork.deb
     - uses: actions/upload-artifact@v4
@@ -35,11 +35,11 @@ jobs:
       with:
         submodules: 'recursive'
     - name: make
-      run: cd l2ork_addons && ./tar_em_up.sh -tkln
-    - uses: QQxiaoming/create-dmg-action@v0.0.2
+      run: cd l2ork_addons && ./tar_em_up.sh -Tkn
+    - uses: L-Super/create-dmg-actions@v1.0.3
       with:
         name: 'Pd-L2Ork'
-        srcdir: 'packages/darwin_app/build'
+        srcdir: 'packages/darwin_app/build/pd-l2ork.app'
     - uses: actions/upload-artifact@v4
       with:
         name: dmg
@@ -59,7 +59,7 @@ jobs:
           update: true
           install: git mingw-w64-ucrt-x86_64-gcc autoconf automake git libtool make mingw-w64-i686-dlfcn mingw-w64-i686-fftw mingw-w64-i686-fluidsynth mingw-w64-i686-SDL2 mingw-w64-i686-ftgl mingw-w64-i686-fribidi mingw-w64-i686-ladspa-sdk mingw-w64-i686-lame mingw-w64-i686-libsndfile mingw-w64-i686-libvorbis mingw-w64-i686-lua mingw-w64-i686-toolchain mingw-w64-i686-libjpeg-turbo mingw-w64-i686-speex rsync unzip wget mingw-w64-i686-cmake mingw-w64-i686-ninja mingw-w64-i686-glfw mingw-w64-i686-pcre mingw-w64-i686-ntldd-git
       - name: make
-        run: make light
+        run: make
       - name: rename
         run: mv Pd-L2Ork-*.exe Pd-L2Ork.exe
       - uses: actions/upload-artifact@v4
