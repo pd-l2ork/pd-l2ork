@@ -35,7 +35,7 @@ jobs:
       with:
         submodules: 'recursive'
     - name: make
-      run: cd l2ork_addons && ./tar_em_up.sh -Tkn
+      run: cd l2ork_addons && ./tar_em_up.sh -tkn
     - uses: L-Super/create-dmg-actions@v1.0.3
       with:
         name: 'Pd-L2Ork'
