@@ -2,9 +2,7 @@ name: Testing build pipelines
 
 on:
   push:
-    branches: [ "build-pipelines" ]
-  # pull_request:
-    # branches: [ "master" ]
+    branches: [ "master" ]
   workflow_dispatch:
 
 jobs:
