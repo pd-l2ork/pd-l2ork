@@ -32,9 +32,10 @@ jobs:
           dockerfile: ./webpdl2ork.Dockerfile
       - name: tag latest
         run: |
-          docker pull ghcr.io/${{ github.repository }}:${{ needs.version.outputs.version }}
-          docker tag ghcr.io/${{ github.repository }}:${{ needs.version.outputs.version }} ghcr.io/${{ github.repository }}:latest
-          docker push ghcr.io/${{ github.repository }}:latest
+          export REPO_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          docker pull ghcr.io/$REPO_NAME:${{ needs.version.outputs.version }}
+          docker tag ghcr.io/$REPO_NAME:${{ needs.version.outputs.version }} ghcr.io/$REPO_NAME:latest
+          docker push ghcr.io/$REPO_NAME:latest
 
   build-linux:
     runs-on: ubuntu-24.04
