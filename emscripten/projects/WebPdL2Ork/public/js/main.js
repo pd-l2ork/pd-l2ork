@@ -3519,7 +3519,7 @@ function text_to_tspans(canvas, svg_text, text, type) {
 
         if (is_comment) {
             // tags can be escaped with <!tag>, show these as literals
-            newtext = newtext.replace(/<!([!a-z0-9#/]+)>/g, "<$1>");
+            newtext = newtext.replace(/<!([!=a-z0-9#/]+)>/g, "<$1>");
         }
         if (newtext.length > 0) {
             // find a way to abstract away the canvas array and the DOM here
@@ -3549,8 +3549,8 @@ function text_to_tspans(canvas, svg_text, text, type) {
             spans[0] = ".";
         } else if (is_comment) {
             // split the text into individual spans and tags
-            spans = lines[i].split(/<[a-z0-9#/]+>/);
-            tags = lines[i].match(/<[a-z0-9#/]+>/g);
+            spans = lines[i].split(/<\/?(?:[bhisu]|=[a-z0-9#]+)>/);
+            tags = lines[i].match(/<\/?([bhisu]|=[a-z0-9#]+)>/g);
         }
         make_tspan(spans[0]);
         if (tags) {
@@ -3591,9 +3591,9 @@ function text_to_tspans(canvas, svg_text, text, type) {
                     break;
                 default:
                     // anything else is taken to be a color
-                    if (!tag.startsWith("</")) {
-                        fill = tag.slice(1, -1);
-                    } else if (fill === tag.slice(2, -1)) {
+                    if (tag.startsWith("<=")) {
+                        fill = tag.slice(2, -1);
+                    } else if (tag.startsWith("</=") && tag.slice(3, -1) === fill) {
                         fill = null;
                     }
                     break;
@@ -4914,20 +4914,42 @@ async function openPatch(content, filename) {
                     data.type = args[1];
                     data.x_pos = +args[2];
                     data.y_pos = +args[3];
-                    data.comment = [];
                     data.canvas = layer;
-                    const lines = args.slice(4).join(" ").replace(/ \\,/g, ",").replace(/\\; /g, ";\n").replace(/ ;/g, ";").replace(//g,'\n').split("\n");
-                    for (const line of lines) {
-                        const lines = line.match(new RegExp(`.{1,${widthOverride || 60}}(\\s|$)`,'g')) || [];
-                        for (const line of lines) {
-                            data.comment.push(line.trim());
-                        }
-                    }
                     data.id = `${data.type}_${nextHTMLID++}`;
 
-                    // create svg
-                    const text = create_item("text", gui_text_text(data, 0, layer.fontSize), layer.canvas);
-                    text_to_tspans(layer.canvas, text, data.comment.join('\n'), 'text');
+                    let rawText = args.slice(4).join(" ").replace(/ \\?,/g, ",").replace(/\\; /g, ";\n").replace(/ ;/g, ";").replace(//g,'\n');
+                    let lines = [];
+                    for(let chunk of rawText.split('\n')) {
+                        let tagExpr = /<\/?(?:[bhisu]|=[a-z0-9#]+)>/g; // Regex for finding tags
+                        let lineExpr = new RegExp(`.{1,${widthOverride || 60}}(\\s|$)`,'g'); // Regex for finding maximal whitespace-terminated line
+
+                        let chunkTags = [], chunkLines = [], match;
+
+                        // Find all of the tags in the current chunk
+                        while((match = tagExpr.exec(chunk)) != null)
+                            chunkTags.push(match);
+
+                        // Create a copy of the chunk with no tags. This was we can measure the width only of visible characters.
+                        let plainChunk = chunk.replace(tagExpr, '');
+
+                        // Split that chunk into pieces with the proper max width
+                        while((match = lineExpr.exec(plainChunk)))
+                            chunkLines.push(match);
+
+                        // Figure out where the splits are in the original string (by adding the length of the tags that were removed)
+                        let indexes = chunkLines.map(line => line.index + chunkTags.reduce((offset, tag) => offset + (tag.index < line.index ? tag[0].length : 0), 0));
+                        
+                        // Add newlines in the proper indexes. In reverse so that indexes don't change from insertions
+                        for(let index of indexes.reverse())
+                            if(index != 0)
+                                chunk = `${chunk.slice(0, index)}\n${chunk.slice(index)}`;
+
+                        // Add all of the new lines that were generated
+                        lines.push(...chunk.split('\n').map(line => line.trim()));
+                    }
+
+                    // Format the text
+                    text_to_tspans(layer.canvas, create_item("text", gui_text_text(data, 0, layer.fontSize), layer.canvas), lines.join('\n'), 'text');
                 } else
                     console.error('Invalid text:', args);
                 break;
