@@ -1437,7 +1437,7 @@ static void gatom_key(void *z, t_floatarg f)
             binbuf_clear(x->a_binbuf);
             while(curr < end) {
                 t_float f = strtof(curr, &next);
-                if(*next == ' ' || *next == 0)
+                if((*next == ' ' || *next == 0))
                     SETFLOAT(&at, f);
                 else {
                     while(*next != ' ' && *next != 0)
@@ -1451,6 +1451,9 @@ static void gatom_key(void *z, t_floatarg f)
                 }
                 curr = next + 1;
                 binbuf_add(x->a_binbuf, 1, &at);
+
+                while(*curr == ' ')
+                    curr++;
             }
         } else bug("gatom_key");
 

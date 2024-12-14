@@ -64,6 +64,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #ifdef __APPLE__
   #include <sys/types.h>
+  #include <stdio.h>
 #endif
 
 #ifdef unix

@@ -536,6 +536,7 @@ cyclone_templates: cyclone
 	install -p $(wildcard $(CYCLONE_PATH)/bin/*.wasm) $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)
 
 cyclone_install: cyclone_templates
+	install -p $(wildcard $(externals_src)/miXed/doc/help/cyclone/*.pd) $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)
 
 cyclone_clean:
 	rm ${CYCLONE_PATH}/bin/*.wasm
@@ -1218,14 +1219,18 @@ iemguts_clean:
 IEMLIB_NAME=iemlib
 # omit the lib files and iem_mp3 (for patent reasons :( )
 IEMLIB_SRC := $(wildcard $(externals_src)/iemlib/iemlib1/src/*[^1].c) $(wildcard $(externals_src)/iemlib/iemlib2/src/*[^2].c)  $(wildcard $(externals_src)/iemlib/iem_t3_lib/src/t3_*.c)  $(wildcard $(externals_src)/iemlib/alias/*.c)
-
 IEMLIB_OBJECTS := $(IEMLIB_SRC:.c=.o)
+IEMLIB_TARGETS := $(IEMLIB_SRC:.c=.$(EXTENSION))
+
 $(IEMLIB_OBJECTS) : %.o : %.c
 	$(CC) -I$(externals_src)/iemlib/include $(CFLAGS) -O2 -funroll-loops -fomit-frame-pointer -fno-tree-vectorize -fno-strict-aliasing -o "$*.o" -c "$*.c"
 
-iemlib: $(IEMLIB_SRC:.c=.$(EXTENSION))
+$(IEMLIB_TARGETS): $(IEMLIB_OBJECTS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(LIBS) -o "$@" "$(@:.$(EXTENSION)=.o)"
 
-iemlib_install: iemlib
+iemlib: $(IEMLIB_TARGETS)
+
+iemlib_install:
 	install -d $(DESTDIR)$(objectsdir)/$(IEMLIB_NAME)
 	$(scripts_src)/generate-libdir-metafile.sh $(DESTDIR)$(objectsdir) $(IEMLIB_NAME) \
 		--description "a collection of objects written at IEM/KUG" \
@@ -2983,17 +2988,35 @@ endif
 #------------------------------------------------------------------------------#
 # NEURALNET
 
+ifneq ($(EMSCRIPTEN), yes)
 neuraln:
 	echo boo
 	cd $(externals_src)/neuralnet && \
 		rm -f *.o && \
 		git submodule update --init --recursive && \
 		make PDDIR=$(pd_src) PDBINDIR=$(pd_src)/src/
+else
+NEURAL_SRC=$(wildcard $(externals_src)/neuralnet/src/*.c)
+NEURAL_OBJ=$(NEURAL_SRC:.c=.o)
+NEURAL_TARGETS=$(NEURAL_SRC:.c=.$(EXTENSION))
 
-neuraln_install: neuralnet
+$(NEURAL_OBJ): $(NEURAL_SRC)
+	$(CC) $(CFLAGS) $(LIBS) -c -o "$*.o" "$*.c"
+
+$(NEURAL_TARGETS): $(NEURAL_OBJ)
+	$(CC) $(LDFLAGS) $(CFLAGS) $(LIBS) -o "$*.$(EXTENSION)" "$*.o"
+
+neuraln: $(NEURAL_TARGETS)
+endif
+
+neuraln_install: neuraln
 	install -d $(DESTDIR)$(objectsdir)/neuralnet
+ifneq ($(EMSCRIPTEN), yes)
 	install -p $(externals_src)/neuralnet/*.${EXTENSION} \
 		$(DESTDIR)$(objectsdir)/neuralnet/
+else
+	install -p $(NEURAL_TARGETS) $(DESTDIR)$(objectsdir)/neuralnet/
+endif
 	install -p $(externals_src)/neuralnet/*.pd \
 		$(DESTDIR)$(objectsdir)/neuralnet/
 	cp -rf $(externals_src)/neuralnet/examples \

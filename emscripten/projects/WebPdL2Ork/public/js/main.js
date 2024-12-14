@@ -13,7 +13,7 @@ let fileCache = {};
 //a long time to load. Instead, the files are listed here, and are symlinked using the FS.symlink
 //function in emscriptens internal filesystem. The real cyclone files are Hammer.wasm and Sickle.wasm.
 //All of these files will be symlinked to those two files.
-let hammerFiles = ['Append.wasm','bangbang.wasm','match.wasm','spell.wasm','Borax.wasm','bondo.wasm','maximum.wasm','split.wasm','Bucket.wasm','buddy.wasm','mean.wasm','spray.wasm','Clip.wasm','capture.wasm','midiflush.wasm','sprintf.wasm','Decode.wasm','cartopol.wasm','midiformat.wasm','substitute.wasm','Histo.wasm','coll.wasm','midiparse.wasm','sustain.wasm','comment.wasm','minimum.wasm','switch.wasm','cosh.wasm','mousefilter.wasm','tanh.wasm','counter.wasm','mtr.wasm','testmess.wasm','cycle.wasm','next.wasm','thresh.wasm','MouseState.wasm','dbtoa.wasm','offer.wasm','tosymbol.wasm','Peak.wasm','decide.wasm','onebang.wasm','universal.wasm','Table.wasm','drunk.wasm','past.wasm','urn.wasm','TogEdge.wasm','flush.wasm','xbendin.wasm','Trough.wasm','forward.wasm','poltocar.wasm','xbendin2.wasm','Uzi.wasm','fromsymbol.wasm','pong.wasm','xbendout.wasm','accum.wasm','funbuff.wasm','prepend.wasm','xbendout2.wasm','acos.wasm','funnel.wasm','prob.wasm','xnotein.wasm','active.wasm','gate.wasm','pv.wasm','xnoteout.wasm','allhammers.wasm','grab.wasm','round.wasm','zl.wasm','anal.wasm','hammer.wasm','seq.wasm','asin.wasm','iter.wasm','sinh.wasm','loadmess.wasm','speedlim.wasm'];
+let hammerFiles = ['Append.wasm','bangbang.wasm','match.wasm','spell.wasm','Borax.wasm','bondo.wasm','maximum.wasm','split.wasm','Bucket.wasm','buddy.wasm','mean.wasm','spray.wasm','Clip.wasm','capture.wasm','midiflush.wasm','sprintf.wasm','Decode.wasm','cartopol.wasm','midiformat.wasm','substitute.wasm','Histo.wasm','coll.wasm','midiparse.wasm','sustain.wasm','comment.wasm','minimum.wasm','switch.wasm','cosh.wasm','tanh.wasm','counter.wasm','mtr.wasm','testmess.wasm','cycle.wasm','next.wasm','thresh.wasm','dbtoa.wasm','offer.wasm','tosymbol.wasm','Peak.wasm','decide.wasm','onebang.wasm','universal.wasm','Table.wasm','drunk.wasm','past.wasm','urn.wasm','TogEdge.wasm','flush.wasm','xbendin.wasm','Trough.wasm','forward.wasm','poltocar.wasm','xbendin2.wasm','Uzi.wasm','fromsymbol.wasm','pong.wasm','xbendout.wasm','accum.wasm','funbuff.wasm','prepend.wasm','xbendout2.wasm','acos.wasm','funnel.wasm','prob.wasm','xnotein.wasm','active.wasm','gate.wasm','pv.wasm','xnoteout.wasm','allhammers.wasm','grab.wasm','round.wasm','zl.wasm','anal.wasm','hammer.wasm','seq.wasm','asin.wasm','iter.wasm','sinh.wasm','loadmess.wasm','speedlim.wasm'];
 let sickleFiles = ['abs~.wasm', 'bitand~.wasm', 'cosx~.wasm', 'kink~.wasm', 'minmax~.wasm', 'rampsmooth~.wasm', 'Snapshot~.wasm', 'acos~.wasm', 'bitnot~.wasm', 'count~.wasm', 'Line~.wasm', 'mstosamps~.wasm', 'rand~.wasm', 'spike~.wasm', 'acosh~.wasm', 'bitor~.wasm', 'curve~.wasm', 'linedrive~.wasm', 'onepole~.wasm', 'record~.wasm', 'svf~.wasm', 'allpass~.wasm', 'bitshift~.wasm', 'log~.wasm', 'overdrive~.wasm', 'reson~.wasm', 'tanh~.wasm', 'allsickles~.wasm', 'bitxor~.wasm', 'cycle~.wasm', 'lookup~.wasm', 'peakamp~.wasm', 'round~.wasm', 'tanx~.wasm', 'asin~.wasm', 'buffir~.wasm', 'dbtoa~.wasm', 'lores~.wasm', 'peek~.wasm', 'sah~.wasm', 'train~.wasm', 'asinh~.wasm', 'capture~.wasm', 'delay~.wasm', 'phasewrap~.wasm', 'sampstoms~.wasm', 'trapezoid~.wasm', 'atan2~.wasm', 'cartopol~.wasm', 'delta~.wasm', 'pink~.wasm', 'Scope~.wasm', 'triangle~.wasm', 'atan~.wasm', 'change~.wasm', 'deltaclip~.wasm', 'play~.wasm', 'trunc~.wasm', 'atanh~.wasm', 'click~.wasm', 'edge~.wasm', 'poke~.wasm', 'sickle~.wasm', 'vectral~.wasm', 'atodb~.wasm', 'Clip~.wasm', 'frameaccum~.wasm', 'matrix~.wasm', 'poltocar~.wasm', 'sinh~.wasm', 'wave~.wasm', 'average~.wasm', 'comb~.wasm', 'framedelta~.wasm', 'maximum~.wasm', 'pong~.wasm', 'sinx~.wasm', 'zerox~.wasm', 'avg~.wasm', 'cosh~.wasm', 'index~.wasm', 'minimum~.wasm', 'pow~.wasm', 'slide~.wasm'];
 let nextScopeID = 0;
 
@@ -855,7 +855,7 @@ var Module = {
                                     gui_subscribe(data);
                                     break;
                                 case "label":
-                                    data.label = list[0] === "empty" ? "" : list[0].replace(/�/g, ' ​');
+                                    data.label = list[0] === "empty" ? "" : list[0].replace(/�/g, '​ ​');
                                     data.text.textContent = data.label;
                                     break;
                                 case "label_pos":
@@ -3410,6 +3410,19 @@ function gobj_font_y_kludge(fontsize) {
     }
 }
 
+function text_line_height_kludge(fontsize) {
+    var pd_fontsize = fontsize;
+    switch (pd_fontsize) {
+        case 8: return 11;
+        case 10: return 13;
+        case 12: return 16;
+        case 16: return 19;
+        case 24: return 29;
+        case 36: return 44;
+        default: return pd_fontsize + 2;
+    }
+}
+
 let font_engine_sanity = false;
 
 function set_font_engine_sanity() {
@@ -3489,6 +3502,110 @@ function gobj_fontsize_kludge(fontsize, return_type) {
 
 function pd_fontsize_to_gui_fontsize(fontsize) {
     return gobj_fontsize_kludge(fontsize, "gui");
+}
+
+function text_to_tspans(canvas, svg_text, text, type) {
+    var lines, i, isatom, len, tspan, fontsize, newtext, text_node;
+    // the type argument is optional, but it *will* be set when we're being
+    // called via rtext_senditup() in order to update an object text
+    var is_comment = type && type === "text";
+    var init_attr, style = {}, fill = null;
+    // Get fontsize (minus the trailing "px")
+    fontsize = svg_text.getAttribute("font-size").slice(0, -2);
+    var dy = text_line_height_kludge(+fontsize);
+    
+    function make_tspan(span) {
+        newtext = span;
+
+        if (is_comment) {
+            // tags can be escaped with <!tag>, show these as literals
+            newtext = newtext.replace(/<!([!=a-z0-9#/]+)>/g, "<$1>");
+        }
+        if (newtext.length > 0) {
+            // find a way to abstract away the canvas array and the DOM here
+            var attr = init_attr;
+            if (fill) attr.fill = fill;
+            tspan = create_item("tspan", attr, canvas);
+            for (var x in style) tspan.style[x] = style[x];
+            text_node = document.createTextNode(newtext);
+            if (!/^\s*$/.test(newtext)) init_attr = {};
+            tspan.appendChild(text_node);
+            svg_text.appendChild(tspan);
+        }
+    }
+
+    isatom = 0;
+    lines = text.split("\n");
+    len = lines.length;
+    for (i = 0; i < len; i++) {
+        var spans = [lines[i]], tags = null;
+        init_attr = { dy: i==0 ? 0 : dy + "px", x: svg_text.getAttribute('x') };
+        delete style.visibility;
+        if (/^\s*$/.test(lines[i])) {
+            // ag: empty spans won't render correctly, so add something other
+            // than a blank and hide the contents of the tspan. See
+            // https://stackoverflow.com/a/58429593
+            style.visibility = "hidden";
+            spans[0] = ".";
+        } else if (is_comment) {
+            // split the text into individual spans and tags
+            spans = lines[i].split(/<\/?(?:[bhisu]|=[a-z0-9#]+)>/);
+            tags = lines[i].match(/<\/?([bhisu]|=[a-z0-9#]+)>/g);
+        }
+        make_tspan(spans[0]);
+        if (tags) {
+            for (var j = 1, k = 0; j < spans.length; j++, k++) {
+                var tag = tags[k];
+                switch (tag) {
+                case "<b>":
+                    style.fontWeight = "bold";
+                    break;
+                case "</b>":
+                    delete style.fontWeight;
+                    break;
+                case "<i>":
+                    style.fontStyle = "italic";
+                    break;
+                case "</i>":
+                    delete style.fontStyle;
+                    break;
+                case "<s>":
+                    style.textDecoration = "line-through";
+                    break;
+                case "</s>":
+                    delete style.textDecoration;
+                    break;
+                case "<u>":
+                    style.textDecoration = "underline";
+                    break;
+                case "</u>":
+                    delete style.textDecoration;
+                    break;
+                case "<h>":
+                    style.fontSize = "120%";
+                    style.fontWeight = "bold";
+                    break;
+                case "</h>":
+                    delete style.fontSize;
+                    delete style.fontWeight;
+                    break;
+                default:
+                    // anything else is taken to be a color
+                    if (tag.startsWith("<=")) {
+                        fill = tag.slice(2, -1);
+                    } else if (tag.startsWith("</=") && tag.slice(3, -1) === fill) {
+                        fill = null;
+                    }
+                    break;
+                }
+                make_tspan(spans[j]);
+            }
+        }
+        // make sure that spaces properly show
+        tspan.style.setProperty("white-space", "normal");
+        if (isatom)
+            break;
+    }
 }
 
 function gui_text_text(data, line_index, fontSize) {
@@ -3753,6 +3870,7 @@ async function openPatch(content, filename) {
                                         y_pos: layer.dimensions.contentY - 1.5,
                                         id: `title_${nextHTMLID}_${i}`,
                                     }, i, layer.fontSize), layer.canvas);
+                                    text.style['text-shadow'] ='-0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff';
                                     text.textContent = layer.arrays[i].name;
                                     layer.labels.push(text);
                                     nextHTMLID++;
@@ -3763,8 +3881,10 @@ async function openPatch(content, filename) {
                                     y_pos: layer.dimensions.contentY,
                                     id: `title_${nextHTMLID++}`
                                 }, 0, layer.fontSize), layer.canvas);
-                                if(layer.arrays.length)
+                                if(layer.arrays.length) {
                                     text.textContent = layer.arrays[0].name;
+                                    text.style['text-shadow'] ='-0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff';
+                                }
                                 else
                                     text.textContent = args.slice(4).join(' ');
                                 layer.labels.push(text);
@@ -4794,24 +4914,42 @@ async function openPatch(content, filename) {
                     data.type = args[1];
                     data.x_pos = +args[2];
                     data.y_pos = +args[3];
-                    data.comment = [];
                     data.canvas = layer;
-                    const lines = args.slice(4).join(" ").replace(/ \\,/g, ",").replace(/\\; /g, ";\n").replace(/ ;/g, ";").replace(//g,'\n').split("\n");
-                    for (const line of lines) {
-                        const lines = line.match(new RegExp(`.{1,${widthOverride || 60}}(\\s|$)`,'g')) || [];
-                        for (const line of lines) {
-                            data.comment.push(line.trim());
-                        }
-                    }
                     data.id = `${data.type}_${nextHTMLID++}`;
 
-                    // create svg
-                    data.texts = [];
-                    for (let i = 0; i < data.comment.length; i++) {
-                        const text = create_item("text", gui_text_text(data, i, layer.fontSize), layer.canvas);
-                        text.textContent = data.comment[i];
-                        data.texts.push(text);
+                    let rawText = args.slice(4).join(" ").replace(/ \\?,/g, ",").replace(/\\; /g, ";\n").replace(/ ;/g, ";").replace(//g,'\n');
+                    let lines = [];
+                    for(let chunk of rawText.split('\n')) {
+                        let tagExpr = /<\/?(?:[bhisu]|=[a-z0-9#]+)>/g; // Regex for finding tags
+                        let lineExpr = new RegExp(`.{1,${widthOverride || 60}}(\\s|$)`,'g'); // Regex for finding maximal whitespace-terminated line
+
+                        let chunkTags = [], chunkLines = [], match;
+
+                        // Find all of the tags in the current chunk
+                        while((match = tagExpr.exec(chunk)) != null)
+                            chunkTags.push(match);
+
+                        // Create a copy of the chunk with no tags. This was we can measure the width only of visible characters.
+                        let plainChunk = chunk.replace(tagExpr, '');
+
+                        // Split that chunk into pieces with the proper max width
+                        while((match = lineExpr.exec(plainChunk)))
+                            chunkLines.push(match);
+
+                        // Figure out where the splits are in the original string (by adding the length of the tags that were removed)
+                        let indexes = chunkLines.map(line => line.index + chunkTags.reduce((offset, tag) => offset + (tag.index < line.index ? tag[0].length : 0), 0));
+                        
+                        // Add newlines in the proper indexes. In reverse so that indexes don't change from insertions
+                        for(let index of indexes.reverse())
+                            if(index != 0)
+                                chunk = `${chunk.slice(0, index)}\n${chunk.slice(index)}`;
+
+                        // Add all of the new lines that were generated
+                        lines.push(...chunk.split('\n').map(line => line.trim()));
                     }
+
+                    // Format the text
+                    text_to_tspans(layer.canvas, create_item("text", gui_text_text(data, 0, layer.fontSize), layer.canvas), lines.join('\n'), 'text');
                 } else
                     console.error('Invalid text:', args);
                 break;

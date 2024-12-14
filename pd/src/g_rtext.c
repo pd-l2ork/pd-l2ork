@@ -8,6 +8,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <stdio.h>
 #include "m_pd.h"
 #include "m_imp.h"
@@ -229,6 +230,35 @@ extern int sys_oldtclversion;
 extern int is_dropdown(t_text *x);
 extern t_class *gatom_class;
 
+// Parse rtf tags. The syntax is [bhisu]|=color, optionally preceded by '/'
+// indicating an end tag, and enclosed in '<' and '>'. Here, 'color' indicates
+// an HTML color spec which can be either an (alphanumeric) color name, or a
+// color triplet beginning with '#'. NOTE: We want to be as specific as
+// possible here, since help patches also use <...> as ad-hoc syntax for
+// certain meta variables, in which case we want to treat them as literals.
+static int is_tag_char(char c, int j)
+{
+    // simple DFA: j==1 indicates the beginning og the parse; state 0 is at
+    // the beginning of the tag, state 1 is when we've read an initial '/',
+    // state 2 when we've read the '=' prefix starting a color spec, and state
+    // -1 is error (we've reached a final state where we can't accept any more
+    // characters).
+    static int state = 0;
+    int ret = 0;
+    if (j == 1) state = 0;
+    if (state == 0) {
+        ret = strchr("bhisu=/", c) != NULL;
+        state = c=='/' ? 1 : c=='=' ? 2 : -1;
+    } else if (state == 1) {
+        ret = strchr("bhisu=", c) != NULL;
+        state = c=='=' ? 2 : -1;
+    } else if (state == 2) {
+        // here we keep eating away all chars that can be in a color spec
+        ret = islower(c) || isdigit(c) || c == '#';
+    }
+    return ret;
+}
+
 static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
     int *indexp)
 {
@@ -276,6 +306,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
         if (x->x_bufsize >= 100)
              tempbuf = (char *)t_getbytes(2 * x->x_bufsize + 1);
         else tempbuf = smallbuf;
+        int large = 0;
         while (x_bufsize_c - inindex_c > 0)
         {
             //bvfound = 0;
@@ -285,6 +316,42 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
                 (inchars_c > widthlimit_c ? widthlimit_c : inchars_c);
             int maxindex_b = u8_offset(x->x_buf + inindex_b, maxindex_c,
                 x->x_bufsize - inindex_b);
+            // deal with rich text tags in the input (comment text)
+            int tag_width = 0, extra_width = 0;
+             if (x->x_text->te_type == T_TEXT) {
+                int extra = 0, in_tag = 0;
+                for (int i = inindex_b; i < inindex_b+maxindex_b &&
+                         x->x_buf[i] != '\n' && x->x_buf[i] != '\v'; i++) {
+                    if (x->x_buf[i] == '<' &&
+                        // skip escaped tags
+                        i+1 < inindex_b+maxindex_b && x->x_buf[i+1] != '!') {
+                        int j;
+                        for (j = i+1; j < inindex_b+maxindex_b &&
+                                 is_tag_char(x->x_buf[j], j-i); j++) ;
+                        if (j < inindex_b+maxindex_b && x->x_buf[j] == '>') {
+                            if (strncmp(x->x_buf+i+1, "h", j-i-1) == 0)
+                                large = 1;
+                            else if (strncmp(x->x_buf+i+1, "/h", j-i-1) == 0)
+                                large = 0;
+                            tag_width += j-i+1;
+                            in_tag = 1;
+                        }
+                    } else if (in_tag && x->x_buf[i] == '>') {
+                        in_tag = 0;
+                    } else if (large && !in_tag) {
+                        extra++;
+                    }
+                }
+                // ag: This is a rough estimate of extra width needed to
+                // accommodate the large font size of headers.
+                extra_width = (int)(extra*0.2+0.5);
+            }
+            int tag_offs = tag_width - extra_width;
+            if (tag_offs && maxindex_c == widthlimit_c) {
+                // recalculate offsets
+                maxindex_c += tag_offs;
+                maxindex_b += tag_offs;
+            }
             int eatchar = 1;
             //fprintf(stderr, "firstone <%s> inindex_b=%d maxindex_b=%d\n", x->x_buf + inindex_b, inindex_b, maxindex_b);
             // ico@vt.edu 2021-08-06:
@@ -311,7 +378,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
                 //post("no n or v found %d", foundit_b);
                 /* too much text to fit in one line? */
                 //post("inchars_c=%d widthlimit_c=%d", inchars_c, widthlimit_c);
-                if (inchars_c > widthlimit_c)
+                if (inchars_c - tag_offs > widthlimit_c)
                 {
                     /* is there a space to break the line at?  OK if it's even
                     one byte past the end since in this context we know there's
@@ -408,8 +475,8 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
                 }
             }
             // if we found a row that is longer than previous (total width)
-            if (foundit_c > ncolumns) {
-                ncolumns = foundit_c; // - (x->x_buf[inindex_c-2] != ';' && bvfound ? 1 : 0);
+            if (foundit_c - tag_offs > ncolumns) {
+                ncolumns = foundit_c - tag_offs; // - (x->x_buf[inindex_c-2] != ';' && bvfound ? 1 : 0);
                 /*post("larger ncolumns %d %d %d | %d %d | %d",
                     x->x_buf[inindex_c-2],
                     x->x_buf[inindex_c-1],
@@ -488,7 +555,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
             int widthwas = x->x_text->te_width, newwidth = 0, newheight = 0,
                 newindex = 0;
             x->x_text->te_width = 0;
-            rtext_senditup(x, 0, &newwidth, &newheight, &newindex);
+            rtext_senditup(x, SEND_CHECK, &newwidth, &newheight, &newindex);
             if (newwidth/fontwidth != widthwas)
                 x->x_text->te_width = widthwas;
             else x->x_text->te_width = 0;
@@ -533,7 +600,9 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
                     pixwide, pixhigh, 0);
             }
             //post("send_update <%s>", tempbuf);
-            gui_vmess("gui_text_set", "xss", canvas, x->x_tag, tempbuf);
+            // note that the type argument comes last here since it is optional
+           gui_vmess("gui_text_set", "xsss",
+                      canvas, x->x_tag, tempbuf, rtext_gettype(x)->s_name);
 
             if (x->x_active)
             {

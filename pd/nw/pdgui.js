@@ -4854,18 +4854,17 @@ function text_line_height_kludge(fontsize, fontsize_type) {
     }
 }
 
-function text_to_tspans(cid, svg_text, text) {
+function text_to_tspans(cid, svg_text, text, type) {
     var lines, i, isatom, len, tspan, fontsize, newtext, text_node;
-
-    //post("incoming text=<"+text+">");
-    isatom = 0;
-    //post("parentnode"+target);
-    lines = text.split("\n");
-    len = lines.length;
+    // the type argument is optional, but it *will* be set when we're being
+    // called via rtext_senditup() in order to update an object text
+    var is_comment = type && type === "text";
+    var init_attr, style = {}, fill = null;
     // Get fontsize (minus the trailing "px")
     fontsize = svg_text.getAttribute("font-size").slice(0, -2);
-    //post("text_to_tspans " + len + " " + svg_text.classList);
-    for (i = 0; i < len; i++) {
+    var dy = text_line_height_kludge(+fontsize, "gui");
+    
+    function make_tspan(span) {
         // remove escaped commas and semicolons in gatom and comment objects only
         newtext = null;
         if (svg_text.classList.contains("atom")) {
@@ -4907,28 +4906,96 @@ function text_to_tspans(cid, svg_text, text) {
                 //post("new newtext=<"+newtext+">");
             }
         }
-        if (newtext == null)
-        {
-            // 2021-05-21 ico@vt.edu: here we add a bogus space because
-            // tspan is ignored unless it has at least one char inside it
-            // we do not have to do this later when sending things back
-            // because this is only used when an inactive object is drawn
-            if (lines[i] === '')
-                lines[i] = ' ';
-            newtext = lines[i];
-        }
+        if(newtext == null)
+            newtext = span;
 
-        tspan = create_item(cid, "tspan", {
-            dy: i == 0 ? 0 : text_line_height_kludge(+fontsize, "gui") + "px",
-            x: 0,
-        });
+        if (is_comment) {
+            // tags can be escaped with <!tag>, show these as literals
+            newtext = newtext.replace(/<!([!=a-z0-9#/]+)>/g, "<$1>");
+        }
+        if (newtext.length > 0) {
+            // find a way to abstract away the canvas array and the DOM here
+            var attr = init_attr;
+            if (fill) attr.fill = fill;
+            tspan = create_item(cid, "tspan", attr);
+            for (var x in style) tspan.style[x] = style[x];
+            text_node = patchwin[cid].window.document
+                .createTextNode(newtext);
+            if (!/^\s*$/.test(newtext)) init_attr = {};
+            tspan.appendChild(text_node);
+            svg_text.appendChild(tspan);
+        }
+    }
+
+    isatom = 0;
+    lines = text.split("\n");
+    len = lines.length;
+    for (i = 0; i < len; i++) {
+        var spans = [lines[i]], tags = null;
+        init_attr = { dy: i==0 ? 0 : dy + "px", x: 0 };
+        delete style.visibility;
+        if (/^\s*$/.test(lines[i])) {
+            // ag: empty spans won't render correctly, so add something other
+            // than a blank and hide the contents of the tspan. See
+            // https://stackoverflow.com/a/58429593
+            style.visibility = "hidden";
+            spans[0] = ".";
+        } else if (is_comment) {
+            // split the text into individual spans and tags
+            spans = lines[i].split(/<\/?(?:[bhisu]|=[a-z0-9#]+)>/);
+            tags = lines[i].match(/<\/?([bhisu]|=[a-z0-9#]+)>/g);
+        }
+        make_tspan(spans[0]);
+        if (tags) {
+            for (var j = 1, k = 0; j < spans.length; j++, k++) {
+                var tag = tags[k];
+                switch (tag) {
+                case "<b>":
+                    style.fontWeight = "bold";
+                    break;
+                case "</b>":
+                    delete style.fontWeight;
+                    break;
+                case "<i>":
+                    style.fontStyle = "italic";
+                    break;
+                case "</i>":
+                    delete style.fontStyle;
+                    break;
+                case "<s>":
+                    style.textDecoration = "line-through";
+                    break;
+                case "</s>":
+                    delete style.textDecoration;
+                    break;
+                case "<u>":
+                    style.textDecoration = "underline";
+                    break;
+                case "</u>":
+                    delete style.textDecoration;
+                    break;
+                case "<h>":
+                    style.fontSize = "120%";
+                    style.fontWeight = "bold";
+                    break;
+                case "</h>":
+                    delete style.fontSize;
+                    delete style.fontWeight;
+                    break;
+                default:
+                    // any tag starting with '=' is taken to be a color
+                    if (tag.startsWith("<=")) {
+                        fill = tag.slice(2, -1);
+                    } else if (tag.startsWith("</=") && tag.slice(3, -1) === fill) {
+                        fill = null;
+                    }
+                    break;
+                }
+                make_tspan(spans[j]);
+            }
+        }
         // make sure that spaces properly show
         tspan.style.setProperty("white-space", "pre");
-        // find a way to abstract away the canvas array and the DOM here
-        text_node = patchwin[cid].window.document
-                    .createTextNode(newtext);
-        tspan.appendChild(text_node);
-        svg_text.appendChild(tspan);
         if (isatom)
             break;
     }
@@ -5137,7 +5204,7 @@ function gui_text_new(cid, tag, type, isselected, left_margin,
         // whitespace.
         text = text.trim();
         // fill svg_text with tspan content by splitting on '\n'
-        text_to_tspans(cid, svg_text, text);
+        text_to_tspans(cid, svg_text, text, type);
         if (is_toplevel && parent.classList.contains("gop"))
             parent.prepend(svg_text);
         else
@@ -5166,12 +5233,12 @@ function gui_gobj_erase(cid, tag) {
     });
 }
 
-function gui_text_set (cid, tag, text) {
+function gui_text_set (cid, tag, text, type) {
     //post("gui_text_set tag=" + tag + " text=<" + text + ">");
     gui(cid).get_elem(tag + "text", function(e) {
         text = text.trim();
         e.textContent = "";
-        text_to_tspans(cid, e, text);
+        text_to_tspans(cid, e, text, type);
     });
 }
 
