@@ -61,6 +61,13 @@
   <url type="bugtracker">https://github.com/pd-l2ork/pd-l2ork/issues</url>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="20241217" type="stable" date="2024-12-17">
+      <description>
+        <p>
+          Integrated rich text and vanilla 0.55 additions, improved indexing, initial clean-up of the cyclone library (active, mousefilter, and MouseState), added neuralnet, reworked flite, 59 new L2Ork Tweeter instruments and a new piece, added MadMapper interfacing patches.
+        </p>
+      </description>
+    </release>
     <release version="20241111" type="stable" date="2024-11-11">
       <description>
         <p>
