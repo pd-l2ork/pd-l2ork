@@ -526,8 +526,10 @@ function finish_index() {
 	console.log(err);
     }
     var t = new Date().getTime() / 1000;
-    post("finished " + (have_cache?"building":"loading") + " help index (" +
-	 (t-index_start_time).toFixed(2) + " secs)");
+    setTimeout(function() {
+        post("finished " + (have_cache?"building":"loading") + " help index (" +
+             (t-index_start_time).toFixed(2) + " secs)");
+    }, 100);
 
     //post("loading file from the disk");
     var idxf = fs.readFileSync
@@ -554,24 +556,33 @@ function expand_tilde(filepath) {
 function check_timestamps(manif)
 {
     manif = manif.split('\n');
-    for (var j = 0, l = manif.length; j < l; j++) {
-	if (manif[j]) {
-	    var e = manif[j].replace(/\\:/g, "\x1c").split(';:')
-		.map(x => x
-		     .replace(/\x1c/g, ":")
-		     .replace(/\\n/g, "\n")
-		     .replace(/\\\\/g, "\\"));
-	    var dirname = e[0] ? e[0] : null;
-	    var stamp = e[1] ? parseFloat(e[1]) : 0.0;
-	    try {
-		var st = fs.statSync(dirname);
-		if (st.mtimeMs > stamp) {
-		    return false;
-		}
-	    } catch (err) {
-		return false;
-	    }
-	}
+    for (var j = 0, l = manif.length; j < l; j++)
+    {
+    	if (manif[j])
+        {
+    	    var e = manif[j].replace(/\\:/g, "\x1c").split(';:')
+    		.map(x => x
+                .replace(/\x1c/g, ":")
+                // ico@vt.edu 2024-12-16: the following breaks on \\neural where
+                // \n is misinterpreted as line break. since no other paths
+                // currently have line breaks, we can safely remove this altogether
+                //.replace(/\\n/g, "\n")
+                .replace(/\\\\/g, "\\"));
+    	    var dirname = e[0] ? e[0] : null;
+    	    var stamp = e[1] ? parseFloat(e[1]) : 0.0;
+    	    try
+            {
+                var st = fs.statSync(dirname);
+                if (st.mtimeMs > stamp)
+                {
+                    return false;
+                }
+    	    } catch (err)
+            {
+        		return false;
+                //post("...need to rebuild due to error dirname=" + dirname + " stamp=" + stamp);
+    	    }
+    	}
     }
     return true;
 }
@@ -617,7 +628,7 @@ function make_index(force) {
         } else {
             // reset the help path index, then invoke the main pass
             i = 0;
-            post("building help index");
+            post("building help index...");
             detail_files();
         }
     }
@@ -640,7 +651,9 @@ function make_index(force) {
     // the preferences "Rebuild Index" button)
     if (!force && idx && manif && check_timestamps(manif) && !browser_init) {
         // index cache is present and up-to-date, load it
-        post("loading cached help index from " + cache_name);
+        setTimeout(function() {
+            post("\nloading cached help index from " + cache_name);
+        }, 100);
         idx = idx.split('\n');
         for (var j = 0, l = idx.length; j < l; j++) {
             if (idx[j]) {
@@ -674,8 +687,28 @@ function make_index(force) {
     } else {
         // no index cache, or it is out of date, so (re)build it now, and
         // save the new cache along the way
-        post("scanning help patches in " + doc_path);
-        dive(doc_path, add_doc_to_index, make_index_cont);
+        setTimeout(function() {
+            var idx, manif, prefix = "";
+            try {
+                // test for index cache and manifest
+                idx = fs.readFileSync(expand_tilde(cache_name), 'utf8');
+                manif = fs.readFileSync(expand_tilde(stamps_name), 'utf8');
+            } catch (err) {
+                //console.log(err);
+            }
+            if (manif)
+            {
+                prefix = "re";
+            }
+            post("\n" + prefix + "building search index...\nthis may take a " +
+                 "while (up to 2 minutes, or so) and will have to be done " +
+                 "only once, unless you alter indexing options in the " +
+                 "preferences window's General tab.\n" +
+                 "scanning help patches in " + doc_path + "...");
+            setTimeout(function() {
+                dive(doc_path, add_doc_to_index, make_index_cont);
+            }, 100);
+        }, 500);
     }
     // ico 2023-07-22:
     // finally load the indexed file into working memory
