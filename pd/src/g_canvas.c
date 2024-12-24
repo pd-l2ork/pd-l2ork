@@ -31,6 +31,8 @@ extern int do_not_redraw;
 extern void canvas_drawconnection(t_canvas *x, int lx1, int ly1, int lx2, int ly2, t_int tag, int issignal);
 extern void canvas_updateconnection(t_canvas *x, int lx1, int ly1, int lx2, int ly2, t_int tag);
 
+extern void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av);
+
     /* LATER consider adding font size to this struct (see glist_getfont()) */
 struct _canvasenvironment
 {
@@ -1199,8 +1201,6 @@ void canvas_update_edit_menu_this_and_all_children_canvases(t_canvas *x, int edi
     }
     gui_vmess("canvas_menu_set_editable", "xi", x, editable);
 }
-
-extern void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av);
 
 void canvas_set_editable(t_canvas *x, t_floatarg f)
 {
