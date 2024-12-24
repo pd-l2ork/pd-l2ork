@@ -4894,7 +4894,9 @@ function text_to_tspans(cid, svg_text, text, type) {
     var is_comment = type && type === "text";
     var init_attr, style = {}, fill = null;
     // Get fontsize (minus the trailing "px")
-    fontsize = svg_text.getAttribute("font-size").slice(0, -2);
+    fontsize = svg_text.getAttribute("font-size")
+    if (fontsize.endsWith('px'))
+        fontsize = fontsize.slice(0, -2);
     var dy = text_line_height_kludge(+fontsize, "gui");
     
     function make_tspan(span) {
