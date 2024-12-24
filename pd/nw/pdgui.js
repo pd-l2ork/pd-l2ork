@@ -2653,6 +2653,7 @@ function update_svg_background(cid, svg_elem) {
 }
 
 function canvas_fake_alt_key_release(cid) {
+    //post("fake_alt_key_release");
     alt_key = 0;
 }
 
