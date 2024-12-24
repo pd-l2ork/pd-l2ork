@@ -1135,6 +1135,27 @@ void canvas_show_menu(t_canvas *x, t_floatarg f)
 // to a shared and appropriate .h file.
 extern int glob_alt;
 
+void canvas_fake_alt_up(t_canvas *x, t_int force)
+{
+    //post("canvas_fake_alt_up %lx %d %d", x, glob_alt, force);
+    if (glob_alt || force)
+    {
+        //post("faking alt up");
+        t_atom a[5];
+        SETFLOAT(a+0, 0.0);
+        SETSYMBOL(a+1, gensym("Alt"));
+        SETFLOAT(a+2, 0.0);
+        SETFLOAT(a+3, 1.0);
+        SETFLOAT(a+4, 0.0);
+        canvas_key(x, gensym("key"), 5, a);
+        // we also need to send this key relase to the front-end
+        // since it now keeps track of its own alt key state for
+        // the purpose of updating the background accordingly
+        // (sparse vs. dense grid)
+        gui_vmess("canvas_fake_alt_key_release", "x", x);
+    }
+}
+
 void canvas_disable_editmode_this_and_children_canvases(t_canvas *x)
 {
     t_gobj *g = x->gl_list;
@@ -1180,27 +1201,6 @@ void canvas_update_edit_menu_this_and_all_children_canvases(t_canvas *x, int edi
 }
 
 extern void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av);
-
-void canvas_fake_alt_up(t_canvas *x, t_int force)
-{
-    //post("canvas_fake_alt_up %lx %d %d", x, glob_alt, force);
-    if (glob_alt || force)
-    {
-        //post("faking alt up");
-        t_atom a[5];
-        SETFLOAT(a+0, 0.0);
-        SETSYMBOL(a+1, gensym("Alt"));
-        SETFLOAT(a+2, 0.0);
-        SETFLOAT(a+3, 1.0);
-        SETFLOAT(a+4, 0.0);
-        canvas_key(x, gensym("key"), 5, a);
-        // we also need to send this key relase to the front-end
-        // since it now keeps track of its own alt key state for
-        // the purpose of updating the background accordingly
-        // (sparse vs. dense grid)
-        gui_vmess("canvas_fake_alt_key_release", "x", x);
-    }
-}
 
 void canvas_set_editable(t_canvas *x, t_floatarg f)
 {
