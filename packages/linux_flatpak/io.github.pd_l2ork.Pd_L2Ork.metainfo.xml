@@ -61,6 +61,13 @@
   <url type="bugtracker">https://github.com/pd-l2ork/pd-l2ork/issues</url>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="20241224" type="stable" date="2024-12-24">
+      <description>
+        <p>
+          Fixed major regression that made GUI stop responding, refined behavior of the patch background and alt key release (temporary runtime) to accommodate edge cases.
+        </p>
+      </description>
+    </release>
     <release version="20241217" type="stable" date="2024-12-17">
       <description>
         <p>
