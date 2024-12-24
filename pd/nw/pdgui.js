@@ -4876,6 +4876,7 @@ function text_line_height_kludge(fontsize, fontsize_type) {
     var pd_fontsize = fontsize_type === "gui" ?
         gui_fontsize_to_pd_fontsize(fontsize) :
         fontsize;
+    //post("text_line_height_kludge fontsize=" + fontsize);
     switch (pd_fontsize) {
         case 8: return 11;
         case 10: return 13;
@@ -4883,7 +4884,7 @@ function text_line_height_kludge(fontsize, fontsize_type) {
         case 16: return 19;
         case 24: return 29;
         case 36: return 44;
-        default: return gui_fontsize + 2;
+        default: return pd_fontsize + 2;
     }
 }
 
@@ -4953,6 +4954,8 @@ function text_to_tspans(cid, svg_text, text, type) {
             var attr = init_attr;
             if (fill) attr.fill = fill;
             tspan = create_item(cid, "tspan", attr);
+            // make sure that spaces properly show
+            tspan.style.setProperty("white-space", "pre");
             for (var x in style) tspan.style[x] = style[x];
             text_node = patchwin[cid].window.document
                 .createTextNode(newtext);
@@ -5029,8 +5032,6 @@ function text_to_tspans(cid, svg_text, text, type) {
                 make_tspan(spans[j]);
             }
         }
-        // make sure that spaces properly show
-        tspan.style.setProperty("white-space", "pre");
         if (isatom)
             break;
     }
