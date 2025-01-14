@@ -3,10 +3,10 @@
 	url = https://github.com/jwmatthys/rtcmix-in-pd.git
 [submodule "l2ork_addons/raspberry_pi/disis_gpio/wiringPi"]
 	path = l2ork_addons/raspberry_pi/disis_gpio/wiringPi
-	url = https://git.purrdata.net/jwilkes/wiringPi.git
+	url = https://github.com/MovementGH/wiringPi.git
 [submodule "externals/pd-lua"]
 	path = externals/pd-lua
-	url = https://git.purrdata.net/jwilkes/pd-lua.git
+	url = https://github.com/MovementGH/pd-lua.git
 [submodule "Gem"]
 	path = Gem
 	url = https://github.com/umlaeute/Gem.git
