@@ -4885,7 +4885,7 @@ function text_line_height_kludge(fontsize, fontsize_type) {
         case 16: return 19;
         case 24: return 29;
         case 36: return 44;
-        default: return pd_fontsize + 2;
+        default: return fontsize + 2;
     }
 }
 
