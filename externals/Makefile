@@ -1786,10 +1786,10 @@ $(LUA_TARGET):
 # cp -f patches/pdlua.c pd-lua/pdlua.c
 	cp -f patches/pdlua_gfx.h pd-lua/pdlua_gfx.h
 	rm -f pd-lua/pdlua.o
-	make -C $(externals_src)/pd-lua LUA_CFLAGS="$(LUA_CFLAGS)" LUA_LIBS="$(LUA_LIBS)" PD_PATH="$(pd_src)" PD_LIB="$(pd_src)/src" CFLAGS="$(CFLAGS)" PDBINDIR=$(pd_src)/src
+	make -C $(externals_src)/pd-lua LUA_CFLAGS="$(LUA_CFLAGS)" LUA_LIBS="$(LUA_LIBS)" PD_PATH="$(pd_src)" PD_LIB="$(pd_src)/src" CFLAGS="$(LUA_CFLAGS) $(CFLAGS)" PDBINDIR=$(pd_src)/src
 
 pdlua_install: pdlua
-	make -C $(externals_src)/pd-lua LUA_CFLAGS="$(LUA_CFLAGS)" LUA_LIBS="$(LUA_LIBS)" PD_PATH="$(pd_src)" PD_LIB="$(pd_src)/src" CFLAGS="$(CFLAGS)" PDBINDIR=$(pd_src)/src DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/pd-lua LUA_CFLAGS="$(LUA_CFLAGS)" LUA_LIBS="$(LUA_LIBS)" PD_PATH="$(pd_src)" PD_LIB="$(pd_src)/src" CFLAGS="$(LUA_CFLAGS) $(CFLAGS)" PDBINDIR=$(pd_src)/src DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
 
 pdlua_clean:
 	make -C $(externals_src)/pd-lua clean
