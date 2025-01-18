@@ -1783,7 +1783,7 @@ LUA_TARGET = $(externals_src)/pd-lua/pdlua.$(EXTENSION)
 pdlua: $(LUA_TARGET)
 
 $(LUA_TARGET):
-# cp -f patches/pdlua.c pd-lua/pdlua.c
+	cp -f patches/pdlua.c pd-lua/pdlua.c
 	cp -f patches/pdlua_gfx.h pd-lua/pdlua_gfx.h
 	rm -f pd-lua/pdlua.o
 	make -C $(externals_src)/pd-lua LUA_CFLAGS="$(LUA_CFLAGS)" LUA_LIBS="$(LUA_LIBS)" PD_PATH="$(pd_src)" PD_LIB="$(pd_src)/src" CFLAGS="$(CFLAGS)" PDBINDIR=$(pd_src)/src
