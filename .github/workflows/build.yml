@@ -123,6 +123,28 @@ jobs:
         with:
           dmg_name: "Pd-L2Ork-x86"
           src_dir: "packages/darwin_app/build/pd-l2ork.app"
+        id: dmgTry1
+        continue-on-error: true
+      - uses: L-Super/create-dmg-actions@v1.0.3
+        with:
+          dmg_name: "Pd-L2Ork-x86"
+          src_dir: "packages/darwin_app/build/pd-l2ork.app"
+        id: dmgTry2
+        if: steps.dmgTry1.outcome == 'failure'
+        continue-on-error: true
+      - uses: L-Super/create-dmg-actions@v1.0.3
+        with:
+          dmg_name: "Pd-L2Ork-x86"
+          src_dir: "packages/darwin_app/build/pd-l2ork.app"
+        id: dmgTry3
+        if: steps.dmgTry2.outcome == 'failure'
+        continue-on-error: true
+      - uses: L-Super/create-dmg-actions@v1.0.3
+        with:
+          dmg_name: "Pd-L2Ork-x86"
+          src_dir: "packages/darwin_app/build/pd-l2ork.app"
+        id: dmgTry4
+        if: steps.dmgTry3.outcome == 'failure'
       - uses: actions/upload-artifact@v4
         with:
           name: dmg-x86
