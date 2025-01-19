@@ -9152,7 +9152,7 @@ void glob_pastetext(void *dummy, t_symbol *s, int ac, t_atom *av)
 
 void canvas_editmode(t_canvas *x, t_floatarg fyesplease)
 {
-    //post("canvas_editmode %f", fyesplease);
+    //post("canvas_editmode %lx %f", x, fyesplease);
 
     // ico@vt.edu 2022-11-14: first check if we have a parent
     // canvas that is not editable (in which case we are not
@@ -9235,7 +9235,7 @@ void canvas_editmode(t_canvas *x, t_floatarg fyesplease)
     }
     if (glist_isvisible(x))
     {
-        //post("canvas_editmode... %d", x->gl_edit);
+        //post("canvas_editmode... %lx %d", x, x->gl_edit);
         int edit = /*!glob_ctrl && */x->gl_edit;
         gui_vmess("gui_canvas_set_editmode", "xi",
             glist_getcanvas(x),

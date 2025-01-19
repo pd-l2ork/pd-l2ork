@@ -1,6 +1,6 @@
 id: io.github.pd_l2ork.Pd_L2Ork
 runtime: org.freedesktop.Platform
-runtime-version: '23.08'
+runtime-version: '24.08'
 sdk: org.freedesktop.Sdk
 command: pd-wrapper.sh
 finish-args:
@@ -23,7 +23,7 @@ finish-args:
 add-extensions:
   org.freedesktop.LinuxAudio.Plugins:
     directory: extensions/Plugins
-    version: '23.08'
+    version: '24.08'
     add-ld-path: lib
     merge-dirs: ladspa
     subdirectories: true
@@ -50,8 +50,8 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20241217'
-    commit: 6763af9c4aa246814f7145047ba6432f7023340d
+    tag: '20241224'
+    commit: fcf040ce54515a5122bbd339d5c62bf896be50db
   - type: patch
     path: patch/no-rsync-during-install.patch
 
@@ -146,8 +146,8 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20241217'
-    commit: 6763af9c4aa246814f7145047ba6432f7023340d
+    tag: '20241224'
+    commit: fcf040ce54515a5122bbd339d5c62bf896be50db
 
 - name: rpi-externals
   buildsystem: simple
@@ -164,8 +164,8 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20241217'
-    commit: 6763af9c4aa246814f7145047ba6432f7023340d
+    tag: '20241224'
+    commit: fcf040ce54515a5122bbd339d5c62bf896be50db
 
 - name: pd-abstractions
   buildsystem: simple
@@ -175,8 +175,8 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20241217'
-    commit: 6763af9c4aa246814f7145047ba6432f7023340d
+    tag: '20241224'
+    commit: fcf040ce54515a5122bbd339d5c62bf896be50db
 
 - name: pd-l2ork-integration
   buildsystem: simple
@@ -213,8 +213,8 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20241217'
-    commit: 6763af9c4aa246814f7145047ba6432f7023340d
+    tag: '20241224'
+    commit: fcf040ce54515a5122bbd339d5c62bf896be50db
   - type: file
     # x86_64
     url: https://dl.nwjs.io/v0.67.1/nwjs-sdk-v0.67.1-linux-x64.tar.gz

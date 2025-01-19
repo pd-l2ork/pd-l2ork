@@ -16,18 +16,19 @@ PD-L2ORK TODO:
 *unit-circle (or any other data structure in Pd-L2Ork data structure demos) does not work with GOP enabled.
   *This is actually not true. GOP setting has to be adjusted. That said, however, adjustment is really confusing if one mixes data structure with regular objects. Should we simply disable GOP on such mixed canvases?
   *A derrivative bug is that when one resizes a GOP window with the data structure being visible (e.g. enable GOP and then set at the bottom values for bottom and right as 1000 and 900, so that unit-circle is visible), then resize the GOP frame. The data structure gets redrawn without being erased, becoming increasingly darker.
+    *This has been fixed. Needs to be further tested.
 
 *opacity.pd (Pd-L2Ork data structures) makes pasting impossible once the patch has been animated.
   *pd_canvas.html: TypeError: Cannot read properties of undefined (reading 'classList')
+    *This has been fixed. Needs to be further tested.
   *Occasional classList error in pd_canvas.html when cuting then pasting (need to track this one down--may be the same as the one above).
+    *This has been fixed. Needs to be further tested.
 
 *Integrate vstplugin~
   https://git.iem.at/pd/vstplugin
 
 *Integrate pd-ndi
   https://github.com/gogo2/pd-ndi
-
-*Consider integrating Rich Text comments feature from Purr-Data
 
 *Consider integrating #1756 pull request from vanilla that may improve the scheduler.
   *This is super convoluted as the literal merge requires major changes to a lot of the code base. Merging this will require a more surgical approach that only merges relevant changes.
@@ -862,7 +863,10 @@ resulting in unexpected stuck keys.
 *Fixed a bug where user was unable to select points in an array that has significantly more points than the width of the array.
 *Added neuralnet external.
 *Included MouseState and mousefilter abstractions for cyclone's backwards compatibility, updated cyclone's active external to make it work with Pd-L2Ork.
-
+*Added Purr-Data rich text support with improvements and bug fixes.
+*Fixed a bug where indexing timestamp check failed on paths that had <path>\\neural, resulting in \n being misinterpreted as a line break. This would make indexing run on every start-up. Fixed also timings of the indexing messages to ensure they are posted last in the console and clearly visible to the user.
+*Cleaned-up updating of the patch background to reflect editmode, temporary runtime, and runtime modes in special situations, like holding alt in editmode (hence being in temporary runtime mode), and clicking on a subpatch object which should open the subpatch and reset the parent patch's alt key state (and hence also the background). Or, when dealing with the editable option in various cases (using keyboard shortcuts and/or temporary runtime mode).
+*WebPdL2Ork updates.
 
 
 
@@ -1058,9 +1062,155 @@ TWEETER DONE:
   *Fixed hiccup when a new client connects and ensured that everyone remains in sync due to disconnect or reconnect
   *Optimized server-side session state pull by only pulling from the oldest connected client
   *Refined tracker positioning and accuracy of placing new notes in hover mode
+0.84:
+  *Fixed a bug where saving a session to online clients via the teacher interface misreported a number of lines saved
+  *Fixed a bug where loading sessions does not erase old notes from the track (the problem were text files edited in notepad that automatically replace non-standard characters with spaces)
+  *Implemented a workaround where every time a loop is loaded or before it is written, we erase a potential extra note (beat 64). LATER: consider exploring why this happened in the first place (potentially a leftover during the optimization of the tracker logic).
+  *Implemented the newfound interactive option for the dropdown object.
+0.85:
+  *Updated array size syntax based on the updated expr object.
+  *Added Interstellar piece with its parts and score.
+
 *TODO:
   *Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. Needs to be further tested.
-  *Update L2Orkmote version of Tweeter with changes made to Tweeter
+    *Also affects Teacher widget
+  *Update L2Orkmote version of Tweeter with changes made to Tweeter (involves L2Orkmote-Tweeter.pd and core/L2OrkTweet-L2Orkmote.pd). See DETAILS below.
+    *Attempt to make L2Orkmote part modular?
+
+DETAILS:
+
+Fixed all net-io
+
+Fixed other *-io
+
+L2OrkTweet
+  Fixed tracker and time offset abstraction
+  Updated interactive to include upcoming array support
+  Fixed bug where after session loading auto-sync does not work
+  Fixed tracker-time to have input from $0-tracker-s
+  Optimized track redrawing (pd tracker)
+  Copyright message
+
+L2Ork-Tweeter
+  network-io
+    session-management
+      delayed-network-sync
+      pd notification
+    session-report    
+  Copyright message
+  Version
+
+Server
+  report
+    find oldest
+    optimized and synchronized session state pull
+
+local-report-request OK
+  preset_node_array_custom OK
+  net-io-sym OK
+
+"error: gate: no method for 'session-title'" still showing up even though it is routed properly? (network-io -> session-report) OK
+
+Notes are not updating upon load OK
+
+Oldest connected cannot sync to others OK
+  Upon syncing with someone else, that part does not have new data broadcast, so the new sync request does not go through. Instead, that user needs to at least once manually adjust their position before they can be synced to.
+    Syncing to needs to update location information
+    ACTUALLY: whomever synchronizes, for some reason it does not copy the PLAY part (it still shows zero)
+
+Sometimes when reconnecting certain parts are out of sync OK
+
+Some are playing after reconnecting even though they are not OK
+  Sometimes play is not selected even though the part is playing
+
+Sync controls--syncing to mid-loop (e.g. 32) to another part, does not synchronize perfectly like it should OK
+
+Session saves two tracker-time values OK
+
+Sync on saved sessions is not anymore as good as it used to be (grapevine-end trumpet part timing seems a bit off) OK
+
+Reset does not resync starting metro point OK
+
+Made reset (single-user) and sync-all (a.k.a. reset all) more robust by restarting everyone's metro OK
+
+Made session sync more robust by sending all client data in a single message OK
+
+Made reset and session sync gui visually react only to clients that are connected (offline mode does not need this since its reset all equivalent is done by toggling all parts and pressing `). For offline session sync one will have to do some scripting and pulling key aspects from the Teacher widget. OK
+
+Scratching the tracker does not dislocate like it should OK
+
+Refine tracker position in respect to the text and dots OK
+
+Fix bug where loaded loop did not erase itself immediately upon playback if looping was not enabled OK
+
+
+
+Overdrive is not correct when copying another part (because of the logarithmic value) OK
+
+Reconnecting client has everyone else slightly out of sync (but everyone who has been already connected is fine) OK
+
+TODO:
+
+*Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. NEED TO RECREATE
+  *Affects Teacher widget
+
+Make dropdown have interactive option to conform to other core GUI objects FIXED
+
+*Loading sessions does not erase old text from the track FIXED
+*Saving sessions to all first time shows 0 for some FIXED
+*Erase 64th note inside coll when loading and saving loops FIXED (WORKAROUND LATER: revisit this, since currently we are getting redundant deletes)
+
+*update net-io-coll and get rid of t b 0 on the 1st outlet of the gate since it does not do anything
+
+Update L2Orkmote version of Tweeter with changes made to Tweeter
+
+*Remove 64th beat from sessions (don't need to worry about reordering each line and can even leave empty lines in the middle--tested on 2024-10-16)
+
+For automation see:
+https://askubuntu.com/questions/354993/how-to-remove-lines-from-the-text-file-containing-specific-words-through-termina
+
+  SESSIONS:
+    4th-beat-droplets-6-session-coll.txt
+    4th-beat-final-10-session-coll.txt
+    canada-end-session-coll.txt
+    canada-mid-session-coll.txt
+    canada-start-24-3-session-coll.txt
+    canada-start-session-coll.txt
+    coffin-dance-session-coll.txt
+    foolin-around-007-session-coll.txt
+    gamelan-session-coll.txt
+    grapevine-end-session-coll.txt
+    grapevine-mid-session-coll.txt
+    grapevine-start-24-3-session-coll.txt
+    grapevine-start-session-coll.txt
+    insterstellar-end-session-coll.txt
+    insterstellar-end-stasis-session-coll.txt
+    interstellar-mid-session-coll.txt
+    interstellar-start-session-coll.txt
+    raye-end-session-coll.txt
+    raye-mid-session-coll.txt
+    raye-start-24-2-session-coll.txt
+    raye-start-session-coll.txt
+  WORKS:
+    2022.transcontinental.grapevine/Loops_and_Presets/10_Joaquin_Montecino/2023-04/Sessions/l2ork-grapevine-take-2-6.1-session-col2-session-coll.txt
+    2022.transcontinental.grapevine/Loops_and_Presets/10_Joaquin_Montecino/2023-04/Sessions/l2ork-grapevine-take-2-6.2-session-coll.txt
+    2022.transcontinental.grapevine/Loops_and_Presets/10_Joaquin_Montecino/2023-04/Sessions/l2ork-grapevine-take-3-session-coll.txt
+    2022.transcontinental.grapevine/Loops_and_Presets/10_Joaquin_Montecino/2023-04/Sessions/l2ork-grapevine-take-arg-session-coll.txt
+    2022.transcontinental.grapevine/Loops_and_Presets/12_Ico_Bukvic/2022-12/Sessions/l2ork-grapevine-take-4-session-coll.txt
+    2022.transcontinental.grapevine/Loops_and_Presets/12_Ico_Bukvic/2022-12/Sessions/l2ork-grapevine-take-5-session-coll.txt
+    2022.transcontinental.grapevine/Sessions/grapevine-end-session-coll.txt
+    2022.transcontinental.grapevine/Sessions/grapevine-mid-session-coll.txt
+    2022.transcontinental.grapevine/Sessions/grapevine-start-24-3-session-coll.txt
+    2022.transcontinental.grapevine/Sessions/grapevine-start-session-coll.txt
+    2023.8-bit.petal/Sessions/raye-end-session-coll.txt
+    2023.8-bit.petal/Sessions/raye-mid-session-coll.txt
+    2023.8-bit.petal/Sessions/raye-start-24-2-session-coll.txt
+    2023.8-bit.petal/Sessions/raye-start-24-5-session-coll.txt
+    2023.8-bit.petal/Sessions/raye-start-24-6-session-coll.txt
+    2023.8-bit.petal/Sessions/raye-start-session-coll.txt
+    2023.territorio.prismatico/Sessions/canada-end-session-coll.txt
+    2023.territorio.prismatico/Sessions/canada-mid-session-coll.txt
+    2023.territorio.prismatico/Sessions/canada-start-session-coll.txt
 
 
 

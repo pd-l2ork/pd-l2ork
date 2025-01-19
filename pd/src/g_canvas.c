@@ -31,6 +31,8 @@ extern int do_not_redraw;
 extern void canvas_drawconnection(t_canvas *x, int lx1, int ly1, int lx2, int ly2, t_int tag, int issignal);
 extern void canvas_updateconnection(t_canvas *x, int lx1, int ly1, int lx2, int ly2, t_int tag);
 
+extern void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av);
+
     /* LATER consider adding font size to this struct (see glist_getfont()) */
 struct _canvasenvironment
 {
@@ -1114,7 +1116,7 @@ void canvas_show_menu(t_canvas *x, t_floatarg f)
    ;
    pd-<subpatch-name> editable 0/1
 
-   editability optiona affects all children canvases, but does not
+   editability option affects all children canvases, but does not
    remove dirty status, thus ensuring that the edited work prior
    to disabling the editable option is not lost.
 
@@ -1124,11 +1126,38 @@ void canvas_show_menu(t_canvas *x, t_floatarg f)
    #X editable 0; line in the saved pd file.
 
    this complexity is intentional to discourage editing in patches
-   meant (e.g.) for beginners who are not meant to edit the patch,
+   designed (e.g.) for beginners who are not meant to edit the patch,
    but only interact with the premade content. at the same time,
    it is not meant to be a draconian lock-out method, so it is
    relatively easy to reenable.
 */
+
+// located in g_editor.c
+// LATER: make this more graceful: make a function and add it
+// to a shared and appropriate .h file.
+extern int glob_alt;
+
+void canvas_fake_alt_up(t_canvas *x, t_int force)
+{
+    //post("canvas_fake_alt_up %lx %d %d", x, glob_alt, force);
+    if (glob_alt || force)
+    {
+        //post("faking alt up");
+        t_atom a[5];
+        SETFLOAT(a+0, 0.0);
+        SETSYMBOL(a+1, gensym("Alt"));
+        SETFLOAT(a+2, 0.0);
+        SETFLOAT(a+3, 1.0);
+        SETFLOAT(a+4, 0.0);
+        canvas_key(x, gensym("key"), 5, a);
+        // we also need to send this key relase to the front-end
+        // since it now keeps track of its own alt key state for
+        // the purpose of updating the background accordingly
+        // (sparse vs. dense grid)
+        gui_vmess("canvas_fake_alt_key_release", "x", x);
+    }
+}
+
 void canvas_disable_editmode_this_and_children_canvases(t_canvas *x)
 {
     t_gobj *g = x->gl_list;
@@ -1141,8 +1170,21 @@ void canvas_disable_editmode_this_and_children_canvases(t_canvas *x)
         }
         g = g->g_next;
     }
-    if (x->gl_edit)
-        canvas_editmode(x, 0.);
+    // ico@vt.edu 2024-12-24:
+    // this is super-messy. because we don't know where the message to disable
+    // editability of a canvas came from, we have to blindly assume that each
+    // patch just may have had alt key pressed, and hence its background altered
+    // to reflect this temporary runtime mode. however, to avoid redundant cycling
+    // of edit mode on/off and because of a messy implementation of the
+    // canvas_editmode, after faking alt key up, we also lie that we have editmode
+    // turned on, so that canvas_editmode issues all the necessary commands. we
+    // have to do this only after we have faked alt key up. otherwise, pd-l2ork
+    // thinks it was in temporary runtime mode and thus first redraws the canvas
+    // in editmode (even if the patch wasn't in one), before drawing it in runtime
+    // mode.
+    canvas_fake_alt_up(x, 1);
+    x->gl_edit = 1;
+    canvas_editmode(x, 0.);
 }
 
 void canvas_update_edit_menu_this_and_all_children_canvases(t_canvas *x, int editable)
@@ -1160,29 +1202,11 @@ void canvas_update_edit_menu_this_and_all_children_canvases(t_canvas *x, int edi
     gui_vmess("canvas_menu_set_editable", "xi", x, editable);
 }
 
-extern void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av);
-
 void canvas_set_editable(t_canvas *x, t_floatarg f)
 {
     //post("canvas_set_editable %lx %f", x, f);
     if ((int)f != 0 && (int)f != 1 || (int)f == x->gl_editable)
         return;
-
-    // fake alt key up in case we have clicked on a message while
-    // in temporarily being out of the edit mode by holding the
-    // alt key
-    t_atom a[5];
-    SETFLOAT(a+0, 0.0);
-    SETSYMBOL(a+1, gensym("Alt"));
-    SETFLOAT(a+2, 0.0);
-    SETFLOAT(a+3, 1.0);
-    SETFLOAT(a+4, 0.0);
-    canvas_key(x, gensym("key"), 5, a);
-    // we also need to send this key relase to the front-end
-    // since it now keeps track of its own alt key state for
-    // the purpose of updating the background accordingly
-    // (sparse vs. dense grid)
-    gui_vmess("canvas_fake_alt_key_release", "x", x);
 
     // ico@vt.edu 2022-11-21:
     // why are we navigating to the root canvas? this is wrong.
@@ -1200,6 +1224,7 @@ void canvas_set_editable(t_canvas *x, t_floatarg f)
         // disable editing mode in all subpatches (and abstractions)
         canvas_disable_editmode_this_and_children_canvases(root);
     }
+    glob_alt = 0;
     x->gl_editable = (int)f;
     // ico@vt.edu 2022-11-22: only if canvas is not editable
     // and does not have an array (meaning it is typically a
@@ -1223,7 +1248,6 @@ void canvas_set_editable(t_canvas *x, t_floatarg f)
     // update edit menu for open windows
     // (should be done regardless of the editable value)
     canvas_update_edit_menu_this_and_all_children_canvases(root, x->gl_editable);
-
 }
 
 static t_symbol *focus;
@@ -1956,6 +1980,13 @@ static void canvas_click(t_canvas *x,
     t_floatarg xpos, t_floatarg ypos,
         t_floatarg shift, t_floatarg ctrl, t_floatarg alt)
 {
+    // fake alt key up in case we have clicked while being
+    // temporarily out of the edit mode by holding the
+    // alt key. we first find the parent where we received
+    // the click from and then pass it the alt keyup
+    t_canvas *z = glist_getcanvas(x);
+    canvas_fake_alt_up(z, 0);
+
     canvas_vis(x, 1);
 }
 
