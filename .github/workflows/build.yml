@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
       - name: build and push
         uses: macbre/push-to-ghcr@master
         with:
@@ -35,43 +35,121 @@ jobs:
           docker tag ghcr.io/$REPO_NAME:${{ needs.version.outputs.version }} ghcr.io/$REPO_NAME:latest
           docker push ghcr.io/$REPO_NAME:latest
 
-  build-linux:
+  build-ubuntu-24-04:
     runs-on: ubuntu-24.04
     steps:
-    - name: deps
-      run: sudo apt-get update && sudo apt-get install git unzip bison flex autoconf automake libasound2-dev libjack-jackd2-dev libtool libbluetooth-dev libgl1-mesa-dev libglu1-mesa-dev libglew-dev libmagick++-dev libftgl-dev libgmerlin-dev libgmerlin-avdec-dev libavifile-0.7-dev libmpeg3-dev libquicktime-dev libv4l-dev libraw1394-dev libdc1394-dev rsync libfftw3-dev libvorbis-dev ladspa-sdk dssi-dev tap-plugins invada-studio-plugins-ladspa blepvco swh-plugins mcp-plugins cmt blop omins rev-plugins dssi-utils vco-plugins wah-plugins fil-plugins mda-lv2 libmp3lame-dev libspeex-dev libgsl0-dev portaudio19-dev liblua5.3-dev python3-dev libsmpeg0 libjpeg-dev flite1-dev libgsm1-dev libgtk2.0-dev git libstk-dev wget libfluidsynth-dev fluid-soundfont-gm byacc cmake ninja-build patchelf libtirpc-dev libnss3 libudev-dev
-    - uses: actions/checkout@v4
-      with:
-        submodules: 'recursive'
-    - name: make
-      run: make
-    - name: rename
-      run: mv Pd-L2Ork-*.deb Pd-L2Ork.deb
-    - uses: actions/upload-artifact@v4
-      with:
-        name: deb
-        path: Pd-L2Ork.deb
-        if-no-files-found: error
-         
-  build-macos:
+      - name: deps
+        run: sudo apt-get update && sudo apt-get install git unzip bison flex autoconf automake libasound2-dev libjack-jackd2-dev libtool libbluetooth-dev libgl1-mesa-dev libglu1-mesa-dev libglew-dev libmagick++-dev libftgl-dev libgmerlin-dev libgmerlin-avdec-dev libavifile-0.7-dev libmpeg3-dev libquicktime-dev libv4l-dev libraw1394-dev libdc1394-dev rsync libfftw3-dev libvorbis-dev ladspa-sdk dssi-dev tap-plugins invada-studio-plugins-ladspa blepvco swh-plugins mcp-plugins cmt blop omins rev-plugins dssi-utils vco-plugins wah-plugins fil-plugins mda-lv2 libmp3lame-dev libspeex-dev libgsl0-dev portaudio19-dev liblua5.3-dev python3-dev libsmpeg0 libjpeg-dev flite1-dev libgsm1-dev libgtk2.0-dev git libstk-dev wget libfluidsynth-dev fluid-soundfont-gm byacc cmake ninja-build patchelf libtirpc-dev libnss3 libudev-dev
+      - uses: actions/checkout@v4
+        with:
+          submodules: "recursive"
+      - name: make
+        run: make
+      - name: rename
+        run: mv Pd-L2Ork-*.deb Pd-L2Ork-24.04.deb
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deb-24.04
+          path: Pd-L2Ork-24.04.deb
+          if-no-files-found: error
+
+  build-ubuntu-22-04:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: deps
+        run: sudo apt-get update && sudo apt-get install git unzip bison flex autoconf automake libasound2-dev libjack-jackd2-dev libtool libbluetooth-dev libgl1-mesa-dev libglu1-mesa-dev libglew-dev libmagick++-dev libftgl-dev libgmerlin-dev libgmerlin-avdec-dev libavifile-0.7-dev libmpeg3-dev libquicktime-dev libv4l-dev libraw1394-dev libdc1394-dev rsync libfftw3-dev libvorbis-dev ladspa-sdk dssi-dev tap-plugins invada-studio-plugins-ladspa blepvco swh-plugins mcp-plugins cmt blop omins rev-plugins dssi-utils vco-plugins wah-plugins fil-plugins mda-lv2 libmp3lame-dev libspeex-dev libgsl0-dev portaudio19-dev liblua5.3-dev python3-dev libsmpeg0 libjpeg-dev flite1-dev libgsm1-dev libgtk2.0-dev git libstk-dev wget libfluidsynth-dev fluid-soundfont-gm byacc cmake ninja-build patchelf libtirpc-dev libnss3 libudev-dev
+      - uses: actions/checkout@v4
+        with:
+          submodules: "recursive"
+      - name: make
+        run: make
+      - name: rename
+        run: mv Pd-L2Ork-*.deb Pd-L2Ork-22.04.deb
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deb-22.04
+          path: Pd-L2Ork-22.04.deb
+          if-no-files-found: error
+
+  build-ubuntu-20-04:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: deps
+        run: sudo apt-get update && sudo apt-get install git unzip bison flex autoconf automake libasound2-dev libjack-jackd2-dev libtool libbluetooth-dev libgl1-mesa-dev libglu1-mesa-dev libglew-dev libmagick++-dev libftgl-dev libgmerlin-dev libgmerlin-avdec-dev libavifile-0.7-dev libmpeg3-dev libquicktime-dev libv4l-dev libraw1394-dev libdc1394-dev rsync libfftw3-dev libvorbis-dev ladspa-sdk dssi-dev tap-plugins invada-studio-plugins-ladspa blepvco swh-plugins mcp-plugins cmt blop omins rev-plugins dssi-utils vco-plugins wah-plugins fil-plugins mda-lv2 libmp3lame-dev libspeex-dev libgsl0-dev portaudio19-dev liblua5.3-dev python3-dev libsmpeg0 libjpeg-dev flite1-dev libgsm1-dev libgtk2.0-dev git libstk-dev wget libfluidsynth-dev fluid-soundfont-gm byacc cmake ninja-build patchelf libtirpc-dev libnss3 libudev-dev
+      - uses: actions/checkout@v4
+        with:
+          submodules: "recursive"
+      - name: make
+        run: make
+      - name: rename
+        run: mv Pd-L2Ork-*.deb Pd-L2Ork-20.04.deb
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deb-20.04
+          path: Pd-L2Ork-20.04.deb
+          if-no-files-found: error
+
+  build-macos-arm:
     runs-on: macos-latest
     steps:
-    - name: deps
-      run: brew install wget autoconf automake libtool fftw python lua fluidsynth faac lame libvorbis speex gsl libquicktime sdl2 pkg-config gettext freetype2 ftgl jpeg libtiff sdl glfw ninja cmake
-    - uses: actions/checkout@v4
-      with:
-        submodules: 'recursive'
-    - name: make
-      run: cd l2ork_addons && ./tar_em_up.sh -tkn
-    - uses: L-Super/create-dmg-actions@v1.0.3
-      with:
-        dmg_name: 'Pd-L2Ork'
-        src_dir: 'packages/darwin_app/build/pd-l2ork.app'
-    - uses: actions/upload-artifact@v4
-      with:
-        name: dmg
-        path: Pd-L2Ork.dmg
-        if-no-files-found: error
+      - name: deps
+        run: brew install wget autoconf automake libtool fftw python lua fluidsynth faac lame libvorbis speex gsl libquicktime sdl2 pkg-config gettext freetype2 ftgl jpeg libtiff sdl glfw ninja cmake
+      - uses: actions/checkout@v4
+        with:
+          submodules: "recursive"
+      - name: make
+        run: cd l2ork_addons && ./tar_em_up.sh -tkn
+      - uses: L-Super/create-dmg-actions@v1.0.3
+        with:
+          dmg_name: "Pd-L2Ork-arm"
+          src_dir: "packages/darwin_app/build/pd-l2ork.app"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dmg-arm
+          path: Pd-L2Ork-arm.dmg
+          if-no-files-found: error
+
+  build-macos-x86:
+    runs-on: macos-13
+    steps:
+      - name: deps
+        run: brew install wget autoconf automake libtool fftw python lua fluidsynth faac lame libvorbis speex gsl libquicktime sdl2 pkg-config gettext freetype2 ftgl jpeg libtiff sdl glfw ninja cmake
+      - uses: actions/checkout@v4
+        with:
+          submodules: "recursive"
+      - name: make
+        run: cd l2ork_addons && ./tar_em_up.sh -tkn
+      - uses: L-Super/create-dmg-actions@v1.0.3
+        with:
+          dmg_name: "Pd-L2Ork-x86"
+          src_dir: "packages/darwin_app/build/pd-l2ork.app"
+        id: dmgTry1
+        continue-on-error: true
+      - uses: L-Super/create-dmg-actions@v1.0.3
+        with:
+          dmg_name: "Pd-L2Ork-x86"
+          src_dir: "packages/darwin_app/build/pd-l2ork.app"
+        id: dmgTry2
+        if: steps.dmgTry1.outcome == 'failure'
+        continue-on-error: true
+      - uses: L-Super/create-dmg-actions@v1.0.3
+        with:
+          dmg_name: "Pd-L2Ork-x86"
+          src_dir: "packages/darwin_app/build/pd-l2ork.app"
+        id: dmgTry3
+        if: steps.dmgTry2.outcome == 'failure'
+        continue-on-error: true
+      - uses: L-Super/create-dmg-actions@v1.0.3
+        with:
+          dmg_name: "Pd-L2Ork-x86"
+          src_dir: "packages/darwin_app/build/pd-l2ork.app"
+        id: dmgTry4
+        if: steps.dmgTry3.outcome == 'failure'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dmg-x86
+          path: Pd-L2Ork-x86.dmg
+          if-no-files-found: error
 
   build-windows:
     runs-on: windows-latest
@@ -96,55 +174,103 @@ jobs:
           if-no-files-found: error
 
   create-release:
-    needs: [build-linux, build-windows, build-macos, version]
+    needs:
+      [
+        build-ubuntu-24-04,
+        build-ubuntu-22-04,
+        build-ubuntu-20-04,
+        build-windows,
+        build-macos-arm,
+        build-macos-x86,
+        version,
+      ]
     runs-on: ubuntu-latest
     steps:
-    - name: Download Linux Release
-      uses: actions/download-artifact@v4
-      with:
-        name: deb
-    - name: Download Windows Release
-      uses: actions/download-artifact@v4
-      with:
-        name: exe
-    - name: Download MacOS Release
-      uses: actions/download-artifact@v4
-      with:
-        name: dmg
-    - name: Create GitHub Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ needs.version.outputs.version }}
-        release_name: Release ${{ needs.version.outputs.version }}
-        draft: false
-        prerelease: false
-    - name: Upload Linux Release
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./Pd-L2Ork.deb
-        asset_name: Pd-L2Ork-${{ needs.version.outputs.version }}.deb
-        asset_content_type: application/vnd.debian.binary-package
-    - name: Upload Windows Release
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./Pd-L2Ork.exe
-        asset_name: Pd-L2Ork-${{ needs.version.outputs.version }}.exe
-        asset_content_type: application/vnd.microsoft.portable-executable
-    - name: Upload MacOS
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./Pd-L2Ork.dmg
-        asset_name: Pd-L2Ork-${{ needs.version.outputs.version }}.dmg
-        asset_content_type: application/x-apple-diskimage
+      - name: Download Ubuntu 24.04 Release
+        uses: actions/download-artifact@v4
+        with:
+          name: deb-24.04
+      - name: Download Ubuntu 22.04 Release
+        uses: actions/download-artifact@v4
+        with:
+          name: deb-22.04
+      - name: Download Ubuntu 20.04 Release
+        uses: actions/download-artifact@v4
+        with:
+          name: deb-20.04
+      - name: Download Windows Release
+        uses: actions/download-artifact@v4
+        with:
+          name: exe
+      - name: Download MacOS arm Release
+        uses: actions/download-artifact@v4
+        with:
+          name: dmg-arm
+      - name: Download MacOS x86 Release
+        uses: actions/download-artifact@v4
+        with:
+          name: dmg-x86
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ needs.version.outputs.version }}
+          release_name: Release ${{ needs.version.outputs.version }}
+          draft: false
+          prerelease: false
+      - name: Upload Ubuntu 24.04 Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Pd-L2Ork-24.04.deb
+          asset_name: Pd-L2Ork-24.04-${{ needs.version.outputs.version }}.deb
+          asset_content_type: application/vnd.debian.binary-package
+      - name: Upload Ubuntu 22.04 Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Pd-L2Ork-22.04.deb
+          asset_name: Pd-L2Ork-22.04-${{ needs.version.outputs.version }}.deb
+          asset_content_type: application/vnd.debian.binary-package
+      - name: Upload Ubuntu 20.04 Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Pd-L2Ork-20.04.deb
+          asset_name: Pd-L2Ork-20.04-${{ needs.version.outputs.version }}.deb
+          asset_content_type: application/vnd.debian.binary-package
+      - name: Upload Windows Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Pd-L2Ork.exe
+          asset_name: Pd-L2Ork-${{ needs.version.outputs.version }}.exe
+          asset_content_type: application/vnd.microsoft.portable-executable
+      - name: Upload MacOS arm
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Pd-L2Ork-arm.dmg
+          asset_name: Pd-L2Ork-AppleSilicon-${{ needs.version.outputs.version }}.dmg
+          asset_content_type: application/x-apple-diskimage
+      - name: Upload MacOS x86
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Pd-L2Ork-x86.dmg
+          asset_name: Pd-L2Ork-Intel-${{ needs.version.outputs.version }}.dmg
+          asset_content_type: application/x-apple-diskimage

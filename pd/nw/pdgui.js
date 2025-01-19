@@ -4885,7 +4885,7 @@ function text_line_height_kludge(fontsize, fontsize_type) {
         case 16: return 19;
         case 24: return 29;
         case 36: return 44;
-        default: return pd_fontsize + 2;
+        default: return fontsize + 2;
     }
 }
 
@@ -4943,8 +4943,11 @@ function text_to_tspans(cid, svg_text, text, type) {
                 //post("new newtext=<"+newtext+">");
             }
         }
-        if(newtext == null)
+        if(newtext == null || newtext?.length == 0) {
+            if (span === '')
+                span = ' ';
             newtext = span;
+        }
 
         if (is_comment) {
             // tags can be escaped with <!tag>, show these as literals
