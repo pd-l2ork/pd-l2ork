@@ -55,6 +55,11 @@ typedef union
     float f;
     uint32_t ui;
 }t_aliasfloatuint;
+typedef union _doubleuint
+{
+  double d;
+  uint64_t ui;
+} t_doubleuint;
 
 #define FORMAT_WAVE 0
 #define FORMAT_AIFF 1
@@ -377,6 +382,8 @@ int open_soundfile_via_fd(int fd, t_soundfile_info *p_info, long skipframes)
                         bytespersamp = 3;
                     else if (format == 32)
                         bytespersamp = 4;
+                    else if (format == 64)
+                        bytespersamp = 8;
                     else goto badheader;
                     samprate = swap4(
                         ((t_fmt *)buf)->f_samplespersec, swap);
@@ -577,6 +584,34 @@ static void soundfile_xferin_sample(int sfchannels, int nvecs, t_sample **vecs,
                     }
             }
         }
+        else if (bytespersamp == 8)
+        {
+            t_doubleuint alias;
+            if (bigendian)
+            {
+                for (j = 0, sp2 = sp, fp = vecs[i] + itemsread;
+                    j < nitems; j++, sp2 += bytesperframe, fp++)
+                {
+                    alias.ui = (((uint64_t)sp2[0] << 56) | ((uint64_t)sp2[1] << 48) |
+                                ((uint64_t)sp2[2] << 40) | ((uint64_t)sp2[3] << 32) |
+                                ((uint64_t)sp2[4] << 24) | ((uint64_t)sp2[5] << 16) |
+                                ((uint64_t)sp2[6] << 8)  |  (uint64_t)sp2[7]);
+                    *fp = (t_sample)alias.d;
+                }
+            }
+            else
+            {
+                for (j = 0, sp2 = sp, fp = vecs[i] + itemsread;
+                    j < nitems; j++, sp2 += bytesperframe, fp++)
+                {
+                    alias.ui = (((uint64_t)sp2[7] << 56) | ((uint64_t)sp2[6] << 48) |
+                                ((uint64_t)sp2[5] << 40) | ((uint64_t)sp2[4] << 32) |
+                                ((uint64_t)sp2[3] << 24) | ((uint64_t)sp2[2] << 16) |
+                                ((uint64_t)sp2[1] << 8)  |  (uint64_t)sp2[0]);
+                    *fp = (t_sample)alias.d;
+                }
+            }
+        }
     }
         /* zero out other outputs */
     for (i = sfchannels; i < nvecs; i++)
@@ -650,6 +685,35 @@ static void soundfile_xferin_float(int sfchannels, int nvecs, t_float **vecs,
                             | (sp2[1] << 8) | sp2[0]);
                         *fp = (t_float)alias.f;
                     }
+            }
+        }
+        else if (bytespersamp == 8)
+        {
+            t_doubleuint alias;
+            if (bigendian)
+            {
+                for (j = 0, sp2 = sp, fp=vecs[i] + spread * itemsread;
+                     j < nitems; j++, sp2 += bytesperframe, fp += spread)
+                {
+                    alias.ui = (((uint64_t)sp2[0] << 56) | ((uint64_t)sp2[1] << 48) |
+                                ((uint64_t)sp2[2] << 40) | ((uint64_t)sp2[3] << 32) |
+                                ((uint64_t)sp2[4] << 24) | ((uint64_t)sp2[5] << 16) |
+                                ((uint64_t)sp2[6] << 8)  |  (uint64_t)sp2[7]);
+                    *fp = (t_float)alias.d;
+
+                }
+            }
+            else
+            {
+                for (j = 0, sp2 = sp, fp=vecs[i] + spread * itemsread;
+                     j < nitems; j++, sp2 += bytesperframe, fp += spread)
+                {
+                    alias.ui = (((uint64_t)sp2[7] << 56) | ((uint64_t)sp2[6] << 48) |
+                                ((uint64_t)sp2[5] << 40) | ((uint64_t)sp2[4] << 32) |
+                                ((uint64_t)sp2[3] << 24) | ((uint64_t)sp2[2] << 16) |
+                                ((uint64_t)sp2[1] << 8)  |  (uint64_t)sp2[0]);
+                    *fp = (t_float)alias.d;
+                }
             }
         }
     }
@@ -823,10 +887,10 @@ static int soundfiler_writeargparse(void *obj, t_symbol *s,
             if (flag_missing_floatarg(obj, s, argc, argv, flag, ac, av))
                 goto usage;
             if ((bytespersamp = av[1].a_w.w_float) < 2 ||
-                   bytespersamp > 4)
+                   (bytespersamp > 4 && bytespersamp != 8))
             {
                 argerror(obj, s, argc, argv,
-                    "'-bytes' flag requires a number between 2 and 4");
+                    "'-bytes' flag requires a number between 2 and 4, or 8");
                 goto usage;
             }
             ac -= 2; av += 2;
@@ -966,7 +1030,7 @@ static int soundfiler_writeargparse(void *obj, t_symbol *s,
             filetype = FORMAT_WAVE;
     }
         /* don't handle AIFF floating point samples */
-    if (bytespersamp == 4)
+    if (bytespersamp == 4 || bytespersamp == 8)
     {
         if (filetype == FORMAT_AIFF)
         {
@@ -1082,7 +1146,7 @@ static int create_soundfile(t_canvas *canvas, const char *filename,
         memcpy(wavehdr->w_fmtid, "fmt ", 4);
         wavehdr->w_fmtchunksize = swap4(16, swap);
         wavehdr->w_fmttag =
-            swap2((bytespersamp == 4 ? WAV_FLOAT : WAV_INT), swap);
+            swap2(((bytespersamp == 4 || bytespersamp == 8) ? WAV_FLOAT : WAV_INT), swap);
         wavehdr->w_nchannels = swap2(nchannels, swap);
         wavehdr->w_samplespersec = swap4(samplerate, swap);
         wavehdr->w_navgbytespersec =
@@ -1285,6 +1349,34 @@ static void soundfile_xferout_sample(int nchannels, t_sample **vecs,
                 }
             }
         }
+        else if (bytespersamp == 8)
+        {
+            t_doubleuint f2;
+            if (bigendian)
+            {
+                for (j = 0, sp2 = sp, fp = vecs[i] + onset;
+                    j < nitems; j++, sp2 += bytesperframe, fp += spread)
+                {
+                    f2.d = *fp * normalfactor;
+                    sp2[0] = (f2.ui >> 56); sp2[1] = (f2.ui >> 48);
+                    sp2[2] = (f2.ui >> 40); sp2[3] = (f2.ui >> 32);
+                    sp2[4] = (f2.ui >> 24); sp2[5] = (f2.ui >> 16);
+                    sp2[6] = (f2.ui >> 8);  sp2[7] = f2.ui;
+                }
+            }
+            else
+            {
+                for (j = 0, sp2 = sp, fp = vecs[i] + onset;
+                    j < nitems; j++, sp2 += bytesperframe, fp += spread)
+                {
+                    f2.d = *fp * normalfactor;
+                    sp2[7] = (f2.ui >> 56); sp2[6] = (f2.ui >> 48);
+                    sp2[5] = (f2.ui >> 40); sp2[4] = (f2.ui >> 32);
+                    sp2[3] = (f2.ui >> 24); sp2[2] = (f2.ui >> 16);
+                    sp2[1] = (f2.ui >> 8);  sp2[0] = f2.ui;
+                }
+            }
+        }
     }
 }
 static void soundfile_xferout_float(int nchannels, t_float **vecs,
@@ -1391,6 +1483,34 @@ static void soundfile_xferout_float(int nchannels, t_float **vecs,
                     xx = alias.ui;
                     sp2[3] = (xx >> 24); sp2[2] = (xx >> 16);
                     sp2[1] = (xx >> 8); sp2[0] = xx;
+                }
+            }
+        }
+        else if (bytespersamp == 8)
+        {
+            t_doubleuint f2;
+            if (bigendian)
+            {
+                for (j = 0, sp2 = sp, fp = vecs[i] + onset;
+                    j < nitems; j++, sp2 += bytesperframe, fp += spread)
+                {
+                    f2.d = (float)(*fp * normalfactor);
+                    sp2[0] = (f2.ui >> 56); sp2[1] = (f2.ui >> 48);
+                    sp2[2] = (f2.ui >> 40); sp2[3] = (f2.ui >> 32);
+                    sp2[4] = (f2.ui >> 24); sp2[5] = (f2.ui >> 16);
+                    sp2[6] = (f2.ui >> 8);  sp2[7] = f2.ui;
+                }
+            }
+            else
+            {
+                for (j = 0, sp2 = sp, fp = vecs[i] + onset;
+                    j < nitems; j++, sp2 += bytesperframe, fp += spread)
+                {
+                    f2.d = (float)(*fp * normalfactor);
+                    sp2[7] = (f2.ui >> 56); sp2[6] = (f2.ui >> 48);
+                    sp2[5] = (f2.ui >> 40); sp2[4] = (f2.ui >> 32);
+                    sp2[3] = (f2.ui >> 24); sp2[2] = (f2.ui >> 16);
+                    sp2[1] = (f2.ui >> 8);  sp2[0] = f2.ui;
                 }
             }
         }
@@ -1586,10 +1706,10 @@ static void soundfiler_read(t_soundfiler *x, t_symbol *s,
                     "'-raw' bytes per sample must be at least 2\n" RAWSYNTAX);
                 goto done;
             }
-            if (info.bytespersample > 4)
+            if (info.bytespersample > 4 && info.bytespersample != 8)
             {
                 argerror(x, s, argc, argv,
-                   "'-raw' bytes per sample must be less than 4\n" RAWSYNTAX);
+                   "'-raw' bytes per sample must be at most 8 (and cannot be between 5-7)\n" RAWSYNTAX);
                 goto done;
             }
             if (av[4].a_type != A_SYMBOL ||
