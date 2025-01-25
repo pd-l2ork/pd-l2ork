@@ -1,5 +1,7 @@
 const axios = require("axios");
 const express = require("express");
+const ws = require("ws");
+const net = require('net')
 const compression = require("compression");
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -84,7 +86,52 @@ app.post("/api/file", async (req, res) => {
     res.sendStatus(204);
 });
 
-// start listening
-app.listen(PORT, () => {
+// Websocket server to proxy network requests. All network connections
+// from WebPdL2Ork will be sent to this server, along with a message
+// containing the host to connect to. We then proxy all data between
+// the user and that host.
+const wsServer = new ws.Server({ noServer: true });
+wsServer.on('connection', client => {
+  let target; // The host to proxy
+  
+  client.on('message', msg => {
+    // If we haven't set up the connection yet, set it up
+    if (!target) {
+      // Determine hostname and port from original connection url that was intercepted
+      const [_, host, port] = msg.toString().match(/^(?:wss?:\/\/)?([^:/]+)(?::(\d+))?/);
+      if (!host || !port) // First message must contain a hostname and port
+        return client.close();
+
+      // Connect to the remote host and set up data proxy
+      target = net.createConnection(port, host);
+      target.on('data', data => {
+        try {
+          client.send(data);
+        } catch (e) {
+          target.end();
+        }
+      });
+      target.on('end', () => client.close());
+      target.on('error', () => {
+        target.end();
+        client.close();
+      });
+    }
+    else // Otherwise, proxy all data
+      target.write(msg);
+  });
+  client.on('close', () => target?.end?.());
+  client.on('error', () => target?.end?.());
+});
+
+// Start listening
+const server = app.listen(PORT, () => {
   console.log(`Pd-L2Ork Server: running on localhost port ${PORT}`)
+});
+
+// Connect to websocket server
+server.on('upgrade', (request, socket, head) => {
+  wsServer.handleUpgrade(request, socket, head, socket => {
+    wsServer.emit('connection', socket, request);
+  });
 });

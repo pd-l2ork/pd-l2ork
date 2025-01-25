@@ -1,4 +1,5 @@
 const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
+const websocket = window.WebSocket;
 const loading = document.getElementById("loading");
 const filter = document.getElementById("filter");
 let currentFile = '';
@@ -93,6 +94,17 @@ let known_objects = [
   ]
 //END CONSTANTS
 
+// NETWORKING SUPPORT
+// Here we intercept all websocket connections and send them to the backend for proxying
+window.WebSocket = function (host, ...arguments) {
+    // Open a websocket to the backend
+    const socket = new websocket(`${window.location.protocol === 'http:' ? 'ws' : 'wss'}://${window.location.host}`, ...arguments);
+    
+    // Immediately send the actual host to connect to, so the backend can connect on our behalf
+    socket.addEventListener('open', () => socket.send(host));
+    
+    return socket;
+}
 
 
 //For Arrays/Graphs/Data Structures
@@ -1516,7 +1528,7 @@ var Module = {
             pd.addToHelpPath(helpPath);
             pd.addToSearchPath(extPath);
             pd.addToHelpPath(extPath);
-            var dir = FS.readdir(extPath);
+            var dir = FS.readdir(extPath).sort();
             for (var i = 0; i < dir.length; i++) {
                 var item = dir[i];
                 if (item.charAt(0) != ".") {

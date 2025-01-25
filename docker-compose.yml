@@ -1,9 +1,10 @@
 version: "3"
 services:
   webpdl2ork:
-    build: 
-      context: .
-      dockerfile: webpdl2ork.Dockerfile
+    image: ghcr.io/pd-l2ork/pd-l2ork # Pre-built GitHub image
+    # build: # Local Image
+    #   context: .
+    #   dockerfile: webpdl2ork.Dockerfile
     #ports:
     #  - "3000:80" # Serve without proxy
     environment:
@@ -18,6 +19,7 @@ services:
     image: nginxproxy/nginx-proxy:alpine
     ports:
       - "3000:443" # Serve using https (requires certificates)
+      # - "3000:80" # Serve using http
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ./certs:/etc/nginx/certs
