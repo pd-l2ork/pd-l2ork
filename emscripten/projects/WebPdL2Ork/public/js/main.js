@@ -1528,7 +1528,7 @@ var Module = {
             pd.addToHelpPath(helpPath);
             pd.addToSearchPath(extPath);
             pd.addToHelpPath(extPath);
-            var dir = FS.readdir(extPath);
+            var dir = FS.readdir(extPath).sort();
             for (var i = 0; i < dir.length; i++) {
                 var item = dir[i];
                 if (item.charAt(0) != ".") {
