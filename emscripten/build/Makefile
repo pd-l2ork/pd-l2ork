@@ -22,7 +22,7 @@ SRC_FILES = $(SRC_DIR)/main.cpp $(SRC_DIR)/pd.cpp $(SRC_DIR)/js.cpp
 TARGET = main.html
 OUTPUT_FILES = $(TARGET) main.js main.wasm $(wildcard main-*.data)
 CFLAGS = -I$(PD_PATH)/src -I$(LIBPD_PATH)/libpd_wrapper -O3
-LDFLAGS = -L$(LIBPD_PATH)/libs -lpd -lm -sENVIRONMENT=web -sSTACK_SIZE=1048576
+LDFLAGS = -L$(LIBPD_PATH)/libs -lpd -lm -sENVIRONMENT=web -sSTACK_SIZE=1048576 -sWEBSOCKET_URL=ws://
 ifeq ($(DEBUG), true)
     CFLAGS = -I$(PD_PATH)/src -I$(LIBPD_PATH)/libpd_wrapper -gsource-map -O0 -fsanitize=address
     LDFLAGS += -sASSERTIONS=2 -sEXCEPTION_DEBUG -sSTACK_OVERFLOW_CHECK=1 --profiling-funcs

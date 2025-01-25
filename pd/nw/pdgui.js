@@ -8973,9 +8973,11 @@ exports.file_dialog_obj = file_dialog_obj;
 
 function gui_openpanel(cid, target, path, mode) {
     path = path || "./";
-    if(nw_os_is_osx)
+    if(nw_os_is_osx || nw_os_is_linux)
         if(!path.endsWith('/'))
             path += '/';
+    if(nw_os_is_linux)
+        path += '*';
     //post("gui_openpanel "+cid+" "+mode+" "+target+" <"+path+">");
     pdsend(file_dialog_object, "trigger", mode, target, path);
 }
