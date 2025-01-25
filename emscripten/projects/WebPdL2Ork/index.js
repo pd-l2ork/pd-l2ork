@@ -98,7 +98,7 @@ wsServer.on('connection', client => {
     // If we haven't set up the connection yet, set it up
     if (!target) {
       // Determine hostname and port from original connection url that was intercepted
-      const [_, host, port] = msg.match(/^(?:wss?:\/\/)?([^:/]+)(?::(\d+))?/);
+      const [_, host, port] = msg.toString().match(/^(?:wss?:\/\/)?([^:/]+)(?::(\d+))?/);
       if (!host || !port) // First message must contain a hostname and port
         return client.close();
 
