@@ -101,7 +101,9 @@ window.WebSocket = function (host, ...arguments) {
     const socket = new websocket(`${window.location.protocol === 'http:' ? 'ws' : 'wss'}://${window.location.host}`, ...arguments);
     
     // Immediately send the actual host to connect to, so the backend can connect on our behalf
-    socket.addEventListener('open', () => socket.send(host));
+    // Exception: If the host is 127.0.0.1:3000, allow the socket to communicate directly with the backend.
+    if(!host.endsWith('127.0.0.1:3000/'))
+        socket.addEventListener('open', () => socket.send(`proxy ${host}`));
     
     return socket;
 }

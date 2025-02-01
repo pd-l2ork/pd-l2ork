@@ -88,7 +88,7 @@ typedef struct _netclient
 } t_netclient;
 
 	/* one lonely prototype */
-static void netclient_rcv(t_netclient *x);
+static void netclient_rcv(t_netclient *x, int fd);
 
 
 	/* gets called when connection status has changed */
@@ -263,7 +263,7 @@ static int netclient_doread(t_netclient *x)
     return (0);
 }
 
-static void netclient_rcv(t_netclient *x)
+static void netclient_rcv(t_netclient *x, int _fd)
 {
 	int fd = x->x_fd;
 	int ret;
