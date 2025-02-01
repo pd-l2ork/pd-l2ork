@@ -1,0 +1,13 @@
+diff --git a/src/utils/fluid_sys.h b/src/utils/fluid_sys.h
+index a3487705..c971f636 100644
+--- a/src/utils/fluid_sys.h
++++ b/src/utils/fluid_sys.h
+@@ -160,7 +160,7 @@ typedef gintptr  intptr_t;
+ #ifndef NO_GLIB
+ #include <glib/gstdio.h>
+ #else
+-#if !defined(__EMSCRIPTEN__) || defined(__EMSCRIPTEN_PTHREADS__)
++#if !defined(__EMSCRIPTEN__)
+ #include <pthread.h>
+ #define USE_PTHREAD
+ #endif
