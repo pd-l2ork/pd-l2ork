@@ -18,14 +18,14 @@ PD_PATH = $(PD_L2ORK_DIR)/pd
 INSTALL_PATH = $(EM_PATH)/projects/pd-l2ork-web
 DESTDIR = pd-l2ork-web
 SRC_DIR = $(EM_PATH)/src
-SRC_FILES = $(SRC_DIR)/main.cpp $(SRC_DIR)/pd.cpp $(SRC_DIR)/js.cpp
+SRC_FILES = $(SRC_DIR)/main.cpp $(SRC_DIR)/pd.cpp $(SRC_DIR)/js.cpp $(SRC_DIR)/overrides.c
 TARGET = main.html
 OUTPUT_FILES = $(TARGET) main.js main.wasm $(wildcard main-*.data)
-CFLAGS = -I$(PD_PATH)/src -I$(LIBPD_PATH)/libpd_wrapper -O3
-LDFLAGS = -L$(LIBPD_PATH)/libs -lpd -lm -sENVIRONMENT=web -sSTACK_SIZE=1048576
+CFLAGS = -I$(PD_PATH)/src -I$(LIBPD_PATH)/libpd_wrapper -O3 -pthread
+LDFLAGS = -L$(LIBPD_PATH)/libs -lpd -lm -sENVIRONMENT=web,worker -sPTHREAD_POOL_SIZE=navigator.hardwareConcurrency -sSTACK_SIZE=1048576 -pthread
 ifeq ($(DEBUG), true)
-    CFLAGS = -I$(PD_PATH)/src -I$(LIBPD_PATH)/libpd_wrapper -gsource-map -O0 -fsanitize=address
-    LDFLAGS += -sASSERTIONS=2 -sEXCEPTION_DEBUG -sSTACK_OVERFLOW_CHECK=1 --profiling-funcs
+    CFLAGS += -gsource-map -O0 -fsanitize=address
+    LDFLAGS += -sASSERTIONS=2 -sEXCEPTION_DEBUG -sSTACK_OVERFLOW_CHECK=1 --profiling-funcs -gsource-map
 endif
 
 .PHONY: build install $(OUTPUT_FILES) clean

@@ -760,6 +760,7 @@ $(FLUID_LIBPATH)/src/libfluidsynth.a: $(FLUID_PATH)/fluidsynth-emscripten/README
 
 $(FLUID_PATH)/fluidsynth-emscripten/README.md:
 	git clone https://github.com/jet2jet/fluidsynth-emscripten $(externals_src)/fluid~/fluidsynth-emscripten
+	cd $(externals_src)/fluid~/fluidsynth-emscripten && git apply $(externals_src)/patches/fluid.patch
 
 fluid_install: fluid
 	install -d $(DESTDIR)$(objectsdir)/fluid~

@@ -154,7 +154,7 @@ static void dologpost(const void *object, const int level, const char *s)
     }
 }
 
-static void dopost(const char *s)
+static void __dopost(const char *s)
 {
     if (sys_printhook)
         (*sys_printhook)(s);
@@ -182,6 +182,16 @@ static void dopost(const char *s)
         gui_vmess("gui_post", "s", upbuf);
     }
 }
+
+#ifdef __EMSCRIPTEN__
+#include <emscripten/threading_legacy.h>
+static void dopost(const char *s)
+{
+    emscripten_sync_run_in_main_runtime_thread(EM_FUNC_SIG_VI, __dopost, s);
+}
+#else
+#define dopost __dopost
+#endif
 
 void logpost(const void *object, const int level, const char *fmt, ...)
 {
