@@ -1,7 +1,8 @@
 const axios = require("axios");
 const express = require("express");
 const ws = require("ws");
-const net = require('net')
+const net = require("net");
+const dns = require("dns");
 const compression = require("compression");
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -9,6 +10,15 @@ const PATCH_PATH = process.env.PATCH_PATH || 'public';
 const STATIC_OPTIONS = {
   maxAge: process.env.DISABLE_CACHE ? undefined : '7d',
 };
+
+// Cross origin isolation headers. Required for -pthread in emscripten (which is required for networking)
+app.use((req, res, next) => {
+  res.set({
+    'Cross-Origin-Embedder-Policy': 'require-corp',
+    'Cross-Origin-Opener-Policy': 'same-origin',
+  });
+  next();
+});
 
 // Body parsing for JSON
 app.use(express.json());
@@ -97,25 +107,41 @@ wsServer.on('connection', client => {
   client.on('message', msg => {
     // If we haven't set up the connection yet, set it up
     if (!target) {
-      // Determine hostname and port from original connection url that was intercepted
-      const [_, host, port] = msg.toString().match(/^(?:wss?:\/\/)?([^:/]+)(?::(\d+))?/);
-      if (!host || !port) // First message must contain a hostname and port
-        return client.close();
+      const [requestType, ...requestDataChunks] = msg.toString().split(' ');
+      const requestData = requestDataChunks.join(' ');
 
-      // Connect to the remote host and set up data proxy
-      target = net.createConnection(port, host);
-      target.on('data', data => {
-        try {
-          client.send(data);
-        } catch (e) {
+      // Proxy a socket to some other host
+      if(requestType === 'proxy') {
+        // Determine hostname and port from original connection url that was intercepted
+        const [_, host, port] = requestData.match(/^(?:wss?:\/\/)?([^:/]+)(?::(\d+))?/);
+        if (!host || !port) // First message must contain a hostname and port
+          return client.close();
+
+        // Connect to the remote host and set up data proxy
+        target = net.createConnection(port, host);
+        target.on('data', data => {
+          try {
+            client.send(data);
+          } catch (e) {
+            target.end();
+          }
+        });
+        target.on('end', () => client.close());
+        target.on('error', () => {
           target.end();
-        }
-      });
-      target.on('end', () => client.close());
-      target.on('error', () => {
-        target.end();
-        client.close();
-      });
+          client.close();
+        });
+      }
+      // Resolve a hostname (DNS lookup does not work from within browser)
+      else if(requestType === 'resolve') {
+        dns.lookup(requestData, 4, (err, address) => {
+          if (err)
+            client.send("FAILED");
+          else
+            client.send(address);
+          client.close();
+        });
+      }
     }
     else // Otherwise, proxy all data
       target.write(msg);

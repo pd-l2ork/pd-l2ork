@@ -19,10 +19,11 @@ INSTALL_PATH = $(EM_PATH)/projects/pd-l2ork-web
 DESTDIR = $(BUILD_PATH)/pd-l2ork-web/
 objectsdir = extra/
 WARN_FLAGS = -Wall -W -Wno-unused-parameter
-EM_FLAGS = -s SIDE_MODULE=1 -O3
+OVERRIDES = `gcc -c src/overrides.c -o overrides.o && nm overrides.o | grep '__em' | awk '{sub(/^__em_/, "", $$3); printf "-D%s=__em_%s ", $$3, $$3;}' && rm overrides.o`
+EM_FLAGS = -s SIDE_MODULE=1 -O3 -pthread $(OVERRIDES)
 TYPE = Release
 ifeq ($(DEBUG), true)
-    EM_FLAGS = -s SIDE_MODULE=1 -g
+    EM_FLAGS += -g -gsource-map
     TYPE = Debug
 endif
 CFLAGS = -DPD -I$(PD_PATH)/src -D__linux__ $(WARN_FLAGS) $(EM_FLAGS)

@@ -101,7 +101,9 @@ window.WebSocket = function (host, ...arguments) {
     const socket = new websocket(`${window.location.protocol === 'http:' ? 'ws' : 'wss'}://${window.location.host}`, ...arguments);
     
     // Immediately send the actual host to connect to, so the backend can connect on our behalf
-    socket.addEventListener('open', () => socket.send(host));
+    // Exception: If the host is 127.0.0.1:3000, allow the socket to communicate directly with the backend.
+    if(!host.endsWith('127.0.0.1:3000/'))
+        socket.addEventListener('open', () => socket.send(`proxy ${host}`));
     
     return socket;
 }
@@ -1860,13 +1862,13 @@ function iemgui_fontfamily(font) {
     return family;
 }
 
-function colfromload(col) { // decimal to hex color
+function colfromload(col, bits = 6) { // decimal to hex color
     if (typeof col === "string")
         return col;
 
-    let bitsPerChannel = col >= 0 ? 8 : 6;
+    let bitsPerChannel = col >= 0 ? 8 : bits;
 
-    col = col >= 0 ? vu_colors[col] : -1 - col;
+    col = col >= 0 ? vu_colors[col % vu_colors.length] : -1 - col;
 
     const r = (col & ((1 << bitsPerChannel) - 1)) << (8 - bitsPerChannel);
     const g = (col & ((1 << (bitsPerChannel * 2)) - 1)) << (8 - bitsPerChannel) * 2;
@@ -3385,8 +3387,8 @@ function gui_cnv_visible_rect(data) {
         y: data.y_pos,
         width: data.width,
         height: data.height,
-        fill: colfromload(data.bg_color),
-        stroke: colfromload(data.bg_color),
+        fill: colfromload(data.bg_color, 8),
+        stroke: colfromload(data.bg_color, 8),
         id: `${data.id}_visible_rect`,
         class: "unclickable"
     }
@@ -3399,7 +3401,7 @@ function gui_cnv_selectable_rect(data) {
         width: data.size,
         height: data.size,
         fill: "none",
-        stroke: colfromload(data.bg_color),
+        stroke: colfromload(data.bg_color, 8),
         id: `${data.id}_selectable_rect`,
         class: "unclickable"
     }

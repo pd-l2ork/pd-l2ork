@@ -42,3 +42,4 @@ CVS
 certs/*
 *.app
 logs
+*.map
