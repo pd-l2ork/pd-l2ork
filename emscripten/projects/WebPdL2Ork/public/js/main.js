@@ -1,3 +1,4 @@
+const DEBUG = false;
 const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
 const websocket = window.WebSocket;
 const loading = document.getElementById("loading");
@@ -2266,7 +2267,7 @@ function gui_slider_set(data, f) {
     else {
         g = (f - data.bottom) / data.k;
     }
-    data.value = 100 * g + 0.49999;
+    data.value = 100 * g;
     gui_slider_update_indicator(data);
 }
 
@@ -3721,9 +3722,9 @@ async function openPatch(content, filename) {
         //If an object is not a message, we also process the $1+, filling in with the current canvas' arguments
         //This is especially important since we flatten all the canvases for compatibility with the emscriptem pd-l2ork
         if(args.slice(0,2).join(' ') != '#X msg')
-            for(let i = 0; i < layer.args?.length; i++)
+            for(let i = 0; i < 10; i++)
                 for(let arg = 0; arg < args.length; arg++)
-                    args[arg] = args[arg].replace(new RegExp(`(?<!\\\\)\\\\\\$${i+1}`,`g`),layer.args[i]);
+                    args[arg] = args[arg].replace(new RegExp(`(?<!\\\\)\\\\\\$${i + 1}`, `g`), layer.args?.[i] ?? 0);
 
         //If we are looking at something that can be connected with a wire, increment the wire counter
         if(object_types.find(type=>lines[i].startsWith(type)))
@@ -4178,7 +4179,8 @@ async function openPatch(content, filename) {
                                 // handle event
                                 gui_slider_check_minmax(data);
                                 addInteractionStartEvent(data.rect, (event, identifier) => {
-                                    gui_slider_onmousedown(data, event, identifier);
+                                    if(data.interactive)
+                                        gui_slider_onmousedown(data, event, identifier);
                                 });
 
                                 // subscribe receiver
@@ -4810,6 +4812,27 @@ async function openPatch(content, filename) {
                                 //Since we removed the line that we just processed, our subpatch starts at line i, so we have to process line i again.
                                 i--;
                                 layer.nextGUIID--;
+                            } else if(DEBUG) {
+                                const text = create_item('text', {
+                                    'font-size':  pd_fontsize_to_gui_fontsize(layer.fontSize) + 'px',
+                                    transform: `translate(2.5,0)`,
+                                    fill: 'white',
+                                    x: +args[2],
+                                    y: +args[3] + font_height_map()[layer.fontSize] + gobj_font_y_kludge(layer.fontSize),
+                                    class: 'unclickable'
+                                }, rootCanvas);
+                                text.textContent = args.slice(4).join(' ');
+
+                                
+                                create_item('rect', {
+                                    fill: '#666766',
+                                    x: +args[2],
+                                    y: +args[3],
+                                    width: text.getComputedTextLength() + 5,
+                                    height: font_height_map()[layer.fontSize] + 4
+                                }, layer.canvas);
+                                rootCanvas.removeChild(text);
+                                layer.canvas.appendChild(text);
                             }
                             break;
                     }
@@ -5304,7 +5327,7 @@ async function openPatch(content, filename) {
                             // It creates a dummy canvas which is then connected to the preset node in the same way as the original
                             // object, and also puts wireless sends and receives inside that canvas to interact with the GUI object.
                             lines.splice(i--, 1, 
-                                `#N canvas 0 0 0 0 ${connectionName} 1`,
+                                `#N canvas 0 0 400 100 ${connectionName} 1`,
                                 `#X obj 5 10 inlet`,
                                 `#X obj 60 45 s ${connectionName}`,
                                 `#X obj 115 45 r ${connectionName}_feedback`,
