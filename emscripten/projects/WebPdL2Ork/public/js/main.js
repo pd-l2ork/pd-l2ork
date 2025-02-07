@@ -3721,10 +3721,13 @@ async function openPatch(content, filename) {
 
         //If an object is not a message, we also process the $1+, filling in with the current canvas' arguments
         //This is especially important since we flatten all the canvases for compatibility with the emscriptem pd-l2ork
-        if(args.slice(0,2).join(' ') != '#X msg')
-            for(let i = 0; i < 10; i++)
+        if(args.slice(0,2).join(' ') != '#X msg') {
+            for(let i = 0; i < layer.args?.length; i++)
                 for(let arg = 0; arg < args.length; arg++)
-                    args[arg] = args[arg].replace(new RegExp(`(?<!\\\\)\\\\\\$${i + 1}`, `g`), layer.args?.[i] ?? 0);
+                    args[arg] = args[arg].replace(new RegExp(`(?<!\\\\)\\\\\\$${i + 1}`, `g`), layer.args[i]);
+            for(let arg = 0; arg < args.length; arg++)
+                args[arg] = args[arg].replace(new RegExp(`(?<!\\\\)\\\\\\$\\d+`, `g`), '0');
+        }
 
         //If we are looking at something that can be connected with a wire, increment the wire counter
         if(object_types.find(type=>lines[i].startsWith(type)))
