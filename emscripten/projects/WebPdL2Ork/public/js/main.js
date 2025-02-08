@@ -1602,12 +1602,13 @@ Module['preRun'].push(function() {
                     else {
                         const request = new XMLHttpRequest();
                         const base = ((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')+'/';
+                        const file = ('' + path).split('/').slice(-1)[0]
                         request.open('POST', window.location.origin+'/api/file', false);
                         request.setRequestHeader('content-type','application/json')
                         request.overrideMimeType('text/plain; charset=x-user-defined'); // Set MIME type for binary data
                         request.send(JSON.stringify({
                             urls: [
-                                `/supplemental/${path}`,
+                                `/supplemental/${file}`,
                                 ...searchPaths.map(searchPath => base + searchPath.slice(0,-1)+path)
                             ]
                         }));
@@ -2937,7 +2938,8 @@ function gui_atom_onmousemove(e, id) {
                 data.dirtyValue = '' + (value - Math.round(curPos.y - pos.y) / 100);
             else
                 data.dirtyValue = '' + (value - Math.round(curPos.y - pos.y));
-            data.value = data.value.replace(/(\.\d\d)(\d*)/, '$1');
+            if(data.value.replace)
+                data.value = data.value.replace(/(\.\d\d)(\d*)/, '$1');
         }
         else if(index !== -1 && !isNaN(data.value[index])) {
             if(keyDown['Shift'])               
@@ -4514,6 +4516,8 @@ async function openPatch(content, filename) {
                                 data.y_pos = +args[3];
                                 data.type = args[4];
                                 data.src = args[5];
+                                if(!data.src.includes('://') && !data.src.startsWith('@pd_extra'))
+                                    data.src = ((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')+'/'+data.src;
                                 data.gopSpill = +args[6];
                                 data.clickBehavior = +args[7];
                                 data.borderWidth = +args[8];
@@ -4617,6 +4621,8 @@ async function openPatch(content, filename) {
                                 });
 
                                 layer.guiObjects[layer.nextGUIID] = data;
+
+                                gui_subscribe(data);
                             } else
                                 console.error('Invalid ggee/image object:', args);
                             break;
