@@ -9,6 +9,5 @@ RUN git submodule update --init --recursive; cd emscripten; make clean; make SHE
 FROM node:current-alpine
 WORKDIR /WebPdL2Ork/
 COPY --from=builder /pd-l2ork/emscripten/projects/WebPdL2Ork .
-RUN npm i; rm public/@pd_extra
-COPY --from=builder /pd-l2ork/emscripten/build/pd-l2ork-web/extra public/@pd_extra
+RUN npm i;
 ENTRYPOINT [ "npm", "run", "start" ]

@@ -155,15 +155,15 @@ ifeq ($(LIGHT),yes)
 lib_targets = loaders-libdir pddp
 INCREMENTAL = yes
 else
-lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui flite fluid freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemgui iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moocow moonlib motex mrpeach neuraln oscx pan pdcontainer pddp pdogg plugin pmpd rjlib sigpack smlib tof unauthorized vbap windowing zexy
+lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui flite fluid freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemgui iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moocow moonlib motex mrpeach neuraln oscx pan pdcontainer pddp pdlua pdogg plugin pmpd rjlib sigpack smlib tof unauthorized vbap windowing zexy
 endif
 
 # Emscriptem needs flatspace for some objects, wheras normal PD has them builtin
-# Additionally, the pdjs and pdlua externals are currently not supported in emscripten.
+# Additionally, the pdjs external is currently not supported in emscripten.
 ifeq ($(EMSCRIPTEN),yes)
 lib_targets += flatspace
 else
-lib_targets += js pdlua hidraw
+lib_targets += js hidraw
 endif
 
 # NEW (IN-PROGRESS): flext
@@ -1788,13 +1788,29 @@ $(LUA_TARGET):
 	cp -f patches/Makefile.pdlua pd-lua/Makefile
 	cp -f patches/pdlua_gfx.h pd-lua/pdlua_gfx.h
 	rm -f pd-lua/pdlua.o
+ifneq ($(EMSCRIPTEN),yes)
 	make -C $(externals_src)/pd-lua LUA_CFLAGS="$(LUA_CFLAGS)" LUA_LIBS="$(LUA_LIBS)" PD_PATH="$(pd_src)" PD_LIB="$(pd_src)/src" CFLAGS="$(CFLAGS)" PDBINDIR=$(pd_src)/src
+else
+	if [ ! -d $(externals_src)/pd-lua/lua ]; then git clone https://github.com/lua/lua.git $(externals_src)/pd-lua/lua; fi
+	$(CC) $(externals_src)/pd-lua/pdlua.c $(externals_src)/pd-lua/lua/onelua.c -o $(LUA_TARGET) $(CFLAGS) $(LDFLAGS) -I$(externals_src)/pd-lua/lua
+endif
 
+ifneq ($(EMSCRIPTEN),yes)
 pdlua_install: pdlua
-	make -C $(externals_src)/pd-lua LUA_CFLAGS="$(LUA_CFLAGS)" LUA_LIBS="$(LUA_LIBS)" PD_PATH="$(pd_src)" PD_LIB="$(pd_src)/src" CFLAGS="$(CFLAGS)" PDBINDIR=$(pd_src)/src DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
+	make -C $(externals_src)/pd-lua LUA_CFLAGS="$(LUA_CFLAGS)" LUA_LIBS="$(LUA_LIBS)" PDINCLUDEDIR="$(pd_src)/src" PD_PATH="$(pd_src)" PD_LIB="$(pd_src)/src" CFLAGS="$(CFLAGS)" PDBINDIR=$(pd_src)/src DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" install
 
 pdlua_clean:
 	make -C $(externals_src)/pd-lua clean
+else
+pdlua_install: pdlua
+	install -d $(DESTDIR)$(objectsdir)/pd-lua
+	install -p $(LUA_TARGET) $(DESTDIR)$(objectsdir)/pd-lua
+	install -p $(externals_src)/pd-lua/pd.lua $(DESTDIR)$(objectsdir)/pd-lua
+
+pdlua_clean:
+	rm $(LUA_TARGET)
+	rm -rf $(externals_src)/pd-lua/lua
+endif
 
 
 #------------------------------------------------------------------------------#
@@ -2901,7 +2917,7 @@ FLITE_SRC = $(BUNDLED_FLITE)/lang/cmulex/cmu_lex.c \
 	 $(BUNDLED_FLITE)/src/wavesynth/cst_sigpr.c \
 	 $(BUNDLED_FLITE)/src/wavesynth/cst_sts.c \
 	 $(BUNDLED_FLITE)/src/wavesynth/cst_units.c
-FLITE_VOICES := $(shell echo $(FLITE)/cmu_us_{awb,rms,slt}.flitevox)
+FLITE_VOICES := $(FLITE)/cmu_us_awb.flitevox $(FLITE)/cmu_us_rms.flitevox $(FLITE)/cmu_us_slt.flitevox
 FLITE_OBJECTS := $(FLITE_SRC:.c=.o)
 FLITE_TARGETS := $(FLITE_SRC:.c=.$(EXTENSION))
 FLITE_FLAGS := -I$(FLITE_DEP)/include -I$(FLITE_DEP)/lang/usenglish -I$(FLITE_DEP)/lang/cmulex -DCSST_AUDIO_NONE -DVERSION='"0.3.3"'
