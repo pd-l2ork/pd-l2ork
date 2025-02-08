@@ -9,7 +9,8 @@ process_chunk() {
 # Function to list files into chunks
 create_chunks() {
     local input_dir="$1"
-    local max_size=26214400  # 25MB in bytes
+    local supplemental_dir="$2"
+    local max_size=34952533  # 33.3MB in bytes
     local current_chunk_size=0
     local current_chunk=""
     local chunk_id=0
@@ -29,7 +30,11 @@ create_chunks() {
         # Add the file to the current chunk
         current_chunk+="$file "
         current_chunk_size=$((current_chunk_size + file_size))
-    done < <(find "$input_dir" -type f)
+    done < <(find "$input_dir" -type f \( -name "*.wasm" -o -name "*.pd" \))
+
+    while IFS= read -r file; do
+        cp $file $supplemental_dir
+    done < <(find $input_dir -type f ! \( -name "*.wasm" -o -name "*.pd" \))
     
     # Process any remaining files in the last chunk
     if [ -n "$current_chunk" ]; then
@@ -38,12 +43,13 @@ create_chunks() {
 }
 
 # Check for input arguments
-if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 <directory> <js to append to>"
+if [ "$#" -ne 3 ]; then
+    echo "Usage: $0 <directory> <js to append to> <supplemental dir>"
     exit 1
 fi
 
 # Start processing files in chunks
-create_chunks $1
+mkdir -p $3
+create_chunks $1 $3
 cat main-*.js >> $2
 rm main-*.js

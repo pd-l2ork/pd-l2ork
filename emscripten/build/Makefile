@@ -43,8 +43,8 @@ build: $(SRC_FILES) $(DESTDIR)
 	-s USE_SDL=2 -s USE_OGG=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s ALLOW_MEMORY_GROWTH=1 \
 	-s FORCE_FILESYSTEM=1 -s EXPORTED_RUNTIME_METHODS=FS \
 	$(LDFLAGS) --cache ./emcc-cache
-	bash PackageFiles.sh $(DESTDIR) main.js
-	ln -svf $(EM_PATH)/build/pd-l2ork-web/extra $(EM_PATH)/projects/WebPdL2Ork/public/@pd_extra
+	rm -rf $(DESTDIR)/doc
+	bash PackageFiles.sh $(DESTDIR) main.js $(EM_PATH)/projects/WebPdL2Ork/public/supplemental
 	@echo "emscripten build succeeded!"
 
 install: $(OUTPUT_FILES)

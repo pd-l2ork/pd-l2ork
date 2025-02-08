@@ -36,6 +36,15 @@ app.get("/", (req, res) => {
   res.sendFile(`${__dirname}/views/index.html`);
 });
 
+app.use("/@pd_extra", (req, res, next) => {
+  const file = req.url.split('/').slice(-1)[0];
+  axios.get(`http://localhost:${PORT}/supplemental/${file}`, { responseType: 'arraybuffer' }).then(response => {
+    res.send(response.data);
+  }).catch(() => {
+    res.sendStatus(404);
+  });
+});
+
 // Fetching patches
 app.post("/api/patch", async (req, res) => {
   let urls = req.body.urls;

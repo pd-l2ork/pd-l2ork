@@ -1605,7 +1605,12 @@ Module['preRun'].push(function() {
                         request.open('POST', window.location.origin+'/api/file', false);
                         request.setRequestHeader('content-type','application/json')
                         request.overrideMimeType('text/plain; charset=x-user-defined'); // Set MIME type for binary data
-                        request.send(JSON.stringify({urls:searchPaths.map(searchPath => base + searchPath.slice(0,-1)+path)}));
+                        request.send(JSON.stringify({
+                            urls: [
+                                `/supplemental/${path}`,
+                                ...searchPaths.map(searchPath => base + searchPath.slice(0,-1)+path)
+                            ]
+                        }));
                         if (request.status === 200) {
                             let folder = path.split('/').slice(0,-1).join('/') + '/';
                             FS.createPath('/', folder);
@@ -3670,7 +3675,7 @@ async function openPatch(content, filename) {
 
     document.getElementById('loadingstage').innerHTML=`Parsing Patch`;
     console.log('Fetch time: '+(Date.now() - start)+'ms');
-    await new Promise(Resolve => setTimeout(Resolve, 10));
+    await new Promise(Resolve => setTimeout(Resolve, 50));
     
     start = Date.now();
     
