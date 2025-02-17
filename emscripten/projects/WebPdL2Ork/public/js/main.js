@@ -8,6 +8,39 @@ let previousValue = '';
 let subscribedData = {};
 let searchPaths = ['/'];
 let fileCache = {};
+let pageId;
+
+// Header that needs to be added to js files to be loaded by pdjs. Implements all the builtin
+// pdjs functions that the pdjs external normally handles using v8
+const pdJsHeader = () => `
+// WebPdL2Ork Injected Code
+cpost = post = data => postMessage({ type: 'post', data });
+error = data => postMessage({ type: 'error', data});
+outlet = (id, ...data) => postMessage({ type: 'outlet', id, data: data.length > 1 ? data.flat().join(' ') : data[0] });
+getprop = prop => outlet(0, this[prop]);
+setprop = (prop, value) => this[prop] = value;
+delprop = prop => delete this[prop];
+inlet = 0;
+_import = file => {
+    let x = new XMLHttpRequest();
+    x.open('get', '${window.location.origin}/@sw?type=import&pageId=${pageId}&file=' + file, false);
+    x.send();
+    eval.bind(this)(JSON.parse(x.response));
+}
+require = file => {
+    let x = new XMLHttpRequest();
+    x.open('get', '${window.location.origin}/@sw?type=require&pageId=${pageId}&file=' + file, false);
+    x.send();
+    return JSON.parse(x.response);
+}
+onmessage = ({ data }) => {
+    arguments = data.args;
+    messagename = data.func
+    this[data.func]?.(...(data.args ?? []));
+    if(data.type === 'exports')
+        postMessage(exports);
+}
+`;
 
 //Files that need to be short-circuited for cyclone
 //If they are symlinked during the build process, emscripten bundler resolves the symlinks and 
@@ -173,6 +206,17 @@ function copyTextToClipboard(text) {
 
         document.body.removeChild(textArea);
     }
+}
+
+function buildFileApiBody(path) {
+    const base = ((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')+'/';
+    const file = ('' + path).split('/').slice(-1)[0];
+    return JSON.stringify({
+        urls: [
+            `/supplemental/${file}`,
+            ...searchPaths.map(searchPath => base + searchPath.slice(0,-1)+path)
+        ]
+    });
 }
 
 // create an AudioContext
@@ -512,6 +556,8 @@ var Module = {
                         case "dropdown":
                             gui_dropdown_send(data);
                             break;
+                        case "js":
+                            data.worker?.postMessage?.({ func: 'bang' });
                     }
                 }
             }
@@ -571,6 +617,8 @@ var Module = {
                             data.render();
                             gui_dropdown_send(data);
                             break;
+                        case "js":
+                            data.worker?.postMessage?.({ func: 'msg_float', args: [value]})
                     }
                 }
             }
@@ -595,6 +643,8 @@ var Module = {
                         case "pddplink":
                             gui_link_open(symbol);
                             break;
+                        case "js":
+                            data.worker?.postMessage?.({ func: 'anything', args: [symbol]});
                     }
                 }
             }
@@ -651,6 +701,8 @@ var Module = {
                             data.value = list;
                             gui_atom_update(data);
                             break;
+                        case "js":
+                            data.worker?.postMessage?.({ func: 'list', args: list })
                     }
                 }
             }
@@ -1445,6 +1497,20 @@ var Module = {
                                     break;
 
                             }
+                        case "js":
+                            switch(symbol) {
+                                case "compile":
+                                    data.compile(list[0]);
+                                    break;
+                                case "open":
+                                    if(data.src)
+                                        return window.open(data.src);
+                                    else
+                                        alert('No script loaded!');
+                                    break;
+                                default:
+                                    data.worker?.postMessage?.({ func: symbol, args: list });
+                            }
                     }
                 }
             }
@@ -1601,17 +1667,10 @@ Module['preRun'].push(function() {
                         node = fileCache[path];
                     else {
                         const request = new XMLHttpRequest();
-                        const base = ((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')+'/';
-                        const file = ('' + path).split('/').slice(-1)[0]
                         request.open('POST', window.location.origin+'/api/file', false);
                         request.setRequestHeader('content-type','application/json')
                         request.overrideMimeType('text/plain; charset=x-user-defined'); // Set MIME type for binary data
-                        request.send(JSON.stringify({
-                            urls: [
-                                `/supplemental/${file}`,
-                                ...searchPaths.map(searchPath => base + searchPath.slice(0,-1)+path)
-                            ]
-                        }));
+                        request.send(buildFileApiBody(path));
                         if (request.status === 200) {
                             let folder = path.split('/').slice(0,-1).join('/') + '/';
                             FS.createPath('/', folder);
@@ -3234,14 +3293,14 @@ function gui_image_onmousemove(e, id) {
         const p = gui_roundedmousepoint(e, data.canvas);
         gui_image_touches[id].p = p;
         if(data.clickBehavior === 2)
-            gui_send('List', data.send, [1, data.x_pos, data.y_pos, p.x - data.x_pos, p.y - data.y_pos]);
+            gui_send('List', data.send, [1, data.x_pos, data.y_pos, Math.max(0, Math.min(data.borderWidth, p.x - data.x_pos)), Math.max(0, Math.min(data.borderHeight, p.y - data.y_pos))]);
     }
 }
 function gui_image_onmouseup(id) {
     if (id in gui_image_touches) {
         const { data, p } = gui_image_touches[id];
         if(data.clickBehavior === 2)
-            gui_send('List', data.send, [0, data.x_pos, data.y_pos, p.x - data.x_pos, p.y - data.y_pos]);
+            gui_send('List', data.send, [0, data.x_pos, data.y_pos, Math.max(0, Math.min(data.borderWidth, p.x - data.x_pos)), Math.max(0, Math.min(data.borderHeight, p.y - data.y_pos))]);
         delete gui_image_touches[id];
     }
 }
@@ -3650,6 +3709,45 @@ function gui_text_text(data, line_index, fontSize) {
 async function openPatch(content, filename) {
     console.log(`Loading Patch: ${filename}`);
     document.title=`WebPdL2Ork: ${filename}`;
+
+    const serviceWorker = await navigator.serviceWorker.register('/service.js', { scope: '/' });
+    const pageIdPromise = new Promise(Resolve => {
+        let registered = false;
+        navigator.serviceWorker.onmessage = async({ data: message }) => {
+            if(message.type === 'register') {
+                if(registered)
+                    throw new Error('Duplicate Registration');
+                registered = true;
+                Resolve(message.data);
+            } else if(message.type === 'require') {
+                const result = await fetch('/api/file', {
+                    method: 'post',
+                    body: buildFileApiBody(message.file),
+                    headers: { 'Content-Type': 'application/json' },
+                });
+
+                if(result.status !== 200)
+                    return serviceWorker.active.postMessage({ messageId: message.messageId, result: null});
+
+                const code = `${pdJsHeader()}\n${(await result.text()).replace(/import\(/g, '_import(')}`;
+                const worker = new Worker(window.URL.createObjectURL(new Blob([code], { type: 'text/javascript'})));
+                worker.onmessage = ({ data }) => {
+                    serviceWorker.active.postMessage({ messageId: message.messageId, result: data});
+                    worker.terminate();
+                }
+                worker.postMessage({type: 'exports'});
+
+            } else if(message.type === 'import') {
+                serviceWorker.active.postMessage({ messageId: message.messageId, result: await (await fetch('/api/file', {
+                    method: 'post',
+                    body: buildFileApiBody(message.file),
+                    headers: { 'Content-Type': 'application/json' },
+                })).text()});
+            }
+        }
+    });
+    serviceWorker.active.postMessage({type: 'register'});
+    pageId = await pageIdPromise;
 
     document.getElementById('loadingstage').innerHTML=`Fetching Dependencies`;
     await new Promise(Resolve => setTimeout(Resolve, 10));
@@ -4571,7 +4669,7 @@ async function openPatch(content, filename) {
                                     configure_item(data.image, {
                                         x: data.x_pos - (data.imageWidth - data.borderWidth) / 2,
                                         y: data.y_pos - (data.imageHeight - data.borderHeight) / 2,
-                                        transform: `rotate(${data.rotation}, ${data.x_pos + data.x_origin}, ${data.y_pos + data.y_origin})`,
+                                        transform: `rotate(${data.rotation}, ${data.x_pos - (data.imageWidth - data.borderWidth) / 2 + data.x_origin}, ${data.y_pos - (data.imageHeight - data.borderHeight) / 2 + data.y_origin})`,
                                         width: data.imageWidth,
                                         height: data.imageHeight,
                                         href: data.src,
@@ -4817,6 +4915,58 @@ async function openPatch(content, filename) {
                                 }
                             })
                             break;
+                        }
+                        case "js": {
+                            let data = {};
+                            data.type = args[4];
+                            data.file = args[5];
+                            data.args = args.slice(6);
+                            data.receive = [];
+                            data.send = [];
+                            data.auxSend = new Array(10).fill([]);
+                            data.id = nextHTMLID++;
+
+                            data.compile = async(file) => {
+                                if(file)
+                                    data.file = file;
+
+                                if(data.worker)
+                                    data.worker.terminate();
+
+                                const result = await fetch('/api/file', {
+                                    method: 'post',
+                                    body: buildFileApiBody(data.file),
+                                    headers: { 'Content-Type': 'application/json' },
+                                });
+
+                                if(result.status !== 200)
+                                    return;
+
+                                const code = `${pdJsHeader()}\njsarguments = ['${data.args.join("','")}'];\n${(await result.text()).replace(/import\(/g, '_import(')}`;
+                                data.src = window.URL.createObjectURL(new Blob([code], { type: 'text/javascript'}));
+                                data.worker = new Worker(data.src);
+                                data.worker.onmessage = ({data: message}) => {
+                                    if(message.type === 'post')
+                                        console.log(message.data);
+                                    else if(message.type === 'error')
+                                        console.error(message.data);
+                                    else if(message.type === 'outlet') {
+                                        if(typeof message.data === 'number')
+                                            gui_send('Float', data.send, message.data);
+                                        else if(typeof message.data === 'undefined')
+                                            gui_send('Bang', data.send);
+                                        else if(typeof message.data !== 'string' && message.data.length)
+                                            gui_send('List', data.send, message.data);
+                                        else
+                                            gui_send('Symbol', data.send, message.data.toString());
+                                    }
+                                }
+                                data.worker.postMessage({ func: 'loadbang' });
+                            }
+
+                            data.compile();
+
+                            layer.guiObjects[layer.nextGUIID] = data;
                         }
                         default: //If we don't have an explicit handling for the object, it's possible that it is an external patch load 
                             if(args[4] in abstractions) {

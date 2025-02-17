@@ -155,7 +155,7 @@ ifeq ($(LIGHT),yes)
 lib_targets = loaders-libdir pddp
 INCREMENTAL = yes
 else
-lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui flite fluid freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemgui iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib loaders-libdir lyonpotpourri mapping markex maxlib mjlib moocow moonlib motex mrpeach neuraln oscx pan pdcontainer pddp pdlua pdogg plugin pmpd rjlib sigpack smlib tof unauthorized vbap windowing zexy
+lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui flite fluid freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemgui iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib js loaders-libdir lyonpotpourri mapping markex maxlib mjlib moocow moonlib motex mrpeach neuraln oscx pan pdcontainer pddp pdlua pdogg plugin pmpd rjlib sigpack smlib tof unauthorized vbap windowing zexy
 endif
 
 # Emscriptem needs flatspace for some objects, wheras normal PD has them builtin
@@ -163,7 +163,7 @@ endif
 ifeq ($(EMSCRIPTEN),yes)
 lib_targets += flatspace
 else
-lib_targets += js hidraw
+lib_targets += hidraw
 endif
 
 # NEW (IN-PROGRESS): flext
@@ -1676,6 +1676,7 @@ pddp_clean:
 # pdjs
 
 js:
+ifneq ($(EMSCRIPTEN),yes)
 ifeq ($(OS_NAME),windows)
 	cd $(externals_src)/pdjs-win/v8 && unzip -u lib.zip
 	cd $(externals_src)/pdjs-win \
@@ -1772,6 +1773,13 @@ ifeq ($(OS_NAME),linux)
 	cd $(externals_src)/pdjs && rm -rf binaries
 	cd $(externals_src)/pdjs && rm -rf binaries
 	cd $(externals_src)/pdjs/out/build/x64-linux-Debug && rm -rf * && rm -rf ./.ninja*
+endif
+else
+js:
+
+js_install:
+	install -d $(DESTDIR)$(objectsdir)/pd-js
+	install -p $(externals_src)/pdjs/pdjs/js.pd $(DESTDIR)$(objectsdir)/pd-js
 endif
 
 #------------------------------------------------------------------------------#
