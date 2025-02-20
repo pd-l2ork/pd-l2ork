@@ -3746,6 +3746,8 @@ async function openPatch(content, filename) {
             }
         }
     });
+    if(!serviceWorker.active)
+        window.location.reload();
     serviceWorker.active.postMessage({type: 'register'});
     pageId = await pageIdPromise;
 
