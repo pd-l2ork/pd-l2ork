@@ -1,5 +1,6 @@
 *
 !js
+!service.js
 !emscripten
 !css
 !default.pd
