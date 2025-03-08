@@ -10,7 +10,7 @@ let searchPaths = [];
 let fileCache = {};
 let page = {
     id: null,
-    mode: window.opener ? 'child' : 'parent',
+    mode: (new URLSearchParams(window.location.search)).get('parent') ? 'child' : 'parent',
     parent: (new URLSearchParams(window.location.search)).get('parent')
 };
 
@@ -1999,7 +1999,7 @@ setInterval(() => {
         navigator.serviceWorker.controller.postMessage({ type, data: queue[type].flat()});
         delete queue[type];
     }
-}, 50);
+}, 100);
 
 function sendToChildren(...data) {
     if(page.mode !== 'parent')
@@ -2791,14 +2791,19 @@ function gui_knob_onmouseup(id) {
 }
 
 //pddplink
+let windows = {};
 function gui_link_open(link) {
     if(link.startsWith('http'))
         window.open(link);
     else if(link.slice(-3) == '.pd') {
-        if(link.startsWith('/'))
-            window.open(`${window.location.origin}/?url=${link}&parent=${page.id}`, link, `resizable=yes,width=800,height=600`);
+        if(windows[link]) {
+            if(windows[link].closed)
+                alert('WebPdL2Ork does not yet support re-opening a closed patch');
+            else
+                windows[link].focus();
+        }
         else
-            window.open(`${window.location.origin}/?url=${window.location.href.split('url=')[1].split('/').slice(0,-1)}/${link}&parent=${page.id}`, link, `resizable=yes,width=800,height=600`);
+            windows[link] = window.open(link.startsWith('/') ? `${window.location.origin}/?url=${link}&parent=${page.id}` : `${window.location.origin}/?url=${window.location.href.split('url=')[1].split('/').slice(0,-1)}/${link}&parent=${page.id}`, '_blank', `resizable=yes,width=800,height=600`)
     }
     else
         window.open(link);
@@ -3837,16 +3842,14 @@ async function openPatch(content, filename) {
                 else if(message.type === 'open') {
                     searchPaths = [...new Set([...searchPaths, ...message.data.searchPaths])];
                     openPatches[message.data.id] = message.data.name;
-                    if(!FS.analyzePath(`/${message.data.name}`).exists)
-                    {
-                        try {
-                            FS.createDataFile("/", message.data.name, new TextEncoder().encode(message.data.content), true, true, true);
-                            Module.pd.openPatch(message.data.name, "/");
-                            pdsend("pd dsp 1");
-                        } catch (error) {
-                            alert(`Failed to open patch ${message.data.name}!`);
-                            console.error(error);
-                        }
+                    page.nextPatchID = message.data.nextPatchID;
+                    try {
+                        FS.writeFile(openPatches[message.data.id], message.data.content);
+                        Module.pd.openPatch(openPatches[message.data.id], `/`);
+                        pdsend("pd dsp 1");
+                    } catch (error) {
+                        alert(`Failed to open patch ${message.data.name}!`);
+                        console.error(error);
                     }
                 }
                 else if(message.type === 'unload') {
@@ -3854,11 +3857,7 @@ async function openPatch(content, filename) {
                         window.close();
                     else {
                         if(openPatches[message.data]) {
-                            const windows = Object.values(openPatches).filter(patch => patch = openPatches[message.data]);
-                            if(windows.length === 1) {
-                                Module.pd.closePatch(openPatches[message.data]);
-                                FS.unlink(`/${openPatches[message.data]}`);
-                            }
+                            Module.pd.closePatch(openPatches[message.data]);
                             delete openPatches[message.data];
                         }
                     }
@@ -3892,7 +3891,8 @@ async function openPatch(content, filename) {
                         body: buildFileApiBody(message.file),
                         headers: { 'Content-Type': 'application/json' },
                     })).text()});
-                }
+                } else if(message.type === 'patchID')
+                    serviceWorker.active.postMessage({ messageId: message.messageId, result: page.nextPatchID});
             }
         }
     });
@@ -3944,7 +3944,6 @@ async function openPatch(content, filename) {
     
     let maxNumInChannels = 0;
     let nextHTMLID = 0;       //This is used to assign unique IDs to gui objects so that their subscriptions can be managed
-    let nextPatchID = 1003;   //This is used to assign patch IDs to subpatches (which will be collapsed by the web parser)
     let nextLayerID = 0;      //This is used to assign unique IDs to layers to keep track of their objects
     let nextArgs = [];        //This is used to pass arguments from abstractions which are collapsed by the web parser
     let layers = [ { } ];   //Holds all the layers currently being processed. Used as a stack.
@@ -4030,7 +4029,7 @@ async function openPatch(content, filename) {
                         showLabel: false,
                         showHandle: false,
                     },
-                    patchID: Number.isNaN(+args[6]) ? layer.patchID : nextPatchID++,
+                    patchID: Number.isNaN(+args[6]) ? layer.patchID : page.nextPatchID++,
                     args: nextArgs ? nextArgs : layer.args,
                     argsInherited: nextArgs ? true : false,
                     id: nextLayerID++,
@@ -4276,7 +4275,6 @@ async function openPatch(content, filename) {
                             data.canvas.style.overflow = "hidden";
                         }
                         data.setVisibility = visibility => {
-                            rootCanvas.removeChild(data.windowGroup);
                             rootCanvas.appendChild(data.windowGroup);
                             data.windowGroup.style.display = visibility ? 'block' : 'none';
 
@@ -5326,17 +5324,17 @@ async function openPatch(content, filename) {
                     data.receive = [null];
                     data.shortCircuit = false;
                     data.send = [null];
-                    data.clickSend = `msg_${layer.id}_${layer.nextGUIID}`
+                    data.clickSend = `msg_${page.id}_${layer.id}_${layer.nextGUIID}`
                     data.canvas = layer.canvas;
                     layer.messages.push(data);
 
                     let nextObjId = layer.nextGUIID, nextSlot = i, depth = 0;
-                    for(;(lines[nextSlot] !== undefined && lines[nextSlot].startsWith('#X connect') == false && lines[nextSlot].startsWith('#X restore') == false) || depth > 0; nextSlot++) {
-                        if(object_types.find(type=>lines[nextSlot].startsWith(type)) && depth == 0)
+                    for(;depth > 0 || (lines[nextSlot] !== undefined && lines[nextSlot].startsWith('#X connect') == false && lines[nextSlot].startsWith('#X restore') == false); nextSlot++) {
+                        if(depth == 0 && object_types.find(type=>lines[nextSlot].startsWith(type)))
                             nextObjId++;
                         if(lines[nextSlot].startsWith('#N canvas'))
                             depth++;
-                        if(lines[nextSlot].startsWith('#X restore'))
+                        else if(lines[nextSlot].startsWith('#X restore'))
                             depth--;
                     }
                     lines.splice(nextSlot, 0, `#X obj 0 0 r ${data.clickSend}`,`#X connect ${nextObjId} 0 ${layer.nextGUIID} 0 __IGNORE__`);
@@ -5626,7 +5624,7 @@ async function openPatch(content, filename) {
                     if(args[6] === '__IGNORE__')
                         break;
                     //We generate a name based off of the arguments of the connect (which will be unique)
-                    let connectionName = `__WIRE_${layer.id}_${args[2]}_${args[3]}_${args[4]}_${args[5]}`;
+                    let connectionName = `__WIRE_${page.id}_${layer.id}_${args[2]}_${args[3]}_${args[4]}_${args[5]}`;
                     if(layer.guiObjects[args[4]]?.shortCircuit === false)
                         connectionName = layer.guiObjects[args[4]].clickSend;
 
@@ -5744,6 +5742,7 @@ async function openPatch(content, filename) {
             name: filename,
             content: lines.join(';\n'),
             searchPaths: searchPaths,
+            nextPatchID: page.nextPatchID
         }
     });
 }

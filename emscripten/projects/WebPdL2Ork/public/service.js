@@ -29,13 +29,13 @@ addEventListener('message', async(event) => {
             if(data.parent)
                 event.source.parent = clients[data.parent];
         }, 100);
-        event.source.postMessage({ type: 'register', data: { id: source }});
+        event.source.postMessage({ type: 'register', data: { id: source, nextPatchID: data.parent ? await waitForMessage(data.parent, { type: 'patchID' }) : 1003}});
     } else if(data.type === 'children') {
         getChildren(source).forEach(child => child.postMessage(data.data));
     } else if(data.type === 'parent') {
-        clients[source].parent?.postMessage?.(data.data);
+        clients[source]?.parent?.postMessage?.(data.data);
     } else if(data.type === 'unload') {
-        clients[source].parent?.postMessage?.({ type: 'unload', data: source });
+        clients[source]?.parent?.postMessage?.({ type: 'unload', data: source });
         getChildren(source).forEach(child => child.postMessage({ type: 'unload' }));
         delete clients[source];
     }
