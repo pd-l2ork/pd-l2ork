@@ -16,8 +16,8 @@
 #X msg 33 342 symbol \$1-tracker-override;
 #X msg 60 316 symbol \$1-tracker-position-override;
 #X obj 285 341 t 1 0 f;
-#X text 64 49 sync-to-at<sync-from-client-num 1-12><sync-to-client-num
-1-12><time 0-63>, f 31;
+#X text 64 49 sync-to-at<sync-from-client-num 1-14><sync-to-client-num
+1-14><time 0-63>, f 31;
 #X connect 1 0 7 0;
 #X connect 2 0 6 0;
 #X connect 3 0 2 1;

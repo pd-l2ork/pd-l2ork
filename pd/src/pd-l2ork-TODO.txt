@@ -6,6 +6,12 @@ PD-L2ORK TODO:
     at HTMLDocument.text_mousedown (pd_canvas.js:829:27)
     *Attempted fixing this with an if check. Need to test.
 
+*C:\Program Files (x8…rk\bin\pdgui.js:901 Uncaught TypeError: Cannot read properties of undefined (reading 'occurrences')
+    at Object.index_obj_completion (C:\Program Files (x86)\Pd-L2Ork\bin\pdgui.js:901:65)
+    at Object.create_obj (pd_canvas.js:1502:27)
+    at HTMLDocument.text_mousedown (pd_canvas.js:831:27)
+    *Creating "gate 2 1" inside server-commands inside the L2Ork-Tweeter-Teacher patch
+
 *Figure out why comments and the end of Tweeter track with lots of numbers converts to scientific notation.
 
 *Opening file dialog on Linux Ubuntu 22.04 via keyboard shortcut creates up to 4 prompts in a row. Doing the same via menu option does not.

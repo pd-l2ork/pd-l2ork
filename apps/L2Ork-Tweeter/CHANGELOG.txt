@@ -9,14 +9,19 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
-12-11-2024 0.85
-*Updated array size syntax based on the updated expr object.
-*Added Interstellar piece with its parts and score.
+19-03-2025 0.86
+*Increased number of players to 14 and changed zoom level to make everything fit.
+*Improved handshake logic to ensure that WebPdL2Ork version works even when dealing with long delays in opening HTML sockets (contributed by William Furgerson).
+*Improved logic of saving and distributing sessions through the Teacher widget.
 *TODO:
   *Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. Needs to be further tested.
     *Also affects Teacher widget
   *Update L2Orkmote version of Tweeter with changes made to Tweeter (involves L2Orkmote-Tweeter.pd and core/L2OrkTweet-L2Orkmote.pd).
     *Attempt to make L2Orkmote part modular?
+
+12-11-2024 0.85
+*Updated array size syntax based on the updated expr object.
+*Added Interstellar piece with its parts and score.
 
 09-10-2024 0.84
 *Fixed a bug where saving a session to online clients via the teacher interface misreported a number of lines saved
