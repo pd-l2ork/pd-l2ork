@@ -26,8 +26,8 @@ f 37;
 -9 0 10 #80fc80 #008080 #fcfcfc 1;
 #X obj 1609 42 bng 16 250 50 0 save-session save-session-r SAVE -5
 -9 0 10 #fcb46c #fc6418 #fcfcfc 1;
-#X obj 243 42 nbx 2 16 0 14 0 0 \$0-slot-s null-r empty 1 -9 0 12 #fcb46c
-#000000 #000000 0 256 0 1 1 0;
+#X obj 243 42 nbx 2 16 0 15 0 0 \$0-slot-s null-r empty 1 -9 0 12 #fcb46c
+#000000 #000000 15 256 0 1 1 0;
 #X obj 247 28 cnv 8 10 8 empty empty SLOT -1 5 0 10 #6c6c6c #fcfcfc
 0;
 #X obj 287 24 cnv 15 55 41 empty empty empty 4 5 0 10 #6c6c6c #fcfcfc
