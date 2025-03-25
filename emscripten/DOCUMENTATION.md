@@ -9,33 +9,45 @@ With contributions from Jonathan Wilkes and Albert Graef
 # Overview
 WebPdL2Ork is a Pd-L2Ork implementation and further development of the [PdWebParty] (https://github.com/cuinjune/PdWebParty) poject, originally introduced as part of the Google Summer of Code. WebPdL2Ork is a system for automatic generation of embeddable library from the code snippets made in the Pd-L2Ork visual programming environment. The end goal is to add the ability to run Pd-L2Ork patches in a web browser. Significant work has been done towards this goal, but there are still changes left to be made to add this functionality to Pd-L2Ork. The rest of this file is a guide for users (particularly those who aim to deploy their own WebPdL2Ork servers), as well as future developers on how to continue working on this project.
 
-# Build Guide
+# Deployment Guide
 
 WebPdL2Ork can be built in two ways: natively, and through docker. The docker build is much easier to set up, and is recommended for most use cases.
 
-## Docker Build
+## Docker Deployment
 
 1. Install docker and docker-compose (through whatever means are appropriate for your OS)
 
-2. Build the docker container from this repository:
-
+2. Go to the pd-l2ork git folder
 ```bash
 cd <pd-l2ork-git-folder>
-docker-compose build
 ```
 
-3. Run the docker container:
+3. Select the image to use. If you want to use our pre-built image, leave the docker-compose.yml file as-is. If you want to build your own image from the repository (for instance if you make custom changes to the source code), comment out the part of the docker-compose.yml file that is marked "For pre-build GitHub image" and uncomment the part marked "For local image".
+
+4. Run the docker-compose network:
 
 ```bash
-docker-compose up
+docker-compose up -d
 ```
 
-Note that you can run the container in the background by using `docker-compose up -d`
+Configuration for the patch folder and port are in `docker-compose.yml`
 
-Configuration for the patch bind mount and port are in `docker-compose.yml`
+### Updating the deployment
 
+If you are using the pre-built github image, run the following commands to update your deployment:
 
-## Native Build
+```bash
+docker-compose pull
+docker-compose up -d
+```
+
+If you are using a locally build image, run the following commands to update your deployment:
+
+```bash
+docker-compose up --build -d
+```
+
+## Native Deployment
 
 1. Install emscripten SDK (requires git, instructions tested on Linux, please see https://emscripten.org/docs/getting_started/downloads.html#installation-instructions for instructions for other platforms). These instructions assume that you are ok installing emsdk in your ~/Downloads folder:
 
@@ -98,23 +110,8 @@ By default WebPdL2Ork is served over http. To enable https support (required for
 	openssl pkey -in your-privkey.pem -out my.domain.name.key
 	```
 
-# Future Work
+# Missing features (compared to desktop Pd-L2Ork)
 
-- Check for access to supporting files both locally and remotely.
-- Fix building of libraries that old version supported but the current one doesn't (see externals/Makefile).
-- After resolving the previous issues, if ther are stil problems, figure out what is preventing the support of more complex patches (e.g. Phase-Cancellation-Emscripten.pd).
-- Add favicon.ico.
-
-## Done Since Transitioning to Pd-L2Ork
-2024-03-25:
-- Added other GUI objects.
-- Implemented many of the external libraries that previosly did not build.
-- Various bug-fixes and optimizations.
-
-2023-08-02:
-- Fixed "Uncaught (in promise) RuntimeError: null function or function signature mismatch" when opening a simple patch.
-- Fixed a bug with select function and expectfds (which is currently apparently not supported by emscripten).
-- Fixed instance being unable to load any external.
-- Fixed issue whereaudio stopped working when loading an external object.
-- Streamlined building process and resolving benign errors.
-- Made transplanting of patches as easy as possible.
+- Editing
+- Data structures
+- Gem

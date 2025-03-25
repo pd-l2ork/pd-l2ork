@@ -6,9 +6,13 @@ const filter = document.getElementById("filter");
 let currentFile = '';
 let previousValue = '';
 let subscribedData = {};
-let searchPaths = ['/'];
+let searchPaths = [];
 let fileCache = {};
-let pageId;
+let page = {
+    id: null,
+    mode: (new URLSearchParams(window.location.search)).get('parent') ? 'child' : 'parent',
+    parent: (new URLSearchParams(window.location.search)).get('parent')
+};
 
 // Header that needs to be added to js files to be loaded by pdjs. Implements all the builtin
 // pdjs functions that the pdjs external normally handles using v8
@@ -23,13 +27,13 @@ delprop = prop => delete this[prop];
 inlet = 0;
 _import = file => {
     let x = new XMLHttpRequest();
-    x.open('get', '${window.location.origin}/@sw?type=import&pageId=${pageId}&file=' + file, false);
+    x.open('get', '${window.location.origin}/@sw?type=import&pageId=${page.id}&file=' + file, false);
     x.send();
     eval.bind(this)(JSON.parse(x.response));
 }
 require = file => {
     let x = new XMLHttpRequest();
-    x.open('get', '${window.location.origin}/@sw?type=require&pageId=${pageId}&file=' + file, false);
+    x.open('get', '${window.location.origin}/@sw?type=require&pageId=${page.id}&file=' + file, false);
     x.send();
     return JSON.parse(x.response);
 }
@@ -209,12 +213,11 @@ function copyTextToClipboard(text) {
 }
 
 function buildFileApiBody(path) {
-    const base = ((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')+'/';
     const file = ('' + path).split('/').slice(-1)[0];
     return JSON.stringify({
         urls: [
             `/supplemental/${file}`,
-            ...searchPaths.map(searchPath => base + searchPath.slice(0,-1)+path)
+            ...searchPaths.map(searchPath => searchPath.slice(0,-1)+path)
         ]
     });
 }
@@ -518,6 +521,14 @@ var Module = {
 
         // receive from pd's subscribed sources
         Module.Pd.receiveBang = function (source) {
+            sendToChildren({
+                type: 'pd',
+                data: {
+                    type: 'Bang',
+                    symbol: source,
+                    value: null,
+                }
+            });
             if (source in subscribedData) {
                 for (const data of subscribedData[source]) {
                     switch (data.type) {
@@ -564,6 +575,14 @@ var Module = {
         }
 
         Module.Pd.receiveFloat = function (source, value) {
+            sendToChildren({
+                type: 'pd',
+                data: {
+                    type: 'Float',
+                    symbol: source,
+                    value: value,
+                }
+            });
             if (source in subscribedData) {
                 for (const data of subscribedData[source]) {
                     switch (data.type) {
@@ -625,6 +644,14 @@ var Module = {
         }
 
         Module.Pd.receiveSymbol = function (source, symbol) {
+            sendToChildren({
+                type: 'pd',
+                data: {
+                    type: 'Symbol',
+                    symbol: source,
+                    value: symbol,
+                }
+            });
             if (source in subscribedData) {
                 for (const data of subscribedData[source]) {
                     switch (data.type) {
@@ -651,6 +678,14 @@ var Module = {
         }
 
         Module.Pd.receiveList = function (source, list) {
+            sendToChildren({
+                type: 'pd',
+                data: {
+                    type: 'List',
+                    symbol: source,
+                    value: list,
+                }
+            });
             if (source in subscribedData) {
                 for (const data of subscribedData[source]) {
                     switch (data.type) {
@@ -709,6 +744,14 @@ var Module = {
         }
 
         Module.Pd.receiveMessage = function (source, symbol, list) {
+            sendToChildren({
+                type: 'pd',
+                data: {
+                    type: 'Message',
+                    symbol: source,
+                    value: [symbol, ...list],
+                }
+            });
             if (source in subscribedData) {
                 for (const data of subscribedData[source]) {
                     switch (data.type) {
@@ -1943,7 +1986,57 @@ function colfromload(col, bits = 6) { // decimal to hex color
     return "#" + (r | g | b).toString(16).slice(-6).padStart(6,'0');
 }
 
+const queue = {};
+function sendToServiceWorker(message) {
+    if(!(message.type in queue))
+        queue[message.type] = [];
+
+    queue[message.type].push(message.data);
+}
+
+setInterval(() => {
+    for(const type in queue) {
+        navigator.serviceWorker.controller.postMessage({ type, data: queue[type].flat()});
+        delete queue[type];
+    }
+}, 100);
+
+function sendToChildren(...data) {
+    if(page.mode !== 'parent')
+        return;
+
+    sendToServiceWorker({ type: 'children', data });
+}
+function sendToParent(...data) {
+    if(page.mode === 'parent') {
+        for(let message of data)
+            navigator.serviceWorker.onmessage({ data: message});
+    } else
+        sendToServiceWorker({ type: 'parent', data});
+}
+
+let subscriptions = {};
+function pd_subscribe_push(symbol) {
+    if(symbol in subscriptions)
+        subscriptions[symbol]++;
+    else if(symbol) {
+        subscriptions[symbol] = 1;
+        Module.pd.subscribe(symbol);
+    }
+}
+
+function pd_subscribe_pop(symbol) {
+    subscriptions[symbol]--;
+    if(subscriptions[symbol] == 0) {
+        delete subscriptions[symbol];
+        Module.pd.unsubscribe(symbol);
+    }
+}
+
 function gui_subscribe(data) {
+    for(let send of (data.send ?? []))
+        if(send)
+            sendToParent({ type: 'subscribe', data: send });
     for(let receive of data.receive) {
         if(!receive)
             continue;
@@ -1953,7 +2046,7 @@ function gui_subscribe(data) {
         }
         else {
             subscribedData[receive] = [data];
-            Module.pd.subscribe(receive);
+            sendToParent({ type: 'subscribe', data: receive });
         }
     }
 }
@@ -1968,7 +2061,7 @@ function gui_unsubscribe(data) {
                 if (subscribedData[receive][i].id === data.id) {
                     subscribedData[receive].splice(i, 1);
                     if (!subscribedData[receive].length) {
-                        Module.pd.unsubscribe(receive);
+                        sendToParent({ type: 'unsubscribe', data: symbol });
                         delete subscribedData[receive];
                     }
                     break;
@@ -1979,6 +2072,13 @@ function gui_unsubscribe(data) {
 }
 
 function gui_send(type, destinations, value) {
+    if(page.mode !== 'parent') {
+        sendToParent(...destinations.map(symbol => ({
+            type: 'pd',
+            data: { type, symbol, value }
+        })));
+        return;
+    }
     for(let destination of destinations) {
         if(destination) {
             if(type === 'List') {
@@ -2691,15 +2791,19 @@ function gui_knob_onmouseup(id) {
 }
 
 //pddplink
+let windows = {};
 function gui_link_open(link) {
     if(link.startsWith('http'))
         window.open(link);
     else if(link.slice(-3) == '.pd') {
-        if(link.startsWith('/'))
-            window.open(`${window.location.origin}/?url=${link}`);
-        else { 
-            window.open(`${window.location.origin}/?url=${window.location.href.split('url=')[1].split('/').slice(0,-1)}/${link}`);
+        if(windows[link]) {
+            if(windows[link].closed)
+                alert('WebPdL2Ork does not yet support re-opening a closed patch');
+            else
+                windows[link].focus();
         }
+        else
+            windows[link] = window.open(link.startsWith('/') ? `${window.location.origin}/?url=${link}&parent=${page.id}` : `${window.location.origin}/?url=${window.location.href.split('url=')[1].split('/').slice(0,-1)}/${link}&parent=${page.id}`, '_blank', `resizable=yes,width=800,height=600`)
     }
     else
         window.open(link);
@@ -3708,53 +3812,103 @@ function gui_text_text(data, line_index, fontSize) {
 //--------------------- patch handling ----------------------------
 async function openPatch(content, filename) {
     console.log(`Loading Patch: ${filename}`);
-    document.title=`WebPdL2Ork: ${filename}`;
+    document.title=filename;
 
     const serviceWorker = await navigator.serviceWorker.register('/service.js', { scope: '/' });
-    const pageIdPromise = new Promise(Resolve => {
+    const openPatches = {};
+    const registrationPromise = new Promise(Resolve => {
         let registered = false;
-        navigator.serviceWorker.onmessage = async({ data: message }) => {
-            if(message.type === 'register') {
-                if(registered)
-                    throw new Error('Duplicate Registration');
-                registered = true;
-                Resolve(message.data);
-            } else if(message.type === 'require') {
-                const result = await fetch('/api/file', {
-                    method: 'post',
-                    body: buildFileApiBody(message.file),
-                    headers: { 'Content-Type': 'application/json' },
-                });
-
-                if(result.status !== 200)
-                    return serviceWorker.active.postMessage({ messageId: message.messageId, result: null});
-
-                const code = `${pdJsHeader()}\n${(await result.text()).replace(/import\(/g, '_import(')}`;
-                const worker = new Worker(window.URL.createObjectURL(new Blob([code], { type: 'text/javascript'})));
-                worker.onmessage = ({ data }) => {
-                    serviceWorker.active.postMessage({ messageId: message.messageId, result: data});
-                    worker.terminate();
+        navigator.serviceWorker.onmessage = async({ data: messages }) => {
+            for(const message of Array.isArray(messages) ? messages : [messages]) {
+                if(message.type === 'register') {
+                    if(!registered) {
+                        Object.assign(page, message.data);
+                        registered = true;
+                        Resolve(message.data);
+                    }
+                } 
+                else if(message.type === 'reregister')
+                    serviceWorker.active.postMessage({type: 'register', parent: page.parent});
+                else if(message.type === 'pd') {
+                    if(page.mode === 'parent')
+                        gui_send(message.data.type, [message.data.symbol], message.data.value);
+                    else {
+                        if(message.data.type === 'Message')
+                            Module.Pd.receiveMessage(message.data.symbol, message.data.value[0], message.data.value.slice(1));
+                        else
+                            Module.Pd[`receive${message.data.type}`](message.data.symbol, message.data.value);
+                    }
                 }
-                worker.postMessage({type: 'exports'});
-
-            } else if(message.type === 'import') {
-                serviceWorker.active.postMessage({ messageId: message.messageId, result: await (await fetch('/api/file', {
-                    method: 'post',
-                    body: buildFileApiBody(message.file),
-                    headers: { 'Content-Type': 'application/json' },
-                })).text()});
+                else if(message.type === 'open') {
+                    searchPaths = [...new Set([...searchPaths, ...message.data.searchPaths])];
+                    openPatches[message.data.id] = message.data.name;
+                    page.nextPatchID = message.data.nextPatchID;
+                    try {
+                        FS.writeFile(openPatches[message.data.id], message.data.content);
+                        Module.pd.openPatch(openPatches[message.data.id], `/`);
+                        pdsend("pd dsp 1");
+                    } catch (error) {
+                        alert(`Failed to open patch ${message.data.name}!`);
+                        console.error(error);
+                    }
+                }
+                else if(message.type === 'unload') {
+                    if(page.mode === 'child')
+                        window.close();
+                    else {
+                        if(openPatches[message.data]) {
+                            Module.pd.closePatch(openPatches[message.data]);
+                            delete openPatches[message.data];
+                        }
+                    }
+                }
+                else if(message.type === 'subscribe')
+                    pd_subscribe_push(message.data);
+                else if(message.type === 'unsubscribe')
+                    pd_subscribe_pop(message.data);
+                else if(message.type === 'require') {
+                    const result = await fetch('/api/file', {
+                        method: 'post',
+                        body: buildFileApiBody(message.file),
+                        headers: { 'Content-Type': 'application/json' },
+                    });
+    
+                    if(result.status !== 200)
+                        return serviceWorker.active.postMessage({ messageId: message.messageId, result: null});
+    
+                    const code = `${pdJsHeader()}\n${(await result.text()).replace(/import\(/g, '_import(')}`;
+                    const worker = new Worker(window.URL.createObjectURL(new Blob([code], { type: 'text/javascript'})));
+                    worker.onmessage = ({ data }) => {
+                        serviceWorker.active.postMessage({ messageId: message.messageId, result: data});
+                        worker.terminate();
+                    }
+                    worker.postMessage({type: 'exports'});
+    
+                } 
+                else if(message.type === 'import') {
+                    serviceWorker.active.postMessage({ messageId: message.messageId, result: await (await fetch('/api/file', {
+                        method: 'post',
+                        body: buildFileApiBody(message.file),
+                        headers: { 'Content-Type': 'application/json' },
+                    })).text()});
+                } else if(message.type === 'patchID')
+                    serviceWorker.active.postMessage({ messageId: message.messageId, result: page.nextPatchID});
             }
         }
     });
+
     if(!serviceWorker.active)
         window.location.reload();
-    serviceWorker.active.postMessage({type: 'register'});
-    pageId = await pageIdPromise;
+
+    serviceWorker.active.postMessage({type: 'register', parent: page.parent});
+    await registrationPromise;
 
     document.getElementById('loadingstage').innerHTML=`Fetching Dependencies`;
     await new Promise(Resolve => setTimeout(Resolve, 10));
     let start = Date.now();
     let abstractions = {};
+    let base = '/'+((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')+'/';
+    searchPaths = [base];
     let fetchAbstractions = async(content, path) => {
         let declares = content.split(';\n').filter(line => line.startsWith('#X declare')).map(declare => declare.slice(11).match(/-\w+ [^ ]+/g).filter(directive => directive.startsWith("-path")).map(directive => directive.split(' ')[1])).flat();
         let paths = [path, ...declares.map(declare => declare.startsWith('/')?declare:`${path}${declare}/`)];
@@ -3770,7 +3924,7 @@ async function openPatch(content, filename) {
                 }
             }
         }
-        searchPaths = [...new Set([...searchPaths, path])];
+        searchPaths = [...new Set([...searchPaths, base + path])];
         await Promise.all(promises);
     }
     await fetchAbstractions(content,'/');
@@ -3790,7 +3944,6 @@ async function openPatch(content, filename) {
     
     let maxNumInChannels = 0;
     let nextHTMLID = 0;       //This is used to assign unique IDs to gui objects so that their subscriptions can be managed
-    let nextPatchID = 1003;   //This is used to assign patch IDs to subpatches (which will be collapsed by the web parser)
     let nextLayerID = 0;      //This is used to assign unique IDs to layers to keep track of their objects
     let nextArgs = [];        //This is used to pass arguments from abstractions which are collapsed by the web parser
     let layers = [ { } ];   //Holds all the layers currently being processed. Used as a stack.
@@ -3854,6 +4007,8 @@ async function openPatch(content, filename) {
                     }
                     break;
                 }
+                if(layers.length == 1)
+                    window.resizeTo(+args[4], +args[5]);
                 layers.push({
                     arrays: [],
                     messages: [],
@@ -3874,7 +4029,7 @@ async function openPatch(content, filename) {
                         showLabel: false,
                         showHandle: false,
                     },
-                    patchID: Number.isNaN(+args[6]) ? layer.patchID : nextPatchID++,
+                    patchID: Number.isNaN(+args[6]) ? layer.patchID : page.nextPatchID++,
                     args: nextArgs ? nextArgs : layer.args,
                     argsInherited: nextArgs ? true : false,
                     id: nextLayerID++,
@@ -4120,7 +4275,6 @@ async function openPatch(content, filename) {
                             data.canvas.style.overflow = "hidden";
                         }
                         data.setVisibility = visibility => {
-                            rootCanvas.removeChild(data.windowGroup);
                             rootCanvas.appendChild(data.windowGroup);
                             data.windowGroup.style.display = visibility ? 'block' : 'none';
 
@@ -4970,6 +5124,9 @@ async function openPatch(content, filename) {
 
                             layer.guiObjects[layer.nextGUIID] = data;
                         }
+                        case "s": {            
+                            sendToParent({ type: 'subscribe', data: args[5] });
+                        }
                         default: //If we don't have an explicit handling for the object, it's possible that it is an external patch load 
                             if(args[4] in abstractions) {
                                 //We must add an #X restore at the end to undo the #N canvas at the beginning
@@ -5167,17 +5324,17 @@ async function openPatch(content, filename) {
                     data.receive = [null];
                     data.shortCircuit = false;
                     data.send = [null];
-                    data.clickSend = `msg_${layer.id}_${layer.nextGUIID}`
+                    data.clickSend = `msg_${page.id}_${layer.id}_${layer.nextGUIID}`
                     data.canvas = layer.canvas;
                     layer.messages.push(data);
 
                     let nextObjId = layer.nextGUIID, nextSlot = i, depth = 0;
-                    for(;(lines[nextSlot] !== undefined && lines[nextSlot].startsWith('#X connect') == false && lines[nextSlot].startsWith('#X restore') == false) || depth > 0; nextSlot++) {
-                        if(object_types.find(type=>lines[nextSlot].startsWith(type)) && depth == 0)
+                    for(;depth > 0 || (lines[nextSlot] !== undefined && lines[nextSlot].startsWith('#X connect') == false && lines[nextSlot].startsWith('#X restore') == false); nextSlot++) {
+                        if(depth == 0 && object_types.find(type=>lines[nextSlot].startsWith(type)))
                             nextObjId++;
                         if(lines[nextSlot].startsWith('#N canvas'))
                             depth++;
-                        if(lines[nextSlot].startsWith('#X restore'))
+                        else if(lines[nextSlot].startsWith('#X restore'))
                             depth--;
                     }
                     lines.splice(nextSlot, 0, `#X obj 0 0 r ${data.clickSend}`,`#X connect ${nextObjId} 0 ${layer.nextGUIID} 0 __IGNORE__`);
@@ -5467,7 +5624,7 @@ async function openPatch(content, filename) {
                     if(args[6] === '__IGNORE__')
                         break;
                     //We generate a name based off of the arguments of the connect (which will be unique)
-                    let connectionName = `__WIRE_${layer.id}_${args[2]}_${args[3]}_${args[4]}_${args[5]}`;
+                    let connectionName = `__WIRE_${page.id}_${layer.id}_${args[2]}_${args[3]}_${args[4]}_${args[5]}`;
                     if(layer.guiObjects[args[4]]?.shortCircuit === false)
                         connectionName = layer.guiObjects[args[4]].clickSend;
 
@@ -5577,16 +5734,17 @@ async function openPatch(content, filename) {
     }
 
     //Next we load our modified lines into the backend of pd-l2ork
-    FS.createDataFile("/", filename, new TextEncoder().encode(lines.join(';\n')), true, true, true);
     console.log('Parse time: '+(Date.now() - start)+'ms');
-    try {
-        Module.pd.openPatch(filename, "/");
-        pdsend("pd dsp 1");
-    } catch (e) {
-        alert("Failed to start PD engine!");
-        console.error(e.stack);
-        return;
-    }
+    sendToParent({
+        type: 'open',
+        data: {
+            id: page.id,
+            name: filename,
+            content: lines.join(';\n'),
+            searchPaths: searchPaths,
+            nextPatchID: page.nextPatchID
+        }
+    });
 }
 
 function uploadPatch(file) {
@@ -5697,3 +5855,7 @@ window.oncontextmenu = function (e) {
     e.stopPropagation();
     return false;
 };
+
+window.onbeforeunload = function() {
+    navigator.serviceWorker.controller.postMessage({ type: 'unload' });
+}
