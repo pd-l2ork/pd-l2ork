@@ -2147,6 +2147,12 @@ static void garray_print(t_garray *x)
         x->x_realname->s_name, array->a_templatesym->s_name, array->a_n);
 }
 
+/* Dummy function which is used internally by WebPdL2Ork to pass data to the front end */
+static void garray_data(t_garray *x)
+{
+
+}
+
 /* ico@vt.edu: used for scalar to detect type and thereby adjust visual offset */
 int garray_get_style(t_garray *x)
 {
@@ -2194,6 +2200,8 @@ void g_array_setup(void)
     class_addmethod(garray_class, (t_method)garray_edit, gensym("edit"),
         A_FLOAT, 0);
     class_addmethod(garray_class, (t_method)garray_print, gensym("print"),
+        A_NULL);
+    class_addmethod(garray_class, (t_method)garray_data, gensym("data"), 
         A_NULL);
     class_addmethod(garray_class, (t_method)garray_sinesum, gensym("sinesum"),
         A_GIMME, 0);
