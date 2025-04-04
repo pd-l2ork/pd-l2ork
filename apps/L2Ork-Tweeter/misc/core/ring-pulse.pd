@@ -1,42 +1,25 @@
-#N canvas 838 356 432 412 10;
+#N canvas 1272 791 432 309 10;
 #X obj -30 -30 preset_hub k12 1 %hidden%;
 #X obj 15 20 r \$1-note-generator;
-#X obj 15 375 s to-mad-mapper;
+#X obj 15 265 s to-mad-mapper;
 #X text 219 20 arguments (all required):1 = instrument number2 =
 ramp down duration in ms3 = name of object in MadMapper;
-#X obj 15 310 pack 0 s;
-#X obj 183 247 loadbang;
-#X obj 183 272 symbol \$3;
-#X obj 15 170 pack 0 0;
-#X obj 127 107 loadbang;
-#X obj 127 132 \$2;
-#X obj 15 220 line 10;
-#X msg 15 350 send /surfaces/\$2/FX/Color/Brightness \$1;
-#X msg 15 195 1 \, 0.25 \$2;
-#X obj 15 44 unpack 0 0;
-#X obj 15 130 gate 1 0;
-#X obj 72 68 t f f;
-#X obj 15 275 * 1;
-#X obj 100 222 nbx 5 14 0 1 0 0 empty empty empty 0 -8 0 10 #fcfcfc
-#000000 #000000 0.0207831 256 0 0 1 0;
-#X obj 71 91 > 0;
-#X obj 99 244 pow 0.15;
-#X connect 1 0 13 0;
+#X obj 15 200 pack 0 s;
+#X obj 127 140 loadbang;
+#X obj 127 165 symbol \$3;
+#X obj 15 110 pack 0 0;
+#X obj 127 50 loadbang;
+#X obj 127 75 \$2;
+#X obj 15 160 line 10;
+#X msg 15 240 send /surfaces/\$2/FX/Color/Brightness \$1;
+#X msg 15 135 1 \, 0.25 \$2;
+#X connect 1 0 7 0;
 #X connect 4 0 11 0;
 #X connect 5 0 6 0;
 #X connect 6 0 4 1;
 #X connect 7 0 12 0;
 #X connect 8 0 9 0;
 #X connect 9 0 7 1;
-#X connect 10 0 16 0;
+#X connect 10 0 4 0;
 #X connect 11 0 2 0;
 #X connect 12 0 10 0;
-#X connect 13 0 14 1;
-#X connect 13 1 15 0;
-#X connect 14 0 7 0;
-#X connect 15 0 18 0;
-#X connect 15 1 17 0;
-#X connect 16 0 4 0;
-#X connect 17 0 19 0;
-#X connect 18 0 14 0;
-#X connect 19 0 16 1;
