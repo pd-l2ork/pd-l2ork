@@ -5,8 +5,10 @@ PD-L2ORK TODO:
 
 *Implement Windows list in the Windows menu.
 
-*Deal with synchronicity of displaying arrays (as seen in phase cancellation VT Waves module).
-  *Looks like this has been already done and is a simple matter of making sure everyone gets the same signal timing to redraw.
+*Bezier implementation of the array sometimes:
+  *does not draw when the patch is opened (with different zoom levels)
+  *sometimes has the last point that you cannot change that is stuck at the top
+  *when a toplevel patch it has only a subset of the points present (e.g. a large vertical bar in the middle) and you cannot edit it, although it adapts to the window size.
 
 *Integrate cyclone
   *Need to request upstream documentation update to remove inappropriate language.
@@ -875,6 +877,9 @@ resulting in unexpected stuck keys.
   *This is an xdg + Ubuntu bug that will be hopefully fixed upstream. The problem is that the new dialog is not focused. WILL NOT FIX
 *Moved RPi nwjs to version 0.6x, fixing error closing a new window because there is no "width" property (e.g. a subpatch has been created). Looks like this only affects RPi's old version of nw.js.
 *Fixed bug where data structures in Pd-L2Ork Data Structure Demos (inside Help Browser, e.g. bulbs patch) when clicked slightly dislocate down and left, suggesting there is a partial loss of the location upon clicking (check places where location is at a whole number rather than x.5 which is used in places because that curiously makes things less blurry). This was because updating scalars inside pdgui.js did not account for whether the object was toplevel or not.
+*Deal with synchronicity of displaying arrays (as seen in phase cancellation VT Waves module).
+  *Looks like this has been already done and is a simple matter of making sure everyone gets the same signal timing to redraw.
+    *Confirming this is indeed the case.
 
 
 
