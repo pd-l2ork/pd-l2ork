@@ -892,13 +892,32 @@ function index_obj_completion(obj_or_msg, obj_or_msg_text) {
         obj_ref = obj_result[0].refIndex;
         obj_freq = obj_result[0].item.occurrences + 1;
         args = obj_result[0].item.args;
+        /*
+        post("index_obj_completion\n  obj_ref=" + obj_ref +
+             "\n  obj_freq=" + obj_freq +
+             "\n  args=" + args);
+        */
         if (arg) {
             arg_ref = args.length;
             let arg_result = arg_exact_match(title, arg);
             if (arg_result.length !== 0) {
                 arg_ref = arg_result[0].matches[1].refIndex;
+                /*
+                post("...\n  arg=" + arg +
+                     "\n  args.length=" + args.length +
+                     "\n  arg_result=" + arg_result +
+                     "\n  arg_ref=" + arg_ref);
+                */
                 if (arg_ref !== null) {
-                    arg_freq = obj_result[0].item.args[arg_ref].occurrences + 1;
+                    /*
+                    post("...\n  obj_result[0]=" + arg_result[0] +
+                         "\n  item=" + arg_result[0].item +
+                         "\n  args=" + arg_result[0].item.args +
+                         "\n  args.length=" + arg_result[0].item.args.length +
+                         "\n  args[arg_ref]=" + arg_result[0].item.args[arg_ref]
+                         );
+                    */
+                    arg_freq = arg_result[0].item.args[arg_ref].occurrences + 1;
                 }
             }
         }
@@ -1349,6 +1368,7 @@ var lang = require("./pdlang.js");
 exports.get_local_string = lang.get_local_string;
 
 var pd_window;
+var pd_window_keys;
 // ico@vt.edu 2022-12-10: disabled this
 // TODO!: check for regressions
 //exports.pd_window;
@@ -8860,13 +8880,23 @@ function gui_raise_pd_window() {
 // work with newer nw.js (should also work with older ones)
 function walk_window_list(cid, offset) {
     /*
-    post("walk_window_list patchwin=" + patchwin +
-         " data[cid]=" + patchwin[cid] +
-         " length=" + Object.keys(patchwin).length +
-         " value_at_index_0=" + Object.keys(patchwin)[0]);
+    post("walk_window_list\n  patchwin=" + patchwin +
+         "\n  patchwin[cid]=" + patchwin[cid] +
+         "\n  cid=" + cid + " offset=" + offset +
+         "\n  length=" + Object.keys(patchwin).length +
+         "\n  value_at_index_0=" + Object.keys(patchwin)[0]);
     */
     var i, next, match = -1;
     var win_array_length = Object.keys(patchwin).length;
+
+    for (i = 0; i < win_array_length; i++) {
+        if (Object.keys(patchwin)[i]) {
+            gui(Object.keys(patchwin)[i]).get_nw_window(function(nw_win) {
+                post("window title:" + nw_win.title);
+            }
+        )};
+    }
+
     for (i = 0; i < win_array_length; i++) {
         if (Object.keys(patchwin)[i] === cid) {
             match = i;
