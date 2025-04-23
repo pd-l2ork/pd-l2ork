@@ -140,8 +140,9 @@ static void sprintf_proxy_checkit(t_sprintf_proxy *x, char *buf, int checkin)
 
 static void sprintf_dooutput(t_sprintf *x)
 {
-    int i, outsize;
+    int i, outsize, is_string;
     char *outstring;
+    is_string = 0;
     outsize = x->x_fsize;  /* this is strlen() + 1 */
     /* LATER consider subtracting format pattern sizes */
     for (i = 0; i < x->x_nslots; i++)
@@ -149,6 +150,8 @@ static void sprintf_dooutput(t_sprintf *x)
 	t_sprintf_proxy *y = (t_sprintf_proxy *)x->x_proxies[i];
 	if (y->p_valid)
 	    outsize += y->p_size;
+		if (y->p_type == SPRINTF_STRING || y->p_type == SPRINTF_CHAR)
+			is_string = 1;
 	else
 	{
 	    /* slot i has received an invalid input -- CHECKME if this
@@ -183,7 +186,15 @@ static void sprintf_dooutput(t_sprintf *x)
 	    t_binbuf *bb = binbuf_new();
 	    int ac;
 	    t_atom *av;
-	    binbuf_text(bb, outp, strlen(outp));
+
+	    if (is_string)
+	    {
+	    	binbuf_rawtext(bb, outp, strlen(outp));
+	    	//post("BOO! <%s>", outp);
+	    }
+	    else
+	    	binbuf_text(bb, outp, strlen(outp));
+
 	    ac = binbuf_getnatom(bb);
 	    av = binbuf_getvec(bb);
 	    if (ac)
