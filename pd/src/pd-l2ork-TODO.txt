@@ -1,7 +1,5 @@
 PD-L2ORK TODO:
 
-*Figure out why comments and the end of Tweeter track with lots of numbers converts to scientific notation.
-
 *Opening file dialog on Linux Ubuntu 22.04 via keyboard shortcut creates up to 4 prompts in a row. Doing the same via menu option does not.
   *This is an xdg + Ubuntu bug that will be hopefully fixed upstream. The problem is that the new dialog is not focused.
 
@@ -868,7 +866,7 @@ resulting in unexpected stuck keys.
       at Object.create_obj (pd_canvas.js:1502:27)
       at HTMLDocument.text_mousedown (pd_canvas.js:831:27)
       *Creating "gate 2 1" inside server-commands inside the L2Ork-Tweeter-Teacher patch
-
+*Fixed bug where sprintf would convert %s%s%s%s%s%s%s%s%s%s with each being a single number (e.g. 1) into a truncated number, rather than keeping it a string. This was apparent at the end of Tweeter track with lots of numbers (notes) being converted into scientific notation.
 
 
 

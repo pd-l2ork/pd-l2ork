@@ -147,17 +147,20 @@ static void sprintf_dooutput(t_sprintf *x)
     /* LATER consider subtracting format pattern sizes */
     for (i = 0; i < x->x_nslots; i++)
     {
-	t_sprintf_proxy *y = (t_sprintf_proxy *)x->x_proxies[i];
-	if (y->p_valid)
-	    outsize += y->p_size;
-		if (y->p_type == SPRINTF_STRING || y->p_type == SPRINTF_CHAR)
-			is_string = 1;
-	else
-	{
-	    /* slot i has received an invalid input -- CHECKME if this
-	       condition blocks all subsequent output requests? */
-	    return;
-	}
+		t_sprintf_proxy *y = (t_sprintf_proxy *)x->x_proxies[i];
+		if (y->p_valid)
+		{
+		    outsize += y->p_size;
+			if (y->p_type == SPRINTF_STRING || y->p_type == SPRINTF_CHAR)
+				is_string = 1;
+		}
+		else
+		{
+			//post("slot %d is invalid", i);
+		    /* slot i has received an invalid input -- CHECKME if this
+		       condition blocks all subsequent output requests? */
+		    return;
+		}
     }
     if (outsize > 0 && (outstring = getbytes(outsize)))
     {

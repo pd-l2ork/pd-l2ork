@@ -315,7 +315,7 @@ void binbuf_rawtext(t_binbuf *x, char *text, size_t size)
 #if 0
         post("binbuf_text: buf %s, dollar=%d", buf, dollar);
 #endif
-        else SETSYMBOL(ap, gensym(buf));
+        SETSYMBOL(ap, gensym(buf));
 
         ap++;
         natom++;
