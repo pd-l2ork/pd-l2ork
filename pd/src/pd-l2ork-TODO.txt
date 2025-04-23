@@ -16,6 +16,9 @@ PD-L2ORK TODO:
   *This is super convoluted as the literal merge requires major changes to a lot of the code base. Merging this will require a more surgical approach that only merges relevant changes.
   *In progress
 
+*Try to track down a sporadic bug that sometimes assumes that object text is empty and even though you only add text, the resulting text is only what you added.
+  *Need to find a way to reproduce reliably.
+
 *Integrate vstplugin~
   https://git.iem.at/pd/vstplugin
 
@@ -140,9 +143,6 @@ RPI 0.28.4 current RPi version.
 *Submit patch to js external github.
 
 *Consider adding ability to display array name that is other than the internal name (e.g. so that we don't have to use $0, $1, _ etc. in the name).
-
-*Error closing a new window because there is no "width" property (e.g. a subpatch has been created). Only affects RPi version of nw.js?
-  *Seeking RPi version of nw.js 0.67.1. IN PROGRESS
 
 *Consider adding tiled version of an image inside ggee/image.
 
@@ -874,6 +874,7 @@ resulting in unexpected stuck keys.
 *Fixed bug where sprintf would convert %s%s%s%s%s%s%s%s%s%s with each being a single number (e.g. 1) into a truncated number, rather than keeping it a string. This was apparent at the end of Tweeter track with lots of numbers (notes) being converted into scientific notation.
 *Opening file dialog on Linux Ubuntu 22.04 via keyboard shortcut creates up to 4 prompts in a row. Doing the same via menu option does not.
   *This is an xdg + Ubuntu bug that will be hopefully fixed upstream. The problem is that the new dialog is not focused. WILL NOT FIX
+*Moved RPi nwjs to version 0.6x, fixing error closing a new window because there is no "width" property (e.g. a subpatch has been created). Looks like this only affects RPi's old version of nw.js.
 
 
 
