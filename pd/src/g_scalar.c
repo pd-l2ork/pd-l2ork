@@ -897,9 +897,10 @@ void scalar_doconfigure(t_gobj *xgobj, t_glist *owner)
 
         char tagbuf[MAXPDSTRING];
         sprintf(tagbuf, "scalar%zx", (t_uint)x->sc_vec);
-        gui_vmess("gui_scalar_configure_gobj", "xsiffffii",
+        gui_vmess("gui_scalar_configure_gobj", "xsiiffffii",
             glist_getcanvas(owner), 
             tagbuf,
+            glist_istoplevel(owner),
             glist_isselected(owner, &x->sc_gobj),
             xscale, 0.0, 0.0, yscale,
             xpos,

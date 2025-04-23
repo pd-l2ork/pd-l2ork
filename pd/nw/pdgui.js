@@ -6650,8 +6650,13 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
             */
         }
 
-        draw_xpos += 0.5;
-        draw_ypos -= 1;
+        // these offsets are used only for the drawing of the array inside a GOP
+        // they should be ignored for the regular scalars
+        if (plot_style >= 0) {
+            draw_xpos += 0.5;
+            draw_ypos -= 1;
+        }
+        //post("plot_style=" + plot_style);
 
         /* ico@vt.edu HACKTASCTIC: calculating scrollbars is throwing 0.997 for
            plots drawn inside the subpatch and it is a result of the -1 in the
@@ -6740,7 +6745,7 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
                     default:
                         // we are a non-plot scalar
                         //post("......non-plot GOP scalar");
-                        matrix = [t1,t2,t3,t4,draw_xpos,draw_ypos];
+                        matrix = [t1,t2,t3,t4,draw_xpos+0.5,draw_ypos+0.5];
                         break;
                 }
             }
@@ -6851,11 +6856,15 @@ function gui_scalar_draw_group(cid, tag, parent_tag, type, attr_array) {
     });
 }
 
-function gui_scalar_configure_gobj(cid, tag, isselected, t1, t2, t3, t4, t5, t6) {
+function gui_scalar_configure_gobj(cid, tag, is_toplevel, isselected, t1, t2, t3, t4, t5, t6) {
     /*
     post("gui_scalar_configure_gobj tag=" + tag + " t1=" +
         t1 + " t2=" + t2 + " t3=" + t3 + " t4=" + t4 + " t5=" + t5 + " t6=" + t6);
     */
+    // adding offset when drawing inside GOP
+    if (is_toplevel === 0) {
+        t5 += 1;
+    }
     var matrix = [t1,t2,t3,t4,t5,t6],
         transform_string = "matrix(" + matrix.join() + ")";
     gui(cid).get_gobj(tag, {

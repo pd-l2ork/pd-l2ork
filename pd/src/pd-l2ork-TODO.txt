@@ -1,10 +1,9 @@
 PD-L2ORK TODO:
 
 *Update L2Ork Tweeter Interstellar and with new piece sessions and parts.
+  *Still waiting on Jeremy and Carter.
 
 *Implement Windows list in the Windows menu.
-
-*Data structures in Pd-L2Ork Data Structure Demos (inside Help Browser) when clicked slightly dislocate down and left, suggesting there is a partial loss of the location upon clicking (check places where location is at a whole number rather than x.5 which is used in places because that curiously makes things less blurry).
 
 *Deal with synchronicity of displaying arrays (as seen in phase cancellation VT Waves module).
   *Looks like this has been already done and is a simple matter of making sure everyone gets the same signal timing to redraw.
@@ -875,6 +874,7 @@ resulting in unexpected stuck keys.
 *Opening file dialog on Linux Ubuntu 22.04 via keyboard shortcut creates up to 4 prompts in a row. Doing the same via menu option does not.
   *This is an xdg + Ubuntu bug that will be hopefully fixed upstream. The problem is that the new dialog is not focused. WILL NOT FIX
 *Moved RPi nwjs to version 0.6x, fixing error closing a new window because there is no "width" property (e.g. a subpatch has been created). Looks like this only affects RPi's old version of nw.js.
+*Fixed bug where data structures in Pd-L2Ork Data Structure Demos (inside Help Browser, e.g. bulbs patch) when clicked slightly dislocate down and left, suggesting there is a partial loss of the location upon clicking (check places where location is at a whole number rather than x.5 which is used in places because that curiously makes things less blurry). This was because updating scalars inside pdgui.js did not account for whether the object was toplevel or not.
 
 
 
