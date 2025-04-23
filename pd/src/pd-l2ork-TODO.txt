@@ -1,9 +1,26 @@
 PD-L2ORK TODO:
 
-*Opening file dialog on Linux Ubuntu 22.04 via keyboard shortcut creates up to 4 prompts in a row. Doing the same via menu option does not.
-  *This is an xdg + Ubuntu bug that will be hopefully fixed upstream. The problem is that the new dialog is not focused.
+*Implement Windows list in the Windows menu.
 
 *Data structures in Pd-L2Ork Data Structure Demos (inside Help Browser) when clicked slightly dislocate down and left, suggesting there is a partial loss of the location upon clicking (check places where location is at a whole number rather than x.5 which is used in places because that curiously makes things less blurry).
+
+*Deal with synchronicity of displaying arrays (as seen in phase cancellation VT Waves module).
+  *Looks like this has been already done and is a simple matter of making sure everyone gets the same signal timing to redraw.
+
+*Integrate cyclone
+  *Need to request upstream documentation update to remove inappropriate language.
+
+*Integrate #1756 pull request from vanilla that may improve the scheduler.
+  *This is super convoluted as the literal merge requires major changes to a lot of the code base. Merging this will require a more surgical approach that only merges relevant changes.
+  *In progress
+
+*Integrate vstplugin~
+  https://git.iem.at/pd/vstplugin
+
+*Integrate pd-ndi
+  https://github.com/gogo2/pd-ndi
+
+*Update pdjs to use a more recent version of v8 (this might fix arm macbook errors, as pdjs currently does not work properly on apple silicon).
 
 *unit-circle (or any other data structure in Pd-L2Ork data structure demos) does not work with GOP enabled.
   *This is actually not true. GOP setting has to be adjusted. That said, however, adjustment is really confusing if one mixes data structure with regular objects. Should we simply disable GOP on such mixed canvases?
@@ -16,19 +33,6 @@ PD-L2ORK TODO:
   *Occasional classList error in pd_canvas.html when cuting then pasting (need to track this one down--may be the same as the one above).
     *This has been fixed. Needs to be further tested.
 
-*Integrate vstplugin~
-  https://git.iem.at/pd/vstplugin
-
-*Integrate pd-ndi
-  https://github.com/gogo2/pd-ndi
-
-*Consider integrating #1756 pull request from vanilla that may improve the scheduler.
-  *This is super convoluted as the literal merge requires major changes to a lot of the code base. Merging this will require a more surgical approach that only merges relevant changes.
-
-*Update pdjs to use a more recent version of v8 (this might fix arm macbook errors, as pdjs currently does not work properly on apple silicon).
-
-*Implement Windows list in the Windows menu.
-
 *Investigate potential issue with preset_nodes and/or patch connections getting all confused after the patch has been edited afterwards (even though patch cords are visually correctly connected, objects, like the one in Sync-Control.pd inside Tweeter, and more specifically length toggle, are not forwarding data like they should).
   *Explore if "select all" also selects invisible preset_hub k12, which could explain how two of them found their way into sync-control patch (select all, cut, paste into a new patch that already has it).
     *No, this should not be a problem since glist_select filters selection of the preset_hub.
@@ -36,6 +40,7 @@ PD-L2ORK TODO:
 *Investigate increase in crashes when manipulating ggee/image and working with Tweeter 0.78.
   *Could it have been the Sync-Controls.pd having erroneously 2 invisible k12 preset_hubs? No idea how this happened.
     *Looks like this has vastly improved the stability. However, opening and closing L2OrkTweet patch still crashes sometimes.
+      *This is a long-standing unrelated bug given the patch complexity.
 
 *Opening meta subpatch inside any patch (here, specifically netserver-help.pd) and then closing it, and then reopening it again, keeps moving the patch window downwards. May be only affecting Linux, which also exhibits this problem when opening the main Pd-L2Ork window (see index.js for an ugly hack fix that works around this nwjs 0.67.1 bug).
   *Does not affect Windows.
@@ -48,8 +53,6 @@ PD-L2ORK TODO:
 *doc/manuals/2.image: looks like on Windows lighting does not work always and destroying window in one of the early examples does not work. This is obsolete documentation that should be ignored. Should we remove this altogether?
 
 *Explore what limits the hex color interpretation to also include alpha channel and support for it. Straightforward CSS works, so this is likely a backend limitation.
-
-*Consider porting AG version of cyclone editor (what are the differences?).
 
 *Investigate ggee/image redraw of the entire canvas.
   *This is due to undo_cut redrawing canvas to reposition all objects where they belong. Added TODO inside g_editor.c where repositioning inside DOM should take place.
@@ -867,6 +870,9 @@ resulting in unexpected stuck keys.
       at HTMLDocument.text_mousedown (pd_canvas.js:831:27)
       *Creating "gate 2 1" inside server-commands inside the L2Ork-Tweeter-Teacher patch
 *Fixed bug where sprintf would convert %s%s%s%s%s%s%s%s%s%s with each being a single number (e.g. 1) into a truncated number, rather than keeping it a string. This was apparent at the end of Tweeter track with lots of numbers (notes) being converted into scientific notation.
+*Opening file dialog on Linux Ubuntu 22.04 via keyboard shortcut creates up to 4 prompts in a row. Doing the same via menu option does not.
+  *This is an xdg + Ubuntu bug that will be hopefully fixed upstream. The problem is that the new dialog is not focused. WILL NOT FIX
+
 
 
 
