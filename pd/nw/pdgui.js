@@ -6650,8 +6650,8 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
             */
         }
 
-        // these offsets are used only for the drawing of the array inside a GOP
-        // they should be ignored for the regular scalars
+        // these offsets are used only for the drawing inside a GOP
+        // they should be ignored for the top-level scalars
         if (plot_style >= 0) {
             draw_xpos += 0.5;
             draw_ypos -= 1;
