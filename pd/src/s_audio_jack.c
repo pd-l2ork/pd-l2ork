@@ -290,7 +290,7 @@ int jack_open_audio(int inchans, int outchans, int rate)
     if (!jack_client)
     {
         do {
-            sprintf(port_name,"pure_data_%d",client_iterator);
+            sprintf(port_name,"pd-l2ork-%d",client_iterator);
             client_iterator++;
             /* do not try to start the jack-server...
                seems to make problems... */
