@@ -24,6 +24,12 @@ PD-L2ORK TODO:
 *Integrate pd-ndi
   https://github.com/gogo2/pd-ndi
 
+*Explore reports of OSX edit menu failing under certain circumstances to be reenabled.
+  *Need a reproducible method.
+
+*Opening meta subpatch inside any patch (here, specifically netserver-help.pd) and then closing it, and then reopening it again, keeps moving the patch window downwards. May be only affecting Linux, which also exhibits this problem when opening the main Pd-L2Ork window (see index.js for an ugly hack fix that works around this nwjs 0.67.1 bug).
+  *Does not affect Windows.
+
 *Update pdjs to use a more recent version of v8 (this might fix arm macbook errors, as pdjs currently does not work properly on apple silicon).
 
 *unit-circle (or any other data structure in Pd-L2Ork data structure demos) does not work with GOP enabled.
@@ -45,9 +51,6 @@ PD-L2ORK TODO:
   *Could it have been the Sync-Controls.pd having erroneously 2 invisible k12 preset_hubs? No idea how this happened.
     *Looks like this has vastly improved the stability. However, opening and closing L2OrkTweet patch still crashes sometimes.
       *This is a long-standing unrelated bug given the patch complexity.
-
-*Opening meta subpatch inside any patch (here, specifically netserver-help.pd) and then closing it, and then reopening it again, keeps moving the patch window downwards. May be only affecting Linux, which also exhibits this problem when opening the main Pd-L2Ork window (see index.js for an ugly hack fix that works around this nwjs 0.67.1 bug).
-  *Does not affect Windows.
 
 *On Linux (possibly other places), moving dialog popup to fit within the desktop, if called on the second screen, still opens dialog on the first screen.
   *Consider porting the whole front-end to electron instead (SIGH...).
