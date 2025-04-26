@@ -1976,12 +1976,27 @@ function check_nw_version(version) {
 
 exports.check_nw_version = check_nw_version;
 
-// ico@vt.edu 2020-08-11: this appears to have to be 25 at all times
-// we will leave this here for later if we encounter issues with inconsistencies
-// across different nw.js versions...
-var nw_menu_offset = check_nw_version("0.46") ? 22 : 22;
+// ico@vt.edu 2025-04-26: Linux when using 0.6x version of nw.js
+// fails to position the window correctly vertically because it is
+// unable to account for its DM's title bar. Inside index.js when
+// we open the main pd window (see gui_init function), we calculate
+// that offset and then store it in the nw_menu_offset global variable
+// below. Therefore the value below is only the default. This does not
+// affect other OSs. TODO: test on RPi's PIXEL desktop.
 
-exports.nw_menu_offset = nw_menu_offset;
+var nw_menu_offset = 0;
+
+function set_nw_menu_offset(val) {
+    nw_menu_offset = val;
+}
+
+exports.set_nw_menu_offset = set_nw_menu_offset;
+
+function get_nw_menu_offset() {
+    return nw_menu_offset;
+}
+
+exports.get_nw_menu_offset = get_nw_menu_offset;
 
 // quick hack so that we can paste pd code from clipboard and
 // have it affect an empty canvas' geometry
@@ -2003,7 +2018,8 @@ function gui_canvas_change_geometry(cid, w, h, x, y) {
 // pd.tk
 function canvas_check_geometry(cid) {
     //post("canvas_check_geomtery\n...OLD height=" +
-    //  patchwin[cid].height + " innerHeight=" + patchwin[cid].window.innerHeight);
+    //  patchwin[cid].height + " innerHeight=" + patchwin[cid].window.innerHeight +
+    //  " offset=" + nw_menu_offset);
     var win_w = patchwin[cid].width,
         // "23" is a kludge to account for the menubar size.  See comment
         // in nw_create_window of index.js
@@ -2015,7 +2031,7 @@ function canvas_check_geometry(cid) {
         cnv_width = patchwin[cid].window.innerWidth,
         cnv_height = patchwin[cid].window.innerHeight;
     //post("...NEW height=" +
-    //  patchwin[cid].height + " innerHeight=" + patchwin[cid].window.innerHeight);
+    //  win_h + " innerHeight=" + cnv_height);
     //post("canvas_check_geometry w=" + win_w + " h=" + win_h +
     //    " x=" + win_x + " y=" + win_y + " cnv_w=" + cnv_width + " cnv_h=" + cnv_height);
 

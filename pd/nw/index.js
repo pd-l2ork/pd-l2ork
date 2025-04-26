@@ -570,7 +570,8 @@ function nw_create_window(cid, type, width, height, xpos, ypos, attr_array) {
         pos = null_pos;
         //pdgui.post("check_os=" + pdgui.check_os("win32"));
         if (pdgui.nw_os_is_linux == 1) {
-            ypos = ypos - pdgui.nw_menu_offset - 3;
+            //pdgui.post("offset=" + pdgui.get_nw_menu_offset());
+            ypos = ypos - pdgui.get_nw_menu_offset();
         }
     }
 
@@ -605,7 +606,7 @@ function nw_create_window(cid, type, width, height, xpos, ypos, attr_array) {
         // altogether to simplify things. But we'd have to add some kind of
         // widget for the "Put" menu.
         // ico@vt.edu: on 0.46.2 this is now 25, go figure...
-        height: height + (pdgui.nw_menu_offset * !pdgui.nw_os_is_osx),
+        height: height + (pdgui.get_nw_menu_offset() * !pdgui.nw_os_is_osx),
         x: Math.floor(xpos),
         y: Math.floor(ypos),
         frame: win_frame,
@@ -1055,7 +1056,9 @@ function gui_init(win) {
         gui.Window.get().on("move", function() {
             if (!linux_titlebar_offset_kludge) {
                 //pdgui.post("titlebar offset=" + (pre_titlebar_y - gui.Window.get().y));
-                gui.Window.get().moveBy(0, ((pre_titlebar_y - gui.Window.get().y)) * 2);
+                gui.Window.get().moveBy(0, (pre_titlebar_y - gui.Window.get().y) * 2);
+                pdgui.set_nw_menu_offset(gui.Window.get().y - pre_titlebar_y);
+                //pdgui.post("window offset = "  + pdgui.get_nw_menu_offset());
                 linux_titlebar_offset_kludge = true;
             }
         });
