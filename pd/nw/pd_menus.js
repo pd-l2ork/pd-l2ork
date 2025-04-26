@@ -4,6 +4,7 @@ var pdgui = require("./pdgui.js");
 var l = pdgui.get_local_string; // For menu names
 var osx_menu = null; // OSX App menu -- a single one per running instance
 var recent_files_submenu = null;
+var window_submenu = null;
 var shortcuts = require("./pd_shortcuts.js");
 
 function create_menu(gui, type) {
@@ -41,6 +42,12 @@ function create_menu(gui, type) {
         // first, make sure that we populate the submenu on the first run in
         // either case.
         pdgui.populate_recent_files(recent_files_submenu);
+    }
+
+    // Create universal submenu for all windows
+    if (!window_submenu) {
+        window_submenu = new gui.Menu();
+        pdgui.populate_open_windows(window_submenu);
     }
 
     // OSX just spawns a single canvas menu and then enables/disables
@@ -646,6 +653,12 @@ function create_menu(gui, type) {
             tooltip: l("menu.abstractions_tt")
         }));
     }
+    winman_menu.append(new gui.MenuItem({ type: "separator" }));
+    winman_menu.append(m.win.win_list = new gui.MenuItem({
+        label: l("menu.win_list"),
+        tooltip: l("menu.win_list_tt"),
+        submenu: window_submenu
+    }));
 
     // Media menu
     media_menu = new gui.Menu();

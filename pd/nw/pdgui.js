@@ -2045,6 +2045,7 @@ exports.canvas_check_geometry = canvas_check_geometry;
 
 function menu_save(name) {
     pdsend(name + " menusave");
+    populate_open_windows();
 }
 
 exports.menu_save = menu_save;
@@ -2076,6 +2077,7 @@ function build_file_dialog_string(obj) {
 exports.build_file_dialog_string = build_file_dialog_string;
 
 function gui_canvas_saveas(name, initfile, initdir, close_flag) {
+    //post("gui_canvas_saveas");
     var input, chooser,
         span = patchwin[name].window.document.querySelector("#saveDialogSpan");
     if (!fs.existsSync(initdir)) {
@@ -2133,6 +2135,7 @@ function saveas_callback(cid, file, close_flag) {
     // update the recent files list
     var norm_path = path.normalize(directory);
     pdsend("pd add-recent-file", enquote(defunkify_windows_path(path.join(norm_path, basename))));
+    populate_open_windows();
 }
 
 exports.saveas_callback = saveas_callback;
@@ -2228,6 +2231,7 @@ function gui_window_close(cid) {
     });
     // remove reference to the window from patchwin object
     set_patchwin(cid, null);
+    populate_open_windows();
     loading[cid] = null;
     editable[cid] = null;
 }
@@ -3099,6 +3103,7 @@ exports.get_patchwin = function(name) {
 }
 
 var set_patchwin = function(cid, win) {
+    //post("set_patchwin cid=" + cid + " win=" + win);
     patchwin[cid] = win;
     if (win) {
         gui.add(cid, win);
@@ -3321,6 +3326,7 @@ function gui_canvas_set_title(cid, name, args, dir, dirty_flag) {
     } else {
         title_queue[cid] = title;
     }
+    populate_open_windows();
 }
 
 function query_title_queue(cid) {
@@ -3354,6 +3360,7 @@ function set_window_finished_loading(cid, new_win) {
             .replace('[','').replace(']','');
         dialogwin_check_overflow(new_win, object);
     }
+    populate_open_windows();
     loading[cid] = null;
 }
 
@@ -8869,6 +8876,7 @@ function gui_cord_inspector_flash(cid, state) {
 function gui_raise_window(cid) {
     // Check if the window exists, for edge cases like
     // [vis 1, vis1(---[send this_canvas]
+    //post("gui_raise_window cid=" + cid);
     gui(cid).get_nw_window(function(nw_win) {
         nw_win.focus();
     });
@@ -8898,13 +8906,17 @@ function walk_window_list(cid, offset) {
     var i, next, match = -1;
     var win_array_length = Object.keys(patchwin).length;
 
+/*
     for (i = 0; i < win_array_length; i++) {
         if (Object.keys(patchwin)[i]) {
+            //post("O=" + Object.keys(patchwin)[i] + " patchwin=" +
+            //     patchwin[Object.keys(patchwin)[i]]);
             gui(Object.keys(patchwin)[i]).get_nw_window(function(nw_win) {
                 post("window title:" + nw_win.title);
             }
         )};
     }
+*/
 
     for (i = 0; i < win_array_length; i++) {
         if (Object.keys(patchwin)[i] === cid) {
@@ -9443,6 +9455,9 @@ exports.open_search = open_search;
 var recent_files_submenu = null;
 var recent_files = null;
 
+// same for open windows shared submenu
+var open_windows_submenu = null
+
 // We need to jump through some hoops here since JS closures capture variables
 // by reference, which causes trouble when closures are created within a
 // loop.
@@ -9485,6 +9500,61 @@ function populate_recent_files(submenu) {
 }
 
 exports.populate_recent_files = populate_recent_files;
+
+// We need to jump through some hoops here since JS closures capture variables
+// by reference, which causes trouble when closures are created within a
+// loop.
+function open_window_callback(i) {
+    return function() {
+        var cid = Object.keys(patchwin)[i];
+        //post("clicked open window callback: "+ cid);
+        gui_raise_window(cid);
+    }
+}
+
+function populate_open_windows(submenu) {
+    //post("populate_open_windows");
+    if (submenu) {
+        open_windows_submenu = submenu;
+        // if we have an argument that means this is only
+        // for the purpose of initializing the pdgui's global var
+        return;
+    }
+    else {
+        setTimeout(function() {
+
+            var i, cid;
+            var titles = [];
+
+            for (i = 0; i < Object.keys(patchwin).length; i++) {
+                if (Object.keys(patchwin)[i]) {
+                    gui(Object.keys(patchwin)[i]).get_nw_window(function(nw_win) {
+                        //titles[i] = nw_win.title; // this one includes path
+                        titles[i] = nw_win.title.split("  - ")[0]; // pathless
+                        //post("window title:" + nw_win.title);
+                    }
+                )};
+            }
+
+            while (open_windows_submenu.items.length > 0)
+                open_windows_submenu.removeAt(0);
+
+            for (i = 0; i < titles.length; i++) {
+                if (titles[i] != null) {
+                    //pdgui.post("...adding " + title_array[i]);
+                    var item = new nw.MenuItem({
+                        label: titles[i],
+                        tooltip: titles[i]
+                    });
+                    item.click = open_window_callback(i);
+                    open_windows_submenu.append(item);
+                }
+            }
+        }, 250);
+    }
+}
+
+exports.populate_open_windows = populate_open_windows;
 
 function gui_recent_files(dummy, recent_files_array) {
     recent_files = recent_files_array;

@@ -3,6 +3,8 @@ var gui = require("nw.gui");
 var pdgui = require("./pdgui.js");
 var pd_menus = require("./pd_menus.js");
 
+window.update_window_submenu = pd_menus.update_window_submenu;
+
 // ico@vt.edu 2022-11-08: make this 1 if you wish to provide a 3-second delay
 // before a newly opened patch window should proceed. dev tools will also
 // automatically open to allow to use performance analysis tool to seek
@@ -688,6 +690,13 @@ function nw_create_pd_window_menus(gui, w) {
     if (process.platform !== "darwin" || pd_m === null) {
         //pdgui.post("nw_create_pd_window_menus first time");
         pd_m = pd_menus.create_menu(gui, "console");
+        /*
+        var item = new nw.MenuItem({
+            label: "testing...",
+            tooltip: "testing..."
+        });
+        pd_m.win.win_list.submenu.append(item);
+        */
     }
 
     // On OSX we have menu items for canvas operations-- we need to disable

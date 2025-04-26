@@ -344,6 +344,8 @@
     "pdwin_tt": "Zeige das Pd-Hauptfenster",
     "abstractions": "Abstraktionen",
     "abstractions_tt": "Abstraktionen abfragen und verwalten",
+    "win_list": "Fensterliste",
+    "win_list_tt": "Eine Liste der aktuell geöffneten Fenster",
 
     "media": "Medien",
 
