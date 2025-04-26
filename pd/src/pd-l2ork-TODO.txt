@@ -27,9 +27,6 @@ PD-L2ORK TODO:
 *Explore reports of OSX edit menu failing under certain circumstances to be reenabled.
   *Need a reproducible method.
 
-*Opening meta subpatch inside any patch (here, specifically netserver-help.pd) and then closing it, and then reopening it again, keeps moving the patch window downwards. May be only affecting Linux, which also exhibits this problem when opening the main Pd-L2Ork window (see index.js for an ugly hack fix that works around this nwjs 0.67.1 bug).
-  *Does not affect Windows.
-
 *Update pdjs to use a more recent version of v8 (this might fix arm macbook errors, as pdjs currently does not work properly on apple silicon).
 
 *unit-circle (or any other data structure in Pd-L2Ork data structure demos) does not work with GOP enabled.
@@ -140,7 +137,7 @@ RPI 0.28.4 current RPi version.
     0.68.0 window close nw1 bug (see #7981 nwjs bug report).
     0.69.1 window close nw1 bug (see #7981 nwjs bug report).
     0.70.1 window close nw1 bug (see #7981 nwjs bug report).
-  *Need to figure out what is slowing down nw2 on versions 0.42.3 and onward, so that we can get away from all the weird idiosyncrasies with window positioning and other issues.
+  *nw2 slows things down, so as long as pd-l2ork uses nw1 mode it should be fine, but this also means we are stuck on 0.67.1.
 
 *Submit patch to js external github.
 
@@ -883,6 +880,10 @@ resulting in unexpected stuck keys.
     *Confirming this is indeed the case.
 *Implemented Windows list in the Windows menu.
 *Refined jack client name.
+*Fixed a bug where opening meta subpatch inside any patch (here, specifically netserver-help.pd) and then closing it, and then reopening it again, keeps moving the patch window downwards (or in some cases upwards). Affects only Linux, which also exhibits this problem when opening the main Pd-L2Ork window (see index.js for an ugly hack fix that works around this nwjs 0.67.1 bug).
+  *Does not affect Windows.
+  *On RPi (using PIXEL/LXDE variant, the window keeps going upwards).
+  *Fixed using start-up window repositioning to calculate universal offset.
 
 
 
