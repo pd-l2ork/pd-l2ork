@@ -882,7 +882,7 @@ resulting in unexpected stuck keys.
 *Refined jack client name.
 *Fixed a bug where opening meta subpatch inside any patch (here, specifically netserver-help.pd) and then closing it, and then reopening it again, keeps moving the patch window downwards (or in some cases upwards). Affects only Linux, which also exhibits this problem when opening the main Pd-L2Ork window (see index.js for an ugly hack fix that works around this nwjs 0.67.1 bug).
   *Does not affect Windows.
-  *On RPi (using PIXEL/LXDE variant, the window keeps going upwards).
+  *On RPi (using PIXEL/LXDE variant, the window keeps going upwards). This was also tested and is ok.
   *Fixed using start-up window repositioning to calculate universal offset.
 
 
