@@ -43,6 +43,7 @@ PD-L2ORK TODO:
 *Investigate potential issue with preset_nodes and/or patch connections getting all confused after the patch has been edited afterwards (even though patch cords are visually correctly connected, objects, like the one in Sync-Control.pd inside Tweeter, and more specifically length toggle, are not forwarding data like they should).
   *Explore if "select all" also selects invisible preset_hub k12, which could explain how two of them found their way into sync-control patch (select all, cut, paste into a new patch that already has it).
     *No, this should not be a problem since glist_select filters selection of the preset_hub.
+  *This may be because sync-controls at one point had two invisible preset_hubs that was causing all kinds of stability problems.
 
 *Investigate increase in crashes when manipulating ggee/image and working with Tweeter 0.78.
   *Could it have been the Sync-Controls.pd having erroneously 2 invisible k12 preset_hubs? No idea how this happened.
@@ -53,8 +54,11 @@ PD-L2ORK TODO:
   *Consider porting the whole front-end to electron instead (SIGH...).
 
 *Touch interface is greatly limited in edit mode. Handles are too small and behavior inconsistent. iemgui label needs to be tapped, then moved (at least we now take the entire handle to treat it as xy movable). cnv has a very narrow and invisible area for selection. GOP frame is probably also too narrow for per-axis dragging. Changing width of a text object does not work consistently, likely due to redrawing of the object (unlike iemguis that update their properties without redrawing). Editmode and right-click menu are inaccessible. etc.
+  *Moving forward we are treating touch interface primarily as a runtime mode means of interaction. That said, accessing right-click menu and editmode menus by tapping and holding should be doable, which should provide minimal usability in a touch-only environment.
+    *There is still a question of being able to show keyboard, which could be an icon or a menu option...
 
 *doc/manuals/2.image: looks like on Windows lighting does not work always and destroying window in one of the early examples does not work. This is obsolete documentation that should be ignored. Should we remove this altogether?
+  *These need to be revamped by possibly using different gemhead object/abstraction. Looks like replacing gemhead with pd_gemhead may fix this, but there is more to clean up than just that...
 
 *Explore what limits the hex color interpretation to also include alpha channel and support for it. Straightforward CSS works, so this is likely a backend limitation.
 
