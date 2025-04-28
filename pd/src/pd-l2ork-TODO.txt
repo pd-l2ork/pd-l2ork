@@ -1,7 +1,9 @@
 PD-L2ORK TODO:
 
 *Update L2Ork Tweeter Interstellar and with new piece sessions and parts.
-  *Still waiting on Jeremy and Carter.
+  *Still waiting on Jeremy and Carter. NEED TO UPLOAD
+
+*Fix Tweeter bug where joining with part 15 (audience) doesn't get the data from other parts, but joining using any other part does (assuming you connect to a part that is already taken which then automatically bumps you to the audience).
 
 *Bezier implementation of the array sometimes:
   *does not draw when the patch is opened (with different zoom levels)
