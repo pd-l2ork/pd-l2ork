@@ -261,7 +261,8 @@ since it will usually contain spaces, making the build fail.
 
         cd packages/win32_inno/msys
         pacman -U mingw-w64-i686-dlfcn-1.2.0-1-any.pkg.tar.xz \
-          mingw-w64-i686-binutils-2.39-3-any.pkg.tar.zst
+          mingw-w64-i686-binutils-2.39-3-any.pkg.tar.zst \
+          mingw-w64-i686-fftw-3.3.10-5-any.pkg.tar.zst
 
 8. Finally, build Pd-L2Ork
 
