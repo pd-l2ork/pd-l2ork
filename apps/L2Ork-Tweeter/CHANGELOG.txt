@@ -9,13 +9,16 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
-19-03-2025 0.86
+28-04-2025 0.86
 *Increased number of players to 14 and changed zoom level to make everything fit.
+*Fixed server bug where joining with part 15 (audience) doesn't get the data from other parts, but joining using any other part does (assuming you connect to a part that is already taken which then automatically bumps you to the audience).
 *Improved handshake logic to ensure that WebPdL2Ork version works even when dealing with long delays in opening HTML sockets (contributed by William Furgerson).
 *Improved logic of saving and distributing sessions through the Teacher widget.
+
 *TODO:
   *Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. Needs to be further tested.
     *Also affects Teacher widget
+  *Explore the slowness of the Teacher widget, particularly in respect to the array changes. This is particularly visible on the WebPdL2Ork, likely due to context sharing. More importantly, this is an issue on hte desktop, where it should be addressed first before exploring any additional issues associated with the WebPdL2Ork.
   *Update L2Orkmote version of Tweeter with changes made to Tweeter (involves L2Orkmote-Tweeter.pd and core/L2OrkTweet-L2Orkmote.pd).
     *Attempt to make L2Orkmote part modular?
 
