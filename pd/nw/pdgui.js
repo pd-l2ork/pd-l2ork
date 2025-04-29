@@ -1981,10 +1981,10 @@ exports.check_nw_version = check_nw_version;
 // unable to account for its DM's title bar. Inside index.js when
 // we open the main pd window (see gui_init function), we calculate
 // that offset and then store it in the nw_menu_offset global variable
-// below. Therefore the value below is only the default. This does not
-// affect other OSs. TODO: test on RPi's PIXEL desktop.
+// below. Therefore the value below is only the default that is used
+// by Windows and OSX.
 
-var nw_menu_offset = 0;
+var nw_menu_offset = 25;
 
 function set_nw_menu_offset(val) {
     nw_menu_offset = val;

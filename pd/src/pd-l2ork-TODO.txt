@@ -1,10 +1,5 @@
 PD-L2ORK TODO:
 
-*Update L2Ork Tweeter Interstellar and with new piece sessions and parts.
-  *Still waiting on Jeremy and Carter. NEED TO UPLOAD
-
-*Fix Tweeter bug where joining with part 15 (audience) doesn't get the data from other parts, but joining using any other part does (assuming you connect to a part that is already taken which then automatically bumps you to the audience).
-
 *Bezier implementation of the array sometimes:
   *does not draw when the patch is opened (with different zoom levels)
   *sometimes has the last point that you cannot change that is stuck at the top
@@ -897,18 +892,9 @@ resulting in unexpected stuck keys.
 TWEETER TODO:
 *Consider adding networked repositioning of the red cursor in the L2Orkmote-Tweeter, so that both users and audience can see what is everyone doing.
 
-*Add number of lines to the saved session, so that when it is being saved locally (via the global request to save the session using teacher interface) and broadcast to all, the remote copies are ensured to have all the data.
-  *Add the nlines as the last line in the session file?
-
-*Still need to figure out how to prevent heavy network traffic from causing dropouts. May just want to implement a server-side message that disallows further connections? What if someone gets disconnected?
-
 *Offer a way to deal with different keyboards (some keys are not in the same place, see the ELSE approach and new objects that deal with this)
 
-*Adding too many numbers in a row on the track they get truncated into a number with an exponent. Looks like a iemgui label parsing issue.
-
 *Copying another part in offline mode disassociates the user from any part, making them unable to do anything even with the keyboard enabled. May also affect the online mode. Temporary fix: (re)select part you wish to control.
-
-*Looks like offline session saving saves as many as 1922 lines, whereas online 1884. Why? Still unknown. There is a hopefully stable fix for this, but it does not yet answer the why.
 
 *When trying to load a pattern that does not exist (after having successfully loaded one that does), the main level goes to zero.
 
@@ -1094,11 +1080,20 @@ TWEETER DONE:
 0.85:
   *Updated array size syntax based on the updated expr object.
   *Added Interstellar piece with its parts and score.
+0.86:
+  *Increased number of players to 14 and changed zoom level to make everything fit.
+  *Fixed server bug where joining with part 15 (audience) doesn't get the data from other parts, but joining using any other part does (assuming you connect to a part that is already taken which then automatically bumps you to the audience).
+  *Improved handshake logic to ensure that WebPdL2Ork version works even when dealing with long delays in opening HTML sockets (contributed by William Furgerson).
+  *Improved logic of saving and distributing sessions through the Teacher widget.
+
+
+
 
 *TODO:
   *Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. Needs to be further tested.
     *Also affects Teacher widget
-  *Update L2Orkmote version of Tweeter with changes made to Tweeter (involves L2Orkmote-Tweeter.pd and core/L2OrkTweet-L2Orkmote.pd). See DETAILS below.
+  *Explore the slowness of the Teacher widget, particularly in respect to the array changes. This is particularly visible on the WebPdL2Ork, likely due to context sharing. More importantly, this is an issue on hte desktop, where it should be addressed first before exploring any additional issues associated with the WebPdL2Ork.
+  *Update L2Orkmote version of Tweeter with changes made to Tweeter (involves L2Orkmote-Tweeter.pd and core/L2OrkTweet-L2Orkmote.pd).
     *Attempt to make L2Orkmote part modular?
 
 DETAILS:
