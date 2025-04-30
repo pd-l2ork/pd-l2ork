@@ -4,6 +4,8 @@
 <dict>
 	<key>defeatrt</key>
 	<string>0</string>
+	<key>savezoom</key>
+	<string>1</string>
 	<key>flags</key>
 	<string>-font-size 12 -helppath ~/Library/Pd-l2ork -helppath /Library/Pd-l2ork</string>
 	<key>loadlib1</key>
