@@ -2041,7 +2041,7 @@ function canvas_check_geometry(cid) {
     // 2020-10-01: this was a bug in 0.14.7 but is no longer needed
     //win_w += 16 * nw_os_is_windows;
     // 0.67.1 OSX bug where saving a window yields smaller window upon reload
-    win_h += 22 * nw_os_is_osx;
+    win_h += 29 * nw_os_is_osx;
     
     // We're reusing win_x and win_y below, as it
     // shouldn't make a difference to the bounds
