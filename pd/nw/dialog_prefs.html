@@ -1185,7 +1185,7 @@ function midi_prefs_callback(attrs) {
         set_devs("midi_in", get_attr("pd-indevs", attrs));
         set_devs("midi_out", get_attr("pd-outdevs", attrs));
     }
-    pdgui.resize_window(pd_object_callback);
+    //pdgui.resize_window(pd_object_callback);
 }
 
 function grid_toggle(checked) {
@@ -1552,9 +1552,9 @@ function add_events(name) {
 
     // closing the Window
     gui.Window.get().on("close", function() {
-        pdgui.remove_dialogwin(pd_object_callback);
         // ico@vt.edu 2022-03-23: see comment above under the same date
         pdgui.get_dialogwin("prefs").close(true);
+        pdgui.remove_dialogwin(pd_object_callback);
         //gui.Window.get().close(true);
         //cancel();
     });
