@@ -407,7 +407,7 @@ select {
             </table>
           </div>
           <br/>
-          <button type="button" onclick="refresh_mididevs()" data-i18n="[title]prefs.midi.refresh_mididevs_tt">
+          <button type="button" onclick="refresh_mididevs()" data-i18n="[title]prefs.midi.refresh_mididevs_tt" style="margin-left: 3px;">
             <span data-i18n="prefs.midi.refresh_mididevs"></span>
           </button>
         </div>
@@ -1499,6 +1499,8 @@ function register_window_id(gfxstub, attr_arrays) {
     pdgui.pdsend("pd start-path-dialog"); // request default system paths
     pdgui.pdsend("pd start-startup-dialog"); // request default loaded libs
     document.getElementsByClassName("container")[0].style.setProperty("display", "inline");
+    // make the window non-resizable
+    pdgui.fix_window_size(pd_object_callback);
 }
 
 function tr_text(id) {

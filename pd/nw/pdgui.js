@@ -9452,7 +9452,7 @@ function gui_pd_dsp(state) {
 // dialog_prefs.html
 function open_prefs() {
     if (!dialogwin["prefs"]) {
-        create_window("prefs", "prefs", 486 + (nw_os_is_osx * 17),
+        create_window("prefs", "prefs", 503,
             552 + (nw_os_is_osx * 16), 0, 0, null);
     } else {
         dialog_raise("prefs");
@@ -10878,6 +10878,11 @@ exports.dialog_bindings = function(did) {
             dwin.cancel();
         }
     }
+}
+
+exports.fix_window_size = function(did) {
+    //ico@vt.edu: comment the following line when working on dialog sizes...
+    dialogwin[did].setResizable(false);
 }
 
 exports.resize_window = function(did) {
