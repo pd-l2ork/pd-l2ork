@@ -601,12 +601,21 @@ function nw_create_window(cid, type, width, height, xpos, ypos, attr_array) {
         //position: pos,
         focus: true,
         width: width,
-        // We add 23 as a kludge to account for the menubar at the top of
-        // the window.  Ideally we would just get rid of the canvas menu
-        // altogether to simplify things. But we'd have to add some kind of
-        // widget for the "Put" menu.
-        // ico@vt.edu: on 0.46.2 this is now 25, go figure...
-        height: height + (pdgui.get_nw_menu_offset() * !pdgui.nw_os_is_osx) - (4 * pdgui.nw_os_is_osx) - (16 * pdgui.nw_os_is_linux),
+        // add to the height to address OS idiosyncrasies and accommodate
+        // the menu height (LATER: see if we need to compensate here if we
+        // don't have menu visible, that certainly is not an issue for OSX)
+        height: height
+                // 1. nw_menu_offset value on non-OSX OSs
+                + (pdgui.get_nw_menu_offset() * !pdgui.nw_os_is_osx)
+                // 2. OSX window size offset to match that of Windows
+                - (4 * pdgui.nw_os_is_osx)
+                // 3. default Raspbian DM offset to ensure same window height
+                //    as Windows
+                + (pdgui.get_nw_menu_offset() === 0 ? 20 : 0)
+                // 4. default Ubuntu Linux window size offset that is negated
+                //    by the Raspberry Pi's DM that has no nw_menu_offset, in
+                //    which case this is multiplied by 0
+                - (16 * pdgui.nw_os_is_linux * (pdgui.get_nw_menu_offset() > 0 ? 1 : 0)),
         x: Math.floor(xpos),
         y: Math.floor(ypos),
         frame: win_frame,
@@ -1048,6 +1057,17 @@ function gui_init(win) {
     connect();
     pdgui.restore_apps(0);
     if (pdgui.nw_os_is_linux) {
+        // set pdgui.js' nw_menu_offset to 0 since we are dealing with Linux.
+        // this is because if the callback below is called (which means offset
+        // is other than 0), it will re-set the offset to the appropriate size.
+        // we do this because on RPi which uses nwjs 0.60.1, move call is not
+        // called unless the values have changed, so we never reach the "on move"
+        // part. thus we set it here to 0, which works for RPi, while other
+        // Linux distros (or at least Ubuntu) that use nwjs 0.67.1 will call
+        // "on move" even if the values have not changed. if we ever get RPi's
+        // version of nwjs to match that of other Linux (intel) platforms,
+        // this part can be removed.
+        pdgui.set_nw_menu_offset(0);
         //pdgui.post("window position " + gui.Window.get().x + " " + gui.Window.get().y);
         var pre_titlebar_y = gui.Window.get().y;
         gui.Window.get().moveTo(gui.Window.get().x, gui.Window.get().y);

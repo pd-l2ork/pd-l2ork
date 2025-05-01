@@ -1987,6 +1987,7 @@ exports.check_nw_version = check_nw_version;
 var nw_menu_offset = 25;
 
 function set_nw_menu_offset(val) {
+    //post("set_nw_menu_offset " + val);
     nw_menu_offset = val;
 }
 
@@ -2021,11 +2022,15 @@ function canvas_check_geometry(cid) {
     //  patchwin[cid].height + " innerHeight=" + patchwin[cid].window.innerHeight +
     //  " offset=" + nw_menu_offset);
     var win_w = patchwin[cid].width,
-        // "23" is a kludge to account for the menubar size.  See comment
-        // in nw_create_window of index.js
-        // ico@vt.edu in 0.46.2 this is now 25 pixels, so I guess
-        // it is now officially kludge^2
-        win_h = patchwin[cid].height - nw_menu_offset,
+        // ico@vt.edu 2025-04-30:
+        // to fully appreciate what is going on in here, see how the window sizes are
+        // adjusted inside index.js when they are being created, to ensure they have
+        // the same size and position when running on different platforms. index.js'
+        // nw_create_window and gui_init hold insight into what is going on. more to
+        // the point, RPi appears to have 0 nw_menu_offset, which is then compounded
+        // by an increase of height by 20 pixels to match that of Windows and other
+        // platforms.
+        win_h = patchwin[cid].height - (nw_menu_offset === 0 ? 20 : nw_menu_offset),
         win_x = patchwin[cid].x,
         win_y = patchwin[cid].y,
         cnv_width = patchwin[cid].window.innerWidth,
@@ -2035,13 +2040,12 @@ function canvas_check_geometry(cid) {
     //post("canvas_check_geometry w=" + win_w + " h=" + win_h +
     //    " x=" + win_x + " y=" + win_y + " cnv_w=" + cnv_width + " cnv_h=" + cnv_height);
 
-    // ico@vt.edu 2020-08-31:
-    // why does Windows have different innerWidth and innerHeight from other OSs?
-    // See canvas_params for the explanation...
-    // 2020-10-01: this was a bug in 0.14.7 but is no longer needed
-    //win_w += 16 * nw_os_is_windows;
-    // 0.67.1 OSX bug where saving a window yields smaller window upon reload
-    win_h += (29 * nw_os_is_osx) + (16 * nw_os_is_linux);
+    // ico@vt.edu 2025-04-30:
+    // to fully appreciate what is going on in here, see how the window sizes are
+    // adjusted inside index.js when they are being created, to ensure they have
+    // the same size and position when running on different platforms. index.js'
+    // nw_create_window and gui_init hold insight into what is going on.
+    win_h += (29 * nw_os_is_osx) + (16 * nw_os_is_linux * (nw_menu_offset > 0 ? 1 : 0));
     
     // We're reusing win_x and win_y below, as it
     // shouldn't make a difference to the bounds
