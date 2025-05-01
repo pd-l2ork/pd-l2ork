@@ -61,6 +61,13 @@
   <url type="bugtracker">https://github.com/pd-l2ork/pd-l2ork/issues</url>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="20250501" type="stable" date="2025-05-01">
+      <description>
+        <p>
+          Latest release with critical bug-fixes, L2Ork Tweeter version 0.86 (now with up to 14 concurrent parts), new window list feature, improved string handling (see sprintf), improved preferences, and many more. If you already have your preferences saved from a previous version of Pd-L2Ork, don't forget to enable save zoom option in the Preferences > GUI. It is now enabled by default.
+        </p>
+      </description>
+    </release>
     <release version="20250430" type="stable" date="2025-04-30">
       <description>
         <p>
