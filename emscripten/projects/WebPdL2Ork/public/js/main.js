@@ -4007,8 +4007,13 @@ async function openPatch(content, filename) {
                     }
                     break;
                 }
-                if(layers.length == 1)
+                if(layers.length == 1) {
                     window.resizeTo(+args[4], +args[5]);
+                    const zoomBits = Math.round(+args[5] * 32);
+                    const zoom = (zoomBits & 0x10) ? -((zoomBits & 0xf ^ 0xf) + 1) : (zoomBits & 0xf);
+                    args[4] = Math.round(+args[4] * (2.5/3) ** zoom);
+                    args[5] = Math.round(+args[5] * (2.5/3) ** zoom);
+                }
                 layers.push({
                     arrays: [],
                     messages: [],
