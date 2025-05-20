@@ -790,7 +790,7 @@ done:
 
 /* ------ traversal routines for code that can't see our structures ------ */
 
-int obj_noutlets(t_object *x)
+int obj_noutlets(const t_object *x)
 {
     int n = 0;
     t_outlet *o;
@@ -813,7 +813,7 @@ t_outlet *obj_rightmost_outlet(t_object *x)
         return 0;
 }
 
-int obj_ninlets(t_object *x)
+int obj_ninlets(const t_object *x)
 {
     int n;
     t_inlet *i;
@@ -822,7 +822,7 @@ int obj_ninlets(t_object *x)
     return (n);
 }
 
-t_outconnect *obj_starttraverseoutlet(t_object *x, t_outlet **op, int nout)
+t_outconnect *obj_starttraverseoutlet(const t_object *x, t_outlet **op, int nout)
 {
     t_outlet *o = x->ob_outlet;
     while (nout-- && o) o = o->o_next;
@@ -897,7 +897,7 @@ void obj_moveoutletfirst(t_object *x, t_outlet *o)
     /* routines for DSP sorting, which are used in d_ugen.c and g_canvas.c */
     /* LATER try to consolidate all the slightly different routines. */
 
-int obj_nsiginlets(t_object *x)
+int obj_nsiginlets(const t_object *x)
 {
     int n;
     t_inlet *i;
@@ -908,7 +908,7 @@ int obj_nsiginlets(t_object *x)
 }
 
     /* get the index, among signal inlets, of the mth inlet overall */
-int obj_siginletindex(t_object *x, int m)
+int obj_siginletindex(const t_object *x, int m)
 {
     int n = 0;
     t_inlet *i;
@@ -928,7 +928,7 @@ int obj_siginletindex(t_object *x, int m)
     return (-1);
 }
 
-int obj_issignalinlet(t_object *x, int m)
+int obj_issignalinlet(const t_object *x, int m)
 {
     t_inlet *i;
     if (x->ob_pd->c_firstin)
@@ -942,7 +942,7 @@ int obj_issignalinlet(t_object *x, int m)
     return (i && (i->i_symfrom == &s_signal));
 }
 
-int obj_nsigoutlets(t_object *x)
+int obj_nsigoutlets(const t_object *x)
 {
     int n;
     t_outlet *o;
@@ -951,7 +951,7 @@ int obj_nsigoutlets(t_object *x)
     return (n);
 }
 
-int obj_sigoutletindex(t_object *x, int m)
+int obj_sigoutletindex(const t_object *x, int m)
 {
     int n;
     t_outlet *o2;
@@ -964,14 +964,14 @@ int obj_sigoutletindex(t_object *x, int m)
     return (-1);
 }
 
-int obj_issignaloutlet(t_object *x, int m)
+int obj_issignaloutlet(const t_object *x, int m)
 {
     t_outlet *o2;
     for (o2 = x->ob_outlet; o2 && m--; o2 = o2->o_next);
     return (o2 && (o2->o_sym == &s_signal));
 }
 
-t_float *obj_findsignalscalar(t_object *x, int m)
+t_float *obj_findsignalscalar(const t_object *x, int m)
 {
     t_inlet *i;
     if (x->ob_pd->c_firstin && x->ob_pd->c_floatsignalin)
@@ -1011,7 +1011,7 @@ int outlet_getsignalindex(t_outlet *x)
     return (n);
 }
 
-void obj_saveformat(t_object *x, t_binbuf *bb)
+void obj_saveformat(const t_object *x, t_binbuf *bb)
 {
     if (x->te_width)
         binbuf_addv(bb, "ssf;", &s__X, gensym("f"), (float)x->te_width);

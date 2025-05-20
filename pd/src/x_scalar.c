@@ -14,7 +14,6 @@
 #ifdef _WIN32
 #include <io.h>
 #endif
-extern t_pd *newest;
 
 t_class *scalar_define_class;
 
@@ -33,7 +32,7 @@ static void *scalar_define_new(t_symbol *s, int argc, t_atom *argv)
             keep = 1;
         else
         {
-            error("scalar define: unknown flag ...");
+            pd_error(0, "scalar define: unknown flag ...");
             postatom(argc, argv);
         }
         argc--; argv++;
@@ -85,12 +84,13 @@ static void *scalar_define_new(t_symbol *s, int argc, t_atom *argv)
         saved file or copy buffer */
     pd_bind(&x->gl_obj.ob_pd, asym);
 noscalar:
-    newest = &x->gl_pd;     /* mimic action of canvas_pop() */
+    pd_this->pd_newest = &x->gl_pd;     /* mimic action of canvas_pop() */
     pd_popsym(&x->gl_pd);
     x->gl_loading = 0;
 
         /* bash the class to "scalar define" -- see comment in x_array,c */
     x->gl_obj.ob_pd = scalar_define_class;
+    outlet_new(&x->gl_obj, &s_pointer);
     return (x);
 }
 
@@ -103,8 +103,7 @@ static void scalar_define_send(t_glist *x, t_symbol *s)
     {
         t_gpointer gp;
         gpointer_init(&gp);
-        // t_gobj is replaced with t_scalar in vanilla
-        gpointer_setglist(&gp, x, (t_gobj *)&x->gl_list->g_pd);
+        gpointer_setglist(&gp, x, (t_scalar *)&x->gl_list->g_pd);
         pd_pointer(s->s_thing, &gp);
         gpointer_unset(&gp);
     }
@@ -117,7 +116,7 @@ static void scalar_define_bang(t_glist *x)
     {
         t_gpointer gp;
         gpointer_init(&gp);
-        gpointer_setglist(&gp, x, (t_gobj *)&x->gl_list->g_pd);
+        gpointer_setglist(&gp, x, (t_scalar *)&x->gl_list->g_pd);
         outlet_pointer(x->gl_obj.ob_outlet, &gp);
         gpointer_unset(&gp);
     }
@@ -147,7 +146,7 @@ static void scalar_define_save(t_gobj *z, t_binbuf *bb)
 {
     t_glist *x = (t_glist *)z;
     binbuf_addv(bb, "ssff", &s__X, gensym("obj"),
-        (float)x->gl_obj.te_xpix, (float)x->gl_obj.te_ypix);
+        (t_float)x->gl_obj.te_xpix, (t_float)x->gl_obj.te_ypix);
     binbuf_addbinbuf(bb, x->gl_obj.ob_binbuf);
     binbuf_addsemi(bb);
     if (x->gl_private && x->gl_list &&
@@ -167,26 +166,26 @@ static void scalar_define_save(t_gobj *z, t_binbuf *bb)
 static void *scalarobj_new(t_symbol *s, int argc, t_atom *argv)
 {
     if (!argc || argv[0].a_type != A_SYMBOL)
-        newest = scalar_define_new(s, argc, argv);
+        pd_this->pd_newest = scalar_define_new(s, argc, argv);
     else
     {
-        char *str = argv[0].a_w.w_symbol->s_name;
+        const char *str = argv[0].a_w.w_symbol->s_name;
         if (!strcmp(str, "d") || !strcmp(str, "define"))
-            newest = scalar_define_new(s, argc-1, argv+1);
+            pd_this->pd_newest = scalar_define_new(s, argc-1, argv+1);
         else
         {
-            error("scalar %s: unknown function", str);
-            newest = 0;
+            pd_error(0, "scalar %s: unknown function", str);
+            pd_this->pd_newest = 0;
         }
     }
-    return (newest);
+    return (pd_this->pd_newest);
 }
 
 void canvas_add_for_class(t_class *c);
 
 /* ---------------- global setup function -------------------- */
 
-void x_scalar_setup(void )
+void x_scalar_setup(void)
 {
     scalar_define_class = class_new(gensym("scalar define"), 0,
         (t_method)canvas_free, sizeof(t_canvas), 0, 0);
@@ -200,5 +199,4 @@ void x_scalar_setup(void )
     class_setsavefn(scalar_define_class, scalar_define_save);
 
     class_addcreator((t_newmethod)scalarobj_new, gensym("scalar"), A_GIMME, 0);
-
 }

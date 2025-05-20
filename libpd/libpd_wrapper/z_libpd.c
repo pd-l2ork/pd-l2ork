@@ -584,4 +584,3 @@ void glob_add_recent_file(t_pd *dummy, t_symbol *s) {}
 void glob_clear_recent_files(t_pd *dummy) {}
 int sys_defeatrt, sys_autopatch_yoffset, sys_zoom, sys_browser_doc = 1,
     sys_browser_path, sys_browser_init;
-t_symbol *sys_flags = &s_;

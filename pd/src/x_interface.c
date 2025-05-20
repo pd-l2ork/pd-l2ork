@@ -752,6 +752,8 @@ t_symbol *getapiname(int id)
     return s;
 }
 
+t_symbol *pd_getdirname(void);
+
 void pdinfo_dir(t_pdinfo *x, t_symbol *s, int argc, t_atom *argv)
 {
     t_atom at[1];
@@ -771,7 +773,7 @@ void pdinfo_dir(t_pdinfo *x, t_symbol *s, int argc, t_atom *argv)
 void pdinfo_dsp(t_pdinfo *x, t_symbol *s, int argc, t_atom *argv)
 {
     t_atom at[1];
-    SETFLOAT(at, (t_float)(pd_this->pd_dspstate_user));
+    SETFLOAT(at, (t_float)(THISGUI->i_dspstate_user));
     info_out((t_text *)x, s, 1, at);
 }
 
@@ -785,7 +787,9 @@ void pdinfo_floatsize(t_pdinfo *x, t_symbol *s, int argc, t_atom *argv)
 void pdinfo_audio_api(t_pdinfo *x, t_symbol *s, int argc, t_atom *argv)
 {
     t_atom at[1];
-    t_symbol *api = getapiname(sys_audioapi);
+    t_audiosettings as;
+    sys_get_audio_settings(&as);
+    t_symbol *api = getapiname(as.a_api);
     SETSYMBOL(at, api);
     info_out((t_text *)x, s, 1, at);
 }
@@ -891,10 +895,12 @@ void pdinfo_audio_listdevs(t_pdinfo *x, t_symbol *s, int argc, t_atom *argv)
 {
     char indevlist[MAXNDEV*DEVDESCSIZE], outdevlist[MAXNDEV*DEVDESCSIZE];
     int nindevs = 0, noutdevs = 0, i, canmulti = 0, cancallback = 0;
+    t_audiosettings as;
+    sys_get_audio_settings(&as);
     sys_get_audio_devs(indevlist, &nindevs,
             outdevlist, &noutdevs,
             &canmulti, &cancallback,
-            MAXNDEV, DEVDESCSIZE);
+            MAXNDEV, DEVDESCSIZE, as.a_api);
     t_atom at[MAXNDEV];
     if (s == gensym("audio-multidev-support"))
     {
@@ -920,16 +926,13 @@ void pdinfo_audio_dev(t_pdinfo *x, t_symbol *s, int argc, t_atom *argv)
     int devno;
     if (argc) devno = (int)atom_getfloatarg(0, argc, argv);
     else devno = 0;
-    int naudioindev, audioindev[MAXAUDIOINDEV], chindev[MAXAUDIOINDEV];
-    int naudiooutdev, audiooutdev[MAXAUDIOOUTDEV], choutdev[MAXAUDIOOUTDEV];
-    int rate, advance, callback, blocksize;
-    sys_get_audio_params(&naudioindev, audioindev, chindev,
-        &naudiooutdev, audiooutdev, choutdev, &rate, &advance, &callback, &blocksize);
+    t_audiosettings as;
+    sys_get_audio_settings(&as);
     int *dev, *chan, ndev;
     if (s == gensym("audio-indev"))
-        dev = audioindev, chan = chindev, ndev = naudioindev;
+        dev = as.a_indevvec, chan = as.a_chindevvec, ndev = as.a_nindev;
     else
-        dev = audiooutdev, chan = choutdev, ndev = naudiooutdev;
+        dev = as.a_outdevvec, chan = as.a_choutdevvec, ndev = as.a_noutdev;
     if (devno >= 0 && devno < ndev)
     {
         t_atom at[2];
@@ -1018,16 +1021,13 @@ void pdinfo_audio_outdev(t_pdinfo *x, t_symbol *s, int argc, t_atom *argv)
     int devno;
     if (argc) devno = (int)atom_getfloatarg(0, argc, argv);
     else devno = 0;
-    int naudioindev, audioindev[MAXAUDIOINDEV], chindev[MAXAUDIOINDEV];
-    int naudiooutdev, audiooutdev[MAXAUDIOOUTDEV], choutdev[MAXAUDIOOUTDEV];
-    int rate, advance, callback, blocksize;
-    sys_get_audio_params(&naudioindev, audioindev, chindev,
-        &naudiooutdev, audiooutdev, choutdev, &rate, &advance, &callback, &blocksize);
-    if (devno >= 0 && devno < naudioindev)
+    t_audiosettings as;
+    sys_get_audio_settings(&as);
+    if (devno >= 0 && devno < as.a_nindev)
     {
         t_atom at[2];
-        SETFLOAT(at, (t_float)audioindev[devno]);
-        SETFLOAT(at+1, (t_float)chindev[devno]);
+        SETFLOAT(at, (t_float)as.a_indevvec[devno]);
+        SETFLOAT(at+1, (t_float)as.a_chindevvec[devno]);
         info_out((t_text *)x, s, 2, at);
     }
     else

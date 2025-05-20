@@ -5,6 +5,7 @@
 #include "m_pd.h"
 #include "m_imp.h"
 #include "s_stuff.h"
+#include "s_net.h"
 #include "s_version.h"
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -17,32 +18,37 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#ifdef MSW
+#ifdef _WIN32
 #include <io.h>
 #include <windows.h>
 #include <winbase.h>
 #endif
-#ifdef _MSC_VER  /* This is only for Microsoft's compiler, not cygwin, e.g. */
-#define snprintf sprintf_s
+#ifdef __APPLE__
+#include <mach-o/dyld.h> // for _NSGetExecutablePath
 #endif
+#include "m_private_utils.h"
 
 char *pd_version;
 static const char pd_compiletime[] = __TIME__;
 static const char pd_compiledate[] = __DATE__;
 
 void pd_init(void);
-int sys_argparse(int argc, char **argv);
-void sys_findprogdir(char *progname);
+void pd_term(void);
+int sys_argparse(int argc, const char **argv);
+void sys_findprogdir(const char *progname);
 void sys_setsignalhandlers(void);
 int sys_startgui(const char *guipath);
+void sys_stopgui(void);
 void sys_setrealtime(const char *guipath);
 int sys_rcfile(void);
 int m_mainloop(void);
 int m_batchmain(void);
 void sys_addhelppath(char *p);
 #ifdef USEAPI_ALSA
-void alsa_adddev(char *name);
+void alsa_adddev(const char *name);
 #endif
+void sys_doneglobinit( void);
+t_symbol *pd_getdirname(void);
 
 int sys_debuglevel;
 int sys_verbose;
@@ -59,11 +65,21 @@ int sys_legacy = 0;     /* by default off, used to enable legacy features,
                            such as offsets in iemgui object positioning */
 int sys_legacy_bendin = 0; /* by default off, used to enable vanilla-
                               compatible (unsigned) pitch bend input */
-char *sys_guicmd;
+int sys_defeatrt;       /* flag to cancel real-time */
+t_symbol *sys_flags;    /* more command-line flags */
+const char *sys_guicmd;
 t_symbol *sys_gui_preset; /* name of gui theme to be used */
 t_symbol *sys_libdir;
 t_symbol *sys_guidir;
-t_namelist *sys_openlist;
+
+typedef struct _patchlist
+{
+    struct _patchlist *pl_next;
+    char *pl_file;
+    char *pl_args;
+} t_patchlist;
+
+static t_patchlist *sys_openlist;
 static t_namelist *sys_messagelist;
 static int sys_version;
 int sys_oldtclversion;      /* hack to warn g_rtext.c about old text sel */
@@ -74,22 +90,18 @@ int sys_midiindevlist[MAXMIDIINDEV] = {1};
 int sys_midioutdevlist[MAXMIDIOUTDEV] = {1};
 
 #ifdef __APPLE__
-char sys_font[] = "Monaco"; /* tb: font name */
+char sys_font[100] = "Monaco"; /* tb: font name */
 #else
-char sys_font[] = "DejaVu Sans Mono"; /* tb: font name */
+char sys_font[100] = "DejaVu Sans Mono"; /* tb: font name */
 #endif
-char sys_fontweight[] = "normal"; /* currently only used for iemguis */
-static int sys_main_srate;
-static int sys_main_advance;
-static int sys_main_callback;
-static int sys_main_blocksize;
+char sys_fontweight[10] = "normal"; /* currently only used for iemguis */
+
 static int sys_listplease;
 
 int sys_externalschedlib;
 char sys_externalschedlibname[MAXPDSTRING];
-static int sys_batch;
-int sys_extraflags;
-char sys_extraflagsstring[MAXPDSTRING];
+int sys_batch;
+const char *pd_extraflags = 0;
 int sys_run_scheduler(const char *externalschedlibname,
     const char *sys_extraflagsstring);
 int sys_noautopatch = 0;    /* temporary hack to defeat new 0.42 editing */
@@ -99,28 +111,15 @@ int glob_autopatch_connectme = 0;   /* added to compensate for weird gui objects
                                        somewhat reasonably autopatched
                                     */
 
-    /* here the "-1" counts signify that the corresponding vector hasn't been
-    specified in command line arguments; sys_set_audio_settings will detect it
-    and fill things in. */
-static int sys_nsoundin = -1;
-static int sys_nsoundout = -1;
-static int sys_soundindevlist[MAXAUDIOINDEV];
-static int sys_soundoutdevlist[MAXAUDIOOUTDEV];
+t_sample *get_sys_soundout() { return STUFF->st_soundout; }
+t_sample *get_sys_soundin() { return STUFF->st_soundin; }
+double *get_sys_time_per_dsp_tick() { return &STUFF->st_time_per_dsp_tick; }
+int *get_sys_schedblocksize() { return &STUFF->st_schedblocksize; }
+double *get_sys_time() { return &pd_this->pd_systime; }
+t_float *get_sys_dacsr() { return &STUFF->st_dacsr; }
+int *get_sys_schedadvance() { return &sys_schedadvance; }
 
-static int sys_nchin = -1;
-static int sys_nchout = -1;
-static int sys_chinlist[MAXAUDIOINDEV];
-static int sys_choutlist[MAXAUDIOOUTDEV];
-
-t_sample* get_sys_soundout() { return sys_soundout; }
-t_sample* get_sys_soundin() { return sys_soundin; }
-int* get_sys_main_advance() { return &sys_main_advance; }
-double* get_sys_time_per_dsp_tick() { return &sys_time_per_dsp_tick; }
-int* get_sys_schedblocksize() { return &sys_schedblocksize; }
-double* get_sys_time() { return &pd_this->pd_systime; }
-t_float* get_sys_dacsr() { return &sys_dacsr; }
-//int* get_sys_sleepgrain() { return &sys_sleepgrain; }
-int* get_sys_schedadvance() { return &sys_schedadvance; }
+t_namelist *sys_searchpath;  /* so old versions of GEM might compile */
 
 typedef struct _fontinfo
 {
@@ -172,7 +171,50 @@ int sys_fontheight(int fontsize)
 int sys_defaultfont;
 #define DEFAULTFONT 10
 
-static void openit(const char *dirname, const char *filename)
+static t_patchlist * patchlist_append(t_patchlist *listwas,
+    const char *files, const char *args)
+{
+    t_namelist *nl, *nl2;
+    nl = namelist_append_files(0, files);
+    for (nl2 = nl; nl2; nl2 = nl2->nl_next)
+    {
+        t_patchlist *pl, *pl2;
+        pl = (t_patchlist *)(getbytes(sizeof(*pl)));
+        pl->pl_next = 0;
+        pl->pl_file = (char *)getbytes(strlen(nl2->nl_string) + 1);
+        strcpy(pl->pl_file, nl2->nl_string);
+        if (args)
+        {
+            pl->pl_args = (char *)getbytes(strlen(args) + 1);
+            strcpy(pl->pl_args, args);
+        }
+        else pl->pl_args = 0;
+        if (!listwas)
+            listwas = pl;
+        else
+        {
+            for (pl2 = listwas; pl2->pl_next; pl2 = pl2->pl_next) ;
+            pl2->pl_next = pl;
+        }
+    }
+    namelist_free(nl);
+    return (listwas);
+}
+
+static void patchlist_free(t_patchlist *list)
+{
+    t_patchlist *pl, *pl2;
+    for (pl = list; pl; pl = pl2)
+    {
+        pl2 = pl->pl_next;
+        freebytes(pl->pl_file, strlen(pl->pl_file) + 1);
+        if (pl->pl_args)
+            freebytes(pl->pl_args, strlen(pl->pl_args) + 1);
+        freebytes(pl, sizeof(*pl));
+    }
+}
+
+static void openit(const char *dirname, const char *filename, const char *args)
 {
     char dirbuf[FILENAME_MAX], *nameptr;
     int fd = open_via_path(dirname, filename, "", dirbuf, &nameptr,
@@ -180,11 +222,20 @@ static void openit(const char *dirname, const char *filename)
     if (fd >= 0)
     {
         sys_close(fd);
+        if (args && *args)
+        {
+            t_binbuf *b1 = binbuf_new(), *b2 = binbuf_new();
+            binbuf_text(b1, args, strlen(args));
+            binbuf_addbinbuf(b2, b1); // bash semis, commas and dollars
+            canvas_setargs(binbuf_getnatom(b2), binbuf_getvec(b2));
+            binbuf_free(b1);
+            binbuf_free(b2);
+        }
         glob_evalfile(0, gensym(nameptr), gensym(dirbuf));
         gui_vmess("gui_process_open_arg", "s", filename);
     }
     else
-        error("%s: can't open", filename);
+        pd_error(0, "%s: can't open", filename);
 }
 
 /* this is called from the gui process.  The first argument is the cwd, and
@@ -197,7 +248,8 @@ open(), read(), etc, calls to be served somehow from the GUI too. */
 
 void glob_initfromgui(void *dummy, t_symbol *s, int argc, t_atom *argv)
 {
-    char *cwd = atom_getsymbolarg(0, argc, argv)->s_name;
+    const char *cwd = atom_getsymbolarg(0, argc, argv)->s_name;
+    t_patchlist *pl;
     t_namelist *nl;
     unsigned int i;
     int j;
@@ -233,13 +285,13 @@ void glob_initfromgui(void *dummy, t_symbol *s, int argc, t_atom *argv)
             sys_fontlist[i].fi_height);
 #endif
         /* load dynamic libraries specified with "-lib" args */
-    for  (nl = sys_externlist; nl; nl = nl->nl_next)
+    for  (nl = STUFF->st_externlist; nl; nl = nl->nl_next)
         if (!sys_load_lib(0, nl->nl_string))
             post("%s: can't load library", nl->nl_string);
         /* open patches specified with "-open" args */
-    for  (nl = sys_openlist; nl; nl = nl->nl_next)
-        openit(cwd, nl->nl_string);
-    namelist_free(sys_openlist);
+    for (pl = sys_openlist; pl; pl = pl->pl_next)
+        openit(cwd, pl->pl_file, pl->pl_args);
+    patchlist_free(sys_openlist);
     sys_openlist = 0;
         /* send messages specified with "-send" args */
     for  (nl = sys_messagelist; nl; nl = nl->nl_next)
@@ -253,7 +305,6 @@ void glob_initfromgui(void *dummy, t_symbol *s, int argc, t_atom *argv)
     sys_messagelist = 0;
 }
 
-
 // font char metric triples: pointsize width(pixels) height(pixels)
 static int defaultfontshit[] = {
  8, 5, 11, 9, 6, 12,
@@ -265,6 +316,7 @@ static int defaultfontshit[] = {
 #define NDEFAULTFONT (sizeof(defaultfontshit)/sizeof(*defaultfontshit))
 
 static t_clock *sys_fakefromguiclk;
+int socket_init(void);
 static void sys_fakefromgui(void)
 {
         /* fake the GUI's message giving cwd and font sizes in case
@@ -278,17 +330,17 @@ static void sys_fakefromgui(void)
 #else
     if (!getcwd(buf, MAXPDSTRING))
         strcpy(buf, ".");
-
 #endif
     SETSYMBOL(zz, gensym(buf));
+    SETFLOAT(zz+1, 0);
     for (i = 0; i < (int)NDEFAULTFONT; i++)
-        SETFLOAT(zz+i+1, defaultfontshit[i]);
-    SETFLOAT(zz+NDEFAULTFONT+1,0);
+        SETFLOAT(zz+i+2, defaultfontshit[i]);
     glob_initfromgui(0, 0, 2+NDEFAULTFONT, zz);
     clock_free(sys_fakefromguiclk);
 }
 
 static void sys_afterargparse(void);
+static void sys_printusage(void);
 
 static void pd_makeversion(void)
 {
@@ -337,13 +389,12 @@ extern int sys_autocomplete, sys_autocomplete_prefix,
   sys_autocomplete_relevance;
 
 /* this is called from main() in s_entry.c */
-int sys_main(int argc, char **argv)
+int sys_main(int argc, const char **argv)
 {
     //fprintf(stderr, "sys_main");
-    int i, noprefs;
+    int i, noprefs, ret;
     t_namelist *nl;
     sys_externalschedlib = 0;
-    sys_extraflags = 0;
     sys_gui_preset = gensym("default");
 #ifdef PD_DEBUG
     fprintf(stderr, "Pd-L2Ork: COMPILED FOR DEBUGGING\n");
@@ -361,7 +412,9 @@ int sys_main(int argc, char **argv)
     _set_fmode( _O_BINARY );
 # else  /* MinGW */
     {
+#ifndef _fmode
         extern int _fmode;
+#endif
         _fmode = _O_BINARY;
     }
 # endif /* MSC */
@@ -373,15 +426,40 @@ int sys_main(int argc, char **argv)
     if (getuid() != geteuid())
     {
         fprintf(stderr, "warning: canceling setuid privilege\n");
-        setuid(getuid());
+        if(setuid(getuid()) < 0) {
+                /* sometimes this fails (which, according to 'man 2 setuid' is a
+                 * grave security error), in which case we bail out and quit. */
+            fprintf(stderr, "\n\nFATAL: could not cancel setuid privilege");
+            fprintf(stderr, "\nTo fix this, please remove the setuid flag from the Pd binary");
+            if(argc>0) {
+                fprintf(stderr, "\ne.g. by running the following as root/superuser:");
+                fprintf(stderr, "\n chmod u-s '%s'", argv[0]);
+            }
+            fprintf(stderr, "\n\n");
+            perror("setuid");
+            return (1);
+        }
     }
 #endif  /* _WIN32 */
+if (socket_init())
+    sys_sockerror("socket_init()");
     pd_init();                                  /* start the message system */
     logpost(NULL, 2, "PD_FLOATSIZE = %u bits", (unsigned)sizeof(t_float)*8);
     sys_findprogdir(argv[0]);                   /* set sys_progname, guipath */
-    for (i = noprefs = 0; i < argc; i++)        /* prescan args for noprefs */
+    for (i = noprefs = 0; i < argc; i++)        /* prescan ... */
+    {
+        /* for prefs override */
         if (!strcmp(argv[i], "-noprefs"))
             noprefs = 1;
+        /* for external scheduler (to ignore audio api in sys_loadpreferences) */
+        else if (!strcmp(argv[i], "-schedlib") && i < argc-1)
+            sys_externalschedlib = 1;
+        else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "-help"))
+        {
+            sys_printusage();
+            return (1);
+        }
+    }
 // do not load preferences and recent files if using emscripten
 // LATER: distinguish between WebPdL2Ork emscripten and full online editor
 #ifndef __EMSCRIPTEN__
@@ -389,7 +467,7 @@ int sys_main(int argc, char **argv)
         sys_loadpreferences();                  /* load default settings */
     sys_load_recent_files();                    /* load recent files table */
 #endif
-#ifndef MSW
+#ifndef _WIN32
     if (!noprefs)
         sys_rcfile();                           /* parse the startup file */
 #endif
@@ -406,19 +484,24 @@ int sys_main(int argc, char **argv)
 #endif
     if (sys_argparse(argc-1, argv+1))           /* parse cmd line */
         return (1);
-    sys_afterargparse();                    /* post-argparse settings */
         /* build version string from defines in m_pd.h */
     pd_makeversion();
     if (sys_verbose || sys_version) fprintf(stderr, "%scompiled %s %s\n",
         pd_version, pd_compiletime, pd_compiledate);
+    if (sys_verbose)
+        fprintf(stderr, "float precision = %lu bits\n", sizeof(t_float)*8);
     if (sys_version)    /* if we were just asked our version, exit here. */
+    {
+        fflush(stderr);
         return (0);
+    }
     sys_setsignalhandlers();
     if (sys_nogui)
         clock_set((sys_fakefromguiclk =
             clock_new(0, (t_method)sys_fakefromgui)), 0);
-    else if (sys_startgui(sys_guidir->s_name))       /* start the gui */
-        return(1);
+    else if (sys_startgui(sys_libdir->s_name)) /* start the gui */
+        return (1);
+    sys_afterargparse();                    /* post-argparse settings */
         /* send the libdir to the GUI */
     gui_vmess("gui_set_lib_dir", "s", sys_libdir->s_name);
         /* send the name of the gui preset */
@@ -432,7 +515,7 @@ int sys_main(int argc, char **argv)
                     sys_autocomplete, sys_autocomplete_prefix,
                     sys_autocomplete_relevance);
     gui_start_array();
-    for (nl = sys_helppath; nl; nl = nl->nl_next)
+    for (nl = STUFF->st_helppath; nl; nl = nl->nl_next)
     {
         gui_s(nl->nl_string);
     }
@@ -442,30 +525,34 @@ int sys_main(int argc, char **argv)
     if (sys_hipriority)
         sys_setrealtime(sys_libdir->s_name); /* set desired process priority */
     if (sys_externalschedlib)
-        return (sys_run_scheduler(sys_externalschedlibname,
-            sys_extraflagsstring));
+        ret = (sys_run_scheduler(sys_externalschedlibname,
+            pd_extraflags));
     else if (sys_batch)
-        return (m_batchmain());
+        ret = (m_batchmain());
     else
     {
         /* open audio and MIDI */
         sys_reopen_midi();
-        sys_reopen_audio();
+        if (audio_shouldkeepopen())
+            sys_reopen_audio();
 
         // ag: no longer needed
         //if (sys_console) sys_vgui("pdtk_toggle_console 1\n");
         if (sys_k12_mode)
         {
             /*
-            t_namelist *path = pd_extrapath;
+            t_namelist *path = STUFF->st_staticpath;
             while (path->nl_next)
                 path = path->nl_next;
             */
             gui_vmess("set_k12_mode", "i", sys_k12_mode);
         }
          /* run scheduler until it quits */
-        return (m_mainloop());
+        ret = (m_mainloop());
     }
+    sys_stopgui();
+    pd_term();
+    return (ret);
 }
 
 static char *(usagemessage[]) = {
@@ -475,6 +562,9 @@ static char *(usagemessage[]) = {
 "-audioindev ...  -- audio in devices; e.g., \"1,3\" for first and third\n",
 "-audiooutdev ... -- audio out devices (same)\n",
 "-audiodev ...    -- specify input and output together\n",
+"-audioaddindev   -- add an audio input device by name\n",
+"-audioaddoutdev  -- add an audio output device by name\n",
+"-audioadddev     -- add an audio input and output device by name\n",
 "-inchannels ...  -- audio input channels (by device, like \"2\" or \"16,8\")\n",
 "-outchannels ... -- number of audio out channels (same)\n",
 "-channels ...    -- specify both input and output channels\n",
@@ -484,6 +574,8 @@ static char *(usagemessage[]) = {
 "-nodac           -- suppress audio output\n",
 "-noadc           -- suppress audio input\n",
 "-noaudio         -- suppress audio input and output (-nosound is synonym) \n",
+"-callback        -- use callbacks if possible\n",
+"-nocallback      -- use polling-mode (true by default)\n",
 "-listdev         -- list audio and MIDI devices\n",
 
 #ifdef USEAPI_OSS
@@ -497,19 +589,22 @@ static char *(usagemessage[]) = {
 
 #ifdef USEAPI_JACK
 "-jack            -- use JACK audio API\n",
+"-jackname <name> -- a name for your JACK client\n",
+"-nojackconnect   -- don't make any automatic connections to the jack graph\n",
+"-jackconnect     -- automatically connect pd to the JACK graph [default]\n",
 #endif
 
 #ifdef USEAPI_PORTAUDIO
-#ifdef MSW
-"-asio            -- use ASIO audio driver (via Portaudio)\n",
-"-pa              -- synonym for -asio\n",
+#ifdef _WIN32
+"-pa              -- use Portaudio API (for ASIO or WASAPI)\n",
+"-asio            -- synonym for -pa\n",
 #else
 "-pa              -- use Portaudio API\n",
 #endif
 #endif
 
 #ifdef USEAPI_MMIO
-"-mmio            -- use MMIO audio API (default for Windows)\n",
+"-mmio            -- use legacy MMIO audio API\n",
 #endif
 "      (default audio API for this platform:  ", API_DEFSTRING, ")\n",
 
@@ -517,9 +612,15 @@ static char *(usagemessage[]) = {
 "-midiindev ...   -- midi in device list; e.g., \"1,3\" for first and third\n",
 "-midioutdev ...  -- midi out device list, same format\n",
 "-mididev ...     -- specify -midioutdev and -midiindev together\n",
+"-midiaddindev    -- add a MIDI input device by name\n",
+"-midiaddoutdev   -- add a MIDI output device by name\n",
+"-midiadddev      -- add a MIDI input and output device by name\n",
 "-nomidiin        -- suppress MIDI input\n",
 "-nomidiout       -- suppress MIDI output\n",
 "-nomidi          -- suppress MIDI input and output\n",
+#ifdef USEAPI_OSS
+"-ossmidi         -- use OSS midi API\n",
+#endif
 #ifdef USEAPI_ALSA
 "-alsamidi        -- use ALSA midi API\n",
 #endif
@@ -531,11 +632,13 @@ static char *(usagemessage[]) = {
 "-stdpath         -- search standard directory (true by default)\n",
 "-helppath <path> -- add to help file search path\n",
 "-open <file>     -- open file(s) on startup\n",
-"-lib <file>      -- load object library(s)\n",
-"-font-size <n>     -- specify default font size in points\n",
-"-font-face <name>  -- specify default font (default: Bitstream Vera Sans Mono)\n",
-"-font-weight <name>-- specify default font weight (normal or bold)\n",
+"-open-with-args <file> <args> -- open file(s) on startup with arguments\n",
+"-lib <file>      -- load object library(s) (omit file extensions)\n",
+"-font-size <n>      -- specify default font size in points\n",
+"-font-face <name>   -- specify default font (default: Bitstream Vera Sans Mono)\n",
+"-font-weight <name> -- specify default font weight (normal or bold)\n",
 "-verbose         -- extra printout on startup and when searching for files\n",
+"-noverbose       -- no extra printout\n",
 "-version         -- don't run Pd; just print out which version it is \n",
 "-d <n>           -- specify debug type:\n",
 "                    1=Pd->GUI\n",
@@ -543,22 +646,28 @@ static char *(usagemessage[]) = {
 "                    3=Pd->GUI and GUI->Pd\n",
 "                    5=Pd->GUI with Pd linenumbers\n",
 "                    7=Pd->GUI and GUI->Pd with Pd linenumbers\n", 
+"-loadbang        -- do not suppress all loadbangs (true by default)\n",
 "-noloadbang      -- suppress all loadbangs\n",
 "-stderr          -- send printout to standard error instead of GUI\n",
+"-nostderr        -- send printout to GUI instead of standard error (true by default)\n",
+"-gui             -- start GUI (true by default)\n",
 "-nogui           -- suppress starting the GUI\n",
 "-guiport <n>     -- connect to pre-existing GUI over port <n>\n",
-"-guicmd \"cmd...\" -- start alternatve GUI program (e.g., remote via ssh)\n",
+"-guicmd \"cmd...\" -- start alternative GUI program (e.g., remote via ssh)\n",
 "-send \"msg...\"   -- send a message at startup, after patches are loaded\n",
+"-prefs           -- load preferences on startup (true by default)\n",
 "-noprefs         -- suppress loading preferences on startup\n",
 "-console         -- open the console along with the pd window\n",
 #ifdef HAVE_UNISTD_H
 "-rt or -realtime -- use real-time priority\n",
 "-nrt             -- don't use real-time priority\n",
 #endif
+"-sleep           -- sleep when idle, don't spin (true by default)\n",
 "-nosleep         -- spin, don't sleep (may lower latency on multi-CPUs)\n",
-"-schedlib <file> -- plug in external scheduler\n",
+"-schedlib <file> -- plug in external scheduler (omit file extensions)\n",
 "-extraflags <s>  -- string argument to send schedlib\n",
 "-batch           -- run off-line as a batch process\n",
+"-nobatch         -- run interactively (true by default)\n",
 "-autopatch       -- enable auto-patching new from selected objects\n",
 "-k12             -- enable K-12 education mode (requires L2Ork K12 lib)\n",
 "-unique          -- enable multiple instances (disabled by default)\n",
@@ -567,25 +676,36 @@ static char *(usagemessage[]) = {
 "\n",
 };
 
-static void sys_parsedevlist(int *np, int *vecp, int max, char *str)
+static void sys_printusage(void)
+{
+    unsigned int i;
+    for (i = 0; i < sizeof(usagemessage)/sizeof(*usagemessage); i++)
+    {
+        fprintf(stderr, "%s", usagemessage[i]);
+        fflush(stderr);
+    }
+}
+
+    /* parse a comma-separated numeric list, returning the number found */
+static int sys_parsedevlist(int *np, int *vecp, int max, const char *str)
 {
     int n = 0;
     while (n < max)
     {
-        if (!*str) break;
+        if (! *str) break;
         else
         {
             char *endp;
-            vecp[n] = strtol(str, &endp, 10);
+            vecp[n] = (int)strtol(str, &endp, 10);
             if (endp == str)
                 break;
             n++;
-            if (!endp)
+            if (! *endp)
                 break;
             str = endp + 1;
         }
     }
-    *np = n;
+    return (*np = n);
 }
 
 /*
@@ -599,16 +719,16 @@ static int sys_getmultidevchannels(int n, int *devlist)
 }
 */
 
-    /* this routine tries to figure out where to find the auxilliary files
+    /* this routine tries to figure out where to find the auxiliary files
     Pd will need to run.  This is either done by looking at the command line
-    invokation for Pd, or if that fails, by consulting the variable
+    invocation for Pd, or if that fails, by consulting the variable
     INSTALL_PREFIX.  In MSW, we don't try to use INSTALL_PREFIX. */
-void sys_findprogdir(char *progname)
+void sys_findprogdir(const char *progname)
 {
     char *execdir = pd_getdirname()->s_name, *lastslash;
     char sbuf[FILENAME_MAX], sbuf2[FILENAME_MAX], appbuf[FILENAME_MAX];
     strncpy(sbuf, execdir, FILENAME_MAX-1);
-#ifndef MSW
+#ifndef _WIN32
     struct stat statbuf;
 #endif
     lastslash = strrchr(sbuf, '/');
@@ -652,7 +772,7 @@ void sys_findprogdir(char *progname)
             .../bin/wish80.exe
             .../doc
         */
-#ifdef MSW
+#ifdef _WIN32
     sys_libdir = gensym(sbuf2);
     sys_guidir = &s_;   /* in MSW the guipath just depends on the libdir */
 #else
@@ -690,68 +810,68 @@ void sys_findprogdir(char *progname)
 #endif
 }
 
-#ifdef MSW
-static int sys_mmio = 1;
-#else
-static int sys_mmio = 0;
-#endif
-
-int sys_argparse(int argc, char **argv)
+int sys_argparse(int argc, const char **argv)
 {
+    t_audiosettings as;
+            /* get the current audio parameters.  These are set
+            by the preferences mechanism (sys_loadpreferences()) or
+            else are the default.  Overwrite them with any results
+            of argument parsing, and store them again. */
+    sys_get_audio_settings(&as);
     while ((argc > 0) && **argv == '-')
     {
+                /* audio flags */
         if (!strcmp(*argv, "-r") && argc > 1 &&
-            sscanf(argv[1], "%d", &sys_main_srate) >= 1)
+            sscanf(argv[1], "%d", &as.a_srate) >= 1)
         {
             argc -= 2;
             argv += 2;
         }
-        else if (!strcmp(*argv, "-inchannels") && (argc > 1))
+        else if (!strcmp(*argv, "-inchannels"))
         {
-            sys_parsedevlist(&sys_nchin,
-                sys_chinlist, MAXAUDIOINDEV, argv[1]);
-
-          if (!sys_nchin)
-              goto usage;
-
-          argc -= 2; argv += 2;
+            if (argc < 2 ||
+                !sys_parsedevlist(&as.a_nchindev,
+                    as.a_chindevvec, MAXAUDIOINDEV, argv[1]))
+                        goto usage;
+            argc -= 2; argv += 2;
         }
         else if (!strcmp(*argv, "-outchannels") && (argc > 1))
         {
-            sys_parsedevlist(&sys_nchout, sys_choutlist,
-                MAXAUDIOOUTDEV, argv[1]);
-
-          if (!sys_nchout)
-            goto usage;
-
-          argc -= 2; argv += 2;
+            if (argc < 2 ||
+                !sys_parsedevlist(&as.a_nchoutdev,
+                    as.a_choutdevvec, MAXAUDIOINDEV, argv[1]))
+                        goto usage;
+            argc -= 2; argv += 2;
         }
         else if (!strcmp(*argv, "-channels") && (argc > 1))
         {
-            sys_parsedevlist(&sys_nchin, sys_chinlist,MAXAUDIOINDEV,
-                argv[1]);
-            sys_parsedevlist(&sys_nchout, sys_choutlist,MAXAUDIOOUTDEV,
-                argv[1]);
-
-            if (!sys_nchout)
-              goto usage;
-
+            if (argc < 2 ||
+                !sys_parsedevlist(&as.a_nchindev,
+                    as.a_chindevvec, MAXAUDIOINDEV, argv[1]) ||
+                !sys_parsedevlist(&as.a_nchoutdev,
+                    as.a_choutdevvec, MAXAUDIOINDEV, argv[1]))
+                        goto usage;
             argc -= 2; argv += 2;
         }
         else if (!strcmp(*argv, "-soundbuf") ||
                  !strcmp(*argv, "-audiobuf") && (argc > 1))
         {
-            sys_main_advance = atoi(argv[1]);
+            as.a_advance = atoi(argv[1]);
             argc -= 2; argv += 2;
         }
         else if (!strcmp(*argv, "-callback"))
         {
-            sys_main_callback = 1;
+            as.a_callback = 1;
+            argc--; argv++;
+        }
+        else if (!strcmp(*argv, "-nocallback"))
+        {
+            as.a_callback = 0;
             argc--; argv++;
         }
         else if (!strcmp(*argv, "-blocksize"))
         {
-            sys_setblocksize(atoi(argv[1]));
+            as.a_blocksize = atoi(argv[1]);
             argc -= 2; argv += 2;
         }
         else if (!strcmp(*argv, "-sleepgrain") && (argc > 1))
@@ -761,40 +881,50 @@ int sys_argparse(int argc, char **argv)
         }
         else if (!strcmp(*argv, "-nodac"))
         {
-            sys_nsoundout=0;
-            sys_nchout = 0;
+            as.a_noutdev = as.a_nchoutdev = 0;
             argc--; argv++;
         }
         else if (!strcmp(*argv, "-noadc"))
         {
-            sys_nsoundin=0;
-            sys_nchin = 0;
+            as.a_nindev = as.a_nchindev = 0;
             argc--; argv++;
         }
         else if (!strcmp(*argv, "-nosound") || !strcmp(*argv, "-noaudio"))
         {
-            sys_nsoundin=sys_nsoundout = 0;
-            sys_nchin = sys_nchout = 0;
+            as.a_noutdev = as.a_nchoutdev =  as.a_nindev = as.a_nchindev = 0;
             argc--; argv++;
         }
 #ifdef USEAPI_OSS
         else if (!strcmp(*argv, "-oss"))
         {
-            sys_set_audio_api(API_OSS);
+            as.a_api = API_OSS;
+            argc--; argv++;
+        }
+        else if (!strcmp(*argv, "-ossmidi"))
+        {
+            sys_set_midi_api(API_OSS);
+            argc--; argv++;
+        }
+#else
+        else if ((!strcmp(*argv, "-oss")) || (!strcmp(*argv, "-ossmidi")))
+        {
+            fprintf(stderr, "Pd compiled without OSS-support, ignoring '%s' flag\n", *argv);
             argc--; argv++;
         }
 #endif
 #ifdef USEAPI_ALSA
         else if (!strcmp(*argv, "-alsa"))
         {
-            sys_set_audio_api(API_ALSA);
+            as.a_api = API_ALSA;
             argc--; argv++;
         }
-        else if (!strcmp(*argv, "-alsaadd") && (argc > 1))
+        else if (!strcmp(*argv, "-alsaadd"))
         {
-            if (argc > 1)
-                alsa_adddev(argv[1]);
-            else goto usage;
+            if (argc < 2)
+                goto usage;
+
+            as.a_api = API_ALSA;
+            alsa_adddev(argv[1]);
             argc -= 2; argv +=2;
         }
         else if (!strcmp(*argv, "-alsamidi"))
@@ -802,34 +932,196 @@ int sys_argparse(int argc, char **argv)
           sys_set_midi_api(API_ALSA);
             argc--; argv++;
         }
+#else
+        else if ((!strcmp(*argv, "-alsa")) || (!strcmp(*argv, "-alsamidi")))
+        {
+            fprintf(stderr, "Pd compiled without ALSA-support, ignoring '%s' flag\n", *argv);
+            argc--; argv++;
+        }
+        else if (!strcmp(*argv, "-alsaadd"))
+        {
+            if (argc < 2)
+                goto usage;
+            fprintf(stderr, "Pd compiled without ALSA-support, ignoring '%s' flag\n", *argv);
+            argc -= 2; argv +=2;
+        }
 #endif
 #ifdef USEAPI_JACK
         else if (!strcmp(*argv, "-jack"))
         {
-            sys_set_audio_api(API_JACK);
+            as.a_api = API_JACK;
             argc--; argv++;
+        }
+        else if (!strcmp(*argv, "-jackname"))
+        {
+            if (argc < 2)
+                goto usage;
+
+            as.a_api = API_JACK;
+            jack_client_name(argv[1]);
+            argc -= 2; argv +=2;
+        }
+        else if (!strcmp(*argv, "-nojackconnect"))
+        {
+            as.a_api = API_JACK;
+            jack_autoconnect(0);
+            argc--; argv++;
+        }
+        else if (!strcmp(*argv, "-jackconnect"))
+        {
+            as.a_api = API_JACK;
+            jack_autoconnect(1);
+            argc--; argv++;
+        }
+#else
+        else if ((!strcmp(*argv, "-jack"))
+            || (!strcmp(*argv, "-jackconnect"))
+            || (!strcmp(*argv, "-nojackconnect")))
+        {
+            fprintf(stderr, "Pd compiled without JACK-support, ignoring '%s' flag\n", *argv);
+            argc--; argv++;
+        }
+        else if (!strcmp(*argv, "-jackname"))
+        {
+            if (argc < 2)
+                goto usage;
+            fprintf(stderr, "Pd compiled without JACK-support, ignoring '%s' flag\n", *argv);
+            argc -= 2; argv +=2;
         }
 #endif
 #ifdef USEAPI_PORTAUDIO
         else if (!strcmp(*argv, "-pa") || !strcmp(*argv, "-portaudio")
-#ifdef MSW
+#ifdef _WIN32
             || !strcmp(*argv, "-asio")
 #endif
             )
         {
-            sys_set_audio_api(API_PORTAUDIO);
-            sys_mmio = 0;
+            as.a_api = API_PORTAUDIO;
             argc--; argv++;
+        }
+#else
+        else if ((!strcmp(*argv, "-pa")) || (!strcmp(*argv, "-portaudio")))
+        {
+            fprintf(stderr, "Pd compiled without PortAudio-support, ignoring '%s' flag\n", *argv);
+            argc--; argv++;
+        }
+        else if (!strcmp(*argv, "-asio"))
+        {
+            fprintf(stderr, "Pd compiled without ASIO-support, ignoring '%s' flag\n", *argv);
+            argc -= 2; argv +=2;
         }
 #endif
 #ifdef USEAPI_MMIO
         else if (!strcmp(*argv, "-mmio"))
         {
-            sys_set_audio_api(API_MMIO);
-            sys_mmio = 1;
+            as.a_api = API_MMIO;
+            argc--; argv++;
+        }
+#else
+        else if (!strcmp(*argv, "-mmio"))
+        {
+            fprintf(stderr, "Pd compiled without MMIO-support, ignoring '%s' flag\n", *argv);
             argc--; argv++;
         }
 #endif
+        else if (!strcmp(*argv, "-listdev"))
+        {
+            sys_listplease = 1;
+            argc--; argv++;
+        }
+        else if (!strcmp(*argv, "-soundindev") ||
+            !strcmp(*argv, "-audioindev"))
+        {
+            if (argc < 2 ||
+                !sys_parsedevlist(&as.a_nindev, as.a_indevvec,
+                    MAXAUDIOINDEV, argv[1]))
+                        goto usage;
+            argc -= 2; argv += 2;
+        }
+        else if (!strcmp(*argv, "-soundoutdev") ||
+            !strcmp(*argv, "-audiooutdev"))
+        {
+            if (argc < 2 ||
+                !sys_parsedevlist(&as.a_noutdev, as.a_outdevvec,
+                    MAXAUDIOOUTDEV, argv[1]))
+                        goto usage;
+            argc -= 2; argv += 2;
+        }
+        else if ((!strcmp(*argv, "-sounddev") || !strcmp(*argv, "-audiodev")))
+        {
+            if (argc < 2 ||
+                !sys_parsedevlist(&as.a_nindev, as.a_indevvec,
+                    MAXAUDIOINDEV, argv[1]) ||
+                !sys_parsedevlist(&as.a_noutdev, as.a_outdevvec,
+                    MAXAUDIOOUTDEV, argv[1]))
+                        goto usage;
+            argc -= 2; argv += 2;
+        }
+        else if (!strcmp(*argv, "-audioaddindev"))
+        {
+            if (argc < 2)
+                goto usage;
+
+            if (as.a_nindev < 0)
+                as.a_nindev = 0;
+            if (as.a_nindev < MAXAUDIOINDEV)
+            {
+                int devn = sys_audiodevnametonumber(0, argv[1]);
+                if (devn < 0)
+                    fprintf(stderr, "Couldn't find audio input device: %s\n",
+                        argv[1]);
+                else as.a_indevvec[as.a_nindev++] = devn + 1;
+            }
+            else fprintf(stderr, "number of audio devices limited to %d\n",
+                MAXAUDIOINDEV);
+            argc -= 2; argv += 2;
+        }
+        else if (!strcmp(*argv, "-audioaddoutdev"))
+        {
+            if (argc < 2)
+                goto usage;
+
+            if (as.a_noutdev < 0)
+                as.a_noutdev = 0;
+            if (as.a_noutdev < MAXAUDIOINDEV)
+            {
+                int devn = sys_audiodevnametonumber(1, argv[1]);
+                if (devn < 0)
+                    fprintf(stderr, "Couldn't find audio output device: %s\n",
+                        argv[1]);
+                else as.a_outdevvec[as.a_noutdev++] = devn + 1;
+            }
+            else fprintf(stderr, "number of audio devices limited to %d\n",
+                MAXAUDIOINDEV);
+            argc -= 2; argv += 2;
+        }
+        else if (!strcmp(*argv, "-audioadddev"))
+        {
+            if (argc < 2)
+                goto usage;
+
+            if (as.a_nindev < 0)
+                as.a_nindev = 0;
+            if (as.a_noutdev < 0)
+                as.a_noutdev = 0;
+            if (as.a_nindev < MAXAUDIOINDEV && as.a_noutdev < MAXAUDIOINDEV)
+            {
+                int devn = sys_audiodevnametonumber(0, argv[1]);
+                if (devn < 0)
+                    fprintf(stderr, "Couldn't find audio input device: %s\n",
+                        argv[1]);
+                else as.a_indevvec[as.a_nindev++] = devn + 1;
+                devn = sys_audiodevnametonumber(1, argv[1]);
+                if (devn < 0)
+                    fprintf(stderr, "Couldn't find audio output device: %s\n",
+                        argv[1]);
+                else as.a_outdevvec[as.a_noutdev++] = devn + 1;
+            }
+            else fprintf(stderr, "number of audio devices limited to %d",
+                MAXAUDIOINDEV);
+            argc -= 2; argv += 2;
+        }
+                /* MIDI flags */
         else if (!strcmp(*argv, "-nomidiin"))
         {
             sys_nmidiin = 0;
@@ -845,7 +1137,7 @@ int sys_argparse(int argc, char **argv)
             sys_nmidiin = sys_nmidiout = 0;
             argc--; argv++;
         }
-        else if (!strcmp(*argv, "-midiindev"))
+        else if (!strcmp(*argv, "-midiindev") && (argc > 1))
         {
             sys_parsedevlist(&sys_nmidiin, sys_midiindevlist, MAXMIDIINDEV,
                 argv[1]);
@@ -871,9 +1163,65 @@ int sys_argparse(int argc, char **argv)
                 goto usage;
             argc -= 2; argv += 2;
         }
+        else if (!strcmp(*argv, "-midiaddindev") && (argc > 1))
+        {
+            if (sys_nmidiin < 0)
+                sys_nmidiin = 0;
+            if (sys_nmidiin < MAXMIDIINDEV)
+            {
+                int devn = sys_mididevnametonumber(0, argv[1]);
+                if (devn < 0)
+                    fprintf(stderr, "Couldn't find MIDI input device: %s\n",
+                        argv[1]);
+                else sys_midiindevlist[sys_nmidiin++] = devn + 1;
+            }
+            else fprintf(stderr, "number of MIDI devices limited to %d\n",
+                MAXMIDIINDEV);
+            argc -= 2; argv += 2;
+        }
+                else if (!strcmp(*argv, "-midiaddoutdev") && (argc > 1))
+        {
+            if (sys_nmidiout < 0)
+                sys_nmidiout = 0;
+            if (sys_nmidiout < MAXMIDIINDEV)
+            {
+                int devn = sys_mididevnametonumber(1, argv[1]);
+                if (devn < 0)
+                    fprintf(stderr, "Couldn't find MIDI output device: %s\n",
+                        argv[1]);
+                else sys_midioutdevlist[sys_nmidiin++] = devn + 1;
+            }
+            else fprintf(stderr, "number of MIDI devices limited to %d\n",
+                MAXMIDIINDEV);
+            argc -= 2; argv += 2;
+        }
+        else if (!strcmp(*argv, "-midiadddev") && (argc > 1))
+        {
+            if (sys_nmidiin < 0)
+                sys_nmidiin = 0;
+            if (sys_nmidiout < 0)
+                sys_nmidiout = 0;
+            if (sys_nmidiin < MAXMIDIINDEV && sys_nmidiout < MAXMIDIINDEV)
+            {
+                int devn = sys_mididevnametonumber(1, argv[1]);
+                if (devn < 0)
+                    fprintf(stderr, "Couldn't find MIDI output device: %s\n",
+                        argv[1]);
+                else sys_midioutdevlist[sys_nmidiin++] = devn + 1;
+                devn = sys_mididevnametonumber(1, argv[1]);
+                if (devn < 0)
+                    fprintf(stderr, "Couldn't find MIDI output device: %s\n",
+                        argv[1]);
+                else sys_midioutdevlist[sys_nmidiin++] = devn + 1;
+            }
+            else fprintf(stderr, "number of MIDI devices limited to %d\n",
+                MAXMIDIINDEV);
+            argc -= 2; argv += 2;
+        }
+                /* other flags */
         else if (!strcmp(*argv, "-path") && (argc > 1))
         {
-            sys_searchpath = namelist_append_files(sys_searchpath, argv[1]);
+            STUFF->st_temppath = namelist_append_files(STUFF->st_temppath, argv[1]);
             argc -= 2; argv += 2;
         }
         else if (!strcmp(*argv, "-nostdpath"))
@@ -888,17 +1236,24 @@ int sys_argparse(int argc, char **argv)
         }
         else if (!strcmp(*argv, "-helppath"))
         {
-            sys_helppath = namelist_append_files(sys_helppath, argv[1]);
+            STUFF->st_helppath = namelist_append_files(STUFF->st_helppath, argv[1]);
             argc -= 2; argv += 2;
         }
         else if (!strcmp(*argv, "-open") && argc > 1)
         {
-            sys_openlist = namelist_append_files(sys_openlist, argv[1]);
+            sys_openlist = patchlist_append(sys_openlist, argv[1], 0);
             argc -= 2; argv += 2;
+        }
+        else if (!strcmp(*argv, "-open-with-args"))
+        {
+            if (argc < 3)
+                goto usage;
+            sys_openlist = patchlist_append(sys_openlist, argv[1], argv[2]);
+            argc -= 3; argv += 3;
         }
         else if (!strcmp(*argv, "-lib") && argc > 1)
         {
-            sys_externlist = namelist_append_files(sys_externlist, argv[1]);
+            STUFF->st_externlist = namelist_append_files(STUFF->st_externlist, argv[1]);
             argc -= 2; argv += 2;
         }
         else if ((!strcmp(*argv, "-font-size") || !strcmp(*argv, "-font"))
@@ -928,6 +1283,11 @@ int sys_argparse(int argc, char **argv)
             sys_verbose++;
             argc--; argv++;
         }
+        else if (!strcmp(*argv, "-noverbose"))
+        {
+            sys_verbose=0;
+            argc--; argv++;
+        }
         else if (!strcmp(*argv, "-version"))
         {
             sys_version = 1;
@@ -939,14 +1299,24 @@ int sys_argparse(int argc, char **argv)
             argc -= 2;
             argv += 2;
         }
+        else if (!strcmp(*argv, "-loadbang"))
+        {
+            sys_noloadbang = 0;
+            argc--; argv++;
+        }
         else if (!strcmp(*argv, "-noloadbang"))
         {
             sys_noloadbang = 1;
             argc--; argv++;
         }
+        else if (!strcmp(*argv, "-gui"))
+        {
+            sys_nogui = 0;
+            argc--; argv++;
+        }
         else if (!strcmp(*argv, "-nogui"))
         {
-            sys_printtostderr = sys_nogui = 1;
+            sys_nogui = 1;
             argc--; argv++;
         }
         else if (!strcmp(*argv, "-console"))
@@ -983,6 +1353,11 @@ int sys_argparse(int argc, char **argv)
             argc -= 2;
             argv += 2;
         }
+        else if (!strcmp(*argv, "-nostderr"))
+        {
+            sys_printtostderr = 0;
+            argc--; argv++;
+        }
         else if (!strcmp(*argv, "-stderr"))
         {
             sys_printtostderr = 1;
@@ -998,24 +1373,26 @@ int sys_argparse(int argc, char **argv)
             sys_messagelist = namelist_append(sys_messagelist, argv[1], 1);
             argc -= 2; argv += 2;
         }
-        else if (!strcmp(*argv, "-listdev"))
-        {
-            sys_listplease = 1;
-            argc--; argv++;
-        }
         else if (!strcmp(*argv, "-schedlib") && argc > 1)
         {
             sys_externalschedlib = 1;
             strncpy(sys_externalschedlibname, argv[1],
                 sizeof(sys_externalschedlibname) - 1);
+#ifndef  __APPLE__
+                /* no audio I/O please, unless overwritten by later args.
+                This is to circumvent a problem running pd~ subprocesses
+                with -nogui; they would open an audio device before pdsched.c
+                could set the API to nothing.  For some reason though, on
+                MACOSX this causes Pd-L2Orkto switch to JACK so we just give up
+                and suppress the workaround there. */
+            as.a_api = 0;
+#endif
             argv += 2;
             argc -= 2;
         }
         else if (!strcmp(*argv, "-extraflags") && argc > 1)
         {
-            sys_extraflags = 1;
-            strncpy(sys_extraflagsstring, argv[1],
-                sizeof(sys_extraflagsstring) - 1);
+            pd_extraflags = argv[1];
             argv += 2;
             argc -= 2;
         }
@@ -1023,6 +1400,11 @@ int sys_argparse(int argc, char **argv)
         {
             sys_batch = 1;
             sys_printtostderr = sys_nogui = 1;
+            argc--; argv++;
+        }
+        else if (!strcmp(*argv, "-nobatch"))
+        {
+            sys_batch = 0;
             argc--; argv++;
         }
         else if (!strcmp(*argv, "-noautopatch"))
@@ -1035,60 +1417,51 @@ int sys_argparse(int argc, char **argv)
             sys_noautopatch = 0;
             argc--; argv++;
         }
+        else if (!strcmp(*argv, "-compatibility") && argc > 1)
+        {
+            float f;
+            if (sscanf(argv[1], "%f", &f) < 1)
+                goto usage;
+            pd_compatibilitylevel = 0.5 + 100. * f; /* e.g., 2.44 --> 244 */
+            argv += 2;
+            argc -= 2;
+        }
 #ifdef HAVE_UNISTD_H
         else if (!strcmp(*argv, "-rt") || !strcmp(*argv, "-realtime"))
         {
             sys_hipriority = 1;
             argc--; argv++;
         }
-        else if (!strcmp(*argv, "-nrt"))
+        else if (!strcmp(*argv, "-nrt") || !strcmp(*argv, "-nort") || !strcmp(*argv, "-norealtime"))
         {
             sys_hipriority = 0;
             argc--; argv++;
         }
+#else
+        else if (!strcmp(*argv, "-rt") || !strcmp(*argv, "-realtime")
+                 || !strcmp(*argv, "-nrt") || !strcmp(*argv, "-nort")
+                 || !strcmp(*argv, "-norealtime"))
+        {
+            fprintf(stderr, "Pd-L2Ork compiled without realtime priority-support, ignoring '%s' flag\n", *argv);
+            argc--; argv++;
+        }
 #endif
+        else if (!strcmp(*argv, "-sleep"))
+        {
+            sys_nosleep = 0;
+            argc--; argv++;
+        }
         else if (!strcmp(*argv, "-nosleep"))
         {
             sys_nosleep = 1;
             argc--; argv++;
         }
-        else if (!strcmp(*argv, "-soundindev") ||
-            !strcmp(*argv, "-audioindev"))
-        {
-            sys_parsedevlist(&sys_nsoundin, sys_soundindevlist,
-                MAXAUDIOINDEV, argv[1]);
-            if (!sys_nsoundin)
-                goto usage;
-            argc -= 2; argv += 2;
-        }
-        else if (!strcmp(*argv, "-soundoutdev") ||
-            !strcmp(*argv, "-audiooutdev"))
-        {
-            sys_parsedevlist(&sys_nsoundout, sys_soundoutdevlist,
-                MAXAUDIOOUTDEV, argv[1]);
-            if (!sys_nsoundout)
-                goto usage;
-            argc -= 2; argv += 2;
-        }
-        else if ((!strcmp(*argv, "-sounddev") || !strcmp(*argv, "-audiodev"))
-                 && (argc > 1))
-        {
-            sys_parsedevlist(&sys_nsoundin, sys_soundindevlist,
-                MAXAUDIOINDEV, argv[1]);
-            sys_parsedevlist(&sys_nsoundout, sys_soundoutdevlist,
-                MAXAUDIOOUTDEV, argv[1]);
-            if (!sys_nsoundout)
-                goto usage;
-            argc -= 2; argv += 2;
-        }
         else if (!strcmp(*argv, "-noprefs")) /* did this earlier */
             argc--, argv++;
         else
         {
-            unsigned int i;
         usage:
-            for (i = 0; i < sizeof(usagemessage)/sizeof(*usagemessage); i++)
-                fprintf(stderr, "%s", usagemessage[i]);
+            sys_printusage();
             return (1);
         }
     }
@@ -1099,12 +1472,26 @@ int sys_argparse(int argc, char **argv)
         // been listed
         sys_console = 1;
     }
+    if (sys_batch)  /* if batch, turn off gui, real-time, audio and MIDI */
+    {
+        sys_nogui = 1;
+        sys_hipriority = 0;
+        as.a_noutdev = as.a_nchoutdev = as.a_nindev = as.a_nchindev = 0;
+        sys_nmidiin = sys_nmidiout = 0;
+    }
+    if (sys_nogui)
+        sys_printtostderr = 1;
+#ifdef _WIN32
+    if (sys_printtostderr)
+        /* we need to tell Windows to output UTF-8 */
+        SetConsoleOutputCP(CP_UTF8);
+#endif
     if (!sys_defaultfont)
         sys_defaultfont = DEFAULTFONT;
     for (; argc > 0; argc--, argv++) 
-        sys_openlist = namelist_append_files(sys_openlist, *argv);
+        sys_openlist = patchlist_append(sys_openlist, *argv, 0);
 
-
+    sys_set_audio_settings(&as);
     return (0);
 }
 
@@ -1113,6 +1500,8 @@ int sys_getblksize(void)
     return (DEFDACBLKSIZE);
 }
 
+void sys_init_audio(void);
+
     /* stuff to do, once, after calling sys_argparse() -- which may itself
     be called more than once (first from "settings, second from .pdrc, then
     from command-line arguments */
@@ -1120,9 +1509,7 @@ static void sys_afterargparse(void)
 {
     char sbuf[MAXPDSTRING];
     int i;
-    int naudioindev, audioindev[MAXAUDIOINDEV], chindev[MAXAUDIOINDEV];
-    int naudiooutdev, audiooutdev[MAXAUDIOOUTDEV], choutdev[MAXAUDIOOUTDEV];
-    int nchindev, nchoutdev, rate, advance, callback, blocksize;
+    t_audiosettings as;
     int nmidiindev = 0, midiindev[MAXMIDIINDEV];
     int nmidioutdev = 0, midioutdev[MAXMIDIOUTDEV];
             /* add "extra" library to path */
@@ -1134,63 +1521,19 @@ static void sys_afterargparse(void)
     strncpy(sbuf, sys_libdir->s_name, MAXPDSTRING-30);
     sbuf[MAXPDSTRING-30] = 0;
     strcat(sbuf, "/doc/5.reference");
-    sys_helppath = namelist_append_files(sys_helppath, sbuf);
-        /* correct to make audio and MIDI device lists zero based.  On
-        MMIO, however, "1" really means the second device (the first one
-        is "mapper" which is was not included when the command args were
-        set up, so we leave it that way for compatibility. */
-    if (!sys_mmio)
-    {
-        for (i = 0; i < sys_nsoundin; i++)
-            sys_soundindevlist[i]--;
-        for (i = 0; i < sys_nsoundout; i++)
-            sys_soundoutdevlist[i]--;
-    }
+    STUFF->st_helppath = namelist_append_files(STUFF->st_helppath, sbuf);
+
     for (i = 0; i < sys_nmidiin; i++)
         sys_midiindevlist[i]--;
     for (i = 0; i < sys_nmidiout; i++)
         sys_midioutdevlist[i]--;
+
     if (sys_listplease)
         sys_listdevs();
         
-            /* get the current audio parameters.  These are set
-            by the preferences mechanism (sys_loadpreferences()) or
-            else are the default.  Overwrite them with any results
-            of argument parsing, and store them again. */
-    sys_get_audio_params(&naudioindev, audioindev, chindev,
-        &naudiooutdev, audiooutdev, choutdev, &rate, &advance,
-            &callback, &blocksize);
-    if (sys_nchin >= 0)
-    {
-        nchindev = sys_nchin;
-        for (i = 0; i < nchindev; i++)
-            chindev[i] = sys_chinlist[i];
-    }
-    else nchindev = naudioindev;
-    if (sys_nsoundin >= 0)
-    {
-        naudioindev = sys_nsoundin;
-        for (i = 0; i < naudioindev; i++)
-            audioindev[i] = sys_soundindevlist[i];
-    }
-    
-    if (sys_nchout >= 0)
-    {
-        nchoutdev = sys_nchout;
-        for (i = 0; i < nchoutdev; i++)
-            choutdev[i] = sys_choutlist[i];
-    }
-    else nchoutdev = naudiooutdev;
-    if (sys_nsoundout >= 0)
-    {
-        naudiooutdev = sys_nsoundout;
-        for (i = 0; i < naudiooutdev; i++)
-            audiooutdev[i] = sys_soundoutdevlist[i];
-    }
     sys_get_midi_params(&nmidiindev, midiindev, &nmidioutdev, midioutdev);
     if (sys_nmidiin >= 0)
     {
-        post("sys_nmidiin %d, nmidiindev %d", sys_nmidiin, nmidiindev);
         nmidiindev = sys_nmidiin;
         for (i = 0; i < nmidiindev; i++)
             midiindev[i] = sys_midiindevlist[i];
@@ -1201,18 +1544,9 @@ static void sys_afterargparse(void)
         for (i = 0; i < nmidioutdev; i++)
             midioutdev[i] = sys_midioutdevlist[i];
     }
-    if (sys_main_advance)
-        advance = sys_main_advance;
-    if (sys_main_srate)
-        rate = sys_main_srate;
-    if (sys_main_callback)
-        callback = sys_main_callback;
-    if (sys_main_blocksize)
-        blocksize = sys_main_blocksize;
-    sys_set_audio_settings(naudioindev, audioindev, nchindev, chindev,
-        naudiooutdev, audiooutdev, nchoutdev, choutdev, rate, advance, 
-        callback, blocksize);
     sys_open_midi(nmidiindev, midiindev, nmidioutdev, midioutdev, 0);
+    
+    sys_init_audio();
 }
 
 //static void sys_addreferencepath(void)

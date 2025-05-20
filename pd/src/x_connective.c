@@ -11,8 +11,6 @@
 #include <stdlib.h>
 #include <errno.h>
 
-extern t_pd *newest;
-
 /* -------------------------- int ------------------------------ */
 static t_class *pdint_class;
 
@@ -79,7 +77,7 @@ void *pdfloat_new(t_pd *dummy, t_float f)
     x->x_f = f;
     outlet_new(&x->x_obj, &s_float);
     floatinlet_new(&x->x_obj, &x->x_f);
-    newest = &x->x_obj.ob_pd;
+    pd_this->pd_newest = &x->x_obj.ob_pd;
     return (x);
 }
 
@@ -185,7 +183,7 @@ void *pdsymbol_new(t_pd *dummy, t_symbol *s)
     x->x_s = s;
     outlet_new(&x->x_obj, &s_symbol);
     symbolinlet_new(&x->x_obj, &x->x_s);
-    newest = &x->x_obj.ob_pd;
+    pd_this->pd_newest = &x->x_obj.ob_pd;
     return (x);
 }
 
@@ -244,7 +242,7 @@ void *bang_new(t_pd *dummy)
 {
     t_bang *x = (t_bang *)pd_new(bang_class);
     outlet_new(&x->x_obj, &s_bang);
-    newest = &x->x_obj.ob_pd;
+    pd_this->pd_newest = &x->x_obj.ob_pd;
     return (x);
 }
 

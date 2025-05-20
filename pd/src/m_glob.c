@@ -24,14 +24,14 @@ int sys_perf;   /* true if we should query user on close and quit */
 /* Compatibility level, e.g., 43 for pd 0.43 compatibility. We default to
    the current minor version. If Pd Vanilla ever changes the major version
    we will need to revisit them implementation of this feature */
-int pd_compatibilitylevel = PD_MINOR_VERSION;
+int pd_compatibilitylevel = 100000;
 /* These "glob" routines, which implement messages to Pd, are from all
 over.  Some others are prototyped in m_imp.h as well. */
 
 void glob_setfilename(void *dummy, t_symbol *filesym, t_symbol *dirsym);
+void glob_quit(void *dummy, t_floatarg status);
 void glob_verifyquit(void *dummy, t_floatarg f);
 void glob_dsp(void *dummy, t_symbol *s, int argc, t_atom *argv);
-void glob_meters(void *dummy, t_floatarg f);
 void glob_key(void *dummy, t_symbol *s, int ac, t_atom *av);
 void glob_pastetext(void *dummy, t_symbol *s, int ac, t_atom *av);
 void glob_audiostatus(void *dummy);
@@ -51,7 +51,7 @@ void glob_addtopath(t_pd *dummy, t_symbol *path, t_float saveit);
 void glob_start_startup_dialog(t_pd *dummy, t_floatarg flongform);
 void glob_startup_dialog(t_pd *dummy, t_symbol *s, int argc, t_atom *argv);
 void glob_ping(t_pd *dummy);
-void glob_watchdog(t_pd *dummy);
+void glob_watchdog(void *dummy);
 void glob_savepreferences(t_pd *dummy);
 void glob_forward_files_from_secondary_instance(void);
 void glob_recent_files(t_pd *dummy);
@@ -61,8 +61,6 @@ void glob_open(t_pd *ignore, t_symbol *name, t_symbol *dir, t_floatarg f);
 void glob_settracing(void *dummy, t_float f);
 void glob_fastforward(t_pd *ignore, t_floatarg f);
 
-void alsa_resync( void);
-
 static void glob_compatibility(t_pd *dummy, t_floatarg level)
 {
     int dspwas = canvas_suspend_dsp();
@@ -70,27 +68,38 @@ static void glob_compatibility(t_pd *dummy, t_floatarg level)
     canvas_resume_dsp(dspwas);
 }
 
-#ifdef MSW
+#ifdef _WIN32
 void glob_audio(void *dummy, t_floatarg adc, t_floatarg dac);
 #endif
 
 /* a method you add for debugging printout */
 void glob_foo(void *dummy, t_symbol *s, int argc, t_atom *argv);
 
-#if 0
+#if 1
 void glob_foo(void *dummy, t_symbol *s, int argc, t_atom *argv)
 {
-    *(int *)1 = 3;
+#ifdef USEAPI_ALSA
+    void alsa_printstate(void);
+    alsa_printstate();
+#endif
 }
 #endif
 
-static void glob_version(t_pd *dummy, float f)
+static void glob_version(t_pd *dummy, t_float f)
 {
-    if (f > 0)
-        error("file format newer than this version of Pd (trying anyway...)");
+    if (f > (PD_MAJOR_VERSION + 0.01*PD_MINOR_VERSION + 0.001))
+    {
+        static int warned;
+        if (warned < 1)
+            post("warning: file format (%g) newer than this version (%g) of Pd",
+                f, PD_MAJOR_VERSION + 0.01*PD_MINOR_VERSION);
+        else if (warned < 2)
+            post("(... more file format messages suppressed)");
+        warned++;
+    }
 }
 
-static void glob_perf(t_pd *dummy, float f)
+static void glob_perf(t_pd *dummy, t_float f)
 {
     sys_perf = (f != 0);
 }
@@ -193,16 +202,16 @@ void glob_init(void)
         gensym("forward_files_from_secondary_instance"), 0);
     class_addmethod(glob_pdobject, (t_method)glob_setfilename, 
         gensym("filename"), A_SYMBOL, A_SYMBOL, 0);
+    class_addmethod(glob_pdobject, (t_method)glob_setfilename, 
+        gensym("menunew"), A_SYMBOL, A_SYMBOL, 0);
     class_addmethod(glob_pdobject, (t_method)glob_open, gensym("open"),
         A_SYMBOL, A_SYMBOL, A_DEFFLOAT, 0);
-    class_addmethod(glob_pdobject, (t_method)glob_quit, gensym("quit"),
-        A_DEFFLOAT, 0);
+    class_addmethod(glob_pdobject, (t_method)glob_quit, gensym("quit"), A_DEFFLOAT, 0);
+    class_addmethod(glob_pdobject, (t_method)glob_quit, gensym("exit"), A_DEFFLOAT, 0);
     class_addmethod(glob_pdobject, (t_method)glob_verifyquit,
         gensym("verifyquit"), A_DEFFLOAT, 0);
     class_addmethod(glob_pdobject, (t_method)glob_foo, gensym("foo"), A_GIMME, 0);
     class_addmethod(glob_pdobject, (t_method)glob_dsp, gensym("dsp"), A_GIMME, 0);
-    class_addmethod(glob_pdobject, (t_method)glob_meters, gensym("meters"),
-        A_FLOAT, 0);
     class_addmethod(glob_pdobject, (t_method)glob_key, gensym("key"), A_GIMME, 0);
     class_addmethod(glob_pdobject, (t_method)glob_pastetext, gensym("pastetext"), A_GIMME, 0);
     class_addmethod(glob_pdobject, (t_method)glob_audiostatus,
@@ -271,7 +280,7 @@ void glob_init(void)
     class_addmethod(glob_pdobject, (t_method)reinit_user_settings,
         gensym("reinit-user-settings"), 0);
 #endif
-#ifdef UNIX
+#if defined(__linux__) || defined(__FreeBSD_kernel__)
     class_addmethod(glob_pdobject, (t_method)glob_watchdog,
         gensym("watchdog"), 0);
 #endif
@@ -281,7 +290,7 @@ void glob_init(void)
 
     /* function to return version number at run time.  Any of the
     calling pointers may be zero in case you don't need all of them. */
-void sys_getversion(int *major, int *minor, int *bugfix)
+unsigned int sys_getversion(int *major, int *minor, int *bugfix)
 {
     if (major)
         *major = PD_MAJOR_VERSION;
@@ -289,5 +298,11 @@ void sys_getversion(int *major, int *minor, int *bugfix)
         *minor = PD_MINOR_VERSION;
     if (bugfix)
         *bugfix = PD_BUGFIX_VERSION;
+
+    return PD_VERSION_CODE;
 }
 
+unsigned int sys_getfloatsize()
+{
+    return sizeof(t_float);
+}

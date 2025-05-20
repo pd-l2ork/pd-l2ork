@@ -52,7 +52,7 @@ static int libdir_add_to_path(const char*dirbuf, t_canvas*canvas) {
       canvasenvironment->ce_path = namelist_append(canvasenvironment->ce_path,
 						 dirbuf, 0);
     } else {
-        sys_searchpath = namelist_append(sys_searchpath, dirbuf, 0);
+        STUFF->st_searchpath = namelist_append(STUFF->st_searchpath, dirbuf, 0);
     }
     return 1;
   }

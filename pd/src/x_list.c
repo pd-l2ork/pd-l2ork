@@ -16,8 +16,6 @@
 #include <alloca.h>
 #endif
 
-extern t_pd *newest;
-
 #ifndef HAVE_ALLOCA     /* can work without alloca() but we never need it */
 #define HAVE_ALLOCA 1
 #endif
@@ -991,35 +989,35 @@ static void list_tosymbol_setup(void)
 void *list_new(t_pd *dummy, t_symbol *s, int argc, t_atom *argv)
 {
     if (!argc || argv[0].a_type != A_SYMBOL)
-        newest = list_append_new(s, argc, argv);
+        pd_this->pd_newest = list_append_new(s, argc, argv);
     else
     {
         t_symbol *s2 = argv[0].a_w.w_symbol;
         if (s2 == gensym("append"))
-            newest = list_append_new(s, argc-1, argv+1);
+            pd_this->pd_newest = list_append_new(s, argc-1, argv+1);
         else if (s2 == gensym("cat"))
-            newest = list_cat_new();
+            pd_this->pd_newest = list_cat_new();
         else if (s2 == gensym("prepend"))
-            newest = list_prepend_new(s, argc-1, argv+1);
+            pd_this->pd_newest = list_prepend_new(s, argc-1, argv+1);
         else if (s2 == gensym("split"))
-            newest = list_split_new(atom_getfloatarg(1, argc, argv));
+            pd_this->pd_newest = list_split_new(atom_getfloatarg(1, argc, argv));
         else if (s2 == gensym("trim"))
-            newest = list_trim_new();
+            pd_this->pd_newest = list_trim_new();
         else if (s2 == gensym("length"))
-            newest = list_length_new();
+            pd_this->pd_newest = list_length_new();
         else if (s2 == gensym("fromsymbol"))
-            newest = list_fromsymbol_new();
+            pd_this->pd_newest = list_fromsymbol_new();
         else if (s2 == gensym("tosymbol"))
-            newest = list_tosymbol_new();
+            pd_this->pd_newest = list_tosymbol_new();
         else if (s2 == gensym("store"))
-            newest = list_store_new(s, argc-1, argv+1);
+            pd_this->pd_newest = list_store_new(s, argc-1, argv+1);
         else 
         {
             error("list %s: unknown function", s2->s_name);
-            newest = 0;
+            pd_this->pd_newest = 0;
         }
     }
-    return (newest);
+    return (pd_this->pd_newest);
 }
 
 void x_list_setup(void)
