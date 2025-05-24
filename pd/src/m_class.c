@@ -427,7 +427,6 @@ void mess_init(void)
     sys_lock();
     pd_globallock();
     pdinstance_init(&pd_maininstance);
-    sys_lock();
     class_extern_dir = &s_;
     pd_objectmaker = class_new(gensym("objectmaker"), 0, 0, sizeof(t_pd),
         CLASS_DEFAULT, A_NULL);
@@ -1149,7 +1148,7 @@ t_symbol *dogensym(const char *s, t_symbol *oldsym, t_pdinstance *pdinstance)
         length++;
         s2++;
     }
-    symhashloc = pd_this->pd_symhash + (hash & (SYMTABHASHSIZE-1));
+    symhashloc = pdinstance->pd_symhash + (hash & (SYMTABHASHSIZE-1));
     while ((sym2 = *symhashloc))
     {
         if (!strcmp(sym2->s_name, s))
@@ -1397,6 +1396,7 @@ void pd_typedmess(t_pd *x, t_symbol *s, int argc, t_atom *argv)
                         argc--;
                         argv++;
                     }
+                    nfarg++;
                     dp++;
                     break;
                 case A_BLOB:/* MP 20070106 blob type */

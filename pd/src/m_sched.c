@@ -453,7 +453,7 @@ int sched_idletask( void)
     {
         if (sched_diored && (sched_counter - sched_dioredtime > 0))
         {
-            sys_vgui("pdtk_pd_dio 0\n");
+            // sys_vgui("pdtk_pd_dio 0\n");
             sched_diored = 0;
         }
         sched_nextmeterpolltime = sched_counter + APPROXTICKSPERSEC;

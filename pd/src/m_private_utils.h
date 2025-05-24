@@ -127,7 +127,7 @@ static int atomic_int_compare_exchange(volatile int *ptr, int *expected, int des
 
 
 /* --------------------------- endianness helpers --------------------- */
-#ifdef HAVE_MACHINE_ENDIAN_H
+#if defined(HAVE_MACHINE_ENDIAN_H) || defined(__APPLE__)
 # include <machine/endian.h>
 #elif defined HAVE_ENDIAN_H
 # include <endian.h>

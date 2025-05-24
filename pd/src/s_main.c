@@ -395,7 +395,6 @@ int sys_main(int argc, const char **argv)
     int i, noprefs, ret;
     t_namelist *nl;
     sys_externalschedlib = 0;
-    sys_gui_preset = gensym("default");
 #ifdef PD_DEBUG
     fprintf(stderr, "Pd-L2Ork: COMPILED FOR DEBUGGING\n");
 #endif
@@ -444,6 +443,7 @@ int sys_main(int argc, const char **argv)
 if (socket_init())
     sys_sockerror("socket_init()");
     pd_init();                                  /* start the message system */
+    sys_gui_preset = gensym("default");
     logpost(NULL, 2, "PD_FLOATSIZE = %u bits", (unsigned)sizeof(t_float)*8);
     sys_findprogdir(argv[0]);                   /* set sys_progname, guipath */
     for (i = noprefs = 0; i < argc; i++)        /* prescan ... */

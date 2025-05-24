@@ -1353,7 +1353,7 @@ void glob_watchdog(void *dummy)
 }
 
 extern t_symbol *pd_getplatform(void);
-extern void sys_expandpath(const char *from, char *to);
+extern void sys_expandpath(const char *from, char *to, int bufsize);
 
 /* set the datadir for nwjs. We use the published nw.js
    defaults if there's only one instance of the GUI set to
@@ -1378,9 +1378,9 @@ static void set_datadir(char *buf, int new_gui_instance, int portno)
        paths, etc. */
     strcat(buf, "\"");
     if (platform == gensym("darwin"))
-        sys_expandpath("~/Library/Application Support/", dir);
+        sys_expandpath("~/Library/Application Support/", dir, FILENAME_MAX);
     else if (platform != gensym("win32"))/* bsd and linux */
-        sys_expandpath("~/.config/", dir);
+        sys_expandpath("~/.config/", dir, FILENAME_MAX);
 #ifdef _WIN32
         /* win32 has a more robust API for getting the
            value of %LOCALAPPDATA%, but this works on

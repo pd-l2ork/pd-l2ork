@@ -64,7 +64,7 @@ void sys_doflags(void);
 
     /* Hmm... maybe better would be to #if on not-apple-or-windows  */
 #if defined(__linux__) || defined(__CYGWIN__) || defined(__FreeBSD_kernel__) \
-|| defined(__GNU__) || defined(ANDROID) || defined(__APPLE__)
+|| defined(__GNU__) || defined(ANDROID)
 
 #define USER_CONFIG_DIR ".pd-l2ork"
 

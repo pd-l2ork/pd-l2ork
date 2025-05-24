@@ -171,7 +171,7 @@ typedef PD_FLOATTYPE t_floatarg;    /* float type for function calls */
 
 typedef struct _symbol
 {
-    const char *s_name;
+    char *s_name;
     struct _class **s_thing;
     struct _symbol *s_next;
 } t_symbol;
@@ -644,9 +644,7 @@ EXTERN void class_setdsp(t_class *c, int flags);
 #define CLASS_DSP_MANUALSCALARS 2   /* suppress promoting float to signal */
 
 EXTERN void class_domainsignalin(t_class *c, int onset);
-#define CLASS_MAINSIGNALIN(c, type, field) \
-    PD_STATIC_ASSERT(sizeof(((type *)NULL)->field) == sizeof(t_float), "field must be t_float!"); \
-    class_domainsignalin(c, offsetof(type, field))
+#define CLASS_MAINSIGNALIN(c, type, field) class_domainsignalin(c, offsetof(type, field))
 
          /* classtable functions */
 EXTERN t_class *classtable_findbyname(t_symbol *s);
@@ -706,6 +704,9 @@ EXTERN void logpost(const void *object, const int level, const char *fmt, ...)
     ATTRIBUTE_FORMAT_PRINTF(3, 4);
 EXTERN void startlogpost(const void *object, const int level, const char *fmt, ...)
     ATTRIBUTE_FORMAT_PRINTF(3, 4);
+EXTERN PD_DEPRECATED void sys_logerror(const char *object, const char *s);
+EXTERN PD_DEPRECATED void sys_unixerror(const char *object);
+EXTERN PD_DEPRECATED void sys_ouch(void);
 
 
 PD_DEPRECATED EXTERN void verbose(int level, const char *fmt, ...) ATTRIBUTE_FORMAT_PRINTF(2, 3); /* avoid this: use logpost() instead */
@@ -804,6 +805,10 @@ EXTERN void mayer_fft(int n, t_sample *real, t_sample *imag);
 EXTERN void mayer_ifft(int n, t_sample *real, t_sample *imag);
 EXTERN void mayer_realfft(int n, t_sample *real);
 EXTERN void mayer_realifft(int n, t_sample *real);
+
+EXTERN t_float *cos_table;
+#define LOGCOSTABSIZE 11
+#define COSTABSIZE (1<<LOGCOSTABSIZE)
 
 EXTERN int canvas_suspend_dsp(void);
 EXTERN void canvas_resume_dsp(int oldstate);
