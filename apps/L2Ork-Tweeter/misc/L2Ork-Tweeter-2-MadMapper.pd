@@ -1,8 +1,8 @@
-#N canvas 634 38 753 256 10;
+#N canvas 662 79 753 249 10;
 #X obj -30 -30 preset_hub k12 1 %hidden%;
 #X obj 172 97 hsl 128 24 0 1 0 1 empty empty | 27 6 0 26 #fd7777 #000000
 #ff0000 12700 1 0 1;
-#X obj 8 214 tgl 26 0 empty empty empty 17 7 0 10 #fcfcfc #000000 #000000
+#X obj 8 215 tgl 26 0 empty empty empty 17 7 0 10 #fcfcfc #000000 #000000
 1 1 1;
 #X obj 116 150 loadbang;
 #X msg 116 171 connect localhost 8010;
@@ -10,17 +10,11 @@
 #X obj 8 171 mrpeach/packOSC;
 #X obj 8 192 mrpeach/udpsend;
 #X obj 8 150 r to-mad-mapper;
-#N canvas 415 64 191 253 pulses 0;
-#X obj 17 183 core/ring-pulse 12 750 p9;
-#X obj 17 163 core/ring-pulse 11 750 p8;
-#X obj 17 143 core/ring-pulse 10 750 p7;
-#X obj 17 123 core/ring-pulse 9 750 p6;
-#X obj 17 103 core/ring-pulse 8 750 p5;
-#X obj 17 83 core/ring-pulse 7 750 p4;
-#X obj 17 63 core/ring-pulse 3 750 p3;
-#X obj 17 43 core/ring-pulse 2 750 p2;
+#N canvas 415 64 191 337 pulses 0;
+#X obj 17 61 core/ring-pulse 3 750 p3;
+#X obj 17 42 core/ring-pulse 2 750 p2;
 #X obj 17 23 core/ring-pulse 1 750 p1;
-#N canvas 57 67 348 226 pulse-debug 0;
+#N canvas 57 66 348 226 pulse-debug 0;
 #X obj 179 26 tgl 26 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 0 1 1;
 #X obj 179 79 metro;
@@ -40,7 +34,18 @@
 #X connect 6 0 7 0;
 #X connect 7 0 8 0;
 #X connect 8 0 5 1;
-#X restore 17 209 pd pulse-debug;
+#X restore 17 299 pd pulse-debug;
+#X obj 17 80 core/ring-pulse 4 750 p4;
+#X obj 17 99 core/ring-pulse 5 750 p5;
+#X obj 17 118 core/ring-pulse 6 750 p6;
+#X obj 17 137 core/ring-pulse 7 750 p7;
+#X obj 17 156 core/ring-pulse 8 750 p8;
+#X obj 17 175 core/ring-pulse 9 750 p9;
+#X obj 17 194 core/ring-pulse 10 750 p10;
+#X obj 17 213 core/ring-pulse 11 750 p11;
+#X obj 17 232 core/ring-pulse 12 750 p12;
+#X obj 17 251 core/ring-pulse 13 750 p13;
+#X obj 17 270 core/ring-pulse 14 750 p14;
 #X restore 8 129 pd pulses;
 #N canvas 926 562 451 434 explosion 0;
 #X obj 111 22 inlet;
@@ -163,38 +168,31 @@
 #X text 337 12 LAVA SATURATION;
 #N canvas 727 397 273 238 TODO 0;
 #X text 29 24 TODO:map right players to right parts MAP:Tweeter
-(1-12) to MadMapper (p1-9)01 = p1 Gala02 = p2 Jacob03 = p3 Caden07
-= p4 Lauti08 = p5 Uma09 = p6 Lane10 = p7 Joaquin11 = p8 Justin12
-= p9 Ico, f 35;
-#X restore 58 27 pd TODO;
-#X obj 8 8 tgl 15 0 empty empty TEST\ PULSES 17 7 0 10 #fcfcfc #000000
+(1-12) to MadMapper (p1-9)01 = p102 = p203 = p307 = p408 = p509
+= p610 = p711 = p812 = p9, f 35;
+#X restore 12 52 pd TODO;
+#N canvas 803 275 450 272 session-test 0;
+#X obj 236 218 s session-name-s;
+#X obj 142 218 s load-session;
+#X obj 142 126 t b b;
+#X msg 249 188 symbol slowbeat;
+#X obj 141 85 sel 1 0;
+#X obj 181 126 t b b;
+#X msg 236 151 symbol empty;
+#X obj 141 50 inlet;
+#X connect 2 0 1 0;
+#X connect 2 1 3 0;
+#X connect 3 0 0 0;
+#X connect 4 0 2 0;
+#X connect 4 1 5 0;
+#X connect 5 0 1 0;
+#X connect 5 1 6 0;
+#X connect 6 0 0 0;
+#X connect 7 0 4 0;
+#X restore 12 31 pd session-test;
+#X obj 12 12 tgl 15 0 empty empty TEST\ PULSES 17 7 0 10 #fcfcfc #000000
 #000000 0 1 1;
-#N canvas 760 385 450 300 net-in-lite 0;
-#X obj 165 103 netreceive 9999;
-#X msg 165 130 \; \$1-note-generator \$2 \$3;
-#X connect 0 0 1 0;
-#X restore 8 48 pd net-in-lite;
-#X text 112 7 (c) 2024 Ivica Ico Bukvic v 0.1;
-#N canvas 803 275 450 272 test 0;
-#X obj 198 41 inlet;
-#X obj 198 66 metro 500;
-#X obj 198 91 counter 1 12;
-#X obj 161 217 s;
-#X floatatom 225 141 5 0 0 0 - - - 0 0 1, f 5;
-#X msg 225 165 \$1-note-generator;
-#X obj 225 190 tosymbol;
-#X msg 161 165 60 1;
-#X obj 198 116 t b f;
-#X connect 0 0 1 0;
-#X connect 1 0 2 0;
-#X connect 2 0 8 0;
-#X connect 4 0 5 0;
-#X connect 5 0 6 0;
-#X connect 6 0 3 1;
-#X connect 7 0 3 0;
-#X connect 8 0 7 0;
-#X connect 8 1 4 0;
-#X restore 8 27 pd test;
+#X obj 307 162 ../L2Ork-Tweeter-lite;
 #X connect 1 0 16 0;
 #X connect 3 0 4 0;
 #X connect 4 0 7 0;
@@ -211,4 +209,4 @@
 #X connect 27 0 30 0;
 #X connect 28 0 31 0;
 #X connect 29 0 32 0;
-#X connect 37 0 40 0;
+#X connect 38 0 37 0;

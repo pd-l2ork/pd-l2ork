@@ -283,7 +283,7 @@ select {
             </tr>
           </table>
           <br/>
-          <button type="button" onclick="refresh_audiodevs()" data-i18n="[title]prefs.audio.refresh_audiodevs_tt">
+          <button type="button" onclick="refresh_audiodevs()" data-i18n="[title]prefs.audio.refresh_audiodevs_tt" style="margin-left: 3px;">
             <span data-i18n="prefs.audio.refresh_audiodevs"></span>
           </button>
         </div>
@@ -407,7 +407,7 @@ select {
             </table>
           </div>
           <br/>
-          <button type="button" onclick="refresh_mididevs()" data-i18n="[title]prefs.midi.refresh_mididevs_tt">
+          <button type="button" onclick="refresh_mididevs()" data-i18n="[title]prefs.midi.refresh_mididevs_tt" style="margin-left: 3px;">
             <span data-i18n="prefs.midi.refresh_mididevs"></span>
           </button>
         </div>
@@ -1117,7 +1117,7 @@ function audio_prefs_callback(attrs) {
     disable_unused_devs("in", get_attr("canmulti", attrs));
     disable_unused_devs("out", get_attr("canmulti", attrs));
 
-    pdgui.resize_window(pd_object_callback);
+    //pdgui.resize_window(pd_object_callback);
 }
 
 function set_devs(type, devs) {
@@ -1185,7 +1185,7 @@ function midi_prefs_callback(attrs) {
         set_devs("midi_in", get_attr("pd-indevs", attrs));
         set_devs("midi_out", get_attr("pd-outdevs", attrs));
     }
-    pdgui.resize_window(pd_object_callback);
+    //pdgui.resize_window(pd_object_callback);
 }
 
 function grid_toggle(checked) {
@@ -1499,6 +1499,8 @@ function register_window_id(gfxstub, attr_arrays) {
     pdgui.pdsend("pd start-path-dialog"); // request default system paths
     pdgui.pdsend("pd start-startup-dialog"); // request default loaded libs
     document.getElementsByClassName("container")[0].style.setProperty("display", "inline");
+    // make the window non-resizable
+    pdgui.fix_window_size(pd_object_callback);
 }
 
 function tr_text(id) {
@@ -1552,9 +1554,9 @@ function add_events(name) {
 
     // closing the Window
     gui.Window.get().on("close", function() {
-        pdgui.remove_dialogwin(pd_object_callback);
         // ico@vt.edu 2022-03-23: see comment above under the same date
         pdgui.get_dialogwin("prefs").close(true);
+        pdgui.remove_dialogwin(pd_object_callback);
         //gui.Window.get().close(true);
         //cancel();
     });

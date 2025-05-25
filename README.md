@@ -233,7 +233,7 @@ since it will usually contain spaces, making the build fail.
    Now everything should be up-to-date. Issue the following command:
 
         pacman -S autoconf automake git libtool \
-          make mingw-w64-i686-dlfcn mingw-w64-i686-fftw \
+          make mingw-w64-i686-dlfcn \
           mingw-w64-i686-fluidsynth \
           mingw-w64-i686-SDL2 \
           mingw-w64-i686-ftgl mingw-w64-i686-fribidi \
@@ -257,19 +257,13 @@ since it will usually contain spaces, making the build fail.
 
         cd pd-l2ork
 
-7. Install older versions of dlfcn and binutils packages that are included in the pd-l2ork git. This is due to newer packages misssing one critical library that prevents certain externals from building. For an experimental 64-bit version (currently unsupported) replace win32_inno with win64_inno:
-
-        cd packages/win32_inno/msys
-        pacman -U mingw-w64-i686-dlfcn-1.2.0-1-any.pkg.tar.xz \
-          mingw-w64-i686-binutils-2.39-3-any.pkg.tar.zst
-
-8. Finally, build Pd-L2Ork
+7. Finally, build Pd-L2Ork
 
         cd ~/pd-l2ork
         git config --global http.sslverify "false"
         make
 
-9. Look in the top level source directory and double-click the setup file to
+8. Look in the top level source directory and double-click the setup file to
    start installing Pd-L2Ork on your system.
 
 #### Windows 64-bit Using msys2

@@ -892,13 +892,32 @@ function index_obj_completion(obj_or_msg, obj_or_msg_text) {
         obj_ref = obj_result[0].refIndex;
         obj_freq = obj_result[0].item.occurrences + 1;
         args = obj_result[0].item.args;
+        /*
+        post("index_obj_completion\n  obj_ref=" + obj_ref +
+             "\n  obj_freq=" + obj_freq +
+             "\n  args=" + args);
+        */
         if (arg) {
             arg_ref = args.length;
             let arg_result = arg_exact_match(title, arg);
             if (arg_result.length !== 0) {
                 arg_ref = arg_result[0].matches[1].refIndex;
+                /*
+                post("...\n  arg=" + arg +
+                     "\n  args.length=" + args.length +
+                     "\n  arg_result=" + arg_result +
+                     "\n  arg_ref=" + arg_ref);
+                */
                 if (arg_ref !== null) {
-                    arg_freq = obj_result[0].item.args[arg_ref].occurrences + 1;
+                    /*
+                    post("...\n  obj_result[0]=" + arg_result[0] +
+                         "\n  item=" + arg_result[0].item +
+                         "\n  args=" + arg_result[0].item.args +
+                         "\n  args.length=" + arg_result[0].item.args.length +
+                         "\n  args[arg_ref]=" + arg_result[0].item.args[arg_ref]
+                         );
+                    */
+                    arg_freq = arg_result[0].item.args[arg_ref].occurrences + 1;
                 }
             }
         }
@@ -1349,6 +1368,7 @@ var lang = require("./pdlang.js");
 exports.get_local_string = lang.get_local_string;
 
 var pd_window;
+var pd_window_keys;
 // ico@vt.edu 2022-12-10: disabled this
 // TODO!: check for regressions
 //exports.pd_window;
@@ -1956,12 +1976,28 @@ function check_nw_version(version) {
 
 exports.check_nw_version = check_nw_version;
 
-// ico@vt.edu 2020-08-11: this appears to have to be 25 at all times
-// we will leave this here for later if we encounter issues with inconsistencies
-// across different nw.js versions...
-var nw_menu_offset = check_nw_version("0.46") ? 22 : 22;
+// ico@vt.edu 2025-04-26: Linux when using 0.6x version of nw.js
+// fails to position the window correctly vertically because it is
+// unable to account for its DM's title bar. Inside index.js when
+// we open the main pd window (see gui_init function), we calculate
+// that offset and then store it in the nw_menu_offset global variable
+// below. Therefore the value below is only the default that is used
+// by Windows and OSX.
 
-exports.nw_menu_offset = nw_menu_offset;
+var nw_menu_offset = 25;
+
+function set_nw_menu_offset(val) {
+    //post("set_nw_menu_offset " + val);
+    nw_menu_offset = val;
+}
+
+exports.set_nw_menu_offset = set_nw_menu_offset;
+
+function get_nw_menu_offset() {
+    return nw_menu_offset;
+}
+
+exports.get_nw_menu_offset = get_nw_menu_offset;
 
 // quick hack so that we can paste pd code from clipboard and
 // have it affect an empty canvas' geometry
@@ -1983,29 +2019,33 @@ function gui_canvas_change_geometry(cid, w, h, x, y) {
 // pd.tk
 function canvas_check_geometry(cid) {
     //post("canvas_check_geomtery\n...OLD height=" +
-    //  patchwin[cid].height + " innerHeight=" + patchwin[cid].window.innerHeight);
+    //  patchwin[cid].height + " innerHeight=" + patchwin[cid].window.innerHeight +
+    //  " offset=" + nw_menu_offset);
     var win_w = patchwin[cid].width,
-        // "23" is a kludge to account for the menubar size.  See comment
-        // in nw_create_window of index.js
-        // ico@vt.edu in 0.46.2 this is now 25 pixels, so I guess
-        // it is now officially kludge^2
-        win_h = patchwin[cid].height - nw_menu_offset,
+        // ico@vt.edu 2025-04-30:
+        // to fully appreciate what is going on in here, see how the window sizes are
+        // adjusted inside index.js when they are being created, to ensure they have
+        // the same size and position when running on different platforms. index.js'
+        // nw_create_window and gui_init hold insight into what is going on. more to
+        // the point, RPi appears to have 0 nw_menu_offset, which is then compounded
+        // by an increase of height by 20 pixels to match that of Windows and other
+        // platforms.
+        win_h = patchwin[cid].height - (nw_menu_offset === 0 ? 20 : nw_menu_offset),
         win_x = patchwin[cid].x,
         win_y = patchwin[cid].y,
         cnv_width = patchwin[cid].window.innerWidth,
         cnv_height = patchwin[cid].window.innerHeight;
     //post("...NEW height=" +
-    //  patchwin[cid].height + " innerHeight=" + patchwin[cid].window.innerHeight);
+    //  win_h + " innerHeight=" + cnv_height);
     //post("canvas_check_geometry w=" + win_w + " h=" + win_h +
     //    " x=" + win_x + " y=" + win_y + " cnv_w=" + cnv_width + " cnv_h=" + cnv_height);
 
-    // ico@vt.edu 2020-08-31:
-    // why does Windows have different innerWidth and innerHeight from other OSs?
-    // See canvas_params for the explanation...
-    // 2020-10-01: this was a bug in 0.14.7 but is no longer needed
-    //win_w += 16 * nw_os_is_windows;
-    // 0.67.1 OSX bug where saving a window yields smaller window upon reload
-    win_h += 22 * nw_os_is_osx;
+    // ico@vt.edu 2025-04-30:
+    // to fully appreciate what is going on in here, see how the window sizes are
+    // adjusted inside index.js when they are being created, to ensure they have
+    // the same size and position when running on different platforms. index.js'
+    // nw_create_window and gui_init hold insight into what is going on.
+    win_h += (29 * nw_os_is_osx) + (16 * nw_os_is_linux * (nw_menu_offset > 0 ? 1 : 0));
     
     // We're reusing win_x and win_y below, as it
     // shouldn't make a difference to the bounds
@@ -2025,6 +2065,7 @@ exports.canvas_check_geometry = canvas_check_geometry;
 
 function menu_save(name) {
     pdsend(name + " menusave");
+    populate_open_windows();
 }
 
 exports.menu_save = menu_save;
@@ -2056,6 +2097,7 @@ function build_file_dialog_string(obj) {
 exports.build_file_dialog_string = build_file_dialog_string;
 
 function gui_canvas_saveas(name, initfile, initdir, close_flag) {
+    //post("gui_canvas_saveas");
     var input, chooser,
         span = patchwin[name].window.document.querySelector("#saveDialogSpan");
     if (!fs.existsSync(initdir)) {
@@ -2113,6 +2155,7 @@ function saveas_callback(cid, file, close_flag) {
     // update the recent files list
     var norm_path = path.normalize(directory);
     pdsend("pd add-recent-file", enquote(defunkify_windows_path(path.join(norm_path, basename))));
+    populate_open_windows();
 }
 
 exports.saveas_callback = saveas_callback;
@@ -2208,6 +2251,7 @@ function gui_window_close(cid) {
     });
     // remove reference to the window from patchwin object
     set_patchwin(cid, null);
+    populate_open_windows();
     loading[cid] = null;
     editable[cid] = null;
 }
@@ -3079,6 +3123,7 @@ exports.get_patchwin = function(name) {
 }
 
 var set_patchwin = function(cid, win) {
+    //post("set_patchwin cid=" + cid + " win=" + win);
     patchwin[cid] = win;
     if (win) {
         gui.add(cid, win);
@@ -3301,6 +3346,7 @@ function gui_canvas_set_title(cid, name, args, dir, dirty_flag) {
     } else {
         title_queue[cid] = title;
     }
+    populate_open_windows();
 }
 
 function query_title_queue(cid) {
@@ -3334,6 +3380,7 @@ function set_window_finished_loading(cid, new_win) {
             .replace('[','').replace(']','');
         dialogwin_check_overflow(new_win, object);
     }
+    populate_open_windows();
     loading[cid] = null;
 }
 
@@ -6630,8 +6677,13 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
             */
         }
 
-        draw_xpos += 0.5;
-        draw_ypos -= 1;
+        // these offsets are used only for the drawing inside a GOP
+        // they should be ignored for the top-level scalars
+        if (plot_style >= 0) {
+            draw_xpos += 0.5;
+            draw_ypos -= 1;
+        }
+        //post("plot_style=" + plot_style);
 
         /* ico@vt.edu HACKTASCTIC: calculating scrollbars is throwing 0.997 for
            plots drawn inside the subpatch and it is a result of the -1 in the
@@ -6720,7 +6772,7 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
                     default:
                         // we are a non-plot scalar
                         //post("......non-plot GOP scalar");
-                        matrix = [t1,t2,t3,t4,draw_xpos,draw_ypos];
+                        matrix = [t1,t2,t3,t4,draw_xpos+0.5,draw_ypos+0.5];
                         break;
                 }
             }
@@ -6831,11 +6883,15 @@ function gui_scalar_draw_group(cid, tag, parent_tag, type, attr_array) {
     });
 }
 
-function gui_scalar_configure_gobj(cid, tag, isselected, t1, t2, t3, t4, t5, t6) {
+function gui_scalar_configure_gobj(cid, tag, is_toplevel, isselected, t1, t2, t3, t4, t5, t6) {
     /*
     post("gui_scalar_configure_gobj tag=" + tag + " t1=" +
         t1 + " t2=" + t2 + " t3=" + t3 + " t4=" + t4 + " t5=" + t5 + " t6=" + t6);
     */
+    // adding offset when drawing inside GOP
+    if (is_toplevel === 0) {
+        t5 += 1;
+    }
     var matrix = [t1,t2,t3,t4,t5,t6],
         transform_string = "matrix(" + matrix.join() + ")";
     gui(cid).get_gobj(tag, {
@@ -8840,6 +8896,7 @@ function gui_cord_inspector_flash(cid, state) {
 function gui_raise_window(cid) {
     // Check if the window exists, for edge cases like
     // [vis 1, vis1(---[send this_canvas]
+    //post("gui_raise_window cid=" + cid);
     gui(cid).get_nw_window(function(nw_win) {
         nw_win.focus();
     });
@@ -8860,13 +8917,27 @@ function gui_raise_pd_window() {
 // work with newer nw.js (should also work with older ones)
 function walk_window_list(cid, offset) {
     /*
-    post("walk_window_list patchwin=" + patchwin +
-         " data[cid]=" + patchwin[cid] +
-         " length=" + Object.keys(patchwin).length +
-         " value_at_index_0=" + Object.keys(patchwin)[0]);
+    post("walk_window_list\n  patchwin=" + patchwin +
+         "\n  patchwin[cid]=" + patchwin[cid] +
+         "\n  cid=" + cid + " offset=" + offset +
+         "\n  length=" + Object.keys(patchwin).length +
+         "\n  value_at_index_0=" + Object.keys(patchwin)[0]);
     */
     var i, next, match = -1;
     var win_array_length = Object.keys(patchwin).length;
+
+/*
+    for (i = 0; i < win_array_length; i++) {
+        if (Object.keys(patchwin)[i]) {
+            //post("O=" + Object.keys(patchwin)[i] + " patchwin=" +
+            //     patchwin[Object.keys(patchwin)[i]]);
+            gui(Object.keys(patchwin)[i]).get_nw_window(function(nw_win) {
+                post("window title:" + nw_win.title);
+            }
+        )};
+    }
+*/
+
     for (i = 0; i < win_array_length; i++) {
         if (Object.keys(patchwin)[i] === cid) {
             match = i;
@@ -9381,7 +9452,8 @@ function gui_pd_dsp(state) {
 // dialog_prefs.html
 function open_prefs() {
     if (!dialogwin["prefs"]) {
-        create_window("prefs", "prefs", 486, 552 + (nw_os_is_osx * 48), 0, 0, null);
+        create_window("prefs", "prefs", 503,
+            552 + (nw_os_is_osx * 16), 0, 0, null);
     } else {
         dialog_raise("prefs");
     }
@@ -9403,6 +9475,9 @@ exports.open_search = open_search;
 // This is the same for all windows (initialization is in pd_menus.js).
 var recent_files_submenu = null;
 var recent_files = null;
+
+// same for open windows shared submenu
+var open_windows_submenu = null
 
 // We need to jump through some hoops here since JS closures capture variables
 // by reference, which causes trouble when closures are created within a
@@ -9446,6 +9521,61 @@ function populate_recent_files(submenu) {
 }
 
 exports.populate_recent_files = populate_recent_files;
+
+// We need to jump through some hoops here since JS closures capture variables
+// by reference, which causes trouble when closures are created within a
+// loop.
+function open_window_callback(i) {
+    return function() {
+        var cid = Object.keys(patchwin)[i];
+        //post("clicked open window callback: "+ cid);
+        gui_raise_window(cid);
+    }
+}
+
+function populate_open_windows(submenu) {
+    //post("populate_open_windows");
+    if (submenu) {
+        open_windows_submenu = submenu;
+        // if we have an argument that means this is only
+        // for the purpose of initializing the pdgui's global var
+        return;
+    }
+    else {
+        setTimeout(function() {
+
+            var i, cid;
+            var titles = [];
+
+            for (i = 0; i < Object.keys(patchwin).length; i++) {
+                if (Object.keys(patchwin)[i]) {
+                    gui(Object.keys(patchwin)[i]).get_nw_window(function(nw_win) {
+                        //titles[i] = nw_win.title; // this one includes path
+                        titles[i] = nw_win.title.split("  - ")[0]; // pathless
+                        //post("window title:" + nw_win.title);
+                    }
+                )};
+            }
+
+            while (open_windows_submenu.items.length > 0)
+                open_windows_submenu.removeAt(0);
+
+            for (i = 0; i < titles.length; i++) {
+                if (titles[i] != null) {
+                    //pdgui.post("...adding " + title_array[i]);
+                    var item = new nw.MenuItem({
+                        label: titles[i],
+                        tooltip: titles[i]
+                    });
+                    item.click = open_window_callback(i);
+                    open_windows_submenu.append(item);
+                }
+            }
+        }, 250);
+    }
+}
+
+exports.populate_open_windows = populate_open_windows;
 
 function gui_recent_files(dummy, recent_files_array) {
     recent_files = recent_files_array;
@@ -10748,6 +10878,11 @@ exports.dialog_bindings = function(did) {
             dwin.cancel();
         }
     }
+}
+
+exports.fix_window_size = function(did) {
+    //ico@vt.edu: comment the following line when working on dialog sizes...
+    dialogwin[did].setResizable(false);
 }
 
 exports.resize_window = function(did) {

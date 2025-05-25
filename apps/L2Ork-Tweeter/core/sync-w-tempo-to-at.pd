@@ -19,18 +19,13 @@
 #X obj 201 516 f;
 #X obj 454 131 t f f f;
 #X obj 375 307 gate 2 1;
-#X obj 348 162 > 12;
 #X obj 348 187 + 1;
 #X obj 348 212 t f f;
 #X obj 218 460 f;
 #X obj 173 283 gate 2 1;
-#X text 26 26 sync-w-tempo-to-at<sync-from-client-num 1-12><sync-to-client-num
-1-12> OR if value is > 12 use this as loop-length<time 0-63>, f 71
-;
 #X obj 457 257 split 500 60000;
 #X msg 457 282 1;
 #X obj 437 336 gate 1 0;
-#X obj 493 162 split 1 12;
 #X obj 493 231 t f 0;
 #X msg 544 282 0;
 #X obj 315 517 route;
@@ -44,13 +39,18 @@
 #X obj 315 587 t f 0;
 #X obj 65 150 t f f f b f;
 #X msg 218 622 symbol \$1-loop-length-override;
+#X text 26 26 sync-w-tempo-to-at<sync-from-client-num 1-14><sync-to-client-num
+1-14> OR if value is > 14 use this as loop-length<time 0-63>, f 71
+;
+#X obj 493 162 split 1 14;
+#X obj 348 162 > 14;
 #X connect 1 0 7 0;
 #X connect 2 0 6 0;
 #X connect 3 0 2 1;
 #X connect 4 0 5 0;
 #X connect 5 0 16 0;
 #X connect 6 0 4 0;
-#X connect 7 0 41 0;
+#X connect 7 0 38 0;
 #X connect 7 1 18 0;
 #X connect 7 2 10 0;
 #X connect 10 0 4 1;
@@ -66,40 +66,40 @@
 #X connect 16 2 3 0;
 #X connect 17 0 15 0;
 #X connect 18 0 19 1;
-#X connect 18 1 20 0;
-#X connect 18 2 29 0;
-#X connect 19 0 39 0;
-#X connect 19 1 23 1;
+#X connect 18 1 42 0;
+#X connect 18 2 41 0;
+#X connect 19 0 36 0;
+#X connect 19 1 22 1;
 #X connect 20 0 21 0;
-#X connect 21 0 22 0;
-#X connect 22 0 24 0;
-#X connect 22 1 19 0;
-#X connect 23 0 17 1;
-#X connect 24 0 35 0;
-#X connect 24 1 23 0;
-#X connect 26 0 27 0;
-#X connect 26 1 31 0;
-#X connect 27 0 28 0;
-#X connect 28 0 3 0;
-#X connect 29 0 30 0;
-#X connect 29 1 26 0;
-#X connect 30 0 3 0;
-#X connect 30 1 28 0;
-#X connect 31 0 28 0;
-#X connect 32 0 34 0;
-#X connect 33 0 36 0;
-#X connect 33 1 32 1;
-#X connect 34 0 40 0;
-#X connect 35 0 33 0;
-#X connect 37 0 36 1;
-#X connect 38 0 32 0;
-#X connect 39 0 35 1;
-#X connect 39 1 37 0;
-#X connect 40 0 17 1;
-#X connect 40 1 37 0;
-#X connect 41 0 12 0;
-#X connect 41 1 13 0;
-#X connect 41 2 42 0;
-#X connect 41 3 24 1;
-#X connect 41 4 28 1;
-#X connect 42 0 15 1;
+#X connect 21 0 23 0;
+#X connect 21 1 19 0;
+#X connect 22 0 17 1;
+#X connect 23 0 32 0;
+#X connect 23 1 22 0;
+#X connect 24 0 25 0;
+#X connect 24 1 28 0;
+#X connect 25 0 26 0;
+#X connect 26 0 3 0;
+#X connect 27 0 3 0;
+#X connect 27 1 26 0;
+#X connect 28 0 26 0;
+#X connect 29 0 31 0;
+#X connect 30 0 33 0;
+#X connect 30 1 29 1;
+#X connect 31 0 37 0;
+#X connect 32 0 30 0;
+#X connect 34 0 33 1;
+#X connect 35 0 29 0;
+#X connect 36 0 32 1;
+#X connect 36 1 34 0;
+#X connect 37 0 17 1;
+#X connect 37 1 34 0;
+#X connect 38 0 12 0;
+#X connect 38 1 13 0;
+#X connect 38 2 39 0;
+#X connect 38 3 23 1;
+#X connect 38 4 26 1;
+#X connect 39 0 15 1;
+#X connect 41 0 27 0;
+#X connect 41 1 24 0;
+#X connect 42 0 20 0;

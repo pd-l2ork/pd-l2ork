@@ -343,6 +343,8 @@
     "pdwin_tt": "Donner le focus à la fenêtre principale de Pd",
     "abstractions": "Abstractions",
     "abstractions_tt": "Interroger et gérer les abstractions",
+    "win_list": "Liste des fenêtres",
+    "win_list_tt": "Une liste des fenêtres actuellement ouvertes",
 
     "media": "Média",
 

@@ -273,6 +273,69 @@ void binbuf_text(t_binbuf *x, const char *text, size_t size)
     x->b_n = natom;
 }
 
+    /* ico@vt.edu 2025-04-22:
+       convert text to a binbuf with a single atom
+       (thus preserving numbers as string and preventing truncation, 
+       e.g. [sprintf %s%s%s%s%s%s%s%s] will get converted into a number
+       if every single string is a number, and even more so it may get
+       truncated with an exponent)
+    */
+void binbuf_rawtext(t_binbuf *x, char *text, size_t size)
+{
+    //post("current text: %d <%s>", size, text);
+    char buf[MAXPDSTRING+1], *bufp, *ebuf = buf+MAXPDSTRING;
+    const char *textp = text, *etext = text+size;
+    t_atom *ap;
+    int nalloc = 16, natom = 0;
+    t_freebytes(x->b_vec, x->b_n * sizeof(*x->b_vec));
+    x->b_vec = t_getbytes(nalloc * sizeof(*x->b_vec));
+    ap = x->b_vec;
+    x->b_n = 0;
+    while (1)
+    {
+        //int type;
+            /* skip leading space */
+        while ((textp != etext) && (*textp == ' ' || *textp == '\n'
+            || *textp == '\r' || *textp == '\t')) textp++;
+        if (textp == etext) break;
+
+            /* it's an atom other than a comma or semi */
+        char c;
+        int floatstate = 0, slash = 0, lastslash = 0, dollar = 0;
+        bufp = buf;
+        do
+        {
+            c = *bufp = *textp++;
+            bufp++;
+        }
+        while (textp != etext && bufp != ebuf && 
+            (slash || (*textp != ' ' && *textp != '\n' && *textp != '\r'
+                && *textp != '\t' && *textp != ',' && *textp != ';')));
+        *bufp = 0;
+#if 0
+        post("binbuf_text: buf %s, dollar=%d", buf, dollar);
+#endif
+        SETSYMBOL(ap, gensym(buf));
+
+        ap++;
+        natom++;
+        if (natom == nalloc)
+        {
+            //fprintf(stderr,"binbuf_text resizing from %d to %d",
+            //    nalloc * sizeof(*x->b_vec), nalloc * (2*sizeof(*x->b_vec)));
+            x->b_vec = t_resizebytes(x->b_vec, nalloc * sizeof(*x->b_vec),
+                nalloc * (2*sizeof(*x->b_vec)));
+            nalloc = nalloc * 2;
+            ap = x->b_vec + natom;
+        }
+        if (textp == etext) break;
+    }
+    /* reallocate the vector to exactly the right size */
+    x->b_vec = t_resizebytes(x->b_vec, nalloc * sizeof(*x->b_vec),
+        natom * sizeof(*x->b_vec));
+    x->b_n = natom;
+}
+
     /* convert a binbuf to text; no null termination. */
 void binbuf_gettext(const t_binbuf *x, char **bufp, int *lengthp)
 {

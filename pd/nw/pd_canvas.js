@@ -3726,7 +3726,7 @@ function update_menu() {
         } else {
             pdgui.toggle_k12_menu(canvas_events.get_id(), 0);
         }
-        // no need to tcall this, since it is already called
+        // no need to call this, since it is already called
         // inside update_k12_menu
         //pdgui.gui_canvas_get_immediate_scroll(canvas_events.get_id());
     } else if ((!pdgui.get_k12_mode() && !pdgui.get_k12_menu_vis()) &&

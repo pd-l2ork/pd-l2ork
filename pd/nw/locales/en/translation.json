@@ -370,6 +370,8 @@
     "pdwin_tt": "Give focus to the main Pd window",
     "abstractions": "Abstractions",
     "abstractions_tt": "Query and manage abstractions",
+    "win_list": "Window List",
+    "win_list_tt": "A list of currently opened windows",
 
     "media": "Media",
 

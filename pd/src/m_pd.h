@@ -14,7 +14,7 @@ extern "C" {
 #define PD_MINOR_VERSION 55
 #define PD_BUGFIX_VERSION 0
 #define PD_TEST_VERSION ""
-#define PD_L2ORK_VERSION "20241224"
+#define PD_L2ORK_VERSION "20250501"
 #define PDL2ORK
 
 /* compile-time version check:
@@ -455,8 +455,10 @@ EXTERN void binbuf_free(t_binbuf *x);
 EXTERN t_binbuf *binbuf_duplicate(const t_binbuf *y);
 
 EXTERN void binbuf_text(t_binbuf *x, const char *text, size_t size);
+EXTERN void binbuf_rawtext(t_binbuf *x, const char *text, size_t size);
 EXTERN void binbuf_gettext(const t_binbuf *x, char **bufp, int *lengthp);
 EXTERN void binbuf_getrawtext(t_binbuf *x, char **bufp, int *lengthp);
+
 EXTERN void binbuf_clear(t_binbuf *x);
 EXTERN void binbuf_add(t_binbuf *x, int argc, const t_atom *argv);
 EXTERN void binbuf_addv(t_binbuf *x, const char *fmt, ...);

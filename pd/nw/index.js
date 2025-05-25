@@ -3,6 +3,8 @@ var gui = require("nw.gui");
 var pdgui = require("./pdgui.js");
 var pd_menus = require("./pd_menus.js");
 
+window.update_window_submenu = pd_menus.update_window_submenu;
+
 // ico@vt.edu 2022-11-08: make this 1 if you wish to provide a 3-second delay
 // before a newly opened patch window should proceed. dev tools will also
 // automatically open to allow to use performance analysis tool to seek
@@ -568,7 +570,8 @@ function nw_create_window(cid, type, width, height, xpos, ypos, attr_array) {
         pos = null_pos;
         //pdgui.post("check_os=" + pdgui.check_os("win32"));
         if (pdgui.nw_os_is_linux == 1) {
-            ypos = ypos - pdgui.nw_menu_offset - 3;
+            //pdgui.post("offset=" + pdgui.get_nw_menu_offset());
+            ypos = ypos - pdgui.get_nw_menu_offset();
         }
     }
 
@@ -598,12 +601,21 @@ function nw_create_window(cid, type, width, height, xpos, ypos, attr_array) {
         //position: pos,
         focus: true,
         width: width,
-        // We add 23 as a kludge to account for the menubar at the top of
-        // the window.  Ideally we would just get rid of the canvas menu
-        // altogether to simplify things. But we'd have to add some kind of
-        // widget for the "Put" menu.
-        // ico@vt.edu: on 0.46.2 this is now 25, go figure...
-        height: height + (pdgui.nw_menu_offset * !pdgui.nw_os_is_osx),
+        // add to the height to address OS idiosyncrasies and accommodate
+        // the menu height (LATER: see if we need to compensate here if we
+        // don't have menu visible, that certainly is not an issue for OSX)
+        height: height
+                // 1. nw_menu_offset value on non-OSX OSs
+                + (pdgui.get_nw_menu_offset() * !pdgui.nw_os_is_osx)
+                // 2. OSX window size offset to match that of Windows
+                - (4 * pdgui.nw_os_is_osx)
+                // 3. default Raspbian DM offset to ensure same window height
+                //    as Windows
+                + (pdgui.get_nw_menu_offset() === 0 ? 20 : 0)
+                // 4. default Ubuntu Linux window size offset that is negated
+                //    by the Raspberry Pi's DM that has no nw_menu_offset, in
+                //    which case this is multiplied by 0
+                - (16 * pdgui.nw_os_is_linux * (pdgui.get_nw_menu_offset() > 0 ? 1 : 0)),
         x: Math.floor(xpos),
         y: Math.floor(ypos),
         frame: win_frame,
@@ -688,6 +700,13 @@ function nw_create_pd_window_menus(gui, w) {
     if (process.platform !== "darwin" || pd_m === null) {
         //pdgui.post("nw_create_pd_window_menus first time");
         pd_m = pd_menus.create_menu(gui, "console");
+        /*
+        var item = new nw.MenuItem({
+            label: "testing...",
+            tooltip: "testing..."
+        });
+        pd_m.win.win_list.submenu.append(item);
+        */
     }
 
     // On OSX we have menu items for canvas operations-- we need to disable
@@ -1038,6 +1057,17 @@ function gui_init(win) {
     connect();
     pdgui.restore_apps(0);
     if (pdgui.nw_os_is_linux) {
+        // set pdgui.js' nw_menu_offset to 0 since we are dealing with Linux.
+        // this is because if the callback below is called (which means offset
+        // is other than 0), it will re-set the offset to the appropriate size.
+        // we do this because on RPi which uses nwjs 0.60.1, move call is not
+        // called unless the values have changed, so we never reach the "on move"
+        // part. thus we set it here to 0, which works for RPi, while other
+        // Linux distros (or at least Ubuntu) that use nwjs 0.67.1 will call
+        // "on move" even if the values have not changed. if we ever get RPi's
+        // version of nwjs to match that of other Linux (intel) platforms,
+        // this part can be removed.
+        pdgui.set_nw_menu_offset(0);
         //pdgui.post("window position " + gui.Window.get().x + " " + gui.Window.get().y);
         var pre_titlebar_y = gui.Window.get().y;
         gui.Window.get().moveTo(gui.Window.get().x, gui.Window.get().y);
@@ -1046,7 +1076,9 @@ function gui_init(win) {
         gui.Window.get().on("move", function() {
             if (!linux_titlebar_offset_kludge) {
                 //pdgui.post("titlebar offset=" + (pre_titlebar_y - gui.Window.get().y));
-                gui.Window.get().moveBy(0, ((pre_titlebar_y - gui.Window.get().y)) * 2);
+                gui.Window.get().moveBy(0, (pre_titlebar_y - gui.Window.get().y) * 2);
+                pdgui.set_nw_menu_offset(gui.Window.get().y - pre_titlebar_y);
+                //pdgui.post("window offset = "  + pdgui.get_nw_menu_offset());
                 linux_titlebar_offset_kludge = true;
             }
         });

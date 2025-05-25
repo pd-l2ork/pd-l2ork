@@ -80,3 +80,4 @@ autocomplete_relevance: 1
 browser_doc: 0
 browser_path: 0
 browser_init: 0
+savezoom: 1

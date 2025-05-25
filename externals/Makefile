@@ -47,6 +47,17 @@ DEST_PATHS = BUILDLAYOUT_DIR=$(BUILDLAYOUT_DIR) \
 # this variable is to support old "win" directories, rather than "windows"
 BUILDSRC_OS_NAME = $(OS_NAME)
 
+# ico@vt.edu 2025-04-29: for github runner we add CFLAGS_GITHUB_RUNNER=-std=gnu17
+# the full command is:
+# cd l2ork_addons && CFLAGS_GITHUB_RUNNER=-std=gnu17 inst_dir="/usr" ./tar_em_up.sh -Tk
+# see build.yml runner file on the github because after April 2025 github msys runner
+# uses gcc 15 which has -std=gnu23. this breaks old code in the 3rd party libraries'
+# old style prototype declarations. given this only affects MSYS2/MINGW environment
+# it is handled through the runner make. below is by default disabled debug printout
+# to make sure all this works as expected.
+#$(info    >>>>>>>>>>> $(CFLAGS_GITHUB_RUNNER))
+#exit -1
+
 WARN_FLAGS = -Wall -W -Wno-unused-parameter -Wno-incompatible-pointer-types
 CFLAGS = -DPD -D__USE_MINGW_ANSI_STDIO=1 -I$(pd_src)/src $(WARN_FLAGS) $(DEBUG_CFLAGS) $(CFLAGS_ADD) -I$(gem_src)/src
 LDFLAGS = 
@@ -96,7 +107,7 @@ ifeq ($(OS_NAME),windows)
 #	-D'PROT_READ=1' \
 #	-D'MAP_PRIVATE=2' \
 #	-D'O_NDELAY=O_NONBLOCK'
-  CFLAGS += -mms-bitfields -DMSW -DNT $(WINDOWS_HACKS)
+  CFLAGS += -mms-bitfields -DMSW -DNT $(WINDOWS_HACKS) $(CFLAGS_GITHUB_RUNNER)
   LDFLAGS += -s -shared
 # all of these included libs are part of libc in UNIX platforms.  All except
 # libregex are in DLLs, so they get stripped from the external's .dll binary
@@ -381,6 +392,7 @@ autotune_clean:
 
 #------------------------------------------------------------------------------#
 # ARRAYSIZE
+
 arraysize:
 	make -C $(externals_src)/arraysize PD_PATH=$(pd_src) CFLAGS="$(CFLAGS)" $(call set_em_flags)
 
@@ -496,7 +508,7 @@ cxc_clean:
 ifneq ($(EMSCRIPTEN),yes)
 cyclone:
 	make -C $(externals_src)/miXed/cyclone -f Makefile.libdir \
-		PD_PATH=$(pd_src) PD_INCLUDE=$(DESTDIR)$(includedir) WARN_CFLAGS="-Wall -W -Wstrict-prototypes -Wno-unused -Wno-parentheses -Wno-switch -Wno-incompatible-pointer-types $(CFLAGS_ADD)"
+		PD_PATH=$(pd_src) PD_INCLUDE=$(DESTDIR)$(includedir) WARN_CFLAGS="-Wall -W -Wstrict-prototypes -Wno-unused -Wno-parentheses -Wno-switch -Wno-incompatible-pointer-types $(CFLAGS_GITHUB_RUNNER) $(CFLAGS_ADD)"
 
 cyclone_install:
 	make -C $(externals_src)/miXed/cyclone -f Makefile.libdir \
@@ -556,7 +568,7 @@ ifneq ($(OS_NAME),darwin)
 	ar rcs $(XWIIMOTE_PATH)/libxwiimote.a $(XWIIMOTE_PATH)/*.o
 endif
 endif
-	make -C $(externals_src)/disis PD_PATH=$(pd_src) pdbinpath=$(pd_src)/src CFLAGS="$(CFLAGS_ADD)"
+	make -C $(externals_src)/disis PD_PATH=$(pd_src) pdbinpath=$(pd_src)/src CFLAGS="$(CFLAGS_GITHUB_RUNNER) $(CFLAGS_ADD)"
 
 disis_flatpak:
 ifneq ($(OS_NAME),windows)
@@ -566,7 +578,7 @@ ifneq ($(OS_NAME),darwin)
 	ar rcs $(XWIIMOTE_PATH)/libxwiimote.a $(XWIIMOTE_PATH)/*.o
 endif
 endif
-	make -C $(externals_src)/disis PD_PATH=$(pd_src) pdbinpath=$(pd_src)/src CFLAGS="$(CFLAGS_ADD)"
+	make -C $(externals_src)/disis PD_PATH=$(pd_src) pdbinpath=$(pd_src)/src CFLAGS="$(CFLAGS_GITHUB_RUNNER) $(CFLAGS_ADD)"
 
 
 disis_install:
@@ -622,7 +634,7 @@ fftease:
 ifeq ($(EMSCRIPTEN),yes)
 	sed -i 's/--enable-new-dtags/-Bsymbolic/g' $(externals_src)/$(FFTEASE_NAME)/Makefile
 endif
-	make -C $(externals_src)/$(FFTEASE_NAME) $(call set_em_flags) PD_PATH=$(pd_src) CFLAGS="$(CFLAGS_ADD)"
+	make -C $(externals_src)/$(FFTEASE_NAME) $(call set_em_flags) PD_PATH=$(pd_src) CFLAGS="$(CFLAGS_GITHUB_RUNNER) $(CFLAGS_ADD)"
 ifeq ($(EMSCRIPTEN),yes)
 	sed -i 's/-Bsymbolic/--enable-new-dtags/g' $(externals_src)/$(FFTEASE_NAME)/Makefile
 endif
@@ -776,7 +788,7 @@ fluid_clean:
 else
 fluid:
 	make -C $(externals_src)/fluid~ PD_PATH=$(pd_src) \
-		pdbinpath=$(pd_src)/src CFLAGS="$(CFLAGS_ADD) -I$(usrlocal)/include" LDFLAGS="$(LDFLAGS)"
+		pdbinpath=$(pd_src)/src CFLAGS="$(CFLAGS_GITHUB_RUNNER) $(CFLAGS_ADD) -I$(usrlocal)/include" LDFLAGS="$(LDFLAGS)"
 
 fluid_install:
 	make -C $(externals_src)/fluid~ DESTDIR="$(DESTDIR)" \
@@ -1263,7 +1275,7 @@ iemlib_clean:
 
 #------------------------------------------------------------------------------#
 # IEMMATRIX
-## oh this is all sh!t: please use iemmatrix's build-system instead
+## oh this is all a mess. please use iemmatrix's build-system instead
 IEMMATRIX_NAME=iemmatrix
 IEMMATRIX_ROOT := $(externals_src)/iem/iemmatrix
 IEMMATRIX_SRC := $(wildcard $(IEMMATRIX_ROOT)/src/m[at]*.c)
@@ -1362,7 +1374,7 @@ lyonpotpourri:
 ifeq ($(EMSCRIPTEN),yes)
 	sed -i 's/--enable-new-dtags/-Bsymbolic/g' $(externals_src)/$(LYON_SRC)/Makefile
 endif
-	make -C $(externals_src)/$(LYON_SRC) $(call set_em_flags) PD_PATH=$(pd_src) CFLAGS="$(CFLAGS_ADD) -Wno-incompatible-pointer-types"
+	make -C $(externals_src)/$(LYON_SRC) $(call set_em_flags) PD_PATH=$(pd_src) CFLAGS="$(CFLAGS_GITHUB_RUNNER) $(CFLAGS_ADD) -Wno-incompatible-pointer-types"
 ifeq ($(EMSCRIPTEN),yes)
 	sed -i 's/-Bsymbolic/--enable-new-dtags/g' $(externals_src)/$(LYON_SRC)/Makefile
 endif
@@ -3016,7 +3028,6 @@ endif
 
 ifneq ($(EMSCRIPTEN), yes)
 neuraln:
-	echo boo
 	cd $(externals_src)/neuralnet && \
 		rm -f *.o && \
 		git submodule update --init --recursive && \

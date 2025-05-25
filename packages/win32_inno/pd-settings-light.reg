@@ -5,6 +5,7 @@ Windows Registry Editor Version 5.00
 "loadlib1"="libdir"
 "loadlib2"="pddp"
 "nloadlib"=2
+"savezoom"=1
 ; delete any previous loadlib flags
 "loadlib3"=-
 "loadlib4"=-

@@ -108,7 +108,7 @@ else
 					 LIBS="-L../../../pd/src -L../../../pd/bin -L../../../pd/obj -lpd -lm -lwsock32"
 					 ;;
         *-*-mingw*)
-                CFLAGS="$CFLAGS -mms-bitfields -Wall -Wimplicit -Wunused -Wmissing-prototypes -O3 "
+                CFLAGS="$CFLAGS -std=gnu89 -mms-bitfields -Wall -Wimplicit -Wunused -Wmissing-prototypes -O3 "
 					 LDFLAGS="-shared"
 					 INCLUDES="$INCLUDES -I../../../pd/src"
 					 pd_suffix=dll
