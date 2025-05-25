@@ -280,7 +280,7 @@ void binbuf_text(t_binbuf *x, const char *text, size_t size)
        if every single string is a number, and even more so it may get
        truncated with an exponent)
     */
-void binbuf_rawtext(t_binbuf *x, char *text, size_t size)
+void binbuf_rawtext(t_binbuf *x, const char *text, size_t size)
 {
     //post("current text: %d <%s>", size, text);
     char buf[MAXPDSTRING+1], *bufp, *ebuf = buf+MAXPDSTRING;
