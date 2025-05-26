@@ -100,8 +100,6 @@ void fftease_cfft( t_float *x, int NC, int forward )
 		i,j,
 		delta;
 
-void fftease_bitreverse();
-
     ND = NC<<1;
     fftease_bitreverse( x, ND );
     for ( mmax = 2; mmax < ND; mmax = delta ) {
