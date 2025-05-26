@@ -1069,7 +1069,7 @@ void scalehandle_free(t_scalehandle *h)
     pd_free((t_pd *)h);
 }
 
-void properties_set_field_int(long props, const char *gui_field, int value)
+void properties_set_field_int(t_int props, const char *gui_field, int value)
 {
     //post("properties_set_field_int %lx %zx %s %d", props, props, gui_field, value);
     char tagbuf[MAXPDSTRING];
