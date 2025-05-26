@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include "m_pd.h"
+
 #ifdef MAX
 #define A_PDFLOAT 1
 #define A_PDSYMBOL 2
