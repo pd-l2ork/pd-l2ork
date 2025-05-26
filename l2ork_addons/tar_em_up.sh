@@ -259,7 +259,7 @@ fi
 
 # ico@vt.edu 2022-11-10: ugly hack for the nwjs 0.67.1 that has wrong permissions set for Linux
 # ico@vt.edu 2024-10-10: however, don't do this for Raspberry Pi which uses 0.60.1
-if [[ $os != "win" && $dmg == 0 && $arch != "aarch64" ]]; then
+if [[ $os != "win" && $os != "win64" && $dmg == 0 && $arch != "aarch64" ]]; then
 	cd ../pd/nw/nw/
 	chmod 755 chrome* minidump_stackwalk nacl* nw nwjc payload
 	cd ../../../l2ork_addons
