@@ -15,8 +15,7 @@
 
 /* ------------------------ split ----------------------------- */
 
-// why have to do this?
-void split_anything();
+void split_anything(t_split *x,t_symbol* s,t_int argc,t_atom* argv);
 
 static t_class *split_class;
 
