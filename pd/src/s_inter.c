@@ -27,9 +27,7 @@ that didn't really belong anywhere. */
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
-#elif HAVE_IO_H /* if isatty exists outside unistd, please add another #ifdef */
-#include <io.h>
-#else
+#elif !defined(_WIN32)
 # define isatty(fd) 0
 #endif
 static int stderr_isatty;
