@@ -158,7 +158,7 @@ int mmio_do_open_audio(void)
            in the global scope. That not valid C, so I'm just guessing at the
            author's motives and conditionally setting to that default in this
            function scope, right before sys_dacsr gets used in the code. */
-    if (sys_dacsr == 0) sys_dacsr = DEFAULTSRATE;
+    if (STUFF->st_dacsr == 0) STUFF->st_dacsr = DEFAULTSRATE;
 
     form.wf.wFormatTag = WAVE_FORMAT_PCM;
     form.wf.nChannels = CHANNELS_PER_DEVICE;
