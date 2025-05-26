@@ -336,6 +336,26 @@ static void sys_huphandler(int n)
     select(1, 0, 0, 0, &timeout);
 }
 
+void sys_setalarm(int microsec)
+{
+    struct itimerval gonzo;
+    int sec = (int)(microsec/1000000);
+    microsec %= 1000000;
+#if 0
+    fprintf(stderr, "timer %d:%d\n", sec, microsec);
+#endif
+    gonzo.it_interval.tv_sec = 0;
+    gonzo.it_interval.tv_usec = 0;
+    gonzo.it_value.tv_sec = sec;
+    gonzo.it_value.tv_usec = microsec;
+    if (microsec)
+        sys_signal(SIGALRM, sys_alarmhandler);
+    else sys_signal(SIGALRM, SIG_IGN);
+    setitimer(ITIMER_REAL, &gonzo, 0);
+}
+
+#endif /* NOT _WIN32 && NOT __CYGWIN__ */
+
 void sys_setsignalhandlers(void)
 {
 #if !defined(_WIN32) && !defined(__CYGWIN__)
@@ -356,26 +376,6 @@ void sys_setsignalhandlers(void)
 #endif
 #endif /* NOT _WIN32 && NOT __CYGWIN__ */
 }
-
-void sys_setalarm(int microsec)
-{
-    struct itimerval gonzo;
-    int sec = (int)(microsec/1000000);
-    microsec %= 1000000;
-#if 0
-    fprintf(stderr, "timer %d:%d\n", sec, microsec);
-#endif
-    gonzo.it_interval.tv_sec = 0;
-    gonzo.it_interval.tv_usec = 0;
-    gonzo.it_value.tv_sec = sec;
-    gonzo.it_value.tv_usec = microsec;
-    if (microsec)
-        sys_signal(SIGALRM, sys_alarmhandler);
-    else sys_signal(SIGALRM, SIG_IGN);
-    setitimer(ITIMER_REAL, &gonzo, 0);
-}
-
-#endif /* NOT _WIN32 && NOT __CYGWIN__ */
 
 #define MODE_NRT 0
 #define MODE_RT 1
