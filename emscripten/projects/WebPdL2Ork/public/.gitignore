@@ -2,6 +2,7 @@
 !js
 !service.js
 !emscripten
+!custom
 !css
 !default.pd
 !favicon.ico
