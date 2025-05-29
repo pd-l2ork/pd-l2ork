@@ -5872,7 +5872,7 @@ function uploadPatch(file) {
     reader.onload = function () {
         const uint8Array = new Uint8Array(reader.result);
         const content = new TextDecoder("utf-8").decode(uint8Array);
-        openPatch(content, file.name);
+        openPatch(content, file.name, '/' + file.name);
     };
     reader.readAsArrayBuffer(file);
 }
