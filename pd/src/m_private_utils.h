@@ -13,11 +13,6 @@
 # error m_private_utils.h is a PRIVATE header. do *not* use it in your externals
 #endif
 
-#ifdef HAVE_CONFIG_H
-/* autotools might put all the HAVE_... defines into "config.h" */
-# include "config.h"
-#endif
-
 /* ------------------------------ atomics ----------------------------------- */
 
 #ifdef _MSC_VER
@@ -76,7 +71,6 @@ static int atomic_int_compare_exchange(volatile int *ptr, int *expected, int des
 #endif
 #endif
 
-
 /* --------------------------- stack allocation helpers --------------------- */
 /* alloca helpers
  * - ALLOCA(type, array, nmemb, maxnmemb)
@@ -111,7 +105,7 @@ static int atomic_int_compare_exchange(volatile int *ptr, int *expected, int des
 #else /* !DONT_USE_ALLOCA */
 /* stack version (unless <nmemb> exceeds <maxnmemb>) */
 
-# if defined __linux__ || defined __APPLE__
+# ifdef HAVE_ALLOCA_H
 #  include <alloca.h> /* linux, mac, mingw, cygwin,... */
 # elif defined _WIN32
 #  include <malloc.h> /* MSVC or mingw on windows */

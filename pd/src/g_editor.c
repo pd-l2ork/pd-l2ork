@@ -1331,7 +1331,7 @@ static void glist_doreload_packed(t_canvas *x, void *z);
     /* recursively check for abstractions to reload as result of a save. 
     Don't reload the one we just saved ("except") though. */
     /*  LATER try to do the same trick for externs. */
-static void glist_doreload(t_glist *gl, t_symbol *name, t_symbol *dir,
+void glist_doreload(t_glist *gl, t_symbol *name, t_symbol *dir,
     t_gobj *except)
 {
     //fprintf(stderr,"doreload\n");

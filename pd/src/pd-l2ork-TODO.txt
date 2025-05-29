@@ -10,7 +10,7 @@ PD-L2ORK TODO:
 
 *Integrate #1756 pull request from vanilla that may improve the scheduler.
   *This is super convoluted as the literal merge requires major changes to a lot of the code base. Merging this will require a more surgical approach that only merges relevant changes.
-  *In progress
+  *IN PROGRESS
 
 *Try to track down a sporadic bug that sometimes assumes that object text is empty and even though you only add text, the resulting text is only what you added.
   *Need to find a way to reproduce reliably.
@@ -885,6 +885,7 @@ resulting in unexpected stuck keys.
   *Does not affect Windows.
   *On RPi (using PIXEL/LXDE variant, the window keeps going upwards). This was also tested and is ok.
   *Fixed using start-up window repositioning to calculate universal offset.
+*Fixed clone object by merging latest additions. May need additional testing for potential regressions.
 
 
 
