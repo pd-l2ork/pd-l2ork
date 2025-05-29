@@ -270,6 +270,7 @@ var Module = {
         console.error(e)
     }
     , pd: {} // make pd object accessible from outside of the scope
+    , locateFile: (file, base) => (base?.length ? base : '/') + file
     , mainInit: function () { // called after Module is ready
         Module.pd = new Module.Pd(); // instantiate Pd object
         if (typeof Module.pd != "object") {
@@ -569,6 +570,19 @@ var Module = {
                             break;
                         case "js":
                             data.worker?.postMessage?.({ func: 'bang' });
+                            break;
+                        case "hook":
+                            if('onBang' in data)
+                                data.onBang(source);
+                            else if('onAny' in data)
+                                data.onAny('Bang', source);
+                            else
+                                console.error('Hook missing handler for Bang', data);
+                            break;
+                        case "msg":
+                            break;
+                        default:
+                            console.error('Bang to unsupported data:', data);
                     }
                 }
             }
@@ -638,6 +652,20 @@ var Module = {
                             break;
                         case "js":
                             data.worker?.postMessage?.({ func: 'msg_float', args: [value]})
+                            break;
+                        case "hook":
+                            if('onFloat' in data)
+                                data.onFloat(source, value);
+                            else if('onAny' in data)
+                                data.onAny('Float', source, value);
+                            else
+                                console.error('Hook missing handler for Float', data);
+                            break;
+                        case "msg":
+                            break;
+                        default:
+                            console.error('Float to unsupported data:', data);
+
                     }
                 }
             }
@@ -672,6 +700,19 @@ var Module = {
                             break;
                         case "js":
                             data.worker?.postMessage?.({ func: 'anything', args: [symbol]});
+                            break;
+                        case "hook":
+                            if('onSymbol' in data)
+                                data.onSymbol(source, symbol);
+                            else if('onAny' in data)
+                                data.onAny('Symbol', source, symbol);
+                            else
+                                console.error('Hook missing handler for Symbol', data);
+                            break;
+                        case "msg":
+                            break;
+                        default:
+                            console.error('Symbol to unsupported data:', data);
                     }
                 }
             }
@@ -738,6 +779,19 @@ var Module = {
                             break;
                         case "js":
                             data.worker?.postMessage?.({ func: 'list', args: list })
+                            break;
+                        case "hook":
+                            if('onList' in data)
+                                data.onList(source, list);
+                            else if('onAny' in data)
+                                data.onAny('List', source, list);
+                            else
+                                console.error('Hook missing handler for List', data);
+                            break;
+                        case "msg":
+                            break;
+                        default:
+                            console.error('List to unsupported data:', data);
                     }
                 }
             }
@@ -1538,8 +1592,8 @@ var Module = {
                                     data.bufsize = list[0];
                                     gui_send("Message", [data.backendReceive], ["bufsize", list[0]]);
                                     break;
-
                             }
+                            break;
                         case "js":
                             switch(symbol) {
                                 case "compile":
@@ -1554,6 +1608,19 @@ var Module = {
                                 default:
                                     data.worker?.postMessage?.({ func: symbol, args: list });
                             }
+                            break;
+                        case "hook":
+                            if('onMessage' in data)
+                                data.onMessage(source, symbol, list);
+                            else if('onAny' in data)
+                                data.onAny('Message', source, symbol, list);
+                            else
+                                console.error('Hook missing handler for Message', data);
+                            break;
+                        case "msg":
+                            break;
+                        default:
+                            console.error('Message to unsupported data:', data);
                     }
                 }
             }
@@ -2110,6 +2177,32 @@ function gui_send(type, destinations, value) {
                 value === undefined ? Module.pd['send'+type](destination) : Module.pd['send'+type](destination, value);
         }
     }
+}
+
+let nextHook = 0;
+let dataHooks = {};
+function addDataHook(properties, symbols = properties.receive) {
+    const id = `hook-${nextHook++}`;
+
+    dataHooks[id] = {
+        id,
+        type: 'hook',
+        ...properties,
+        receive: Array.isArray(symbols) ? symbols : [symbols],
+    };
+
+    gui_subscribe(dataHooks[id]);
+
+    return id;
+}
+
+function removeDataHook(id) {
+    gui_unsubscribe(dataHooks[id]);
+}
+
+function clearDataHooks() {
+    for(const id in dataHooks)
+        removeDataHook(id);
 }
 
 // common
@@ -3810,10 +3903,11 @@ function gui_text_text(data, line_index, fontSize) {
 }
 
 //--------------------- patch handling ----------------------------
-async function openPatch(content, filename) {
+async function openPatch(content, filename, patchURL) {
     console.log(`Loading Patch: ${filename}`);
     document.title=filename;
 
+    const loadingStage = document.getElementById('loadingstage');
     const serviceWorker = await navigator.serviceWorker.register('/service.js', { scope: '/' });
     const openPatches = {};
     const registrationPromise = new Promise(Resolve => {
@@ -3903,17 +3997,19 @@ async function openPatch(content, filename) {
     serviceWorker.active.postMessage({type: 'register', parent: page.parent});
     await registrationPromise;
 
-    document.getElementById('loadingstage').innerHTML=`Fetching Dependencies`;
+    if(loadingStage)
+        loadingStage.innerHTML=`Fetching Dependencies`;
+
     await new Promise(Resolve => setTimeout(Resolve, 10));
     let start = Date.now();
     let abstractions = {};
-    let base = '/'+((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')+'/';
+    let base = patchURL.split('/').slice(0,-1).join('/')+'/';
     searchPaths = [base];
     let fetchAbstractions = async(content, path) => {
         let declares = content.split(';\n').filter(line => line.startsWith('#X declare')).map(declare => declare.slice(11).match(/-\w+ [^ ]+/g).filter(directive => directive.startsWith("-path")).map(directive => directive.split(' ')[1])).flat();
         let paths = [path, ...declares.map(declare => declare.startsWith('/')?declare:`${path}${declare}/`)];
         let missingAbstractions = [... new Set(content.split(';\n').filter( line => line.startsWith('#X obj') && !known_objects.includes(line.split(' ')[4]) ).map( line => line.split(' ')[4]))];
-        let abstractionData = await getPatchDatas(missingAbstractions.map(obj => paths.map(path => `${((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')}/${path}${obj}.pd`)).flat());
+        let abstractionData = await getPatchDatas(missingAbstractions.map(obj => paths.map(path => `${base}${path}${obj}.pd`)).flat());
         let promises = [];
         for(let abstraction in missingAbstractions) {
             for(let i=0; i<paths.length; i++) {
@@ -3929,7 +4025,9 @@ async function openPatch(content, filename) {
     }
     await fetchAbstractions(content,'/');
 
-    document.getElementById('loadingstage').innerHTML=`Parsing Patch`;
+    if(loadingStage)
+        loadingStage.innerHTML=`Parsing Patch`;
+
     console.log('Fetch time: '+(Date.now() - start)+'ms');
     await new Promise(Resolve => setTimeout(Resolve, 50));
     
@@ -4776,7 +4874,9 @@ async function openPatch(content, filename) {
                                 data.type = args[4];
                                 data.src = args[5];
                                 if(!data.src.includes('://') && !data.src.startsWith('@pd_extra'))
-                                    data.src = ((new URLSearchParams(window.location.search)).get('url')||'').split('/').slice(0,-1).join('/')+'/'+data.src;
+                                    data.src = base + data.src;
+                                if(data.src.startsWith('@pd_extra'))
+                                    data.src = '/' + data.src;
                                 data.gopSpill = +args[6];
                                 data.clickBehavior = +args[7];
                                 data.borderWidth = +args[8];
@@ -5714,7 +5814,9 @@ async function openPatch(content, filename) {
 
     windowSizeStack.push({id: '', width: layers[1].dimensions.width, height: layers[1].dimensions.height});
 
-    document.getElementById('loadingstage').innerHTML=`Starting Pd-L2Ork Engine`;
+    if(loadingStage)
+        loadingStage.innerHTML=`Starting Pd-L2Ork Engine`;
+
     await new Promise(resolve => setTimeout(resolve, 10));
 
     if (nextLayerID == 0)
@@ -5750,6 +5852,10 @@ async function openPatch(content, filename) {
             nextPatchID: page.nextPatchID
         }
     });
+
+    // Run init hook if provided
+    if(typeof initHook !== 'undefined')
+        await initHook?.();
 }
 
 function uploadPatch(file) {
@@ -5797,30 +5903,45 @@ async function getPatchDatas(urls) {
 // called after Module.mainInit() is called
 async function init() {
     const urlParams = new URLSearchParams(window.location.search);
-    let patchURL = urlParams.get("url");
-    let content = "";
-    let filename = "";
-    if (!patchURL) {
+    let patchURL = urlParams.get("url"), content, filename;
+
+    // Open default patch if no patch is provided
+    if (!patchURL)
         patchURL = "default.pd";
-    }
-    if (patchURL) {
+
+    // If a patchHook exists, run it
+    if(typeof patchHook !== 'undefined')
+        ({content, patchURL, filename} = await patchHook?.(patchURL));
+
+    // Fetch the patch content from URL if URL is provided
+    if (patchURL && !content?.length) {
+        if(!patchURL.startsWith('/'))
+            patchURL = window.location.pathname.split('/').slice(0,-1).join('/') + '/' + patchURL;
+
         filename = patchURL.split("/").pop();
         content = await getPatchData(patchURL);
-        if(!content.startsWith('#')) {
-            alert(`Failed to access the file ${patchURL}`);
-            loading.style.display = "none";
-            return;
-        }
+        if(!content.startsWith('#'))
+            content = null;
     }
+
+    // Show error if no patch was found
     if (!content) {
-        // we should not reach this because above we now
-        // always make patchURL have a default value
-        alert("Bug: init function");
-        loading.style.display = "none";
+        alert('Patch content not found');
+        if(loading)
+            loading.style.display = "none";
+
         return;
     }
-    await openPatch(content, filename);
-    loading.style.display = "none";
+
+    // Set default filename if not provided
+    if (!filename)
+        filename = 'unnamed.pd';
+
+    // Open patch
+    await openPatch(content, filename, patchURL);
+
+    if(loading)
+        loading.style.display = "none";
 }
 
 // drag & drop file uploading
@@ -5832,26 +5953,28 @@ function hideFilter() {
     filter.style.display = "none";
 }
 
-document.addEventListener("dragenter", function (e) {
-    e.preventDefault();
-    showFilter();
-});
-
-filter.addEventListener("dragleave", function (e) {
-    e.preventDefault();
-    hideFilter();
-});
-
-document.addEventListener("dragover", function (e) {
-    e.preventDefault();
-});
-
-filter.addEventListener("drop", function (e) {
-    e.preventDefault();
-    hideFilter();
-    const file = e.dataTransfer.files[0];
-    uploadPatch(file);
-});
+if(filter) {
+    document.addEventListener("dragenter", function (e) {
+        e.preventDefault();
+        showFilter();
+    });
+    
+    filter.addEventListener("dragleave", function (e) {
+        e.preventDefault();
+        hideFilter();
+    });
+    
+    document.addEventListener("dragover", function (e) {
+        e.preventDefault();
+    });
+    
+    filter.addEventListener("drop", function (e) {
+        e.preventDefault();
+        hideFilter();
+        const file = e.dataTransfer.files[0];
+        uploadPatch(file);
+    });
+}
 
 // disable context menu
 window.oncontextmenu = function (e) {

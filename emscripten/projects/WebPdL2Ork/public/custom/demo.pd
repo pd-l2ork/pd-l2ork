@@ -1,0 +1,11 @@
+#N canvas 615 188 366 313 12;
+#X obj -30 -30 preset_hub k12 1 %hidden%;
+#X floatatom 10 95 18 0 0 0 - random_in - 0 0 1, f 18;
+#X symbolatom 10 225 18 0 0 0 - - text_out 0 0 1, f 18;
+#X text 10 10 <b>Patch controlled by a custom web page</b>, f 47;
+#X text 10 155 This symbol box is monitored by the web page and its
+value is put into the text at the top of the page., f 48;
+#X text 10 50 This numbox is sent data from the web page when the button
+at the top of the page is clicked, f 47;
+#X text 10 255 Code can be found here:;
+#X obj 10 279 pddplink index.js;
