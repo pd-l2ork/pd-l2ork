@@ -2092,7 +2092,7 @@ void sys_doneglobinit(void)
     we really need and tell the GUI - that way we can support arbitrary
     zoom with appropriate font sizes.   And/or: if we ever move definitively
     to a vector-based GUI lib we might be able to skip this step altogether. */
-int sys_startgui(const char *libdir)
+int sys_startgui(const char *guidir)
 {
     t_canvas *x;
     stderr_isatty = isatty(2);
@@ -2101,7 +2101,7 @@ int sys_startgui(const char *libdir)
     INTER->i_havegui = 1;
     INTER->i_guihead = INTER->i_guitail = 0;
     INTER->i_waitingforping = 0;
-    if (sys_do_startgui(libdir))
+    if (sys_do_startgui(guidir))
         return (-1);
     return (0);
 }

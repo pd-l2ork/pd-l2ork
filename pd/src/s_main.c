@@ -499,7 +499,7 @@ if (socket_init())
     if (sys_nogui)
         clock_set((sys_fakefromguiclk =
             clock_new(0, (t_method)sys_fakefromgui)), 0);
-    else if (sys_startgui(sys_libdir->s_name)) /* start the gui */
+    else if (sys_startgui(sys_guidir->s_name)) /* start the gui */
         return (1);
     sys_afterargparse();                    /* post-argparse settings */
         /* send the libdir to the GUI */
