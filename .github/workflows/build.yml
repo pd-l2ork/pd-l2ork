@@ -86,12 +86,12 @@ jobs:
     if: ${{ github.event.inputs.desktop == 'true' }}
     steps:
       - name: deps
-        run: brew install wget autoconf automake libtool fftw python lua fluidsynth faac lame libvorbis speex gsl libquicktime sdl2 pkg-config gettext freetype2 ftgl jpeg libtiff sdl glfw ninja cmake
+        run: brew install autoconf automake libtool fftw lua fluidsynth faac lame libvorbis speex gsl libquicktime sdl2 ftgl jpeg sdl glfw cmake
       - uses: actions/checkout@v4
         with:
           submodules: "recursive"
       - name: make
-        run: cd l2ork_addons && ./tar_em_up.sh -tkn
+        run: cd l2ork_addons && ./tar_em_up.sh -Tkn
       - uses: L-Super/create-dmg-actions@v1.0.3
         with:
           dmg_name: "Pd-L2Ork-arm"
@@ -107,12 +107,12 @@ jobs:
     if: ${{ github.event.inputs.desktop == 'true' }}
     steps:
       - name: deps
-        run: brew install wget autoconf automake libtool fftw python lua fluidsynth faac lame libvorbis speex gsl libquicktime sdl2 pkg-config gettext freetype2 ftgl jpeg libtiff sdl glfw ninja cmake
+        run: brew install autoconf automake libtool fftw lua fluidsynth faac lame libvorbis speex gsl libquicktime sdl2 ftgl jpeg sdl glfw cmake
       - uses: actions/checkout@v4
         with:
           submodules: "recursive"
       - name: make
-        run: cd l2ork_addons && ./tar_em_up.sh -tkn
+        run: cd l2ork_addons && ./tar_em_up.sh -Tkn
       - uses: L-Super/create-dmg-actions@v1.0.3
         with:
           dmg_name: "Pd-L2Ork-x86"
@@ -157,7 +157,7 @@ jobs:
         with:
           msystem: MINGW32
           update: true
-          install: git mingw-w64-ucrt-x86_64-gcc autoconf automake git libtool make mingw-w64-i686-dlfcn mingw-w64-i686-fluidsynth mingw-w64-i686-SDL2 mingw-w64-i686-ftgl mingw-w64-i686-fribidi mingw-w64-i686-ladspa-sdk mingw-w64-i686-lame mingw-w64-i686-libsndfile mingw-w64-i686-libvorbis mingw-w64-i686-lua mingw-w64-i686-toolchain mingw-w64-i686-libjpeg-turbo mingw-w64-i686-speex rsync unzip wget mingw-w64-i686-cmake mingw-w64-i686-ninja mingw-w64-i686-glfw mingw-w64-i686-pcre mingw-w64-i686-ntldd-git
+          install: git mingw-w64-ucrt-x86_64-gcc autoconf automake git libtool make mingw-w64-i686-dlfcn mingw-w64-i686-fluidsynth mingw-w64-i686-SDL2 mingw-w64-x86_64-ftgl mingw-w64-i686-fribidi mingw-w64-i686-ladspa-sdk mingw-w64-i686-lame mingw-w64-i686-libsndfile mingw-w64-i686-libvorbis mingw-w64-i686-lua mingw-w64-i686-toolchain mingw-w64-i686-libjpeg-turbo mingw-w64-i686-speex rsync unzip wget mingw-w64-i686-cmake mingw-w64-i686-ninja mingw-w64-i686-glfw mingw-w64-i686-pcre mingw-w64-i686-ntldd-git
       - name: make
         run: cd l2ork_addons && CFLAGS_GITHUB_RUNNER=-std=gnu17 inst_dir="/usr" ./tar_em_up.sh -Tk
       - name: rename
