@@ -86,7 +86,7 @@ jobs:
     if: ${{ github.event.inputs.desktop == 'true' }}
     steps:
       - name: deps
-        run: brew install autoconf automake libtool fftw lua fluidsynth faac lame libvorbis speex gsl libquicktime sdl2 ftgl jpeg sdl glfw cmake
+        run: brew install autoconf automake libtool fftw lua fluidsynth faac lame libvorbis speex gsl libquicktime sdl2 ftgl jpeg sdl glfw && brew install --formula cmake
       - uses: actions/checkout@v4
         with:
           submodules: "recursive"
@@ -107,7 +107,7 @@ jobs:
     if: ${{ github.event.inputs.desktop == 'true' }}
     steps:
       - name: deps
-        run: brew install autoconf automake libtool fftw lua fluidsynth faac lame libvorbis speex gsl libquicktime sdl2 ftgl jpeg sdl glfw cmake
+        run: brew install autoconf automake libtool fftw lua fluidsynth faac lame libvorbis speex gsl libquicktime sdl2 ftgl jpeg sdl glfw && brew install --formula cmake
       - uses: actions/checkout@v4
         with:
           submodules: "recursive"
