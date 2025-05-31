@@ -90,11 +90,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: "recursive"
-      - name: Replace Apple libtool with GNU libtool
+      - name: Set up GNU libtool (glibtool)
         run: |
-          sudo mv /usr/bin/libtool /usr/bin/libtool.apple
-          sudo ln -s $(brew --prefix)/bin/glibtool /usr/local/bin/libtool
-          sudo ln -s $(brew --prefix)/bin/glibtoolize /usr/local/bin/libtoolize
+          echo "alias libtool='glibtool'" >> ~/.bashrc
+          echo "alias libtoolize='glibtoolize'" >> ~/.bashrc
+          echo "alias libtool='glibtool'" >> ~/.zshrc
+          echo "alias libtoolize='glibtoolize'" >> ~/.zshrc
+          export LIBTOOL=glibtool
+          export LIBTOOLIZE=glibtoolize
+          echo 'export LIBTOOL=glibtool' >> $GITHUB_ENV
+          echo 'export LIBTOOLIZE=glibtoolize' >> $GITHUB_ENV
       - name: make
         run: cd l2ork_addons && ./tar_em_up.sh -Tkn
       - uses: L-Super/create-dmg-actions@v1.0.3
@@ -116,11 +121,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: "recursive"
-      - name: Replace Apple libtool with GNU libtool
+      - name: Set up GNU libtool (glibtool)
         run: |
-          sudo mv /usr/bin/libtool /usr/bin/libtool.apple
-          sudo ln -s $(brew --prefix)/bin/glibtool /usr/local/bin/libtool
-          sudo ln -s $(brew --prefix)/bin/glibtoolize /usr/local/bin/libtoolize
+          echo "alias libtool='glibtool'" >> ~/.bashrc
+          echo "alias libtoolize='glibtoolize'" >> ~/.bashrc
+          echo "alias libtool='glibtool'" >> ~/.zshrc
+          echo "alias libtoolize='glibtoolize'" >> ~/.zshrc
+          export LIBTOOL=glibtool
+          export LIBTOOLIZE=glibtoolize
+          echo 'export LIBTOOL=glibtool' >> $GITHUB_ENV
+          echo 'export LIBTOOLIZE=glibtoolize' >> $GITHUB_ENV
       - name: make
         run: cd l2ork_addons && ./tar_em_up.sh -Tkn
       - uses: L-Super/create-dmg-actions@v1.0.3
