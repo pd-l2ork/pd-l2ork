@@ -901,7 +901,7 @@ $(gem_src)/Gem.pd_darwin: gem_prep
 		--without-ndi --with-DeckLink-CFLAGS="-I./plugins/DECKLINK/SDK" \
 		--with-pd=$(pd_src)
 ifeq ($(OS_NAME),darwin)
-	perl -0777 -i -pe 's{(LTOBJCXXCOMPILE\s*=.*?--)(mode=compile)}{$1tag=OBJCXX --$2}s' Gem/plugins/imageIO/Makefile
+	perl -0777 -i -pe 's{(LTOBJCXXCOMPILE\s*=.*?--)(mode=compile)}{$1tag=OBJCXX --$2}s' $(gem_src)/plugins/imageIO/Makefile
 endif
 	$(MAKE) $(GEM_MAKEFLAGS) -C $(gem_src)
 
