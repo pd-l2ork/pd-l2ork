@@ -886,9 +886,10 @@ endif
 gem_window = --with-sdl2 --with-sdl2-LIBS="-L$(usrlocal)/lib -lSDL2" --with-defaultwindow=gemglfw3window
 
 $(gem_src)/Gem.pd_darwin: gem_prep
-	perl -i -pe 's{(\s)--mode=compile}{${1} --tag=CXX --mode=compile} if /imageIO\.mm/' $(gem_src)/plugins/imageIO/Makefile
+	cd $(gem_src) && autoreconf -vim
+	perl -i -pe 's{(\s)--mode=compile}{${1} --tag=CXX --mode=compile} if /imageIO\.mm/' $(gem_src)/plugins/imageIO/Makefile.in
 	perl -i -pe 's/CGRect rect = \{\{0,0\},\{w,h\}\};/CGRect rect = {{0,0},{(double)w,(double)h}};/' $(gem_src)/plugins/imageIO/imageIO.mm
-	cd $(gem_src) && autoreconf -vim && ./configure \
+	cd $(gem_src) && ./configure \
 		CXXFLAGS="-DHAVE_S_STUFF_H $(CFLAGS_ADD)" \
 		--prefix=$(prefix) \
 		--libdir=$(objectsdir) \
