@@ -105,7 +105,10 @@ static int atomic_int_compare_exchange(volatile int *ptr, int *expected, int des
 #else /* !DONT_USE_ALLOCA */
 /* stack version (unless <nmemb> exceeds <maxnmemb>) */
 
-# if defined(HAVE_ALLOCA_H)
+# ifdef __APPLE__
+# include <alloca.h>
+# include <stdlib.h>
+# elif defined(HAVE_ALLOCA_H)
 #  include <alloca.h> /* linux, mac, mingw, cygwin,... */
 # elif defined _WIN32
 #  include <malloc.h> /* MSVC or mingw on windows */
