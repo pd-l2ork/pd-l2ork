@@ -408,7 +408,7 @@ int sys_trytoopenit(const char *dir, const char *name, const char* ext,
     char *dirresult, char **nameresult, unsigned int size, int bin, int okgui)
 {
     int fd;
-    char buf[FILENAME_MAX];
+    char buf[MAXPDSTRING];
     if (strlen(dir) + strlen(name) + strlen(ext) + 4 > size)
         return (-1);
     sys_expandpath(dir, buf, MAXPDSTRING);
