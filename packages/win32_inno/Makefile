@@ -99,7 +99,14 @@ endif
 #bin_src = /usr/local/bin
 bin_src = /mingw32/bin
 system32 = /c/WINDOWS/system32
-lib_install:
+
+$(bin_src)/libftgl-2.dll:
+	mkdir /tmp/ftgl && cd /tmp/ftgl && \
+		wget https://raw.githubusercontent.com/msys2/MINGW-packages/e33213fb01ac0bd52ef866ebbd1248a91e6ff74c/mingw-w64-ftgl/PKGBUILD && \
+		perl -i -pe 's|^\s*make ECHO=echo\s*|  make ECHO=echo CXXFLAGS="$$(make -pn | grep '\''^CXXFLAGS ='\'' | head -1 | cut -d= -f2-) -fpermissive"|' PKGBUILD && \
+		makepkg -si --noconfirm
+
+lib_install: $(bin_src)/libftgl-2.dll
 # ultimately, the DLLs should be installed in %SystemRoot%\system32 by
 # InnoSetup since they are 'officially' named and versioned DLLs, and can be
 # shared between apps
