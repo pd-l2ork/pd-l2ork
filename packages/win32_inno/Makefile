@@ -107,8 +107,9 @@ $(bin_src)/libftgl-2.dll:
 		new_line='  make ECHO=echo CXXFLAGS="`make -pn | grep ^CXXFLAGS\\ = | head -1 | cut -d= -f2-` -fpermissive"'; \
 		awk -v old="$$old_line" -v new="$$new_line" ' \
 			{gsub(/^[ \t]+/, "", $$0); if ($$0 == old) print new; else print $$0} \
-			' PKGBUILD > PKGBUILD.new && mv PKGBUILD.new PKGBUILD
-		makepkg -si --noconfirm
+			' PKGBUILD > PKGBUILD.new && mv PKGBUILD.new PKGBUILD; \
+		makepkg -si --noconfirm; \
+		rm -r /tmp/ftgl
 
 lib_install: $(bin_src)/libftgl-2.dll
 # ultimately, the DLLs should be installed in %SystemRoot%\system32 by
