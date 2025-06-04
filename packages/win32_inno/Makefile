@@ -103,7 +103,8 @@ system32 = /c/WINDOWS/system32
 $(bin_src)/libftgl-2.dll:
 	mkdir -p /tmp/ftgl && cd /tmp/ftgl && rm -f PKGBUILD && \
 		wget https://raw.githubusercontent.com/msys2/MINGW-packages/e33213fb01ac0bd52ef866ebbd1248a91e6ff74c/mingw-w64-ftgl/PKGBUILD && \
-		perl -i -pe 's|^\s*make ECHO=echo\s*$$|  make ECHO=echo CXXFLAGS="$$\(make -pn | grep \'^CXXFLAGS =\' | head -1 | cut -d= -f2-) -fpermissive"|' PKGBUILD && \
+		new_line='  make ECHO=echo CXXFLAGS="`make -pn | grep ^CXXFLAGS\ = | head -1 | cut -d= -f2-` -fpermissive"' && \
+		perl -i -pe "s|^\s*make ECHO=echo\s*$$|$$new_line|" PKGBUILD && \
 		makepkg -si --noconfirm
 
 lib_install: $(bin_src)/libftgl-2.dll
