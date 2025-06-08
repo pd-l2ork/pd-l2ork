@@ -1669,7 +1669,7 @@ void garray_redraw(t_garray *x)
         SETFLOAT(data, block);
         for(int i = 0; i < c; i++)
             SETFLOAT(data+i+1, *((t_float *)((char *)array->a_vec + elemsize * (i + BLOCK_SIZE * block)) + yonset));
-        (*libpd_messagehook)(x->x_realname->s_name, "data", c + 1, data);
+        (*LIBPDSTUFF->i_hooks.h_messagehook)(x->x_realname->s_name, "data", c + 1, data);
     }
 #endif
 

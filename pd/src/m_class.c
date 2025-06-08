@@ -1260,8 +1260,6 @@ extern t_pd *pd_mess_from_responder(t_pd *x);
 t_symbol *last_typedmess;
 t_pd *last_typedmess_pd;
 
-#ifndef __EMSCRIPTEN__
-
 void pd_typedmess(t_pd *x, t_symbol *s, int argc, t_atom *argv)
 {
     t_class *c = *x;
@@ -1357,6 +1355,7 @@ void pd_typedmess(t_pd *x, t_symbol *s, int argc, t_atom *argv)
             wp = m->me_arg;
             if (*wp == A_GIMME)
             {
+#ifndef __EMSCRIPTEN__
                 if (x == &pd_objectmaker)
                     pd_this->pd_newest = (*((t_newgimme)(m->me_fun)))(s, argc, argv);
                 else if (((t_messgimmer)(m->me_fun)) == ((t_messgimmer)(canvas_new)))
@@ -1364,6 +1363,20 @@ void pd_typedmess(t_pd *x, t_symbol *s, int argc, t_atom *argv)
                 else
                     (*((t_messgimme)(m->me_fun)))(x, s, argc, argv);
                 goto lastmess;
+#else
+            if (x == &pd_objectmaker)
+                pd_this->pd_newest =
+                    (*((t_newgimme)(m->me_fun)))(s, argc, argv);
+            else if (((t_messgimmer)(m->me_fun)) == ((t_messgimmer)(canvas_new)))
+                (*((t_messgimmer)(m->me_fun)))(x, s, argc, argv);
+            else if (((t_messgimmer)(m->me_fun)) == ((t_messgimmer)(template_usetemplate)))
+                (*((t_messgimmer)(m->me_fun)))(x, s, argc, argv);
+            else if (((t_messgimmer)(m->me_fun)) == ((t_messgimmer)(graph_array)))
+                (*((t_messgimmer)(m->me_fun)))(x, s, argc, argv);
+            else
+                (*((t_messgimme)(m->me_fun)))(x, s, argc, argv);
+            return;
+#endif
             }
             if (argc > MAXPDARG) argc = MAXPDARG;
             if (x != &pd_objectmaker) *(ap++) = (t_int)x, niarg++;
@@ -1462,388 +1475,6 @@ lastmess:
     last_typedmess_pd = x;
     return;
 }
-
-#else // __EMSCRIPTEN__
-
-void pd_typedmess(t_pd *x, t_symbol *s, int argc, t_atom *argv)
-{
-    t_method *f;
-    t_class *c = *x;
-    t_methodentry *m, *mlist;
-    t_atomtype *wp, wanttype;
-    int i;
-    t_int ai[MAXPDARG+1], *ap = ai;
-    t_floatarg ad[MAXPDARG+1], *dp = ad;
-    int niarg = 0;
-    int nfarg = 0;
-    t_pd *bonzo;
-
-        /* check for messages that are handled by fixed slots in the class
-        structure.  We don't catch "pointer" though so that sending "pointer"
-        to pd_objectmaker doesn't require that we supply a pointer value. */
-    if (s == &s_float)
-    {
-        if (x == &pd_objectmaker)
-          if (!argc)
-              newest = pdfloat_new(x, 0.);
-          else if (argv->a_type == A_FLOAT)
-              newest = pdfloat_new(x, argv->a_w.w_float);
-          else goto badarg;
-        else
-          if (!argc) (*c->c_floatmethod)(x, 0.);
-          else if (argv->a_type == A_FLOAT)
-              (*c->c_floatmethod)(x, argv->a_w.w_float);
-          else goto badarg;
-        return;
-    }
-    if (s == &s_bang)
-    {
-        if (x == &pd_objectmaker)
-            newest = bang_new(x);
-        else
-            (*c->c_bangmethod)(x);
-        return;
-    }
-    if (s == &s_list)
-    {
-        if (x == &pd_objectmaker)
-            newest = list_new(x, s, argc, argv);
-        else
-            (*c->c_listmethod)(x, s, argc, argv);
-        return;
-    }
-    if (s == &s_symbol)
-    {
-        if (argc && argv->a_type == A_SYMBOL)
-           if (x == &pd_objectmaker)
-                newest = pdsymbol_new(x, argv->a_w.w_symbol);
-           else
-                (*c->c_symbolmethod)(x, argv->a_w.w_symbol);
-        else
-           if (x == &pd_objectmaker)
-                newest = pdsymbol_new(x, &s_);
-           else
-                (*c->c_symbolmethod)(x, &s_);
-        return;
-    }
-#ifdef PDINSTANCE
-    mlist = c->c_methods[pd_this->pd_instanceno];
-#else
-    mlist = c->c_methods;
-#endif
-    for (i = c->c_nmethod, m = mlist; i--; m++)
-        if (m->me_name == s)
-    {
-        wp = m->me_arg;
-        if (*wp == A_GIMME)
-        {
-            if (x == &pd_objectmaker)
-                newest =
-                    (*((t_newgimme)(m->me_fun)))(s, argc, argv);
-            else if (((t_messgimmer)(m->me_fun)) == ((t_messgimmer)(canvas_new)))
-                (*((t_messgimmer)(m->me_fun)))(x, s, argc, argv);
-            else if (((t_messgimmer)(m->me_fun)) == ((t_messgimmer)(template_usetemplate)))
-                (*((t_messgimmer)(m->me_fun)))(x, s, argc, argv);
-            else if (((t_messgimmer)(m->me_fun)) == ((t_messgimmer)(graph_array)))
-                (*((t_messgimmer)(m->me_fun)))(x, s, argc, argv);
-            else
-                (*((t_messgimme)(m->me_fun)))(x, s, argc, argv);
-            return;
-        }
-        if (argc > MAXPDARG) argc = MAXPDARG;
-        if (x != &pd_objectmaker) *(ap++) = (t_int)x, niarg++;
-        while ((wanttype = *wp++))
-        {
-            switch (wanttype)
-            {
-            case A_POINTER:
-                if (!argc) goto badarg;
-                else
-                {
-                    if (argv->a_type == A_POINTER)
-                        *ap = (t_int)(argv->a_w.w_gpointer);
-                    else goto badarg;
-                    argc--;
-                    argv++;
-                }
-                niarg++;
-                ap++;
-                break;
-            case A_FLOAT:
-                if (!argc) goto badarg;  /* falls through */
-            case A_DEFFLOAT:
-                if (!argc) *dp = 0;
-                else
-                {
-                    if (argv->a_type == A_FLOAT)
-                        *dp = argv->a_w.w_float;
-                    else goto badarg;
-                    argc--;
-                    argv++;
-                }
-                nfarg++;
-                dp++;
-                break;
-            case A_SYMBOL:
-                if (!argc) goto badarg;  /* falls through */
-            case A_DEFSYM:
-                if (!argc) *ap = (t_int)(&s_);
-                else
-                {
-                    if (argv->a_type == A_SYMBOL)
-                        *ap = (t_int)(argv->a_w.w_symbol);
-                            /* if it's an unfilled "dollar" argument it appears
-                            as zero here; cheat and bash it to the null
-                            symbol.  Unfortunately, this lets real zeros
-                            pass as symbols too, which seems wrong... */
-                    else if (x == &pd_objectmaker && argv->a_type == A_FLOAT
-                        && argv->a_w.w_float == 0)
-                        *ap = (t_int)(&s_);
-                    else goto badarg;
-                    argc--;
-                    argv++;
-                }
-                niarg++;
-                ap++;
-                break;
-            default:
-                goto badarg;
-            }
-        }
-
-        if (x == &pd_objectmaker)
-        {
-            switch (niarg * 10 + nfarg)
-            {
-            case 0 : bonzo = (*(t_fun00)(m->me_fun))
-                (); break;
-            case 10 : bonzo = (*(t_fun10)(m->me_fun))
-                (ai[0]); break;
-            case 20 : bonzo = (*(t_fun20)(m->me_fun))
-                (ai[0], ai[1]); break;
-            case 30 : bonzo = (*(t_fun30)(m->me_fun))
-                (ai[0], ai[1], ai[2]); break;
-            case 40 : bonzo = (*(t_fun40)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3]); break;
-            case 50 : bonzo = (*(t_fun50)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4]); break;
-            case 60 : bonzo = (*(t_fun60)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4], ai[5]); break;
-
-            case 1 : bonzo = (*(t_fun01)(m->me_fun))
-                (ad[0]); break;
-            case 11 : bonzo = (*(t_fun11)(m->me_fun))
-                (ai[0], ad[0]); break;
-            case 21 : bonzo = (*(t_fun21)(m->me_fun))
-                (ai[0], ai[1], ad[0]); break;
-            case 31 : bonzo = (*(t_fun31)(m->me_fun))
-                (ai[0], ai[1], ai[2], ad[0]); break;
-            case 41 : bonzo = (*(t_fun41)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3],
-                    ad[0]); break;
-            case 51 : bonzo = (*(t_fun51)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4],
-                    ad[0]); break;
-            case 61 : bonzo = (*(t_fun61)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4], ai[5],
-                    ad[0]); break;
-
-            case 2 : bonzo = (*(t_fun02)(m->me_fun))
-                (ad[0], ad[1]); break;
-            case 12 : bonzo = (*(t_fun12)(m->me_fun))
-                (ai[0], ad[0], ad[1]); break;
-            case 22 : bonzo = (*(t_fun22)(m->me_fun))
-                (ai[0], ai[1], ad[0], ad[1]); break;
-            case 32 : bonzo = (*(t_fun32)(m->me_fun))
-                (ai[0], ai[1], ai[2], ad[0], ad[1]); break;
-            case 42 : bonzo = (*(t_fun42)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3],
-                    ad[0], ad[1]); break;
-            case 52 : bonzo = (*(t_fun52)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4],
-                    ad[0], ad[1]); break;
-            case 62 : bonzo = (*(t_fun62)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4], ai[5],
-                    ad[0], ad[1]); break;
-
-            case 3 : bonzo = (*(t_fun03)(m->me_fun))
-                (ad[0], ad[1], ad[2]); break;
-            case 13 : bonzo = (*(t_fun13)(m->me_fun))
-                (ai[0], ad[0], ad[1], ad[2]); break;
-            case 23 : bonzo = (*(t_fun23)(m->me_fun))
-                (ai[0], ai[1], ad[0], ad[1], ad[2]); break;
-            case 33 : bonzo = (*(t_fun33)(m->me_fun))
-                (ai[0], ai[1], ai[2], ad[0], ad[1], ad[2]); break;
-            case 43 : bonzo = (*(t_fun43)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3],
-                    ad[0], ad[1], ad[2]); break;
-            case 53 : bonzo = (*(t_fun53)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4],
-                    ad[0], ad[1], ad[2]); break;
-            case 63 : bonzo = (*(t_fun63)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4], ai[5],
-                    ad[0], ad[1], ad[2]); break;
-
-            case 4 : bonzo = (*(t_fun04)(m->me_fun))
-                (ad[0], ad[1], ad[2], ad[3]); break;
-            case 14 : bonzo = (*(t_fun14)(m->me_fun))
-                (ai[0], ad[0], ad[1], ad[2], ad[3]); break;
-            case 24 : bonzo = (*(t_fun24)(m->me_fun))
-                (ai[0], ai[1], ad[0], ad[1], ad[2], ad[3]); break;
-            case 34 : bonzo = (*(t_fun34)(m->me_fun))
-                (ai[0], ai[1], ai[2], ad[0], ad[1], ad[2], ad[3]); break;
-            case 44 : bonzo = (*(t_fun44)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3],
-                    ad[0], ad[1], ad[2], ad[3]); break;
-            case 54 : bonzo = (*(t_fun54)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4],
-                    ad[0], ad[1], ad[2], ad[3]); break;
-            case 64 : bonzo = (*(t_fun64)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4], ai[5],
-                    ad[0], ad[1], ad[2], ad[3]); break;
-
-            case 5 : bonzo = (*(t_fun05)(m->me_fun))
-                (ad[0], ad[1], ad[2], ad[3], ad[4]); break;
-            case 15 : bonzo = (*(t_fun15)(m->me_fun))
-                (ai[0], ad[0], ad[1], ad[2], ad[3], ad[4]); break;
-            case 25 : bonzo = (*(t_fun25)(m->me_fun))
-                (ai[0], ai[1], ad[0], ad[1], ad[2], ad[3], ad[4]); break;
-            case 35 : bonzo = (*(t_fun35)(m->me_fun))
-                (ai[0], ai[1], ai[2], ad[0], ad[1], ad[2], ad[3], ad[4]); break;
-            case 45 : bonzo = (*(t_fun45)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3],
-                    ad[0], ad[1], ad[2], ad[3], ad[4]); break;
-            case 55 : bonzo = (*(t_fun55)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4],
-                    ad[0], ad[1], ad[2], ad[3], ad[4]); break;
-            case 65 : bonzo = (*(t_fun65)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4], ai[5],
-                    ad[0], ad[1], ad[2], ad[3], ad[4]); break;
-            default: bonzo = 0;
-            }
-            newest = bonzo;
-        }
-        else
-        {
-            switch (niarg * 10 + nfarg)
-            {
-            case 0 : (*(t_vfun00)(m->me_fun))
-                (); break;
-            case 10 : (*(t_vfun10)(m->me_fun))
-                (ai[0]); break;
-            case 20 : (*(t_vfun20)(m->me_fun))
-                (ai[0], ai[1]); break;
-            case 30 : (*(t_vfun30)(m->me_fun))
-                (ai[0], ai[1], ai[2]); break;
-            case 40 : (*(t_vfun40)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3]); break;
-            case 50 : (*(t_vfun50)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4]); break;
-            case 60 : (*(t_vfun60)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4], ai[5]); break;
-
-            case 1 : (*(t_vfun01)(m->me_fun))
-                (ad[0]); break;
-            case 11 : (*(t_vfun11)(m->me_fun))
-                (ai[0], ad[0]); break;
-            case 21 : (*(t_vfun21)(m->me_fun))
-                (ai[0], ai[1], ad[0]); break;
-            case 31 : (*(t_vfun31)(m->me_fun))
-                (ai[0], ai[1], ai[2], ad[0]); break;
-            case 41 : (*(t_vfun41)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3],
-                    ad[0]); break;
-            case 51 : (*(t_vfun51)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4],
-                    ad[0]); break;
-            case 61 : (*(t_vfun61)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4], ai[5],
-                    ad[0]); break;
-
-            case 2 : (*(t_vfun02)(m->me_fun))
-                (ad[0], ad[1]); break;
-            case 12 : (*(t_vfun12)(m->me_fun))
-                (ai[0], ad[0], ad[1]); break;
-            case 22 : (*(t_vfun22)(m->me_fun))
-                (ai[0], ai[1], ad[0], ad[1]); break;
-            case 32 : (*(t_vfun32)(m->me_fun))
-                (ai[0], ai[1], ai[2], ad[0], ad[1]); break;
-            case 42 : (*(t_vfun42)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3],
-                    ad[0], ad[1]); break;
-            case 52 : (*(t_vfun52)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4],
-                    ad[0], ad[1]); break;
-            case 62 : (*(t_vfun62)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4], ai[5],
-                    ad[0], ad[1]); break;
-
-            case 3 : (*(t_vfun03)(m->me_fun))
-                (ad[0], ad[1], ad[2]); break;
-            case 13 : (*(t_vfun13)(m->me_fun))
-                (ai[0], ad[0], ad[1], ad[2]); break;
-            case 23 : (*(t_vfun23)(m->me_fun))
-                (ai[0], ai[1], ad[0], ad[1], ad[2]); break;
-            case 33 : (*(t_vfun33)(m->me_fun))
-                (ai[0], ai[1], ai[2], ad[0], ad[1], ad[2]); break;
-            case 43 : (*(t_vfun43)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3],
-                    ad[0], ad[1], ad[2]); break;
-            case 53 : (*(t_vfun53)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4],
-                    ad[0], ad[1], ad[2]); break;
-            case 63 : (*(t_vfun63)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4], ai[5],
-                    ad[0], ad[1], ad[2]); break;
-
-            case 4 : (*(t_vfun04)(m->me_fun))
-                (ad[0], ad[1], ad[2], ad[3]); break;
-            case 14 : (*(t_vfun14)(m->me_fun))
-                (ai[0], ad[0], ad[1], ad[2], ad[3]); break;
-            case 24 : (*(t_vfun24)(m->me_fun))
-                (ai[0], ai[1], ad[0], ad[1], ad[2], ad[3]); break;
-            case 34 : (*(t_vfun34)(m->me_fun))
-                (ai[0], ai[1], ai[2], ad[0], ad[1], ad[2], ad[3]); break;
-            case 44 : (*(t_vfun44)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3],
-                    ad[0], ad[1], ad[2], ad[3]); break;
-            case 54 : (*(t_vfun54)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4],
-                    ad[0], ad[1], ad[2], ad[3]); break;
-            case 64 : (*(t_vfun64)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4], ai[5],
-                    ad[0], ad[1], ad[2], ad[3]); break;
-
-            case 5 : (*(t_vfun05)(m->me_fun))
-                (ad[0], ad[1], ad[2], ad[3], ad[4]); break;
-            case 15 : (*(t_vfun15)(m->me_fun))
-                (ai[0], ad[0], ad[1], ad[2], ad[3], ad[4]); break;
-            case 25 : (*(t_vfun25)(m->me_fun))
-                (ai[0], ai[1], ad[0], ad[1], ad[2], ad[3], ad[4]); break;
-            case 35 : (*(t_vfun35)(m->me_fun))
-                (ai[0], ai[1], ai[2], ad[0], ad[1], ad[2], ad[3], ad[4]); break;
-            case 45 : (*(t_vfun45)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3],
-                    ad[0], ad[1], ad[2], ad[3], ad[4]); break;
-            case 55 : (*(t_vfun55)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4],
-                    ad[0], ad[1], ad[2], ad[3], ad[4]); break;
-            case 65 : (*(t_vfun65)(m->me_fun))
-                (ai[0], ai[1], ai[2], ai[3], ai[4], ai[5],
-                    ad[0], ad[1], ad[2], ad[3], ad[4]); break;
-            default: ;
-            }
-        }
-        return;
-    }
-    (*c->c_anymethod)(x, s, argc, argv);
-    return;
-badarg:
-    pd_error(x, "Bad arguments for message '%s' to object '%s'",
-        s->s_name, c->c_name->s_name);
-}
-
-#endif // __EMSCRIPTEN__
 
 
     /* convenience routine giving a stdarg interface to typedmess().  Only

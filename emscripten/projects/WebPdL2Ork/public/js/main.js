@@ -1987,19 +1987,28 @@ function colfromload(col, bits = 6) { // decimal to hex color
 }
 
 const queue = {};
+let scheduled = false;
 function sendToServiceWorker(message) {
     if(!(message.type in queue))
         queue[message.type] = [];
 
     queue[message.type].push(message.data);
+
+    if(!scheduled) {
+        queueMicrotask(flushServiceWorkerQueue);
+        scheduled = true;
+    }
 }
 
-setInterval(() => {
+
+function flushServiceWorkerQueue() {
     for(const type in queue) {
         navigator.serviceWorker.controller.postMessage({ type, data: queue[type].flat()});
         delete queue[type];
     }
-}, 100);
+
+    scheduled = false;
+}
 
 function sendToChildren(...data) {
     if(page.mode !== 'parent')
@@ -2072,6 +2081,10 @@ function gui_unsubscribe(data) {
 }
 
 function gui_send(type, destinations, value) {
+    queueMicrotask(() => do_gui_send(type, destinations, value));
+}
+
+function do_gui_send(type, destinations, value) {
     if(page.mode !== 'parent') {
         sendToParent(...destinations.map(symbol => ({
             type: 'pd',
@@ -5676,12 +5689,14 @@ async function openPatch(content, filename) {
                         //If both the sender and receiver are gui objects, we can directly set their sends and receives
                         //Theoretically, they should only have 1 input/output, so the input/output id should always be 0
                         if(args[3] === '0') {
+                            lines.splice(i, 1);
                             layer.guiObjects[args[2]].send.push(connectionName);
                             if(layer.guiObjects[args[4]].shortCircuit !== false) {
                                 layer.guiObjects[args[4]].receive.push(connectionName);
                                 gui_subscribe(layer.guiObjects[args[4]]);
                             }
                         } else if(layer.guiObjects[args[2]].auxSend) {
+                            lines.splice(i, 1);
                             layer.guiObjects[args[2]].auxSend[+args[3] - 1].push(connectionName);
                             if(layer.guiObjects[args[4]].shortCircuit !== false) {
                                 layer.guiObjects[args[4]].receive.push(connectionName);

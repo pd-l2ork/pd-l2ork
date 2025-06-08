@@ -1024,7 +1024,7 @@ static void scope_tick(t_scope *x)
         int c = BLOCK_SIZE * (block + 1) > x->x_bufsize ? x->x_bufsize % BLOCK_SIZE : BLOCK_SIZE;
         for(int i=0; i<c; i++)
             SETFLOAT(data + i + 1, x->x_ybuffer[i + block * BLOCK_SIZE]);
-        (*libpd_messagehook)(cbuf, "data", c + 1, data);
+        (*LIBPDSTUFF->i_hooks.h_messagehook)(cbuf, "data", c + 1, data);
     }
 #endif
     t_canvas *cv;

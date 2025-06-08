@@ -790,7 +790,7 @@ void glob_audio_dialog(t_pd *dummy, t_symbol *s, int argc, t_atom *argv)
     }
 
 #ifdef __EMSCRIPTEN__
-    __Pd_reinit(as.a_indevvec[0], as.a_outdevvec[0], newrate);
+    __Pd_reinit(as.a_indevvec[0], as.a_outdevvec[0], as.a_srate);
     return;
 #endif
 

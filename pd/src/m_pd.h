@@ -359,17 +359,6 @@ in Pd extended.  (that code will run incorrectly anyhow so why not catch it
 at compile time anyhow.) */
 #if defined(__APPLE__) && defined(__aarch64__)
 typedef void (*t_gotfn)(void *x);
-#else
-typedef void (*t_gotfn)(void *x, ...);
-#endif
-
-/* in ARM 64 a varargs prototype generates a different function call sequence
-from a fixed one, so in that special case we make a more restrictive
-definition for t_gotfn.  This will break some code in the "chaos" package
-in Pd extended.  (that code will run incorrectly anyhow so why not catch it
-at compile time anyhow.) */
-#if defined(__APPLE__) && defined(__aarch64__)
-typedef void (*t_gotfn)(void *x);
 /* for building emscripten, listed separately to avoid mixing && and ||
 in the same #if expression above */
 #elif defined(__EMSCRIPTEN__)
