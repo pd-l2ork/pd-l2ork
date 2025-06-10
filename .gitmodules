@@ -12,7 +12,7 @@
 	url = https://github.com/xwiimote/xwiimote
 [submodule "pd/src/tinyfd"]
 	path = pd/src/tinyfd
-	url = https://github.com/LazyJazz/tinyfiledialogs
+	url = http://git.code.sf.net/p/tinyfiledialogs/code
 [submodule "externals/pd-flite"]
 	path = externals/pd-flite
 	url = https://github.com/Lucarda/pd-flite.git
