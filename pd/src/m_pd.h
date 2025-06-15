@@ -14,7 +14,7 @@ extern "C" {
 #define PD_MINOR_VERSION 55
 #define PD_BUGFIX_VERSION 0
 #define PD_TEST_VERSION ""
-#define PD_L2ORK_VERSION "20250501"
+#define PD_L2ORK_VERSION "20250531"
 #define PDL2ORK
 
 /* compile-time version check:

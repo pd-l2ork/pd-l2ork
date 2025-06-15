@@ -12,22 +12,26 @@
 	<meta name="mobile-web-app-capable" content="yes" />
 	<meta name="google" content="notranslate" />
 	<link rel="stylesheet" href="css/dejavu.css" type="text/css" />
-	<link rel="stylesheet" href="css/main.css" type="text/css" />
+	<link rel="stylesheet" href="css/index.css" type="text/css" />
+	<link rel="stylesheet" href="css/WebPdL2Ork.css" type="text/css" />
 	<link rel="icon" href="/favicon.ico">
 	<script src="js/webmidi.min.js"></script>
 </head>
 
 <body>
-	<input style="position: absolute; top: 0; opacity: 0; width: 0; height: 0;" id="keyboardTrigger"/>
-	<svg id="canvas" width="100%" height="100%" viewBox="0 0 450 300" preserveAspectRatio="xMidYMin meet"></svg>
-	<div id="loading">
-		<h2>Starting WebPdL2Ork</h2>
-		<br />
-		<p id="loadingstage">Initialization</p>
-		<br />
-		<span class="loader"></span>
+	<div class="patch">
+		<input style="position: absolute; top: 0; opacity: 0; width: 0; height: 0;" id="keyboardTrigger"/>
+		<svg id="canvas" width="100%" height="100%" viewBox="0 0 450 300" preserveAspectRatio="xMidYMin meet"></svg>
+		<div id="loading">
+			<h2>Starting WebPdL2Ork</h2>
+			<br />
+			<p id="loadingstage">Initialization</p>
+			<br />
+			<span class="loader"></span>
+		</div>
+		<div id="filter"></div>
 	</div>
-	<div id="filter"></div>
+	
 	<script src="js/main.js"></script>
 	<script src="emscripten/main.js"></script>
 </body>

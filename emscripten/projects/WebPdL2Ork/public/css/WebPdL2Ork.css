@@ -1,0 +1,76 @@
+.patch {
+    position: relative;
+
+    .border {
+        stroke: black;
+        stroke-width: 1;
+    }
+    
+    .clickable {
+        pointer-events: auto;
+    }
+    
+    .unclickable {
+        pointer-events: none;
+    }
+    
+    #loading {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        font-family: Helvetica, sans-serif;
+        font-size: 32px;
+        color: rgb(50, 54, 57);
+        background-color: white;
+    }
+    
+    #canvas {
+        background-color: rgb(158,158,158);
+    }
+    
+    #filter {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(200, 204, 207, 0.5);
+    }
+    
+    .loader {
+        color: #000;
+        font-family: Consolas, Menlo, Monaco, monospace;
+        font-weight: bold;
+        font-size: 78px;
+        opacity: 0.8;
+
+        &:before {
+            content: "{";
+            display: inline-block;
+            animation: pulse 0.4s alternate infinite ease-in-out;
+        }
+    
+        &:after {
+            content: "}";
+            display: inline-block;
+            animation: pulse 0.4s 0.3s alternate infinite ease-in-out;
+        }
+    }
+    
+}
+
+@keyframes pulse {
+    to {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+}

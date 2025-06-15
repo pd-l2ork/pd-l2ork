@@ -225,7 +225,7 @@ then
         EXTERNTARGET=d_fat
         LDFLAGS=$LDFLAGS" -arch i386 -arch ppc"
     else
-        MORECFLAGS="-DMACOSX3 -DPA_BIG_ENDIAN -Wno-error"
+        MORECFLAGS="-DHAVE_ALLOCA_H=1 -DHAVE_MACHINE_ENDIAN_H=1 -DMACOSX3 -DPA_BIG_ENDIAN -Wno-error"
         EXTERNTARGET=d_ppc
     fi
     SYSSRC="s_midi_pm.c s_audio_pa.c \
