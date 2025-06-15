@@ -534,41 +534,18 @@ var Module = {
                     switch (data.type) {
                         case "bng":
                             gui_bng_update_circle(data);
-                            gui_send('Bang', data.send)
                             break;
                         case "tgl":
                             data.value = data.value ? 0 : data.default_value;
                             gui_tgl_update_cross(data);
-                            gui_send('Float', data.send, data.value);
-                            break;
-                        case "vsl":
-                        case "hsl":
-                            gui_slider_bang(data);
-                            break;
-                        case "vradio":
-                        case "hradio":
-                        case "floatatom":
-                        case "nbx":
-                            gui_send('Float', data.send, data.value);
-                            break;
-                        case "symbolatom":
-                            gui_send('Symbol', data.send, data.value);
-                            break;
-                        case "listbox":
-                            gui_send('List', data.send, data.value);
                             break;
                         case "pddplink":
                         case "pddp/pddplink":
                             gui_link_open(data.link);
                             break;
-                        case "flatgui/knob":
-                            gui_send('Float', data.send, data.value);
-                            break;
-                        case "dropdown":
-                            gui_dropdown_send(data);
-                            break;
                         case "js":
                             data.worker?.postMessage?.({ func: 'bang' });
+                            break;
                     }
                 }
             }
@@ -588,36 +565,30 @@ var Module = {
                     switch (data.type) {
                         case "bng":
                             gui_bng_update_circle(data);
-                            gui_send('Bang', data.send);
                             break;
                         case "tgl":
                             data.value = value;
                             if(value != 0)
                                 data.default_value = value;
                             gui_tgl_update_cross(data);
-                            gui_send('Float', data.send, data.value);
                             break;
                         case "vsl":
                         case "hsl":
                             gui_slider_set(data, value);
-                            gui_slider_bang(data);
                             break;
                         case "vradio":
                         case "hradio":
                             data.value = Math.min(Math.max(Math.floor(value), 0), data.number - 1);
                             gui_radio_update_button(data);
-                            gui_send('Float', data.send, data.value);
                             break;
                         case "flatgui/knob":
                             data.value = Math.max(Math.min(value,data.maximum),data.minimum);
                             configure_item(data.extracircle, gui_knob_extracircle(data));
                             configure_item(data.line, gui_knob_line(data));
-                            gui_send('Float', data.send, data.value);
                             break;
                         case "vu":
                             data.value = value;
                             gui_vumeter_update_bars(data);
-                            gui_send('Float', data.send, data.value);
                             break;
                         case "floatatom":
                             data.value = value;
@@ -634,10 +605,10 @@ var Module = {
                         case "dropdown":
                             data.selectedOption = Math.max(0, Math.min(data.options.length - 1, value));
                             data.render();
-                            gui_dropdown_send(data);
                             break;
                         case "js":
                             data.worker?.postMessage?.({ func: 'msg_float', args: [value]})
+                            break;
                     }
                 }
             }
@@ -672,6 +643,7 @@ var Module = {
                             break;
                         case "js":
                             data.worker?.postMessage?.({ func: 'anything', args: [symbol]});
+                            break;
                     }
                 }
             }
@@ -697,18 +669,15 @@ var Module = {
                             if(list[0] != 0)
                                 data.default_value = list[0];
                             gui_tgl_update_cross(data);
-                            gui_send('Float', data.send, data.value);
                             break;
                         case "vsl":
                         case "hsl":
                             gui_slider_set(data, list[0]);
-                            gui_slider_bang(data);
                             break;
                         case "vradio":
                         case "hradio":
                             data.value = Math.min(Math.max(Math.floor(list[0]), 0), data.number - 1);
                             gui_radio_update_button(data);
-                            gui_send('Float', data.send, data.value);
                             break;
                         case "vu":
                             if(list[0] !== 0 || list[1] === 0)
@@ -716,7 +685,6 @@ var Module = {
                             data.peak = list[1];
                             gui_vumeter_update_bars(data);
                             configure_item(data.line, gui_vumeter_line(data));
-                            gui_send('Float', data.send, data.value);
                             break;
                         case "nbx":
                             data.value = list[0];
@@ -725,7 +693,6 @@ var Module = {
                         case "dropdown":
                             data.selectedOption = Math.max(0, Math.min(data.options.length - 1, list[0]));
                             data.render();
-                            gui_dropdown_send(data);
                             break;
                         case "floatatom":
                         case "symbolatom":
@@ -1181,9 +1148,6 @@ var Module = {
                                 case 'autoupdate':
                                     data.arrowUpdate = list[0];
                                     break;
-                                case 'commit':
-                                    gui_nbx_commit(data);
-                                    break;
                                 case 'drawstyle':
                                     data.showTriangle = list[0] % 2 == 0;
                                     data.showBorder = list[0] < 2;
@@ -1205,8 +1169,10 @@ var Module = {
                                     if(keyboardFocus.data?.id === data.id)
                                         setKeyboardFocus(null, false);
                                     break;
+                                case 'commit':
                                 case 'set':
-                                    data.dirtyValue = '' + list[0];
+                                    if(symbol === 'set')
+                                        data.dirtyValue = '' + list[0];
                                     let send = data.send;
                                     data.send = [];
                                     gui_atom_commit(data);
@@ -2043,9 +2009,6 @@ function pd_subscribe_pop(symbol) {
 }
 
 function gui_subscribe(data) {
-    for(let send of (data.send ?? []))
-        if(send)
-            sendToParent({ type: 'subscribe', data: send });
     for(let receive of data.receive) {
         if(!receive)
             continue;
@@ -2080,8 +2043,28 @@ function gui_unsubscribe(data) {
     }
 }
 
+if(DEBUG)
+    Error.stackTraceLimit = Infinity;
+
 function gui_send(type, destinations, value) {
-    queueMicrotask(() => do_gui_send(type, destinations, value));
+    if(destinations.length === 0)
+        return;
+
+    // If do_gui_send is called from the context of a Module.Pd.receiveXYZ, it will
+    // hang, as libpd will then attempt to aqcuire sys_lock (which is already held
+    // by the current thread which called into the receive hook). The current
+    // WebPdL2Ork code should avoid this situation, but this check is here to make
+    // sure that the browser doesn't hang in case there is a bug somewhere.
+    try {
+        throw new Error("Sending from wasm context");
+    } catch(e) {
+        if(e.stack.toString().split('\n').filter(l => l.includes('wasm')).length > 1) {
+            console.error(e);
+            return;
+        }
+    }
+
+    do_gui_send(type, destinations, value);
 }
 
 function do_gui_send(type, destinations, value) {
@@ -3050,9 +3033,11 @@ function gui_array_onmouseup(id) {
 
 
 let gui_atom_touches = {};
+function gui_atom_send(data) {
+    gui_send({floatatom: 'Float', symbolatom: 'Symbol', listbox: 'List'}[data.type], data.send, data.value);
+}
 function gui_atom_update(data) {
     gui_atom_settext(data, '' + (data.type === 'listbox' ? data.value.join(' ') : data.value));
-    gui_send({floatatom: 'Float', symbolatom: 'Symbol', listbox: 'List'}[data.type], data.send, data.value);
 }
 function gui_atom_getindex(data, e) {
     const text = data.svgText.textContent;
@@ -3077,12 +3062,14 @@ function gui_atom_onmousedown(data, e, id) {
                 data.value = 0;
             }
             gui_atom_update(data);
+            gui_atom_send(data);
         } else {
             if(data.type !== 'floatatom') {
                 if(keyDown['Shift'])
                     data.dirtyValue = data.type === 'symbolatom' ? data.value : data.value.join(' ');
                 else
                     data.dirtyValue = '';
+                gui_atom_settext(data, data.dirtyValue + (new Array(Math.max(0,3 - data.dirtyValue.length))).fill('.').join(''));
             }
             setKeyboardFocus(data, data.exclusive);
             configure_item(data.svgText, {fill: '#ff0000'});
@@ -3196,6 +3183,7 @@ function gui_atom_commit(data, mousing) {
 
     delete data.dirtyValue;
     gui_atom_update(data);
+    gui_atom_send(data);
 }
 function gui_atom_losefocus(data) {
     configure_item(data.svgText, {fill: '#000000'});
@@ -3266,7 +3254,6 @@ function gui_dropdown_option_onmousemove(e, id) {
 let gui_nbx_touches = {};
 function gui_nbx_update(data) {
     gui_nbx_settext(data, '' + data.value);
-    gui_send('Float', data.send, data.value);
 }
 function gui_nbx_onmousedown(data, e, id) {
     if(data.interactive) {
@@ -3381,6 +3368,7 @@ function gui_nbx_commit(data) {
 
     delete data.dirtyValue;
     gui_nbx_update(data);
+    gui_send('Float', data.send, data.value);
 }
 function gui_nbx_losefocus(data) {
     configure_item(data.svgText, {fill: data.foreground_color});
@@ -5142,9 +5130,6 @@ async function openPatch(content, filename) {
 
                             layer.guiObjects[layer.nextGUIID] = data;
                         }
-                        case "s": {            
-                            sendToParent({ type: 'subscribe', data: args[5] });
-                        }
                         default: //If we don't have an explicit handling for the object, it's possible that it is an external patch load 
                             if(args[4] in abstractions) {
                                 //We must add an #X restore at the end to undo the #N canvas at the beginning
@@ -5651,11 +5636,11 @@ async function openPatch(content, filename) {
                         //sender can send wirelessly. Then we connect the receive object to the receiver, and the sender wirelessly to the receive object
                         if(args[3] == '0') {
                             if(layer.guiObjects[args[2]]?.shortCircuit !== false)
-                                lines.splice(i++,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++layer.nextGUIID} 0 ${args[4]} ${args[5]} __IGNORE__`)
+                                lines.splice(i+1,0,`#X obj 0 0 r ${connectionName}`,`#X connect ${layer.nextGUIID + 1} 0 ${args[4]} ${args[5]} __IGNORE__`)
                             layer.guiObjects[args[2]].send.push(connectionName);
                         } else if(layer.guiObjects[args[2]].auxSend) {
                             if(layer.guiObjects[args[2]]?.shortCircuit !== false)
-                                lines.splice(i++,1,`#X obj 0 0 r ${connectionName}`,`#X connect ${++layer.nextGUIID} 0 ${args[4]} ${args[5]} __IGNORE__`)
+                                lines.splice(i+1,0,`#X obj 0 0 r ${connectionName}`,`#X connect ${layer.nextGUIID + 1} 0 ${args[4]} ${args[5]} __IGNORE__`)
                             layer.guiObjects[args[2]].auxSend[+args[3] - 1].push(connectionName);
                         } else
                             console.warn('Ignoring unsupported wired connection (Code A)'); //This should never happen
@@ -5667,7 +5652,7 @@ async function openPatch(content, filename) {
                             // This is for preset nodes, it tricks them into thinking that they are physically connected to an object.
                             // It creates a dummy canvas which is then connected to the preset node in the same way as the original
                             // object, and also puts wireless sends and receives inside that canvas to interact with the GUI object.
-                            lines.splice(i--, 1, 
+                            lines.splice(i+1, 0, 
                                 `#N canvas 0 0 400 100 ${connectionName} 1`,
                                 `#X obj 5 10 inlet`,
                                 `#X obj 60 45 s ${connectionName}`,
@@ -5678,9 +5663,9 @@ async function openPatch(content, filename) {
                                 `#X connect 2 0 3 0`,
                                 `#X restore 0 0 pd ${connectionName}`,
                                 `#X connect ${args[2]} ${args[3]} ${layer.nextGUIID + 1} 0 __IGNORE__`);
-                            layer.guiObjects[args[4]].send.push(`${connectionName}_feedback`);
+                            layer.guiObjects[args[4]].send.push(`${connectionName}_feedback`); 
                         } else {
-                            lines.splice(i++,1,`#X obj 0 0 s ${connectionName}`,`#X connect ${args[2]} ${args[3]} ${++layer.nextGUIID} 0 __IGNORE__`);
+                            lines.splice(i+1,0,`#X obj 0 0 s ${connectionName}`,`#X connect ${args[2]} ${args[3]} ${layer.nextGUIID + 1} 0 __IGNORE__`);
                         }
                         layer.guiObjects[args[4]].receive.push(connectionName);
                         gui_subscribe(layer.guiObjects[args[4]]);
@@ -5689,14 +5674,14 @@ async function openPatch(content, filename) {
                         //If both the sender and receiver are gui objects, we can directly set their sends and receives
                         //Theoretically, they should only have 1 input/output, so the input/output id should always be 0
                         if(args[3] === '0') {
-                            lines.splice(i, 1);
+                            // lines.splice(i, 1);
                             layer.guiObjects[args[2]].send.push(connectionName);
                             if(layer.guiObjects[args[4]].shortCircuit !== false) {
                                 layer.guiObjects[args[4]].receive.push(connectionName);
                                 gui_subscribe(layer.guiObjects[args[4]]);
                             }
                         } else if(layer.guiObjects[args[2]].auxSend) {
-                            lines.splice(i, 1);
+                            // lines.splice(i, 1);
                             layer.guiObjects[args[2]].auxSend[+args[3] - 1].push(connectionName);
                             if(layer.guiObjects[args[4]].shortCircuit !== false) {
                                 layer.guiObjects[args[4]].receive.push(connectionName);
@@ -5708,16 +5693,15 @@ async function openPatch(content, filename) {
                     }
                     if(args[5] !== '0' && layer.guiObjects[args[4]]) {
                         if(args[5] === '1') {
-                            lines.splice(i,1,
+                            lines.splice(i+1,0,
                                 `#X obj 0 0 pack`,
                                 `#X obj 0 0 t b a`,
                                 `#X obj 0 0 s ${connectionName}`,
-                                `#X connect ${layer.nextGUIID + 2} 0 ${layer.nextGUIID + 1} 0`,
-                                `#X connect ${layer.nextGUIID + 2} 1 ${layer.nextGUIID + 1} 1`,
-                                `#X connect ${layer.nextGUIID + 1} 0 ${layer.nextGUIID + 3} 0`,
-                                `#X connect ${args[2]} ${args[3]} ${layer.nextGUIID + 2} 0`
+                                `#X connect ${layer.nextGUIID + 2} 0 ${layer.nextGUIID + 1} 0 __IGNORE__`,
+                                `#X connect ${layer.nextGUIID + 2} 1 ${layer.nextGUIID + 1} 1 __IGNORE__`,
+                                `#X connect ${layer.nextGUIID + 1} 0 ${layer.nextGUIID + 3} 0 __IGNORE__`,
+                                `#X connect ${args[2]} ${args[3]} ${layer.nextGUIID + 2} 0 __IGNORE__`
                             );
-                            layer.nextGUIID++;
                             layer.guiObjects[args[4]].receive.push(connectionName);
                             gui_subscribe(layer.guiObjects[args[4]]);
                         } else
