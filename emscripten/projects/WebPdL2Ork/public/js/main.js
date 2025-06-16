@@ -3168,7 +3168,9 @@ function gui_atom_onmousedown(data, e, id) {
                     data.dirtyValue = data.type === 'symbolatom' ? data.value : data.value.join(' ');
                 else
                     data.dirtyValue = '';
-                gui_atom_settext(data, data.dirtyValue + (new Array(Math.max(0,3 - data.dirtyValue.length))).fill('.').join(''));
+
+                if(data.value === '')
+                    gui_atom_settext(data, data.dirtyValue + (new Array(Math.max(0,3 - data.dirtyValue.length))).fill('.').join(''));
             }
             setKeyboardFocus(data, data.exclusive);
             configure_item(data.svgText, {fill: '#ff0000'});
