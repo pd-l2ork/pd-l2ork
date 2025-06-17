@@ -272,7 +272,6 @@ static t_filedialog *filedialog_new( void)
     sprintf(buf, "d%zx", (t_uint)x);
     x->x_s = gensym(buf);
     pd_bind(&x->x_obj.ob_pd, x->x_s);
-    filedialog_obj = x;
     return (x);
 }
 
@@ -385,7 +384,7 @@ static void filedialog_setup(void)
     // platform-specific file dialog code. On Windows and Mac, file dialogs
     // are passed back to pdgui.js to handle, on Linux, they are handled
     // in C.
-    t_filedialog *x = filedialog_new();
+    filedialog_obj = filedialog_new();
 }
 
 /* -------------------------- openpanel ------------------------------ */
