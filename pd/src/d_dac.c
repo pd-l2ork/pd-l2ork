@@ -35,7 +35,7 @@ static void *dac_new(t_symbol *s, int argc, t_atom *argv)
     x->x_n = argc;
     x->x_vec = (t_int *)getbytes(argc * sizeof(*x->x_vec));
     for (i = 0; i < argc; i++)
-        x->x_vec[i] = atom_getintarg(i, argc, argv);
+        x->x_vec[i] = atom_getfloatarg(i, argc, argv);
     for (i = 1; i < argc; i++)
         inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
     x->x_f = 0;
@@ -56,9 +56,9 @@ static void dac_dsp(t_dac *x, t_signal **sp)
         {
             if (ch + j >= 0 && ch + j < sys_get_outchannels())
                 dsp_add(plus_perform, 4,
-                    sys_soundout + DEFDACBLKSIZE * (ch + j),
+                    STUFF->st_soundout + DEFDACBLKSIZE * (ch + j),
                 sp[i]->s_vec + j * sp[i]->s_length,
-                    sys_soundout + DEFDACBLKSIZE * (ch + j),
+                    STUFF->st_soundout + DEFDACBLKSIZE * (ch + j),
                         (t_int)DEFDACBLKSIZE);
         }
     }
@@ -84,7 +84,7 @@ static void dac_setup(void)
     CLASS_MAINSIGNALIN(dac_class, t_dac, x_f);
     class_addmethod(dac_class, (t_method)dac_dsp, gensym("dsp"), A_CANT, 0);
     class_addmethod(dac_class, (t_method)dac_set, gensym("set"), A_GIMME, 0);
-    class_sethelpsymbol(dac_class, gensym("dac~"));
+    class_sethelpsymbol(dac_class, gensym("adc~_dac~"));
 }
 
 /* ----------------------------- adc~ --------------------------- */
@@ -110,7 +110,7 @@ static void *adc_new(t_symbol *s, int argc, t_atom *argv)
         SETFLOAT(&defarg[0], 1);
         SETFLOAT(&defarg[1], 2);
     }
-    if (argc >= 2 && argv[0].a_type == A_SYMBOL &&
+    if (argc > 0 && argv[0].a_type == A_SYMBOL &&
         !strcmp(argv[0].a_w.w_symbol->s_name, "-m"))
     {       /* multichannel version: -m [nchans] [start channel] */
         x->x_multi = 1;
@@ -118,7 +118,7 @@ static void *adc_new(t_symbol *s, int argc, t_atom *argv)
             x->x_n = 2;
         if ((firstchan = atom_getfloatarg(2, argc, argv)) < 1)
             firstchan = 1;
-        x->x_vec = (int *)getbytes(argc * sizeof(*x->x_vec));
+        x->x_vec = (int *)getbytes(x->x_n * sizeof(*x->x_vec));
         for (i = 0; i < x->x_n; i++)
             x->x_vec[i] = firstchan+i;
         outlet_new(&x->x_obj, &s_signal);
@@ -155,10 +155,10 @@ static void adc_dsp(t_adc *x, t_signal **sp)
         t_sample *out = (x->x_multi? sp[0]->s_vec + sp[0]->s_length * i:
             sp[i]->s_vec);
         if (ch >= 0 && ch < sys_get_inchannels())
-            dsp_add_copy(sys_soundin + DEFDACBLKSIZE*ch,
+            dsp_add_copy(STUFF->st_soundin + DEFDACBLKSIZE*ch,
                 out, DEFDACBLKSIZE);
         else dsp_add_zero(out, DEFDACBLKSIZE);
-    }  
+    }
 }
 
 static void adc_set(t_adc *x, t_symbol *s, int argc, t_atom *argv)
@@ -194,7 +194,7 @@ static void adc_setup(void)
         (t_method)adc_free, sizeof(t_adc), 0, A_GIMME, 0);
     class_addmethod(adc_class, (t_method)adc_dsp, gensym("dsp"), A_CANT, 0);
     class_addmethod(adc_class, (t_method)adc_set, gensym("set"), A_GIMME, 0);
-    class_sethelpsymbol(adc_class, gensym("adc~"));
+    class_sethelpsymbol(adc_class, gensym("adc~_dac~"));
 }
 
 void d_dac_setup(void)

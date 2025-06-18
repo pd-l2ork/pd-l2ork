@@ -68,7 +68,7 @@ void binbuf_free(t_binbuf *x)
     t_freebytes(x,  sizeof(*x));
 }
 
-t_binbuf *binbuf_duplicate(t_binbuf *y)
+t_binbuf *binbuf_duplicate(const t_binbuf *y)
 {
     t_binbuf *x = (t_binbuf *)t_getbytes(sizeof(*x));
     x->b_n = y->b_n;
@@ -103,7 +103,7 @@ void binbuf_setvec(t_binbuf *x, t_atom *vec)
 }
 
     /* convert text to a binbuf */
-void binbuf_text(t_binbuf *x, char *text, size_t size)
+void binbuf_text(t_binbuf *x, const char *text, size_t size)
 {
     //post("current text: %d <%s>", size, text);
     char buf[MAXPDSTRING+1], *bufp, *ebuf = buf+MAXPDSTRING;
@@ -280,7 +280,7 @@ void binbuf_text(t_binbuf *x, char *text, size_t size)
        if every single string is a number, and even more so it may get
        truncated with an exponent)
     */
-void binbuf_rawtext(t_binbuf *x, char *text, size_t size)
+void binbuf_rawtext(t_binbuf *x, const char *text, size_t size)
 {
     //post("current text: %d <%s>", size, text);
     char buf[MAXPDSTRING+1], *bufp, *ebuf = buf+MAXPDSTRING;
@@ -337,7 +337,7 @@ void binbuf_rawtext(t_binbuf *x, char *text, size_t size)
 }
 
     /* convert a binbuf to text; no null termination. */
-void binbuf_gettext(t_binbuf *x, char **bufp, int *lengthp)
+void binbuf_gettext(const t_binbuf *x, char **bufp, int *lengthp)
 {
     char *buf = getbytes(0), *newbuf;
     int length = 0;
@@ -440,7 +440,7 @@ void binbuf_getrawtext(t_binbuf *x, char **bufp, int *lengthp)
 /* LATER improve the out-of-space behavior below.  Also fix this so that
 writing to file doesn't buffer everything together. */
 
-void binbuf_add(t_binbuf *x, int argc, t_atom *argv)
+void binbuf_add(t_binbuf *x, int argc, const t_atom *argv)
 {
     //fprintf(stderr,"binbuf_add_started %d\n", argc);
     int newsize = x->b_n + argc, i;
@@ -477,7 +477,7 @@ void binbuf_add(t_binbuf *x, int argc, t_atom *argv)
 }
 
 #define MAXADDMESSV 100
-void binbuf_addv(t_binbuf *x, char *fmt, ...)
+void binbuf_addv(t_binbuf *x, const char *fmt, ...)
 {
     //fprintf(stderr,"binbuf_addv started\n");
     va_list ap;
@@ -561,7 +561,7 @@ void binbuf_addarray(t_binbuf *x, int length, char *fmt, t_word *wordarray)
 symbols ";", ",",; We assume here (probably incorrectly) that there's
 no symbol whose name is ";" - should we be escaping those?. */
 
-void binbuf_addbinbuf(t_binbuf *x, t_binbuf *y)
+void binbuf_addbinbuf(t_binbuf *x, const t_binbuf *y)
 {
     //fprintf(stderr,"starting binbuf_addbinbuf\n");
     t_binbuf *z = binbuf_new();
@@ -640,7 +640,7 @@ void binbuf_addsemi(t_binbuf *x)
 /* Supply atoms to a binbuf from a message, making the opposite changes
 from binbuf_addbinbuf.  The symbol ";" goes to a semicolon, etc. */
 
-void binbuf_restore(t_binbuf *x, int argc, t_atom *argv)
+void binbuf_restore(t_binbuf *x, int argc, const t_atom *argv)
 {
     int newsize = x->b_n + argc, i;
     t_atom *ap;
@@ -714,7 +714,7 @@ void binbuf_restore(t_binbuf *x, int argc, t_atom *argv)
 #define ISSYMBOL(a, b) ((a)->a_type == A_SYMBOL && \
     !strcmp((a)->a_w.w_symbol->s_name, (b)))
 
-void binbuf_print(t_binbuf *x)
+void binbuf_print(const t_binbuf *x)
 {
     int i, startedpost = 0, newline = 1;
     for (i = 0; i < x->b_n; i++)
@@ -735,12 +735,12 @@ void binbuf_print(t_binbuf *x)
     if (startedpost) endpost();
 }
 
-int binbuf_getnatom(t_binbuf *x)
+int binbuf_getnatom(const t_binbuf *x)
 {
     return (x->b_n);
 }
 
-t_atom *binbuf_getvec(t_binbuf *x)
+t_atom *binbuf_getvec(const t_binbuf *x)
 {
     return (x->b_vec);
 }
@@ -878,7 +878,7 @@ done:
     return (gensym(buf2));
 }
 
-t_symbol *binbuf_realizedollsym(t_symbol *s, int ac, t_atom *av, int tonew)
+t_symbol *binbuf_realizedollsym(t_symbol *s, int ac, const t_atom *av, int tonew)
 {
     return binbuf_dorealizedollsym(0, s, ac, av, tonew);
 }
@@ -914,7 +914,7 @@ static void binbuf_error(t_pd *x, const char *fmt, ...)
         error(buf);
 }
 
-void binbuf_eval(t_binbuf *x, t_pd *target, int argc, t_atom *argv)
+void binbuf_eval(const t_binbuf *x, t_pd *target, int argc, const t_atom *argv)
 {
     t_atom smallstack[SMALLMSG], *mstack, *msp;
     t_atom *at = x->b_vec;
@@ -1170,7 +1170,7 @@ broken:
          ATOMS_FREEA(mstack, maxnargs);
 }
 
-int binbuf_read(t_binbuf *b, char *filename, char *dirname, int crflag)
+int binbuf_read(t_binbuf *b, const char *filename, const char *dirname, int crflag)
 {
     long length;
     int fd;
@@ -1226,7 +1226,7 @@ int binbuf_read(t_binbuf *b, char *filename, char *dirname, int crflag)
 }
 
     /* read a binbuf from a file, via the search patch of a canvas */
-int binbuf_read_via_canvas(t_binbuf *b, char *filename, t_canvas *canvas,
+int binbuf_read_via_canvas(t_binbuf *b, const char *filename, const t_canvas *canvas,
     int crflag)
 {
     int filedesc;
@@ -1244,7 +1244,7 @@ int binbuf_read_via_canvas(t_binbuf *b, char *filename, t_canvas *canvas,
 }
 
     /* old version */
-int binbuf_read_via_path(t_binbuf *b, char *filename, char *dirname,
+int binbuf_read_via_path(t_binbuf *b, const char *filename, char *dirname,
     int crflag)
 {
     int filedesc;
@@ -1266,7 +1266,7 @@ static t_binbuf *binbuf_convert(t_binbuf *oldb, int maxtopd);
 
     /* write a binbuf to a text file.  If "crflag" is set we suppress
     semicolons. */
-int binbuf_write(t_binbuf *x, char *filename, char *dir, int crflag)
+int binbuf_write(const t_binbuf *x, const char *filename, char *dir, int crflag)
 {
     FILE *f = 0;
     char sbuf[WBUFSIZE], fbuf[MAXPDSTRING], *bp = sbuf, *ep = sbuf + WBUFSIZE;
@@ -1288,11 +1288,7 @@ int binbuf_write(t_binbuf *x, char *filename, char *dir, int crflag)
     }
     
     if (!(f = sys_fopen(fbuf, "w")))
-    {
-        //fprintf(stderr, "open: ");
-        sys_unixerror(fbuf);
         goto fail;
-    }
     for (ap = x->b_vec, indx = x->b_n; indx--; ap++)
     {
         int length;
@@ -1304,10 +1300,7 @@ int binbuf_write(t_binbuf *x, char *filename, char *dir, int crflag)
         if (ep - bp < length)
         {
             if (fwrite(sbuf, bp-sbuf, 1, f) < 1)
-            {
-                sys_unixerror(fbuf);
                 goto fail;
-            }
             bp = sbuf;
         }
         if ((ap->a_type == A_SEMI || ap->a_type == A_COMMA) &&
@@ -1334,17 +1327,11 @@ int binbuf_write(t_binbuf *x, char *filename, char *dir, int crflag)
         }
     }
     if (fwrite(sbuf, bp-sbuf, 1, f) < 1)
-    {
-        sys_unixerror(fbuf);
         goto fail;
-    }
 
 
     if (fflush(f) != 0) 
-    {
-        sys_unixerror(fbuf);
         goto fail;
-    }
 
     if (deleteit)
         binbuf_free(x);
@@ -1935,31 +1922,6 @@ void binbuf_evalfile(t_symbol *name, t_symbol *dir)
     glob_setfilename(0, &s_, &s_);
     binbuf_free(b);
     canvas_resume_dsp(dspstate);
-}
-
-t_pd *glob_evalfile(t_pd *ignore, t_symbol *name, t_symbol *dir)
-{
-    t_pd *x = 0;
-        /* even though binbuf_evalfile appears to take care of dspstate,
-        we have to do it again here, because canvas_startdsp() assumes
-        that all toplevel canvases are visible.  LATER check if this
-        is still necessary -- probably not. */
-
-    int dspstate = canvas_suspend_dsp();
-    t_pd *boundx = s__X.s_thing;
-        s__X.s_thing = 0;       /* don't save #X; we'll need to leave it bound
-                                for the caller to grab it. */
-    binbuf_evalfile(name, dir);
-    while ((x != s__X.s_thing) && s__X.s_thing) 
-    {
-        x = s__X.s_thing;
-        vmess(x, gensym("pop"), "i", 1);
-    }
-    if (!sys_noloadbang)
-        pd_doloadbang();
-    canvas_resume_dsp(dspstate);
-    s__X.s_thing = boundx;
-    return x;
 }
 
     /* save a text object to a binbuf for a file or copy buf */

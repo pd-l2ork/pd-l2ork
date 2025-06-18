@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2010 Peter Brinkmann (peter.brinkmann@gmail.com)
- * Copyright (c) 2012-2019 libpd team
+ * Copyright (c) 2012-2021 libpd team
  *
  * For information on usage and redistribution, and for a DISCLAIMER OF ALL
  * WARRANTIES, see the file, "LICENSE.txt," in this distribution.
@@ -21,9 +21,17 @@
 #include "x_libpdreceive.h"
 #include "z_hooks.h"
 #include "m_imp.h"
-#include "s_stuff.h"
 #include "g_canvas.h"
 #include "g_all_guis.h"
+
+// pd_init() doesn't call socket_init() which is needed on windows for
+// libpd_start_gui() to work
+#if (defined(_WIN32) || defined(_WIN64)) && PD_MINOR_VERSION > 50
+# include "s_net.h"
+# define SOCKET_INIT socket_init();
+#else
+# define SOCKET_INIT
+#endif
 
 #if PD_MINOR_VERSION < 46
 # define HAVE_SCHED_TICK_ARG
@@ -37,32 +45,43 @@
 
 // forward declares
 void pd_init(void);
+void sys_setchsr(int chin, int chout, int sr);
 int sys_startgui(const char *libdir);
-// adding a dummy function ({} part) to prevent emscripten from
-// complaining about undefined reference, since this file is the
-// only place that references sys_stopgui(). LATER: figure out
-// why do we even need this in the first place.
-void sys_stopgui(void) {}
+void sys_stopgui(void);
 int sys_pollgui(void);
 
-static t_atom *s_argv = NULL;
-static t_atom *s_curr = NULL;
-static int s_argm = 0;
-static int s_argc = 0;
+// (optional) setup functions for built-in "extra" externals
+#ifdef LIBPD_EXTRA
+  void bob_tilde_setup(void);
+  void bonk_tilde_setup(void);
+  void choice_setup(void);
+  void fiddle_tilde_setup(void);
+  void loop_tilde_setup(void);
+  void lrshift_tilde_setup(void);
+  void pd_tilde_setup(void);
+  void pique_setup(void);
+  void sigmund_tilde_setup(void);
+  void stdout_setup(void);
+#endif
+
+static PERTHREAD t_atom *s_argv = NULL;
+static PERTHREAD t_atom *s_curr = NULL;
+static PERTHREAD int s_argm = 0;
+static PERTHREAD int s_argc = 0;
 
 static void *get_object(const char *s) {
   t_pd *x = gensym(s)->s_thing;
   return x;
 }
 
+// note: could we use pd_this instead?
+static int s_initialized = 0;
+
 // this is called instead of sys_main() to start things
 int libpd_init(void) {
-  static int initialized = 0;
-  if (initialized) return -1; // only allow init once (for now)
-  initialized = 1;
-#ifndef __EMSCRIPTEN__
+  if (s_initialized) return -1; // only allow init once (for now)
+  s_initialized = 1;
   signal(SIGFPE, SIG_IGN);
-#endif
   libpd_start_message(32); // allocate array for message assembly
   sys_externalschedlib = 0;
   sys_printtostderr = 0;
@@ -76,16 +95,29 @@ int libpd_init(void) {
   sys_time = 0;
 #endif
   pd_init();
-  sys_soundin = NULL;
-  sys_soundout = NULL;
-  sys_schedblocksize = DEFDACBLKSIZE;
+  STUFF->st_soundin = NULL;
+  STUFF->st_soundout = NULL;
+  STUFF->st_schedblocksize = DEFDACBLKSIZE;
+  STUFF->st_impdata = &libpd_mainimp;
+  sys_init_fdpoll();
   libpdreceive_setup();
-  sys_set_audio_api(API_DUMMY);
-  sys_searchpath = NULL;
-  sys_helppath = NULL;
+  STUFF->st_searchpath = NULL;
   sys_libdir = gensym("");
+  SOCKET_INIT
   post("pd %d.%d.%d%s", PD_MAJOR_VERSION, PD_MINOR_VERSION,
     PD_BUGFIX_VERSION, PD_TEST_VERSION);
+#ifdef LIBPD_EXTRA
+  bob_tilde_setup();
+  bonk_tilde_setup();
+  choice_setup();
+  fiddle_tilde_setup();
+  loop_tilde_setup();
+  lrshift_tilde_setup();
+  pd_tilde_setup();
+  pique_setup();
+  sigmund_tilde_setup();
+  stdout_setup();
+#endif
 #ifndef LIBPD_NO_NUMERIC
   setlocale(LC_NUMERIC, "C");
 #endif
@@ -94,27 +126,27 @@ int libpd_init(void) {
 
 void libpd_clear_search_path(void) {
   sys_lock();
-  namelist_free(sys_searchpath);
-  sys_searchpath = NULL;
+  namelist_free(STUFF->st_searchpath);
+  STUFF->st_searchpath = NULL;
   sys_unlock();
 }
 
 void libpd_add_to_search_path(const char *path) {
   sys_lock();
-  sys_searchpath = namelist_append(sys_searchpath, path, 0);
+  STUFF->st_searchpath = namelist_append(STUFF->st_searchpath, path, 0);
   sys_unlock();
 }
 
 void libpd_clear_help_path(void) {
   sys_lock();
-  namelist_free(sys_helppath);
-  sys_helppath = NULL;
+  namelist_free(STUFF->st_helppath);
+  STUFF->st_helppath = NULL;
   sys_unlock();
 }
 
 void libpd_add_to_help_path(const char *path) {
   sys_lock();
-  sys_helppath = namelist_append(sys_helppath, path, 0);
+  STUFF->st_helppath = namelist_append(STUFF->st_helppath, path, 0);
   sys_unlock();
 }
   
@@ -132,8 +164,6 @@ void libpd_closefile(void *p) {
   sys_unlock();
 }
 
-EXTERN int canvas_getdollarzero(t_pd *x);
-
 int libpd_getdollarzero(void *p) {
   sys_lock();
   pd_pushsym((t_pd *)p);
@@ -148,16 +178,9 @@ int libpd_blocksize(void) {
 }
 
 int libpd_init_audio(int inChannels, int outChannels, int sampleRate) {
-  int indev[MAXAUDIOINDEV], inch[MAXAUDIOINDEV],
-       outdev[MAXAUDIOOUTDEV], outch[MAXAUDIOOUTDEV];
-  indev[0] = outdev[0] = DEFAULTAUDIODEV;
-  inch[0] = inChannels;
-  outch[0] = outChannels;
   sys_lock();
-  sys_set_audio_settings(1, indev, 1, inch,
-         1, outdev, 1, outch, sampleRate, -1, 1, DEFDACBLKSIZE);
   sched_set_using_audio(SCHED_AUDIO_CALLBACK);
-  sys_reopen_audio();
+  sys_setchsr(inChannels, outChannels, sampleRate);
   sys_unlock();
   return 0;
 }
@@ -171,17 +194,17 @@ static const t_sample sample_to_short = SHRT_MAX,
   sys_lock(); \
   sys_pollgui(); \
   for (i = 0; i < ticks; i++) { \
-    for (j = 0, p0 = sys_soundin; j < DEFDACBLKSIZE; j++, p0++) { \
-      for (k = 0, p1 = p0; k < sys_inchannels; k++, p1 += DEFDACBLKSIZE) \
+    for (j = 0, p0 = STUFF->st_soundin; j < DEFDACBLKSIZE; j++, p0++) { \
+      for (k = 0, p1 = p0; k < STUFF->st_inchannels; k++, p1 += DEFDACBLKSIZE) \
         { \
         *p1 = *inBuffer++ _x; \
       } \
     } \
-    memset(sys_soundout, 0, \
-        sys_outchannels*DEFDACBLKSIZE*sizeof(t_sample)); \
-    SCHED_TICK(pd_this->pd_systime + sys_time_per_dsp_tick); \
-    for (j = 0, p0 = sys_soundout; j < DEFDACBLKSIZE; j++, p0++) { \
-      for (k = 0, p1 = p0; k < sys_outchannels; k++, p1 += DEFDACBLKSIZE) \
+    memset(STUFF->st_soundout, 0, \
+        STUFF->st_outchannels*DEFDACBLKSIZE*sizeof(t_sample)); \
+    SCHED_TICK(pd_this->pd_systime + STUFF->st_time_per_dsp_tick); \
+    for (j = 0, p0 = STUFF->st_soundout; j < DEFDACBLKSIZE; j++, p0++) { \
+      for (k = 0, p1 = p0; k < STUFF->st_outchannels; k++, p1 += DEFDACBLKSIZE) \
         { \
         *outBuffer++ = *p1 _y; \
       } \
@@ -203,22 +226,22 @@ int libpd_process_double(const int ticks, const double *inBuffer, double *outBuf
 }
 
 #define PROCESS_RAW(_x, _y) \
-  size_t n_in = sys_inchannels * DEFDACBLKSIZE; \
-  size_t n_out = sys_outchannels * DEFDACBLKSIZE; \
+  size_t n_in = STUFF->st_inchannels * DEFDACBLKSIZE; \
+  size_t n_out = STUFF->st_outchannels * DEFDACBLKSIZE; \
   t_sample *p; \
   size_t i; \
   sys_lock(); \
   sys_pollgui(); \
-  for (p = sys_soundin, i = 0; i < n_in; i++) { \
+  for (p = STUFF->st_soundin, i = 0; i < n_in; i++) { \
     *p++ = *inBuffer++ _x; \
   } \
-  memset(sys_soundout, 0, n_out * sizeof(t_sample)); \
-  SCHED_TICK(pd_this->pd_systime + sys_time_per_dsp_tick); \
-  for (p = sys_soundout, i = 0; i < n_out; i++) { \
+  memset(STUFF->st_soundout, 0, n_out * sizeof(t_sample)); \
+  SCHED_TICK(pd_this->pd_systime + STUFF->st_time_per_dsp_tick); \
+  for (p = STUFF->st_soundout, i = 0; i < n_out; i++) { \
     *outBuffer++ = *p++ _y; \
   } \
   sys_unlock(); \
-  return 0; 
+  return 0;
 
 int libpd_process_raw(const float *inBuffer, float *outBuffer) {
   PROCESS_RAW(,)
@@ -231,7 +254,7 @@ int libpd_process_raw_short(const short *inBuffer, short *outBuffer) {
 int libpd_process_raw_double(const double *inBuffer, double *outBuffer) {
   PROCESS_RAW(,)
 }
- 
+
 #define GETARRAY \
   t_garray *garray = (t_garray *) pd_findbyclass(gensym(name), garray_class); \
   if (!garray) {sys_unlock(); return -1;} \
@@ -274,6 +297,20 @@ int libpd_write_array(const char *name, int offset, const float *src, int n) {
   return 0;
 }
 
+int libpd_read_array_double(double *dest, const char *name, int offset, int n) {
+  sys_lock();
+  MEMCPY(*dest++, (vec++)->w_float)
+  sys_unlock();
+  return 0;
+}
+
+int libpd_write_array_double(const char *name, int offset, const double *src, int n) {
+  sys_lock();
+  MEMCPY((vec++)->w_float, *src++)
+  sys_unlock();
+  return 0;
+}
+
 int libpd_bang(const char *recv) {
   void *obj;
   sys_lock();
@@ -288,7 +325,7 @@ int libpd_bang(const char *recv) {
   return 0;
 }
 
-int libpd_float(const char *recv, float x) {
+static int libpd_dofloat(const char *recv, t_float x) {
   void *obj;
   sys_lock();
   obj = get_object(recv);
@@ -300,6 +337,14 @@ int libpd_float(const char *recv, float x) {
   pd_float(obj, x);
   sys_unlock();
   return 0;
+}
+
+int libpd_float(const char *recv, float x) {
+  return libpd_dofloat(recv, x);
+}
+
+int libpd_double(const char *recv, double x) {
+  return libpd_dofloat(recv, x);
 }
 
 int libpd_symbol(const char *recv, const char *symbol) {
@@ -337,6 +382,10 @@ void libpd_add_float(float x) {
   ADD_ARG(SETFLOAT);
 }
 
+void libpd_add_double(double x) {
+  ADD_ARG(SETFLOAT);
+}
+
 void libpd_add_symbol(const char *symbol) {
   t_symbol *x;
   sys_lock();
@@ -355,6 +404,10 @@ int libpd_finish_message(const char *recv, const char *msg) {
 
 void libpd_set_float(t_atom *a, float x) {
   SETFLOAT(a, x);
+}
+
+void libpd_set_double(t_atom *v, double x) {
+  SETFLOAT(v, x);
 }
 
 void libpd_set_symbol(t_atom *a, const char *symbol) {
@@ -411,28 +464,40 @@ int libpd_exists(const char *recv) {
   return retval;
 }
 
+// when setting hooks, use mainimp if pd is not yet inited
+#define IMP (s_initialized ? LIBPDSTUFF : &libpd_mainimp)
+
 void libpd_set_printhook(const t_libpd_printhook hook) {
-  sys_printhook = (t_printhook) hook;
+  if (!s_initialized) // set default hook
+    sys_printhook = (t_printhook)hook;
+  else // set instance hook
+    STUFF->st_printhook = (t_printhook)hook;
 }
 
 void libpd_set_banghook(const t_libpd_banghook hook) {
-  libpd_banghook = hook;
+  IMP->i_hooks.h_banghook = hook;
 }
 
 void libpd_set_floathook(const t_libpd_floathook hook) {
-  libpd_floathook = hook;
+  IMP->i_hooks.h_floathook = hook;
+  IMP->i_hooks.h_doublehook = NULL;
+}
+
+void libpd_set_doublehook(const t_libpd_doublehook hook) {
+  IMP->i_hooks.h_floathook = NULL;
+  IMP->i_hooks.h_doublehook = hook;
 }
 
 void libpd_set_symbolhook(const t_libpd_symbolhook hook) {
-  libpd_symbolhook = hook;
+  IMP->i_hooks.h_symbolhook = hook;
 }
 
 void libpd_set_listhook(const t_libpd_listhook hook) {
-  libpd_listhook = hook;
+  IMP->i_hooks.h_listhook = hook;
 }
 
 void libpd_set_messagehook(const t_libpd_messagehook hook) {
-  libpd_messagehook = hook;
+  IMP->i_hooks.h_messagehook = hook;
 }
 
 int libpd_is_float(t_atom *a) {
@@ -444,6 +509,10 @@ int libpd_is_symbol(t_atom *a) {
 }
 
 float libpd_get_float(t_atom *a) {
+  return (a)->a_w.w_float;
+}
+
+double libpd_get_double(t_atom *a) {
   return (a)->a_w.w_float;
 }
 
@@ -520,35 +589,62 @@ int libpd_polyaftertouch(int channel, int pitch, int value) {
   return 0;
 }
 
+int libpd_midibyte(int port, int byte) {
+  CHECK_PORT
+  CHECK_RANGE_8BIT(byte)
+  sys_lock();
+  inmidi_byte(port, byte);
+  sys_unlock();
+  return 0;
+}
+
+int libpd_sysex(int port, int byte) {
+  CHECK_PORT
+  CHECK_RANGE_8BIT(byte)
+  sys_lock();
+  inmidi_sysex(port, byte);
+  sys_unlock();
+  return 0;
+}
+
+int libpd_sysrealtime(int port, int byte) {
+  CHECK_PORT
+  CHECK_RANGE_8BIT(byte)
+  sys_lock();
+  inmidi_realtimein(port, byte);
+  sys_unlock();
+  return 0;
+}
+
 void libpd_set_noteonhook(const t_libpd_noteonhook hook) {
-  libpd_noteonhook = hook;
+  IMP->i_hooks.h_noteonhook = hook;
 }
 
 void libpd_set_controlchangehook(const t_libpd_controlchangehook hook) {
-  libpd_controlchangehook = hook;
+  IMP->i_hooks.h_controlchangehook = hook;
 }
 
 void libpd_set_programchangehook(const t_libpd_programchangehook hook) {
-  libpd_programchangehook = hook;
+  IMP->i_hooks.h_programchangehook = hook;
 }
 
 void libpd_set_pitchbendhook(const t_libpd_pitchbendhook hook) {
-  libpd_pitchbendhook = hook;
+  IMP->i_hooks.h_pitchbendhook = hook;
 }
 
 void libpd_set_aftertouchhook(const t_libpd_aftertouchhook hook) {
-  libpd_aftertouchhook = hook;
+  IMP->i_hooks.h_aftertouchhook = hook;
 }
 
 void libpd_set_polyaftertouchhook(const t_libpd_polyaftertouchhook hook) {
-  libpd_polyaftertouchhook = hook;
+  IMP->i_hooks.h_polyaftertouchhook = hook;
 }
 
 void libpd_set_midibytehook(const t_libpd_midibytehook hook) {
-  libpd_midibytehook = hook;
+  IMP->i_hooks.h_midibytehook = hook;
 }
 
-int libpd_start_gui(char *path) {
+int libpd_start_gui(const char *path) {
   int retval;
   sys_lock();
   retval = sys_startgui(path);
@@ -562,10 +658,61 @@ void libpd_stop_gui(void) {
   sys_unlock();
 }
 
-void libpd_poll_gui(void) {
+int libpd_poll_gui(void) {
+  int retval;
   sys_lock();
-  sys_pollgui();
+  retval = sys_pollgui();
   sys_unlock();
+  return (retval);
+}
+
+t_pdinstance *libpd_new_instance(void) {
+#ifdef PDINSTANCE
+  t_pdinstance *pd = pdinstance_new();
+  pd->pd_stuff->st_impdata = libpdimp_new();
+  return pd;
+#else
+  return NULL;
+#endif
+}
+
+void libpd_set_instance(t_pdinstance *pd) {
+#ifdef PDINSTANCE
+  pd_setinstance(pd);
+#endif
+}
+
+void libpd_free_instance(t_pdinstance *pd) {
+#ifdef PDINSTANCE
+  if (pd == &pd_maininstance) return;
+  libpdimp_free(pd->pd_stuff->st_impdata);
+  pdinstance_free(pd);
+#endif
+}
+
+t_pdinstance *libpd_this_instance(void) {
+  return pd_this;
+}
+
+t_pdinstance *libpd_main_instance(void) {
+  return &pd_maininstance;
+}
+
+int libpd_num_instances(void) {
+#ifdef PDINSTANCE
+  return pd_ninstances;
+#else
+  return 1;
+#endif
+}
+
+void libpd_set_instancedata(void *data, t_libpd_freehook freehook) {
+  LIBPDSTUFF->i_data = data;
+  LIBPDSTUFF->i_data_freehook = freehook;
+}
+
+void* libpd_get_instancedata() {
+  return LIBPDSTUFF->i_data;
 }
 
 void libpd_set_verbose(int verbose) {
@@ -578,10 +725,14 @@ int libpd_get_verbose(void) {
 }
 
 // dummy routines needed because we don't use s_file.c
+void glob_loadpreferences(t_pd *dummy) {}
 void glob_savepreferences(t_pd *dummy) {}
 void glob_recent_files(t_pd *dummy) {}
 void glob_add_recent_file(t_pd *dummy, t_symbol *s) {}
 void glob_clear_recent_files(t_pd *dummy) {}
-int sys_defeatrt, sys_autopatch_yoffset, sys_zoom, sys_browser_doc = 1,
+int sys_autopatch_yoffset, sys_zoom, sys_browser_doc = 1,
     sys_browser_path, sys_browser_init;
-t_symbol *sys_flags = &s_;
+void glob_forgetpreferences(t_pd *dummy) {}
+void sys_loadpreferences(const char *filename, int startingup) {}
+int sys_oktoloadfiles(int done) {return 1;}
+void sys_savepreferences(const char *filename) {} // used in s_path.c

@@ -33,16 +33,14 @@
 #include <fcntl.h>
 #endif
 
-#ifdef MSW
+#ifdef _WIN32
 #include <windows.h>
 #include <tchar.h>
 #include <io.h>
 #endif
-#ifdef _MSC_VER  /* This is only for Microsoft's compiler, not cygwin, e.g. */
-#define snprintf sprintf_s
-#endif
+#include "m_private_utils.h"
 
-int sys_defeatrt, sys_autopatch_yoffset,
+int sys_autopatch_yoffset,
     sys_zoom = 1, sys_browser_doc = 1, sys_browser_path, sys_browser_init;
 
 /* ico@vt.edu 2023-04-17: moved sys_curved_cords, sys_snaptogrid, sys_gridsize, sys_autocomplete_relevance, sys_autocomplete_prefix to m_glob.c to allow for
@@ -62,16 +60,17 @@ extern int sys_autocomplete;
 //extern int sys_browser_init;
 
 
-t_symbol *sys_flags = &s_;
-void sys_doflags( void);
+void sys_doflags(void);
 
-#ifdef UNIX
+    /* Hmm... maybe better would be to #if on not-apple-or-windows  */
+#if defined(__linux__) || defined(__CYGWIN__) || defined(__FreeBSD_kernel__) \
+|| defined(__GNU__) || defined(ANDROID)
 
 #define USER_CONFIG_DIR ".pd-l2ork"
 
 static char *sys_prefbuf;
 
-static void sys_initloadpreferences( void)
+static void sys_initloadpreferences(void)
 {
     char filenamebuf[FILENAME_MAX], *homedir = getenv("HOME");
     int fd, length;
@@ -80,11 +79,11 @@ static void sys_initloadpreferences( void)
     char default_prefs_file[FILENAME_MAX];
     struct stat statbuf;
 
-    snprintf(default_prefs_file, FILENAME_MAX, "%s/default.settings", 
+    pd_snprintf(default_prefs_file, FILENAME_MAX, "%s/default.settings", 
              sys_libdir->s_name);
 
     if (homedir)
-        snprintf(user_prefs_file, FILENAME_MAX, "%s/" USER_CONFIG_DIR "/user.settings", homedir);
+        pd_snprintf(user_prefs_file, FILENAME_MAX, "%s/" USER_CONFIG_DIR "/user.settings", homedir);
     if (stat(user_prefs_file, &statbuf) == 0) 
         strncpy(filenamebuf, user_prefs_file, FILENAME_MAX);
     else if (stat(default_prefs_file, &statbuf) == 0)
@@ -109,7 +108,7 @@ static void sys_initloadpreferences( void)
     lseek(fd, 0, 0);
     if (!(sys_prefbuf = malloc(length + 2)))
     {
-        error("couldn't allocate memory for preferences buffer");
+        pd_error(0, "couldn't allocate memory for preferences buffer");
         sys_close(fd);
         return;
     }
@@ -150,7 +149,7 @@ static int sys_getpreference(const char *key, char *value, int size)
     return (1);
 }
 
-static void sys_doneloadpreferences( void)
+static void sys_doneloadpreferences(void)
 {
     if (sys_prefbuf)
         free(sys_prefbuf);
@@ -158,14 +157,14 @@ static void sys_doneloadpreferences( void)
 
 static FILE *sys_prefsavefp;
 
-static void sys_initsavepreferences( void)
+static void sys_initsavepreferences(void)
 {
     char filenamebuf[FILENAME_MAX], *homedir = getenv("HOME");
     struct stat statbuf;
 
     if (!homedir)
         return;
-    snprintf(filenamebuf, FILENAME_MAX, "%s/" USER_CONFIG_DIR, homedir);
+    pd_snprintf(filenamebuf, FILENAME_MAX, "%s/" USER_CONFIG_DIR, homedir);
     filenamebuf[FILENAME_MAX-1] = 0;
     if (stat(filenamebuf, &statbuf) || !S_ISDIR(statbuf.st_mode)) {
       // user config dir doesn't exist yet, try to create it
@@ -174,11 +173,11 @@ static void sys_initsavepreferences( void)
         return;
       }
     }
-    snprintf(filenamebuf, FILENAME_MAX, "%s/" USER_CONFIG_DIR "/user.settings", homedir);
+    pd_snprintf(filenamebuf, FILENAME_MAX, "%s/" USER_CONFIG_DIR "/user.settings", homedir);
     filenamebuf[FILENAME_MAX-1] = 0;
     if ((sys_prefsavefp = sys_fopen(filenamebuf, "w")) == NULL)
     {
-        //snprintf(errbuf, FILENAME_MAX, "%s: %s",filenamebuf, strerror(errno));
+        //pd_snprintf(errbuf, FILENAME_MAX, "%s: %s",filenamebuf, strerror(errno));
         pd_error(0, "%s: %s",filenamebuf, strerror(errno));
     }
 }
@@ -190,7 +189,7 @@ static void sys_putpreference(const char *key, const char *value)
             key, value);
 }
 
-static void sys_donesavepreferences( void)
+static void sys_donesavepreferences(void)
 {
     if (sys_prefsavefp)
     {
@@ -199,11 +198,11 @@ static void sys_donesavepreferences( void)
     }
 }
 
-#endif /* UNIX */
+#endif /* __linux__ || __CYGWIN__ || __FreeBSD_kernel__ || __GNU__ */
 
-#ifdef MSW
+#ifdef _WIN32
 
-static void sys_initloadpreferences( void)
+static void sys_initloadpreferences(void)
 {
 }
 
@@ -234,11 +233,11 @@ static int sys_getpreference(const char *key, char *value, int size)
     return (1);
 }
 
-static void sys_doneloadpreferences( void)
+static void sys_doneloadpreferences(void)
 {
 }
 
-static void sys_initsavepreferences( void)
+static void sys_initsavepreferences(void)
 {
 }
 
@@ -250,21 +249,21 @@ static void sys_putpreference(const char *key, const char *value)
         NULL, &hkey, NULL);
     if (err != ERROR_SUCCESS)
     {
-        post("unable to create registry entry: %s: error %zx\n", key,
+        pd_error(0, "unable to create registry entry: %s: error %zx\n", key,
             (t_int)err);
         return;
     }
     err = RegSetValueEx(hkey, key, 0, REG_EXPAND_SZ, value, strlen(value)+1);
     if (err != ERROR_SUCCESS)
-        post("unable to set registry entry: %s\n", key);
+        pd_error(0, "unable to set registry entry: %s\n", key);
     RegCloseKey(hkey);
 }
 
-static void sys_donesavepreferences( void)
+static void sys_donesavepreferences(void)
 {
 }
 
-#endif /* MSW */
+#endif /* _WIN32 */
 
 #ifdef __APPLE__
 
@@ -311,16 +310,16 @@ static void sys_initloadpreferences(void)
     // these exist. Note that Pd-l2ork can't create standalone apps à la
     // Pd-extended right now, but we might want to support them in the future,
     // so we handle the embedded prefs case anyway.
-    snprintf(default_prefs, FILENAME_MAX,
+    pd_snprintf(default_prefs, FILENAME_MAX,
 	     "%s/../org.puredata.pd-l2ork.default",
              sys_libdir->s_name);
-    snprintf(embedded_prefs, FILENAME_MAX,
+    pd_snprintf(embedded_prefs, FILENAME_MAX,
 	     "%s/../org.puredata.pd-l2ork",
              sys_libdir->s_name);
-    snprintf(user_prefs, FILENAME_MAX,
+    pd_snprintf(user_prefs, FILENAME_MAX,
              "%s/Library/Preferences/org.puredata.pd-l2ork", homedir);
-    snprintf(embedded_prefs_file, FILENAME_MAX, "%s.plist", embedded_prefs);
-    snprintf(user_prefs_file, FILENAME_MAX, "%s.plist", user_prefs);
+    pd_snprintf(embedded_prefs_file, FILENAME_MAX, "%s.plist", embedded_prefs);
+    pd_snprintf(user_prefs_file, FILENAME_MAX, "%s.plist", user_prefs);
     if (stat(embedded_prefs_file, &statbuf) == 0) {
       // Read from and write to the embedded prefs (standalone app).
       prefs = embedded_prefs;
@@ -348,7 +347,7 @@ static void sys_initloadpreferences(void)
     //   "loadlib1" : "libdir",                   loadlib1: libdir
     //   "path1" : "\/System\/Library\/Fonts"     path1: /System/Library/Fonts
     // }
-    snprintf(cmdbuf, MAXPDSTRING,
+    pd_snprintf(cmdbuf, MAXPDSTRING,
         "plutil -convert json -r -o - \"%s.plist\" "
         "| sed -E "
           "-e 's/[{}]//g' "
@@ -361,7 +360,7 @@ static void sys_initloadpreferences(void)
       // if opening the pipe failed for some reason, bail out now
       if (sys_verbose)
         perror(current_prefs);
-      error("%s: %s", current_prefs, strerror(errno));
+      pd_error(0, "%s: %s", current_prefs, strerror(errno));
       return;
     }
     // Initialize the buffer. Note that we have to reserve one extra byte for
@@ -427,7 +426,7 @@ static int sys_getpreference(const char *key, char *value, int size)
     return (1);
 }
 
-static void sys_doneloadpreferences( void)
+static void sys_doneloadpreferences(void)
 {
     if (sys_prefbuf)
         free(sys_prefbuf);
@@ -453,7 +452,7 @@ static void sys_doneloadpreferences( void)
 static FILE *save_fp;
 static char save_prefs[] = save_prefs_template;
 
-static void sys_initsavepreferences( void)
+static void sys_initsavepreferences(void)
 {
   strcpy(save_prefs, save_prefs_template);
   int fd = mkstemp(save_prefs);
@@ -480,14 +479,14 @@ static void sys_putpreference(const char *key, const char *value)
           key, value);
 }
 
-static void sys_donesavepreferences( void)
+static void sys_donesavepreferences(void)
 {
   if (!save_fp) return;
   fprintf(save_fp, "</dict>\n</plist>\n");
   fclose(save_fp);
   save_fp = 0;
   char cmdbuf[MAXPDSTRING];
-  snprintf(cmdbuf, MAXPDSTRING,
+  pd_snprintf(cmdbuf, MAXPDSTRING,
            "defaults import '%s' '%s' 2> /dev/null",
            current_prefs, save_prefs);
   system(cmdbuf);
@@ -518,25 +517,25 @@ static int check_exists(const char*path)
 
 extern void sys_expandpathelems(const char *name, char *result);
 
-void sys_loadpreferences( void)
+void sys_loadpreferences(void)
 {
-    int naudioindev, audioindev[MAXAUDIOINDEV], chindev[MAXAUDIOINDEV];
-    int naudiooutdev, audiooutdev[MAXAUDIOOUTDEV], choutdev[MAXAUDIOOUTDEV];
+    t_audiosettings as;
     int nmidiindev, midiindev[MAXMIDIINDEV];
     int nmidioutdev, midioutdev[MAXMIDIOUTDEV];
-    int i, rate = 0, advance = -1, callback = 0, blocksize = 0,
-        api, maxi;
+    int midiapi, maxi, i;
     char prefbuf[MAXPDSTRING], keybuf[80];
+    sys_get_audio_settings(&as);
 
     sys_initloadpreferences();
         /* load audio preferences */
-    if (sys_getpreference("audioapi", prefbuf, MAXPDSTRING)
-        && sscanf(prefbuf, "%d", &api) > 0)
-            sys_set_audio_api(api);
+    if (!sys_externalschedlib
+        && sys_getpreference("audioapi", prefbuf, MAXPDSTRING)
+        && sscanf(prefbuf, "%d", &as.a_api) < 1)
+            as.a_api = -1;
             /* JMZ/MB: brackets for initializing */
     if (sys_getpreference("noaudioin", prefbuf, MAXPDSTRING) &&
         (!strcmp(prefbuf, ".") || !strcmp(prefbuf, "True")))
-            naudioindev = 0;
+            as.a_nindev = 0;
     else
     {
         /* AG: naudioin key */
@@ -557,23 +556,22 @@ void sys_loadpreferences( void)
         if (!(sys_getpreference("naudioin", prefbuf, MAXPDSTRING)
               && sscanf(prefbuf, "%d", &n) > 0))
             n = MAXAUDIOINDEV;
-        for (i = 0, naudioindev = 0; i < n; i++)
+        for (as.a_nindev = 0; as.a_nindev < n; as.a_nindev++)
         {
-            sprintf(keybuf, "audioindev%d", i+1);
+            sprintf(keybuf, "audioindev%d", as.a_nindev+1);
             if (!sys_getpreference(keybuf, prefbuf, MAXPDSTRING))
                 break;
-            if (sscanf(prefbuf, "%d %d", &audioindev[i], &chindev[i]) < 2)
+            if (sscanf(prefbuf, "%d %d", &as.a_indevvec[as.a_nindev], &as.a_chindevvec[as.a_nindev]) < 2)
                 break;
-            naudioindev++;
         }
             /* if no preferences at all, set -1 for default behavior */
-        if (naudioindev == 0)
-            naudioindev = -1;
+        if (as.a_nindev == 0)
+            as.a_nindev = -1;
     }
         /* JMZ/MB: brackets for initializing */
     if (sys_getpreference("noaudioout", prefbuf, MAXPDSTRING) &&
         (!strcmp(prefbuf, ".") || !strcmp(prefbuf, "True")))
-            naudiooutdev = 0;
+            as.a_noutdev = 0;
     else
     {
         /* AG: naudioout key */
@@ -581,34 +579,31 @@ void sys_loadpreferences( void)
         if (!(sys_getpreference("naudioout", prefbuf, MAXPDSTRING)
               && sscanf(prefbuf, "%d", &n) > 0))
             n = MAXAUDIOOUTDEV;
-        for (i = 0, naudiooutdev = 0; i < n; i++)
+        for (as.a_noutdev = 0; as.a_noutdev < n; as.a_noutdev++)
         {
-            sprintf(keybuf, "audiooutdev%d", i+1);
+            sprintf(keybuf, "audiooutdev%d", as.a_noutdev+1);
             if (!sys_getpreference(keybuf, prefbuf, MAXPDSTRING))
                 break;
-            if (sscanf(prefbuf, "%d %d", &audiooutdev[i], &choutdev[i]) < 2)
+            if (sscanf(prefbuf, "%d %d", &as.a_outdevvec[as.a_noutdev], &as.a_choutdevvec[as.a_noutdev]) < 2)
                 break;
-            naudiooutdev++;
         }
-        if (naudiooutdev == 0)
-            naudiooutdev = -1;
+        if (as.a_noutdev == 0)
+            as.a_noutdev = -1;
     }
     if (sys_getpreference("rate", prefbuf, MAXPDSTRING))
-        sscanf(prefbuf, "%d", &rate);
+        sscanf(prefbuf, "%d", &as.a_srate);
     if (sys_getpreference("audiobuf", prefbuf, MAXPDSTRING))
-        sscanf(prefbuf, "%d", &advance);
+        sscanf(prefbuf, "%d", &as.a_advance);
     if (sys_getpreference("callback", prefbuf, MAXPDSTRING))
-        sscanf(prefbuf, "%d", &callback);
+        sscanf(prefbuf, "%d", &as.a_callback);
     if (sys_getpreference("blocksize", prefbuf, MAXPDSTRING))
-        sscanf(prefbuf, "%d", &blocksize);
-    sys_set_audio_settings(naudioindev, audioindev, naudioindev, chindev,
-        naudiooutdev, audiooutdev, naudiooutdev, choutdev, rate, advance,
-        callback, blocksize);
+        sscanf(prefbuf, "%d", &as.a_blocksize);
+    sys_set_audio_settings(&as);
         
         /* load MIDI preferences */
     if (sys_getpreference("midiapi", prefbuf, MAXPDSTRING)
-        && sscanf(prefbuf, "%d", &api) > 0)
-            sys_set_midi_api(api);
+        && sscanf(prefbuf, "%d", &midiapi) > 0)
+            sys_set_midi_api(midiapi);
         /* JMZ/MB: brackets for initializing */
     if (sys_getpreference("nomidiin", prefbuf, MAXPDSTRING) &&
         (!strcmp(prefbuf, ".") || !strcmp(prefbuf, "True")))
@@ -620,14 +615,13 @@ void sys_loadpreferences( void)
         if (!(sys_getpreference("nmidiin", prefbuf, MAXPDSTRING)
               && sscanf(prefbuf, "%d", &n) > 0))
             n = MAXMIDIINDEV;
-        for (i = 0, nmidiindev = 0; i < n; i++)
+        for (nmidiindev = 0; nmidiindev < n; nmidiindev++)
         {
-            sprintf(keybuf, "midiindev%d", i+1);
+            sprintf(keybuf, "midiindev%d", nmidiindev+1);
             if (!sys_getpreference(keybuf, prefbuf, MAXPDSTRING))
                 break;
-            if (sscanf(prefbuf, "%d", &midiindev[i]) < 1)
+            if (sscanf(prefbuf, "%d", &midiindev[nmidiindev]) < 1)
                 break;
-            nmidiindev++;
         }
     }
         /* JMZ/MB: brackets for initializing */
@@ -641,14 +635,13 @@ void sys_loadpreferences( void)
         if (!(sys_getpreference("nmidiout", prefbuf, MAXPDSTRING)
               && sscanf(prefbuf, "%d", &n) > 0))
             n = MAXMIDIOUTDEV;
-        for (i = 0, nmidioutdev = 0; i < n; i++)
+        for (nmidioutdev = 0; nmidioutdev < n; nmidioutdev++)
         {
-            sprintf(keybuf, "midioutdev%d", i+1);
+            sprintf(keybuf, "midioutdev%d", nmidioutdev+1);
             if (!sys_getpreference(keybuf, prefbuf, MAXPDSTRING))
                 break;
-            if (sscanf(prefbuf, "%d", &midioutdev[i]) < 1)
+            if (sscanf(prefbuf, "%d", &midioutdev[nmidioutdev]) < 1)
                 break;
-            nmidioutdev++;
         }
     }
     sys_open_midi(nmidiindev, midiindev, nmidioutdev, midioutdev, 0);
@@ -657,7 +650,7 @@ void sys_loadpreferences( void)
     if (sys_getpreference("npath", prefbuf, MAXPDSTRING))
         sscanf(prefbuf, "%d", &maxi);
     else maxi = 0x7fffffff;
-    for (i = 0; i<maxi; i++)
+    for (i = 0; i < maxi; i++)
     {
         sprintf(keybuf, "path%d", i+1);
         if (!sys_getpreference(keybuf, prefbuf, MAXPDSTRING))
@@ -670,7 +663,7 @@ void sys_loadpreferences( void)
             if (!check_exists(final_name))
                 continue;
 	}
-        sys_searchpath = namelist_append_files(sys_searchpath, prefbuf);
+        STUFF->st_searchpath = namelist_append_files(STUFF->st_searchpath, prefbuf);
     }
     if (sys_getpreference("standardpath", prefbuf, MAXPDSTRING))
         sscanf(prefbuf, "%d", &sys_usestdpath);
@@ -686,7 +679,7 @@ void sys_loadpreferences( void)
         sprintf(keybuf, "loadlib%d", i+1);
         if (!sys_getpreference(keybuf, prefbuf, MAXPDSTRING))
             break;
-        sys_externlist = namelist_append_files(sys_externlist, prefbuf);
+        STUFF->st_externlist = namelist_append_files(STUFF->st_externlist, prefbuf);
     }
     if (sys_getpreference("defeatrt", prefbuf, MAXPDSTRING))
         sscanf(prefbuf, "%d", &sys_defeatrt);
@@ -732,22 +725,17 @@ void sys_loadpreferences( void)
     if (sys_defeatrt)
         sys_hipriority = 0;
     else
-#ifdef UNIX
-        sys_hipriority = 1; //!geteuid();
-#else
-#ifdef MSW
+#if defined(ANDROID)
         sys_hipriority = 0;
 #else
         sys_hipriority = 1;
-#endif
 #endif
 }
 
 void glob_savepreferences(t_pd *dummy)
 {
-    int naudioindev, audioindev[MAXAUDIOINDEV], chindev[MAXAUDIOINDEV];
-    int naudiooutdev, audiooutdev[MAXAUDIOOUTDEV], choutdev[MAXAUDIOOUTDEV];
-    int i, rate, advance, callback, blocksize;
+    t_audiosettings as;
+    int i;
     char buf1[MAXPDSTRING], buf2[MAXPDSTRING];
     int nmidiindev, midiindev[MAXMIDIINDEV];
     int nmidioutdev, midioutdev[MAXMIDIOUTDEV];
@@ -756,45 +744,42 @@ void glob_savepreferences(t_pd *dummy)
 
 
         /* audio settings */
-    sprintf(buf1, "%d", sys_audioapi);
+    sys_get_audio_settings(&as);
+    sprintf(buf1, "%d", as.a_api);
     sys_putpreference("audioapi", buf1);
 
-    sys_get_audio_params(&naudioindev, audioindev, chindev,
-        &naudiooutdev, audiooutdev, choutdev, &rate, &advance, &callback,
-            &blocksize);
-
-    sys_putpreference("noaudioin", (naudioindev <= 0 ? "True" : "False"));
+    sys_putpreference("noaudioin", (as.a_nindev <= 0 ? "True" : "False"));
     /* AG: additional naudioin key, see the comments in sys_loadpreferences
        above for explanation */
-    sprintf(buf1, "%d", naudioindev);
+    sprintf(buf1, "%d", as.a_nindev);
     sys_putpreference("naudioin", buf1);
-    for (i = 0; i < naudioindev; i++)
+    for (i = 0; i < as.a_nindev; i++)
     {
         sprintf(buf1, "audioindev%d", i+1);
-        sprintf(buf2, "%d %d", audioindev[i], chindev[i]);
+        sprintf(buf2, "%d %d", as.a_indevvec[i], as.a_chindevvec[i]);
         sys_putpreference(buf1, buf2);
     }
-    sys_putpreference("noaudioout", (naudiooutdev <= 0 ? "True" : "False"));
+    sys_putpreference("noaudioout", (as.a_noutdev <= 0 ? "True" : "False"));
     /* AG: naudioout key */
-    sprintf(buf1, "%d", naudiooutdev);
+    sprintf(buf1, "%d", as.a_noutdev);
     sys_putpreference("naudioout", buf1);
-    for (i = 0; i < naudiooutdev; i++)
+    for (i = 0; i < as.a_noutdev; i++)
     {
         sprintf(buf1, "audiooutdev%d", i+1);
-        sprintf(buf2, "%d %d", audiooutdev[i], choutdev[i]);
+        sprintf(buf2, "%d %d", as.a_outdevvec[i], as.a_choutdevvec[i]);
         sys_putpreference(buf1, buf2);
    }
 
-    sprintf(buf1, "%d", advance);
+    sprintf(buf1, "%d", as.a_advance);
     sys_putpreference("audiobuf", buf1);
 
-    sprintf(buf1, "%d", rate);
+    sprintf(buf1, "%d", as.a_srate);
     sys_putpreference("rate", buf1);
 
-    sprintf(buf1, "%d", callback);
+    sprintf(buf1, "%d", as.a_callback);
     sys_putpreference("callback", buf1);
 
-    sprintf(buf1, "%d", blocksize);
+    sprintf(buf1, "%d", as.a_blocksize);
     sys_putpreference("blocksize", buf1);
 
         /* MIDI settings */
@@ -826,7 +811,7 @@ void glob_savepreferences(t_pd *dummy)
 
     for (i = 0; 1; i++)
     {
-        char *pathelem = namelist_get(sys_searchpath, i);
+        const char *pathelem = namelist_get(STUFF->st_searchpath, i);
         if (!pathelem)
             break;
         sprintf(buf1, "path%d", i+1);
@@ -843,7 +828,7 @@ void glob_savepreferences(t_pd *dummy)
         /* startup */
     for (i = 0; 1; i++)
     {
-        char *pathelem = namelist_get(sys_externlist, i);
+        const char *pathelem = namelist_get(STUFF->st_externlist, i);
         if (!pathelem)
             break;
         sprintf(buf1, "loadlib%d", i+1);
@@ -922,7 +907,7 @@ void sys_save_recent_files(void)
   char filenamebuf[FILENAME_MAX], *homedir = getenv("HOME");
   struct stat statbuf;
   if (!homedir) return;
-  snprintf(filenamebuf, FILENAME_MAX, "%s/" USER_CONFIG_DIR, homedir);
+  pd_snprintf(filenamebuf, FILENAME_MAX, "%s/" USER_CONFIG_DIR, homedir);
   filenamebuf[FILENAME_MAX-1] = 0;
   if (stat(filenamebuf, &statbuf) || !S_ISDIR(statbuf.st_mode)) {
     // user config dir doesn't exist yet, try to create it
@@ -931,7 +916,7 @@ void sys_save_recent_files(void)
       return;
     }
   }
-  snprintf(filenamebuf, FILENAME_MAX, "%s/" USER_CONFIG_DIR "/recent_files", homedir);
+  pd_snprintf(filenamebuf, FILENAME_MAX, "%s/" USER_CONFIG_DIR "/recent_files", homedir);
   filenamebuf[FILENAME_MAX-1] = 0;
   if ((fp = sys_fopen(filenamebuf, "w")) == NULL) {
     pd_error(0, "%s: %s",filenamebuf, strerror(errno));
@@ -962,7 +947,7 @@ void sys_load_recent_files(void)
   FILE *fp;
   char filenamebuf[FILENAME_MAX], *homedir = getenv("HOME");
   if (!homedir) return;
-  snprintf(filenamebuf, FILENAME_MAX, "%s/" USER_CONFIG_DIR "/recent_files", homedir);
+  pd_snprintf(filenamebuf, FILENAME_MAX, "%s/" USER_CONFIG_DIR "/recent_files", homedir);
   filenamebuf[FILENAME_MAX-1] = 0;
   if ((fp = sys_fopen(filenamebuf, "r")) == NULL) return;
   for (sys_n_recent_files = 0; sys_n_recent_files < MAX_RECENT_FILES &&

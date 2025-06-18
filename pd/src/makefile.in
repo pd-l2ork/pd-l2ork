@@ -244,7 +244,7 @@ tags: $(SRC); ctags *.[ch]
 depend: makefile.dependencies
 
 makefile.dependencies: makefile s_version.h
-	$(CC) $(CPPFLAGS) -M $(SRC) > makefile.dependencies
+	$(CC) $(ARCH_CFLAGS) $(CPPFLAGS) -M $(SRC) > makefile.dependencies
 
 s_version.h: s_version.h.in
 	sed 's|^\(#define PD_BUILD_VERSION "\).*"|\1$(PD_BUILD_VERSION)"|' $< > $@

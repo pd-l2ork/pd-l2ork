@@ -886,7 +886,10 @@ endif
 gem_window = --with-sdl2 --with-sdl2-LIBS="-L$(usrlocal)/lib -lSDL2" --with-defaultwindow=gemglfw3window
 
 $(gem_src)/Gem.pd_darwin: gem_prep
-	cd $(gem_src) && autoreconf -vim && ./configure \
+	cd $(gem_src) && autoreconf -vim
+	perl -i -pe 's{^\s*func_fatal_error\s*"specify a tag with .--tag."}{      tagname=\${available_tags%% *}\n      echo "libtool: warning: no tag specified, assuming --tag=\$tagname" >&2;}g' $(gem_src)/ltmain.sh
+	perl -i -pe 's/CGRect rect = \{\{0,0\},\{w,h\}\};/CGRect rect = {{0,0},{(double)w,(double)h}};/' $(gem_src)/plugins/imageIO/imageIO.mm
+	cd $(gem_src) && ./configure \
 		CXXFLAGS="-DHAVE_S_STUFF_H $(CFLAGS_ADD)" \
 		--prefix=$(prefix) \
 		--libdir=$(objectsdir) \

@@ -32,7 +32,7 @@ static void scalehandle_check_and_redraw(t_iemgui *x);
 
 /* forward declarations */
 void iemgui_update_properties(t_iemgui *x, int option);
-void properties_set_field_int(long props, const char *gui_field, int value);
+void properties_set_field_int(t_int props, const char *gui_field, int value);
 void properties_set_field_float(t_int props, const char *gui_field, t_floatarg value);
 void properties_set_field_symbol(t_int props, const char *gui_field, t_symbol *value);
 
@@ -1069,7 +1069,7 @@ void scalehandle_free(t_scalehandle *h)
     pd_free((t_pd *)h);
 }
 
-void properties_set_field_int(long props, const char *gui_field, int value)
+void properties_set_field_int(t_int props, const char *gui_field, int value)
 {
     //post("properties_set_field_int %lx %zx %s %d", props, props, gui_field, value);
     char tagbuf[MAXPDSTRING];

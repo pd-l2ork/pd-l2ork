@@ -84,7 +84,7 @@ static struct timeval ztout;
 
 static char   *mp3fileout_version = "mp3fileout~: mp3 file streamer version 0.2, written by ydegoyon@free.fr";
 
-extern void sys_sockerror(char *s);
+extern void sys_sockerror(const char *s);
 
 void mp3fileout_closesocket(int fd)
 {

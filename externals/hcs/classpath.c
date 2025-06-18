@@ -85,7 +85,7 @@ static void classpath_rewind(t_classpath* x)
 	strncpy(buffer, sys_libdir->s_name, MAXPDSTRING - 6);
 	strcat(buffer, "/extra");
 	x->x_top = namelist_append(NULL, buffer, 0);
-	x->x_top->nl_next = sys_searchpath;
+	x->x_top->nl_next = STUFF->st_searchpath;
 	x->x_current = x->x_top;
 }
 

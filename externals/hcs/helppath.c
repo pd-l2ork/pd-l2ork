@@ -81,7 +81,7 @@ static void helppath_reset(t_helppath* x)
 {
 	DEBUG(post("helppath_reset"););
 
-	x->x_current = x->x_top = sys_helppath;
+	x->x_current = x->x_top = STUFF->st_helppath;
 }
 
 

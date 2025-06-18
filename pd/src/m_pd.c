@@ -2,8 +2,6 @@
 * For information on usage and redistribution, and for a DISCLAIMER OF ALL
 * WARRANTIES, see the file, "LICENSE.txt," in this distribution.  */
 
-#include <stdlib.h>
-#include <string.h>
 #include "m_pd.h"
 #include "m_imp.h"
 
@@ -34,10 +32,12 @@ t_pd *pd_new(t_class *c)
     return (x);
 }
 
+typedef void (*t_freemethod)(t_pd *);
+
 void pd_free(t_pd *x)
 {
     t_class *c = *x;
-    if (c->c_freemethod) (*(t_gotfn)(c->c_freemethod))(x);
+    if (c->c_freemethod) (*(t_freemethod)(c->c_freemethod))(x);
     if (c->c_patchable)
     {
         while (((t_object *)x)->ob_outlet)
@@ -266,7 +266,7 @@ void pd_unbind(t_pd *x, t_symbol *s)
             }
             //fprintf(stderr,"    success B1a %d\n", e->e_delayed_free);
         }
-        else for (e = b->b_list; e2 = e->e_next; e = e2)
+        else for (e = b->b_list; (e2 = e->e_next); e = e2)
         {
             if (e2->e_who == x)
             {
@@ -310,9 +310,7 @@ void pd_unbind(t_pd *x, t_symbol *s)
     else pd_error(x, "%s: couldn't unbind", s->s_name);
 }
 
-void zz(void) {}
-
-t_pd *pd_findbyclass(t_symbol *s, t_class *c)
+t_pd *pd_findbyclass(t_symbol *s, const t_class *c)
 {
     t_pd *x = 0;
     
@@ -333,7 +331,6 @@ t_pd *pd_findbyclass(t_symbol *s, t_class *c)
                 //fprintf(stderr,"...found %zx", e);
                 if (x && !warned)
                 {
-                    zz();
                     post("warning: %s: multiply defined", s->s_name);
                     warned = 1;
                 }
@@ -453,82 +450,61 @@ void pd_anything(t_pd *x, t_symbol *s, int argc, t_atom *argv)
 }
 
 void mess_init(void);
+void sched_init(void);
 void obj_init(void);
 void conf_init(void);
 void glob_init(void);
 void garray_init(void);
 
-t_pdinstance *pd_this;
-
-static t_symbol *midi_gensym(const char *prefix, const char *name)
-{
-    char buf[80];
-    strncpy(buf, prefix, 79);
-    buf[79] = 0;
-    buf[79] = 0;
-    strncat(buf, name, 79 - strlen(buf));
-    return (gensym(buf));
-}
-
-static t_pdinstance *pdinstance_donew(int useprefix)
-{
-    t_pdinstance *x = (t_pdinstance *)getbytes(sizeof(t_pdinstance));
-    char midiprefix[80];
-    if (useprefix)
-        sprintf(midiprefix, "%p", x);
-    else midiprefix[0] = 0;
-    x->pd_systime = 0;
-    x->pd_clock_setlist = 0;
-    x->pd_dspchain = 0;
-    x->pd_dspchainsize = 0;
-    x->pd_canvaslist = 0;
-    x->pd_dspstate = 0;
-    x->pd_dspstate_user = 0;
-    x->pd_midiin_sym = midi_gensym(midiprefix, "#midiin");
-    x->pd_sysexin_sym = midi_gensym(midiprefix, "#sysexin");
-    x->pd_notein_sym = midi_gensym(midiprefix, "#notein");
-    x->pd_ctlin_sym = midi_gensym(midiprefix, "#ctlin");
-    x->pd_pgmin_sym = midi_gensym(midiprefix, "#pgmin");
-    x->pd_bendin_sym = midi_gensym(midiprefix, "#bendin");
-    x->pd_touchin_sym = midi_gensym(midiprefix, "#touchin");
-    x->pd_polytouchin_sym = midi_gensym(midiprefix, "#polytouchin");
-    x->pd_midirealtimein_sym = midi_gensym(midiprefix, "#midirealtimein");
-    return (x);
-}
-
-EXTERN t_pdinstance *pdinstance_new(void)
-{
-    return (pdinstance_donew(1));
-}
-
 void pd_init(void)
 {
-    if (!pd_this)
-        pd_this = pdinstance_donew(0);
-    //fprintf(stderr,"pd_this=%lx\n", pd_this);
+    static int initted = 0;
+    if (initted)
+        return;
+    initted = 1;
+#ifdef PDINSTANCE
+    pd_instances = (t_pdinstance **)getbytes(sizeof(*pd_instances));
+    pd_instances[0] = &pd_maininstance;
+    pd_ninstances = 1;
+#endif
+    pd_init_systems();
+}
+
+void pd_term(void)
+{
+    t_glist *c;
+    for (c = pd_getcanvaslist(); c; c = c->gl_next)
+        canvas_closebang(c);
+#if 0
+        /* Canvases may be slow to close and as a workaround people
+        may want Pd to shutdown quickly. Conversely, others might
+        prefer it if canvases (and all their containing objects) are
+        always freed properly. For now let's exit quickly and LATER
+        figure out a way to handle this. */
+    while ((c = pd_getcanvaslist()))
+        pd_free((t_pd *)c);
+#endif
+    pd_term_systems();
+}
+
+void pd_init_systems(void)
+{
     mess_init();
+    sched_init();
+    sys_lock();
     obj_init();
     conf_init();
     glob_init();
     garray_init();
+    sys_unlock();
 }
 
-EXTERN void pd_setinstance(t_pdinstance *x)
+void pd_term_systems(void)
 {
-    pd_this = x;
+        /* TODO free resources */
 }
 
-EXTERN void pdinstance_free(t_pdinstance *x)
-{
-    /* placeholder - LATER free symtab, dsp chain, classes and canvases */
-}
-
-EXTERN t_canvas *pd_getcanvaslist(void)
+t_canvas *pd_getcanvaslist(void)
 {
     return (pd_this->pd_canvaslist);
-}
-
-EXTERN int pd_getdspstate(void)
-{
-    return (pd_this->pd_dspstate);
 }

@@ -126,7 +126,7 @@ map<string,ContainerType> ContainerBase<ContainerType,ContTypeIterator>::data_;
 template<class ContainerType, class ContTypeIterator>
 void ContainerBase<ContainerType,ContTypeIterator>::help()
 {
-  post("\nPD-Container, Version: "PDC_VERSION"");
+  post("\nPD-Container, Version: " PDC_VERSION);
   post("object: %s",dataname_.c_str());
   post("------------------------------------------");
   post("this is an implementation of the container");

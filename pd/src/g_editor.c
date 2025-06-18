@@ -24,7 +24,7 @@ void glist_readfrombinbuf(t_glist *x, t_binbuf *b, char *filename,
     int selectem);
 
 void open_via_helppath(const char *name, const char *dir);
-char *class_gethelpdir(t_class *c);
+const char *class_gethelpdir(const t_class *c);
 
 //static int toggle_moving = 0; //global variable
 
@@ -2040,8 +2040,6 @@ void canvas_canvas_setundo(t_canvas *x)
 
 /* --------- 9. create ----------- */
 
-extern t_pd *newest;
-
 typedef struct _undo_create      
 {
     int u_index;                /* index of the created object object */
@@ -2128,8 +2126,8 @@ void canvas_undo_create(t_canvas *x, void *z, int action)
         pd_bind(&x->gl_pd, gensym("#X"));
            binbuf_eval(buf->u_reconnectbuf, 0, 0, 0);
         pd_unbind(&x->gl_pd, gensym("#X"));
-        if (newest && pd_class(newest) == canvas_class)
-            canvas_loadbang((t_canvas *)newest);
+        if (pd_this->pd_newest && pd_class(pd_this->pd_newest) == canvas_class)
+            canvas_loadbang((t_canvas *)pd_this->pd_newest);
         y = glist_nth(x, buf->u_index);
         glist_select(x, y);
     }
@@ -2247,8 +2245,8 @@ void canvas_undo_recreate(t_canvas *x, void *z, int action)
                 canvas_redraw(x);
 
         // send a loadbang
-        if (newest && pd_class(newest) == canvas_class)
-            canvas_loadbang((t_canvas *)newest);
+        if (pd_this->pd_newest && pd_class(pd_this->pd_newest) == canvas_class)
+            canvas_loadbang((t_canvas *)pd_this->pd_newest);
 
         // select
         if (action == UNDO_REDO)
@@ -7628,7 +7626,6 @@ static void canvas_clearline(t_canvas *x)
     }
 }
 
-extern t_pd *newest;
 static void canvas_doclear(t_canvas *x)
 {
     t_gobj *y, *y2;
@@ -7659,12 +7656,12 @@ static void canvas_doclear(t_canvas *x)
         the glist to reselect. */
     if (x->gl_editor->e_textedfor)
     {
-        newest = 0;
+        pd_this->pd_newest = 0;
         glist_noselect(x);
-        if (newest)
+        if (pd_this->pd_newest)
         {
             for (y = x->gl_list; y; y = y->g_next)
-                if (&y->g_pd == newest) glist_select(x, y);
+                if (&y->g_pd == pd_this->pd_newest) glist_select(x, y);
         }
     }
     while (1)   /* this is pretty weird...  should rewrite it */
@@ -9640,4 +9637,14 @@ void canvas_editor_for_class(t_class *c)
         gensym("menuclose"), A_DEFFLOAT, 0);
     class_addmethod(c, (t_method)canvas_find_parent,
         gensym("findparent"), A_NULL);
+}
+
+void g_editor_newpdinstance(void)
+{
+    // Have not ported multi-instance editor from pure-data
+}
+
+void g_editor_freepdinstance(void)
+{
+    // Have not ported multi-instance editor from pure-data
 }

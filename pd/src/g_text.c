@@ -34,7 +34,7 @@ void canvas_howputnew(t_canvas *x, int *connectp, int *xpixp, int *ypixp,
     int *indexp, int *totalp);
 
 void canvas_startmotion(t_canvas *x);
-t_widgetbehavior text_widgetbehavior;
+const t_widgetbehavior text_widgetbehavior;
 
 extern void canvas_displaceselection(t_canvas *x, int dx, int dy);
 extern void canvas_apply_setundo(t_canvas *x, t_gobj *y);
@@ -139,7 +139,6 @@ void get_runtime_tooltip_text(t_text *x, int ac, t_atom *av)
     }
 }
 
-extern t_pd *newest;
 int scalar_in_a_box;
 extern void glist_scalar(t_glist *canvas, t_symbol *s, int argc, t_atom *argv);
 void canvas_getargs(int *argcp, t_atom **argvp);
@@ -157,13 +156,13 @@ static void canvas_objtext(t_glist *gl, int xpix, int ypix,
     int len, i, hidden;
     t_binbuf *hide;
 
-    newest = 0;
+    pd_this->pd_newest = 0;
     canvas_setcurrent((t_canvas *)gl);
     canvas_getargs(&argc, &argv);
     binbuf_eval(b, &pd_objectmaker, argc, argv);
     if (binbuf_getnatom(b))
     {
-        if (!newest)
+        if (!pd_this->pd_newest)
         {
             /* let's see if there's a scalar by this name... */
             t_atom *scalar_at = binbuf_getvec(b);
@@ -197,7 +196,7 @@ static void canvas_objtext(t_glist *gl, int xpix, int ypix,
             }
             x = 0;
         }
-        else if (!(x = pd_checkobject(newest)))
+        else if (!(x = pd_checkobject(pd_this->pd_newest)))
         {
             binbuf_print(b);
             post("... didn't return a patchable object");
@@ -3025,7 +3024,7 @@ void text_save(t_gobj *z, t_binbuf *b)
 }
 
     /* this one is for everyone but "gatoms"; it's imposed in m_class.c */
-t_widgetbehavior text_widgetbehavior =
+const t_widgetbehavior text_widgetbehavior =
 {
     text_getrect,
     text_displace,
@@ -3067,7 +3066,7 @@ static t_widgetbehavior dropdown_widgetbehavior =
 
     /* draw inlets and outlets for a text object or for a graph. */
 void glist_drawiofor(t_glist *glist, t_object *ob, int firsttime,
-    char *tag, int x1, int y1, int x2, int y2)
+    const char *tag, int x1, int y1, int x2, int y2)
 {
     t_rtext *y = glist_findrtext(glist, ob);
     //if this is a comment or we are drawing inside gop on one of
@@ -3158,7 +3157,7 @@ void glist_drawiofor(t_glist *glist, t_object *ob, int firsttime,
 }
 
 void text_drawborder(t_text *x, t_glist *glist,
-    char *tag, int width2, int height2, int firsttime)
+    const char *tag, int width2, int height2, int firsttime)
 {
     t_object *ob;
     int x1, y1, x2, y2;
@@ -3300,7 +3299,7 @@ void text_drawborder(t_text *x, t_glist *glist,
         canvas_raise_all_cords(glist);
 }
 
-void glist_eraseiofor(t_glist *glist, t_object *ob, char *tag)
+void glist_eraseiofor(t_glist *glist, t_object *ob, const char *tag)
 {
     //fprintf(stderr,"glist_eraseiofor\n");
     /* This whole function seems unnecessary now... xlets
@@ -3328,7 +3327,7 @@ void text_erase_gobj(t_text *x, t_glist *glist, char *tag)
 
 /* Another function that's unnecessary... parent gobj group will
    erase this for us */
-void text_eraseborder(t_text *x, t_glist *glist, char *tag)
+void text_eraseborder(t_text *x, t_glist *glist, const char *tag)
 {
     if (x->te_type == T_TEXT && !glist->gl_edit) return;
     //if (!glist_isvisible(glist)) return;
@@ -3381,7 +3380,7 @@ void text_checkvalidwidth(t_glist *glist)
 
     /* change text; if T_OBJECT, remake it. */
 
-void text_setto(t_text *x, t_glist *glist, char *buf, int bufsize, int pos)
+void text_setto(t_text *x, t_glist *glist, const char *buf, int bufsize, int pos)
 {
     char *c1, *c2;
     int i1, i2;
@@ -3487,8 +3486,8 @@ void text_setto(t_text *x, t_glist *glist, char *buf, int bufsize, int pos)
                 glist_delete(glist, &x->te_g);
                 canvas_objtext(glist, xwas, ywas, widthwas, 0, b, 0);
                     /* if it's an abstraction loadbang it here */
-                if (newest && pd_class(newest) == canvas_class)
-                    canvas_loadbang((t_canvas *)newest);
+                if (pd_this->pd_newest && pd_class(pd_this->pd_newest) == canvas_class)
+                    canvas_loadbang((t_canvas *)pd_this->pd_newest);
                 canvas_restoreconnections(glist_getcanvas(glist));
                 //canvas_apply_restore_original_position(glist_getcanvas(glist),
                 //    pos);

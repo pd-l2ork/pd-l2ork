@@ -263,6 +263,8 @@ typedef struct _filedialog
     t_symbol *x_s;
 } t_filedialog;
 
+static t_filedialog *filedialog_obj;
+
 static t_filedialog *filedialog_new( void)
 {
     char buf[50];
@@ -270,7 +272,6 @@ static t_filedialog *filedialog_new( void)
     sprintf(buf, "d%zx", (t_uint)x);
     x->x_s = gensym(buf);
     pd_bind(&x->x_obj.ob_pd, x->x_s);
-    gui_vmess("file_dialog_obj", "s", x->x_s->s_name);
     return (x);
 }
 
@@ -383,7 +384,7 @@ static void filedialog_setup(void)
     // platform-specific file dialog code. On Windows and Mac, file dialogs
     // are passed back to pdgui.js to handle, on Linux, they are handled
     // in C.
-    t_filedialog *x = filedialog_new();
+    filedialog_obj = filedialog_new();
 }
 
 /* -------------------------- openpanel ------------------------------ */
@@ -408,6 +409,7 @@ static void *openpanel_new(t_floatarg mode)
     x->x_s = gensym(buf);
     pd_bind(&x->x_obj.ob_pd, x->x_s);
     outlet_new(&x->x_obj, &s_symbol);
+    gui_vmess("file_dialog_obj", "s", filedialog_obj->x_s->s_name);
     return (x);
 }
 
@@ -471,6 +473,7 @@ static void *savepanel_new( void)
     x->x_canvas = canvas_getcurrent();
     pd_bind(&x->x_obj.ob_pd, x->x_s);
     outlet_new(&x->x_obj, &s_symbol);
+    gui_vmess("file_dialog_obj", "s", x->x_s->s_name);
     return (x);
 }
 

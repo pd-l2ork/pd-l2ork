@@ -13,9 +13,14 @@ typedef int socklen_t;
 #else
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <sys/select.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <netdb.h>
+#endif
+
+#ifndef NET_MAXPACKETSIZE
+#define NET_MAXPACKETSIZE 65536
 #endif
 
 /* ----- socket address ----- */
