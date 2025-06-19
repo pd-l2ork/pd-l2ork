@@ -4394,10 +4394,12 @@ async function openPatch(content, filename, patchURL) {
                                 windowSizeStack.push({id: data.id, width: data.layer.dimensions.width, height: data.layer.dimensions.height + 15});
                             else
                                 windowSizeStack = windowSizeStack.filter(window => window.id !== data.id);
-                            if(windowSizeStack.length)
-                                configure_item(rootCanvas, {
-                                    viewBox: `0 0 ${Math.max(...windowSizeStack.map(window => window.width))} ${Math.max(...windowSizeStack.map(window => window.height))}`,
-                                })
+                            if(windowSizeStack.length) {
+                                const w = Math.max(...windowSizeStack.map(window => window.width));
+                                const h = Math.max(...windowSizeStack.map(window => window.height));
+                                if(w != rootCanvas.viewBox.baseVal.width || h != rootCanvas.viewBox.baseVal.height)
+                                    configure_item(rootCanvas, {viewBox: `0 0 ${w} ${h}`});
+                            }
                         }
 
                         data.updateWindow();
@@ -5388,7 +5390,7 @@ async function openPatch(content, filename, patchURL) {
                     data.canvas = layer;
                     data.id = `${data.type}_${nextHTMLID++}`;
 
-                    let rawText = args.slice(4).join(" ").replace(/ \\?,/g, ",").replace(/\\; /g, ";\n").replace(/ ;/g, ";").replace(//g,'\n');
+                    let rawText = args.slice(4).join(" ").replace(/ \\?,/g, ",").replace(/ \\;/g, ";").replace(//g,'\n');
                     let lines = [];
                     for(let chunk of rawText.split('\n')) {
                         let tagExpr = /<\/?(?:[bhisu]|=[a-z0-9#]+)>/g; // Regex for finding tags
@@ -5473,7 +5475,7 @@ async function openPatch(content, filename, patchURL) {
                         data.sizeText.textContent = new Array(+widthOverride || Math.max(2,textLines.reduce((p,c)=>c.length>p?c.length:p,0))).fill('A').join('');
                         let width = data.sizeText.getComputedTextLength() + 5, height = font_height_map()[layer.fontSize] * textLines.length + 4;
                         rootCanvas.removeChild(data.sizeText);
-                        configure_item(data.border, {d: `M ${data.x_pos} ${data.y_pos} h ${width+4} l -4 4 v ${height-8} l 4 4 H ${data.x_pos} V ${data.y_pos}`}); 
+                        configure_item(data.border, {d: `M ${data.x_pos} ${data.y_pos} h ${width+4} l -4 4 v ${height-8} l 4 4 H ${data.x_pos} V ${data.y_pos} h ${width+4}`}); 
                         for(let i = 0; i < textLines.length; i++) {
                             if(!data.svgText[i]) {
                                 data.svgText.push(create_item("text", {
@@ -5779,18 +5781,20 @@ async function openPatch(content, filename, patchURL) {
                         gui_subscribe(layer.guiObjects[args[4]]);
                     }
                     if(layer.guiObjects[args[2]] && layer.guiObjects[args[4]] && args[5] === '0' && layer.guiObjects[args[2]].shortCircuit !== false) {
-                        //If both the sender and receiver are gui objects, we can directly set their sends and receives
-                        //Theoretically, they should only have 1 input/output, so the input/output id should always be 0
-                        if(args[3] === '0') {
-                            // lines.splice(i, 1);
-                            layer.guiObjects[args[2]].send.push(connectionName);
-                            if(layer.guiObjects[args[4]].shortCircuit !== false) {
-                                layer.guiObjects[args[4]].receive.push(connectionName);
-                                gui_subscribe(layer.guiObjects[args[4]]);
-                            }
-                        } else if(layer.guiObjects[args[2]].auxSend) {
-                            // lines.splice(i, 1);
-                            layer.guiObjects[args[2]].auxSend[+args[3] - 1].push(connectionName);
+                        //If both the sender and receiver are gui objects, we create a send and receive and connect them to each object
+                        if(args[3] === '0' || layer.guiObjects[args[2]].auxSend) {
+                            lines.splice(i--, 1,
+                                `#X obj 0 0 s ${connectionName}`,
+                                `#X obj 0 0 r ${connectionName}`,
+                                `#X connect ${args[2]} ${args[3]} ${layer.nextGUIID + 1} 0 __IGNORE__`,
+                                `#X connect ${layer.nextGUIID + 2} 0 ${args[4]} ${args[5]} __IGNORE__`,
+                            );
+
+                            if(args[3] === '0')
+                                layer.guiObjects[args[2]].send.push(connectionName);
+                            else
+                                layer.guiObjects[args[2]].auxSend[+args[3] - 1].push(connectionName);
+
                             if(layer.guiObjects[args[4]].shortCircuit !== false) {
                                 layer.guiObjects[args[4]].receive.push(connectionName);
                                 gui_subscribe(layer.guiObjects[args[4]]);
@@ -5922,7 +5926,7 @@ async function init() {
 
     // Fetch the patch content from URL if URL is provided
     if (patchURL && !content?.length) {
-        if(!patchURL.startsWith('/'))
+        if(!patchURL.startsWith('/') && !patchURL.startsWith('http'))
             patchURL = window.location.pathname.split('/').slice(0,-1).join('/') + '/' + patchURL;
 
         filename = patchURL.split("/").pop();
