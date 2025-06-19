@@ -5,11 +5,14 @@ const net = require("net");
 const dns = require("dns");
 const compression = require("compression");
 const app = express();
+const BUILD = 'development';
 const PORT = process.env.PORT || 3000;
 const PATCH_PATH = process.env.PATCH_PATH || 'public';
 const STATIC_OPTIONS = {
   maxAge: process.env.DISABLE_CACHE ? undefined : '7d',
 };
+
+console.log(`Starting Pd-L2Ork Server build '${BUILD}'`);
 
 // Cross origin isolation headers. Required for -pthread in emscripten (which is required for networking)
 app.use((req, res, next) => {
