@@ -1,4 +1,7 @@
 const DEBUG = false;
+const BUILD = "development";
+console.info(`Loaded WebPdL2Ork build '${BUILD}' in '${DEBUG ? 'debug' : 'production'}' mode`)
+
 const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
 const websocket = window.WebSocket;
 const loading = document.getElementById("loading");
