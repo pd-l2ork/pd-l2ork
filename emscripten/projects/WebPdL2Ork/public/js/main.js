@@ -3357,6 +3357,9 @@ function gui_dropdown_option_onmousemove(e, id) {
 //nbx
 let gui_nbx_touches = {};
 function gui_nbx_update(data) {
+    if(!(data.min == 0 && data.max == 0))
+        data.value = Math.max(data.min, Math.min(data.max, data.value));
+    
     gui_nbx_settext(data, '' + data.value);
 }
 function gui_nbx_onmousedown(data, e, id) {
@@ -3467,8 +3470,6 @@ function gui_nbx_commit(data) {
         data.dirtyValue = '' + data.value;
 
     data.value = Math.round(+(data.dirtyValue.match(data.regex)[0]) * 100000) / 100000;
-    if(!(data.min == 0 && data.max == 0))
-        data.value = Math.max(data.min, Math.min(data.max, data.value));
 
     delete data.dirtyValue;
     gui_nbx_update(data);
