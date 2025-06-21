@@ -61,6 +61,13 @@
   <url type="bugtracker">https://github.com/pd-l2ork/pd-l2ork/issues</url>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="20250620" type="stable" date="2025-06-20">
+      <description>
+        <p>
+          Major release with a complete overhaul of the threading engine and the audio backend (based on Pd 0.55), and a number of smaller bug-fixes and improvements to both Pd-L2Ork and WebPdL2Ork.
+        </p>
+      </description>
+    </release>
     <release version="20250501" type="stable" date="2025-05-01">
       <description>
         <p>
