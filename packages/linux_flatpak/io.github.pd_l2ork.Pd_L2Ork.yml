@@ -46,12 +46,12 @@ modules:
 - name: pd-l2ork
   buildsystem: autotools
   subdir: pd/src
-  config-opts: [ '--disable-portaudio', '--enable-alsa', '--disable-oss', '--enable-jack' ]
+  config-opts: [ '--enable-portaudio', '--enable-alsa', '--disable-oss', '--enable-jack' ]
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20250501'
-    commit: 38024de4b54021dc0691ecf4fe2b2ba9c1605a1c
+    tag: '20250620'
+    commit: 0f7a7b1ca30248e7b0c8c261e2847eb873161e35
   - type: patch
     path: patch/no-rsync-during-install.patch
 
@@ -145,8 +145,8 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20250501'
-    commit: 38024de4b54021dc0691ecf4fe2b2ba9c1605a1c
+    tag: '20250620'
+    commit: 0f7a7b1ca30248e7b0c8c261e2847eb873161e35
 
 - name: rpi-externals
   buildsystem: simple
@@ -163,8 +163,8 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20250501'
-    commit: 38024de4b54021dc0691ecf4fe2b2ba9c1605a1c
+    tag: '20250620'
+    commit: 0f7a7b1ca30248e7b0c8c261e2847eb873161e35
 
 - name: pd-abstractions
   buildsystem: simple
@@ -174,8 +174,8 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20250501'
-    commit: 38024de4b54021dc0691ecf4fe2b2ba9c1605a1c
+    tag: '20250620'
+    commit: 0f7a7b1ca30248e7b0c8c261e2847eb873161e35
 
 - name: pd-l2ork-integration
   buildsystem: simple
@@ -211,8 +211,8 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20250501'
-    commit: 38024de4b54021dc0691ecf4fe2b2ba9c1605a1c
+    tag: '20250620'
+    commit: 0f7a7b1ca30248e7b0c8c261e2847eb873161e35
   - type: file
     # x86_64
     url: https://dl.nwjs.io/v0.67.1/nwjs-sdk-v0.67.1-linux-x64.tar.gz
