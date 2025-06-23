@@ -1,0 +1,57 @@
+#N canvas 223 725 1363 229 10;
+#X obj 808 7 cnv 15 281 211 empty empty 11 3 10 0 20 #e89292 #404040
+0;
+#X obj 541 7 cnv 15 262 148 empty empty 10 3 10 0 20 #eea5a5 #404040
+0;
+#X obj 274 7 cnv 15 262 148 empty empty 9 3 10 0 20 #ecbbbb #404040
+0;
+#X obj 7 7 cnv 15 262 148 empty empty 3 3 10 0 20 #f7d4d4 #404040 0
+;
+#X obj -30 -30 preset_hub k12 1 %hidden%;
+#X obj 638 186 s chat-out;
+#X msg 277 59 chat admin p:l2orklicious l2ork-inst-level-at 9 0 10
+, f 39;
+#X text 277 39 part 9 downbeat ON;
+#X text 287 95 part 9 downbeat OFF;
+#X msg 287 115 chat admin p:l2orklicious l2ork-inst-level-at 9 0 0.1
+, f 39;
+#X text 547 39 part 10 downbeat ON;
+#X text 557 95 part 10 downbeat OFF;
+#X msg 547 59 chat admin p:l2orklicious l2ork-inst-level-at 10 0 10
+, f 39;
+#X msg 557 115 chat admin p:l2orklicious l2ork-inst-level-at 10 0 0.1
+, f 39;
+#X msg 830 122 chat admin p:l2orklicious l2ork-inst-level-at 11 52
+10, f 39;
+#X msg 840 178 chat admin p:l2orklicious l2ork-inst-level-at 11 0 0.1
+, f 39;
+#X text 840 158 part 11 downbeat OFF;
+#X text 830 102 part 11 fill ON;
+#X text 820 46 part 11 downbeat ON;
+#X msg 820 66 chat admin p:l2orklicious l2ork-inst-level-at 11 0 10
+, f 39;
+#X msg 24 115 chat admin p:l2orklicious l2ork-inst-level-at 9 0 0.1
+, f 39;
+#X text 14 39 part 3 downbeat ON;
+#X text 24 95 part 3 downbeat OFF;
+#X msg 14 59 chat admin p:l2orklicious l2ork-inst-level-at 3 0 0.9
+, f 39;
+#X obj 1094 7 cnv 15 262 148 empty empty 12 3 10 0 20 #e67a7a #404040
+0;
+#X text 1100 39 part 12 downbeat ON;
+#X text 1110 95 part 12 downbeat OFF;
+#X msg 1100 59 chat admin p:l2orklicious l2ork-inst-level-at 12 0 10
+, f 39;
+#X msg 1110 115 chat admin p:l2orklicious l2ork-inst-level-at 12 0
+0.1, f 39;
+#X connect 6 0 5 0;
+#X connect 9 0 5 0;
+#X connect 12 0 5 0;
+#X connect 13 0 5 0;
+#X connect 14 0 5 0;
+#X connect 15 0 5 0;
+#X connect 19 0 5 0;
+#X connect 20 0 5 0;
+#X connect 23 0 5 0;
+#X connect 27 0 5 0;
+#X connect 28 0 5 0;
