@@ -3,11 +3,11 @@
 ;
 #X obj -30 -30 preset_hub k12 1 %hidden%;
 #X obj 14 166 s chat-out;
-#X msg 24 115 chat admin p:l2orklicious l2ork-inst-level-at 9 0 0.1
-, f 39;
 #X text 14 39 part 3 downbeat ON;
 #X text 24 95 part 3 downbeat OFF;
 #X msg 14 59 chat admin p:l2orklicious l2ork-inst-level-at 3 0 0.9
 , f 39;
-#X connect 3 0 2 0;
+#X msg 24 115 chat admin p:l2orklicious l2ork-inst-level-at 3 0 0.1
+, f 39;
+#X connect 5 0 2 0;
 #X connect 6 0 2 0;

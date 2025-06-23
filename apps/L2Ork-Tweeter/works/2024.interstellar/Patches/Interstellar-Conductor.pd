@@ -1,8 +1,8 @@
-#N canvas 781 370 477 709 10;
+#N canvas 127 365 477 709 10;
 #X obj -30 -30 preset_hub k12 1 %hidden%;
 #X obj 18 168 s chat-out;
 #X obj 18 115 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
-#fcfcfc #000000 #000000 0 256 0 0 1 0;
+#fcfcfc #000000 #000000 3415.43 256 0 0 1 0;
 #X msg 18 147 chat admin p:l2orklicious l2ork-length-all \$1;
 #X obj 18 62 line 100;
 #X text 78 61 tempo;
@@ -18,10 +18,10 @@
 #X msg 20 191 chat admin p:l2orklicious l2ork-load \$1;
 #X obj 20 160 tosymbol;
 #X obj 20 45 sel 0 1 2 3;
-#X msg 290 115 insterstellar-end;
-#X msg 420 115 insterstellar-end-stasis;
-#X msg 162 115 interstellar-mid;
-#X msg 20 115 interstellar-start-3;
+#X msg 300 115 insterstellar-end;
+#X msg 430 115 insterstellar-end-stasis;
+#X msg 172 115 interstellar-mid;
+#X msg 20 115 interstellar-start-3-1;
 #X connect 0 0 4 0;
 #X connect 2 0 1 0;
 #X connect 3 0 2 0;
@@ -69,8 +69,6 @@ the final muting at the end;
 #X obj 128 39 t b b;
 #X obj 18 87 expr 6000-pow($f1 \, 0.8)*4500;
 #X text 220 420 ending;
-#X msg 220 487 chat admin p:l2orklicious l2ork-inst-level-list-at 10
-5 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1, f 39;
 #X msg 182 439 chat admin p:l2orklicious l2ork-inst-level-list-at 10
 56 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.8 0.1 0.1 0.1 0.1, f 40;
 #X msg 160 377 chat admin p:l2orklicious l2ork-inst-level-list-at 10
@@ -83,6 +81,8 @@ the final muting at the end;
 #X msg 219 90 chat admin p:l2orklicious l2ork-inst-level-at 12 0 0.1
 , f 39;
 #X obj 209 124 s chat-out;
+#X msg 220 487 chat admin p:l2orklicious l2ork-inst-level-list-at 10
+62 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1, f 39;
 #X connect 2 0 3 0;
 #X connect 3 0 1 0;
 #X connect 4 0 30 0;
@@ -106,6 +106,6 @@ the final muting at the end;
 #X connect 30 0 2 0;
 #X connect 32 0 9 0;
 #X connect 33 0 9 0;
-#X connect 34 0 9 0;
-#X connect 38 0 40 0;
-#X connect 39 0 40 0;
+#X connect 37 0 39 0;
+#X connect 38 0 39 0;
+#X connect 40 0 9 0;
