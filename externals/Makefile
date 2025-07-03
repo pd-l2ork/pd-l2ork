@@ -772,7 +772,6 @@ $(FLUID_LIBPATH)/src/libfluidsynth.a: $(FLUID_PATH)/fluidsynth-emscripten/README
 
 $(FLUID_PATH)/fluidsynth-emscripten/README.md:
 	git clone https://github.com/jet2jet/fluidsynth-emscripten $(externals_src)/fluid~/fluidsynth-emscripten
-	cd $(externals_src)/fluid~/fluidsynth-emscripten && git apply $(externals_src)/patches/fluid.patch
 
 fluid_install: fluid
 	install -d $(DESTDIR)$(objectsdir)/fluid~
@@ -1801,21 +1800,19 @@ endif
 # PDLUA
 
 LUA_CFLAGS = $(shell (pkg-config --cflags lua5.4 || pkg-config --cflags lua5.3 || pkg-config --cflags lua5.2 || pkg-config --cflags lua) 2> /dev/null)
+PDLUA_CFLAGS = -DPURR_DATA -DGLIST_GRAB_COMPAT $(CFLAGS)
 LUA_LIBS = $(shell (pkg-config --libs lua5.4 || pkg-config --libs lua5.3 || pkg-config --libs lua5.2 || pkg-config --libs lua) 2> /dev/null)
 LUA_TARGET = $(externals_src)/pd-lua/pdlua.$(EXTENSION)
 
 pdlua: $(LUA_TARGET)
 
 $(LUA_TARGET):
-# cp -f patches/pdlua.c pd-lua/pdlua.c
-	cp -f patches/Makefile.pdlua pd-lua/Makefile
-	cp -f patches/pdlua_gfx.h pd-lua/pdlua_gfx.h
 	rm -f pd-lua/pdlua.o
 ifneq ($(EMSCRIPTEN),yes)
-	make -C $(externals_src)/pd-lua LUA_CFLAGS="$(LUA_CFLAGS)" LUA_LIBS="$(LUA_LIBS)" PD_PATH="$(pd_src)" PD_LIB="$(pd_src)/src" CFLAGS="$(CFLAGS)" PDBINDIR=$(pd_src)/src
+	make -C $(externals_src)/pd-lua LUA_CFLAGS="$(LUA_CFLAGS)" LUA_LIBS="$(LUA_LIBS)" PD_PATH="$(pd_src)" PD_LIB="$(pd_src)/src" CFLAGS="$(PDLUA_CFLAGS)" PDBINDIR=$(pd_src)/src
 else
 	if [ ! -d $(externals_src)/pd-lua/lua ]; then git clone https://github.com/lua/lua.git $(externals_src)/pd-lua/lua; fi
-	$(CC) $(externals_src)/pd-lua/pdlua.c $(externals_src)/pd-lua/lua/onelua.c -o $(LUA_TARGET) $(CFLAGS) $(LDFLAGS) -I$(externals_src)/pd-lua/lua
+	$(CC) $(externals_src)/pd-lua/pdlua.c $(externals_src)/pd-lua/lua/onelua.c -o $(LUA_TARGET) $(CFLAGS) $(LDFLAGS) -I$(externals_src)/pd-lua/lua -DPURR_DATA
 endif
 
 ifneq ($(EMSCRIPTEN),yes)
@@ -1826,9 +1823,7 @@ pdlua_clean:
 	make -C $(externals_src)/pd-lua clean
 else
 pdlua_install: pdlua
-	install -d $(DESTDIR)$(objectsdir)/pd-lua
-	install -p $(LUA_TARGET) $(DESTDIR)$(objectsdir)/pd-lua
-	install -p $(externals_src)/pd-lua/pd.lua $(DESTDIR)$(objectsdir)/pd-lua
+	cp -r $(externals_src)/pd-lua $(DESTDIR)$(objectsdir)
 
 pdlua_clean:
 	rm $(LUA_TARGET)

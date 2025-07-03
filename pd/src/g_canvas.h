@@ -526,6 +526,9 @@ EXTERN void glist_retext(t_glist *x, t_text *y);
 EXTERN void glist_grab(t_glist *x, t_gobj *y, t_glistmotionfn motionfn,
     t_glistkeyfn keyfn, t_glistkeynameafn keynameafn,
     int xpos, int ypos, int exclusive);
+#ifdef GLIST_GRAB_COMPAT
+#define glist_grab(c,g,m,k,x,y) glist_grab(c,g,m,k,NULL,x,y,0)
+#endif
 EXTERN int glist_grab_exclusive(t_glist *x, int exclusive);
 EXTERN void glist_grab_disable_motion(t_glist *x);
 EXTERN int glist_isvisible(t_glist *x);
