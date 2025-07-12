@@ -60,6 +60,8 @@ void glob_clear_recent_files(t_pd *dummy);
 void glob_open(t_pd *ignore, t_symbol *name, t_symbol *dir, t_floatarg f);
 void glob_settracing(void *dummy, t_float f);
 void glob_fastforward(t_pd *ignore, t_floatarg f);
+void glob_colors(void *dummy, t_symbol *fg, t_symbol *bg, t_symbol *sel,
+    t_symbol *gop);
 
 static void glob_compatibility(t_pd *dummy, t_floatarg level)
 {
@@ -275,6 +277,8 @@ void glob_init(void)
          gensym("set-tracing"), A_FLOAT, 0);
     class_addmethod(glob_pdobject, (t_method)glob_fastforward,
          gensym("fast-forward"), A_FLOAT, 0);
+    class_addmethod(glob_pdobject, (t_method)glob_colors,
+        gensym("colors"), A_SYMBOL, A_SYMBOL, A_SYMBOL, A_DEFSYMBOL, 0);
     /* -------------- windows delete all registry keys in s_file.c ------------------ */
 #ifndef __EMSCRIPTEN__
     class_addmethod(glob_pdobject, (t_method)reinit_user_settings,

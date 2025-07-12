@@ -193,7 +193,16 @@ static void glist_readatoms(t_glist *x, int natoms, t_atom *vec,
             for (last = first; last < natoms && vec[last].a_type != A_SEMI;
                 last++);
             binbuf_restore(z, last-first, vec+first);
-            binbuf_add(w[i].w_binbuf, binbuf_getnatom(z), binbuf_getvec(z));
+                /* binbufs are initialized continaing "..." so they can be
+                clicked on.  Until there's a way to click on empty binbufs
+                we just leave the "..." in place in case the saved binbuf is
+                empty.  LATER figure out a way do allow and deal with empty
+                ones. */
+            if (binbuf_getnatom(z))
+            {
+                binbuf_clear(w[i].w_binbuf);
+                binbuf_add(w[i].w_binbuf, binbuf_getnatom(z), binbuf_getvec(z));
+            }
             binbuf_free(z);
             last++;
             if (last > natoms) last = natoms;
@@ -884,6 +893,36 @@ static void canvas_saveto(t_canvas *x, t_binbuf *b)
         binbuf_addv(b, "ssi;", gensym("#X"), gensym("editable"), 0);
     if (x->gl_disableruntimepopup)
         binbuf_addv(b, "ssi;", gensym("#X"), gensym("disable-popup"), 1);
+
+        /* graph ticks and labels */
+    if (x->gl_isgraph)
+    {
+        if (x->gl_xtick.k_lperb) {
+            binbuf_addv(b, "ssffi;", gensym("#X"), gensym("xticks"),
+                x->gl_xtick.k_point, x->gl_xtick.k_inc, x->gl_xtick.k_lperb);
+        }
+        if (x->gl_ytick.k_lperb) {
+            binbuf_addv(b, "ssffi;", gensym("#X"), gensym("yticks"),
+                x->gl_ytick.k_point, x->gl_ytick.k_inc, x->gl_ytick.k_lperb);
+        }
+
+        if(x->gl_nxlabels>0) {
+            int i;
+            binbuf_addv(b, "ssf", gensym("#X"), gensym("xlabel"), x->gl_xlabely);
+            for(i=0; i<x->gl_nxlabels; i++) {
+                binbuf_addv(b, "s", x->gl_xlabel[i]);
+            }
+            binbuf_addv(b, ";");
+        }
+        if(x->gl_nylabels>0) {
+            int i;
+            binbuf_addv(b, "ssf", gensym("#X"), gensym("ylabel"), x->gl_ylabelx);
+            for(i=0; i<x->gl_nylabels; i++) {
+                binbuf_addv(b, "s", x->gl_ylabel[i]);
+            }
+            binbuf_addv(b, ";");
+        }
+    }
 }
 
 /* yuck, wish I didn't have to do this... */
@@ -904,7 +943,7 @@ static void canvas_collecttemplatesfor(t_canvas *x, int *ntemplatesp,
                     ((t_scalar *)y)->sc_vec,  ntemplatesp, templatevecp);
         else if ((pd_class(&y->g_pd) == gtemplate_class) &&
             (wholething || glist_isselected(x, y)))
-                canvas_addtemplatesforstruct(gtemplate_get((t_gtemplate *)y),
+                canvas_addtemplatesforstruct(gtemplate_get((t_pdstruct *)y),
                     ntemplatesp, templatevecp);
         else if ((pd_class(&y->g_pd) == canvas_class) &&
             (wholething || glist_isselected(x, y)))
@@ -947,8 +986,9 @@ static void canvas_savetemplatesto(t_canvas *x, t_binbuf *b, int wholething)
                 binbuf_addv(b, "sss", type, template->t_vec[j].ds_name,
                     gensym(template->t_vec[j].ds_fieldtemplate->s_name));
             else if (template->t_vec[j].ds_type == DT_ARRAY)
-                binbuf_addv(b, "sss", type, template->t_vec[j].ds_name,
-                    gensym(template->t_vec[j].ds_fieldtemplate->s_name + 3));
+                binbuf_addv(b, "sssf", type, template->t_vec[j].ds_name,
+                    gensym(template->t_vec[j].ds_fieldtemplate->s_name + 3),
+                    (double)template->t_vec[j].ds_arraydeflength);
             else binbuf_addv(b, "ss", type, template->t_vec[j].ds_name);
         }
         binbuf_addsemi(b);

@@ -44,7 +44,6 @@ static int jack_isopening = 0;
 static jack_port_t *input_port[MAX_JACK_PORTS];
 static jack_port_t *output_port[MAX_JACK_PORTS];
 static jack_client_t *jack_client = NULL;
-static char * desired_client_name = NULL;
 static const char *jack_client_names[MAX_CLIENTS];
 static volatile int jack_dio_error;
 static volatile int jack_didshutdown;
@@ -455,9 +454,7 @@ int jack_open_audio(int inchans, int outchans, t_audiocallback callback)
         jack_client_open() don't start one up by default.  It's not clear
         whether or not this is desirable; see long Pd list thread started by
         yvan volochine, June 2013) */
-    if (!desired_client_name || !strlen(desired_client_name))
-        jack_client_name("pd-l2ork");
-    jack_client = jack_client_open (desired_client_name, JackNoStartServer,
+    jack_client = jack_client_open(sys_devicename, JackNoStartServer,
       &status, NULL);
     if (status & JackFailure) {
         pd_error(0, "JACK: couldn't connect to server, is JACK running?");
@@ -467,8 +464,6 @@ int jack_open_audio(int inchans, int outchans, t_audiocallback callback)
         STUFF->st_inchannels = STUFF->st_outchannels = 0;
         return 1;
     }
-    if (status & JackNameNotUnique)
-        jack_client_name(jack_get_client_name(jack_client));
     logpost(NULL, PD_VERBOSE, "JACK: registered as '%s'", desired_client_name);
 
     STUFF->st_inchannels = inchans;
@@ -738,18 +733,6 @@ void jack_listdevs(void)
 void jack_autoconnect(int v)
 {
     jack_should_autoconnect = v;
-}
-
-void jack_client_name(const char *name)
-{
-    if (desired_client_name) {
-        free(desired_client_name);
-        desired_client_name = NULL;
-    }
-    if (name) {
-        desired_client_name = (char*)getbytes(strlen(name) + 1);
-        strcpy(desired_client_name, name);
-    }
 }
 
 int jack_get_blocksize(void)

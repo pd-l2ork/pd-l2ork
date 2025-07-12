@@ -784,6 +784,7 @@ void rtext_select(t_rtext *x, int state)
 
 EXTERN void scrollbar_synchronous_update(t_glist *glist);
 
+extern t_class *message_class;
 void rtext_activate(t_rtext *x, int state)
 {
     //post("rtext_activate state=%d", state);
