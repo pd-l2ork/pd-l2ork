@@ -1,5 +1,7 @@
 PD-L2ORK TODO:
 
+*Double-clicking on a patch in Windows (possibly others?) once again is not opening the patch in Pd-L2Ork. Possible change in MSYS?
+
 *Bezier implementation of the array sometimes:
   *does not draw when the patch is opened (with different zoom levels)
   *sometimes has the last point that you cannot change that is stuck at the top

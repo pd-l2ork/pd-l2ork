@@ -1,0 +1,21 @@
+#N canvas 547 618 296 305 10;
+#X obj 7 7 cnv 15 281 254 empty empty 9 3 10 0 20 #ecbbbb #404040 0
+;
+#X obj -30 -30 preset_hub k12 1 %hidden%;
+#X obj 12 278 s chat-out;
+#X msg 22 111 chat admin p:l2orklicious l2ork-inst-level-at 9 0 10
+, f 39;
+#X text 22 91 part 9 downbeat ON;
+#X text 12 36 part 9 fill ON;
+#X msg 12 56 chat admin p:l2orklicious l2ork-inst-level-at 9 46 10
+, f 39;
+#X msg 32 167 chat admin p:l2orklicious l2ork-inst-level-at 9 1 0.1
+, f 39;
+#X text 32 147 part 9 WITH downbeat OFF;
+#X text 42 205 part 9 downbeat OFF;
+#X msg 42 225 chat admin p:l2orklicious l2ork-inst-level-at 9 0 0.1
+, f 39;
+#X connect 3 0 2 0;
+#X connect 6 0 2 0;
+#X connect 7 0 2 0;
+#X connect 10 0 2 0;
