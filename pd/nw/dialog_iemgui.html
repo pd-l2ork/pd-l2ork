@@ -383,8 +383,8 @@
 
       <div class="foreground_color prop hidden">
         <label data-i18n="[title]iem.prop.fgcolor_tt">
-          <input type="color" name="foreground_color"
-                 onchange="update_attr(this);">
+          <input name="foreground_color" value="#00000000" style="width:70px;"
+                 onchange="update_attr(this);" data-jscolor="{}">
           <span data-i18n="iem.prop.fgcolor"></span>
         </label>
         <br>
@@ -420,6 +420,8 @@
 
   </form> 
   </div>      
+
+<script src="./jscolor.js"></script>
 
   <script>
 "use strict";
@@ -763,12 +765,12 @@ function populate_form(attr_object) {
             if (elem.length > 0) {
                 if (attr.slice(-5) === "color") {
                     var hex_string = Number(attr_object[attr]).toString(16);
-                    while(hex_string.length < 6) {
-                        hex_string = "0" + hex_string;
+                    while(hex_string.length < 8) {
+                        hex_string = hex_string + "f";
                     }
                     var color_string = "#" +
-                        (hex_string === "0" ? "000000" : hex_string);
-                    //pdgui.post("color is " + color_string);
+                        (hex_string === "0" ? "00000000" : hex_string);
+                    pdgui.post("color is " + color_string);
                     elem[0].value = color_string;
                 } else if (elem[0].type === "checkbox") {
                     // The attr here is a string, so we need to

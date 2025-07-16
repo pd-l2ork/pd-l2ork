@@ -8647,7 +8647,7 @@ function gui_graph_label(cid, tag, font_size, font_height, is_selected,
         var c;
         if (!show_color_rect) {
             c = attr_array_to_object(e).color;
-            show_color_rect = (c !== "black" && c !== "#000000");
+            show_color_rect = (c !== "black" && (c !== "#000000" && c !== "#00000000"));
         }
     });
 
@@ -9258,11 +9258,11 @@ function gui_dialog_set_field(did, field_name, value) {
             elem.selectedIndex = value;
         } else if (elem.type === "color") {
             var hex_string = Number(value).toString(16);
-            while(hex_string.length < 6) {
-                hex_string = "0" + hex_string;
+            while(hex_string.length < 8) {
+                hex_string = hex_string + "f";
             }
             var color_string = "#" +
-                (hex_string === "0" ? "000000" : hex_string);
+                (hex_string === "0" ? "00000000" : hex_string);
             elem.value = color_string;
         } else {
             elem.value = value;

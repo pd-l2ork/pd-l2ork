@@ -156,7 +156,7 @@ static t_symbol *color2symbol(int col)
     }
     else
     {
-        snprintf(colname, MAXPDSTRING-1, "#%06x", col);
+        snprintf(colname, MAXPDSTRING-1, "#%08x", col);
     }
     return gensym(colname);
 }
@@ -193,21 +193,38 @@ static int iemgui_getcolorarg(t_iemgui *x, int index, int argc, t_atom *argv)
     if (IS_A_SYMBOL(argv, index))
     {
         t_symbol *s = atom_getsymbolarg(index, argc, argv);
+        post("iemgui_getcolorarg=%s", s->s_name);
         if ('#' == s->s_name[0])
         {
             char *start = s->s_name + 1, *end;
-            char expanded[7];
+            char expanded1[7], expanded2[9];
             int len = strlen(start);
             if (len == 3)
             {
-                sprintf(expanded, "%c%c%c%c%c%c",
+                sprintf(expanded1, "%c%c%c%c%c%c",
                     start[0], start[0],
                     start[1], start[1],
                     start[2], start[2]);
-                start = expanded;
+                start = expanded1;
                 len = 6;
             }
             if (len == 6)
+            {
+                int col = (int)strtol(start, &end, 16);
+                if (end != start)
+                    return col;
+            }
+            if (len == 4)
+            {
+                sprintf(expanded2, "%c%c%c%c%c%c%c%c",
+                    start[0], start[0],
+                    start[1], start[1],
+                    start[2], start[2],
+                    start[3], start[3]);
+                start = expanded2;
+                len = 8;
+            }
+            if (len == 8)
             {
                 int col = (int)strtol(start, &end, 16);
                 if (end != start)
@@ -298,7 +315,7 @@ int iemgui_compatible_colorarg(t_iemgui *x, int index, int argc, t_atom* argv)
             return(iemgui_color_hex[(idx)]);
         }
         else
-            return((-1 - col) & 0xffffff);
+            return((-1 - col) & 0xffffffff);
     }
     return iemgui_getcolorarg(x, index, argc, argv);
 }
@@ -800,9 +817,9 @@ int iemgui_dialog(t_iemgui *x, int argc, t_atom *argv)
     int f = atom_getintarg(12, argc, argv);
     x->x_fontsize = maxi(atom_getintarg(13, argc, argv),4);
     //iemgui_all_loadcolors(&x->x_gui, argv+14, argv+15, argv+16);
-    x->x_bcol = iemgui_getcolorarg(x, 14, argc, argv) & 0xffffff;
-    x->x_fcol = iemgui_getcolorarg(x, 15, argc, argv) & 0xffffff;
-    x->x_lcol = iemgui_getcolorarg(x, 16, argc, argv) & 0xffffff;
+    x->x_bcol = iemgui_getcolorarg(x, 14, argc, argv) & 0xffffffff;
+    x->x_fcol = iemgui_getcolorarg(x, 15, argc, argv) & 0xffffffff;
+    x->x_lcol = iemgui_getcolorarg(x, 16, argc, argv) & 0xffffffff;
     int oldsndrcvable=0;
     if(iemgui_has_rcv(x)) oldsndrcvable |= IEM_GUI_OLD_RCV_FLAG;
     if(iemgui_has_snd(x)) oldsndrcvable |= IEM_GUI_OLD_SND_FLAG;
@@ -916,9 +933,9 @@ void iemgui_update_properties(t_iemgui *x, int option)
     {
         switch(option) {
             case IEM_GUI_PROP_COLORS:
-                properties_set_field_int(properties,"background_color",0xffffff & x->x_bcol);
-                properties_set_field_int(properties,"foreground_color",0xffffff & x->x_fcol);
-                properties_set_field_int(properties,"label_color",0xffffff & x->x_lcol);
+                properties_set_field_int(properties,"background_color",0xffffffff & x->x_bcol);
+                properties_set_field_int(properties,"foreground_color",0xffffffff & x->x_fcol);
+                properties_set_field_int(properties,"label_color",0xffffffff & x->x_lcol);
                 break;
             case IEM_GUI_PROP_SEND:
                 properties_set_field_symbol(properties,"send_symbol",srl[0]);
