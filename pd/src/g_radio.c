@@ -29,7 +29,7 @@ t_class *vradio_class, *vradio_old_class;
 void radio_draw_update(t_gobj *client, t_glist *glist)
 {
     t_radio *x = (t_radio *)client;
-    char cbuf[8];
+    char cbuf[10];
     sprintf(cbuf, "#%6.6x", x->x_gui.x_fcol);
     if (!glist_isvisible(glist)) return;
     t_canvas *canvas=glist_getcanvas(glist);
@@ -45,7 +45,7 @@ void radio_draw_update(t_gobj *client, t_glist *glist)
 void radio_draw_new(t_radio *x, t_glist *glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
-    char cbuf[8];
+    char cbuf[10];
     sprintf(cbuf, "#%6.6x", x->x_gui.x_fcol);
     int n=x->x_number, i, d=x->x_gui.x_w, s=d/4;
     int x1=text_xpix(&x->x_gui.x_obj, glist), xi=x1;
@@ -113,7 +113,7 @@ void radio_draw_config(t_radio *x, t_glist *glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
     int n=x->x_number, i;
-    char cbuf[8];
+    char cbuf[10];
     sprintf(cbuf, "#%6.6x", x->x_gui.x_fcol);
     iemgui_base_draw_config(&x->x_gui);
     for (i=0; i<n; i++)

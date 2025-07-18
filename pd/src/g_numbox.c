@@ -283,10 +283,6 @@ static void my_numbox_draw_new(t_my_numbox *x, t_glist *glist)
         glist_istoplevel(glist));
 
     my_numbox_ftoa(x, 0);
-    // TODO: create function inside g_all_guis.c that pads
-    // the color correctly (cases include 3, 4, 6, and 8
-    // hex values). Then use it here and in other places
-    // where #%8.8x is used, instead of the line below.
     sprintf(cbuf, "#%8.8x", x->x_gui.x_fcol);
     post("my_numbox_draw_new %d %s", x->x_gui.x_fcol, cbuf);
     gui_vmess("gui_numbox_draw_text", "xxsisiiiiii",

@@ -604,8 +604,8 @@ function send_params(attrs, create_undo_point) {
     if (font_size === undefined) { font_size = 0; }
 
     // [vu] doesn't have a foreground color
-    pdgui.post("DIALOG foreground color " + attrs.foreground_color);
-    pdgui.post("..." + "#" + attrs.foreground_color.slice(7,9) + attrs.foreground_color.slice(1,7));
+    //pdgui.post("DIALOG foreground color " + attrs.foreground_color);
+    //pdgui.post("..." + "#" + attrs.foreground_color.slice(7,9) + attrs.foreground_color.slice(1,7));
     /*var argb = (Number(attrs.foreground_color) >>> 0).toString(16);
     pdgui.post("..." + argb);
     argb = argb.slice(2,8) + argb.slice(0,2);
@@ -818,6 +818,22 @@ function add_events(name) {
     });
     pdgui.dialog_bindings(name);
 }
+
+jscolor.presets.default = {
+  //width: 141,               // make the picker a little narrower
+  //position: 'right',        // position it to the right of the target
+  //previewPosition: 'right', // display color preview on the right
+  //previewSize: 40,          // make the color preview bigger
+  palette: [
+    '#fcfcfc', '#a0a0a0', '#404040', '#fce0e0', '#fce0c0',
+    '#fcfcc8', '#d8fcd8', '#d8fcfc', '#dce4fc', '#f8d8fc',
+    '#e0e0e0', '#7c7c7c', '#202020', '#fc2828', '#fcac44',
+    '#e8e828', '#14e814', '#28f4f4', '#3c50fc', '#f430f0',
+    '#bcbcbc', '#606060', '#000000', '#8c0808', '#583000',
+    '#782814', '#285014', '#004450', '#001488', '#580050',
+  ],
+};
+</script>
 
   </script>
   </body>

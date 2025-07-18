@@ -26,8 +26,8 @@ void my_canvas_draw_new(t_my_canvas *x, t_glist *glist)
     t_canvas *canvas=glist_getcanvas(glist);
     int x1 = text_xpix(&x->x_gui.x_obj, glist);
     int y1 = text_ypix(&x->x_gui.x_obj, glist);
-    char cbuf[8];
-    sprintf(cbuf, "#%6.6x", x->x_gui.x_bcol);
+    char cbuf[10];
+    sprintf(cbuf, "#%8.8x", x->x_gui.x_bcol);
 
     t_rtext *y = glist_findrtext(glist, x);
     char buf[FILENAME_MAX];
@@ -60,9 +60,9 @@ void my_canvas_draw_config(t_my_canvas* x, t_glist* glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
     int isselected;
-    char cbuf[8];
+    char cbuf[10];
     isselected = x->x_gui.x_selected == canvas && x->x_gui.x_glist == canvas;
-    sprintf(cbuf, "#%6.6x", x->x_gui.x_bcol);
+    sprintf(cbuf, "#%8.8x", x->x_gui.x_bcol);
     gui_vmess("gui_mycanvas_update", "xxsi",
         canvas, x, cbuf, isselected);
 }
@@ -195,7 +195,7 @@ static void my_canvas_properties(t_gobj *z, t_glist *owner)
             srl[0]->s_name, srl[1]->s_name,
             srl[2]->s_name, x->x_gui.x_ldx, x->x_gui.x_ldy,
             x->x_gui.x_font_style, x->x_gui.x_fontsize,
-            0xffffff & x->x_gui.x_bcol, -1/*no frontcolor*/, 0xffffff & x->x_gui.x_lcol);
+            0xffffffff & x->x_gui.x_bcol, -1/*no frontcolor*/, 0xffffffff & x->x_gui.x_lcol);
     //gfxstub_new(&x->x_gui.x_obj.ob_pd, x, buf);
 
     gfx_tag = gfxstub_new2(&x->x_gui.x_obj.ob_pd, &x->x_gui);
@@ -221,9 +221,9 @@ static void my_canvas_properties(t_gobj *z, t_glist *owner)
     gui_s("y_offset");  gui_i(x->x_gui.x_ldy);
     gui_s("font_style"); gui_i(x->x_gui.x_font_style);
     gui_s("font_size"); gui_i(x->x_gui.x_fontsize);
-    gui_s("background_color"); gui_i(0xffffff & x->x_gui.x_bcol);
-    //gui_s("foreground_color"); gui_i(0xffffff & x->x_gui.x_fcol);
-    gui_s("label_color"); gui_i(0xffffff & x->x_gui.x_lcol);
+    gui_s("background_color"); gui_i(0xffffffff & x->x_gui.x_bcol);
+    //gui_s("foreground_color"); gui_i(0xffffffff & x->x_gui.x_fcol);
+    gui_s("label_color"); gui_i(0xffffffff & x->x_gui.x_lcol);
     
     gui_end_array();
     gui_end_vmess();
