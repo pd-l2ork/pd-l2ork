@@ -5895,10 +5895,17 @@ function gui_numbox_new(cid, ownercid, parentcid, tag, color, x, y, w, h, drawst
     // so we must create its gobj manually
     //gui(cid).get_elem("patchsvg", function() {
     //    var g = gui_gobj_new(cid, tag, "iemgui", x, y, is_toplevel);
+    var rgba = color;
+    //post("gui_numbox_new color " + rgba + " " + rgba.length);
+    if (rgba.length === 9) {
+        // swap argb into rgba
+        rgba = color.slice(0,1) + color.slice(3,9) + color.slice(1,3);
+        //post("...color " + rgba + " " + rgba.length);
+    }
     var g = gui_gobj_new(cid, ownercid, parentcid, tag, "iemgui", x, y, is_toplevel, 0, "numbox2", "numbox2");
     var border = create_item(cid, "path", {
         d: numbox_data_string_frame(w, h),
-        fill: color,
+        fill: rgba,
         stroke: "black",
         "stroke-width": (drawstyle < 2 ? 1 : 0),
         id: (tag + "border"),
@@ -5907,7 +5914,7 @@ function gui_numbox_new(cid, ownercid, parentcid, tag, color, x, y, w, h, drawst
     g.appendChild(border);
     var triangle = create_item(cid, "path", {
         d: numbox_data_string_triangle(w, h),
-        fill: color,
+        fill: rgba,
         stroke: "black",
         "stroke-width": (drawstyle == 0 || drawstyle ==  2 ? 1 : 0),
         id: (tag + "triangle"),
@@ -5941,12 +5948,18 @@ function gui_numbox_draw_text(cid, tag, text, font_size, color, xpos,
         } else {
             trans_y = (font_size - fontmargin/2);
         }
+        var rgba = color;
+        post("gui_numbox_draw_text rgba " + rgba);
+        if (color.length === 9) {
+            rgba = color.slice(0,1) + color.slice(3,9) + color.slice(1,3);
+        }
+        post("..." + rgba);
         var svg_text = create_item(cid, "text", {
             transform: "translate(" +
                         (xpos - basex) + "," + trans_y + ")",
                         //((ypos - basey + (ypos - basey) * 0.5)|0) + ")",
             "font-size": font_size,
-            fill: color,
+            fill: rgba,
             id: tag + "text",
             class: "cut copy paste" + (is_toplevel === 1 ? " toplevel" : "")
         }),
@@ -6253,9 +6266,14 @@ function gui_vumeter_update_peak(cid,tag,color,p1,p2,p3,p4,basex,basey) {
 }
 
 function gui_iemgui_base_color(cid, tag, color) {
+    var rgba = color;
+    //post("gui_iemgui_base_color " + color);
+    if (color.length === 9) {
+        rgba = color.slice(0,1) + color.slice(3,9) + color.slice(1,3);
+    }
     gui(cid).get_gobj(tag)
     .q(".border", {
-        fill: color
+        fill: rgba
     });
 }
 
@@ -6312,6 +6330,11 @@ function iemgui_fontfamily(name) {
 
 function gui_iemgui_label_new(cid, tag, x, y, color, text, fontname, fontweight,
     fontsize) {
+    var rgba = color;
+    if (rgba.length === 9) {
+        // swap argb into rgba
+        rgba = color.slice(0,1) + color.slice(3,9) + color.slice(1,3);
+    }
     gui(cid).get_gobj(tag)
     .append(function(frag, w) {
         var svg_text = create_item(cid, "text", {
@@ -6323,7 +6346,7 @@ function gui_iemgui_label_new(cid, tag, x, y, color, text, fontname, fontweight,
             // for some reason the font looks bold in Pd-Vanilla-- not sure why
             "font-weight": fontweight,
             "font-size": fontsize + "px",
-            fill: color,
+            fill: rgba,
             // Iemgui labels are anchored "w" (left-aligned to non-tclers).
             // For no good reason, they are also centered vertically, unlike
             // object box text. Since svg text uses the baseline as a reference
@@ -6361,14 +6384,13 @@ function gui_iemgui_label_coords(cid, tag, x, y) {
 }
 
 function gui_iemgui_label_color(cid, tag, color) {
+    var rgba = color;
+    if (rgba.length === 9) {
+        // swap argb into rgba
+        rgba = color.slice(0,1) + color.slice(3,9) + color.slice(1,3);
+    }
     gui(cid).get_elem(tag + "label", {
-        fill: color
-    });
-}
-
-function gui_iemgui_label_color(cid, tag, color) {
-    gui(cid).get_elem(tag + "label", {
-        fill: color
+        fill: rgba
     });
 }
 
@@ -9218,6 +9240,8 @@ function gui_iemgui_dialog(did, attr_array) {
     // ico@vt.edu: since adding frameless window, we use top 20px for draggable titlebar,
     // so now we subtract only 5 (25-20)
 
+    //post("gui_iemgui_dialog " + attr_array);
+
     // we also need adjustment for flatgui/knob (in the menu, a.k.a. footils), and moonlinb/msknob
     create_window(did, "iemgui", 305, 366,
         popup_coords[2] + 10, popup_coords[3] + 60,
@@ -9258,12 +9282,21 @@ function gui_dialog_set_field(did, field_name, value) {
             elem.selectedIndex = value;
         } else if (elem.type === "color") {
             var hex_string = Number(value).toString(16);
-            while(hex_string.length < 8) {
-                hex_string = hex_string + "f";
+            if (hex_string.length === 8) {
+                post("gui_dialog_set_field starting color: " + hex_string);
+                hex_string = hex_string.slice(-2) + hex_string.slice(0, 6);
+                post("gui_dialog_set_field ending color: " + hex_string);
+            }
+            while(hex_string.length < 6) {
+                hex_string = "0" + hex_string;
+            }
+            if (hex_string.length === 6) {
+                hex_string = hex_string + "ff";
             }
             var color_string = "#" +
-                (hex_string === "0" ? "00000000" : hex_string);
+                (hex_string === "0" ? "000000ff" : hex_string);
             elem.value = color_string;
+            post("gui_dialog_set_field color " + color_string);
         } else {
             elem.value = value;
         }
@@ -11231,6 +11264,7 @@ function gui_highlight_obj_on_return(cid, tag, type) {
         //post("highlight "+tag+"text "+type);
         gui(cid).get_elem(tag + "text", function(item) {
             item.style.setProperty("font-weight", "bold");
+            item.style.setProperty("text-shadow", "0.25px 0 currentColor, -0.25px 0 currentColor");
             if (highlight_reset[cid])
                 clearTimeout(highlight_reset[cid]);
             highlight_reset[cid] =
@@ -11248,6 +11282,7 @@ function gui_highlight_obj_on_return_reset(cid, tag, type) {
     if (type === "gatom" || type === "numbox2") {
         gui(cid).get_elem(tag + "text", function(item) {
             item.style.setProperty("font-weight", "normal");
+            item.style.setProperty("text-shadow", "none");
         });
         /*
         gui(cid).get_elem(tag + "text", {

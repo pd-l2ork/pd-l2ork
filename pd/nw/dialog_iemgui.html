@@ -372,29 +372,26 @@
         </tr>
       </table>
 
-      <div class="background_color prop hidden">
+      <div class="background_color prop hidden" style="margin-bottom: 2px;">
         <label data-i18n="[title]iem.prop.bgcolor_tt">
-          <input type="color" name="background_color"
-                 onchange="update_attr(this);">
-          <span data-i18n="iem.prop.bgcolor"></span>
+          <input name="background_color" value="#00000000" style="width:80px; border-style: solid; border-width: thin;" onchange="update_attr(this);" data-jscolor="{}">
+          <span data-i18n="iem.prop.bgcolor" style="bottom: 0px;"></span>
         </label>
         <br>
       </div>
 
-      <div class="foreground_color prop hidden">
+      <div class="foreground_color prop hidden" style="margin-bottom: 2px;">
         <label data-i18n="[title]iem.prop.fgcolor_tt">
-          <input name="foreground_color" value="#00000000" style="width:70px;"
-                 onchange="update_attr(this);" data-jscolor="{}">
-          <span data-i18n="iem.prop.fgcolor"></span>
+          <input name="foreground_color" value="#00000000" style="width:80px; border-style: solid; border-width: thin;" onchange="update_attr(this);" data-jscolor="{}">
+          <span data-i18n="iem.prop.fgcolor" style="bottom: 0px;"></span>
         </label>
         <br>
       </div>
 
-      <div class="label_color prop hidden">
+      <div class="label_color prop hidden" style="margin-bottom: 2px;">
         <label data-i18n="[title]iem.prop.label_color_tt">
-          <input type="color" name="label_color"
-                 onchange="update_attr(this);">
-          <span data-i18n="iem.prop.label_color"></span>
+          <input name="label_color" value="#00000000" style="width:80px; border-style: solid; border-width: thin;" onchange="update_attr(this);" data-jscolor="{}">
+          <span data-i18n="iem.prop.label_color" style="bottom: 0px;"></span>
         </label>
         <br>
       </div>
@@ -463,7 +460,7 @@ function update_attr(elem, symbol_field) {
     } else if (elem.type === "select-one") {
         new_attrs[elem.name] = elem.selectedIndex;
     } else if (elem.type === "color") {
-        new_attrs[elem.name] = parseInt(elem.value.slice(1), 16)
+        new_attrs[elem.name] = elem.value;
     } else {
         new_attrs[elem.name] = (elem.value === "" && !symbol_field) ?
             "0" : elem.value;
@@ -607,10 +604,19 @@ function send_params(attrs, create_undo_point) {
     if (font_size === undefined) { font_size = 0; }
 
     // [vu] doesn't have a foreground color
+    pdgui.post("DIALOG foreground color " + attrs.foreground_color);
+    pdgui.post("..." + "#" + attrs.foreground_color.slice(7,9) + attrs.foreground_color.slice(1,7));
+    /*var argb = (Number(attrs.foreground_color) >>> 0).toString(16);
+    pdgui.post("..." + argb);
+    argb = argb.slice(2,8) + argb.slice(0,2);
+    pdgui.post("..." + argb);
+    attrs.foreground_color = parseInt(argb, 16);
+    pdgui.post("..." + attrs.foreground_color);*/
+
     var foreground_color = attrs.foreground_color ?
-        attrs.foreground_color : 0;
-    var background_color = attrs.background_color;
-    var label_color = attrs.label_color;
+        "#" + attrs.foreground_color.slice(7,9) + attrs.foreground_color.slice(1,7) : 0;
+    var background_color = "#" + attrs.background_color.slice(7,9) + attrs.background_color.slice(1,7);
+    var label_color = "#" + attrs.label_color.slice(7,9) + attrs.label_color.slice(1,7);
 
     var slot18 = attrs.steady_on_click ? +attrs.steady_on_click : 0;
 
@@ -764,14 +770,28 @@ function populate_form(attr_object) {
             var elem = document.getElementsByName(attr);
             if (elem.length > 0) {
                 if (attr.slice(-5) === "color") {
-                    var hex_string = Number(attr_object[attr]).toString(16);
-                    while(hex_string.length < 8) {
-                        hex_string = hex_string + "f";
+                    pdgui.post("populate_form:\n    " + attr + " raw color is " + attr_object[attr]);
+                    // ico@vt.edu 2025-07-17: here we do >>> 0 to make the
+                    // value unsigned to match C behavior, otherwise
+                    // the hex value will be incorrect
+                    var hex_string =
+                      (Number(attr_object[attr])  >>> 0).toString(16);
+                    pdgui.post("    hex color is " + hex_string);
+                    hex_string = hex_string.slice(2,8) + hex_string.slice(0,2);
+                    pdgui.post("    reverted hex color is " + hex_string);
+                    while(hex_string.length < 6) {
+                      hex_string = "0" + hex_string;
+                    }
+                    if (hex_string.length === 6) {
+                      hex_string = hex_string + "ff";               
                     }
                     var color_string = "#" +
-                        (hex_string === "0" ? "00000000" : hex_string);
-                    pdgui.post("color is " + color_string);
+                        (hex_string === "0" ? "000000ff" : hex_string);
                     elem[0].value = color_string;
+                    elem[0].jscolor.fromString(color_string);
+                    new_attrs[elem[0].name] = color_string.toLowerCase();
+                    old_attrs[elem[0].name] = color_string.toLowerCase();
+                    pdgui.post("...new attr_object[attr] " + attr_object[attr]);
                 } else if (elem[0].type === "checkbox") {
                     // The attr here is a string, so we need to
                     // force it to number, hence the "+" below

@@ -262,7 +262,7 @@ static void my_numbox_draw_update(t_gobj *client, t_glist *glist)
 static void my_numbox_draw_new(t_my_numbox *x, t_glist *glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
-    char cbuf[8];
+    char cbuf[10];
     sprintf(cbuf, "#%8.8x", x->x_gui.x_bcol);
     int half=x->x_gui.x_h/2;
     int d=1+x->x_gui.x_h/34;
@@ -283,7 +283,12 @@ static void my_numbox_draw_new(t_my_numbox *x, t_glist *glist)
         glist_istoplevel(glist));
 
     my_numbox_ftoa(x, 0);
+    // TODO: create function inside g_all_guis.c that pads
+    // the color correctly (cases include 3, 4, 6, and 8
+    // hex values). Then use it here and in other places
+    // where #%8.8x is used, instead of the line below.
     sprintf(cbuf, "#%8.8x", x->x_gui.x_fcol);
+    post("my_numbox_draw_new %d %s", x->x_gui.x_fcol, cbuf);
     gui_vmess("gui_numbox_draw_text", "xxsisiiiiii",
         canvas,
         x,
@@ -332,7 +337,7 @@ static void my_numbox_draw_move(t_my_numbox *x, t_glist *glist)
 static void my_numbox_draw_config(t_my_numbox* x,t_glist* glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
-    char fg[8], bg[8];
+    char fg[10], bg[10];
     sprintf(fg, "#%8.8x",  x->x_gui.x_fcol);
     sprintf(bg, "#%8.8x",  x->x_gui.x_bcol);
     gui_vmess("gui_numbox_update", "xxssisiii",
@@ -357,8 +362,8 @@ static void my_numbox_draw_select(t_my_numbox *x, t_glist *glist)
         x->x_buf[0] = 0;
         sys_queuegui(x, x->x_gui.x_glist, my_numbox_draw_update);
     }
-    char fcol[8]; sprintf(fcol, "#%8.8x", x->x_gui.x_fcol);
-    char bcol[8]; sprintf(bcol, "#%8.8x", x->x_gui.x_bcol);
+    char fcol[10]; sprintf(fcol, "#%8.8x", x->x_gui.x_fcol);
+    char bcol[10]; sprintf(bcol, "#%8.8x", x->x_gui.x_bcol);
     // The logic in these sys_vgui calls is being taken care
     // of in the gui now...
     //sys_vgui(".x%zx.c itemconfigure %zxBASE1 -stroke %s\n", canvas, x,
@@ -589,6 +594,10 @@ static void my_numbox_properties(t_gobj *z, t_glist *owner)
     //gfxstub_new(&x->x_gui.x_obj.ob_pd, x, buf);
     gfx_tag = gfxstub_new2(&x->x_gui.x_obj.ob_pd, &x->x_gui);
 
+    post("my_numbox_properties fcol %x %d", 0xffffffff & x->x_gui.x_fcol, x->x_gui.x_fcol);
+    post("my_numbox_properties bcol %x %d", 0xffffffff & x->x_gui.x_bcol, x->x_gui.x_bcol);
+    post("my_numbox_properties lcol %x %d", 0xffffffff & x->x_gui.x_lcol, x->x_gui.x_lcol);
+
     gui_start_vmess("gui_iemgui_dialog", "s", gfx_tag);
     gui_start_array();
     gui_s("type"); gui_s("nbx");
@@ -639,6 +648,8 @@ static void my_numbox_dialog(t_my_numbox *x, t_symbol *s, int argc,
     x->x_numwidth = my_numbox_calc_fontwidth(x);
     my_numbox_interactive(x, atom_getintarg(20, argc, argv));
     x->x_autoupdate = atom_getintarg(22, argc, argv);
+
+    post("my_numbox_dialog fcol %d", x->x_gui.x_fcol);
 
     my_numbox_check_minmax(x, min, max);
     // automatically adjust the number font size
