@@ -579,9 +579,9 @@ static void *slider_new(t_symbol *s, int argc, t_atom *argv)
     iem_inttosymargs(&x->x_gui, 0);
     iem_inttofstyle(&x->x_gui, 0);
 
-    x->x_gui.x_bcol = 0xFCFCFC;
-    x->x_gui.x_fcol = 0x00;
-    x->x_gui.x_lcol = 0x00;
+    x->x_gui.x_bcol = 0xFFFCFCFC;
+    x->x_gui.x_fcol = 0xFF000000;
+    x->x_gui.x_lcol = 0xFF000000;
     x->x_gui.x_click = 1;
 
     if(argc >= 17&&IS_A_FLOAT(argv,0)&&IS_A_FLOAT(argv,1)

@@ -656,9 +656,9 @@ static void *vu_new(t_symbol *s, int argc, t_atom *argv)
     iem_inttosymargs(&x->x_gui, 0);
     iem_inttofstyle(&x->x_gui, 0);
 
-    x->x_gui.x_bcol = 0x404040;
-    x->x_gui.x_fcol = 0x00;
-    x->x_gui.x_lcol = 0x00;
+    x->x_gui.x_bcol = 0xFF404040;
+    x->x_gui.x_fcol = 0xFF000000;
+    x->x_gui.x_lcol = 0xFF000000;
 
     if((argc >= 11)&&IS_A_FLOAT(argv,0)&&IS_A_FLOAT(argv,1)
        &&(IS_A_SYMBOL(argv,2)||IS_A_FLOAT(argv,2))

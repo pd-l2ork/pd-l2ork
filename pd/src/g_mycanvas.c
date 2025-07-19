@@ -296,9 +296,9 @@ static void *my_canvas_new(t_symbol *s, int argc, t_atom *argv)
     iem_inttosymargs(&x->x_gui, 0);
     iem_inttofstyle(&x->x_gui, 0);
 
-    x->x_gui.x_bcol = 0xE0E0E0;
-    x->x_gui.x_fcol = 0x00;
-    x->x_gui.x_lcol = 0x404040;
+    x->x_gui.x_bcol = 0xFFE0E0E0;
+    x->x_gui.x_fcol = 0xFF000000;
+    x->x_gui.x_lcol = 0xFF404040;
 
     if(((argc >= 10)&&(argc <= 13))
        &&IS_A_FLOAT(argv,0)&&IS_A_FLOAT(argv,1)&&IS_A_FLOAT(argv,2))

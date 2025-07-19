@@ -1228,9 +1228,9 @@ static void *my_numbox_new(t_symbol *s, int argc, t_atom *argv)
     int log_height=256;
     double min=-1.0e+37, max=1.0e+37,v=0.0;
 
-    x->x_gui.x_bcol = 0xFCFCFC;
-    x->x_gui.x_fcol = 0x00;
-    x->x_gui.x_lcol = 0x00;
+    x->x_gui.x_bcol = 0xFFFCFCFC;
+    x->x_gui.x_fcol = 0xFF000000;
+    x->x_gui.x_lcol = 0xFF000000;
     x->x_gui.x_click = 1;
     x->x_autoupdate = 0;
 
