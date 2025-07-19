@@ -877,6 +877,7 @@ function search_args(title) {
 }
 
 function index_obj_completion(obj_or_msg, obj_or_msg_text) {
+    //post("index_obj_completion " + obj_or_msg + " " + obj_or_msg_text);
     var title, arg;
     if (obj_or_msg === "obj") {
         let text_array = obj_or_msg_text.split(" ");
@@ -925,8 +926,14 @@ function index_obj_completion(obj_or_msg, obj_or_msg_text) {
     if(arg) args[arg_ref] = {"occurrences" : arg_freq, "text" : arg};
     let obj = {"occurrences" : obj_freq, "title" : title, "args" : args};
 
-    if(obj_found) completion_index.update(obj, obj_ref);
-    else completion_index.add(obj);
+    if(obj_found) {
+        completion_index.update(obj, obj_ref);
+        //post("...updating");
+    }
+    else {
+        completion_index.add(obj);
+        //post("...creating a new entry");
+    }
 }
 
 function write_completion_index() {

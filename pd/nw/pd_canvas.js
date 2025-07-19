@@ -1501,7 +1501,7 @@ var canvas_events = (function() {
                 if (pdgui.autocomplete_enabled()) {
                     pdgui.index_obj_completion(obj_class, fudi_msg);
                     // GB: save every 50 changes, so that we don't loose too
-                    // much data in case purr-data unexpectedly quits or crashes
+                    // much data in case pd-l2ork unexpectedly quits or crashes
                     if (changes_in_completion_index===0 ||
                         ++changes_in_completion_index > 50) {
                         pdgui.write_completion_index();
