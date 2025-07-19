@@ -269,8 +269,8 @@ static void slider_properties(t_gobj *z, t_glist *owner)
         srl[0]->s_name, srl[1]->s_name,
         srl[2]->s_name, x->x_gui.x_ldx, x->x_gui.x_ldy,
         x->x_gui.x_font_style, x->x_gui.x_fontsize,
-        0xffffff & x->x_gui.x_bcol, 0xffffff & x->x_gui.x_fcol,
-        0xffffff & x->x_gui.x_lcol);
+        0xffffffff & x->x_gui.x_bcol, 0xffffffff & x->x_gui.x_fcol,
+        0xffffffff & x->x_gui.x_lcol);
     //gfxstub_new(&x->x_gui.x_obj.ob_pd, x, buf);
     gfx_tag = gfxstub_new2(&x->x_gui.x_obj.ob_pd, &x->x_gui);
     gui_start_vmess("gui_iemgui_dialog", "s", gfx_tag);
@@ -291,9 +291,9 @@ static void slider_properties(t_gobj *z, t_glist *owner)
     gui_s("y_offset");         gui_i(x->x_gui.x_ldy);
     gui_s("font_style");       gui_i(x->x_gui.x_font_style);
     gui_s("font_size");        gui_i(x->x_gui.x_fontsize);
-    gui_s("background_color"); gui_i(0xffffff & x->x_gui.x_bcol);
-    gui_s("foreground_color"); gui_i(0xffffff & x->x_gui.x_fcol);
-    gui_s("label_color");      gui_i(0xffffff & x->x_gui.x_lcol);
+    gui_s("background_color"); gui_i(0xffffffff & x->x_gui.x_bcol);
+    gui_s("foreground_color"); gui_i(0xffffffff & x->x_gui.x_fcol);
+    gui_s("label_color");      gui_i(0xffffffff & x->x_gui.x_lcol);
     gui_s("exclusive");        gui_i(x->x_exclusive);
     gui_s("interactive");      gui_i(x->x_gui.x_click);
 
