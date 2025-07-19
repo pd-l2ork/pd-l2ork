@@ -6392,11 +6392,13 @@ function iemgui_fontfamily(name) {
 
 function gui_iemgui_label_new(cid, tag, x, y, color, text, fontname, fontweight,
     fontsize) {
+    //post("gui_iemgui_label_new " + color);
     var rgba = color;
     if (rgba.length === 9) {
         // swap argb into rgba
         rgba = color.slice(0,1) + color.slice(3,9) + color.slice(1,3);
     }
+    //post("..." + rgba);
     gui(cid).get_gobj(tag)
     .append(function(frag, w) {
         var svg_text = create_item(cid, "text", {

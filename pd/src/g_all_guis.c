@@ -181,7 +181,7 @@ void iemgui_all_col2save(t_iemgui *x, t_symbol **bflcol)
     bflcol[2] = color2symbol(x->x_lcol);
 }
 
-static int iemgui_getcolorarg(t_iemgui *x, int index, int argc, t_atom *argv)
+int iemgui_getcolorarg(t_iemgui *x, int index, int argc, t_atom *argv)
 {
     char *classname;
     if (index < 0 || index >= argc || !argc)

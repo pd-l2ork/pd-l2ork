@@ -1304,7 +1304,8 @@ static void image_dialog(t_image *x, t_symbol *s, int argc,
     srl[2] = iemgui_getfloatsymarg(13,argc,argv);
     x->x_gui.x_ldx = atom_getintarg(14, argc, argv);
     x->x_gui.x_ldy = atom_getintarg(15, argc, argv);
-    x->x_gui.x_lcol = atom_getintarg(16, argc, argv) & 0xffffffff;
+    //x->x_gui.x_lcol = atom_getintarg(16, argc, argv) & 0xffffffff;
+    x->x_gui.x_lcol = iemgui_getcolorarg(&x->x_gui, 16, argc, argv) & 0xffffffff;
     int f = atom_getintarg(17, argc, argv); // font style (resolved below)
     x->x_gui.x_fontsize = maxi(atom_getintarg(18, argc, argv),4);
     x->x_visible = atom_getintarg(19, argc, argv);
