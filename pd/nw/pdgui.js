@@ -8286,6 +8286,17 @@ function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
     var w = size,
         h = size;
     //post("gui_configure_mknob size=" + size + " w=" + xtra_w);
+
+    var fg_rgba = fg_color;
+    if (fg_color.length === 9) {
+        fg_rgba = fg_color.slice(0,1) + fg_color.slice(3,9) + fg_color.slice(1,3);
+    }
+
+    var bg_rgba = bg_color;
+    if (bg_color.length === 9) {
+        bg_rgba = bg_color.slice(0,1) + bg_color.slice(3,9) + bg_color.slice(1,3);
+    }
+
     var g = gui(cid).get_gobj(tag)
     .q(".border", {
         d: ["M", -xtra_w, -xtra_w, w+xtra_w, -xtra_w,
@@ -8297,7 +8308,7 @@ function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
     })
     .q("." + tag + "dial", { // indicator
         "stroke-width": dial_w,
-        stroke: fg_color
+        stroke: fg_rgba
     });
 
     if (!is_footils_knob) {
@@ -8305,7 +8316,7 @@ function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
             cx: size / 2,
             cy: size / 2,
             r: size / 2,
-            fill: bg_color,
+            fill: bg_rgba,
             stroke: "black",
             "stroke-width": 1,
             "stroke-dasharray": "none",
@@ -8321,7 +8332,7 @@ function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
         g.q("." + tag + "dial_frag", {
             "knob_w": size,
             fill: "none",
-            stroke: bg_color,
+            stroke: bg_rgba,
             "stroke-width": frag_w,
             "d": describeArc(size/2, size/2, size/2 - 1, 192.9, 528.1),
         });

@@ -1367,7 +1367,7 @@ void iemgui_label_draw_config(t_iemgui *x)
             x,
             x->x_lab != s_empty ? x->x_lab->s_name: "");
         if (x->x_lcol < 0)
-            sprintf(col, "#%6.6x", x->x_lcol);
+            sprintf(col, "#%8.8x", x->x_lcol);
         else
             sprintf(col, "#%x", x->x_lcol);
         gui_vmess("gui_iemgui_label_color", "xxs",
