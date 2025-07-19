@@ -157,7 +157,7 @@ static t_symbol *color2symbol(int col)
     else
     {
         snprintf(colname, MAXPDSTRING-1, "#%08x", col);
-        post("color2symbol %s", colname);
+        //post("color2symbol %s", colname);
     }
     return gensym(colname);
 }
@@ -189,7 +189,6 @@ static int iemgui_getcolorarg(t_iemgui *x, int index, int argc, t_atom *argv)
 
     if (IS_A_FLOAT(argv, index))
     {
-        post("iemgui_getcolorarg float %f %x", atom_getfloatarg(index, argc, argv), ((int)atom_getfloatarg(index, argc, argv) & 0xffffff));
         return atom_getfloatarg(index, argc, argv);
     }
 
@@ -197,7 +196,7 @@ static int iemgui_getcolorarg(t_iemgui *x, int index, int argc, t_atom *argv)
     if (IS_A_SYMBOL(argv, index))
     {
         t_symbol *s = atom_getsymbolarg(index, argc, argv);
-        post("iemgui_getcolorarg=%s", s->s_name);
+        //post("iemgui_getcolorarg=%s", s->s_name);
         if ('#' == s->s_name[0])
         {
             char *start = s->s_name + 1, *end;
@@ -242,7 +241,7 @@ static int iemgui_getcolorarg(t_iemgui *x, int index, int argc, t_atom *argv)
             if(expanded[0] != '\0')
             {
                 start = expanded;
-                post("start = expanded %s", expanded);
+                //post("start = expanded %s", expanded);
             }
             len = 8;
 
@@ -287,13 +286,13 @@ static int colfromatomload(t_iemgui *x, t_atom *colatom)
         color = -1 - color;
         color = 0xff000000|((color & 0x3f000) << 6)|((color & 0xfc0) << 4)|
         ((color & 0x3f) << 2);
-        post("colfromatomload < 0 %d %x", color, color);
+        //post("colfromatomload < 0 %d %x", color, color);
     }
     else
     {
         color = iemgui_modulo_color(color);
         color = 0xff000000|iemgui_color_hex[color];
-        post("colfromatomload hex %d %x", color, color);
+        //post("colfromatomload hex %d %x", color, color);
     }
     return (color);
 }
@@ -342,7 +341,6 @@ int iemgui_compatible_colorarg(t_iemgui *x, int index, int argc, t_atom* argv)
             // at the beginning to comply with the argb format
             // displaying it swaps argb for CSS-compliant rgba
             // this is done inside pdgui.js
-            post("iemgui_compatible_colorarg %d %x", (-1 - col + 4278190080) & 0xffffffff, (-1 - col + 4278190080) & 0xffffffff);
             return((-1 - col + 4278190080) & 0xffffffff);
         }
     }
@@ -852,8 +850,6 @@ int iemgui_dialog(t_iemgui *x, int argc, t_atom *argv)
     if(iemgui_has_rcv(x)) oldsndrcvable |= IEM_GUI_OLD_RCV_FLAG;
     if(iemgui_has_snd(x)) oldsndrcvable |= IEM_GUI_OLD_SND_FLAG;
     iemgui_all_raute2dollar(srl);
-
-    post("iemgui_dialog fcol %d", x->x_fcol);
 
     // replace ascii code 11 (\v or vertical tab) with spaces
     // we do this so that the string with spaces can survive argc,argv

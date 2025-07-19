@@ -89,7 +89,7 @@ static void vu_update_peak(t_vu *x, t_glist *glist)
     {
         int x1 = text_xpix(&x->x_gui.x_obj, glist);
         int y1 = text_ypix(&x->x_gui.x_obj, glist);
-        char cbuf[8];
+        char cbuf[10];
 
         if (x->x_peak)
         {
@@ -104,7 +104,7 @@ static void vu_update_peak(t_vu *x, t_glist *glist)
         else
         {
             int mid = x1 + x->x_gui.x_w / 2;
-            sprintf(cbuf, "#%6.6x", x->x_gui.x_bcol);
+            sprintf(cbuf, "#%8.8x", x->x_gui.x_bcol);
             gui_vmess("gui_vumeter_update_peak", "xxsiiiiii",
                 canvas, x, cbuf,
                 mid+1, y1+22, mid+1, y1+22, x1, y1);
@@ -136,7 +136,7 @@ static void vu_draw_new(t_vu *x, t_glist *glist)
     int quad3=x2-w4, end=x2+4;
     int k1=x->x_led_size+1, k2=IEM_VU_STEPS+1, k3=k1/2;
     int led_col, yyy, i, k4=y1-k3;
-    char cbuf[8];
+    char cbuf[10];
 
     /* vumeter is a special case because the base doesn't actually
        cover the entire bbox returned by vu_getrect.  Instead it is
@@ -230,8 +230,8 @@ static void vu_draw_config(t_vu* x, t_glist* glist)
 {
     int i;
     t_canvas *canvas=glist_getcanvas(glist);
-    char cbuf[8];
-    sprintf(cbuf, "#%6.6x", x->x_gui.x_lcol);
+    char cbuf[10];
+    sprintf(cbuf, "#%8.8x", x->x_gui.x_lcol);
     for(i = 1; i <= IEM_VU_STEPS+1; i++)
     {
         if (i <= IEM_VU_STEPS)
@@ -249,7 +249,7 @@ static void vu_draw_config(t_vu* x, t_glist* glist)
                 iemgui_font(&x->x_gui), isselected, cbuf, i);
         }
     }
-    sprintf(cbuf, "#%6.6x", x->x_gui.x_bcol);
+    sprintf(cbuf, "#%8.8x", x->x_gui.x_bcol);
     gui_vmess("gui_vumeter_update_rect", "xxs",
         canvas, x, cbuf);
     gui_vmess("gui_vumeter_update_peak_width", "xxi",
@@ -450,7 +450,7 @@ void vu_check_height(t_vu *x, int h)
 static void vu_scale(t_vu *x, t_floatarg fscale)
 {
     int i, scale = (int)fscale;
-    char cbuf[8];
+    char cbuf[10];
 
     if(scale != 0) scale = 1;
     if(x->x_scale && !scale)
@@ -487,7 +487,7 @@ static void vu_scale(t_vu *x, t_floatarg fscale)
         x->x_scale = (int)scale;
         if(glist_isvisible(x->x_gui.x_glist))
         {
-            sprintf(cbuf, "#%6.6x", x->x_gui.x_lcol);
+            sprintf(cbuf, "#%8.8x", x->x_gui.x_lcol);
             for(i=1; i<=IEM_VU_STEPS; i++)
             {
                 yyy = k4 + k1*(k2-i);

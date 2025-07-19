@@ -284,7 +284,6 @@ static void my_numbox_draw_new(t_my_numbox *x, t_glist *glist)
 
     my_numbox_ftoa(x, 0);
     sprintf(cbuf, "#%8.8x", x->x_gui.x_fcol);
-    post("my_numbox_draw_new %d %s", x->x_gui.x_fcol, cbuf);
     gui_vmess("gui_numbox_draw_text", "xxsisiiiiii",
         canvas,
         x,
@@ -590,10 +589,6 @@ static void my_numbox_properties(t_gobj *z, t_glist *owner)
     //gfxstub_new(&x->x_gui.x_obj.ob_pd, x, buf);
     gfx_tag = gfxstub_new2(&x->x_gui.x_obj.ob_pd, &x->x_gui);
 
-    post("my_numbox_properties fcol %x %d", 0xffffffff & x->x_gui.x_fcol, x->x_gui.x_fcol);
-    post("my_numbox_properties bcol %x %d", 0xffffffff & x->x_gui.x_bcol, x->x_gui.x_bcol);
-    post("my_numbox_properties lcol %x %d", 0xffffffff & x->x_gui.x_lcol, x->x_gui.x_lcol);
-
     gui_start_vmess("gui_iemgui_dialog", "s", gfx_tag);
     gui_start_array();
     gui_s("type"); gui_s("nbx");
@@ -644,8 +639,6 @@ static void my_numbox_dialog(t_my_numbox *x, t_symbol *s, int argc,
     x->x_numwidth = my_numbox_calc_fontwidth(x);
     my_numbox_interactive(x, atom_getintarg(20, argc, argv));
     x->x_autoupdate = atom_getintarg(22, argc, argv);
-
-    post("my_numbox_dialog fcol %d", x->x_gui.x_fcol);
 
     my_numbox_check_minmax(x, min, max);
     // automatically adjust the number font size

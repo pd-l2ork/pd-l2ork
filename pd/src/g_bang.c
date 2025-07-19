@@ -28,7 +28,7 @@ void bng_draw_update(t_gobj *xgobj, t_glist *glist)
 {
     t_bng *x = (t_bng *)xgobj;
     char cbuf[10];
-    sprintf(cbuf, "#%6.6x", x->x_flashed ? x->x_gui.x_fcol : x->x_gui.x_bcol);
+    sprintf(cbuf, "#%8.8x", x->x_flashed ? x->x_gui.x_fcol : x->x_gui.x_bcol);
     if (x->x_gui.x_changed != x->x_flashed && glist_isvisible(glist))
     {
         gui_vmess("gui_bng_button_color", "xxs",
@@ -42,7 +42,7 @@ void bng_draw_update(t_gobj *xgobj, t_glist *glist)
 void bng_draw_new(t_bng *x, t_glist *glist)
 {
     char cbuf[10];
-    sprintf(cbuf, "#%6.6x", x->x_flashed ? x->x_gui.x_fcol : x->x_gui.x_bcol);
+    sprintf(cbuf, "#%8.8x", x->x_flashed ? x->x_gui.x_fcol : x->x_gui.x_bcol);
     t_canvas *canvas=glist_getcanvas(glist);
     int x1=text_xpix(&x->x_gui.x_obj, glist);
     int y1=text_ypix(&x->x_gui.x_obj, glist);
@@ -54,7 +54,7 @@ void bng_draw_new(t_bng *x, t_glist *glist)
        old interface to see if there's anything we're doing wrong. Then once
        we get the circle placement right we can remove the old code here... */
     //sys_vgui(".x%zx.c create circle %f %f -r %f "
-    //         "-stroke $pd_colors(iemgui_border) -fill #%6.6x "
+    //         "-stroke $pd_colors(iemgui_border) -fill #%8.8x "
     //         "-tags {%zxBUT x%zx text iemgui border}\n",
     //     canvas, cx, cy, cr, x->x_flashed?x->x_gui.x_fcol:x->x_gui.x_bcol,
     //     x, x);
@@ -77,7 +77,7 @@ void bng_draw_move(t_bng *x, t_glist *glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
     char cbuf[10];
-    sprintf(cbuf, "#%6.6x", x->x_flashed ? x->x_gui.x_fcol : x->x_gui.x_bcol);
+    sprintf(cbuf, "#%8.8x", x->x_flashed ? x->x_gui.x_fcol : x->x_gui.x_bcol);
     if (!glist_isvisible(canvas)) return;
     int x1=text_xpix(&x->x_gui.x_obj, glist);
     int y1=text_ypix(&x->x_gui.x_obj, glist);
@@ -99,7 +99,7 @@ void bng_draw_config(t_bng* x, t_glist* glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
     char cbuf[10];
-    sprintf(cbuf, "#%6.6x", x->x_flashed ? x->x_gui.x_fcol : x->x_gui.x_bcol);
+    sprintf(cbuf, "#%8.8x", x->x_flashed ? x->x_gui.x_fcol : x->x_gui.x_bcol);
     iemgui_base_draw_config(&x->x_gui);
     gui_vmess("gui_bng_button_color", "xxs",
         canvas,

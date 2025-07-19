@@ -24,7 +24,7 @@ void toggle_draw_update(t_gobj *xgobj, t_glist *glist)
 {
     t_toggle *x = (t_toggle *)xgobj;
     char cbuf[10];
-    sprintf(cbuf, "#%6.6x", x->x_gui.x_fcol);
+    sprintf(cbuf, "#%8.8x", x->x_gui.x_fcol);
     if (x->x_gui.x_changed)
     {
         if(glist_isvisible(glist_getcanvas(glist)))
@@ -41,7 +41,7 @@ void toggle_draw_new(t_toggle *x, t_glist *glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
     char cbuf[10];
-    sprintf(cbuf, "#%6.6x", x->x_gui.x_fcol);
+    sprintf(cbuf, "#%8.8x", x->x_gui.x_fcol);
     int w=(x->x_gui.x_w+29)/30;
     int x1=text_xpix(&x->x_gui.x_obj, glist);
     int y1=text_ypix(&x->x_gui.x_obj, glist);
@@ -76,7 +76,7 @@ void toggle_draw_config(t_toggle* x, t_glist* glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
     char cbuf[10];
-    sprintf(cbuf, "#%6.6x", x->x_gui.x_fcol);
+    sprintf(cbuf, "#%8.8x", x->x_gui.x_fcol);
     iemgui_base_draw_config(&x->x_gui);
     if (glist_isvisible(glist_getcanvas(glist)))
     {

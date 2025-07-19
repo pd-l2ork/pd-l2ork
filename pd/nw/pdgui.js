@@ -5949,11 +5949,9 @@ function gui_numbox_draw_text(cid, tag, text, font_size, color, xpos,
             trans_y = (font_size - fontmargin/2);
         }
         var rgba = color;
-        post("gui_numbox_draw_text rgba " + rgba);
         if (color.length === 9) {
             rgba = color.slice(0,1) + color.slice(3,9) + color.slice(1,3);
         }
-        post("..." + rgba);
         var svg_text = create_item(cid, "text", {
             transform: "translate(" +
                         (xpos - basex) + "," + trans_y + ")",
@@ -5971,7 +5969,6 @@ function gui_numbox_draw_text(cid, tag, text, font_size, color, xpos,
 }
 
 function gui_numbox_update(cid, tag, fcolor, bgcolor, num_font_size, font_name, font_size, font_weight, drawstyle) {
-    post("gui_numbox_update " + bgcolor + " " + fcolor);
     var rgba = bgcolor;
     if (rgba.length === 9) {
         rgba = bgcolor.slice(0,1) + bgcolor.slice(3,9) + bgcolor.slice(1,3);
@@ -5981,7 +5978,6 @@ function gui_numbox_update(cid, tag, fcolor, bgcolor, num_font_size, font_name, 
     if (frgba.length === 9) {
         frgba = fcolor.slice(0,1) + fcolor.slice(3,9) + fcolor.slice(1,3);
     }
-    post("..." + rgba + " " + frgba);
     gui(cid)
     .get_elem(tag + "border", {
         fill: rgba,
@@ -9341,9 +9337,9 @@ function gui_dialog_set_field(did, field_name, value) {
         } else if (elem.type === "color") {
             var hex_string = Number(value).toString(16);
             if (hex_string.length === 8) {
-                post("gui_dialog_set_field starting color: " + hex_string);
+                //post("gui_dialog_set_field starting color: " + hex_string);
                 hex_string = hex_string.slice(-2) + hex_string.slice(0, 6);
-                post("gui_dialog_set_field ending color: " + hex_string);
+                //post("gui_dialog_set_field ending color: " + hex_string);
             }
             while(hex_string.length < 6) {
                 hex_string = "0" + hex_string;
@@ -9354,7 +9350,7 @@ function gui_dialog_set_field(did, field_name, value) {
             var color_string = "#" +
                 (hex_string === "0" ? "000000ff" : hex_string);
             elem.value = color_string;
-            post("gui_dialog_set_field color " + color_string);
+            //post("gui_dialog_set_field color " + color_string);
         } else {
             elem.value = value;
         }
