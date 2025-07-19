@@ -11336,7 +11336,7 @@ function gui_highlight_obj_on_return(cid, tag, type) {
         //post("highlight "+tag+"text "+type);
         gui(cid).get_elem(tag + "text", function(item) {
             item.style.setProperty("font-weight", "bold");
-            item.style.setProperty("text-shadow", "0.25px 0 currentColor, -0.25px 0 currentColor");
+            item.style.setProperty("text-shadow", "0.25px 0 red, -0.25px 0 red");
             if (highlight_reset[cid])
                 clearTimeout(highlight_reset[cid]);
             highlight_reset[cid] =
