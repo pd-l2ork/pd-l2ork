@@ -5795,21 +5795,33 @@ function gui_bng_new(cid, tag, cx, cy, radius) {
 }
 
 function gui_bng_button_color(cid, tag, color) {
+    var rgba = color;
+    if (color.length === 9) {
+        rgba = color.slice(0,1) + color.slice(3,9) + color.slice(1,3);
+    }
     gui(cid).get_elem(tag + "button", {
-        fill: color
+        fill: rgba
     });
 }
 
 function gui_bng_configure(cid, tag, color, cx, cy, r) {
+    var rgba = color;
+    if (color.length === 9) {
+        rgba = color.slice(0,1) + color.slice(3,9) + color.slice(1,3);
+    }
     gui(cid).get_elem(tag + "button", {
         cx: cx,
         cy: cy,
         r: r,
-        fill: color
+        fill: rgba
     });
 }
 
 function gui_toggle_new(cid, tag, color, width, state, p1,p2,p3,p4,p5,p6,p7,p8,basex,basey) {
+    var rgba = color;
+    if (color.length === 9) {
+        rgba = color.slice(0,1) + color.slice(3,9) + color.slice(1,3);
+    }
     gui(cid).get_gobj(tag)
     .append(function(frag) {
         var points = [p1 - basex, p2 - basey,
@@ -5817,7 +5829,7 @@ function gui_toggle_new(cid, tag, color, width, state, p1,p2,p3,p4,p5,p6,p7,p8,b
         ].join(" ");
         var cross1 = create_item(cid, "polyline", {
             points: points,
-            stroke: color,
+            stroke: rgba,
             fill: "none",
             id: tag + "cross1",
             display: state ? "inline" : "none",
@@ -5828,7 +5840,7 @@ function gui_toggle_new(cid, tag, color, width, state, p1,p2,p3,p4,p5,p6,p7,p8,b
         ].join(" ");
         var cross2 = create_item(cid, "polyline", {
             points: points,
-            stroke: color,
+            stroke: rgba,
             fill: "none",
             id: tag + "cross2",
             display: state ? "inline" : "none",
@@ -5859,15 +5871,19 @@ function gui_toggle_resize_cross(cid,tag,w,p1,p2,p3,p4,p5,p6,p7,p8,basex,basey) 
 }
 
 function gui_toggle_update(cid, tag, state, color) {
+    var rgba = color;
+    if (color.length === 9) {
+        rgba = color.slice(0,1) + color.slice(3,9) + color.slice(1,3);
+    }
     var disp = !!state ? "inline" : "none";
     gui(cid)
     .get_elem(tag + "cross1", {
         display: disp,
-        stroke: color
+        stroke: rgba
     })
     .get_elem(tag + "cross2", {
         display: disp,
-        stroke: color
+        stroke: rgba
     })
 }
 
