@@ -890,7 +890,7 @@ resulting in unexpected stuck keys.
   *On RPi (using PIXEL/LXDE variant, the window keeps going upwards). This was also tested and is ok.
   *Fixed using start-up window repositioning to calculate universal offset.
 *Fixed clone object by merging latest additions. May need additional testing for potential regressions.
-*Double-clicking on a patch in Windows (possibly others?) once again is not opening the patch in Pd-L2Ork. Looks like new scheduler megapatch broke this. Implemented a bandaid solution until I study this more closely since Windows now throws the same instance for both instances. The old code continues to work on Linux and OSX.
+*Fixed a bug where double-clicking on a patch in Windows once again is not opening the patch in Pd-L2Ork. Looks like new scheduler megapatch broke this. Implemented a bandaid solution until I study this more closely since Windows now throws the same instance for both instances. The old code continues to work on Linux and OSX.
 
 
 
