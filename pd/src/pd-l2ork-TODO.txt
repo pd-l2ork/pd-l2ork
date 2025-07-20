@@ -1,6 +1,8 @@
 PD-L2ORK TODO:
 
-*Double-clicking on a patch in Windows (possibly others?) once again is not opening the patch in Pd-L2Ork. Possible change in MSYS?
+*Autocomplete displaying multiple instances of the same
+  *Not sure how this broke. Deleting ~/.pd-l2ork/completions.json fixed the issue
+  *Will leave this open to see if it recurrs
 
 *Bezier implementation of the array sometimes:
   *does not draw when the patch is opened (with different zoom levels)
@@ -888,6 +890,7 @@ resulting in unexpected stuck keys.
   *On RPi (using PIXEL/LXDE variant, the window keeps going upwards). This was also tested and is ok.
   *Fixed using start-up window repositioning to calculate universal offset.
 *Fixed clone object by merging latest additions. May need additional testing for potential regressions.
+*Fixed a bug where double-clicking on a patch in Windows once again is not opening the patch in Pd-L2Ork. Looks like new scheduler megapatch broke this. Implemented a bandaid solution until I study this more closely since Windows now throws the same instance for both instances. The old code continues to work on Linux and OSX.
 
 
 

@@ -1265,7 +1265,7 @@ static void image_properties(t_gobj *z, t_glist *owner)
     gui_s("label");             gui_s(srl[2]->s_name);
     gui_s("x_offset");          gui_i(x->x_gui.x_ldx);
     gui_s("y_offset");          gui_i(x->x_gui.x_ldy);
-    gui_s("label_color");       gui_i(0xffffff & x->x_gui.x_lcol);
+    gui_s("label_color");       gui_i(0xffffffff & x->x_gui.x_lcol);
     gui_s("font_style");        gui_i(x->x_gui.x_font_style);
     gui_s("font_size");         gui_i(x->x_gui.x_fontsize);
     gui_s("visible");           gui_i(x->x_visible);
@@ -1304,7 +1304,8 @@ static void image_dialog(t_image *x, t_symbol *s, int argc,
     srl[2] = iemgui_getfloatsymarg(13,argc,argv);
     x->x_gui.x_ldx = atom_getintarg(14, argc, argv);
     x->x_gui.x_ldy = atom_getintarg(15, argc, argv);
-    x->x_gui.x_lcol = atom_getintarg(16, argc, argv) & 0xffffff;
+    //x->x_gui.x_lcol = atom_getintarg(16, argc, argv) & 0xffffffff;
+    x->x_gui.x_lcol = iemgui_getcolorarg(&x->x_gui, 16, argc, argv) & 0xffffffff;
     int f = atom_getintarg(17, argc, argv); // font style (resolved below)
     x->x_gui.x_fontsize = maxi(atom_getintarg(18, argc, argv),4);
     x->x_visible = atom_getintarg(19, argc, argv);
@@ -1427,9 +1428,9 @@ static void *image_new(t_symbol *s, t_int argc, t_atom *argv)
     x->x_rot_angle = 0;
     // We only use the label color and initialize others, so that we can
     // safely use the iemgui calls...
-    x->x_gui.x_bcol = 0x00;
-    x->x_gui.x_fcol = 0x00;
-    x->x_gui.x_lcol = 0x00;
+    x->x_gui.x_bcol = 0xFF000000;
+    x->x_gui.x_fcol = 0xFF000000;
+    x->x_gui.x_lcol = 0xFF000000;
     x->x_gui.x_ldy = -8; // default label y offset
     x->x_draw_firstime = 1;
     x->x_visible = 1;

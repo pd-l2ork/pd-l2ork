@@ -277,6 +277,7 @@ EXTERN void iemgui_save(t_iemgui *x, t_symbol **srl, t_symbol **bflcol);
 EXTERN void iemgui_properties(t_iemgui *x, t_symbol **srl);
 EXTERN void iemgui_update_properties(t_iemgui *x, int option);
 EXTERN int iemgui_dialog(t_iemgui *x, int argc, t_atom *argv);
+EXTERN int iemgui_getcolorarg(t_iemgui *x, int index, int argc, t_atom *argv);
 
 EXTERN int canvas_getdollarzero(t_pd *x);
 

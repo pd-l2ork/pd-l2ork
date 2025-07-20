@@ -262,8 +262,8 @@ static void my_numbox_draw_update(t_gobj *client, t_glist *glist)
 static void my_numbox_draw_new(t_my_numbox *x, t_glist *glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
-    char cbuf[8];
-    sprintf(cbuf, "#%6.6x", x->x_gui.x_bcol);
+    char cbuf[10];
+    sprintf(cbuf, "#%8.8x", x->x_gui.x_bcol);
     int half=x->x_gui.x_h/2;
     int d=1+x->x_gui.x_h/34;
     int x1=text_xpix(&x->x_gui.x_obj, glist), x2=x1+x->x_numwidth;
@@ -283,7 +283,7 @@ static void my_numbox_draw_new(t_my_numbox *x, t_glist *glist)
         glist_istoplevel(glist));
 
     my_numbox_ftoa(x, 0);
-    sprintf(cbuf, "#%6.6x", x->x_gui.x_fcol);
+    sprintf(cbuf, "#%8.8x", x->x_gui.x_fcol);
     gui_vmess("gui_numbox_draw_text", "xxsisiiiiii",
         canvas,
         x,
@@ -332,9 +332,9 @@ static void my_numbox_draw_move(t_my_numbox *x, t_glist *glist)
 static void my_numbox_draw_config(t_my_numbox* x,t_glist* glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
-    char fg[8], bg[8];
-    sprintf(fg, "#%6.6x",  x->x_gui.x_fcol);
-    sprintf(bg, "#%6.6x",  x->x_gui.x_bcol);
+    char fg[10], bg[10];
+    sprintf(fg, "#%8.8x",  x->x_gui.x_fcol);
+    sprintf(bg, "#%8.8x",  x->x_gui.x_bcol);
     gui_vmess("gui_numbox_update", "xxssisiii",
         canvas,
         x,
@@ -357,8 +357,8 @@ static void my_numbox_draw_select(t_my_numbox *x, t_glist *glist)
         x->x_buf[0] = 0;
         sys_queuegui(x, x->x_gui.x_glist, my_numbox_draw_update);
     }
-    char fcol[8]; sprintf(fcol, "#%6.6x", x->x_gui.x_fcol);
-    char bcol[8]; sprintf(bcol, "#%6.6x", x->x_gui.x_bcol);
+    char fcol[10]; sprintf(fcol, "#%8.8x", x->x_gui.x_fcol);
+    char bcol[10]; sprintf(bcol, "#%8.8x", x->x_gui.x_bcol);
     // The logic in these sys_vgui calls is being taken care
     // of in the gui now...
     //sys_vgui(".x%zx.c itemconfigure %zxBASE1 -stroke %s\n", canvas, x,
@@ -584,8 +584,8 @@ static void my_numbox_properties(t_gobj *z, t_glist *owner)
         srl[0]->s_name, srl[1]->s_name, srl[2]->s_name,
         x->x_gui.x_ldx, x->x_gui.x_ldy,
         x->x_gui.x_font_style, x->x_gui.x_fontsize,
-        0xffffff & x->x_gui.x_bcol, 0xffffff & x->x_gui.x_fcol,
-        0xffffff & x->x_gui.x_lcol);
+        0xffffffff & x->x_gui.x_bcol, 0xffffffff & x->x_gui.x_fcol,
+        0xffffffff & x->x_gui.x_lcol);
     //gfxstub_new(&x->x_gui.x_obj.ob_pd, x, buf);
     gfx_tag = gfxstub_new2(&x->x_gui.x_obj.ob_pd, &x->x_gui);
 
@@ -606,9 +606,9 @@ static void my_numbox_properties(t_gobj *z, t_glist *owner)
     gui_s("y_offset");         gui_i(x->x_gui.x_ldy);
     gui_s("font_style");       gui_i(x->x_gui.x_font_style);
     gui_s("font_size");        gui_i(x->x_gui.x_fontsize);
-    gui_s("background_color"); gui_i(0xffffff & x->x_gui.x_bcol);
-    gui_s("foreground_color"); gui_i(0xffffff & x->x_gui.x_fcol);
-    gui_s("label_color");      gui_i(0xffffff & x->x_gui.x_lcol);
+    gui_s("background_color"); gui_i(0xffffffff & x->x_gui.x_bcol);
+    gui_s("foreground_color"); gui_i(0xffffffff & x->x_gui.x_fcol);
+    gui_s("label_color");      gui_i(0xffffffff & x->x_gui.x_lcol);
     gui_s("draw_style");       gui_i(x->x_drawstyle);
     gui_s("exclusive");        gui_i(x->x_exclusive);
     gui_s("interactive");      gui_i(x->x_gui.x_click);
@@ -1228,9 +1228,9 @@ static void *my_numbox_new(t_symbol *s, int argc, t_atom *argv)
     int log_height=256;
     double min=-1.0e+37, max=1.0e+37,v=0.0;
 
-    x->x_gui.x_bcol = 0xFCFCFC;
-    x->x_gui.x_fcol = 0x00;
-    x->x_gui.x_lcol = 0x00;
+    x->x_gui.x_bcol = 0xFFFCFCFC;
+    x->x_gui.x_fcol = 0xFF000000;
+    x->x_gui.x_lcol = 0xFF000000;
     x->x_gui.x_click = 1;
     x->x_autoupdate = 0;
 

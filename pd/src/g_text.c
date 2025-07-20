@@ -1299,7 +1299,7 @@ static void gatom_key(void *z, t_floatarg f)
     t_atom *firstAtom = binbuf_getvec(x->a_binbuf);
     int c = f;
     //post("gatom_key %f shift=%d strlen=%d <%s>", \
-        f, x->a_shift, strlen(x->a_buf), x->a_buf);
+    //    f, x->a_shift, strlen(x->a_buf), x->a_buf);
     int len = strlen(x->a_buf);
     int ndots;
     t_atom at;

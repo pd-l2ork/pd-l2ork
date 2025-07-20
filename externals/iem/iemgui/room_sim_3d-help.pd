@@ -1,99 +1,99 @@
-#N canvas 6 5 960 708 10;
+#N canvas 66 69 960 708 10;
 #X obj 44 182 room_sim_3d 2 30 0 1.3 30 24197 12 10 5 123525 140 116
 1 250684 224 186 45 250684 64 158 42;
 #X obj 44 157 r to_GUI;
 #X msg 432 146 \; to_GUI r_ambi 1.4;
 #X obj 508 86 t b f;
-#X floatatom 433 69 5 2 30 0 - - -;
-#X floatatom 510 69 5 2 30 0 - - -;
+#X floatatom 433 69 5 2 30 0 - - - 0 0 1, f 5;
+#X floatatom 510 69 5 2 30 0 - - - 0 0 1, f 5;
 #X msg 432 199 \; to_GUI r_ambi \$1;
-#X floatatom 432 181 5 0.1 10 0 - - -;
+#X floatatom 432 181 5 0.1 10 0 - - - 0 0 1, f 5;
 #X text 468 180 m;
 #X msg 430 289 \; to_GUI pix_per_m_ratio \$1;
-#X floatatom 430 271 5 5 50 0 - - -;
+#X floatatom 430 271 5 5 50 0 - - - 0 0 1, f 5;
 #X text 473 269 pix/m;
-#X floatatom 429 362 5 5 150 0 - - -;
+#X floatatom 429 362 5 5 150 0 - - - 0 0 1, f 5;
 #X msg 429 380 \; to_GUI src_font \$1;
 #X text 472 360 pix;
 #X msg 429 324 \; to_GUI src_font 30;
 #X obj 44 616 s from_GUI;
 #X obj 687 34 r from_GUI;
 #X obj 687 63 route 0 1 2;
-#X floatatom 687 280 5 0 0 0 - - -;
-#X floatatom 727 280 5 0 0 0 - - -;
-#X floatatom 711 209 5 0 0 0 - - -;
-#X floatatom 751 209 5 0 0 0 - - -;
-#X floatatom 735 135 5 0 0 0 - - -;
-#X floatatom 775 135 5 0 0 0 - - -;
+#X floatatom 687 280 5 0 0 0 - - - 0 0 1, f 5;
+#X floatatom 727 280 5 0 0 0 - - - 0 0 1, f 5;
+#X floatatom 711 209 5 0 0 0 - - - 0 0 1, f 5;
+#X floatatom 751 209 5 0 0 0 - - - 0 0 1, f 5;
+#X floatatom 735 135 5 0 0 0 - - - 0 0 1, f 5;
+#X floatatom 775 135 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 514 473 t b f;
-#X floatatom 423 456 5 -20 20 0 - - -;
-#X floatatom 516 456 5 -20 20 0 - - -;
+#X floatatom 423 456 5 -20 20 0 - - - 0 0 1, f 5;
+#X floatatom 516 456 5 -20 20 0 - - - 0 0 1, f 5;
 #X text 802 165 source 1;
 #X text 829 90 source 2;
 #X obj 337 593 pp 0 rho_z;
-#X floatatom 840 263 5 0 0 0 - - -;
+#X floatatom 840 263 5 0 0 0 - - - 0 0 1, f 5;
 #X text 878 263 degree;
 #X text 186 159 |;
 #X text 186 155 ^;
 #X text 187 142 x;
 #X text 31 335 _;
-#N canvas 698 61 330 711 colors 0;
-#X msg 47 153 \; to_GUI room_col \$1;
-#X msg 46 291 \; to_GUI head_col \$1;
-#X msg 45 434 \; to_GUI src_col 1 \$1;
-#X msg 45 584 \; to_GUI src_col 2 \$1;
+#N canvas 698 69 294 672 colors 0;
+#X msg 47 147 \; to_GUI room_col \$1;
+#X msg 47 291 \; to_GUI head_col \$1;
+#X msg 47 434 \; to_GUI src_col 1 \$1;
+#X msg 47 584 \; to_GUI src_col 2 \$1;
 #N canvas 16 80 189 98 source_color_2 0;
-#X obj 12 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -262144 -1
--1;
+#X obj 12 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffcfcfc #ff000000
+#ff000000 1;
 #X msg 12 139 0;
 #X obj 12 226 outlet;
-#X obj 12 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -166441 -1
--1;
+#X obj 12 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffa0a0a0 #ff000000
+#ff000000 1;
 #X msg 12 160 1;
-#X obj 12 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -66577 -1 -1
-;
-#X obj 60 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -261689 -1
--1;
+#X obj 12 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff404040 #ff000000
+#ff000000 1;
+#X obj 60 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffce0e0 #ff000000
+#ff000000 1;
 #X msg 12 181 2;
 #X msg 60 139 3;
-#X obj 76 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -261681 -1
--1;
-#X obj 92 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -262131 -1
--1;
-#X obj 108 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -225271 -1
--1;
-#X obj 124 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -225280 -1
--1;
+#X obj 76 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffce0c0 #ff000000
+#ff000000 1;
+#X obj 92 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffcfcc8 #ff000000
+#ff000000 1;
+#X obj 108 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffd8fcd8
+#ff000000 #ff000000 1;
+#X obj 124 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffd8fcfc
+#ff000000 #ff000000 1;
 #X msg 76 139 4;
 #X msg 92 139 5;
 #X msg 108 139 6;
 #X msg 124 139 7;
-#X obj 140 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -228992 -1
--1;
-#X obj 156 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -257472 -1
--1;
+#X obj 140 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffdce4fc
+#ff000000 #ff000000 1;
+#X obj 156 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fff8d8fc
+#ff000000 #ff000000 1;
 #X msg 140 139 8;
 #X msg 156 139 9;
-#X obj 28 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -233017 -1
--1;
-#X obj 28 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -128992 -1
--1;
-#X obj 28 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -33289 -1 -1
-;
-#X obj 60 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -258699 -1
--1;
-#X obj 76 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -260818 -1
--1;
-#X obj 92 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -241291 -1
--1;
-#X obj 108 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -24198 -1
--1;
-#X obj 124 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -44926 -1
--1;
-#X obj 140 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -62784 -1
--1;
-#X obj 156 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -250685 -1
--1;
+#X obj 28 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffe0e0e0 #ff000000
+#ff000000 1;
+#X obj 28 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff7c7c7c #ff000000
+#ff000000 1;
+#X obj 28 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff202020 #ff000000
+#ff000000 1;
+#X obj 60 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffc2828 #ff000000
+#ff000000 1;
+#X obj 76 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffcac44 #ff000000
+#ff000000 1;
+#X obj 92 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffe8e828 #ff000000
+#ff000000 1;
+#X obj 108 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff14e814
+#ff000000 #ff000000 1;
+#X obj 124 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff28f4f4
+#ff000000 #ff000000 1;
+#X obj 140 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff3c50fc
+#ff000000 #ff000000 1;
+#X obj 156 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fff430f0
+#ff000000 #ff000000 1;
 #X msg 60 160 13;
 #X msg 76 160 14;
 #X msg 92 160 15;
@@ -104,25 +104,26 @@
 #X msg 28 139 10;
 #X msg 28 160 11;
 #X msg 28 181 12;
-#X obj 44 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -195568 -1
--1;
-#X obj 44 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -99865 -1 -1
-;
-#X obj 44 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -1 -1 -1;
-#X obj 60 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -143491 -1
--1;
-#X obj 76 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -90881 -1 -1
-;
-#X obj 92 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -123526 -1
--1;
-#X obj 108 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -42246 -1
--1;
-#X obj 124 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -1109 -1 -1
-;
-#X obj 140 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -355 -1 -1
-;
-#X obj 156 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -90133 -1
--1;
+#X obj 44 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffbcbcbc #ff000000
+#ff000000 1;
+#X obj 44 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff606060 #ff000000
+#ff000000 1;
+#X obj 44 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff000000 #ff000000
+#ff000000 1;
+#X obj 60 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff8c0808 #ff000000
+#ff000000 1;
+#X obj 76 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff583000 #ff000000
+#ff000000 1;
+#X obj 92 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff782814 #ff000000
+#ff000000 1;
+#X obj 108 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff285014
+#ff000000 #ff000000 1;
+#X obj 124 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff004450
+#ff000000 #ff000000 1;
+#X obj 140 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff001488
+#ff000000 #ff000000 1;
+#X obj 156 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff580050
+#ff000000 #ff000000 1;
 #X msg 60 181 23;
 #X msg 76 181 24;
 #X msg 92 181 25;
@@ -193,60 +194,60 @@
 #X connect 58 0 2 0;
 #X connect 59 0 2 0;
 #X connect 60 0 2 0;
-#X coords 0 0 1 1 200 100 1;
-#X restore 45 482 pd source_color_2;
+#X coords 0 0 1 1 200 100 1 0 0;
+#X restore 47 482 pd source_color_2;
 #N canvas 16 80 189 98 source_color_1 0;
-#X obj 12 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -262144 -1
--1;
+#X obj 12 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffcfcfc #ff000000
+#ff000000 1;
 #X msg 12 139 0;
 #X obj 12 226 outlet;
-#X obj 12 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -166441 -1
--1;
+#X obj 12 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffa0a0a0 #ff000000
+#ff000000 1;
 #X msg 12 160 1;
-#X obj 12 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -66577 -1 -1
-;
-#X obj 60 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -261689 -1
--1;
+#X obj 12 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff404040 #ff000000
+#ff000000 1;
+#X obj 60 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffce0e0 #ff000000
+#ff000000 1;
 #X msg 12 181 2;
 #X msg 60 139 3;
-#X obj 76 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -261681 -1
--1;
-#X obj 92 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -262131 -1
--1;
-#X obj 108 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -225271 -1
--1;
-#X obj 124 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -225280 -1
--1;
+#X obj 76 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffce0c0 #ff000000
+#ff000000 1;
+#X obj 92 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffcfcc8 #ff000000
+#ff000000 1;
+#X obj 108 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffd8fcd8
+#ff000000 #ff000000 1;
+#X obj 124 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffd8fcfc
+#ff000000 #ff000000 1;
 #X msg 76 139 4;
 #X msg 92 139 5;
 #X msg 108 139 6;
 #X msg 124 139 7;
-#X obj 140 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -228992 -1
--1;
-#X obj 156 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -257472 -1
--1;
+#X obj 140 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffdce4fc
+#ff000000 #ff000000 1;
+#X obj 156 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fff8d8fc
+#ff000000 #ff000000 1;
 #X msg 140 139 8;
 #X msg 156 139 9;
-#X obj 28 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -233017 -1
--1;
-#X obj 28 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -128992 -1
--1;
-#X obj 28 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -33289 -1 -1
-;
-#X obj 60 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -258699 -1
--1;
-#X obj 76 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -260818 -1
--1;
-#X obj 92 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -241291 -1
--1;
-#X obj 108 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -24198 -1
--1;
-#X obj 124 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -44926 -1
--1;
-#X obj 140 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -62784 -1
--1;
-#X obj 156 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -250685 -1
--1;
+#X obj 28 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffe0e0e0 #ff000000
+#ff000000 1;
+#X obj 28 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff7c7c7c #ff000000
+#ff000000 1;
+#X obj 28 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff202020 #ff000000
+#ff000000 1;
+#X obj 60 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffc2828 #ff000000
+#ff000000 1;
+#X obj 76 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffcac44 #ff000000
+#ff000000 1;
+#X obj 92 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffe8e828 #ff000000
+#ff000000 1;
+#X obj 108 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff14e814
+#ff000000 #ff000000 1;
+#X obj 124 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff28f4f4
+#ff000000 #ff000000 1;
+#X obj 140 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff3c50fc
+#ff000000 #ff000000 1;
+#X obj 156 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fff430f0
+#ff000000 #ff000000 1;
 #X msg 60 160 13;
 #X msg 76 160 14;
 #X msg 92 160 15;
@@ -257,25 +258,26 @@
 #X msg 28 139 10;
 #X msg 28 160 11;
 #X msg 28 181 12;
-#X obj 44 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -195568 -1
--1;
-#X obj 44 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -99865 -1 -1
-;
-#X obj 44 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -1 -1 -1;
-#X obj 60 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -143491 -1
--1;
-#X obj 76 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -90881 -1 -1
-;
-#X obj 92 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -123526 -1
--1;
-#X obj 108 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -42246 -1
--1;
-#X obj 124 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -1109 -1 -1
-;
-#X obj 140 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -355 -1 -1
-;
-#X obj 156 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -90133 -1
--1;
+#X obj 44 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffbcbcbc #ff000000
+#ff000000 1;
+#X obj 44 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff606060 #ff000000
+#ff000000 1;
+#X obj 44 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff000000 #ff000000
+#ff000000 1;
+#X obj 60 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff8c0808 #ff000000
+#ff000000 1;
+#X obj 76 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff583000 #ff000000
+#ff000000 1;
+#X obj 92 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff782814 #ff000000
+#ff000000 1;
+#X obj 108 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff285014
+#ff000000 #ff000000 1;
+#X obj 124 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff004450
+#ff000000 #ff000000 1;
+#X obj 140 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff001488
+#ff000000 #ff000000 1;
+#X obj 156 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff580050
+#ff000000 #ff000000 1;
 #X msg 60 181 23;
 #X msg 76 181 24;
 #X msg 92 181 25;
@@ -346,60 +348,60 @@
 #X connect 58 0 2 0;
 #X connect 59 0 2 0;
 #X connect 60 0 2 0;
-#X coords 0 0 1 1 200 100 1;
-#X restore 45 332 pd source_color_1;
+#X coords 0 0 1 1 200 100 1 0 0;
+#X restore 47 332 pd source_color_1;
 #N canvas 16 80 189 98 head_color 0;
-#X obj 12 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -262144 -1
--1;
+#X obj 12 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffcfcfc #ff000000
+#ff000000 1;
 #X msg 12 139 0;
 #X obj 12 226 outlet;
-#X obj 12 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -166441 -1
--1;
+#X obj 12 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffa0a0a0 #ff000000
+#ff000000 1;
 #X msg 12 160 1;
-#X obj 12 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -66577 -1 -1
-;
-#X obj 60 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -261689 -1
--1;
+#X obj 12 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff404040 #ff000000
+#ff000000 1;
+#X obj 60 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffce0e0 #ff000000
+#ff000000 1;
 #X msg 12 181 2;
 #X msg 60 139 3;
-#X obj 76 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -261681 -1
--1;
-#X obj 92 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -262131 -1
--1;
-#X obj 108 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -225271 -1
--1;
-#X obj 124 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -225280 -1
--1;
+#X obj 76 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffce0c0 #ff000000
+#ff000000 1;
+#X obj 92 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffcfcc8 #ff000000
+#ff000000 1;
+#X obj 108 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffd8fcd8
+#ff000000 #ff000000 1;
+#X obj 124 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffd8fcfc
+#ff000000 #ff000000 1;
 #X msg 76 139 4;
 #X msg 92 139 5;
 #X msg 108 139 6;
 #X msg 124 139 7;
-#X obj 140 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -228992 -1
--1;
-#X obj 156 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -257472 -1
--1;
+#X obj 140 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffdce4fc
+#ff000000 #ff000000 1;
+#X obj 156 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fff8d8fc
+#ff000000 #ff000000 1;
 #X msg 140 139 8;
 #X msg 156 139 9;
-#X obj 28 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -233017 -1
--1;
-#X obj 28 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -128992 -1
--1;
-#X obj 28 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -33289 -1 -1
-;
-#X obj 60 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -258699 -1
--1;
-#X obj 76 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -260818 -1
--1;
-#X obj 92 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -241291 -1
--1;
-#X obj 108 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -24198 -1
--1;
-#X obj 124 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -44926 -1
--1;
-#X obj 140 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -62784 -1
--1;
-#X obj 156 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -250685 -1
--1;
+#X obj 28 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffe0e0e0 #ff000000
+#ff000000 1;
+#X obj 28 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff7c7c7c #ff000000
+#ff000000 1;
+#X obj 28 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff202020 #ff000000
+#ff000000 1;
+#X obj 60 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffc2828 #ff000000
+#ff000000 1;
+#X obj 76 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffcac44 #ff000000
+#ff000000 1;
+#X obj 92 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffe8e828 #ff000000
+#ff000000 1;
+#X obj 108 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff14e814
+#ff000000 #ff000000 1;
+#X obj 124 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff28f4f4
+#ff000000 #ff000000 1;
+#X obj 140 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff3c50fc
+#ff000000 #ff000000 1;
+#X obj 156 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fff430f0
+#ff000000 #ff000000 1;
 #X msg 60 160 13;
 #X msg 76 160 14;
 #X msg 92 160 15;
@@ -410,25 +412,26 @@
 #X msg 28 139 10;
 #X msg 28 160 11;
 #X msg 28 181 12;
-#X obj 44 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -195568 -1
--1;
-#X obj 44 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -99865 -1 -1
-;
-#X obj 44 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -1 -1 -1;
-#X obj 60 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -143491 -1
--1;
-#X obj 76 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -90881 -1 -1
-;
-#X obj 92 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -123526 -1
--1;
-#X obj 108 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -42246 -1
--1;
-#X obj 124 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -1109 -1 -1
-;
-#X obj 140 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -355 -1 -1
-;
-#X obj 156 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -90133 -1
--1;
+#X obj 44 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffbcbcbc #ff000000
+#ff000000 1;
+#X obj 44 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff606060 #ff000000
+#ff000000 1;
+#X obj 44 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff000000 #ff000000
+#ff000000 1;
+#X obj 60 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff8c0808 #ff000000
+#ff000000 1;
+#X obj 76 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff583000 #ff000000
+#ff000000 1;
+#X obj 92 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff782814 #ff000000
+#ff000000 1;
+#X obj 108 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff285014
+#ff000000 #ff000000 1;
+#X obj 124 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff004450
+#ff000000 #ff000000 1;
+#X obj 140 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff001488
+#ff000000 #ff000000 1;
+#X obj 156 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff580050
+#ff000000 #ff000000 1;
 #X msg 60 181 23;
 #X msg 76 181 24;
 #X msg 92 181 25;
@@ -499,60 +502,60 @@
 #X connect 58 0 2 0;
 #X connect 59 0 2 0;
 #X connect 60 0 2 0;
-#X coords 0 0 1 1 200 100 1;
-#X restore 46 189 pd head_color;
+#X coords 0 0 1 1 200 100 1 0 0;
+#X restore 47 189 pd head_color;
 #N canvas 16 80 189 98 room_color 0;
-#X obj 12 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -262144 -1
--1;
+#X obj 12 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffcfcfc #ff000000
+#ff000000 1;
 #X msg 12 139 0;
 #X obj 12 226 outlet;
-#X obj 12 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -166441 -1
--1;
+#X obj 12 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffa0a0a0 #ff000000
+#ff000000 1;
 #X msg 12 160 1;
-#X obj 12 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -66577 -1 -1
-;
-#X obj 60 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -261689 -1
--1;
+#X obj 12 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff404040 #ff000000
+#ff000000 1;
+#X obj 60 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffce0e0 #ff000000
+#ff000000 1;
 #X msg 12 181 2;
 #X msg 60 139 3;
-#X obj 76 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -261681 -1
--1;
-#X obj 92 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -262131 -1
--1;
-#X obj 108 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -225271 -1
--1;
-#X obj 124 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -225280 -1
--1;
+#X obj 76 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffce0c0 #ff000000
+#ff000000 1;
+#X obj 92 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffcfcc8 #ff000000
+#ff000000 1;
+#X obj 108 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffd8fcd8
+#ff000000 #ff000000 1;
+#X obj 124 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffd8fcfc
+#ff000000 #ff000000 1;
 #X msg 76 139 4;
 #X msg 92 139 5;
 #X msg 108 139 6;
 #X msg 124 139 7;
-#X obj 140 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -228992 -1
--1;
-#X obj 156 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -257472 -1
--1;
+#X obj 140 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffdce4fc
+#ff000000 #ff000000 1;
+#X obj 156 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fff8d8fc
+#ff000000 #ff000000 1;
 #X msg 140 139 8;
 #X msg 156 139 9;
-#X obj 28 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -233017 -1
--1;
-#X obj 28 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -128992 -1
--1;
-#X obj 28 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -33289 -1 -1
-;
-#X obj 60 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -258699 -1
--1;
-#X obj 76 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -260818 -1
--1;
-#X obj 92 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -241291 -1
--1;
-#X obj 108 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -24198 -1
--1;
-#X obj 124 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -44926 -1
--1;
-#X obj 140 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -62784 -1
--1;
-#X obj 156 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -250685 -1
--1;
+#X obj 28 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffe0e0e0 #ff000000
+#ff000000 1;
+#X obj 28 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff7c7c7c #ff000000
+#ff000000 1;
+#X obj 28 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff202020 #ff000000
+#ff000000 1;
+#X obj 60 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffc2828 #ff000000
+#ff000000 1;
+#X obj 76 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fffcac44 #ff000000
+#ff000000 1;
+#X obj 92 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffe8e828 #ff000000
+#ff000000 1;
+#X obj 108 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff14e814
+#ff000000 #ff000000 1;
+#X obj 124 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff28f4f4
+#ff000000 #ff000000 1;
+#X obj 140 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff3c50fc
+#ff000000 #ff000000 1;
+#X obj 156 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #fff430f0
+#ff000000 #ff000000 1;
 #X msg 60 160 13;
 #X msg 76 160 14;
 #X msg 92 160 15;
@@ -563,25 +566,26 @@
 #X msg 28 139 10;
 #X msg 28 160 11;
 #X msg 28 181 12;
-#X obj 44 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 -195568 -1
--1;
-#X obj 44 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 -99865 -1 -1
-;
-#X obj 44 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -1 -1 -1;
-#X obj 60 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -143491 -1
--1;
-#X obj 76 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -90881 -1 -1
-;
-#X obj 92 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -123526 -1
--1;
-#X obj 108 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -42246 -1
--1;
-#X obj 124 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -1109 -1 -1
-;
-#X obj 140 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -355 -1 -1
-;
-#X obj 156 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 -90133 -1
--1;
+#X obj 44 27 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ffbcbcbc #ff000000
+#ff000000 1;
+#X obj 44 43 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff606060 #ff000000
+#ff000000 1;
+#X obj 44 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff000000 #ff000000
+#ff000000 1;
+#X obj 60 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff8c0808 #ff000000
+#ff000000 1;
+#X obj 76 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff583000 #ff000000
+#ff000000 1;
+#X obj 92 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff782814 #ff000000
+#ff000000 1;
+#X obj 108 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff285014
+#ff000000 #ff000000 1;
+#X obj 124 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff004450
+#ff000000 #ff000000 1;
+#X obj 140 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff001488
+#ff000000 #ff000000 1;
+#X obj 156 59 bng 15 250 50 0 empty empty empty 0 -6 0 8 #ff580050
+#ff000000 #ff000000 1;
 #X msg 60 181 23;
 #X msg 76 181 24;
 #X msg 92 181 25;
@@ -652,14 +656,14 @@
 #X connect 58 0 2 0;
 #X connect 59 0 2 0;
 #X connect 60 0 2 0;
-#X coords 0 0 1 1 200 100 1;
+#X coords 0 0 1 1 200 100 1 0 0;
 #X restore 47 45 pd room_color;
 #X connect 4 0 3 0;
 #X connect 5 0 2 0;
 #X connect 6 0 1 0;
 #X connect 7 0 0 0;
 #X restore 699 418 pd colors;
-#X floatatom 693 349 5 0 0 0 - - -;
+#X floatatom 693 349 5 0 0 0 - - - 0 0 1, f 5;
 #X msg 693 311 \; to_GUI set_rho 0;
 #X msg 693 367 \; to_GUI set_rho \$1;
 #X text 736 347 degree;
@@ -677,32 +681,32 @@
 #X obj 433 86 pack 0 0 0;
 #X text 593 67 m x m x m;
 #X obj 550 87 t b f;
-#X floatatom 552 70 5 2 20 0 - - -;
+#X floatatom 552 70 5 2 20 0 - - - 0 0 1, f 5;
 #X msg 433 111 \; to_GUI room_dim \$1 \$2 \$3;
 #X msg 431 236 \; to_GUI pix_per_m_ratio 30;
 #X msg 430 419 \; to_GUI set_head_xyz 0 0 1.8;
 #X obj 430 473 pack 0 0 0;
 #X obj 564 473 t b f;
-#X floatatom 566 456 5 0 30 0 - - -;
+#X floatatom 566 456 5 0 30 0 - - - 0 0 1, f 5;
 #X msg 430 494 \; to_GUI set_head_xyz \$1 \$2 \$3;
 #X text 12 340 y <;
 #X msg 430 538 \; to_GUI set_src_xyz 1 3 -3 1.8;
 #X text 614 454 m x m x m;
 #X text 611 574 m x m x m;
 #X obj 514 592 t b f;
-#X floatatom 423 575 5 -20 20 0 - - -;
-#X floatatom 516 575 5 -20 20 0 - - -;
+#X floatatom 423 575 5 -20 20 0 - - - 0 0 1, f 5;
+#X floatatom 516 575 5 -20 20 0 - - - 0 0 1, f 5;
 #X obj 430 592 pack 0 0 0;
 #X obj 564 592 t b f;
-#X floatatom 566 575 5 0 30 0 - - -;
+#X floatatom 566 575 5 0 30 0 - - - 0 0 1, f 5;
 #X msg 430 613 \; to_GUI set_src_xyz 1 \$1 \$2 \$3;
 #X text 879 505 m x m x m;
 #X obj 782 523 t b f;
-#X floatatom 691 506 5 -20 20 0 - - -;
-#X floatatom 784 506 5 -20 20 0 - - -;
+#X floatatom 691 506 5 -20 20 0 - - - 0 0 1, f 5;
+#X floatatom 784 506 5 -20 20 0 - - - 0 0 1, f 5;
 #X obj 698 523 pack 0 0 0;
 #X obj 832 523 t b f;
-#X floatatom 834 506 5 0 30 0 - - -;
+#X floatatom 834 506 5 0 30 0 - - - 0 0 1, f 5;
 #X msg 698 544 \; to_GUI set_src_xyz 2 \$1 \$2 \$3;
 #X msg 698 469 \; to_GUI set_src_xyz 2 3 3 1.8;
 #X obj 735 90 route src_xyz;
@@ -711,17 +715,17 @@
 #X obj 687 258 unpack 0 0 0;
 #X obj 711 187 unpack 0 0 0;
 #X obj 735 113 unpack 0 0 0;
-#X floatatom 767 280 5 0 0 0 - - -;
-#X floatatom 793 209 5 0 0 0 - - -;
-#X floatatom 816 135 5 0 0 0 - - -;
+#X floatatom 767 280 5 0 0 0 - - - 0 0 1, f 5;
+#X floatatom 793 209 5 0 0 0 - - - 0 0 1, f 5;
+#X floatatom 816 135 5 0 0 0 - - - 0 0 1, f 5;
 #X text 860 133 m x m x m;
 #X text 835 207 m x m x m;
 #X text 806 278 m x m x m;
-#X floatatom 316 50 5 0.1 10 0 - - -;
+#X floatatom 316 50 5 0.1 10 0 - - - 0 0 1, f 5;
 #X msg 316 68 \; to_GUI nr_src \$1;
 #X obj 316 29 + 1;
-#X obj 316 10 hradio 15 1 0 8 empty empty empty 0 -6 0 8 -262144 -1
--1 0;
+#X obj 316 10 hradio 15 1 0 8 empty empty empty 0 -6 0 8 #fffcfcfc
+#ff000000 #ff000000 0 1;
 #X text 97 665 IEM KUG;
 #X text 81 653 musil;
 #X text 111 653 @;

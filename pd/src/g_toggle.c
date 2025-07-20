@@ -23,8 +23,8 @@ static t_class *toggle_class;
 void toggle_draw_update(t_gobj *xgobj, t_glist *glist)
 {
     t_toggle *x = (t_toggle *)xgobj;
-    char cbuf[8];
-    sprintf(cbuf, "#%6.6x", x->x_gui.x_fcol);
+    char cbuf[10];
+    sprintf(cbuf, "#%8.8x", x->x_gui.x_fcol);
     if (x->x_gui.x_changed)
     {
         if(glist_isvisible(glist_getcanvas(glist)))
@@ -40,8 +40,8 @@ void toggle_draw_update(t_gobj *xgobj, t_glist *glist)
 void toggle_draw_new(t_toggle *x, t_glist *glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
-    char cbuf[8];
-    sprintf(cbuf, "#%6.6x", x->x_gui.x_fcol);
+    char cbuf[10];
+    sprintf(cbuf, "#%8.8x", x->x_gui.x_fcol);
     int w=(x->x_gui.x_w+29)/30;
     int x1=text_xpix(&x->x_gui.x_obj, glist);
     int y1=text_ypix(&x->x_gui.x_obj, glist);
@@ -75,8 +75,8 @@ void toggle_draw_move(t_toggle *x, t_glist *glist)
 void toggle_draw_config(t_toggle* x, t_glist* glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
-    char cbuf[8];
-    sprintf(cbuf, "#%6.6x", x->x_gui.x_fcol);
+    char cbuf[10];
+    sprintf(cbuf, "#%8.8x", x->x_gui.x_fcol);
     iemgui_base_draw_config(&x->x_gui);
     if (glist_isvisible(glist_getcanvas(glist)))
     {
@@ -209,7 +209,7 @@ static void toggle_properties(t_gobj *z, t_glist *owner)
         srl[0]->s_name, srl[1]->s_name, srl[2]->s_name,
         x->x_gui.x_ldx, x->x_gui.x_ldy,
         x->x_gui.x_font_style, x->x_gui.x_fontsize,
-        0xffffff & x->x_gui.x_bcol, 0xffffff & x->x_gui.x_fcol, 0xffffff & x->x_gui.x_lcol);
+        0xffffffff & x->x_gui.x_bcol, 0xffffffff & x->x_gui.x_fcol, 0xffffffff & x->x_gui.x_lcol);
     //gfxstub_new(&x->x_gui.x_obj.ob_pd, x, buf);
     gfx_tag = gfxstub_new2(&x->x_gui.x_obj.ob_pd, &x->x_gui);
 
@@ -256,13 +256,13 @@ static void toggle_properties(t_gobj *z, t_glist *owner)
     gui_i(x->x_gui.x_fontsize);
 
     gui_s("background_color");
-    gui_i(0xffffff & x->x_gui.x_bcol);
+    gui_i(0xffffffff & x->x_gui.x_bcol);
 
     gui_s("foreground_color");
-    gui_i(0xffffff & x->x_gui.x_fcol);
+    gui_i(0xffffffff & x->x_gui.x_fcol);
 
     gui_s("label_color");
-    gui_i(0xffffff & x->x_gui.x_lcol);
+    gui_i(0xffffffff & x->x_gui.x_lcol);
 
     gui_s("interactive");
     gui_i(x->x_gui.x_click);
@@ -380,9 +380,9 @@ static void *toggle_new(t_symbol *s, int argc, t_atom *argv)
     iem_inttosymargs(&x->x_gui, 0);
     iem_inttofstyle(&x->x_gui, 0);
 
-    x->x_gui.x_bcol = 0xFCFCFC;
-    x->x_gui.x_fcol = 0x00;
-    x->x_gui.x_lcol = 0x00;
+    x->x_gui.x_bcol = 0xFFFCFCFC;
+    x->x_gui.x_fcol = 0xFF000000;
+    x->x_gui.x_lcol = 0xFF000000;
     x->x_gui.x_click = 1;
 
     if((argc >= 13)&&IS_A_FLOAT(argv,0)

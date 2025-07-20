@@ -422,6 +422,7 @@ text.activated {
 /* gatom "activated" text (i.e., when it has the keyboard focus) */
 .atom.activated .data {
     fill: red;
+    color: red;
 }
 
 /* Increases dropdown scrollbar and scrollbar track area for better touch UX */
@@ -648,7 +649,7 @@ text.activated {
 
 /* text label for an iemgui */
 .editmode .iemgui_label_selected {
-    fill: black;
+    #fill: black;
 }
 
 /* test of xlet hover animation... this should 

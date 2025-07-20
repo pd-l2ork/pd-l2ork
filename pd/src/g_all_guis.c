@@ -156,7 +156,8 @@ static t_symbol *color2symbol(int col)
     }
     else
     {
-        snprintf(colname, MAXPDSTRING-1, "#%06x", col);
+        snprintf(colname, MAXPDSTRING-1, "#%08x", col);
+        //post("color2symbol %s", colname);
     }
     return gensym(colname);
 }
@@ -180,47 +181,84 @@ void iemgui_all_col2save(t_iemgui *x, t_symbol **bflcol)
     bflcol[2] = color2symbol(x->x_lcol);
 }
 
-static int iemgui_getcolorarg(t_iemgui *x, int index, int argc, t_atom *argv)
+int iemgui_getcolorarg(t_iemgui *x, int index, int argc, t_atom *argv)
 {
     char *classname;
     if (index < 0 || index >= argc || !argc)
         return 0;
 
     if (IS_A_FLOAT(argv, index))
+    {
         return atom_getfloatarg(index, argc, argv);
+    }
 
     classname = class_getname(pd_class(&x->x_obj.te_pd));
     if (IS_A_SYMBOL(argv, index))
     {
         t_symbol *s = atom_getsymbolarg(index, argc, argv);
+        //post("iemgui_getcolorarg=%s", s->s_name);
         if ('#' == s->s_name[0])
         {
             char *start = s->s_name + 1, *end;
-            char expanded[7];
+            char expanded[9];
+            expanded[0] = '\0';
             int len = strlen(start);
+            if (len == 1)
+            {
+                sprintf(expanded, "ff%c%c%c%c%c%c",
+                    start[0], start[0],
+                    start[0], start[0],
+                    start[0], start[0]);
+            }
             if (len == 3)
             {
-                sprintf(expanded, "%c%c%c%c%c%c",
+                sprintf(expanded, "ff%c%c%c%c%c%c",
                     start[0], start[0],
                     start[1], start[1],
                     start[2], start[2]);
-                start = expanded;
-                len = 6;
+            }
+            if (len == 4)
+            {
+                sprintf(expanded, "%c%c%c%c%c%c%c%c",
+                    start[0], start[0],
+                    start[1], start[1],
+                    start[2], start[2],
+                    start[3], start[3]);
             }
             if (len == 6)
             {
-                int col = (int)strtol(start, &end, 16);
-                if (end != start)
-                    return col;
+                sprintf(expanded, "ff%c%c%c%c%c%c",
+                    start[0], start[1],
+                    start[2], start[3],
+                    start[4], start[5]
+                );
             }
+
+            // common outcome of all previous cases
+            // however, expanded is not used when the
+            // color already has 8 digits, so we check
+            // that below
+            if(expanded[0] != '\0')
+            {
+                start = expanded;
+                //post("start = expanded %s", expanded);
+            }
+            len = 8;
+
+            int col = (int)strtol(start, &end, 16);
+
+            //post("...col = %d", col);
+            if (end != start)
+                return col;
         }
         if (s == &s_)
             pd_error(x, "%s: empty symbol detected in hex color argument. "
                 "Falling back to black. (Hit the sack.:)",
                 classname);
         else
-            pd_error(x, "%s: expected '#fff' or '#ffffff' hex color format "
-                "but got '%s'. Falling back to black.",
+            pd_error(x, "%s: expected '#f', #fff', '#ffff', '#ffffff', or "
+                "'#ffffffff' hex color format but got '%s'. Falling back "
+                "to black.",
                 classname, s->s_name);
         return 0;
     }
@@ -248,13 +286,15 @@ static int colfromatomload(t_iemgui *x, t_atom *colatom)
     if (color < 0)
     {
         color = -1 - color;
-        color = ((color & 0x3f000) << 6)|((color & 0xfc0) << 4)|
+        color = 0xff000000|((color & 0x3f000) << 6)|((color & 0xfc0) << 4)|
         ((color & 0x3f) << 2);
+        //post("colfromatomload < 0 %d %x", color, color);
     }
     else
     {
         color = iemgui_modulo_color(color);
-        color = iemgui_color_hex[color];
+        color = 0xff000000|iemgui_color_hex[color];
+        //post("colfromatomload hex %d %x", color, color);
     }
     return (color);
 }
@@ -275,7 +315,7 @@ static int colfromload(int col) {
         return ((col & 0x3f000) << 6)|((col & 0xfc0) << 4)|((col & 0x3f) << 2);
     }
     else
-        return iemgui_color_hex[iemgui_modulo_color(col)];
+        return 0xff000000|iemgui_color_hex[iemgui_modulo_color(col)];
 }
 void iemgui_all_colfromload(t_iemgui *x, int *bflcol)
 {
@@ -295,14 +335,19 @@ int iemgui_compatible_colorarg(t_iemgui *x, int index, int argc, t_atom* argv)
         if (col >= 0)
         {
             int idx = iemgui_modulo_color(col);
-            return(iemgui_color_hex[(idx)]);
+            return(0xff000000|iemgui_color_hex[(idx)]);
         }
         else
-            return((-1 - col) & 0xffffff);
+        {
+            // here we add this large number to add ff to the 6 hex value
+            // at the beginning to comply with the argb format
+            // displaying it swaps argb for CSS-compliant rgba
+            // this is done inside pdgui.js
+            return((-1 - col + 4278190080) & 0xffffffff);
+        }
     }
     return iemgui_getcolorarg(x, index, argc, argv);
 }
-
 
 void iemgui_all_raute2dollar(t_symbol **srlsym)
 {
@@ -800,9 +845,9 @@ int iemgui_dialog(t_iemgui *x, int argc, t_atom *argv)
     int f = atom_getintarg(12, argc, argv);
     x->x_fontsize = maxi(atom_getintarg(13, argc, argv),4);
     //iemgui_all_loadcolors(&x->x_gui, argv+14, argv+15, argv+16);
-    x->x_bcol = iemgui_getcolorarg(x, 14, argc, argv) & 0xffffff;
-    x->x_fcol = iemgui_getcolorarg(x, 15, argc, argv) & 0xffffff;
-    x->x_lcol = iemgui_getcolorarg(x, 16, argc, argv) & 0xffffff;
+    x->x_bcol = iemgui_getcolorarg(x, 14, argc, argv) & 0xffffffff;
+    x->x_fcol = iemgui_getcolorarg(x, 15, argc, argv) & 0xffffffff;
+    x->x_lcol = iemgui_getcolorarg(x, 16, argc, argv) & 0xffffffff;
     int oldsndrcvable=0;
     if(iemgui_has_rcv(x)) oldsndrcvable |= IEM_GUI_OLD_RCV_FLAG;
     if(iemgui_has_snd(x)) oldsndrcvable |= IEM_GUI_OLD_SND_FLAG;
@@ -916,9 +961,9 @@ void iemgui_update_properties(t_iemgui *x, int option)
     {
         switch(option) {
             case IEM_GUI_PROP_COLORS:
-                properties_set_field_int(properties,"background_color",0xffffff & x->x_bcol);
-                properties_set_field_int(properties,"foreground_color",0xffffff & x->x_fcol);
-                properties_set_field_int(properties,"label_color",0xffffff & x->x_lcol);
+                properties_set_field_int(properties,"background_color",0xffffffff & x->x_bcol);
+                properties_set_field_int(properties,"foreground_color",0xffffffff & x->x_fcol);
+                properties_set_field_int(properties,"label_color",0xffffffff & x->x_lcol);
                 break;
             case IEM_GUI_PROP_SEND:
                 properties_set_field_symbol(properties,"send_symbol",srl[0]);
@@ -1267,12 +1312,16 @@ void iemgui_tag_selected(t_iemgui *x)
 
 void iemgui_label_draw_new(t_iemgui *x)
 {
-    char col[8];
+    char col[10];
     t_canvas *canvas=glist_getcanvas(x->x_glist);
     int x1=text_xpix(&x->x_obj, x->x_glist) + (sys_legacy ? x->legacy_x : 0);
     int y1=text_ypix(&x->x_obj, x->x_glist) + (sys_legacy ? x->legacy_y : 0);
     iemgui_getrect_legacy_label(x, &x1, &y1);
-    sprintf(col, "#%6.6x", x->x_lcol);
+    if (x->x_lcol < 0)
+        sprintf(col, "#%8.8x", x->x_lcol);
+    else
+        sprintf(col, "#%x", x->x_lcol);
+    //post("iemgui_label_draw_new %s", col);
     gui_vmess("gui_iemgui_label_new", "xxiissssi",
         canvas,
         x,
@@ -1306,10 +1355,11 @@ void iemgui_label_draw_move(t_iemgui *x)
 
 void iemgui_label_draw_config(t_iemgui *x)
 {
-    char col[8];
+    char col[10];
     t_canvas *canvas=glist_getcanvas(x->x_glist);
     if (x->x_selected == canvas && x->x_glist == canvas)
     {
+        //post("iemgui_label_draw_config %d", x->x_lcol);
         gui_vmess("gui_iemgui_label_font", "xxssi",
             glist_getcanvas(x->x_glist),
             x,
@@ -1320,7 +1370,14 @@ void iemgui_label_draw_config(t_iemgui *x)
             glist_getcanvas(x->x_glist),
             x,
             x->x_lab != s_empty ? x->x_lab->s_name: "");
-        sprintf(col, "#%6.6x", x->x_lcol);
+        if (x->x_lcol < 0) {
+            sprintf(col, "#%8.8x", x->x_lcol);
+            //post("...negative value %s", col);
+        }
+        else {
+            sprintf(col, "#%x", x->x_lcol);
+            //post("...string color %s", col);
+        }
         gui_vmess("gui_iemgui_label_color", "xxs",
             canvas,
             x,
@@ -1338,7 +1395,10 @@ void iemgui_label_draw_config(t_iemgui *x)
             glist_getcanvas(x->x_glist),
             x,
             x->x_lab != s_empty ? x->x_lab->s_name: "");
-        sprintf(col, "#%6.6x", x->x_lcol);
+        if (x->x_lcol < 0)
+            sprintf(col, "#%6.6x", x->x_lcol);
+        else
+            sprintf(col, "#%x", x->x_lcol);
         gui_vmess("gui_iemgui_label_color", "xxs",
             canvas,
             x,
@@ -1518,7 +1578,10 @@ void iemgui_base_draw_new(t_iemgui *x)
     //iemgui_getrect_draw(x, &x1, &y1, &x2, &y2); 
     gop_redraw = gr;
     char colorbuf[MAXPDSTRING];
-    sprintf(colorbuf, "#%6.6x", x->x_bcol);
+    if (x->x_bcol < 0)
+        sprintf(colorbuf, "#%6.6x", x->x_bcol);
+    else
+        sprintf(colorbuf, "#%x", x->x_bcol);
 
     char namebuf[FILENAME_MAX];
     gobj_vis_gethelpname((t_gobj *)x, &namebuf);
@@ -1534,7 +1597,10 @@ void iemgui_base_draw_new(t_iemgui *x)
         x2 - x1,
         y2 - y1,
         glist_istoplevel(x->x_glist));
-    sprintf(colorbuf, "#%6.6x", x->x_bcol);
+    if (x->x_bcol < 0)
+        sprintf(colorbuf, "#%6.6x", x->x_bcol);
+    else
+        sprintf(colorbuf, "#%x", x->x_bcol);
     gui_vmess("gui_iemgui_base_color", "xxs",
         canvas, x, colorbuf);
 }
@@ -1564,9 +1630,16 @@ void iemgui_base_draw_move(t_iemgui *x)
 void iemgui_base_draw_config(t_iemgui *x)
 {
     t_canvas *canvas=glist_getcanvas(x->x_glist);
-    char fcol[8]; sprintf(fcol,"#%6.6x", x->x_fcol);
+    char fcol[10], bcol[10];
+    if (x->x_fcol < 0)
+        sprintf(fcol,"#%6.6x", x->x_fcol);
+    else
+        sprintf(fcol,"#%x", x->x_fcol);
+    if (x->x_bcol < 0)
+        sprintf(bcol, "#%6.6x", x->x_bcol);
+    else
+        sprintf(bcol, "#%x", x->x_bcol);
     char tagbuf[MAXPDSTRING];
-    char bcol[8]; sprintf(bcol, "#%6.6x", x->x_bcol);
     sprintf(tagbuf, "x%zxborder", (t_int)x);
     gui_vmess("gui_iemgui_base_color", "xxs",
         canvas, x, bcol); 

@@ -330,11 +330,10 @@ input[type="number"] {
           </tr>
       </table>
 
-      <div class="label_color prop hidden">
+      <div class="label_color prop hidden" style="margin-bottom: 2px;">
         <label data-i18n="[title]iem.prop.label_color_tt">
-          <input type="color" name="label_color"
-                 onchange="update_attr(this);">
-          <span data-i18n="iem.prop.label_color"></span>
+          <input name="label_color" value="#00000000" style="width:80px; border-style: solid; border-width: thin;" onchange="update_attr(this);" data-jscolor="{}">
+          <span data-i18n="iem.prop.label_color" style="bottom: 0px;"></span>
         </label>
         <br>
       </div>
@@ -359,7 +358,9 @@ input[type="number"] {
     </div>
 
   </form> 
-  </div>  
+  </div>
+
+  <script src="./jscolor.js"></script>
 
   <span id = "openpanelSpan">
     <input style="display:none;" id="openpanel_dialog" onchange="update_filename(this);"
@@ -565,7 +566,7 @@ function update_attr(elem, symbol_field) {
     } else if (elem.type === "select-one") {
         new_attrs[elem.name] = elem.selectedIndex;
     } else if (elem.type === "color") {
-        new_attrs[elem.name] = parseInt(elem.value.slice(1), 16)
+        new_attrs[elem.name] = elem.value;
     } else {
         new_attrs[elem.name] = (elem.value === "" && !symbol_field) ?
             "0" : elem.value;
@@ -627,7 +628,7 @@ function send_params(attrs, create_undo_point) {
         label,
         attrs.x_offset,
         attrs.y_offset,
-        attrs.label_color,
+        "#" + attrs.label_color.slice(7,9) + attrs.label_color.slice(1,7),
         attrs.font_style,
         attrs.font_size,
         attrs.visible,
@@ -738,14 +739,42 @@ function populate_form(attr_object) {
             var elem = document.getElementsByName(attr);
             if (elem.length > 0) {
                 if (attr.slice(-5) === "color") {
-                    var hex_string = Number(attr_object[attr]).toString(16);
+                    //pdgui.post("populate_form:\n    " + attr + " raw color is " + attr_object[attr]);
+                    // ico@vt.edu 2025-07-17: here we do >>> 0 to make the
+                    // value unsigned to match C behavior, otherwise
+                    // the hex value will be incorrect
+                    var hex_string =
+                      (Number(attr_object[attr])  >>> 0).toString(16);
+                    //pdgui.post("    hex color is " + hex_string);
+                    if (hex_string.length === 7) {
+                      // special case where argb value is #01000000
+                      // which, without the preceding # and when treated
+                      // as a number drops its preceding 0
+                      hex_string = '0' + hex_string;
+                    }
+                    hex_string = hex_string.slice(2,8) + hex_string.slice(0,2);
+                    //pdgui.post("    reverted hex color is " + hex_string);
+                    if (hex_string.length === 1) {
+                      // when the value is 0, which should be 00000000
+                      hex_string = "00000000";
+                    }
                     while(hex_string.length < 6) {
-                        hex_string = "0" + hex_string;
+                      hex_string = "0" + hex_string;
+                    }
+                    if (hex_string.length === 6) {
+                      hex_string = hex_string + "ff";
                     }
                     var color_string = "#" +
-                        (hex_string === "0" ? "000000" : hex_string);
-                    //pdgui.post("color is " + color_string);
+                        (hex_string === "0" ? "000000ff" : hex_string);
                     elem[0].value = color_string;
+                    elem[0].jscolor.fromString(color_string);
+                    new_attrs[elem[0].name] = color_string.toLowerCase();
+                    old_attrs[elem[0].name] = color_string.toLowerCase();
+                    //pdgui.post("...new attr_object[attr] " + attr_object[attr]);
+                } else if (elem[0].type === "checkbox") {
+                    // The attr here is a string, so we need to
+                    // force it to number, hence the "+" below
+                    elem[0].checked = +attr_object[attr];
                 } else if (elem[0].type === "checkbox") {
                     // The attr here is a string, so we need to
                     // force it to number, hence the "+" below
@@ -772,6 +801,21 @@ function add_events(name) {
     });
     pdgui.dialog_bindings(name);
 }
+
+jscolor.presets.default = {
+  //width: 141,               // make the picker a little narrower
+  //position: 'right',        // position it to the right of the target
+  //previewPosition: 'right', // display color preview on the right
+  //previewSize: 40,          // make the color preview bigger
+  palette: [
+    '#fcfcfc', '#a0a0a0', '#404040', '#fce0e0', '#fce0c0',
+    '#fcfcc8', '#d8fcd8', '#d8fcfc', '#dce4fc', '#f8d8fc',
+    '#e0e0e0', '#7c7c7c', '#202020', '#fc2828', '#fcac44',
+    '#e8e828', '#14e814', '#28f4f4', '#3c50fc', '#f430f0',
+    '#bcbcbc', '#606060', '#000000', '#8c0808', '#583000',
+    '#782814', '#285014', '#004450', '#001488', '#580050',
+  ],
+};
 
   </script>
   </body>

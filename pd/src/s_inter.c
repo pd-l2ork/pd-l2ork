@@ -273,7 +273,7 @@ static int sys_domicrosleep(int microsec)
         for (fp = INTER->i_fdpoll, i = INTER->i_nfdpoll; i--; fp++)
             FD_SET(fp->fdp_fd, &readset);
         if(select(INTER->i_maxfd+1, &readset, &writeset, NULL, &timeout))
-            perror("microsleep select");
+            ; //perror("microsleep select");
         INTER->i_fdschanged = 0;
         for (i = 0; i < INTER->i_nfdpoll &&
             !INTER->i_fdschanged; i++)

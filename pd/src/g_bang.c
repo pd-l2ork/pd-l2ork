@@ -27,8 +27,8 @@ static void bng_interactive(t_bng *x, t_floatarg f);
 void bng_draw_update(t_gobj *xgobj, t_glist *glist)
 {
     t_bng *x = (t_bng *)xgobj;
-    char cbuf[8];
-    sprintf(cbuf, "#%6.6x", x->x_flashed ? x->x_gui.x_fcol : x->x_gui.x_bcol);
+    char cbuf[10];
+    sprintf(cbuf, "#%8.8x", x->x_flashed ? x->x_gui.x_fcol : x->x_gui.x_bcol);
     if (x->x_gui.x_changed != x->x_flashed && glist_isvisible(glist))
     {
         gui_vmess("gui_bng_button_color", "xxs",
@@ -41,8 +41,8 @@ void bng_draw_update(t_gobj *xgobj, t_glist *glist)
 
 void bng_draw_new(t_bng *x, t_glist *glist)
 {
-    char cbuf[8];
-    sprintf(cbuf, "#%6.6x", x->x_flashed ? x->x_gui.x_fcol : x->x_gui.x_bcol);
+    char cbuf[10];
+    sprintf(cbuf, "#%8.8x", x->x_flashed ? x->x_gui.x_fcol : x->x_gui.x_bcol);
     t_canvas *canvas=glist_getcanvas(glist);
     int x1=text_xpix(&x->x_gui.x_obj, glist);
     int y1=text_ypix(&x->x_gui.x_obj, glist);
@@ -54,7 +54,7 @@ void bng_draw_new(t_bng *x, t_glist *glist)
        old interface to see if there's anything we're doing wrong. Then once
        we get the circle placement right we can remove the old code here... */
     //sys_vgui(".x%zx.c create circle %f %f -r %f "
-    //         "-stroke $pd_colors(iemgui_border) -fill #%6.6x "
+    //         "-stroke $pd_colors(iemgui_border) -fill #%8.8x "
     //         "-tags {%zxBUT x%zx text iemgui border}\n",
     //     canvas, cx, cy, cr, x->x_flashed?x->x_gui.x_fcol:x->x_gui.x_bcol,
     //     x, x);
@@ -76,8 +76,8 @@ void bng_draw_new(t_bng *x, t_glist *glist)
 void bng_draw_move(t_bng *x, t_glist *glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
-    char cbuf[8];
-    sprintf(cbuf, "#%6.6x", x->x_flashed ? x->x_gui.x_fcol : x->x_gui.x_bcol);
+    char cbuf[10];
+    sprintf(cbuf, "#%8.8x", x->x_flashed ? x->x_gui.x_fcol : x->x_gui.x_bcol);
     if (!glist_isvisible(canvas)) return;
     int x1=text_xpix(&x->x_gui.x_obj, glist);
     int y1=text_ypix(&x->x_gui.x_obj, glist);
@@ -98,8 +98,8 @@ void bng_draw_move(t_bng *x, t_glist *glist)
 void bng_draw_config(t_bng* x, t_glist* glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
-    char cbuf[8];
-    sprintf(cbuf, "#%6.6x", x->x_flashed ? x->x_gui.x_fcol : x->x_gui.x_bcol);
+    char cbuf[10];
+    sprintf(cbuf, "#%8.8x", x->x_flashed ? x->x_gui.x_fcol : x->x_gui.x_bcol);
     iemgui_base_draw_config(&x->x_gui);
     gui_vmess("gui_bng_button_color", "xxs",
         canvas,
@@ -257,9 +257,9 @@ static void bng_properties(t_gobj *z, t_glist *owner)
         srl[0]->s_name, srl[1]->s_name, srl[2]->s_name,
         x->x_gui.x_ldx, x->x_gui.x_ldy,
         x->x_gui.x_font_style, x->x_gui.x_fontsize,
-        0xffffff & x->x_gui.x_bcol,
-        0xffffff & x->x_gui.x_fcol,
-        0xffffff & x->x_gui.x_lcol);
+        0xffffffff & x->x_gui.x_bcol,
+        0xffffffff & x->x_gui.x_fcol,
+        0xffffffff & x->x_gui.x_lcol);
 
     gfx_tag = gfxstub_new2(&x->x_gui.x_obj.ob_pd, &x->x_gui);
     /* todo: send along the x/y of the object here so we can
@@ -311,13 +311,13 @@ static void bng_properties(t_gobj *z, t_glist *owner)
     gui_i(x->x_gui.x_fontsize);
 
     gui_s("background_color");
-    gui_i(0xffffff & x->x_gui.x_bcol);
+    gui_i(0xffffffff & x->x_gui.x_bcol);
 
     gui_s("foreground_color");
-    gui_i(0xffffff & x->x_gui.x_fcol);
+    gui_i(0xffffffff & x->x_gui.x_fcol);
 
     gui_s("label_color");
-    gui_i(0xffffff & x->x_gui.x_lcol);
+    gui_i(0xffffffff & x->x_gui.x_lcol);
 
     gui_s("interactive");
     gui_i(x->x_gui.x_click);
@@ -470,9 +470,9 @@ static void *bng_new(t_symbol *s, int argc, t_atom *argv)
     iem_inttosymargs(&x->x_gui, 0);
     iem_inttofstyle(&x->x_gui, 0);
 
-    x->x_gui.x_bcol = 0xFCFCFC;
-    x->x_gui.x_fcol = 0x00;
-    x->x_gui.x_lcol = 0x00;
+    x->x_gui.x_bcol = 0xFFFCFCFC;
+    x->x_gui.x_fcol = 0xFF000000;
+    x->x_gui.x_lcol = 0xFF000000;
     x->x_gui.x_click = 1;
 
     if((argc >= 14)&&IS_A_FLOAT(argv,0)
