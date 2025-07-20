@@ -597,7 +597,11 @@ extern const t_widgetbehavior text_widgetbehavior;
 // number in comment is the number in grep -w|wc
 EXTERN t_rtext *rtext_new(t_glist *glist, t_text *who); //5
 EXTERN t_rtext *glist_findrtext(t_glist *gl, t_text *who); //53
-#define glist_getrtext glist_findrtext // rtext is not yet fully ported from upstream, maintain compatibility
+#ifdef GLIST_GRAB_COMPAT
+#define glist_getrtext(x,y,z) glist_findrtext(x,y) // rtext is not yet fully ported from upstream, maintain compatibility
+#else
+#define glist_getrtext glist_findrtext
+#endif
 EXTERN t_rtext *glist_getforscalar(t_glist *gl, t_scalar *sc, t_word *words,
     t_gobj *drawtext);
 EXTERN void rtext_draw(t_rtext *x); //4
