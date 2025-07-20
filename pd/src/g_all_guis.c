@@ -246,6 +246,8 @@ int iemgui_getcolorarg(t_iemgui *x, int index, int argc, t_atom *argv)
             len = 8;
 
             int col = (int)strtol(start, &end, 16);
+
+            //post("...col = %d", col);
             if (end != start)
                 return col;
         }
@@ -1316,9 +1318,10 @@ void iemgui_label_draw_new(t_iemgui *x)
     int y1=text_ypix(&x->x_obj, x->x_glist) + (sys_legacy ? x->legacy_y : 0);
     iemgui_getrect_legacy_label(x, &x1, &y1);
     if (x->x_lcol < 0)
-        sprintf(col, "#%6.6x", x->x_lcol);
+        sprintf(col, "#%8.8x", x->x_lcol);
     else
         sprintf(col, "#%x", x->x_lcol);
+    //post("iemgui_label_draw_new %s", col);
     gui_vmess("gui_iemgui_label_new", "xxiissssi",
         canvas,
         x,
@@ -1356,6 +1359,7 @@ void iemgui_label_draw_config(t_iemgui *x)
     t_canvas *canvas=glist_getcanvas(x->x_glist);
     if (x->x_selected == canvas && x->x_glist == canvas)
     {
+        //post("iemgui_label_draw_config %d", x->x_lcol);
         gui_vmess("gui_iemgui_label_font", "xxssi",
             glist_getcanvas(x->x_glist),
             x,
@@ -1366,10 +1370,14 @@ void iemgui_label_draw_config(t_iemgui *x)
             glist_getcanvas(x->x_glist),
             x,
             x->x_lab != s_empty ? x->x_lab->s_name: "");
-        if (x->x_lcol < 0)
+        if (x->x_lcol < 0) {
             sprintf(col, "#%8.8x", x->x_lcol);
-        else
+            //post("...negative value %s", col);
+        }
+        else {
             sprintf(col, "#%x", x->x_lcol);
+            //post("...string color %s", col);
+        }
         gui_vmess("gui_iemgui_label_color", "xxs",
             canvas,
             x,

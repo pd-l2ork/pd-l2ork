@@ -746,8 +746,18 @@ function populate_form(attr_object) {
                     var hex_string =
                       (Number(attr_object[attr])  >>> 0).toString(16);
                     //pdgui.post("    hex color is " + hex_string);
+                    if (hex_string.length === 7) {
+                      // special case where argb value is #01000000
+                      // which, without the preceding # and when treated
+                      // as a number drops its preceding 0
+                      hex_string = '0' + hex_string;
+                    }
                     hex_string = hex_string.slice(2,8) + hex_string.slice(0,2);
                     //pdgui.post("    reverted hex color is " + hex_string);
+                    if (hex_string.length === 1) {
+                      // when the value is 0, which should be 00000000
+                      hex_string = "00000000";
+                    }
                     while(hex_string.length < 6) {
                       hex_string = "0" + hex_string;
                     }
