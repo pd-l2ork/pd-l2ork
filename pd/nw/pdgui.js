@@ -6389,9 +6389,9 @@ function gui_iemgui_label_coords(cid, tag, x, y) {
 }
 
 function gui_iemgui_label_color(cid, tag, color) {
-    post("gui_iemgui_label_color color " + color);
+    //post("gui_iemgui_label_color color " + color);
     var rgba = color2rgba(color);
-    post("..." + rgba);
+    //post("..." + rgba);
     gui(cid).get_elem(tag + "label", {
         fill: rgba
     });
