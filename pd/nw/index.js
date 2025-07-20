@@ -401,10 +401,21 @@ function add_events() {
                     // you indicate IP of 0.0.0.0. (localhost or 127.0.0.1
                     // results in connection refused inside the
                     // connect_as_client_to_secondary_instance function)
+                    // ico@vt.edu 2025-07-19: it seems 127.0.0.1 now also works
                     //host = win_args[0].split(" ").slice(-1).join();
+                    //pdgui.post("win_args[0]=" + win_args[0] + "\n[1]=" + win_args[1]);
                     host = "0.0.0.0";
                     port = win_args[0].split(" ").slice(-2, -1).join();
+                    // ico@vt.edu 2025-07-19: the following stopped working
+                    // on windows only, so when we test for different instances
+                    // we for the time being ignore on windows comparison between
+                    // primary and secondary instances (see pdgui.js'
+                    // gui_open_via_unique function
                     pd_engine_id = win_args[1].split(" ").pop();
+                    // the following gets us the port, but that does not work
+                    // as a comparison for the unique instance since the instance
+                    // is also sent from c (see s_main.c)
+                    //pd_engine_id = win_args[0].split(" ").slice(-2,-1);
                     //pdgui.post("...argv_string final: host=" + host + " port=" + port + " engine=" + pd_engine_id);
 
                     // LATER: consider taking this approach instead,

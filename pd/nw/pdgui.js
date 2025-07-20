@@ -38,6 +38,7 @@ function funkify_windows_path(s) {
 exports.funkify_windows_path = funkify_windows_path;
 
 exports.set_pd_engine_id = function (id) {
+    //console.log("set_pd_engine_id " + id);
     pd_engine_id = id;
 }
 
@@ -2922,6 +2923,7 @@ function import_file(directory, basename)
 }
 
 function process_file(file, do_open) {
+    //post("process_file " + file + " " + do_open);
     var filename = defunkify_windows_path(file),
         directory = path.dirname(filename),
         basename = path.basename(filename),
@@ -2941,6 +2943,7 @@ function process_file(file, do_open) {
 }
 
 function open_file(file) {
+    //post("open_file " + file);
     process_file(file, 1);
 }
 
@@ -3009,10 +3012,11 @@ function gui_set_cwd(dummy, cwd) {
 // This doesn't work at the moment. Not sure how to feed the command line
 // filelist to a single instance of node-webkit.
 function gui_open_via_unique (secondary_pd_engine_id, unique, file_array) {
+    //post("gui_open_via_unique " + pd_engine_id + " " + secondary_pd_engine_id + " " + unique + " " + file_array + " os_is_windows=" + nw_os_is_windows);
     var startup_dir = pwd,
         i,
         file;
-    if (unique == 0 && secondary_pd_engine_id !== pd_engine_id) {
+    if (unique == 0 && (nw_os_is_windows || secondary_pd_engine_id !== pd_engine_id)) {
         for (i = 0; i < file_array.length; i++) {
             file = file_array[i];
             if (!path.isAbsolute(file)) {
@@ -3595,6 +3599,7 @@ var secondary_pd_engines = {};
 // 12.The original Pd engine opens the files, and the secondary Pd instance
 //    quits.
 function connect_as_client_to_secondary_instance(host, port, pd_engine_id) {
+    //post("connect_as_client_to_secondary_instance " + pd_engine_id);
     var client = new net.Socket(),
         command_buffer = {
             next_command: ""
@@ -3609,6 +3614,7 @@ function connect_as_client_to_secondary_instance(host, port, pd_engine_id) {
         client.write("pd forward_files_from_secondary_instance;");
     });
     client.on("data", function(data) {
+        //post("...on data:\n" + data + "\n\n" + command_buffer);
         // Terrible thing:
         // We're parsing the data as it comes in-- possibly
         // from multiple ancillary instances of the Pd engine.
