@@ -5568,7 +5568,7 @@ static void curve_vis(t_gobj *z, t_glist *glist, t_glist *parentglist,
     /* LATER protect against the template changing or the scalar disappearing
     probably by attaching a gpointer here ... */
 
-static void curve_motion(void *z, t_floatarg dx, t_floatarg dy, t_floatarg up)
+static void curve_motion(void *z, t_floatarg dx, t_floatarg dy)
 {
     //fprintf(stderr,"curve_motion\n");
     t_curve *x = (t_curve *)z;

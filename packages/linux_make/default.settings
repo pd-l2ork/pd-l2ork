@@ -37,7 +37,8 @@ loadlib32: ekext
 loadlib33: disis
 loadlib34: lyonpotpourri
 loadlib35: pdlua
-nloadlib: 35
+loadlib36: else
+nloadlib: 36
 path1: /var/lib/defoma/x-ttcidfont-conf.d/dirs/TrueType
 path2: ~/pd-l2ork-externals
 path3: ~/L2Ork/PD/Abstractions

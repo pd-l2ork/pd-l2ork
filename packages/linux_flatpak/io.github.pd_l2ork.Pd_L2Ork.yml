@@ -93,7 +93,7 @@ modules:
 
   - |
     make prefix=/app \
-         adaptive arraysize autotune bassemu boids comport creb cxc cyclone \
+         adaptive arraysize autotune bassemu boids comport creb cxc pd-cyclone pd-else \
          disis_flatpak earplug ekext ext13 fftease flatgui freeverb gem ggee hcs \
          iem_ambi iem_bin_ambi iemlib iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay \
          iem_roomsim iem_spec2 iem_tab jasch_lib loaders-libdir lyonpotpourri mapping \
@@ -130,7 +130,7 @@ modules:
     make DESTDIR=/ prefix=/app \
          adaptive_install arraysize_install autotune_install bassemu_install \
          boids_install bsaylor_install \
-         comport_install creb_install cxc_install cyclone_install \
+         comport_install creb_install cxc_install pd-cyclone_install pd-else_install \
          disis_install earplug_install ekext_install ext13_install fftease_install \
          flatgui_install fluid_install freeverb_install gem_install ggee_install \
          hcs_install iem_ambi_install iem_bin_ambi_install iemlib_install \

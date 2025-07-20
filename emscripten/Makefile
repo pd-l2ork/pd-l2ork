@@ -89,6 +89,6 @@ clean:
 	find $(PD_PATH)/extra -name "*.o" -type f -delete
 	make -C $(LIBPD_PATH) clean
 	make -C $(BUILD_PATH) clean
-	make -C $(PD_L2ORK_DIR)/externals SHELL="${SHELL}" EMSCRIPTEN="yes" clean
+	make -C $(PD_L2ORK_DIR)/externals SHELL="${SHELL}" EXTENSION="${EXTENSION}" EMSCRIPTEN="yes" clean
 	rm -rf $(DESTDIR)
 	

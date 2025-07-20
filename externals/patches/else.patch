@@ -1,0 +1,65 @@
+diff --git a/Source/Audio/numbox~.c b/Source/Audio/numbox~.c
+index c1aee6fc..89edaa37 100644
+--- a/Source/Audio/numbox~.c
++++ b/Source/Audio/numbox~.c
+@@ -230,8 +230,12 @@ static void numbox_range(t_numbox *x, t_floatarg f1, t_floatarg f2){
+ }
+ 
+ // ------------------------ widgetbehaviour-----------------------------
++#ifdef PDL2ORK
++static void numbox_key(void *z, t_floatarg fkey){
++#else
+ static void numbox_key(void *z, t_symbol *keysym, t_floatarg fkey){
+     keysym = NULL; // unused, avoid warning
++#endif
+     t_numbox *x = z;
+     char c = fkey, buf[3];
+     buf[1] = 0;
+diff --git a/Source/Audio/sfz~/sfizz/library/external/atomic_queue/include/atomic_queue/atomic_queue.h b/Source/Audio/sfz~/sfizz/library/external/atomic_queue/include/atomic_queue/atomic_queue.h
+index 21dc029b..7561af55 100644
+--- a/Source/Audio/sfz~/sfizz/library/external/atomic_queue/include/atomic_queue/atomic_queue.h
++++ b/Source/Audio/sfz~/sfizz/library/external/atomic_queue/include/atomic_queue/atomic_queue.h
+@@ -391,13 +391,21 @@ class AtomicQueue2 : public AtomicQueueCommon<AtomicQueue2<T, SIZE, MINIMIZE_CON
+ 
+     T do_pop(unsigned tail) noexcept {
+         unsigned index = details::remap_index<SHUFFLE_BITS>(tail % size_);
++#ifdef PDL2ORK
++        return Base::do_pop_any(states_[index], elements_[index]);
++#else
+         return Base::template do_pop_any(states_[index], elements_[index]);
++#endif
+     }
+ 
+     template<class U>
+     void do_push(U&& element, unsigned head) noexcept {
+         unsigned index = details::remap_index<SHUFFLE_BITS>(head % size_);
++#ifdef PDL2ORK
++        Base::do_push_any(std::forward<U>(element), states_[index], elements_[index]);
++#else
+         Base::template do_push_any(std::forward<U>(element), states_[index], elements_[index]);
++#endif
+     }
+ 
+ public:
+@@ -519,13 +527,21 @@ class AtomicQueueB2 : public AtomicQueueCommon<AtomicQueueB2<T, A, MAXIMIZE_THRO
+ 
+     T do_pop(unsigned tail) noexcept {
+         unsigned index = details::remap_index<SHUFFLE_BITS>(tail & (size_ - 1));
++#ifdef PDL2ORK
++        return Base::do_pop_any(states_[index], elements_[index]);
++#else
+         return Base::template do_pop_any(states_[index], elements_[index]);
++#endif
+     }
+ 
+     template<class U>
+     void do_push(U&& element, unsigned head) noexcept {
+         unsigned index = details::remap_index<SHUFFLE_BITS>(head & (size_ - 1));
++#ifdef PDL2ORK
++        Base::do_push_any(std::forward<U>(element), states_[index], elements_[index]);
++#else
+         Base::template do_push_any(std::forward<U>(element), states_[index], elements_[index]);
++#endif
+     }
+ 
+ public:

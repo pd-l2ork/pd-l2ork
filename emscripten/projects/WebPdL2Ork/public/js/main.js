@@ -49,14 +49,6 @@ onmessage = ({ data }) => {
 }
 `;
 
-//Files that need to be short-circuited for cyclone
-//If they are symlinked during the build process, emscripten bundler resolves the symlinks and 
-//copies them into main.data multiple times, adding ~120MB to main.data and making the page take 
-//a long time to load. Instead, the files are listed here, and are symlinked using the FS.symlink
-//function in emscriptens internal filesystem. The real cyclone files are Hammer.wasm and Sickle.wasm.
-//All of these files will be symlinked to those two files.
-let hammerFiles = ['Append.wasm','bangbang.wasm','match.wasm','spell.wasm','Borax.wasm','bondo.wasm','maximum.wasm','split.wasm','Bucket.wasm','buddy.wasm','mean.wasm','spray.wasm','Clip.wasm','capture.wasm','midiflush.wasm','sprintf.wasm','Decode.wasm','cartopol.wasm','midiformat.wasm','substitute.wasm','Histo.wasm','coll.wasm','midiparse.wasm','sustain.wasm','comment.wasm','minimum.wasm','switch.wasm','cosh.wasm','tanh.wasm','counter.wasm','mtr.wasm','testmess.wasm','cycle.wasm','next.wasm','thresh.wasm','dbtoa.wasm','offer.wasm','tosymbol.wasm','Peak.wasm','decide.wasm','onebang.wasm','universal.wasm','Table.wasm','drunk.wasm','past.wasm','urn.wasm','TogEdge.wasm','flush.wasm','xbendin.wasm','Trough.wasm','forward.wasm','poltocar.wasm','xbendin2.wasm','Uzi.wasm','fromsymbol.wasm','pong.wasm','xbendout.wasm','accum.wasm','funbuff.wasm','prepend.wasm','xbendout2.wasm','acos.wasm','funnel.wasm','prob.wasm','xnotein.wasm','active.wasm','gate.wasm','pv.wasm','xnoteout.wasm','allhammers.wasm','grab.wasm','round.wasm','zl.wasm','anal.wasm','hammer.wasm','seq.wasm','asin.wasm','iter.wasm','sinh.wasm','loadmess.wasm','speedlim.wasm'];
-let sickleFiles = ['abs~.wasm', 'bitand~.wasm', 'cosx~.wasm', 'kink~.wasm', 'minmax~.wasm', 'rampsmooth~.wasm', 'Snapshot~.wasm', 'acos~.wasm', 'bitnot~.wasm', 'count~.wasm', 'Line~.wasm', 'mstosamps~.wasm', 'rand~.wasm', 'spike~.wasm', 'acosh~.wasm', 'bitor~.wasm', 'curve~.wasm', 'linedrive~.wasm', 'onepole~.wasm', 'record~.wasm', 'svf~.wasm', 'allpass~.wasm', 'bitshift~.wasm', 'log~.wasm', 'overdrive~.wasm', 'reson~.wasm', 'tanh~.wasm', 'allsickles~.wasm', 'bitxor~.wasm', 'cycle~.wasm', 'lookup~.wasm', 'peakamp~.wasm', 'round~.wasm', 'tanx~.wasm', 'asin~.wasm', 'buffir~.wasm', 'dbtoa~.wasm', 'lores~.wasm', 'peek~.wasm', 'sah~.wasm', 'train~.wasm', 'asinh~.wasm', 'capture~.wasm', 'delay~.wasm', 'phasewrap~.wasm', 'sampstoms~.wasm', 'trapezoid~.wasm', 'atan2~.wasm', 'cartopol~.wasm', 'delta~.wasm', 'pink~.wasm', 'Scope~.wasm', 'triangle~.wasm', 'atan~.wasm', 'change~.wasm', 'deltaclip~.wasm', 'play~.wasm', 'trunc~.wasm', 'atanh~.wasm', 'click~.wasm', 'edge~.wasm', 'poke~.wasm', 'sickle~.wasm', 'vectral~.wasm', 'atodb~.wasm', 'Clip~.wasm', 'frameaccum~.wasm', 'matrix~.wasm', 'poltocar~.wasm', 'sinh~.wasm', 'wave~.wasm', 'average~.wasm', 'comb~.wasm', 'framedelta~.wasm', 'maximum~.wasm', 'pong~.wasm', 'sinx~.wasm', 'zerox~.wasm', 'avg~.wasm', 'cosh~.wasm', 'index~.wasm', 'minimum~.wasm', 'pow~.wasm', 'slide~.wasm'];
 let nextScopeID = 0;
 
 //CONSTANTS IMPORTED FROM g_vumeter.c, lines 25-61
@@ -275,6 +267,11 @@ var Module = {
     , pd: {} // make pd object accessible from outside of the scope
     , locateFile: (file, base) => (base?.length ? base : '/') + file
     , mainInit: function () { // called after Module is ready
+
+        // Cyclone shenanigans
+        for(let file of FS.readdir('/pd-l2ork-web/extra/cyclone').filter(file => file.endsWith('.wasm') && file.charAt(0) == file.charAt(0).toLowerCase()))
+            FS.symlink(`/pd-l2ork-web/extra/cyclone/${file}`, `/pd-l2ork-web/extra/cyclone/${file.charAt(0).toUpperCase()}${file.slice(1)}`);
+
         Module.pd = new Module.Pd(); // instantiate Pd object
         if (typeof Module.pd != "object") {
             alert("Pd-l2Ork: failed to instantiate pd object");
@@ -1715,16 +1712,9 @@ var Module = {
 };
 
 Module['preRun'].push(function() {
-
-    //Cyclone shenanigans
-    for(let file of hammerFiles)
-        FS.symlink('/pd-l2ork-web/extra/cyclone/Hammer.wasm', `/pd-l2ork-web/extra/cyclone/${file}`);
-    for(let file of sickleFiles.filter(f=>!hammerFiles.includes(f)))
-        FS.symlink('/pd-l2ork-web/extra/cyclone/Sickle.wasm', `/pd-l2ork-web/extra/cyclone/${file}`);
-
     // Intercept file reads
     FS.open = function (path, flags, mode) {
-        let isNetworkCandidate = !['wasm','so','pat','pd'].map(ext=>('' + path).endsWith(ext)).find(matches => matches == true);
+        let isNetworkCandidate = !['wasm','so','pat','pd','pd_lua'].map(ext=>('' + path).endsWith(ext)).find(matches => matches == true);
         if (path === "") {
             throw new FS.ErrnoError(44)
         }
@@ -4016,12 +4006,13 @@ async function openPatch(content, filename, patchURL) {
     await new Promise(Resolve => setTimeout(Resolve, 10));
     let start = Date.now();
     let abstractions = {};
+    let lua_candidates = [];
     let base = patchURL.split('/').slice(0,-1).join('/')+'/';
     searchPaths = [base];
     let fetchAbstractions = async(content, path) => {
         let declares = content.split(';\n').filter(line => line.startsWith('#X declare')).map(declare => declare.slice(11).match(/-\w+ [^ ]+/g).filter(directive => directive.startsWith("-path")).map(directive => directive.split(' ')[1])).flat();
         let paths = [path, ...declares.map(declare => declare.startsWith('/')?declare:`${path}${declare}/`)];
-        let missingAbstractions = [... new Set(content.split(';\n').filter( line => line.startsWith('#X obj') && !known_objects.includes(line.split(' ')[4]) ).map( line => line.split(' ')[4]))];
+        let missingAbstractions = [... new Set(content.split(';\n').filter( line => line.startsWith('#X obj') && !known_objects.includes(line.split(' ')[4]) ).map(line => line.split(' ')[4]))];
         let abstractionData = await getPatchDatas(missingAbstractions.map(obj => paths.map(path => `${base}${path}${obj}.pd`)).flat());
         let promises = [];
         for(let abstraction in missingAbstractions) {
@@ -4032,12 +4023,24 @@ async function openPatch(content, filename, patchURL) {
                     break;
                 }
             }
+            if(!(missingAbstractions[abstraction] in abstractions))
+                lua_candidates.push(missingAbstractions[abstraction]);
         }
         searchPaths = [...new Set([...searchPaths, base + path])];
         await Promise.all(promises);
     }
-    await fetchAbstractions(content,'/');
+    await fetchAbstractions(content,'');
 
+    lua_candidates = [...new Set(lua_candidates)]
+    const lua_objs = await getPatchDatas(lua_candidates.map(candidate => searchPaths.map(s => `${s}${candidate}.pd_lua`)).flat());
+    for(let candidate in lua_candidates) {
+        for(let i=0; i<searchPaths.length; i++) {
+            const data = lua_objs[candidate * searchPaths.length + i];
+            if(data.length)
+                FS.writeFile(`/pd-l2ork-web/${lua_candidates[candidate].split('/').pop()}.pd_lua`, data);
+        }
+    }
+    
     if(loadingStage)
         loadingStage.innerHTML=`Parsing Patch`;
 
@@ -4761,7 +4764,7 @@ async function openPatch(content, filename, patchURL) {
                                 console.error('Invalid pddplink object:', args);
                             break;
                         case "nbx":
-                            if (args.length >= 27) {
+                            if (args.length >= 23) {
                                 const data = {};
                                 data.x_pos = +args[2];
                                 data.y_pos = +args[3];
@@ -4784,11 +4787,11 @@ async function openPatch(content, filename, patchURL) {
                                 data.label_color= isNaN(args[20]) ? args[20] : +args[20];
                                 data.value = data.init ? +args[21] : 0;
                                 data.logHeight = +args[22];
-                                data.showTriangle = +args[23] % 2 == 0;
-                                data.showBorder = +args[23] < 2;
-                                data.exclusive = +args[24];
-                                data.interactive = +args[25];
-                                data.arrowUpdate = +args[26];
+                                data.showTriangle = +(args[23] ?? 0) % 2 == 0;
+                                data.showBorder = +(args[23] ?? 0) < 2;
+                                data.exclusive = +(args[24] ?? 0);
+                                data.interactive = +(args[25] ?? 1);
+                                data.arrowUpdate = +(args[26] ?? 0);
                                 data.id = `${data.type}_${nextHTMLID++}`;
                                 data.canvas = layer.canvas;
             

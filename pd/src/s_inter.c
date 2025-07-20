@@ -886,10 +886,10 @@ void sys_vvgui(const char *fmt, va_list ap) {
     va_copy(aq, ap);
     int msglen;
 
-#ifndef __EMSCRIPTEN__
+// #ifndef __EMSCRIPTEN__ // Needed if gui mode is used in WebPdL2Ork
     if (!sys_havegui())
         return;
-#endif
+// #endif
     if (!INTER->i_guibuf)
     {
         if (!(INTER->i_guibuf = malloc(GUI_ALLOCCHUNK)))
