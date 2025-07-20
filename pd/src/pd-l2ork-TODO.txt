@@ -4,6 +4,7 @@ PD-L2ORK TODO:
 
 *Autocomplete displaying multiple instances of the same
   *Not sure how this broke. Deleting ~/.pd-l2ork/completions.json fixed the issue
+  *Will leave this open to see if it recurrs
 
 *Bezier implementation of the array sometimes:
   *does not draw when the patch is opened (with different zoom levels)
