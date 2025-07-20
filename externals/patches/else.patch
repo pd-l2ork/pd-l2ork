@@ -63,3 +63,23 @@ index 21dc029b..7561af55 100644
      }
  
  public:
+diff --git a/Source/Audio/sfz~/sfizz/library/external/atomic_queue/include/atomic_queue/defs.h b/Source/Audio/sfz~/sfizz/library/external/atomic_queue/include/atomic_queue/defs.h
+index a279dcf8..35e72846 100644
+--- a/Source/Audio/sfz~/sfizz/library/external/atomic_queue/include/atomic_queue/defs.h
++++ b/Source/Audio/sfz~/sfizz/library/external/atomic_queue/include/atomic_queue/defs.h
+@@ -36,6 +36,15 @@ static inline void spin_loop_pause() noexcept {
+ #endif
+ }
+ } // namespace atomic_queue
++#elif defined(__EMSCRIPTEN__)
++#include <emscripten.h>
++namespace atomic_queue {
++constexpr int CACHE_LINE_SIZE = 64;
++static inline void spin_loop_pause() noexcept {
++    // Yield to allow other pthreads in WebAssembly to run.
++    emscripten_sleep(0);
++}
++} // namespace atomic_queue
+ #else
+ #error "Unknown CPU architecture."
+ #endif
