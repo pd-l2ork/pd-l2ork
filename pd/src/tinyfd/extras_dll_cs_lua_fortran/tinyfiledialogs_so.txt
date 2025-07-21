@@ -1,0 +1,5 @@
+compile:
+gcc -fPIC -shared -o libtinyfd.so tinyfiledialogs.c
+
+link:
+gcc -o hello hello.c ./libtinyfd.so
