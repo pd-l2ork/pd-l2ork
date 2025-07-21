@@ -122,6 +122,9 @@ export TAR_EM_UP_PREFIX=$inst_dir
 os=`uname | tr '[:upper:]' '[:lower:]'`
 if [[ $os == *"mingw64"* ]]; then
 	os=win64
+	cd ../packages/win64_inno/msys
+	pacman -U --noconfirm *xz *zst
+	cd ../../../l2ork_addons
 elif [[ $os == *"mingw"* ]]; then
 	os=win
 	cd ../packages/win32_inno/msys

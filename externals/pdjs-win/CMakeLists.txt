@@ -31,7 +31,7 @@ else()
 	string(TOLOWER ${CMAKE_SYSTEM_NAME} TARGET_OS)
 endif()
 
-set(TARGET_CPU x86)
+# set(TARGET_CPU x86)
 
 set(TARGET_TRIPLET ${TARGET_CPU}-${TARGET_OS})
 
