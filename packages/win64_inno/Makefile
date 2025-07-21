@@ -60,10 +60,17 @@ pd_install: build_pd
 #	-$(MAKE) -C $(pd_src)/src $(DEST_PATHS) install
 	$(MAKE) -C $(pd_src)/src -f makefile.mingw $(DEST_PATHS) install
 
-install: pd_install prebuilt_install lib_install exe_install
+rpi_install:
+	cd $(cvs_root_dir)/l2ork_addons/raspberry_pi/disis_gpio_dummy && make && cd ../ \
+		&& cp -f disis_gpio_dummy/disis_gpio.dll $(DESTDIR)/extra && \
+		cp -f disis_gpio/disis_gpio-help.pd $(DESTDIR)/extra && \
+		cd disis_spi_dummy && make && cd ../ && \
+		cp -f disis_spi_dummy/disis_spi.dll $(DESTDIR)/extra && \
+		cp -f disis_spi/disis_spi-help.pd $(DESTDIR)/extra
+
+install: pd_install rpi_install prebuilt_install lib_install exe_install
 	@echo " "
 	@echo "win64_inno install succeeded!"
-
 
 prebuilt_install:
 	$(MAKE) -C $(packages_src) $(DEST_PATHS) extended_install INCREMENTAL=$(INCREMENTAL) LIGHT=$(LIGHT)
@@ -169,11 +176,13 @@ ifneq ($(LIGHT),yes)
 endif
 # these stay with pd.exe
 # if these are installed, include them in the build root
-	#-install -p $(system32)/msvcp71.dll   $(DESTDIR)$(bindir)
-	#-install -p $(system32)/msvcr71.dll   $(DESTDIR)$(bindir)
+	-install -p $(system32)/msvcp71.dll   $(DESTDIR)$(bindir)
+	-install -p $(system32)/msvcr71.dll   $(DESTDIR)$(bindir)
 	#-install -p $(system32)/pthreadVC.dll $(DESTDIR)$(bindir)
 	install -p $(bin_src)/libwinpthread-1.dll $(DESTDIR)$(bindir)
-	install -p $(bin_src)/libgcc_s_seh-1.dll $(DESTDIR)$(bindir)
+	# was
+	#install -p $(bin_src)/libgcc_s_seh-1.dll $(DESTDIR)$(bindir)
+	install -p $(bin_src)/libgcc_s_dw2-1.dll $(DESTDIR)$(bindir)
 	install -p $(bin_src)/libstdc++-6.dll $(DESTDIR)$(bindir)
 ifneq ($(LIGHT),yes)
 # lyonpotpourri compiles its own shared lib. On Windows it needs to be

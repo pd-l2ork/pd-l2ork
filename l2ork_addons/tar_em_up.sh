@@ -122,10 +122,13 @@ export TAR_EM_UP_PREFIX=$inst_dir
 os=`uname | tr '[:upper:]' '[:lower:]'`
 if [[ $os == *"mingw64"* ]]; then
 	os=win64
+	cd ../packages/win64_inno/msys
+	pacman -U --noconfirm *xz *zst
+	cd ../../../l2ork_addons
 elif [[ $os == *"mingw"* ]]; then
 	os=win
 	cd ../packages/win32_inno/msys
-	pacman -U --noconfirm mingw-w64-i686-dlfcn-1.2.0-1-any.pkg.tar.xz mingw-w64-i686-binutils-2.39-3-any.pkg.tar.zst mingw-w64-i686-fftw-3.3.10-5-any.pkg.tar.zst mingw-w64-i686-ftgl-2.4.0-2-any.pkg.tar.zst
+	pacman -U --noconfirm *xz *zst
 	cd ../../../l2ork_addons
 elif [[ $os == "darwin" ]]; then
 	os=osx

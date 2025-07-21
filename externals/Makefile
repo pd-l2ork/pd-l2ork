@@ -1741,10 +1741,17 @@ js:
 ifneq ($(EMSCRIPTEN),yes)
 ifeq ($(OS_NAME),windows)
 	cd $(externals_src)/pdjs-win/v8 && unzip -u lib.zip
+ifeq ($(MSYSTEM),MINGW32)
 	cd $(externals_src)/pdjs-win \
-		&& /mingw32/bin/cmake -G Ninja -DVERSION=1.0 -DCMAKE_BUILD_TYPE=Debug \
-			-B out/build/x86-mingw-Debug/ -S . \
-		&& /mingw32/bin/cmake --build out/build/x86-mingw-Debug -- -v
+			&& $(msys_prefix)/bin/cmake -G Ninja -DVERSION=1.0 -DCMAKE_BUILD_TYPE=Debug \
+				-B out/build/x86-mingw-Debug/ -S . \
+			&& $(msys_prefix)/bin/cmake --build out/build/x86-mingw-Debug -- -v
+else
+	cd $(externals_src)/pdjs-win \
+		&& $(msys_prefix)/bin/cmake -G Ninja -DVERSION=1.0 -DCMAKE_BUILD_TYPE=Debug \
+			-B out/build/x64-mingw-Debug/ -S . \
+		&& $(msys_prefix)/bin/cmake --build out/build/x64-mingw-Debug -- -v
+endif
 endif
 ifeq ($(OS_NAME),darwin)
 	cd $(externals_src)/pdjs/v8 && unzip -u lib.zip
@@ -1772,11 +1779,11 @@ endif
 js_install:
 	install -d $(DESTDIR)$(objectsdir)/js
 ifeq ($(OS_NAME),windows)
-	install -p $(externals_src)/pdjs-win/binaries/x86-windows/js.$(EXTENSION) \
+	install -p $(externals_src)/pdjs-win/binaries/x64-windows/js.$(EXTENSION) \
 		$(DESTDIR)/$(objectsdir)/js
-	install -p $(externals_src)/pdjs-win/binaries/x86-windows/*.pd \
+	install -p $(externals_src)/pdjs-win/binaries/x64-windows/*.pd \
 		$(DESTDIR)/$(objectsdir)/js
-	install -p $(externals_src)/pdjs-win/binaries/x86-windows/*.js \
+	install -p $(externals_src)/pdjs-win/binaries/x64-windows/*.js \
 		$(DESTDIR)/$(objectsdir)/js
 endif
 ifeq ($(OS_NAME),darwin)
@@ -1817,7 +1824,7 @@ endif
 js_clean:
 ifeq ($(OS_NAME),windows)
 	cd $(externals_src)/pdjs-win \
-		&& /mingw32/bin/cmake --build out/build/x86-mingw-Debug --target clean
+		&& $(msys_prefix)/bin/cmake --build out/build/x86-mingw-Debug --target clean
 	cd $(externals_src)/pdjs-win/v8 && rm -rf lib
 	cd $(externals_src)/pdjs-win && rm -rf binaries
 endif
