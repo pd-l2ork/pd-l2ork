@@ -10,9 +10,6 @@
 [submodule "externals/disis/xwiimote"]
 	path = externals/disis/xwiimote
 	url = https://github.com/xwiimote/xwiimote
-[submodule "pd/src/tinyfd"]
-	path = pd/src/tinyfd
-	url = http://git.code.sf.net/p/tinyfiledialogs/code
 [submodule "externals/pd-flite"]
 	path = externals/pd-flite
 	url = https://github.com/Lucarda/pd-flite.git
