@@ -245,7 +245,7 @@ int iemgui_getcolorarg(t_iemgui *x, int index, int argc, t_atom *argv)
             }
             len = 8;
 
-            int col = (int)strtol(start, &end, 16);
+            t_int col = (int)strtoll(start, &end, 16);
 
             //post("...col = %d", col);
             if (end != start)
