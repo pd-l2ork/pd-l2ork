@@ -695,7 +695,7 @@ EXTERN void class_setfreefn(t_class *c, t_classfreefn fn);
 # define class_new class_new64
 #endif
 
-/* ------------   printing
+/* ------------   printing.  ------------ */
 
 /* post and pd_post are synonyms; pd_post is safer if dynamically linked */
 EXTERN void pd_post(const char *fmt, ...);
@@ -927,10 +927,10 @@ EXTERN void sys_vguid(const char *file, int line, const char *fmt, ...);
 EXTERN void sys_vvguid(const char *file, int line, const char *fmt, va_list);
 #endif
 EXTERN void sys_gui(const char *s);
-#ifndef sys_vgui(...)
+#ifndef sys_vgui
 #define sys_vgui(...) sys_vguid(__FILE__,__LINE__,__VA_ARGS__)
 #endif
-#ifndef sys_gui(s)
+#ifndef sys_gui
 #define sys_gui(s)        sys_vguid(__FILE__,__LINE__,"%s",s)
 #endif
 EXTERN void gui_vmess(const char *sel, char *fmt, ...);
