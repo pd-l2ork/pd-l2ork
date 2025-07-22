@@ -514,7 +514,7 @@ $(PD_CYCLONE_PATH)/.patched:
 	touch $(PD_CYCLONE_PATH)/.patched
 
 pd-cyclone: $(PD_CYCLONE_PATH)/.patched
-	make -C $(PD_CYCLONE_PATH) PDINCLUDEDIR=$(pd_src)/src CFLAGS="$(PD_CYCLONE_FLAGS)" -j extension=$(EXTENSION)
+	make -C $(PD_CYCLONE_PATH) PDBINDIR=$(pd_src)/src PDINCLUDEDIR=$(pd_src)/src CFLAGS="$(PD_CYCLONE_FLAGS)" -j extension=$(EXTENSION)
 
 pd-cyclone_install:
 	make -C $(PD_CYCLONE_PATH) install objectsdir="$(objectsdir)" extension=$(EXTENSION)
@@ -523,7 +523,7 @@ pd-cyclone_clean:
 	make -C $(PD_CYCLONE_PATH) clean
 
 PD_ELSE_PATH := $(externals_src)/pd-else
-PD_ELSE_FLAGS := $(CFLAGS) $(SILENCE_PD_GUI) -DGLIST_GRAB_COMPAT -DPURR_DATA -DPDL2ORK -Wno-incompatible-function-pointer-types -U__linux__
+PD_ELSE_FLAGS := $(CFLAGS) $(SILENCE_PD_GUI) -DGLIST_GRAB_COMPAT -DPURR_DATA -DPDL2ORK -Wno-incompatible-function-pointer-types
 
 $(PD_ELSE_PATH)/.patched:
 	cd $(PD_ELSE_PATH) && git apply $(externals_src)/patches/else.patch
@@ -536,7 +536,7 @@ VORBIS_PATH := $(PD_ELSE_PATH)/.vorbis
 VORBIS_LIB := $(VORBIS_PATH)/build/lib/libvorbis.a
 OPENSSL_PATH := $(PD_ELSE_PATH)/.openssl
 OPENSSL_LIB := $(OPENSSL_PATH)/libssl.a
-PD_ELSE_EM_FLAGS := $(PD_ELSE_FLAGS) -msimd128
+PD_ELSE_EM_FLAGS := $(PD_ELSE_FLAGS) -msimd128 -U__linux__
 
 $(OGG_PATH)/README.md:
 	git clone https://github.com/emscripten-ports/Ogg $(OGG_PATH)
@@ -581,7 +581,11 @@ $(PD_ELSE_PATH)/build/.built: $(PD_ELSE_PATH)/.patched $(OGG_LIB) $(VORBIS_LIB) 
 	touch $(PD_ELSE_PATH)/build/.built
 else
 $(PD_ELSE_PATH)/build/.built: $(PD_ELSE_PATH)/.patched
+ifeq ($(OS_NAME),windows)
+	CMAKE_GENERATOR="Unix Makefiles" $(CMAKE) -B$(PD_ELSE_PATH)/build -Wno-dev -DPD_LIBRARY="$(pd_src)/src/pd.dll" -DPD_PATH="$(pd_src)" $(PD_ELSE_PATH) -DCMAKE_C_FLAGS="$(PD_ELSE_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_FLAGS)"
+else
 	$(CMAKE) -B$(PD_ELSE_PATH)/build -Wno-dev -DPD_PATH="$(pd_src)" $(PD_ELSE_PATH) -DCMAKE_C_FLAGS="$(PD_ELSE_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_FLAGS)"
+endif
 	make -C $(PD_ELSE_PATH)/Source/Audio/sfz~/sfizz/library/build CFLAGS="$(PD_ELSE_FLAGS)" CXXFLAGS="$(PD_ELSE_FLAGS)"
 	make -j -C $(PD_ELSE_PATH)/build
 	touch $(PD_ELSE_PATH)/build/.built
