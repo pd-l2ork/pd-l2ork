@@ -597,6 +597,8 @@ pd-else_install:
 	cp -r $(PD_ELSE_PATH)/build/else $(DESTDIR)/$(objectsdir)
 ifeq ($(OS_NAME),darwin)
 	for f in $(DESTDIR)/$(objectsdir)/else/*.darwin-fat-32.so; do mv -- "$$f" "$${f%.darwin-fat-32.so}.pd_darwin"; done
+else ifeq ($(OS_NAME),windows)
+	for f in $(DESTDIR)/$(objectsdir)/else/*.m_amd64; do mv -- "$$f" "$${f%.m_amd64}.pd_linux"; done
 else
 	for f in $(DESTDIR)/$(objectsdir)/else/*.l_amd64; do mv -- "$$f" "$${f%.l_amd64}.pd_linux"; done
 endif
