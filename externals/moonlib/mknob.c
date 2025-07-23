@@ -101,18 +101,13 @@ static void mknob_draw_update(t_mknob *x, t_glist *glist)
 static void mknob_draw_config(t_mknob *x,t_glist *glist)
 {
     t_canvas *canvas = glist_getcanvas(glist);
-    char bcol[10], fcol[10], lcol[10];
-
-    sprintf(bcol, "#%8.8x", x->x_gui.x_bcol);
-    sprintf(fcol, "#%8.8x", x->x_gui.x_fcol);
-    sprintf(lcol, "#%8.8x", x->x_gui.x_lcol);
 
     gui_vmess("gui_configure_mknob", "xxissiiii",
         canvas,
         x,
         x->x_gui.x_w,
-        bcol,
-        fcol,
+        x->x_gui.x_bcol->s_name,
+        x->x_gui.x_fcol->s_name,
         0,      // we are NOT footils (a.k.a. flatgui) knob
         2, 1, 0 // this is to comply with the function call
                 // that is shared with flatgui/knob
@@ -278,9 +273,9 @@ static void mknob_properties(t_gobj *z, t_glist *owner)
     gui_s("y_offset");         gui_i(x->x_gui.x_ldy);
     gui_s("font_style");       gui_i(x->x_gui.x_font_style);
     gui_s("font_size");        gui_i(x->x_gui.x_fontsize);
-    gui_s("background_color"); gui_i(0xffffffff & x->x_gui.x_bcol);
-    gui_s("foreground_color"); gui_i(0xffffffff & x->x_gui.x_fcol);
-    gui_s("label_color");      gui_i(0xffffffff & x->x_gui.x_lcol);
+    gui_s("background_color"); gui_s(x->x_gui.x_bcol->s_name);
+    gui_s("foreground_color"); gui_s(x->x_gui.x_fcol->s_name);
+    gui_s("label_color");      gui_s(x->x_gui.x_lcol->s_name);
     gui_s("interactive");      gui_i(x->x_gui.x_click);
 
     gui_end_array();
@@ -729,9 +724,9 @@ static void *mknob_new(t_symbol *s, int argc, t_atom *argv)
     //t_iem_fstyle_flags *fstyle=(t_iem_fstyle_flags *)(&ifstyle);
     char str[144];
 
-    x->x_gui.x_bcol = 0xFFFCFCFC;
-    x->x_gui.x_fcol = 0xFF000000;
-    x->x_gui.x_lcol = 0xFF000000;
+    x->x_gui.x_bcol = gensym("#FCFCFCFF");
+    x->x_gui.x_fcol = gensym("#000000FF");
+    x->x_gui.x_lcol = gensym("#000000FF");
     x->x_gui.x_click = 1;
 
     if((argc >= 17)&&IS_A_FLOAT(argv,0)&&IS_A_FLOAT(argv,1)

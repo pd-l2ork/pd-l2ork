@@ -50,6 +50,8 @@ typedef struct _room_sim_2d
   void      *x_out_para;
   void      *x_out_rho;
   t_atom    x_at[6];
+  int       x_fcol;
+  int       x_bcol;
 } t_room_sim_2d;
 
 static void room_sim_2d_out_rho(t_room_sim_2d *x)
@@ -126,8 +128,8 @@ void room_sim_2d_draw_map(t_room_sim_2d *x, t_glist *glist)
   char fcol[MAXPDSTRING];
   char bcol[MAXPDSTRING];
   char elemcol[MAXPDSTRING];
-  sprintf(fcol, "#%6.6x", x->x_gui.x_fcol);
-  sprintf(bcol, "#%6.6x", x->x_gui.x_bcol);
+  sprintf(fcol, "#%6.6x", x->x_fcol);
+  sprintf(bcol, "#%6.6x", x->x_bcol);
 
   gui_start_vmess("gui_room_sim_map", "xxiiifiiiss",
     canvas,
@@ -162,13 +164,13 @@ void room_sim_2d_draw_map(t_room_sim_2d *x, t_glist *glist)
 //  sys_vgui(".x%x.c create oval %d %d %d %d -outline #%6.6x -tags %xHEAD\n",
 //    canvas, xpos+x->x_pix_src_x[0]-x->x_pix_rad, ypos+x->x_pix_src_y[0]-x->x_pix_rad,
 //    xpos+x->x_pix_src_x[0]+x->x_pix_rad-1, ypos+x->x_pix_src_y[0]+x->x_pix_rad-1,
-//    x->x_gui.x_fcol, x);
+//    x->x_fcol, x);
   dx = -(int)((t_float)x->x_pix_rad*(t_float)sin(x->x_rho_head*0.0174533f) + 0.49999f);
   dy = -(int)((t_float)x->x_pix_rad*(t_float)cos(x->x_rho_head*0.0174533f) + 0.49999f);
 //  sys_vgui(".x%x.c create line %d %d %d %d -width 3 -fill #%6.6x -tags %xNOSE\n",
 //    canvas, xpos+x->x_pix_src_x[0], ypos+x->x_pix_src_y[0],
 //    xpos+x->x_pix_src_x[0]+dx, ypos+x->x_pix_src_y[0]+dy,
-//    x->x_gui.x_fcol, x);
+//    x->x_fcol, x);
 }
 
 void room_sim_2d_draw_new(t_room_sim_2d *x, t_glist *glist)
@@ -195,7 +197,7 @@ void room_sim_2d_draw_new(t_room_sim_2d *x, t_glist *glist)
   room_sim_2d_draw_map(x, glist);
 /*  sys_vgui(".x%x.c create rectangle %d %d %d %d -fill #%6.6x -outline #%6.6x -tags %xBASE\n",
     canvas, xpos, ypos, xpos + x->x_gui.x_w, ypos + x->x_gui.x_h,
-    x->x_gui.x_bcol, x->x_gui.x_fsf.x_selected?IEM_GUI_COLOR_SELECTED:IEM_GUI_COLOR_NORMAL, x);
+    x->x_bcol, x->x_gui.x_fsf.x_selected?IEM_GUI_COLOR_SELECTED:IEM_GUI_COLOR_NORMAL, x);
 */
 
 //  for(i=1; i<=n; i++)
@@ -209,13 +211,13 @@ void room_sim_2d_draw_new(t_room_sim_2d *x, t_glist *glist)
 //  sys_vgui(".x%x.c create oval %d %d %d %d -outline #%6.6x -tags %xHEAD\n",
 //    canvas, xpos+x->x_pix_src_x[0]-x->x_pix_rad, ypos+x->x_pix_src_y[0]-x->x_pix_rad,
 //    xpos+x->x_pix_src_x[0]+x->x_pix_rad-1, ypos+x->x_pix_src_y[0]+x->x_pix_rad-1,
-//    x->x_gui.x_fcol, x);
+//    x->x_fcol, x);
 //  dx = -(int)((t_float)x->x_pix_rad*(t_float)sin(x->x_rho_head*0.0174533f) + 0.49999f);
 //  dy = -(int)((t_float)x->x_pix_rad*(t_float)cos(x->x_rho_head*0.0174533f) + 0.49999f);
 //  sys_vgui(".x%x.c create line %d %d %d %d -width 3 -fill #%6.6x -tags %xNOSE\n",
 //    canvas, xpos+x->x_pix_src_x[0], ypos+x->x_pix_src_y[0],
 //    xpos+x->x_pix_src_x[0]+dx, ypos+x->x_pix_src_y[0]+dy,
-//    x->x_gui.x_fcol, x);
+//    x->x_fcol, x);
 }
 
 /*
@@ -285,10 +287,10 @@ static void room_sim_2d_save(t_gobj *z, t_binbuf *b)
     atom_getsymbol(binbuf_getvec(x->x_gui.x_obj.te_binbuf))
    );
   binbuf_addv(b, "ifffi", x->x_nr_src, x->x_cnvrt_roomlx2pixh, x->x_rho_head, x->x_r_ambi, x->x_fontsize);
-  c = x->x_gui.x_bcol;
+  c = x->x_bcol;
   j = (((0xfc0000 & c) >> 6)|((0xfc00 & c) >> 4)|((0xfc & c) >> 2));
   binbuf_addv(b, "iff", j, x->x_room_x, x->x_room_y);
-  c = x->x_gui.x_fcol;
+  c = x->x_fcol;
   j = (((0xfc0000 & c) >> 6)|((0xfc00 & c) >> 4)|((0xfc & c) >> 2));
   binbuf_addv(b, "iii", j, x->x_pix_src_x[0], x->x_pix_src_y[0]);
   for(i=1; i<=n; i++)
@@ -678,23 +680,23 @@ static void room_sim_2d_room_col(t_room_sim_2d *x, t_floatarg fcol)
   if (col < 0)
   {
     i = -1 - col;
-    x->x_gui.x_bcol = ((i & 0x3f000) << 6)|((i & 0xfc0) << 4)|((i & 0x3f) << 2);
+    x->x_bcol = ((i & 0x3f000) << 6)|((i & 0xfc0) << 4)|((i & 0x3f) << 2);
   }
   else
   {
     if (col > 29)
       col = 29;
-    x->x_gui.x_bcol = my_iemgui_color_hex[col];
+    x->x_bcol = my_iemgui_color_hex[col];
   }
-  sprintf(fgstring, "#%6.6x", x->x_gui.x_fcol);
-  sprintf(bgstring, "#%6.6x", x->x_gui.x_bcol);
+  sprintf(fgstring, "#%6.6x", x->x_fcol);
+  sprintf(bgstring, "#%6.6x", x->x_bcol);
   gui_vmess("gui_room_sim_colors", "xxss",
     canvas,
     x,
     fgstring,
     bgstring
   );
-//  sys_vgui(".x%x.c itemconfigure %xBASE -fill #%6.6x\n", canvas, x, x->x_gui.x_bcol);
+//  sys_vgui(".x%x.c itemconfigure %xBASE -fill #%6.6x\n", canvas, x, x->x_bcol);
 }
 
 static void room_sim_2d_head_col(t_room_sim_2d *x, t_floatarg fcol)
@@ -708,24 +710,24 @@ static void room_sim_2d_head_col(t_room_sim_2d *x, t_floatarg fcol)
   if (col < 0)
   {
     i = -1 - col;
-    x->x_gui.x_fcol = ((i & 0x3f000) << 6)|((i & 0xfc0) << 4)|((i & 0x3f) << 2);
+    x->x_fcol = ((i & 0x3f000) << 6)|((i & 0xfc0) << 4)|((i & 0x3f) << 2);
   }
   else
   {
     if (col > 29)
       col = 29;
-    x->x_gui.x_fcol = my_iemgui_color_hex[col];
+    x->x_fcol = my_iemgui_color_hex[col];
   }
-  sprintf(fgstring, "#%6.6x", x->x_gui.x_fcol);
-  sprintf(bgstring, "#%6.6x", x->x_gui.x_bcol);
+  sprintf(fgstring, "#%6.6x", x->x_fcol);
+  sprintf(bgstring, "#%6.6x", x->x_bcol);
   gui_vmess("gui_room_sim_colors", "xxss",
     canvas,
     x,
     fgstring,
     bgstring
   );
-  //sys_vgui(".x%x.c itemconfigure %xHEAD -outline #%6.6x\n", canvas, x, x->x_gui.x_fcol);
-  //sys_vgui(".x%x.c itemconfigure %xNOSE -fill #%6.6x\n", canvas, x, x->x_gui.x_fcol);
+  //sys_vgui(".x%x.c itemconfigure %xHEAD -outline #%6.6x\n", canvas, x, x->x_fcol);
+  //sys_vgui(".x%x.c itemconfigure %xNOSE -fill #%6.6x\n", canvas, x, x->x_fcol);
 }
 
 static void room_sim_2d_src_col(t_room_sim_2d *x, t_symbol *s, int argc, t_atom *argv)
@@ -760,7 +762,7 @@ static void room_sim_2d_src_col(t_room_sim_2d *x, t_symbol *s, int argc, t_atom 
       gui_vmess("gui_room_sim_update_src", "xxiiiis",
         canvas,
         x,
-        j,
+        j-1,
         x->x_pix_src_x[j],
         x->x_pix_src_y[j],
         x->x_fontsize,
@@ -912,11 +914,11 @@ static void *room_sim_2d_new(t_symbol *s, int argc, t_atom *argv)
     x->x_r_ambi = atom_getfloatarg(3, argc, argv);
     x->x_fontsize = (int)atom_getintarg(4, argc, argv);
     c = (int)atom_getintarg(5, argc, argv);
-    x->x_gui.x_bcol = ((c & 0x3f000) << 6)|((c & 0xfc0) << 4)|((c & 0x3f) << 2);
+    x->x_bcol = ((c & 0x3f000) << 6)|((c & 0xfc0) << 4)|((c & 0x3f) << 2);
     x->x_room_x = atom_getfloatarg(6, argc, argv);
     x->x_room_y = atom_getfloatarg(7, argc, argv);
     c = (int)atom_getintarg(8, argc, argv);
-    x->x_gui.x_fcol = ((c & 0x3f000) << 6)|((c & 0xfc0) << 4)|((c & 0x3f) << 2);
+    x->x_fcol = ((c & 0x3f000) << 6)|((c & 0xfc0) << 4)|((c & 0x3f) << 2);
     x->x_pix_src_x[0] = (int)atom_getintarg(9, argc, argv);
     x->x_pix_src_y[0] = (int)atom_getintarg(10, argc, argv);
     for (i = 1; i <= n; i++)
@@ -935,10 +937,10 @@ static void *room_sim_2d_new(t_symbol *s, int argc, t_atom *argv)
     x->x_rho_head = 0.0f;
     x->x_r_ambi = 1.4f;
     x->x_fontsize = 12;
-    x->x_gui.x_bcol = my_iemgui_color_hex[IEM_GUI_COLNR_GREEN];
+    x->x_bcol = my_iemgui_color_hex[IEM_GUI_COLNR_GREEN];
     x->x_room_x = 12.0f;
     x->x_room_y = 10.0f;
-    x->x_gui.x_fcol = my_iemgui_color_hex[IEM_GUI_COLNR_D_ORANGE];
+    x->x_fcol = my_iemgui_color_hex[IEM_GUI_COLNR_D_ORANGE];
     x->x_pix_src_x[0] = 125;
     x->x_pix_src_y[0] = 200;
     j = 0;
@@ -975,6 +977,11 @@ static void *room_sim_2d_new(t_symbol *s, int argc, t_atom *argv)
       x->x_gui.x_glist, 1, room_sim_2d__clickhook, room_sim_2d__motionhook);
   x->x_gui.x_lhandle = scalehandle_new((t_object *)x,
       x->x_gui.x_glist, 0, room_sim_2d__clickhook, room_sim_2d__motionhook);
+
+  // dummy colors to ensure g_all_guis.c does not crash
+  x->x_gui.x_bcol = gensym("#FCFCFCFF");
+  x->x_gui.x_fcol = gensym("#000000FF");
+  x->x_gui.x_lcol = gensym("#000000FF");
 
   return (x);
 }

@@ -87,9 +87,9 @@ typedef struct _iemgui
     int            x_ldx;            //33
     int            x_ldy;            //33
     int            x_fontsize;//uns. //41
-    int            x_fcol;//iemcolor //35  /* foreground */
-    int            x_bcol;//iemcolor //41  /* background */
-    int            x_lcol;//iemcolor //21  /* label */
+    t_symbol      *x_fcol;//iemcolor //35  /* foreground */
+    t_symbol      *x_bcol;//iemcolor //41  /* background */
+    t_symbol      *x_lcol;//iemcolor //21  /* label */
     t_symbol      *x_snd;            //18  /* send symbol */
     t_symbol      *x_rcv;            //33  /* receive */
     t_symbol      *x_lab;            //15  /* label */
@@ -124,9 +124,9 @@ typedef struct _iemgui
     //int click_x;                  // click getrect x offset
     //int click_y;                  // click getrect y offset
                              // we use the following to accommodate objects that do not use all colors
-    int *x_color1;             // references 1st color, by default x_bcol
-    int *x_color2;             // references 2nd color, by default x_fcol
-    int *x_color3;             // references 3rd color, by default x_lcol
+    int x_color1;             // references 1st color, by default x_bcol or 1 (0 is equivalent to null)
+    int x_color2;             // references 2nd color, by default x_fcol or 2
+    int x_color3;             // references 3rd color, by default x_lcol or 3
 } t_iemgui;
 
 typedef struct _bng
@@ -277,7 +277,7 @@ EXTERN void iemgui_save(t_iemgui *x, t_symbol **srl, t_symbol **bflcol);
 EXTERN void iemgui_properties(t_iemgui *x, t_symbol **srl);
 EXTERN void iemgui_update_properties(t_iemgui *x, int option);
 EXTERN int iemgui_dialog(t_iemgui *x, int argc, t_atom *argv);
-EXTERN int iemgui_getcolorarg(t_iemgui *x, int index, int argc, t_atom *argv);
+EXTERN t_symbol *iemgui_getcolorarg(t_iemgui *x, int index, int argc, t_atom *argv);
 
 EXTERN int canvas_getdollarzero(t_pd *x);
 

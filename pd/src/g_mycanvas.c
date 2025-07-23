@@ -26,8 +26,6 @@ void my_canvas_draw_new(t_my_canvas *x, t_glist *glist)
     t_canvas *canvas=glist_getcanvas(glist);
     int x1 = text_xpix(&x->x_gui.x_obj, glist);
     int y1 = text_ypix(&x->x_gui.x_obj, glist);
-    char cbuf[10];
-    sprintf(cbuf, "#%8.8x", x->x_gui.x_bcol);
 
     t_rtext *y = glist_findrtext(glist, x);
     char buf[FILENAME_MAX];
@@ -42,7 +40,7 @@ void my_canvas_draw_new(t_my_canvas *x, t_glist *glist)
         namebuf, buf);
     gui_vmess("gui_mycanvas_new", "xxxxsiiiiiii", canvas,
         x->x_gui.x_glist, x->x_gui.x_glist->gl_owner,
-        x, cbuf, x1, y1, x1+x->x_vis_w, y1+x->x_vis_h,
+        x, x->x_gui.x_bcol->s_name, x1, y1, x1+x->x_vis_w, y1+x->x_vis_h,
         x1+x->x_gui.x_w, y1+x->x_gui.x_h, glist_istoplevel(glist));
 }
 
@@ -60,11 +58,9 @@ void my_canvas_draw_config(t_my_canvas* x, t_glist* glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
     int isselected;
-    char cbuf[10];
     isselected = x->x_gui.x_selected == canvas && x->x_gui.x_glist == canvas;
-    sprintf(cbuf, "#%8.8x", x->x_gui.x_bcol);
     gui_vmess("gui_mycanvas_update", "xxsi",
-        canvas, x, cbuf, isselected);
+        canvas, x, x->x_gui.x_bcol->s_name, isselected);
 }
 
 void my_canvas_draw_select(t_my_canvas* x, t_glist* glist)
@@ -181,6 +177,7 @@ static void my_canvas_properties(t_gobj *z, t_glist *owner)
     t_symbol *srl[3];
 
     iemgui_properties(&x->x_gui, srl);
+/*
     sprintf(buf, "pdtk_iemgui_dialog %%s |cnv| \
             ------selectable_dimensions(pix):------ %d %d size: 0.0 0.0 empty \
             ------visible_rectangle(pix)(pix):------ %d width: %d height: %d \
@@ -190,12 +187,13 @@ static void my_canvas_properties(t_gobj *z, t_glist *owner)
             %d %d \
             %d %d %d\n",
             x->x_gui.x_w, 1,
-            x->x_vis_w, x->x_vis_h, 0,/*no_schedule*/
-            -1, -1, -1, -1,/*no linlog, no init, no multi*/
-            srl[0]->s_name, srl[1]->s_name,
-            srl[2]->s_name, x->x_gui.x_ldx, x->x_gui.x_ldy,
-            x->x_gui.x_font_style, x->x_gui.x_fontsize,
-            0xffffffff & x->x_gui.x_bcol, -1/*no frontcolor*/, 0xffffffff & x->x_gui.x_lcol);
+*/
+            //x->x_vis_w, x->x_vis_h, 0,/*no_schedule*/
+            //-1, -1, -1, -1,/*no linlog, no init, no multi*/
+            //srl[0]->s_name, srl[1]->s_name,
+            //srl[2]->s_name, x->x_gui.x_ldx, x->x_gui.x_ldy,
+            //x->x_gui.x_font_style, x->x_gui.x_fontsize,
+            //x->x_gui.x_bcol, -1/*no frontcolor*/, x->x_gui.x_lcol);
     //gfxstub_new(&x->x_gui.x_obj.ob_pd, x, buf);
 
     gfx_tag = gfxstub_new2(&x->x_gui.x_obj.ob_pd, &x->x_gui);
@@ -221,9 +219,9 @@ static void my_canvas_properties(t_gobj *z, t_glist *owner)
     gui_s("y_offset");  gui_i(x->x_gui.x_ldy);
     gui_s("font_style"); gui_i(x->x_gui.x_font_style);
     gui_s("font_size"); gui_i(x->x_gui.x_fontsize);
-    gui_s("background_color"); gui_i(0xffffffff & x->x_gui.x_bcol);
-    //gui_s("foreground_color"); gui_i(0xffffffff & x->x_gui.x_fcol);
-    gui_s("label_color"); gui_i(0xffffffff & x->x_gui.x_lcol);
+    gui_s("background_color"); gui_s(x->x_gui.x_bcol->s_name);
+    //gui_s("foreground_color"); gui_s(x->x_gui.x_fcol->s_name);
+    gui_s("label_color"); gui_s(x->x_gui.x_lcol->s_name);
     
     gui_end_array();
     gui_end_vmess();
@@ -296,9 +294,9 @@ static void *my_canvas_new(t_symbol *s, int argc, t_atom *argv)
     iem_inttosymargs(&x->x_gui, 0);
     iem_inttofstyle(&x->x_gui, 0);
 
-    x->x_gui.x_bcol = 0xFFE0E0E0;
-    x->x_gui.x_fcol = 0xFF000000;
-    x->x_gui.x_lcol = 0xFF404040;
+    x->x_gui.x_bcol = gensym("#E0E0E0FF");
+    x->x_gui.x_fcol = gensym("#000000FF");
+    x->x_gui.x_lcol = gensym("#404040FF");
 
     if(((argc >= 10)&&(argc <= 13))
        &&IS_A_FLOAT(argv,0)&&IS_A_FLOAT(argv,1)&&IS_A_FLOAT(argv,2))

@@ -29,14 +29,12 @@ t_class *vradio_class, *vradio_old_class;
 void radio_draw_update(t_gobj *client, t_glist *glist)
 {
     t_radio *x = (t_radio *)client;
-    char cbuf[10];
-    sprintf(cbuf, "#%8.8x", x->x_gui.x_fcol);
     if (!glist_isvisible(glist)) return;
     t_canvas *canvas=glist_getcanvas(glist);
     gui_vmess("gui_radio_update", "xxsii",
         canvas,
         x,
-        cbuf,
+        x->x_gui.x_fcol->s_name,
         x->x_drawn,
         x->x_on);
     x->x_drawn = x->x_on;
@@ -45,8 +43,6 @@ void radio_draw_update(t_gobj *client, t_glist *glist)
 void radio_draw_new(t_radio *x, t_glist *glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
-    char cbuf[10];
-    sprintf(cbuf, "#%8.8x", x->x_gui.x_fcol);
     int n=x->x_number, i, d=x->x_gui.x_w, s=d/4;
     int x1=text_xpix(&x->x_gui.x_obj, glist), xi=x1;
     int y1=text_ypix(&x->x_gui.x_obj, glist), yi=y1; 
@@ -63,7 +59,7 @@ void radio_draw_new(t_radio *x, t_glist *glist)
             }
             gui_vmess("gui_radio_create_buttons", "xxsiiiiiiii",
                 canvas, x,
-                cbuf,
+                x->x_gui.x_fcol->s_name,
                 x1+s, yi+s, x1+d-s, yi+d-s, x1, y1, i, x->x_on==i);
             yi += d;
             x->x_drawn = x->x_on;
@@ -77,7 +73,7 @@ void radio_draw_new(t_radio *x, t_glist *glist)
             }
             gui_vmess("gui_radio_create_buttons", "xxsiiiiiiii",
                 canvas, x,
-                cbuf,
+                x->x_gui.x_fcol->s_name,
                 xi+s, y1+s, xi+d-s, yi+d-s, x1, y1, i, x->x_on==i);
             xi += d;
             x->x_drawn = x->x_on;
@@ -113,8 +109,6 @@ void radio_draw_config(t_radio *x, t_glist *glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
     int n=x->x_number, i;
-    char cbuf[10];
-    sprintf(cbuf, "#%8.8x", x->x_gui.x_fcol);
     iemgui_base_draw_config(&x->x_gui);
     for (i=0; i<n; i++)
     {
@@ -124,7 +118,7 @@ void radio_draw_config(t_radio *x, t_glist *glist)
         //    (x->x_on==i) ? x->x_gui.x_fcol : x->x_gui.x_bcol);
     }
     gui_vmess("gui_radio_update", "xxsii",
-        canvas, x, cbuf, 0, x->x_on);
+        canvas, x, x->x_gui.x_fcol->s_name, 0, x->x_on);
 
 }
 
@@ -235,18 +229,18 @@ static void radio_properties(t_gobj *z, t_glist *owner)
     iemgui_properties(&x->x_gui, srl);
     if (pd_class((t_pd *)x) == hradio_old_class || pd_class((t_pd *)x) == vradio_old_class)
         hchange = x->x_change;
-    sprintf(buf, "pdtk_iemgui_dialog %%s |%cradio| \
-        ----------dimensions(pix):----------- %d %d size: 0 0 empty \
-        empty 0.0 empty 0.0 empty %d %d new-only new&old %d %d number: %d \
-        {%s} {%s} {%s} %d %d %d %d %d %d %d\n",
-        x->x_orient ? 'v' : 'h',
-        x->x_gui.x_w, IEM_GUI_MINSIZE, 0,/*no_schedule*/
-        hchange, x->x_gui.x_loadinit, -1, x->x_number,
-        srl[0]->s_name, srl[1]->s_name,
-        srl[2]->s_name, x->x_gui.x_ldx, x->x_gui.x_ldy,
-        x->x_gui.x_font_style, x->x_gui.x_fontsize,
-        0xffffffff & x->x_gui.x_bcol, 0xffffffff & x->x_gui.x_fcol,
-        0xffffffff & x->x_gui.x_lcol);
+//    sprintf(buf, "pdtk_iemgui_dialog %%s |%cradio| \
+//        ----------dimensions(pix):----------- %d %d size: 0 0 empty \
+//        empty 0.0 empty 0.0 empty %d %d new-only new&old %d %d number: %d \
+//        {%s} {%s} {%s} %d %d %d %d %d %d %d\n",
+//        x->x_orient ? 'v' : 'h',
+//        x->x_gui.x_w, IEM_GUI_MINSIZE, 0,/*no_schedule*/
+//        hchange, x->x_gui.x_loadinit, -1, x->x_number,
+//        srl[0]->s_name, srl[1]->s_name,
+//        srl[2]->s_name, x->x_gui.x_ldx, x->x_gui.x_ldy,
+//        x->x_gui.x_font_style, x->x_gui.x_fontsize,
+//        x->x_gui.x_bcol, x->x_gui.x_fcol,
+//        x->x_gui.x_lcol);
     //gfxstub_new(&x->x_gui.x_obj.ob_pd, x, buf);
     gfx_tag = gfxstub_new2(&x->x_gui.x_obj.ob_pd, &x->x_gui);
 
@@ -272,9 +266,9 @@ static void radio_properties(t_gobj *z, t_glist *owner)
     gui_s("y_offset");         gui_i(x->x_gui.x_ldy);
     gui_s("font_style");       gui_i(x->x_gui.x_font_style);
     gui_s("font_size");        gui_i(x->x_gui.x_fontsize);
-    gui_s("background_color"); gui_i(0xffffffff & x->x_gui.x_bcol);
-    gui_s("foreground_color"); gui_i(0xffffffff & x->x_gui.x_fcol);
-    gui_s("label_color");      gui_i(0xffffffff & x->x_gui.x_lcol);
+    gui_s("background_color"); gui_s(x->x_gui.x_bcol->s_name);
+    gui_s("foreground_color"); gui_s(x->x_gui.x_fcol->s_name);
+    gui_s("label_color");      gui_s(x->x_gui.x_lcol->s_name);
     gui_s("interactive");      gui_i(x->x_gui.x_click);
     
     gui_end_array();
@@ -482,9 +476,9 @@ static void *radio_new(t_symbol *s, int argc, t_atom *argv)
     iem_inttosymargs(&x->x_gui, 0);
     iem_inttofstyle(&x->x_gui, 0);
 
-    x->x_gui.x_bcol = 0xFFFCFCFC;
-    x->x_gui.x_fcol = 0xFF000000;
-    x->x_gui.x_lcol = 0xFF000000;
+    x->x_gui.x_bcol = gensym("#FCFCFCFF");
+    x->x_gui.x_fcol = gensym("#000000FF");
+    x->x_gui.x_lcol = gensym("#000000FF");
     x->x_gui.x_click = 1;
 
     if((argc >= 15)&&IS_A_FLOAT(argv,0)&&IS_A_FLOAT(argv,1)&&IS_A_FLOAT(argv,2)

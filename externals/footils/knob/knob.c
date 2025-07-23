@@ -177,19 +177,14 @@ static void knob_draw_config(t_knob *x,t_glist *glist)
 {
     //post("knob_draw_config");
     t_canvas *canvas = glist_getcanvas(glist);
-    char bcol[10], fcol[10], lcol[10];
-
-    sprintf(bcol, "#%8.8x", x->x_gui.x_bcol);
-    sprintf(fcol, "#%8.8x", x->x_gui.x_fcol);
-    sprintf(lcol, "#%8.8x", x->x_gui.x_lcol);
 
     /* reuse mknob interface */
     gui_vmess("gui_configure_mknob", "xxissiiii",
         canvas,
         x,
         x->x_gui.x_h,
-        bcol,
-        fcol,
+        x->x_gui.x_bcol->s_name,
+        x->x_gui.x_fcol->s_name,
         1, /* flag to tell we are a footils/knob */
         x->x_dial_w,
         x->x_circle_w,
@@ -330,9 +325,9 @@ static void knob_properties(t_gobj *z, t_glist *owner)
     gui_s("y_offset");         gui_i(x->x_gui.x_ldy);
     gui_s("font_style");       gui_i(x->x_gui.x_font_style);
     gui_s("font_size");        gui_i(x->x_gui.x_fontsize);
-    gui_s("background_color"); gui_i(0xffffffff & x->x_gui.x_bcol);
-    gui_s("foreground_color"); gui_i(0xffffffff & x->x_gui.x_fcol);
-    gui_s("label_color");      gui_i(0xffffffff & x->x_gui.x_lcol);
+    gui_s("background_color"); gui_s(x->x_gui.x_bcol->s_name);
+    gui_s("foreground_color"); gui_s(x->x_gui.x_fcol->s_name);
+    gui_s("label_color");      gui_s(x->x_gui.x_lcol->s_name);
     gui_s("interactive");      gui_i(x->x_gui.x_click);
     gui_s("dial_width");       gui_i(x->x_dial_w);
     gui_s("off_circle_width"); gui_i(x->x_circle_w);
@@ -846,9 +841,9 @@ static void *knob_new(t_symbol *s, int argc, t_atom *argv)
     iem_inttosymargs(&x->x_gui, 0);
     iem_inttofstyle(&x->x_gui, 0);
 
-    x->x_gui.x_bcol = 0xFFFCFCFC;
-    x->x_gui.x_fcol = 0xFF000000;
-    x->x_gui.x_lcol = 0xFF000000;
+    x->x_gui.x_bcol = gensym("#FCFCFCFF");
+    x->x_gui.x_fcol = gensym("#000000FF");
+    x->x_gui.x_lcol = gensym("#000000FF");
     x->x_gui.x_click = 1;
     x->x_dial_w = 2;
     x->x_circle_w = 3;

@@ -58,8 +58,6 @@ static void slider_draw_update(t_gobj *client, t_glist *glist)
 static void slider_draw_new(t_slider *x, t_glist *glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
-    char cbuf[10];
-    sprintf(cbuf, "#%8.8x", x->x_gui.x_fcol);
     int x1=text_xpix(&x->x_gui.x_obj, glist), x2=x1+x->x_gui.x_w;
     int y1=text_ypix(&x->x_gui.x_obj, glist), y2=y1+x->x_gui.x_h;
     if (x->x_orient) y2+=5; else x2+=5;
@@ -70,11 +68,11 @@ static void slider_draw_new(t_slider *x, t_glist *glist)
     if (x->x_orient) {
         gui_vmess("gui_slider_new", "xxsiiiiii",
             canvas, x,
-            cbuf, x1+2, r, x2-2, r, x1, y1);
+            x->x_gui.x_fcol->s_name, x1+2, r, x2-2, r, x1, y1);
     } else {
         gui_vmess("gui_slider_new", "xxsiiiiii",
             canvas, x,
-            cbuf, r, y1+2, r, y2-2, x1, y1);
+            x->x_gui.x_fcol->s_name, r, y1+2, r, y2-2, x1, y1);
     }
 }
 
@@ -106,11 +104,9 @@ static void slider_draw_move(t_slider *x, t_glist *glist)
 static void slider_draw_config(t_slider *x, t_glist *glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
-    char cbuf[10];
-    sprintf(cbuf, "#%8.8x", x->x_gui.x_fcol);
     iemgui_base_draw_config(&x->x_gui);
     gui_vmess("gui_slider_indicator_color", "xxs",
-        canvas, x, cbuf);
+        canvas, x, x->x_gui.x_fcol->s_name);
 }
 
 static void slider__clickhook(t_scalehandle *sh, int newstate)
@@ -258,19 +254,19 @@ static void slider_properties(t_gobj *z, t_glist *owner)
     int minx = x->x_orient ? IEM_GUI_MINSIZE : IEM_SL_MINSIZE;
     int miny = x->x_orient ? IEM_SL_MINSIZE : IEM_GUI_MINSIZE;
     iemgui_properties(&x->x_gui, srl);
-    sprintf(buf, "pdtk_iemgui_dialog %%s |%csl| \
-        --------dimensions(pix)(pix):-------- %d %d width: %d %d height: \
-        -----------output-range:----------- %g left: %g right: %g \
-        %d lin log %d %d empty %d {%s} {%s} {%s} %d %d %d %d %d %d %d\n",
-        x->x_orient ? 'v' : 'h',
-        x->x_gui.x_w, minx, x->x_gui.x_h, miny,
-        x->x_min, x->x_max, 0.0,/*no_schedule*/
-        x->x_lin0_log1, x->x_gui.x_loadinit, x->x_steady, -1,/*no multi, but iem-characteristic*/
-        srl[0]->s_name, srl[1]->s_name,
-        srl[2]->s_name, x->x_gui.x_ldx, x->x_gui.x_ldy,
-        x->x_gui.x_font_style, x->x_gui.x_fontsize,
-        0xffffffff & x->x_gui.x_bcol, 0xffffffff & x->x_gui.x_fcol,
-        0xffffffff & x->x_gui.x_lcol);
+//    sprintf(buf, "pdtk_iemgui_dialog %%s |%csl| \
+//        --------dimensions(pix)(pix):-------- %d %d width: %d %d height: \
+//        -----------output-range:----------- %g left: %g right: %g \
+//        %d lin log %d %d empty %d {%s} {%s} {%s} %d %d %d %d %d %d %d\n",
+//        x->x_orient ? 'v' : 'h',
+//        x->x_gui.x_w, minx, x->x_gui.x_h, miny,
+//        x->x_min, x->x_max, 0.0,/*no_schedule*/
+//        x->x_lin0_log1, x->x_gui.x_loadinit, x->x_steady, -1,/*no multi, but iem-characteristic*/
+//        srl[0]->s_name, srl[1]->s_name,
+//        srl[2]->s_name, x->x_gui.x_ldx, x->x_gui.x_ldy,
+//        x->x_gui.x_font_style, x->x_gui.x_fontsize,
+//        x->x_gui.x_bcol, x->x_gui.x_fcol,
+//        x->x_gui.x_lcol);
     //gfxstub_new(&x->x_gui.x_obj.ob_pd, x, buf);
     gfx_tag = gfxstub_new2(&x->x_gui.x_obj.ob_pd, &x->x_gui);
     gui_start_vmess("gui_iemgui_dialog", "s", gfx_tag);
@@ -291,9 +287,9 @@ static void slider_properties(t_gobj *z, t_glist *owner)
     gui_s("y_offset");         gui_i(x->x_gui.x_ldy);
     gui_s("font_style");       gui_i(x->x_gui.x_font_style);
     gui_s("font_size");        gui_i(x->x_gui.x_fontsize);
-    gui_s("background_color"); gui_i(0xffffffff & x->x_gui.x_bcol);
-    gui_s("foreground_color"); gui_i(0xffffffff & x->x_gui.x_fcol);
-    gui_s("label_color");      gui_i(0xffffffff & x->x_gui.x_lcol);
+    gui_s("background_color"); gui_s(x->x_gui.x_bcol->s_name);
+    gui_s("foreground_color"); gui_s(x->x_gui.x_fcol->s_name);
+    gui_s("label_color");      gui_s(x->x_gui.x_lcol->s_name);
     gui_s("exclusive");        gui_i(x->x_exclusive);
     gui_s("interactive");      gui_i(x->x_gui.x_click);
 
@@ -579,9 +575,9 @@ static void *slider_new(t_symbol *s, int argc, t_atom *argv)
     iem_inttosymargs(&x->x_gui, 0);
     iem_inttofstyle(&x->x_gui, 0);
 
-    x->x_gui.x_bcol = 0xFFFCFCFC;
-    x->x_gui.x_fcol = 0xFF000000;
-    x->x_gui.x_lcol = 0xFF000000;
+    x->x_gui.x_bcol = gensym("#FCFCFCFF");
+    x->x_gui.x_fcol = gensym("#000000FF");
+    x->x_gui.x_lcol = gensym("#000000FF");
     x->x_gui.x_click = 1;
 
     if(argc >= 17&&IS_A_FLOAT(argv,0)&&IS_A_FLOAT(argv,1)

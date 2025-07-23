@@ -5808,24 +5808,21 @@ function gui_bng_new(cid, tag, cx, cy, radius) {
 }
 
 function gui_bng_button_color(cid, tag, color) {
-    var rgba = color2rgba(color);
     gui(cid).get_elem(tag + "button", {
-        fill: rgba
+        fill: color
     });
 }
 
 function gui_bng_configure(cid, tag, color, cx, cy, r) {
-    var rgba = color2rgba(color);
     gui(cid).get_elem(tag + "button", {
         cx: cx,
         cy: cy,
         r: r,
-        fill: rgba
+        fill: color
     });
 }
 
 function gui_toggle_new(cid, tag, color, width, state, p1,p2,p3,p4,p5,p6,p7,p8,basex,basey) {
-    var rgba = color2rgba(color);
     gui(cid).get_gobj(tag)
     .append(function(frag) {
         var points = [p1 - basex, p2 - basey,
@@ -5833,7 +5830,7 @@ function gui_toggle_new(cid, tag, color, width, state, p1,p2,p3,p4,p5,p6,p7,p8,b
         ].join(" ");
         var cross1 = create_item(cid, "polyline", {
             points: points,
-            stroke: rgba,
+            stroke: color,
             fill: "none",
             id: tag + "cross1",
             display: state ? "inline" : "none",
@@ -5844,7 +5841,7 @@ function gui_toggle_new(cid, tag, color, width, state, p1,p2,p3,p4,p5,p6,p7,p8,b
         ].join(" ");
         var cross2 = create_item(cid, "polyline", {
             points: points,
-            stroke: rgba,
+            stroke: color,
             fill: "none",
             id: tag + "cross2",
             display: state ? "inline" : "none",
@@ -5875,16 +5872,15 @@ function gui_toggle_resize_cross(cid,tag,w,p1,p2,p3,p4,p5,p6,p7,p8,basex,basey) 
 }
 
 function gui_toggle_update(cid, tag, state, color) {
-    var rgba = color2rgba(color);
     var disp = !!state ? "inline" : "none";
     gui(cid)
     .get_elem(tag + "cross1", {
         display: disp,
-        stroke: rgba
+        stroke: color
     })
     .get_elem(tag + "cross2", {
         display: disp,
-        stroke: rgba
+        stroke: color
     })
 }
 
@@ -5912,11 +5908,10 @@ function gui_numbox_new(cid, ownercid, parentcid, tag, color, x, y, w, h, drawst
     // so we must create its gobj manually
     //gui(cid).get_elem("patchsvg", function() {
     //    var g = gui_gobj_new(cid, tag, "iemgui", x, y, is_toplevel);
-    var rgba = color2rgba(color);
     var g = gui_gobj_new(cid, ownercid, parentcid, tag, "iemgui", x, y, is_toplevel, 0, "numbox2", "numbox2");
     var border = create_item(cid, "path", {
         d: numbox_data_string_frame(w, h),
-        fill: rgba,
+        fill: color,
         stroke: "black",
         "stroke-width": (drawstyle < 2 ? 1 : 0),
         id: (tag + "border"),
@@ -5925,7 +5920,7 @@ function gui_numbox_new(cid, ownercid, parentcid, tag, color, x, y, w, h, drawst
     g.appendChild(border);
     var triangle = create_item(cid, "path", {
         d: numbox_data_string_triangle(w, h),
-        fill: rgba,
+        fill: color,
         stroke: "black",
         "stroke-width": (drawstyle == 0 || drawstyle ==  2 ? 1 : 0),
         id: (tag + "triangle"),
@@ -5959,13 +5954,12 @@ function gui_numbox_draw_text(cid, tag, text, font_size, color, xpos,
         } else {
             trans_y = (font_size - fontmargin/2);
         }
-        var rgba = color2rgba(color);
         var svg_text = create_item(cid, "text", {
             transform: "translate(" +
                         (xpos - basex) + "," + trans_y + ")",
                         //((ypos - basey + (ypos - basey) * 0.5)|0) + ")",
             "font-size": font_size,
-            fill: rgba,
+            fill: color,
             id: tag + "text",
             class: "cut copy paste" + (is_toplevel === 1 ? " toplevel" : "")
         }),
@@ -5977,19 +5971,17 @@ function gui_numbox_draw_text(cid, tag, text, font_size, color, xpos,
 }
 
 function gui_numbox_update(cid, tag, fcolor, bgcolor, num_font_size, font_name, font_size, font_weight, drawstyle) {
-    var brgba = color2rgba(bgcolor);
-    var frgba = color2rgba(fcolor);
     gui(cid)
     .get_elem(tag + "border", {
-        fill: brgba,
+        fill: bgcolor,
         "stroke-width": (drawstyle < 2 ? 1 : 0),
     })
     .get_elem(tag + "triangle", {
-        fill: brgba,
+        fill: bgcolor,
         "stroke-width": (drawstyle == 0 || drawstyle ==  2 ? 1 : 0),
     })
     .get_elem(tag + "text", {
-        fill: frgba,
+        fill: fcolor,
         "font-size": num_font_size
     })
     // label may or may not exist, but that's covered by the API
@@ -6015,7 +6007,6 @@ function gui_numbox_update_text_position(cid, tag, x, y, font_size, fontmargin) 
 }
 
 function gui_slider_new(cid, tag, color, p1, p2, p3, p4, basex, basey) {
-    var rgba = color2rgba(color);
     gui(cid).get_gobj(tag)
     .append(function(frag) {
         var indicator = create_item(cid, "line", {
@@ -6023,7 +6014,7 @@ function gui_slider_new(cid, tag, color, p1, p2, p3, p4, basex, basey) {
             y1: p2 - basey,
             x2: p3 - basex,
             y2: p4 - basey,
-            stroke: rgba,
+            stroke: color,
             "stroke-width": 3,
             fill: "none",
             id: tag + "indicator"
@@ -6043,9 +6034,8 @@ function gui_slider_update(cid, tag, p1, p2, p3, p4, basex, basey) {
 }
 
 function gui_slider_indicator_color(cid, tag, color) {
-    var rgba = color2rgba(color);
     gui(cid).get_elem(tag + "indicator", {
-        stroke: rgba
+        stroke: color
     });
 }
 
@@ -6069,7 +6059,6 @@ function gui_radio_new(cid, tag, p1, p2, p3, p4, i, basex, basey) {
 }
 
 function gui_radio_create_buttons(cid ,tag, color, p1, p2, p3, p4, basex, basey, i, state) {
-    var rgba = color2rgba(color);
     gui(cid).get_gobj(tag)
     .append(function(frag) {
         var b = create_item(cid, "rect", {
@@ -6077,8 +6066,8 @@ function gui_radio_create_buttons(cid ,tag, color, p1, p2, p3, p4, basex, basey,
             y: p2 - basey,
             width: p3 - p1,
             height: p4 - p2,
-            stroke: rgba,
-            fill: rgba,
+            stroke: color,
+            fill: color,
             id: tag + "button_" + i,
             display: state ? "inline" : "none"
         });
@@ -6109,15 +6098,14 @@ function gui_radio_button_coords(cid, tag, x1, y1, xi, yi, i, s, d, orient) {
 }
 
 function gui_radio_update(cid, tag, color, prev, next) {
-    var rgba = color2rgba(color);
     gui(cid)
     .get_elem(tag + "button_" + prev, {
         display: "none"
     })
     .get_elem(tag + "button_" + next, {
         display: "inline",
-        fill: rgba,
-        stroke: rgba
+        fill: color,
+        stroke: color
     });
 }
 
@@ -6149,9 +6137,8 @@ function gui_vumeter_draw_text(cid, tag, color, xpos, ypos, text, index, basex, 
 // To get on to other work we just parrot the insanity here,
 // and silently ignore calls to update non-existent text.
 function gui_vumeter_update_text(cid, tag, text, font, selected, color, i) {
-    var rgba = color2rgba(color);
     gui(cid).get_elem(tag + "text_" + i, {
-        fill: rgba
+        fill: color
     });
 }
 
@@ -6169,7 +6156,6 @@ function gui_vumeter_erase_text(cid, tag, i) {
 }
 
 function gui_vumeter_create_steps(cid, tag, color, p1, p2, p3, p4, width, basex, basey, i) {
-    var rgba = color2rgba(color);
     gui(cid).get_gobj(tag)
     .append(function(frag) {
         var l = create_item(cid, "line", {
@@ -6177,7 +6163,7 @@ function gui_vumeter_create_steps(cid, tag, color, p1, p2, p3, p4, width, basex,
             y1: p2 - basey,
             x2: p3 - basex,
             y2: p4 - basey,
-            stroke: rgba,
+            stroke: color,
             "stroke-width": width,
             "id": tag + "led_" + i
         });
@@ -6202,7 +6188,6 @@ function gui_vumeter_update_step_coords(cid, tag, i, x1, y1, x2, y2, basex, base
 }
 
 function gui_vumeter_draw_rect(cid, tag, color, p1, p2, p3, p4, basex, basey) {
-    var rgba = color2rgba(color);
     gui(cid).get_gobj(tag)
     .append(function(frag) {
         var rect = create_item(cid, "rect", {
@@ -6210,8 +6195,8 @@ function gui_vumeter_draw_rect(cid, tag, color, p1, p2, p3, p4, basex, basey) {
             y: p2 - basey,
             width: p3 - p1,
             height: p4 + 1 - p2,
-            stroke: rgba,
-            fill: rgba,
+            stroke: color,
+            fill: color,
             id: tag + "rect"
         });
         frag.appendChild(rect);
@@ -6220,10 +6205,9 @@ function gui_vumeter_draw_rect(cid, tag, color, p1, p2, p3, p4, basex, basey) {
 }
 
 function gui_vumeter_update_rect(cid, tag, color) {
-    var rgba = color2rgba(color);
     gui(cid).get_elem(tag + "rect", {
-        fill: rgba,
-        stroke: rgba
+        fill: color,
+        stroke: color
     });
 }
 
@@ -6244,7 +6228,6 @@ function gui_vumeter_update_peak_width(cid, tag, width) {
 }
 
 function gui_vumeter_draw_peak(cid, tag, color, p1, p2, p3, p4, width, basex, basey) {
-    var rgba = color2rgba(color);
     gui(cid).get_gobj(tag)
     .append(function(frag) {
         var line = create_item(cid, "line", {
@@ -6252,7 +6235,7 @@ function gui_vumeter_draw_peak(cid, tag, color, p1, p2, p3, p4, width, basex, ba
             y1: p2 - basey,
             x2: p3 - basex,
             y2: p4 - basey,
-            stroke: rgba,
+            stroke: color,
             "stroke-width": width,
             id: tag + "peak"
         }); 
@@ -6272,21 +6255,19 @@ function gui_vumeter_update_rms(cid, tag, p1, p2, p3, p4, basex, basey) {
 }
 
 function gui_vumeter_update_peak(cid,tag,color,p1,p2,p3,p4,basex,basey) {
-    var rgba = color2rgba(color);
     gui(cid).get_elem(tag + "peak", {
         x1: p1 - basex,
         y1: p2 - basey,
         x2: p3 - basex,
         y2: p4 - basey,
-        stroke: rgba
+        stroke: color
     });
 }
 
 function gui_iemgui_base_color(cid, tag, color) {
-    var rgba = color2rgba(color);
     gui(cid).get_gobj(tag)
     .q(".border", {
-        fill: rgba
+        fill: color
     });
 }
 
@@ -6344,8 +6325,6 @@ function iemgui_fontfamily(name) {
 function gui_iemgui_label_new(cid, tag, x, y, color, text, fontname, fontweight,
     fontsize) {
     //post("gui_iemgui_label_new " + color);
-    var rgba = color2rgba(color);
-    //post("..." + rgba);
     gui(cid).get_gobj(tag)
     .append(function(frag, w) {
         var svg_text = create_item(cid, "text", {
@@ -6357,7 +6336,7 @@ function gui_iemgui_label_new(cid, tag, x, y, color, text, fontname, fontweight,
             // for some reason the font looks bold in Pd-Vanilla-- not sure why
             "font-weight": fontweight,
             "font-size": fontsize + "px",
-            fill: rgba,
+            fill: color,
             // Iemgui labels are anchored "w" (left-aligned to non-tclers).
             // For no good reason, they are also centered vertically, unlike
             // object box text. Since svg text uses the baseline as a reference
@@ -6395,11 +6374,8 @@ function gui_iemgui_label_coords(cid, tag, x, y) {
 }
 
 function gui_iemgui_label_color(cid, tag, color) {
-    //post("gui_iemgui_label_color color " + color);
-    var rgba = color2rgba(color);
-    //post("..." + rgba);
     gui(cid).get_elem(tag + "label", {
-        fill: rgba
+        fill: color
     });
 }
 
@@ -6604,15 +6580,14 @@ function gui_iemgui_label_displace_drag_handle(cid, tag, dx, dy) {
 
 function gui_mycanvas_new(cid, ownercid, parentcid, tag, color, x1, y1,
     x2_vis, y2_vis, x2, y2, is_toplevel) {
-    var rgba = color2rgba(color);
     gui(cid).get_gobj(tag)
     .append(function(frag) {
         var rect_vis, rect, g;
         rect_vis = create_item(cid, "rect", {
             width: x2_vis - x1,
             height: y2_vis - y1,
-            fill: rgba,
-            stroke: rgba,
+            fill: color,
+            stroke: color,
             id: tag + "rect"
             }
         );
@@ -6632,7 +6607,7 @@ function gui_mycanvas_new(cid, ownercid, parentcid, tag, color, x1, y1,
             width: x2 - x1,
             height: y2 - y1,
             fill: "none",
-            stroke: rgba,
+            stroke: color,
             id: tag + "drag_handle",
             "class": (is_toplevel === 1 ? "toplevel " : "") + "border mycanvas_border"
             }
@@ -6644,14 +6619,13 @@ function gui_mycanvas_new(cid, ownercid, parentcid, tag, color, x1, y1,
 }
 
 function gui_mycanvas_update(cid, tag, color, selected) {
-    var rgba = color2rgba(color);
     gui(cid)
     .get_elem(tag + "rect", {
-        fill: rgba,
-        stroke: rgba
+        fill: color,
+        stroke: color
     })
     .get_elem(tag + "drag_handle", {
-        stroke: rgba
+        stroke: color
     });
 }
 
@@ -8219,13 +8193,6 @@ function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
         h = size;
     //post("gui_configure_mknob size=" + size + " w=" + xtra_w);
 
-    //post("gui_configure_mknob bg " + bg_color + " fg " + fg_color);
-
-    var fg_rgba = color2rgba(fg_color);
-    var bg_rgba = color2rgba(bg_color);
-
-    //post("gui_configure_mknob bg " + bg_rgba + " fg " + fg_rgba);
-
     var g = gui(cid).get_gobj(tag)
     .q(".border", {
         d: ["M", -xtra_w, -xtra_w, w+xtra_w, -xtra_w,
@@ -8237,7 +8204,7 @@ function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
     })
     .q("." + tag + "dial", { // indicator
         "stroke-width": dial_w,
-        stroke: fg_rgba
+        stroke: fg_color
     });
 
     if (!is_footils_knob) {
@@ -8245,7 +8212,7 @@ function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
             cx: size / 2,
             cy: size / 2,
             r: size / 2,
-            fill: bg_rgba,
+            fill: bg_color,
             stroke: "black",
             "stroke-width": 1,
             "stroke-dasharray": "none",
@@ -8261,7 +8228,7 @@ function gui_configure_mknob(cid, tag, size, bg_color, fg_color,
         g.q("." + tag + "dial_frag", {
             "knob_w": size,
             fill: "none",
-            stroke: bg_rgba,
+            stroke: bg_color,
             "stroke-width": frag_w,
             "d": describeArc(size/2, size/2, size/2 - 1, 192.9, 528.1),
         });
@@ -11537,28 +11504,3 @@ function reset_user_settings() {
 }
 
 exports.reset_user_settings = reset_user_settings;
-
-function color2rgba(color) {
-    //post("color2rgba " + color + " " + color.length);
-    var rgba = color;
-    if (rgba.length === 8) {
-        // special case where an argb color of #01000000,
-        // when it gets converted to an int, (conversion inside
-        // g_all_guis.c removes '#' and when parsing the value
-        // into an int, it loses the leading 0
-        rgba = "#0" + rgba.slice(1,8);
-        //post("...8 " + rgba);
-    }
-    while(rgba.length < 9) {
-        // deal with simple values, like #0 that is truncated
-        // from #00000000
-        rgba = rgba + '0';
-    }
-    //post("...post-while " + rgba);
-    // finally, convert argb to rgba
-    if (rgba.length === 9) {
-        rgba = rgba.slice(0,1) + rgba.slice(3,9) + rgba.slice(1,3);
-    }
-    //post("...final " + rgba);
-    return rgba;
-}
