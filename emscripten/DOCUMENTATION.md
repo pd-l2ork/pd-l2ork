@@ -77,8 +77,8 @@ docker-compose up --build -d
 3. Install the nvm server by following online instruction (see https://github.com/itp-dwd/2020-spring/blob/master/guides/installing-nodejs.md) OR reference the pd-l2ork one (https://l2ork.music.vt.edu:3000). Below is the key command (note that the version may change):
 
 		cd emscripten/projects/WebPdL2Ork
-		curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash
-		npm install dependencies
+		npm i
+		node .
 
 4. Copy your patch to the [emscripten/build/WebPdL2Ork/public](./build/WebPdL2Ork/public) folder.
 
