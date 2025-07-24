@@ -39,7 +39,7 @@ build: $(SRC_FILES) $(DESTDIR)
 	@echo "build/Makefile building with $(CFLAGS)..."
 # use this to clear the cache
 #	emcc  --cache ./emcc-cache --clear-cache
-	emcc $(CFLAGS) -s MAIN_MODULE=1 --bind -o $(TARGET) $(SRC_FILES) \
+	emcc $(CFLAGS) -s MAIN_MODULE=1 -s MODULARIZE -s EXPORT_NAME="WebPdL2OrkModule" --shell-file ../shell_custom.html --bind -o $(TARGET) $(SRC_FILES) \
 	-s USE_SDL=2 -s USE_OGG=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s ALLOW_MEMORY_GROWTH=1 \
 	-s FORCE_FILESYSTEM=1 -s EXPORTED_RUNTIME_METHODS=FS \
 	$(LDFLAGS) --cache ./emcc-cache
