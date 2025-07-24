@@ -192,7 +192,7 @@ Hard drive space required: *roughly 2 GB*
 
 6. There should now be a .dmg file in your current directory, which lets you install the app in the usual way
 
-#### Windows 32-bit Using msys2
+#### Windows 64-bit Using msys2
 
 Time to build: *roughly 30-60 minutes--most of this is for Gem alone*  
 Hard drive space required to build: *rougly 2.5 GB*
@@ -213,10 +213,10 @@ since it will usually contain spaces, making the build fail.
 
 2. Download and install the [inno setup Quickstart Pack](http://www.jrsoftware.org/isdl.php) which includes the Script Editor
 
-3. Run the "MSYS2 MinGW 32-bit" shell  
+3. Run the "MSYS2 MinGW 64-bit" shell  
    msys2 adds three Start Menu items for different "flavors" of shell:
-    + MSYS2 MinGW __32-bit__ <- click this one!
-    + MSYS2 MinGW 64-bit
+    + MSYS2 MinGW 32-bit
+    + MSYS2 MinGW 64-bit <- click this one!
     + MSYS2 MSYS
 
 4. Install the dependencies  
@@ -233,19 +233,19 @@ since it will usually contain spaces, making the build fail.
    Now everything should be up-to-date. Issue the following command:
 
         pacman -S autoconf automake git libtool \
-          make mingw-w64-i686-dlfcn \
-          mingw-w64-i686-fluidsynth \
-          mingw-w64-i686-SDL2 \
-          mingw-w64-i686-ftgl mingw-w64-i686-fribidi \
-          mingw-w64-i686-ladspa-sdk mingw-w64-i686-lame \
-          mingw-w64-i686-libsndfile mingw-w64-i686-libvorbis \
-          mingw-w64-i686-lua mingw-w64-i686-toolchain \
-          mingw-w64-i686-libjpeg-turbo \
-          mingw-w64-i686-speex \
-          rsync unzip wget mingw-w64-i686-cmake \
-          mingw-w64-i686-ninja \
-          mingw-w64-i686-glfw mingw-w64-i686-pcre \
-          mingw-w64-i686-ntldd-git
+          make mingw-w64-x86_64-dlfcn \
+          mingw-w64-x86_64-fluidsynth \
+          mingw-w64-x86_64-SDL2 \
+          mingw-w64-x86_64-ftgl mingw-w64-x86_64-fribidi \
+          mingw-w64-x86_64-ladspa-sdk mingw-w64-x86_64-lame \
+          mingw-w64-x86_64-libsndfile mingw-w64-x86_64-libvorbis \
+          mingw-w64-x86_64-lua mingw-w64-x86_64-toolchain \
+          mingw-w64-x86_64-libjpeg-turbo \
+          mingw-w64-x86_64-speex \
+          rsync unzip wget mingw-w64-x86_64-cmake \
+          mingw-w64-x86_64-ninja \
+          mingw-w64-x86_64-glfw mingw-w64-x86_64-pcre \
+          mingw-w64-x86_64-ntldd-git
 
 5. Download the source code  
    Issue the following command to create a new directory "pd-l2ork" and clone
@@ -266,13 +266,13 @@ since it will usually contain spaces, making the build fail.
 8. Look in the top level source directory and double-click the setup file to
    start installing Pd-L2Ork on your system.
 
-#### Windows 64-bit Using msys2
+#### Windows 32-bit Using msys2 (deprecated)
 
-The instructions are exactly the same as for the 32 bit build (see above), but the build needs to be done using mingw64 instead of mingw32. That is:
+The instructions are exactly the same as for the 64 bit build (see above), but the build needs to be done using mingw32 instead of mingw64. That is:
 
-- Install the mingw64 packages for the dependencies. See the i686 packages listed under dependencies above, and replace i686 with x86_64 in the package names when installing.
+- Install the mingw64 packages for the dependencies. See the x86_64 packages listed under dependencies above, and replace x86_64 with i686 in the package names when installing.
 
-- Use the MSYS2 MinGW 64-bit shell (rather than the 32-bit shell) to do the build.
+- Use the MSYS2 MinGW 32-bit shell (rather than the 64-bit shell) to do the build.
 
 ### Code of Conduct
 
