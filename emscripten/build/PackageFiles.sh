@@ -51,5 +51,22 @@ fi
 # Start processing files in chunks
 mkdir -p $3
 create_chunks $1 $3
-cat main-*.js >> $2
+
+# When we use MODULARIZE, there is no more global Module variable. It only exists
+# inside a function scope which is called on demand. This messes with the filesys
+# code that the file packaging tool generates. So, we inject the filesys code in
+# the middle of the function so that it can use the Module variable in that scope
+
+# Extract everything before 'var Module = moduleArg;' and save it in a temporary file
+perl -ne '/^(\s*var\s+Module\s*=\s*moduleArg;).*/ && do { print $1 . "\n"; exit }; print' "$2" > "$2.tmp"
+
+# Append all the filesys code
+cat main-*.js >> "$2.tmp"
+
+# Append the rest of the original outputfile after 'var Module = moduleArg;'
+perl -ne '/^(\s*var\s+Module\s*=\s*moduleArg;).*/ && do { $start=1 }; $start ? print : next' "$2" >> "$2.tmp"
+
+# Overwrite the original file with the new file that has the filesys code
+mv "$2.tmp" "$2"
+
 rm main-*.js

@@ -17,6 +17,7 @@
 // EM_JS functions are exposed to the global scope in javascript
 // we use a double underscore prefix to prevent potential namespace collision
 EM_JS(void, __mainInit, (void), {
+    window.pdl2ork = Module;
     if (typeof Module.mainInit === "function") {
         Module.mainInit();
     }
