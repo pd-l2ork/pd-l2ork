@@ -261,7 +261,8 @@ function suspendAudio() {
 // ].forEach(name => document.addEventListener(name, resumeAudio));
 
 //--------------------- emscripten ----------------------------
-var Module = {
+let pdl2ork;
+let pdl2ork_promise = WebPdL2OrkModule({
     preRun: []
     , postRun: []
     , print: function (e) {
@@ -274,15 +275,122 @@ var Module = {
     }
     , pd: {} // make pd object accessible from outside of the scope
     , locateFile: (file, base) => (base?.length ? base : '/') + file
-    , mainInit: function () { // called after Module is ready
-        Module.pd = new Module.Pd(); // instantiate Pd object
-        if (typeof Module.pd != "object") {
+    , mainInit: function () { // called after pdl2ork is ready
+        pdl2ork = window.pdl2ork;
+
+        //Cyclone shenanigans
+        for (let file of hammerFiles)
+            pdl2ork.FS.symlink('/pd-l2ork-web/extra/cyclone/Hammer.wasm', `/pd-l2ork-web/extra/cyclone/${file}`);
+        for (let file of sickleFiles.filter(f => !hammerFiles.includes(f)))
+            pdl2ork.FS.symlink('/pd-l2ork-web/extra/cyclone/Sickle.wasm', `/pd-l2ork-web/extra/cyclone/${file}`);
+
+        // Intercept file reads
+        pdl2ork.FS.open = function (path, flags, mode) {
+            let isNetworkCandidate = !['wasm', 'so', 'pat', 'pd'].map(ext => ('' + path).endsWith(ext)).find(matches => matches == true);
+            if (path === "") {
+                throw new pdl2ork.FS.ErrnoError(44)
+            }
+            flags = typeof flags == "string" ? pdl2ork.FS_modeStringToFlags(flags) : flags;
+            mode = typeof mode == "undefined" ? 438 : mode;
+            if (flags & 64) {
+                mode = mode & 4095 | 32768
+            } else {
+                mode = 0
+            }
+            var node;
+            if (typeof path == "object") {
+                node = path
+            } else {
+                try {
+                    var lookup = pdl2ork.FS.lookupPath(path, {
+                        follow: !(flags & 131072)
+                    });
+                    node = lookup.node
+                    path = lookup.path
+
+                } catch (e) {
+                    if (isNetworkCandidate) {
+                        if (fileCache[path])
+                            node = fileCache[path];
+                        else {
+                            const request = new XMLHttpRequest();
+                            request.open('POST', window.location.origin + '/api/file', false);
+                            request.setRequestHeader('content-type', 'application/json')
+                            request.overrideMimeType('text/plain; charset=x-user-defined'); // Set MIME type for binary data
+                            request.send(buildFileApiBody(path));
+                            if (request.status === 200) {
+                                let folder = path.split('/').slice(0, -1).join('/') + '/';
+                                pdl2ork.FS.createPath('/', folder);
+                                pdl2ork.FS.createDataFile(folder, path.split('/').slice(-1)[0], request.response, true, true, true);
+                                fileCache[path] = pdl2ork.FS.lookupPath(path, { follow: !(flags & 131072) }).node;
+                                node = fileCache[path];
+                                path = pdl2ork.FS.getPath(node)
+                            }
+                        }
+                    }
+                }
+            }
+            var created = false;
+            if (flags & 64) {
+                if (node) {
+                    if (flags & 128) {
+                        throw new pdl2ork.FS.ErrnoError(20)
+                    }
+                } else {
+                    node = pdl2ork.FS.mknod(path, mode, 0);
+                    created = true
+                }
+            }
+            if (!node) {
+                throw new pdl2ork.FS.ErrnoError(44)
+            }
+            if (pdl2ork.FS.isChrdev(node.mode)) {
+                flags &= ~512
+            }
+            if (flags & 65536 && !pdl2ork.FS.isDir(node.mode)) {
+                throw new pdl2ork.FS.ErrnoError(54)
+            }
+            if (!created) {
+                var errCode = pdl2ork.FS.mayOpen(node, flags);
+                if (errCode) {
+                    throw new pdl2ork.FS.ErrnoError(errCode)
+                }
+            }
+            if (flags & 512 && !created) {
+                pdl2ork.FS.truncate(node, 0)
+            }
+            flags &= ~(128 | 512 | 131072);
+            var stream = pdl2ork.FS.createStream({
+                node: node,
+                path: pdl2ork.FS.getPath(node),
+                flags: flags,
+                seekable: true,
+                position: 0,
+                stream_ops: node.stream_ops,
+                ungotten: [],
+                error: false
+            });
+            if (stream.stream_ops.open) {
+                stream.stream_ops.open(stream)
+            }
+            if (pdl2ork["logReadFiles"] && !(flags & 1)) {
+                if (!pdl2ork.FS.readFiles)
+                    pdl2ork.FS.readFiles = {};
+                if (!(path in pdl2ork.FS.readFiles)) {
+                    pdl2ork.FS.readFiles[path] = 1
+                }
+            }
+            return stream;
+        }
+
+        pdl2ork.pd = new pdl2ork.Pd(); // instantiate Pd object
+        if (typeof pdl2ork.pd != "object") {
             alert("Pd-l2Ork: failed to instantiate pd object");
             console.error("Pd-l2Ork: failed to instantiate pd object");
-            Module.mainExit();
+            pdl2ork.mainExit();
             return;
         }
-        var pd = Module.pd;
+        var pd = pdl2ork.pd;
         pd.setNoGui(true); // set to true if you don't use the pd's gui
 
         // create an AudioContext
@@ -307,7 +415,7 @@ var Module = {
         else {
             alert("The Web Audio API is not supported in this browser.");
             console.error("Audio: failed to use the web audio");
-            Module.mainExit();
+            pdl2ork.mainExit();
             return;
         }
 
@@ -316,7 +424,7 @@ var Module = {
         if (typeof WebMidi != "object") {
             alert("Midi: failed to find the 'WebMidi' object");
             console.error("Midi: failed to find the 'WebMidi' object");
-            Module.mainExit();
+            pdl2ork.mainExit();
             return;
         }
 
@@ -376,7 +484,7 @@ var Module = {
         }, false); // not use sysex
 
         // reinit pd (called by "pd audio-dialog" message)
-        Module.Pd.reinit = function (newinchan, newoutchan, newrate) {
+        pdl2ork.Pd.reinit = function (newinchan, newoutchan, newrate) {
             if (pd.init(newinchan, newoutchan, newrate, pd.getTicksPerBuffer())) {
 
                 // print obtained settings
@@ -390,14 +498,14 @@ var Module = {
                 // failed to reinit pd
                 alert("Pd-l2Ork: failed to reinitialize pd");
                 console.error("Pd-l2Ork: failed to reinitialize pd");
-                Module.mainExit();
+                pdl2ork.mainExit();
             }
         }
 
         // open midi (called by "pd midi-dialog" message)
         // receives input/output arrays of only selected devices
         // 0: first available device, 1: second available device...
-        Module.Pd.openMidi = function (midiinarr, midioutarr) {
+        pdl2ork.Pd.openMidi = function (midiinarr, midioutarr) {
             if (!isWebMidiSupported)
                 return;
 
@@ -476,7 +584,7 @@ var Module = {
         }
 
         // get midi in device name
-        Module.Pd.getMidiInDeviceName = function (devno) {
+        pdl2ork.Pd.getMidiInDeviceName = function (devno) {
             if (!isWebMidiSupported)
                 return;
             if (devno >= WebMidi.inputs.length || devno < 0) {
@@ -490,7 +598,7 @@ var Module = {
         }
 
         // get midi out device name
-        Module.Pd.getMidiOutDeviceName = function (devno) {
+        pdl2ork.Pd.getMidiOutDeviceName = function (devno) {
             if (!isWebMidiSupported)
                 return;
             if (devno >= WebMidi.inputs.length || devno < 0) {
@@ -504,7 +612,7 @@ var Module = {
         }
 
         // receive gui commands (only called in gui mode)
-        Module.Pd.receiveCommandBuffer = function (data) {
+        pdl2ork.Pd.receiveCommandBuffer = function (data) {
             var command_buffer = {
                 next_command: ""
             };
@@ -513,7 +621,7 @@ var Module = {
 
         // receive print messages (only called in no gui mode)
         let buf = '';
-        Module.Pd.receivePrint = function (s) {
+        pdl2ork.Pd.receivePrint = function (s) {
             let lines = s.split('\n');
             for(let i = 0; i < lines.length - 1; i++) {
                 buf += lines[i];
@@ -524,7 +632,7 @@ var Module = {
         }
 
         // receive from pd's subscribed sources
-        Module.Pd.receiveBang = function (source) {
+        pdl2ork.Pd.receiveBang = function (source) {
             sendToChildren({
                 type: 'pd',
                 data: {
@@ -577,7 +685,7 @@ var Module = {
             }
         }
 
-        Module.Pd.receiveFloat = function (source, value) {
+        pdl2ork.Pd.receiveFloat = function (source, value) {
             sendToChildren({
                 type: 'pd',
                 data: {
@@ -652,7 +760,7 @@ var Module = {
             }
         }
 
-        Module.Pd.receiveSymbol = function (source, symbol) {
+        pdl2ork.Pd.receiveSymbol = function (source, symbol) {
             sendToChildren({
                 type: 'pd',
                 data: {
@@ -699,7 +807,7 @@ var Module = {
             }
         }
 
-        Module.Pd.receiveList = function (source, list) {
+        pdl2ork.Pd.receiveList = function (source, list) {
             sendToChildren({
                 type: 'pd',
                 data: {
@@ -773,7 +881,7 @@ var Module = {
             }
         }
 
-        Module.Pd.receiveMessage = function (source, symbol, list) {
+        pdl2ork.Pd.receiveMessage = function (source, symbol, list) {
             sendToChildren({
                 type: 'pd',
                 data: {
@@ -1602,7 +1710,7 @@ var Module = {
         }
 
         // receive midi messages from pd and forward them to WebMidi output
-        Module.Pd.receiveNoteOn = function (channel, pitch, velocity) {
+        pdl2ork.Pd.receiveNoteOn = function (channel, pitch, velocity) {
             for (var i = 0; i < midiOutIds.length; i++) {
                 var output = WebMidi.getOutputById(midiOutIds[i]);
                 if (output) {
@@ -1611,7 +1719,7 @@ var Module = {
             }
         }
 
-        Module.Pd.receiveControlChange = function (channel, controller, value) {
+        pdl2ork.Pd.receiveControlChange = function (channel, controller, value) {
             for (var i = 0; i < midiOutIds.length; i++) {
                 var output = WebMidi.getOutputById(midiOutIds[i]);
                 if (output) {
@@ -1620,7 +1728,7 @@ var Module = {
             }
         }
 
-        Module.Pd.receiveProgramChange = function (channel, value) {
+        pdl2ork.Pd.receiveProgramChange = function (channel, value) {
             for (var i = 0; i < midiOutIds.length; i++) {
                 var output = WebMidi.getOutputById(midiOutIds[i]);
                 if (output) {
@@ -1629,7 +1737,7 @@ var Module = {
             }
         }
 
-        Module.Pd.receivePitchBend = function (channel, value) {
+        pdl2ork.Pd.receivePitchBend = function (channel, value) {
             for (var i = 0; i < midiOutIds.length; i++) {
                 var output = WebMidi.getOutputById(midiOutIds[i]);
                 if (output) {
@@ -1639,7 +1747,7 @@ var Module = {
             }
         }
 
-        Module.Pd.receiveAftertouch = function (channel, value) {
+        pdl2ork.Pd.receiveAftertouch = function (channel, value) {
             for (var i = 0; i < midiOutIds.length; i++) {
                 var output = WebMidi.getOutputById(midiOutIds[i]);
                 if (output) {
@@ -1648,7 +1756,7 @@ var Module = {
             }
         }
 
-        Module.Pd.receivePolyAftertouch = function (channel, pitch, value) {
+        pdl2ork.Pd.receivePolyAftertouch = function (channel, pitch, value) {
             for (var i = 0; i < midiOutIds.length; i++) {
                 var output = WebMidi.getOutputById(midiOutIds[i]);
                 if (output) {
@@ -1657,7 +1765,7 @@ var Module = {
             }
         }
 
-        Module.Pd.receiveMidiByte = function (port, byte) {
+        pdl2ork.Pd.receiveMidiByte = function (port, byte) {
         }
 
         // default audio settings
@@ -1682,7 +1790,7 @@ var Module = {
             pd.addToHelpPath(helpPath);
             pd.addToSearchPath(extPath);
             pd.addToHelpPath(extPath);
-            var dir = FS.readdir(extPath).sort();
+            var dir = pdl2ork.FS.readdir(extPath).sort();
             for (var i = 0; i < dir.length; i++) {
                 var item = dir[i];
                 if (item.charAt(0) != ".") {
@@ -1696,147 +1804,39 @@ var Module = {
         else { // failed to init pd
             alert("Pd-l2Ork: failed to initialize pd");
             console.error("Pd-l2Ork: failed to initialize pd");
-            Module.mainExit();
+            pdl2ork.mainExit();
         }
     }
     , mainLoop: function () { // called every frame (use for whatever)
     }
     , mainExit: function () { // this won't be called from emscripten
         console.error("quiting emscripten...");
-        if (typeof Module.pd == "object") {
-            Module.pd.clear(); // clear pd, close audio devices
-            Module.pd.unsubscribeAll(); // unsubscribe all subscribed sources
-            Module.pd.delete(); // quit SDL, emscripten
+        if (typeof pdl2ork.pd == "object") {
+            pdl2ork.pd.clear(); // clear pd, close audio devices
+            pdl2ork.pd.unsubscribeAll(); // unsubscribe all subscribed sources
+            pdl2ork.pd.delete(); // quit SDL, emscripten
         }
         if (typeof WebMidi == "object") {
             WebMidi.disable(); // disable all midi devices
         }
     }
-};
-
-Module['preRun'].push(function() {
-
-    //Cyclone shenanigans
-    for(let file of hammerFiles)
-        FS.symlink('/pd-l2ork-web/extra/cyclone/Hammer.wasm', `/pd-l2ork-web/extra/cyclone/${file}`);
-    for(let file of sickleFiles.filter(f=>!hammerFiles.includes(f)))
-        FS.symlink('/pd-l2ork-web/extra/cyclone/Sickle.wasm', `/pd-l2ork-web/extra/cyclone/${file}`);
-
-    // Intercept file reads
-    FS.open = function (path, flags, mode) {
-        let isNetworkCandidate = !['wasm','so','pat','pd'].map(ext=>('' + path).endsWith(ext)).find(matches => matches == true);
-        if (path === "") {
-            throw new FS.ErrnoError(44)
-        }
-        flags = typeof flags == "string" ? FS_modeStringToFlags(flags) : flags;
-        mode = typeof mode == "undefined" ? 438 : mode;
-        if (flags & 64) {
-            mode = mode & 4095 | 32768
-        } else {
-            mode = 0
-        }
-        var node;
-        if (typeof path == "object") {
-            node = path
-        } else {
-            path = PATH.normalize(path);
-            try {
-                var lookup = FS.lookupPath(path, {
-                    follow: !(flags & 131072)
-                });
-                node = lookup.node
-                
-            } catch (e) {
-                if(isNetworkCandidate) {
-                    if(fileCache[path])
-                        node = fileCache[path];
-                    else {
-                        const request = new XMLHttpRequest();
-                        request.open('POST', window.location.origin+'/api/file', false);
-                        request.setRequestHeader('content-type','application/json')
-                        request.overrideMimeType('text/plain; charset=x-user-defined'); // Set MIME type for binary data
-                        request.send(buildFileApiBody(path));
-                        if (request.status === 200) {
-                            let folder = path.split('/').slice(0,-1).join('/') + '/';
-                            FS.createPath('/', folder);
-                            FS.createDataFile(folder, path.split('/').slice(-1)[0], request.response, true, true, true);
-                            fileCache[path] = FS.lookupPath(path, { follow: !(flags & 131072) }).node;
-                            node = fileCache[path];
-                        }
-                    }
-                }
-            }
-        }
-        var created = false;
-        if (flags & 64) {
-            if (node) {
-                if (flags & 128) {
-                    throw new FS.ErrnoError(20)
-                }
-            } else {
-                node = FS.mknod(path, mode, 0);
-                created = true
-            }
-        }
-        if (!node) {
-            throw new FS.ErrnoError(44)
-        }
-        if (FS.isChrdev(node.mode)) {
-            flags &= ~512
-        }
-        if (flags & 65536 && !FS.isDir(node.mode)) {
-            throw new FS.ErrnoError(54)
-        }
-        if (!created) {
-            var errCode = FS.mayOpen(node, flags);
-            if (errCode) {
-                throw new FS.ErrnoError(errCode)
-            }
-        }
-        if (flags & 512 && !created) {
-            FS.truncate(node, 0)
-        }
-        flags &= ~(128 | 512 | 131072);
-        var stream = FS.createStream({
-            node: node,
-            path: FS.getPath(node),
-            flags: flags,
-            seekable: true,
-            position: 0,
-            stream_ops: node.stream_ops,
-            ungotten: [],
-            error: false
-        });
-        if (stream.stream_ops.open) {
-            stream.stream_ops.open(stream)
-        }
-        if (Module["logReadFiles"] && !(flags & 1)) {
-            if (!FS.readFiles)
-                FS.readFiles = {};
-            if (!(path in FS.readFiles)) {
-                FS.readFiles[path] = 1
-            }
-        }
-        return stream;
-    }
-});
-
+})
 
 //--------------------- pdgui.js ----------------------------
 
 function pdsend() {
     var string = Array.prototype.join.call(arguments, " ");
     var array = string.split(" ");
-    Module.pd.startMessage(array.length - 2);
+    pdl2ork.pd.startMessage(array.length - 2);
     for (let i = 2; i < array.length; i++) {
         if (isNaN(array[i]) || array[i] === "") {
-            Module.pd.addSymbol(array[i]);
+            pdl2ork.pd.addSymbol(array[i]);
         }
         else {
-            Module.pd.addFloat(+array[i]);
+            pdl2ork.pd.addFloat(+array[i]);
         }
     }
-    Module.pd.finishMessage(array[0], array[1]);
+    pdl2ork.pd.finishMessage(array[0], array[1]);
 }
 
 function gui_ping() {
@@ -2072,7 +2072,7 @@ function pd_subscribe_push(symbol) {
         subscriptions[symbol]++;
     else if(symbol) {
         subscriptions[symbol] = 1;
-        Module.pd.subscribe(symbol);
+        pdl2ork.pd.subscribe(symbol);
     }
 }
 
@@ -2080,7 +2080,7 @@ function pd_subscribe_pop(symbol) {
     subscriptions[symbol]--;
     if(subscriptions[symbol] == 0) {
         delete subscriptions[symbol];
-        Module.pd.unsubscribe(symbol);
+        pdl2ork.pd.unsubscribe(symbol);
     }
 }
 
@@ -2126,7 +2126,7 @@ function gui_send(type, destinations, value) {
     if(destinations.length === 0)
         return;
 
-    // If do_gui_send is called from the context of a Module.Pd.receiveXYZ, it will
+    // If do_gui_send is called from the context of a pdl2ork.Pd.receiveXYZ, it will
     // hang, as libpd will then attempt to aqcuire sys_lock (which is already held
     // by the current thread which called into the receive hook). The current
     // WebPdL2Ork code should avoid this situation, but this check is here to make
@@ -2155,31 +2155,31 @@ function do_gui_send(type, destinations, value) {
         if(destination) {
             if(type === 'List') {
                 if(destination) {
-                    Module.pd.startMessage(value.length);
+                    pdl2ork.pd.startMessage(value.length);
                     for(let val of value) {
                         if(typeof val === 'number')
-                            Module.pd.addFloat(val);
+                            pdl2ork.pd.addFloat(val);
                         else if(typeof val === 'string')
-                            Module.pd.addSymbol(val);
+                            pdl2ork.pd.addSymbol(val);
                         else
                             return console.error('Invalid value in list, not sent!');
                     }
-                    Module.pd.finishList(destination);
+                    pdl2ork.pd.finishList(destination);
                 }
             }
             else if(type === 'Message') {
-                Module.pd.startMessage(value);
+                pdl2ork.pd.startMessage(value);
                 for(let val of value.slice(1)) {
                     if(typeof val === 'number')
-                        Module.pd.addFloat(val);
+                        pdl2ork.pd.addFloat(val);
                     else if(typeof val === 'string')
-                        Module.pd.addSymbol(val);
+                        pdl2ork.pd.addSymbol(val);
                     else
                         return console.error('Invalid value in message, not sent!');
                 }
-                Module.pd.finishMessage(destination, value[0]);
+                pdl2ork.pd.finishMessage(destination, value[0]);
             } else
-                value === undefined ? Module.pd['send'+type](destination) : Module.pd['send'+type](destination, value);
+                value === undefined ? pdl2ork.pd['send' + type](destination) : pdl2ork.pd['send' + type](destination, value);
         }
     }
 }
@@ -3941,9 +3941,9 @@ async function openPatch(content, filename, patchURL) {
                         gui_send(message.data.type, [message.data.symbol], message.data.value);
                     else {
                         if(message.data.type === 'Message')
-                            Module.Pd.receiveMessage(message.data.symbol, message.data.value[0], message.data.value.slice(1));
+                            pdl2ork.Pd.receiveMessage(message.data.symbol, message.data.value[0], message.data.value.slice(1));
                         else
-                            Module.Pd[`receive${message.data.type}`](message.data.symbol, message.data.value);
+                            pdl2ork.Pd[`receive${message.data.type}`](message.data.symbol, message.data.value);
                     }
                 }
                 else if(message.type === 'open') {
@@ -3951,8 +3951,8 @@ async function openPatch(content, filename, patchURL) {
                     openPatches[message.data.id] = message.data.name;
                     page.nextPatchID = message.data.nextPatchID;
                     try {
-                        FS.writeFile(openPatches[message.data.id], message.data.content);
-                        Module.pd.openPatch(openPatches[message.data.id], `/`);
+                        pdl2ork.FS.writeFile(openPatches[message.data.id], message.data.content);
+                        pdl2ork.pd.openPatch(openPatches[message.data.id], `/`);
                         pdsend("pd dsp 1");
                     } catch (error) {
                         alert(`Failed to open patch ${message.data.name}!`);
@@ -3964,7 +3964,7 @@ async function openPatch(content, filename, patchURL) {
                         window.close();
                     else {
                         if(openPatches[message.data]) {
-                            Module.pd.closePatch(openPatches[message.data]);
+                            pdl2ork.pd.closePatch(openPatches[message.data]);
                             delete openPatches[message.data];
                         }
                     }
@@ -4050,7 +4050,7 @@ async function openPatch(content, filename, patchURL) {
     while (rootCanvas.lastChild) // clear svg
         rootCanvas.removeChild(rootCanvas.lastChild);
         
-    Module.pd.unsubscribeAll();
+    pdl2ork.pd.unsubscribeAll();
     subscribedData = {};
     
     let maxNumInChannels = 0;
@@ -5838,19 +5838,19 @@ async function openPatch(content, filename, patchURL) {
         return alert("The main canvas not found in the pd file.");
 
     if (maxNumInChannels) {
-        if (Module.pd.init(maxNumInChannels, Module.pd.getNumOutChannels(), Module.pd.getSampleRate(), Module.pd.getTicksPerBuffer())) {
+        if (pdl2ork.pd.init(maxNumInChannels, pdl2ork.pd.getNumOutChannels(), pdl2ork.pd.getSampleRate(), pdl2ork.pd.getTicksPerBuffer())) {
             // print obtained settings
             console.log("Pd-l2Ork: successfully reinitialized");
-            console.log("Pd-l2Ork: audio input channels: " + Module.pd.getNumInChannels());
-            console.log("Pd-l2Ork: audio output channels: " + Module.pd.getNumOutChannels());
-            console.log("Pd-l2Ork: audio sample rate: " + Module.pd.getSampleRate());
-            console.log("Pd-l2Ork: audio ticks per buffer: " + Module.pd.getTicksPerBuffer());
+            console.log("Pd-l2Ork: audio input channels: " + pdl2ork.pd.getNumInChannels());
+            console.log("Pd-l2Ork: audio output channels: " + pdl2ork.pd.getNumOutChannels());
+            console.log("Pd-l2Ork: audio sample rate: " + pdl2ork.pd.getSampleRate());
+            console.log("Pd-l2Ork: audio ticks per buffer: " + pdl2ork.pd.getTicksPerBuffer());
         }
         else {
             // failed to reinit pd
             alert("Pd-l2Ork: failed to reinitialize pd");
             console.error("Pd-l2Ork: failed to reinitialize pd");
-            Module.mainExit();
+            pdl2ork.mainExit();
             return;
         }
     }
@@ -5880,8 +5880,8 @@ function uploadPatch(file) {
     }
     if (currentFile) {
         pdsend("pd dsp 0");
-        Module.pd.closePatch(currentFile);
-        FS.unlink("/" + currentFile);
+        pdl2ork.pd.closePatch(currentFile);
+        pdl2ork.FS.unlink("/" + currentFile);
     }
     const reader = new FileReader();
     reader.onload = function () {
@@ -5915,7 +5915,7 @@ async function getPatchDatas(urls) {
     return urls.map(url => cachedData[url]);
 }
 
-// called after Module.mainInit() is called
+// called after pdl2ork.mainInit() is called
 async function init() {
     const urlParams = new URLSearchParams(window.location.search);
     let patchURL = urlParams.get("url"), content, filename;
