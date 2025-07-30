@@ -19,7 +19,7 @@ INSTALL_PATH = $(EM_PATH)/projects/pd-l2ork-web
 DESTDIR = pd-l2ork-web
 SRC_DIR = $(EM_PATH)/src
 SRC_FILES = $(SRC_DIR)/main.cpp $(SRC_DIR)/pd.cpp $(SRC_DIR)/js.cpp $(SRC_DIR)/overrides.c
-TARGET = main.html
+TARGET = main.js
 OUTPUT_FILES = $(TARGET) main.js main.wasm $(wildcard main-*.data)
 CFLAGS = -I$(PD_PATH)/src -I$(LIBPD_PATH)/libpd_wrapper -O3 -pthread
 LDFLAGS = -L$(LIBPD_PATH)/libs -lpd -lm -sENVIRONMENT=web,worker -sPTHREAD_POOL_SIZE=navigator.hardwareConcurrency -sSTACK_SIZE=1048576 -pthread
@@ -39,7 +39,7 @@ build: $(SRC_FILES) $(DESTDIR)
 	@echo "build/Makefile building with $(CFLAGS)..."
 # use this to clear the cache
 #	emcc  --cache ./emcc-cache --clear-cache
-	emcc $(CFLAGS) -s MAIN_MODULE=1 --bind -o $(TARGET) $(SRC_FILES) \
+	emcc $(CFLAGS) -s MAIN_MODULE=1 -s MODULARIZE -s EXPORT_NAME="WebPdL2OrkModule" --bind -o $(TARGET) $(SRC_FILES) \
 	-s USE_SDL=2 -s USE_OGG=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s ALLOW_MEMORY_GROWTH=1 \
 	-s FORCE_FILESYSTEM=1 -s EXPORTED_RUNTIME_METHODS=FS \
 	$(LDFLAGS) --cache ./emcc-cache

@@ -23,15 +23,13 @@ static t_class *toggle_class;
 void toggle_draw_update(t_gobj *xgobj, t_glist *glist)
 {
     t_toggle *x = (t_toggle *)xgobj;
-    char cbuf[10];
-    sprintf(cbuf, "#%8.8x", x->x_gui.x_fcol);
     if (x->x_gui.x_changed)
     {
         if(glist_isvisible(glist_getcanvas(glist)))
         {
             t_canvas *canvas=glist_getcanvas(glist);
             gui_vmess("gui_toggle_update", "xxis", canvas,
-                x, x->x_on != 0.0, cbuf);
+                x, x->x_on != 0.0, x->x_gui.x_fcol->s_name);
         }
         x->x_gui.x_changed = 0;
     }
@@ -40,8 +38,6 @@ void toggle_draw_update(t_gobj *xgobj, t_glist *glist)
 void toggle_draw_new(t_toggle *x, t_glist *glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
-    char cbuf[10];
-    sprintf(cbuf, "#%8.8x", x->x_gui.x_fcol);
     int w=(x->x_gui.x_w+29)/30;
     int x1=text_xpix(&x->x_gui.x_obj, glist);
     int y1=text_ypix(&x->x_gui.x_obj, glist);
@@ -49,7 +45,7 @@ void toggle_draw_new(t_toggle *x, t_glist *glist)
 
     iemgui_base_draw_new(&x->x_gui);
     gui_vmess("gui_toggle_new", "xxsiiiiiiiiiiii", canvas,
-        x, cbuf, w,
+        x, x->x_gui.x_fcol->s_name, w,
         (x->x_on != 0.0),
         x1+w+1, y1+w+1, x2-w-1, y2-w-1,
         x1+w+1, y2-w-1, x2-w-1, y1+w+1, x1, y1);
@@ -75,8 +71,6 @@ void toggle_draw_move(t_toggle *x, t_glist *glist)
 void toggle_draw_config(t_toggle* x, t_glist* glist)
 {
     t_canvas *canvas=glist_getcanvas(glist);
-    char cbuf[10];
-    sprintf(cbuf, "#%8.8x", x->x_gui.x_fcol);
     iemgui_base_draw_config(&x->x_gui);
     if (glist_isvisible(glist_getcanvas(glist)))
     {
@@ -84,7 +78,7 @@ void toggle_draw_config(t_toggle* x, t_glist* glist)
             canvas,
             x,
             x->x_on != 0.0,
-            cbuf);
+            x->x_gui.x_fcol->s_name);
     }
 }
 
@@ -199,17 +193,17 @@ static void toggle_properties(t_gobj *z, t_glist *owner)
     char buf[800], *gfx_tag;
     t_symbol *srl[3];
     iemgui_properties(&x->x_gui, srl);
-    sprintf(buf, "pdtk_iemgui_dialog %%s |tgl| \
-        ----------dimensions(pix):----------- %d %d size: 0 0 empty \
-        -----------non-zero-value:----------- %g value: 0.0 empty %g \
-        -1 lin log %d %d empty %d {%s} {%s} {%s} %d %d %d %d %d %d %d\n",
-        x->x_gui.x_w, IEM_GUI_MINSIZE,
-        x->x_nonzero, 1.0,/*non_zero-schedule*/
-        x->x_gui.x_loadinit, -1, -1,/*no multi*/
-        srl[0]->s_name, srl[1]->s_name, srl[2]->s_name,
-        x->x_gui.x_ldx, x->x_gui.x_ldy,
-        x->x_gui.x_font_style, x->x_gui.x_fontsize,
-        0xffffffff & x->x_gui.x_bcol, 0xffffffff & x->x_gui.x_fcol, 0xffffffff & x->x_gui.x_lcol);
+//    sprintf(buf, "pdtk_iemgui_dialog %%s |tgl| \
+//        ----------dimensions(pix):----------- %d %d size: 0 0 empty \
+//        -----------non-zero-value:----------- %g value: 0.0 empty %g \
+//        -1 lin log %d %d empty %d {%s} {%s} {%s} %d %d %d %d %d %d %d\n",
+//        x->x_gui.x_w, IEM_GUI_MINSIZE,
+//        x->x_nonzero, 1.0,/*non_zero-schedule*/
+//        x->x_gui.x_loadinit, -1, -1,/*no multi*/
+//        srl[0]->s_name, srl[1]->s_name, srl[2]->s_name,
+//        x->x_gui.x_ldx, x->x_gui.x_ldy,
+//        x->x_gui.x_font_style, x->x_gui.x_fontsize,
+//        x->x_gui.x_bcol, x->x_gui.x_fcol, x->x_gui.x_lcol);
     //gfxstub_new(&x->x_gui.x_obj.ob_pd, x, buf);
     gfx_tag = gfxstub_new2(&x->x_gui.x_obj.ob_pd, &x->x_gui);
 
@@ -256,13 +250,13 @@ static void toggle_properties(t_gobj *z, t_glist *owner)
     gui_i(x->x_gui.x_fontsize);
 
     gui_s("background_color");
-    gui_i(0xffffffff & x->x_gui.x_bcol);
+    gui_s(x->x_gui.x_bcol->s_name);
 
     gui_s("foreground_color");
-    gui_i(0xffffffff & x->x_gui.x_fcol);
+    gui_s(x->x_gui.x_fcol->s_name);
 
     gui_s("label_color");
-    gui_i(0xffffffff & x->x_gui.x_lcol);
+    gui_s(x->x_gui.x_lcol->s_name);
 
     gui_s("interactive");
     gui_i(x->x_gui.x_click);
@@ -380,9 +374,9 @@ static void *toggle_new(t_symbol *s, int argc, t_atom *argv)
     iem_inttosymargs(&x->x_gui, 0);
     iem_inttofstyle(&x->x_gui, 0);
 
-    x->x_gui.x_bcol = 0xFFFCFCFC;
-    x->x_gui.x_fcol = 0xFF000000;
-    x->x_gui.x_lcol = 0xFF000000;
+    x->x_gui.x_bcol = gensym("#FCFCFCFF");
+    x->x_gui.x_fcol = gensym("#000000FF");
+    x->x_gui.x_lcol = gensym("#000000FF");
     x->x_gui.x_click = 1;
 
     if((argc >= 13)&&IS_A_FLOAT(argv,0)

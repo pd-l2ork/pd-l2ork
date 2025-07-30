@@ -6,21 +6,21 @@
 ;
 
 [Setup]
-AppName=Pd-L2Ork (64-bit)
-AppVerName=Pd-L2Ork-PD_VERSION (64-bit)
+AppName=Pd-L2Ork
+AppVerName=Pd-L2Ork-PD_VERSION
 AppPublisher=l2ork.music.vt.edu
 AppPublisherURL=https://l2ork.music.vt.edu
 AppSupportURL=http://disis.music.vt.edu/cgi-bin/mailman/listinfo/l2ork-dev
 AppUpdatesURL=https://l2ork.music.vt.edu/main/make-your-own-l2ork/software/
 DefaultDirName={commonpf}\Pd-L2Ork
-DefaultGroupName=Pd-L2Ork (64-bit)
+DefaultGroupName=Pd-L2Ork
 LicenseFile=..\gpl-3.0.txt
 DisableWelcomePage=no
 UninstallDisplayIcon={app}\lib\pd_l2ork.ico
 PrivilegesRequired=admin
 Compression=lzma/ultra
 ChangesAssociations=true
-OutputBaseFilename=Pd-L2Ork-full-PD_VERSION (64-bit)
+OutputBaseFilename=Pd-L2Ork-full-x86_64-PD_VERSION
 AppCopyright=GNU GPL
 WizardImageFile=pd_l2ork_large.bmp
 WizardImageStretch=no

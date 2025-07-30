@@ -67,15 +67,18 @@ docker-compose up --build -d
 		make
 
 	For a debugging-enabled version, instead of make, use:
+
 		export DEBUG=true && make
 
-	A successful completion of this build will produce a main.js, main.wasm, main.data, and main.html files in the folder [emscripten/build](./build). [See the section below](#How-To-Run-In-PdWebParty) to run the Emscripten-compiled Pd-L2Ork in Zack Lee's [PdWebParty](https://github.com/cuinjune/PdWebParty).
+	If you encounter errors building the externals, it may be that multi-core compilation is not working well on your system. If so, in the [emscripten/Makefile](./Makefile) replace 'nprocs' with 1 and try running the make again.
+
+	A successful completion of this build will produce a main.js, main.wasm, main.data, and main.html files in the folder [emscripten/build](./build), and will also set up the web server environment in the [emscripten/projects/WebPdL2Ork](./projects/WebPdL2Ork) folder and its Web server ready public subfolder with the demo patch. See below on how to set up the Web server.
 
 3. Install the nvm server by following online instruction (see https://github.com/itp-dwd/2020-spring/blob/master/guides/installing-nodejs.md) OR reference the pd-l2ork one (https://l2ork.music.vt.edu:3000). Below is the key command (note that the version may change):
 
 		cd emscripten/projects/WebPdL2Ork
-		curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash
-		npm install dependencies
+		npm i
+		node .
 
 4. Copy your patch to the [emscripten/build/WebPdL2Ork/public](./build/WebPdL2Ork/public) folder.
 

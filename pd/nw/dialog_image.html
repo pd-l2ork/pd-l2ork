@@ -739,7 +739,8 @@ function populate_form(attr_object) {
             var elem = document.getElementsByName(attr);
             if (elem.length > 0) {
                 if (attr.slice(-5) === "color") {
-                    //pdgui.post("populate_form:\n    " + attr + " raw color is " + attr_object[attr]);
+                    //pdgui.post("populate_form:\n..." + attr + " raw color is " + attr_object[attr]);
+                    /*
                     // ico@vt.edu 2025-07-17: here we do >>> 0 to make the
                     // value unsigned to match C behavior, otherwise
                     // the hex value will be incorrect
@@ -766,11 +767,13 @@ function populate_form(attr_object) {
                     }
                     var color_string = "#" +
                         (hex_string === "0" ? "000000ff" : hex_string);
+                    */
+                    var color_string = attr_object[attr];
                     elem[0].value = color_string;
                     elem[0].jscolor.fromString(color_string);
-                    new_attrs[elem[0].name] = color_string.toLowerCase();
-                    old_attrs[elem[0].name] = color_string.toLowerCase();
-                    //pdgui.post("...new attr_object[attr] " + attr_object[attr]);
+                    new_attrs[elem[0].name] = color_string;
+                    old_attrs[elem[0].name] = color_string;
+                    //pdgui.post("...new attr_object[attr] " + new_attrs[attr]);
                 } else if (elem[0].type === "checkbox") {
                     // The attr here is a string, so we need to
                     // force it to number, hence the "+" below

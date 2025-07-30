@@ -100,18 +100,19 @@ endif
 bin_src = /mingw32/bin
 system32 = /c/WINDOWS/system32
 
-$(bin_src)/libftgl-2.dll:
-	mkdir -p /tmp/ftgl && cd /tmp/ftgl && rm -f PKGBUILD && \
-		wget https://raw.githubusercontent.com/msys2/MINGW-packages/e33213fb01ac0bd52ef866ebbd1248a91e6ff74c/mingw-w64-ftgl/PKGBUILD && \
-		old_line="make ECHO=echo"; \
-		new_line='  make ECHO=echo CXXFLAGS="`make -pn | grep ^CXXFLAGS\\ = | head -1 | cut -d= -f2-` -fpermissive"'; \
-		awk -v old="$$old_line" -v new="$$new_line" ' \
-			{gsub(/^[ \t]+/, "", $$0); if ($$0 == old) print new; else print $$0} \
-			' PKGBUILD > PKGBUILD.new && mv PKGBUILD.new PKGBUILD; \
-		makepkg -si --noconfirm; \
-		rm -r /tmp/ftgl
+# $(bin_src)/libftgl-2.dll:
+# 	mkdir -p /tmp/ftgl && cd /tmp/ftgl && rm -f PKGBUILD && \
+# 		wget https://raw.githubusercontent.com/msys2/MINGW-packages/e33213fb01ac0bd52ef866ebbd1248a91e6ff74c/mingw-w64-ftgl/PKGBUILD && \
+# 		old_line="make ECHO=echo"; \
+# 		new_line='  make ECHO=echo CXXFLAGS="`make -pn | grep ^CXXFLAGS\\ = | head -1 | cut -d= -f2-` -fpermissive"'; \
+# 		awk -v old="$$old_line" -v new="$$new_line" ' \
+# 			{gsub(/^[ \t]+/, "", $$0); if ($$0 == old) print new; else print $$0} \
+# 			' PKGBUILD > PKGBUILD.new && mv PKGBUILD.new PKGBUILD; \
+# 		makepkg -si --noconfirm; \
+# 		rm -r /tmp/ftgl
+# 
+# lib_install: $(bin_src)/libftgl-2.dll
 
-lib_install: $(bin_src)/libftgl-2.dll
 # ultimately, the DLLs should be installed in %SystemRoot%\system32 by
 # InnoSetup since they are 'officially' named and versioned DLLs, and can be
 # shared between apps
