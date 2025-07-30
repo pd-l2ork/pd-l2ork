@@ -509,12 +509,9 @@ SILENCE_PD_GUI := -D\"pdgui_vmess(...)=\" -D\"pdgui_stub_vnew(...)=\" -D\"pdgui_
 PD_CYCLONE_PATH := $(externals_src)/pd-cyclone
 PD_CYCLONE_FLAGS := $(CFLAGS_GITHUB_RUNNER) $(CFLAGS) $(SILENCE_PD_GUI) -DGLIST_GRAB_COMPAT -DCOLLTHREAD=0
 
-$(PD_CYCLONE_PATH)/.patched:
-	cd $(PD_CYCLONE_PATH) && git apply $(externals_src)/patches/cyclone.patch
-	touch $(PD_CYCLONE_PATH)/.patched
-
-pd-cyclone: $(PD_CYCLONE_PATH)/.patched
-	make -C $(PD_CYCLONE_PATH) PDBINDIR=$(pd_src)/src PDINCLUDEDIR=$(pd_src)/src CFLAGS="$(PD_CYCLONE_FLAGS)" -j extension=$(EXTENSION)
+pd-cyclone:
+	perl -pi -e 's/define COLLTHREAD 1/define COLLTHREAD 0/' $(PD_CYCLONE_PATH)/cyclone_objects/binaries/control/coll.c
+	make -C $(PD_CYCLONE_PATH) PDBINDIR=$(pd_src)/src PDINCLUDEDIR=$(pd_src)/src CFLAGS="$(PD_CYCLONE_FLAGS)" extension=$(EXTENSION)
 
 pd-cyclone_install:
 	make -C $(PD_CYCLONE_PATH) install objectsdir="$(objectsdir)" extension=$(EXTENSION)
@@ -523,7 +520,7 @@ pd-cyclone_clean:
 	make -C $(PD_CYCLONE_PATH) clean
 
 PD_ELSE_PATH := $(externals_src)/pd-else
-PD_ELSE_FLAGS := $(CFLAGS) $(SILENCE_PD_GUI) -DGLIST_GRAB_COMPAT -DPURR_DATA -DPDL2ORK -Wno-incompatible-function-pointer-types
+PD_ELSE_FLAGS := $(CFLAGS) $(SILENCE_PD_GUI) -DGLIST_GRAB_COMPAT -DPURR_DATA -DPDL2ORK -Wno-incompatible-function-pointer-types -Wno-missing-template-arg-list-after-template-kw
 
 $(PD_ELSE_PATH)/.patched:
 	cd $(PD_ELSE_PATH) && git apply $(externals_src)/patches/else.patch
@@ -585,9 +582,9 @@ ifeq ($(OS_NAME),windows)
 	CMAKE_GENERATOR="Unix Makefiles" $(CMAKE) -B$(PD_ELSE_PATH)/build -Wno-dev -DPD_LIBRARY="$(pd_src)/src/pd.dll" -DPD_PATH="$(pd_src)" $(PD_ELSE_PATH) -DCMAKE_C_FLAGS="$(PD_ELSE_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_FLAGS)"
 else
 	$(CMAKE) -B$(PD_ELSE_PATH)/build -Wno-dev -DPD_PATH="$(pd_src)" $(PD_ELSE_PATH) -DCMAKE_C_FLAGS="$(PD_ELSE_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_FLAGS)"
+	$(CMAKE) -B$(PD_ELSE_PATH)/Source/Audio/sfz~/sfizz/library/build $(PD_ELSE_PATH)/Source/Audio/sfz~/sfizz/library -DCMAKE_C_FLAGS="$(PD_ELSE_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_FLAGS)"
 endif
-	make -C $(PD_ELSE_PATH)/Source/Audio/sfz~/sfizz/library/build CFLAGS="$(PD_ELSE_FLAGS)" CXXFLAGS="$(PD_ELSE_FLAGS)"
-	make -j -C $(PD_ELSE_PATH)/build
+	make -C $(PD_ELSE_PATH)/build
 	touch $(PD_ELSE_PATH)/build/.built
 endif
 
