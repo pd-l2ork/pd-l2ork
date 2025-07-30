@@ -1787,12 +1787,21 @@ endif
 js_install:
 	install -d $(DESTDIR)$(objectsdir)/js
 ifeq ($(OS_NAME),windows)
+ifeq ($(MSYSTEM),MINGW32)
+	install -p $(externals_src)/pdjs-win/binaries/x86-windows/js.$(EXTENSION) \
+		$(DESTDIR)/$(objectsdir)/js
+	install -p $(externals_src)/pdjs-win/binaries/x86-windows/*.pd \
+		$(DESTDIR)/$(objectsdir)/js
+	install -p $(externals_src)/pdjs-win/binaries/x86-windows/*.js \
+		$(DESTDIR)/$(objectsdir)/js
+else
 	install -p $(externals_src)/pdjs-win/binaries/x64-windows/js.$(EXTENSION) \
 		$(DESTDIR)/$(objectsdir)/js
 	install -p $(externals_src)/pdjs-win/binaries/x64-windows/*.pd \
 		$(DESTDIR)/$(objectsdir)/js
 	install -p $(externals_src)/pdjs-win/binaries/x64-windows/*.js \
 		$(DESTDIR)/$(objectsdir)/js
+endif
 endif
 ifeq ($(OS_NAME),darwin)
 ifeq ($(shell uname -m),arm64)

@@ -83,3 +83,30 @@ index a279dcf8..35e72846 100644
  #else
  #error "Unknown CPU architecture."
  #endif
+diff --git a/Source/Shared/ffmpeg/build_ffmpeg.sh b/Source/Shared/ffmpeg/build_ffmpeg.sh
+index 20ea0216..9f0a1281 100755
+--- a/Source/Shared/ffmpeg/build_ffmpeg.sh
++++ b/Source/Shared/ffmpeg/build_ffmpeg.sh
+@@ -17,7 +17,7 @@ elif [[ "$OS" == "Linux" ]]; then
+         ffmpeg_config="--enable-openssl --enable-pic"
+         ffmpeg_cc="${CC:-gcc}"
+     fi
+-elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
++elif [ "$(expr substr $(uname -s) 1 5)" == "MINGW" ]; then
+     ffmpeg_cc="${CC:-gcc}"
+ else
+     echo "Unsupported OS: $OS"
+diff --git a/Source/Shared/link/udp/udp_socket.hpp b/Source/Shared/link/udp/udp_socket.hpp
+index 2e447d2a..ab37ef80 100644
+--- a/Source/Shared/link/udp/udp_socket.hpp
++++ b/Source/Shared/link/udp/udp_socket.hpp
+@@ -11,7 +11,9 @@
+ #include <winsock2.h>
+ #include <ws2tcpip.h>
+ #undef min
++#ifndef PDL2ORK
+ typedef SSIZE_T ssize_t;
++#endif
+ // Unix
+ #else
+ #include <sys/types.h>
