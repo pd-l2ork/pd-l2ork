@@ -180,9 +180,7 @@ endif
 	-install -p $(system32)/msvcr71.dll   $(DESTDIR)$(bindir)
 	#-install -p $(system32)/pthreadVC.dll $(DESTDIR)$(bindir)
 	install -p $(bin_src)/libwinpthread-1.dll $(DESTDIR)$(bindir)
-	# was
-	#install -p $(bin_src)/libgcc_s_seh-1.dll $(DESTDIR)$(bindir)
-	install -p $(bin_src)/libgcc_s_dw2-1.dll $(DESTDIR)$(bindir)
+	install -p $(bin_src)/libgcc_s_seh-1.dll $(DESTDIR)$(bindir)
 	install -p $(bin_src)/libstdc++-6.dll $(DESTDIR)$(bindir)
 ifneq ($(LIGHT),yes)
 # lyonpotpourri compiles its own shared lib. On Windows it needs to be
