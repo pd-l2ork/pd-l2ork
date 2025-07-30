@@ -235,7 +235,7 @@ since it will usually contain spaces, making the build fail.
         pacman -S autoconf automake git libtool \
           make mingw-w64-x86_64-dlfcn \
           mingw-w64-x86_64-fluidsynth \
-          mingw-w64-x86_64-SDL2 \
+          mingw-w64-x86_64-SDL2 mingw-w64-x86_64-gcc-libs \
           mingw-w64-x86_64-ftgl mingw-w64-x86_64-fribidi \
           mingw-w64-x86_64-ladspa-sdk mingw-w64-x86_64-lame \
           mingw-w64-x86_64-libsndfile mingw-w64-x86_64-libvorbis \
