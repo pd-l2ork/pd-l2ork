@@ -522,7 +522,11 @@ else
 endif
 
 pd-cyclone_install:
+ifeq ($(EMSCRIPTEN),yes)
 	make -C $(PD_CYCLONE_PATH)/build install objectsdir="$(objectsdir)" extension=$(EXTENSION)
+else
+	make -C $(PD_CYCLONE_PATH) install objectsdir="$(objectsdir)" extension=$(EXTENSION)
+endif
 
 pd-cyclone_clean:
 	make -C $(PD_CYCLONE_PATH) clean
