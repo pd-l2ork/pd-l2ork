@@ -507,14 +507,18 @@ cxc_clean:
 
 SILENCE_PD_GUI := -D\"pdgui_vmess(...)=\" -D\"pdgui_stub_vnew(...)=\" -D\"pdgui_stub_deleteforkey(...)=\"
 PD_CYCLONE_PATH := $(externals_src)/pd-cyclone
-PD_CYCLONE_FLAGS := $(CFLAGS_GITHUB_RUNNER) $(CFLAGS) $(SILENCE_PD_GUI) -DGLIST_GRAB_COMPAT -DCOLLTHREAD=0
+PD_CYCLONE_FLAGS := $(CFLAGS_GITHUB_RUNNER) $(CFLAGS) $(SILENCE_PD_GUI) -DGLIST_GRAB_COMPAT
+ifeq ($(EMSCRIPTEN),yes)
+PD_CYCLONE_FLAGS := $(PD_CYCLONE_FLAGS) -D__linux__
+endif
 
 pd-cyclone:
 	perl -pi -e 's/define COLLTHREAD 1/define COLLTHREAD 0/' $(PD_CYCLONE_PATH)/cyclone_objects/binaries/control/coll.c
-	make -C $(PD_CYCLONE_PATH) PDBINDIR=$(pd_src)/src PDINCLUDEDIR=$(pd_src)/src CFLAGS="$(PD_CYCLONE_FLAGS)" extension=$(EXTENSION)
+	$(CMAKE) -B$(PD_CYCLONE_PATH)/build $(PD_CYCLONE_PATH) -DCMAKE_C_FLAGS="$(PD_CYCLONE_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_CYCLONE_FLAGS)" -DPD_INCLUDE_DIR="$(pd_src)/src" -DPD_LIBRARY="$(pd_src)/src"
+	make -C $(PD_CYCLONE_PATH)/build extension=$(EXTENSION)
 
 pd-cyclone_install:
-	make -C $(PD_CYCLONE_PATH) install objectsdir="$(objectsdir)" extension=$(EXTENSION)
+	make -C $(PD_CYCLONE_PATH)/build install objectsdir="$(objectsdir)" extension=$(EXTENSION)
 
 pd-cyclone_clean:
 	make -C $(PD_CYCLONE_PATH) clean
@@ -596,7 +600,7 @@ ifeq ($(OS_NAME),darwin)
 	for f in $(DESTDIR)/$(objectsdir)/else/*.darwin-fat-32.so; do mv -- "$$f" "$${f%.darwin-fat-32.so}.pd_darwin"; done
 else ifeq ($(OS_NAME),windows)
 	for f in $(DESTDIR)/$(objectsdir)/else/*.m_amd64; do mv -- "$$f" "$${f%.m_amd64}.pd_linux"; done
-else
+else ifneq ($(EMSCRIPTEN),yes)
 	for f in $(DESTDIR)/$(objectsdir)/else/*.l_amd64; do mv -- "$$f" "$${f%.l_amd64}.pd_linux"; done
 endif
 
