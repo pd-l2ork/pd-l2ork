@@ -26,7 +26,7 @@ ifeq ($(DEBUG), true)
     EM_FLAGS += -g -gsource-map
     TYPE = Debug
 endif
-CFLAGS = -DPD -I$(PD_PATH)/src -D__linux__ $(WARN_FLAGS) $(EM_FLAGS)
+CFLAGS = -DPD -I$(PD_PATH)/src -I$(EM_PATH)/src -D__linux__ $(WARN_FLAGS) $(EM_FLAGS)
 LDFLAGS = $(EM_FLAGS)
 LIBS = 
 CC = emcc

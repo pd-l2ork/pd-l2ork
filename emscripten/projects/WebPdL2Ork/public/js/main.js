@@ -58,6 +58,7 @@ onmessage = ({ data }) => {
 let hammerFiles = ['Append.wasm','bangbang.wasm','match.wasm','spell.wasm','Borax.wasm','bondo.wasm','maximum.wasm','split.wasm','Bucket.wasm','buddy.wasm','mean.wasm','spray.wasm','Clip.wasm','capture.wasm','midiflush.wasm','sprintf.wasm','Decode.wasm','cartopol.wasm','midiformat.wasm','substitute.wasm','Histo.wasm','coll.wasm','midiparse.wasm','sustain.wasm','comment.wasm','minimum.wasm','switch.wasm','cosh.wasm','tanh.wasm','counter.wasm','mtr.wasm','testmess.wasm','cycle.wasm','next.wasm','thresh.wasm','dbtoa.wasm','offer.wasm','tosymbol.wasm','Peak.wasm','decide.wasm','onebang.wasm','universal.wasm','Table.wasm','drunk.wasm','past.wasm','urn.wasm','TogEdge.wasm','flush.wasm','xbendin.wasm','Trough.wasm','forward.wasm','poltocar.wasm','xbendin2.wasm','Uzi.wasm','fromsymbol.wasm','pong.wasm','xbendout.wasm','accum.wasm','funbuff.wasm','prepend.wasm','xbendout2.wasm','acos.wasm','funnel.wasm','prob.wasm','xnotein.wasm','active.wasm','gate.wasm','pv.wasm','xnoteout.wasm','allhammers.wasm','grab.wasm','round.wasm','zl.wasm','anal.wasm','hammer.wasm','seq.wasm','asin.wasm','iter.wasm','sinh.wasm','loadmess.wasm','speedlim.wasm'];
 let sickleFiles = ['abs~.wasm', 'bitand~.wasm', 'cosx~.wasm', 'kink~.wasm', 'minmax~.wasm', 'rampsmooth~.wasm', 'Snapshot~.wasm', 'acos~.wasm', 'bitnot~.wasm', 'count~.wasm', 'Line~.wasm', 'mstosamps~.wasm', 'rand~.wasm', 'spike~.wasm', 'acosh~.wasm', 'bitor~.wasm', 'curve~.wasm', 'linedrive~.wasm', 'onepole~.wasm', 'record~.wasm', 'svf~.wasm', 'allpass~.wasm', 'bitshift~.wasm', 'log~.wasm', 'overdrive~.wasm', 'reson~.wasm', 'tanh~.wasm', 'allsickles~.wasm', 'bitxor~.wasm', 'cycle~.wasm', 'lookup~.wasm', 'peakamp~.wasm', 'round~.wasm', 'tanx~.wasm', 'asin~.wasm', 'buffir~.wasm', 'dbtoa~.wasm', 'lores~.wasm', 'peek~.wasm', 'sah~.wasm', 'train~.wasm', 'asinh~.wasm', 'capture~.wasm', 'delay~.wasm', 'phasewrap~.wasm', 'sampstoms~.wasm', 'trapezoid~.wasm', 'atan2~.wasm', 'cartopol~.wasm', 'delta~.wasm', 'pink~.wasm', 'Scope~.wasm', 'triangle~.wasm', 'atan~.wasm', 'change~.wasm', 'deltaclip~.wasm', 'play~.wasm', 'trunc~.wasm', 'atanh~.wasm', 'click~.wasm', 'edge~.wasm', 'poke~.wasm', 'sickle~.wasm', 'vectral~.wasm', 'atodb~.wasm', 'Clip~.wasm', 'frameaccum~.wasm', 'matrix~.wasm', 'poltocar~.wasm', 'sinh~.wasm', 'wave~.wasm', 'average~.wasm', 'comb~.wasm', 'framedelta~.wasm', 'maximum~.wasm', 'pong~.wasm', 'sinx~.wasm', 'zerox~.wasm', 'avg~.wasm', 'cosh~.wasm', 'index~.wasm', 'minimum~.wasm', 'pow~.wasm', 'slide~.wasm'];
 let nextScopeID = 0;
+let nextLuaID   = 0;
 
 //CONSTANTS IMPORTED FROM g_vumeter.c, lines 25-61
 let vu_colors = [
@@ -219,8 +220,8 @@ function buildFileApiBody(path) {
     const file = ('' + path).split('/').slice(-1)[0];
     return JSON.stringify({
         urls: [
+            ...searchPaths.map(searchPath => searchPath.slice(0,-1)+path),
             `/supplemental/${file}`,
-            ...searchPaths.map(searchPath => searchPath.slice(0,-1)+path)
         ]
     });
 }
@@ -286,7 +287,7 @@ let pdl2ork_promise = WebPdL2OrkModule({
 
         // Intercept file reads
         pdl2ork.FS.open = function (path, flags, mode) {
-            let isNetworkCandidate = !['wasm', 'so', 'pat', 'pd'].map(ext => ('' + path).endsWith(ext)).find(matches => matches == true);
+            let isNetworkCandidate = !['wasm','so','pat','pd','pd_lua'].map(ext=>('' + path).endsWith(ext)).find(matches => matches == true);
             if (path === "") {
                 throw new pdl2ork.FS.ErrnoError(44)
             }
@@ -1702,6 +1703,13 @@ let pdl2ork_promise = WebPdL2OrkModule({
                             break;
                         case "msg":
                             break;
+                        case "lua":
+                            list[0] = data;
+                            if(symbol in window)
+                                window[symbol](...list);
+                            else
+                                console.error('Invalid message for lua: ', symbol);
+                            break;
                         default:
                             console.error('Message to unsupported data:', data);
                     }
@@ -1899,6 +1907,182 @@ function gui_canvas_get_scroll(cid) {
     console.log("gui_canvas_get_scroll", cid);
 }
 
+let gui_luagfx_touches = {};
+function gui_luagfx_mousesend(data, e, type) {
+    const pos = gui_mousepoint(e, data.canvas);
+    gui_send('Message', [data.internal_receive], [
+        'mouse_event',
+        Math.floor(pos.x),
+        Math.floor(pos.y),
+        type
+    ]);
+}
+function gui_luagfx_onmousedown(data, e, id) {
+    gui_luagfx_mousesend(data, e, 0);
+    gui_luagfx_touches[id] = { data };
+}
+
+function gui_luagfx_onmousemove(e, id) {
+    const touch = gui_luagfx_touches[id];
+    if(touch)
+        gui_luagfx_mousesend(touch.data, e, 3);
+    // else
+    //     gui_luagfx_mousesend(data, e, 2);
+}
+
+function gui_luagfx_onmouseup(e) {
+    for(id in gui_luagfx_touches) {
+        const touch = gui_luagfx_touches[id];
+        gui_luagfx_mousesend(touch.data, e, 1);
+        delete gui_luagfx_touches[id];
+    }
+}
+
+function gui_luagfx_new(data, tag, xpos, ypos, is_toplevel) {
+    // Nothing to do here
+}
+
+// create a graphics layer (pd-lua 0.12.19)
+function gui_luagfx_new_layer(data, tag, layer_tag) {
+    if(!data.layers[layer_tag])
+        data.layers[layer_tag] = create_item("g", {}, data.canvas);
+}
+
+// clear the contents of the graphics container (or layer, per pd-lua 0.12.19)
+function gui_luagfx_clear(data, tag) {
+    data.layers[tag].innerHTML = '';
+}
+
+// this erases the gobj (completely removes it)
+function gui_luagfx_erase(data, tag) {
+    console.log('erase', data, tag);
+}
+
+// a bunch of drawing operations as required by the pd-lua graphics interface
+function gui_luagfx_fill_all(data, tag, gfxtag, color, x1, y1, x2, y2) {
+    create_item("rect", {
+        x: x1,
+        y: y1,
+        width: x2-x1,
+        height: y2-y1,
+        style: 'fill: ' + color + ';'
+    }, data.layers[tag]);
+}
+
+function gui_luagfx_fill_rect(data, tag, gfxtag, color, width, x1, y1, x2, y2) {
+    create_item("rect", {
+        x: x1,
+        y: y1,
+        width: x2-x1,
+        height: y2-y1,
+        fill: color,
+        'stroke-width': width
+    }, data.layers[tag]);
+}
+
+function gui_luagfx_stroke_rect(data, tag, gfxtag, color, width, x1, y1, x2, y2) {
+    create_item("rect", {
+        x: x1,
+        y: y1,
+        width: x2-x1,
+        height: y2-y1,
+        fill: 'none',
+        stroke: color,
+        'stroke-width': width
+    }, data.layers[tag]);
+}
+
+function gui_luagfx_fill_rounded_rect(data, tag, gfxtag, color, width, x1, y1, x2, y2, rx, ry) {
+    create_item("rect", {
+        x: x1,
+        y: y1,
+        width: x2-x1,
+        height: y2-y1,
+        rx: rx,
+        ry: ry,
+        fill: color,
+        'stroke-width': width
+    }, data.layers[tag]);
+}
+
+function gui_luagfx_stroke_rounded_rect(data, tag, gfxtag, color, width, x1, y1, x2, y2, rx, ry) {
+    create_item("rect", {
+        x: x1,
+        y: y1,
+        width: x2-x1,
+        height: y2-y1,
+        rx: rx,
+        ry: ry,
+        stroke: color,
+        fill: 'none',
+        'stroke-width': width
+    }, data.layers[tag]);
+}
+
+function gui_luagfx_fill_ellipse(data, tag, gfxtag, color, width, x1, y1, x2, y2) {
+    create_item("ellipse", {
+        cx: (x2 - x1) * 0.5 + x1,
+        cy: (y2 - y1) * 0.5 + y1,
+        rx: (x2 - x1) * 0.5,
+        ry: (y2 - y1) * 0.5,
+        fill: color,
+        "stroke-width": width,
+    }, data.layers[tag]);
+}
+
+function gui_luagfx_stroke_ellipse(data, tag, gfxtag, color, width, x1, y1, x2, y2) {
+    create_item("ellipse", {
+        cx: (x2 - x1) * 0.5 + x1,
+        cy: (y2 - y1) * 0.5 + y1,
+        rx: (x2 - x1) * 0.5,
+        ry: (y2 - y1) * 0.5,
+        fill: 'none',
+        stroke: color,
+        "stroke-width": width,
+    }, data.layers[tag]);
+}
+
+function gui_luagfx_draw_line(data, tag, gfxtag, color, width, x1, y1, x2, y2) {
+    create_item("line", {
+        x1: x1,
+        y1: y1,
+        x2: x2,
+        y2: y2,
+        stroke: color,
+        "stroke-width": width,
+    }, data.layers[tag]);
+}
+
+function gui_luagfx_draw_text(data, tag, gfxtag, color, width, font_height, x, y, text) {
+    font_height = 12;
+    let elem = create_item("text", {
+        transform: "translate(" + x + ")",
+        x: 0,
+        y: y + font_height,
+        width: width,
+        "font-size": font_height + "px",
+        fill: color,
+    }, data.layers[tag]);
+    text_to_tspans(data.layers[tag], elem, text, 'text');
+}
+
+function gui_luagfx_fill_path(data, tag, gfxtag, color, width, ...path) {
+    create_item("path", {
+        d: path.join(' '),
+        fill: color,
+        "stroke-width": width,
+    }, data.layers[tag]);
+}
+
+function gui_luagfx_stroke_path(data, tag, gfxtag, color, width, ...path) {
+    create_item("path", {
+        d: path.join(' '),
+        fill: "none",
+        stroke: color,
+        "stroke-width": width,
+    }, data.layers[tag]);
+}
+
 function pd_receive_command_buffer(data) {
     var command_buffer = {
         next_command: ""
@@ -2014,8 +2198,14 @@ function iemgui_fontfamily(font) {
 }
 
 function colfromload(col, bits = 6) { // decimal to hex color
-    if (typeof col === "string")
+    if (typeof col === "string") {
+        if(col.startsWith('#') && col.length === 9)
+            return `#${col.slice(3)}${col.slice(1,3)}`;
+        if(col.startsWith('#') && col.length === 5)
+            return `#${col.slice(2)}${col.slice(1,2)}`;
+
         return col;
+    }
 
     let bitsPerChannel = col >= 0 ? 8 : bits;
 
@@ -2168,7 +2358,7 @@ function do_gui_send(type, destinations, value) {
                 }
             }
             else if(type === 'Message') {
-                pdl2ork.pd.startMessage(value);
+                pdl2ork.pd.startMessage(value.length);
                 for(let val of value.slice(1)) {
                     if(typeof val === 'number')
                         pdl2ork.pd.addFloat(val);
@@ -3476,7 +3666,7 @@ function gui_nbx_commit(data) {
     gui_send('Float', data.send, data.value);
 }
 function gui_nbx_losefocus(data) {
-    configure_item(data.svgText, {fill: data.foreground_color});
+    configure_item(data.svgText, {fill: colfromload(data.foreground_color)});
     delete data.dirtyValue;
     gui_nbx_settext(data, '' + data.value);
 }
@@ -3630,6 +3820,7 @@ addInteractionMoveEvent(window, (event, identifier) => {
     gui_image_onmousemove(event, identifier);
     gui_window_onmousemove(event, identifier);
     gui_slider_onmousemove(event, identifier);
+    gui_luagfx_onmousemove(event, identifier);
     onMouseMove(event);
 });
 addInteractionEndEvent(window, (event, identifier) => {
@@ -3640,6 +3831,7 @@ addInteractionEndEvent(window, (event, identifier) => {
     gui_image_onmouseup(identifier);
     gui_window_onmouseup(identifier);
     gui_slider_onmouseup(identifier);
+    gui_luagfx_onmouseup(identifier);
     onMouseUp(event);
 });
 document.addEventListener('keydown', onKeyDown);
@@ -4016,12 +4208,13 @@ async function openPatch(content, filename, patchURL) {
     await new Promise(Resolve => setTimeout(Resolve, 10));
     let start = Date.now();
     let abstractions = {};
+    let lua_candidates = [];
     let base = patchURL.split('/').slice(0,-1).join('/')+'/';
     searchPaths = [base];
     let fetchAbstractions = async(content, path) => {
         let declares = content.split(';\n').filter(line => line.startsWith('#X declare')).map(declare => declare.slice(11).match(/-\w+ [^ ]+/g).filter(directive => directive.startsWith("-path")).map(directive => directive.split(' ')[1])).flat();
         let paths = [path, ...declares.map(declare => declare.startsWith('/')?declare:`${path}${declare}/`)];
-        let missingAbstractions = [... new Set(content.split(';\n').filter( line => line.startsWith('#X obj') && !known_objects.includes(line.split(' ')[4]) ).map( line => line.split(' ')[4]))];
+        let missingAbstractions = [... new Set(content.split(';\n').filter( line => line.startsWith('#X obj') && !known_objects.includes(line.split(' ')[4]) ).map(line => line.split(' ')[4]))];
         let abstractionData = await getPatchDatas(missingAbstractions.map(obj => paths.map(path => `${base}${path}${obj}.pd`)).flat());
         let promises = [];
         for(let abstraction in missingAbstractions) {
@@ -4032,12 +4225,28 @@ async function openPatch(content, filename, patchURL) {
                     break;
                 }
             }
+            if(!(missingAbstractions[abstraction] in abstractions))
+                lua_candidates.push(missingAbstractions[abstraction]);
         }
-        searchPaths = [...new Set([...searchPaths, base + path])];
+        searchPaths = [...new Set([...searchPaths, ...paths.map(path => base + path)])];
         await Promise.all(promises);
     }
-    await fetchAbstractions(content,'/');
+    await fetchAbstractions(content,'');
 
+    lua_candidates = [...new Set(lua_candidates)]
+    const lua_objs_arr = await getPatchDatas(lua_candidates.map(candidate => searchPaths.map(s => `${s}${candidate}.pd_lua`)).flat());
+    const lua_objs = {};
+    for(let candidate in lua_candidates) {
+        for(let i=0; i<searchPaths.length; i++) {
+            const data = lua_objs_arr[candidate * searchPaths.length + i];
+            if(data.length) {
+                const obj = lua_candidates[candidate].split('/').pop()
+                pdl2ork.FS.writeFile(`/pd-l2ork-web/extra/${obj}.pd_lua`, data);
+                lua_objs[obj] = data;
+            }
+        }
+    }
+    
     if(loadingStage)
         loadingStage.innerHTML=`Parsing Patch`;
 
@@ -4063,7 +4272,7 @@ async function openPatch(content, filename, patchURL) {
     let lines = content.split(';\n');
     for(let i = 0; i < lines.length; i++)
         while(lines[i].endsWith('\\'))
-            lines.splice(i,2,`${lines[i].slice(0,-1)};\n${lines[i+1]}`);
+            lines.splice(i,2,`${lines[i].slice(0,-1)}\\;\n${lines[i+1]}`);
     for (let i = 0; i < lines.length; i++) {
         let layer = layers.at(-1); //Shortcut for the current layer being processed so we aren't always writing layers.at(-1)
 
@@ -4257,7 +4466,7 @@ async function openPatch(content, filename, patchURL) {
                                         y: layer.dimensions.contentY + 3.9 + 13 * i,
                                         width: 10,
                                         height: 10,
-                                        fill: layer.arrays[i].outlineColor,
+                                        fill: colfromload(layer.arrays[i].outlineColor),
                                         stroke: '#000',
                                         id: `title_legend_${nextHTMLID}_${i}`
                                     }, layer.canvas)
@@ -4761,7 +4970,7 @@ async function openPatch(content, filename, patchURL) {
                                 console.error('Invalid pddplink object:', args);
                             break;
                         case "nbx":
-                            if (args.length >= 27) {
+                            if (args.length >= 23) {
                                 const data = {};
                                 data.x_pos = +args[2];
                                 data.y_pos = +args[3];
@@ -4784,11 +4993,11 @@ async function openPatch(content, filename, patchURL) {
                                 data.label_color= isNaN(args[20]) ? args[20] : +args[20];
                                 data.value = data.init ? +args[21] : 0;
                                 data.logHeight = +args[22];
-                                data.showTriangle = +args[23] % 2 == 0;
-                                data.showBorder = +args[23] < 2;
-                                data.exclusive = +args[24];
-                                data.interactive = +args[25];
-                                data.arrowUpdate = +args[26];
+                                data.showTriangle = +(args[23] ?? 0) % 2 == 0;
+                                data.showBorder = +(args[23] ?? 0) < 2;
+                                data.exclusive = +(args[24] ?? 0);
+                                data.interactive = +(args[25] ?? 1);
+                                data.arrowUpdate = +(args[26] ?? 0);
                                 data.id = `${data.type}_${nextHTMLID++}`;
                                 data.canvas = layer.canvas;
             
@@ -4802,7 +5011,7 @@ async function openPatch(content, filename, patchURL) {
                                     "shape-rendering": "crispEdges",
                                     "font-size": data.height + "px",
                                     "font-weight": "normal",
-                                    fill: data.foreground_color,
+                                    fill: colfromload(data.foreground_color),
                                     id: `${data.id}_text`,
                                     class: "unclickable",
                                 }, rootCanvas);
@@ -4820,7 +5029,7 @@ async function openPatch(content, filename, patchURL) {
                                     id: `${data.id}_border`,
                                     stroke: '#000000',
                                     "stroke-width": data.showBorder ? '1' : '0',
-                                    fill: data.bg_color,
+                                    fill: colfromload(data.bg_color),
                                     d: `M ${data.x_pos} ${data.y_pos} h ${width - 4} l 4 4 v ${data.height-4} H ${data.x_pos} V ${data.y_pos}`
                                 }, data.canvas);
                                 data.triangle = create_item('path', {
@@ -5252,6 +5461,35 @@ async function openPatch(content, filename, patchURL) {
                                 //Since we removed the line that we just processed, our subpatch starts at line i, so we have to process line i again.
                                 i--;
                                 layer.nextGUIID--;
+                            } else if (args[4] in lua_objs) {
+                                let data = {};
+                                data.x_pos = +args[2];
+                                data.y_pos = +args[3];
+                                data.type = 'lua';
+                                data.receive = [`lua_${++nextLuaID}`];
+                                data.send = [];
+                                data.id = nextHTMLID++;
+                                data.canvas = create_item("svg", {
+                                    x: data.x_pos,
+                                    y: data.y_pos,
+                                }, layer.canvas);
+                                data.layers = {};
+                                data.internal_receive = `lua_${nextLuaID}_internal`;
+
+                                let nextObjId = layer.nextGUIID, nextSlot = i, depth = 0;
+                                for(;depth > 0 || (lines[nextSlot] !== undefined && lines[nextSlot].startsWith('#X connect') == false && lines[nextSlot].startsWith('#X restore') == false); nextSlot++) {
+                                    if(depth == 0 && object_types.find(type=>lines[nextSlot].startsWith(type)))
+                                        nextObjId++;
+                                    if(lines[nextSlot].startsWith('#N canvas'))
+                                        depth++;
+                                    else if(lines[nextSlot].startsWith('#X restore'))
+                                        depth--;
+                                }
+                                lines.splice(nextSlot, 0, `#X obj 0 0 r ${data.internal_receive}`,`#X connect ${nextObjId} 0 ${layer.nextGUIID} 0 __IGNORE__`);
+
+                                gui_subscribe(data);
+
+                                addInteractionStartEvent(data.canvas, (e, i) => gui_luagfx_onmousedown(data, e, i));
                             } else if(DEBUG) {
                                 const text = create_item('text', {
                                     'font-size':  pd_fontsize_to_gui_fontsize(layer.fontSize) + 'px',
