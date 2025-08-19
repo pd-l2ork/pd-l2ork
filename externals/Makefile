@@ -535,7 +535,7 @@ PD_ELSE_PATH := $(externals_src)/pd-else
 PD_ELSE_FLAGS := $(CFLAGS) $(SILENCE_PD_GUI) -DGLIST_GRAB_COMPAT -DPURR_DATA -DPDL2ORK -Wno-incompatible-function-pointer-types -Wno-missing-template-arg-list-after-template-kw
 
 $(PD_ELSE_PATH)/.patched:
-	cd $(PD_ELSE_PATH) && git apply --3way $(externals_src)/patches/else.patch
+	cd $(PD_ELSE_PATH) && git apply -v $(externals_src)/patches/else.patch
 	touch $(PD_ELSE_PATH)/.patched
 
 ifeq ($(EMSCRIPTEN),yes)
