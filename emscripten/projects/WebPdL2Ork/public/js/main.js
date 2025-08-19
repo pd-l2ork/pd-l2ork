@@ -1288,16 +1288,15 @@ let pdl2ork_promise = WebPdL2OrkModule({
                                         setKeyboardFocus(null, false);
                                     configure_item(data.svgText, {fill: list[0] && data.interactive ? '#ff0000' : '#000000'});
                                     break;
-                                case 'commit':
-                                    gui_atom_commit(data);
-                                    break;
                                 case 'interactive':
                                     data.interactive = list[0];
                                     if(keyboardFocus.data?.id === data.id)
                                         setKeyboardFocus(null, false);
                                     break;
+                                case 'commit':
                                 case 'set':
-                                    data.dirtyValue = '' + (data.type === 'listbox' ? list.join(' ') : list[0]);
+                                    if(symbol === 'set')
+                                        data.dirtyValue = '' + (data.type === 'listbox' ? list.join(' ') : list[0]);
                                     let send = data.send;
                                     data.send = [];
                                     gui_atom_commit(data);
@@ -3452,7 +3451,7 @@ function gui_atom_keydown(data, e) {
         gui_atom_settext(data, data.dirtyValue + (new Array(Math.max(0,3 - data.dirtyValue.length))).fill('.').join(''));
 }
 function gui_atom_commit(data, mousing) {
-    if(!data.dirtyValue)
+    if(!('dirtyValue' in data))
         data.dirtyValue = '' + (data.type === 'listbox' ? data.value.join(' ') : data.value);
 
     if(data.type === 'floatatom') {
