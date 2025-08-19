@@ -19,9 +19,9 @@
 [submodule "externals/neuralnet"]
 	path = externals/neuralnet
 	url = https://github.com/alexdrymonitis/neuralnet.git
-[submodule "pd-lua"]
+[submodule "externals/pd-lua"]
 	path = externals/pd-lua
-	url = https://github.com/pd-l2ork/pd-lua
+	url = https://github.com/movementgh/pd-lua
 [submodule "wiringPi"]
 	path = l2ork_addons/raspberry_pi/disis_gpio/wiringPi
 	url = https://github.com/pd-l2ork/wiringPi

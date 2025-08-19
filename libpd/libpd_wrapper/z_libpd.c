@@ -151,6 +151,8 @@ void libpd_add_to_help_path(const char *path) {
 }
   
 void *libpd_openfile(const char *name, const char *dir) {
+  sys_load_lib(0, "pdlua");
+  
   void *retval;
   sys_lock();
   retval = (void *)glob_evalfile(NULL, gensym(name), gensym(dir));
