@@ -845,7 +845,7 @@ fluid_install: fluid
 	install -p $(FLUID_PATH)/soundfonts/* $(DESTDIR)$(objectsdir)/soundfonts
 
 fluid_clean:
-	rm -rf $(FLUIDPATH)/fluidsynth-emscripten
+	rm -rf $(FLUID_PATH)/fluidsynth-emscripten/build
 	rm -rf $(FLUID_PATH)/fluid~.o
 	rm -rf $(FLUID_PATH)/fluid~.wasm
 
@@ -1881,7 +1881,7 @@ endif
 # PDLUA
 
 LUA_CFLAGS = $(shell (pkg-config --cflags lua5.4 || pkg-config --cflags lua5.3 || pkg-config --cflags lua5.2 || pkg-config --cflags lua) 2> /dev/null)
-PDLUA_CFLAGS = -DPURR_DATA -DGLIST_GRAB_COMPAT $(CFLAGS)
+PDLUA_CFLAGS = -DPURR_DATA -DGLIST_GRAB_COMPAT -DALWAYS_VIS $(CFLAGS)
 LUA_LIBS = $(shell (pkg-config --libs lua5.4 || pkg-config --libs lua5.3 || pkg-config --libs lua5.2 || pkg-config --libs lua) 2> /dev/null)
 LUA_TARGET = $(externals_src)/pd-lua/pdlua.$(EXTENSION)
 
@@ -1893,7 +1893,7 @@ ifneq ($(EMSCRIPTEN),yes)
 	make -C $(externals_src)/pd-lua LUA_CFLAGS="$(LUA_CFLAGS)" LUA_LIBS="$(LUA_LIBS)" PD_PATH="$(pd_src)" PD_LIB="$(pd_src)/src" CFLAGS="$(PDLUA_CFLAGS)" PDBINDIR=$(pd_src)/src
 else
 	if [ ! -d $(externals_src)/pd-lua/lua ]; then git clone https://github.com/lua/lua.git $(externals_src)/pd-lua/lua; fi
-	$(CC) $(externals_src)/pd-lua/pdlua.c $(externals_src)/pd-lua/lua/onelua.c -o $(LUA_TARGET) $(CFLAGS) $(LDFLAGS) -I$(externals_src)/pd-lua/lua $(PDLUA_CFLAGS)
+	$(CC) $(externals_src)/pd-lua/pdlua.c $(externals_src)/pd-lua/lua/onelua.c -o $(LUA_TARGET) $(PDLUA_CFLAGS) $(CFLAGS) $(LDFLAGS) -I$(externals_src)/pd-lua/lua -I$(pd_src)/../libpd/libpd_wrapper -DPURR_DATA
 endif
 
 ifneq ($(EMSCRIPTEN),yes)
@@ -1904,11 +1904,8 @@ pdlua_clean:
 	make -C $(externals_src)/pd-lua clean
 else
 pdlua_install: pdlua
-	install -d $(DESTDIR)$(objectsdir)/pd-lua
-	cp -r ${externals_src}/pd-lua/pdlua $(DESTDIR)$(objectsdir)/pd-lua
-	cp -r ${externals_src}/pd-lua/*.pd $(DESTDIR)$(objectsdir)/pd-lua
-	cp -r ${externals_src}/pd-lua/*.lua $(DESTDIR)$(objectsdir)/pd-lua
-	cp -r ${externals_src}/pd-lua/*.${EXTENSION} $(DESTDIR)$(objectsdir)/pd-lua
+	install -d $(DESTDIR)/$(objectsdir)/pd-lua
+	bash -c "cp -r $(externals_src)/pd-lua/{pdlua,doc,*.pd,*.${EXTENSION},tutorial,*.lua*} $(DESTDIR)$(objectsdir)/pd-lua"
 
 pdlua_clean:
 	rm -f $(LUA_TARGET)

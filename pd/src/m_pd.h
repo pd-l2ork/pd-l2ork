@@ -16,6 +16,9 @@ extern "C" {
 #define PD_TEST_VERSION ""
 #define PD_L2ORK_VERSION "20250721"
 #define PDL2ORK
+#ifdef __EMSCRIPTEN__
+#define WEBPDL2ORK
+#endif
 
 /* compile-time version check:
    #if PD_VERSION_CODE < PD_VERSION(0, 56, 0)

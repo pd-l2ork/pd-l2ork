@@ -515,7 +515,11 @@ EXTERN int gobj_click(t_gobj *x, struct _glist *glist,
     int xpix, int ypix, int shift, int alt, int dbl, int doit);
 EXTERN void gobj_save(t_gobj *x, t_binbuf *b);
 EXTERN void gobj_properties(t_gobj *x, struct _glist *glist);
+#ifdef ALWAYS_VIS
+#define gobj_shouldvis(x, y) 1
+#else
 EXTERN int gobj_shouldvis(t_gobj *x, struct _glist *glist);
+#endif
 EXTERN void gobj_dirty(t_gobj *x, t_glist *g, int state);
 
 /* -------------------- functions on glists --------------------- */
@@ -539,7 +543,11 @@ EXTERN void glist_grab(t_glist *x, t_gobj *y, t_glistmotionfn motionfn,
 #endif
 EXTERN int glist_grab_exclusive(t_glist *x, int exclusive);
 EXTERN void glist_grab_disable_motion(t_glist *x);
+#ifdef ALWAYS_VIS
+#define glist_isvisible(x) 1
+#else
 EXTERN int glist_isvisible(t_glist *x);
+#endif
 EXTERN int glist_istoplevel(t_glist *x);
 EXTERN t_glist *glist_findgraph(t_glist *x);
 EXTERN int glist_getfont(t_glist *x);
