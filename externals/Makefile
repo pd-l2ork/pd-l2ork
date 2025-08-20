@@ -533,15 +533,16 @@ pd-cyclone_clean:
 
 PD_ELSE_PATH := $(externals_src)/pd-else
 PD_ELSE_FLAGS := $(CFLAGS) $(SILENCE_PD_GUI) -DGLIST_GRAB_COMPAT -DPURR_DATA -DPDL2ORK -Wno-incompatible-function-pointer-types -Wno-missing-template-arg-list-after-template-kw
+PD_ELSE_EM_FLAGS := $(PD_ELSE_FLAGS) -msimd128 -U__linux__
 
-ifeq ($(EMSCRIPTEN),yes)
 OGG_PATH := $(PD_ELSE_PATH)/.ogg
 OGG_LIB := $(OGG_PATH)/build/libogg.a
+OGG_CMAKE_FLAGS := -DOGG_INCLUDE_DIR="$(OGG_PATH)/include" -DOGG_LIBRARY="$(OGG_PATH)/build"
 VORBIS_PATH := $(PD_ELSE_PATH)/.vorbis
 VORBIS_LIB := $(VORBIS_PATH)/build/lib/libvorbis.a
+VORBIS_CMAKE_FLAGS := -DVORBIS_INCLUDE_DIR="$(VORBIS_PATH)/include" -DVORBIS_LIBRARY="$(VORBIS_PATH)/build" -DVORBISENC_INCLUDE_DIR="$(VORBIS_PATH)/include" -DVORBISENC_LIBRARY="$(VORBIS_PATH)/build"
 OPENSSL_PATH := $(PD_ELSE_PATH)/.openssl
 OPENSSL_LIB := $(OPENSSL_PATH)/libssl.a
-PD_ELSE_EM_FLAGS := $(PD_ELSE_FLAGS) -msimd128 -U__linux__
 
 $(OGG_PATH)/README.md:
 	git clone https://github.com/emscripten-ports/Ogg $(OGG_PATH)
@@ -554,22 +555,20 @@ $(OPENSSL_PATH)/README.md:
 
 $(OGG_LIB): $(OGG_PATH)/README.md $(OPENSSL_LIB)
 	$(CMAKE) -B$(OGG_PATH)/build $(OGG_PATH)
-	MAKEOVERRIDES= emmake make -j -C $(OGG_PATH)/build
+	MAKEOVERRIDES= $(MAKE) -j -C $(OGG_PATH)/build
 
 $(VORBIS_LIB): $(VORBIS_PATH)/README.md $(OGG_LIB)
 	$(CMAKE) -B$(VORBIS_PATH)/build $(VORBIS_PATH) -DOGG_INCLUDE_DIRS="$(OGG_PATH)/include" -DOGG_LIBRARIES="$(OGG_PATH)/build"
-	emmake make -j -C $(VORBIS_PATH)/build
+	$(MAKE) -j -C $(VORBIS_PATH)/build
 
+ifeq ($(EMSCRIPTEN),yes)
 $(OPENSSL_LIB): $(OPENSSL_PATH)/README.md
 	cd $(OPENSSL_PATH) && emconfigure ./Configure -no-asm -no-apps gcc
 	MAKEFLAGS= emmake make -j -C $(OPENSSL_PATH) LDFLAGS="" WARN_FLAGS="" CXX=`which em++` AR=`which emar` CC=`which emcc` RANLIB=`which emranlib`
 
 $(PD_ELSE_PATH)/build/.built: $(OGG_LIB) $(VORBIS_LIB) $(OPENSSL_LIB)
 	$(CMAKE) -B$(PD_ELSE_PATH)/build -Wno-dev -DPD_PATH="$(pd_src)" $(PD_ELSE_PATH) \
-		-DOPENSSL_ROOT_DIR=$(OPENSSL_PATH) \
-		-DOGG_INCLUDE_DIR="$(OGG_PATH)/include" -DOGG_LIBRARY="$(OGG_PATH)/build" \
-		-DVORBIS_INCLUDE_DIR="$(VORBIS_PATH)/include" -DVORBIS_LIBRARY="$(VORBIS_PATH)/build" \
-		-DVORBISENC_INCLUDE_DIR="$(VORBIS_PATH)/include" -DVORBISENC_LIBRARY="$(VORBIS_PATH)/build" \
+		-DOPENSSL_ROOT_DIR=$(OPENSSL_PATH) $(OGG_CMAKE_FLAGS) $(VORBIS_CMAKE_FLAGS) \
 		-DCMAKE_C_FLAGS="$(PD_ELSE_EM_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_EM_FLAGS)"
 	env -i PATH=$(PATH) bash -c ' \
 		cd $(PD_ELSE_PATH)/build/Source/Shared/ffmpeg/ffmpeg-7.0.1 && \
@@ -585,11 +584,21 @@ $(PD_ELSE_PATH)/build/.built: $(OGG_LIB) $(VORBIS_LIB) $(OPENSSL_LIB)
 	done
 	touch $(PD_ELSE_PATH)/build/.built
 else
-$(PD_ELSE_PATH)/build/.built:
-ifeq ($(OS_NAME),windows)
-	CMAKE_GENERATOR="Unix Makefiles" $(CMAKE) -B$(PD_ELSE_PATH)/build -Wno-dev -DPD_LIBRARY="$(pd_src)/src/pd.dll" -DPD_PATH="$(pd_src)" $(PD_ELSE_PATH) -DCMAKE_C_FLAGS="$(PD_ELSE_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_FLAGS)"
+
+ifeq ($(OS_NAME)-$(CPU),darwin-x86_64)
+PD_ELSE_CMAKE_FLAGS := $(OGG_CMAKE_FLAGS) $(VORBIS_CMAKE_FLAGS)
+
+$(PD_ELSE_PATH)/build/.built: $(OGG_LIB) $(VORBIS_LIB)
 else
-	$(CMAKE) -B$(PD_ELSE_PATH)/build -Wno-dev -DPD_PATH="$(pd_src)" $(PD_ELSE_PATH) -DCMAKE_C_FLAGS="$(PD_ELSE_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_FLAGS)"
+PD_ELSE_CMAKE_FLAGS := 
+
+$(PD_ELSE_PATH)/build/.built:
+endif
+
+ifeq ($(OS_NAME),windows)
+	CMAKE_GENERATOR="Unix Makefiles" $(CMAKE) -B$(PD_ELSE_PATH)/build -Wno-dev -DPD_LIBRARY="$(pd_src)/src/pd.dll" -DPD_PATH="$(pd_src)" $(PD_ELSE_PATH) -DCMAKE_C_FLAGS="$(PD_ELSE_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_FLAGS)" $(PD_ELSE_CMAKE_FLAGS)
+else
+	$(CMAKE) -B$(PD_ELSE_PATH)/build -Wno-dev -DPD_PATH="$(pd_src)" $(PD_ELSE_PATH) -DCMAKE_C_FLAGS="$(PD_ELSE_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_FLAGS)" $(PD_ELSE_CMAKE_FLAGS)
 	$(CMAKE) -B$(PD_ELSE_PATH)/Source/Audio/sfz~/sfizz/library/build $(PD_ELSE_PATH)/Source/Audio/sfz~/sfizz/library -DCMAKE_C_FLAGS="$(PD_ELSE_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_FLAGS)"
 endif
 	make -C $(PD_ELSE_PATH)/build
