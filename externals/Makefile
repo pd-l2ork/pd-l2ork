@@ -89,6 +89,7 @@ usrlocal = $(optlocal)
   LIBS += -lc 
   DYLIB_LDFLAGS = -dynamiclib -undefined dynamic_lookup -read_only_relocs warning -L$(usrlocal)/lib
   STRIP = strip -x
+  CPU = $(shell uname -m)
 endif
 ifeq ($(OS_NAME),linux)
   CFLAGS += -I$(externals_src)/pdp/include -DUNIX -Dunix -DDL_OPEN -fPIC -O2
