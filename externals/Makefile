@@ -594,7 +594,7 @@ PD_ELSE_CMAKE_FLAGS :=
 
 $(PD_ELSE_PATH)/build/.built:
 endif
-
+	echo $(OS_NAME)-$(CPU)
 ifeq ($(OS_NAME),windows)
 	CMAKE_GENERATOR="Unix Makefiles" $(CMAKE) -B$(PD_ELSE_PATH)/build -Wno-dev -DPD_LIBRARY="$(pd_src)/src/pd.dll" -DPD_PATH="$(pd_src)" $(PD_ELSE_PATH) -DCMAKE_C_FLAGS="$(PD_ELSE_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_FLAGS)" $(PD_ELSE_CMAKE_FLAGS)
 else
