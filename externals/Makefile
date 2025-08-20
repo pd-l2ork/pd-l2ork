@@ -557,7 +557,7 @@ $(OPENSSL_PATH)/README.md:
 	git clone https://github.com/openssl/openssl $(OPENSSL_PATH)
 
 $(OGG_LIB): $(OGG_PATH)/README.md
-	$(CMAKE) -B$(OGG_PATH)/build $(OGG_PATH)
+	$(CMAKE) -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -B$(OGG_PATH)/build $(OGG_PATH)
 	MAKEOVERRIDES= $(MAKE) -j -C $(OGG_PATH)/build
 
 $(VORBIS_LIB): $(VORBIS_PATH)/README.md $(OGG_LIB)
