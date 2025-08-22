@@ -595,8 +595,7 @@ endif
 ifeq ($(OS_NAME),windows)
 	CMAKE_GENERATOR="Unix Makefiles" $(CMAKE) -B$(PD_ELSE_PATH)/build -Wno-dev -DPD_LIBRARY="$(pd_src)/src/pd.dll" -DPD_PATH="$(pd_src)" $(PD_ELSE_PATH) -DCMAKE_C_FLAGS="$(PD_ELSE_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_FLAGS)" $(PD_ELSE_CMAKE_FLAGS)
 else
-	ls /opt/homebrew/lib && ls /opt/homebrew/include && asdf && fghj
-	$(CMAKE) -B$(PD_ELSE_PATH)/build -Wno-dev -DPD_PATH="$(pd_src)" $(PD_ELSE_PATH) -DCMAKE_C_FLAGS="$(PD_ELSE_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_FLAGS)" $(PD_ELSE_CMAKE_FLAGS)
+	$(CMAKE) -B$(PD_ELSE_PATH)/build -Wno-dev -DPD_PATH="$(pd_src)" $(PD_ELSE_PATH) -DCMAKE_C_FLAGS="$(PD_ELSE_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_FLAGS)" $(PD_ELSE_CMAKE_FLAGS) -DFORCE_FIND_LIBRARY=ON
 	$(CMAKE) -B$(PD_ELSE_PATH)/Source/Audio/sfz~/sfizz/library/build $(PD_ELSE_PATH)/Source/Audio/sfz~/sfizz/library -DCMAKE_C_FLAGS="$(PD_ELSE_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_FLAGS)"
 endif
 	make -C $(PD_ELSE_PATH)/build
