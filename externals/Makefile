@@ -527,6 +527,7 @@ pd-cyclone_install:
 
 pd-cyclone_clean:
 	make -C $(PD_CYCLONE_PATH) clean
+	rm -f $(PD_CYCLONE_PATH)/.built
 
 PD_ELSE_PATH := $(externals_src)/pd-else
 PD_ELSE_FLAGS := $(CFLAGS) $(SILENCE_PD_GUI) -DGLIST_GRAB_COMPAT -DPURR_DATA -DPDL2ORK -Wno-incompatible-function-pointer-types -Wno-missing-template-arg-list-after-template-kw
@@ -615,6 +616,7 @@ endif
 
 pd-else_clean:
 	rm -rf $(PD_ELSE_PATH)/build
+	rm -f $(PD_ELSE_PATH)/.built
 ifeq ($(EMSCRIPTEN),yes)
 	rm -rf $(OGG_PATH)
 	rm -rf $(VORBIS_PATH)
