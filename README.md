@@ -2,7 +2,7 @@
 
 Maintainer:
 
-* Ivica Ico Bukvic <ico@vt.edu>
+* Ivica Ico Bukvic <ico@bukvic.net>
 
 [Mailing List](http://disis.music.vt.edu/cgi-bin/mailman/listinfo/l2ork-dev)
 
