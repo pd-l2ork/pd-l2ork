@@ -515,21 +515,15 @@ ifeq ($(EMSCRIPTEN),yes)
 PD_CYCLONE_FLAGS := $(PD_CYCLONE_FLAGS) -D__linux__
 endif
 
-pd-cyclone:
+pd-cyclone: $(PD_CYCLONE_PATH)/.built
+
+$(PD_CYCLONE_PATH)/.built:
 	perl -pi -e 's/define COLLTHREAD 1/define COLLTHREAD 0/' $(PD_CYCLONE_PATH)/cyclone_objects/binaries/control/coll.c
-ifeq ($(EMSCRIPTEN),yes)
-	$(CMAKE) -B$(PD_CYCLONE_PATH)/build $(PD_CYCLONE_PATH) -DCMAKE_C_FLAGS="$(PD_CYCLONE_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_CYCLONE_FLAGS)" -DPD_INCLUDE_DIR="$(pd_src)/src" -DPD_LIBRARY="$(pd_src)/src"
-	make -C $(PD_CYCLONE_PATH)/build extension=$(EXTENSION)
-else
 	make -C $(PD_CYCLONE_PATH) PDBINDIR=$(pd_src)/src PDINCLUDEDIR=$(pd_src)/src CFLAGS="$(PD_CYCLONE_FLAGS)" extension=$(EXTENSION)
-endif
+	touch $(PD_CYCLONE_PATH)/.built
 
 pd-cyclone_install:
-ifeq ($(EMSCRIPTEN),yes)
-	make -C $(PD_CYCLONE_PATH)/build install objectsdir="$(objectsdir)" extension=$(EXTENSION)
-else
 	make -C $(PD_CYCLONE_PATH) install objectsdir="$(objectsdir)" extension=$(EXTENSION)
-endif
 
 pd-cyclone_clean:
 	make -C $(PD_CYCLONE_PATH) clean

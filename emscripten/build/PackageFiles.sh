@@ -66,6 +66,7 @@ create_chunks $1 $3
 perl -ne '/^(\s*var\s+Module\s*=\s*moduleArg;).*/ && do { print $1 . "\n"; exit }; print' "$2" > "$2.tmp"
 
 # Append all the filesys code
+echo "var ENVIRONMENT_IS_PTHREAD = globalThis.self?.name?.startsWith('em-pthread');" >> "$2.tmp"
 cat main-*.js >> "$2.tmp"
 
 # Append the rest of the original outputfile after 'var Module = moduleArg;'
