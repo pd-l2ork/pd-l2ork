@@ -1909,6 +1909,7 @@ else
 pdlua_install: pdlua
 	install -d $(DESTDIR)/$(objectsdir)/pd-lua
 	bash -c "cp -r $(externals_src)/pd-lua/{pdlua,doc,*.pd,*.${EXTENSION},tutorial,*.lua*} $(DESTDIR)$(objectsdir)/pd-lua"
+	cp $(externals_src)/pd-lua/pdlua/tutorial/examples/pdx.lua $(DESTDIR)$(objectsdir)/pd-lua
 
 pdlua_clean:
 	rm -f $(LUA_TARGET)
