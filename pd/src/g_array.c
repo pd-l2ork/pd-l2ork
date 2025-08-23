@@ -48,23 +48,23 @@ t_symbol *sharptodollar(t_symbol *s)
 They are instantiated by "garrays" below or can be elements of other
 scalars (g_scalar.c); their graphical behavior is defined accordingly. */
 
-t_array *array_new(t_symbol *templatesym, t_gpointer *parent)
+t_array *array_new(t_symbol *templatesym, int length, t_gpointer *parent)
 {
     t_array *x = (t_array *)getbytes(sizeof (*x));
     t_template *template;
     template = template_findbyname(templatesym);
     x->a_templatesym = templatesym;
-    x->a_n = 1;
+    x->a_n = length;
     x->a_elemsize = sizeof(t_word) * template->t_n;
-    x->a_vec = (char *)getbytes(x->a_elemsize);
-    x->a_draw_vec = (char *)getbytes(x->a_elemsize);
+    x->a_vec = (char *)getbytes(length * x->a_elemsize);
+    x->a_draw_vec = (char *)getbytes(length * x->a_elemsize);
         /* note here we blithely copy a gpointer instead of "setting" a
         new one; this gpointer isn't accounted for and needn't be since
         we'll be deleted before the thing pointed to gets deleted anyway;
         see array_free. */
     x->a_gp = *parent;
     x->a_stub = gstub_new(0, x);
-    word_init((t_word *)(x->a_vec), template, parent);
+    word_initvec((t_word *)(x->a_vec), template, parent, length);
     return (x);
 }
 
@@ -115,11 +115,7 @@ void array_free(t_array *x)
     int i;
     t_template *scalartemplate = template_findbyname(x->a_templatesym);
     gstub_cutoff(x->a_stub);
-    for (i = 0; i < x->a_n; i++)
-    {
-        t_word *wp = (t_word *)(x->a_vec + x->a_elemsize * i);
-        word_free(wp, scalartemplate);
-    }
+    word_freevec((t_word *)x->a_vec, scalartemplate, x->a_n);
     freebytes(x->a_vec, x->a_elemsize * x->a_n);
     freebytes(x->a_draw_vec, x->a_elemsize * x->a_n);
     freebytes(x, sizeof *x);
@@ -615,6 +611,13 @@ int garray_properties(t_garray *x, t_symbol **gfxstubp, t_symbol **namep,
     return 1;
 }
 
+static void garray_deleteit(t_garray *x) {
+    int wasused = x->x_usedindsp;
+    glist_delete(x->x_glist, &x->x_gobj);
+    if (wasused)
+        canvas_update_dsp();
+}
+
     /* this is called back from the dialog window to create a garray. 
     The otherflag requests that we find an existing graph to put it in. */
 void glist_arraydialog(t_glist *parent, t_symbol *s, int argc, t_atom *argv)
@@ -685,6 +688,13 @@ void glist_arraydialog(t_glist *parent, t_symbol *s, int argc, t_atom *argv)
     //garray_redraw(a);
     canvas_getscroll(glist_getcanvas(parent));
     canvas_dirty(parent, 1);
+}
+
+/* remove a named array from a graph */
+void glist_removearray(t_glist *x, t_symbol *name) {
+    t_garray*a = (t_garray*)pd_findbyclass(name, garray_class);
+    if (a && x == a->x_glist)
+        garray_deleteit(a);
 }
 
 extern void canvas_apply_setundo(t_canvas *x, t_gobj *y);
@@ -1766,6 +1776,11 @@ void garray_setsaveit(t_garray *x, int saveit)
     x->x_saveit = saveit;
 }
 
+static void garray_saveit(t_garray *x, t_floatarg f)
+{
+    garray_setsaveit(x, (int)f);
+}
+
 /*------------------- Pd messages ------------------------ */
 static void garray_const(t_garray *x, t_floatarg g)
 {
@@ -2140,6 +2155,15 @@ static void garray_edit(t_garray *x, t_floatarg f)
     x->x_edit = (int)f;
 }
 
+static void garray_visname(t_garray *x, t_floatarg f)
+{
+    int hidewas = x->x_hidename;
+    x->x_hidename = !((int)f);
+    if (hidewas != x->x_hidename) {
+        glist_redraw(x->x_glist);
+    }
+}
+
 static void garray_print(t_garray *x)
 {
     t_array *array = garray_getarray(x);
@@ -2189,8 +2213,12 @@ void g_array_setup(void)
         A_GIMME, 0);
     class_addmethod(garray_class, (t_method)garray_vis_msg, gensym("vis"),
         A_FLOAT, 0);
+    class_addmethod(garray_class, (t_method)garray_visname, gensym("visname"),
+        A_FLOAT, 0);
     class_addmethod(garray_class, (t_method)garray_rename, gensym("rename"),
         A_SYMBOL, 0);
+    class_addmethod(garray_class, (t_method)garray_saveit, gensym("keep"),
+        A_FLOAT, 0);
     class_addmethod(garray_class, (t_method)garray_read, gensym("read"),
         A_SYMBOL, A_NULL);
     class_addmethod(garray_class, (t_method)garray_write, gensym("write"),
