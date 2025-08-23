@@ -599,7 +599,7 @@ pd-else_install:
 ifeq ($(OS_NAME),darwin)
 	for f in $(DESTDIR)/$(objectsdir)/else/*.darwin-fat-32.so; do mv -- "$$f" "$${f%.darwin-fat-32.so}.pd_darwin"; done
 else ifeq ($(OS_NAME),windows)
-	for f in $(DESTDIR)/$(objectsdir)/else/*.m_amd64; do mv -- "$$f" "$${f%.m_amd64}.pd_linux"; done
+	for f in $(DESTDIR)/$(objectsdir)/else/*.m_amd64; do mv -- "$$f" "$${f%.m_amd64}.dll"; done
 else ifneq ($(EMSCRIPTEN),yes)
 	for f in $(DESTDIR)/$(objectsdir)/else/*.l_amd64; do mv -- "$$f" "$${f%.l_amd64}.pd_linux"; done
 endif
