@@ -22,7 +22,7 @@ SRC_FILES = $(SRC_DIR)/main.cpp $(SRC_DIR)/pd.cpp $(SRC_DIR)/js.cpp $(SRC_DIR)/o
 TARGET = main.js
 OUTPUT_FILES = $(TARGET) main.js main.wasm $(wildcard main-*.data)
 CFLAGS = -I$(PD_PATH)/src -I$(LIBPD_PATH)/libpd_wrapper -O3 -pthread
-LDFLAGS = -L$(LIBPD_PATH)/libs -lpd -lm -sENVIRONMENT=web,worker -sPTHREAD_POOL_SIZE=navigator.hardwareConcurrency -sSTACK_SIZE=1048576 -pthread
+LDFLAGS = -L$(LIBPD_PATH)/libs -lpd -lm -lidbfs.js -sENVIRONMENT=web,worker -sPTHREAD_POOL_SIZE=navigator.hardwareConcurrency -sSTACK_SIZE=1048576 -pthread
 ifeq ($(DEBUG), true)
     CFLAGS += -gsource-map -O0 -fsanitize=address
     LDFLAGS += -sASSERTIONS=2 -sEXCEPTION_DEBUG -sSTACK_OVERFLOW_CHECK=1 --profiling-funcs -gsource-map
