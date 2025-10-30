@@ -12,12 +12,27 @@ PD-L2ORK TODO:
 *Integrate cyclone
   *Need to request upstream documentation update to remove inappropriate language.
 
-*Integrate #1756 pull request from vanilla that may improve the scheduler.
-  *This is super convoluted as the literal merge requires major changes to a lot of the code base. Merging this will require a more surgical approach that only merges relevant changes.
-  *IN PROGRESS
-
 *Try to track down a sporadic bug that sometimes assumes that object text is empty and even though you only add text, the resulting text is only what you added.
   *Need to find a way to reproduce reliably.
+
+*Updating cursor when exiting out of edit mode (stays stale until you move it)
+
+*C:\Program Files (x86)\Pd-L2Ork\bin\pdgui.js:3822 Uncaught TypeError: Cannot read properties of null (reading 'window')
+    at get_item (C:\Program Files (x86)\Pd-L2Ork\bin\pdgui.js:3822:26)
+    at img.onload (C:\Program Files (x86)\Pd-L2Ork\bin\pdgui.js:7288:24)
+  *Need to be able to reproduce
+
+*consistency check failed: canvas_get_snap_offset when copying instead of cutting inside sync controls password part
+  *Maybe: TypeError: Cannot read properties of undefined (reading 'classList')
+  *Need to be able to reproduce
+
+*Uncaught TypeError: Cannot read properties of undefined (reading 'classList')
+    at HTMLDocument.<anonymous> (pd_canvas.js:1905:43)
+  *Need to be able to reproduce
+
+*Make coll silent on deleting keys that don't exist (after merging the new version of cyclone)
+
+*On Windows11, every time window is saved it gets a bit bigger? No, but it does seem to nudge itself one pixel to the right. TODO: get printout from the checkgeometry or similar to see what pd-l2ork thinks.
 
 *Integrate vstplugin~
   https://git.iem.at/pd/vstplugin
@@ -891,11 +906,35 @@ resulting in unexpected stuck keys.
   *Fixed using start-up window repositioning to calculate universal offset.
 *Fixed clone object by merging latest additions. May need additional testing for potential regressions.
 *Fixed a bug where double-clicking on a patch in Windows once again is not opening the patch in Pd-L2Ork. Looks like new scheduler megapatch broke this. Implemented a bandaid solution until I study this more closely since Windows now throws the same instance for both instances. The old code continues to work on Linux and OSX.
+*Integrate #1756 pull request from vanilla that may improve the scheduler.
+  *This is super convoluted as the literal merge requires major changes to a lot of the code base. Merging this will require a more surgical approach that only merges relevant changes.
+*Bring parity to the Pd 0.56.
+*Find last error now successfully prints last error
+*Clicking on the print or error in the console now works again
+*Fixed temporary runtime mode where it remains enabled when you lose focus (when opening the subpatch in non-edit mode, regardless whether the parent is in edit mode or not, the subpatch upon opening with alt key has lines on it even though it is not in edit mode). Now the temporary runtime looks like the runtime. It is less confusing that way, anyhow.
+*Fixed savepanel is not working: everything sent into its inlet triggered a "trigger" error
+*Resizing/repositioning window does not save its new size unless you put a new object on the canvas (solved itself, perhaps this was a cascading bug from something else)
+*Put a check into the code to hopefully address potential errors like this one:
+    Uncaught TypeError: Cannot read properties of null (reading 'toLowerCase')
+    at dwin.document.onkeydown (C:\Program Files (x86)\Pd-L2Ork\bin\pdgui.js:10877:56)
 
 
 
 
 TWEETER TODO:
+*Add disconnect-all message to the server to bump all
+*Add disconnect-all-audience message to the serve to bump all non-players
+*Add lockdown to prevent anyone else from joining
+
+*Remove 65th beats from all sessions
+  *Remove unnecessary removal of keys that post unnecessary errors
+
+*Why is copyfrom issuing two identical tracker-time values?
+
+*When adding/removing a part, reiterate toggle keyboard (under certain circumstances, it is lost)
+    *Need to find a way to reproduce this
+    *Justin reported not seeing William's part being on but also had other stack overflow issues at the time.
+
 *Consider adding networked repositioning of the red cursor in the L2Orkmote-Tweeter, so that both users and audience can see what is everyone doing.
 
 *Offer a way to deal with different keyboards (some keys are not in the same place, see the ELSE approach and new objects that deal with this)
