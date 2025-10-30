@@ -338,7 +338,7 @@ void verbose(int level, const char *fmt, ...)
     later. */
 
 static const void *error_object;
-static char error_string[256];
+static char error_string[MAXPDSTRING];
 void canvas_finderror(const void *object);
 
 void pd_error(const void *object, const char *fmt, ...)
@@ -350,6 +350,7 @@ void pd_error(const void *object, const char *fmt, ...)
     va_start(ap, fmt);
     pd_vsnprintf(buf, MAXPDSTRING-1, fmt, ap);
     va_end(ap);
+    strcpy(error_string, buf);
     strcat(buf, "\n");
 
     doerror(object, buf);
@@ -360,7 +361,7 @@ void pd_error(const void *object, const char *fmt, ...)
     {
         /* move this to a function in the GUI so that we can change the
            message without having to recompile */
-        post("... click the link above to track it down, or click the 'Find Last Error' item in the Edit menu.");
+        post("... click the link above to track it down, or click the 'Find Last Error' item in the Edit menu");
         saidit = 1;
     }
 }
@@ -381,6 +382,15 @@ void glob_findinstance(t_pd *dummy, t_symbol*s)
 {
     // revert s to (potential) pointer to object
     t_int obj = 0;
+    if (sscanf(s->s_name, ".x%zx", &obj))
+    {
+        if (obj)
+        {
+            canvas_finderror((void *)obj);
+        }
+    }
+    /*
+    t_int obj = 0;
     const char*addr;
     int result = 0;
     if(!s || !s->s_name)
@@ -397,6 +407,7 @@ void glob_findinstance(t_pd *dummy, t_symbol*s)
         return;
 
     canvas_finderror((void *)obj);
+    */
 }
 
 void bug(const char *fmt, ...)

@@ -2679,14 +2679,20 @@ function set_editmode_bg(cid, svg_elem, state)
     var offset, zoom;
     if (!state) {
         if (alt_key)
-            set_bg(cid, create_editmode_key_runmode_bg(cid, svg_elem),
-                "0% 0%", "repeat");
+            //set_bg(cid, create_editmode_key_runmode_bg(cid, svg_elem),
+            //    "0% 0%", "repeat");
+            // ico@bukvic.net 2025-10-29:
+            // this is too messy due to alt key autorepeat, so we are disabling
+            // different look for the alt key pressed temporary runtime. it is
+            // only cosmetic anyhow.
+            set_bg(cid, "none", "0% 0%", "repeat");
         else
             set_bg(cid, "none", "0% 0%", "repeat");
     } else {
         if (alt_key)
-            set_bg(cid, create_editmode_key_runmode_bg(cid, svg_elem),
-                "0% 0%", "repeat");
+            //set_bg(cid, create_editmode_key_runmode_bg(cid, svg_elem),
+            //    "0% 0%", "repeat");
+            set_bg(cid, "none", "0% 0%", "repeat");
         else
             set_bg(cid, create_editmode_bg(cid, svg_elem), "0% 0%", "repeat");
     }
@@ -2700,7 +2706,7 @@ function update_svg_background(cid, svg_elem) {
     // it has we assume we're in editmode.
     //post("...bg=" + bg);
     if (bg !== "none") {
-        set_editmode_bg(cid, svg_elem, 1);
+        set_editmode_bg(cid, svg_elem, true);
     }
 }
 
@@ -3256,7 +3262,7 @@ exports.last_loaded = function () {
 // close a canvas window
 
 function gui_canvas_cursor(cid, pd_event_type) {
-    //post("gui_canvas_cursor " + pd_event_type);
+    //post("gui_canvas_cursor " + cid + " " + pd_event_type);
     gui(cid).get_elem("patchsvg", function(patch) {
         // A quick mapping of events to pointers-- these can
         // be revised later
@@ -3317,6 +3323,9 @@ function gui_canvas_cursor(cid, pd_event_type) {
                 break;
         }
         patch.style.cursor = c;
+        // ico@bukvic.net 2025-10-29:
+        // On Win11 this for some reason does not update the cursor
+        // until the cursor is moved...
     });
 }
 
@@ -11094,17 +11103,19 @@ exports.dialog_bindings = function(did) {
             // cmd/ctrl+a
             //post("onkeydown ctrl+a");
             var element = dwin.document.activeElement;
-            var tagName = element.tagName.toLowerCase();
-            if (tagName === 'input') {
-                //post("...got input");
-                var type = element.getAttribute('type').toLowerCase();
-                if (type === "text" || type === "number")
-                {
-                    //post("...we got text or number, selecting")
-                    element.select();
+            if (element) {
+                var tagName = element.tagName.toLowerCase();
+                if (tagName === 'input') {
+                    //post("...got input");
+                    var type = element.getAttribute('type').toLowerCase();
+                    if (type === "text" || type === "number")
+                    {
+                        //post("...we got text or number, selecting")
+                        element.select();
+                    }
                 }
+                evt.preventDefault();
             }
-            evt.preventDefault();
         }
         else if (nw_os_is_osx && evt.keyCode == 87 && evt.metaKey) {
             //post("OSX version of cmd+w");

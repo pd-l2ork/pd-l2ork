@@ -473,7 +473,7 @@ static void *savepanel_new( void)
     x->x_canvas = canvas_getcurrent();
     pd_bind(&x->x_obj.ob_pd, x->x_s);
     outlet_new(&x->x_obj, &s_symbol);
-    gui_vmess("file_dialog_obj", "s", x->x_s->s_name);
+    gui_vmess("file_dialog_obj", "s", filedialog_obj->x_s->s_name);
     return (x);
 }
 
