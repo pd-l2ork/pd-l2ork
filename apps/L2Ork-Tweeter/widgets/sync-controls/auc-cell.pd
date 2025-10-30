@@ -1,57 +1,61 @@
 #N canvas 880 197 750 877 10;
-#X text 474 737 (c) Ivica Ico Bukvic 2023;
-#X text 474 719 advanced user controls abstraction;
+#X text 534 737 (c) Ivica Ico Bukvic 2023;
+#X text 534 719 advanced user controls abstraction;
 #X obj -40 130 preset_hub k12 1 %hidden%;
-#X obj 175 99 cnv 15 207 20 empty \$0-panel |01 -1 8 0 14 #888888 #fcfcfc
-0;
-#X obj 222 509 s chat-out;
-#X obj 230 102 nbx 8 15 0 60000 0 0 empty empty empty 1 -19 0 10 #fcb46c
-#000000 #000000 0 256 0 1 1 0;
-#X obj 356 102 tgl 15 0 empty empty empty -75 5 0 10 #fcb46c #000000
-#000000 0 1 1;
-#X obj 316 102 nbx 2 15 0 63 0 0 empty empty empty 0 -8 0 10 #fcb46c
-#000000 #000000 0 256 0 1 1 0;
-#X obj 272 375 gate 1 0;
-#X msg 366 260 0;
-#X obj 222 406 gate 2 1;
-#X obj 398 312 r adv-user-ctrl-pass-r;
-#X obj 222 375 + 1;
-#X obj 222 260 t f 1;
-#X obj 206 102 bng 15 250 50 0 empty empty empty 17 7 0 10 #80fc80
-#008080 #000000 1;
-#X text 413 343 arguments:1 = dummy one2 = local client id3 = sync
+#X obj 235 99 cnv 15 207 20 empty \$0-panel |01 -1 8 0 14 #ff888888
+#fffcfcfc 0;
+#X obj 287 509 s chat-out;
+#X obj 290 102 nbx 8 15 0 60000 0 0 empty empty empty 1 -19 0 10 #fffcb46c
+#ff000000 #ff000000 0 256 0 1 1 0;
+#X obj 416 102 tgl 15 0 empty empty empty -75 5 0 10 #fffcb46c #ff000000
+#ff000000 0 1 1;
+#X obj 376 102 nbx 2 15 0 63 0 0 empty empty empty 0 -8 0 10 #fffcb46c
+#ff000000 #ff000000 0 256 0 1 1 0;
+#X obj 332 375 gate 1 0;
+#X msg 426 260 0;
+#X obj 287 406 gate 2 1;
+#X obj 458 312 r adv-user-ctrl-pass-r;
+#X obj 287 375 + 1;
+#X obj 282 260 t f 1;
+#X obj 266 102 bng 15 250 50 0 empty empty empty 17 7 0 10 #ff80fc80
+#ff008080 #ff000000 1;
+#X text 473 343 arguments:1 = dummy one2 = local client id3 = sync
 to client (or length)4 = sync at which beat5 = admin password;
-#X obj 317 343 pack 0 0 0 0 s;
-#X msg 222 476 chat admin p:\$5 l2ork-custom sync-to-at \$2 \$2 \$3
+#X obj 377 343 pack 0 0 0 0 s;
+#X msg 287 476 chat admin p:\$5 l2ork-custom sync-to-at \$2 \$2 \$3
 \$4;
-#X msg 267 442 chat admin p:\$5 l2ork-custom sync-w-tempo-to-at \$2
+#X msg 332 442 chat admin p:\$5 l2ork-custom sync-w-tempo-to-at \$2
 \$2 \$3 \$4;
-#X obj 235 60 preset_node auc;
-#X obj 336 60 preset_node auc;
-#X obj 438 60 preset_node auc;
-#X obj 410 260 r myclientnum;
-#X obj 279 260 t f 1 1;
-#X obj 150 60 r \$1-activate;
-#X obj 222 590 \$1;
-#X obj 222 675 % 2;
-#X obj 222 700 sel 0 1;
-#X msg 222 725 #777777;
-#X obj 222 615 t f f;
-#X msg 282 686 \; \$0-panel label \$1;
-#X obj 222 564 loadbang;
-#X obj 282 637 sprintf |%02d;
-#X obj 282 661 tosymbol;
-#X obj 254 761 tosymbol;
-#X msg 282 725 #888888;
-#X msg 254 787 \; \$0-panel color \$1 #fcfcfc;
-#X obj 356 102 tgl 15 0 empty empty empty -75 5 0 10 #fcb46c #000000
-#000000 0 1 1;
-#X obj 230 130 moses 1;
-#X obj 314 178 moses 500;
-#X obj 365 202 moses 60001;
-#X obj 269 154 moses 15;
-#X text 326 154 adjust for maximum performers;
-#X connect 5 0 38 0;
+#X obj 295 60 preset_node auc;
+#X obj 392 60 preset_node auc;
+#X obj 489 60 preset_node auc;
+#X obj 339 260 t f 1 1;
+#X obj 210 60 r \$1-activate;
+#X obj 282 590 \$1;
+#X obj 282 675 % 2;
+#X obj 282 700 sel 0 1;
+#X msg 282 725 #777777;
+#X obj 282 615 t f f;
+#X msg 342 686 \; \$0-panel label \$1;
+#X obj 282 564 loadbang;
+#X obj 342 637 sprintf |%02d;
+#X obj 342 661 tosymbol;
+#X obj 314 761 tosymbol;
+#X msg 342 725 #888888;
+#X msg 314 787 \; \$0-panel color \$1 #fcfcfc;
+#X obj 416 102 tgl 15 0 empty empty empty -75 5 0 10 #fffcb46c #ff000000
+#ff000000 0 1 1;
+#X obj 290 130 moses 1;
+#X obj 374 178 moses 500;
+#X obj 425 202 moses 60001;
+#X obj 329 154 moses 15;
+#X text 386 154 adjust for maximum performers;
+#X obj 70 200 s get-all-local-parts-with-keyboard-on;
+#X obj 70 222 r all-local-parts-with-keyboard-on;
+#X obj 25 245 gate 1 0;
+#X obj 51 146 t 0 b 1;
+#X obj 25 270 t b f;
+#X connect 5 0 37 0;
 #X connect 7 0 16 3;
 #X connect 8 0 10 1;
 #X connect 9 0 8 0;
@@ -62,36 +66,43 @@ to client (or length)4 = sync at which beat5 = admin password;
 #X connect 13 0 16 2;
 #X connect 13 1 8 0;
 #X connect 14 0 16 0;
+#X connect 14 0 45 0;
 #X connect 16 0 8 1;
 #X connect 17 0 4 0;
 #X connect 18 0 4 0;
 #X connect 19 0 5 0;
 #X connect 20 0 7 0;
-#X connect 21 0 37 0;
-#X connect 22 0 16 1;
-#X connect 23 0 16 2;
-#X connect 23 1 37 0;
-#X connect 23 2 8 0;
-#X connect 24 0 14 0;
-#X connect 25 0 29 0;
+#X connect 21 0 36 0;
+#X connect 22 0 16 2;
+#X connect 22 1 36 0;
+#X connect 22 2 8 0;
+#X connect 23 0 14 0;
+#X connect 24 0 28 0;
+#X connect 25 0 26 0;
 #X connect 26 0 27 0;
-#X connect 27 0 28 0;
-#X connect 27 1 35 0;
-#X connect 28 0 34 0;
-#X connect 29 0 26 0;
-#X connect 29 1 32 0;
-#X connect 31 0 25 0;
-#X connect 32 0 33 0;
-#X connect 33 0 30 0;
-#X connect 34 0 36 0;
-#X connect 35 0 34 0;
-#X connect 37 0 12 0;
+#X connect 26 1 34 0;
+#X connect 27 0 33 0;
+#X connect 28 0 25 0;
+#X connect 28 1 31 0;
+#X connect 30 0 24 0;
+#X connect 31 0 32 0;
+#X connect 32 0 29 0;
+#X connect 33 0 35 0;
+#X connect 34 0 33 0;
+#X connect 36 0 12 0;
+#X connect 37 0 9 0;
+#X connect 37 1 40 0;
 #X connect 38 0 9 0;
-#X connect 38 1 41 0;
-#X connect 39 0 9 0;
-#X connect 39 1 40 0;
-#X connect 40 0 23 0;
-#X connect 40 1 9 0;
-#X connect 41 0 13 0;
-#X connect 41 1 39 0;
-#X coords 0 -1 1 1 209 21 2 174 99;
+#X connect 38 1 39 0;
+#X connect 39 0 22 0;
+#X connect 39 1 9 0;
+#X connect 40 0 13 0;
+#X connect 40 1 38 0;
+#X connect 43 0 44 1;
+#X connect 44 0 46 0;
+#X connect 45 0 44 0;
+#X connect 45 1 42 0;
+#X connect 45 2 44 0;
+#X connect 46 0 16 0;
+#X connect 46 1 16 1;
+#X coords 0 -1 1 1 209 21 2 234 99;

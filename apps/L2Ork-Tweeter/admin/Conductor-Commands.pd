@@ -1,12 +1,12 @@
-#N canvas 367 223 1321 667 10;
-#X obj 815 11 cnv 15 496 649 empty empty empty 20 12 0 14 #d7fbd8 #404040
-0;
-#X obj 451 11 cnv 15 352 649 empty empty empty 20 12 0 14 #d7fbd8 #404040
-0;
-#X obj 823 428 cnv 15 480 225 empty empty empty 20 12 0 14 #ffd5bf
-#404040 0;
-#X obj 460 455 cnv 15 335 198 empty empty empty 20 12 0 14 #ffd5bf
-#404040 0;
+#N canvas 366 222 1312 669 10;
+#X obj 815 11 cnv 15 496 649 empty empty empty 20 12 0 14 #ffd7fbd8
+#ff404040 0;
+#X obj 451 11 cnv 15 352 649 empty empty empty 20 12 0 14 #ffd7fbd8
+#ff404040 0;
+#X obj 823 428 cnv 15 480 225 empty empty empty 20 12 0 14 #ffffd5bf
+#ff404040 0;
+#X obj 460 455 cnv 15 335 198 empty empty empty 20 12 0 14 #ffffd5bf
+#ff404040 0;
 #X obj 12 643 s chat-out;
 #X msg 24 117 chat admin p:l2orklicious l2ork-sync-all;
 #X msg 12 38 chat admin p:l2orklicious l2ork-length 6000 3000 500 6000
@@ -14,17 +14,17 @@
 ;
 #X text 12 19 Pre-Drop;
 #X text 24 97 Sync;
-#X obj 48 148 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 0 1 1;
+#X obj 48 148 tgl 15 0 empty empty empty 17 7 0 10 #fffcfcfc #ff000000
+#ff000000 0 1 1;
 #X msg 48 169 chat admin p:l2orklicious l2ork-obfuscate \$1;
 #X msg 71 250 chat admin p:l2orklicious l2ork-report \$1;
 #X floatatom 71 228 5 0 0 0 - - - 0 0 1, f 5;
-#X obj 71 208 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 1;
+#X obj 71 208 bng 15 250 50 0 empty empty empty 17 7 0 10 #fffcfcfc
+#ff000000 #ff000000 1;
 #X msg 67 398 chat admin p:l2orklicious l2ork-load jamminlicious-002
 ;
 #X obj 98 336 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
-#fcfcfc #000000 #000000 0 256 0 0 1 0;
+#fffcfcfc #ff000000 #ff000000 0 256 0 0 1 0;
 #X msg 98 358 chat admin p:l2orklicious l2ork-length-all \$1;
 #X msg 208 286 2000;
 #X obj 98 313 line 100;
@@ -74,6 +74,16 @@ client engine and require theL2Ork-Tweeter-Teacher patch to be open:
 , f 52;
 #X text 111 479 overrides the output level of the client 1 to 1 (unity
 \, possible range is 0.1 to 10), f 42;
+#X text 823 302 l2ork-inst-level-* commands allow for anticipating
+future events that need to be synchronized with a particular user's
+time on their timebar and which then triggers change in either their
+or entire ensemble's instrument level \, as denoted by the message's
+third argument. Note that due to logarithmic nature of the instrument
+level \, the lowest value is 0.1 \, not 0 also note that sending user_num
+0 will disable last pending request and the monitoring system that
+remains active until the request is fulfilled. only one request per
+client is possible and any subsequent requests will override the previous
+one. requests remain active until fulfilled or disabled., f 78;
 #X text 823 20 remote admin uses chat system. see left for examples.
 possible admin commands: l2ork-conduct (see the possible command
 list on the left)l2ork-disconnect (user_num) l2ork-free-slot (user_num
@@ -84,23 +94,13 @@ audience chat) l2ork-inst-level-at (user_num \, target_time \, target_level
 of ms values for each user) l2ork-length-all (ms for all users) l2ork-load
 (session-name \, without the -session-coll.txt suffix) l2ork-load-sync-delay
 (ms \, sets sync delay after l2ork-load) l2ork-obfuscate (1/0=default
-\, obfuscates note letters to avoid misuse) l2ork-report (user_num
-\, requests their state report) l2ork-reset-client-list (resets all
-clients and reassigns them) l2ork-save (session_name \, distributes
-locally saved version to all) l2ork-set-password (new_password \,
-change the admin password) l2ork-sync-all (syncs all clients over
-network using the reset command) l2ork-teach (same as l2ork-conduct)
-, f 78;
-#X text 823 295 l2ork-inst-level-* commands allow for anticipating
-future events that need to be synchronized with a particular user's
-time on their timebar and which then triggers change in either their
-or entire ensemble's instrument level \, as denoted by the message's
-third argument. Note that due to logarithmic nature of the instrument
-level \, the lowest value is 0.1 \, not 0 also note that sending user_num
-0 will disable last pending request and the monitoring system that
-remains active until the request is fulfilled. only one request per
-client is possible and any subsequent requests will override the previous
-one. requests remain active until fulfilled or disabled., f 78;
+\, obfuscates note letters to avoid misuse)l2ork-part (part to add
+to a user \, user number (1-14))l2ork-report (user_num \, requests
+their state report) l2ork-reset-client-list (resets all clients and
+reassigns them) l2ork-save (session_name \, distributes locally saved
+version to all) l2ork-set-password (new_password \, change the admin
+password) l2ork-sync-all (syncs all clients over network using the
+reset command) l2ork-teach (same as l2ork-conduct), f 78;
 #X connect 5 0 4 0;
 #X connect 6 0 4 0;
 #X connect 9 0 10 0;

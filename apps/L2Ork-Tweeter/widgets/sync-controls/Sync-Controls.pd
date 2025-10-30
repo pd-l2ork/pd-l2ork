@@ -1,6 +1,6 @@
-#N canvas 6 25 219 281 10;
+#N canvas 6 25 207 269 10;
 #X obj 10 -10 preset_hub k12 1 %hidden%;
-#N canvas 645 150 588 653 guts 0;
+#N canvas 645 150 626 653 guts 0;
 #X obj 256 21 loadbang;
 #X obj 256 207 s whatismyclientnum;
 #X symbolatom 117 23 20 0 0 0 - - - 0 0 1, f 20;
@@ -93,8 +93,8 @@
 #X obj 19 256 expr \\$f1+$f2+$f3, f 33;
 #X obj 19 281 == 3;
 #X obj 19 306 sel 1;
-#X obj 19 331 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 1 1 1;
+#X obj 19 331 tgl 15 0 empty empty empty 17 7 0 10 #fffcfcfc #ff000000
+#ff000000 1 1 1;
 #X text 19 92 ctrl+shift+alt toggles editability (alt being last!)
 ;
 #X obj 64 125 keyname 1;
@@ -132,6 +132,8 @@
 #X connect 20 1 18 0;
 #X restore 256 255 pd editable;
 #X msg 366 155 updatefileloc;
+#X obj 460 50 r adv-user-ctrl-pass-set;
+#X msg 460 75 set \$1;
 #X connect 0 0 23 0;
 #X connect 2 0 10 0;
 #X connect 2 0 8 0;
@@ -183,5 +185,7 @@
 #X connect 55 0 15 0;
 #X connect 56 0 15 1;
 #X connect 58 0 7 0;
+#X connect 59 0 60 0;
+#X connect 60 0 2 0;
 #X coords 0 -1 1 1 214 269 2 29 19;
 #X restore 2 2 pd guts;

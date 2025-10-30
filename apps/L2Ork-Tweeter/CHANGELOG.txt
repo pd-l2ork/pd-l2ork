@@ -1,6 +1,6 @@
-L2Ork Tweeter by Ivica Ico Bukvic <ico@vt.edu>
+L2Ork Tweeter by Ivica Ico Bukvic <ico@bukvic.net>
 ico.bukvic.net
-l2ork.icat.vt.edu
+l2ork.bukvic.net
 
 Released under the GPL v3 License
 https://www.gnu.org/licenses/gpl-3.0.en.html
@@ -9,26 +9,47 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+27-10-2025 0.87
+*Implemented ability for online users to take control of multiple parts. Reworked most of the networking core, primarily focusing on myclientnum, to accommodate this change. Implemented Part-Mapper.pd widget responsible for mapping parts to users.
+*myclientnum fixes across L2Ork Tweeter (approx. 10)
+*clean-up r myclientnum for preset/loop operations (only use first arg to start)
+  *filter-my-parts
+  *load-save-session
+  *local-copy-logic
+  *track-redraw
+  *update Sync-Controls.pd to apply to all currently activated parts that have keyboard enabled (see the1 guts subpatch).
+*Save session without name should open a file browser
+*Part mapper auto-refreshes upon opening and upon connection.
+*Increased delay from 250 to 500ms between disconnection and reconnection. Also, added a 100ms delay for disconnection after sending the disconnect message to the server.
+*Implement support for presets per part, so that multiple presets and loops can be saved and recalled.
+  *Added MULTI option that uses glob-multi-lp send that enables this option.
+  *Added loading to multiple parts when MULTI is off (only loading, since saving would be confused by what part to pick to save if multiple parts have keyboard enabled--this is because the original approach is to save only one file).
+*Fixed bug where copying from secondary part enables primary part playback (only when the keyboard is enabled).
+*Immediately remove intentionally disconnected user from the server's ping mechanism (may need to revisit later to further improve upon this, namely by increasing the delay between disconnect and reconnect--see above).
+*Made observer -1 instead of 15 (to allow for easier future scaling beyond 14 performers).
+*Fixed bugs when connecting as a guest:
+  *error: 0-override-solo: no such object.
+  *error: 0-manual-toggle-tracker: no such object.
+*Removed L2Orkmote support since we are not using those interfaces anymore. See version 0.86 for the last included version of those.
+
+*TODO:
+  *Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. Needs to be further tested.
+    *Also affects Teacher widget.
+  *Explore the slowness of the Teacher widget, particularly in respect to the array changes. This is particularly visible on the WebPdL2Ork, likely due to context sharing. More importantly, this is an issue on hte desktop, where it should be addressed first before exploring any additional issues associated with the WebPdL2Ork.
+
 28-04-2025 0.86
 *Increased number of players to 14 and changed zoom level to make everything fit.
 *Fixed server bug where joining with part 15 (audience) doesn't get the data from other parts, but joining using any other part does (assuming you connect to a part that is already taken which then automatically bumps you to the audience).
 *Improved handshake logic to ensure that WebPdL2Ork version works even when dealing with long delays in opening HTML sockets (contributed by William Furgerson).
 *Improved logic of saving and distributing sessions through the Teacher widget.
 
-*TODO:
-  *Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. Needs to be further tested.
-    *Also affects Teacher widget
-  *Explore the slowness of the Teacher widget, particularly in respect to the array changes. This is particularly visible on the WebPdL2Ork, likely due to context sharing. More importantly, this is an issue on hte desktop, where it should be addressed first before exploring any additional issues associated with the WebPdL2Ork.
-  *Update L2Orkmote version of Tweeter with changes made to Tweeter (involves L2Orkmote-Tweeter.pd and core/L2OrkTweet-L2Orkmote.pd).
-    *Attempt to make L2Orkmote part modular?
-
 12-11-2024 0.85
 *Updated array size syntax based on the updated expr object.
 *Added Interstellar piece with its parts and score.
 
 09-10-2024 0.84
-*Fixed a bug where saving a session to online clients via the teacher interface misreported a number of lines saved
-*Fixed a bug where loading sessions does not erase old notes from the track (the problem were text files edited in notepad that automatically replace non-standard characters with spaces)
+*Fixed a bug where saving a session to online clients via the teacher interface misreported a number of lines saved.
+*Fixed a bug where loading sessions does not erase old notes from the track (the problem were text files edited in notepad that automatically replace non-standard characters with spaces).
 *Implemented a workaround where every time a loop is loaded or before it is written, we erase a potential extra note (beat 64). LATER: consider exploring why this happened in the first place (potentially a leftover during the optimization of the tracker logic).
 *Implemented the newfound interactive option for the dropdown object.
 

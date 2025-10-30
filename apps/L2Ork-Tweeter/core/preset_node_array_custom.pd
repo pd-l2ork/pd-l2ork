@@ -26,7 +26,7 @@
 #X obj 462 416 route \$3;
 #X obj 387 824 list prepend \$3;
 #X obj 462 372 r network-in;
-#X obj 387 846 send client-out;
+#X obj 387 846 send \$4-client-out;
 #X obj 235 60 inlet;
 #X obj 462 394 route \$4;
 #X obj 323 18 loadbang;
