@@ -14,8 +14,8 @@
       compatible with Pure Data and other variants, the same is not true
       the other way around. Hence, some of the most advanced content
       created in Pd-L2Ork may not run well, or at all on other Pure Data
-      variants. Pd-L2Ork is a brainchild of the Virginia Tech Linux
-      Laptop Orchestra (L2Ork).
+      variants. Pd-L2Ork is a brainchild of the Linux
+      International Ensemble.
     </p>
     <p>
       Pure Data is an open source visual programming environment that runs on
@@ -40,27 +40,34 @@
   <screenshots>
     <screenshot type="default">
       <caption>L2Ork Tweeter synchronous networked synth tracker built using Pd-L2Ork</caption>
-      <image type="source">https://l2ork.music.vt.edu/data/pd-l2ork/screenshots/L2Ork-Tweeter.png</image>
+      <image type="source">https://l2ork.bukvic.net/data/pd-l2ork/screenshots/L2Ork-Tweeter.png</image>
     </screenshot>
     <screenshot>
       <caption>Pd-L2Ork K12 mode for beginners</caption>
-      <image type="source">https://l2ork.music.vt.edu/data/pd-l2ork/screenshots/K12-Demo.png</image>
+      <image type="source">https://l2ork.bukvic.net/data/pd-l2ork/screenshots/K12-Demo.png</image>
     </screenshot>
     <screenshot>
       <caption>Documentation for the image object</caption>
-      <image type="source">https://l2ork.music.vt.edu/data/pd-l2ork/screenshots/Image-Help-File.png</image>
+      <image type="source">https://l2ork.bukvic.net/data/pd-l2ork/screenshots/Image-Help-File.png</image>
     </screenshot>
   </screenshots>
-  <developer_name>L2Ork Dev Team</developer_name>
+  <developer_name>Pd-L2Ork Dev Team</developer_name>
   <branding>
     <color type="primary" scheme_preference="light">#c4dcdc</color>
     <color type="primary" scheme_preference="dark">#282828</color>
   </branding>
   <launchable type="desktop-id">io.github.pd_l2ork.Pd_L2Ork.desktop</launchable>
-  <url type="homepage">https://l2ork.music.vt.edu/main/make-your-own-l2ork/software/</url>
+  <url type="homepage">https://l2ork.bukvic.net/main/make-your-own-l2ork/software/</url>
   <url type="bugtracker">https://github.com/pd-l2ork/pd-l2ork/issues</url>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="20251030" type="stable" date="2025-11-01">
+      <description>
+        <p>
+          Major release with L2Ork Tweeter 0.87, regression fixes that were introduced during merging Pd 0.55-2 changes, and a number of smaller bug-fixes and improvements.
+        </p>
+      </description>
+    </release>
     <release version="20250620" type="stable" date="2025-06-20">
       <description>
         <p>
