@@ -30,6 +30,8 @@ PD-L2ORK TODO:
     at HTMLDocument.<anonymous> (pd_canvas.js:1905:43)
   *Need to be able to reproduce
 
+*consistency check failed: canvas_get_snap_offset (copying and pasting content from the L2Ork Tweeter's pd client-out-parser found inside core->network-io)
+
 *Make coll silent on deleting keys that don't exist (after merging the new version of cyclone)
 
 *On Windows11, every time window is saved it gets a bit bigger? No, but it does seem to nudge itself one pixel to the right. TODO: get printout from the checkgeometry or similar to see what pd-l2ork thinks.
@@ -917,31 +919,7 @@ resulting in unexpected stuck keys.
 *Put a check into the code to hopefully address potential errors like this one:
     Uncaught TypeError: Cannot read properties of null (reading 'toLowerCase')
     at dwin.document.onkeydown (C:\Program Files (x86)\Pd-L2Ork\bin\pdgui.js:10877:56)
-
-
-
-
-TWEETER TODO:
-*Add disconnect-all message to the server to bump all
-*Add disconnect-all-audience message to the serve to bump all non-players
-*Add lockdown to prevent anyone else from joining
-
-*Remove 65th beats from all sessions
-  *Remove unnecessary removal of keys that post unnecessary errors
-
-*Why is copyfrom issuing two identical tracker-time values?
-
-*When adding/removing a part, reiterate toggle keyboard (under certain circumstances, it is lost)
-    *Need to find a way to reproduce this
-    *Justin reported not seeing William's part being on but also had other stack overflow issues at the time.
-
-*Consider adding networked repositioning of the red cursor in the L2Orkmote-Tweeter, so that both users and audience can see what is everyone doing.
-
-*Offer a way to deal with different keyboards (some keys are not in the same place, see the ELSE approach and new objects that deal with this)
-
-*Copying another part in offline mode disassociates the user from any part, making them unable to do anything even with the keyboard enabled. May also affect the online mode. Temporary fix: (re)select part you wish to control.
-
-*When trying to load a pattern that does not exist (after having successfully loaded one that does), the main level goes to zero.
+*Fixed a bug when editing a message and locking the patch, there are leftover smaller ghost inlets and outlets, when there should be none.
 
 
 
@@ -1130,16 +1108,37 @@ TWEETER DONE:
   *Fixed server bug where joining with part 15 (audience) doesn't get the data from other parts, but joining using any other part does (assuming you connect to a part that is already taken which then automatically bumps you to the audience).
   *Improved handshake logic to ensure that WebPdL2Ork version works even when dealing with long delays in opening HTML sockets (contributed by William Furgerson).
   *Improved logic of saving and distributing sessions through the Teacher widget.
+0.87:
+  *Implemented ability for online users to take control of multiple parts. Reworked most of the networking core, primarily focusing on myclientnum, to accommodate this change. Implemented Part-Mapper.pd widget responsible for mapping parts to users.
+  *myclientnum fixes across L2Ork Tweeter (approx. 10)
+  *clean-up r myclientnum for preset/loop operations (only use first arg to start)
+    *filter-my-parts
+    *load-save-session
+    *local-copy-logic
+    *track-redraw
+    *update Sync-Controls.pd to apply to all currently activated parts that have keyboard enabled (see the1 guts subpatch).
+  *Save session without name should open a file browser
+  *Part mapper auto-refreshes upon opening and upon connection.
+  *Increased delay from 250 to 500ms between disconnection and reconnection. Also, added a 100ms delay for disconnection after sending the disconnect message to the server.
+  *Implement support for presets per part, so that multiple presets and loops can be saved and recalled.
+    *Added MULTI option that uses glob-multi-lp send that enables this option.
+    *Added loading to multiple parts when MULTI is off (only loading, since saving would be confused by what part to pick to save if multiple parts have keyboard enabled--this is because the original approach is to save only one file).
+  *Fixed bug where copying from secondary part enables primary part playback (only when the keyboard is enabled).
+  *Immediately remove intentionally disconnected user from the server's ping mechanism (may need to revisit later to further improve upon this, namely by increasing the delay between disconnect and reconnect--see above).
+  *Made observer -1 instead of 15 (to allow for easier future scaling beyond 14 performers).
+  *Fixed bugs when connecting as a guest:
+    *error: 0-override-solo: no such object.
+    *error: 0-manual-toggle-tracker: no such object.
+  *Removed L2Orkmote support since we are not using those interfaces anymore. See version 0.86 for the last included version of those.
+0.88:
+  *Server's l2ork part report now reports to all clients that may have part mapper open.
+  *Increased buffer size for each client from 128KB to 1024KB and server's to 8192KB to minimize data loss due to more parts being assigned to any individual user.
+  *When turning off the solo if another solo is enabled on a user's part, the solo should remain active for that one. Reworked this to capture both offline and online modes.
+  *Save session button when opening a browser should also proceed to populate the symbol and save it. When using save browser option, the user should only indicate the title, not the extension.
+  *Load session also now autopopulates the name field.
 
 
 
-
-*TODO:
-  *Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. Needs to be further tested.
-    *Also affects Teacher widget
-  *Explore the slowness of the Teacher widget, particularly in respect to the array changes. This is particularly visible on the WebPdL2Ork, likely due to context sharing. More importantly, this is an issue on hte desktop, where it should be addressed first before exploring any additional issues associated with the WebPdL2Ork.
-  *Update L2Orkmote version of Tweeter with changes made to Tweeter (involves L2Orkmote-Tweeter.pd and core/L2OrkTweet-L2Orkmote.pd).
-    *Attempt to make L2Orkmote part modular?
 
 DETAILS:
 
@@ -1207,26 +1206,9 @@ Refine tracker position in respect to the text and dots OK
 
 Fix bug where loaded loop did not erase itself immediately upon playback if looping was not enabled OK
 
-
-
 Overdrive is not correct when copying another part (because of the logarithmic value) OK
 
 Reconnecting client has everyone else slightly out of sync (but everyone who has been already connected is fine) OK
-
-TODO:
-
-*Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. NEED TO RECREATE
-  *Affects Teacher widget
-
-Make dropdown have interactive option to conform to other core GUI objects FIXED
-
-*Loading sessions does not erase old text from the track FIXED
-*Saving sessions to all first time shows 0 for some FIXED
-*Erase 64th note inside coll when loading and saving loops FIXED (WORKAROUND LATER: revisit this, since currently we are getting redundant deletes)
-
-*update net-io-coll and get rid of t b 0 on the 1st outlet of the gate since it does not do anything
-
-Update L2Orkmote version of Tweeter with changes made to Tweeter
 
 *Remove 64th beat from sessions (don't need to worry about reordering each line and can even leave empty lines in the middle--tested on 2024-10-16)
 
