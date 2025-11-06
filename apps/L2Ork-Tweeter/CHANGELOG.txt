@@ -9,6 +9,32 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
+TODO:
+*Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. Needs to be further tested.
+  *Also affects Teacher widget.
+*Explore the slowness of the Teacher widget, particularly in respect to the array changes. This is particularly visible on the WebPdL2Ork, likely due to context sharing. More importantly, this is an issue on the desktop, where it should be addressed first before exploring any additional issues associated with the WebPdL2Ork.
+*Add disconnect-all message to the server to bump all (may need to extend the netserver functionality)
+*Add disconnect-all-audience message to the serve to bump all non-players
+*Add lockdown to prevent anyone else from joining
+*Remove 65th beats from all sessions
+  *Remove unnecessary removal of keys that post unnecessary errors
+*Why is copyfrom issuing two identical tracker-time values?
+*When adding/removing a part, reiterate toggle keyboard (under certain circumstances, it is lost)
+  *Need to find a way to reproduce this
+  *Justin reported not seeing William's part being on but also had other stack overflow issues at the time.
+  *May be related to:
+    *Copying another part in offline mode disassociates the user from any part, making them unable to do anything even with the keyboard enabled. May also affect the online mode. Temporary fix: disable and reenable part you wish to control using ctrl key.
+*Offer a way to deal with different keyboards (some keys are not in the same place, see the ELSE approach and new objects that deal with this)
+*When trying to load a pattern that does not exist (after having successfully loaded one that does), the main level goes to zero.
+*update net-io-coll and get rid of t b 0 on the 1st outlet of the gate since it does not do anything
+
+06-11-2025 0.88
+*Server's l2ork part report now reports to all clients that may have part mapper open.
+*Increased buffer size for each client from 128KB to 1024KB and server's to 8192KB to minimize data loss due to more parts being assigned to any individual user.
+*When turning off the solo if another solo is enabled on a user's part, the solo should remain active for that one. Reworked this to capture both offline and online modes.
+*Save session button when opening a browser should also proceed to populate the symbol and save it. When using save browser option, the user should only indicate the title, not the extension.
+*Load session also now autopopulates the name field.
+
 27-10-2025 0.87
 *Implemented ability for online users to take control of multiple parts. Reworked most of the networking core, primarily focusing on myclientnum, to accommodate this change. Implemented Part-Mapper.pd widget responsible for mapping parts to users.
 *myclientnum fixes across L2Ork Tweeter (approx. 10)
@@ -31,11 +57,6 @@ CHANGELOG (Date Format: DD-MM-YYYY)
   *error: 0-override-solo: no such object.
   *error: 0-manual-toggle-tracker: no such object.
 *Removed L2Orkmote support since we are not using those interfaces anymore. See version 0.86 for the last included version of those.
-
-*TODO:
-  *Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. Needs to be further tested.
-    *Also affects Teacher widget.
-  *Explore the slowness of the Teacher widget, particularly in respect to the array changes. This is particularly visible on the WebPdL2Ork, likely due to context sharing. More importantly, this is an issue on hte desktop, where it should be addressed first before exploring any additional issues associated with the WebPdL2Ork.
 
 28-04-2025 0.86
 *Increased number of players to 14 and changed zoom level to make everything fit.
