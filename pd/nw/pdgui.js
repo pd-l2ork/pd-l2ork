@@ -10105,11 +10105,13 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         //     3) extend this to all text objects.
         if (type === "msg") {
         	// Message approach
-	        var i, nlets = patchwin[cid].window.document
+	        /*
+            var i, nlets = patchwin[cid].window.document
 	        	.getElementById(tag+"gobj").querySelectorAll(".xlet_control");
 	        for (i = 0; i < nlets.length; i++) {
 	        	nlets[i].style.setProperty("visibility", "hidden");        	
 	        }
+            */
 	        gui(cid).get_gobj(tag).q(".box_text", { visibility: "hidden" });
 	    } else {
 	    	// Anything else but message
@@ -10370,13 +10372,14 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         }
 
         // MSG approach
-        if (type === "msg") {
+        /*if (type === "msg") {
             var i, nlets = patchwin[cid].window.document
             	.getElementById(tag+"gobj").querySelectorAll(".xlet_control");
             for (i = 0; i < nlets.length; i++) {
             	nlets[i].style.setProperty("visibility", "visible");        	
             }
         }
+        */
         gui(cid).get_gobj(tag).q(".box_text", { visibility: "visible" });
 
         if (patchwin[cid].window.canvas_events.get_previous_state() ===

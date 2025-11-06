@@ -609,6 +609,11 @@ text.activated {
 }
 
 /* control inlet */
+.editmode .selected .xlet_control {
+    visibility: hidden;
+}
+
+/* control inlet */
 .editmode .xlet_control {
     stroke: #1a1a1a;
     fill: #1a1a1a;
