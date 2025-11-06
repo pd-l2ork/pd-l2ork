@@ -117,3 +117,8 @@
 .prefs_tab + label {
     margin-right: -16px;
 }
+
+/* control inlet */
+.editmode .selected .xlet_control {
+    visibility: hidden;
+}
