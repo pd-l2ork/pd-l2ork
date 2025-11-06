@@ -22,8 +22,6 @@ TODO:
 *When adding/removing a part, reiterate toggle keyboard (under certain circumstances, it is lost)
   *Need to find a way to reproduce this
   *Justin reported not seeing William's part being on but also had other stack overflow issues at the time.
-  *May be related to:
-    *Copying another part in offline mode disassociates the user from any part, making them unable to do anything even with the keyboard enabled. May also affect the online mode. Temporary fix: disable and reenable part you wish to control using ctrl key.
 *Offer a way to deal with different keyboards (some keys are not in the same place, see the ELSE approach and new objects that deal with this)
 *When trying to load a pattern that does not exist (after having successfully loaded one that does), the main level goes to zero.
 *update net-io-coll and get rid of t b 0 on the 1st outlet of the gate since it does not do anything
