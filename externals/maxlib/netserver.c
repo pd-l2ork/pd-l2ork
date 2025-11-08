@@ -93,6 +93,7 @@ typedef struct _netserver
 	  t_outlet *x_connectout;
 	  t_outlet *x_clientno;
 	  t_outlet *x_connectionip;
+	  t_outlet *x_other;						// ico 2025-11-08: generic outlet for other types of printout
 	  t_symbol *x_host[MAX_CONNECT];
 	  t_int    x_fd[MAX_CONNECT];
 
@@ -110,6 +111,7 @@ typedef struct _netserver
 	  t_int    x_connectsocket;
 	  t_int    x_nconnections;
 	  t_int	  x_bufsize;
+	  t_int	  x_lockdown;
 /* for syslog style logging priorities  */
 	  t_int    x_log_pri;
 } t_netserver;
@@ -126,7 +128,7 @@ typedef struct _netserver_socketreceiver
 } t_netserver_socketreceiver;
 
 /* forward declarations */
-static void netserver_disconnect(t_netserver *x, t_symbol *s, t_floatarg f);
+static void netserver_disconnect(t_netserver *x, t_floatarg f);
 static void netserver_notify(t_netserver *x);
 
 static t_netserver_socketreceiver *netserver_socketreceiver_new(void *owner, t_netserver_socketnotifier notifier,
@@ -454,7 +456,7 @@ static void netserver_client_send(t_netserver *x, t_symbol *s, int argc, t_atom 
 
 // ico@vt.edu 2021-11-18:
 // disconnect client connected on the provided socket number 
-static void netserver_disconnect(t_netserver *x, t_symbol *s, t_floatarg f)
+static void netserver_disconnect(t_netserver *x, t_floatarg f)
 {
    int client, i, sock = f;
    if(x->x_nconnections <= 0)
@@ -608,21 +610,29 @@ static void netserver_connectpoll(t_netserver *x)
    if (fd < 0) post("netserver: accept failed");
    else
    {
-     // ico@vt.edu 2021-10-01: make socket non-blocking
-     SetSocketBlockingEnabled(fd, 0);
-	  t_netserver_socketreceiver *y = netserver_socketreceiver_new((void *)x, 
-																   (t_netserver_socketnotifier)netserver_notify,
-																   (x->x_msgout ? netserver_doit : 0));
-	  sys_addpollfn(fd, (t_fdpollfn)netserver_socketreceiver_read, y);
-	  x->x_nconnections++;
-	  x->x_host[x->x_nconnections - 1] = gensym(inet_ntoa(incomer_address.sin_addr));
-	  x->x_fd[x->x_nconnections - 1] = fd;
-	  //x->x_fd_error[x->x_nconnections - 1] = 0;
+      // ico@vt.edu 2021-10-01: make socket non-blocking
+      SetSocketBlockingEnabled(fd, 0);
+ 		t_netserver_socketreceiver *y = netserver_socketreceiver_new((void *)x, 
+ 																(t_netserver_socketnotifier)netserver_notify,
+ 																(x->x_msgout ? netserver_doit : 0));
+ 	  	sys_addpollfn(fd, (t_fdpollfn)netserver_socketreceiver_read, y);
+ 	  	x->x_nconnections++;
+ 	  	x->x_host[x->x_nconnections - 1] = gensym(inet_ntoa(incomer_address.sin_addr));
+ 	  	x->x_fd[x->x_nconnections - 1] = fd;
+ 	  	//x->x_fd_error[x->x_nconnections - 1] = 0;
 
-	  if (x->x_log_pri >= LOG_NOTICE) 
-		 post("netserver: ** accepted connection from %s on socket %d", 
-			  x->x_host[x->x_nconnections - 1]->s_name, x->x_fd[x->x_nconnections - 1]);
-	  outlet_float(x->x_connectout, x->x_nconnections);
+	   // ico 2025-11-08: implemented lockdown that prevents further connections
+		if (x->x_lockdown == 1)
+		{
+			post("netserver: refusing connection due to lockdown option");
+			netserver_disconnect(x, fd);
+			return;
+		}
+	 
+ 	  	if (x->x_log_pri >= LOG_NOTICE) 
+ 			post("netserver: ** accepted connection from %s on socket %d", 
+ 				x->x_host[x->x_nconnections - 1]->s_name, x->x_fd[x->x_nconnections - 1]);
+ 		outlet_float(x->x_connectout, x->x_nconnections);
    }
 }
 
@@ -749,6 +759,7 @@ static void *netserver_new(t_floatarg fportno, t_floatarg bufsize_pow)
 	  x->x_connectout = outlet_new(&x->x_obj, &s_float);
 	  x->x_clientno = outlet_new(&x->x_obj, &s_float);
 	  x->x_connectionip = outlet_new(&x->x_obj, &s_symbol);
+	  x->x_other = outlet_new(&x->x_obj, &s_anything);
 	  x->x_inbinbuf = binbuf_new();
    }
    x->x_connectsocket = sockfd;
@@ -758,6 +769,8 @@ static void *netserver_new(t_floatarg fportno, t_floatarg bufsize_pow)
    	x->x_fd[i] = -1;
    	//x->x_fd_error[i] = 0;
    }
+
+   x->x_lockdown = 0;
 
    return (x);
 }
@@ -778,6 +791,41 @@ static void netserver_free(t_netserver *x)
    binbuf_free(x->x_inbinbuf);
 }
 
+static void netserver_disconnect_all(t_netserver *x)
+{
+   int i;
+   for(i = 0; i < x->x_nconnections; i++)
+   {
+	  netserver_disconnect(x, x->x_fd[i]);
+   }	
+}
+
+static void netserver_lockdown(t_netserver *x, t_floatarg f)
+{
+	if ((int)f == 0 || (int)f == 1)
+	{
+		x->x_lockdown = (int)f;
+	}
+}
+
+static void netserver_get_all_sockets(t_netserver *x)
+{
+   t_atom *av;
+   if (x->x_nconnections > 0)
+   {
+   	int i;
+		av = (t_atom *)getbytes(x->x_nconnections * sizeof(t_atom));
+		for (int i = 0; i < x->x_nconnections; i++)
+		    SETFLOAT(av + i, x->x_fd[i]); 
+   } else {
+   	av = (t_atom *)getbytes(sizeof(t_atom));
+   	SETFLOAT(av, 0);
+   }
+
+   outlet_anything(x->x_other, gensym("all-sockets"), x->x_nconnections ? x->x_nconnections : 1, av);
+   freebytes(av, x->x_nconnections * sizeof(t_atom));
+}
+
 #ifndef MAXLIB
 void netserver_setup(void)
 {
@@ -788,6 +836,9 @@ void netserver_setup(void)
    class_addmethod(netserver_class, (t_method)netserver_client_send, gensym("client"), A_GIMME, 0);
    class_addmethod(netserver_class, (t_method)netserver_broadcast, gensym("broadcast"), A_GIMME, 0);
    class_addmethod(netserver_class, (t_method)netserver_disconnect, gensym("disconnect"), A_FLOAT, 0);
+   class_addmethod(netserver_class, (t_method)netserver_disconnect_all, gensym("disconnect-all"), 0);
+   class_addmethod(netserver_class, (t_method)netserver_get_all_sockets, gensym("get-all-sockets"), 0);
+   class_addmethod(netserver_class, (t_method)netserver_lockdown, gensym("lockdown"), A_FLOAT, 0);
    //class_addmethod(netserver_class, (t_method)netserver_retry, gensym("retry"), A_FLOAT, 0);
 /* syslog log level messages */
    class_addmethod(netserver_class, (t_method)netserver_emerg, gensym("emerg"), 0);
