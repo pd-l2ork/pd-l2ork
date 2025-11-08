@@ -14,7 +14,7 @@ extern "C" {
 #define PD_MINOR_VERSION 55
 #define PD_BUGFIX_VERSION 2
 #define PD_TEST_VERSION ""
-#define PD_L2ORK_VERSION "20251030"
+#define PD_L2ORK_VERSION "20251108"
 #define PDL2ORK
 #ifdef __EMSCRIPTEN__
 #define WEBPDL2ORK
