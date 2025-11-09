@@ -32,6 +32,7 @@ TODO:
 *When turning off the solo if another solo is enabled on a user's part, the solo should remain active for that one. Reworked this to capture both offline and online modes.
 *Save session button when opening a browser should also proceed to populate the symbol and save it. When using save browser option, the user should only indicate the title, not the extension.
 *Load session also now autopopulates the name field.
+*Added disconnect-all, disconnect-all-audience, and lockdown options.
 
 27-10-2025 0.87
 *Implemented ability for online users to take control of multiple parts. Reworked most of the networking core, primarily focusing on myclientnum, to accommodate this change. Implemented Part-Mapper.pd widget responsible for mapping parts to users.
@@ -41,7 +42,7 @@ TODO:
   *load-save-session
   *local-copy-logic
   *track-redraw
-  *update Sync-Controls.pd to apply to all currently activated parts that have keyboard enabled (see the1 guts subpatch).
+  *update Sync-Controls.pd to apply to all currently activated parts that have keyboard enabled (see the guts subpatch).
 *Save session without name should open a file browser
 *Part mapper auto-refreshes upon opening and upon connection.
 *Increased delay from 250 to 500ms between disconnection and reconnection. Also, added a 100ms delay for disconnection after sending the disconnect message to the server.

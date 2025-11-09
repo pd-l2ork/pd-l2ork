@@ -916,15 +916,6 @@ user or inactive, f 24;
 #X connect 106 0 2 0;
 #X connect 106 0 1 0;
 #X restore 430 633 pd l2ork-part;
-#X text 377 229 remote admin uses chat system. messages include: l2ork-conduct
-\, l2ork-custom \, l2ork-disconnect \, l2ork-free-slot \, l2ork-guest-chat
-\, l2ork-inst-level-at \, l2ork-inst-level-all-at \, l2ork-inst-level-list-at
-\, l2ork-length \, l2ork-length-all \, l2ork-load \, l2ork-load-sync-delay
-\, l2ork-obfuscate \, l2ork-part \, l2ork-report \, l2ork-reset-client-list
-\, l2ork-save \, l2ork-sync-data \, l2ork-sync-save-data \, l2ork-sync-vis
-\, l2ork-set-password \, l2ork-sync-all \, and l2ork-teach. All messages
-need to be prepended by the server password (formatted as p:password)
-\, which can be set below., f 67;
 #N canvas 604 91 727 882 l2ork-part-report 0;
 #X obj 49 41 r admin-messages;
 #X obj 179 826 s admin-main-outlet;
@@ -999,6 +990,97 @@ need to be prepended by the server password (formatted as p:password)
 #X connect 29 0 3 0;
 #X connect 32 0 29 0;
 #X restore 430 654 pd l2ork-part-report;
+#X text 480 800 TODO: l2ork-disconnect-all \, l2ork-disconnect-audience
+\, l2ork-lockdown;
+#X text 377 229 remote admin uses chat system. messages include: l2ork-conduct
+\, l2ork-custom \, l2ork-disconnect \, l2ork-disconnect-all \, l2ork-disconnect-audience
+\, l2ork-free-slot \, l2ork-guest-chat \, l2ork-inst-level-at \, l2ork-inst-level-all-at
+\, l2ork-inst-level-list-at \, l2ork-length \, l2ork-length-all \,
+l2ork-load \, l2ork-load-sync-delay \, l2ork-lockdown \, l2ork-obfuscate
+\, l2ork-part \, l2ork-report \, l2ork-reset-client-list \, l2ork-save
+\, l2ork-sync-data \, l2ork-sync-save-data \, l2ork-sync-vis \, l2ork-set-password
+\, l2ork-sync-all \, and l2ork-teach. All messages need to be prepended
+by the server password (formatted as p:password) \, which can be set
+below., f 67;
+#N canvas 992 335 536 403 l2ork-disconnect-all 0;
+#X obj 49 41 r admin-messages;
+#X obj 179 326 s admin-main-outlet;
+#X obj 308 326 s print-server;
+#X obj 50 90 route bang;
+#X obj 407 326 s server-out;
+#X obj 50 326 s malformed-request;
+#X obj 49 66 route l2ork-disconnect-all;
+#X msg 257 210 disconnect-all;
+#X obj 230 180 t b b;
+#X msg 230 240 server requested to disconnect all users;
+#X connect 0 0 6 0;
+#X connect 3 0 8 0;
+#X connect 3 1 5 0;
+#X connect 6 0 3 0;
+#X connect 7 0 4 0;
+#X connect 8 0 9 0;
+#X connect 8 1 7 0;
+#X connect 9 0 2 0;
+#X restore 199 738 pd l2ork-disconnect-all;
+#N canvas 992 335 536 403 l2ork-lockdown 0;
+#X obj 49 41 r admin-messages;
+#X obj 179 326 s admin-main-outlet;
+#X obj 308 326 s print-server;
+#X obj 50 90 route bang;
+#X obj 407 326 s server-out;
+#X obj 50 326 s malformed-request;
+#X obj 49 66 route l2ork-lockdown;
+#X msg 257 210 lockdown \$1;
+#X obj 230 180 t f f;
+#X msg 230 240 server requested to set lockdown option to \$1;
+#X connect 0 0 6 0;
+#X connect 3 0 5 0;
+#X connect 3 1 8 0;
+#X connect 6 0 3 0;
+#X connect 7 0 4 0;
+#X connect 8 0 9 0;
+#X connect 8 1 7 0;
+#X connect 9 0 2 0;
+#X restore 199 780 pd l2ork-lockdown;
+#N canvas 658 450 581 483 l2ork-disconnect-audience 0;
+#X obj 49 41 r admin-messages;
+#X obj 179 426 s admin-main-outlet;
+#X obj 308 426 s print-server;
+#X obj 50 90 route bang;
+#X obj 407 426 s server-out;
+#X obj 50 426 s malformed-request;
+#X obj 49 66 route l2ork-disconnect-audience;
+#X msg 160 330 server requested to disconnect all audience;
+#X obj 407 114 zl iter 1;
+#X msg 407 290 disconnect \$1;
+#X obj 368 40 r server-other;
+#X msg 300 290 get-all-sockets;
+#X obj 160 170 t b b;
+#X obj 368 65 route all-sockets;
+#X obj 368 90 route 0;
+#X obj 407 139 t f f, f 18;
+#X obj 407 260 f;
+#X obj 407 164 text search clients 1;
+#X obj 407 189 sel -1;
+#X connect 0 0 6 0;
+#X connect 3 0 12 0;
+#X connect 3 1 5 0;
+#X connect 6 0 3 0;
+#X connect 7 0 2 0;
+#X connect 8 0 15 0;
+#X connect 9 0 4 0;
+#X connect 10 0 13 0;
+#X connect 11 0 4 0;
+#X connect 12 0 7 0;
+#X connect 12 1 11 0;
+#X connect 13 0 14 0;
+#X connect 14 1 8 0;
+#X connect 15 0 17 0;
+#X connect 15 1 16 1;
+#X connect 16 0 9 0;
+#X connect 17 0 18 0;
+#X connect 18 0 16 0;
+#X restore 199 759 pd l2ork-disconnect-audience;
 #X connect 0 0 2 1;
 #X connect 0 1 9 0;
 #X connect 1 0 0 0;
@@ -1460,15 +1542,16 @@ and 14, f 34;
 #X obj 1279 453 pack 0 0 0;
 #X msg 796 889 \$2 \$1 0;
 #X msg 890 196 \; \$1-client-disconnect bang;
-#X msg 232 741 0.88;
 #X obj 448 38 netserver 9002 23, f 73;
+#X msg 232 741 0.88;
+#X obj 1030 74 s server-other;
 #X connect 0 0 60 0;
 #X connect 0 0 98 0;
 #X connect 2 0 146 0;
 #X connect 3 0 118 2;
 #X connect 4 0 5 0;
 #X connect 5 0 128 0;
-#X connect 6 0 180 0;
+#X connect 6 0 179 0;
 #X connect 8 0 10 0;
 #X connect 10 0 165 0;
 #X connect 10 1 7 1;
@@ -1574,7 +1657,7 @@ and 14, f 34;
 #X connect 127 0 4 0;
 #X connect 130 1 178 0;
 #X connect 131 0 137 0;
-#X connect 132 0 179 0;
+#X connect 132 0 180 0;
 #X connect 133 0 131 0;
 #X connect 134 0 136 0;
 #X connect 134 1 131 2;
@@ -1632,8 +1715,9 @@ and 14, f 34;
 #X connect 172 1 108 0;
 #X connect 176 0 7 0;
 #X connect 177 0 17 0;
-#X connect 179 0 134 0;
-#X connect 180 0 156 0;
-#X connect 180 1 0 0;
-#X connect 180 2 2 0;
-#X connect 180 3 3 0;
+#X connect 179 0 156 0;
+#X connect 179 1 0 0;
+#X connect 179 2 2 0;
+#X connect 179 3 3 0;
+#X connect 179 4 181 0;
+#X connect 180 0 134 0;
