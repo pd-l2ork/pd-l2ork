@@ -22,6 +22,7 @@ TODO:
 *Offer a way to deal with different keyboards (some keys are not in the same place, see the ELSE approach and new objects that deal with this)
 *When trying to load a pattern that does not exist (after having successfully loaded one that does), the main level goes to zero.
 *update net-io-coll and get rid of t b 0 on the 1st outlet of the gate since it does not do anything
+*Update L2Ork Tweeter Lite
 
 08-11-2025 0.88
 *Server's l2ork part report now reports to all clients that may have part mapper open.
