@@ -3323,9 +3323,23 @@ function gui_canvas_cursor(cid, pd_event_type) {
                 break;
         }
         patch.style.cursor = c;
-        // ico@bukvic.net 2025-10-29:
+        // ico@bukvic.net 2025-11-08:
         // On Win11 this for some reason does not update the cursor
-        // until the cursor is moved...
+        // until the cursor is moved. Below thing is really ugly and does
+        // not work every time. Not sure if this is Win11-wide issue, or
+        // just a specific build issue.
+        if (nw_os_is_windows) {
+            //gui(cid).get_nw_window(function(nw_win) {
+            //    nw_win.moveBy(1, 0);
+            //});
+            // OR
+            setTimeout(function () {
+                patchwin[cid].window.moveBy(1, 0);
+            }, 10);
+            setTimeout(function () {
+                patchwin[cid].window.moveBy(-1, 0);
+            }, 10);
+        }
     });
 }
 
