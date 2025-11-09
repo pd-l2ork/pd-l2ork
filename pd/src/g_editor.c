@@ -6533,7 +6533,7 @@ static void snap_get_anchor_xy(t_canvas *x, int *gobj_x, int *gobj_y)
         }
 	s = s->sel_next;
     }
-    bug("canvas_get_snap_offset");
+    //bug("canvas_get_snap_offset");
 }
 
 int anchor_xoff;
