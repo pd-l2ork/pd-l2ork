@@ -3328,6 +3328,7 @@ function gui_canvas_cursor(cid, pd_event_type) {
         // until the cursor is moved. Below thing is really ugly and does
         // not work every time. Not sure if this is Win11-wide issue, or
         // just a specific build issue.
+        /*
         if (nw_os_is_windows) {
             //gui(cid).get_nw_window(function(nw_win) {
             //    nw_win.moveBy(1, 0);
@@ -3340,6 +3341,7 @@ function gui_canvas_cursor(cid, pd_event_type) {
                 patchwin[cid].window.moveBy(-1, 0);
             }, 10);
         }
+        */
     });
 }
 
