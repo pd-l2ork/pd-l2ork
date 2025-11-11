@@ -1,4 +1,4 @@
-#N canvas 224 70 1366 949.969 10;
+#N canvas 224 68 1370 951.969 10;
 #X obj 0 0 cnv 15 1638 1127 empty empty empty 5 7 0 10 #ff444444 #fffcfcfc
 0;
 #X obj 4 2 cnv 15 1630 19 empty empty empty 200 5 0 10 #ff6c6c6c #fffcfcfc
@@ -74,9 +74,9 @@ empty -5 -9 0 10 #ff80fc80 #ff008080 #fffcfcfc 1;
 #X obj 820 68 core/L2OrkTweet 8;
 #X obj 820 219 core/L2OrkTweet 9;
 #X obj 820 370 core/L2OrkTweet 10;
-#X obj 153 3 pddp/pddplink http://ico.bukvic.net -text Ivica Ico Bukvic
+#X obj 152 2 pddp/pddplink http://ico.bukvic.net -text Ivica Ico Bukvic
 ;
-#X obj 472 3 pddp/pddplink https://www.gnu.org/licenses/gpl-3.0.en.html
+#X obj 472 2 pddp/pddplink https://www.gnu.org/licenses/gpl-3.0.en.html
 -text GPL v3 License;
 #X obj 820 521 core/L2OrkTweet 11;
 #X obj 820 672 core/L2OrkTweet 12;
@@ -2647,8 +2647,6 @@ of easy-to-access presets and loops;
 #X obj 1101 3 hsl 229 17 1 101 1 1 main-out-multiplier main-out-multiplier-r
 LOCAL\ MAIN\ OUT -90 6 0 10 #ff80fc80 #ff008000 #ffffffff 22800 1 0
 1;
-#X obj 787 3 pddp/pddplink https://l2ork.music.vt.edu/main/make-your-own-l2ork/tweeter/
--text website;
 #X obj 561 3 cnv 15 19 16 empty empty For\ latest\ updates\ visit\ the\ project
 4 6 0 10 #ff6c6c6c #fffcfcfc 0;
 #X text 1103 3 MIN;
@@ -2733,3 +2731,5 @@ first click:, f 82;
 #FFFCB46C #FF000000 #FF000000 0 1 1;
 #X obj 405 28 cnv 8 8 8 empty empty MULTI -1 5 0 10 #ff6c6c6c #fffcfcfc
 0;
+#X obj 788 2 pddp/pddplink https://l2ork.bukvic.net/main/make-your-own-l2ork/tweeter/
+-text website;
