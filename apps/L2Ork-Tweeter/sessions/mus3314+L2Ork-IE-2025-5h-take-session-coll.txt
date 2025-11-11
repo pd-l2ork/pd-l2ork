@@ -2061,7 +2061,6 @@
 1830, 1 tracker-char 61  ;
 1831, 1 tracker-char 62  ;
 1832, 1 tracker-char 63  ;
-1833, 1 tracker-char 64 d;
 1834, 1 tracker-data 0 59;
 1835, 1 tracker-data 1 0;
 1836, 1 tracker-data 2 0;
@@ -2126,7 +2125,6 @@
 1895, 1 tracker-data 61 0;
 1896, 1 tracker-data 62 0;
 1897, 1 tracker-data 63 0;
-1898, 1 tracker-data 64 51;
 1899, 1 flanger-ms 0.001;
 1900, 1 flanger-mod-amp 0;
 1901, 1 flanger-amp 0;
