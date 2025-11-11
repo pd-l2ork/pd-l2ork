@@ -106,7 +106,6 @@
 81, 12 tracker-char 61  ;
 82, 12 tracker-char 62  ;
 83, 12 tracker-char 63  ;
-84, 12 tracker-char 64  ;
 85, 12 tracker-data 0 52;
 86, 12 tracker-data 1 0;
 87, 12 tracker-data 2 0;
@@ -171,7 +170,6 @@
 146, 12 tracker-data 61 0;
 147, 12 tracker-data 62 0;
 148, 12 tracker-data 63 0;
-149, 12 tracker-data 64 0;
 150, 12 flanger-ms 0.001;
 151, 12 flanger-mod-amp 33.3333;
 152, 12 flanger-amp 0;
@@ -282,7 +280,6 @@
 242, 11 tracker-char 61  ;
 243, 11 tracker-char 62  ;
 244, 11 tracker-char 63  ;
-245, 11 tracker-char 64  ;
 246, 11 tracker-data 0 57;
 247, 11 tracker-data 1 0;
 248, 11 tracker-data 2 0;
@@ -347,7 +344,6 @@
 307, 11 tracker-data 61 0;
 308, 11 tracker-data 62 0;
 309, 11 tracker-data 63 0;
-310, 11 tracker-data 64 0;
 311, 11 flanger-ms 10;
 312, 11 flanger-mod-amp 5.55556;
 313, 11 flanger-amp 0.444444;
@@ -813,7 +809,6 @@
 721, 8 tracker-char 61  ;
 722, 8 tracker-char 62 .;
 723, 8 tracker-char 63  ;
-724, 8 tracker-char 64  ;
 725, 8 tracker-data 0 0;
 726, 8 tracker-data 1 0;
 727, 8 tracker-data 2 55;
@@ -878,7 +873,6 @@
 786, 8 tracker-data 61 0;
 787, 8 tracker-data 62 62;
 788, 8 tracker-data 63 0;
-789, 8 tracker-data 64 0;
 790, 8 flanger-ms 0.001;
 791, 8 flanger-mod-amp 33.3333;
 792, 8 flanger-amp 0;
@@ -985,7 +979,6 @@
 882, 7 tracker-char 61  ;
 883, 7 tracker-char 62  ;
 884, 7 tracker-char 63  ;
-885, 7 tracker-char 64  ;
 886, 7 tracker-data 0 77;
 887, 7 tracker-data 1 0;
 888, 7 tracker-data 2 0;
@@ -1050,7 +1043,6 @@
 947, 7 tracker-data 61 0;
 948, 7 tracker-data 62 0;
 949, 7 tracker-data 63 0;
-950, 7 tracker-data 64 0;
 951, 7 flanger-ms 0.001;
 952, 7 flanger-mod-amp 33.3333;
 953, 7 flanger-amp 0.166667;
@@ -1165,7 +1157,6 @@
 1043, 6 tracker-char 61  ;
 1044, 6 tracker-char 62 4;
 1045, 6 tracker-char 63  ;
-1046, 6 tracker-char 64  ;
 1047, 6 tracker-data 0 56;
 1048, 6 tracker-data 1 0;
 1049, 6 tracker-data 2 58;
@@ -1230,7 +1221,6 @@
 1108, 6 tracker-data 61 0;
 1109, 6 tracker-data 62 70;
 1110, 6 tracker-data 63 0;
-1111, 6 tracker-data 64 0;
 1112, 6 flanger-ms 0.001;
 1113, 6 flanger-mod-amp 33.3333;
 1114, 6 flanger-amp 0.343333;
@@ -1336,7 +1326,6 @@
 1204, 5 tracker-char 61  ;
 1205, 5 tracker-char 62 q;
 1206, 5 tracker-char 63  ;
-1207, 5 tracker-char 64  ;
 1208, 5 tracker-data 0 69;
 1209, 5 tracker-data 1 0;
 1210, 5 tracker-data 2 0;
@@ -1401,7 +1390,6 @@
 1269, 5 tracker-data 61 0;
 1270, 5 tracker-data 62 65;
 1271, 5 tracker-data 63 0;
-1272, 5 tracker-data 64 0;
 1273, 5 flanger-ms 0.001;
 1274, 5 flanger-mod-amp 33.3333;
 1275, 5 flanger-amp 0;
@@ -1520,7 +1508,6 @@
 1365, 4 tracker-char 61  ;
 1366, 4 tracker-char 62  ;
 1367, 4 tracker-char 63  ;
-1368, 4 tracker-char 64  ;
 1369, 4 tracker-data 0 0;
 1370, 4 tracker-data 1 0;
 1371, 4 tracker-data 2 0;
@@ -1585,7 +1572,6 @@
 1430, 4 tracker-data 61 0;
 1431, 4 tracker-data 62 0;
 1432, 4 tracker-data 63 0;
-1433, 4 tracker-data 64 0;
 1434, 4 flanger-ms 10;
 1435, 4 flanger-mod-amp 100;
 1436, 4 flanger-amp 0;
@@ -1706,7 +1692,6 @@
 1526, 3 tracker-char 61  ;
 1527, 3 tracker-char 62  ;
 1528, 3 tracker-char 63  ;
-1529, 3 tracker-char 64  ;
 1530, 3 tracker-data 0 77;
 1531, 3 tracker-data 1 0;
 1532, 3 tracker-data 2 0;
@@ -1771,7 +1756,6 @@
 1591, 3 tracker-data 61 0;
 1592, 3 tracker-data 62 0;
 1593, 3 tracker-data 63 0;
-1594, 3 tracker-data 64 0;
 1595, 3 flanger-ms 0.001;
 1596, 3 flanger-mod-amp 33.3333;
 1597, 3 flanger-amp 0;
@@ -1886,7 +1870,6 @@
 1687, 2 tracker-char 61  ;
 1688, 2 tracker-char 62 4;
 1689, 2 tracker-char 63  ;
-1690, 2 tracker-char 64  ;
 1691, 2 tracker-data 0 56;
 1692, 2 tracker-data 1 0;
 1693, 2 tracker-data 2 58;
@@ -1951,7 +1934,6 @@
 1752, 2 tracker-data 61 0;
 1753, 2 tracker-data 62 70;
 1754, 2 tracker-data 63 0;
-1755, 2 tracker-data 64 0;
 1756, 2 flanger-ms 0.001;
 1757, 2 flanger-mod-amp 33.3333;
 1758, 2 flanger-amp 0.343333;
@@ -2063,7 +2045,6 @@
 1848, 1 tracker-char 61  ;
 1849, 1 tracker-char 62 m;
 1850, 1 tracker-char 63  ;
-1851, 1 tracker-char 64  ;
 1852, 1 tracker-data 0 60;
 1853, 1 tracker-data 1 0;
 1854, 1 tracker-data 2 0;

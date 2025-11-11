@@ -1218,49 +1218,6 @@ Reconnecting client has everyone else slightly out of sync (but everyone who has
 For automation see:
 https://askubuntu.com/questions/354993/how-to-remove-lines-from-the-text-file-containing-specific-words-through-termina
 
-  SESSIONS:
-    4th-beat-droplets-6-session-coll.txt
-    4th-beat-final-10-session-coll.txt
-    canada-end-session-coll.txt
-    canada-mid-session-coll.txt
-    canada-start-24-3-session-coll.txt
-    canada-start-session-coll.txt
-    coffin-dance-session-coll.txt
-    foolin-around-007-session-coll.txt
-    gamelan-session-coll.txt
-    grapevine-end-session-coll.txt
-    grapevine-mid-session-coll.txt
-    grapevine-start-24-3-session-coll.txt
-    grapevine-start-session-coll.txt
-    insterstellar-end-session-coll.txt
-    insterstellar-end-stasis-session-coll.txt
-    interstellar-mid-session-coll.txt
-    interstellar-start-session-coll.txt
-    raye-end-session-coll.txt
-    raye-mid-session-coll.txt
-    raye-start-24-2-session-coll.txt
-    raye-start-session-coll.txt
-  WORKS:
-    2022.transcontinental.grapevine/Loops_and_Presets/10_Joaquin_Montecino/2023-04/Sessions/l2ork-grapevine-take-2-6.1-session-col2-session-coll.txt
-    2022.transcontinental.grapevine/Loops_and_Presets/10_Joaquin_Montecino/2023-04/Sessions/l2ork-grapevine-take-2-6.2-session-coll.txt
-    2022.transcontinental.grapevine/Loops_and_Presets/10_Joaquin_Montecino/2023-04/Sessions/l2ork-grapevine-take-3-session-coll.txt
-    2022.transcontinental.grapevine/Loops_and_Presets/10_Joaquin_Montecino/2023-04/Sessions/l2ork-grapevine-take-arg-session-coll.txt
-    2022.transcontinental.grapevine/Loops_and_Presets/12_Ico_Bukvic/2022-12/Sessions/l2ork-grapevine-take-4-session-coll.txt
-    2022.transcontinental.grapevine/Loops_and_Presets/12_Ico_Bukvic/2022-12/Sessions/l2ork-grapevine-take-5-session-coll.txt
-    2022.transcontinental.grapevine/Sessions/grapevine-end-session-coll.txt
-    2022.transcontinental.grapevine/Sessions/grapevine-mid-session-coll.txt
-    2022.transcontinental.grapevine/Sessions/grapevine-start-24-3-session-coll.txt
-    2022.transcontinental.grapevine/Sessions/grapevine-start-session-coll.txt
-    2023.8-bit.petal/Sessions/raye-end-session-coll.txt
-    2023.8-bit.petal/Sessions/raye-mid-session-coll.txt
-    2023.8-bit.petal/Sessions/raye-start-24-2-session-coll.txt
-    2023.8-bit.petal/Sessions/raye-start-24-5-session-coll.txt
-    2023.8-bit.petal/Sessions/raye-start-24-6-session-coll.txt
-    2023.8-bit.petal/Sessions/raye-start-session-coll.txt
-    2023.territorio.prismatico/Sessions/canada-end-session-coll.txt
-    2023.territorio.prismatico/Sessions/canada-mid-session-coll.txt
-    2023.territorio.prismatico/Sessions/canada-start-session-coll.txt
-
 
 
 

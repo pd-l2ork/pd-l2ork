@@ -1649,7 +1649,6 @@
 1502, 3 tracker-char 61  ;
 1503, 3 tracker-char 62  ;
 1504, 3 tracker-char 63  ;
-1505, 3 tracker-char 64  ;
 1506, 3 tracker-data 0 65;
 1507, 3 tracker-data 1 0;
 1508, 3 tracker-data 2 0;
@@ -1714,7 +1713,6 @@
 1567, 3 tracker-data 61 0;
 1568, 3 tracker-data 62 0;
 1569, 3 tracker-data 63 0;
-1570, 3 tracker-data 64 0;
 1571, 3 flanger-ms 18.001;
 1572, 3 flanger-mod-amp 0.925926;
 1573, 3 flanger-amp 0.001;
