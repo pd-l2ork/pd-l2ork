@@ -4915,6 +4915,7 @@ void canvas_updateconnection(t_canvas *x, int lx1, int ly1, int lx2, int ly2,
     }
 }
 
+extern t_class *message_class;
 int canvas_doconnect_doit(t_canvas *x, t_gobj *y1, t_gobj *y2,
     int closest1, int closest2, int multi, int create_undo)
 {

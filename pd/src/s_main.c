@@ -48,6 +48,7 @@ void sys_addhelppath(char *p);
 void alsa_adddev(const char *name);
 #endif
 void sys_doneglobinit( void);
+char sys_devicename[MAXPDSTRING] = "Pd-L2Ork";
 t_symbol *pd_getdirname(void);
 
 int sys_debuglevel;
@@ -577,6 +578,7 @@ static char *(usagemessage[]) = {
 "-callback        -- use callbacks if possible\n",
 "-nocallback      -- use polling-mode (true by default)\n",
 "-listdev         -- list audio and MIDI devices\n",
+"-devicename -- device name for this pd session used by audio and midi APIs\n",
 
 #ifdef USEAPI_OSS
 "-oss             -- use OSS audio API\n",
@@ -957,8 +959,7 @@ int sys_argparse(int argc, const char **argv)
             if (argc < 2)
                 goto usage;
 
-            as.a_api = API_JACK;
-            jack_client_name(argv[1]);
+            pd_snprintf(sys_devicename, MAXPDSTRING-1, argv[1]);
             argc -= 2; argv +=2;
         }
         else if (!strcmp(*argv, "-nojackconnect"))
@@ -1028,6 +1029,13 @@ int sys_argparse(int argc, const char **argv)
         {
             sys_listplease = 1;
             argc--; argv++;
+        }
+        else if (!strcmp(*argv, "-devicename"))
+        {
+            if (argc < 2)
+                goto usage;
+            pd_snprintf(sys_devicename, MAXPDSTRING-1, argv[1]);
+            argc -= 2; argv +=2;
         }
         else if (!strcmp(*argv, "-soundindev") ||
             !strcmp(*argv, "-audioindev"))

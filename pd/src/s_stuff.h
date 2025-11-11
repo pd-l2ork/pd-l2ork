@@ -71,6 +71,7 @@ extern int sys_nogui;
 extern int sys_havegui(void);
 extern const char *sys_guicmd;
 extern int sys_batch;
+extern char sys_devicename[];
 
 EXTERN int sys_nearestfontsize(int fontsize);
 
@@ -168,7 +169,6 @@ typedef struct _audiosettings
 
 #define DEFMIDIDEV 0
 
-#define DEFAULTSRATE 44100
 #if defined(_WIN32)
 #define DEFAULTADVANCE 80
 #define MMIODEFBLOCKSIZE 512

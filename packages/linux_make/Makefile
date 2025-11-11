@@ -200,9 +200,9 @@ deb: debstage
 # sanitize permissions
 	chmod -R go-w $(DESTDIR)
 	chmod -R a+r $(DESTDIR)
-	find $(DESTDIR) -name \*.pd_linux | xargs chmod a-x
-	find $(DESTDIR) -name \*.pd | xargs chmod a-x
-	find $(DESTDIR) -type d | xargs chmod a+x
+	find "$(DESTDIR)" -name '*.pd_linux' -print0 | xargs -0 chmod a-x
+	find "$(DESTDIR)" -name '*.pd'       -print0 | xargs -0 chmod a-x
+	find "$(DESTDIR)" -type d            -print0 | xargs -0 chmod a+x
 	fakeroot dpkg-deb --build $(DESTDIR) $(packages_src)/linux_make/$(PACKAGE_NAME).deb
 
 
