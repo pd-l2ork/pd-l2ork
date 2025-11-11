@@ -10,7 +10,6 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
 TODO:
-*Syncing from another part sometimes reverts their username to Username
 *Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. Needs to be further tested.
   *Also affects Teacher widget.
 *Explore the slowness of the Teacher widget, particularly in respect to the array changes. This is particularly visible on the WebPdL2Ork, likely due to context sharing. More importantly, this is an issue on the desktop, where it should be addressed first before exploring any additional issues associated with the WebPdL2Ork.
