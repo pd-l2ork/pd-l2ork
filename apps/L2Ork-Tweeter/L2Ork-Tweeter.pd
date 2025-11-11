@@ -1,9 +1,9 @@
-#N canvas 224 70 1362 949.969 10;
+#N canvas 224 70 1366 949.969 10;
 #X obj 0 0 cnv 15 1638 1127 empty empty empty 5 7 0 10 #ff444444 #fffcfcfc
 0;
 #X obj 4 2 cnv 15 1630 19 empty empty empty 200 5 0 10 #ff6c6c6c #fffcfcfc
 0;
-#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.88\ by
+#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.89\ by
 4 5 0 10 #ff6c6c6c #fffcfcfc 0;
 #X obj 252 3 cnv 15 125 16 empty empty (c)\ 2020-present\ Released\ under\ the
 4 6 0 10 #ff6c6c6c #fffcfcfc 0;
@@ -2355,7 +2355,7 @@ stuff \, we need to do this manually., f 45;
 #X text 99 75 DEBUG;
 #X obj 177 168 sprintf L2Ork Tweeter v.%.02f by;
 #X obj 177 193 tosymbol;
-#X msg 177 76 0.88;
+#X msg 177 76 0.89;
 #X connect 0 0 10 0;
 #X connect 1 0 8 0;
 #X connect 1 1 2 0;

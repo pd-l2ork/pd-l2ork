@@ -10,6 +10,7 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
 TODO:
+*Syncing from another part sometimes reverts their username to Username
 *Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. Needs to be further tested.
   *Also affects Teacher widget.
 *Explore the slowness of the Teacher widget, particularly in respect to the array changes. This is particularly visible on the WebPdL2Ork, likely due to context sharing. More importantly, this is an issue on the desktop, where it should be addressed first before exploring any additional issues associated with the WebPdL2Ork.
@@ -23,6 +24,11 @@ TODO:
 *When trying to load a pattern that does not exist (after having successfully loaded one that does), the main level goes to zero.
 *update net-io-coll and get rid of t b 0 on the 1st outlet of the gate since it does not do anything
 *Update L2Ork Tweeter Lite
+
+10-11-2025 0.89
+*Fixed a bug where users losing their names when another part from the same user attempts to sync with it.
+*Removed redundant truncation of the loop's 65th note (a leftover of a bug from an earlier version).
+*Cleaned up old sessions that still have the 65th note.
 
 08-11-2025 0.88
 *Server's l2ork part report now reports to all clients that may have part mapper open.

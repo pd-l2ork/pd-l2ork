@@ -12,7 +12,7 @@
 #X obj 593 30 inlet;
 #X text 631 30 manually set instance;
 #X obj 447 179 == -1;
-#X obj 531 318 list prepend \$2;
+#X obj 558 340 list prepend \$2;
 #X text 99 73 select the right client;
 #X obj 474 133 t b f;
 #X obj 352 265 gate 2 1;
@@ -30,7 +30,7 @@ by doing so overriding user input (since it should be disallowed) \,
 while the right has two options: do the same as incoming networked
 data because we are not connected and need to store latest data \,
 or forward to the network., f 65;
-#X obj 462 319 route bang;
+#X obj 486 340 route bang;
 #X floatatom 486 276 5 0 0 0 - - - 0 0 1, f 5;
 #X obj 486 226 r network-status;
 #X obj 114 563 outlet;
@@ -63,8 +63,9 @@ before it receives 0 \, even in zero logical time), f 23;
 #X obj 391 584 s local-copyfrom-data;
 #X obj 391 536 list prepend \$2;
 #X obj 391 560 list prepend \$4;
-#X obj 531 341 s \$1-client-out;
+#X obj 558 363 s \$1-client-out;
 #X obj 474 108 r \$1-myclientnum;
+#X obj 531 318 t s s;
 #X connect 0 0 1 0;
 #X connect 1 0 41 0;
 #X connect 4 0 48 0;
@@ -89,7 +90,7 @@ before it receives 0 \, even in zero logical time), f 23;
 #X connect 18 2 15 0;
 #X connect 20 0 24 0;
 #X connect 21 0 23 0;
-#X connect 21 1 12 0;
+#X connect 21 1 55 0;
 #X connect 23 1 35 1;
 #X connect 24 0 21 0;
 #X connect 25 0 20 0;
@@ -125,3 +126,5 @@ before it receives 0 \, even in zero logical time), f 23;
 #X connect 51 0 52 0;
 #X connect 52 0 50 0;
 #X connect 54 0 14 0;
+#X connect 55 0 23 0;
+#X connect 55 1 12 0;

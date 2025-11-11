@@ -1288,13 +1288,10 @@ become rather cpu intensive.;
 #X restore 171 486 pd multi-lp;
 #X obj 63 530 pack s s;
 #X obj 283 530 pack s s;
-#X msg 98 574 read \$1/../loops/loop-char-\$2coll.txt \, delete 64
-;
-#X msg 90 629 read \$1/../loops/loop-num-\$2coll.txt \, delete 64;
-#X msg 283 596 delete 64 \, write \$1/../loops/loop-num-\$2coll.txt
-;
-#X msg 283 552 delete 64 \, write \$1/../loops/loop-char-\$2coll.txt
-;
+#X msg 98 574 read \$1/../loops/loop-char-\$2coll.txt;
+#X msg 90 629 read \$1/../loops/loop-num-\$2coll.txt;
+#X msg 283 596 write \$1/../loops/loop-num-\$2coll.txt;
+#X msg 283 552 write \$1/../loops/loop-char-\$2coll.txt;
 #X connect 0 0 164 0;
 #X connect 1 0 2 0;
 #X connect 2 0 109 0;

@@ -3328,6 +3328,8 @@ function gui_canvas_cursor(cid, pd_event_type) {
         // until the cursor is moved. Below thing is really ugly and does
         // not work every time. Not sure if this is Win11-wide issue, or
         // just a specific build issue.
+        // 2025-11-09: this thing also makes L2Ork Tweeter and other complex
+        // patches flicker. Disabling...
         /*
         if (nw_os_is_windows) {
             //gui(cid).get_nw_window(function(nw_win) {
