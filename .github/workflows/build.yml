@@ -103,7 +103,7 @@ jobs:
           if-no-files-found: error
 
   build-macos-x86:
-    runs-on: macos-13
+    runs-on: macos-15-intel
     if: ${{ github.event.inputs.desktop == 'true' }}
     steps:
       - name: deps
