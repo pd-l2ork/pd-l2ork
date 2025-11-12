@@ -5996,7 +5996,7 @@ async function openPatch(content, filename, patchURL) {
                         } else
                             console.warn('Ignoring unsupported wired connection (Code A)'); //This should never happen
                     }
-                    if((!layer.guiObjects[args[2]] || layer.guiObjects[args[2]].shortCircuit === false) && layer.guiObjects[args[4]] && args[5] === '0') {
+                    if((!layer.guiObjects[args[2]] || layer.guiObjects[args[2]].shortCircuit === false) && layer.guiObjects[args[4]] && layer.guiObjects[args[4]].shortCircuit !== false && args[5] === '0') {
                         //If the receiver is a gui object, and the sender is not, we must add a send object so that the receiver
                         //can receive wirelessly. Then we connect the send object to the sender, and the receiver wirelessly to the send object
                         if(layer.objects[args[2]] === 'preset_node') {
