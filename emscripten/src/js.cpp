@@ -18,6 +18,7 @@
 // we use a double underscore prefix to prevent potential namespace collision
 EM_JS(void, __mainInit, (void), {
     window.pdl2ork = Module;
+    window.pdl2ork.IDBFS = IDBFS;
     if (typeof Module.mainInit === "function") {
         Module.mainInit();
     }
