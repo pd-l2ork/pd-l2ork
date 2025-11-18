@@ -1,5 +1,10 @@
 PD-L2ORK TODO:
 
+*Replace all l2ork.music.vt.edu with l2ork.bukvic.net
+*Replace ico@vt.edu with ico@bukvic.net
+
+*Figure out why the Conductor-Commands.pd truncates top right comment (perhaps the size limit of the comment is reached?).
+
 *Autocomplete displaying multiple instances of the same
   *Not sure how this broke. Deleting ~/.pd-l2ork/completions.json fixed the issue
   *Will leave this open to see if it recurrs
