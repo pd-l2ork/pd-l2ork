@@ -1,13 +1,13 @@
-#N canvas 366 222 1312 669 10;
-#X obj 815 11 cnv 15 496 649 empty empty empty 20 12 0 14 #ffd7fbd8
+#N canvas 366 222 1312 691 10;
+#X obj 815 11 cnv 15 496 677 empty empty empty 20 12 0 14 #ffd7fbd8
 #ff404040 0;
-#X obj 451 11 cnv 15 352 649 empty empty empty 20 12 0 14 #ffd7fbd8
+#X obj 451 11 cnv 15 352 677 empty empty empty 20 12 0 14 #ffd7fbd8
 #ff404040 0;
-#X obj 823 428 cnv 15 480 225 empty empty empty 20 12 0 14 #ffffd5bf
+#X obj 823 456 cnv 15 480 225 empty empty empty 20 12 0 14 #ffffd5bf
 #ff404040 0;
-#X obj 460 455 cnv 15 335 198 empty empty empty 20 12 0 14 #ffffd5bf
+#X obj 460 482 cnv 15 335 198 empty empty empty 20 12 0 14 #ffffd5bf
 #ff404040 0;
-#X obj 12 643 s chat-out;
+#X obj 12 673 s chat-out;
 #X msg 24 117 chat admin p:l2orklicious l2ork-sync-all;
 #X msg 12 38 chat admin p:l2orklicious l2ork-length 6000 3000 500 6000
 500 6000 1500 6000 500 3000 \, chat admin p:l2orklicious l2ork-sync-all
@@ -29,19 +29,19 @@
 #X msg 208 286 2000;
 #X obj 98 313 line 100;
 #X msg 98 286 2000 \, 555 30000;
-#X obj 491 539 s load-session-network-sync;
+#X obj 491 566 s load-session-network-sync;
 #X msg 131 511 chat admin p:l2orklicious l2ork-teach 1 overdrive-override
 1, f 32;
 #X msg 67 421 chat admin p:l2orklicious l2ork-load 4th-beat-final-10
 ;
 #X msg 67 444 chat admin p:l2orklicious l2ork-load 4th-beat-droplets-6
 ;
-#X msg 491 515 4th-beat-final-10;
-#X msg 607 515 4th-beat-droplets-6;
-#X msg 491 562 \; load-session-network-sync 4th-beat-droplets-6;
-#X msg 491 598 \; session-sync-offset -1 \; load-session-network-sync
+#X msg 491 542 4th-beat-final-10;
+#X msg 607 542 4th-beat-droplets-6;
+#X msg 491 589 \; load-session-network-sync 4th-beat-droplets-6;
+#X msg 491 625 \; session-sync-offset -1 \; load-session-network-sync
 4th-beat-final-10;
-#X text 824 428 In addition to commands described above \, Tweeter
+#X text 824 456 In addition to commands described above \, Tweeter
 Server also recognizes l2ork-sync-save \, l2ork-sync-save-data \, l2ork-sync-data
 \, and l2ork-sync-vis. These are INTERNAL RESERVED ADMIN COMMANDS for
 broadcasting locally saved session data which is generated via L2Ork-Tweeter-Teacher
@@ -60,12 +60,12 @@ visual sync with red color (using the reset button) \, signalling the
 global sync based on the session data. NONE OF THESE RESERVED COMMANDS
 ARE NOT MEANT TO BE USED DIRECTLY and will not work as designed without
 the L2Ork-Tweeter-Teacher widget being open., f 79;
-#X text 470 464 special case commands that are broadcast from the local
+#X text 470 491 special case commands that are broadcast from the local
 client engine and require theL2Ork-Tweeter-Teacher patch to be open:
 , f 52;
 #X text 111 479 overrides the output level of the client 1 to 1 (unity
 \, possible range is 0.1 to 10), f 42;
-#X text 823 308 l2ork-inst-level-* commands allow for anticipating
+#X text 823 329 l2ork-inst-level-* commands allow for anticipating
 future events that need to be synchronized with a particular user's
 time on their timebar and which then triggers change in either their
 or entire ensemble's instrument level \, as denoted by the message's
@@ -77,7 +77,7 @@ client is possible and any subsequent requests will override the previous
 one. requests remain active until fulfilled or disabled., f 78;
 #X text 823 20 remote admin uses chat system. see left for examples.
 possible admin commands:l2ork-conduct (see the possible command list
-on the left)l2ork-disconnect nect-alll2ork-disconnect-audiencel2ork-free-slot
+on the left)l2ork-disconnectl2ork-disconnect-alll2ork-disconnect-audiencel2ork-free-slot
 (user_num \, bumps them into audience) l2ork-guest-chat (1=default/0
 \, toggles audience chat) l2ork-inst-level-at (user_num \, target_time
 \, target_level 0.1-10)l2ork-inst-level-all-at (user_num \, target_time

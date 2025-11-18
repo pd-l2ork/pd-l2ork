@@ -10,6 +10,7 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
 TODO:
+*Disconnect-all sometimes does not disconnect all.
 *Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. Needs to be further tested.
   *Also affects Teacher widget.
 *Explore the slowness of the Teacher widget, particularly in respect to the array changes. This is particularly visible on the WebPdL2Ork, likely due to context sharing. More importantly, this is an issue on the desktop, where it should be addressed first before exploring any additional issues associated with the WebPdL2Ork.
@@ -21,6 +22,10 @@ TODO:
 *When trying to load a pattern that does not exist (after having successfully loaded one that does), the main level goes to zero.
 *update net-io-coll and get rid of t b 0 on the 1st outlet of the gate since it does not do anything
 *Update L2Ork Tweeter Lite
+
+18-11-2025 0.90
+*Fixed a bug addressing the following condition: while online, solo toggling by another user makes their part audible if one's own solo is enabled (it shouldn't).
+*Adjust vertical alignment links within the copyright notice.
 
 10-11-2025 0.89
 *Fixed a bug where users losing their names when another part from the same user attempts to sync with it.

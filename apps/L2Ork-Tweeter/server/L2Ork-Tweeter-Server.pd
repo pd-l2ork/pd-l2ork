@@ -1544,7 +1544,7 @@ and 14, f 34;
 #X msg 890 196 \; \$1-client-disconnect bang;
 #X obj 448 38 netserver 9002 23, f 73;
 #X obj 1030 74 s server-other;
-#X msg 232 741 0.89;
+#X msg 232 741 0.9;
 #X connect 0 0 60 0;
 #X connect 0 0 98 0;
 #X connect 2 0 146 0;

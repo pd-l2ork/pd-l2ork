@@ -32,7 +32,7 @@
 #X obj 18 199 tgl 15 0 \$1-loop null-r LOOP(alt) 17 6 0 10 #fffcb46c
 #ff000000 #ff000000 0 1 1;
 #X obj 18 145 tgl 15 0 \$1-toggle-keyboard \$1-manual-toggle-keyboard
-KEYBOARD(ctrl) 17 6 0 10 #fffc6418 #ff000000 #ff000000 0 1 1;
+KEYBOARD(ctrl) 17 6 0 10 #fffc6418 #ff000000 #ff000000 1 1 1;
 #N canvas 793 437 521 278 REVERB 0;
 #X obj 45 181 freeverb~;
 #N canvas 3 75 470 252 reverb_levels 0;
@@ -296,7 +296,7 @@ KEYBOARD(ctrl) 17 6 0 10 #fffc6418 #ff000000 #ff000000 0 1 1;
 #X text 417 48 logic for detecting dsp status on startup;
 #X obj 527 91 delay 10;
 #X obj 341 248 hsl 40 15 0 1.5708 0 1 empty empty empty 12 6 0 10 #fffcb46c
-#fffc6418 #ff000000 1950 0 0 1;
+#fffc6418 #ff000000 2500 0 0 1;
 #X obj 13 446 *~;
 #X obj 50 446 *~;
 #X obj 28 408 line~;
@@ -466,53 +466,72 @@ KEYBOARD(ctrl) 17 6 0 10 #fffc6418 #ff000000 #ff000000 0 1 1;
 #X connect 22 0 3 0;
 #X restore 13 522 pd main-disis-mix;
 #X obj 89 223 r solo;
-#N canvas 1270 464 594 410 filter-local 0;
-#X obj 290 20 inlet;
-#X obj 299 380 outlet;
-#X obj 317 56 r \$1-myclientnum;
-#X obj 290 80 route;
-#X obj 220 345 expr 1-$f1;
-#X obj 260 110 moses 1;
-#X text 329 80 the command is coming from another part;
-#X text 65 80 the command is coming from this part;
-#X obj 35 239 gate 1 0;
-#X msg 35 216 1;
-#X text 60 130 the command will arrive here before it is sent via a
+#N canvas 643 168 713 724 filter-local 0;
+#X obj 274 19 inlet;
+#X obj 283 689 outlet;
+#X obj 301 55 r \$1-myclientnum;
+#X obj 274 79 route;
+#X obj 204 654 expr 1-$f1;
+#X obj 244 109 moses 1;
+#X text 49 79 the command is coming from this part;
+#X obj 19 548 gate 1 0;
+#X msg 19 520 1;
+#X text 64 149 the command will arrive here before it is sent via a
 send to change the solo status and generate output from the receive
 below, f 35;
-#X obj 35 261 t f 0;
-#X obj 60 187 r any-local-parts-with-solo-enabled;
-#X obj 334 136 r \$1-toggle-solo;
-#X obj 317 160 f;
-#X obj 317 111 t b;
-#X obj 317 185 moses 1;
-#X text 91 210 if we are turning solo off and are the last one to do
+#X obj 19 570 t f 0;
+#X obj 64 206 r any-local-parts-with-solo-enabled;
+#X text 75 519 if we are turning solo off and are the last one to do
 so \, we should still output audio for this one. however \, if there
 are oters still active among the parts that belong to this particular
 user \, the level should be 0 \, since the other part should be still
 solo-ed out, f 32;
-#X text 317 210 if the solo command is coming from another part \,
-then check what is our current solo status and if it is on \, then
-keep us on no matter what. however \, if it is off \, check if any
-other parts that belong to this user have a solo on and if so \, make
-this one silent \, otherwise \, make us audible., f 35;
+#X text 313 79 the command is coming from another part (that canstill
+be owned by this user);
+#X msg 301 133 \$1;
+#X obj 301 181 text get myparts;
+#X obj 301 157 - 1;
+#X obj 301 109 unpack 0 0;
+#X obj 301 358 f;
+#X obj 318 334 r \$1-toggle-solo;
+#X obj 301 381 moses 1;
+#X text 344 239 0 = NOT our part and the incoming part has solo OFF1
+= NOT our part and the incoming part has solo ON2 = OUR part and the
+incoming part has solo OFF3 = OUR part and the incoming part has solo
+ON;
+#X obj 301 204 expr 2-($f1*2)+$f2;
+#X obj 301 229 > 1;
+#X obj 301 254 sel 1;
+#X text 364 369 4 conditions (with one sub-condition):other part is
+also a part of this user or not (P/p)the other part has solo or not
+(S/s)PS > check if we have solo and then make us audible. otherwise
+mute.Ps > check if we have solo and if so \, make us audible. otherwise
+\, check if any other part of this user has solo enabled and if yes
+\, mute us. otherwise make us audible.pS > ignoreps > ignore;
 #X connect 0 0 3 0;
 #X connect 2 0 3 1;
 #X connect 3 0 5 0;
-#X connect 3 1 15 0;
+#X connect 3 1 17 0;
 #X connect 4 0 1 0;
-#X connect 5 0 9 0;
+#X connect 5 0 8 0;
 #X connect 5 1 1 0;
-#X connect 8 0 11 0;
-#X connect 9 0 8 0;
-#X connect 11 0 4 0;
-#X connect 11 1 8 0;
-#X connect 12 0 8 1;
-#X connect 13 0 14 1;
+#X connect 7 0 10 0;
+#X connect 8 0 7 0;
+#X connect 10 0 4 0;
+#X connect 10 1 7 0;
+#X connect 11 0 7 1;
 #X connect 14 0 16 0;
-#X connect 15 0 14 0;
-#X connect 16 0 9 0;
-#X connect 16 1 1 0;
+#X connect 15 0 22 0;
+#X connect 16 0 15 0;
+#X connect 17 0 14 0;
+#X connect 17 1 22 1;
+#X connect 18 0 20 0;
+#X connect 19 0 18 1;
+#X connect 20 0 8 0;
+#X connect 20 1 1 0;
+#X connect 22 0 23 0;
+#X connect 23 0 24 0;
+#X connect 24 0 18 0;
 #X restore 89 244 pd filter-local;
 #X connect 0 0 37 0;
 #X connect 1 0 0 0;
