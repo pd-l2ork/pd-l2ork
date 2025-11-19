@@ -61,10 +61,17 @@
   <url type="bugtracker">https://github.com/pd-l2ork/pd-l2ork/issues</url>
   <content_rating type="oars-1.1"/>
   <releases>
-    <release version="20251111" type="stable" date="2025-11-11">
+    <release version="20251118" type="stable" date="2025-11-11">
       <description>
         <p>
           Major release with L2Ork Tweeter 0.89, and a number of smaller bug-fixes and improvements.
+        </p>
+      </description>
+    </release>
+    <release version="20251118" type="stable" date="2025-11-19">
+      <description>
+        <p>
+          Implemented WebPdL2Ork file system. Assorted bug-fixes. Introduces L2Ork Tweeter 0.90.
         </p>
       </description>
     </release>
