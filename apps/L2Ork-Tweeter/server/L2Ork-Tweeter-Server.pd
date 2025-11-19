@@ -47,7 +47,7 @@ and updates the client list accordingly;
 #X text 1262 166 broadcasts messages among clients;
 #X text 1360 290 client list is stored here;
 #X obj 40 715 s server-out;
-#X text 1230 941 l2ork.music.vt.edu;
+#X text 1230 941 l2ork.bukvic.net;
 #X obj 40 583 coll network-update-messages-coll.txt;
 #C restore;
 #X obj 40 671 list prepend send;

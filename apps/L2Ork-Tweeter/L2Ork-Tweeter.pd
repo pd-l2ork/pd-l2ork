@@ -342,7 +342,7 @@ the human-readable client number), f 54;
 #X obj 81 58 r version;
 #X msg 328 170 version match--welcome to L2Ork Tweeter!, f 30;
 #X msg 145 170 version mismatch--disconnecting... please download the
-server-compatible version of the client available at http://l2ork.music.vt.edu/main/make-your-own-l2ork/tweeter/
+server-compatible version of the client available at http://l2ork.bukvic.net/main/make-your-own-l2ork/tweeter/
 , f 28;
 #X msg 133 389 \$1;
 #X connect 0 0 16 0;

@@ -73,7 +73,7 @@ typedef struct _coll
 
 	//for thread-unsafe file i/o operations
 	//added by Ivica Ico Bukvic <ico@bukvic.net> 9-24-2010
-	//http://disis.music.vt.edu http://l2ork.music.vt.edu
+	//http://disis.music.vt.edu http://l2ork.bukvic.net
 	t_clock *x_clock;
 
 	pthread_t unsafe_t;

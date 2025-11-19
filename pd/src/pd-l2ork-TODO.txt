@@ -1,7 +1,5 @@
 PD-L2ORK TODO:
 
-*Replace all l2ork.music.vt.edu with l2ork.bukvic.net
-
 *Autocomplete displaying multiple instances of the same
   *Not sure how this broke. Deleting ~/.pd-l2ork/completions.json fixed the issue
   *Will leave this open to see if it recurrs
@@ -922,6 +920,7 @@ resulting in unexpected stuck keys.
   *Reproducible with larger selections at once that are being pasted into a patch, often having some elements fall outside the visible bbox.
   *Removed the printout since it is unnecessary. Something else still catches the point and the system continues to function just fine.
 *Figured out why the Conductor-Commands.pd truncates top right comment (it was message size limit). Implemented warning to inform the user.
+*Updated URLs and email throughout the project tree.
 
 
 

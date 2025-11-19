@@ -7,7 +7,7 @@
 /* http://pure-data.svn.sourceforge.net/viewvc/pure-data/trunk/externals/maxlib/src/netclient.c */
 /* March 26 2010                                                                */
 /* Additional fixes and improvements by Ivica Ico Bukvic <ico@bukvic.net>       */
-/* for the purpose of L2Ork http://l2ork.music.vt.edu                           */
+/* for the purpose of L2Ork http://l2ork.bukvic.net                           */
 /* This program is free software; you can redistribute it and/or                */
 /* modify it under the terms of the GNU General Public License                  */
 /* as published by the Free Software Foundation; either version 2               */

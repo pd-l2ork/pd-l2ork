@@ -336,7 +336,7 @@ bluetooth stack.;
 #X text 586 553 MOTION PLUS;
 #X text -14 2 Threaded implementation of Wiimote object by DISIS &
 L2Ork by Ivica Ico Bukvic <ico@bukvic.net> <http://disis.music.vt.edu>
-<http://l2ork.music.vt.edu>;
+<http://l2ork.bukvic.net>;
 #X text 119 122 By default \, the wiimote does not report acceleration
 data \, IR data \, or any data from an attached extension (eg \, nunchuck).
 You must specifically enable each reporting mode.;

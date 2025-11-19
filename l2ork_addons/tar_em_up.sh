@@ -1,6 +1,6 @@
 #!/bin/bash
 # super-simplistic installer for l2ork things by Ivica Ico Bukvic <ico@bukvic.net>
-# for info on L2Ork visit http://l2ork.music.vt.edu
+# for info on L2Ork visit http://l2ork.bukvic.net
 
 cleanup() {
     # maybe we'd want to do some actual cleanup here
@@ -228,7 +228,7 @@ if [ ! -d "../pd/nw/nw" ]; then
 		# nwjs_url=https://github.com/LeonardLaszlo/nw.js-armv7-binaries/releases/download/v0.28.4/nwjs-sdk-v0.28.4-linux-arm.tar.gz
 		# nwjs_filename=nwjs-sdk-v0.28.4-linux-arm.tar.gz
 		# nwjs_dirname=nwjs-sdk-v0.28.4-linux-arm
-		nwjs_url=https://l2ork.music.vt.edu/data/pd-l2ork/nwjs-v0.60.1-linux-arm64.tar.gz
+		nwjs_url=https://l2ork.bukvic.net/data/pd-l2ork/nwjs-v0.60.1-linux-arm64.tar.gz
 		nwjs_filename=nwjs-v0.60.1-linux-arm64.tar.gz
 		nwjs_dirname=nwjs-v0.60.1-linux-arm64
 	fi

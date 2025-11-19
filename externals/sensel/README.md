@@ -1,6 +1,6 @@
 # DISIS/L2Ork Sensel 
 
-[Pd-L2Ork](https://l2ork.music.vt.edu/main/make-your-own-l2ork/software/) and [Pure-Data](http://msp.ucsd.edu/software.html) external for interfacing with the [Sensel Morph](http://sensel.com/morph)
+[Pd-L2Ork](https://l2ork.bukvic.net/main/make-your-own-l2ork/software/) and [Pure-Data](http://msp.ucsd.edu/software.html) external for interfacing with the [Sensel Morph](http://sensel.com/morph)
 
 by [Rachel Hachem](https://github.com/rachelhachem) and Ivica Ico Bukvic <ico@bukvic.net>
 

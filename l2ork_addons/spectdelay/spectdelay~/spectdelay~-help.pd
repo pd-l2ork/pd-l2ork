@@ -219,7 +219,7 @@ using the binmap table.;
 #000000 #000000;
 #X text 380 51 <--start here;
 #X text 315 382 NB: arrays will auto-update settings as soon as they
-are clicked only if using L2Ork iteration of Pd (http://l2ork.music.vt.edu).
+are clicked only if using L2Ork iteration of Pd (http://l2ork.bukvic.net).
 Otherwise click on respective bang buttons to activate changes. Sliders
 behave the same.;
 #X text 314 174 optional arguments:;

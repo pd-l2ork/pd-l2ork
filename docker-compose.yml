@@ -10,7 +10,7 @@ services:
     environment:
       - PORT=80
       - PATCH_PATH=public/patches
-      - VIRTUAL_HOST=l2ork.music.vt.edu # Sets the domain name being used for pd-l2ork
+      - VIRTUAL_HOST=l2ork.bukvic.net # Sets the domain name being used for pd-l2ork
     volumes:
       # The path before the ":" is where webpdl2ork will read patches from. 
       - ./emscripten/projects/WebPdL2Ork/public:/WebPdL2Ork/public/patches:ro

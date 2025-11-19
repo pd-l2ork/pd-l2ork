@@ -3,7 +3,7 @@ Version: 20121108
 Section: sound
 Priority: optional
 Maintainer: Ivica Ico Bukvic <ico@bukvic.net>
-Homepage: http://l2ork.music.vt.edu
+Homepage: http://l2ork.bukvic.net
 Package: pd-l2ork
 Architecture: i386
 Depends: python

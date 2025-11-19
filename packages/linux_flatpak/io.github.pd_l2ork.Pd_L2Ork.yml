@@ -222,7 +222,7 @@ modules:
       - x86_64
   - type: file
     # aarch64
-    url: https://l2ork.music.vt.edu/data/pd-l2ork/nwjs-v0.60.1-linux-arm64.tar.gz
+    url: https://l2ork.bukvic.net/data/pd-l2ork/nwjs-v0.60.1-linux-arm64.tar.gz
     sha256: c57fa2684680119789b5403630a24218db06f2713370b87cfab3cc6839409c25
     dest-filename: nwjs.tar.gz
     only-arches:

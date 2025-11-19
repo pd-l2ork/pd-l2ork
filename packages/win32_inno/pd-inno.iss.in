@@ -8,10 +8,10 @@
 [Setup]
 AppName=Pd-L2Ork
 AppVerName=Pd-L2Ork-PD_VERSION
-AppPublisher=l2ork.music.vt.edu
-AppPublisherURL=https://l2ork.music.vt.edu
+AppPublisher=l2ork.bukvic.net
+AppPublisherURL=https://l2ork.bukvic.net
 AppSupportURL=http://disis.music.vt.edu/cgi-bin/mailman/listinfo/l2ork-dev
-AppUpdatesURL=https://l2ork.music.vt.edu/main/make-your-own-l2ork/software/
+AppUpdatesURL=https://l2ork.bukvic.net/main/make-your-own-l2ork/software/
 DefaultDirName={commonpf}\Pd-L2Ork
 DefaultGroupName=Pd-L2Ork
 LicenseFile=..\gpl-3.0.txt
@@ -35,7 +35,7 @@ Name: fileassociations; Description: Reset File Associations
 Name: libs; Description: Reset Libraries and Paths
 
 [INI]
-Filename: {app}\pd.url; Section: InternetShortcut; Key: URL; String: https://l2ork.music.vt.edu
+Filename: {app}\pd.url; Section: InternetShortcut; Key: URL; String: https://l2ork.bukvic.net
 Filename: {app}\asio4all.url; Section: InternetShortcut; Key: URL; String: http://asio4all.com
 Filename: {app}\puredata.url; Section: InternetShortcut; Key: URL; String: http://en.flossmanuals.net/puredata
 Filename: {app}\techniques.url; Section: InternetShortcut; Key: URL; String: http://crca.ucsd.edu/~msp/techniques.htm

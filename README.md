@@ -66,7 +66,7 @@ Pd-L2ork has the following goals:
 
 For Pd-L2Ork website see:
 
-<http://l2ork.music.vt.edu/main/make-your-own-l2ork/software/>
+<http://l2ork.bukvic.net/main/make-your-own-l2ork/software/>
  
 ### Relationship of Pd-L2Ork to Pure Data
 
@@ -83,7 +83,7 @@ There are two maintained distributions of Pure Data:
 
 Releases are provided on the L2Ork's webpage:
 
-<http://l2ork.music.vt.edu/main/make-your-own-l2ork/software/>
+<http://l2ork.bukvic.net/main/make-your-own-l2ork/software/>
 
 ### Build Guide
 

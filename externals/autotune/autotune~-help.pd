@@ -12,7 +12,7 @@
 #X text 7 51 DESCRIPTION pitch correction (a.k.a. autotuning);
 #X text 7 171 LIBRARY L2Ork addons;
 #X text 7 191 AUTHOR Ivica Ico Bukvic;
-#X text 7 211 WEBSITE http://l2ork.music.vt.edu;
+#X text 7 211 WEBSITE http://l2ork.bukvic.net;
 #X text 7 231 RELEASE_DATE 2015;
 #X text 7 251 HELP_PATCH_AUTHORS Ivica Ico Bukvic;
 #X text 7 71 INLET_0 signal list correct mix shift tune smooth lfodepth

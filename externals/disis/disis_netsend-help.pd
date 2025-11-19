@@ -13,7 +13,7 @@
 #X text 12 85 OUTLET_0 float;
 #X text 12 185 HELP_PATCH_AUTHORS Based on netsend help file. Updated
 by Ivica Ico Bukvic to conform to the PDDP template for Pd-L2Ork.;
-#X text 12 145 WEBSITE http://l2ork.music.vt.edu;
+#X text 12 145 WEBSITE http://l2ork.bukvic.net;
 #X text 12 165 RELEASE_DATE 2013;
 #X text 12 65 INLET_0 connect disconnect send enqueue bang;
 #X text 12 125 AUTHOR Ivica Ico Bukvic;

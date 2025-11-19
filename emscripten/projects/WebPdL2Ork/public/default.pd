@@ -259,8 +259,8 @@
 #X text 21 162 (e.g. Patchstorage) and put the download;
 #X text 21 177 LINK to:;
 #X text 11 80 - To run locally stored patches:;
-#X text 21 192 https://l2ork.music.vt.edu:3000?url=LINK;
-#X text 21 96 https://l2ork.music.vt.edu:3000?url=/PATH/PATCHNAME.pd
+#X text 21 192 https://l2ork.bukvic.net:3000?url=LINK;
+#X text 21 96 https://l2ork.bukvic.net:3000?url=/PATH/PATCHNAME.pd
 ;
 #X text 11 220 WebPdL2Ork supports all GUI objects that shipwith Pd-L2Ork
 and are not deprecated;
