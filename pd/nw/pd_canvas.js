@@ -291,12 +291,13 @@ var canvas_events = (function() {
         string_to_array_of_chunks = function(msg) {
         // Convert a string (FUDI message) to an array of strings small enough
         // to fit in Pd's socketreceiver buffer of 4096 bytes
-            var chunk_max = 1024,
+            var chunk_max = 2048,
                 max_pd_string = 1000,
                 left,
                 in_array = [],
                 nargs = [],
                 out_array = [];
+            //pdgui.post("string_to_array_of_chunks msg.length=" + msg.length);
             if (msg.length <= chunk_max) {
                 out_array.push([msg]);
             } else {
@@ -334,6 +335,12 @@ var canvas_events = (function() {
                 // arguments exceeds that of pd's 1000.
                 nargs = msg.split(' ');
                 //pdgui.post("nargs="+nargs.length);
+                if (msg.length > chunk_max) {
+                    pdgui.post("warning: message lenght of " +
+                         msg.length + " exceeds pd-l2ork's " +
+                         "allowed maximum of 1024 characters. excess " +
+                         "text will be truncated...");
+                }
                 if (nargs.length > max_pd_string)
                     pdgui.post("warning: message exceeds pd-l2ork's " +
                          "allowed maximum of 1000 arguments. excess " +
