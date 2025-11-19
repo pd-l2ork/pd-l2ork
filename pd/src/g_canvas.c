@@ -1102,7 +1102,7 @@ void canvas_show_menu(t_canvas *x, t_floatarg f)
     x->gl_nomenu = (int)f;
 }
 
-/* ico@vt.edu 2022-11-15: following three functions deal with
+/* ico@bukvic.net 2022-11-15: following three functions deal with
    the new "editable" option that is only scriptable at this point
    in time. this can be issued by creating a message:
 
@@ -1168,7 +1168,7 @@ void canvas_disable_editmode_this_and_children_canvases(t_canvas *x)
         }
         g = g->g_next;
     }
-    // ico@vt.edu 2024-12-24:
+    // ico@bukvic.net 2024-12-24:
     // this is super-messy. because we don't know where the message to disable
     // editability of a canvas came from, we have to blindly assume that each
     // patch just may have had alt key pressed, and hence its background altered
@@ -1206,7 +1206,7 @@ void canvas_set_editable(t_canvas *x, t_floatarg f)
     if ((int)f != 0 && (int)f != 1 || (int)f == x->gl_editable)
         return;
 
-    // ico@vt.edu 2022-11-21:
+    // ico@bukvic.net 2022-11-21:
     // why are we navigating to the root canvas? this is wrong.
     // disabling until I remember why I had this here in the
     // first place. leaving root, to prevent having to change
@@ -1224,14 +1224,14 @@ void canvas_set_editable(t_canvas *x, t_floatarg f)
     }
     glob_alt = 0;
     x->gl_editable = (int)f;
-    // ico@vt.edu 2022-11-22: only if canvas is not editable
+    // ico@bukvic.net 2022-11-22: only if canvas is not editable
     // and does not have an array (meaning it is typically a
     // subpatch of a GOP array)
     if (!x->gl_editable && !canvas_hasarray(x))
     {
         // raise the window to bring it to user's attention
 
-        // ico@vt.edu 2022-11-21: this is problematic on many levels,
+        // ico@bukvic.net 2022-11-21: this is problematic on many levels,
         // including loading of a new patch where this may take place
         // before the parent patch has been created, resulting in
         // incorrect patch being opened. instead, we need to reference
@@ -1374,7 +1374,7 @@ void canvas_map(t_canvas *x, t_floatarg f)
             canvas_drawlines(x);
             if (x->gl_isgraph && x->gl_goprect)
                 canvas_drawredrect(x, 1);
-            // ico@vt.edu 2021-11-12: if we are subpatch with
+            // ico@bukvic.net 2021-11-12: if we are subpatch with
             // an array, delete scrollbars
             scrollbar_update(x);
             if (canvas_hasarray(x) && glist_istoplevel(x))
@@ -1902,7 +1902,7 @@ static void canvas_relocate(t_canvas *x, t_symbol *canvasgeom,
     }
     canvas_checkconfig(x);
 
-    // ico@vt.edu:
+    // ico@bukvic.net:
     // Here we update only scrollbars to avoid race condition
     // caused by doing gui_canvas_get_scroll which in turn
     // calls canvas_relocate to ensure garrays in subpatches
@@ -3499,13 +3499,13 @@ void canvasgop__clickhook(t_scalehandle *sh, int newstate)
     if (sh->h_scale != 1)
         canvas_undo_add(x, 8, "apply", canvas_undo_set_canvas(x));
 
-    // ico@vt.edu 2022-11-22: here we disable redrawing of canvas'
+    // ico@bukvic.net 2022-11-22: here we disable redrawing of canvas'
     // contents if it has an array, as that can be rather CPU intense
     // for large arrays. we reenable this in g_editor.c inside
     // canvas_mouseup event.
     if (x->gl_isgraph && canvas_hasarray(x) && !glist_istoplevel(x))
     {
-        // ico@vt.edu 2022-11-24: do not redraw GOP canvases with
+        // ico@bukvic.net 2022-11-24: do not redraw GOP canvases with
         // arrays that cumulatively have more than 200k points
         // while resizing the GOP canvas (we blank them instead)
         // this is useful on not only slower computers, but also
@@ -3596,7 +3596,7 @@ void canvasgop__motionhook(t_scalehandle *sh, t_floatarg mouse_x,
         t_glist *owner = glist_getcanvas(x);
         /* Just unvis the object, then vis it once we've done our
            mutation and checks */
-        /* ico@vt.edu 2020-08-26: this was owner instead of x->gl_owner However,
+        /* ico@bukvic.net 2020-08-26: this was owner instead of x->gl_owner However,
            there is a special case where this causes consistency check error 
            in canvas_vis because a gop patch size is being manipulated on the
            parent window and its window is also visible, glist_getcanvas() will
@@ -3624,7 +3624,7 @@ void canvasgop__motionhook(t_scalehandle *sh, t_floatarg mouse_x,
         //fprintf(stderr,"%d %d %d %d\n", tmpx1, tmpy1, tmpx2, tmpy2);
         if (!x->gl_hidetext)
         {
-            /* ico@vt.edu: we add pixels to match minimum space
+            /* ico@bukvic.net: we add pixels to match minimum space
                on the right side of the text to that of the left side */
             tmp_x_final = tmpx2 - tmpx1 + 2;
             tmp_y_final = tmpy2 - tmpy1;
@@ -3640,21 +3640,21 @@ void canvasgop__motionhook(t_scalehandle *sh, t_floatarg mouse_x,
             x->gl_pixheight = tmp_y_final;
         owner->gl_editor->e_xnew = mouse_x;
         owner->gl_editor->e_ynew = mouse_y;
-        // ico@vt.edu 2021-04-29: here we don't have to check if we have
+        // ico@bukvic.net 2021-04-29: here we don't have to check if we have
         // gl_owner since we already know we are adjusting our size on the
         // parent patch. this is also why the commented-out canvas_fixlinesfor
         // is not properly working.
         //canvas_fixlinesfor(owner, (t_text *)x);
         canvas_fixlinesfor(glist_getcanvas(x->gl_owner), (t_text *)x);
         gobj_vis((t_gobj *)x, x->gl_owner, 1);
-        // ico@vt.edu 2022-11-29: if we are not an abstraction,
+        // ico@bukvic.net 2022-11-29: if we are not an abstraction,
         // dirty parent canvas. otherwise dirty the abstraction.
         if (!owner->gl_env)
             canvas_dirty(owner, 1);
         else
             canvas_dirty(x, 1);
 
-        /* ico@vt.edu 2020-08-26: if we are changing the gop size
+        /* ico@bukvic.net 2020-08-26: if we are changing the gop size
            on the parent window with our own window open, updated the 
            red rectangle on our own window */
         if (x->gl_havewindow)
@@ -3700,18 +3700,18 @@ void canvasgop__motionhook(t_scalehandle *sh, t_floatarg mouse_x,
             properties_set_field_int(properties,
                 "y_pix",x->gl_pixheight + sh->h_dragy);
         }
-        /* ico@vt.edu: resize parent window gop rectangle if visible
+        /* ico@bukvic.net: resize parent window gop rectangle if visible
            as an added bonus, this also works even if it is only
            visible inside another gop (gop within a gop within a gop) */
         if (x->gl_owner && glist_isvisible(x->gl_owner))
         {
             gobj_vis(&x->gl_gobj, x->gl_owner, 0);
             gobj_vis(&x->gl_gobj, x->gl_owner, 1);
-            // ico@vt.edu 2021-04-29: we also need to adjust patch cords
+            // ico@bukvic.net 2021-04-29: we also need to adjust patch cords
             // on the parent window here
             canvas_fixlinesfor(glist_getcanvas(x->gl_owner), (t_text *)x);
         }
-        // ico@vt.edu 2022-11-29:
+        // ico@bukvic.net 2022-11-29:
         // dirty parent canvas or ourselves, depending whether
         // we are an abstraction (gl_env == 1) or not. we get
         // here only if we are changing GOP red rect inside
@@ -3744,7 +3744,7 @@ void canvasgop__motionhook(t_scalehandle *sh, t_floatarg mouse_x,
             x, x1, y1, x2, y2);
         sh->h_dragx = dx;
         sh->h_dragy = dy;
-        // ico@vt.edu 2022-11-29: 
+        // ico@bukvic.net 2022-11-29: 
         // dirty parent canvas or ourselves, depending whether
         // we are an abstraction (gl_env == 1) or not. we get
         // here only if we are changing GOP red rect inside
@@ -3753,7 +3753,7 @@ void canvasgop__motionhook(t_scalehandle *sh, t_floatarg mouse_x,
             canvas_dirty(glist_getcanvas(x), 1);
         else
             canvas_dirty(x, 1);
-        // ico@vt.edu 2021-08-09: this is an overriding scroll
+        // ico@bukvic.net 2021-08-09: this is an overriding scroll
         // request that, if sent continuously, will override
         // the previous call and thus save the precious CPU cycles.
         // this will result in the scrollbar update finally taking
@@ -3778,7 +3778,7 @@ t_glist *pd_checkglist(t_pd *x)
 
 extern void rtext_update_active_nlines(t_rtext *, int nlines);
 
-// ico@vt.edu 2021-03-26:
+// ico@bukvic.net 2021-03-26:
 // this is used to update temporary height of the object being edited
 // to ensure that the object's patch cords are also correctly repositioned
 // while editing, since its height due to added lines may change

@@ -1155,7 +1155,7 @@ static void gatom_keyname(t_gatom *x, t_symbol *s, int argc, t_atom *argv)
 {
     //post("gatom_keyname <%s>", s->s_name);
     t_atom *firstAtom = binbuf_getvec(x->a_binbuf);
-    /* ico@vt.edu 20200904 like g_numbox.c, here we hijack list to capture
+    /* ico@bukvic.net 20200904 like g_numbox.c, here we hijack list to capture
        keyname keypresses, so that we can use shift+backspace to delete
        entire text */
     if (argc == 2 && argv[0].a_type == A_FLOAT && argv[1].a_type == A_SYMBOL)
@@ -1239,7 +1239,7 @@ static void gatom_motion(void *z, t_floatarg dx, t_floatarg dy)
     }
 }
 
-// ico@vt.edu 2021-04-16: function for adding ... to the gatom
+// ico@bukvic.net 2021-04-16: function for adding ... to the gatom
 // that is being edited via keyboard--we do ... only instead of the
 // first three characters (in case they are not present). otherwise
 // we introduce a cascading set of problems on the front-end which is
@@ -1314,7 +1314,7 @@ static void gatom_key(void *z, t_floatarg f)
         {
             binbuf_clear(x->a_binbuf);
             x->a_binbuf = binbuf_duplicate(x->a_binbufold);
-            /* ico@vt.edu 2021-08-25: this has all kinds of problems due to
+            /* ico@bukvic.net 2021-08-25: this has all kinds of problems due to
                conversion that adds bunch of unnecessary decimal points and
                makes appending cumbersome
             */
@@ -1330,7 +1330,7 @@ static void gatom_key(void *z, t_floatarg f)
                 x->a_buf[0] = 0;
             */
 
-            // ico@vt.edu 20200904:
+            // ico@bukvic.net 20200904:
             // we reset internal buffer since there is currently no graceful way
             // to handle conversion from float to string and back without loss
             // in the value accuracy. this is why currently the shift click does
@@ -1341,7 +1341,7 @@ static void gatom_key(void *z, t_floatarg f)
         else if (x->a_flavor == A_SYMBOL)
         {
             //post("gatom_key release");
-            // ico@vt.edu 20200923: we also check for empty a_buf to ensure that
+            // ico@bukvic.net 20200923: we also check for empty a_buf to ensure that
             // the ... is deleted. This was created when the object was originally
             // clicked on below, but only if the current gatom is symbol type and
             // is empty.
@@ -1419,7 +1419,7 @@ static void gatom_key(void *z, t_floatarg f)
             //sprintf(x->a_buf, "%f", x->a_atom.a_w.w_float);
             //post("got float f=<%f> s=<%s>", x->a_atom.a_w.w_float, x->a_buf);
 
-            // ico@vt.edu 20200904:
+            // ico@bukvic.net 20200904:
             // we reset internal buffer since there is currently no graceful way
             // to handle conversion from float to string and back without loss
             // in the value accuracy
@@ -1460,7 +1460,7 @@ static void gatom_key(void *z, t_floatarg f)
         x->a_binbufold = binbuf_duplicate(x->a_binbuf);
         gatom_retext(x, 1, 0);
         gatom_bang(x);
-        /* ico@vt.edu 20200904: We prevent deleting of internal buffer,
+        /* ico@bukvic.net 20200904: We prevent deleting of internal buffer,
 		   so that we can keep adding to the existing text unless we click
 		   the second time in which case we will always start with an
 		   empty symbol
@@ -1540,7 +1540,7 @@ static void gatom_click(t_gatom *x,
         }
         else
         {
-            // 2021-08-25 ico@vt.edu: the following alt is invoked by
+            // 2021-08-25 ico@bukvic.net: the following alt is invoked by
             // holding CTRL (on Linux) and clicking on a gatom. this
             // effectively makes gatom toggle between 0 and previous value
             // its previous value (e.g. 123 will toggle to 0 and then to 123),
@@ -1661,7 +1661,7 @@ static void gatom_exclusive(t_gatom *x, t_floatarg f)
     }
 }
 
-// ico@vt.edu 2021-03-22: pass various css attribute changes
+// ico@bukvic.net 2021-03-22: pass various css attribute changes
 void gatom_css(t_gatom *x, t_symbol *s, int argc, t_atom *argv)
 {
     if (argc > 2 && glist_isvisible(x->a_glist))
@@ -2595,7 +2595,7 @@ static void text_getrect(t_gobj *z, t_glist *glist,
             int bufsizedbg;
             if (y) rtext_gettext(y, &bufdbg, &bufsizedbg);
             */
-            // ico@vt.edu 2022-12-14: keeping the text object width
+            // ico@bukvic.net 2022-12-14: keeping the text object width
             // consistent with text width. that way resizing it will
             // not result in weird fractional resizing and the
             // inability to return to the original width.
@@ -2762,7 +2762,7 @@ static void text_vis(t_gobj *z, t_glist *glist, int vis)
     //don't draw it and make its width/height 0
     int exception = 0;
     //post("...exception=%d k12=%d", exception, sys_k12_mode);
-    // ico@vt.edu 2022-12-05: we now embed one preset_hub in every
+    // ico@bukvic.net 2022-12-05: we now embed one preset_hub in every
     // new toplevel patch. this is because k12 mode is not togglable
     // at runtime, and not doing so could confuse new users because
     // they may have created a patch in non-k12 mode and are now
@@ -2874,7 +2874,7 @@ static int text_click(t_gobj *z, struct _glist *glist,
         {
             //post("gatom click on");
             /* Change the gatom text color when it's clicked */
-            /* ico@vt.edu 2021-09-09: added check if the interactive
+            /* ico@bukvic.net 2021-09-09: added check if the interactive
                mode is enabled. Since dropdown has its own click
                handler, we know this code is exclusively for gatoms */
             if (((t_gatom *)x)->a_click)
@@ -3242,7 +3242,7 @@ void text_drawborder(t_text *x, t_glist *glist,
         }
         else
         {
-            /* ico@vt.edu 2021-08-25: this gets called when
+            /* ico@bukvic.net 2021-08-25: this gets called when
                a gatom has a width of 0, possibly in other
                situations, as well */
             //post("text_drawborder gui_atom_redraw_border");

@@ -133,7 +133,7 @@ function create_menu(gui, type) {
         }));
     }
     file_menu.append(new gui.MenuItem({ type: "separator" }));
-    // ico@vt.edu 2020-12-05: checkbox to switch between k12 mode
+    // ico@bukvic.net 2020-12-05: checkbox to switch between k12 mode
     // based on hlkwok@vt.edu
     file_menu.append(m.file.k12_mode = new gui.MenuItem({
             type: "checkbox",
@@ -799,7 +799,7 @@ function create_menu(gui, type) {
     if (process.platform === "darwin") {
         osx_menu = m;
 
-        // ico@vt.edu 2022-12-13: review elements
+        // ico@bukvic.net 2022-12-13: review elements
         var i;
         for (i = 0; i < window_menu.items[2].submenu.items.length; i++) {
             console.log(i + ":" + window_menu.items[2].submenu.items[i].label);

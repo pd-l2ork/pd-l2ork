@@ -1,8 +1,8 @@
 # Authors (listed alphabetically)
-Drew Bowman <drewb00@vt.edu>  
-Ivica Ico Bukvic <ico@vt.edu>  
-William Furgerson <williamfurgerson@vt.edu>  
-Zack Lee <cuinjune@gmail.com>  
+Drew Bowman <drewb00@vt.edu>
+Ivica Ico Bukvic <ico@bukvic.net>
+William Furgerson <williamfurgerson@vt.edu>
+Zack Lee <cuinjune@gmail.com>
 
 With contributions from Jonathan Wilkes and Albert Graef
 

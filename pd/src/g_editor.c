@@ -255,7 +255,7 @@ int gobj_shouldvis(t_gobj *x, struct _glist *glist)
         //    "gobj_shouldvis gop: %d %d %d %d || object %d %d %d %d\n",
         //    x1, x2, y1, y2, gx1, gx2, gy1, gy2);
 
-        // ico@vt.edu 20200914: replacing the original crude on/off calculation
+        // ico@bukvic.net 20200914: replacing the original crude on/off calculation
         // that is commented out below, with the new one that returns 1 on any
         // object that is even partially visible, e.g. inside a GOP graph on
         // the parent canvas
@@ -2714,7 +2714,7 @@ t_gobj *canvas_findhitbox_w_nlets(t_canvas *x, int xpos, int ypos,
 extern t_class *array_define_class;
 extern int scalar_getcanvasfield(t_scalar *x);
 
-// ico@vt.edu 2022-11-14: check if this or any of the parent canvases
+// ico@bukvic.net 2022-11-14: check if this or any of the parent canvases
 // have the editable option disabled, and if so, ignore the right click
 int canvas_is_editable(t_canvas *x)
 {
@@ -2771,7 +2771,7 @@ static void canvas_rightclick(t_canvas *x, int xpos, int ypos, t_gobj *y_sel)
        seeing what is inside them? CURRENTLY DISABLED */
     //post("canvas_rightclick %d", (y && pd_class(&y->g_pd) == garray_class ? 1 : 0));
     canprop = (!y || (y && class_getpropertiesfn(pd_class(&y->g_pd)))
-               // ico@vt.edu: the following ensures that even if we are clicking on
+               // ico@bukvic.net: the following ensures that even if we are clicking on
                // a garray, we should still be able to get the canvas properties
                 || (y && pd_class(&y->g_pd) == garray_class)
                /*&& !canvas_isabstraction( ((t_glist*)y) )*/ );
@@ -2803,7 +2803,7 @@ static void canvas_rightclick(t_canvas *x, int xpos, int ypos, t_gobj *y_sel)
     /* or if it is the background of a subpatch */
     cansaveas = (cansaveas || (!y && canvas_getrootfor(x) != x &&
                     !canvas_isabstraction((t_canvas *)x)));
-    // ico@vt.edu 2022-12-18: avoid creating help for the comment object
+    // ico@bukvic.net 2022-12-18: avoid creating help for the comment object
     // in the K12 mode, to avoid users to dig into non-K12 help files
     if (sys_k12_mode == 1 && pd_class(&y->g_pd) == text_class && 
         ((t_text *)y)->te_type == T_TEXT) {
@@ -2910,13 +2910,13 @@ void canvas_map(t_canvas *x, t_floatarg f);
 //extern t_rtext *glist_findrtext(t_glist *gl, t_text *who);
 //extern void rtext_gettext(t_rtext *x, char **buf, int *bufsize);
 
-// ico@vt.edu 2020-08-24: update initial menu settings
+// ico@bukvic.net 2020-08-24: update initial menu settings
 void canvas_init_menu(t_canvas *x)
 {   
     //post("g_editor.c canvas_init_menu %d", x->gl_font);
-    // ico@vt.edu 2020-08-24: we now need this to init the menu font size
+    // ico@bukvic.net 2020-08-24: we now need this to init the menu font size
     gui_vmess("gui_menu_font_set_initial_size", "xi", x, x->gl_font);
-    // ico@vt.edu 2022-11-30: check if this or a parent canvas
+    // ico@bukvic.net 2022-11-30: check if this or a parent canvas
     // is not editable (parents' editability affects children
     // canvases) and store the value in the editable variable
     int editable = x->gl_editable;
@@ -2932,7 +2932,7 @@ void canvas_init_menu(t_canvas *x)
     gui_vmess("canvas_menu_set_editable", "xi", x, editable);
 }
 
-// ico@vt.edu 2022-06-18: exposing class from the x_array.c
+// ico@bukvic.net 2022-06-18: exposing class from the x_array.c
 // for the canvas_click below, so that we can toggle off
 // edit and inspector options on the gui side.
 extern t_class *array_define_class;
@@ -3000,12 +3000,12 @@ void canvas_vis(t_canvas *x, t_floatarg f)
                 canvas_destroy_editor(x);
             }
             //fprintf(stderr,"new\n");
-            /* ico@vt.edu: here we use hasarray only for toplevel garrays
+            /* ico@bukvic.net: here we use hasarray only for toplevel garrays
                because they require check_config every time resize is invoked.
                We may need to expand this to include scalars, as well. */
             canvas_create_editor(x);
             canvas_args_to_string(argsbuf, x);
-            /* ico@vt.edu 2022-12-07: added check for whether the canvas is
+            /* ico@bukvic.net 2022-12-07: added check for whether the canvas is
                blank, which we use to resize window as needed for the k12 mode
             */
             int isblank = 0;
@@ -3116,7 +3116,7 @@ void canvas_vis(t_canvas *x, t_floatarg f)
             x->gl_havewindow = 0;
             if (glist_isvisible(gl2))
                 gobj_vis(&x->gl_gobj, gl2, 1);
-            // ico@vt.edu 2022-08-07: redraw parent window to honor correct
+            // ico@bukvic.net 2022-08-07: redraw parent window to honor correct
             // ordering of objects. Otherwise the redrawn GOP will be shown
             // in front of other objects.
             // TODO: his can be removed later when we implement correct
@@ -3840,7 +3840,7 @@ static int canvas_upx, canvas_upy;
 
 static int ctrl_runmode_warned;
 
-// ico@vt.edu 2021-10-08: here we define these statically
+// ico@bukvic.net 2021-10-08: here we define these statically
 // because they will be reused for the mouseup call
 // where we redistribute calls to all objects that catch
 // mouse motion, including mouse clicks while passing them
@@ -3981,7 +3981,7 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
             //post("...runmode && !rightclick");
             for (y = x->gl_list; y; y = y->g_next)
             {
-                // ico@vt.edu 2021-11-12: here we need to check for
+                // ico@bukvic.net 2021-11-12: here we need to check for
                 // garray class since otherwise we are unable to click on
                 // array points on a toplevel window (when opening the gop
                 // it holds the array). this is because those points do
@@ -4015,7 +4015,7 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
                     );
                     */
                     /* do not give clicks to comments or cnv during runtime */
-                    /* ico@vt.edu 2021-10-08: also do not give clicks to the
+                    /* ico@bukvic.net 2021-10-08: also do not give clicks to the
                        ggee/image object if it is in click_mode 3 because that
                        one needs to be passed through below it, so we manually
                        acknowledge the click here without interrupting the flow */
@@ -4078,7 +4078,7 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
     }
     else
     {
-        // ico@vt.edu 2021-11-13:
+        // ico@bukvic.net 2021-11-13:
         // for testing for gop rect resize hotspots, we need to first
         // confirm that the redrect is drawn on the canvas we are currently
         // on. this is because if we are toplevel and the canvas only has
@@ -4206,7 +4206,7 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
             /* look for an outlet
                 if object is valid, has outlets,
                 and we are within the bottom area of an object
-                ico@vt.edu: 2020-06-05 added expanded hotspot for
+                ico@bukvic.net: 2020-06-05 added expanded hotspot for
                 nlets for easier pinpointing
             */
             else if (ob && (noutlet = obj_noutlets(ob)) &&
@@ -4218,7 +4218,7 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
                 int hotspot = x1 +
                     (width - IOWIDTH) * closest / (nout1);
                 // if we are within the boundaries of an nlet
-                /* ico@vt.edu: account for enlarged nlet when already
+                /* ico@bukvic.net: account for enlarged nlet when already
                    highlighted to make it easier to "hit" the nlet */
                 //int enlarged = 0;
                 //if (closest == last_outlet)
@@ -4320,7 +4320,7 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
             }
             /* look for an inlet (these are colored differently
                 since they are not connectable)
-                ico@vt.edu: 2020-06-05 added expanded hotspot for
+                ico@bukvic.net: 2020-06-05 added expanded hotspot for
                 nlets for easier pinpointing
             */
             else if (ob && (ninlet = obj_ninlets(ob))
@@ -4332,7 +4332,7 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
                 int closest = ((xpos-x1) * (nin1) + width/2)/width;
                 int hotspot = x1 +
                     (width - IOWIDTH) * closest / (nin1);
-                /* ico@vt.edu: account for enlarged nlet when already
+                /* ico@bukvic.net: account for enlarged nlet when already
                    highlighted to make it easier to "hit" the nlet */
                 // if have found an inlet and are within its range...
                 if (closest < ninlet &&
@@ -4584,7 +4584,7 @@ void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
 
             glist_noselect(x);
 
-            // ico@vt.edu 2021-10-06: reset indices for find back as if we haven't
+            // ico@bukvic.net 2021-10-06: reset indices for find back as if we haven't
             // searched yet for anything, effectively restarting the search
             //post("search reset when there is selection");
             canvas_find_index1 = 0;
@@ -5857,7 +5857,7 @@ static void canvas_doregion(t_canvas *x, int xpos, int ypos, int doit)
 }
 
 
-/* ico@vt.edu 2021-10-10: mousedown can be three options
+/* ico@bukvic.net 2021-10-10: mousedown can be three options
      1 = mousedown
      0 = motion (neither click nor release)
     -1 = mouseup
@@ -5865,7 +5865,7 @@ static void canvas_doregion(t_canvas *x, int xpos, int ypos, int doit)
 void canvas_passthrough_click(t_canvas *x, t_int xpos, t_int ypos, t_int click)
 {
     //post("canvas_passthrough_click %d %d | %d", xpos, ypos, click);
-    // ico@vt.edu 2021-10-08: lastly look for any passthrough objects that should
+    // ico@bukvic.net 2021-10-08: lastly look for any passthrough objects that should
     // catch the mouseup event even though they have not grabbed the mouse focus
 
     /*
@@ -5999,7 +5999,7 @@ void canvas_mouseup(t_canvas *x,
         x->gl_editor->e_onmotion = MA_NONE;
         canvas_setcursor(x, CURSOR_EDITMODE_NOTHING);        
     }
-    // ico@vt.edu 2021-08-09: added this condition to account
+    // ico@bukvic.net 2021-08-09: added this condition to account
     // for scrollbar refresh when resizing a GOP-enabled subpatch
     // or an abstraction
     else if (x->gl_editor->e_onmotion == MA_RESIZE)
@@ -6305,7 +6305,7 @@ void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av)
     // set the shared variable for broadcasting of keypresses to key et al. objects
     t_atom at[2];
 
-    // 2020-10-04 ico@vt.edu: we are here changing the order of broadcasting
+    // 2020-10-04 ico@bukvic.net: we are here changing the order of broadcasting
     // key presses to grabbed objects first, and only then to all bound objects
     // this change should be heavily scrutinized as it may introduce subtle
     // and not so subtle regressions. I am here introducing it becuase doing so
@@ -6336,7 +6336,7 @@ void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av)
     //post("exclusive=%d", (x && x->gl_editor ? x->gl_editor->exclusive : 0));
 
     // now broadcast key press to key et al. objects
-    // 2020-10-05 ico@vt.edu: only do so if we do not have an object
+    // 2020-10-05 ico@bukvic.net: only do so if we do not have an object
     // that has grabbed the keyboard exclusively, such as gatom or iemgui numbox
     //post("canvas_key exclusive=%d", (x  && x->gl_editor ? x->gl_editor->exclusive : 0));
     if (!x || !x->gl_editor || !x->gl_editor->exclusive)
@@ -6476,7 +6476,7 @@ void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av)
         //fprintf(stderr,"ctrl\n");
         glob_alt = down;
         //post("glob_alt=%d", down);
-        /* ico@vt.edu: commenting MA_NONE part as that prevents the patch 
+        /* ico@bukvic.net: commenting MA_NONE part as that prevents the patch 
            from assuming editmode after it has had an object added via 
            a ctrl+(1-5) shortcut while not in edit mode
         */
@@ -6571,7 +6571,7 @@ static void canvas_snap_to_grid(t_canvas *x, int xwas, int ywas, int xnew,
 
 static void delay_move(t_canvas *x)
 {
-    // ico@vt.edu 2022-12-13:
+    // ico@bukvic.net 2022-12-13:
     // since this is a delayed action, here we check if we still
     // have a canvas, editor, and selection to work with. otherwise bail.
     if (!x || !x->gl_editor || !x->gl_editor->e_selection)
@@ -6591,7 +6591,7 @@ static void delay_move(t_canvas *x)
     x->gl_editor->e_ywas = ynew;
 }
 
-/* ico@vt.edu 2020-10-21: added simple motion that keeps updating last
+/* ico@bukvic.net 2020-10-21: added simple motion that keeps updating last
    xy position without all the other actions. This is useful when we just
    let go of the object that was just created and which followed the mouse
    until user clicked to let it go. This is where this function comes into
@@ -6661,7 +6661,7 @@ void canvas_motion(t_canvas *x, t_floatarg xpos, t_floatarg ypos,
         //post("canvas_motion HERE");
         if (!x->gl_editor->e_motionfn)
             bug("e_motionfn");
-        // ico@vt.edu 2021-10-08: if we are in passout mode, which
+        // ico@bukvic.net 2021-10-08: if we are in passout mode, which
         // means mouse pointer has been grabbed by an object, thus
         // preventing other objects from accessing the pointer info,
         // here we look for any passthrough objects that should
@@ -6698,7 +6698,7 @@ void canvas_motion(t_canvas *x, t_floatarg xpos, t_floatarg ypos,
                         !((t_canvas *)ob)->gl_isgraph)))
             {
                 //post("...object");
-                // ico@vt.edu 2022-12-14: check for minimum allowable
+                // ico@bukvic.net 2022-12-14: check for minimum allowable
                 // width based on how many nlets we have (in or out,
                 // whichever are the largest number). this should be
                 // in sync with text_getrect inside g_text.c. this is
@@ -7084,7 +7084,7 @@ static int canvas_dofind(t_canvas *x, int *myindex1p)
                     iscanvas = 1;
                 gobj_save(y, b);
                 //binbuf_print(b);
-                /* 2021-11-06 ico@vt.edu: before b was ob->ob_binbuf
+                /* 2021-11-06 ico@bukvic.net: before b was ob->ob_binbuf
                    however, this caused 2 problems:
                    1) newly created objects that had their sends/receives
                       changed, did not have their binbuf reflect anything
@@ -7095,7 +7095,7 @@ static int canvas_dofind(t_canvas *x, int *myindex1p)
                       .and reopened.
                    2) some objects, like gatom, whose sends and receives
                       may match the search phrase, would never work.
-                   2021-12-01 ico@vt.edu update: it appears for canvas
+                   2021-12-01 ico@bukvic.net update: it appears for canvas
                    objects we do want the ob->ob_binbuf approach. otherwise
                    b contains all its objects inside it, resulting in a
                    false positive (highlighting the canvas containing an
@@ -7242,7 +7242,7 @@ static void canvas_find_parent(t_canvas *x, t_floatarg f)
 }
 
 /*
-   ico@vt.edu 2021-10-19:
+   ico@bukvic.net 2021-10-19:
    finds a number of instances on canvas of a particular class. this
    is useful in situations where an object may have loaded bunch of
    stuff on the GUI side of things (e.g. moonlib/image that can batch
@@ -7703,7 +7703,7 @@ restore:
 
 static void canvas_cut(t_canvas *x)
 {
-    // ico@vt.edu 2022-11-14: check if we are editable, otherwise bail
+    // ico@bukvic.net 2022-11-14: check if we are editable, otherwise bail
     if (!canvas_is_editable(x))
         return;
 
@@ -8112,12 +8112,12 @@ extern int we_are_undoing;
 
 static void canvas_dopaste(t_canvas *x, t_binbuf *b)
 {
-    // ico@vt.edu 2022-11-14: check if we are editable, otherwise bail
+    // ico@bukvic.net 2022-11-14: check if we are editable, otherwise bail
     if (!canvas_is_editable(x))
         return;
 
     //fprintf(stderr,"start dopaste\n");
-    // ico@vt.edu: paste is enabled at startup (GUI-end problem),
+    // ico@bukvic.net: paste is enabled at startup (GUI-end problem),
     // so until we figure out why that is so, here we double-check the
     // sanity of the paste command
     if (binbuf_getnatom(b) == 0)
@@ -8286,11 +8286,11 @@ static void canvas_paste(t_canvas *x)
     if (!x->gl_editor)
         return;
 
-    // ico@vt.edu 2022-11-14: check if we are editable, otherwise bail
+    // ico@bukvic.net 2022-11-14: check if we are editable, otherwise bail
     if (!canvas_is_editable(x))
         return;
 
-    // ico@vt.edu: prevent pasting in a toplevel garray window
+    // ico@bukvic.net: prevent pasting in a toplevel garray window
     if (x->gl_list && glist_istoplevel(x) && canvas_hasarray(x))
         return;
     if (x->gl_editor->e_textedfor)
@@ -8309,7 +8309,7 @@ static void canvas_paste(t_canvas *x)
         }*/
 //#endif
     }
-    // ico@vt.edu: need to check that the copy_binbuf is not null. This
+    // ico@bukvic.net: need to check that the copy_binbuf is not null. This
     // currently prevents the crash when opening a new patch with nothing
     // in the buffer and pressing paste since the paste menu item is not
     // being properly initialized. This is probably a good safety check
@@ -8328,7 +8328,7 @@ static void canvas_paste(t_canvas *x)
 
 static void canvas_duplicate(t_canvas *x)
 {
-    // ico@vt.edu 2022-11-14: check if we are editable, otherwise bail
+    // ico@bukvic.net 2022-11-14: check if we are editable, otherwise bail
     if (!canvas_is_editable(x))
         return;
 
@@ -8417,7 +8417,7 @@ static void canvas_duplicate(t_canvas *x)
 
 static void canvas_selectall(t_canvas *x)
 {
-    // ico@vt.edu 2022-11-14: check if we are editable, otherwise bail
+    // ico@bukvic.net 2022-11-14: check if we are editable, otherwise bail
     if (!canvas_is_editable(x))
         return;
     
@@ -8659,7 +8659,7 @@ static int canvas_tidy_gobj_height(t_canvas *x, t_gobj *y)
 
 static void canvas_tidy(t_canvas *x)
 {
-    // ico@vt.edu 2022-11-14: check if we are editable, otherwise bail
+    // ico@bukvic.net 2022-11-14: check if we are editable, otherwise bail
     if (!canvas_is_editable(x))
         return;
 
@@ -9151,7 +9151,7 @@ void canvas_editmode(t_canvas *x, t_floatarg fyesplease)
 {
     //post("canvas_editmode %lx %f", x, fyesplease);
 
-    // ico@vt.edu 2022-11-14: first check if we have a parent
+    // ico@bukvic.net 2022-11-14: first check if we have a parent
     // canvas that is not editable (in which case we are not
     // editable either, and therefore bail)
     if (!canvas_is_editable(x))
@@ -9184,7 +9184,7 @@ void canvas_editmode(t_canvas *x, t_floatarg fyesplease)
         t_object *ob;
         if (x->gl_goprect)    canvas_draw_gop_resize_hooks(x);
         canvas_setcursor(x, CURSOR_EDITMODE_NOTHING);
-        // ico@vt.edu 2022-12-03: disabled drawing of the comment
+        // ico@bukvic.net 2022-12-03: disabled drawing of the comment
         // border in edit mode, as that is unnecessary and results
         // in redundant borders being drawn every time we (re)enter
         // the edit mode. instead we draw them once at vis time,
@@ -9252,7 +9252,7 @@ void canvas_query_editmode(t_canvas *x)
 // jsarlo
 void canvas_magicglass(t_canvas *x, t_floatarg fyesplease)
 {
-    // ico@vt.edu 2022-11-14: check if we are editable, otherwise bail
+    // ico@bukvic.net 2022-11-14: check if we are editable, otherwise bail
     if (!canvas_is_editable(x))
         return;
 

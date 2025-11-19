@@ -70,7 +70,7 @@ only have to be open/embedded in other patches., f 66;
 #X text 12 15 KEYWORDS nonlocal needs_work all_about_pd;
 #X text 12 75 HELP_PATCH_AUTHORS Dave Sabine \, May 5 \, 2003 . Jonathan
 Wilkes revised the patch to conform to the PDDP template for Pd version
-0.42. Documentation revised and finished by Ivica Ico Bukvic <ico@vt.edu>
+0.42. Documentation revised and finished by Ivica Ico Bukvic <ico@bukvic.net>
 for Pd-L2Ork.;
 #X restore 398 245 pd META;
 #N canvas 216 279 428 121 Related_objects 0;

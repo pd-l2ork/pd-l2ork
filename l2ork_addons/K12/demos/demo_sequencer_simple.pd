@@ -26,7 +26,7 @@
 #X obj 211 140 K12/logic_counter 0;
 #X obj 30 800 K12/fx_multitap 0;
 #X text 57 118 recall preset #0to begin;
-#X text 57 155 by Ivica Ico Bukvic<ico@vt.edu> 2014-21;
+#X text 57 155 by Ivica Ico Bukvic<ico@bukvic.net> 2014-21;
 #X connect 1 0 2 1;
 #X connect 1 0 7 1;
 #X connect 2 0 6 0;

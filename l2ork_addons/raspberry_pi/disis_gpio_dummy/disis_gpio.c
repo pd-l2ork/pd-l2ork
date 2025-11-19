@@ -1,7 +1,7 @@
 /* disis_gpio_dummy */
 /* used for non-RPi platforms as a dummy replacement external */
 
-/* Copyright Ivica Ico Bukic <ico@vt.edu> */
+/* Copyright Ivica Ico Bukic <ico@bukvic.net> */
 /* Based on Miller Puckette's example - Copyright Miller Puckette - BSD license */
 /* with changes to make external rely on the gpio executable to sidestep permmission issues */
 

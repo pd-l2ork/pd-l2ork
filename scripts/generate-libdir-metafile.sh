@@ -4,7 +4,7 @@
 # file is read for relevant meta data when a libdir is opened. (That's the
 # plan at least) <hans@at.or.at>
 
-# improvements and bug-fixes by Ivica Ico Bukvic <ico@vt.edu> 2013
+# improvements and bug-fixes by Ivica Ico Bukvic <ico@bukvic.net> 2013
 
 # keeps track of where the last bit of text was printed so that new text is
 # not printed on top of existing text

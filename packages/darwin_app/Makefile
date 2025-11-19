@@ -214,7 +214,7 @@ package: dmg
 
 VOLUME_NAME = $(PACKAGE_NAME)
 dmg:
-# ico@vt.edu 2022-10-10: sign the app, so that we can get the mic/camera
+# ico@bukvic.net 2022-10-10: sign the app, so that we can get the mic/camera
 # permission prompts
 	rm -f build.dmg
 	hdiutil create -verbose -format UDRW -fs HFS+ -srcfolder "$(BUILD_BASE)" \

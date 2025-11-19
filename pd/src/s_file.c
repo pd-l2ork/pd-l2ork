@@ -43,7 +43,7 @@
 int sys_autopatch_yoffset,
     sys_zoom = 1, sys_browser_doc = 1, sys_browser_path, sys_browser_init;
 
-/* ico@vt.edu 2023-04-17: moved sys_curved_cords, sys_snaptogrid, sys_gridsize, sys_autocomplete_relevance, sys_autocomplete_prefix to m_glob.c to allow for
+/* ico@bukvic.net 2023-04-17: moved sys_curved_cords, sys_snaptogrid, sys_gridsize, sys_autocomplete_relevance, sys_autocomplete_prefix to m_glob.c to allow for
    emscripten to compile since emscripten currently does not compile s_file.c */
 extern int sys_curved_cords;
 extern int sys_snaptogrid;

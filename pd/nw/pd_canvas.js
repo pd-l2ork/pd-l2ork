@@ -35,7 +35,7 @@ function nw_window_zoom(name, delta) {
         //pdgui.post("nw_window_zoom");
         gui.Window.get().zoomLevel = z;
         pdgui.pdsend(name, "zoom", z);
-        // ico@vt.edu 2022-12-05: super ugly since we have
+        // ico@bukvic.net 2022-12-05: super ugly since we have
         // no way of knowing when the zoom call has finished,
         // so that we can get accurate window dimensions
         // apparently, 0 does the trick
@@ -328,7 +328,7 @@ var canvas_events = (function() {
                     in_array = in_array.splice(left.length);
                 }
                 */
-                // ico@vt.edu 2021-11-13: replacing buggy implementation
+                // ico@bukvic.net 2021-11-13: replacing buggy implementation
                 // above that caused problems when a comment had more than
                 // 1024 characters, which resulted in endlines being removed
                 // TODO: Still need to warn the user if the number of
@@ -460,7 +460,7 @@ var canvas_events = (function() {
                     ac_dropdown().getAttribute("searched_text") +
                     "> innerText=<" + textbox().innerText + ">");
                 */
-                // ico@vt.edu 2022-11-09: the following if statement prevents
+                // ico@bukvic.net 2022-11-09: the following if statement prevents
                 // repopulating values if the innerText is the same as the one
                 // being removed
                 //if (ac_dropdown().getAttribute("searched_text") !== textbox().innerText) {
@@ -493,7 +493,7 @@ var canvas_events = (function() {
                         // while dragging, which will also suppress the selection
                         // rectangle to appear.
 
-                        // ico@vt.edu 2023-10-22: here we once again distinguish
+                        // ico@bukvic.net 2023-10-22: here we once again distinguish
                         // between single touch (which should disable scrolling)
                         // and double touch (a.k.a. pinch) and adjust accordingly
                         if (evt.touches.length === 1) {
@@ -565,7 +565,7 @@ var canvas_events = (function() {
                 //pdgui.post("mousedown");
                 //pdgui.post("pdcanvas mousedown evt.Altkey=" +
                 //    evt.altKey + " tgt_is_canvas=" + target_is_canvas(evt));
-                // ico@vt.edu capture middle click for a different type of scroll
+                // ico@bukvic.net capture middle click for a different type of scroll
                 // currently disabled due to problem with scrollBy and zoom
                 /*if (evt.which == 2)
                 {
@@ -585,7 +585,7 @@ var canvas_events = (function() {
                         // itself. So, to initiate a scroll using touch,
                         // you'll have to touch a blank spot on the canvas.
 
-                        // ico@vt.edu 2023-10-22: this is problematic because
+                        // ico@bukvic.net 2023-10-22: this is problematic because
                         // some interfaces (like L2Ork Tweeter) are densely
                         // packed, leaving no place to scroll over, so
                         // we only disable this if there is only one touch
@@ -753,7 +753,7 @@ var canvas_events = (function() {
                     // re-enable scrolling
                     document.body.style.overflow = 'visible';
                     //pdgui.post("scale=" + window.visualViewport.scale);
-                    // ico@vt.edu 2023-10-22: only re-enable touch-based
+                    // ico@bukvic.net 2023-10-22: only re-enable touch-based
                     // scrolling if we are on pinch scale of 1. otherwise,
                     // when trying to manipulate objects while scaled in
                     // (this is different from the menu zoom options),
@@ -860,7 +860,7 @@ var canvas_events = (function() {
                     pdgui.gui_message_update_textarea_border(name, textbox(), 1);
                 }, 0);
 
-                // ico@vt.edu 2022-10-13: moved autocomplete to keydown to allow
+                // ico@bukvic.net 2022-10-13: moved autocomplete to keydown to allow
                 // for autorepeat
                 let ac_dropdown = function() {
                     return document.getElementById("autocomplete_dropdown");
@@ -1067,7 +1067,7 @@ var canvas_events = (function() {
                     }
                     canvas_events.set_last_search_term(t);
                 }
-                // ico@vt.edu 2021-10-06:
+                // ico@bukvic.net 2021-10-06:
                 // we do not need these here because the find_bar has its
                 // catch-all find_ignore event and is located below all
                 // find widgets and above the actual canvas
@@ -1077,7 +1077,7 @@ var canvas_events = (function() {
             find_ignore: function(evt) {
                 //pdgui.post("find_ignore");
                 evt.stopPropagation();
-                // ico@vt.edu 2021-10-06: if we also preventDefault, the
+                // ico@bukvic.net 2021-10-06: if we also preventDefault, the
                 // entry box cannot be focused anymore
                 //evt.preventDefault();
             },
@@ -1087,12 +1087,12 @@ var canvas_events = (function() {
                 }
             },
             match_words: function(evt) {
-                // ico@vt.edu 2021-10-06: curiously we need to make the
+                // ico@bukvic.net 2021-10-06: curiously we need to make the
                 // variable equal to inverted value of the checkbox
                 match_words_state =
                     !document.getElementById("canvas_find_whole_word").checked;
                 //pdgui.post("whole_words " + match_words_state);
-                // ico@vt.edu 2021-10-06: reset find process since we have
+                // ico@bukvic.net 2021-10-06: reset find process since we have
                 // changed parameters, so findagain now makes no more sense
                 canvas_events.find_reset();
                 pdgui.gui_set_backend_search_term("");
@@ -1474,7 +1474,7 @@ var canvas_events = (function() {
                 // them inside comments
                 var iscomment = textbox().getAttribute("type");
 
-                // ico@vt.edu 2022-11-17: fix issue of erroneous
+                // ico@bukvic.net 2022-11-17: fix issue of erroneous
                 // addition of lines (only for comments) because
                 // <div><br></div> is interpreted as two lines
                 // by the innerText. So, we change it to
@@ -1565,7 +1565,7 @@ var canvas_events = (function() {
         },
         // hlkwok@vt.edu: 2022-11-24: Disallow clicking objects through menu
         k12menu: function() {
-            // ico@vt.edu 2022-12-08: have to approach this in a hybrid fashion
+            // ico@bukvic.net 2022-12-08: have to approach this in a hybrid fashion
             // we disable all events, then enable select ones, and then make
             // our state "normal". otherwise events dependent on the normal
             // state will not work (some of them have checks inside functions).
@@ -1577,9 +1577,9 @@ var canvas_events = (function() {
             //document.addEventListener("mousemove", events.mousemove, false);
             state = "normal";
             toggle_put_menu(false);
-            // ico@vt.edu 2022-12-08: we do this to prevent scroll from
+            // ico@bukvic.net 2022-12-08: we do this to prevent scroll from
             // "leaking" onto the patchsvg below the k12 menu
-            // ico@vt.edu 2022-12-16: this is problematic because
+            // ico@bukvic.net 2022-12-16: this is problematic because
             // leaving event is not always triggered accurately,
             // in part because of the animated menu
             //document.body.style.overflow = 'hidden';
@@ -1588,10 +1588,10 @@ var canvas_events = (function() {
         k12menu_out: function() {
             //pdgui.post("k12menu_out activated");
             //document.body.style.overflow = 'visible';
-            // ico@vt.edu 2022-12-08: we do this to reenable patchsvg
+            // ico@bukvic.net 2022-12-08: we do this to reenable patchsvg
             // scrolling
             toggle_put_menu(true);
-            // ico@vt.edu 2022-12-16: this is problematic because
+            // ico@bukvic.net 2022-12-16: this is problematic because
             // leaving event is not always triggered accurately,
             // in part because of the animated menu
             //document.body.style.overflow = 'visible';
@@ -1897,11 +1897,11 @@ var canvas_events = (function() {
             document.addEventListener("cut", function(evt) {
                 // On OSX, this event gets triggered when we're editing
                 // inside an object/message box, including activated objects.
-                // ico@vt.edu 2021-10-20: we don't need the search part since
+                // ico@bukvic.net 2021-10-20: we don't need the search part since
                 // that one for some reason works just fine on OSX (see
                 // m.edit.copy above)
                 if (pdgui.gui_is_gobj_grabbed(name)) {
-                    // ico@vt.edu 2021-10-08: cutting contents of a grabbed object
+                    // ico@bukvic.net 2021-10-08: cutting contents of a grabbed object
                     //pdgui.post("gobj_grabbed copy");
                     var clipboard = nw.Clipboard.get();
                     var activated_gobj =
@@ -1931,11 +1931,11 @@ var canvas_events = (function() {
             document.addEventListener("copy", function(evt) {
                 // On OSX, this event gets triggered when we're editing
                 // inside an object/message box, including activated objects.
-                // ico@vt.edu 2021-10-20: we don't need the search part since
+                // ico@bukvic.net 2021-10-20: we don't need the search part since
                 // that one for some reason works just fine on OSX (see
                 // m.edit.copy above)
                 if (pdgui.gui_is_gobj_grabbed(name)) {
-                    // ico@vt.edu 2021-10-08: copying contents of a grabbed object
+                    // ico@bukvic.net 2021-10-08: copying contents of a grabbed object
                     //pdgui.post("gobj_grabbed copy");
                     var clipboard = nw.Clipboard.get();
                     var activated_gobj =
@@ -1957,17 +1957,17 @@ var canvas_events = (function() {
             });
 
             // Listen to paste event
-            // ico@vt.edu 2021-09-28: This is used by OSX only?, so we
+            // ico@bukvic.net 2021-09-28: This is used by OSX only?, so we
             // redundantly reproduce here the paste when gatom has been grabbed
             document.addEventListener("paste", function(evt) {
-                // ico@vt.edu 2021-10-20: we don't need the search part since
+                // ico@bukvic.net 2021-10-20: we don't need the search part since
                 // that one for some reason works just fine on OSX (see m.edit.paste
                 // above)
                 if (canvas_events.get_state() !== "normal") {
                     return;
                 }
                 if (pdgui.gui_is_gobj_grabbed(name)) {
-                    // ico@vt.edu 2021-09-28: pasting inside a grabbed object
+                    // ico@bukvic.net 2021-09-28: pasting inside a grabbed object
                     //pdgui.post("gobj_grabbed paste <" + nw.Clipboard.get().get('text') + ">");
                     var paste_text = nw.Clipboard.get().get('text');
                     for (var i = 0; i < paste_text.length; i++) {
@@ -2017,7 +2017,7 @@ var canvas_events = (function() {
                 pdgui.pdsend(name, "legacy_mousewheel",
                     d.deltaX, d.deltaY, d.deltaZ);
 
-                // ico@vt.edu 2022-12-16: catching wheel inertia on Windows
+                // ico@bukvic.net 2022-12-16: catching wheel inertia on Windows
                 // to prevent unwanted zooms once one presses ctrl after having
                 // done a large swipe with two fingers to scroll
                 var threshold = 10 + (pdgui.nw_os_is_osx ? 590 : 0);
@@ -2032,7 +2032,7 @@ var canvas_events = (function() {
                 }
             });
 
-            // ico@vt.edu 2022-12-16: this on windows prevents
+            // ico@bukvic.net 2022-12-16: this on windows prevents
             // pinch resizing using default zoom levels and thus
             // matches behavior on OSX
             window.visualViewport.addEventListener("resize", function(evt) {
@@ -2079,7 +2079,7 @@ var canvas_events = (function() {
             );
 
             // disable drag and drop for the time being
-            // ico@vt.edu 2022-12-07: added dragstart and drop to the mix
+            // ico@bukvic.net 2022-12-07: added dragstart and drop to the mix
             // which appears to solve occasional hscroll and vscroll drag
             // and results in multidimensional scroll... nw.js 0.67.1
             window.addEventListener("dragstart", function (evt) {
@@ -2133,7 +2133,7 @@ var canvas_events = (function() {
                 pdgui.gui_canvas_get_scroll_on_resize(name);
                 // hlkwok@vt.edu 2022-11-8: update k12 menu when
                 // window resizes
-                // ico@vt.edu 2022-12-05: add a delay, so that
+                // ico@bukvic.net 2022-12-05: add a delay, so that
                 // when switching to full screen, we are sure
                 // we got the right size
                 setTimeout(function() { update_k12_menu() }, 0);
@@ -2147,7 +2147,7 @@ var canvas_events = (function() {
             });
             gui.Window.get().on("move", function(x, y) {
                 var w = gui.Window.get();
-                // ico@vt.edu 2022-12-02:
+                // ico@bukvic.net 2022-12-02:
                 // here we subtract 22 since somehow window size
                 // grows on subsequent checks. it is not the menu
                 // since it also affects osx, and it should not
@@ -2349,7 +2349,7 @@ function instantiate_live_box() {
     }
 }
 
-// ico@vt.edu 2022-12-15: we toggle off creation of new put
+// ico@bukvic.net 2022-12-15: we toggle off creation of new put
 // menu objects
 function toggle_put_menu(state) {
     // we do this only if we are NOT in k12 mode
@@ -2570,7 +2570,7 @@ function set_edit_menu_modals(window, state) {
         //pdgui.post("...has scalars");
         state = false;
     }
-    // ico@vt.edu 2022-11-30: the following disables
+    // ico@bukvic.net 2022-11-30: the following disables
     // proper handling of the edit menu updates when
     // editable is toggled. Leaving here to see if there
     // are any regressions...
@@ -2594,7 +2594,7 @@ function set_edit_menu_modals(window, state) {
 
 function set_menu_modals(window, state) {
     //pdgui.post("set_menu_modals window=" + window + " state=" + state);
-    // ico@vt.edu 2022-06-18: added context_state for patches that should
+    // ico@bukvic.net 2022-06-18: added context_state for patches that should
     // have select options disabled because the patch in question should
     // not be editable.
     //pdgui.post("set_menu_modals window=" + window +
@@ -2604,7 +2604,7 @@ function set_menu_modals(window, state) {
     //if (process.platform === "darwin" && !pdgui.canvas_menu_get_editable(window)) {
     //    context_state = false;
     //}
-    // ico@vt.edu 2022-11-30: the following disables
+    // ico@bukvic.net 2022-11-30: the following disables
     // proper handling of the edit menu updates when
     // editable is toggled. Leaving here to see if there
     // are any regressions...
@@ -2614,7 +2614,7 @@ function set_menu_modals(window, state) {
         context_state = true;
     }
     */
-    // ico@vt.edu 2022-09-28: only patches with arrays should not be editable
+    // ico@bukvic.net 2022-09-28: only patches with arrays should not be editable
     if (pdgui.get_toplevel_scalars(window) === 1) {
         //pdgui.post("...has scalars");
         context_state = false;
@@ -2850,13 +2850,13 @@ function nw_create_patch_window_menus(gui, name) {
         enabled: true,
         click: function () {
             pdgui.pdsend(name, "cut");
-            // ico@vt.edu 2020-10-30 if we are cutting inside find box
+            // ico@bukvic.net 2020-10-30 if we are cutting inside find box
             if (canvas_events.get_state() === "search") {
                 if (document.getSelection()) {
                     document.execCommand("cut");
                 }
             } else if (pdgui.gui_is_gobj_grabbed(name)) {
-                // ico@vt.edu 2021-10-08: cutting contents of a grabbed object
+                // ico@bukvic.net 2021-10-08: cutting contents of a grabbed object
                 //pdgui.post("gobj_grabbed copy");
                 var clipboard = nw.Clipboard.get();
                 var activated_gobj =
@@ -2884,14 +2884,14 @@ function nw_create_patch_window_menus(gui, name) {
     minit(m.edit.copy, {
         enabled: true,
         click: function () {
-            // ico@vt.edu 2020-10-30 if we are copying inside find box
+            // ico@bukvic.net 2020-10-30 if we are copying inside find box
             if (canvas_events.get_state() === "search") {
                 //pdgui.post("m.edit.copy text");
                 if (document.getSelection()) {
                     document.execCommand("copy");
                 }
             } else if (pdgui.gui_is_gobj_grabbed(name)) {
-                // ico@vt.edu 2021-10-08: copying contents of a grabbed object
+                // ico@bukvic.net 2021-10-08: copying contents of a grabbed object
                 //pdgui.post("gobj_grabbed copy");
                 var clipboard = nw.Clipboard.get();
                 var activated_gobj =
@@ -2918,10 +2918,10 @@ function nw_create_patch_window_menus(gui, name) {
             //+ " state=" + canvas_events.get_state());
             if (canvas_events.get_state() === "search") {
                 //pdgui.post("pasting inside a box...");
-                // ico@vt.edu 2020-10-30: pasting inside find box
+                // ico@bukvic.net 2020-10-30: pasting inside find box
                 document.execCommand("paste");
             } else if (pdgui.gui_is_gobj_grabbed(name)) {
-                // ico@vt.edu 2021-08-20: pasting inside a grabbed object
+                // ico@bukvic.net 2021-08-20: pasting inside a grabbed object
                 //pdgui.post("gobj_grabbed paste <" + nw.Clipboard.get().get('text') + ">");
                 var paste_text = nw.Clipboard.get().get('text');
                 for (var i = 0; i < paste_text.length; i++) {
@@ -2961,7 +2961,7 @@ function nw_create_patch_window_menus(gui, name) {
                 // the stupid MacBuiltin is buggy-- see pd_menus.js)
                 document.execCommand("selectAll", false, null);
             }
-            // ico@vt.edu 2020-10-30 if we are pasting inside find box
+            // ico@bukvic.net 2020-10-30 if we are pasting inside find box
             if (canvas_events.get_state() === "search") {
                 document.execCommand("selectAll");
             }
@@ -3096,7 +3096,7 @@ function nw_create_patch_window_menus(gui, name) {
                 instantiate_live_box();
                 if (state === "none") {
                     //pdgui.post("m.edit.find state=none");
-                    // ico@vt.edu 2021-10-06: send fake mouse up in case we were doing
+                    // ico@bukvic.net 2021-10-06: send fake mouse up in case we were doing
                     // a selection box, so that the selection does not get stuck 
                     pdgui.pdsend(name, "mouseup_fake");
                     find_bar.style.setProperty("display", "inline");
@@ -3523,7 +3523,7 @@ function nw_create_patch_window_menus(gui, name) {
     //console.log("nw_create_patch_window_menus get_editmode=" + get_editmode());
     m.edit.editmode.checked = get_editmode();
 
-    // ico@vt.edu 2022-06-18: here we disable edit and inspector options
+    // ico@bukvic.net 2022-06-18: here we disable edit and inspector options
     // if the patch is not editable (e.g. has only an array inside it).
     // this prevents users from clicking on the edit and cord inspector,
     // or using keyboard shortcuts to create check boxes in the edit menu
@@ -3581,7 +3581,7 @@ function nw_create_patch_window_menus(gui, name) {
             m.put.k12_menu.enabled = false;
         }
     }
-    // ico@vt.edu 2022-12-13: toggle menu options on OSX
+    // ico@bukvic.net 2022-12-13: toggle menu options on OSX
     // since (AFAICT) we cannot add/remove menu contents
     if (pdgui.nw_os_is_osx) {
         update_osx_k12_menu(name);
@@ -3620,13 +3620,13 @@ function init_menu_font_size(size) {
     } 
 }
 
-// ico@vt.edu 2020-08-24: this is called when the window is finally
+// ico@bukvic.net 2020-08-24: this is called when the window is finally
 // loaded and then asks libpd to tell us what is the font state
 // LATER: we can use this to also update the undo state appropriately
-// ico@vt.edu 2022-10-10: this is super hack-ish, since we have no
+// ico@bukvic.net 2022-10-10: this is super hack-ish, since we have no
 // way of telling if the window has actually displayed, particularly
 // for more complex patches...
-// ico@vt.edu 2022-11-30: we expand this now to also deal with the
+// ico@bukvic.net 2022-11-30: we expand this now to also deal with the
 // editable option. Shortened delay to 0 which seems to work fine with
 // nwjs 0.67.1.
 function update_menu_items(cid, isblank) {
@@ -3688,7 +3688,7 @@ function place_k12_comment() {
 }
 
 // hlkwok@vt.edu 2022-11-3: toggles edit mode in both edit menu and k12 menu
-// ico@vt.edu 2022-12-08: reworked to simplify edit functions inside pdgui.js
+// ico@bukvic.net 2022-12-08: reworked to simplify edit functions inside pdgui.js
 function toggle_edit() {
     //console.log("pd_canvas.js toggle_edit");
     update_live_box();
@@ -3715,7 +3715,7 @@ function toggle_k12_menu_visibility() {
     pdgui.toggle_k12_menu_visibility(canvas_events.get_id(), m.put.k12_menu.checked);
 }
 
-// ico@vt.edu 2022-12-09: invoked from pdgui.js for K12_menu purposes
+// ico@bukvic.net 2022-12-09: invoked from pdgui.js for K12_menu purposes
 function update_menu() {
     //pdgui.post("pd_canvas.js update_menu");
     nw_create_patch_window_menus(gui, canvas_events.get_id());

@@ -65,7 +65,7 @@
 #define LOG_INFO        6       /* informational */
 #define LOG_DEBUG       7       /* debug-level messages */
 
-/* ico@vt.edu 2021-09-07: define MSG_NOSIGNAL for Windows/Mac
+/* ico@bukvic.net 2021-09-07: define MSG_NOSIGNAL for Windows/Mac
    we use this to prevent the external and with it pd-l2ork from
    crashing in case a client suddenly drops and causes broken pipe */
 #ifndef MSG_NOSIGNAL
@@ -76,7 +76,7 @@ static char *version =
    "netserver v0.5 :: bidirectional TCP network server for Pd-L2Ork\n"
    "             written by Olaf Matthes <olaf.matthes@gmx.de>\n"
    "             syslogging by Hans-Christoph Steiner <hans@eds.org>\n"
-   "             improvements by Ivica Ico Bukvic <ico@vt.edu>";
+   "             improvements by Ivica Ico Bukvic <ico@bukvic.net>";
 
 /* ----------------------------- netserver ------------------------- */
 
@@ -145,7 +145,7 @@ static t_netserver_socketreceiver *netserver_socketreceiver_new(void *owner, t_n
    return (x);
 }
 
-/* ico@vt.edu 2021-10-01: OS-agnostic helper function for ensuring
+/* ico@bukvic.net 2021-10-01: OS-agnostic helper function for ensuring
    sockets are non-blocking, adapted from from:
    https://stackoverflow.com/questions/1543466/how-do-i-change-a-tcp-socket-to-be-non-blocking/1549344
    returns 0 on success, or 1 if there was an error
@@ -454,7 +454,7 @@ static void netserver_client_send(t_netserver *x, t_symbol *s, int argc, t_atom 
 	  post("netserver: not a valid socket number (%d)", sockfd);
 }
 
-// ico@vt.edu 2021-11-18:
+// ico@bukvic.net 2021-11-18:
 // disconnect client connected on the provided socket number 
 static void netserver_disconnect(t_netserver *x, t_floatarg f)
 {
@@ -504,7 +504,7 @@ static void netserver_broadcast(t_netserver *x, t_symbol *s, int argc, t_atom *a
    }
 }
 
-/* ico@vt.edu 2021-12-03: added to adjust the threshold before disconnecting
+/* ico@bukvic.net 2021-12-03: added to adjust the threshold before disconnecting
    2021-12-13: disabled because it results in erroneous disconnections */
 /*
 static void netserver_retry(t_netserver *x, t_symbol *s, t_floatarg f)
@@ -535,7 +535,7 @@ static void netserver_notify(t_netserver *x)
 		 x->x_nconnections--;
 		 if (x->x_log_pri >= LOG_NOTICE)
 			post("netserver: \"%s\" removed from list of clients", x->x_host[i]->s_name);
-		 // ico@vt.edu 2022-12-07: make sure to remove the poll function and
+		 // ico@bukvic.net 2022-12-07: make sure to remove the poll function and
 		 // close the socket...
 		 sys_rmpollfn(x->x_fd[i]);
 	  	 sys_closesocket(x->x_fd[i]);
@@ -610,7 +610,7 @@ static void netserver_connectpoll(t_netserver *x)
    if (fd < 0) post("netserver: accept failed");
    else
    {
-      // ico@vt.edu 2021-10-01: make socket non-blocking
+      // ico@bukvic.net 2021-10-01: make socket non-blocking
       SetSocketBlockingEnabled(fd, 0);
  		t_netserver_socketreceiver *y = netserver_socketreceiver_new((void *)x, 
  																(t_netserver_socketnotifier)netserver_notify,
@@ -742,7 +742,7 @@ static void *netserver_new(t_floatarg fportno, t_floatarg bufsize_pow)
 	  sys_closesocket(sockfd);
 	  return (0);
    }
-   // ico@vt.edu 2021-10-01: make socket non-blocking
+   // ico@bukvic.net 2021-10-01: make socket non-blocking
    SetSocketBlockingEnabled(sockfd, 0);
    x->x_msgout = outlet_new(&x->x_obj, &s_anything);
 

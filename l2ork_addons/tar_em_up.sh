@@ -1,5 +1,5 @@
 #!/bin/bash
-# super-simplistic installer for l2ork things by Ivica Ico Bukvic <ico@vt.edu>
+# super-simplistic installer for l2ork things by Ivica Ico Bukvic <ico@bukvic.net>
 # for info on L2Ork visit http://l2ork.music.vt.edu
 
 cleanup() {
@@ -223,7 +223,7 @@ if [ ! -d "../pd/nw/nw" ]; then
 	fi
 	nwjs_filename=${nwjs_dirname}.${ext}
 	nwjs_url=https://dl.nwjs.io/${nwjs_version}/$nwjs_filename
-	# 2021-12-28 ico@vt.edu: override RPi settings with a newer nw.js
+	# 2021-12-28 ico@bukvic.net: override RPi settings with a newer nw.js
 	if [ $arch == "armv7l" ]; then
 		# nwjs_url=https://github.com/LeonardLaszlo/nw.js-armv7-binaries/releases/download/v0.28.4/nwjs-sdk-v0.28.4-linux-arm.tar.gz
 		# nwjs_filename=nwjs-sdk-v0.28.4-linux-arm.tar.gz
@@ -256,12 +256,12 @@ if [ ! -d "../pd/nw/nw" ]; then
 		chmod 755 ../pd/nw/nw/nw
 	fi
 	rm $nwjs_filename
-	# ico@vt.edu 2024-10-10: revert the arch to the true uname -m since that is what we use below
+	# ico@bukvic.net 2024-10-10: revert the arch to the true uname -m since that is what we use below
 	arch=`uname -m`
 fi
 
-# ico@vt.edu 2022-11-10: ugly hack for the nwjs 0.67.1 that has wrong permissions set for Linux
-# ico@vt.edu 2024-10-10: however, don't do this for Raspberry Pi which uses 0.60.1
+# ico@bukvic.net 2022-11-10: ugly hack for the nwjs 0.67.1 that has wrong permissions set for Linux
+# ico@bukvic.net 2024-10-10: however, don't do this for Raspberry Pi which uses 0.60.1
 if [[ $os != "win" && $os != "win64" && $dmg == 0 && $arch != "aarch64" ]]; then
 	cd ../pd/nw/nw/
 	chmod 755 chrome* minidump_stackwalk nacl* nw nwjc payload
@@ -344,13 +344,13 @@ then
 	cd ../pd/src && aclocal && autoconf
 	if [[ $os == "win" ]]; then
 		cd ../../packages/win32_inno
-		# ico@vt.edu 2021-08-25: remove old inno files
+		# ico@bukvic.net 2021-08-25: remove old inno files
 		# to force the creation of the new one
 		rm -f pd-inno.iss
 		rm -f pd-inno-light.iss
 	elif [[ $os == "win64" ]]; then
 		cd ../../packages/win64_inno
-		# ico@vt.edu 2021-08-25: remove old inno files
+		# ico@bukvic.net 2021-08-25: remove old inno files
 		# to force the creation of the new one
 		rm -f pd-inno.iss
 		rm -f pd-inno-light.iss
@@ -359,7 +359,7 @@ then
 	else
 		cd ../../packages/linux_make
 	fi
-	# ico@vt.edu 2021-08-25: move this here so that all builds
+	# ico@bukvic.net 2021-08-25: move this here so that all builds
 	# update the revision number regardless whether they are
 	# light, incremental, or all (full recompile)
 	test -f ../../pd/src/s_version.h || make -C .. git_version
@@ -429,7 +429,7 @@ then
 	if [ $inno -eq 0 -a $dmg -eq 0 -a $light -eq 0 ]; then
 		cd raspberry_pi
 		./makeall.sh
-		# ico@vt.edu 2022-11-11: only install disis_gpio for the RPi/arm platform
+		# ico@bukvic.net 2022-11-11: only install disis_gpio for the RPi/arm platform
 		# because wiringPi is ridden with things that crash the whole
 		# application if the platform is not recognized. this will result
 		# in objects like disis_spi and disis_gpio to fail to create,

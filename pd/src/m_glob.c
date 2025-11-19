@@ -9,7 +9,7 @@
 t_class *glob_pdobject;
 static t_class *maxclass;
 
-/* ico@vt.edu 2023-04-17: moved sys_curved_cords, sys_snaptogrid, sys_gridsize, sys_autocomplete_relevance, sys_autocomplete_prefix, and sys_autocomplete to m_glob.c to allow for
+/* ico@bukvic.net 2023-04-17: moved sys_curved_cords, sys_snaptogrid, sys_gridsize, sys_autocomplete_relevance, sys_autocomplete_prefix, and sys_autocomplete to m_glob.c to allow for
    emscripten to compile since emscripten currently does not compile s_file.c */
 int sys_curved_cords = 1;
 int sys_snaptogrid = 1;

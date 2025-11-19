@@ -436,7 +436,7 @@ static void envgen_displace_withtag(t_gobj *z, t_glist *glist, int dx, int dy)
     t_envgen *x = (t_envgen *)z;
     x->x_obj.te_xpix += dx;
     x->x_obj.te_ypix += dy;
-    // ico@vt.edu 2022-10-17: update patch cords when dragging the object
+    // ico@bukvic.net 2022-10-17: update patch cords when dragging the object
     canvas_fixlinesfor(glist,(t_text*) x);
 }
 

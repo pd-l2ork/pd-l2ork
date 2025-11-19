@@ -27,7 +27,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-static char *version = "average v0.2, written by Olaf Matthes <olaf.matthes@gmx.de>, revised by Ivica Ico Bukvic <ico@vt.edu>";
+static char *version = "average v0.2, written by Olaf Matthes <olaf.matthes@gmx.de>, revised by Ivica Ico Bukvic <ico@bukvic.net>";
  
 typedef struct average
 {

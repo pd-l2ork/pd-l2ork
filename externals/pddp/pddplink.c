@@ -50,7 +50,7 @@ static void pddplink_getrect(t_gobj *z, t_glist *glist,
     	}
     }
 
-    // ico@vt.edu 2022-09-26: reworked width calculation
+    // ico@bukvic.net 2022-09-26: reworked width calculation
     // since now we allow partially visible objects inside GOP
     int font = glist_getfont(glist);
     width = x->x_vislength * sys_fontwidth(font) + 2;
@@ -180,7 +180,7 @@ static void pddplink_activate(t_gobj *z, t_glist *glist, int state)
     t_rtext *y = glist_findrtext(glist, (t_text *)x);
     rtext_activate(y, state);
     x->x_rtextactive = state;
-    // 2020-11-11 ico@vt.edu: the following is needed when clicking on
+    // 2020-11-11 ico@bukvic.net: the following is needed when clicking on
     // another object to activate, while this one is still activated
     if (!state) {
         gui_vmess("gui_text_set", "xss",
@@ -361,7 +361,7 @@ static void *pddplink_new(t_symbol *s, int ac, t_atom *av)
     t_pddplink xgen, *x;
     int skip;
     xgen.x_isboxed = 0;
-    // ico@vt.edu 2022-09-26: made GOP visible on by default
+    // ico@bukvic.net 2022-09-26: made GOP visible on by default
     // there is no reason for this to be off. if one does not
     // want it visible inside GOP, simply don't put it there.
     xgen.x_isgopvisible = 1;

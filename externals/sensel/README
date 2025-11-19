@@ -1,5 +1,5 @@
 DISIS/L2Ork Sensel Pd-L2Ork (and Pure-Data) external for interfacing with the Sensel Morph
-by Rachel Hachem <rachelly@vt.edu> and Ivica Ico Bukvic <ico@vt.edu>
+by Rachel Hachem <rachelly@vt.edu> and Ivica Ico Bukvic <ico@bukvic.net>
 http://l2ork.icat.vt.edu
 Released under the GPL v3 license <https://www.gnu.org/licenses/gpl-3.0.en.html>
 
@@ -9,13 +9,13 @@ CHANGELOG
 ---------
 2020-04-13 0.9.0
   Initial release by Rachel Hachem <rachelly@vt.edu>
-  under the guidance of Ivica Ico Bukvic <ico@vt.edu>
+  under the guidance of Ivica Ico Bukvic <ico@bukvic.net>
 
 2020-05-20 1.0.0
   Threaded implementation with additional features,
   including, disconnect, free, identify, improved
   console output, versioning, and updated help file by
-  Ivica Ico Bukvic <ico@vt.edu>
+  Ivica Ico Bukvic <ico@bukvic.net>
 
 2020-05-22 v.1.1.0
   Improved integration of the contacts API to fix
@@ -23,17 +23,17 @@ CHANGELOG
   address missed contact status changes, reworked
   polling logic and removed reliance on the external
   metro, added total contact count, and setting the
-  polling time by Ivica Ico Bukvic <ico@vt.edu>
+  polling time by Ivica Ico Bukvic <ico@bukvic.net>
 
 2020-05-22 v.1.2.0
   Introduced ability to change LED brightness and
   further improved the help file by Ivica Ico Bukvic
-  <ico@vt.edu>
+  <ico@bukvic.net>
 
 2021-12-28 v.1.2.1
   Improved build script to support raspbian and improved
   start-up messaging and pathfinding of the required
-  dynamically linked libraries <ico@vt.edu>
+  dynamically linked libraries <ico@bukvic.net>
 
 
 

@@ -673,7 +673,7 @@ function console_find_callback() {
 
 function console_find_keypress(elem, e) {
     //pdgui.post(e.keyCode + " " + e.ctrlKey);
-    // ico@vt.edu 2020-10-31: not sure why here ctrl+f does not register
+    // ico@bukvic.net 2020-10-31: not sure why here ctrl+f does not register
     // with keyCode 70 and instead does 6 which is equivalent of a help event
     if(!e.ctrlKey || e.keyCode !== 6) {
         console_find_text(elem, e, console_find_callback);
@@ -761,7 +761,7 @@ var console_find_traverse = (function() {
     }
 }());
 
-// ico@vt.edu 2020-10-30: Here we prevent autorepeat from messing with the
+// ico@bukvic.net 2020-10-30: Here we prevent autorepeat from messing with the
 // shift key detection (LATER: may use the same approach for other modifiers)
 var shiftKey = 0;
 function console_find_keydown(elem, evt) {

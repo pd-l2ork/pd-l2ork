@@ -720,7 +720,7 @@ function register_window_id(gfxstub, attr_object) {
         change_width_and_height_labels();
     }
 
-    // ico@vt.edu TODO: translate the window title
+    // ico@bukvic.net TODO: translate the window title
     // for the timebeing we just give it english version
     document.getElementById("titlebar_title").textContent = "[" + 
         attr_object.type + "] Iemgui Properties";
@@ -773,7 +773,7 @@ function populate_form(attr_object) {
                 if (attr.slice(-5) === "color") {
                     //pdgui.post("populate_form:\n..." + attr + " raw color is " + attr_object[attr]);
                     /*
-                    // ico@vt.edu 2025-07-17: here we do >>> 0 to make the
+                    // ico@bukvic.net 2025-07-17: here we do >>> 0 to make the
                     // value unsigned to match C behavior, otherwise
                     // the hex value will be incorrect
                     var hex_string =

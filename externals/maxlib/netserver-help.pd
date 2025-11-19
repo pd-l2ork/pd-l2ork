@@ -31,7 +31,7 @@
 #X text 14 41 LICENSE GPL v2;
 #X text 14 18 KEYWORDS control network;
 #X text 14 202 AUTHOR Olaf Matthes <olaf.matthes@gmx.de> and Ivica
-Ico Bukvic <ico@vt.edu>;
+Ico Bukvic <ico@bukvic.net>;
 #X text 14 241 HELP_PATCH_AUTHORS "pd meta" information added by Jonathan
 Wilkes for Pd version 0.42. Help file updated by Ivica Ico Bukvic 2021
 ;

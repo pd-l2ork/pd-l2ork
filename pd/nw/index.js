@@ -5,7 +5,7 @@ var pd_menus = require("./pd_menus.js");
 
 window.update_window_submenu = pd_menus.update_window_submenu;
 
-// ico@vt.edu 2022-11-08: make this 1 if you wish to provide a 3-second delay
+// ico@bukvic.net 2022-11-08: make this 1 if you wish to provide a 3-second delay
 // before a newly opened patch window should proceed. dev tools will also
 // automatically open to allow to use performance analysis tool to seek
 // potential performance bottlenecks. leave this 0 to make it run normally.
@@ -275,7 +275,7 @@ var console_find_traverse = (function () {
     };
 }());
 
-// ico@vt.edu 2020-10-30: Here we prevent autorepeat from messing with the
+// ico@bukvic.net 2020-10-30: Here we prevent autorepeat from messing with the
 // shift key detection (LATER: may use the same approach for other modifiers)
 var shiftKey = 0;
 function console_find_keydown(evt) {
@@ -401,12 +401,12 @@ function add_events() {
                     // you indicate IP of 0.0.0.0. (localhost or 127.0.0.1
                     // results in connection refused inside the
                     // connect_as_client_to_secondary_instance function)
-                    // ico@vt.edu 2025-07-19: it seems 127.0.0.1 now also works
+                    // ico@bukvic.net 2025-07-19: it seems 127.0.0.1 now also works
                     //host = win_args[0].split(" ").slice(-1).join();
                     //pdgui.post("win_args[0]=" + win_args[0] + "\n[1]=" + win_args[1]);
                     host = "0.0.0.0";
                     port = win_args[0].split(" ").slice(-2, -1).join();
-                    // ico@vt.edu 2025-07-19: the following stopped working
+                    // ico@bukvic.net 2025-07-19: the following stopped working
                     // on windows only, so when we test for different instances
                     // we for the time being ignore on windows comparison between
                     // primary and secondary instances (see pdgui.js'
@@ -465,7 +465,7 @@ function add_events() {
     });
     // Pd Window zooming with mousewheel
     document.addEventListener("wheel", function(evt) {
-        // ico@vt.edu 2022-12-16: prevent unwanted
+        // ico@bukvic.net 2022-12-16: prevent unwanted
         // zoom due to intertial wheel behavior.
         var threshold = 20 + (process.platform === "darwin" ? 280 : 0);
         if (evt.deltaY > -threshold && evt.deltaY < threshold && 
@@ -552,10 +552,10 @@ function nw_create_window(cid, type, width, height, xpos, ypos, attr_array) {
             attr_array.args,
             attr_array.dir);
 
-	    // ico@vt.edu 2020-08-13:
+	    // ico@bukvic.net 2020-08-13:
 	    // why does Windows have different innerWidth and innerHeight from other OSs?
 	    // See pdgui.js' canvas_params for the explanation...
-	    // ico@vt.edu 2020-08-21: this should only apply to patch windows
+	    // ico@bukvic.net 2020-08-21: this should only apply to patch windows
         // 2020-10-01: this is not needed anymore since it was a bug specific to 0.14.7
         // and Windows is now using 0.24.4
 	    //width -= 16 * pdgui.nw_os_is_windows;
@@ -589,7 +589,7 @@ function nw_create_window(cid, type, width, height, xpos, ypos, attr_array) {
     //pdgui.post("nw_create_window w=" + width + " h=" + height);
 
     /*
-    // ico@vt.edu: instantiate default options for the window behavior
+    // ico@bukvic.net: instantiate default options for the window behavior
     // the first two vars (transparent is currently disabled) are options
     // to be passed to the window at creation time, while second two are
     // activated via a function call after the window has been created
@@ -608,7 +608,7 @@ function nw_create_window(cid, type, width, height, xpos, ypos, attr_array) {
     }*/
     gui.Window.open(my_file, {
         title: my_title,
-        // ico@vt.edu: position in 0.46.2 overrides x and y below
+        // ico@bukvic.net: position in 0.46.2 overrides x and y below
         //position: pos,
         focus: true,
         width: width,
@@ -633,7 +633,7 @@ function nw_create_window(cid, type, width, height, xpos, ypos, attr_array) {
         transparent: win_transparent
     }, function (new_win) {
 
-        // ico@vt.edu 2022-11-06: let's open dev tools and give time to
+        // ico@bukvic.net 2022-11-06: let's open dev tools and give time to
         // start recording data before we start loading the patch
         if (PD_L2ORK_NW_DEBUG === 1)
         {
@@ -827,7 +827,7 @@ function nw_create_pd_window_menus(gui, w) {
         enabled: true,
         click: function () {
             var container_id = "p1", range;
-            // ico@vt.edu 2020-10-30 if we are doing select all inside find box
+            // ico@bukvic.net 2020-10-30 if we are doing select all inside find box
             var find_bar = w.document.getElementById("console_find"),
                 state = find_bar.style.getPropertyValue("display");
             if (state !== "none") {
@@ -1082,7 +1082,7 @@ function gui_init(win) {
         //pdgui.post("window position " + gui.Window.get().x + " " + gui.Window.get().y);
         var pre_titlebar_y = gui.Window.get().y;
         gui.Window.get().moveTo(gui.Window.get().x, gui.Window.get().y);
-        // ico@vt.edu 2022-11-19: this for some reason does not work with
+        // ico@bukvic.net 2022-11-19: this for some reason does not work with
         // the addEventListener approach so, we need to use the kludge global variable
         gui.Window.get().on("move", function() {
             if (!linux_titlebar_offset_kludge) {

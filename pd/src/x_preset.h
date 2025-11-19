@@ -3,7 +3,7 @@
 #define __x_preset_h_
 
 /*
-Global preset system by Ivica Ico Bukvic <ico@vt.edu> July, 2012
+Global preset system by Ivica Ico Bukvic <ico@bukvic.net> July, 2012
 */
 
 #include "s_stuff.h"

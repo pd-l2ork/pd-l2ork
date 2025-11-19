@@ -22,7 +22,7 @@ extern t_symbol *canvas_field_templatesym; /* for "canvas" data type */
 extern t_word *canvas_field_vec;           /* for "canvas" data type */
 extern t_gpointer *canvas_field_gp;        /* parent for "canvas" data type */
 
-/* ico@vt.edu: used by the scalar_vis to adjust visual offset
+/* ico@bukvic.net: used by the scalar_vis to adjust visual offset
    based on the graph drawing style, affects bar graph */
 extern int garray_get_style(t_garray *x);
 
@@ -486,7 +486,7 @@ static void scalar_getrect(t_gobj *z, t_glist *owner,
         if (!templatecanvas)
         {
             //post("...no template canvas");
-            // ico@vt.edu 2022-10-17: like below, instead of zeroing out the
+            // ico@bukvic.net 2022-10-17: like below, instead of zeroing out the
             // scalar size, here we leave at least 5px, so that the user is
             // able to select empty scalar.
             //x1 = x2 = glist_xtopixels(owner, basex);
@@ -527,7 +527,7 @@ static void scalar_getrect(t_gobj *z, t_glist *owner,
             scalar_getgrouprect(owner, templatecanvas, x->sc_vec, template,
                 basex, basey, &x1, &x2, &y1, &y2);
             if (x2 < x1 || y2 < y1) {
-                // ico@vt.edu 2022-10-17: it appears that if there is nothing inside
+                // ico@bukvic.net 2022-10-17: it appears that if there is nothing inside
                 // the drawgroup or there is no template, the original, now commented
                 // out code, would zero everything out. this would prevent keeping
                 // empty data structures visible and therefore editable/deletable.
@@ -881,7 +881,7 @@ void scalar_doconfigure(t_gobj *xgobj, t_glist *owner)
         scalar_getbasexy(x, &basex, &basey);
             /* if we don't know how to draw it, make a small rectangle */
 
-        // ico@vt.edu 2022-09-29: HACK, this should really be inside
+        // ico@bukvic.net 2022-09-29: HACK, this should really be inside
         // glist_xtoxpixels and glist_ytopixels, but since I don't know
         // what other regressions that will cause, this is a quick fix
         int xpos = (int)glist_xtopixels(owner, basex);
@@ -1083,7 +1083,7 @@ static void scalar_vis(t_gobj *z, t_glist *owner, int vis)
                 glist_norm_x_per_scalar(owner, 0));
             t_float yscale = (glist_norm_y_per_scalar(owner, 1) - 
                 glist_norm_y_per_scalar(owner, 0));
-            // ico@vt.edu 2022-10-17: reenabling drawing of empty scalars
+            // ico@bukvic.net 2022-10-17: reenabling drawing of empty scalars
             // we will use plot_style == -2 to communicate to front-end
             // that we are an empty scalar, so that its border gets visible
             // even when it is not selected
@@ -1147,7 +1147,7 @@ static void scalar_vis(t_gobj *z, t_glist *owner, int vis)
            here on the .scalar%zx group. (Notice also that tkpath doesn't
            understand "None"-- instead we must send an empty symbol.) */
 
-        // ico@vt.edu 2022-10-17: test if the template is empty and if so,
+        // ico@bukvic.net 2022-10-17: test if the template is empty and if so,
         // change plot_style to -2
         if (plot_style == -1)
         {
@@ -1245,7 +1245,7 @@ void scalar_redraw(t_scalar *x, t_glist *glist)
 {
     if (glist_isvisible(glist))
         //scalar_doredraw((t_gobj *)x, glist);
-        // ico@vt.edu 2022-11-24:
+        // ico@bukvic.net 2022-11-24:
         // EXPERIMENTAL: enable queue gui instead of outright drawing.
         // doing so fixes major slowdown when trying to alter an array
         // data by clicking and dragging (drawing using mouse), which
@@ -1396,7 +1396,7 @@ int scalar_doclick(t_word *data, t_template *template, t_scalar *sc,
 /* Unfortunately, nested gops don't yet handle scalar clicks correctly. The
    nested scalar seems not to receive the click.  However, the enter/leave
    messages happen just fine since most of their logic is in tcl/tk. */
-/* ico@vt.edu: I tried nested GOP and it appears to work ok */
+/* ico@bukvic.net: I tried nested GOP and it appears to work ok */
 static int scalar_click(t_gobj *z, struct _glist *owner,
     int xpix, int ypix, int shift, int alt, int dbl, int doit)
 {

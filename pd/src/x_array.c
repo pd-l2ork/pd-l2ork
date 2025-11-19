@@ -883,7 +883,7 @@ void x_array_setup(void)
     class_addmethod(array_define_class, (t_method)array_define_ignore,
         gensym("done-popup"), A_GIMME, 0);
 
-    // ico@vt.edu 2022-06-13: added dummy calls for three calls that get
+    // ico@bukvic.net 2022-06-13: added dummy calls for three calls that get
     // called when clicking on array define because those are interpreted
     // as opening of a new canvas whose main class is actually array define
     class_addmethod(array_define_class, (t_method)array_define_ignore,

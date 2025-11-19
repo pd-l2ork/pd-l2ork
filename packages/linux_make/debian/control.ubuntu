@@ -2,7 +2,7 @@ Source: pd-l2ork
 Version: 20121108
 Section: sound
 Priority: optional
-Maintainer: Ivica Ico Bukvic <ico@vt.edu>
+Maintainer: Ivica Ico Bukvic <ico@bukvic.net>
 Homepage: http://l2ork.music.vt.edu
 Package: pd-l2ork
 Architecture: i386

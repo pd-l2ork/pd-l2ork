@@ -2,7 +2,7 @@
 
 [Pd-L2Ork](https://l2ork.music.vt.edu/main/make-your-own-l2ork/software/) and [Pure-Data](http://msp.ucsd.edu/software.html) external for interfacing with the [Sensel Morph](http://sensel.com/morph)
 
-by [Rachel Hachem](https://github.com/rachelhachem) and Ivica Ico Bukvic <ico@vt.edu>
+by [Rachel Hachem](https://github.com/rachelhachem) and Ivica Ico Bukvic <ico@bukvic.net>
 
 Part of the [ICAT Laptop Orchestra at Virgina Tech](http://l2ork.icat.vt.edu)
 
@@ -164,4 +164,4 @@ Introduced ability to change LED brightness and further improved the help file b
 
 ### 2021-12-28 v.1.2.1
 
-Improved build script to support raspbian and improved start-up messaging and pathfinding of the required dynamically linked libraries <ico@vt.edu>
+Improved build script to support raspbian and improved start-up messaging and pathfinding of the required dynamically linked libraries <ico@bukvic.net>

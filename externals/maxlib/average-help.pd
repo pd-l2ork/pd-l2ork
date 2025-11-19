@@ -31,7 +31,7 @@ Wilkes for Pd version 0.42.;
 #X text 12 140 OUTLET_1 float;
 #X text 12 120 OUTLET_0 float;
 #X text 12 160 AUTHOR Olaf Matthes <olaf.matthes@gmx.de> \, revised
-by Ivica Ico Bukvic <ico@vt.edu>;
+by Ivica Ico Bukvic <ico@bukvic.net>;
 #X restore 405 313 pd META;
 #X connect 0 0 3 0;
 #X connect 2 0 3 1;

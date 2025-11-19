@@ -51,7 +51,7 @@ static const char *image_get_filename(t_image *x, char *file)
     char fname[FILENAME_MAX];
     char *fileresult, *fullpath;
     int fd;
-    // ico@vt.edu 2021-10-19: got to expand the file to fname
+    // ico@bukvic.net 2021-10-19: got to expand the file to fname
     // otherwise relative path will fail to open the file on js side
     canvas_makefilename(
         glist_getcanvas(x->x_glist),
