@@ -5,7 +5,7 @@
 0;
 #X obj -35 6 ggee/image @pd_extra/K12/icons/l2ork.png 0 0 48 50 empty
 empty empty 48 50 1 0 10 #000000 0 -8 24 25 0 1 1;
-#X obj 77 421 pddp/pddplink http://l2ork.music.vt.edu;
+#X obj 77 421 pddp/pddplink http://l2ork.bukvic.net;
 #X obj 49 460 pddp/pddplink http://disis.music.vt.edu/listinfo/l2ork-dev
 ;
 #X text 18 18 Welcome to Pd-L2Ork!What is Pd-L2Ork?Pd-L2Ork is

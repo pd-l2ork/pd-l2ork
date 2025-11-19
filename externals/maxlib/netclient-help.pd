@@ -35,7 +35,7 @@
 Wilkes for Pd version 0.42. Help file updated by Ivica Ico Bukvic 2021
 ;
 #X text 10 174 AUTHOR Olaf Matthes <olaf.matthes@gmx.de> and Ivica
-Ico Bukvic <ico@vt.edu>;
+Ico Bukvic <ico@bukvic.net>;
 #X text 10 110 OUTLET_0 list: packet data;
 #X text 10 134 OUTLET_1 float: connection status (0=disconnected \,
 1=connected);
@@ -71,7 +71,7 @@ quiet., f 79;
 connection. Data sent by the client gets received and displayed by
 the server imediately. Or just try it the other way round..., f 85
 ;
-#X text 110 51 improvements by Ivica Ico Bukvic <ico@vt.edu>;
+#X text 110 51 improvements by Ivica Ico Bukvic <ico@bukvic.net>;
 #X floatatom 102 270 5 0 0 0 - - - 0 0 1, f 5;
 #X msg 102 298 disconnect \$1;
 #X text 147 270 disconnect client using socket number;

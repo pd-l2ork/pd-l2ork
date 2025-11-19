@@ -1,5 +1,5 @@
 #!/bin/bash
-# source diff for externals folder by Ivica Ico Bukvic <ico@vt.edu> (c) 2012
+# source diff for externals folder by Ivica Ico Bukvic <ico@bukvic.net> (c) 2012
 # released under GPL v3 license
 
 usage()

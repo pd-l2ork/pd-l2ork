@@ -787,7 +787,6 @@
 712, 8 tracker-char 61 \;;
 713, 8 tracker-char 62 q;
 714, 8 tracker-char 63 q;
-715, 8 tracker-char 64  ;
 716, 8 tracker-data 0 0;
 717, 8 tracker-data 1 0;
 718, 8 tracker-data 2 65;
@@ -852,7 +851,6 @@
 777, 8 tracker-data 61 63;
 778, 8 tracker-data 62 65;
 779, 8 tracker-data 63 65;
-780, 8 tracker-data 64 0;
 781, 8 flanger-ms 18.001;
 782, 8 flanger-mod-amp 0.925926;
 783, 8 flanger-amp 0.001;
@@ -1643,7 +1641,6 @@
 1504, 3 tracker-char 61  ;
 1505, 3 tracker-char 62  ;
 1506, 3 tracker-char 63  ;
-1507, 3 tracker-char 64  ;
 1508, 3 tracker-data 0 65;
 1509, 3 tracker-data 1 0;
 1510, 3 tracker-data 2 0;
@@ -1708,7 +1705,6 @@
 1569, 3 tracker-data 61 0;
 1570, 3 tracker-data 62 0;
 1571, 3 tracker-data 63 0;
-1572, 3 tracker-data 64 0;
 1573, 3 flanger-ms 18.001;
 1574, 3 flanger-mod-amp 0.925926;
 1575, 3 flanger-amp 0.001;

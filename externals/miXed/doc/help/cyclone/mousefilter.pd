@@ -5,7 +5,7 @@
 #X obj 275 170 == 1;
 #X obj 237 240 gate 1 0;
 #X text 50 10 Compatibility abstraction for the Cyclone's mousefilterIco
-Bukvic 2024 <ico@vt.edu> Like legacy objects below \, this one only
+Bukvic 2024 <ico@bukvic.net> Like legacy objects below \, this one only
 broadcasts mouse activity within the patch window;
 #X obj 237 269 == 0;
 #X obj 180 120 inlet;

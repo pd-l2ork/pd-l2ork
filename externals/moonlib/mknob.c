@@ -340,7 +340,7 @@ static void mknob_dialog(t_mknob *x, t_symbol *s, int argc, t_atom *argv)
     if (lilo != 0) lilo = 1;
     x->x_lin0_log1 = lilo;
     
-    // ico@vt.edu 2022-09-26: disabled editing and altering of the steady
+    // ico@bukvic.net 2022-09-26: disabled editing and altering of the steady
     // variable since it has no effect and since this is a legacy object.
     // so, this is done solely to avoid confusing users.
     //if (steady)

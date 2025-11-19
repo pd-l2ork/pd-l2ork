@@ -486,7 +486,7 @@ text.activated {
     stroke-dasharray: 3 2;
 }
 
-/* ico@vt.edu: added selected border coloring
+/* ico@bukvic.net: added selected border coloring
    in edit mode only */
 #patchsvg.editmode .comment.selected .border {
     stroke: #e87216;
@@ -509,7 +509,7 @@ text.activated {
       This lets us highlight an object's border, unless it is inside a gop
       canvas.
    
-   ico@vt.edu 20200916: above does not work anymore due to the fact that
+   ico@bukvic.net 20200916: above does not work anymore due to the fact that
    now things are getting properly embedded inside the DOM structure when
    it comes to GOP objects. As a result we need a whole new set of rules.
    I still for some reason am unable to figure out why :not directive is
@@ -564,8 +564,8 @@ text.activated {
 }
 
 /* text inside selected objects
-   ico@vt.edu added selection highlight only if we are in editmode 
-   ico@vt.edu 20200914: this isn't working as it should when embedded
+   ico@bukvic.net added selection highlight only if we are in editmode 
+   ico@bukvic.net 20200914: this isn't working as it should when embedded
    in a new GOP model. Why? I have no idea...
    */
 /*#patchsvg.editmode :not(.gop).selected text {
@@ -588,7 +588,7 @@ text.activated {
     visibility: visible;
 }
 
-/* control inlet or outlet -- ico@vt.edu 2023-07-17: by default now hidden */
+/* control inlet or outlet -- ico@bukvic.net 2023-07-17: by default now hidden */
 .xlet_control {
     visibility: hidden;
 }
@@ -601,7 +601,7 @@ text.activated {
     visibility: visible;
 }
 
-/* signal inlet or outlet -- ico@vt.edu 2023-07-17: by default now hidden */
+/* signal inlet or outlet -- ico@bukvic.net 2023-07-17: by default now hidden */
 .xlet_signal {
     visibility: hidden;
 }
@@ -614,7 +614,7 @@ text.activated {
     visibility: visible;
 }
 
-/* iemgui inlet or outlet -- ico@vt.edu 2020-11-29: by default now hidden */
+/* iemgui inlet or outlet -- ico@bukvic.net 2020-11-29: by default now hidden */
 .xlet_iemgui {
     visibility: hidden;
 }

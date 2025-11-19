@@ -354,7 +354,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
             }
             int eatchar = 1;
             //fprintf(stderr, "firstone <%s> inindex_b=%d maxindex_b=%d\n", x->x_buf + inindex_b, inindex_b, maxindex_b);
-            // ico@vt.edu 2021-08-06:
+            // ico@bukvic.net 2021-08-06:
             // we add to foundit_b and foundit_bv one extra spot in case
             // the user-entered \n is right at the point of the maximum width
             // since we will eat this char, it is all good
@@ -368,7 +368,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
             {
                 foundit_b = foundit_bv;
             }
-            // ico@vt.edu 2021-04-16: if we are gatom, we need to pack everything
+            // ico@bukvic.net 2021-04-16: if we are gatom, we need to pack everything
             // into a single line, so that the nw.js side can do accurate truncating
             if (pd_class(&x->x_text->te_pd) == gatom_class) {
                 foundit_b = x_bufsize_c;
@@ -386,7 +386,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
                     foundit_b =
                         lastone(x->x_buf + inindex_b, ' ', maxindex_b + 1);
 
-                    // ico@vt.edu 2021-05-10: here we also check for hyphen
+                    // ico@bukvic.net 2021-05-10: here we also check for hyphen
                     // since HTML line breaks also allow for those to happen
                     // at a point where the hyphen is.
                     foundit_bv =
@@ -445,7 +445,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
             //    x->x_buf[inindex_c-1], x->x_buf[inindex_c-1]);
             if (inindex_b < x->x_bufsize) // && (!iscomment || tempbuf[outchars_b-1] != '\n'))
             {
-                // ico@vt.edu 2021-08-06:
+                // ico@bukvic.net 2021-08-06:
                 // really frail way of dealing with \n at the end of the line length, in which
                 // case they need to be eaten since the newline will be automatically added
                 // given we have exceeded the object width limit. LATER: rework all this, so that
@@ -458,7 +458,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
                     eatchar,
                     maxindex_b,
                     x->x_buf[inindex_b]);*/
-                // ico@vt.edu 2021-08-06:
+                // ico@bukvic.net 2021-08-06:
                 // only add a newline in case the line length is not equal the maximum length
                 // and the character that follows is not an \n or a \v
                 if (foundit_b != maxindex_b ||
@@ -466,7 +466,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
                     //post("...adding");
                     tempbuf[outchars_b++] = '\n';
                 } else {
-                    // ico@vt.edu 2021-08-06:
+                    // ico@bukvic.net 2021-08-06:
                     // here we subtract a line since the throwaway \n or \v character that will
                     // be leftover from a previous line (which was ended at the object's length
                     // by an \n or \v), will generate a ghost extra line causing formatting
@@ -485,7 +485,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
                     ncolumns,
                     bvfound);*/
             }
-            // ico@vt.edu 2021-03-30:
+            // ico@bukvic.net 2021-03-30:
             // only if we did not find a \v or an \n do we add a line here
             // after extensive testing it appears not doing so adds extra lines
             // and makes comments in particular have extra padded lines at the end
@@ -505,7 +505,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
         }
         endpost();*/
         // append new line in case we end our input with an \n
-        // 2021-05-10 ico@vt.edu: but do not do so if we have this at the end of
+        // 2021-05-10 ico@bukvic.net: but do not do so if we have this at the end of
         // a comment, because that is pointless. this also ensures vanilla
         // compatibility.
         if (!iscomment && x_bufsize_c > 0 && 
@@ -584,7 +584,7 @@ static void rtext_senditup(t_rtext *x, int action, int *widthp, int *heightp,
             // pd_canvas.html.
             // Additionally we avoid redrawing the border here for the
             // dropdown_class as that has its own special width handling.
-            // ico@vt.edu 2021-08-25: this is also where the gatom gets
+            // ico@bukvic.net 2021-08-25: this is also where the gatom gets
             // autoresized when its width is specified as 0. This is why
             // we do this first, because the gatom width and consequently
             // its '>' symbol that gets appended on strings larger than
@@ -677,7 +677,7 @@ void rtext_retext(t_rtext *x)
             x->x_buf = t_resizebytes(x->x_buf, bufsize, 1);
             bufsize = 1;
         }
-        // ico@vt.edu 2021-04-16: we now handle this inside pdgui.js
+        // ico@bukvic.net 2021-04-16: we now handle this inside pdgui.js
         /*else if (bufsize > text->te_width)
         {
             x->x_buf[text->te_width - 1] = '>';
@@ -861,7 +861,7 @@ void rtext_activate(t_rtext *x, int state)
     if (pd_class((t_pd*)x->x_text) == canvas_class &&
         ((t_canvas *)x->x_text)->gl_isgraph)
     {
-        // ico@vt.edu 2021-10-07: we need to get the rectangle in case
+        // ico@bukvic.net 2021-10-07: we need to get the rectangle in case
         // gop object has more nlets than can fit on the size specified
         // in its properties, so that the activated object size matches
         // its regular size.

@@ -250,7 +250,7 @@ static void tabwrite_tilde_start(t_tabwrite_tilde *x, t_floatarg f)
 
 static void tabwrite_tilde_bang(t_tabwrite_tilde *x)
 {
-    // ico@vt.edu 2022-02-23: redraw here in case bang is sent faster
+    // ico@bukvic.net 2022-02-23: redraw here in case bang is sent faster
     // than what it takes to populate the entire array (at which point
     // redraw is triggered by the perform function above). Since we
     // enqueue these, this should have a minimal impact on the overall

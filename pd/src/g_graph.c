@@ -62,7 +62,7 @@ extern t_template *canvas_findtemplate(t_canvas *c);
 extern t_canvas *canvas_templatecanvas_forgroup(t_canvas *c);
 
 
-/* ico@vt.edu 2020-08-24:
+/* ico@bukvic.net 2020-08-24:
 check if canvas consists of only scalars and returns 2. if the canvas only
 has the last object as a non-scalar (e.g. a new object has just been created,
 then we return 1, otherwise return 0. this is used to determine whether the
@@ -85,7 +85,7 @@ int canvas_has_scalars_only(t_canvas *x)
                 (((t_text *)g)->te_type == T_TEXT) ? "T_TEXT" : "NOT_T_TEXT");
             */
 
-            /* ico@vt.edu 2020-08-24:
+            /* ico@bukvic.net 2020-08-24:
             if we have one more object or the last object is not newly
             instantiated text object to distinguish between a comment and
             a text object that is yet to be instantiated we use:
@@ -111,7 +111,7 @@ int canvas_has_scalars_only(t_canvas *x)
     return(hasonlyscalars);
 }
 
-/* ico@vt.edu 2020-08-24: this draws or erases redrect on a gop window
+/* ico@bukvic.net 2020-08-24: this draws or erases redrect on a gop window
    and is being refactored due to complex logic involving subpatches with
    scalars only that should not have a redrect until a non-scalar object
    has been instantiated (this does not include empty objects that are
@@ -212,7 +212,7 @@ int canvas_hasarray(t_canvas *x)
     return(hasarray);
 }
 
-/* ico@vt.edu 2021-11-12:
+/* ico@bukvic.net 2021-11-12:
    check if canvas has a toplevel scalar that requires resizing upon
    resizing of the window and return 2, otherwise return 0. we use this
    to inform front-end via gui_canvas_new if instead of updating
@@ -406,7 +406,7 @@ void glist_retext(t_glist *glist, t_text *y)
     }
 }
 
-// 2020-10-05 ico@vt.edu:
+// 2020-10-05 ico@bukvic.net:
 // exclusive flag only applies to keyboard events (keyfn and keynameafn)
 // as of right now I cannot think of a scenario where mouse motion should be
 // exclusive to a single object.
@@ -462,7 +462,7 @@ int glist_grab_exclusive(t_glist *x, int exclusive)
     return(1);
 }
 
-// ico@vt.edu 2021-04-15: used for allowing message-induced focus on gatoms
+// ico@bukvic.net 2021-04-15: used for allowing message-induced focus on gatoms
 // needs to disable motionfn enabled by the text_click->gatom_click call
 // to disable accidental drag that may result from a scripted focus, but not
 // from the actual clicked focus
@@ -889,7 +889,7 @@ t_float glist_pixelstoy(t_glist *x, t_float ypix)
     }
 }
 
-/* ico@vt.edu: used by the scalar_vis to adjust visual offset
+/* ico@bukvic.net: used by the scalar_vis to adjust visual offset
    based on the graph drawing style, affects bar graph */
 extern int garray_get_style(t_garray *x);
 
@@ -897,7 +897,7 @@ extern int garray_get_style(t_garray *x);
 t_float glist_xtopixels(t_glist *x, t_float xval)
 {
     //post("glist_Xtopixels %zx %f isgraph=%d", (t_uint)x, xval, x->gl_isgraph);
-    // ico@vt.edu: used to deal with the bar graph
+    // ico@bukvic.net: used to deal with the bar graph
     t_float plot_offset = 0;
     t_gobj *g = x->gl_list;
 
@@ -924,7 +924,7 @@ t_float glist_xtopixels(t_glist *x, t_float xval)
     }
     else
     {
-        /* ico@vt.edu: some really stupid code to compensate for the fact
+        /* ico@bukvic.net: some really stupid code to compensate for the fact
            that the svg stroke feature adds unaccounted width to the bars
            TODO LATER: cycle through all garray classes in case there are multiple
            garrays inside the same array object? is this necessary?
@@ -942,7 +942,7 @@ t_float glist_xtopixels(t_glist *x, t_float xval)
     }
 }
 
-/* ico@vt.edu 2022-11-29:
+/* ico@bukvic.net 2022-11-29:
    provide width per scalar (used for arrays only to minimize errors
    with large arrays where x offset appears to play a role in producing
    a rounding error. only applies to scalars drawn inside GOP on
@@ -960,12 +960,12 @@ t_float glist_norm_x_per_scalar(t_glist *x, t_float xval)
         return glist_xtopixels(x, xval);
     //post("...using norm for x");
 
-    // ico@vt.edu: used to deal with the bar graph
+    // ico@bukvic.net: used to deal with the bar graph
     t_float plot_offset = 0;
 
     t_gobj *g = x->gl_list;
 
-    /* ico@vt.edu: some really stupid code to compensate for the fact
+    /* ico@bukvic.net: some really stupid code to compensate for the fact
        that the svg stroke feature adds unaccounted width to the bars
        TODO LATER: cycle through all garray classes in case there are multiple
        garrays inside the same array object? is this necessary?
@@ -988,7 +988,7 @@ t_float glist_norm_x_per_scalar(t_glist *x, t_float xval)
 
 t_float glist_ytopixels(t_glist *x, t_float yval)
 {
-    // ico@vt.edu 2022-10-01: debugging in this function should be done
+    // ico@bukvic.net 2022-10-01: debugging in this function should be done
     // using fprintf, as otherwise post command could corrupt a mid-point
     // array message output, which will break the front-end
     //fprintf(stderr,"glist_Ytopixels %zx %f isgraph=%d", (t_uint)x, yval, x->gl_isgraph);
@@ -1013,14 +1013,14 @@ t_float glist_ytopixels(t_glist *x, t_float yval)
     }
 }
 
-/* ico@vt.edu 2022-11-29:
+/* ico@bukvic.net 2022-11-29:
    provide width per scalar (used for arrays only to minimize errors
    with large arrays where y offset appears to play a role in producing
    a rounding error. only applies to scalars drawn inside GOP on
    the parent canvas */
 t_float glist_norm_y_per_scalar(t_glist *x, t_float yval)
 {
-    // ico@vt.edu 2022-10-01: debugging in this function should be done
+    // ico@bukvic.net 2022-10-01: debugging in this function should be done
     // using fprintf, as otherwise post command could corrupt a mid-point
     // array message output, which will break the front-end
     //fprintf(stderr,"glist_Ytopixels %zx %f isgraph=%d", (t_uint)x, yval, x->gl_isgraph);
@@ -1212,7 +1212,7 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
             x->gl_owner,
             tag, "graph", xpix, ypix,
             (parent_glist == glist_getcanvas(x->gl_owner) ? 1 : 0),
-            // ico@vt.edu 2022-09-26: changed last argument to 1
+            // ico@bukvic.net 2022-09-26: changed last argument to 1
             // since this is a canvas object after all
             // need to test further, so far it checks out
             1,
@@ -1257,7 +1257,7 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
                 y2 - y1,
                 1
             );
-            // ico@vt.edu 2022-12-15: make sure that the dirty
+            // ico@bukvic.net 2022-12-15: make sure that the dirty
             // rectangle is redrawn based on dirty and subdirty
             gui_vmess("gui_gobj_dirty", "xsi",
                 glist_getcanvas(x->gl_owner), tag,
@@ -1266,7 +1266,7 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
             gui_vmess("gui_graph_fill_border", "xsi",
                 glist_getcanvas(x->gl_owner),
                 tag);
-			/* ico@vt.edu: do we need to redraw scalars here? */
+			/* ico@bukvic.net: do we need to redraw scalars here? */
 			for (g = x->gl_list; g; g = g->g_next)
 			{
 				gop_redraw = 1;
@@ -1405,7 +1405,7 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
                 glist_getcanvas(x),
                 tag,
                 (int)glist_xtopixels(x, atof(x->gl_xlabel[i]->s_name)),
-                // ico@vt.edu 2022-06-13: added +7 offset for the x label
+                // ico@bukvic.net 2022-06-13: added +7 offset for the x label
                 // because it was otherwise overlapping with the array
                 // and potentially unreadable
                 (int)glist_ytopixels(x, x->gl_xlabely)+7,
@@ -1448,7 +1448,7 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
                 gop_redraw = 0;
             }
         }
-        // ico@vt.edu 2022-11-09: if we have gopspill option enabled
+        // ico@bukvic.net 2022-11-09: if we have gopspill option enabled
         // allow for object to be drawn outside the boundaries
         // here we lower the border line, so that it does not cover
         // spilled objects. this is achieved by adding the
@@ -1467,7 +1467,7 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
             );
         glist_drawiofor(parent_glist, &x->gl_obj, 1,
             tag, x1, y1, x2, y2);
-        // ico@vt.edu 2022-09-28: reattach labels dirty and subdirty
+        // ico@bukvic.net 2022-09-28: reattach labels dirty and subdirty
         // upon redrawing, so that the GOP border is colored accordingly.
         //post("===========is gop dirty? %zx %d", x, x->gl_dirty);
         canvas_dirtyclimb(x, x->gl_dirty, 1);
@@ -1835,7 +1835,7 @@ static void graph_select(t_gobj *z, t_glist *glist, int state)
                     canvas, rtext_gettag(y));
         }
 
-        // ico@vt.edu 20200914: Not needed anymore for the new
+        // ico@bukvic.net 20200914: Not needed anymore for the new
         // implementation of GOP gobjects being drawn inside the GOP group
         /*t_gobj *g;
         //fprintf(stderr,"graph_select\n");
@@ -1933,7 +1933,7 @@ static int graph_click(t_gobj *z, struct _glist *glist,
         for (y = x->gl_list; y; y = y->g_next)
         {
             /*
-            ico@vt.edu 2021-11-12: this aspect deals with trying to grab
+            ico@bukvic.net 2021-11-12: this aspect deals with trying to grab
             points of a graph when they are drawn as a GOP on a parent
             patch. for handling points on a toplevel window, see g_editor.c
             canvas_doclick. we also use this to update the
@@ -1975,7 +1975,7 @@ static int graph_click(t_gobj *z, struct _glist *glist,
                 {
                     ob = pd_checkobject(&y->g_pd);
                     /* do not give clicks to comments or cnv during runtime */
-                    /* ico@vt.edu 2021-10-10: also do not give clicks to the
+                    /* ico@bukvic.net 2021-10-10: also do not give clicks to the
                        ggee/image object if it is in click_mode 3 because that
                        one needs to be passed through below it, so we manually
                        acknowledge the click here without interrupting the flow.

@@ -30,6 +30,10 @@ away before the panel does... */
 #include <unistd.h>
 #endif
 
+#ifdef WEBPDL2ORK
+#include <z_hooks.h>
+#endif
+
 #ifdef _MSC_VER
 #define snprintf _snprintf  /* for pdcontrol object */
 #endif
@@ -397,6 +401,9 @@ typedef struct _openpanel
     t_canvas *x_canvas;
     t_symbol *x_s;
     int x_mode;
+#ifdef WEBPDL2ORK
+    int x_id;
+#endif
 } t_openpanel;
 
 static void *openpanel_new(t_floatarg mode)
@@ -410,17 +417,31 @@ static void *openpanel_new(t_floatarg mode)
     pd_bind(&x->x_obj.ob_pd, x->x_s);
     outlet_new(&x->x_obj, &s_symbol);
     gui_vmess("file_dialog_obj", "s", filedialog_obj->x_s->s_name);
+#ifdef WEBPDL2ORK
+    static int next_id = 0;
+    x->x_id = ++next_id;
+#endif
     return (x);
 }
 
 static void openpanel_symbol(t_openpanel *x, t_symbol *s)
 {
+#ifdef WEBPDL2ORK
+    char cbuf[14];
+    sprintf(cbuf, "openpanel_%d", x->x_id);
+
+    t_atom data;
+    SETFLOAT(&data, x->x_mode);
+
+    (*LIBPDSTUFF->i_hooks.h_messagehook)(cbuf, "trigger", 1, &data);
+#else
     char *path = (s && s->s_name) ? s->s_name : "$pd_opendir";
     gui_vmess("gui_openpanel", "xssi",
         x->x_canvas,
         x->x_s->s_name,
         path,
         x->x_mode);
+#endif
 }
 
 static void openpanel_bang(t_openpanel *x)
@@ -430,7 +451,7 @@ static void openpanel_bang(t_openpanel *x)
 
 static void openpanel_callback(t_openpanel *x, t_symbol *s, int argc, t_atom *argv)
 {
-    if(x->x_mode != 2)
+    if(x->x_mode != FILEDIALOG_OPENMULTI)
         outlet_symbol(x->x_obj.ob_outlet, argv->a_w.w_symbol);
     else
         outlet_list(x->x_obj.ob_outlet, s, argc, argv);
@@ -473,27 +494,33 @@ static void *savepanel_new( void)
     x->x_canvas = canvas_getcurrent();
     pd_bind(&x->x_obj.ob_pd, x->x_s);
     outlet_new(&x->x_obj, &s_symbol);
-    gui_vmess("file_dialog_obj", "s", x->x_s->s_name);
+    gui_vmess("file_dialog_obj", "s", filedialog_obj->x_s->s_name);
     return (x);
-}
-
-static void savepanel_symbol(t_savepanel *x, t_symbol *s)
-{
-    char *path = (s && s->s_name) ? s->s_name : "$pd_opendir";
-    gui_vmess("gui_savepanel", "xss",
-        x->x_canvas,
-        x->x_s->s_name,
-        path);
-}
-
-static void savepanel_bang(t_savepanel *x)
-{
-    savepanel_symbol(x, &s_);
 }
 
 static void savepanel_callback(t_savepanel *x, t_symbol *s)
 {
     outlet_symbol(x->x_obj.ob_outlet, s);
+}
+
+static void savepanel_symbol(t_savepanel *x, t_symbol *s)
+{
+    char *path = (s && s->s_name) ? s->s_name : "$pd_opendir";
+#ifdef WEBPDL2ORK
+    char fullpath[MAXPDSTRING];
+    snprintf(fullpath, MAXPDSTRING, "/tmp/download/%s", path);
+    savepanel_callback(x, gensym(fullpath));
+#else
+    gui_vmess("gui_savepanel", "xss",
+        x->x_canvas,
+        x->x_s->s_name,
+        path);
+#endif
+}
+
+static void savepanel_bang(t_savepanel *x)
+{
+    savepanel_symbol(x, &s_);
 }
 
 static void savepanel_free(t_savepanel *x)

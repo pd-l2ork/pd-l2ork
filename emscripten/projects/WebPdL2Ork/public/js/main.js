@@ -11,6 +11,7 @@ let previousValue = '';
 let subscribedData = {};
 let searchPaths = [];
 let fileCache = {};
+let writtenFiles = new Set();
 let page = {
     id: null,
     mode: (new URLSearchParams(window.location.search)).get('parent') ? 'child' : 'parent',
@@ -51,6 +52,7 @@ onmessage = ({ data }) => {
 
 let nextScopeID = 0;
 let nextLuaID   = 0;
+let nextOpenpanelId = 0;
 
 //CONSTANTS IMPORTED FROM g_vumeter.c, lines 25-61
 let vu_colors = [
@@ -159,7 +161,7 @@ function screenToCoord(low, high, span, screen) {
 }
 function addInteractionStartEvent(target, func) {
     target.addEventListener('mousedown', e => e.preventDefault() || func(e, 0));
-    target.addEventListener('touchstart', e => e.preventDefault() || [...(e || window.event).changedTouches].forEach(touch => func(touch, touch.identifier)));
+    target.addEventListener('touchstart', e => [...(e || window.event).changedTouches].forEach(touch => func(touch, touch.identifier)), { passive: true });
 }
 function addInteractionMoveEvent(target, func) {
     target.addEventListener('mousemove', e => e.preventDefault() || func(e, 0));
@@ -275,103 +277,53 @@ let pdl2ork_promise = WebPdL2OrkModule({
         for(let file of pdl2ork.FS.readdir('/pd-l2ork-web/extra/cyclone').filter(file => file.endsWith('.wasm') && file.charAt(0) == file.charAt(0).toLowerCase()))
             pdl2ork.FS.symlink(`/pd-l2ork-web/extra/cyclone/${file}`, `/pd-l2ork-web/extra/cyclone/${file.charAt(0).toUpperCase()}${file.slice(1)}`);
 
-        // Intercept file reads
-        pdl2ork.FS.open = function (path, flags, mode) {
-            let isNetworkCandidate = !['wasm','so','pat','pd','pd_lua'].map(ext=>('' + path).endsWith(ext)).find(matches => matches == true);
-            if (path === "") {
-                throw new pdl2ork.FS.ErrnoError(44)
-            }
-            flags = typeof flags == "string" ? pdl2ork.FS_modeStringToFlags(flags) : flags;
-            mode = typeof mode == "undefined" ? 438 : mode;
-            if (flags & 64) {
-                mode = mode & 4095 | 32768
-            } else {
-                mode = 0
-            }
-            var node;
-            if (typeof path == "object") {
-                node = path
-            } else {
-                try {
-                    var lookup = pdl2ork.FS.lookupPath(path, {
-                        follow: !(flags & 131072)
-                    });
-                    node = lookup.node
-                    path = lookup.path
+        pdl2ork.FS.createPath('/', '/tmp/uploads');
 
-                } catch (e) {
-                    if (isNetworkCandidate) {
-                        if (fileCache[path])
-                            node = fileCache[path];
-                        else {
-                            const request = new XMLHttpRequest();
-                            request.open('POST', window.location.origin + '/api/file', false);
-                            request.setRequestHeader('content-type', 'application/json')
-                            request.overrideMimeType('text/plain; charset=x-user-defined'); // Set MIME type for binary data
-                            request.send(buildFileApiBody(path));
-                            if (request.status === 200) {
-                                let folder = path.split('/').slice(0, -1).join('/') + '/';
-                                pdl2ork.FS.createPath('/', folder);
-                                pdl2ork.FS.createDataFile(folder, path.split('/').slice(-1)[0], request.response, true, true, true);
-                                fileCache[path] = pdl2ork.FS.lookupPath(path, { follow: !(flags & 131072) }).node;
-                                node = fileCache[path];
-                                path = pdl2ork.FS.getPath(node)
-                            }
-                        }
-                    }
+        const FS_open = pdl2ork.FS.open;
+        const ignoredExtensions = new Set(['wasm', 'so', 'pat', 'pd', 'pd_lua']);
+        pdl2ork.FS.open = (path, flags, mode, intercept = true) => {
+            const isWrite = flags & 64;
+
+            if(typeof path !== 'string' || ignoredExtensions.has(path.split('.').slice(-1)[0]) || path.startsWith('/mnt'))
+                intercept = false;
+
+            if(intercept && !pdl2ork.FS.analyzePath(path).exists) {
+                if (fileCache[path])
+                    node = fileCache[path];
+                else {
+                    const folder = path.split('/').slice(0, -1).join('/') + '/';
+                    const request = new XMLHttpRequest();
+                    request.open('POST', window.location.origin + '/api/file', false);
+                    request.setRequestHeader('content-type', 'application/json')
+                    request.overrideMimeType('text/plain; charset=x-user-defined'); // Set MIME type for binary data
+                    request.send(buildFileApiBody(path));
+                    if (request.status === 200) {
+                        pdl2ork.FS.createPath('/', folder);
+                        pdl2ork.FS.createDataFile(folder, path.split('/').slice(-1)[0], request.response, true, true, true);
+                        fileCache[path] = pdl2ork.FS.lookupPath(path, { follow: !(flags & 131072) }).node;
+                        node = fileCache[path];
+                        path = pdl2ork.FS.getPath(node)
+                    } else if(isWrite)
+                        pdl2ork.FS.createPath('/', folder);
                 }
             }
-            var created = false;
-            if (flags & 64) {
-                if (node) {
-                    if (flags & 128) {
-                        throw new pdl2ork.FS.ErrnoError(20)
-                    }
-                } else {
-                    node = pdl2ork.FS.mknod(path, mode, 0);
-                    created = true
-                }
-            }
-            if (!node) {
-                throw new pdl2ork.FS.ErrnoError(44)
-            }
-            if (pdl2ork.FS.isChrdev(node.mode)) {
-                flags &= ~512
-            }
-            if (flags & 65536 && !pdl2ork.FS.isDir(node.mode)) {
-                throw new pdl2ork.FS.ErrnoError(54)
-            }
-            if (!created) {
-                var errCode = pdl2ork.FS.mayOpen(node, flags);
-                if (errCode) {
-                    throw new pdl2ork.FS.ErrnoError(errCode)
-                }
-            }
-            if (flags & 512 && !created) {
-                pdl2ork.FS.truncate(node, 0)
-            }
-            flags &= ~(128 | 512 | 131072);
-            var stream = pdl2ork.FS.createStream({
-                node: node,
-                path: pdl2ork.FS.getPath(node),
-                flags: flags,
-                seekable: true,
-                position: 0,
-                stream_ops: node.stream_ops,
-                ungotten: [],
-                error: false
-            });
-            if (stream.stream_ops.open) {
-                stream.stream_ops.open(stream)
-            }
-            if (pdl2ork["logReadFiles"] && !(flags & 1)) {
-                if (!pdl2ork.FS.readFiles)
-                    pdl2ork.FS.readFiles = {};
-                if (!(path in pdl2ork.FS.readFiles)) {
-                    pdl2ork.FS.readFiles[path] = 1
-                }
-            }
+
+            const stream = FS_open(path, flags, mode);
+            if(intercept && isWrite)
+                stream.isTrackedWrite = true;
+
             return stream;
+        }
+
+        const FS_close = pdl2ork.FS.close;
+        pdl2ork.FS.close = stream => {
+            FS_close(stream);
+
+            const path = pdl2ork.FS.getPath(stream.node);
+            if(stream.isWrite && path.startsWith('/tmp/download'))
+                download(path.split('/').slice(-1)[0], new Blob([pdl2ork.FS.readFile(path)]));
+            else if(stream.isTrackedWrite)
+                writtenFiles.add(path);
         }
 
         pdl2ork.pd = new pdl2ork.Pd(); // instantiate Pd object
@@ -1699,6 +1651,34 @@ let pdl2ork_promise = WebPdL2OrkModule({
                             else
                                 console.error('Invalid message for lua: ', symbol);
                             break;
+                        case "openpanel":
+                            switch(symbol) {
+                                case "trigger":
+                                    const mode = list[0];
+                                    const isSingleUpload = mode === 0;
+                                    const isFolderUpload = mode === 1;
+                                    upload(!isSingleUpload, isFolderUpload).then(async(files) => {
+                                        if(isSingleUpload)
+                                            files = [files];
+                                        else
+                                            files = [...files];
+
+                                        let base = '/tmp/uploads/';
+                                        if(isFolderUpload) {
+                                            base = `/tmp/uploads/${Date.now()}/`;
+                                            pdl2ork.FS.createPath('/', base);
+                                        }
+
+                                        await Promise.all(files.map(file => save(base + file.name, file)));
+
+                                        if(isFolderUpload)
+                                            gui_send('Message', [data.internal_receive], ['callback', base]);
+                                        else
+                                            gui_send('Message', [data.internal_receive], ['callback', ...files.map(file => base + file.name)]);
+                                    });
+                                    break;
+                            }
+                            break;
                         default:
                             console.error('Message to unsupported data:', data);
                     }
@@ -1818,6 +1798,184 @@ let pdl2ork_promise = WebPdL2OrkModule({
         }
     }
 })
+
+const download = (name, blob) => {
+    const link = document.createElement('a');
+    link.setAttribute('download', name);
+    link.href = window.URL.createObjectURL(blob);
+    document.body.appendChild(link);
+    window.requestAnimationFrame(() => {
+        link.dispatchEvent(new MouseEvent('click'));
+        window.URL.revokeObjectURL(link.href);
+        document.body.removeChild(link);
+    });
+}
+
+const upload = async(multiple = false, directory = false, accept = '') => new Promise(Resolve => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.multiple = multiple;
+    input.webkitdirectory = directory;
+    input.accept = accept;
+    input.onchange = e => Resolve(multiple ? e.target.files : e.target.files[0]);
+    input.click();
+})
+
+const save = async(path, file) => new Promise(Resolve => {
+    const reader = new FileReader();
+    reader.addEventListener('loadend', () => {
+        pdl2ork.FS.writeFile(path, new Uint8Array(reader.result));
+        Resolve();
+    });
+    reader.readAsArrayBuffer(file);
+})
+
+const compressBlob = async(blob) => {
+    return (await new Response(
+        blob.stream().pipeThrough(new CompressionStream('gzip'))
+    )).blob();
+}
+
+const decompressBlob = async(blob) => {
+    return (await new Response(
+        blob.stream().pipeThrough(new DecompressionStream('gzip'))
+    )).blob();
+}
+
+const mountFS = async () => {
+    pdl2ork.FS.mkdir('/mnt');
+    pdl2ork.FS.mount(pdl2ork.IDBFS, { }, '/mnt');
+
+    await new Promise((resolve, reject) => {
+        pdl2ork.FS.syncfs(true, err => err ? reject(err) : resolve());
+    });
+}
+
+const unmountFS = async () => {
+    await new Promise((resolve, reject) => {
+        pdl2ork.FS.syncfs(false, err => err ? reject(err) : resolve());
+    });
+
+    pdl2ork.FS.unmount('/mnt');
+    pdl2ork.FS.rmdir('/mnt');
+}
+
+const exportFS = async () => {
+    const encoder = new TextEncoder();
+    const parts = [];
+
+    await saveFS();
+    await mountFS();
+    for (const file of findRecursive('/mnt')) {
+        const pathBytes = encoder.encode(file.slice('/mnt'.length));
+        const mode = pdl2ork.FS.stat(file).mode;
+        const data = pdl2ork.FS.readFile(file); // Uint8Array
+
+        const header = new ArrayBuffer(12);
+        const view = new DataView(header);
+        view.setUint32(0, pathBytes.length, true);
+        view.setUint32(4, mode, true);
+        view.setUint32(8, data.length, true);
+
+        parts.push(header, pathBytes, data);
+    }
+    await unmountFS();
+
+    return await compressBlob(new Blob(parts));
+};
+
+const importFS = async (blob) => {
+    const decompressed = await decompressBlob(blob);
+    const buffer = await decompressed.arrayBuffer();
+    const view = new DataView(buffer);
+    const decoder = new TextDecoder();
+
+    let offset = 0;
+    while (offset < buffer.byteLength) {
+        const pathLen = view.getUint32(offset, true);
+        const mode = view.getUint32(offset + 4, true);
+        const dataLen = view.getUint32(offset + 8, true);
+        offset += 12;
+
+        const pathBytes = new Uint8Array(buffer, offset, pathLen);
+        const path = decoder.decode(pathBytes);
+        offset += pathLen;
+
+        const data = new Uint8Array(buffer, offset, dataLen);
+        offset += dataLen;
+
+        const folder = path.split('/').slice(0, -1).join('/') + '/';
+        pdl2ork.FS.createPath('/', folder);
+
+        const writeStream = pdl2ork.FS.open(path, 'w', mode);
+        pdl2ork.FS.write(writeStream, data, 0, dataLen);
+    }
+};
+
+const downloadFS = async () => {
+    download('WebPdL2OrkFilesys.img', await exportFS());
+}
+
+const uploadFS = async () => {
+    await importFS(await upload(false, false, '.img'));
+}
+
+const clearFS = async () => {
+    for(const file of writtenFiles)
+        pdl2ork.FS.unlink(file);
+
+    pdl2ork.IDBFS.dbs['/mnt'].close();
+    delete pdl2ork.IDBFS.dbs['/mnt'];
+    
+    await new Promise((resolve, reject) => {
+        const trx = window.indexedDB.deleteDatabase('/mnt');
+        trx.onsuccess = resolve;
+        trx.onerror = reject;
+    });
+
+    window.location.reload();
+}
+
+const copy = (src, dst) => {
+    const mode = pdl2ork.FS.stat(src).mode;
+    const data = pdl2ork.FS.readFile(src, { encoding: 'binary' });
+    const stream = pdl2ork.FS.open(dst, 'w', mode);
+    pdl2ork.FS.write(stream, data, 0, data.length);
+    pdl2ork.FS.close(stream);
+}
+
+const copyRecursive = (src, dst) => {
+    const mode = pdl2ork.FS.stat(src).mode;
+    if (pdl2ork.FS.isDir(mode)) {
+        try { pdl2ork.FS.mkdir(dst); } catch {}
+        for (const entry of pdl2ork.FS.readdir(src).filter(name => name !== '.' && name !== '..'))
+            copyRecursive(`${src}/${entry}`, `${dst}/${entry}`);
+    } else if (pdl2ork.FS.isFile(mode))
+        copy(src, dst)
+};
+
+const findRecursive = (path) => {
+    const mode = pdl2ork.FS.stat(path).mode;
+    if (pdl2ork.FS.isDir(mode))
+        return pdl2ork.FS.readdir(path).filter(name => name !== '.' && name !== '..').map(entry => findRecursive(`${path}/${entry}`)).flat();
+    else if (pdl2ork.FS.isFile(mode))
+        return [path];
+}
+
+const saveFS = async () => {
+    await mountFS()
+    for(const file of writtenFiles) {
+        pdl2ork.FS.createPath('/mnt', file.split('/').slice(0, -1).join('/') + '/');
+        copy(file, `/mnt${file}`);
+    }
+    await unmountFS();
+}
+
+const loadFS = async () => {
+    await mountFS();
+    copyRecursive('/mnt', '/');
+    await unmountFS();
+}
 
 //--------------------- pdgui.js ----------------------------
 
@@ -3730,6 +3888,24 @@ let keyDown = {}
 function onKeyDown(e) {
     if('Dead' != e.key)
         e.preventDefault();
+    if(e.metaKey || e.ctrlKey) {
+        let captured = true;
+        if(e.altKey && 'KeyS' === e.code)
+            downloadFS();
+        else if(e.altKey && 'KeyO' === e.code)
+            uploadFS();
+        else if(e.altKey && 'KeyC' === e.code)
+            clearFS();
+        // else if('KeyS' === e.code)
+        //     future: save patch bundle?
+        // else if('KeyO' === e.code)
+        //     future: open patch bundle?
+        else
+            captured = false;
+
+        if(captured)
+            e.preventDefault();
+    }
     if(keyboardFocus.data?.onKeyDown)
         keyboardFocus.data.onKeyDown(keyboardFocus.data, e);
     keyDown[e.key] = true;
@@ -3845,8 +4021,8 @@ function gui_cnv_visible_rect(data) {
         y: data.y_pos,
         width: data.width,
         height: data.height,
-        fill: colfromload(data.bg_color, 8),
-        stroke: colfromload(data.bg_color, 8),
+        fill: colfromload(data.bg_color),
+        stroke: colfromload(data.bg_color),
         id: `${data.id}_visible_rect`,
         class: "unclickable"
     }
@@ -5442,6 +5618,25 @@ async function openPatch(content, filename, patchURL) {
 
                             layer.guiObjects[layer.nextGUIID] = data;
                         }
+                        case "openpanel": {
+                            let data = {};
+                            data.type = 'openpanel';
+                            data.receive = [`openpanel_${++nextOpenpanelId}`];
+                            data.internal_receive = `openpanel_${nextOpenpanelId}_internal`;
+
+                            let nextObjId = layer.nextGUIID, nextSlot = i, depth = 0;
+                            for(;depth > 0 || (lines[nextSlot] !== undefined && lines[nextSlot].startsWith('#X connect') == false && lines[nextSlot].startsWith('#X restore') == false); nextSlot++) {
+                                if(depth == 0 && object_types.find(type=>lines[nextSlot].startsWith(type)))
+                                    nextObjId++;
+                                if(lines[nextSlot].startsWith('#N canvas'))
+                                    depth++;
+                                else if(lines[nextSlot].startsWith('#X restore'))
+                                    depth--;
+                            }
+                            lines.splice(nextSlot, 0, `#X obj 0 0 r ${data.internal_receive}`,`#X connect ${nextObjId} 0 ${layer.nextGUIID} 0 __IGNORE__`);
+
+                            gui_subscribe(data);
+                        }
                         default: //If we don't have an explicit handling for the object, it's possible that it is an external patch load 
                             if(args[4] in abstractions) {
                                 //We must add an #X restore at the end to undo the #N canvas at the beginning
@@ -5986,7 +6181,7 @@ async function openPatch(content, filename, patchURL) {
                         } else
                             console.warn('Ignoring unsupported wired connection (Code A)'); //This should never happen
                     }
-                    if((!layer.guiObjects[args[2]] || layer.guiObjects[args[2]].shortCircuit === false) && layer.guiObjects[args[4]] && args[5] === '0') {
+                    if((!layer.guiObjects[args[2]] || layer.guiObjects[args[2]].shortCircuit === false) && layer.guiObjects[args[4]] && layer.guiObjects[args[4]].shortCircuit !== false && args[5] === '0') {
                         //If the receiver is a gui object, and the sender is not, we must add a send object so that the receiver
                         //can receive wirelessly. Then we connect the send object to the sender, and the receiver wirelessly to the send object
                         if(layer.objects[args[2]] === 'preset_node') {
@@ -6147,6 +6342,9 @@ async function init() {
     const urlParams = new URLSearchParams(window.location.search);
     let patchURL = urlParams.get("url"), content, filename;
 
+    // Load filesystem
+    await loadFS();
+
     // Open default patch if no patch is provided
     if (!patchURL)
         patchURL = "default.pd";
@@ -6228,4 +6426,6 @@ window.oncontextmenu = function (e) {
 
 window.onbeforeunload = function() {
     navigator.serviceWorker.controller.postMessage({ type: 'unload' });
+    if(page.mode === 'parent')
+        saveFS();
 }

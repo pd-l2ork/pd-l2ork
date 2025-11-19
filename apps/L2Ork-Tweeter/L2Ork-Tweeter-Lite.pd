@@ -261,7 +261,7 @@ the human-readable client number), f 54;
 #X obj 81 58 r version;
 #X msg 328 170 version match--welcome to L2Ork Tweeter!, f 30;
 #X msg 145 170 version mismatch--disconnecting... please download the
-server-compatible version of the client available at http://l2ork.music.vt.edu/main/make-your-own-l2ork/tweeter/
+server-compatible version of the client available at http://l2ork.bukvic.net/main/make-your-own-l2ork/tweeter/
 , f 28;
 #X connect 0 0 16 0;
 #X connect 2 0 3 0;
@@ -1865,7 +1865,7 @@ click - preset-all only7 - shift + triple click - preset+preset-all8
 #N canvas 727 338 450 252 init 0;
 #X obj 24 85 tosymbol;
 #X obj 24 147 s \$0-hostname-r;
-#X msg 24 63 pd-l2ork.music.vt.edu:9002;
+#X msg 24 63 pd-l2ork.bukvic.net:9002;
 #X obj 211 27 loadbang;
 #X obj 211 206 s \$0-chat-r;
 #X obj 211 110 tosymbol;

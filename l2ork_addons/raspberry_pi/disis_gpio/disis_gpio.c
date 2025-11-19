@@ -1,7 +1,7 @@
 /* gpio - Pi gpio pins via /sys/etc */
 /* see http://elinux.org/RPi_Low-level_peripherals */
 
-/* Copyright Ivica Ico Bukic <ico@vt.edu> */
+/* Copyright Ivica Ico Bukic <ico@bukvic.net> */
 /* Based on Miller Puckette's example - Copyright Miller Puckette - BSD license */
 /* with changes to make external rely on the gpio executable to sidestep permmission issues */
 
@@ -478,7 +478,7 @@ static void *disis_gpio_new(t_floatarg f)
 {
     if (!disis_gpio_isvalidpin((int)f)) return(NULL);
     /*
-    // ico@vt.edu 2022-10-03: this is not necessary anymore
+    // ico@bukvic.net 2022-10-03: this is not necessary anymore
     // because newer Raspbian now provides proper permissions
     // not to require sudo to access the GPIOs
     if (geteuid () != 0)

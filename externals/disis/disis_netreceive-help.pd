@@ -15,7 +15,7 @@
 #X text 12 105 OUTLET_1 float;
 #X text 12 145 AUTHOR Ivica Ico Bukvic;
 #X text 12 65 INLET_0 port;
-#X text 12 165 WEBSITE http://l2ork.music.vt.edu;
+#X text 12 165 WEBSITE http://l2ork.bukvic.net;
 #X text 12 185 RELEASE_DATE 2013;
 #X text 12 205 HELP_PATCH_AUTHORS Based on netreceive help file. Revised
 by Ivica Ico Bukvic to conform to the PDDP template for Pd-L2Ork.;

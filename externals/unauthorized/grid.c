@@ -736,7 +736,7 @@ static void grid__motionhook(t_scalehandle *sh,
     int minw = MIN_GRID_WIDTH,
         minh = MIN_GRID_HEIGHT;
 
-    // ico@vt.edu 2022-09-27: ensured that the "point" also gets
+    // ico@bukvic.net 2022-09-27: ensured that the "point" also gets
     // its location updated.
     if (width < minw) width = minw;
     if (height < minh) height = minh;

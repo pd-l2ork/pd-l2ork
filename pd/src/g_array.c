@@ -647,7 +647,7 @@ void glist_arraydialog(t_glist *parent, t_symbol *s, int argc, t_atom *argv)
             (size > 1 ? size-1 : size), -1, xdraw+30, ydraw+30,
             xdraw+30+GLIST_DEFGRAPHWIDTH, ydraw+30+GLIST_DEFGRAPHHEIGHT);
         gl->gl_hidetext = 1;
-        // ico@vt.edu 2022-11-21: this is where we should also set
+        // ico@bukvic.net 2022-11-21: this is where we should also set
         // any other flags to maintain sanity. since disabling editable
         // flag will force that window into focus, we maintain editable
         // flag even for this window and prevent editing elsewhere.
@@ -676,7 +676,7 @@ void glist_arraydialog(t_glist *parent, t_symbol *s, int argc, t_atom *argv)
     // been associated with glist
     // sys_queuegui((t_gobj *)gl, glist_getcanvas(gl), graph_redraw);
     //fprintf(stderr,"glist_arraydialog done\n"); 
-    // ico@vt.edu 2022-09-28: originally, below we had glist_redraw only
+    // ico@bukvic.net 2022-09-28: originally, below we had glist_redraw only
     // which was necessary to display the array name. with the new GOP
     // drawing method, we now also have to call garray_redraw, so that
     // the name is properly updated... LATER: figure out how to just
@@ -838,7 +838,7 @@ void garray_arraydialog(t_garray *x, t_symbol *s, int argc, t_atom *argv)
                  " then garray_redraw due to array name change");
             */
             glist_redraw(x->x_glist);
-            // ico@vt.edu 2022-09-28: disabled garray_redraw here because
+            // ico@bukvic.net 2022-09-28: disabled garray_redraw here because
             // with the new GOP-nested drawing this results in the array
             // being incorrectly positioned. This is because (I think)
             // of the socket-based communication that results in
@@ -1444,7 +1444,7 @@ static void garray_displace(t_gobj *z, t_glist *glist, int dx, int dy)
 
 static void garray_select(t_gobj *z, t_glist *glist, int state)
 {
-    // ico@vt.edu 2022-11-21: now that array is truly embedded inside
+    // ico@bukvic.net 2022-11-21: now that array is truly embedded inside
     // canvas, this entire function is unnecessary, including selection
     // of the scalars. doing so, leaves a stale selection, so when a
     // new object is created, insides of the array continue to move
@@ -1624,7 +1624,7 @@ static void garray_doredraw(t_gobj *client, t_glist *glist)
         if (array)
             array->a_vec = data_vec;
 
-        // ico@vt.edu 2022-12-02: we don't need any of this anymore since
+        // ico@bukvic.net 2022-12-02: we don't need any of this anymore since
         // now arrays are a part of the gop <group>. Leaving it all for
         // a little while, and if there are no regressions, will delete it.
         //fprintf(stderr,"check if we need to reselect %zx %zx %zx\n",
@@ -1685,7 +1685,7 @@ void garray_redraw(t_garray *x)
 
     if (glist_isvisible(x->x_glist))
     {
-        // ico@vt.edu 2022-12-07: save latest contents into our
+        // ico@bukvic.net 2022-12-07: save latest contents into our
         // temporary array. We will reference these when we are
         // redrawing...
 
@@ -2177,7 +2177,7 @@ static void garray_data(t_garray *x)
 
 }
 
-/* ico@vt.edu: used for scalar to detect type and thereby adjust visual offset */
+/* ico@bukvic.net: used for scalar to detect type and thereby adjust visual offset */
 int garray_get_style(t_garray *x)
 {
     return(x->x_style);

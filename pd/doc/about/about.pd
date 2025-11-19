@@ -50,17 +50,16 @@ doc/manuals/Pd/License.html;
 for the purpose of improving editor functionality and stability. It
 is distributed under the same license as Pd. For additional info see:
 ;
-#X obj 18 276 pddp/pddplink http://l2ork.music.vt.edu/main/;
 #X text 18 381 Reference documentation for Pd lives in:;
 #X obj 18 399 pddp/pddplink @pd_help/../1.manual/index.htm -text doc/1.manual/index.htm
 ;
-#X obj 18 29 cnv 15 482 33 empty \$0-about_text Pd-L2Ork\ v.20240930\ rev.afe61d05c
-67 14 0 18 #ff9f71 #000000 0;
+#X obj 18 29 cnv 15 482 33 empty \$0-about_text Pd-L2Ork\ v.20251111\ rev.9b0619f6
+67 14 0 18 #ffff9f71 #ff000000 0;
 #N canvas 430 372 450 323 cat 0;
 #X obj 16 180 draw sprite ./cat;
 #X obj 16 21 struct cat float x float y;
-#X obj 16 80 tgl 15 1 empty empty empty 17 7 0 10 #fcfcfc #000000 #000000
-1 1 1;
+#X obj 16 80 tgl 15 1 empty empty empty 17 7 0 10 #fffcfcfc #ff000000
+#ff000000 1 1 1;
 #X obj 70 125 + 1;
 #X obj 16 125 f;
 #X obj 70 150 mod 30;
@@ -75,13 +74,14 @@ is distributed under the same license as Pd. For additional info see:
 #X connect 7 0 4 0;
 #X restore 454 426 pd cat;
 #X scalar cat 411 75 \;;
-#X obj 407 58 cnv 15 93 20 empty \$0-vanilla_text Pd-0.54.0 10 6 0
-14 #d0d0d0 #000000 0;
-#X obj 393 398 cnv 15 31 20 empty \$0-precision_text 32 10 7 0 14 #fcfcfc
-#000000 0;
+#X obj 407 58 cnv 15 93 20 empty \$0-vanilla_text Pd-0.55.2 10 6 0
+14 #ffd0d0d0 #ff000000 0;
+#X obj 393 398 cnv 15 31 20 empty \$0-precision_text 32 10 7 0 14 #fffcfcfc
+#ff000000 0;
 #X text 427 397 bit floats;
 #X text 18 304 Pd-L2Ork 2.x integrates elements of Purr-Data and merges
 it with the milestones achieved in the Pd-L2Ork 1.x and Pure-Data.
 It further introduces an array of new and unique features.;
 #X obj 9 6 ggee/image pd-l2ork-k12.png 0 0 78 78 empty empty empty
-78 78 1 0 10 #000000 0 -8 12.5 12.5 0 1 1;
+78 78 1 0 10 #ff000000 0 -8 12.5 12.5 0 1 1;
+#X obj 18 276 pddp/pddplink http://l2ork.bukvic.net;

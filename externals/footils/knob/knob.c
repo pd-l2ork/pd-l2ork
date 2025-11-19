@@ -12,7 +12,7 @@
    in Pd where it is declared */
 
 /* Complete overhaul based on initial Jonathan Wilkes' Purr-Data port by
-   Ivica Ico Bukvic ico@vt.edu 2020-09-24
+   Ivica Ico Bukvic ico@bukvic.net 2020-09-24
 */
 
 
@@ -417,7 +417,7 @@ static void knob_motion(t_knob *x, t_floatarg dx, t_floatarg dy)
             x->x_pos = x->x_min;        
     }
 
-/* ico@vt.edu 2020-09-25
+/* ico@bukvic.net 2020-09-25
 DO NOT ERASE -- this took 2 days to flesh out from the old code and can be now reused for other purposes
 t_float norm_val = (x->x_pos - x->x_min) / (x->x_max - x->x_min);
 t_float log_norm_val = log(1 + (norm_val * 99))/(log(100));

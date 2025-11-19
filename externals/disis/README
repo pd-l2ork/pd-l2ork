@@ -1,4 +1,4 @@
-disis_wiimote by Ivica Ico Bukvic for L2Ork (2009-23) l2ork.music.vt.edu
+disis_wiimote by Ivica Ico Bukvic for L2Ork (2009-23) l2ork.bukvic.net
 wiimote external for Pd-L2Ork(Linux-only due to platform-specific bluetooth stack)
 Based on wiimote external by Mike Wozniewki (Feb 2007). This project uses a fork
 of the CWiid library by L. Donnie Smith

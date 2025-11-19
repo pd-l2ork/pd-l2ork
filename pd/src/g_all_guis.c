@@ -487,7 +487,7 @@ void iemgui_label_font(t_iemgui *x, t_symbol *s, int ac, t_atom *av)
     iemgui_update_properties(x, IEM_GUI_PROP_FONT);
 }
 
-// ico@vt.edu 2020-12-11: pass various css attribute changes
+// ico@bukvic.net 2020-12-11: pass various css attribute changes
 void iemgui_css(t_iemgui *x, t_symbol *s, int argc, t_atom *argv)
 {
     if (argc > 2 && glist_isvisible(x->x_glist))
@@ -1636,7 +1636,7 @@ void iemgui_base_draw_move(t_iemgui *x)
     c->c_wb->w_getrectfn((t_gobj *)x,x->x_glist,&x1,&y1,&x2,&y2);
     //iemgui_getrect_draw(x, &x1, &y1, &x2, &y2);
     gop_redraw=gr;
-    // ico@vt.edu 2023-02-20: due to new nested drawing we now
+    // ico@bukvic.net 2023-02-20: due to new nested drawing we now
     // have to displace any requested position by the object's
     // original position, but only if we are drawing inside a GOP
     if (x->x_glist != glist_getcanvas(x->x_glist))
@@ -1703,7 +1703,7 @@ void scrollbar_update(t_glist *glist)
     canvas_getscroll(canvas);
 }
 
-/* ico@vt.edu 20200920: introduced for situation where getscroll
+/* ico@bukvic.net 20200920: introduced for situation where getscroll
 needs to occur before the next command, e.g. automate. */
 void scrollbar_synchronous_update(t_glist *glist)
 {

@@ -18,7 +18,7 @@
     width: 140px;
     position: relative;
     left: 5px;
-/* ico@vt.edu animate individual k12 tabs */
+/* ico@bukvic.net animate individual k12 tabs */
     transition: max-height 0.25s ease-in;
 }
 
@@ -116,4 +116,9 @@
 /* Configure labels to look like tabs */
 .prefs_tab + label {
     margin-right: -16px;
+}
+
+/* control inlet */
+.editmode .selected .xlet_control {
+    visibility: hidden;
 }

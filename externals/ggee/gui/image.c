@@ -1,5 +1,5 @@
 /*
-    image object by Ivica Ico Bukvic <ico@vt.edu> 2020-12-03
+    image object by Ivica Ico Bukvic <ico@bukvic.net> 2020-12-03
     this object is backwards compatible with the ggee/image
 */
 
@@ -154,7 +154,7 @@ static void image_drawme(t_gobj *client, t_glist *glist)
                 if (1) // was if it was only gopspill
                     gui_vmess("gui_ggee_image_display", "xxi",
                         glist_getcanvas(glist), x, 0);
-                // ico@vt.edu 2021-10-08: here we need to convert the path
+                // ico@bukvic.net 2021-10-08: here we need to convert the path
                 // to realpath because nw.js has an inconsistent way of
                 // handling paths. e.g., when running pd-l2ork on Linux from
                 // a command line, first time you open the patch it works ok.
@@ -595,7 +595,7 @@ static void image_clickmode(t_image *x, t_float f)
 {
     if (f >= 0 && f <= 3)
         x->x_click = (int)f;
-    // ico@vt.edu 2021-10-08: change the iemgui object version
+    // ico@bukvic.net 2021-10-08: change the iemgui object version
     // based on whether it has passthrough click mode, so that
     // g_editor.c can handle it properly
     x->x_gui.x_obj.te_iemgui = (x->x_click == 3 ? 3 : 2);
@@ -768,7 +768,7 @@ static void image_open(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
         if (1) // was if it was only gopspill
             gui_vmess("gui_ggee_image_display", "xxi", 
                 glist_getcanvas(x->x_gui.x_glist), x, 0);
-        // ico@vt.edu 2021-10-08: here we need to convert the path
+        // ico@bukvic.net 2021-10-08: here we need to convert the path
         // to realpath because nw.js has an inconsistent way of
         // handling paths. e.g., when running pd-l2ork on Linux from
         // a command line, first time you open the patch it works ok.
@@ -1127,7 +1127,7 @@ static void image_rotate(t_image* x, t_symbol *s, t_int argc, t_atom *argv)
         }
         else
         {
-            // ico@vt.edu 2021-10-21: no need to report this as an error since it
+            // ico@bukvic.net 2021-10-21: no need to report this as an error since it
             // sometimes happens when the image is still being loaded due to the
             // canvas just having been opened, while the metro calling the rotation
             // may be already firing

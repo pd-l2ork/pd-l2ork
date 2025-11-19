@@ -10,7 +10,7 @@
 #define IEM_SL_MINSIZE 2
 #define IEM_FONT_MINSIZE 4
 
-// ico@vt.edu 2024-11-10: added vanilla modes 4 and 6 and repuprosed
+// ico@bukvic.net 2024-11-10: added vanilla modes 4 and 6 and repuprosed
 // 6 for the knob object
 #define IEM_GUI_DRAW_MODE_UPDATE 0
 #define IEM_GUI_DRAW_MODE_MOVE   1

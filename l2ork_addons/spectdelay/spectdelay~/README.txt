@@ -1,6 +1,6 @@
 spectdelay~ is a PD port of John Gibson's jg.spectdelay~ v.0.9 a granulation object for Max5 (John Gibson <johgibso@gmail.com> www.john-gibson.com).
 
-Port by Ivica Ico Bukvic (<ico@vt.edu> ico.bukvic.net).
+Port by Ivica Ico Bukvic (<ico@bukvic.net> ico.bukvic.net).
 
 The source code is licensed under the GNU General Public License
 (see "COPYING").

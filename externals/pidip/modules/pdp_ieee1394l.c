@@ -341,7 +341,7 @@ static int pdp_ieee1394_open(t_pdp_ieee1394 *x, t_symbol *name)
   All of the errors in this method return -1 anyhow, so fd should be 0 to allow
   successful open if everything goes ok.
 
-  Ico Bukvic ico@vt.edu 2-18-07
+  Ico Bukvic ico@bukvic.net 2-18-07
   */
   int fd = 0; 
   struct dv1394_init init = {
@@ -399,7 +399,7 @@ static int pdp_ieee1394_open(t_pdp_ieee1394 *x, t_symbol *name)
   }
   /*Extra verbosity never hurt anyone...
 
-  Ico Bukvic ico@vt.edu 2-18-07
+  Ico Bukvic ico@bukvic.net 2-18-07
   */
   post("DV4L: Successfully opened...");
   startTransfer(x);

@@ -308,7 +308,7 @@ right you can see a VU dial consisting of three images \, the background
 visibility is toggled when the input level exceeds unity. Enable DSP
 and use microphone or manually alter the value in the topmost number
 box to monitor its behavior.;
-#X text 412 1893 (c) ico@vt.edu 2020/1;
+#X text 412 1893 (c) ico@bukvic.net 2020/1;
 #N canvas 81 279 383 373 advanced_css_properties 0;
 #X obj 48 163 ggee/image vu.png 0 0 287 163 empty empty empty 287 163
 1 0 10 #000000 0 -8 12.5 12.5 0 1 1;

@@ -7,7 +7,7 @@
 14 #e0e0e0 #202020 0;
 #N canvas 499 347 369 120 META 0;
 #X text 12 75 LIBRARY PDDP;
-#X text 12 92 HELP_PATCH_AUTHORS Ivica Ico Bukvic <ico@vt.edu>;
+#X text 12 92 HELP_PATCH_AUTHORS Ivica Ico Bukvic <ico@bukvic.net>;
 #X text 12 15 KEYWORDS GUI disable-popup editable scriptable options
 canvas;
 #X text 12 45 DESCRIPTION advanced scriptable settings for the canvas

@@ -103,7 +103,6 @@
 79, 12 tracker-char 61  ;
 80, 12 tracker-char 62  ;
 81, 12 tracker-char 63  ;
-82, 12 tracker-char 64  ;
 83, 12 tracker-data 0 62;
 84, 12 tracker-data 1 0;
 85, 12 tracker-data 2 0;
@@ -168,7 +167,6 @@
 144, 12 tracker-data 61 0;
 145, 12 tracker-data 62 0;
 146, 12 tracker-data 63 0;
-147, 12 tracker-data 64 0;
 148, 12 flanger-ms 10;
 149, 12 flanger-mod-amp 100;
 150, 12 flanger-amp 0.351852;
@@ -285,7 +283,6 @@
 238, 11 tracker-char 61  ;
 239, 11 tracker-char 62  ;
 240, 11 tracker-char 63  ;
-241, 11 tracker-char 64  ;
 242, 11 tracker-data 0 60;
 243, 11 tracker-data 1 0;
 244, 11 tracker-data 2 0;
@@ -350,7 +347,6 @@
 303, 11 tracker-data 61 0;
 304, 11 tracker-data 62 0;
 305, 11 tracker-data 63 0;
-306, 11 tracker-data 64 0;
 307, 11 flanger-ms 10;
 308, 11 flanger-mod-amp 100;
 309, 11 flanger-amp 0.351852;
@@ -638,7 +634,6 @@
 554, 9 tracker-char 61  ;
 555, 9 tracker-char 62  ;
 556, 9 tracker-char 63  ;
-557, 9 tracker-char 64  ;
 558, 9 tracker-data 0 0;
 559, 9 tracker-data 1 0;
 560, 9 tracker-data 2 0;
@@ -703,7 +698,6 @@
 619, 9 tracker-data 61 0;
 620, 9 tracker-data 62 0;
 621, 9 tracker-data 63 0;
-622, 9 tracker-data 64 0;
 623, 9 flanger-ms 10;
 624, 9 flanger-mod-amp 100;
 625, 9 flanger-amp 0.351852;
@@ -820,7 +814,6 @@
 713, 8 tracker-char 61  ;
 714, 8 tracker-char 62  ;
 715, 8 tracker-char 63  ;
-716, 8 tracker-char 64  ;
 717, 8 tracker-data 0 0;
 718, 8 tracker-data 1 0;
 719, 8 tracker-data 2 0;
@@ -885,7 +878,6 @@
 778, 8 tracker-data 61 0;
 779, 8 tracker-data 62 0;
 780, 8 tracker-data 63 0;
-781, 8 tracker-data 64 0;
 782, 8 flanger-ms 0.001;
 783, 8 flanger-mod-amp 33.3333;
 784, 8 flanger-amp 0.602593;
@@ -1003,7 +995,6 @@
 872, 7 tracker-char 61  ;
 873, 7 tracker-char 62  ;
 874, 7 tracker-char 63  ;
-875, 7 tracker-char 64  ;
 876, 7 tracker-data 0 69;
 877, 7 tracker-data 1 0;
 878, 7 tracker-data 2 0;
@@ -1068,7 +1059,6 @@
 937, 7 tracker-data 61 0;
 938, 7 tracker-data 62 0;
 939, 7 tracker-data 63 0;
-940, 7 tracker-data 64 0;
 941, 7 flanger-ms 10;
 942, 7 flanger-mod-amp 100;
 943, 7 flanger-amp 0.351852;
@@ -1354,7 +1344,6 @@
 1188, 5 tracker-char 61 o;
 1189, 5 tracker-char 62 o;
 1190, 5 tracker-char 63  ;
-1191, 5 tracker-char 64  ;
 1192, 5 tracker-data 0 72;
 1193, 5 tracker-data 1 72;
 1194, 5 tracker-data 2 74;
@@ -1419,7 +1408,6 @@
 1253, 5 tracker-data 61 79;
 1254, 5 tracker-data 62 79;
 1255, 5 tracker-data 63 0;
-1256, 5 tracker-data 64 0;
 1257, 5 flanger-ms 20;
 1258, 5 flanger-mod-amp 20.3704;
 1259, 5 flanger-amp 0.314815;
@@ -1537,7 +1525,6 @@
 1347, 4 tracker-char 61  ;
 1348, 4 tracker-char 62 .;
 1349, 4 tracker-char 63  ;
-1350, 4 tracker-char 64  ;
 1351, 4 tracker-data 0 52;
 1352, 4 tracker-data 1 0;
 1353, 4 tracker-data 2 55;
@@ -1602,7 +1589,6 @@
 1412, 4 tracker-data 61 0;
 1413, 4 tracker-data 62 62;
 1414, 4 tracker-data 63 0;
-1415, 4 tracker-data 64 0;
 1416, 4 flanger-ms 10;
 1417, 4 flanger-mod-amp 100;
 1418, 4 flanger-amp 0;
@@ -1719,7 +1705,6 @@
 1506, 3 tracker-char 61  ;
 1507, 3 tracker-char 62  ;
 1508, 3 tracker-char 63  ;
-1509, 3 tracker-char 64  ;
 1510, 3 tracker-data 0 57;
 1511, 3 tracker-data 1 0;
 1512, 3 tracker-data 2 0;
@@ -1784,7 +1769,6 @@
 1571, 3 tracker-data 61 0;
 1572, 3 tracker-data 62 0;
 1573, 3 tracker-data 63 0;
-1574, 3 tracker-data 64 0;
 1575, 3 flanger-ms 0.001;
 1576, 3 flanger-mod-amp 33.3333;
 1577, 3 flanger-amp 0;
@@ -1896,7 +1880,6 @@
 1665, 2 tracker-char 61  ;
 1666, 2 tracker-char 62  ;
 1667, 2 tracker-char 63  ;
-1668, 2 tracker-char 64  ;
 1669, 2 tracker-data 0 62;
 1670, 2 tracker-data 1 0;
 1671, 2 tracker-data 2 0;
@@ -1961,7 +1944,6 @@
 1730, 2 tracker-data 61 0;
 1731, 2 tracker-data 62 0;
 1732, 2 tracker-data 63 0;
-1733, 2 tracker-data 64 0;
 1734, 2 flanger-ms 18;
 1735, 2 flanger-mod-amp 53.7037;
 1736, 2 flanger-amp 0;

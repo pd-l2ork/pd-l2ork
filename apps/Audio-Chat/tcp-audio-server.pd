@@ -2067,7 +2067,7 @@ send \$1 remove, f 36;
 #X msg 182 741 0.1;
 #X msg 152 897 send \$1 server Chat Audio server version \$3;
 #X msg 71 792 Audio-Chat server version \$1;
-#X text 1263 928 l2ork.music.vt.edu;
+#X text 1263 928 l2ork.bukvic.net;
 #X text 1131 911 (c) 2021 Ivica Ico Bukvic ico.bukvic.net;
 #X text 1167 877 Simple 10-Client Audio-Chat Server;
 #X text 1173 894 Based on the L2Ork Tweeter Server;

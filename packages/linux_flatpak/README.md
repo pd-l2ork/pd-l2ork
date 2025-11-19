@@ -1,6 +1,6 @@
 # Pd-L2Ork packaged for Flatpak
 
-This is a Flatpak for [Pd-L2Ork](http://l2ork.music.vt.edu/main/make-your-own-l2ork/software/).
+This is a Flatpak for [Pd-L2Ork](http://l2ork.bukvic.net/main/make-your-own-l2ork/software/).
 
 Pd-L2Ork is a popular fork of the [Pure Data](http://puredata.info/), an open
 source visual programming language for multimedia.

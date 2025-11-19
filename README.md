@@ -66,7 +66,7 @@ Pd-L2ork has the following goals:
 
 For Pd-L2Ork website see:
 
-<http://l2ork.music.vt.edu/main/make-your-own-l2ork/software/>
+<http://l2ork.bukvic.net/main/make-your-own-l2ork/software/>
  
 ### Relationship of Pd-L2Ork to Pure Data
 
@@ -83,7 +83,7 @@ There are two maintained distributions of Pure Data:
 
 Releases are provided on the L2Ork's webpage:
 
-<http://l2ork.music.vt.edu/main/make-your-own-l2ork/software/>
+<http://l2ork.bukvic.net/main/make-your-own-l2ork/software/>
 
 ### Build Guide
 
@@ -213,11 +213,9 @@ since it will usually contain spaces, making the build fail.
 
 2. Download and install the [inno setup Quickstart Pack](http://www.jrsoftware.org/isdl.php) which includes the Script Editor
 
-3. Run the "MSYS2 MinGW 64-bit" shell  
-   msys2 adds three Start Menu items for different "flavors" of shell:
-    + MSYS2 MinGW 32-bit
-    + MSYS2 MinGW 64-bit <- click this one!
-    + MSYS2 MSYS
+3. Run the "MSYS2 MINGW64" shell  
+   msys2 adds multiple Start Menu items for different "flavors" of shell:
+    + MSYS2 MINGW64 <- click this one!
 
 4. Install the dependencies  
    Once the shell opens, we need to install the dependencies for building
@@ -233,6 +231,7 @@ since it will usually contain spaces, making the build fail.
    Now everything should be up-to-date. Issue the following command:
 
         pacman -S autoconf automake git libtool \
+          mingw-w64-ucrt-x86_64-gcc \
           make mingw-w64-x86_64-dlfcn \
           mingw-w64-x86_64-fluidsynth \
           mingw-w64-x86_64-SDL2 mingw-w64-x86_64-gcc-libs \
@@ -259,7 +258,6 @@ since it will usually contain spaces, making the build fail.
 
 7. Finally, build Pd-L2Ork
 
-        cd ~/pd-l2ork
         git config --global http.sslverify "false"
         make
 

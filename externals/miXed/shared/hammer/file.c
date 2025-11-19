@@ -717,7 +717,7 @@ void hammerfile_setup(t_class *c, int embeddable)
 				     sizeof(t_hammerfile),
 				     CLASS_PD | CLASS_NOINLET, 0);
 
-	// ico@vt.edu 2021-10-31: callback, map, close, and notify added
+	// ico@bukvic.net 2021-10-31: callback, map, close, and notify added
 	// to make the hammerfile compatible with the pd-l2ork 2.x
 	// dialog_text.html dialog, ideally ensuring that all the cyclone
 	// objects can properly function.

@@ -7,7 +7,7 @@
 #X obj 65 199 sprintf %s/%s;
 #X symbolatom 65 264 70 0 0 0 - - - 0 0 1, f 70;
 #X obj 65 221 tosymbol;
-#X text 4 5 patch_name by Ivica Ico Bukvic (c) 2012 <ico@vt.edu>;
+#X text 4 5 patch_name by Ivica Ico Bukvic (c) 2012 <ico@bukvic.net>;
 #X obj 267 34 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 1;
 #N canvas 4 100 450 300 subpatch 0;

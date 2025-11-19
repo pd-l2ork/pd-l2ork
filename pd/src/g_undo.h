@@ -3,7 +3,7 @@
 #define __g_undo_h_
 
 /*
-Infinite undo by Ivica Ico Bukvic <ico@vt.edu> Dec. 2011
+Infinite undo by Ivica Ico Bukvic <ico@bukvic.net> Dec. 2011
 
 This is the home of infinite undo queue. Each root canvas has one of these.
 Only canvas that is root will instantiate the pointer to t_undo_action struct.

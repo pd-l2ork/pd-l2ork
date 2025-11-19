@@ -7,7 +7,7 @@
 #X floatatom 179 92 5 0 0 0 - - -;
 #X obj 266 169 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
-#X text 41 218 DISIS version of phasor~ by Ivica Ico Bukvic <ico@vt.edu>
+#X text 41 218 DISIS version of phasor~ by Ivica Ico Bukvic <ico@bukvic.net>
 (c) 2009 http://disis.music.vt.edu. Code released under the same BSD
 license as the rest of the Pd.;
 #X text 40 262 The main difference between the disis_phasor~ and phasor~

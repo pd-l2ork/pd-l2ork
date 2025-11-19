@@ -282,7 +282,7 @@ void binbuf_text(t_binbuf *x, const char *text, size_t size)
     x->b_n = natom;
 }
 
-    /* ico@vt.edu 2025-04-22:
+    /* ico@bukvic.net 2025-04-22:
        convert text to a binbuf with a single atom
        (thus preserving numbers as string and preventing truncation, 
        e.g. [sprintf %s%s%s%s%s%s%s%s] will get converted into a number
@@ -380,7 +380,7 @@ void binbuf_gettext(const t_binbuf *x, char **bufp, int *lengthp)
     }
     if (length && buf[length-1] == ' ')
     {
-        // 2021-11-18 ico@vt.edu: here the new length (3rd arg) is equal to
+        // 2021-11-18 ico@bukvic.net: here the new length (3rd arg) is equal to
         // length and not length-1 because realloc in resizebytes
         // adds a terminating character
         if (newbuf = t_resizebytes(buf, length, length))
@@ -432,7 +432,7 @@ void binbuf_getrawtext(t_binbuf *x, char **bufp, int *lengthp)
     }
     if (length && buf[length-1] == ' ')
     {
-        // 2021-11-18 ico@vt.edu: here the new length (3rd arg) is equal to
+        // 2021-11-18 ico@bukvic.net: here the new length (3rd arg) is equal to
         // length and not length-1 because realloc in resizebytes
         // adds a terminating character
         if (newbuf = t_resizebytes(buf, length, length))
@@ -526,7 +526,7 @@ done:
     binbuf_add(x, nargs, arg);
 }
 
-/* ico@vt.edu 2022-11-22: a function that can process
+/* ico@bukvic.net 2022-11-22: a function that can process
    large amounts of data (e.g. saving array contents)
    at a fraction of time. this is necessary for Windows
    where regualr binbuf_addv for a ~3-minute wav file
@@ -612,7 +612,7 @@ void binbuf_addbinbuf(t_binbuf *x, const t_binbuf *y)
             break;
         case A_SYMBOL:
             //post("addbinbuf: symbol %s", ap->a_w.w_symbol->s_name);
-            // ico@vt.edu 2020-12-11: Here we escape , ; and $ in case
+            // ico@bukvic.net 2020-12-11: Here we escape , ; and $ in case
             // they are interpreted as symbols, which implies they were
             // prepended with a '\'. Doing this will ensure that the patch
             // is reopened the same way it was saved.
@@ -843,7 +843,7 @@ static t_symbol *binbuf_dorealizedollsym(t_pd *target, t_symbol *s, int ac,
     if (substr-str > 0 && substr-str < MAXPDSTRING)
         post("... <%c>", str[substr-str-1]);
     */
-    // ico@vt.edu 2021-04-29: added third condition to check if $ is preceded
+    // ico@bukvic.net 2021-04-29: added third condition to check if $ is preceded
     // by a backslash, in which case the dollsym should remain unrealized
     if (!substr || substr-str >= MAXPDSTRING ||
         (substr-str > 0 && substr-str < MAXPDSTRING && str[substr-str-1] == '\\'))

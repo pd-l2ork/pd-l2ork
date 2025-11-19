@@ -1,8 +1,8 @@
 # Authors (listed alphabetically)
-Drew Bowman <drewb00@vt.edu>  
-Ivica Ico Bukvic <ico@vt.edu>  
-William Furgerson <williamfurgerson@vt.edu>  
-Zack Lee <cuinjune@gmail.com>  
+Drew Bowman <drewb00@vt.edu>
+Ivica Ico Bukvic <ico@bukvic.net>
+William Furgerson <williamfurgerson@vt.edu>
+Zack Lee <cuinjune@gmail.com>
 
 With contributions from Jonathan Wilkes and Albert Graef
 
@@ -74,7 +74,7 @@ docker-compose up --build -d
 
 	A successful completion of this build will produce a main.js, main.wasm, main.data, and main.html files in the folder [emscripten/build](./build), and will also set up the web server environment in the [emscripten/projects/WebPdL2Ork](./projects/WebPdL2Ork) folder and its Web server ready public subfolder with the demo patch. See below on how to set up the Web server.
 
-3. Install the nvm server by following online instruction (see https://github.com/itp-dwd/2020-spring/blob/master/guides/installing-nodejs.md) OR reference the pd-l2ork one (https://l2ork.music.vt.edu:3000). Below is the key command (note that the version may change):
+3. Install the nvm server by following online instruction (see https://github.com/itp-dwd/2020-spring/blob/master/guides/installing-nodejs.md) OR reference the pd-l2ork one (https://l2ork.bukvic.net:3000). Below is the key command (note that the version may change):
 
 		cd emscripten/projects/WebPdL2Ork
 		npm i

@@ -114,7 +114,7 @@ exports.set_focused_patchwin = function(cid) {
     last_focused = cid;
 }
 
-// ico@vt.edu 2020-08-12: check which OS we have since Windows has a different
+// ico@bukvic.net 2020-08-12: check which OS we have since Windows has a different
 // windows positioning logic on nw.js 0.14.7 than Linux/OSX. Go figure...
 function check_os(name) {
 
@@ -125,7 +125,7 @@ function check_os(name) {
 
 exports.check_os = check_os;
 
-// ico@vt.edu 2020-08-14: used to speed-up window size consistency and other
+// ico@bukvic.net 2020-08-14: used to speed-up window size consistency and other
 // OS-centric operations by avoiding constant calls to string comparisons.
 // Most pertinent calls can be found in index.js' nw_create_window and pdgui.js'
 // canvas_check_geometry
@@ -564,7 +564,7 @@ function check_timestamps(manif)
     	    var e = manif[j].replace(/\\:/g, "\x1c").split(';:')
     		.map(x => x
                 .replace(/\x1c/g, ":")
-                // ico@vt.edu 2024-12-16: the following breaks on \\neural where
+                // ico@bukvic.net 2024-12-16: the following breaks on \\neural where
                 // \n is misinterpreted as line break. since no other paths
                 // currently have line breaks, we can safely remove this altogether
                 //.replace(/\\n/g, "\n")
@@ -646,7 +646,7 @@ function make_index(force) {
     } catch (err) {
         //console.log(err);
     }
-    // ico@vt.edu 2022-11-09: force rebuilding of index if
+    // ico@bukvic.net 2022-11-09: force rebuilding of index if
     // browser_init option is set in the general preferences tab
     // OR (2022-11-26) if we are passing a "force" flag (used by
     // the preferences "Rebuild Index" button)
@@ -1158,7 +1158,7 @@ function repopulate_autocomplete_dd(cid, doc, ac_dropdown, obj_class, new_obj_el
         })
         ac_dropdown().setAttribute("selected_item", "-1");
 
-        // ico@vt.edu 2022-10-13: make sure that the autocomplete popup can fit
+        // ico@bukvic.net 2022-10-13: make sure that the autocomplete popup can fit
         // below. otherwise, move it above, unless there is not enough room
         // above either.
         var y = ac_dropdown().getBoundingClientRect().y;
@@ -1258,10 +1258,10 @@ function create_autocomplete_dd (cid, doc, ac_dropdown, new_obj_element) {
         dd.style.setProperty("min-width", style.getPropertyValue("min-width"));
         dd.setAttribute("selected_item", "-1");
         dd.setAttribute("searched_text", "");
-        // ico@vt.edu 2022-10-13:
+        // ico@bukvic.net 2022-10-13:
         // help determine which side of the object we are on
         dd.setAttribute("above", "0");
-        // ico@vt.edu 2022-10-12: insert this below the dialogs and scrollbars
+        // ico@bukvic.net 2022-10-12: insert this below the dialogs and scrollbars
         var ref = doc.getElementById("canvas_find");
         ref.parentNode.insertBefore(dd, ref);
     }
@@ -1377,7 +1377,7 @@ exports.get_local_string = lang.get_local_string;
 
 var pd_window;
 var pd_window_keys;
-// ico@vt.edu 2022-12-10: disabled this
+// ico@bukvic.net 2022-12-10: disabled this
 // TODO!: check for regressions
 //exports.pd_window;
 
@@ -1567,7 +1567,7 @@ function cmd_or_ctrl_key(evt) {
 
 exports.cmd_or_ctrl_key = cmd_or_ctrl_key;
 
-// ico@vt.edu 2022-06-29: added global variable for updating canvas background
+// ico@bukvic.net 2022-06-29: added global variable for updating canvas background
 var alt_key = 0;
 
 (function () {
@@ -1962,7 +1962,7 @@ function pd_geo_string(w, h, x, y) {
     return  [w,"x",h,"+",x,"+",y].join("");
 }
 
-// ico@vt.edu: we moved this from index.js, so that we can use the versioning
+// ico@bukvic.net: we moved this from index.js, so that we can use the versioning
 // to also deal with weird offsets between nwjs 0.14/0.24 and 0.46 and upwards
 function check_nw_version(version) {
     // aggraef: check that process.versions["nw"] is at least the given version
@@ -1984,7 +1984,7 @@ function check_nw_version(version) {
 
 exports.check_nw_version = check_nw_version;
 
-// ico@vt.edu 2025-04-26: Linux when using 0.6x version of nw.js
+// ico@bukvic.net 2025-04-26: Linux when using 0.6x version of nw.js
 // fails to position the window correctly vertically because it is
 // unable to account for its DM's title bar. Inside index.js when
 // we open the main pd window (see gui_init function), we calculate
@@ -2030,7 +2030,7 @@ function canvas_check_geometry(cid) {
     //  patchwin[cid].height + " innerHeight=" + patchwin[cid].window.innerHeight +
     //  " offset=" + nw_menu_offset);
     var win_w = patchwin[cid].width,
-        // ico@vt.edu 2025-04-30:
+        // ico@bukvic.net 2025-04-30:
         // to fully appreciate what is going on in here, see how the window sizes are
         // adjusted inside index.js when they are being created, to ensure they have
         // the same size and position when running on different platforms. index.js'
@@ -2048,7 +2048,7 @@ function canvas_check_geometry(cid) {
     //post("canvas_check_geometry w=" + win_w + " h=" + win_h +
     //    " x=" + win_x + " y=" + win_y + " cnv_w=" + cnv_width + " cnv_h=" + cnv_height);
 
-    // ico@vt.edu 2025-04-30:
+    // ico@bukvic.net 2025-04-30:
     // to fully appreciate what is going on in here, see how the window sizes are
     // adjusted inside index.js when they are being created, to ensure they have
     // the same size and position when running on different platforms. index.js'
@@ -2057,10 +2057,10 @@ function canvas_check_geometry(cid) {
     
     // We're reusing win_x and win_y below, as it
     // shouldn't make a difference to the bounds
-    // algorithm in Pd (ico@vt.edu: this is not true anymore for nw 0.46+)
+    // algorithm in Pd (ico@bukvic.net: this is not true anymore for nw 0.46+)
     //post("relocate " + pd_geo_string(cnv_width, cnv_height, win_x, win_y) + " " +
     //       pd_geo_string(cnv_width, cnv_height, win_x, win_y));
-    // IMPORTANT! ico@vt.edu: for nw 0.46+ we will need to replace first pd_geo_string's
+    // IMPORTANT! ico@bukvic.net: for nw 0.46+ we will need to replace first pd_geo_string's
     // first two args (win_w and win_h with cnv_width and cnv_height + nw_menu_offset
     // to ensure the window reopens exactly how it was saved)
     pdsend(cid, "relocate",
@@ -2234,7 +2234,7 @@ function menu_new () {
            "Untitled-" + untitled_number,
            enquote(defunkify_windows_path(untitled_directory)));
 
-    // ico@vt.edu 2022-12-05: made invisible preset_hub with
+    // ico@bukvic.net 2022-12-05: made invisible preset_hub with
     // k12 scope mandatory for all new patches due to the
     // ability to now change k12 mode at runtime.
     pdsend("#N canvas");
@@ -2413,7 +2413,7 @@ function canvas_menuclose_callback(cid_for_dialog, cid, force) {
     // big workaround-- apparently the dialog placement algo and the nw.js
     // zoomLevel state change don't happen deterministically. So we set a
     // timeout to force the dialog to render after the zoomLevel change.
-    // ico@vt.edu 2022-12-15: update K12_menu and getscroll to update
+    // ico@bukvic.net 2022-12-15: update K12_menu and getscroll to update
     // scrollbars in case we are changing zoom level. otherwise menu and
     // scrollbars end-up being incorrect. we delay this to allow for
     // zoom to update.
@@ -2509,7 +2509,7 @@ function menu_send(name) {
 }
 
 /*
-ico@vt.edu 20200907: added svg tiled background to reflect edit mode and
+ico@bukvic.net 20200907: added svg tiled background to reflect edit mode and
 integrated it into the canvas_set_editmode below.
 20220627: Merged with further improvements from Purr-Data that allow for
 snap to grid.
@@ -2547,7 +2547,7 @@ function get_grid_coords(cid, svg_elem) {
     return { x: dx, y: dy };
 }
 
-// 2022-06-29 ico@vt.edu:
+// 2022-06-29 ico@bukvic.net:
 // currently unused as this is created behind other objects and therefore
 // potentially useless
 function create_svg_lock(cid) {
@@ -2679,14 +2679,20 @@ function set_editmode_bg(cid, svg_elem, state)
     var offset, zoom;
     if (!state) {
         if (alt_key)
-            set_bg(cid, create_editmode_key_runmode_bg(cid, svg_elem),
-                "0% 0%", "repeat");
+            //set_bg(cid, create_editmode_key_runmode_bg(cid, svg_elem),
+            //    "0% 0%", "repeat");
+            // ico@bukvic.net 2025-10-29:
+            // this is too messy due to alt key autorepeat, so we are disabling
+            // different look for the alt key pressed temporary runtime. it is
+            // only cosmetic anyhow.
+            set_bg(cid, "none", "0% 0%", "repeat");
         else
             set_bg(cid, "none", "0% 0%", "repeat");
     } else {
         if (alt_key)
-            set_bg(cid, create_editmode_key_runmode_bg(cid, svg_elem),
-                "0% 0%", "repeat");
+            //set_bg(cid, create_editmode_key_runmode_bg(cid, svg_elem),
+            //    "0% 0%", "repeat");
+            set_bg(cid, "none", "0% 0%", "repeat");
         else
             set_bg(cid, create_editmode_bg(cid, svg_elem), "0% 0%", "repeat");
     }
@@ -2700,7 +2706,7 @@ function update_svg_background(cid, svg_elem) {
     // it has we assume we're in editmode.
     //post("...bg=" + bg);
     if (bg !== "none") {
-        set_editmode_bg(cid, svg_elem, 1);
+        set_editmode_bg(cid, svg_elem, true);
     }
 }
 
@@ -3256,7 +3262,7 @@ exports.last_loaded = function () {
 // close a canvas window
 
 function gui_canvas_cursor(cid, pd_event_type) {
-    //post("gui_canvas_cursor " + pd_event_type);
+    //post("gui_canvas_cursor " + cid + " " + pd_event_type);
     gui(cid).get_elem("patchsvg", function(patch) {
         // A quick mapping of events to pointers-- these can
         // be revised later
@@ -3317,6 +3323,27 @@ function gui_canvas_cursor(cid, pd_event_type) {
                 break;
         }
         patch.style.cursor = c;
+        // ico@bukvic.net 2025-11-08:
+        // On Win11 this for some reason does not update the cursor
+        // until the cursor is moved. Below thing is really ugly and does
+        // not work every time. Not sure if this is Win11-wide issue, or
+        // just a specific build issue.
+        // 2025-11-09: this thing also makes L2Ork Tweeter and other complex
+        // patches flicker. Disabling...
+        /*
+        if (nw_os_is_windows) {
+            //gui(cid).get_nw_window(function(nw_win) {
+            //    nw_win.moveBy(1, 0);
+            //});
+            // OR
+            setTimeout(function () {
+                patchwin[cid].window.moveBy(1, 0);
+            }, 10);
+            setTimeout(function () {
+                patchwin[cid].window.moveBy(-1, 0);
+            }, 10);
+        }
+        */
     });
 }
 
@@ -3324,7 +3351,7 @@ function gui_canvas_cursor(cid, pd_event_type) {
 // console window
 function canvas_sendkey(cid, state, evt, char_code, repeat) {
     var shift = 0, repeat_number = 0;
-    // ico@vt.edu 2021-08-20: here we check whether evt is not null because we use
+    // ico@bukvic.net 2021-08-20: here we check whether evt is not null because we use
     // this same mechanism to paste text into gatom (see m.edit.paste
     // inside the pd_canvas.js)
     if (evt) {
@@ -3417,7 +3444,7 @@ function gui_canvas_new(cid, width, height, geometry, grid, grid_size_value,
     // hack for buggy tcl popups... should go away for node-webkit
     //reset_ctrl_on_popup_window
     
-    // ico@vt.edu: added has_toplevel_scalars, which is primarily
+    // ico@bukvic.net: added has_toplevel_scalars, which is primarily
     // being used for detecting toplevel garrays but may need to be
     // expanded to also deal with scalars
     // 2021-11-12: has_toplevel_scalars now supports:
@@ -3447,7 +3474,7 @@ function gui_canvas_new(cid, width, height, geometry, grid, grid_size_value,
     showgrid[cid] = grid != 0;
     gridsize[cid] = grid_size_value;
     toplevel_scalars[cid] = has_toplevel_scalars;
-    // ico@vt.edu 2022-11-15: by default enable editable until informed
+    // ico@bukvic.net 2022-11-15: by default enable editable until informed
     // otherwise (this message is procesed later via parsing the saved
     // patch or via a message, see g_canvas.c for more info)
     editable[cid] = 1;
@@ -3457,7 +3484,7 @@ function gui_canvas_new(cid, width, height, geometry, grid, grid_size_value,
     // Keep patches on the visible screen
     var xpos = Math.min(Number(geometry[0]), window.screen.width - width);
     var ypos = Math.min(Number(geometry[1]), window.screen.height - height);
-    // ico@vt.edu 2022-11-04: for MacOS on nw.js 0.28.3 for some reason
+    // ico@bukvic.net 2022-11-04: for MacOS on nw.js 0.28.3 for some reason
     // the window is not centered vertically against its parent window
     // (Pd-L2Ork console), so here we center it manually. LATER: check
     // if this is necessary for future versions of nw.js and adjust
@@ -3479,7 +3506,7 @@ function gui_canvas_new(cid, width, height, geometry, grid, grid_size_value,
 
     // Not sure why resize and topmost are here--but we'll pass them on for
     // the time being...
-    // ico@vt.edu 2020-08-24: this is because in 1.x we can change these window
+    // ico@bukvic.net 2020-08-24: this is because in 1.x we can change these window
     // properties via scripting. We should add this to 2.x soon...
     //post("gui_canvas_new cargs=" + cargs);
     create_window(cid, "pd_canvas", width + (170 * k12_mode * isblank),
@@ -4070,7 +4097,7 @@ function find_tooltip_index_line(tip, obj) {
 // In the future, it might make sense to combine the scalar and object
 // creation, in which case a flag to toggle the offset would be appropriate.
 
-/* ico@vt.edu 20200916: added following params:
+/* ico@bukvic.net 20200916: added following params:
    ownercid    = the canvas id to which gobj belongs. This is the same as cid
                  for toplevel gobjs and for non-toplevel gop-drawn objects, it
                  is the actual canvas the gobj belongs to. cid on the other hand
@@ -4242,7 +4269,7 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
     return g;
 }
 
-// ico@vt.edu 2022-11-09: implementation for the gopspill feature used by the K12 mode
+// ico@bukvic.net 2022-11-09: implementation for the gopspill feature used by the K12 mode
 function gui_graph_gopspill(cid, tag, state) {
     //post("gui_graph_gopspill cid=" + cid + " tag=" + tag + " state=" + state);
     gui(cid).get_elem(tag + "svg", function(graph_svg) {
@@ -4615,7 +4642,7 @@ function gui_atom_redraw_border(cid, tag, type, width, height) {
 }
 
 // draw a patch cord
-// ico@vt.edu: p11 added to provide different color for when the cord is
+// ico@bukvic.net: p11 added to provide different color for when the cord is
 // being created vs when it is being finished
 function gui_canvas_line(cid,tag,type,curved,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11) {
     gui(cid).get_elem("patchsvg")
@@ -4645,7 +4672,7 @@ function gui_canvas_line(cid,tag,type,curved,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11)
         frag.appendChild(path);
         return frag;
     });
-    // ico@vt.edu 2020-08-12: update scroll when cord is drawn
+    // ico@bukvic.net 2020-08-12: update scroll when cord is drawn
     gui_canvas_get_scroll(cid);
 }
 
@@ -4666,11 +4693,11 @@ function gui_canvas_delete_line(cid, tag) {
     gui(cid).get_elem(tag, function(e) {
         e.parentNode.removeChild(e);
     });
-    // ico@vt.edu 2020-08-12: update scroll when cord is deleted
+    // ico@bukvic.net 2020-08-12: update scroll when cord is deleted
     gui_canvas_get_scroll(cid);
 }
 
-// ico@vt.edu 2021-05-03: autoscroll when patchcord exceeds the window size
+// ico@bukvic.net 2021-05-03: autoscroll when patchcord exceeds the window size
 // LATER: refactor this and consider combining with gui_canvas_move_selection
 function gui_canvas_patchcord_scroll(cid, x1, y1, x2, y2) {
     //post("gui_canvas_patchcord_scroll");
@@ -4819,7 +4846,7 @@ function gui_canvas_patchcord_scroll(cid, x1, y1, x2, y2) {
                 offsety = y1b - bry;
         }
         */
-        // ico@vt.edu 2021-10-19: added edge zone where scroll is initiated
+        // ico@bukvic.net 2021-10-19: added edge zone where scroll is initiated
         // before even getting to the edge of the canvas because it appears
         // the current nw.js version sometimes stops reporting mouse position
         // when the mouse is rapidly pulled away from the window, which
@@ -4918,7 +4945,7 @@ function gui_canvas_update_line(cid, tag, curved, x1, y1, x2, y2, yoff) {
                     :
                     ["M", x1, y1, "L", x2, y2]
                   );
-        // ico@vt.edu 2021-05-03:
+        // ico@bukvic.net 2021-05-03:
         // if we are a new cord created by a user, we will have a tag
         // "newcord", as reflected in g_editor.c, so we need to check
         // if we need to autoscroll when the patch cord exceeds the
@@ -4971,7 +4998,7 @@ function text_to_tspans(cid, svg_text, text, type) {
             //newtext = text.replace(/\n/g, '');
             newtext = text.replace(/\\/g,'');
             //post("atom newtext=<" + newtext +">");
-            // ico@vt.edu 2021-04-16:
+            // ico@bukvic.net 2021-04-16:
             // now truncate gatom by adding '>' at the end of overflow
             // we do this here because it is more flexible and efficient than
             // in c, since this is done post-escaping the \\s
@@ -5181,11 +5208,11 @@ function gobj_font_y_kludge(fontsize) {
 
 function gui_text_new(cid, tag, type, isselected, left_margin,
     font_height, text, font, font_width, is_toplevel) {
-    //ico@vt.edu: different text spacing for GOPs
+    //ico@bukvic.net: different text spacing for GOPs
     //post("gui_text_new type=" + type + " tag=" + tag + " text=<" + text + ">");
     var xoff = 0.5; // Default value for normal objects, GOP uses -0.5
     var yoff = 0;
-    /* ico@vt.edu 20200907: the following id_suffix is used for gatom objects.
+    /* ico@bukvic.net 20200907: the following id_suffix is used for gatom objects.
     When activated, they tend to highlight both the label and the gatom contents
     since prior to this there was no differentiation between the two in terms of
     their tags. However, g_rtext.c instantiates gatom contents with type "atom"
@@ -5398,7 +5425,7 @@ function gui_gobj_deselect(cid, tag) {
         */
         e.classList.remove("selected");
         //}
-        // ico@vt.edu: check for scroll in case the handle disappears
+        // ico@bukvic.net: check for scroll in case the handle disappears
         // during deselect. LATER: make handles always fit inside the
         // object, so this won't be necessary
         gui_canvas_get_scroll(cid);
@@ -5408,7 +5435,7 @@ function gui_gobj_deselect(cid, tag) {
 function gui_gobj_dirty(cid, tag, state) {
     //post("gui_gobj_dirty cid=" + cid + " state=" + state);
     gui(cid).get_gobj(tag, function(e) {
-        // ico@vt.edu 2022-09-28: we add two conditions, one
+        // ico@bukvic.net 2022-09-28: we add two conditions, one
         // for border classes (canvas with GOP disabled) used
         // by non-GOP abstractions, and another, gopborder,
         // for GOP-enabled abstractions
@@ -5696,7 +5723,7 @@ function gui_canvas_move_selection(cid, x1, y1, x2, y2) {
         bry = tly + min_height;
         //post("("+tlx+","+tly+") | ("+brx+","+bry+")");
 
-        // ico@vt.edu 2021-10-19: added edge zone where scroll is initiated
+        // ico@bukvic.net 2021-10-19: added edge zone where scroll is initiated
         // before even getting to the edge of the canvas because it appears
         // the current nw.js version sometimes stops reporting mouse position
         // when the mouse is rapidly pulled away from the window, which
@@ -5902,7 +5929,7 @@ function numbox_data_string_triangle(w, h) {
     .join(" ");
 }
 
-// TODO: send fewer parameters from c (ico@vt.edu 20200916: not sure if this is possible)
+// TODO: send fewer parameters from c (ico@bukvic.net 20200916: not sure if this is possible)
 function gui_numbox_new(cid, ownercid, parentcid, tag, color, x, y, w, h, drawstyle, is_toplevel) {
     // numbox doesn't have a standard iemgui border,
     // so we must create its gobj manually
@@ -6692,7 +6719,7 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
         }
         //post("plot_style=" + plot_style);
 
-        /* ico@vt.edu HACKTASCTIC: calculating scrollbars is throwing 0.997 for
+        /* ico@bukvic.net HACKTASCTIC: calculating scrollbars is throwing 0.997 for
            plots drawn inside the subpatch and it is a result of the -1 in the
            (min_width - 1) / width call inside canvas_params. Yet, if we don't
            call this, we don't have nice flush scrollbars with the regular edges.
@@ -6754,7 +6781,7 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
                 }
             }
             else {
-                // ico@vt.edu 2022-09-29: here we squash the x offset if we are
+                // ico@bukvic.net 2022-09-29: here we squash the x offset if we are
                 // drawing an array inside a GOP since it always starts flush with
                 // the left side
                 //if (plot_style > -1)
@@ -6813,7 +6840,7 @@ function gui_scalar_new(cid, ownercid, parentcid, tag, isselected, t1, t2, t3, t
             selection_rect = create_item(cid, "rect", {
                 class: "border" + (plot_style == -2 ? " empty" : ""),
                 "pointer-events": "none",
-                // ico@vt.edu 2022-10-17: set default size in case
+                // ico@bukvic.net 2022-10-17: set default size in case
                 // we don't have a template.
                 width: 5,
                 height: 5,
@@ -7110,7 +7137,7 @@ function gui_drawnumber_vis(cid, parent_tag, tag, x, y, scale_x, scale_y,
 // draw sprite
 // draw image
 
-// ico@vt.edu 2021-10-19: added types, as follows:
+// ico@bukvic.net 2021-10-19: added types, as follows:
 // 0 = uninitialized
 // 1 = ggee/image
 // 2 = moonlib/image
@@ -7456,7 +7483,7 @@ function gui_load_default_image(dummy_cid, key) {
 }
 
 // Load an image and cache the base64 data
-// ico@vt.edu 2021-10-19:
+// ico@bukvic.net 2021-10-19:
 // objtype is reserved to recognize previously batch-loaded images by
 // different objects, so that when the last of that kind of the object
 // has been deleted, we can dispose of all such images
@@ -7538,10 +7565,10 @@ function gui_moonlib_load_image(cid, key, filepath, callback, objtype) {
 // tof/imagebang. For the meaning of tk_anchor see img_size_setter. This
 // interface assumes there is only one image per gobject. If you try to
 // set more you'll get duplicate ids.
-// ico@vt.edu 2020-11-17: added requested width, height, and constrain
+// ico@bukvic.net 2020-11-17: added requested width, height, and constrain
 // aspect ratio which is used by the ggee/image, and in addition the
 // image type (0 = ggee, 1 = moonlib)
-// ico@vt.edu 2021-03-30: added isgop which is used only for ggee/image
+// ico@bukvic.net 2021-03-30: added isgop which is used only for ggee/image
 // to toggle visibility off before the image is properly positioned through
 // a callback. this removes flicker.
 function gui_gobj_draw_image(cid, tag, image_key, tk_anchor, w, h, constrain, type, isgop) {
@@ -7614,7 +7641,7 @@ function gui_gobj_draw_image(cid, tag, image_key, tk_anchor, w, h, constrain, ty
     });
 }
 
-// ico@vt.edu 2021-03-25:
+// ico@bukvic.net 2021-03-25:
 // We use this to remove flicker due to asynchronous loading of image and its
 // potential repositioning due to ggee's gop_spill option, so we initially
 // make the image invisible in the gui_gobj_draw_image, and make it visible
@@ -7648,7 +7675,7 @@ function gui_ggee_image_display(cid, tag, vis) {
     }
 }
 
-// ico@vt.edu 2020-11-13:
+// ico@bukvic.net 2020-11-13:
 // Special function just for ggee/image designed to deal with the
 // gop_spill option while supporting the newly introduced compliance
 // with the xpix and ypix corresponding to the true top-left corner
@@ -8377,7 +8404,7 @@ function gui_mknob_new(cid, ownercid, parentcid, tag, x, y, is_toplevel, show_in
     });
 }
 
-// ico@vt.edu 20200923: improved drawing of the flatgui/knob
+// ico@bukvic.net 20200923: improved drawing of the flatgui/knob
 // code adapted from https://jsbin.com/fiqulevevu/edit?html,js,output
 function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
   var angleInRadians = (angleInDegrees-90) * Math.PI / 180.0;
@@ -8784,7 +8811,7 @@ function zoom_kludge(zoom_level) {
 function gui_canvas_popup(cid, xpos, ypos, canprop, canopen, cansaveas, isobject) {
     // Get page coords for top of window, in case we're scrolled
     gui(cid).get_nw_window(function(nw_win) {
-        // ico@vt.edu updated win_left and win_top for the 0.46.2
+        // ico@bukvic.net updated win_left and win_top for the 0.46.2
         var win_left = nw_win.window.scrollX,
             win_top = nw_win.window.scrollY,
             zoom_level = nw_win.zoomLevel, // these were used to work
@@ -9144,7 +9171,7 @@ function gui_raise_pd_window() {
     */
 }
 
-// ico@vt.edu 2022-11-09: reimplemented this function to make it
+// ico@bukvic.net 2022-11-09: reimplemented this function to make it
 // work with newer nw.js (should also work with older ones)
 function walk_window_list(cid, offset) {
     /*
@@ -9270,7 +9297,7 @@ function file_dialog_obj(obj) {
 
 exports.file_dialog_obj = file_dialog_obj;
 
-// ico@vt.edu 2021-10-31: we expose open and save panels
+// ico@bukvic.net 2021-10-31: we expose open and save panels
 // for the coll and other cyclone objects
 
 function gui_openpanel(cid, target, path, mode) {
@@ -9343,12 +9370,12 @@ function gui_gatom_css(cid, tag, elem, prop, args) {
 
 function gui_dropdown_dialog(did, attr_array) {
     // Just reuse the "gatom" dialog (this is not true anymore, see below)
-    // ico@vt.edu 2020-08-21: made this into a separate dialog due to inability to easily retitle
+    // ico@bukvic.net 2020-08-21: made this into a separate dialog due to inability to easily retitle
     // the window
     dialogwin[did] = create_window(did, "dropdown", 228, 268-5,
         popup_coords[2], popup_coords[3],
         attr_array_to_object(attr_array));
-    // ico@vt.edu 2020-08-21: the following does not work because the window is not created yet?
+    // ico@bukvic.net 2020-08-21: the following does not work because the window is not created yet?
     //dialogwin[did].window.document.getElementById("titlebar_title").innerHTML = "dropdown properties";
 }
 
@@ -9444,9 +9471,9 @@ function gui_iemgui_dialog(did, attr_array) {
     //for (var i = 0; i < attr_array.length; i++) {
     //    attr_array[i] = '"' + attr_array[i] + '"';
     //}
-    // ico@vt.edu: updated window size to match actual, thereby minimizing the flicker
+    // ico@bukvic.net: updated window size to match actual, thereby minimizing the flicker
     // We are subtracting 25 for the menu
-    // ico@vt.edu: since adding frameless window, we use top 20px for draggable titlebar,
+    // ico@bukvic.net: since adding frameless window, we use top 20px for draggable titlebar,
     // so now we subtract only 5 (25-20)
 
     //post("gui_iemgui_dialog " + attr_array);
@@ -9466,7 +9493,7 @@ function gui_image_dialog(did, attr_array) {
 function gui_dialog_set_field(did, field_name, value) {
     var elem;
     //post("gui_dialog_set_field " + did + " " + field_name + " " + value);
-    // ico@vt.edu 2021-10-21: hack-ish solution to an error that
+    // ico@bukvic.net 2021-10-21: hack-ish solution to an error that
     // breaks the gui: try to gracefully handle inability to locate
     // a dialog window.
     try {
@@ -9478,7 +9505,7 @@ function gui_dialog_set_field(did, field_name, value) {
         //post("error: iemgui dialog window id:" + did + " " + field_name +
         //     ":" + value + " update failed... dialog window not found (" + error + ")");
     }
-    // ico@vt.edu 2021-10-21: here we not only check that the elem is not null
+    // ico@bukvic.net 2021-10-21: here we not only check that the elem is not null
     // but also whether the window has fully loaded.
     if (elem && dialogwin[did].window.document.readyState === "complete")
     {
@@ -9528,7 +9555,7 @@ function gui_font_dialog_change_size(did, font_size) {
 
 function gui_menu_font_change_size(canvas, newsize) {
     pdsend(canvas, "menufont", newsize);
-    	// ico@vt.edu 2020-08-24: changed to use submenu
+    	// ico@bukvic.net 2020-08-24: changed to use submenu
     	// this was the following
         /*+document.querySelector('input[name="font_size"]:checked').value,
         current_size,
@@ -9588,7 +9615,7 @@ function gui_canvas_dialog(did, attr_arrays) {
     	(attr_arrays.length > 1 ? 494-25+(attr_arrays.length > 2 ? 38 : 0) : 392-25));
     */
     dialogwin[did] = create_window(did, "canvas",
-        // ico@vt.edu: property dialog size is larger when one has
+        // ico@bukvic.net: property dialog size is larger when one has
         // arrays inside the canvas.
         // 1 for regular canvas and 2 for a canvas with 1 array,
         // 3 for canvas with 2 arrays, etc.
@@ -9663,7 +9690,7 @@ function gui_font_dialog(cid, font_size) {
     //var attrs = { canvas: cid, font_size: font_size };
     //dialogwin[gfxstub] = create_window(gfxstub, "font", 136, 187, 0, 0,
     //    attrs);
-    // ico@vt.edu: 2020-08-24: we don't need this anymore since everything
+    // ico@bukvic.net: 2020-08-24: we don't need this anymore since everything
     // is now inside the menu
 }
 
@@ -9983,7 +10010,7 @@ function get_style_by_selector(w, selector) {
 // for debugging purposes
 exports.get_style_by_selector = get_style_by_selector;
 
-// 2020-10-06 ico@vt.edu: the following deals with nw.js' discrepancy between
+// 2020-10-06 ico@bukvic.net: the following deals with nw.js' discrepancy between
 // positioning svg text, versus html paragraph (editable) text
 var textarea_font_height_array_kludge = [
 // zoom levels      -7  -6  -5  -4  -3  -2  -1  0   1   2   3   4   5   6   7
@@ -10096,11 +10123,13 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         //     3) extend this to all text objects.
         if (type === "msg") {
         	// Message approach
-	        var i, nlets = patchwin[cid].window.document
+	        /*
+            var i, nlets = patchwin[cid].window.document
 	        	.getElementById(tag+"gobj").querySelectorAll(".xlet_control");
 	        for (i = 0; i < nlets.length; i++) {
 	        	nlets[i].style.setProperty("visibility", "hidden");        	
 	        }
+            */
 	        gui(cid).get_gobj(tag).q(".box_text", { visibility: "hidden" });
 	    } else {
 	    	// Anything else but message
@@ -10128,7 +10157,7 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
             "nlet_width": nlet_width
         });
 
-        // ico@vt.edu 2021-05-10: hide overflow, so that the selection
+        // ico@bukvic.net 2021-05-10: hide overflow, so that the selection
         // does not stick out of the object when the object's text is
         // multiline and therefore implicitly has a line break character
         p.style.setProperty("overflow", "hidden");
@@ -10144,15 +10173,15 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         if (is_gop == 0) {
             // do we need to assign here color from the css theme instead?
             p.style.setProperty("background-color", "#f6f8f8");
-            // ico@vt.edu 2021-05-10: added a bit of right padding to make
+            // ico@bukvic.net 2021-05-10: added a bit of right padding to make
             // the activated box better match the regular one
             p.style.setProperty("padding-right", "2px");
         } else {
-            // ico@vt.edu: added tweaks to ensure the GOP selection
+            // ico@bukvic.net: added tweaks to ensure the GOP selection
             // border is near identical to that of its regular border
             p.style.setProperty("min-height", height_spec - 7 + "px");
             p.style.setProperty("padding-left", "2px");
-            /* ico@vt.edu:
+            /* ico@bukvic.net:
                should the graph be transparent or opaque? legacy compatibility
                suggests it should be transparent, although that may go against
                common sense UI design. Perhaps we can make this an option? If
@@ -10176,20 +10205,20 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         //p.style.setProperty("width", -width_spec - 2 + "px");
         p.style.setProperty("-webkit-padding-after", "1px");
 
-        // ico@vt.edu 2021-10-08: disable shadowing effect on message boxes
+        // ico@bukvic.net 2021-10-08: disable shadowing effect on message boxes
         // since it obliterates visibility of its edges
         if (type == "msg") {
             p.style.setProperty("box-shadow", "none");
             p.style.setProperty("animation", "none");
         }
 
-        // ico@vt.edu 2021-10-07: set the minimum width according to the width_spec
+        // ico@bukvic.net 2021-10-07: set the minimum width according to the width_spec
         // variable if it is less than zero.
         if (type !== "msg" && width_spec < 0) {
             p.style.setProperty("min-width", (-width_spec-3) + "px");
         }
 
-        // ico@vt.edu 2021-03-29 (updated 2021-04-20 because activation of a comment
+        // ico@bukvic.net 2021-03-29 (updated 2021-04-20 because activation of a comment
         // that spills over to the right results in a width truncation which only
         // applies to when the object is initially activated, thus requiring a slightly
         // different treatment of the two approaches):
@@ -10317,13 +10346,13 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         p.textContent = text;
         // append to doc body
         //patchwin[cid].window.document.body.appendChild(p);
-        // ico@vt.edu 2022-10-12: instead of putting it at the very top,
+        // ico@bukvic.net 2022-10-12: instead of putting it at the very top,
         // insert this below the dialogs and scrollbars
         var ref = patchwin[cid].window.document.getElementById("canvas_find");
         ref.parentNode.insertBefore(p, ref);
         if (type === "msg")
         {
-            // ico@vt.edu 2020-09-30: New approach to drawing
+            // ico@bukvic.net 2020-09-30: New approach to drawing
             // messages that utilizes the original svg border
             p.style.setProperty("-webkit-padding-before", "2px");
             p.style.setProperty("-webkit-padding-after", "3px");
@@ -10361,13 +10390,14 @@ function gui_textarea(cid, tag, type, x, y, width_spec, height_spec, text,
         }
 
         // MSG approach
-        if (type === "msg") {
+        /*if (type === "msg") {
             var i, nlets = patchwin[cid].window.document
             	.getElementById(tag+"gobj").querySelectorAll(".xlet_control");
             for (i = 0; i < nlets.length; i++) {
             	nlets[i].style.setProperty("visibility", "visible");        	
             }
         }
+        */
         gui(cid).get_gobj(tag).q(".box_text", { visibility: "visible" });
 
         if (patchwin[cid].window.canvas_events.get_previous_state() ===
@@ -10451,7 +10481,7 @@ function zoom_level_to_chrome_percent(nw_win) {
     return zoom;
 }
 
-// ico@vt.edu 2021-10-17: added delayed version to allow for the
+// ico@bukvic.net 2021-10-17: added delayed version to allow for the
 // new window to open before making the call. 1000ms is an approximation
 // and may not work on slow machines. LATER: think about how to deal
 // with the back-end (or front-end) being unable to know when everything
@@ -10459,7 +10489,7 @@ function zoom_level_to_chrome_percent(nw_win) {
 // objects have been loaded and somehow ensure that the last object
 // reports finishing drawing? What about adding it a unique class just
 // for loading purposes?
-// ico@vt.edu 2021-10-21: perhaps the readyState solves the problem?
+// ico@bukvic.net 2021-10-21: perhaps the readyState solves the problem?
 var delayed_scroll = {};
 
 function gui_canvas_delayed_scroll_to_gobj(cid, tag, smooth) {
@@ -10482,7 +10512,7 @@ function gui_canvas_delayed_scroll_to_gobj(cid, tag, smooth) {
 
 exports.gui_canvas_delayed_scroll_to_gobj = gui_canvas_delayed_scroll_to_gobj;
 
-// ico@vt.edu 2021-04-20: used to autoscroll after doing the "find" request
+// ico@bukvic.net 2021-04-20: used to autoscroll after doing the "find" request
 // on the main patch canvas
 function gui_canvas_scroll_to_gobj(cid, tag, smooth) {
     //post("gui_canvas_scoll_to_gobj " + tag);
@@ -10518,7 +10548,7 @@ function gui_canvas_scroll_to_gobj(cid, tag, smooth) {
                 post("..."+cid+" scrollX="+nw_win.window.scrollX+
                   " scrollY="+nw_win.window.scrollY);
                 */
-                // ico@vt.edu 2021-10-21:
+                // ico@bukvic.net 2021-10-21:
                 // if the left/top edge of the canvas is less than 0 (x or y),
                 // we need to add that from the reported x and y position
                 // from the object's BBOX calculated above. Given the values
@@ -10576,7 +10606,7 @@ function canvas_params(nw_win, cid)
         selbox, patchcord, svg_elem, gop_svgs, i, k12m;
     svg_elem = nw_win.window.document.getElementById("patchsvg");
     k12m = nw_win.window.document.getElementById("k12_menu");
-    // ico@vt.edu 20210421: hide selection box, so that we don't include it in the
+    // ico@bukvic.net 20210421: hide selection box, so that we don't include it in the
     // bbox calculation
     selbox = nw_win.window.document.getElementById("selection_rectangle");
     patchcord = nw_win.window.document.getElementById("newcord");
@@ -10585,7 +10615,7 @@ function canvas_params(nw_win, cid)
     if(patchcord)
         patchcord.style.display = "none";
 
-    // ico@vt.edu 20200915: hide all GOP objects in case they spill over to get us
+    // ico@bukvic.net 20200915: hide all GOP objects in case they spill over to get us
     // accurate bbox values...
     gop_svgs = nw_win.window.document.getElementsByClassName("graphsvg");
     if (gop_svgs.length > 0) {
@@ -10610,7 +10640,7 @@ function canvas_params(nw_win, cid)
     }
     //post("canvas_params calculated bbox: x=" + bbox.x +
     //     " w=" + bbox.width + " offset=" + k12_menu_canvas_x[cid]);
-    // ico@vt.edu 2022-12: adjust canvas size if the k12_menu
+    // ico@bukvic.net 2022-12: adjust canvas size if the k12_menu
     // is unfolded.
     if ((k12_mode == 1 || k12_menu_vis == 1)) {
         if (k12m.style.left == "0px") {
@@ -10642,13 +10672,13 @@ function canvas_params(nw_win, cid)
     // To implement the Pd-l2ork behavior, the top-left of the canvas should
     // always be the topmost, leftmost object.
     width = bbox.x > 0 ? bbox.x + bbox.width : bbox.width;
-    // ico@vt.edu 2020-08-12: we add 1 due to an unknown nw.js discrepancy,
+    // ico@bukvic.net 2020-08-12: we add 1 due to an unknown nw.js discrepancy,
     // perhaps because of rounding taking place further below?
     height = bbox.y > 0 ? bbox.y + bbox.height + 1 : bbox.height + 1;
     x = bbox.x > 0 ? 0 : bbox.x,
     y = bbox.y > 0 ? 0 : bbox.y;
 
-    // ico@vt.edu: adjust body width and height to match patchsvg to ensure
+    // ico@bukvic.net: adjust body width and height to match patchsvg to ensure
     // scrollbars only come up when we are indeed inside svg and not before
     // with extra margins around. This is accurate to a pixel on nw 0.47.0.
     // This is needed when maximizing and restoring the window in order
@@ -10678,7 +10708,7 @@ function canvas_params(nw_win, cid)
     x |= 0;
     y |= 0;
 
-    /* ico@vt.edu: now let's draw/update our own scrollbars, so that we
+    /* ico@bukvic.net: now let's draw/update our own scrollbars, so that we
        don't have to deal with the window size nonsense caused by the
        built-in ones... */  
     // zoom var is used to compensate for the zoom level and keep
@@ -10699,7 +10729,7 @@ function canvas_params(nw_win, cid)
         vscroll.style.setProperty("-webkit-clip-path",
             "polygon(0px 0px, 5px 0px, 5px " + (yHeight - 1 + nw_version_bbox_offset) +
             "px, 0px " + (yHeight - 6 + nw_version_bbox_offset) + "px, 0px 5px)");
-        // ico@vt.edu: this could go either way. We can zoom here to compensate for
+        // ico@bukvic.net: this could go either way. We can zoom here to compensate for
         // the zoom and keep the scrollbars the same size, or, as is the case with
         // this new commit, we enlarge them together with the patch since one of the
         // possible rationales is that zooming is there to improve visibility. If
@@ -10726,7 +10756,7 @@ function canvas_params(nw_win, cid)
         hscroll.style.setProperty("-webkit-clip-path",
             "polygon(0px 0px, " + (xWidth - 6) + "px 0px, " +
             (xWidth - 1) + "px 5px, 0px 5px)");
-        // ico@vt.edu: this could go either way. We can zoom here to compensate for
+        // ico@bukvic.net: this could go either way. We can zoom here to compensate for
         // the zoom and keep the scrollbars the same size, or, as is the case with
         // this new commit, we enlarge them together with the patch since one of the
         // possible rationales is that zooming is there to improve visibility. If
@@ -10748,7 +10778,7 @@ function canvas_params(nw_win, cid)
 }
 
 
-// ico@vt.edu:
+// ico@bukvic.net:
 // the timeout is a bad hack and does not solve the problem consistently
 // even on a fast computer, while also slowing down the overall user 
 // experience. As such, ti is disabled and left here for reference.
@@ -10765,7 +10795,7 @@ function pd_do_getscroll(cid) {
 
 exports.pd_do_getscroll = pd_do_getscroll;*/
 
-// ico@vt.edu: we need this because of inconsistent canvas size between
+// ico@bukvic.net: we need this because of inconsistent canvas size between
 // nw <=0.24 and >=0.46
 var nw_version_bbox_offset = check_nw_version("0.46") ? 0 : -4;
 
@@ -10863,7 +10893,7 @@ exports.gui_canvas_get_scroll = gui_canvas_get_scroll;
 function gui_canvas_get_scroll_on_resize(cid) {
     //post("gui_canvas_get_scroll_on_resize " + toplevel_scalars[cid]);
     if (toplevel_scalars[cid] === 2) {
-        // ico@vt.edu 2021-11-12: if we have toplevel scalars
+        // ico@bukvic.net 2021-11-12: if we have toplevel scalars
         // that require scaling on window resize, we deal with that
         // here
         if (getscroll_var[cid]) {
@@ -10886,7 +10916,7 @@ function gui_canvas_get_scroll_on_resize(cid) {
 exports.gui_canvas_get_scroll_on_resize = gui_canvas_get_scroll_on_resize;
 
 
-/* ico@vt.edu: here is one alternative getscroll call, it focuses on
+/* ico@bukvic.net: here is one alternative getscroll call, it focuses on
    overriding the previous call, so the getscroll is more delayed. This
    is useful when manipulating a plot with a mouse, for instance, so that
    we prevent excessive getscroll calls which can be rather cpu intensive.
@@ -10908,7 +10938,7 @@ function gui_canvas_get_overriding_scroll(cid) {
 
 exports.gui_canvas_get_overriding_scroll = gui_canvas_get_overriding_scroll;
 
-/* ico@vt.edu 20200920: this last variant that executes immediately
+/* ico@bukvic.net 20200920: this last variant that executes immediately
    is needed for g_text.c when one displaces a text object and it
    immediately activates and it falls outside the visible canvas bounds
    this can trigger the object to have its activated box at an incorrect
@@ -11075,7 +11105,7 @@ exports.dialog_bindings = function(did) {
         if (!nw_os_is_osx && evt.keyCode == 13 && evt.ctrlKey ||
              nw_os_is_osx && evt.keyCode == 13 && evt.metaKey) {
             // cmd/ctrl+enter/return
-            // ico@vt.edu 2022-12-03:
+            // ico@bukvic.net 2022-12-03:
             // activate ok only if we use ctrl + enter
             // this is because if we are inside a
             // dropdown menu nwjs may crash
@@ -11094,17 +11124,19 @@ exports.dialog_bindings = function(did) {
             // cmd/ctrl+a
             //post("onkeydown ctrl+a");
             var element = dwin.document.activeElement;
-            var tagName = element.tagName.toLowerCase();
-            if (tagName === 'input') {
-                //post("...got input");
-                var type = element.getAttribute('type').toLowerCase();
-                if (type === "text" || type === "number")
-                {
-                    //post("...we got text or number, selecting")
-                    element.select();
+            if (element) {
+                var tagName = element.tagName.toLowerCase();
+                if (tagName === 'input') {
+                    //post("...got input");
+                    var type = element.getAttribute('type').toLowerCase();
+                    if (type === "text" || type === "number")
+                    {
+                        //post("...we got text or number, selecting")
+                        element.select();
+                    }
                 }
+                evt.preventDefault();
             }
-            evt.preventDefault();
         }
         else if (nw_os_is_osx && evt.keyCode == 87 && evt.metaKey) {
             //post("OSX version of cmd+w");
@@ -11123,14 +11155,14 @@ exports.dialog_bindings = function(did) {
 }
 
 exports.fix_window_size = function(did) {
-    //ico@vt.edu: comment the following line when working on dialog sizes...
+    //ico@bukvic.net: comment the following line when working on dialog sizes...
     dialogwin[did].setResizable(false);
 }
 
 exports.resize_window = function(did) {
     var w = dialogwin[did].window.document.body.scrollWidth,
         h = dialogwin[did].window.document.body.scrollHeight;
-    // ico@vt.edu: the following is a change needed for the nw.js 0.47
+    // ico@bukvic.net: the following is a change needed for the nw.js 0.47
     // for the dialog window to be properly resized
     //dialogwin[did].width = w;
     //dialogwin[did].height = h;
@@ -11140,7 +11172,7 @@ exports.resize_window = function(did) {
         " h=" + dialogwin[did].window.document.body.clientHeight + " scroll: w=" +
         w + " h=" + h);*/
     dialogwin[did].resizeTo(w,h);
-    //ico@vt.edu: comment the following line when working on dialog sizes...
+    //ico@bukvic.net: comment the following line when working on dialog sizes...
     dialogwin[did].setResizable(false);
     //post("dialog set always on top");
     //dialogwin[did].setAlwaysOnTop(true);
@@ -11165,7 +11197,7 @@ function gui_pddplink_open(filename, dir) {
     }
 }
 
-/* ico@vt.edu: this function is run when we scroll with a mouse wheel,
+/* ico@bukvic.net: this function is run when we scroll with a mouse wheel,
    a touchpad (e.g. two-finger scroll), or some other HID. It is
    linked from the pd_canvas.js and called from the garray_fittograph 1
    call when we are resizing the plot toplevel window to avoid race condition.
@@ -11245,7 +11277,7 @@ function gui_update_scrollbars(cid) {
 
 exports.gui_update_scrollbars = gui_update_scrollbars;
 
-// ico@vt.edu 2020-08-29: fine-tune appearance of various
+// ico@bukvic.net 2020-08-29: fine-tune appearance of various
 // css elements because, consistency in HTML font rendering
 // across different OSs is a joke
 function gui_check_for_dialog_appearance_inconsistencies(id)
@@ -11333,7 +11365,7 @@ function restore_apps(force) {
         }
         if (force == 0) post("Copying Pd-L2Ork Apps...");
         if (nw_os_is_osx) {
-            // ico@vt.edu 2021-09-10:
+            // ico@bukvic.net 2021-09-10:
             // here we need to reference lib_dir which is initialized inside index.js
             // otherwise process.cwd() when invoked from the preferences window
             // returns the user's home folder which results in a failed copy operation
@@ -11352,7 +11384,7 @@ function restore_apps(force) {
 
 exports.restore_apps = restore_apps;
 
-// ico@vt.edu 2021-08-20: variable to inform the pdgui when the object
+// ico@bukvic.net 2021-08-20: variable to inform the pdgui when the object
 // has been grabbed. We use this to enable pasting of text inside gatoms
 // LATER: consider using this for other purposes, as well
 var gobj_grabbed = {};
@@ -11425,7 +11457,7 @@ function gui_is_gobj_grabbed(cid) {
 exports.gui_is_gobj_grabbed = gui_is_gobj_grabbed;
 
 
-// ico@vt.edu 2021-10-17: used for find again when original find opens
+// ico@bukvic.net 2021-10-17: used for find again when original find opens
 // subcanvas whose canvasevents last_search_term has not yet been set
 // (or is set to something else), so, we check against what the backend
 // has and act accordingly.
@@ -11462,7 +11494,7 @@ function gui_close_find_bar_on_new_window_focus(cid) {
 exports.gui_close_find_bar_on_new_window_focus =
     gui_close_find_bar_on_new_window_focus;
 
-// ico@vt.edu 2021-10-17:
+// ico@bukvic.net 2021-10-17:
 // used for reseting the highlighting of objects' text
 // (initiall gatom and numbox2). This is triggered exclusively
 // when editing object's value using keyboard and then pressing enter.
@@ -11526,7 +11558,7 @@ function get_k12_menu_vis() {
 
 exports.get_k12_menu_vis = get_k12_menu_vis;
 
-// ico@vt.edu 2022-12-05: moving all this from pd_canvas.js to pdgui.js,
+// ico@bukvic.net 2022-12-05: moving all this from pd_canvas.js to pdgui.js,
 // so that index.js can benefit from it, as well (responsible for the
 // console window).
 
@@ -11594,7 +11626,7 @@ lock_editmode.src = "K12-icons/lock-editmode.png";
 var lock_runtime = new Image();
 lock_runtime.src = "K12-icons/lock-runtime.png";
 
-// ico@vt.edu 2022-12-08:
+// ico@bukvic.net 2022-12-08:
 // toggle lock flap sends its request to c (pd_canvas.js) and this is
 // then invoked from gui_canvas_set_editmode above
 // states:
@@ -11628,7 +11660,7 @@ function toggle_k12_menu(cid, state) {
 
 exports.toggle_k12_menu = toggle_k12_menu;
 
-// ico@vt.edu 2022-12-08: toggles k12 menu visibility (for k12 menu option
+// ico@bukvic.net 2022-12-08: toggles k12 menu visibility (for k12 menu option
 // in the put menu). both k12_mode and k12_mode are global variables, so
 // they should be applied to all open canvases.
 function toggle_k12_menu_visibility(cid, state) {
@@ -11645,7 +11677,7 @@ function toggle_k12_menu_visibility(cid, state) {
 
 exports.toggle_k12_menu_visibility = toggle_k12_menu_visibility;
 
-// ico@vt.edu 2022-12-18: moving this from the dialog_prefs.html
+// ico@bukvic.net 2022-12-18: moving this from the dialog_prefs.html
 // so that we can call it via File->Message with a nwjs: prefix
 // below, we will continue to add other functions, as needed,
 // and potentially eventually pull this out of this file into

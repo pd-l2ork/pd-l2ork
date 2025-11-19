@@ -47,7 +47,7 @@ DEST_PATHS = BUILDLAYOUT_DIR=$(BUILDLAYOUT_DIR) \
 # this variable is to support old "win" directories, rather than "windows"
 BUILDSRC_OS_NAME = $(OS_NAME)
 
-# ico@vt.edu 2025-04-29: for github runner we add CFLAGS_GITHUB_RUNNER=-std=gnu17
+# ico@bukvic.net 2025-04-29: for github runner we add CFLAGS_GITHUB_RUNNER=-std=gnu17
 # the full command is:
 # cd l2ork_addons && CFLAGS_GITHUB_RUNNER=-std=gnu17 inst_dir="/usr" ./tar_em_up.sh -Tk
 # see build.yml runner file on the github because after April 2025 github msys runner

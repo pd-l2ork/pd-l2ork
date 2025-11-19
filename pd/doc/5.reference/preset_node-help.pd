@@ -17,7 +17,7 @@ to conform to the PDDP template for Pd version 0.42.;
 #X text 12 45 DESCRIPTION universal preset system for Pd-l2ork;
 #X text 12 65 INLET_0 anything;
 #X text 12 85 OUTLET_0 anything;
-#X text 12 105 AUTHOR Ivica Ico Bukvic (c) 2012 <ico@vt.edu>;
+#X text 12 105 AUTHOR Ivica Ico Bukvic (c) 2012 <ico@bukvic.net>;
 #X restore 498 1437 pd META;
 #X obj -2 952 cnv 3 550 3 empty \$0-pddp.cnv.outlets outlets 8 12 0
 13 #dcdcdc #000000 0;

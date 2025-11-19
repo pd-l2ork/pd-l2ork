@@ -22,18 +22,18 @@
 /*
 	The Sensel Morph Pd external, written by
 	Rachel Hachem <rachelly@vt.edu>
-	under the guidance of Ivica Ico Bukvic <ico@vt.edu>
+	under the guidance of Ivica Ico Bukvic <ico@bukvic.net>
 
 	2020-04-13 v.0.9.0
 	Initial release by Rachel Hachem <rachelly@vt.edu>
-	under the guidance of Ivica Ico Bukvic <ico@vt.edu>
+	under the guidance of Ivica Ico Bukvic <ico@bukvic.net>
 
 	2020-05-20 v.1.0.0
 	Threaded implementation with additional features,
 	including, disconnect, free, identify, improved
 	console output, versioning, updated help file, and
 	bug-fixes to support multiple sensel morphs by
-	Ivica Ico Bukvic <ico@vt.edu>
+	Ivica Ico Bukvic <ico@bukvic.net>
 
 	2020-05-22 v.1.1.0
 	Improved integration of the contacts API to fix
@@ -41,12 +41,12 @@
 	address missed contact status changes, reworked
 	polling logic and removed reliance on the external
  	metro, added total contact count, and setting the
-	polling time by Ivica Ico Bukvic <ico@vt.edu>
+	polling time by Ivica Ico Bukvic <ico@bukvic.net>
 
 	2020-05-22 v.1.2.0
 	Introduced ability to change LED brightness and
 	further improved the help file by Ivica Ico Bukvic
-	<ico@vt.edu>
+	<ico@bukvic.net>
   
 	Please see the supporting help file for the
 	explanation of its features.

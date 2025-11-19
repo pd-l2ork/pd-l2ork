@@ -98,7 +98,7 @@ static void canvas_undo_doit(t_canvas *x, t_undo_action *udo, int action)
 
 void canvas_undo_undo(t_canvas *x)
 {
-    // ico@vt.edu 2022-11-14: check if we are editable, otherwise bail
+    // ico@bukvic.net 2022-11-14: check if we are editable, otherwise bail
     if (!canvas_is_editable(x))
         return;
 
@@ -169,7 +169,7 @@ void canvas_undo_undo(t_canvas *x)
 
 void canvas_undo_redo(t_canvas *x)
 {
-    // ico@vt.edu 2022-11-14: check if we are editable, otherwise bail
+    // ico@bukvic.net 2022-11-14: check if we are editable, otherwise bail
     if (!canvas_is_editable(x))
         return;
 

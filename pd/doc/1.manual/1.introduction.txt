@@ -11,7 +11,7 @@ See the file:
 Pd-l2ork offers a rewrite of many of Pd's core routines for the purpose
 of improving editor functionality and stability. It is distributed under
 the same license as Pd. For additional info see:
-    http://l2ork.music.vt.edu/main/
+    http://l2ork.bukvic.net/main/
 
 Reference documentation for Pd lives in:
     file:PD_BASEDIR/doc/1.manual/index.htm

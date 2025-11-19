@@ -1,5 +1,5 @@
 /*  preset_node and preset_hub implementation by
-    Ivica Ico Bukvic <ico@vt.edu> (c) 2012
+    Ivica Ico Bukvic <ico@bukvic.net> (c) 2012
      distributed under GPL v3 license or newer
 */
 
@@ -972,7 +972,7 @@ typedef enum
     H_PRESET,
     H_PRESET_DATA,
     H_WAS,
-    H_WAS_LOCATION /* ico@vt.edu 2020-11-05:
+    H_WAS_LOCATION /* ico@bukvic.net 2020-11-05:
                       wasnode and waslocation are used to store snapshot of the original
                       location for file preseet operations since saved preset files do
                       not automatically adjust to changes in node locations

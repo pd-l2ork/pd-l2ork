@@ -44,7 +44,7 @@ exports.menu = {
   "fullscreen": { key: (process.platform === "darwin") ? "f" : "F11",
     modifiers: (process.platform === "darwin") ? "cmd+ctrl" : null },
 
-  // ico@vt.edu 2022-08-11: replaced cmd with ctrl for shortcuts
+  // ico@bukvic.net 2022-08-11: replaced cmd with ctrl for shortcuts
   // using numbers 1-5 (also valid for 6-9) on OSX only, because
   // newer nw.js for an unknown upstream reason does not recognise
   // cmd+1 - cmd+9 keys

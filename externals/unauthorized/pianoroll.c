@@ -294,7 +294,7 @@ static void pianoroll_draw_new(t_pianoroll *x, t_glist *glist)
     t_canvas *canvas=glist_getcanvas(glist);
 
     // create a gobj container in the GUI
-    // ico@vt.edu 2022-09-27: this appears to be superfluous since
+    // ico@bukvic.net 2022-09-27: this appears to be superfluous since
     // all the other elements are already drawn as part of
     // pianoroll_draw_innards below. Further, with the new GOP
     // drawing it results in stale objects being left behind.

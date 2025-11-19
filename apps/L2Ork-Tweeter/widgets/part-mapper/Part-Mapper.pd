@@ -1,0 +1,177 @@
+#N canvas 4 399 259 275 10;
+#X obj -30 -30 preset_hub k12 1 %hidden%;
+#N canvas 861 384 457 386 UI 0;
+#X obj 51 157 hradio 15 0 0 15 part-1-radio-s part-1-radio-r empty
+0 -8 0 10 #FFFCB46C #FFFC6418 #FF000000 1 1;
+#X obj 51 172 hradio 15 0 0 15 part-2-radio-s part-2-radio-r empty
+0 -8 0 10 #FFFCB46C #FFFC6418 #FF000000 0 1;
+#X symbolatom 153 107 20 0 0 0 - - - 0 0 1, f 20;
+#X text 96 106 PASSWORD:;
+#X obj 168 22 r adv-user-ctrl-pass-r;
+#X obj 295 131 s adv-user-ctrl-pass-s;
+#X obj 295 154 s adv-user-ctrl-pass-set;
+#X obj 139 46 r adv-user-ctrl-pass-set;
+#X msg 139 70 set \$1;
+#X text 148 129 USER;
+#X text 69 144 1;
+#X text 54 144 0;
+#X text 84 144 2;
+#X text 99 144 3;
+#X text 114 144 4;
+#X text 129 144 5;
+#X text 144 144 6;
+#X text 159 144 7;
+#X text 174 144 8;
+#X text 189 144 9;
+#X text 201 144 10;
+#X text 216 144 11;
+#X text 231 144 12;
+#X text 245 144 13;
+#X text 260 144 14;
+#X text 42 157 1;
+#X text 42 172 2;
+#X text 42 187 3;
+#X text 42 202 4;
+#X text 42 217 5;
+#X text 42 232 6;
+#X text 42 247 7;
+#X text 42 262 8;
+#X text 42 277 9;
+#X text 36 292 10;
+#X text 36 307 11;
+#X text 36 322 12;
+#X text 36 337 13;
+#X text 36 352 14;
+#X obj 51 187 hradio 15 0 0 15 part-3-radio-s part-3-radio-r empty
+0 -8 0 10 #FFFCB46C #FFFC6418 #FF000000 1 1;
+#X obj 51 202 hradio 15 0 0 15 part-4-radio-s part-4-radio-r empty
+0 -8 0 10 #FFFCB46C #FFFC6418 #FF000000 0 1;
+#X obj 51 217 hradio 15 0 0 15 part-5-radio-s part-5-radio-r empty
+0 -8 0 10 #FFFCB46C #FFFC6418 #FF000000 0 1;
+#X obj 51 232 hradio 15 0 0 15 part-6-radio-s part-6-radio-r empty
+0 -8 0 10 #FFFCB46C #FFFC6418 #FF000000 0 1;
+#X obj 51 247 hradio 15 0 0 15 part-7-radio-s part-7-radio-r empty
+0 -8 0 10 #FFFCB46C #FFFC6418 #FF000000 0 1;
+#X obj 51 262 hradio 15 0 0 15 part-8-radio-s part-8-radio-r empty
+0 -8 0 10 #FFFCB46C #FFFC6418 #FF000000 0 1;
+#X obj 51 277 hradio 15 0 0 15 part-9-radio-s part-9-radio-r empty
+0 -8 0 10 #FFFCB46C #FFFC6418 #FF000000 0 1;
+#X obj 51 292 hradio 15 0 0 15 part-10-radio-s part-10-radio-r empty
+0 -8 0 10 #FFFCB46C #FFFC6418 #FF000000 0 1;
+#X obj 51 307 hradio 15 0 0 15 part-11-radio-s part-11-radio-r empty
+0 -8 0 10 #FFFCB46C #FFFC6418 #FF000000 0 1;
+#X obj 51 322 hradio 15 0 0 15 part-12-radio-s part-12-radio-r empty
+0 -8 0 10 #FFFCB46C #FFFC6418 #FF000000 0 1;
+#X obj 51 337 hradio 15 0 0 15 part-13-radio-s part-13-radio-r empty
+0 -8 0 10 #FFFCB46C #FFFC6418 #FF000000 0 1;
+#X obj 51 352 hradio 15 0 0 15 part-14-radio-s part-14-radio-r empty
+0 -8 0 10 #FFFCB46C #FFFC6418 #FF000000 0 1;
+#N canvas 502 450 276 395 guts 0;
+#X obj 39 33 loadbang;
+#X msg 39 55 symbol l2orklicious;
+#N canvas 808 359 383 413 editable 0;
+#X obj 19 19 loadbang;
+#X obj 161 125 keyname 1;
+#X obj 172 150 sel Shift;
+#X msg 172 175 1;
+#X msg 223 175 0;
+#X obj 116 219 gate 1 0;
+#X obj 259 125 keyname 1;
+#X msg 270 175 1;
+#X msg 333 175 0;
+#X obj 214 219 gate 1 0;
+#X obj 270 150 sel Control;
+#X obj 19 256 expr \\$f1+$f2+$f3, f 33;
+#X obj 19 281 == 3;
+#X obj 19 306 sel 1;
+#X obj 19 331 tgl 15 0 empty empty empty 17 7 0 10 #fffcfcfc #ff000000
+#ff000000 1 1 1;
+#X text 19 92 ctrl+shift+alt toggles editability (alt being last!)
+;
+#X obj 64 125 keyname 1;
+#X msg 75 175 1;
+#X msg 114 175 0;
+#X obj 19 219 gate 1 0;
+#X obj 75 150 sel Alt;
+#X msg 19 43 \; pd-Part-Mapper.pd editable 0;
+#X msg 19 355 \; pd-Part-Mapper.pd editable \$1;
+#X connect 0 0 21 0;
+#X connect 1 0 5 1;
+#X connect 1 1 2 0;
+#X connect 2 0 3 0;
+#X connect 2 1 4 0;
+#X connect 3 0 5 0;
+#X connect 4 0 5 0;
+#X connect 5 0 11 1;
+#X connect 6 0 9 1;
+#X connect 6 1 10 0;
+#X connect 7 0 9 0;
+#X connect 8 0 9 0;
+#X connect 9 0 11 2;
+#X connect 10 0 7 0;
+#X connect 10 1 8 0;
+#X connect 11 0 12 0;
+#X connect 12 0 13 0;
+#X connect 13 0 14 0;
+#X connect 14 0 22 0;
+#X connect 16 0 19 1;
+#X connect 16 1 20 0;
+#X connect 17 0 19 0;
+#X connect 18 0 19 0;
+#X connect 19 0 11 0;
+#X connect 20 0 17 0;
+#X connect 20 1 18 0;
+#X restore 39 109 pd editable;
+#X obj 39 77 s adv-user-ctrl-pass-r;
+#X obj 39 155 r network-in;
+#X obj 39 199 s part-mapper-update;
+#X obj 38 347 s chat-out;
+#N canvas 721 528 437 135 cells 0;
+#X obj 28 25 pm-cell 1;
+#X obj 108 25 pm-cell 2;
+#X obj 188 25 pm-cell 3;
+#X obj 268 25 pm-cell 4;
+#X obj 348 25 pm-cell 5;
+#X obj 28 55 pm-cell 6;
+#X obj 108 55 pm-cell 7;
+#X obj 188 55 pm-cell 8;
+#X obj 268 55 pm-cell 9;
+#X obj 348 55 pm-cell 10;
+#X obj 28 85 pm-cell 11;
+#X obj 108 85 pm-cell 12;
+#X obj 188 85 pm-cell 13;
+#X obj 268 85 pm-cell 14;
+#X restore 118 109 pd cells;
+#X obj 38 242 r l2ork-part-mapper-refresh-parts;
+#X obj 38 290 symbol;
+#X obj 71 266 r adv-user-ctrl-pass-set;
+#X msg 38 324 chat admin p:\$1 l2ork-part-report;
+#X obj 39 177 route l2ork-part-status;
+#X connect 0 0 1 0;
+#X connect 1 0 3 0;
+#X connect 4 0 12 0;
+#X connect 8 0 9 0;
+#X connect 9 0 11 0;
+#X connect 10 0 9 1;
+#X connect 11 0 6 0;
+#X connect 12 0 5 0;
+#X restore 295 187 pd guts;
+#X text 28 232 PART;
+#X obj 27 106 bng 30 250 50 0 l2ork-part-mapper-refresh-parts empty
+empty 37 25 0 8 #FFFCB46C #FFFC6418 #FF000000 1;
+#X text 58 121 REFRESH;
+#X obj 37 81 loadbang;
+#X obj 27 11 r network-status;
+#X obj 27 33 sel 1;
+#X obj 27 55 delay 1000;
+#X connect 2 0 5 0;
+#X connect 2 0 6 0;
+#X connect 4 0 2 0;
+#X connect 7 0 8 0;
+#X connect 8 0 2 0;
+#X connect 55 0 53 0;
+#X connect 56 0 57 0;
+#X connect 57 0 58 0;
+#X connect 58 0 53 0;
+#X coords 0 -1 1 1 255 267 2 24 103;
+#X restore 3 3 pd UI;

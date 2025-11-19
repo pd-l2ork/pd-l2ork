@@ -1,7 +1,7 @@
 ;;; pd-l2ork-mode.el --- major mode for editing Pd configuration files
 
 ;; Author: Hans-Christoph Steiner <hans@at.or.at>
-;; Adapted for pd-l2ork: Ivica Ico Bukvic <ico@vt.edu>
+;; Adapted for pd-l2ork: Ivica Ico Bukvic <ico@bukvic.net>
 ;; Keywords:    languages, faces
 ;; Last edit: 
 ;; Version: 1.0.1 

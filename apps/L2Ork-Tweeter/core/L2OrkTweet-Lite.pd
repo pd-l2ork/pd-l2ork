@@ -1390,7 +1390,7 @@ preset;
 #X connect 40 0 5 0;
 #X connect 40 1 4 0;
 #X restore 13 400 pd instrument \$1;
-#X text 1203 652 l2ork.music.vt.edu;
+#X text 1203 652 l2ork.bukvic.net;
 #X text 220 598 toggle keyboard input and network output;
 #X obj 491 392 r override-myid;
 #N canvas 723 345 535 410 delete-logic 0;

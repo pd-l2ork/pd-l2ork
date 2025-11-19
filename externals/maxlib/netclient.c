@@ -7,7 +7,7 @@
 /* http://pure-data.svn.sourceforge.net/viewvc/pure-data/trunk/externals/maxlib/src/netclient.c */
 /* March 26 2010                                                                */
 /* Additional fixes and improvements by Ivica Ico Bukvic <ico@bukvic.net>       */
-/* for the purpose of L2Ork http://l2ork.music.vt.edu                           */
+/* for the purpose of L2Ork http://l2ork.bukvic.net                           */
 /* This program is free software; you can redistribute it and/or                */
 /* modify it under the terms of the GNU General Public License                  */
 /* as published by the Free Software Foundation; either version 2               */
@@ -52,7 +52,7 @@
 
 #define INBUFSIZE 32768	/* maximum numbers of characters to read */
 
-/* ico@vt.edu 2021-09-07: define MSG_NOSIGNAL for Windows/Mac
+/* ico@bukvic.net 2021-09-07: define MSG_NOSIGNAL for Windows/Mac
    we use this to prevent the external and with it pd-l2ork from
    crashing in case a client suddenly drops and causes broken pipe */
 #ifndef MSG_NOSIGNAL
@@ -61,7 +61,7 @@
 
 static char *version = "netclient v0.5 :: bidirectional network client for Pd-L2Ork\n"
 					   "             written by Olaf Matthes <olaf.matthes@gmx.de>\n"
-					   "             improvements by Ivica Ico Bukvic <ico@vt.edu>";
+					   "             improvements by Ivica Ico Bukvic <ico@bukvic.net>";
 
 static t_class *netclient_class;
 static t_binbuf *inbinbuf;

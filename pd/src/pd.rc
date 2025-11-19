@@ -1,20 +1,20 @@
 id ICON "pd_l2ork.ico"
 1 VERSIONINFO
-FILEVERSION     0,43,0,0
-PRODUCTVERSION  0,43,0,0
+FILEVERSION     2025,11,18,0
+PRODUCTVERSION  2025,11,18,0
 BEGIN
   BLOCK "StringFileInfo"
   BEGIN
     BLOCK "040904E4"
     BEGIN
-      VALUE "CompanyName", "l2ork.music.vt.edu"
+      VALUE "CompanyName", "l2ork.bukvic.net"
       VALUE "FileDescription", "Pd-L2Ork Application"
-      VALUE "FileVersion", "0.48"
+      VALUE "FileVersion", "0.55.2"
       VALUE "InternalName", "pd-l2ork.exe"
       VALUE "LegalCopyright", "Miller Puckette, et al."
       VALUE "OriginalFilename", "pd-l2ork.exe"
       VALUE "ProductName", "Pd-L2Ork"
-      VALUE "ProductVersion", "0.48"
+      VALUE "ProductVersion", "0.55.2"
     END
   END
 

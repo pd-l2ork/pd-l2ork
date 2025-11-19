@@ -7552,7 +7552,7 @@ static void drawsymbol_getrect(t_gobj *z, t_glist *glist,
     if (strlen(startline) > (unsigned)width)
         width = (int)strlen(startline);
 
-    // ico@vt.edu 2022-09-30: this was before GOP drawing rework,
+    // ico@bukvic.net 2022-09-30: this was before GOP drawing rework,
     // although it was also buggy before it, so the new one should
     // fix incorrect selection boxes around the drawsymbol_scalar
     /*
@@ -7831,7 +7831,7 @@ static int drawsymbol_click(t_gobj *z, t_glist *glist,
                     THISTMPL->drawsymbol_motion_glist, &THISTMPL->drawsymbol_motion_scalar->sc_gobj);
             else gpointer_setarray(&THISTMPL->drawsymbol_motion_gpointer,
                     THISTMPL->drawsymbol_motion_array, THISTMPL->drawsymbol_motion_wp);
-            /* ico@vt.edu 20200920: LATER consider also using keyname (currently 0) */
+            /* ico@bukvic.net 20200920: LATER consider also using keyname (currently 0) */
             glist_grab(glist, z, drawsymbol_motion, drawsymbol_key,
                 0, xpix, ypix, 0);
         }
@@ -8262,7 +8262,7 @@ static int drawimage_click(t_gobj *z, t_glist *glist,
                     drawimage_motion_glist, &drawimage_motion_scalar->sc_gobj);
             else gpointer_setarray(&drawimage_motion_gpointer,
                     drawimage_motion_array, drawimage_motion_wp);
-            /* ico@vt.edu 20200920: LATER consider also using keyname (currently 0) */
+            /* ico@bukvic.net 20200920: LATER consider also using keyname (currently 0) */
            glist_grab(glist, z, drawimage_motion, drawimage_key,
                 0, xpix, ypix, 0);
         }

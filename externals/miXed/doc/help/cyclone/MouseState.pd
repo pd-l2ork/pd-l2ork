@@ -15,7 +15,7 @@
 #X obj 74 159 == 1;
 #X obj 36 229 gate 1 0;
 #X text 50 10 Compatibility abstraction for the Cyclone's MouseStateIco
-Bukvic 2024 <ico@vt.edu> Like legacy objects below \, this one only
+Bukvic 2024 <ico@bukvic.net> Like legacy objects below \, this one only
 broadcasts mouse activity within the patch window;
 #X connect 1 0 12 0;
 #X connect 1 1 9 0;

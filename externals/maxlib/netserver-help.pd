@@ -1,37 +1,37 @@
-#N canvas 569 360 712 571 12;
-#X obj 459 247 netclient;
-#X floatatom 24 470 5 0 0 0 - - - 0 0 1, f 5;
-#X floatatom 62 445 5 0 0 0 - - - 0 0 1, f 5;
-#X symbolatom 139 398 10 0 0 0 - - - 0 0 1, f 10;
-#X text 77 469 received data;
-#X text 115 445 number of connections;
-#X msg 24 70 print;
-#X floatatom 100 419 5 0 0 0 - - - 0 0 1, f 5;
-#X text 158 423 socket number;
-#X msg 78 195 broadcast hallo world!;
-#X text 253 195 send to all clients;
+#N canvas 447 197 712 838 12;
+#X obj 459 327 netclient;
+#X floatatom 24 730 5 0 0 0 - - - 0 0 1, f 5;
+#X floatatom 62 705 5 0 0 0 - - - 0 0 1, f 5;
+#X symbolatom 139 658 10 0 0 0 - - - 0 0 1, f 10;
+#X text 77 729 received data;
+#X text 115 705 number of connections;
+#X msg 24 90 print;
+#X floatatom 100 679 5 0 0 0 - - - 0 0 1, f 5;
+#X text 158 683 socket number;
+#X msg 78 225 broadcast hallo world!;
+#X text 245 225 send to all clients;
 #X text 113 31 written by Olaf Matthes <olaf.matthes@gmx.de>;
-#X obj 24 350 netserver 3000;
-#X text 112 136 send message to client no. 1;
-#X text 231 398 client's IP address;
-#X msg 480 174 connect localhost 3000;
-#X msg 493 201 disconnect;
-#X msg 459 142 send 23;
-#X floatatom 526 276 5 0 0 0 - - - 0 0 1, f 5;
-#X msg 58 107 send 380 17.3;
-#X floatatom 459 354 5 0 0 0 - - - 0 0 1, f 5;
-#X obj 582 339 print anything;
-#X obj 520 367 print list;
-#X obj 459 303 route float list;
-#X msg 73 158 client 1 23;
-#X text 179 107 "send <socketnumber> <data>";
-#X text 85 86 send message on specified socket;
-#X text 175 159 "client <clientnumber> <data>";
+#X obj 24 550 netserver 3000;
+#X text 112 166 send message to client no. 1;
+#X text 231 658 client's IP address;
+#X msg 480 254 connect localhost 3000;
+#X msg 493 281 disconnect;
+#X msg 459 222 send 23;
+#X floatatom 526 356 5 0 0 0 - - - 0 0 1, f 5;
+#X msg 58 137 send 380 17.3;
+#X floatatom 459 434 5 0 0 0 - - - 0 0 1, f 5;
+#X obj 582 419 print anything;
+#X obj 520 447 print list;
+#X obj 459 383 route float list;
+#X msg 73 188 client 1 23;
+#X text 161 137 "send <socketnumber> <data>";
+#X text 85 116 send message on specified socket;
+#X text 162 189 "client <clientnumber> <data>";
 #N canvas 762 591 448 302 META 0;
 #X text 14 41 LICENSE GPL v2;
 #X text 14 18 KEYWORDS control network;
 #X text 14 202 AUTHOR Olaf Matthes <olaf.matthes@gmx.de> and Ivica
-Ico Bukvic <ico@vt.edu>;
+Ico Bukvic <ico@bukvic.net>;
 #X text 14 241 HELP_PATCH_AUTHORS "pd meta" information added by Jonathan
 Wilkes for Pd version 0.42. Help file updated by Ivica Ico Bukvic 2021
 ;
@@ -45,7 +45,7 @@ packet;
 ;
 #X text 14 64 DESCRIPTION bidirectional TCP network server for Pd-L2Ork
 ;
-#X restore 645 534 pd META;
+#X restore 645 794 pd META;
 #N canvas 673 310 626 393 info_and_debugging 0;
 #X obj 36 350 outlet;
 #X text 261 254 outputs current netserver status into console;
@@ -70,15 +70,14 @@ quiet., f 79;
 #X connect 7 0 0 0;
 #X connect 8 0 0 0;
 #X connect 11 0 0 0;
-#X restore 98 235 pd info_and_debugging;
-#X text 12 505 This example demonstrates how to set up a client/server
+#X restore 98 265 pd info_and_debugging;
+#X text 12 765 This example demonstrates how to set up a client/server
 connection. Data sent by the client gets received and displayed by
 the server imediately. Or just try it the other way round..., f 85
 ;
-#X text 113 49 improvements by Ivica Ico Bukvic <ico@vt.edu>;
-#X floatatom 105 268 5 0 0 0 - - - 0 0 1, f 5;
-#X msg 105 296 disconnect \$1;
-#X text 150 268 disconnect client using socket number;
+#X floatatom 105 298 5 0 0 0 - - - 0 0 1, f 5;
+#X msg 105 326 disconnect \$1;
+#X text 150 298 disconnect client using socket number;
 #N canvas 268 323 445 588 netserver_arguments 0;
 #X text 10 10 netserver accepts two arguments: 1) port on which server
 should receive connections2) OPTIONAL receiving buffer size exponent
@@ -105,7 +104,7 @@ per client. Therefore \, if you anticipate a lot of concurrent connections
 \, consider the memory footprint this may generate. Buffer exponent
 of 26 (64MB) * 256 clients (maximum currently supported by the netserver)
 \, would take up 16GB of computer's RAM!;
-#X restore 131 350 pd netserver_arguments;
+#X restore 132 550 pd netserver_arguments;
 #N canvas 1274 222 445 732 netclient_arguments 0;
 #X text 10 10 netclient accepts two arguments: 1) OPTIONAL connection
 type (0=TCP \, non-zero=UDP \, default 0)2) OPTIONAL receiving buffer
@@ -137,11 +136,25 @@ falling behind the incoming data. The end result is \, once again \,
 lost data. Therefore \, increasing this second argument will be critical
 to ensuring brief bursts of a larger amount of data do not get partially
 lost \, or end-up overwriting some other data.;
-#X restore 531 247 pd netclient_arguments;
+#X restore 531 327 pd netclient_arguments;
 #X text 21 13 netserver :: bidirectional TCP network server for Pd-L2Ork
 ;
-#X text 568 275 connection status;
-#X text 579 302 received data;
+#X text 568 355 connection status;
+#X text 579 382 received data;
+#X obj 160 620 print other;
+#X text 250 620 other output;
+#X msg 120 360 get-all-sockets;
+#X text 113 49 improvements by Ivica Ico Bukvic <ico@bukvic.net>;
+#X text 70 90 print out the current status;
+#X msg 130 400 disconnect-all;
+#X text 240 400 disconnect all clients;
+#X obj 140 440 tgl 15 0 empty empty empty 17 7 0 10 #FFFCFCFC #FF000000
+#FF000000 0 1 1;
+#X msg 140 460 lockdown \$1;
+#X text 230 460 lockdown the server andprevent further connections
+;
+#X text 236 360 output through the 5th outletall connected clients'
+sockets;
 #X connect 0 0 23 0;
 #X connect 0 1 18 0;
 #X connect 6 0 12 0;
@@ -150,6 +163,7 @@ lost \, or end-up overwriting some other data.;
 #X connect 12 1 2 0;
 #X connect 12 2 7 0;
 #X connect 12 3 3 0;
+#X connect 12 4 39 0;
 #X connect 15 0 0 0;
 #X connect 16 0 0 0;
 #X connect 17 0 0 0;
@@ -159,5 +173,9 @@ lost \, or end-up overwriting some other data.;
 #X connect 23 2 21 0;
 #X connect 24 0 12 0;
 #X connect 29 0 12 0;
-#X connect 32 0 33 0;
-#X connect 33 0 12 0;
+#X connect 31 0 32 0;
+#X connect 32 0 12 0;
+#X connect 41 0 12 0;
+#X connect 44 0 12 0;
+#X connect 46 0 47 0;
+#X connect 47 0 12 0;

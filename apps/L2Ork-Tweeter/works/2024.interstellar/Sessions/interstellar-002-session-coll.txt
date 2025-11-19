@@ -287,7 +287,6 @@
 240, 11 tracker-char 61  ;
 241, 11 tracker-char 62  ;
 242, 11 tracker-char 63  ;
-243, 11 tracker-char 64 r;
 244, 11 tracker-data 0 60;
 245, 11 tracker-data 1 0;
 246, 11 tracker-data 2 0;
@@ -352,7 +351,6 @@
 305, 11 tracker-data 61 0;
 306, 11 tracker-data 62 0;
 307, 11 tracker-data 63 0;
-308, 11 tracker-data 64 71;
 309, 11 flanger-ms 10;
 310, 11 flanger-mod-amp 100;
 311, 11 flanger-amp 0;
@@ -471,7 +469,6 @@
 401, 10 tracker-char 61  ;
 402, 10 tracker-char 62  ;
 403, 10 tracker-char 63  ;
-404, 10 tracker-char 64 r;
 405, 10 tracker-data 0 53;
 406, 10 tracker-data 1 0;
 407, 10 tracker-data 2 0;
@@ -536,7 +533,6 @@
 466, 10 tracker-data 61 0;
 467, 10 tracker-data 62 0;
 468, 10 tracker-data 63 0;
-469, 10 tracker-data 64 71;
 470, 10 flanger-ms 0.001;
 471, 10 flanger-mod-amp 33.3333;
 472, 10 flanger-amp 0.962963;
@@ -833,7 +829,6 @@
 721, 8 tracker-char 61  ;
 722, 8 tracker-char 62  ;
 723, 8 tracker-char 63  ;
-724, 8 tracker-char 64  ;
 725, 8 tracker-data 0 0;
 726, 8 tracker-data 1 0;
 727, 8 tracker-data 2 0;
@@ -898,7 +893,6 @@
 786, 8 tracker-data 61 0;
 787, 8 tracker-data 62 0;
 788, 8 tracker-data 63 0;
-789, 8 tracker-data 64 0;
 790, 8 flanger-ms 0.001;
 791, 8 flanger-mod-amp 66.6667;
 792, 8 flanger-amp 0.981481;
@@ -1005,7 +999,6 @@
 882, 7 tracker-char 61 c;
 883, 7 tracker-char 62 b;
 884, 7 tracker-char 63 z;
-885, 7 tracker-char 64  ;
 886, 7 tracker-data 0 48;
 887, 7 tracker-data 1 52;
 888, 7 tracker-data 2 55;
@@ -1070,7 +1063,6 @@
 947, 7 tracker-data 61 52;
 948, 7 tracker-data 62 55;
 949, 7 tracker-data 63 48;
-950, 7 tracker-data 64 0;
 951, 7 flanger-ms 50;
 952, 7 flanger-mod-amp 0;
 953, 7 flanger-amp 0.759259;
@@ -2080,7 +2072,6 @@
 1838, 1 tracker-char 61  ;
 1839, 1 tracker-char 62  ;
 1840, 1 tracker-char 63  ;
-1841, 1 tracker-char 64  ;
 1842, 1 tracker-data 0 0;
 1843, 1 tracker-data 1 0;
 1844, 1 tracker-data 2 0;
@@ -2145,7 +2136,6 @@
 1903, 1 tracker-data 61 0;
 1904, 1 tracker-data 62 0;
 1905, 1 tracker-data 63 0;
-1906, 1 tracker-data 64 0;
 1907, 1 flanger-ms 0.031;
 1908, 1 flanger-mod-amp 26.8519;
 1909, 1 flanger-amp 0.777778;

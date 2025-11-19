@@ -135,7 +135,7 @@ ifneq ($(LIGHT),yes)
 	#install -p $(bin_src)/pthreadGC2.dll     $(DESTDIR)$(bindir)/
 	#install -p $(bin_src)/libdl.dll     $(DESTDIR)$(bindir)/
 	install -p $(bin_src)/libportaudio*.dll     $(DESTDIR)$(bindir)/
-	# ico@vt.edu 2022-08-17: added both versions of libFLAC because
+	# ico@bukvic.net 2022-08-17: added both versions of libFLAC because
 	# libFLAC version 1.3.4-2 does not have "-8" appended to the dll
 	-install -p $(bin_src)/libFLAC-8.dll     $(DESTDIR)$(bindir)/
 	-install -p $(bin_src)/libFLAC.dll     $(DESTDIR)$(bindir)/
@@ -153,7 +153,7 @@ ifneq ($(LIGHT),yes)
 	install -p $(bin_src)/libpcre-1.dll $(DESTDIR)$(bindir)/
 	install -p $(bin_src)/libgraphite2.dll $(DESTDIR)$(bindir)/
 	install -p $(bin_src)/libjpeg-8.dll $(DESTDIR)$(bindir)/
-	# ico@vt.edu 2022-12-15: added libraries that are needed for
+	# ico@bukvic.net 2022-12-15: added libraries that are needed for
 	# fluid~ even though there is no mention of them anywhere, and
 	# had to be identified by copying the entire /mingw32/bin/ folder
 	# and then pruning...

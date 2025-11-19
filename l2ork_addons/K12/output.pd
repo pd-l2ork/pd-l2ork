@@ -61,11 +61,11 @@
 #X obj 149 338 line~;
 #X obj 90 251 loadbang;
 #X obj 199 81 preset_node k12;
-#X text 351 298 ico@vt.edu;
+#X text 351 298 ico@bukvic.net;
 #X text 351 332 Have fun!;
 #X msg 90 273 0;
 #X msg 149 316 \$1 10;
-#X text 351 281 l2ork.music.vt.edu;
+#X text 351 281 l2ork.bukvic.net;
 #X text 351 264 2022:;
 #X obj 307 58 sig~ 1;
 #X obj 307 103 snapshot~;

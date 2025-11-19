@@ -80,7 +80,7 @@ void my_numbox_clip(t_my_numbox *x)
 int my_numbox_calc_fontwidth2(t_my_numbox *x, int w, int h, int fontsize)
 {
     int f=25;
-    // ico@vt.edu 20200917: below options are disabled for the value
+    // ico@bukvic.net 20200917: below options are disabled for the value
     // inside the numbox since we ignore those in 2.x
     //if     (x->x_gui.x_font_style == 1) f = 27;
     //else if(x->x_gui.x_font_style == 2) f = 25;
@@ -405,7 +405,7 @@ static void my_numbox__motionhook(t_scalehandle *sh,
             IEM_FONT_MINSIZE);
 
         int f = 25;
-        // ico@vt.edu 20200917: below options are disabled for the value
+        // ico@bukvic.net 20200917: below options are disabled for the value
         // inside the numbox since we ignore those in 2.x
         //if     (x->x_gui.x_font_style == 1) f = 27;
         //else if(x->x_gui.x_font_style == 2) f = 25;
@@ -722,7 +722,7 @@ static int my_numbox_newclick(t_gobj *z, struct _glist *glist,
             if (!x->x_focused)
             {
                 //post("|...focusing for the first time");
-                // ico@vt.edu 2021-09-04: added msgfocus check when you issue
+                // ico@bukvic.net 2021-09-04: added msgfocus check when you issue
                 // the "focus" command for keyboard navigation in which case
                 // there should be no timeout
                 if (x->x_msgfocus == 0)

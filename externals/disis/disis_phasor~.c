@@ -2,7 +2,7 @@
 * For information on usage and redistribution, and for a DISCLAIMER OF ALL
 * WARRANTIES, see the file, "LICENSE.txt," in this distribution.  */
 
-/* disis_phasor~ by Copyright (c) 2009  Ivica Ico Bukvic <ico@vt.edu>
+/* disis_phasor~ by Copyright (c) 2009  Ivica Ico Bukvic <ico@bukvic.net>
 * DISIS http://disis.music.vt.edu
 * released under the same BSD license as the above */
 
