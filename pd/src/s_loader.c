@@ -360,8 +360,10 @@ int sys_load_lib(t_canvas *canvas, const char *classname)
 
     if (sys_onloadlist(classname))
     {
+        /* if lib is already loaded, dismiss. */
         verbose(1, "%s: already loaded", classname);
-        return (1);
+        data.ok = 1;
+        goto cleanup;
     }
         /* if classname is absolute, try this first */
     if (sys_isabsolutepath(classname))
@@ -371,7 +373,10 @@ int sys_load_lib(t_canvas *canvas, const char *classname)
         char dirbuf[MAXPDSTRING], *z = strrchr(classname, '/');
         int dirlen;
         if (!z)
-            return (0);
+        {
+            data.ok = 0;
+            goto cleanup;
+        }
         dirlen = z - classname;
         if (dirlen > MAXPDSTRING-1)
             dirlen = MAXPDSTRING-1;
@@ -393,7 +398,7 @@ int sys_load_lib(t_canvas *canvas, const char *classname)
     if(data.ok)
       sys_putonloadlist(classname);
 
-
+cleanup:
     canvas_resume_dsp(dspstate);
     return data.ok;
 }
