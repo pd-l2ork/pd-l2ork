@@ -329,6 +329,9 @@ let pdl2ork_promise = WebPdL2OrkModule({
         pdl2ork.FS.close = stream => {
             FS_close(stream);
 
+            if(stream.node.name.startsWith('socket'))
+                return;
+
             const path = pdl2ork.FS.getPath(stream.node);
             if(stream.isWrite && path.startsWith('/tmp/download'))
                 download(path.split('/').slice(-1)[0], new Blob([pdl2ork.FS.readFile(path)]));
