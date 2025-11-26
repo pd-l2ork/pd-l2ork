@@ -4034,8 +4034,8 @@ function gui_cnv_visible_rect(data) {
         y: data.y_pos,
         width: data.width,
         height: data.height,
-        fill: colfromload(data.bg_color),
-        stroke: colfromload(data.bg_color),
+        fill: colfromload(data.bg_color, 8),
+        stroke: colfromload(data.bg_color, 8),
         id: `${data.id}_visible_rect`,
         class: "unclickable"
     }
