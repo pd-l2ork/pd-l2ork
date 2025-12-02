@@ -264,12 +264,12 @@ KEYBOARD(ctrl) 17 6 0 10 #fffc6418 #ff000000 #ff000000 1 1 1;
 #X connect 6 0 0 0;
 #X connect 6 1 1 1;
 #X restore 17 112 pd keyboard-logic;
-#N canvas 1081 237 690 603 OUT 0;
+#N canvas 1081 237 668 730 OUT 0;
 #X obj 10 126 *~;
 #X obj 10 92 z~ 64;
 #X obj 57 92 limiter~;
 #X msg 69 69 compress 98 88 0.5;
-#X obj 13 558 dac~;
+#X obj 13 702 dac~;
 #N canvas 0 22 271 201 level 0;
 #X obj 49 8 inlet~;
 #X obj 48 156 *~;
@@ -296,7 +296,7 @@ KEYBOARD(ctrl) 17 6 0 10 #fffc6418 #ff000000 #ff000000 1 1 1;
 #X text 417 48 logic for detecting dsp status on startup;
 #X obj 527 91 delay 10;
 #X obj 341 248 hsl 40 15 0 1.5708 0 1 empty empty empty 12 6 0 10 #fffcb46c
-#fffc6418 #ff000000 2500 0 0 1;
+#fffc6418 #ff000000 1950 0 0 1;
 #X obj 13 446 *~;
 #X obj 50 446 *~;
 #X obj 28 408 line~;
@@ -404,7 +404,7 @@ KEYBOARD(ctrl) 17 6 0 10 #fffc6418 #ff000000 #ff000000 1 1 1;
 #X connect 13 0 9 0;
 #X connect 14 0 11 0;
 #X connect 14 0 10 0;
-#X restore 49 558 pd DISIS-dac~;
+#X restore 49 702 pd DISIS-dac~;
 #X obj 335 379 r main-out-multiplier;
 #X obj 335 401 expr ($f1-1)/100;
 #X msg 335 423 \$1 10;
@@ -464,9 +464,9 @@ KEYBOARD(ctrl) 17 6 0 10 #fffc6418 #ff000000 #ff000000 1 1 1;
 #X connect 20 0 3 0;
 #X connect 21 0 2 0;
 #X connect 22 0 3 0;
-#X restore 13 522 pd main-disis-mix;
+#X restore 13 666 pd main-disis-mix;
 #X obj 89 223 r solo;
-#N canvas 643 168 713 724 filter-local 0;
+#N canvas 643 168 821 724 filter-local 0;
 #X obj 274 19 inlet;
 #X obj 283 689 outlet;
 #X obj 301 55 r \$1-myclientnum;
@@ -488,30 +488,36 @@ user \, the level should be 0 \, since the other part should be still
 solo-ed out, f 32;
 #X text 313 79 the command is coming from another part (that canstill
 be owned by this user);
-#X msg 301 133 \$1;
 #X obj 301 181 text get myparts;
 #X obj 301 157 - 1;
 #X obj 301 109 unpack 0 0;
-#X obj 301 358 f;
-#X obj 318 334 r \$1-toggle-solo;
-#X obj 301 381 moses 1;
-#X text 344 239 0 = NOT our part and the incoming part has solo OFF1
-= NOT our part and the incoming part has solo ON2 = OUR part and the
-incoming part has solo OFF3 = OUR part and the incoming part has solo
-ON;
+#X obj 301 328 f;
+#X obj 318 304 r \$1-toggle-solo;
+#X obj 301 351 moses 1;
 #X obj 301 204 expr 2-($f1*2)+$f2;
 #X obj 301 229 > 1;
 #X obj 301 254 sel 1;
-#X text 364 369 4 conditions (with one sub-condition):other part is
+#X text 344 239 0 = NOT our part that has solo OFF1 = NOT our part
+that has solo ON2 = OUR part that has solo OFF3 = OUR part that has
+solo ON;
+#X text 410 180 outputs 0 if it is our part and 1 if it is not;
+#X obj 340 380 t b;
+#X obj 340 405 \$1;
+#X obj 340 430 - 1;
+#X obj 340 455 text get myparts;
+#X obj 340 480 moses 1;
+#X msg 340 535 1;
+#X text 454 329 4 conditions (with one sub-condition):other part is
 also a part of this user or not (P/p)the other part has solo or not
-(S/s)PS > check if we have solo and then make us audible. otherwise
-mute.Ps > check if we have solo and if so \, make us audible. otherwise
-\, check if any other part of this user has solo enabled and if yes
-\, mute us. otherwise make us audible.pS > ignoreps > ignore;
+(S/s)PS > check if we have solo and are a local part \, and if so
+\, make us audible. otherwise mute.Ps > check if we have solo and
+are a local part \, and if so \, make us audible. otherwise \, check
+if any other part of this user has solo enabled and if yes \, mute
+us. otherwise make us audible.pS > ignoreps > ignore;
 #X connect 0 0 3 0;
 #X connect 2 0 3 1;
 #X connect 3 0 5 0;
-#X connect 3 1 17 0;
+#X connect 3 1 16 0;
 #X connect 4 0 1 0;
 #X connect 5 0 8 0;
 #X connect 5 1 1 0;
@@ -520,19 +526,32 @@ mute.Ps > check if we have solo and if so \, make us audible. otherwise
 #X connect 10 0 4 0;
 #X connect 10 1 7 0;
 #X connect 11 0 7 1;
-#X connect 14 0 16 0;
-#X connect 15 0 22 0;
+#X connect 14 0 20 0;
+#X connect 15 0 14 0;
 #X connect 16 0 15 0;
-#X connect 17 0 14 0;
-#X connect 17 1 22 1;
-#X connect 18 0 20 0;
-#X connect 19 0 18 1;
-#X connect 20 0 8 0;
-#X connect 20 1 1 0;
-#X connect 22 0 23 0;
-#X connect 23 0 24 0;
-#X connect 24 0 18 0;
+#X connect 16 1 20 1;
+#X connect 17 0 19 0;
+#X connect 18 0 17 1;
+#X connect 19 0 8 0;
+#X connect 19 1 25 0;
+#X connect 20 0 21 0;
+#X connect 21 0 22 0;
+#X connect 22 0 17 0;
+#X connect 25 0 26 0;
+#X connect 26 0 27 0;
+#X connect 27 0 28 0;
+#X connect 28 0 29 0;
+#X connect 29 0 30 0;
+#X connect 29 1 8 0;
+#X connect 30 0 1 0;
 #X restore 89 244 pd filter-local;
+#X msg 100 569 \$1 10;
+#X obj 100 591 line~;
+#X obj 100 487 r \$1-part-mixer;
+#X obj 13 636 *~;
+#X obj 50 636 *~;
+#X obj 110 511 loadbang;
+#X msg 110 536 1;
 #X connect 0 0 37 0;
 #X connect 1 0 0 0;
 #X connect 2 0 0 1;
@@ -593,8 +612,8 @@ mute.Ps > check if we have solo and if so \, make us audible. otherwise
 #X connect 52 0 53 0;
 #X connect 53 0 55 1;
 #X connect 53 0 54 1;
-#X connect 54 0 59 0;
-#X connect 55 0 59 1;
+#X connect 54 0 65 0;
+#X connect 55 0 66 0;
 #X connect 56 0 24 0;
 #X connect 56 0 14 0;
 #X connect 57 0 56 0;
@@ -605,6 +624,14 @@ mute.Ps > check if we have solo and if so \, make us audible. otherwise
 #X connect 59 3 49 1;
 #X connect 60 0 61 0;
 #X connect 61 0 39 0;
+#X connect 62 0 63 0;
+#X connect 63 0 66 1;
+#X connect 63 0 65 1;
+#X connect 64 0 62 0;
+#X connect 65 0 59 0;
+#X connect 66 0 59 1;
+#X connect 67 0 68 0;
+#X connect 68 0 62 0;
 #X coords 0 -1 1 1 53 106 1 337 161;
 #X restore 763 144 pd OUT;
 #N canvas 697 197 675 422 FLANGER 0;
@@ -1770,7 +1797,7 @@ preset;
 #X connect 74 0 9 0;
 #X connect 74 0 65 0;
 #X restore 13 400 pd instrument \$1;
-#X text 1203 652 l2ork.bukvic.net;
+#X text 1216 652 l2ork.bukvic.net;
 #X text 220 598 toggle keyboard input and network output;
 #X obj 491 392 r override-myid;
 #N canvas 723 345 535 410 delete-logic 0;
@@ -2109,8 +2136,8 @@ which allows users to have control over multiple parts, f 31;
 #X obj 480 329 sel 1;
 #X msg 480 351 0;
 #X msg 243 370 1;
-#X obj 18 181 tgl 15 0 \$1-toggle-solo \$1-override-solo SOLO(esc)
-17 6 0 10 #fffcb46c #ff000000 #ff000000 0 1 1;
+#X obj 18 163 tgl 15 0 \$1-toggle-solo \$1-override-solo SOLO(esc)
+17 6 0 10 #FF7C7C7C #FFFCFCFC #ff000000 0 1 1;
 #N canvas 716 332 454 303 solo-logic 0;
 #X obj 190 205 outlet;
 #X obj 235 116 gate 1 0;
@@ -2392,7 +2419,7 @@ not belong to us or if it does \, that it does not have keyboard enabled
 #X connect 36 1 3 0;
 #X restore 17 294 pd local-copy-logic \$1;
 #X obj 501 539 f;
-#X obj 18 163 tgl 15 0 \$1-hover-mode \$1-manual-toggle-hover-mode
+#X obj 18 181 tgl 15 0 \$1-hover-mode \$1-manual-toggle-hover-mode
 HOVER(space) 17 6 0 10 #fffcb46c #ff000000 #ff000000 0 1 1;
 #X obj 42 266 ggee/image @pd_extra/ggee/empty_image.png 0 3 773 25
 empty empty empty 773 25 0 0 10 #ff000000 0 -8 12.5 12.5 0 1 0;

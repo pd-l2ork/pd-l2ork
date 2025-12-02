@@ -7,11 +7,11 @@
 0 -8 0 10 #FFFCB46C #FFFC6418 #FF000000 0 1;
 #X symbolatom 153 107 20 0 0 0 - - - 0 0 1, f 20;
 #X text 96 106 PASSWORD:;
-#X obj 168 22 r adv-user-ctrl-pass-r;
+#X obj 260 10 r adv-user-ctrl-pass-r;
 #X obj 295 131 s adv-user-ctrl-pass-s;
 #X obj 295 154 s adv-user-ctrl-pass-set;
-#X obj 139 46 r adv-user-ctrl-pass-set;
-#X msg 139 70 set \$1;
+#X obj 231 32 r adv-user-ctrl-pass-set;
+#X msg 231 54 set \$1;
 #X text 148 129 USER;
 #X text 69 144 1;
 #X text 54 144 0;
@@ -43,7 +43,7 @@
 #X text 36 337 13;
 #X text 36 352 14;
 #X obj 51 187 hradio 15 0 0 15 part-3-radio-s part-3-radio-r empty
-0 -8 0 10 #FFFCB46C #FFFC6418 #FF000000 1 1;
+0 -8 0 10 #FFFCB46C #FFFC6418 #FF000000 0 1;
 #X obj 51 202 hradio 15 0 0 15 part-4-radio-s part-4-radio-r empty
 0 -8 0 10 #FFFCB46C #FFFC6418 #FF000000 0 1;
 #X obj 51 217 hradio 15 0 0 15 part-5-radio-s part-5-radio-r empty
@@ -164,6 +164,9 @@ empty 37 25 0 8 #FFFCB46C #FFFC6418 #FF000000 1;
 #X obj 27 11 r network-status;
 #X obj 27 33 sel 1;
 #X obj 27 55 delay 1000;
+#X obj 140 11 r nclients;
+#X obj 140 55 t b;
+#X obj 140 33 change 0;
 #X connect 2 0 5 0;
 #X connect 2 0 6 0;
 #X connect 4 0 2 0;
@@ -173,5 +176,8 @@ empty 37 25 0 8 #FFFCB46C #FFFC6418 #FF000000 1;
 #X connect 56 0 57 0;
 #X connect 57 0 58 0;
 #X connect 58 0 53 0;
+#X connect 59 0 61 0;
+#X connect 60 0 58 0;
+#X connect 61 0 60 0;
 #X coords 0 -1 1 1 255 267 2 24 103;
-#X restore 3 3 pd UI;
+#X restore 0 0 pd UI;
