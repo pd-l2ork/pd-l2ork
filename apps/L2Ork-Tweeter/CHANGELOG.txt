@@ -29,7 +29,7 @@ TODO:
 *Made solo button more visible and reordered button locations for a more logical grouping.
 *Introduced local part mixer widget for local monitoring (regardless of the remote solo setting). The part mixer toggles all parts on when opened or closed to avoid confusion.
 *Issued updating of the Part Mapper state on each connect and disconnect.
-*Improved server reporting of errors for part mapping requests.
+*Improved server reporting of errors for part mapping requests*.
 
 18-11-2025 0.90
 *Fixed a bug addressing the following condition: while online, solo toggling by another user makes their part audible if one's own solo is enabled (it shouldn't).
