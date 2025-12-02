@@ -380,8 +380,11 @@ void binbuf_gettext(const t_binbuf *x, char **bufp, int *lengthp)
         // termination which became apparent when trying to use
         // runtime tooltips ("tooltip" message to gatoms and iemguis)
         // so, we fix this here accordingly. this apparently affects
-        // all such tooltips.
+        // all such tooltips. However, we also need to shrink the size.
+        // ohterwise, pd subpatchers all have extra space at the end.
+        // TODO: check if this has any kind of overflow issue.
         buf[length-1] = '\0';
+        length--;
     }
     //fprintf(stderr,"binbuf_gettext: <%s>\n", buf);
     *bufp = buf;
