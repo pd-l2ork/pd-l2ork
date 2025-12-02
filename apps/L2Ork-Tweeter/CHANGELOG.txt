@@ -23,6 +23,14 @@ TODO:
 *update net-io-coll and get rid of t b 0 on the 1st outlet of the gate since it does not do anything
 *Update L2Ork Tweeter Lite
 
+03-12-2025 0.91
+*Fixed yet another online condition for solo (toggling solo on after another user already has solo on keeps their solo still audible when it shouldn't).
+*Fixed a bug where offline mode part selection was not activating keyboard on such a part.
+*Made solo button more visible and reordered button locations for a more logical grouping.
+*Introduced local part mixer widget for local monitoring (regardless of the remote solo setting). The part mixer toggles all parts on when opened or closed to avoid confusion.
+*Issued updating of the Part Mapper state on each connect and disconnect.
+*Improved server reporting of errors for part mapping requests.
+
 18-11-2025 0.90
 *Fixed a bug addressing the following condition: while online, solo toggling by another user makes their part audible if one's own solo is enabled (it shouldn't).
 *Adjust vertical alignment links within the copyright notice.

@@ -3,7 +3,7 @@
 0;
 #X obj 4 2 cnv 15 1630 19 empty empty empty 200 5 0 10 #ff6c6c6c #fffcfcfc
 0;
-#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.90\ by
+#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.91\ by
 4 5 0 10 #ff6c6c6c #fffcfcfc 0;
 #X obj 252 3 cnv 15 125 16 empty empty (c)\ 2020-present\ Released\ under\ the
 4 6 0 10 #ff6c6c6c #fffcfcfc 0;
@@ -1802,9 +1802,9 @@ ShiftF8 ShiftF9 ShiftF10 ShiftF11 ShiftF12 ShiftCtrlF1 ShiftCtrlF2
 #X msg 241 541 \$1;
 #X msg 43 842 \$1;
 #X obj 112 662 s resetmyclientnumlist;
-#X msg 112 623 1 2 3 4 5 6 7 8 9 10 11 12 13 14, f 16;
-#X obj 85 597 t b b;
-#X obj 26 539 t b b b b b b b;
+#X msg 112 623 \$1 1 2 3 4 5 6 7 8 9 10 11 12 13 14, f 18;
+#X obj 85 597 t b f;
+#X obj 26 539 t b b b b f b b;
 #X connect 0 0 3 0;
 #X connect 1 0 3 1;
 #X connect 1 1 46 0;
@@ -2355,7 +2355,7 @@ stuff \, we need to do this manually., f 45;
 #X text 99 75 DEBUG;
 #X obj 177 168 sprintf L2Ork Tweeter v.%.02f by;
 #X obj 177 193 tosymbol;
-#X msg 177 76 0.9;
+#X msg 177 76 0.91;
 #X connect 0 0 10 0;
 #X connect 1 0 8 0;
 #X connect 1 1 2 0;
@@ -2575,7 +2575,7 @@ prevent unnecessary error being printed into the console, f 27;
 #X obj 19 281 == 3;
 #X obj 19 306 sel 1;
 #X obj 19 331 tgl 15 0 empty empty empty 17 7 0 10 #fffcfcfc #ff000000
-#ff000000 1 1 1;
+#ff000000 0 1 1;
 #X text 19 92 ctrl+shift+alt toggles editability (alt being last!)
 ;
 #X obj 64 125 keyname 1;
@@ -2653,8 +2653,8 @@ LOCAL\ MAIN\ OUT -90 6 0 10 #ff80fc80 #ff008000 #ffffffff 22800 1 0
 #X text 1312 3 MAX;
 #X symbolatom 1478 42 21 0 0 0 - session-name-r session-name-s 1 0
 1, f 21;
-#N canvas 1372 149 146 180 widgets 0;
-#X obj 0 0 cnv 15 149 176 empty empty empty 20 12 0 14 #ffe0e0e0 #ff404040
+#N canvas 1372 149 146 196 widgets 0;
+#X obj 0 0 cnv 15 149 192 empty empty empty 20 12 0 14 #ffe0e0e0 #ff404040
 0;
 #X text 12 105 PERFORMER:;
 #X text 12 12 CONDUCTOR:;
@@ -2664,10 +2664,12 @@ LOCAL\ MAIN\ OUT -90 6 0 10 #ff80fc80 #ff008000 #ffffffff 22800 1 0
 Matrix;
 #X obj 13 53 pddplink admin/DISIS-Dante-Out-Controls.pd -text DISIS
 Dante Out;
-#X obj 12 144 pddplink widgets/sync-controls/Sync-Controls.pd -text
+#X obj 12 143 pddplink widgets/sync-controls/Sync-Controls.pd -text
 Sync Controls;
 #X obj 13 73 pddplink widgets/part-mapper/Part-Mapper.pd -text Part
 Mapper;
+#X obj 12 162 pddplink widgets/part-mixer/Part-Mixer.pd -text Local
+Part Mixer;
 #X restore 1519 3 pd widgets;
 #N canvas 712 186 500 647 supplemental-documentation 0;
 #X obj 0 0 cnv 15 512 651 empty empty empty 20 12 0 14 #ffe0e0e0 #ff404040
@@ -2733,3 +2735,4 @@ first click:, f 82;
 0;
 #X obj 788 3 pddp/pddplink https://l2ork.bukvic.net/main/make-your-own-l2ork/tweeter/
 -text website;
+#X editable 0;
