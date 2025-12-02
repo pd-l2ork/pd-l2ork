@@ -371,14 +371,17 @@ void binbuf_gettext(const t_binbuf *x, char **bufp, int *lengthp)
     }
     if (length && buf[length-1] == ' ')
     {
-        // 2021-11-18 ico@bukvic.net: here the new length (3rd arg) is equal to
-        // length and not length-1 because realloc in resizebytes
-        // adds a terminating character
-        if (newbuf = t_resizebytes(buf, length, length))
+        /*if (newbuf = t_resizebytes(buf, length, length-1))
         {
             buf = newbuf;
             length--;
-        }
+        }*/
+        // ico 2025-12-2: resizebytes at some point lost its null
+        // termination which became apparent when trying to use
+        // runtime tooltips ("tooltip" message to gatoms and iemguis)
+        // so, we fix this here accordingly. this apparently affects
+        // all such tooltips.
+        buf[length-1] = '\0';
     }
     //fprintf(stderr,"binbuf_gettext: <%s>\n", buf);
     *bufp = buf;
