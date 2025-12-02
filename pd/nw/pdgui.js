@@ -2779,16 +2779,17 @@ function canvas_set_editmode(cid, state) {
                 //    all_svg_g[i].getElementsByTagName('title').length + " text=<" +
                 //    all_svg_g[i].getElementsByTagName('title').innerHTML + ">");
                 if (all_svg_g[i].getElementsByTagName('title').length > 0) {
-                    for (var j = 0; j < all_svg_g[i].getElementsByTagName('title').length; j++) {
+                    //for (var j = 0; j < all_svg_g[i].getElementsByTagName('title').length; j++) {
                         //post("..." + j + ":current tooltip=<" +
                         //    all_svg_g[i].getElementsByTagName('title')[j].textContent + ">");
-                    }
+                    //}
                     // ico 2023-11-04: we need the frist one since the subpatch
                     // or an abstraction only has one tooltip that applies to
                     // the entire object
                     //var last = all_svg_g[i].getElementsByTagName('title').length - 1;
                     all_svg_g[i].getElementsByTagName('title')[0].textContent = tooltip;
                 }
+            //post("runtime tooltips off");
             }
         }
     });
@@ -4252,7 +4253,12 @@ function gui_gobj_new(cid, ownercid, parentcid, tag, type, xpos, ypos, is_toplev
                     //    " object description: " + index_file_lines[line]);
                     var yyy = index_file_lines[line].split(';:')[_tooltip_obj];
                     var parsed_tooltip = String(yyy).replace(/\\/g,'');
-                    x.textContent = parsed_tooltip;
+                    var editmode = svg_elem.classList.contains("editmode");
+                    if (editmode) {
+                        x.textContent = parsed_tooltip;
+                    } else {
+                        x.textContent = "";
+                    }
                     g.appendChild(x);
                     g.setAttribute("tooltip", parsed_tooltip);
                 }
