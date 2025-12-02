@@ -131,8 +131,8 @@ void get_runtime_tooltip_text(t_text *x, int ac, t_atom *av)
     binbuf_gettext_from_a_gimme(&buf, &size, ac, av);
     if (size < 1000)
     {
+        //buf[size] = '\0';
         strncpy(x->te_rttp, buf, 1000);
-        buf[size] = '\0';
     } else {
         pd_error(x, "runtime tooltip is larger than the maximum allowed length of %d", MAXPDSTRING);
         x->te_rttp[0] = '\0';
