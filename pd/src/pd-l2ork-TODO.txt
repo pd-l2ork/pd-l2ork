@@ -6,7 +6,7 @@ PD-L2ORK TODO:
 
 *Tooltips appear on the parent patch when an abstraction or subpatch with GOP enabled is opened and closed. After having been redrawn, somehow the tooltips are back (and they should not be if the patch is not in edit mode).
 
-*Aligning links does not redraw them.
+*Aligning pddp link object(s) does not redraw them.
 
 *Bezier implementation of the array sometimes:
   *does not draw when the patch is opened (with different zoom levels)
@@ -925,6 +925,7 @@ resulting in unexpected stuck keys.
   *Removed the printout since it is unnecessary. Something else still catches the point and the system continues to function just fine.
 *Figured out why the Conductor-Commands.pd truncates top right comment (it was message size limit). Implemented warning to inform the user.
 *Updated URLs and email throughout the project tree.
+*Runtime tooltips now get correct null termination at the end of the string.
 
 
 
