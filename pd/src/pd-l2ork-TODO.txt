@@ -4,8 +4,6 @@ PD-L2ORK TODO:
   *Not sure how this broke. Deleting ~/.pd-l2ork/completions.json fixed the issue
   *Will leave this open to see if it recurrs
 
-*Aligning pddp link object(s) does not redraw them.
-
 *Bezier implementation of the array sometimes:
   *does not draw when the patch is opened (with different zoom levels)
   *sometimes has the last point that you cannot change that is stuck at the top
@@ -924,8 +922,8 @@ resulting in unexpected stuck keys.
 *Figured out why the Conductor-Commands.pd truncates top right comment (it was message size limit). Implemented warning to inform the user.
 *Updated URLs and email throughout the project tree.
 *Runtime tooltips now get correct null termination at the end of the string.
-*Fixed a bug where tooltips appear on the parent patch when an abstraction or subpatch with GOP enabled is opened and closed. After having been redrawn, the tooltips were enabled even if the parent patch was not in edit mode.
-
+*Fixed a long-standing bug where tooltips appear on the parent patch when an abstraction or subpatch with GOP enabled is opened and closed. After having been redrawn, the tooltips were enabled even if the parent patch was not in edit mode.
+*Fixed a bug where aligning pddp link object(s) using tidy did not redraw them.
 
 
 

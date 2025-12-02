@@ -753,10 +753,13 @@ void rtext_erase(t_rtext *x)
 }
 
 /* Not needed since the rtext gets displaced along with the parent gobj group */
+// ico 2025-12-02: however, pddplink, for instance uses this to displace itself...
 void rtext_displace(t_rtext *x, int dx, int dy)
 {
     //sys_vgui(".x%zx.c move %s %d %d\n", glist_getcanvas(x->x_glist), 
     //    x->x_tag, dx, dy);
+    gui_vmess("gui_text_displace", "xsii",
+        glist_getcanvas(x->x_glist), x->x_tag, dx, dy);
 }
 
 /* This is no longer used-- we do this with CSS now. But keeping the code
