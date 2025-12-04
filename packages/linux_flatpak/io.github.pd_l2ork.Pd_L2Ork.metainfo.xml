@@ -61,6 +61,13 @@
   <url type="bugtracker">https://github.com/pd-l2ork/pd-l2ork/issues</url>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="20251203" type="stable" date="2025-12-04">
+      <description>
+        <p>
+          Fixed several long-standing editor bugs, including tooltips erroneously showing up in runtime mode and pddp objects not repositioning when aligned. Introduces L2Ork Tweeter 0.91.
+        </p>
+      </description>
+    </release>
     <release version="20251118" type="stable" date="2025-11-19">
       <description>
         <p>
