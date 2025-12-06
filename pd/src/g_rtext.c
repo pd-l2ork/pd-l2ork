@@ -739,6 +739,16 @@ void rtext_update_active_nlines(t_rtext *x, int nlines)
         x->x_active_nlines = nlines;
 }
 
+void rtext_getrect(t_rtext *x, int *x1p, int *y1p, int *x2p, int *y2p)
+{
+    int w = 0, h = 0, indx;
+    rtext_senditup(x, SEND_CHECK, &w, &h, &indx);
+    // For now, this is only used to get width and height, so the actual coords
+    // arent important. This will need to be ported better later
+    *x2p = (*x1p = 0) + w;
+    *y2p = (*y1p = 0) + h;
+}
+
 void rtext_draw(t_rtext *x)
 {
     int w = 0, h = 0, indx;
@@ -787,6 +797,7 @@ void rtext_select(t_rtext *x, int state)
 
 EXTERN void scrollbar_synchronous_update(t_glist *glist);
 
+extern t_class *message_class;
 void rtext_activate(t_rtext *x, int state)
 {
     //post("rtext_activate state=%d", state);

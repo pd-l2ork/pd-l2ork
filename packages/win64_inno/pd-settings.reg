@@ -38,11 +38,10 @@ Windows Registry Editor Version 5.00
 "loadlib33"="hexloader"
 "loadlib34"="disis"
 "loadlib35"="lyonpotpourri"
-"nloadlib"=35
+"loadlib36"="pdlua"
+"loadlib37"="else"
+"nloadlib"=37
 ; delete any previous loadlib flags
-"loadlib35"=-
-"loadlib36"=-
-"loadlib37"=-
 "loadlib38"=-
 "loadlib39"=-
 "loadlib40"=-

@@ -40,7 +40,7 @@ void word_init(t_word *data, t_template *template, t_gpointer *gp)
             wp->w_symbol = &s_symbol;
         else if (type == DT_ARRAY)
         {
-            wp->w_array = array_new(datatypes->ds_fieldtemplate, gp);
+            wp->w_array = array_new(datatypes->ds_fieldtemplate, datatypes->ds_arraydeflength, gp);
         }
         else if (type == DT_LIST)
         {
@@ -111,6 +111,28 @@ void word_init(t_word *data, t_template *template, t_gpointer *gp)
         {
             // Miller's [text] object addition
             wp->w_binbuf = binbuf_new();
+            binbuf_addv(wp->w_binbuf, "s", gensym("..."));
+        }
+    }
+}
+
+    /* a block versions of word_init is provided because
+    creating and destroying large arrays had been absurdly slowing down patch
+    loading and closing.  The first one is created as above and the rest
+    are simply copied from the first one, in a way that now appears
+    unnecessarily convoluted. */
+void word_initvec(t_word *wp, t_template *template, t_gpointer *gp, long n)
+{
+    if (n > 0)
+    {
+        long ndone = 1;
+        word_init(wp, template, gp);  /* init the first one */
+        while (ndone < n)
+        {
+            long ncopy = (n-ndone > ndone ? ndone : n-ndone);
+            memcpy(wp + template->t_n*ndone, wp,
+                ncopy * template->t_n * sizeof(t_word));
+            ndone += ncopy;
         }
     }
 }
@@ -178,6 +200,25 @@ void word_free(t_word *wp, t_template *template)
             canvas_free(wp[i].w_list);
         else if (dt->ds_type == DT_TEXT)
             binbuf_free(wp[i].w_binbuf);
+    }
+}
+
+void word_freevec(t_word *wp, t_template *template, long n)
+{
+    int i, j;
+    t_dataslot *dt;
+    for (dt = template->t_vec, i = 0; i < template->t_n; i++, dt++)
+    {
+        if (dt->ds_type == DT_ARRAY)
+        {
+            for (j = 0; j < n; j++)
+                array_free(wp[i + j * template->t_n].w_array);
+        }
+        else if (dt->ds_type == DT_TEXT)
+        {
+            for (j = 0; j < n; j++)
+                binbuf_free(wp[i + j * template->t_n].w_binbuf);
+        }
     }
 }
 
@@ -399,6 +440,8 @@ int template_has_elemtemplate(t_template *t, t_template *elemtemplate)
     }
     return (returnval);
 }
+
+extern t_class *drawnumber_class;
 
 /* -------------------- widget behavior for scalar ------------ */
 void scalar_getbasexy(t_scalar *x, t_float *basex, t_float *basey)
@@ -727,7 +770,7 @@ static void scalar_displace(t_gobj *z, t_glist *glist, int dx, int dy)
     SETPOINTER(&at[0], &gp);
     SETFLOAT(&at[1], (t_float)dx);
     SETFLOAT(&at[2], (t_float)dy);
-    template_notify(template, gensym("displace"), 2, at);
+    template_notify(template, gensym("displace"), 3, at);
     scalar_redraw(x, glist);
 }
 
@@ -1355,49 +1398,45 @@ int scalar_doclick(t_word *data, t_template *template, t_scalar *sc,
     t_float xloc, t_float yloc, int xpix, int ypix,
     int shift, int alt, int dbl, int doit)
 {
-    int hit = 0;
+    int hit = 0, notified = 0;
     t_canvas *templatecanvas = template_findcanvas(template);
-    t_atom at[2];
-    t_gobj *obj;
-    t_float basex = template_getfloat(template, gensym("x"), data, 0);
-    t_float basey = template_getfloat(template, gensym("y"), data, 0);
-    //fprintf(stderr,"=================scalar_doclick %f %f %f %f %d\n",
-    //    basex, basey, xloc, yloc, doit);
-
-    SETFLOAT(at, basex + xloc);
-    SETFLOAT(at+1, basey + yloc);
-    if (doit)
+    t_gobj *y;
+    for (y = templatecanvas->gl_list; y; y = y->g_next)
     {
-        //fprintf(stderr,"    doit\n");
-        template_notifyforscalar(template, owner, 
-            sc, gensym("click"), 2, at);
+        const t_parentwidgetbehavior *wb = pd_getparentwidget(&y->g_pd);
+        if (!wb) continue;
+        if ((hit = (*wb->w_parentclickfn)(y, owner,
+            data, template, sc, ap, xloc, yloc,
+            xpix, ypix, shift, alt, dbl, doit)))
+        {
+            if (doit && !notified)
+            {
+                t_atom at[6];
+                SETFLOAT(at, 0); /* unused - later bashed to the gpointer */
+                SETFLOAT(at+1, xpix - glist_xtopixels(owner, xloc));
+                SETFLOAT(at+2, ypix - glist_ytopixels(owner, yloc));
+                SETFLOAT(at+3, shift);
+                SETFLOAT(at+4, alt);
+                SETFLOAT(at+5, dbl);
+                template_notifyforscalar(template, owner,
+                    sc, gensym("click"), 6, at);
+                notified = 1;
+            }
+                /* hit might be -1 (see curve_click()) indicating "scalar
+                was notified" but keep looking for something to start dragging
+                so continue the search until hit is positive. */
+            if (hit > 0)
+                return (hit);
+        }
     }
-
-    // if we are nested ignore xloc and yloc, otherwise
-    // nested objects get their hitbox miscalculated
-    if (xloc != 0.0 || yloc != 0.0)
-    {
-        //fprintf(stderr,"ignoring\n");
-        //basex = 0.0;
-        //basey = 0.0;
-    }
-
-    if (templatecanvas)
-    {
-        //post("scalar_doclick -> groupclick");
-        if (!(obj = templatecanvas->gl_list)) return 0;
-        hit = scalar_groupclick(templatecanvas, data, template, sc, ap,
-                    owner, xloc, yloc, xpix, ypix,
-                    shift, alt, dbl, doit, basex, basey, obj);
-    }
-    return hit;
+    return (0);
 }
 
 /* Unfortunately, nested gops don't yet handle scalar clicks correctly. The
    nested scalar seems not to receive the click.  However, the enter/leave
    messages happen just fine since most of their logic is in tcl/tk. */
 /* ico@bukvic.net: I tried nested GOP and it appears to work ok */
-static int scalar_click(t_gobj *z, struct _glist *owner,
+int scalar_click(t_gobj *z, struct _glist *owner,
     int xpix, int ypix, int shift, int alt, int dbl, int doit)
 {
     //post("scalar_click %d %d %d", xpix, ypix, doit);
@@ -1406,9 +1445,11 @@ static int scalar_click(t_gobj *z, struct _glist *owner,
     x->sc_bboxcache = 0;
 
     t_template *template = template_findbyname(x->sc_template);
+    t_float basex = template_getfloat(template, gensym("x"), x->sc_vec, 0);
+    t_float basey = template_getfloat(template, gensym("y"), x->sc_vec, 0);
 
     return (scalar_doclick(x->sc_vec, template, x, 0,
-        owner, 0, 0, xpix, ypix, shift, alt, dbl, doit));
+        owner, basex, basey, xpix, ypix, shift, alt, dbl, doit));
 }
 
 void canvas_writescalar(t_symbol *templatesym, t_word *w, t_binbuf *b,
