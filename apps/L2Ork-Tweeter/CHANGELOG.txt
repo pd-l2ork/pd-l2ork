@@ -10,6 +10,7 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
 TODO:
+*Clean-up older sessions from solo?
 *Disconnect-all sometimes does not disconnect all.
 *Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. Needs to be further tested.
   *Also affects Teacher widget.
