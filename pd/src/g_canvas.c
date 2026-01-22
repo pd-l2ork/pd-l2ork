@@ -1568,6 +1568,7 @@ void canvas_free(t_canvas *x)
 
 /* ----------------- lines ---------- */
 
+extern t_class *message_class;
 static void canvas_drawlines(t_canvas *x)
 {
     t_linetraverser t;
@@ -4047,6 +4048,10 @@ void g_canvas_newpdinstance( void)
     THISGUI->i_reloadingabstraction = 0;
     THISGUI->i_dspstate = 0;
     THISGUI->i_dollarzero = 1000;
+    THISGUI->i_foregroundcolor = gensym("black");
+    THISGUI->i_backgroundcolor = gensym("white");
+    THISGUI->i_selectcolor = gensym("blue");
+    THISGUI->i_gopcolor = gensym("red");
     g_editor_newpdinstance();
     g_template_newpdinstance();
 }
@@ -4091,4 +4096,29 @@ t_pd *glob_evalfile(t_pd *ignore, t_symbol *name, t_symbol *dir)
     canvas_resume_dsp(dspstate);
     s__X.s_thing = boundx;
     return x;
+}
+
+static void glist_dorevis(t_glist *glist)
+{
+    t_gobj *g;
+    if (glist->gl_havewindow)
+    {
+        canvas_vis(glist, 0);
+        canvas_vis(glist, 1);
+    }
+    for (g = glist->gl_list; g; g = g->g_next)
+        if (g->g_pd == canvas_class)
+            glist_dorevis((t_glist *)g);
+}
+
+void glob_colors(void *dummy, t_symbol *fg, t_symbol *bg, t_symbol *sel,
+    t_symbol *gop)
+{
+    t_glist *gl;
+    THISGUI->i_foregroundcolor = fg;
+    THISGUI->i_backgroundcolor = bg;
+    THISGUI->i_selectcolor = sel;
+    THISGUI->i_gopcolor = (*gop->s_name ? gop : sel);
+    for (gl = pd_this->pd_canvaslist; gl; gl = gl->gl_next)
+        glist_dorevis(gl);
 }

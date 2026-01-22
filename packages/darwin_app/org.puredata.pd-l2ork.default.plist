@@ -80,8 +80,10 @@
 	<string>lyonpotpourri</string>
 	<key>loadlib36</key>
 	<string>pdlua</string>
+	<key>loadlib37</key>
+	<string>else</string>
 	<key>nloadlib</key>
-	<string>36</string>
+	<string>37</string>
 	<key>path1</key>
 	<string>/System/Library/Fonts</string>
 	<key>path2</key>
