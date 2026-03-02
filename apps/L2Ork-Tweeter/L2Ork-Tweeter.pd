@@ -3,7 +3,7 @@
 0;
 #X obj 4 2 cnv 15 1630 19 empty empty empty 200 5 0 10 #ff6c6c6c #fffcfcfc
 0;
-#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.91\ by
+#X obj 5 4 cnv 15 13 13 null-s title-version-r L2Ork\ Tweeter\ v.0.92\ by
 4 5 0 10 #ff6c6c6c #fffcfcfc 0;
 #X obj 252 3 cnv 15 125 16 empty empty (c)\ 2020-present\ Released\ under\ the
 4 6 0 10 #ff6c6c6c #fffcfcfc 0;
@@ -80,7 +80,7 @@ empty -5 -9 0 10 #ff80fc80 #ff008080 #fffcfcfc 1;
 -text GPL v3 License;
 #X obj 820 521 core/L2OrkTweet 11;
 #X obj 820 672 core/L2OrkTweet 12;
-#N canvas 560 448 510 131 core 0;
+#N canvas 560 448 510 131 core 1;
 #N canvas 80 24 898 923 loop-logic 0;
 #X obj 127 219 coll;
 #C restore;
@@ -2355,7 +2355,7 @@ stuff \, we need to do this manually., f 45;
 #X text 99 75 DEBUG;
 #X obj 177 168 sprintf L2Ork Tweeter v.%.02f by;
 #X obj 177 193 tosymbol;
-#X msg 177 76 0.91;
+#X msg 177 76 0.92;
 #X connect 0 0 10 0;
 #X connect 1 0 8 0;
 #X connect 1 1 2 0;
