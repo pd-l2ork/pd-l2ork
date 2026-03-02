@@ -80,7 +80,7 @@ empty -5 -9 0 10 #ff80fc80 #ff008080 #fffcfcfc 1;
 -text GPL v3 License;
 #X obj 820 521 core/L2OrkTweet 11;
 #X obj 820 672 core/L2OrkTweet 12;
-#N canvas 560 448 510 131 core 1;
+#N canvas 560 448 510 131 core 0;
 #N canvas 80 24 898 923 loop-logic 0;
 #X obj 127 219 coll;
 #C restore;
@@ -2575,7 +2575,7 @@ prevent unnecessary error being printed into the console, f 27;
 #X obj 19 281 == 3;
 #X obj 19 306 sel 1;
 #X obj 19 331 tgl 15 0 empty empty empty 17 7 0 10 #fffcfcfc #ff000000
-#ff000000 0 1 1;
+#ff000000 1 1 1;
 #X text 19 92 ctrl+shift+alt toggles editability (alt being last!)
 ;
 #X obj 64 125 keyname 1;
@@ -2735,4 +2735,3 @@ first click:, f 82;
 0;
 #X obj 788 3 pddp/pddplink https://l2ork.bukvic.net/main/make-your-own-l2ork/tweeter/
 -text website;
-#X editable 0;
