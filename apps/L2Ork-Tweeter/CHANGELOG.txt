@@ -24,6 +24,10 @@ TODO:
 *update net-io-coll and get rid of t b 0 on the 1st outlet of the gate since it does not do anything
 *Update L2Ork Tweeter Lite
 
+02-03-2026 0.92
+*Fixed bug where hover mode did not capture the entire track area (a regression from previous patch editing to access elements below the mouse capturing object that was never reverted).
+*Fixed a bug where part 14 could not be correctly assigned in the Part Mapper.
+
 03-12-2025 0.91
 *Fixed yet another online condition for solo (toggling solo on after another user already has solo on keeps their solo still audible when it shouldn't).
 *Fixed a bug where offline mode part selection was not activating keyboard on such a part.
