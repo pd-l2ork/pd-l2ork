@@ -32,7 +32,7 @@
 #X obj 18 199 tgl 15 0 \$1-loop null-r LOOP(alt) 17 6 0 10 #fffcb46c
 #ff000000 #ff000000 0 1 1;
 #X obj 18 145 tgl 15 0 \$1-toggle-keyboard \$1-manual-toggle-keyboard
-KEYBOARD(ctrl) 17 6 0 10 #fffc6418 #ff000000 #ff000000 1 1 1;
+KEYBOARD(ctrl) 17 6 0 10 #fffc6418 #ff000000 #ff000000 0 1 1;
 #N canvas 793 437 521 278 REVERB 0;
 #X obj 45 181 freeverb~;
 #N canvas 3 75 470 252 reverb_levels 0;
@@ -296,7 +296,7 @@ KEYBOARD(ctrl) 17 6 0 10 #fffc6418 #ff000000 #ff000000 1 1 1;
 #X text 417 48 logic for detecting dsp status on startup;
 #X obj 527 91 delay 10;
 #X obj 341 248 hsl 40 15 0 1.5708 0 1 empty empty empty 12 6 0 10 #fffcb46c
-#fffc6418 #ff000000 1950 0 0 1;
+#fffc6418 #ff000000 2500 0 0 1;
 #X obj 13 446 *~;
 #X obj 50 446 *~;
 #X obj 28 408 line~;
@@ -2421,7 +2421,7 @@ not belong to us or if it does \, that it does not have keyboard enabled
 #X obj 501 539 f;
 #X obj 18 181 tgl 15 0 \$1-hover-mode \$1-manual-toggle-hover-mode
 HOVER(space) 17 6 0 10 #fffcb46c #ff000000 #ff000000 0 1 1;
-#X obj 42 266 ggee/image @pd_extra/ggee/empty_image.png 0 3 773 25
+#X obj 42 256 ggee/image @pd_extra/ggee/empty_image.png 0 3 773 25
 empty empty empty 773 25 0 0 10 #ff000000 0 -8 12.5 12.5 0 1 0;
 #N canvas 322 381 254 355 hover-logic 0;
 #X obj 63 17 inlet;
