@@ -298,15 +298,15 @@ void glist_delete(t_glist *x, t_gobj *y)
                         //sprintf(tag, "graph%zx", (t_uint)gl);
                         //t_glist *yy = (t_glist *)y;
                         sprintf(tag, "%s",
-                            rtext_gettag(glist_findrtext(x, &gl->gl_obj)));
+                            rtext_gettag(glist_getrtext(x, &gl->gl_obj)));
                         glist_eraseiofor(x, &gl->gl_obj, tag);
                         text_eraseborder(&gl->gl_obj, x,
-                            rtext_gettag(glist_findrtext(x, &gl->gl_obj)));
+                            rtext_gettag(glist_getrtext(x, &gl->gl_obj)));
                     }
                     else
                     {
                         text_eraseborder(&gl->gl_obj, x,
-                            rtext_gettag(glist_findrtext(x, &gl->gl_obj)));
+                            rtext_gettag(glist_getrtext(x, &gl->gl_obj)));
                     }
                 }
             }
@@ -330,7 +330,7 @@ void glist_delete(t_glist *x, t_gobj *y)
         if (x->gl_editor && (ob = pd_checkobject(&y->g_pd)))
         {
             //rtext_new(x, ob);
-            rt = glist_findrtext(x, ob);
+            rt = glist_getrtext(x, ob);
             if (rt)
                 late_rtext_free = 1;
         }
@@ -400,7 +400,7 @@ void glist_retext(t_glist *glist, t_text *y)
         /* check that we have built rtexts yet.  LATER need a better test. */
     if (glist->gl_editor && glist->gl_editor->e_rtext)
     {
-        t_rtext *rt = glist_findrtext(glist, y);
+        t_rtext *rt = glist_getrtext(glist, y);
         if (rt)
             rtext_retext(rt);
     }
@@ -662,7 +662,7 @@ void canvas_resortinlets(t_canvas *x)
 
         /*
         t_object *ob = pd_checkobject(&y->g_pd);
-        t_rtext *rt = glist_findrtext(x->gl_owner, (t_text *)&ob->ob_g);
+        t_rtext *rt = glist_getrtext(x->gl_owner, (t_text *)&ob->ob_g);
         for (i = 0; i < ninlets; i++)
         {
             //sys_vgui(".x%x.c itemconfigure %si%d -fill %s -width 1\n",
@@ -1177,7 +1177,7 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
 
         /* Sanity check */
     //post("parent_glist=%lx x->gl_obj=%lx", parent_glist, &x->gl_obj);
-    rtext = glist_findrtext(parent_glist, &x->gl_obj);
+    rtext = glist_getrtext(parent_glist, &x->gl_obj);
     if (!rtext)
     {
         bug("graph_vis");
@@ -1220,10 +1220,10 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
             buf
         );
         if (canvas_showtext(x))
-            rtext_draw(glist_findrtext(parent_glist, &x->gl_obj));
+            rtext_draw(glist_getrtext(parent_glist, &x->gl_obj));
     }
 
-    //sprintf(tag, "%s", rtext_gettag(glist_findrtext(parent_glist, &x->gl_obj)));
+    //sprintf(tag, "%s", rtext_gettag(glist_getrtext(parent_glist, &x->gl_obj)));
 
     // need the rect to create the gobj, so this should perhaps be above the
     // conditional
@@ -1237,11 +1237,11 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
     }
 
     if (!vis)
-        rtext_erase(glist_findrtext(parent_glist, &x->gl_obj));
+        rtext_erase(glist_getrtext(parent_glist, &x->gl_obj));
 
     //sprintf(tag, "graph%zx", (t_uint)x);
     //fprintf(stderr, "gettag=%s, tag=graph%zx\n",
-    //    rtext_gettag(glist_findrtext(parent_glist, &x->gl_obj)),(t_int)x);
+    //    rtext_gettag(glist_getrtext(parent_glist, &x->gl_obj)),(t_int)x);
     /* if we look like a graph but have been moved to a toplevel,
        just show the bounding rectangle */
     if (x->gl_havewindow)
@@ -1350,31 +1350,20 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
             t_float upix, lpix;
             if (y2 < y1)
                 upix = y1, lpix = y2;
-            else upix = y2, lpix = y1;
-            for (i = 0, f = x->gl_xtick.k_point;
-                f < 0.99 * x->gl_x2 + 0.01*x->gl_x1; i++,
-                    f += x->gl_xtick.k_inc)
+                        else
+                upix = y2, lpix = y1;
+
+            for (i = (int)((x->gl_x1 - x->gl_xtick.k_point) / x->gl_xtick.k_inc) + (x->gl_xtick.k_point<x->gl_x1);
+                 i <= (int)((x->gl_x2 - x->gl_xtick.k_point) / x->gl_xtick.k_inc) - (x->gl_xtick.k_point>x->gl_x2);
+                 i++)
             {
+                t_float fx = x->gl_xtick.k_point + (i * x->gl_xtick.k_inc);
                 int tickpix = (i % x->gl_xtick.k_lperb ? 2 : 4);
+                int ix = (int)glist_xtopixels(x, x->gl_xtick.k_point + (i * x->gl_xtick.k_inc));
                 gui_vmess("gui_graph_vtick", "xsiiiiii",
                     glist_getcanvas(x->gl_owner),
                     tag,
-                    (int)glist_xtopixels(x, f),
-                    (int)upix,
-                    (int)lpix,
-                    (int)tickpix,
-                    x1,
-                    y1);
-            }
-            for (i = 1, f = x->gl_xtick.k_point - x->gl_xtick.k_inc;
-                f > 0.99 * x->gl_x1 + 0.01*x->gl_x2;
-                    i++, f -= x->gl_xtick.k_inc)
-            {
-                int tickpix = (i % x->gl_xtick.k_lperb ? 2 : 4);
-                gui_vmess("gui_graph_vtick", "xsiiiiii",
-                    glist_getcanvas(x->gl_owner),
-                    tag,
-                    (int)glist_xtopixels(x, f),
+                    ix,
                     (int)upix,
                     (int)lpix,
                     (int)tickpix,
@@ -1389,31 +1378,19 @@ static void graph_vis(t_gobj *gr, t_glist *parent_glist, int vis)
             t_float ubound, lbound;
             if (x->gl_y2 < x->gl_y1)
                 ubound = x->gl_y1, lbound = x->gl_y2;
-            else ubound = x->gl_y2, lbound = x->gl_y1;
-            for (i = 0, f = x->gl_ytick.k_point;
-                f < 0.99 * ubound + 0.01 * lbound;
-                    i++, f += x->gl_ytick.k_inc)
+            else
+                ubound = x->gl_y2, lbound = x->gl_y1;
+            for (i =  (int)((lbound - x->gl_ytick.k_point) / x->gl_ytick.k_inc) + (x->gl_ytick.k_point<lbound);
+                 i <= (int)((ubound - x->gl_ytick.k_point) / x->gl_ytick.k_inc) - (x->gl_ytick.k_point>ubound);
+                 i++)
             {
+                t_float fy = x->gl_ytick.k_point + (i * x->gl_ytick.k_inc);
                 int tickpix = (i % x->gl_ytick.k_lperb ? 2 : 4);
+                int iy = (int)glist_ytopixels(x, fy);
                 gui_vmess("gui_graph_htick", "xsiiiiii",
                     glist_getcanvas(x->gl_owner),
                     tag,
-                    (int)glist_ytopixels(x, f),
-                    x1,
-                    x2,
-                    (int)tickpix,
-                    x1,
-                    y1);
-            }
-            for (i = 1, f = x->gl_ytick.k_point - x->gl_ytick.k_inc;
-                f > 0.99 * lbound + 0.01 * ubound;
-                    i++, f -= x->gl_ytick.k_inc)
-            {
-                int tickpix = (i % x->gl_ytick.k_lperb ? 2 : 4);
-                gui_vmess("gui_graph_htick", "xsiiiiii",
-                    glist_getcanvas(x->gl_owner),
-                    tag,
-                    (int)glist_ytopixels(x, f),
+                    iy,
                     x1,
                     x2,
                     (int)tickpix,
@@ -1538,7 +1515,7 @@ void graph_gopspill(t_canvas *x, t_floatarg f)
         char tag[50];
         t_rtext *rtext;
 
-        rtext = glist_findrtext(x->gl_owner, &x->gl_obj);
+        rtext = glist_getrtext(x->gl_owner, &x->gl_obj);
         if (!rtext)
         {
             bug("canvas_gopspill");
@@ -1747,7 +1724,7 @@ static void graph_displace(t_gobj *z, t_glist *glist, int dx, int dy)
         /*char tag[80];
         sprintf(tag, "%s",
             rtext_gettag(
-                glist_findrtext((x->gl_owner ? x->gl_owner: x), &x->gl_obj)));
+                glist_getrtext((x->gl_owner ? x->gl_owner: x), &x->gl_obj)));
         sys_vgui(".x%zx.c move %s %d %d\n",
             glist_getcanvas(x->gl_owner), tag, dx, dy);
         sys_vgui(".x%zx.c move %sR %d %d\n",
@@ -1831,7 +1808,7 @@ static void graph_select(t_gobj *z, t_glist *glist, int state)
     {
         //fprintf(stderr,"...yes\n");
         //fprintf(stderr,"%zx %zx %zx\n", glist_getcanvas(glist), glist, x);
-        t_rtext *y = glist_findrtext(glist, &x->gl_obj);
+        t_rtext *y = glist_getrtext(glist, &x->gl_obj);
         if (canvas_showtext(x))
         {
             rtext_select(y, state);
@@ -1879,7 +1856,7 @@ static void graph_select(t_gobj *z, t_glist *glist, int state)
         // Don't yet understand the purpose of this call, so not deleting
         // it just yet...
         //sys_vgui("pdtk_select_all_gop_widgets .x%zx %s %d\n",
-        //    canvas, rtext_gettag(glist_findrtext(glist, &x->gl_obj)), state);
+        //    canvas, rtext_gettag(glist_getrtext(glist, &x->gl_obj)), state);
     }
 }
 

@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <limits.h>
 
 /* -------------------------- int ------------------------------ */
 static t_class *pdint_class;
@@ -1530,6 +1531,7 @@ static t_class *makefilename_class;
 typedef enum {
     NONE = 0,
     INT,
+    UINT,
     FLOAT,
     STRING,
     POINTER,
@@ -1690,9 +1692,15 @@ static const char* makefilename_doscanformat(const char *str, t_printtype *typ,
             }
 
             /* an int */
-            if (*str && strchr("xXdiouc", *str) != 0)
+            if (*str && strchr("dic", *str) != 0)
             {
                 *typ = INT;
+                return str;
+            }
+
+            /* a uint */
+            if (strchr("ouxX",*str)!=0) {
+                *typ = UINT;
                 return str;
             }
 
@@ -1807,6 +1815,7 @@ static void makefilename_snprintf(t_makefilename *x, char *buf, char *fmt, ...)
 
 static void makefilename_float(t_makefilename *x, t_floatarg f)
 {
+#define CLAMP(var, min, max) (var>(t_float)max)?max:(var<(t_float)min)?min:var
     char buf[MAXPDSTRING];
     if (!x->x_format)
     {
@@ -1818,8 +1827,18 @@ static void makefilename_float(t_makefilename *x, t_floatarg f)
     case FLOAT:
         makefilename_snprintf(x, buf, x->x_format->s_name, f);
         break;
-    case INT:
-        makefilename_snprintf(x, buf, x->x_format->s_name, (int)f);
+    case INT: {
+        int i = CLAMP(f, INT_MIN, INT_MAX);
+        sprintf(buf, x->x_format->s_name, i);
+        break;
+    }
+    case UINT: {
+        unsigned int i = CLAMP(f, 0, UINT_MAX);
+        sprintf(buf, x->x_format->s_name, i);
+        break;
+    }
+    case POINTER:
+        sprintf(buf, x->x_format->s_name, (t_int)f);
         break;
     case STRING: {
         char buf2[MAXPDSTRING];
@@ -1855,7 +1874,7 @@ static void makefilename_symbol(t_makefilename *x, t_symbol *s)
     case STRING:
         makefilename_snprintf(x, buf, x->x_format->s_name, s->s_name);
         break;
-    case INT:
+    case INT: case UINT:
         makefilename_snprintf(x, buf, x->x_format->s_name, 0);
         break;
     case FLOAT:
@@ -1887,7 +1906,7 @@ static void makefilename_bang(t_makefilename *x)
     }
     switch(x->x_accept)
     {
-    case INT:
+    case INT: case UINT:
         makefilename_snprintf(x, buf, x->x_format->s_name, 0);
         break;
     case FLOAT:
