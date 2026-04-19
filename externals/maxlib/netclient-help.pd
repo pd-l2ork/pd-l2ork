@@ -1,4 +1,4 @@
-#N canvas 569 336 712 571 12;
+#N canvas 774 471 713 572 12;
 #X obj 458 247 netclient;
 #X floatatom 21 472 5 0 0 0 - - - 0 0 1, f 5;
 #X floatatom 59 447 5 0 0 0 - - - 0 0 1, f 5;
@@ -75,7 +75,7 @@ the server imediately. Or just try it the other way round..., f 85
 #X floatatom 102 270 5 0 0 0 - - - 0 0 1, f 5;
 #X msg 102 298 disconnect \$1;
 #X text 147 270 disconnect client using socket number;
-#N canvas 269 317 445 588 netserver_arguments 0;
+#N canvas 542 240 445 589 netserver_arguments 0;
 #X text 10 10 netserver accepts two arguments: 1) port on which server
 should receive connections2) OPTIONAL receiving buffer size exponent
 (default 15) Second argument stands for the exponent applied to the
@@ -123,7 +123,7 @@ bytes (4KB) and 6.71089e+07 bytes (or 64MB) Second argument is important
 if there are a lot of clients and/or a lot of network traffic. Because
 netserver handles messages in the Pd-L2Ork interrupt \, which by default
 happens every 64 bytes of audio (timing will depend on the sampling
-rate). Because if this and the fact that internal buffer for storing
+rate). Because of this and the fact that internal buffer for storing
 incoming messages is circular in nature \, it is possible that the
 entire buffer size gets filled up \, which will result in data being
 lost and/or overwritten. This is even more true if there are so many
