@@ -126,7 +126,7 @@ bytes (4KB) and 6.71089e+07 bytes (or 64MB) Second argument is important
 if there are a lot of clients and/or a lot of network traffic. Because
 netserver handles messages in the Pd-L2Ork interrupt \, which by default
 happens every 64 bytes of audio (timing will depend on the sampling
-rate). Because if this and the fact that internal buffer for storing
+rate). Because of this and the fact that internal buffer for storing
 incoming messages is circular in nature \, it is possible that the
 entire buffer size gets filled up \, which will result in data being
 lost and/or overwritten. This is even more true if there are so many
