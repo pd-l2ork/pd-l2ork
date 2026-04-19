@@ -24,6 +24,11 @@ TODO:
 *update net-io-coll and get rid of t b 0 on the 1st outlet of the gate since it does not do anything
 *Update L2Ork Tweeter Lite
 
+18-04-2026 0.93
+*Fixed a bug that was created by the 0.87 where oldest client was not correctly detected.
+*Updated sessions.
+*Added latest work 0s and 1s Drifting Apart.
+
 02-03-2026 0.92
 *Fixed bug where hover mode did not capture the entire track area (a regression from previous patch editing to access elements below the mouse capturing object that was never reverted).
 *Fixed a bug where part 14 could not be correctly assigned in the Part Mapper.
