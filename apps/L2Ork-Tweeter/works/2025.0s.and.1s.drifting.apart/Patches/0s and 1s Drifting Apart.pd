@@ -1,0 +1,66 @@
+#N canvas 20 36 527 685 10;
+#X obj -30 -30 preset_hub k12 1 %hidden%;
+#X obj 10 650 s chat-out;
+#X msg 30 290 chat admin p:l2orklicious l2ork-sync-all;
+#X text 280 290 RESET;
+#X msg 30 45 chat admin p:l2orklicious l2ork-load 0s-and-1s-apart-B
+;
+#X msg 30 87 chat admin p:l2orklicious l2ork-load 0s-and-1s-apart-A
+;
+#X msg 30 111 chat admin p:l2orklicious l2ork-load 0s-and-1s-apart-C
+;
+#X msg 30 160 chat admin p:l2orklicious l2ork-load 0s-and-1s-apart-A
+;
+#X msg 30 184 chat admin p:l2orklicious l2ork-load 0s-and-1s-apart-D
+;
+#X msg 30 232 chat admin p:l2orklicious l2ork-load 0s-and-1s-apart-E
+;
+#X text 57 358 args: start/stop(0/1) soundfile-num sync-to-part at-beat
+;
+#X msg 60 400 chat admin p:l2orklicious l2ork-custom soundfile 0 0
+14 63;
+#X msg 60 523 chat admin p:l2orklicious l2ork-custom soundfile 0 2
+14 63;
+#X msg 60 564 chat admin p:l2orklicious l2ork-custom soundfile 0 3
+14 32;
+#X msg 60 461 chat admin p:l2orklicious l2ork-custom soundfile 0 1
+14 2;
+#X msg 60 626 chat admin p:l2orklicious l2ork-custom soundfile 0 4
+14 61;
+#X msg 42 605 chat admin p:l2orklicious l2ork-custom soundfile 1 4
+12 0;
+#X msg 42 543 chat admin p:l2orklicious l2ork-custom soundfile 1 3
+12 0;
+#X msg 43 502 chat admin p:l2orklicious l2ork-custom soundfile 1 2
+12 0;
+#X msg 42 440 chat admin p:l2orklicious l2ork-custom soundfile 1 1
+12 0;
+#X msg 42 379 chat admin p:l2orklicious l2ork-custom soundfile 1 0
+12 0;
+#X text 366 19 intro + beeps;
+#X text 367 87 verse 1 x 2;
+#X text 366 232 beeps;
+#X text 366 45 intro + beeps;
+#X msg 29 20 chat admin p:l2orklicious l2ork-load 0s-and-1s-apart-AI
+;
+#X text 366 111 2 NaN + 2 beeps;
+#X text 366 160 verse 2 + beep> + verse 2;
+#X text 366 184 refrain x 2;
+#X connect 2 0 1 0;
+#X connect 4 0 1 0;
+#X connect 5 0 1 0;
+#X connect 6 0 1 0;
+#X connect 7 0 1 0;
+#X connect 8 0 1 0;
+#X connect 9 0 1 0;
+#X connect 11 0 1 0;
+#X connect 12 0 1 0;
+#X connect 13 0 1 0;
+#X connect 14 0 1 0;
+#X connect 15 0 1 0;
+#X connect 16 0 1 0;
+#X connect 17 0 1 0;
+#X connect 18 0 1 0;
+#X connect 19 0 1 0;
+#X connect 20 0 1 0;
+#X connect 25 0 1 0;
