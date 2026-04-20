@@ -166,15 +166,19 @@ ifeq ($(LIGHT),yes)
 lib_targets = loaders-libdir pddp
 INCREMENTAL = yes
 else
-lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui flite fluid freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemgui iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib js loaders-libdir lyonpotpourri mapping markex maxlib mjlib moocow moonlib motex mrpeach neuraln oscx pan pdcontainer pddp pdlua pdogg plugin pmpd rjlib sigpack smlib tof unauthorized vbap windowing zexy
+lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc disis earplug ekext ext13 fftease flatgui flite fluid freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemgui iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib js loaders-libdir lyonpotpourri mapping markex maxlib mjlib moocow moonlib motex mrpeach neuraln oscx pan  pd-cyclone pd-else pdcontainer pddp pdlua pdogg plugin pmpd rjlib sigpack smlib tof unauthorized vbap windowing zexy
 endif
 
 # Emscriptem needs flatspace for some objects, wheras normal PD has them builtin
 # Additionally, the pdjs external is currently not supported in emscripten.
 ifeq ($(EMSCRIPTEN),yes)
 lib_targets += flatspace
+CMAKE = emcmake cmake
+MAKE = emmake make
 else
 lib_targets += hidraw
+CMAKE = cmake
+MAKE = make
 endif
 
 # NEW (IN-PROGRESS): flext
@@ -503,57 +507,111 @@ cxc_clean:
 #------------------------------------------------------------------------------#
 # CYCLONE
 
-# AG: this external provides no sane way to pass custom CFLAGS, so we abuse
-# WARN_CFLAGS for that purpose.
-ifneq ($(EMSCRIPTEN),yes)
-cyclone:
-	make -C $(externals_src)/miXed/cyclone -f Makefile.libdir \
-		PD_PATH=$(pd_src) PD_INCLUDE=$(DESTDIR)$(includedir) WARN_CFLAGS="-Wall -W -Wstrict-prototypes -Wno-unused -Wno-parentheses -Wno-switch -Wno-incompatible-pointer-types $(CFLAGS_GITHUB_RUNNER) $(CFLAGS_ADD)"
+SILENCE_PD_GUI := -D\"pdgui_vmess(...)=\" -D\"pdgui_stub_vnew(...)=\" -D\"pdgui_stub_deleteforkey(...)=\"
+PD_CYCLONE_PATH := $(externals_src)/pd-cyclone
+PD_CYCLONE_FLAGS := $(CFLAGS_GITHUB_RUNNER) $(CFLAGS) $(SILENCE_PD_GUI) -DGLIST_GRAB_COMPAT
+ifeq ($(EMSCRIPTEN),yes)
+PD_CYCLONE_FLAGS := $(PD_CYCLONE_FLAGS) -D__linux__
+endif
 
-cyclone_install:
-	make -C $(externals_src)/miXed/cyclone -f Makefile.libdir \
-		DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" \
-		install
+pd-cyclone: $(PD_CYCLONE_PATH)/.built
 
-cyclone_clean:
-	make -C $(externals_src)/miXed/cyclone -f Makefile.libdir \
-		clean
+$(PD_CYCLONE_PATH)/.built:
+	perl -pi -e 's/define COLLTHREAD 1/define COLLTHREAD 0/' $(PD_CYCLONE_PATH)/cyclone_objects/binaries/control/coll.c
+	make -C $(PD_CYCLONE_PATH) PDBINDIR=$(pd_src)/src PDINCLUDEDIR=$(pd_src)/src CFLAGS="$(PD_CYCLONE_FLAGS)" extension=$(EXTENSION)
+	touch $(PD_CYCLONE_PATH)/.built
+
+pd-cyclone_install:
+	make -C $(PD_CYCLONE_PATH) install objectsdir="$(objectsdir)" extension=$(EXTENSION)
+
+pd-cyclone_clean:
+	make -C $(PD_CYCLONE_PATH) clean
+	rm -f $(PD_CYCLONE_PATH)/.built
+
+PD_ELSE_PATH := $(externals_src)/pd-else
+PD_ELSE_FLAGS := $(CFLAGS) $(SILENCE_PD_GUI) -DGLIST_GRAB_COMPAT -DPURR_DATA -DPDL2ORK -Wno-incompatible-function-pointer-types -Wno-missing-template-arg-list-after-template-kw
+PD_ELSE_EM_FLAGS := $(PD_ELSE_FLAGS) -msimd128 -U__linux__
+
+ifeq ($(EMSCRIPTEN),yes)
+OGG_PATH := $(PD_ELSE_PATH)/.ogg
+OGG_LIB := $(OGG_PATH)/build/libogg.a
+OGG_CMAKE_FLAGS := -DOGG_INCLUDE_DIR="$(OGG_PATH)/include" -DOGG_LIBRARY="$(OGG_PATH)/build"
+VORBIS_PATH := $(PD_ELSE_PATH)/.vorbis
+VORBIS_LIB := $(VORBIS_PATH)/build/lib/libvorbis.a
+VORBIS_CMAKE_FLAGS := -DVORBIS_INCLUDE_DIR="$(VORBIS_PATH)/include" -DVORBIS_LIBRARY="$(VORBIS_PATH)/build" -DVORBISENC_INCLUDE_DIR="$(VORBIS_PATH)/include" -DVORBISENC_LIBRARY="$(VORBIS_PATH)/build"
+OPENSSL_PATH := $(PD_ELSE_PATH)/.openssl
+OPENSSL_LIB := $(OPENSSL_PATH)/libssl.a
+
+$(OGG_PATH)/README.md:
+	git clone https://github.com/emscripten-ports/Ogg $(OGG_PATH)
+
+$(VORBIS_PATH)/README.md:
+	git clone https://github.com/emscripten-ports/Vorbis $(VORBIS_PATH)
+
+$(OPENSSL_PATH)/README.md:
+	git clone https://github.com/openssl/openssl $(OPENSSL_PATH)
+
+$(OGG_LIB): $(OGG_PATH)/README.md
+	$(CMAKE) -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -B$(OGG_PATH)/build $(OGG_PATH)
+	MAKEOVERRIDES= $(MAKE) -j -C $(OGG_PATH)/build
+
+$(VORBIS_LIB): $(VORBIS_PATH)/README.md $(OGG_LIB)
+	$(CMAKE) -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -B$(VORBIS_PATH)/build $(VORBIS_PATH) -DOGG_INCLUDE_DIRS="$(OGG_PATH)/include" -DOGG_LIBRARIES="$(OGG_PATH)/build"
+	$(MAKE) -j -C $(VORBIS_PATH)/build
+
+$(OPENSSL_LIB): $(OPENSSL_PATH)/README.md
+	cd $(OPENSSL_PATH) && emconfigure ./Configure -no-asm -no-apps gcc
+	MAKEFLAGS= emmake make -j -C $(OPENSSL_PATH) LDFLAGS="" WARN_FLAGS="" CXX=`which em++` AR=`which emar` CC=`which emcc` RANLIB=`which emranlib`
+
+$(PD_ELSE_PATH)/build/.built: $(OGG_LIB) $(VORBIS_LIB) $(OPENSSL_LIB)
+	$(CMAKE) -B$(PD_ELSE_PATH)/build -Wno-dev -DPD_PATH="$(pd_src)" $(PD_ELSE_PATH) \
+		-DOPENSSL_ROOT_DIR=$(OPENSSL_PATH) $(OGG_CMAKE_FLAGS) $(VORBIS_CMAKE_FLAGS) \
+		-DCMAKE_C_FLAGS="$(PD_ELSE_EM_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_EM_FLAGS)"
+	env -i PATH=$(PATH) bash -c ' \
+		cd $(PD_ELSE_PATH)/build/Source/Shared/ffmpeg/ffmpeg-7.0.1 && \
+		emconfigure ./configure --target-os=none --arch=x86_32 --enable-cross-compile --disable-debug --disable-x86asm --disable-programs && \
+		emmake make -j \
+	'
+	$(CMAKE) -B$(PD_ELSE_PATH)/Source/Audio/sfz~/sfizz/library/build $(PD_ELSE_PATH)/Source/Audio/sfz~/sfizz/library \
+		-DCMAKE_C_FLAGS="$(PD_ELSE_EM_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_EM_FLAGS)" && \
+	emmake make -C $(PD_ELSE_PATH)/build -j
+	for f in $(PD_ELSE_PATH)/build/else/*.l_arm64; do \
+		emcc $(CFLAGS) "$$f" -o "$${f%.l_arm64}.wasm"; \
+		rm $$f; \
+	done
+	touch $(PD_ELSE_PATH)/build/.built
 else
-CYCLONE_NAME := cyclone
-CYCLONE_FLAGS := -s -I${CYCLONE_PATH}/cyclone -I$(pd_src)/../libpd/libpd_wrapper -I$(externals_src)/miXed/shared -DUNIX -fPIC
-CYCLONE_PATH := $(externals_src)/miXed/
-CYCLONE_HAMMER := $(wildcard $(externals_src)/miXed/cyclone/hammer/*.c)
-CYCLONE_SICKLE := $(wildcard $(externals_src)/miXed/cyclone/sickle/*.c)
-CYCLONE_SHARED_SRC := \
-	$(wildcard $(externals_src)/miXed/shared/common/*.c)\
-	$(wildcard $(externals_src)/miXed/shared/sickle/*.c)\
-	$(wildcard $(externals_src)/miXed/shared/hammer/*.c)\
-	$(externals_src)/miXed/shared/unstable/forky.c $(externals_src)/miXed/shared/unstable/fragile.c\
-	$(externals_src)/miXed/shared/unstable/fringe.c $(externals_src)/miXed/shared/unstable/loader.c
+$(PD_ELSE_PATH)/build/.built:
+ifeq ($(OS_NAME),windows)
+	CMAKE_GENERATOR="Unix Makefiles" $(CMAKE) -B$(PD_ELSE_PATH)/build -Wno-dev -DPD_LIBRARY="$(pd_src)/src/pd.dll" -DPD_PATH="$(pd_src)" $(PD_ELSE_PATH) -DCMAKE_C_FLAGS="$(PD_ELSE_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_FLAGS)"
+else
+	$(CMAKE) -B$(PD_ELSE_PATH)/build -Wno-dev -DPD_PATH="$(pd_src)" $(PD_ELSE_PATH) -DCMAKE_C_FLAGS="$(PD_ELSE_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_FLAGS)" -DFORCE_FIND_LIBRARY=ON
+	$(CMAKE) -B$(PD_ELSE_PATH)/Source/Audio/sfz~/sfizz/library/build $(PD_ELSE_PATH)/Source/Audio/sfz~/sfizz/library -DCMAKE_C_FLAGS="$(PD_ELSE_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_FLAGS)"
+endif
+	make -C $(PD_ELSE_PATH)/build
+	touch $(PD_ELSE_PATH)/build/.built
+endif
 
-cyclone: $(CYCLONE_PATH)/bin/Hammer.wasm $(CYCLONE_PATH)/bin/Sickle.wasm
+pd-else: $(PD_ELSE_PATH)/build/.built
 
-$(CYCLONE_PATH)/bin/Hammer.wasm:
-	mv $(externals_src)/miXed/cyclone/hammer/atodb.c $(externals_src)/miXed/cyclone/hammer/atodb.c.ignore
-	touch $(externals_src)/miXed/cyclone/hammer/atodb.c
-	$(CC) $(CFLAGS) $(CYCLONE_FLAGS) -o $(CYCLONE_PATH)/bin/Hammer.wasm $(CYCLONE_SHARED_SRC) $(CYCLONE_HAMMER)
-	rm $(externals_src)/miXed/cyclone/hammer/atodb.c
-	mv $(externals_src)/miXed/cyclone/hammer/atodb.c.ignore $(externals_src)/miXed/cyclone/hammer/atodb.c
+pd-else_install:
+	cp -r $(PD_ELSE_PATH)/build/else $(DESTDIR)/$(objectsdir)
+ifeq ($(OS_NAME),darwin)
+	for f in $(DESTDIR)/$(objectsdir)/else/*.darwin-fat-32.so; do mv -- "$$f" "$${f%.darwin-fat-32.so}.pd_darwin"; done
+else ifeq ($(OS_NAME),windows)
+	for f in $(DESTDIR)/$(objectsdir)/else/*.m_amd64; do mv -- "$$f" "$${f%.m_amd64}.dll"; done
+else ifneq ($(EMSCRIPTEN),yes)
+	for f in $(DESTDIR)/$(objectsdir)/else/*.l_amd64; do mv -- "$$f" "$${f%.l_amd64}.pd_linux"; done
+endif
 
-$(CYCLONE_PATH)/bin/Sickle.wasm:
-	$(CC) $(CFLAGS) $(CYCLONE_FLAGS) -o $(CYCLONE_PATH)/bin/Sickle.wasm $(CYCLONE_SHARED_SRC) $(CYCLONE_SICKLE)
-
-cyclone_templates: cyclone
-	install -d $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)
-	install -p $(wildcard $(CYCLONE_PATH)/bin/*.wasm) $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)
-
-cyclone_install: cyclone_templates
-	install -p $(wildcard $(externals_src)/miXed/doc/help/cyclone/*.pd) $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)
-
-cyclone_clean:
-	rm -f ${CYCLONE_PATH}/bin/*.wasm
-	rm -f $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)/*.wasm
-	-mv $(externals_src)/miXed/cyclone/hammer/atodb.c.ignore $(externals_src)/miXed/cyclone/hammer/atodb.c
+pd-else_clean:
+	rm -rf $(PD_ELSE_PATH)/build
+	rm -f $(PD_ELSE_PATH)/.built
+ifeq ($(EMSCRIPTEN),yes)
+	rm -rf $(OGG_PATH)
+	rm -rf $(VORBIS_PATH)
+	rm -rf $(OPENSSL_PATH)
+	rm -rf $(PD_ELSE_PATH)/Source/Audio/sfz~/sfizz/library/build
 endif
 
 #------------------------------------------------------------------------------#
@@ -589,9 +647,9 @@ disis_install:
 disis_clean:
 ifneq ($(OS_NAME),windows)
 ifneq ($(OS_NAME),darwin)
-	rm $(XWIIMOTE_PATH)/libxwiimote.a
-	rm $(XWIIMOTE_PATH)/core.o
-	rm $(XWIIMOTE_PATH)/monitor.o
+	rm -f $(XWIIMOTE_PATH)/libxwiimote.a
+	rm -f $(XWIIMOTE_PATH)/core.o
+	rm -f $(XWIIMOTE_PATH)/monitor.o
 endif
 endif
 	make -C $(externals_src)/disis clean
@@ -768,7 +826,7 @@ $(FLUID_PATH)/fluid~.wasm: $(FLUID_LIBPATH)/src/libfluidsynth.a $(FLUID_PATH)/fl
 
 $(FLUID_LIBPATH)/src/libfluidsynth.a: $(FLUID_PATH)/fluidsynth-emscripten/README.md
 	mkdir -p $(externals_src)/fluid~/fluidsynth-emscripten/build 
-	cd $(externals_src)/fluid~/fluidsynth-emscripten/build && emcmake cmake -Denable-oss=off -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=off .. && emmake make
+	cd $(externals_src)/fluid~/fluidsynth-emscripten/build && $(CMAKE) -Denable-oss=off -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=off .. && emmake make
 
 $(FLUID_PATH)/fluidsynth-emscripten/README.md:
 	git clone https://github.com/jet2jet/fluidsynth-emscripten $(externals_src)/fluid~/fluidsynth-emscripten
@@ -1731,12 +1789,21 @@ endif
 js_install:
 	install -d $(DESTDIR)$(objectsdir)/js
 ifeq ($(OS_NAME),windows)
+ifeq ($(MSYSTEM),MINGW32)
+	install -p $(externals_src)/pdjs-win/binaries/x86-windows/js.$(EXTENSION) \
+		$(DESTDIR)/$(objectsdir)/js
+	install -p $(externals_src)/pdjs-win/binaries/x86-windows/*.pd \
+		$(DESTDIR)/$(objectsdir)/js
+	install -p $(externals_src)/pdjs-win/binaries/x86-windows/*.js \
+		$(DESTDIR)/$(objectsdir)/js
+else
 	install -p $(externals_src)/pdjs-win/binaries/x64-windows/js.$(EXTENSION) \
 		$(DESTDIR)/$(objectsdir)/js
 	install -p $(externals_src)/pdjs-win/binaries/x64-windows/*.pd \
 		$(DESTDIR)/$(objectsdir)/js
 	install -p $(externals_src)/pdjs-win/binaries/x64-windows/*.js \
 		$(DESTDIR)/$(objectsdir)/js
+endif
 endif
 ifeq ($(OS_NAME),darwin)
 ifeq ($(shell uname -m),arm64)
@@ -1832,6 +1899,7 @@ else
 pdlua_install: pdlua
 	install -d $(DESTDIR)/$(objectsdir)/pd-lua
 	bash -c "cp -r $(externals_src)/pd-lua/{pdlua,doc,*.pd,*.${EXTENSION},tutorial,*.lua*} $(DESTDIR)$(objectsdir)/pd-lua"
+	cp $(externals_src)/pd-lua/pdlua/tutorial/examples/pdx.lua $(DESTDIR)$(objectsdir)/pd-lua
 
 pdlua_clean:
 	rm -f $(LUA_TARGET)
