@@ -189,6 +189,7 @@ static int netserver_socketreceiver_doread(t_netserver_socketreceiver *x)
    if (intail == inhead) return (0);
    for (indx = intail; indx != inhead; indx = (indx+1)&(y->x_bufsize-1))
    {
+     if (bp - x->sr_messbuf >= y->x_bufsize - 1) break; /* ADD THIS SAFETY */
 	  char c = *bp++ = inbuf[indx];
 	  if (c == ';' && (!indx || inbuf[indx-1] != '\\'))
 	  {
@@ -650,6 +651,10 @@ static void netserver_connectpoll(t_netserver *x)
    if (fd < 0) post("netserver: accept failed");
    else
    {
+#ifdef __APPLE__
+      int set = 1;
+      setsockopt(fd, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
+#endif
       // ico@bukvic.net 2021-10-01: make socket non-blocking
       SetSocketBlockingEnabled(fd, 0);
  		t_netserver_socketreceiver *y = netserver_socketreceiver_new((void *)x, 
@@ -854,7 +859,7 @@ static void netserver_get_all_sockets(t_netserver *x)
    if (x->x_nconnections > 0)
    {
    	int i;
-		av = (t_atom *)getbytes(x->x_nconnections * sizeof(t_atom));
+		av = (t_atom *)getbytes((x->x_nconnections ? x->x_nconnections : 1) * sizeof(t_atom));
 		for (int i = 0; i < x->x_nconnections; i++)
 		    SETFLOAT(av + i, x->x_fd[i]); 
    } else {
@@ -863,7 +868,7 @@ static void netserver_get_all_sockets(t_netserver *x)
    }
 
    outlet_anything(x->x_other, gensym("all-sockets"), x->x_nconnections ? x->x_nconnections : 1, av);
-   freebytes(av, x->x_nconnections * sizeof(t_atom));
+   freebytes(av, (x->x_nconnections ? x->x_nconnections : 1) * sizeof(t_atom));
 }
 
 #ifndef MAXLIB
