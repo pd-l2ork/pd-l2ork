@@ -771,9 +771,9 @@ static void *netserver_new(t_floatarg fportno, t_floatarg bufsize_pow)
 	  post("setsockopt SO_REUSEADDR failed\n");
 #endif
 
-#ifdef OSX
+#ifdef __APPLE__
 	int nspopt = 1;
-	if (setsockopt(sockfd, SO_NOSIGPIPE, &nspopt, sizeof(nspopt)) == -1)
+	if (setsockopt(sockfd, SOL_SOCKET, SO_NOSIGPIPE, &nspopt, sizeof(nspopt)) == -1)
 	  post("setsockopt SO_NOSIGPIPE failed\n");
 #endif
 
