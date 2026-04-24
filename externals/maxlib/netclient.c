@@ -59,7 +59,7 @@
 #define MSG_NOSIGNAL 0
 #endif
 
-static char *version = "netclient v0.5 :: bidirectional network client for Pd-L2Ork\n"
+static char *version = "netclient v0.6 :: bidirectional network client for Pd-L2Ork\n"
 					   "             written by Olaf Matthes <olaf.matthes@gmx.de>\n"
 					   "             improvements by Ivica Ico Bukvic <ico@bukvic.net>";
 
@@ -82,6 +82,7 @@ typedef struct _netclient
 	int x_intail;
 	int x_inhead;
 	int x_bufsize;
+	char *x_messbuf;	/* persistent parsing buffer */
 		/* multithread stuff */
 	pthread_t x_threadid;            /* id of child thread */
 	pthread_attr_t x_threadattr;     /* attributes of child thread */
@@ -242,7 +243,7 @@ static void netclient_send(t_netclient *x, t_symbol *s, int argc, t_atom *argv)
     sitting on the stack while the messages are getting passed. */
 static int netclient_doread(t_netclient *x)
 {
-    char messbuf[x->x_bufsize], *bp = messbuf;
+    char *bp = x->x_messbuf;
     int indx;
     int inhead = x->x_inhead;
     int intail = x->x_intail;
@@ -250,15 +251,16 @@ static int netclient_doread(t_netclient *x)
     if (intail == inhead) return (0);
     for (indx = intail; indx != inhead; indx = (indx+1)&(x->x_bufsize-1))
     {
-    	char c = *bp++ = inbuf[indx];
-    	if (c == ';' && (!indx || inbuf[indx-1] != '\\'))
+    	*bp++ = inbuf[indx];
+    	if (inbuf[indx] == ';' && (indx == intail || inbuf[(indx-1)&(x->x_bufsize-1)] != '\\'))
     	{
     	    intail = (indx+1)&(x->x_bufsize-1);
-    	    binbuf_text(inbinbuf, messbuf, bp - messbuf);
+    	    binbuf_text(inbinbuf, x->x_messbuf, bp - x->x_messbuf);
     	    x->x_inhead = inhead;
     	    x->x_intail = intail;
     	    return (1);
     	}
+    	if (bp - x->x_messbuf >= x->x_bufsize - 1) break; /* safety break */
     }
     return (0);
 }
@@ -374,6 +376,7 @@ static void *netclient_new(t_floatarg udpflag, t_floatarg bufsize_pow)
 	   	x->x_bufsize = INBUFSIZE;
     post("netclient buffer size: %d", x->x_bufsize);
     x->x_inbuf = (char *)malloc(sizeof(char) * x->x_bufsize);
+    x->x_messbuf = (char *)malloc(sizeof(char) * x->x_bufsize);
     x->x_outdata = outlet_new(&x->x_obj, &s_anything);	/* received data */
     x->x_outconnect = outlet_new(&x->x_obj, &s_float);	/* connection state */
     x->x_clock = clock_new(x, (t_method)netclient_tick);
@@ -398,6 +401,7 @@ static void netclient_free(t_netclient *x)
     if(netclient_instance_count == 0)
         binbuf_free(inbinbuf);
     free(x->x_inbuf);
+    free(x->x_messbuf);
 }
 
 #ifndef MAXLIB
