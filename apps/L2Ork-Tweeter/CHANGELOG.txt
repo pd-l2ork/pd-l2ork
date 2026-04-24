@@ -26,6 +26,7 @@ TODO:
 
 18-04-2026 0.93
 *Fixed a bug that was created by the 0.87 where oldest client was not correctly detected.
+*Fixed additional server-side connection and packet reliability issues.
 *Updated sessions.
 *Added latest work 0s and 1s Drifting Apart.
 
