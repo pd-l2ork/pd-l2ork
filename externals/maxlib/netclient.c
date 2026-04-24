@@ -128,7 +128,7 @@ static void *netclient_child_connect(void *w)
     }
 #ifdef __APPLE__
 	int nspopt = 1;
-	if (setsockopt(sockfd, SO_NOSIGPIPE, &nspopt, sizeof(nspopt)) == -1)
+	if (setsockopt(sockfd, SOL_SOCKET, SO_NOSIGPIPE, &nspopt, sizeof(nspopt)) == -1)
 	  post("setsockopt SO_NOSIGPIPE failed\n");
 #endif    
 		/* connect socket using hostname provided in command line */
