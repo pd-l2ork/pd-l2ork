@@ -23,6 +23,15 @@
 /*                                                                              */
 /* ---------------------------------------------------------------------------- */
 
+#ifdef _WIN32
+  #ifndef EWOULDBLOCK
+    #define EWOULDBLOCK WSAEWOULDBLOCK
+  #endif
+  #ifndef EAGAIN
+    #define EAGAIN WSAEWOULDBLOCK
+  #endif
+#endif
+
 #include "m_pd.h"
 #include "s_stuff.h"
 #include "m_imp.h"
@@ -41,6 +50,8 @@
 #include <io.h>
 #include <fcntl.h>
 #include <winsock.h>
+#include <windows.h>
+#define usleep(t) Sleep((t) / 1000) // Convert microseconds to milliseconds
 #else
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -73,7 +84,7 @@
 #endif
 
 static char *version = 
-   "netserver v0.5 :: bidirectional TCP network server for Pd-L2Ork\n"
+   "netserver v0.6 :: bidirectional TCP network server for Pd-L2Ork\n"
    "             written by Olaf Matthes <olaf.matthes@gmx.de>\n"
    "             syslogging by Hans-Christoph Steiner <hans@eds.org>\n"
    "             improvements by Ivica Ico Bukvic <ico@bukvic.net>";
@@ -486,22 +497,51 @@ static void netserver_disconnect(t_netserver *x, t_floatarg f)
 /* broadcasts a message to all connected clients */
 static void netserver_broadcast(t_netserver *x, t_symbol *s, int argc, t_atom *argv)
 {
-   if(x->x_nconnections > 0)
-   {
-       int i, client = x->x_nconnections;	/* number of clients to send to */
-       t_atom at[argc+1];
-       for(i = 0; i < argc; i++)
-       {
-          at[i + 1] = argv[i];
-       }
-       argc++;
-       /* enumerate through the clients and send each the message */
-       while(client--)
-       {
-          SETFLOAT(at, client + 1);	/* prepend number of client */
-          netserver_client_send(x, s, argc, at);
-       }
-   }
+    if(x->x_nconnections > 0)
+    {
+        t_binbuf *b = binbuf_new();
+        char *buf;
+        int length, i;
+        t_atom at;
+
+        /* Prepare the message once for all clients */
+        binbuf_add(b, argc, argv);
+        SETSEMI(&at);
+        binbuf_add(b, 1, &at);
+        binbuf_gettext(b, &buf, &length);
+
+        for(i = 0; i < x->x_nconnections; i++)
+        {
+            int sockfd = x->x_fd[i];
+            if(sockfd > 0)
+            {
+                int sent = 0;
+                int retries = 0;
+                /* Keep trying to push this message until it's all gone */
+                while (sent < length && retries < 1000)
+                {
+                    int res = send(sockfd, buf + sent, length - sent, MSG_NOSIGNAL);
+                    if (res > 0) {
+                        sent += res;
+                    } else if (res < 0 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
+                        /* Socket buffer is full, wait a tiny bit and retry */
+                        retries++;
+                        usleep(10); // 10 microsecond pause to let the kernel breathe
+                    } else {
+                        /* Hard error (connection lost) */
+                        break;
+                    }
+                }
+                
+                if (sent < length && x->x_log_pri >= LOG_ERR)
+                {
+                    post("netserver: broadcast timed out or failed for socket %d", sockfd);
+                }
+            }
+        }
+        t_freebytes(buf, length);
+        binbuf_free(b);
+    }
 }
 
 /* ico@bukvic.net 2021-12-03: added to adjust the threshold before disconnecting
