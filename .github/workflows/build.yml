@@ -62,7 +62,7 @@ jobs:
           path: Pd-L2Ork-24.04.deb
           if-no-files-found: error
 
-  build-ubuntu-22-04:
+  build-ubuntu-26-04:
     runs-on: ubuntu-26.04
     if: ${{ github.event.inputs.desktop == 'true' }}
     steps:
@@ -172,7 +172,7 @@ jobs:
     needs:
       [
         build-ubuntu-24-04,
-        build-ubuntu-22-04,
+        build-ubuntu-26-04,
         build-windows,
         build-macos-arm,
         build-macos-x86,
