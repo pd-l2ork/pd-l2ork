@@ -1560,7 +1560,7 @@ and 14, f 34;
 #X obj 652 860 bng 15 250 50 0 empty empty empty 17 7 0 10 #FFFCFCFC
 #FF000000 #FF000000 1;
 #X msg 232 741 0.93;
-#X obj 448 38 netserver 9003 21, f 73;
+#X obj 448 38 netserver 9002 21, f 73;
 #X connect 0 0 60 0;
 #X connect 0 0 98 0;
 #X connect 2 0 146 0;
