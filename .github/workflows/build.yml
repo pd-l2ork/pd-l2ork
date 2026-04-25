@@ -63,7 +63,7 @@ jobs:
           if-no-files-found: error
 
   build-ubuntu-22-04:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
     if: ${{ github.event.inputs.desktop == 'true' }}
     steps:
       - name: deps
@@ -74,11 +74,11 @@ jobs:
       - name: make
         run: make
       - name: rename
-        run: mv Pd-L2Ork-*.deb Pd-L2Ork-22.04.deb
+        run: mv Pd-L2Ork-*.deb Pd-L2Ork-26.04.deb
       - uses: actions/upload-artifact@v4
         with:
-          name: deb-22.04
-          path: Pd-L2Ork-22.04.deb
+          name: deb-26.04
+          path: Pd-L2Ork-26.04.deb
           if-no-files-found: error
 
   build-macos-arm:
@@ -185,10 +185,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: deb-24.04
-      - name: Download Ubuntu 22.04 Release
+      - name: Download Ubuntu 26.04 Release
         uses: actions/download-artifact@v4
         with:
-          name: deb-22.04
+          name: deb-26.04
       - name: Download Windows Release
         uses: actions/download-artifact@v4
         with:
@@ -220,14 +220,14 @@ jobs:
           asset_path: ./Pd-L2Ork-24.04.deb
           asset_name: Pd-L2Ork-24.04-${{ needs.version.outputs.version }}.deb
           asset_content_type: application/vnd.debian.binary-package
-      - name: Upload Ubuntu 22.04 Release
+      - name: Upload Ubuntu 26.04 Release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./Pd-L2Ork-22.04.deb
-          asset_name: Pd-L2Ork-22.04-${{ needs.version.outputs.version }}.deb
+          asset_path: ./Pd-L2Ork-26.04.deb
+          asset_name: Pd-L2Ork-26.04-${{ needs.version.outputs.version }}.deb
           asset_content_type: application/vnd.debian.binary-package
       - name: Upload Windows Release
         uses: actions/upload-release-asset@v1
