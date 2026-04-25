@@ -61,6 +61,13 @@
   <url type="bugtracker">https://github.com/pd-l2ork/pd-l2ork/issues</url>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="20260425" type="stable" date="2026-04-25">
+      <description>
+        <p>
+          Fixed long-standing bugs in maxlib's netclient and netserver, and in the L2Ork Tweeter's server. Introduces L2Ork Tweeter 0.93.
+        </p>
+      </description>
+    </release>
     <release version="20251203" type="stable" date="2025-12-04">
       <description>
         <p>
