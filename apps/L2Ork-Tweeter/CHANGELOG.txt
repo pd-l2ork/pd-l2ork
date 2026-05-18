@@ -21,12 +21,12 @@ TODO:
   *Justin reported not seeing William's part being on but also had other stack overflow issues at the time.
 *Offer a way to deal with different keyboards (some keys are not in the same place, see the ELSE approach and new objects that deal with this)
 *When trying to load a pattern that does not exist (after having successfully loaded one that does), the main level goes to zero.
-*update net-io-coll and get rid of t b 0 on the 1st outlet of the gate since it does not do anything
 *Update L2Ork Tweeter Lite
 
 20-05-2026 0.94
 *Fixed a netserver bug where disconnect-all sometimes did not disconnect all.
 *Fixed a L2Ork-Tweeter-Server bug where disconnecting a client did not correctly disconnect stale part-mapped parts.
+*Updated net-io-coll to get rid of t b 0 on the 1st outlet of the gate (visually in the middle of the patch) since it does not do anything (other than wasting CPU cycles).
 
 18-04-2026 0.93
 *Fixed a bug that was created by the 0.87 where oldest client was not correctly detected.
