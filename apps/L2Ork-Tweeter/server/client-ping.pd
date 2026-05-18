@@ -1,4 +1,4 @@
-#N canvas 1085 497 736 524 10;
+#N canvas 1084 496 738 526 10;
 #X obj 407 282 text set clients;
 #X obj 376 27 r \$1-ping;
 #X obj 376 49 t b l;
@@ -35,10 +35,10 @@ broadcast server connection \$1 0;
 #X obj 555 282 sel 0;
 #X text 555 200 brute force disconnectto prevent stale sockets;
 #X obj 82 316 t f f;
-#N canvas 727 397 316 366 uptime 0;
+#N canvas 726 396 318 415 uptime 0;
 #X obj 162 62 t b;
 #X obj 39 37 inlet;
-#X obj 162 299 outlet;
+#X obj 162 349 outlet;
 #X obj 39 275 pack 0 0;
 #X obj 162 87 \$1;
 #X obj 162 112 - 1;

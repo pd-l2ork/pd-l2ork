@@ -10,8 +10,9 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
 TODO:
+*Reconnecting on a different part while having multi-part assignment prevents you from changing your primary part, while all the previously assigned parts remain a "ghost" green part.
+*Reconnecting to a session somehow breaks getting the session data from the oldest client. Try 0s and 1s with 14 disconnecting and reconnecting. Sometimes the part 1 is not playing for newly connected client.
 *Clean-up older sessions from solo?
-*Disconnect-all sometimes does not disconnect all.
 *Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. Needs to be further tested.
   *Also affects Teacher widget.
 *Explore the slowness of the Teacher widget, particularly in respect to the array changes. This is particularly visible on the WebPdL2Ork, likely due to context sharing. More importantly, this is an issue on the desktop, where it should be addressed first before exploring any additional issues associated with the WebPdL2Ork.
@@ -23,6 +24,9 @@ TODO:
 *When trying to load a pattern that does not exist (after having successfully loaded one that does), the main level goes to zero.
 *update net-io-coll and get rid of t b 0 on the 1st outlet of the gate since it does not do anything
 *Update L2Ork Tweeter Lite
+
+20-05-2026 0.94
+*Fixed a netserver bug where disconnect-all sometimes did not disconnect all.
 
 18-04-2026 0.93
 *Fixed a bug that was created by the 0.87 where oldest client was not correctly detected.

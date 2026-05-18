@@ -838,11 +838,12 @@ static void netserver_free(t_netserver *x)
 
 static void netserver_disconnect_all(t_netserver *x)
 {
-   int i;
-   for(i = 0; i < x->x_nconnections; i++)
-   {
-	  netserver_disconnect(x, x->x_fd[i]);
-   }	
+	int i;
+	/* Iterate backwards so shifting indices don't skip entries */
+	for(i = x->x_nconnections - 1; i >= 0; i--)
+	{
+		netserver_disconnect(x, (t_floatarg)x->x_fd[i]);
+	}
 }
 
 static void netserver_lockdown(t_netserver *x, t_floatarg f)
