@@ -10,11 +10,10 @@ https://www.gnu.org/licenses/gpl-3.0.en.html
 CHANGELOG (Date Format: DD-MM-YYYY)
 -----------------------------------
 TODO:
-*Reconnecting on a different part while having multi-part assignment prevents you from changing your primary part, while all the previously assigned parts remain a "ghost" green part.
-*Reconnecting to a session somehow breaks getting the session data from the oldest client. Try 0s and 1s with 14 disconnecting and reconnecting. Sometimes the part 1 is not playing for newly connected client.
-*Clean-up older sessions from solo?
-*Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. Needs to be further tested.
+*Reconnecting to a session somehow breaks getting the session data from the oldest client. Try 0s and 1s with 14 disconnecting and reconnecting. Sometimes the part 1 is not playing for newly connected client, and part 2 has weird bogus data.
+  *Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. Needs to be further tested.
   *Also affects Teacher widget.
+*Clean-up older sessions from solo?
 *Explore the slowness of the Teacher widget, particularly in respect to the array changes. This is particularly visible on the WebPdL2Ork, likely due to context sharing. More importantly, this is an issue on the desktop, where it should be addressed first before exploring any additional issues associated with the WebPdL2Ork.
 *Why is copyfrom issuing two identical tracker-time values?
 *When adding/removing a part, reiterate toggle keyboard (under certain circumstances, it is lost)
@@ -27,6 +26,7 @@ TODO:
 
 20-05-2026 0.94
 *Fixed a netserver bug where disconnect-all sometimes did not disconnect all.
+*Fixed a L2Ork-Tweeter-Server bug where disconnecting a client did not correctly disconnect stale part-mapped parts.
 
 18-04-2026 0.93
 *Fixed a bug that was created by the 0.87 where oldest client was not correctly detected.
