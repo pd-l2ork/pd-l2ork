@@ -43,3 +43,56 @@ certs/*
 *.app
 logs
 *.map
+
+# Compiled dynamic libraries and debug symbols
+*.dylib
+*.so
+*.dll
+*.dSYM/
+
+# Autotools / make config generated files
+**/Make.config
+**/Makefile.config
+**/stamp-h1
+**/config.h
+externals/pdp/include/pdp_config.h
+
+# Subdirectory configure & make outputs (not tracked by git)
+externals/OSCx/Makefile
+externals/OSCx/configure
+externals/OSCx/libOSC/Makefile
+externals/OSCx/send+dump/Makefile
+externals/OSCx/src/Makefile
+externals/iem16/src/configure
+externals/pdp/configure
+externals/moocow/**/Makefile
+externals/moocow/**/common/
+externals/moocow/extended/build.moo/
+externals/moocow/extended/build.stamp
+externals/moocow/pdstring/src/any2string-help.pd
+externals/moocow/pdstring/src/string2any-help.pd
+externals/moocow/sprinkler/sprinkler-help.pd
+
+# pdjs external binaries & libs
+externals/pdjs/binaries/
+externals/pdjs/v8/lib/
+externals/pdjs/v8/__MACOSX/
+
+# zexy generated aliases
+externals/zexy/any2list.pd
+externals/zexy/any2list-help.pd
+externals/zexy/demux-help.pd
+externals/zexy/demux~-help.pd
+externals/zexy/l-help.pd
+externals/zexy/l2i-help.pd
+externals/zexy/l2i.pd
+externals/zexy/l2s-help.pd
+externals/zexy/mux-help.pd
+externals/zexy/mux~-help.pd
+externals/zexy/s2l-help.pd
+
+# miXed cyclist binary
+externals/miXed/bin/cyclist
+
+# Packages generated Info.plist
+packages/darwin_app/Info.plist
