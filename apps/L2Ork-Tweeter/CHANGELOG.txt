@@ -13,6 +13,7 @@ TODO:
 *Reconnecting to a session somehow breaks getting the session data from the oldest client. Try 0s and 1s with 14 disconnecting and reconnecting. Sometimes the part 1 is not playing for newly connected client, and part 2 has weird bogus data.
   *Sometimes reconnecting keeps the playback going? Looks like this may be a side-effect of quick disconnect and reconnect. Needs to be further tested.
   *Also affects Teacher widget.
+  *Appears to have been fixed by the other 0.94 fixes, although there was at least one instance where sync was lost for some when reconnection like the one above took place.
 *Clean-up older sessions from solo?
 *Explore the slowness of the Teacher widget, particularly in respect to the array changes. This is particularly visible on the WebPdL2Ork, likely due to context sharing. More importantly, this is an issue on the desktop, where it should be addressed first before exploring any additional issues associated with the WebPdL2Ork.
 *Why is copyfrom issuing two identical tracker-time values?
