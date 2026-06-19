@@ -590,6 +590,7 @@ void sys_reopen_midi(void) {
     int nmidiindev, midiindev[MAXMIDIINDEV];
     int nmidioutdev, midioutdev[MAXMIDIOUTDEV];
     sys_get_midi_params(&nmidiindev, midiindev, &nmidioutdev, midioutdev);
+    sys_close_midi();
     sys_open_midi(nmidiindev, midiindev, nmidioutdev, midioutdev, 1);
     post("Sys reopened midi");
 }
