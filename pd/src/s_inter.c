@@ -1863,12 +1863,12 @@ extern void glob_savepreferences(t_pd *dummy);
 void sys_exit(int status);
 
 void glob_quit(void *dummy, t_floatarg status) {
-    post("Starting Glob Quit");
+    if (sys_verbose) post("glob_quit: Starting shutdown...");
     if (!sys_havegui()) {
         // ag: Take the quick way out. Specifically, we do *not* want to clean
         // up a non-existent gui here (which also causes spurious segfaults in
         // gui-less operation on Windows).
-        post("glob_quit: Running headless, bailing out...");
+        if (sys_verbose) post("glob_quit: Running headless, bailing out...");
         canvas_suspend_dsp();
         sys_bail(status);
         // sys_bail shouldn't return, but just in case:
@@ -1884,35 +1884,35 @@ void glob_quit(void *dummy, t_floatarg status) {
     //     canvas_free((t_canvas *)garray_arraytemplatecanvas);
     // if (garray_floattemplatecanvas)
     //     canvas_free( (t_canvas *)garray_floattemplatecanvas);
-    post("glob_quit: suspending DSP...");
+    if (sys_verbose) post("glob_quit: suspending DSP...");
     canvas_suspend_dsp();
 
     do_not_redraw = 1;
 
-    post("glob_quit: closing all open canvases...");
+    if (sys_verbose) post("glob_quit: closing all open canvases...");
     glob_closeall(0, 1);
 
     // ico@bukvic.net 2022-12-14: save preferences on quit
-    post("glob_quit: saving preferences...");
+    if (sys_verbose) post("glob_quit: saving preferences...");
     glob_savepreferences(dummy);
 
     // sys_vgui("exit\n");
-    post("glob_quit: notifying GUI to quit...");
+    if (sys_verbose) post("glob_quit: notifying GUI to quit...");
     gui_vmess("app_quit", "");
 
-    post("glob_quit: closing audio streams...");
+    if (sys_verbose) post("glob_quit: closing audio streams...");
     sys_close_audio();
 
-    post("glob_quit: closing MIDI streams...");
+    if (sys_verbose) post("glob_quit: closing MIDI streams...");
     sys_close_midi();
 
     if (sys_havegui()) {
-        post("glob_quit: cleaning up GUI socket...");
+        if (sys_verbose) post("glob_quit: cleaning up GUI socket...");
         sys_closesocket(INTER->i_guisock);
         sys_rmpollfn(INTER->i_guisock);
     }
 
-    post("glob_quit: exiting process with status %d", (int)status);
+    if (sys_verbose) post("glob_quit: exiting process with status %d", (int)status);
     exit(status);
 }
 
