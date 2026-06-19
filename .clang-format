@@ -1,0 +1,7 @@
+# Use the LLVM base style, but override indentation to 4 spaces
+BasedOnStyle: LLVM
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 80
+SortIncludes: false
