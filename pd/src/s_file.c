@@ -1,13 +1,13 @@
 /* Copyright (c) 1997-2004 Miller Puckette.
-* For information on usage and redistribution, and for a DISCLAIMER OF ALL
-* WARRANTIES, see the file, "LICENSE.txt," in this distribution.  */
+ * For information on usage and redistribution, and for a DISCLAIMER OF ALL
+ * WARRANTIES, see the file, "LICENSE.txt," in this distribution.  */
 
 /*
  * this file implements a mechanism for storing and retrieving preferences.
  * Should later be renamed "preferences.c" or something.
  *
- * In unix this is handled by the "~/.pd-l2ork/user.settings" file, in windows by
- * the registry, and in MacOS by the Preferences system.
+ * In unix this is handled by the "~/.pd-l2ork/user.settings" file, in windows
+ * by the registry, and in MacOS by the Preferences system.
  */
 
 #include "config.h"
@@ -40,11 +40,13 @@
 #endif
 #include "m_private_utils.h"
 
-int sys_autopatch_yoffset,
-    sys_zoom = 1, sys_browser_doc = 1, sys_browser_path, sys_browser_init;
+int sys_autopatch_yoffset, sys_zoom = 1, sys_browser_doc = 1, sys_browser_path,
+                           sys_browser_init;
 
-/* ico@bukvic.net 2023-04-17: moved sys_curved_cords, sys_snaptogrid, sys_gridsize, sys_autocomplete_relevance, sys_autocomplete_prefix to m_glob.c to allow for
-   emscripten to compile since emscripten currently does not compile s_file.c */
+/* ico@bukvic.net 2023-04-17: moved sys_curved_cords, sys_snaptogrid,
+   sys_gridsize, sys_autocomplete_relevance, sys_autocomplete_prefix to m_glob.c
+   to allow for emscripten to compile since emscripten currently does not
+   compile s_file.c */
 extern int sys_curved_cords;
 extern int sys_snaptogrid;
 extern int sys_gridsize;
@@ -52,82 +54,76 @@ extern int sys_autocomplete_relevance;
 extern int sys_autocomplete_prefix;
 extern int sys_autocomplete;
 
-//extern int sys_defeatrt;
-//extern int sys_autopatch_yoffset;
-//extern int sys_zoom;
-//extern int sys_browser_doc;
-//extern int sys_browser_path;
-//extern int sys_browser_init;
-
+// extern int sys_defeatrt;
+// extern int sys_autopatch_yoffset;
+// extern int sys_zoom;
+// extern int sys_browser_doc;
+// extern int sys_browser_path;
+// extern int sys_browser_init;
 
 void sys_doflags(void);
 
-    /* Hmm... maybe better would be to #if on not-apple-or-windows  */
-#if defined(__linux__) || defined(__CYGWIN__) || defined(__FreeBSD_kernel__) \
-|| defined(__GNU__) || defined(ANDROID)
+/* Hmm... maybe better would be to #if on not-apple-or-windows  */
+#if defined(__linux__) || defined(__CYGWIN__) ||                               \
+    defined(__FreeBSD_kernel__) || defined(__GNU__) || defined(ANDROID)
 
 #define USER_CONFIG_DIR ".pd-l2ork"
 
 static char *sys_prefbuf;
 
-static void sys_initloadpreferences(void)
-{
+static void sys_initloadpreferences(void) {
     char filenamebuf[FILENAME_MAX], *homedir = getenv("HOME");
     int fd, length;
     char user_prefs_file[FILENAME_MAX]; /* user prefs file */
-        /* default prefs embedded in the package */
+    /* default prefs embedded in the package */
     char default_prefs_file[FILENAME_MAX];
     struct stat statbuf;
 
-    pd_snprintf(default_prefs_file, FILENAME_MAX, "%s/default.settings", 
-             sys_libdir->s_name);
+    pd_snprintf(default_prefs_file, FILENAME_MAX, "%s/default.settings",
+                sys_libdir->s_name);
 
     if (homedir)
-        pd_snprintf(user_prefs_file, FILENAME_MAX, "%s/" USER_CONFIG_DIR "/user.settings", homedir);
-    if (stat(user_prefs_file, &statbuf) == 0) 
+        pd_snprintf(user_prefs_file, FILENAME_MAX,
+                    "%s/" USER_CONFIG_DIR "/user.settings", homedir);
+    if (stat(user_prefs_file, &statbuf) == 0)
         strncpy(filenamebuf, user_prefs_file, FILENAME_MAX);
     else if (stat(default_prefs_file, &statbuf) == 0)
         strncpy(filenamebuf, default_prefs_file, FILENAME_MAX);
     else
         return;
-    filenamebuf[FILENAME_MAX-1] = 0;
-    if ((fd = sys_open(filenamebuf, 0)) < 0)
-    {
+    filenamebuf[FILENAME_MAX - 1] = 0;
+    if ((fd = sys_open(filenamebuf, 0)) < 0) {
         if (sys_verbose)
             perror(filenamebuf);
         return;
     }
     length = lseek(fd, 0, 2);
-    if (length < 0)
-    {
+    if (length < 0) {
         if (sys_verbose)
             perror(filenamebuf);
         sys_close(fd);
         return;
     }
     lseek(fd, 0, 0);
-    if (!(sys_prefbuf = malloc(length + 2)))
-    {
+    if (!(sys_prefbuf = malloc(length + 2))) {
         pd_error(0, "couldn't allocate memory for preferences buffer");
         sys_close(fd);
         return;
     }
     sys_prefbuf[0] = '\n';
-    if (read(fd, sys_prefbuf+1, length) < length)
-    {
+    if (read(fd, sys_prefbuf + 1, length) < length) {
         perror(filenamebuf);
         sys_prefbuf[0] = 0;
         sys_close(fd);
         return;
     }
-    sys_prefbuf[length+1] = 0;
+    sys_prefbuf[length + 1] = 0;
     sys_close(fd);
     if (sys_verbose)
         post("success reading preferences from: %s", filenamebuf);
 }
 
-static int sys_getpreference(const char *key, char *value, int size)
-{
+static int sys_getpreference(const char *key, char *value, int size) {
     char searchfor[80], *where, *whereend;
     if (!sys_prefbuf)
         return (0);
@@ -144,55 +140,57 @@ static int sys_getpreference(const char *key, char *value, int size)
         whereend--;
     if (whereend > where + size - 1)
         whereend = where + size - 1;
-    strncpy(value, where, whereend+1-where);
-    value[whereend+1-where] = 0;
+    strncpy(value, where, whereend + 1 - where);
+    value[whereend + 1 - where] = 0;
     return (1);
 }
 
-static void sys_doneloadpreferences(void)
-{
+static void sys_doneloadpreferences(void) {
     if (sys_prefbuf)
         free(sys_prefbuf);
 }
 
 static FILE *sys_prefsavefp;
 
-static void sys_initsavepreferences(void)
-{
+static void sys_initsavepreferences(void) {
     char filenamebuf[FILENAME_MAX], *homedir = getenv("HOME");
     struct stat statbuf;
 
     if (!homedir)
         return;
     pd_snprintf(filenamebuf, FILENAME_MAX, "%s/" USER_CONFIG_DIR, homedir);
-    filenamebuf[FILENAME_MAX-1] = 0;
+    filenamebuf[FILENAME_MAX - 1] = 0;
     if (stat(filenamebuf, &statbuf) || !S_ISDIR(statbuf.st_mode)) {
-      // user config dir doesn't exist yet, try to create it
-      if (mkdir(filenamebuf, 0755)) {
-        pd_error(0, "%s: %s",filenamebuf, strerror(errno));
-        return;
-      }
+        // user config dir doesn't exist yet, try to create it
+        if (mkdir(filenamebuf, 0755)) {
+            pd_error(0, "%s: %s", filenamebuf, strerror(errno));
+            return;
+        }
     }
-    pd_snprintf(filenamebuf, FILENAME_MAX, "%s/" USER_CONFIG_DIR "/user.settings", homedir);
-    filenamebuf[FILENAME_MAX-1] = 0;
-    if ((sys_prefsavefp = sys_fopen(filenamebuf, "w")) == NULL)
-    {
-        //pd_snprintf(errbuf, FILENAME_MAX, "%s: %s",filenamebuf, strerror(errno));
-        pd_error(0, "%s: %s",filenamebuf, strerror(errno));
+    pd_snprintf(filenamebuf, FILENAME_MAX,
+                "%s/" USER_CONFIG_DIR "/user.settings", homedir);
+    filenamebuf[FILENAME_MAX - 1] = 0;
+    if (sys_verbose)
+        post("sys_initsavepreferences: opening settings file: %s", filenamebuf);
+    if ((sys_prefsavefp = sys_fopen(filenamebuf, "w")) == NULL) {
+        // pd_snprintf(errbuf, FILENAME_MAX, "%s: %s",filenamebuf,
+        // strerror(errno));
+        pd_error(0, "%s: %s", filenamebuf, strerror(errno));
     }
 }
 
-static void sys_putpreference(const char *key, const char *value)
-{
-    if (sys_prefsavefp)
-        fprintf(sys_prefsavefp, "%s: %s\n",
-            key, value);
+static void sys_putpreference(const char *key, const char *value) {
+    if (sys_prefsavefp) {
+        if (sys_verbose)
+            post("sys_putpreference: settings: %s = %s", key, value);
+        fprintf(sys_prefsavefp, "%s: %s\n", key, value);
+    }
 }
 
-static void sys_donesavepreferences(void)
-{
-    if (sys_prefsavefp)
-    {
+static void sys_donesavepreferences(void) {
+    if (sys_prefsavefp) {
+        if (sys_verbose)
+            post("sys_donesavepreferences: closing settings file");
         fclose(sys_prefsavefp);
         sys_prefsavefp = 0;
     }
@@ -202,30 +200,25 @@ static void sys_donesavepreferences(void)
 
 #ifdef _WIN32
 
-static void sys_initloadpreferences(void)
-{
-}
+static void sys_initloadpreferences(void) {}
 
-static int sys_getpreference(const char *key, char *value, int size)
-{
-    //post("sys_getpreference");
+static int sys_getpreference(const char *key, char *value, int size) {
+    // post("sys_getpreference");
     HKEY hkey;
     DWORD bigsize = size;
-    LONG err = RegOpenKeyEx(HKEY_CURRENT_USER,
-        "Software\\Pd-L2Ork", 0,  KEY_QUERY_VALUE, &hkey);
-    if (err != ERROR_SUCCESS)
-    {
-        err = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-            "Software\\WOW6432Node\\Pd-L2Ork", 0,  KEY_QUERY_VALUE, &hkey);
-        if (err != ERROR_SUCCESS)
-        {
+    LONG err = RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\Pd-L2Ork", 0,
+                            KEY_QUERY_VALUE, &hkey);
+    if (err != ERROR_SUCCESS) {
+        err =
+            RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\WOW6432Node\\Pd-L2Ork",
+                         0, KEY_QUERY_VALUE, &hkey);
+        if (err != ERROR_SUCCESS) {
             return (0);
-	}
+        }
     }
     err = RegQueryValueEx(hkey, key, 0, 0, value, &bigsize);
-    //post("...%s %s", key, value);
-    if (err != ERROR_SUCCESS)
-    {
+    // post("...%s %s", key, value);
+    if (err != ERROR_SUCCESS) {
         RegCloseKey(hkey);
         return (0);
     }
@@ -233,34 +226,34 @@ static int sys_getpreference(const char *key, char *value, int size)
     return (1);
 }
 
-static void sys_doneloadpreferences(void)
-{
+static void sys_doneloadpreferences(void) {}
+
+static void sys_initsavepreferences(void) {
+    if (sys_verbose)
+        post("sys_initsavepreferences: preparing to write Registry entries...");
 }
 
-static void sys_initsavepreferences(void)
-{
-}
-
-static void sys_putpreference(const char *key, const char *value)
-{
+static void sys_putpreference(const char *key, const char *value) {
     HKEY hkey;
-    LONG err = RegCreateKeyEx(HKEY_CURRENT_USER,
-        "Software\\Pd-L2Ork", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_SET_VALUE,
-        NULL, &hkey, NULL);
-    if (err != ERROR_SUCCESS)
-    {
+    LONG err = RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Pd-L2Ork", 0, NULL,
+                              REG_OPTION_NON_VOLATILE, KEY_SET_VALUE, NULL,
+                              &hkey, NULL);
+    if (err != ERROR_SUCCESS) {
         pd_error(0, "unable to create registry entry: %s: error %zx\n", key,
-            (t_int)err);
+                 (t_int)err);
         return;
     }
-    err = RegSetValueEx(hkey, key, 0, REG_EXPAND_SZ, value, strlen(value)+1);
+    if (sys_verbose)
+        post("sys_putpreference: registry: %s = %s", key, value);
+    err = RegSetValueEx(hkey, key, 0, REG_EXPAND_SZ, value, strlen(value) + 1);
     if (err != ERROR_SUCCESS)
         pd_error(0, "unable to set registry entry: %s\n", key);
     RegCloseKey(hkey);
 }
 
-static void sys_donesavepreferences(void)
-{
+static void sys_donesavepreferences(void) {
+    if (sys_verbose)
+        post("sys_donesavepreferences: finished writing Registry entries.");
 }
 
 #endif /* _WIN32 */
@@ -268,7 +261,7 @@ static void sys_donesavepreferences(void)
 #ifdef __APPLE__
 
 // prefs file that is currently the one to save to
-static char current_prefs[FILENAME_MAX] = "org.puredata.pd-l2ork"; 
+static char current_prefs[FILENAME_MAX] = "org.puredata.pd-l2ork";
 
 static char *sys_prefbuf;
 
@@ -292,8 +285,7 @@ static char *sys_prefbuf;
 
 static int save_prefs_later = 0;
 
-static void sys_initloadpreferences(void)
-{
+static void sys_initloadpreferences(void) {
     char cmdbuf[MAXPDSTRING], *buf;
     FILE *fp;
     size_t sz, n = 0;
@@ -311,29 +303,28 @@ static void sys_initloadpreferences(void)
     // Pd-extended right now, but we might want to support them in the future,
     // so we handle the embedded prefs case anyway.
     pd_snprintf(default_prefs, FILENAME_MAX,
-	     "%s/../org.puredata.pd-l2ork.default",
-             sys_libdir->s_name);
-    pd_snprintf(embedded_prefs, FILENAME_MAX,
-	     "%s/../org.puredata.pd-l2ork",
-             sys_libdir->s_name);
+                "%s/../org.puredata.pd-l2ork.default", sys_libdir->s_name);
+    pd_snprintf(embedded_prefs, FILENAME_MAX, "%s/../org.puredata.pd-l2ork",
+                sys_libdir->s_name);
     pd_snprintf(user_prefs, FILENAME_MAX,
-             "%s/Library/Preferences/org.puredata.pd-l2ork", homedir);
+                "%s/Library/Preferences/org.puredata.pd-l2ork", homedir);
     pd_snprintf(embedded_prefs_file, FILENAME_MAX, "%s.plist", embedded_prefs);
     pd_snprintf(user_prefs_file, FILENAME_MAX, "%s.plist", user_prefs);
     if (stat(embedded_prefs_file, &statbuf) == 0) {
-      // Read from and write to the embedded prefs (standalone app).
-      prefs = embedded_prefs;
-      strncpy(current_prefs, embedded_prefs, FILENAME_MAX);
+        // Read from and write to the embedded prefs (standalone app).
+        prefs = embedded_prefs;
+        strncpy(current_prefs, embedded_prefs, FILENAME_MAX);
     } else if (stat(user_prefs_file, &statbuf) == 0) {
-      // Read from and write to the user prefs.
-      prefs = current_prefs;
-      strncpy(current_prefs, user_prefs, FILENAME_MAX);
+        // Read from and write to the user prefs.
+        prefs = current_prefs;
+        strncpy(current_prefs, user_prefs, FILENAME_MAX);
     } else {
-      // Read from the package defaults and write to the user prefs.
-      prefs = default_prefs;
-      strncpy(current_prefs, user_prefs, FILENAME_MAX);
-      // AG: Remember to save the prefs later after we loaded them (see below).
-      save_prefs_later = 1;
+        // Read from the package defaults and write to the user prefs.
+        prefs = default_prefs;
+        strncpy(current_prefs, user_prefs, FILENAME_MAX);
+        // AG: Remember to save the prefs later after we loaded them (see
+        // below).
+        save_prefs_later = 1;
     }
     // This looks complicated, but is rather straightforward. The individual
     // stages of the pipe are:
@@ -347,64 +338,68 @@ static void sys_initloadpreferences(void)
     //   "loadlib1" : "libdir",                   loadlib1: libdir
     //   "path1" : "\/System\/Library\/Fonts"     path1: /System/Library/Fonts
     // }
-    pd_snprintf(cmdbuf, MAXPDSTRING,
+    pd_snprintf(
+        cmdbuf, MAXPDSTRING,
         "plutil -convert json -r -o - \"%s.plist\" "
         "| sed -E "
-          "-e 's/[{}]//g' "
-          "-e 's/^ *\"(([^\"]|\\\\.)*)\" *: *\"(([^\"]|\\\\.)*)\".*/\\1: \\3/' "
-          "-e 's/\\\\(.)/\\1/g'",
+        "-e 's/[{}]//g' "
+        "-e 's/^ *\"(([^\"]|\\\\.)*)\" *: *\"(([^\"]|\\\\.)*)\".*/\\1: \\3/' "
+        "-e 's/\\\\(.)/\\1/g'",
         prefs);
     // open the pipe
     fp = popen(cmdbuf, "r");
     if (!fp) {
-      // if opening the pipe failed for some reason, bail out now
-      if (sys_verbose)
-        perror(current_prefs);
-      pd_error(0, "%s: %s", current_prefs, strerror(errno));
-      return;
+        // if opening the pipe failed for some reason, bail out now
+        if (sys_verbose)
+            perror(current_prefs);
+        pd_error(0, "%s: %s", current_prefs, strerror(errno));
+        return;
     }
     // Initialize the buffer. Note that we have to reserve one extra byte for
     // the terminating NUL character. The buf variable always points to the
     // current chunk of memory to be written into.
-    sys_prefbuf = buf = malloc((sz = BUFSZ)+1);
+    sys_prefbuf = buf = malloc((sz = BUFSZ) + 1);
     while (buf && (n = fread(buf, 1, BUFSZ, fp)) > 0) {
-      char *newbuf;
-      size_t oldsz = sz;
-      // terminating NUL byte, to be safe
-      buf[n] = 0;
-      // if the byte count is short, then all data has been read; bail out
-      if (n < BUFSZ) break;
-      // more data may follow, enlarge the buffer in BUFSZ increments
-      sz += BUFSZ;
-      if ((newbuf = realloc(sys_prefbuf, sz+1))) {
-        // memory allocation succeeded, prepare the new buffer for the next read
-        sys_prefbuf = newbuf;
-        // adjust the current buffer pointer
-        buf = newbuf + oldsz;
-      } else {
-        // memory allocation failed, bail out
-        buf = NULL;
-      }
+        char *newbuf;
+        size_t oldsz = sz;
+        // terminating NUL byte, to be safe
+        buf[n] = 0;
+        // if the byte count is short, then all data has been read; bail out
+        if (n < BUFSZ)
+            break;
+        // more data may follow, enlarge the buffer in BUFSZ increments
+        sz += BUFSZ;
+        if ((newbuf = realloc(sys_prefbuf, sz + 1))) {
+            // memory allocation succeeded, prepare the new buffer for the next
+            // read
+            sys_prefbuf = newbuf;
+            // adjust the current buffer pointer
+            buf = newbuf + oldsz;
+        } else {
+            // memory allocation failed, bail out
+            buf = NULL;
+        }
     }
     // close the pipe
     res = pclose(fp);
     if (res)
-      post("%s: pclose returned exit status %d", current_prefs, WEXITSTATUS(res));
+        post("%s: pclose returned exit status %d", current_prefs,
+             WEXITSTATUS(res));
     // check for memory allocation errors
     if (!buf) {
-      error("couldn't allocate memory for preferences buffer");
-      return;
+        error("couldn't allocate memory for preferences buffer");
+        return;
     }
     // When we come here, n is the length of the last chunk we read into buf.
     // Add the terminating NUL byte there.
     buf[n] = 0;
     if (sys_verbose)
-      post("success reading preferences from: %s", current_prefs);
-    //post("%s: read %d bytes of preferences data", current_prefs, strlen(sys_prefbuf));
+        post("success reading preferences from: %s", current_prefs);
+    // post("%s: read %d bytes of preferences data", current_prefs,
+    // strlen(sys_prefbuf));
 }
 
-static int sys_getpreference(const char *key, char *value, int size)
-{
+static int sys_getpreference(const char *key, char *value, int size) {
     char searchfor[80], *where, *whereend;
     if (!sys_prefbuf)
         return (0);
@@ -421,23 +416,22 @@ static int sys_getpreference(const char *key, char *value, int size)
         whereend--;
     if (whereend > where + size - 1)
         whereend = where + size - 1;
-    strncpy(value, where, whereend+1-where);
-    value[whereend+1-where] = 0;
+    strncpy(value, where, whereend + 1 - where);
+    value[whereend + 1 - where] = 0;
     return (1);
 }
 
-static void sys_doneloadpreferences(void)
-{
+static void sys_doneloadpreferences(void) {
     if (sys_prefbuf)
         free(sys_prefbuf);
     sys_prefbuf = NULL;
     if (save_prefs_later) {
-      // AG: We need to save the default prefs to the user prefs at this point
-      // in order to avoid losing them, in case the recent file list is written
-      // without first saving the defaults (fixes #339).
-      extern void glob_savepreferences(t_pd *dummy);
-      glob_savepreferences(NULL);
-      save_prefs_later = 0;
+        // AG: We need to save the default prefs to the user prefs at this point
+        // in order to avoid losing them, in case the recent file list is
+        // written without first saving the defaults (fixes #339).
+        extern void glob_savepreferences(t_pd * dummy);
+        glob_savepreferences(NULL);
+        save_prefs_later = 0;
     }
 }
 
@@ -452,63 +446,68 @@ static void sys_doneloadpreferences(void)
 static FILE *save_fp;
 static char save_prefs[] = save_prefs_template;
 
-static void sys_initsavepreferences(void)
-{
-  strcpy(save_prefs, save_prefs_template);
-  int fd = mkstemp(save_prefs);
-  if (fd < 0) {
-    error("save preferences: %s", strerror(errno));
-    return;
-  }
-  save_fp = fdopen(fd, "w");
-  if (!save_fp) {
-    error("save preferences: %s", strerror(errno));
-    return;
-  }
-  fprintf(save_fp, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-"<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n"
-"<plist version=\"1.0\">\n"
-"<dict>\n");
+static void sys_initsavepreferences(void) {
+    strcpy(save_prefs, save_prefs_template);
+    int fd = mkstemp(save_prefs);
+    if (fd < 0) {
+        error("save preferences: %s", strerror(errno));
+        return;
+    }
+    if (sys_verbose)
+        post("sys_initsavepreferences: creating temp plist file: %s",
+             save_prefs);
+    save_fp = fdopen(fd, "w");
+    if (!save_fp) {
+        error("save preferences: %s", strerror(errno));
+        return;
+    }
+    fprintf(save_fp,
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            "<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" "
+            "\"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n"
+            "<plist version=\"1.0\">\n"
+            "<dict>\n");
 }
 
-static void sys_putpreference(const char *key, const char *value)
-{
-  if (!save_fp) return;
-  fprintf(save_fp,
-          "<key>%s</key>\n<string>%s</string>\n",
-          key, value);
+static void sys_putpreference(const char *key, const char *value) {
+    if (!save_fp)
+        return;
+    if (sys_verbose)
+        post("sys_putpreference: plist: %s = %s", key, value);
+    fprintf(save_fp, "<key>%s</key>\n<string>%s</string>\n", key, value);
 }
 
-static void sys_donesavepreferences(void)
-{
-  if (!save_fp) return;
-  fprintf(save_fp, "</dict>\n</plist>\n");
-  fclose(save_fp);
-  save_fp = 0;
-  char cmdbuf[MAXPDSTRING];
-  pd_snprintf(cmdbuf, MAXPDSTRING,
-           "defaults import '%s' '%s' 2> /dev/null",
-           current_prefs, save_prefs);
-  system(cmdbuf);
-  unlink(save_prefs);
+static void sys_donesavepreferences(void) {
+    if (!save_fp)
+        return;
+    if (sys_verbose)
+        post("sys_donesavepreferences: importing temp plist into defaults "
+             "database...");
+    fprintf(save_fp, "</dict>\n</plist>\n");
+    fclose(save_fp);
+    save_fp = 0;
+    char cmdbuf[MAXPDSTRING];
+    pd_snprintf(cmdbuf, MAXPDSTRING, "defaults import '%s' '%s' 2> /dev/null",
+                current_prefs, save_prefs);
+    system(cmdbuf);
+    if (sys_verbose)
+        post("sys_donesavepreferences: deleting temp file: %s", save_prefs);
+    unlink(save_prefs);
 }
 
 #endif /* __APPLE__ */
 
-
 #ifdef _WIN32
-static int check_exists(const char*path)
-{
+static int check_exists(const char *path) {
     char pathbuf[MAXPDSTRING];
     wchar_t ucs2path[MAXPDSTRING];
     sys_bashfilename(path, pathbuf);
-    u8_utf8toucs2(ucs2path, MAXPDSTRING, pathbuf, MAXPDSTRING-1);
-    return (0 ==  _waccess(ucs2path, 0));
+    u8_utf8toucs2(ucs2path, MAXPDSTRING, pathbuf, MAXPDSTRING - 1);
+    return (0 == _waccess(ucs2path, 0));
 }
 #else
 #include <unistd.h>
-static int check_exists(const char*path)
-{
+static int check_exists(const char *path) {
     char pathbuf[MAXPDSTRING];
     sys_bashfilename(path, pathbuf);
     return (0 == access(pathbuf, 0));
@@ -517,8 +516,7 @@ static int check_exists(const char*path)
 
 extern void sys_expandpathelems(const char *name, char *result);
 
-void sys_loadpreferences(void)
-{
+void sys_loadpreferences(void) {
     t_audiosettings as;
     int nmidiindev, midiindev[MAXMIDIINDEV];
     int nmidioutdev, midioutdev[MAXMIDIOUTDEV];
@@ -527,17 +525,16 @@ void sys_loadpreferences(void)
     sys_get_audio_settings(&as);
 
     sys_initloadpreferences();
-        /* load audio preferences */
-    if (!sys_externalschedlib
-        && sys_getpreference("audioapi", prefbuf, MAXPDSTRING)
-        && sscanf(prefbuf, "%d", &as.a_api) < 1)
-            as.a_api = -1;
-            /* JMZ/MB: brackets for initializing */
+    /* load audio preferences */
+    if (!sys_externalschedlib &&
+        sys_getpreference("audioapi", prefbuf, MAXPDSTRING) &&
+        sscanf(prefbuf, "%d", &as.a_api) < 1)
+        as.a_api = -1;
+    /* JMZ/MB: brackets for initializing */
     if (sys_getpreference("noaudioin", prefbuf, MAXPDSTRING) &&
         (!strcmp(prefbuf, ".") || !strcmp(prefbuf, "True")))
-            as.a_nindev = 0;
-    else
-    {
+        as.a_nindev = 0;
+    else {
         /* AG: naudioin key */
         /* The idea here is to keep track of the actual number of devices, so
            that we don't read stale device entries which were removed long ago
@@ -553,39 +550,55 @@ void sys_loadpreferences(void)
            by other Pd versions. Audio outputs and MIDI inputs/outputs are
            handled in exactly the same fashion below. */
         int n;
-        if (!(sys_getpreference("naudioin", prefbuf, MAXPDSTRING)
-              && sscanf(prefbuf, "%d", &n) > 0))
+        if (!(sys_getpreference("naudioin", prefbuf, MAXPDSTRING) &&
+              sscanf(prefbuf, "%d", &n) > 0))
             n = MAXAUDIOINDEV;
-        for (as.a_nindev = 0; as.a_nindev < n; as.a_nindev++)
-        {
-            sprintf(keybuf, "audioindev%d", as.a_nindev+1);
+        for (as.a_nindev = 0; as.a_nindev < n; as.a_nindev++) {
+            char namekey[MAXPDSTRING], namebuf[MAXPDSTRING];
+            sprintf(keybuf, "audioindev%d", as.a_nindev + 1);
             if (!sys_getpreference(keybuf, prefbuf, MAXPDSTRING))
                 break;
-            if (sscanf(prefbuf, "%d %d", &as.a_indevvec[as.a_nindev], &as.a_chindevvec[as.a_nindev]) < 2)
+            if (sscanf(prefbuf, "%d %d", &as.a_indevvec[as.a_nindev],
+                       &as.a_chindevvec[as.a_nindev]) < 2)
                 break;
+
+            /* Match audio input device by name if name key exists */
+            sprintf(namekey, "audioindevname%d", as.a_nindev + 1);
+            if (sys_getpreference(namekey, namebuf, MAXPDSTRING)) {
+                int devn = sys_audiodevnametonumber(0, namebuf);
+                if (devn >= 0)
+                    as.a_indevvec[as.a_nindev] = devn;
+            }
         }
-            /* if no preferences at all, set -1 for default behavior */
+        /* if no preferences at all, set -1 for default behavior */
         if (as.a_nindev == 0)
             as.a_nindev = -1;
     }
-        /* JMZ/MB: brackets for initializing */
+    /* JMZ/MB: brackets for initializing */
     if (sys_getpreference("noaudioout", prefbuf, MAXPDSTRING) &&
         (!strcmp(prefbuf, ".") || !strcmp(prefbuf, "True")))
-            as.a_noutdev = 0;
-    else
-    {
+        as.a_noutdev = 0;
+    else {
         /* AG: naudioout key */
         int n;
-        if (!(sys_getpreference("naudioout", prefbuf, MAXPDSTRING)
-              && sscanf(prefbuf, "%d", &n) > 0))
+        if (!(sys_getpreference("naudioout", prefbuf, MAXPDSTRING) &&
+              sscanf(prefbuf, "%d", &n) > 0))
             n = MAXAUDIOOUTDEV;
-        for (as.a_noutdev = 0; as.a_noutdev < n; as.a_noutdev++)
-        {
-            sprintf(keybuf, "audiooutdev%d", as.a_noutdev+1);
+        for (as.a_noutdev = 0; as.a_noutdev < n; as.a_noutdev++) {
+            char namekey[MAXPDSTRING], namebuf[MAXPDSTRING];
+            sprintf(keybuf, "audiooutdev%d", as.a_noutdev + 1);
             if (!sys_getpreference(keybuf, prefbuf, MAXPDSTRING))
                 break;
-            if (sscanf(prefbuf, "%d %d", &as.a_outdevvec[as.a_noutdev], &as.a_choutdevvec[as.a_noutdev]) < 2)
+            if (sscanf(prefbuf, "%d %d", &as.a_outdevvec[as.a_noutdev],
+                       &as.a_choutdevvec[as.a_noutdev]) < 2)
                 break;
+            /* AG: match audio output device by name if name key exists */
+            sprintf(namekey, "audiooutdevname%d", as.a_noutdev + 1);
+            if (sys_getpreference(namekey, namebuf, MAXPDSTRING)) {
+                int devn = sys_audiodevnametonumber(1, namebuf);
+                if (devn >= 0)
+                    as.a_outdevvec[as.a_noutdev] = devn;
+            }
         }
         if (as.a_noutdev == 0)
             as.a_noutdev = -1;
@@ -599,60 +612,72 @@ void sys_loadpreferences(void)
     if (sys_getpreference("blocksize", prefbuf, MAXPDSTRING))
         sscanf(prefbuf, "%d", &as.a_blocksize);
     sys_set_audio_settings(&as);
-        
-        /* load MIDI preferences */
-    if (sys_getpreference("midiapi", prefbuf, MAXPDSTRING)
-        && sscanf(prefbuf, "%d", &midiapi) > 0)
-            sys_set_midi_api(midiapi);
-        /* JMZ/MB: brackets for initializing */
+
+    /* load MIDI preferences */
+    if (sys_getpreference("midiapi", prefbuf, MAXPDSTRING) &&
+        sscanf(prefbuf, "%d", &midiapi) > 0)
+        sys_set_midi_api(midiapi);
+    /* JMZ/MB: brackets for initializing */
     if (sys_getpreference("nomidiin", prefbuf, MAXPDSTRING) &&
         (!strcmp(prefbuf, ".") || !strcmp(prefbuf, "True")))
-            nmidiindev = 0;
-    else
-    {
+        nmidiindev = 0;
+    else {
         /* AG: nmidiin key */
         int n;
-        if (!(sys_getpreference("nmidiin", prefbuf, MAXPDSTRING)
-              && sscanf(prefbuf, "%d", &n) > 0))
+        if (!(sys_getpreference("nmidiin", prefbuf, MAXPDSTRING) &&
+              sscanf(prefbuf, "%d", &n) > 0))
             n = MAXMIDIINDEV;
-        for (nmidiindev = 0; nmidiindev < n; nmidiindev++)
-        {
-            sprintf(keybuf, "midiindev%d", nmidiindev+1);
+        for (nmidiindev = 0; nmidiindev < n; nmidiindev++) {
+            char namekey[MAXPDSTRING], namebuf[MAXPDSTRING];
+            sprintf(keybuf, "midiindev%d", nmidiindev + 1);
             if (!sys_getpreference(keybuf, prefbuf, MAXPDSTRING))
                 break;
             if (sscanf(prefbuf, "%d", &midiindev[nmidiindev]) < 1)
                 break;
+            /* AG: match MIDI input device by name if name key exists */
+            sprintf(namekey, "midiindevname%d", nmidiindev + 1);
+            if (sys_getpreference(namekey, namebuf, MAXPDSTRING)) {
+                int devn = sys_mididevnametonumber(0, namebuf);
+                if (devn >= 0)
+                    midiindev[nmidiindev] = devn;
+            }
         }
     }
-        /* JMZ/MB: brackets for initializing */
+    /* JMZ/MB: brackets for initializing */
     if (sys_getpreference("nomidiout", prefbuf, MAXPDSTRING) &&
         (!strcmp(prefbuf, ".") || !strcmp(prefbuf, "True")))
-            nmidioutdev = 0;
-    else
-    {
+        nmidioutdev = 0;
+    else {
         /* AG: nmidiout key */
         int n;
-        if (!(sys_getpreference("nmidiout", prefbuf, MAXPDSTRING)
-              && sscanf(prefbuf, "%d", &n) > 0))
+        if (!(sys_getpreference("nmidiout", prefbuf, MAXPDSTRING) &&
+              sscanf(prefbuf, "%d", &n) > 0))
             n = MAXMIDIOUTDEV;
-        for (nmidioutdev = 0; nmidioutdev < n; nmidioutdev++)
-        {
-            sprintf(keybuf, "midioutdev%d", nmidioutdev+1);
+        for (nmidioutdev = 0; nmidioutdev < n; nmidioutdev++) {
+            char namekey[MAXPDSTRING], namebuf[MAXPDSTRING];
+            sprintf(keybuf, "midioutdev%d", nmidioutdev + 1);
             if (!sys_getpreference(keybuf, prefbuf, MAXPDSTRING))
                 break;
             if (sscanf(prefbuf, "%d", &midioutdev[nmidioutdev]) < 1)
                 break;
+            /* AG: match MIDI output device by name if name key exists */
+            sprintf(namekey, "midioutdevname%d", nmidioutdev + 1);
+            if (sys_getpreference(namekey, namebuf, MAXPDSTRING)) {
+                int devn = sys_mididevnametonumber(1, namebuf);
+                if (devn >= 0)
+                    midioutdev[nmidioutdev] = devn;
+            }
         }
     }
     sys_open_midi(nmidiindev, midiindev, nmidioutdev, midioutdev, 0);
 
-        /* search path */
+    /* search path */
     if (sys_getpreference("npath", prefbuf, MAXPDSTRING))
         sscanf(prefbuf, "%d", &maxi);
-    else maxi = 0x7fffffff;
-    for (i = 0; i < maxi; i++)
-    {
-        sprintf(keybuf, "path%d", i+1);
+    else
+        maxi = 0x7fffffff;
+    for (i = 0; i < maxi; i++) {
+        sprintf(keybuf, "path%d", i + 1);
         if (!sys_getpreference(keybuf, prefbuf, MAXPDSTRING))
             break;
         else {
@@ -662,24 +687,26 @@ void sys_loadpreferences(void)
             // AG: ignore non-existent paths
             if (!check_exists(final_name))
                 continue;
-	}
-        STUFF->st_searchpath = namelist_append_files(STUFF->st_searchpath, prefbuf);
+        }
+        STUFF->st_searchpath =
+            namelist_append_files(STUFF->st_searchpath, prefbuf);
     }
     if (sys_getpreference("standardpath", prefbuf, MAXPDSTRING))
         sscanf(prefbuf, "%d", &sys_usestdpath);
     if (sys_getpreference("verbose", prefbuf, MAXPDSTRING))
         sscanf(prefbuf, "%d", &sys_verbose);
 
-        /* startup settings */
+    /* startup settings */
     if (sys_getpreference("nloadlib", prefbuf, MAXPDSTRING))
         sscanf(prefbuf, "%d", &maxi);
-    else maxi = 0x7fffffff;
-    for (i = 0; i<maxi; i++)
-    {
-        sprintf(keybuf, "loadlib%d", i+1);
+    else
+        maxi = 0x7fffffff;
+    for (i = 0; i < maxi; i++) {
+        sprintf(keybuf, "loadlib%d", i + 1);
         if (!sys_getpreference(keybuf, prefbuf, MAXPDSTRING))
             break;
-        STUFF->st_externlist = namelist_append_files(STUFF->st_externlist, prefbuf);
+        STUFF->st_externlist =
+            namelist_append_files(STUFF->st_externlist, prefbuf);
     }
     if (sys_getpreference("defeatrt", prefbuf, MAXPDSTRING))
         sscanf(prefbuf, "%d", &sys_defeatrt);
@@ -703,20 +730,17 @@ void sys_loadpreferences(void)
         sscanf(prefbuf, "%d", &sys_browser_init);
     if (sys_getpreference("autopatch_yoffset", prefbuf, MAXPDSTRING))
         sscanf(prefbuf, "%d", &sys_autopatch_yoffset);
-    if (sys_getpreference("guipreset", prefbuf, MAXPDSTRING))
-    {
+    if (sys_getpreference("guipreset", prefbuf, MAXPDSTRING)) {
         char preset_buf[MAXPDSTRING];
         sscanf(prefbuf, "%s", preset_buf);
-        //post("gui_preset = %s", preset_buf);
+        // post("gui_preset = %s", preset_buf);
         sys_gui_preset = gensym(preset_buf);
     }
-    if (sys_getpreference("flags", prefbuf, MAXPDSTRING))
-    {
+    if (sys_getpreference("flags", prefbuf, MAXPDSTRING)) {
         if (strcmp(prefbuf, "."))
             sys_flags = gensym(prefbuf);
     }
-    if (sys_getpreference("curved_cords", prefbuf, MAXPDSTRING))
-    {
+    if (sys_getpreference("curved_cords", prefbuf, MAXPDSTRING)) {
         sscanf(prefbuf, "%d", &sys_curved_cords);
     }
     sys_doneloadpreferences();
@@ -732,18 +756,18 @@ void sys_loadpreferences(void)
 #endif
 }
 
-void glob_savepreferences(t_pd *dummy)
-{
+void glob_savepreferences(t_pd *dummy) {
     t_audiosettings as;
     int i;
     char buf1[MAXPDSTRING], buf2[MAXPDSTRING];
     int nmidiindev, midiindev[MAXMIDIINDEV];
     int nmidioutdev, midioutdev[MAXMIDIOUTDEV];
 
+    if (sys_verbose)
+        post("glob_savepreferences: Saving preferences...");
     sys_initsavepreferences();
 
-
-        /* audio settings */
+    /* audio settings */
     sys_get_audio_settings(&as);
     sprintf(buf1, "%d", as.a_api);
     sys_putpreference("audioapi", buf1);
@@ -753,22 +777,34 @@ void glob_savepreferences(t_pd *dummy)
        above for explanation */
     sprintf(buf1, "%d", as.a_nindev);
     sys_putpreference("naudioin", buf1);
-    for (i = 0; i < as.a_nindev; i++)
-    {
-        sprintf(buf1, "audioindev%d", i+1);
+    for (i = 0; i < as.a_nindev; i++) {
+        char name[MAXPDSTRING];
+        sprintf(buf1, "audioindev%d", i + 1);
         sprintf(buf2, "%d %d", as.a_indevvec[i], as.a_chindevvec[i]);
         sys_putpreference(buf1, buf2);
+        /* AG: save audio input device name */
+        sys_audiodevnumbertoname(0, as.a_indevvec[i], name, MAXPDSTRING);
+        if (*name) {
+            sprintf(buf1, "audioindevname%d", i + 1);
+            sys_putpreference(buf1, name);
+        }
     }
     sys_putpreference("noaudioout", (as.a_noutdev <= 0 ? "True" : "False"));
     /* AG: naudioout key */
     sprintf(buf1, "%d", as.a_noutdev);
     sys_putpreference("naudioout", buf1);
-    for (i = 0; i < as.a_noutdev; i++)
-    {
-        sprintf(buf1, "audiooutdev%d", i+1);
+    for (i = 0; i < as.a_noutdev; i++) {
+        char name[MAXPDSTRING];
+        sprintf(buf1, "audiooutdev%d", i + 1);
         sprintf(buf2, "%d %d", as.a_outdevvec[i], as.a_choutdevvec[i]);
         sys_putpreference(buf1, buf2);
-   }
+        /* AG: save audio output device name */
+        sys_audiodevnumbertoname(1, as.a_outdevvec[i], name, MAXPDSTRING);
+        if (*name) {
+            sprintf(buf1, "audiooutdevname%d", i + 1);
+            sys_putpreference(buf1, name);
+        }
+    }
 
     sprintf(buf1, "%d", as.a_advance);
     sys_putpreference("audiobuf", buf1);
@@ -782,7 +818,7 @@ void glob_savepreferences(t_pd *dummy)
     sprintf(buf1, "%d", as.a_blocksize);
     sys_putpreference("blocksize", buf1);
 
-        /* MIDI settings */
+    /* MIDI settings */
     sprintf(buf1, "%d", sys_midiapi);
     sys_putpreference("midiapi", buf1);
 
@@ -791,30 +827,41 @@ void glob_savepreferences(t_pd *dummy)
     /* AG: nmidiin */
     sprintf(buf1, "%d", nmidiindev);
     sys_putpreference("nmidiin", buf1);
-    for (i = 0; i < nmidiindev; i++)
-    {
-        sprintf(buf1, "midiindev%d", i+1);
+    for (i = 0; i < nmidiindev; i++) {
+        char name[MAXPDSTRING];
+        sprintf(buf1, "midiindev%d", i + 1);
         sprintf(buf2, "%d", midiindev[i]);
         sys_putpreference(buf1, buf2);
+        /* AG: save MIDI input device name */
+        sys_mididevnumbertoname(0, midiindev[i], name, MAXPDSTRING);
+        if (*name) {
+            sprintf(buf1, "midiindevname%d", i + 1);
+            sys_putpreference(buf1, name);
+        }
     }
     sys_putpreference("nomidiout", (nmidioutdev <= 0 ? "True" : "False"));
     /* AG: nmidiout */
     sprintf(buf1, "%d", nmidioutdev);
     sys_putpreference("nmidiout", buf1);
-    for (i = 0; i < nmidioutdev; i++)
-    {
-        sprintf(buf1, "midioutdev%d", i+1);
+    for (i = 0; i < nmidioutdev; i++) {
+        char name[MAXPDSTRING];
+        sprintf(buf1, "midioutdev%d", i + 1);
         sprintf(buf2, "%d", midioutdev[i]);
         sys_putpreference(buf1, buf2);
+        /* AG: save MIDI output device name */
+        sys_mididevnumbertoname(1, midioutdev[i], name, MAXPDSTRING);
+        if (*name) {
+            sprintf(buf1, "midioutdevname%d", i + 1);
+            sys_putpreference(buf1, name);
+        }
     }
-        /* file search path */
+    /* file search path */
 
-    for (i = 0; 1; i++)
-    {
+    for (i = 0; 1; i++) {
         const char *pathelem = namelist_get(STUFF->st_searchpath, i);
         if (!pathelem)
             break;
-        sprintf(buf1, "path%d", i+1);
+        sprintf(buf1, "path%d", i + 1);
         sys_putpreference(buf1, pathelem);
     }
     sprintf(buf1, "%d", i);
@@ -822,16 +869,15 @@ void glob_savepreferences(t_pd *dummy)
     sprintf(buf1, "%d", sys_usestdpath);
     sys_putpreference("standardpath", buf1);
     // this should not be saved in the settings file
-    //sprintf(buf1, "%d", sys_verbose);
-    //sys_putpreference("verbose", buf1);
-    
-        /* startup */
-    for (i = 0; 1; i++)
-    {
+    // sprintf(buf1, "%d", sys_verbose);
+    // sys_putpreference("verbose", buf1);
+
+    /* startup */
+    for (i = 0; 1; i++) {
         const char *pathelem = namelist_get(STUFF->st_externlist, i);
         if (!pathelem)
             break;
-        sprintf(buf1, "loadlib%d", i+1);
+        sprintf(buf1, "loadlib%d", i + 1);
         sys_putpreference(buf1, pathelem);
     }
     sprintf(buf1, "%d", i);
@@ -859,12 +905,12 @@ void glob_savepreferences(t_pd *dummy)
     sprintf(buf1, "%d", sys_autopatch_yoffset);
     sys_putpreference("autopatch_yoffset", buf1);
     sys_putpreference("guipreset", sys_gui_preset->s_name);
-    sys_putpreference("flags", 
-        (sys_flags ? sys_flags->s_name : ""));
+    sys_putpreference("flags", (sys_flags ? sys_flags->s_name : ""));
     sprintf(buf1, "%d", sys_curved_cords);
     sys_putpreference("curved_cords", buf1);
     sys_donesavepreferences();
-    
+    if (sys_verbose)
+        post("glob_savepreferences: Finished saving preferences.");
 }
 
 /* AG: Recent files table */
@@ -872,135 +918,142 @@ void glob_savepreferences(t_pd *dummy)
 int sys_n_recent_files = 0;
 char *sys_recent_files[MAX_RECENT_FILES];
 
-void sys_add_recent_file(const char *s)
-{
-  int i;
-  // only add the file if it actually exists
-  if (!check_exists(s)) return;
-  for (i = 0; i < sys_n_recent_files && strcmp(sys_recent_files[i], s); i++) ;
-  if (i < sys_n_recent_files) {
-    // already got an existing entry, move it to the front
-    char *t = sys_recent_files[i];
-    memmove(sys_recent_files+1, sys_recent_files, i*sizeof(char*));
-    sys_recent_files[0] = t;
-  } else {
-    char *t = strdup(s);
-    if (!t) return;
-    if (sys_n_recent_files == MAX_RECENT_FILES) {
-      // kick out the oldest entry to make room for a new one
-      free(sys_recent_files[--sys_n_recent_files]);
+void sys_add_recent_file(const char *s) {
+    int i;
+    // only add the file if it actually exists
+    if (!check_exists(s))
+        return;
+    for (i = 0; i < sys_n_recent_files && strcmp(sys_recent_files[i], s); i++)
+        ;
+    if (i < sys_n_recent_files) {
+        // already got an existing entry, move it to the front
+        char *t = sys_recent_files[i];
+        memmove(sys_recent_files + 1, sys_recent_files, i * sizeof(char *));
+        sys_recent_files[0] = t;
+    } else {
+        char *t = strdup(s);
+        if (!t)
+            return;
+        if (sys_n_recent_files == MAX_RECENT_FILES) {
+            // kick out the oldest entry to make room for a new one
+            free(sys_recent_files[--sys_n_recent_files]);
+        }
+        // add a new entry at the beginning of the table
+        memmove(sys_recent_files + 1, sys_recent_files,
+                sys_n_recent_files * sizeof(char *));
+        sys_recent_files[0] = t;
+        sys_n_recent_files++;
     }
-    // add a new entry at the beginning of the table
-    memmove(sys_recent_files+1, sys_recent_files,
-            sys_n_recent_files*sizeof(char*));
-    sys_recent_files[0] = t;
-    sys_n_recent_files++;
-  }
 }
 
-void sys_save_recent_files(void)
-{
-  int i;
+void sys_save_recent_files(void) {
+    int i;
 #ifdef UNIX
-  // UNIX/Linux: save in recent_files file
-  FILE *fp;
-  char filenamebuf[FILENAME_MAX], *homedir = getenv("HOME");
-  struct stat statbuf;
-  if (!homedir) return;
-  pd_snprintf(filenamebuf, FILENAME_MAX, "%s/" USER_CONFIG_DIR, homedir);
-  filenamebuf[FILENAME_MAX-1] = 0;
-  if (stat(filenamebuf, &statbuf) || !S_ISDIR(statbuf.st_mode)) {
-    // user config dir doesn't exist yet, try to create it
-    if (mkdir(filenamebuf, 0755)) {
-      pd_error(0, "%s: %s",filenamebuf, strerror(errno));
-      return;
+    // UNIX/Linux: save in recent_files file
+    FILE *fp;
+    char filenamebuf[FILENAME_MAX], *homedir = getenv("HOME");
+    struct stat statbuf;
+    if (!homedir)
+        return;
+    pd_snprintf(filenamebuf, FILENAME_MAX, "%s/" USER_CONFIG_DIR, homedir);
+    filenamebuf[FILENAME_MAX - 1] = 0;
+    if (stat(filenamebuf, &statbuf) || !S_ISDIR(statbuf.st_mode)) {
+        // user config dir doesn't exist yet, try to create it
+        if (mkdir(filenamebuf, 0755)) {
+            pd_error(0, "%s: %s", filenamebuf, strerror(errno));
+            return;
+        }
     }
-  }
-  pd_snprintf(filenamebuf, FILENAME_MAX, "%s/" USER_CONFIG_DIR "/recent_files", homedir);
-  filenamebuf[FILENAME_MAX-1] = 0;
-  if ((fp = sys_fopen(filenamebuf, "w")) == NULL) {
-    pd_error(0, "%s: %s",filenamebuf, strerror(errno));
-    return;
-  }
-  for (i = 0; i < sys_n_recent_files; i++) {
-    fprintf(fp, "%s\n", sys_recent_files[i]);
-  }
-  fclose(fp);
+    pd_snprintf(filenamebuf, FILENAME_MAX,
+                "%s/" USER_CONFIG_DIR "/recent_files", homedir);
+    filenamebuf[FILENAME_MAX - 1] = 0;
+    if ((fp = sys_fopen(filenamebuf, "w")) == NULL) {
+        pd_error(0, "%s: %s", filenamebuf, strerror(errno));
+        return;
+    }
+    for (i = 0; i < sys_n_recent_files; i++) {
+        fprintf(fp, "%s\n", sys_recent_files[i]);
+    }
+    fclose(fp);
 #else
-  // Mac/Windows (use the defaults/registry)
-  char buf[MAXPDSTRING];
-  sys_initsavepreferences();
-  for (i = 0; i < sys_n_recent_files; i++) {
-    sprintf(buf, "recent%d", i+1);
-    sys_putpreference(buf, sys_recent_files[i]);
-  }
-  sprintf(buf, "%d", i);
-  sys_putpreference("nrecent", buf);
-  sys_donesavepreferences();
+    // Mac/Windows (use the defaults/registry)
+    char buf[MAXPDSTRING];
+    sys_initsavepreferences();
+    for (i = 0; i < sys_n_recent_files; i++) {
+        sprintf(buf, "recent%d", i + 1);
+        sys_putpreference(buf, sys_recent_files[i]);
+    }
+    sprintf(buf, "%d", i);
+    sys_putpreference("nrecent", buf);
+    sys_donesavepreferences();
 #endif
 }
 
-void sys_load_recent_files(void)
-{
+void sys_load_recent_files(void) {
 #ifdef UNIX
-  // UNIX/Linux: load from recent_files file
-  FILE *fp;
-  char filenamebuf[FILENAME_MAX], *homedir = getenv("HOME");
-  if (!homedir) return;
-  pd_snprintf(filenamebuf, FILENAME_MAX, "%s/" USER_CONFIG_DIR "/recent_files", homedir);
-  filenamebuf[FILENAME_MAX-1] = 0;
-  if ((fp = sys_fopen(filenamebuf, "r")) == NULL) return;
-  for (sys_n_recent_files = 0; sys_n_recent_files < MAX_RECENT_FILES &&
-         fgets(filenamebuf, FILENAME_MAX, fp); ) {
-    char *s;
-    int l = strlen(filenamebuf);
-    if (l > 0 && filenamebuf[l-1] == '\n') filenamebuf[--l] = 0;
-    // only add files which actually exist
-    if (l == 0 || !check_exists(filenamebuf)) continue;
-    s = strdup(filenamebuf);
-    if (s) sys_recent_files[sys_n_recent_files++] = s;
-  }
-  fclose(fp);
+    // UNIX/Linux: load from recent_files file
+    FILE *fp;
+    char filenamebuf[FILENAME_MAX], *homedir = getenv("HOME");
+    if (!homedir)
+        return;
+    pd_snprintf(filenamebuf, FILENAME_MAX,
+                "%s/" USER_CONFIG_DIR "/recent_files", homedir);
+    filenamebuf[FILENAME_MAX - 1] = 0;
+    if ((fp = sys_fopen(filenamebuf, "r")) == NULL)
+        return;
+    for (sys_n_recent_files = 0; sys_n_recent_files < MAX_RECENT_FILES &&
+                                 fgets(filenamebuf, FILENAME_MAX, fp);) {
+        char *s;
+        int l = strlen(filenamebuf);
+        if (l > 0 && filenamebuf[l - 1] == '\n')
+            filenamebuf[--l] = 0;
+        // only add files which actually exist
+        if (l == 0 || !check_exists(filenamebuf))
+            continue;
+        s = strdup(filenamebuf);
+        if (s)
+            sys_recent_files[sys_n_recent_files++] = s;
+    }
+    fclose(fp);
 #else
-  // Mac/Windows (use the defaults/registry)
-  char prefbuf[MAXPDSTRING], keybuf[80];
-  int i, maxi = MAX_RECENT_FILES;
-  sys_initloadpreferences();
-  if (sys_getpreference("nrecent", prefbuf, MAXPDSTRING))
-    sscanf(prefbuf, "%d", &maxi);
-  for (i = 0; i < maxi; i++) {
-    int l;
-    char *s;
-    sprintf(keybuf, "recent%d", i+1);
-    if (!sys_getpreference(keybuf, prefbuf, MAXPDSTRING))
-      break;
-    l = strlen(prefbuf);
-    if (l == 0 || !check_exists(prefbuf)) continue;
-    s = strdup(prefbuf);
-    if (s) sys_recent_files[sys_n_recent_files++] = s;
-  }
-  sys_doneloadpreferences();
+    // Mac/Windows (use the defaults/registry)
+    char prefbuf[MAXPDSTRING], keybuf[80];
+    int i, maxi = MAX_RECENT_FILES;
+    sys_initloadpreferences();
+    if (sys_getpreference("nrecent", prefbuf, MAXPDSTRING))
+        sscanf(prefbuf, "%d", &maxi);
+    for (i = 0; i < maxi; i++) {
+        int l;
+        char *s;
+        sprintf(keybuf, "recent%d", i + 1);
+        if (!sys_getpreference(keybuf, prefbuf, MAXPDSTRING))
+            break;
+        l = strlen(prefbuf);
+        if (l == 0 || !check_exists(prefbuf))
+            continue;
+        s = strdup(prefbuf);
+        if (s)
+            sys_recent_files[sys_n_recent_files++] = s;
+    }
+    sys_doneloadpreferences();
 #endif
 }
 
-void sys_clear_recent_files(void)
-{
-  int i;
-  for (i = 0; i < sys_n_recent_files; i++) {
-    free(sys_recent_files[i]);
-  }
-  sys_n_recent_files = 0;
+void sys_clear_recent_files(void) {
+    int i;
+    for (i = 0; i < sys_n_recent_files; i++) {
+        free(sys_recent_files[i]);
+    }
+    sys_n_recent_files = 0;
 }
 
 // send the recent files list back to the gui so that the Recent Files menu
 // can be updated accordingly
-void glob_recent_files(t_pd *dummy)
-{
+void glob_recent_files(t_pd *dummy) {
     int i;
     gui_start_vmess("gui_recent_files", "x", dummy);
     gui_start_array();
-    for (i = 0; i < sys_n_recent_files; i++)
-    {
+    for (i = 0; i < sys_n_recent_files; i++) {
         gui_s(sys_recent_files[i]);
     }
     gui_end_array();
@@ -1008,16 +1061,14 @@ void glob_recent_files(t_pd *dummy)
 }
 
 // add an entry to the recent files list, save the list and update the gui
-void glob_add_recent_file(t_pd *dummy, t_symbol *s)
-{
+void glob_add_recent_file(t_pd *dummy, t_symbol *s) {
     sys_add_recent_file(s->s_name);
     sys_save_recent_files();
     glob_recent_files(dummy);
 }
 
 // clear the recent files list, save the list and update the gui
-void glob_clear_recent_files(t_pd *dummy)
-{
+void glob_clear_recent_files(t_pd *dummy) {
     sys_clear_recent_files();
     sys_save_recent_files();
     glob_recent_files(dummy);
@@ -1048,10 +1099,9 @@ void glob_clear_recent_files(t_pd *dummy)
 #define MAX_KEY_LENGTH 255
 #define MAX_VALUE_NAME 16383
 
-void RegDelnode (HKEY hKeyRoot, LPTSTR lpSubKey)
-{
-    TCHAR szDelKey[MAX_PATH*2];
-    StringCchCopy (szDelKey, MAX_PATH*2, lpSubKey);
+void RegDelnode(HKEY hKeyRoot, LPTSTR lpSubKey) {
+    TCHAR szDelKey[MAX_PATH * 2];
+    StringCchCopy(szDelKey, MAX_PATH * 2, lpSubKey);
 
     LONG lResult;
 
@@ -1065,8 +1115,7 @@ void RegDelnode (HKEY hKeyRoot, LPTSTR lpSubKey)
 
 #endif
 
-void reinit_user_settings(void *dummy)
-{
+void reinit_user_settings(void *dummy) {
     // this part should be called only from the Windows OS.
 #ifdef MSW
     RegDelnode(HKEY_CURRENT_USER, TEXT("Software\\Pd-L2Ork"));
