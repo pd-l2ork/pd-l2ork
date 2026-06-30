@@ -558,11 +558,19 @@ void sys_loadpreferences(void)
             n = MAXAUDIOINDEV;
         for (as.a_nindev = 0; as.a_nindev < n; as.a_nindev++)
         {
+            char namekey[MAXPDSTRING], namebuf[MAXPDSTRING];
             sprintf(keybuf, "audioindev%d", as.a_nindev+1);
             if (!sys_getpreference(keybuf, prefbuf, MAXPDSTRING))
                 break;
             if (sscanf(prefbuf, "%d %d", &as.a_indevvec[as.a_nindev], &as.a_chindevvec[as.a_nindev]) < 2)
                 break;
+            /* Match audio input device by name if name key exists */
+            sprintf(namekey, "audioindevname%d", as.a_nindev + 1);
+            if (sys_getpreference(namekey, namebuf, MAXPDSTRING)) {
+                int devn = sys_audiodevnametonumber(0, namebuf);
+                if (devn >= 0)
+                    as.a_indevvec[as.a_nindev] = devn;
+            }
         }
             /* if no preferences at all, set -1 for default behavior */
         if (as.a_nindev == 0)
@@ -581,11 +589,19 @@ void sys_loadpreferences(void)
             n = MAXAUDIOOUTDEV;
         for (as.a_noutdev = 0; as.a_noutdev < n; as.a_noutdev++)
         {
+            char namekey[MAXPDSTRING], namebuf[MAXPDSTRING];
             sprintf(keybuf, "audiooutdev%d", as.a_noutdev+1);
             if (!sys_getpreference(keybuf, prefbuf, MAXPDSTRING))
                 break;
             if (sscanf(prefbuf, "%d %d", &as.a_outdevvec[as.a_noutdev], &as.a_choutdevvec[as.a_noutdev]) < 2)
                 break;
+            /* Match audio output device by name if name key exists */
+            sprintf(namekey, "audiooutdevname%d", as.a_noutdev + 1);
+            if (sys_getpreference(namekey, namebuf, MAXPDSTRING)) {
+                int devn = sys_audiodevnametonumber(1, namebuf);
+                if (devn >= 0)
+                    as.a_outdevvec[as.a_noutdev] = devn;
+            }
         }
         if (as.a_noutdev == 0)
             as.a_noutdev = -1;
@@ -617,11 +633,19 @@ void sys_loadpreferences(void)
             n = MAXMIDIINDEV;
         for (nmidiindev = 0; nmidiindev < n; nmidiindev++)
         {
+            char namekey[MAXPDSTRING], namebuf[MAXPDSTRING];
             sprintf(keybuf, "midiindev%d", nmidiindev+1);
             if (!sys_getpreference(keybuf, prefbuf, MAXPDSTRING))
                 break;
             if (sscanf(prefbuf, "%d", &midiindev[nmidiindev]) < 1)
                 break;
+            /* AG: match MIDI input device by name if name key exists */
+            sprintf(namekey, "midiindevname%d", nmidiindev + 1);
+            if (sys_getpreference(namekey, namebuf, MAXPDSTRING)) {
+                int devn = sys_mididevnametonumber(0, namebuf);
+                if (devn >= 0)
+                    midiindev[nmidiindev] = devn;
+            }
         }
     }
         /* JMZ/MB: brackets for initializing */
@@ -637,11 +661,19 @@ void sys_loadpreferences(void)
             n = MAXMIDIOUTDEV;
         for (nmidioutdev = 0; nmidioutdev < n; nmidioutdev++)
         {
+            char namekey[MAXPDSTRING], namebuf[MAXPDSTRING];
             sprintf(keybuf, "midioutdev%d", nmidioutdev+1);
             if (!sys_getpreference(keybuf, prefbuf, MAXPDSTRING))
                 break;
             if (sscanf(prefbuf, "%d", &midioutdev[nmidioutdev]) < 1)
                 break;
+            /* AG: match MIDI output device by name if name key exists */
+            sprintf(namekey, "midioutdevname%d", nmidioutdev + 1);
+            if (sys_getpreference(namekey, namebuf, MAXPDSTRING)) {
+                int devn = sys_mididevnametonumber(1, namebuf);
+                if (devn >= 0)
+                    midioutdev[nmidioutdev] = devn;
+            }
         }
     }
     sys_open_midi(nmidiindev, midiindev, nmidioutdev, midioutdev, 0);
@@ -755,9 +787,16 @@ void glob_savepreferences(t_pd *dummy)
     sys_putpreference("naudioin", buf1);
     for (i = 0; i < as.a_nindev; i++)
     {
+        char name[MAXPDSTRING];
         sprintf(buf1, "audioindev%d", i+1);
         sprintf(buf2, "%d %d", as.a_indevvec[i], as.a_chindevvec[i]);
         sys_putpreference(buf1, buf2);
+        /* AG: save audio input device name */
+        sys_audiodevnumbertoname(0, as.a_indevvec[i], name, MAXPDSTRING);
+        if (*name) {
+            sprintf(buf1, "audioindevname%d", i + 1);
+            sys_putpreference(buf1, name);
+        }
     }
     sys_putpreference("noaudioout", (as.a_noutdev <= 0 ? "True" : "False"));
     /* AG: naudioout key */
@@ -765,9 +804,16 @@ void glob_savepreferences(t_pd *dummy)
     sys_putpreference("naudioout", buf1);
     for (i = 0; i < as.a_noutdev; i++)
     {
+        char name[MAXPDSTRING];
         sprintf(buf1, "audiooutdev%d", i+1);
         sprintf(buf2, "%d %d", as.a_outdevvec[i], as.a_choutdevvec[i]);
         sys_putpreference(buf1, buf2);
+        /* AG: save audio output device name */
+        sys_audiodevnumbertoname(1, as.a_outdevvec[i], name, MAXPDSTRING);
+        if (*name) {
+            sprintf(buf1, "audiooutdevname%d", i + 1);
+            sys_putpreference(buf1, name);
+        }
    }
 
     sprintf(buf1, "%d", as.a_advance);
@@ -793,9 +839,16 @@ void glob_savepreferences(t_pd *dummy)
     sys_putpreference("nmidiin", buf1);
     for (i = 0; i < nmidiindev; i++)
     {
+        char name[MAXPDSTRING];
         sprintf(buf1, "midiindev%d", i+1);
         sprintf(buf2, "%d", midiindev[i]);
         sys_putpreference(buf1, buf2);
+        /* AG: save MIDI input device name */
+        sys_mididevnumbertoname(0, midiindev[i], name, MAXPDSTRING);
+        if (*name) {
+            sprintf(buf1, "midiindevname%d", i + 1);
+            sys_putpreference(buf1, name);
+        }
     }
     sys_putpreference("nomidiout", (nmidioutdev <= 0 ? "True" : "False"));
     /* AG: nmidiout */
@@ -803,9 +856,16 @@ void glob_savepreferences(t_pd *dummy)
     sys_putpreference("nmidiout", buf1);
     for (i = 0; i < nmidioutdev; i++)
     {
+        char name[MAXPDSTRING];
         sprintf(buf1, "midioutdev%d", i+1);
         sprintf(buf2, "%d", midioutdev[i]);
         sys_putpreference(buf1, buf2);
+        /* AG: save MIDI output device name */
+        sys_mididevnumbertoname(1, midioutdev[i], name, MAXPDSTRING);
+        if (*name) {
+            sprintf(buf1, "midioutdevname%d", i + 1);
+            sys_putpreference(buf1, name);
+        }
     }
         /* file search path */
 
