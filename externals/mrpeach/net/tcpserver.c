@@ -539,7 +539,7 @@ failed:
 /* SIOCOUTQ exists only(?) on linux, returns remaining space in the socket's output buffer  */
 static int tcpserver_send_buffer_avaliable_for_client(t_tcpserver *x, int client)
 {
-    int sockfd = x->x_sr[client].sr_fd;
+    int sockfd = x->x_sr[client]->sr_fd;
     int result = 0L;
 
     ioctl(sockfd, SIOCOUTQ, &result);
@@ -925,7 +925,7 @@ static void *tcpserver_broadcast_thread(void *arg)
                     {
                         /* this might be better than allocating huge amounts of memory */
 #ifdef SIOCOUTQ
-                        if (tcpserver_send_buffer_avaliable_for_client(x, client) < j)
+                        if (tcpserver_send_buffer_avaliable_for_client(ttbp->x, client) < j)
                         {
                             error("%s_broadcast_thread: buffer too small for client(%d)", objName, client);
                             if (NULL != arg) freebytes (arg, sizeof (t_tcpserver_broadcast_params));
@@ -968,7 +968,7 @@ static void *tcpserver_broadcast_thread(void *arg)
         for(client = 0; client < ttbp->x->x_nconnections; client++)	/* check if connection exists */
         {
 #ifdef SIOCOUTQ
-            if (tcpserver_send_buffer_avaliable_for_client(x, client) < length)
+            if (tcpserver_send_buffer_avaliable_for_client(ttbp->x, client) < length)
             {
                 error("%s_broadcast_thread: buffer too small for client(%d)", objName, client);
                 if (NULL != arg) freebytes (arg, sizeof (t_tcpserver_broadcast_params));
