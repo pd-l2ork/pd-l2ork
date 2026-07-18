@@ -72,7 +72,7 @@ jobs:
         with:
           submodules: "recursive"
       - name: make
-        run: make
+        run: export CFLAGS="-std=gnu89 -fpermissive" && make
       - name: rename
         run: mv Pd-L2Ork-*.deb Pd-L2Ork-26.04.deb
       - uses: actions/upload-artifact@v4
