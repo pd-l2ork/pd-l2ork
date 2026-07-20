@@ -1,6 +1,6 @@
 id: io.github.pd_l2ork.Pd_L2Ork
 runtime: org.freedesktop.Platform
-runtime-version: '24.08'
+runtime-version: '25.08'
 sdk: org.freedesktop.Sdk
 command: pd-wrapper.sh
 finish-args:
@@ -14,8 +14,6 @@ finish-args:
   - --filesystem=xdg-run/pipewire-0
 # Filesystem access (pd doesn't yet work with portals)
   - --filesystem=home
-# MIDI access (Flatpak doesn't yet support exposing only MIDI devices)
-  - --device=all
 # Share network access
   - --share=network
 # Linux Audio plugins
@@ -23,7 +21,7 @@ finish-args:
 add-extensions:
   org.freedesktop.LinuxAudio.Plugins:
     directory: extensions/Plugins
-    version: '24.08'
+    version: '25.08'
     add-ld-path: lib
     merge-dirs: ladspa
     subdirectories: true
@@ -45,13 +43,15 @@ cleanup:
 modules:
 - name: pd-l2ork
   buildsystem: autotools
+  build-options:
+    cflags: -std=gnu17
   subdir: pd/src
   config-opts: [ '--enable-portaudio', '--enable-alsa', '--disable-oss', '--enable-jack' ]
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20251101'
-    commit: 19c1cdd6a35dea718ac71da8284a76d2abe51768
+    tag: '20260425'
+    commit: 5b463522eae95c45bae613f8695da92855424e7f
   - type: patch
     path: patch/no-rsync-during-install.patch
 
@@ -65,6 +65,8 @@ modules:
 - shared-modules/lua5.3/lua-5.3.5.json
 # For the OSCx library
 - name: libtirpc
+  build-options:
+    cflags: -std=gnu17
   config-opts:
     - --disable-gssapi
   sources:
@@ -77,6 +79,8 @@ modules:
 - name: pd-externals
   buildsystem: simple
   subdir: externals
+  build-options:
+    cflags: -std=gnu17
   build-commands:
   # run Gem configure, so that iemgui can build, since it depends on it
   # currently disabled, since we build gem below before iemgui
@@ -119,7 +123,7 @@ modules:
     export OSCX_FLATPAK_CONFIGURE_FLAGS="--host=$(uname -m)-pc-linux-gnu" && \
          export OSCX_FLATPAK_LIBS="-ltirpc" && \
          export OSCX_FLATPAK_LDFLAGS="-L/app/lib" && \
-         export OSCX_FLATPAK_INCLUDES="-I/app/include/tirpc" && \
+         export OSCX_FLATPAK_INCLUDES="-std=gnu17 -I/app/include/tirpc" && \
          make prefix=/app \
          oscx
   - |
@@ -145,8 +149,10 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20251101'
-    commit: 19c1cdd6a35dea718ac71da8284a76d2abe51768
+    tag: '20260425'
+    commit: 5b463522eae95c45bae613f8695da92855424e7f
+  - type: patch
+    path: patch/pd-external-mrpeach-buildfix.patch
 
 - name: rpi-externals
   buildsystem: simple
@@ -163,8 +169,8 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20251101'
-    commit: 19c1cdd6a35dea718ac71da8284a76d2abe51768
+    tag: '20260425'
+    commit: 5b463522eae95c45bae613f8695da92855424e7f
 
 - name: pd-abstractions
   buildsystem: simple
@@ -174,8 +180,8 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20251101'
-    commit: 19c1cdd6a35dea718ac71da8284a76d2abe51768
+    tag: '20260425'
+    commit: 5b463522eae95c45bae613f8695da92855424e7f
 
 - name: pd-l2ork-integration
   buildsystem: simple
@@ -211,8 +217,8 @@ modules:
   sources:
   - type: git
     url: https://github.com/pd-l2ork/pd-l2ork/
-    tag: '20251101'
-    commit: 19c1cdd6a35dea718ac71da8284a76d2abe51768
+    tag: '20260425'
+    commit: 5b463522eae95c45bae613f8695da92855424e7f
   - type: file
     # x86_64
     url: https://dl.nwjs.io/v0.67.1/nwjs-sdk-v0.67.1-linux-x64.tar.gz
@@ -222,7 +228,7 @@ modules:
       - x86_64
   - type: file
     # aarch64
-    url: https://l2ork.bukvic.net/data/pd-l2ork/nwjs-v0.60.1-linux-arm64.tar.gz
+    url: https://l2ork.music.vt.edu/data/pd-l2ork/nwjs-v0.60.1-linux-arm64.tar.gz
     sha256: c57fa2684680119789b5403630a24218db06f2713370b87cfab3cc6839409c25
     dest-filename: nwjs.tar.gz
     only-arches:

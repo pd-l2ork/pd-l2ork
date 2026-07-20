@@ -61,6 +61,13 @@
   <url type="bugtracker">https://github.com/pd-l2ork/pd-l2ork/issues</url>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="20260720" type="stable" date="2026-07-20">
+      <description>
+        <p>
+          Added ability to save audio settings by soundcard name. Fixed being unable to re-open MIDI on Windows. Added support for Ubuntu 26.04. Fixed bug in WebPdL2Ork where return/enter keys were not correctly registered. Improvements to the build process. Additional L2Ork Tweeter improvements.
+        </p>
+      </description>
+    </release>
     <release version="20260425" type="stable" date="2026-04-25">
       <description>
         <p>
