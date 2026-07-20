@@ -151,8 +151,6 @@ modules:
     url: https://github.com/pd-l2ork/pd-l2ork/
     tag: '20260720'
     commit: 92fe5b6a3fa8d828f2d960e3a90db032195f3858
-  - type: patch
-    path: patch/pd-external-mrpeach-buildfix.patch
 
 - name: rpi-externals
   buildsystem: simple
