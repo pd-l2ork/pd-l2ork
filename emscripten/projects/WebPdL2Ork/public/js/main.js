@@ -130,33 +130,6 @@ let known_objects = [
 ];
 //END CONSTANTS
 
-// ==========================================
-// INTEGRATED WEBPD CANVAS FOCUS ENGINE
-// ==========================================
-(function initWebPdCanvasFocusEngine() {
-    function bindCanvas() {
-        const webPdCanvas = document.querySelector('canvas') || document.getElementById('canvas');
-        if (webPdCanvas) {
-            webPdCanvas.setAttribute('tabindex', '0');
-            webPdCanvas.style.outline = 'none';
-
-            webPdCanvas.addEventListener('mousedown', function() {
-                webPdCanvas.focus();
-            });
-            return true;
-        }
-        return false;
-    }
-
-    if (!bindCanvas()) {
-        const checkInterval = setInterval(function() {
-            if (bindCanvas()) clearInterval(checkInterval);
-        }, 100);
-        setTimeout(() => clearInterval(checkInterval), 10000);
-    }
-})();
-// ==========================================
-
 // NETWORKING SUPPORT
 // Here we intercept all websocket connections and send them to the backend for proxying
 window.WebSocket = function (host, ...arguments) {
@@ -3995,23 +3968,39 @@ window.onblur = () => {
         keyDown[key] = false;
 };
 
-function setKeyboardFocus(data, exclusive = false) {
-   for(let key in keyDown) {
-       if(exclusive)
-           if(keyDown[key])
-               onKeyUp({key});
-       if(keyboardFocus?.data?.onKeyUp)
-           keyboardFocus.data.onKeyUp(keyboardFocus.data, {key});
-   }
-   if(keyboardFocus?.data?.onLoseFocus)
-       keyboardFocus.data.onLoseFocus(keyboardFocus.data);
-   if(data !== null)
-       document.getElementById('keyboardTrigger').focus();
-   else
-       document.getElementById('keyboardTrigger').blur();
-   keyboardFocus.data = data;
-   keyboardFocus.exclusive = exclusive;
-   keyboardFocus.current = true;
+function setKeyboardFocus(data, exclusive) {
+    // 1. NORMALIZATION
+    if (data === false || data === "null" || data === "") {
+        data = null;
+    }
+
+    // --- ORIGINAL CORE KEY DEFLATION ENGINE ---
+    for(let key in keyDown) {
+        if(exclusive)
+            if(keyDown[key])
+                onKeyUp({key});
+        if(keyboardFocus?.data?.onKeyUp)
+            keyboardFocus.data.onKeyUp(keyboardFocus.data, {key});
+    }
+    
+    if(keyboardFocus?.data?.onLoseFocus)
+        keyboardFocus.data.onLoseFocus(keyboardFocus.data);
+
+    // --- SAFELY PRESERVE BROWSER FOCUS SEAMLESSLY ---
+    const trigger = document.getElementById('keyboardTrigger');
+    if (trigger) {
+        // NEVER call trigger.blur() inside an asynchronous loop block.
+        // We force the element to keep its browser focus state 100% of the time,
+        // preventing Chrome's background timer focus security block.
+        trigger.focus(); 
+    }
+
+    // --- STATE ENGINE UPDATE ---
+    // WebPdL2Ork will check if keyboardFocus.data is null. If it is null,
+    // the system naturally knows to ignore object data inputs and route hotkeys globally.
+    keyboardFocus.data = data;
+    keyboardFocus.exclusive = exclusive;
+    keyboardFocus.current = true;
 }
 function onMouseDown(e) {
     e.preventDefault?.();
