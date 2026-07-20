@@ -1,7 +1,7 @@
 const DEBUG = false;
 const BUILD = "development";
-console.info(`Loaded WebPdL2Ork build '${BUILD}' in '${DEBUG ? 'debug' : 'production'}' mode`)
-console.info("TEST BUILD");
+console.info(`Loaded WebPdL2Ork build '${BUILD}' in '${DEBUG ? 'debug' : 'production'}' mode`);
+console.info("TEST BUILD 20260720-2");
 
 const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
 const websocket = window.WebSocket;
@@ -1241,13 +1241,13 @@ let pdl2ork_promise = WebPdL2OrkModule({
                                     if(list[0] && data.interactive)
                                         setKeyboardFocus(data, data.exclusive);
                                     else
-                                        setKeyboardFocus(false, false);
+                                        setKeyboardFocus(null, false);
                                     configure_item(data.svgText, {fill: list[0] && data.interactive ? '#ff0000' : '#000000'});
                                     break;
                                 case 'interactive':
                                     data.interactive = list[0];
                                     if(keyboardFocus.data?.id === data.id)
-                                        setKeyboardFocus(false, false);
+                                        setKeyboardFocus(null, false);
                                     break;
                                 case 'commit':
                                 case 'set':
@@ -1278,13 +1278,13 @@ let pdl2ork_promise = WebPdL2OrkModule({
                                     if(list[0] && data.interactive)
                                         setKeyboardFocus(data, data.exclusive);
                                     else
-                                        setKeyboardFocus(false, false);
+                                        setKeyboardFocus(null, false);
                                     configure_item(data.svgText, {fill: list[0] && data.interactive ? '#ff0000' : '#000000'});
                                     break;
                                 case 'interactive':
                                     data.interactive = list[0];
                                     if(keyboardFocus.data?.id === data.id)
-                                        setKeyboardFocus(false, false);
+                                        setKeyboardFocus(null, false);
                                     break;
                                 case 'commit':
                                 case 'set':
@@ -3667,7 +3667,7 @@ function gui_dropdown_onkeydown(data, e) {
         data.showOptions = false;
         data.render();
         gui_dropdown_send(data);
-        setKeyboardFocus(false, false);
+        setKeyboardFocus(null, false);
     }
 }
 function gui_dropdown_onlosefocus(data) {
@@ -3710,7 +3710,7 @@ function gui_nbx_onmousedown(data, e, id) {
             gui_nbx_settext(data, '' + data.value);
         }
         setKeyboardFocus(data, data.exclusive);
-        data.focusTimeout = setTimeout(setKeyboardFocus, 3000, false);
+        data.focusTimeout = setTimeout(setKeyboardFocus, 3000, null);
         configure_item(data.svgText, {fill: '#ff0000'});
         gui_nbx_touches[id] = {
             data,
@@ -3758,7 +3758,7 @@ function gui_nbx_settext(data, text, mousing) {
 function gui_nbx_keydown(data, e) {
     if(data.focusTimeout) {
         clearTimeout(data.focusTimeout);
-        data.focusTimeout = setTimeout(setKeyboardFocus, 3000, false);
+        data.focusTimeout = setTimeout(setKeyboardFocus, 3000, null);
     }
     
     if(e.key === 'v' && (keyDown['Control'] || keyDown['Meta'])) {
@@ -3949,18 +3949,21 @@ function setKeyboardFocus(data, exclusive) {
     }
     if(keyboardFocus?.data?.onLoseFocus)
         keyboardFocus.data.onLoseFocus(keyboardFocus.data);
-    if(data !== null)
+    if(data !== null) {
         document.getElementById('keyboardTrigger').focus();
-    else
+        keyboardFocus.current = true;
+    } else {
         document.getElementById('keyboardTrigger').blur();
+        keyboardFocus.current = false;
+    }
     keyboardFocus.data = data;
     keyboardFocus.exclusive = exclusive;
-    keyboardFocus.current = true;
+    //keyboardFocus.current = true;
 }
 function onMouseDown(e) {
     e.preventDefault?.();
     if(keyboardFocus.current == false)
-        setKeyboardFocus(false, false);
+        setKeyboardFocus(null, false);
     keyboardFocus.current = false;
 
     for(let listener of inputListeners)
