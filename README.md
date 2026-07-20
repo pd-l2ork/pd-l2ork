@@ -211,7 +211,7 @@ since it will usually contain spaces, making the build fail.
    Note: don't run the shell after installation finishes. You'll do that
    manually in step 3.
 
-2. Download and install the [inno setup Quickstart Pack](http://www.jrsoftware.org/isdl.php) which includes the Script Editor
+2. Download and install the [Inno Setup 6](http://www.jrsoftware.org/isdl.php) which includes the Script Editor
 
 3. Run the "MSYS2 MINGW64" shell  
    msys2 adds multiple Start Menu items for different "flavors" of shell:
@@ -223,12 +223,12 @@ since it will usually contain spaces, making the build fail.
 
         pacman -Syu
 
-   After closing and reopening the shell as prompted, you may need to do it
+   After closing and reopening the shell as prompted, you will need to do it
    again:
    
         pacman -Syu
    
-   Now everything should be up-to-date. Issue the following command:
+   Now everything should be up-to-date. Issue the following command. When prompet, press Enter/Return:
 
         pacman -S autoconf automake git libtool \
           mingw-w64-ucrt-x86_64-gcc \
@@ -256,12 +256,15 @@ since it will usually contain spaces, making the build fail.
 
         cd pd-l2ork
 
-7. Finally, build Pd-L2Ork
+7. Disable SSL checking for downloading some of the packages via HTTP:
 
         git config --global http.sslverify "false"
+
+9. Finally, build Pd-L2Ork
+
         make
 
-8. Look in the top level source directory and double-click the setup file to
+10. Look in the top level source directory and double-click the setup file to
    start installing Pd-L2Ork on your system.
 
 #### Windows 32-bit Using msys2 (deprecated)
