@@ -63,12 +63,17 @@ docker-compose up --build -d
 
 2. Install emscripten version of pd-l2ork by going into the the folder this document is located:
 
-		cd <pd-l2ork-git-folder>/emscripten
+		cd <pd-l2ork-git-folder>/emscripten && \
+		EMCC_CFLAGS="-fpermissive -Wno-error=incompatible-pointer-types" \
+		EMCC_CXXFLAGS="-fpermissive" \
 		make
 
 	For a debugging-enabled version, instead of make, use:
 
-		export DEBUG=true && make
+		export DEBUG=true && \
+		EMCC_CFLAGS="-fpermissive -Wno-error=incompatible-pointer-types" \
+		EMCC_CXXFLAGS="-fpermissive" \
+		make
 
 	If you encounter errors building the externals, it may be that multi-core compilation is not working well on your system. If so, in the [emscripten/Makefile](./Makefile) replace 'nprocs' with 1 and try running the make again.
 
