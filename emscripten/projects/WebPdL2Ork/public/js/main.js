@@ -3742,22 +3742,10 @@ function gui_nbx_onmousedown(data, e, id) {
             clearTimeout(data.focusTimeout);
         }
 
-        // Snapshot the exact focused element right at this millisecond
-        const originalActiveElement = document.activeElement;
-
-        // Fire the updated safety execution loop
-        data.focusTimeout = setTimeout(function() {
-            // Only proceed if the user HAS NOT selected a new item during the 3000ms delay
-            if (document.activeElement === originalActiveElement && originalActiveElement) {
-                
-                // Strip focus from the idle number box element natively
-                originalActiveElement.blur();
-                
-                // Re-route back through your updated focus engine safely
+        data.focusTimeout = setTimeout(() => {
+            if (keyboardFocus.data == data)
                 setKeyboardFocus(null);
-            }
         }, 3000);
-        //data.focusTimeout = setTimeout(setKeyboardFocus, 3000, null);
 
         configure_item(data.svgText, {fill: '#ff0000'});
         gui_nbx_touches[id] = {
@@ -3981,7 +3969,7 @@ function onKeyDown(e) {
     if(keyboardFocus.data?.onKeyDown)
         keyboardFocus.data.onKeyDown(keyboardFocus.data, e);
     keyDown[e.key] = true;
-    if(keyboardFocus.exclusive == false) {
+    if(keyboardFocus.exclusive != true) {
         for(let listener of inputListeners.sort((a,b) => (b.priority || 0) - (a.priority || 0))) {
             if(listener.onKeyUp && e.repeat)
                 listener.onKeyUp(e);
@@ -4007,77 +3995,24 @@ window.onblur = () => {
         keyDown[key] = false;
 };
 
-function setKeyboardFocus(data, exclusive) {
-    // 1. SAFETY NORMALIZATION: Treat false, "null", or empty objects as null 
-    // to cleanly trigger canvas-level fallback tracking
-    if (data === false || data === "null" || data === "") {
-        data = null;
-    }
-
-    // --- ORIGINAL CORE ROUTING ENGINE ---
-    for(let key in keyDown) {
-        if(exclusive)
-            if(keyDown[key])
-                onKeyUp({key});
-        if(keyboardFocus?.data?.onKeyUp)
-            keyboardFocus.data.onKeyUp(keyboardFocus.data, {key});
-    }
-    
-    if(keyboardFocus?.data?.onLoseFocus)
-        keyboardFocus.data.onLoseFocus(keyboardFocus.data);
-
-    // --- FOCUS FALLBACK REDIRECTION ---
-    if(data !== null) {
-        // An active element exists; route typing events through the standard trigger box
-        const trigger = document.getElementById('keyboardTrigger');
-        if (trigger) {
-            trigger.focus();
-        }
-    } else {
-        // Focus is being released. Blur the hidden trigger element...
-        const trigger = document.getElementById('keyboardTrigger');
-        if (trigger) {
-            trigger.blur();
-        }
-        
-        // ...and immediately ground the focus state onto WebPdL2Ork's main canvas
-        const webPdCanvas = document.querySelector('canvas') || document.getElementById('canvas');
-        if (webPdCanvas) {
-            // Make sure the canvas can structurally host keyboard focus
-            if (!webPdCanvas.hasAttribute('tabindex')) {
-                webPdCanvas.setAttribute('tabindex', '0');
-                webPdCanvas.style.outline = 'none'; // Clear out the browser's blue border
-            }
-            webPdCanvas.focus();
-        } else {
-            // Last-resort fallback to the document frame if the canvas isn't fully drawn yet
-            document.body.focus();
-        }
-    }
-
-    // --- ORIGINAL STATE PRESERVATION ---
-    keyboardFocus.data = data;
-    keyboardFocus.exclusive = exclusive;
-    keyboardFocus.current = true;
+function setKeyboardFocus(data, exclusive = false) {
+   for(let key in keyDown) {
+       if(exclusive)
+           if(keyDown[key])
+               onKeyUp({key});
+       if(keyboardFocus?.data?.onKeyUp)
+           keyboardFocus.data.onKeyUp(keyboardFocus.data, {key});
+   }
+   if(keyboardFocus?.data?.onLoseFocus)
+       keyboardFocus.data.onLoseFocus(keyboardFocus.data);
+   if(data !== null)
+       document.getElementById('keyboardTrigger').focus();
+   else
+       document.getElementById('keyboardTrigger').blur();
+   keyboardFocus.data = data;
+   keyboardFocus.exclusive = exclusive;
+   keyboardFocus.current = true;
 }
-//function setKeyboardFocus(data, exclusive) {
-//    for(let key in keyDown) {
-//        if(exclusive)
-//            if(keyDown[key])
-//                onKeyUp({key});
-//        if(keyboardFocus?.data?.onKeyUp)
-//            keyboardFocus.data.onKeyUp(keyboardFocus.data, {key});
-//    }
-//    if(keyboardFocus?.data?.onLoseFocus)
-//        keyboardFocus.data.onLoseFocus(keyboardFocus.data);
-//    if(data !== null)
-//        document.getElementById('keyboardTrigger').focus();
-//    else
-//        document.getElementById('keyboardTrigger').blur();
-//    keyboardFocus.data = data;
-//    keyboardFocus.exclusive = exclusive;
-//    keyboardFocus.current = true;
-//}
 function onMouseDown(e) {
     e.preventDefault?.();
     if(keyboardFocus.current == false)
