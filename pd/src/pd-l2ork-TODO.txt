@@ -1,8 +1,10 @@
 PD-L2ORK TODO:
 
+*WebPdL2Ork loses keyboard focus after number2 times out and reverts to being unfocused. This happens even if the focus is manually removed.
+
 *Autocomplete displaying multiple instances of the same
   *Not sure how this broke. Deleting ~/.pd-l2ork/completions.json fixed the issue
-  *Will leave this open to see if it recurrs
+  *Will leave this open to see if it recurs
 
 *Bezier implementation of the array sometimes:
   *does not draw when the patch is opened (with different zoom levels)
