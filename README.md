@@ -256,7 +256,7 @@ since it will usually contain spaces, making the build fail.
 
         cd pd-l2ork
 
-7. Disable SSL checking for downloading some of the packages via HTTP:
+7. Disable SSL checking for downloading some of the 3rd-party packages via HTTP (otherwise install will fail):
 
         git config --global http.sslverify "false"
 
