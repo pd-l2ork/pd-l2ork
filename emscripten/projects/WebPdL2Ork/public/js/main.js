@@ -127,7 +127,7 @@ let known_objects = [
     'keyname',
     'legacy_mousemotion',
     'legacy_mouseclick'
-  ]
+];
 //END CONSTANTS
 
 // ==========================================
