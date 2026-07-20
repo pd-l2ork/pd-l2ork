@@ -1,7 +1,6 @@
 const DEBUG = false;
 const BUILD = "development";
-console.info(`Loaded WebPdL2Ork build '${BUILD}' in '${DEBUG ? 'debug' : 'production'}' mode`);
-console.info("TEST BUILD 20260720-2");
+console.info(`Loaded WebPdL2Ork build '${BUILD}' in '${DEBUG ? 'debug' : 'production'}' mode`)
 
 const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
 const websocket = window.WebSocket;
@@ -130,6 +129,33 @@ let known_objects = [
     'legacy_mouseclick'
   ]
 //END CONSTANTS
+
+// ==========================================
+// INTEGRATED WEBPD CANVAS FOCUS ENGINE
+// ==========================================
+(function initWebPdCanvasFocusEngine() {
+    function bindCanvas() {
+        const webPdCanvas = document.querySelector('canvas') || document.getElementById('canvas');
+        if (webPdCanvas) {
+            webPdCanvas.setAttribute('tabindex', '0');
+            webPdCanvas.style.outline = 'none';
+
+            webPdCanvas.addEventListener('mousedown', function() {
+                webPdCanvas.focus();
+            });
+            return true;
+        }
+        return false;
+    }
+
+    if (!bindCanvas()) {
+        const checkInterval = setInterval(function() {
+            if (bindCanvas()) clearInterval(checkInterval);
+        }, 100);
+        setTimeout(() => clearInterval(checkInterval), 10000);
+    }
+})();
+// ==========================================
 
 // NETWORKING SUPPORT
 // Here we intercept all websocket connections and send them to the backend for proxying
@@ -3710,7 +3736,29 @@ function gui_nbx_onmousedown(data, e, id) {
             gui_nbx_settext(data, '' + data.value);
         }
         setKeyboardFocus(data, data.exclusive);
-        data.focusTimeout = setTimeout(setKeyboardFocus, 3000, null);
+
+        // Clear out old background tasks running from previous clicks
+        if (data.focusTimeout) {
+            clearTimeout(data.focusTimeout);
+        }
+
+        // Snapshot the exact focused element right at this millisecond
+        const originalActiveElement = document.activeElement;
+
+        // Fire the updated safety execution loop
+        data.focusTimeout = setTimeout(function() {
+            // Only proceed if the user HAS NOT selected a new item during the 3000ms delay
+            if (document.activeElement === originalActiveElement && originalActiveElement) {
+                
+                // Strip focus from the idle number box element natively
+                originalActiveElement.blur();
+                
+                // Re-route back through your updated focus engine safely
+                setKeyboardFocus(null);
+            }
+        }, 3000);
+        //data.focusTimeout = setTimeout(setKeyboardFocus, 3000, null);
+
         configure_item(data.svgText, {fill: '#ff0000'});
         gui_nbx_touches[id] = {
             data,
@@ -3757,8 +3805,28 @@ function gui_nbx_settext(data, text, mousing) {
 }
 function gui_nbx_keydown(data, e) {
     if(data.focusTimeout) {
-        clearTimeout(data.focusTimeout);
-        data.focusTimeout = setTimeout(setKeyboardFocus, 3000, null);
+
+        // Clear out old background tasks running from previous clicks
+        if (data.focusTimeout) {
+            clearTimeout(data.focusTimeout);
+        }
+
+        // Snapshot the exact focused element right at this millisecond
+        const originalActiveElement = document.activeElement;
+
+        // Fire the updated safety execution loop
+        data.focusTimeout = setTimeout(function() {
+            // Only proceed if the user HAS NOT selected a new item during the 3000ms delay
+            if (document.activeElement === originalActiveElement && originalActiveElement) {
+                
+                // Strip focus from the idle number box element natively
+                originalActiveElement.blur();
+                
+                // Re-route back through your updated focus engine safely
+                setKeyboardFocus(null);
+            }
+        }, 3000);
+        //data.focusTimeout = setTimeout(setKeyboardFocus, 3000, null);
     }
     
     if(e.key === 'v' && (keyDown['Control'] || keyDown['Meta'])) {
@@ -3940,6 +4008,13 @@ window.onblur = () => {
 };
 
 function setKeyboardFocus(data, exclusive) {
+    // 1. SAFETY NORMALIZATION: Treat false, "null", or empty objects as null 
+    // to cleanly trigger canvas-level fallback tracking
+    if (data === false || data === "null" || data === "") {
+        data = null;
+    }
+
+    // --- ORIGINAL CORE ROUTING ENGINE ---
     for(let key in keyDown) {
         if(exclusive)
             if(keyDown[key])
@@ -3947,19 +4022,62 @@ function setKeyboardFocus(data, exclusive) {
         if(keyboardFocus?.data?.onKeyUp)
             keyboardFocus.data.onKeyUp(keyboardFocus.data, {key});
     }
+    
     if(keyboardFocus?.data?.onLoseFocus)
         keyboardFocus.data.onLoseFocus(keyboardFocus.data);
+
+    // --- FOCUS FALLBACK REDIRECTION ---
     if(data !== null) {
-        document.getElementById('keyboardTrigger').focus();
-        keyboardFocus.current = true;
+        // An active element exists; route typing events through the standard trigger box
+        const trigger = document.getElementById('keyboardTrigger');
+        if (trigger) {
+            trigger.focus();
+        }
     } else {
-        document.getElementById('keyboardTrigger').blur();
-        keyboardFocus.current = false;
+        // Focus is being released. Blur the hidden trigger element...
+        const trigger = document.getElementById('keyboardTrigger');
+        if (trigger) {
+            trigger.blur();
+        }
+        
+        // ...and immediately ground the focus state onto WebPdL2Ork's main canvas
+        const webPdCanvas = document.querySelector('canvas') || document.getElementById('canvas');
+        if (webPdCanvas) {
+            // Make sure the canvas can structurally host keyboard focus
+            if (!webPdCanvas.hasAttribute('tabindex')) {
+                webPdCanvas.setAttribute('tabindex', '0');
+                webPdCanvas.style.outline = 'none'; // Clear out the browser's blue border
+            }
+            webPdCanvas.focus();
+        } else {
+            // Last-resort fallback to the document frame if the canvas isn't fully drawn yet
+            document.body.focus();
+        }
     }
+
+    // --- ORIGINAL STATE PRESERVATION ---
     keyboardFocus.data = data;
     keyboardFocus.exclusive = exclusive;
-    //keyboardFocus.current = true;
+    keyboardFocus.current = true;
 }
+//function setKeyboardFocus(data, exclusive) {
+//    for(let key in keyDown) {
+//        if(exclusive)
+//            if(keyDown[key])
+//                onKeyUp({key});
+//        if(keyboardFocus?.data?.onKeyUp)
+//            keyboardFocus.data.onKeyUp(keyboardFocus.data, {key});
+//    }
+//    if(keyboardFocus?.data?.onLoseFocus)
+//        keyboardFocus.data.onLoseFocus(keyboardFocus.data);
+//    if(data !== null)
+//        document.getElementById('keyboardTrigger').focus();
+//    else
+//        document.getElementById('keyboardTrigger').blur();
+//    keyboardFocus.data = data;
+//    keyboardFocus.exclusive = exclusive;
+//    keyboardFocus.current = true;
+//}
 function onMouseDown(e) {
     e.preventDefault?.();
     if(keyboardFocus.current == false)
