@@ -45,6 +45,8 @@ extern "C" {
   
 /* --------------------- geometry ---------------------------- */
 #define IOWIDTH 7       /* width of an inlet/outlet in pixels */
+#define IHEIGHT 3       /* height of an inlet in pixels */
+#define OHEIGHT 3       /* height of an outlet in pixels */
 #define IOMIDDLE ((IOWIDTH-1)/2)
 #define IOHOTSPOT 6
 #define GLIST_DEFGRAPHWIDTH 200
@@ -369,6 +371,8 @@ struct _instancecanvas
     int i_dspstate_user;
     int i_dollarzero;
     t_float i_graph_lastxpix, i_graph_lastypix;
+    t_symbol *i_foregroundcolor, *i_backgroundcolor;  /* color of fg & bg */
+    t_symbol *i_selectcolor, *i_gopcolor;             /* ...selection and GOP */
 };
 
 void g_editor_newpdinstance( void);

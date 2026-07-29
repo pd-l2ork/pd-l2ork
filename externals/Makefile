@@ -166,7 +166,7 @@ ifeq ($(LIGHT),yes)
 lib_targets = loaders-libdir pddp
 INCREMENTAL = yes
 else
-lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc cyclone disis earplug ekext ext13 fftease flatgui flite fluid freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemgui iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib js loaders-libdir lyonpotpourri mapping markex maxlib mjlib moocow moonlib motex mrpeach neuraln oscx pan pdcontainer pddp pdlua pdogg plugin pmpd rjlib sigpack smlib tof unauthorized vbap windowing zexy
+lib_targets = adaptive arraysize autotune bassemu boids bsaylor comport creb cxc pd-cyclone disis earplug ekext ext13 fftease flatgui flite fluid freeverb ggee hcs iem_ambi iem_bin_ambi iemlib iemgui iemguts iem_adaptfilt iemmatrix iemxmlrpc iem_delay iem_roomsim iem_spec2 iem_tab jasch_lib js loaders-libdir lyonpotpourri mapping markex maxlib mjlib moocow moonlib motex mrpeach neuraln oscx pan pdcontainer pddp pdlua pdogg plugin pmpd rjlib sigpack smlib tof unauthorized vbap windowing zexy
 endif
 
 # Emscriptem needs flatspace for some objects, wheras normal PD has them builtin
@@ -501,60 +501,85 @@ cxc_clean:
 	make -C $(externals_src)/cxc clean
 
 #------------------------------------------------------------------------------#
-# CYCLONE
+#------------------------------------------------------------------------------#
+# # AG: this external provides no sane way to pass custom CFLAGS, so we abuse
+# # WARN_CFLAGS for that purpose.
+# ifneq ($(EMSCRIPTEN),yes)
+# cyclone:
+# 	make -C $(externals_src)/miXed/cyclone -f Makefile.libdir \
+# 		PD_PATH=$(pd_src) PD_INCLUDE=$(DESTDIR)$(includedir) WARN_CFLAGS="-Wall -W -Wstrict-prototypes -Wno-unused -Wno-parentheses -Wno-switch -Wno-incompatible-pointer-types $(CFLAGS_GITHUB_RUNNER) $(CFLAGS_ADD)"
+# 
+# cyclone_install:
+# 	make -C $(externals_src)/miXed/cyclone -f Makefile.libdir \
+# 		DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" \
+# 		install
+# 
+# cyclone_clean:
+# 	make -C $(externals_src)/miXed/cyclone -f Makefile.libdir \
+# 		clean
+# else
+# CYCLONE_NAME := cyclone
+# CYCLONE_FLAGS := -s -I${CYCLONE_PATH}/cyclone -I$(pd_src)/../libpd/libpd_wrapper -I$(externals_src)/miXed/shared -DUNIX -fPIC
+# CYCLONE_PATH := $(externals_src)/miXed/
+# CYCLONE_HAMMER := $(wildcard $(externals_src)/miXed/cyclone/hammer/*.c)
+# CYCLONE_SICKLE := $(wildcard $(externals_src)/miXed/cyclone/sickle/*.c)
+# CYCLONE_SHARED_SRC := \
+# 	$(wildcard $(externals_src)/miXed/shared/common/*.c)\
+# 	$(wildcard $(externals_src)/miXed/shared/sickle/*.c)\
+# 	$(wildcard $(externals_src)/miXed/shared/hammer/*.c)\
+# 	$(externals_src)/miXed/shared/unstable/forky.c $(externals_src)/miXed/shared/unstable/fragile.c\
+# 	$(externals_src)/miXed/shared/unstable/fringe.c $(externals_src)/miXed/shared/unstable/loader.c
+# 
+# cyclone: $(CYCLONE_PATH)/bin/Hammer.wasm $(CYCLONE_PATH)/bin/Sickle.wasm
+# 
+# $(CYCLONE_PATH)/bin/Hammer.wasm:
+# 	mv $(externals_src)/miXed/cyclone/hammer/atodb.c $(externals_src)/miXed/cyclone/hammer/atodb.c.ignore
+# 	touch $(externals_src)/miXed/cyclone/hammer/atodb.c
+# 	$(CC) $(CFLAGS) $(CYCLONE_FLAGS) -o $(CYCLONE_PATH)/bin/Hammer.wasm $(CYCLONE_SHARED_SRC) $(CYCLONE_HAMMER)
+# 	rm $(externals_src)/miXed/cyclone/hammer/atodb.c
+# 	mv $(externals_src)/miXed/cyclone/hammer/atodb.c.ignore $(externals_src)/miXed/cyclone/hammer/atodb.c
+# 
+# $(CYCLONE_PATH)/bin/Sickle.wasm:
+# 	$(CC) $(CFLAGS) $(CYCLONE_FLAGS) -o $(CYCLONE_PATH)/bin/Sickle.wasm $(CYCLONE_SHARED_SRC) $(CYCLONE_SICKLE)
+# 
+# cyclone_templates: cyclone
+# 	install -d $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)
+# 	install -p $(wildcard $(CYCLONE_PATH)/bin/*.wasm) $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)
+# 
+# cyclone_install: cyclone_templates
+# 	install -p $(wildcard $(externals_src)/miXed/doc/help/cyclone/*.pd) $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)
+# 
+# cyclone_clean:
+# 	rm -f ${CYCLONE_PATH}/bin/*.wasm
+# 	rm -f $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)/*.wasm
+# 	-mv $(externals_src)/miXed/cyclone/hammer/atodb.c.ignore $(externals_src)/miXed/cyclone/hammer/atodb.c
+# endif
 
-# AG: this external provides no sane way to pass custom CFLAGS, so we abuse
-# WARN_CFLAGS for that purpose.
-ifneq ($(EMSCRIPTEN),yes)
-cyclone:
-	make -C $(externals_src)/miXed/cyclone -f Makefile.libdir \
-		PD_PATH=$(pd_src) PD_INCLUDE=$(DESTDIR)$(includedir) WARN_CFLAGS="-Wall -W -Wstrict-prototypes -Wno-unused -Wno-parentheses -Wno-switch -Wno-incompatible-pointer-types $(CFLAGS_GITHUB_RUNNER) $(CFLAGS_ADD)"
+#------------------------------------------------------------------------------#
+# PD-CYCLON
 
-cyclone_install:
-	make -C $(externals_src)/miXed/cyclone -f Makefile.libdir \
-		DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" \
-		install
-
-cyclone_clean:
-	make -C $(externals_src)/miXed/cyclone -f Makefile.libdir \
-		clean
-else
-CYCLONE_NAME := cyclone
-CYCLONE_FLAGS := -s -I${CYCLONE_PATH}/cyclone -I$(pd_src)/../libpd/libpd_wrapper -I$(externals_src)/miXed/shared -DUNIX -fPIC
-CYCLONE_PATH := $(externals_src)/miXed/
-CYCLONE_HAMMER := $(wildcard $(externals_src)/miXed/cyclone/hammer/*.c)
-CYCLONE_SICKLE := $(wildcard $(externals_src)/miXed/cyclone/sickle/*.c)
-CYCLONE_SHARED_SRC := \
-	$(wildcard $(externals_src)/miXed/shared/common/*.c)\
-	$(wildcard $(externals_src)/miXed/shared/sickle/*.c)\
-	$(wildcard $(externals_src)/miXed/shared/hammer/*.c)\
-	$(externals_src)/miXed/shared/unstable/forky.c $(externals_src)/miXed/shared/unstable/fragile.c\
-	$(externals_src)/miXed/shared/unstable/fringe.c $(externals_src)/miXed/shared/unstable/loader.c
-
-cyclone: $(CYCLONE_PATH)/bin/Hammer.wasm $(CYCLONE_PATH)/bin/Sickle.wasm
-
-$(CYCLONE_PATH)/bin/Hammer.wasm:
-	mv $(externals_src)/miXed/cyclone/hammer/atodb.c $(externals_src)/miXed/cyclone/hammer/atodb.c.ignore
-	touch $(externals_src)/miXed/cyclone/hammer/atodb.c
-	$(CC) $(CFLAGS) $(CYCLONE_FLAGS) -o $(CYCLONE_PATH)/bin/Hammer.wasm $(CYCLONE_SHARED_SRC) $(CYCLONE_HAMMER)
-	rm $(externals_src)/miXed/cyclone/hammer/atodb.c
-	mv $(externals_src)/miXed/cyclone/hammer/atodb.c.ignore $(externals_src)/miXed/cyclone/hammer/atodb.c
-
-$(CYCLONE_PATH)/bin/Sickle.wasm:
-	$(CC) $(CFLAGS) $(CYCLONE_FLAGS) -o $(CYCLONE_PATH)/bin/Sickle.wasm $(CYCLONE_SHARED_SRC) $(CYCLONE_SICKLE)
-
-cyclone_templates: cyclone
-	install -d $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)
-	install -p $(wildcard $(CYCLONE_PATH)/bin/*.wasm) $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)
-
-cyclone_install: cyclone_templates
-	install -p $(wildcard $(externals_src)/miXed/doc/help/cyclone/*.pd) $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)
-
-cyclone_clean:
-	rm -f ${CYCLONE_PATH}/bin/*.wasm
-	rm -f $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)/*.wasm
-	-mv $(externals_src)/miXed/cyclone/hammer/atodb.c.ignore $(externals_src)/miXed/cyclone/hammer/atodb.c
+SILENCE_PD_GUI := -D\"pdgui_vmess(...)=\" -D\"pdgui_stub_vnew(...)=\" -D\"pdgui_stub_deleteforkey(...)=\"
+PD_CYCLONE_PATH := $(externals_src)/pd-cyclone
+PD_CYCLONE_FLAGS := $(CFLAGS_GITHUB_RUNNER) $(CFLAGS) $(SILENCE_PD_GUI) -DGLIST_GRAB_COMPAT -DPDL2ORK
+ifeq ($(EMSCRIPTEN),yes)
+PD_CYCLONE_FLAGS := $(PD_CYCLONE_FLAGS) -D__linux__
 endif
+
+pd-cyclone: $(PD_CYCLONE_PATH)/.built
+
+$(PD_CYCLONE_PATH)/.built:
+	# 1. Patch the thread pool setting in coll.c dynamically on the fly
+	perl -pi -e 's/define COLLTHREAD 1/define COLLTHREAD 0/' $(PD_CYCLONE_PATH)/cyclone_objects/binaries/control/coll.c
+	# 2. Build the entire pd-cyclone project using pd-lib-builder configuration
+	make -C $(PD_CYCLONE_PATH) PDBINDIR=$(pd_src)/src PDINCLUDEDIR=$(pd_src)/src CFLAGS="$(PD_CYCLONE_FLAGS)" extension=$(EXTENSION)
+	touch $(PD_CYCLONE_PATH)/.built
+
+pd-cyclone_install:
+	make -C $(PD_CYCLONE_PATH) install PDINCLUDEDIR=$(pd_src)/src objectsdir="$(objectsdir)" extension=$(EXTENSION)
+
+pd-cyclone_clean:
+	make -C $(PD_CYCLONE_PATH) clean
+	rm -f $(PD_CYCLONE_PATH)/.built
 
 #------------------------------------------------------------------------------#
 # DISIS

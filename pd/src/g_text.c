@@ -3069,6 +3069,8 @@ void glist_drawiofor(t_glist *glist, t_object *ob, int firsttime,
     const char *tag, int x1, int y1, int x2, int y2)
 {
     t_rtext *y = glist_findrtext(glist, ob);
+    if (!y)
+        return;
     //if this is a comment or we are drawing inside gop on one of
     //our parents return
     if (pd_class(&ob->te_pd) == text_class || glist_getcanvas(glist) != glist)

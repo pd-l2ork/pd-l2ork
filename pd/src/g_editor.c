@@ -3775,6 +3775,9 @@ static int text_resizing_hotspot(t_canvas *x, t_object *ob, int xpos, int ypos,
     if ((ob->te_iemgui == 1 && ob->ob_pd != my_canvas_class) ||
         (ob->ob_pd == canvas_class && ((t_canvas *)ob)->gl_isgraph) ||
         ob->ob_pd->c_name == gensym("Scope~") ||
+        ob->ob_pd->c_name == gensym("scope~") ||
+        ob->ob_pd->c_name == gensym("cyclone/scope~") ||
+        ob->ob_pd->c_name == gensym("cyclone/Scope~") ||
         ob->ob_pd->c_name == gensym("grid"))
     {
             /* stay out of the way of outlet in the bottom right-hand corner */
@@ -6748,6 +6751,9 @@ void canvas_motion(t_canvas *x, t_floatarg xpos, t_floatarg ypos,
                 //pd_vmess(sh, gensym("_click"), "fff", 0, xpos, ypos);
             }
             else if (ob && (pd_class(&ob->te_pd)->c_name == gensym("Scope~")
+                            || pd_class(&ob->te_pd)->c_name == gensym("scope~")
+                            || pd_class(&ob->te_pd)->c_name == gensym("cyclone/scope~")
+                            || pd_class(&ob->te_pd)->c_name == gensym("cyclone/Scope~")
                             || pd_class(&ob->te_pd)->c_name == gensym("grid")))
             {
                 //post("...scope/grid");
