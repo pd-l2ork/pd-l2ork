@@ -501,62 +501,7 @@ cxc_clean:
 	make -C $(externals_src)/cxc clean
 
 #------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-# # AG: this external provides no sane way to pass custom CFLAGS, so we abuse
-# # WARN_CFLAGS for that purpose.
-# ifneq ($(EMSCRIPTEN),yes)
-# cyclone:
-# 	make -C $(externals_src)/miXed/cyclone -f Makefile.libdir \
-# 		PD_PATH=$(pd_src) PD_INCLUDE=$(DESTDIR)$(includedir) WARN_CFLAGS="-Wall -W -Wstrict-prototypes -Wno-unused -Wno-parentheses -Wno-switch -Wno-incompatible-pointer-types $(CFLAGS_GITHUB_RUNNER) $(CFLAGS_ADD)"
-# 
-# cyclone_install:
-# 	make -C $(externals_src)/miXed/cyclone -f Makefile.libdir \
-# 		DESTDIR="$(DESTDIR)" objectsdir="$(objectsdir)" \
-# 		install
-# 
-# cyclone_clean:
-# 	make -C $(externals_src)/miXed/cyclone -f Makefile.libdir \
-# 		clean
-# else
-# CYCLONE_NAME := cyclone
-# CYCLONE_FLAGS := -s -I${CYCLONE_PATH}/cyclone -I$(pd_src)/../libpd/libpd_wrapper -I$(externals_src)/miXed/shared -DUNIX -fPIC
-# CYCLONE_PATH := $(externals_src)/miXed/
-# CYCLONE_HAMMER := $(wildcard $(externals_src)/miXed/cyclone/hammer/*.c)
-# CYCLONE_SICKLE := $(wildcard $(externals_src)/miXed/cyclone/sickle/*.c)
-# CYCLONE_SHARED_SRC := \
-# 	$(wildcard $(externals_src)/miXed/shared/common/*.c)\
-# 	$(wildcard $(externals_src)/miXed/shared/sickle/*.c)\
-# 	$(wildcard $(externals_src)/miXed/shared/hammer/*.c)\
-# 	$(externals_src)/miXed/shared/unstable/forky.c $(externals_src)/miXed/shared/unstable/fragile.c\
-# 	$(externals_src)/miXed/shared/unstable/fringe.c $(externals_src)/miXed/shared/unstable/loader.c
-# 
-# cyclone: $(CYCLONE_PATH)/bin/Hammer.wasm $(CYCLONE_PATH)/bin/Sickle.wasm
-# 
-# $(CYCLONE_PATH)/bin/Hammer.wasm:
-# 	mv $(externals_src)/miXed/cyclone/hammer/atodb.c $(externals_src)/miXed/cyclone/hammer/atodb.c.ignore
-# 	touch $(externals_src)/miXed/cyclone/hammer/atodb.c
-# 	$(CC) $(CFLAGS) $(CYCLONE_FLAGS) -o $(CYCLONE_PATH)/bin/Hammer.wasm $(CYCLONE_SHARED_SRC) $(CYCLONE_HAMMER)
-# 	rm $(externals_src)/miXed/cyclone/hammer/atodb.c
-# 	mv $(externals_src)/miXed/cyclone/hammer/atodb.c.ignore $(externals_src)/miXed/cyclone/hammer/atodb.c
-# 
-# $(CYCLONE_PATH)/bin/Sickle.wasm:
-# 	$(CC) $(CFLAGS) $(CYCLONE_FLAGS) -o $(CYCLONE_PATH)/bin/Sickle.wasm $(CYCLONE_SHARED_SRC) $(CYCLONE_SICKLE)
-# 
-# cyclone_templates: cyclone
-# 	install -d $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)
-# 	install -p $(wildcard $(CYCLONE_PATH)/bin/*.wasm) $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)
-# 
-# cyclone_install: cyclone_templates
-# 	install -p $(wildcard $(externals_src)/miXed/doc/help/cyclone/*.pd) $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)
-# 
-# cyclone_clean:
-# 	rm -f ${CYCLONE_PATH}/bin/*.wasm
-# 	rm -f $(DESTDIR)$(objectsdir)/$(CYCLONE_NAME)/*.wasm
-# 	-mv $(externals_src)/miXed/cyclone/hammer/atodb.c.ignore $(externals_src)/miXed/cyclone/hammer/atodb.c
-# endif
-
-#------------------------------------------------------------------------------#
-# PD-CYCLON
+# PD-CYCLONE
 
 SILENCE_PD_GUI := -D\"pdgui_vmess(...)=\" -D\"pdgui_stub_vnew(...)=\" -D\"pdgui_stub_deleteforkey(...)=\"
 PD_CYCLONE_PATH := $(externals_src)/pd-cyclone
@@ -568,9 +513,13 @@ endif
 pd-cyclone: $(PD_CYCLONE_PATH)/.built
 
 $(PD_CYCLONE_PATH)/.built:
-	# 1. Patch the thread pool setting in coll.c dynamically on the fly
+	# 1. Fetch latest pd-cyclone from tonmoy50/pd-cyclone pdl2ork_integration if git directory exists
+	if [ -d $(PD_CYCLONE_PATH)/.git ]; then \
+		cd $(PD_CYCLONE_PATH) && git fetch origin && git checkout pdl2ork_integration; \
+	fi
+	# 2. Patch the thread pool setting in coll.c dynamically on the fly
 	perl -pi -e 's/define COLLTHREAD 1/define COLLTHREAD 0/' $(PD_CYCLONE_PATH)/cyclone_objects/binaries/control/coll.c
-	# 2. Build the entire pd-cyclone project using pd-lib-builder configuration
+	# 3. Build the entire pd-cyclone project using pd-lib-builder configuration
 	make -C $(PD_CYCLONE_PATH) PDBINDIR=$(pd_src)/src PDINCLUDEDIR=$(pd_src)/src CFLAGS="$(PD_CYCLONE_FLAGS)" extension=$(EXTENSION)
 	touch $(PD_CYCLONE_PATH)/.built
 
