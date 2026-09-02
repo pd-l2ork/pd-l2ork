@@ -288,3 +288,10 @@ void canvas_undo_free(t_canvas *x)
     //fprintf(stderr,"done!\n");
 }
 
+void pd_undo_set_objectstate(t_canvas*canvas, t_pd*x, t_symbol*s,
+                            int undo_argc, t_atom*undo_argv,
+                            int redo_argc, t_atom*redo_argv)
+{
+    /* no-op stub for L2Ork compatibility */
+}
+

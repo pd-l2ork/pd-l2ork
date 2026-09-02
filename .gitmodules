@@ -25,3 +25,7 @@
 [submodule "wiringPi"]
 	path = l2ork_addons/raspberry_pi/disis_gpio/wiringPi
 	url = https://github.com/pd-l2ork/wiringPi
+[submodule "externals/pd-cyclone"]
+	path = externals/pd-cyclone
+	url = https://github.com/porres/pd-cyclone.git
+	branch = master
