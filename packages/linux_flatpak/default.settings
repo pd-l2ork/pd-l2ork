@@ -82,7 +82,8 @@ loadlib32: ekext
 loadlib33: disis
 loadlib34: lyonpotpourri
 loadlib35: pdlua
-nloadlib: 35
+loadlib36: else
+nloadlib: 36
 defeatrt: 0
 showgrid: 1
 gridsize: 10

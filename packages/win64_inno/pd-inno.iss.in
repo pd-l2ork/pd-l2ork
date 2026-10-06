@@ -188,8 +188,11 @@ Root: HKLM; SubKey: SOFTWARE\Pd-L2Ork; ValueType: string; ValueName: loadlib34; 
 Root: HKLM; SubKey: SOFTWARE\Pd-L2Ork; ValueType: string; ValueName: loadlib35; ValueData: pdlua; Tasks: libs; Flags: uninsdeletekey
 ; Root: HKCU; SubKey: SOFTWARE\Pd-L2Ork; ValueType: string; ValueName: loadlib35; ValueData: pdlua; Tasks: libs;
 
-Root: HKLM; SubKey: SOFTWARE\Pd-L2Ork; ValueType: string; ValueName: nloadlib; ValueData: 35; Tasks: libs; Flags: uninsdeletekey
-; Root: HKCU; SubKey: SOFTWARE\Pd-L2Ork; ValueType: string; ValueName: nloadlib; ValueData: 35; Tasks: libs;
+Root: HKLM; SubKey: SOFTWARE\Pd-L2Ork; ValueType: string; ValueName: loadlib35; ValueData: else; Tasks: libs; Flags: uninsdeletekey
+; Root: HKCU; SubKey: SOFTWARE\Pd-L2Ork; ValueType: string; ValueName: loadlib35; ValueData: else; Tasks: libs;
+
+Root: HKLM; SubKey: SOFTWARE\Pd-L2Ork; ValueType: string; ValueName: nloadlib; ValueData: 36; Tasks: libs; Flags: uninsdeletekey
+; Root: HKCU; SubKey: SOFTWARE\Pd-L2Ork; ValueType: string; ValueName: nloadlib; ValueData: 36; Tasks: libs;
 
 Root: HKLM; SubKey: SOFTWARE\Pd-L2Ork; ValueType: none; ValueName: loadlib36; Tasks: libs; Flags: uninsdeletekey
 ; Root: HKCU; SubKey: SOFTWARE\Pd-L2Ork; ValueType: none; ValueName: loadlib36; Tasks: libs;

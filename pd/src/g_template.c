@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>  /* for path bbox calculations */
 
 #include "m_pd.h"
@@ -14,29 +15,46 @@
 void array_redraw(t_array *a, t_glist *glist);
 void graph_graphrect(t_gobj *z, t_glist *glist,
     int *xp1, int *yp1, int *xp2, int *yp2);
+
+/* pointer to "globals" for templates in this pd instance */
+#define THISTMPL (pd_this->pd_gui->i_template)
+
 /*
 This file contains text objects you would put in a canvas to define a
-template.  Templates describe objects of type "array" (g_array.c) and
-"scalar" (g_scalar.c).
+pd-data-structure. These describe "scalars" (g_scalar.c) and elements
+of "arrays" (g_array.c).  The pd-data-structure is defined by a "struct"
+object and its associated drawing instructions such as "drawcurve".
+There are pre-defined "float" and "floatarray" structures used by the
+"array" object, tabread/write, etc.  All others are defined in patches
+using "struct" objects.
+A good deal of messing around is needed in case data described by struct
+objects are copied from one patch to another which may have no corresponding
+"struct' object or even a conflicting one.
 */
 
     /* the structure of a "struct" object (also the obsolete "gtemplate"
-    you get when using the name "template" in a box.) */
+    object, which stupidly took the structure name from the containing Pd).
+    This object defines a named "template" which in turn keeps a linked
+    list of every "struct" of that name. */
 
-struct _gtemplate
+struct _pdstruct
 {
     t_object x_obj;
-    t_template *x_template;
-    t_canvas *x_owner;
-    t_symbol *x_sym;
-    struct _gtemplate *x_next;
-    int x_argc;
+    t_template *x_template;     /* actual field definitions */
+    t_canvas *x_owner;          /* canvas containing this "struct" */
+    t_symbol *x_sym;            /* name of the struct */
+    struct _pdstruct *x_next;   /* next "struct" belonging to x_template */
+    int x_argc;                 /* list of creation args */
     t_atom *x_argv;
 };
 
+    /* stuff that was once static but is now per-PD-instance, used for
+    stateful editing such as dragging.  LATER consider using the same gpointer,
+     etc., variables for the various motion callbacks below. */
+
 struct _instancetemplate
 {
-    int curve_motion_field;
+    int curve_motion_vertex;
     t_float curve_motion_xcumulative;
     t_float curve_motion_xbase;
     t_float curve_motion_xper;
@@ -48,6 +66,7 @@ struct _instancetemplate
     t_array *curve_motion_array;
     t_word *curve_motion_wp;
     t_template *curve_motion_template;
+    t_gpointer array_motion_gpointer;
     t_gpointer curve_motion_gpointer;
     t_float array_motion_xcumulative;
     t_float array_motion_ycumulative;
@@ -93,9 +112,6 @@ static int drawimage_getindex(void *z, t_template *template, t_word *data);
 t_class *gtemplate_class;
 static t_class *template_class;
 
-/* there's a pre-defined "float" template.  LATER should we bind this
-to a symbol such as "pd-float"??? */
-
     /* return true if two dataslot definitions match */
 static int dataslot_matches(t_dataslot *ds1, t_dataslot *ds2,
     int nametoo)
@@ -103,10 +119,11 @@ static int dataslot_matches(t_dataslot *ds1, t_dataslot *ds2,
     return ((!nametoo || ds1->ds_name == ds2->ds_name) &&
         ds1->ds_type == ds2->ds_type &&
             (ds1->ds_type != DT_ARRAY ||
-                ds1->ds_fieldtemplate == ds2->ds_fieldtemplate));
+                (ds1->ds_fieldtemplate == ds2->ds_fieldtemplate &&
+                    ds1->ds_arraydeflength == ds2->ds_arraydeflength)));
 }
 
-/* -- templates, the active ingredient in gtemplates defined below. ------- */
+/* -- templates, the active ingredient in "struct" objects defined below. -- */
 
     /* add a template to the list */
 static void template_addtolist(t_template *x)
@@ -139,7 +156,7 @@ t_template *template_new(t_symbol *templatesym, int argc, t_atom *argv)
     template_addtolist(x);
     while (argc > 0)
     {
-        int newtype, oldn, newn;
+        int newtype, oldn, newn, newarraydeflength= 1;
         t_symbol *newname, *newarraytemplate = &s_, *newtypesym;
         t_binbuf *newbinbuf = NULL;
         if (argc < 2 || argv[0].a_type != A_SYMBOL ||
@@ -185,10 +202,17 @@ t_template *template_new(t_symbol *templatesym, int argc, t_atom *argv)
                 pd_error(x, "array lacks element template or name");
                 goto bad;
             }
-            newarraytemplate = canvas_makebindsym(argv[2].a_w.w_symbol);
             newtype = DT_ARRAY;
-            argc--;
-            argv++;
+            newarraytemplate = canvas_makebindsym(argv[2].a_w.w_symbol);
+                /* optional third float arg sets initial array length */
+            if (argc > 3 && argv[3].a_type == A_FLOAT)
+            {
+                if ((newarraydeflength = argv[3].a_w.w_float) < 1)
+                    newarraydeflength = 1;
+                argc -= 2;
+                argv += 2;
+            }
+            else argc--, argv++;
         }
         else
         {
@@ -203,6 +227,7 @@ t_template *template_new(t_symbol *templatesym, int argc, t_atom *argv)
         x->t_vec[oldn].ds_name = newname;
         x->t_vec[oldn].ds_fieldtemplate = newarraytemplate;
         x->t_vec[oldn].ds_binbuf = newbinbuf;
+        x->t_vec[oldn].ds_arraydeflength = newarraydeflength;
     bad: 
         argc -= 2; argv += 2;
     }
@@ -573,7 +598,7 @@ t_template *template_findbyname(t_symbol *s)
 
 t_canvas *template_findcanvas(t_template *template)
 {
-    t_gtemplate *gt;
+    t_pdstruct *gt;
     if (!template)
     {
         bug("template_findcanvas");
@@ -669,7 +694,7 @@ static void template_setup(void)
         
 }
 
-/* ---------------- gtemplates.  One per canvas. ----------- */
+/* ---------------- "Struct" object.  One per canvas. ----------- */
 
 /* "Struct": an object that searches for, and if necessary creates, 
 a template (above).  Other objects in the canvas then can give drawing
@@ -677,7 +702,7 @@ instructions for the template.  The template doesn't go away when the
 "struct" is deleted, so that you can replace it with
 another one to add new fields, for example. */
 
-static void gtemplate_free(t_gtemplate *x);
+static void gtemplate_free(t_pdstruct *x);
 
 static void *gtemplate_donew(t_symbol *sym, int argc, t_atom *argv)
 {
@@ -693,7 +718,7 @@ static void *gtemplate_donew(t_symbol *sym, int argc, t_atom *argv)
         }
         gob = gob->g_next;
     }
-    t_gtemplate *x = (t_gtemplate *)pd_new(gtemplate_class);
+    t_pdstruct *x = (t_pdstruct *)pd_new(gtemplate_class);
     t_template *t = template_findbyname(sym);
 
     int i;
@@ -714,7 +739,7 @@ static void *gtemplate_donew(t_symbol *sym, int argc, t_atom *argv)
             there. */
         if (t->t_list)
         {
-            t_gtemplate *x2, *x3;
+            t_pdstruct *x2, *x3;
             for (x2 = x->x_template->t_list; x3 = x2->x_next; x2 = x3)
                 ;
             x2->x_next = x;
@@ -845,16 +870,73 @@ static void *gtemplate_new_old(t_symbol *s, int argc, t_atom *argv)
     return (gtemplate_donew(sym, argc, argv));
 }
 
-t_template *gtemplate_get(t_gtemplate *x)
+t_template *gtemplate_get(t_pdstruct *x)
 {
     return (x->x_template);
 }
 
-static void gtemplate_free(t_gtemplate *x)
+   /* add a new scalar for this template to the named canvas.  First argument
+    is the template name, and following pairs of arguments (name, value)
+    initialize float or symbol fields.  (Array and text fields can't be
+    initialized.) */
+static void gtemplate_add(t_pdstruct *x, t_symbol *s, int argc, t_atom *argv)
+{
+    t_glist *glist;
+    t_symbol *canvasname, *elemtemplatesym;
+
+    if (argc < 1 || argv[0].a_type != A_SYMBOL)
+        pd_error(x, "gtemplate_add: needs a symbol argument for canvas");
+    else if (!(glist = (t_glist *)pd_findbyclass(argv[0].a_w.w_symbol,
+        canvas_class)))
+            pd_error(x, "gtemplate_add: no canvas named '%s'",
+                argv[0].a_w.w_symbol->s_name);
+    else
+    {
+        t_scalar *sc = scalar_new(x->x_owner, x->x_sym);
+        int i, type, onset;
+        for (i = 1; i < argc-1; i += 2)
+        {
+            if (argv[i].a_type != A_SYMBOL)
+                pd_error(x, "gtemplate_add: field name %f not a symbol",
+                    argv[i].a_w.w_float);
+            else if (!template_find_field(x->x_template,
+                argv[i].a_w.w_symbol, &onset, &type,
+                    &elemtemplatesym))
+                        pd_error(x, "gtemplate_add: field %s not found",
+                            argv[i].a_w.w_symbol->s_name);
+            else if (type == DT_FLOAT)
+            {
+                if (argv[i+1].a_type == A_FLOAT)
+                    *(t_float *)(((char *)(sc->sc_vec)) + onset) =
+                        argv[i+1].a_w.w_float;
+                else pd_error(x,
+                    "gtemplate_add: can't set float field %s to %s",
+                            argv[i].a_w.w_symbol->s_name,
+                                argv[i+1].a_w.w_symbol->s_name);
+            }
+            else if (type == DT_SYMBOL)
+            {
+                if (argv[i+1].a_type == A_SYMBOL)
+                    *(t_symbol **)(((char *)(sc->sc_vec)) + onset) =
+                        argv[i+1].a_w.w_symbol;
+                else pd_error(x,
+                    "gtemplate_add: can't set symbol field %s to %f",
+                            argv[i].a_w.w_symbol->s_name,
+                                argv[i+1].a_w.w_float);
+            }
+            else pd_error(x,
+      "gtemplate_add: can't initialize field %s (float or symbol only)",
+                argv[i].a_w.w_symbol->s_name);
+        }
+        glist_add(glist, &sc->sc_gobj);
+    }
+}
+
+static void gtemplate_free(t_pdstruct *x)
 {
         /* get off the template's list */
     t_template *t = x->x_template;
-    t_gtemplate *y;
+    t_pdstruct *y;
     if (x == t->t_list)
     {
         canvas_redrawallfortemplate(t, 2);
@@ -878,7 +960,7 @@ static void gtemplate_free(t_gtemplate *x)
     }
     else
     {
-        t_gtemplate *x2, *x3;
+        t_pdstruct *x2, *x3;
         for (x2 = t->t_list; x3 = x2->x_next; x2 = x3)
         {
             if (x == x3)
@@ -895,9 +977,25 @@ static void gtemplate_setup(void)
 {
     gtemplate_class = class_new(gensym("struct"),
         (t_newmethod)gtemplate_new, (t_method)gtemplate_free,
-        sizeof(t_gtemplate), CLASS_NOINLET, A_GIMME, 0);
+        sizeof(t_pdstruct), 0, A_GIMME, 0);
     class_addcreator((t_newmethod)gtemplate_new_old, gensym("template"),
         A_GIMME, 0);
+    class_addmethod(gtemplate_class, (t_method)gtemplate_add,
+        gensym("add"), A_GIMME, 0);
+}
+
+t_template *glist_findtemplate(t_glist *gl)
+{
+    t_gobj *g;
+    for (g = gl->gl_list; g; g = g->g_next)
+        if (g->g_pd == gtemplate_class)
+    {
+        t_template *t = (t_template *)pd_findbyclass(((t_pdstruct *)g)->x_sym,
+            template_class);
+        if (t)
+            return (t);
+    }
+    return (0);
 }
 
 /* ---------------  FIELD DESCRIPTORS ---------------------- */
@@ -996,41 +1094,44 @@ static void fielddesc_setfloat_var(t_fielddesc *fd, t_symbol *s)
 
 #define CLOSED 1
 #define BEZ 2
-#define NOMOUSE 4
+#define NOMOUSERUN 4  /* disable mouse interaction when in run mode  */
+#define NOMOUSEEDIT 8 /* same in edit mode */
+#define NOVERTICES 16 /* disable only vertex grabbing in run mode */
+#define DRAGGABLE 32  /* can use to drag entire scalar around */
 #define A_ARRAY 55      /* LATER decide whether to enshrine this in m_pd.h */
 
 static void fielddesc_setfloatarg(t_fielddesc *fd, int argc, t_atom *argv)
 {
-        if (argc <= 0) fielddesc_setfloat_const(fd, 0);
-        else if (argv->a_type == A_SYMBOL)
-            fielddesc_setfloat_var(fd, argv->a_w.w_symbol);
-        else fielddesc_setfloat_const(fd, argv->a_w.w_float);
+    if (argc <= 0) fielddesc_setfloat_const(fd, 0);
+    else if (argv->a_type == A_SYMBOL)
+        fielddesc_setfloat_var(fd, argv->a_w.w_symbol);
+    else fielddesc_setfloat_const(fd, argv->a_w.w_float);
 }
 
 static void fielddesc_setsymbolarg(t_fielddesc *fd, int argc, t_atom *argv)
 {
-        if (argc <= 0) fielddesc_setsymbol_const(fd, &s_);
-        else if (argv->a_type == A_SYMBOL)
-        {
-            fd->fd_type = A_SYMBOL;
-            fd->fd_var = 1;
-            fd->fd_un.fd_varsym = argv->a_w.w_symbol;
-            fd->fd_v1 = fd->fd_v2 = fd->fd_screen1 = fd->fd_screen2 =
-                fd->fd_quantum = 0;
-        }
-        else fielddesc_setsymbol_const(fd, &s_);
+    if (argc <= 0) fielddesc_setsymbol_const(fd, &s_);
+    else if (argv->a_type == A_SYMBOL)
+    {
+        fd->fd_type = A_SYMBOL;
+        fd->fd_var = 1;
+        fd->fd_un.fd_varsym = argv->a_w.w_symbol;
+        fd->fd_v1 = fd->fd_v2 = fd->fd_screen1 = fd->fd_screen2 =
+            fd->fd_quantum = 0;
+    }
+    else fielddesc_setsymbol_const(fd, &s_);
 }
 
 static void fielddesc_setarrayarg(t_fielddesc *fd, int argc, t_atom *argv)
 {
-        if (argc <= 0) fielddesc_setfloat_const(fd, 0);
-        else if (argv->a_type == A_SYMBOL)
-        {
-            fd->fd_type = A_ARRAY;
-            fd->fd_var = 1;
-            fd->fd_un.fd_varsym = argv->a_w.w_symbol;
-        }
-        else fielddesc_setfloat_const(fd, argv->a_w.w_float);
+    if (argc <= 0) fielddesc_setfloat_const(fd, 0);
+    else if (argv->a_type == A_SYMBOL)
+    {
+        fd->fd_type = A_ARRAY;
+        fd->fd_var = 1;
+        fd->fd_un.fd_varsym = argv->a_w.w_symbol;
+    }
+    else fielddesc_setfloat_const(fd, argv->a_w.w_float);
 }
 
     /* getting and setting values via fielddescs -- note confusing names;
@@ -5142,7 +5243,28 @@ static void *curve_new(t_symbol *classsym, int argc, t_atom *argv)
         }
         else if (!strcmp(flag, "-x"))
         {
-            flags |= NOMOUSE;
+            /* disable all mouse interaction */
+            flags |= (NOMOUSERUN | NOMOUSEEDIT);
+        }
+        else if (!strcmp(flag, "-xr"))
+        {
+            /* disable mouse actions in run mode */
+            flags |= NOMOUSERUN;
+        }
+        else if (!strcmp(flag, "-xe"))
+        {
+            /* disable mouse actions in edit mode */
+            flags |= NOMOUSEEDIT;
+        }
+        else if (!strcmp(flag, "-xv"))
+        {
+            /* disable changing vertices in run mode */
+            flags |= NOVERTICES;
+        }
+        else if (!strcmp(flag, "-d"))
+        {
+            /* clicking on this drags entire scalar (i.e., changes x,y) */
+            flags |= DRAGGABLE;
         }
         else
         {
@@ -5198,7 +5320,8 @@ static void curve_getrect(t_gobj *z, t_glist *glist,
     t_fielddesc *f = x->x_vec;
     int x1 = 0x7fffffff, x2 = -0x7fffffff, y1 = 0x7fffffff, y2 = -0x7fffffff;
     if (!fielddesc_getfloat(&x->x_vis, template, data, 0) ||
-        (x->x_flags & NOMOUSE))
+        (glist->gl_edit && x->x_flags & NOMOUSEEDIT) ||
+        (!glist->gl_edit && x->x_flags & NOMOUSERUN))
     {
         *xp1 = *yp1 = 0x7fffffff;
         *xp2 = *yp2 = -0x7fffffff;
@@ -5449,35 +5572,59 @@ static void curve_motion(void *z, t_floatarg dx, t_floatarg dy)
 {
     //fprintf(stderr,"curve_motion\n");
     t_curve *x = (t_curve *)z;
-    t_fielddesc *f = x->x_vec + TEMPLATE->curve_motion_field;
+    t_fielddesc *f;
     t_atom at;
-    if (!gpointer_check(&TEMPLATE->curve_motion_gpointer, 0))
+    {
+        gpointer_unset(&THISTMPL->curve_motion_gpointer);
+        return;
+    }
+    if (!gpointer_check(&THISTMPL->curve_motion_gpointer, 0))
     {
         post("curve_motion: scalar disappeared");
         return;
     }
-    TEMPLATE->curve_motion_xcumulative += dx;
-    TEMPLATE->curve_motion_ycumulative += dy;
+    if (THISTMPL->curve_motion_vertex < 0)   /* drag the whole object */
+    {
+        gobj_displace(&THISTMPL->curve_motion_scalar->sc_gobj,
+            THISTMPL->curve_motion_glist, dx, dy);
+        return;
+    }
+    f = x->x_vec + THISTMPL->curve_motion_vertex;
+    THISTMPL->curve_motion_xcumulative += dx;
+    THISTMPL->curve_motion_ycumulative += dy;
     if (f->fd_var && (dx != 0))
     {
-        fielddesc_setcoord(f, TEMPLATE->curve_motion_template, TEMPLATE->curve_motion_wp,
-            TEMPLATE->curve_motion_xbase + TEMPLATE->curve_motion_xcumulative * TEMPLATE->curve_motion_xper,
+        fielddesc_setcoord(f, THISTMPL->curve_motion_template, THISTMPL->curve_motion_wp,
+            THISTMPL->curve_motion_xbase + THISTMPL->curve_motion_xcumulative * THISTMPL->curve_motion_xper,
                 1); 
     }
     if ((f+1)->fd_var && (dy != 0))
     {
-        fielddesc_setcoord(f+1, TEMPLATE->curve_motion_template, TEMPLATE->curve_motion_wp,
-            TEMPLATE->curve_motion_ybase + TEMPLATE->curve_motion_ycumulative * TEMPLATE->curve_motion_yper,
+        fielddesc_setcoord(f+1, THISTMPL->curve_motion_template, THISTMPL->curve_motion_wp,
+            THISTMPL->curve_motion_ybase + THISTMPL->curve_motion_ycumulative * THISTMPL->curve_motion_yper,
                 1); 
     }
-        /* LATER figure out what to do to notify for an array? */
-    if (TEMPLATE->curve_motion_scalar)
-        template_notifyforscalar(TEMPLATE->curve_motion_template, TEMPLATE->curve_motion_glist, 
-            TEMPLATE->curve_motion_scalar, gensym("change"), 1, &at);
-    if (TEMPLATE->curve_motion_scalar)
-        scalar_redraw(TEMPLATE->curve_motion_scalar, TEMPLATE->curve_motion_glist);
-    if (TEMPLATE->curve_motion_array)
-        array_redraw(TEMPLATE->curve_motion_array, TEMPLATE->curve_motion_glist);
+    if (THISTMPL->curve_motion_scalar)
+    {
+        template_notifyforscalar(THISTMPL->curve_motion_template,
+            THISTMPL->curve_motion_glist,
+            THISTMPL->curve_motion_scalar, gensym("change"), 1, &at);
+        scalar_redraw(THISTMPL->curve_motion_scalar,
+            THISTMPL->curve_motion_glist);
+    }
+    else
+    {
+            /* chase back to owning scalar to notify it */
+        t_array *owner_array =
+            THISTMPL->curve_motion_gpointer.gp_stub->gs_un.gs_array;
+        while (owner_array->a_gp.gp_stub->gs_which == GP_ARRAY)
+            owner_array = owner_array->a_gp.gp_stub->gs_un.gs_array;
+        template_notifyforscalar(THISTMPL->curve_motion_template,
+            THISTMPL->curve_motion_glist,
+            owner_array->a_gp.gp_un.gp_scalar, gensym("change"), 1, &at);
+        array_redraw(THISTMPL->curve_motion_array,
+            THISTMPL->curve_motion_glist);
+    }
 }
 
 static int curve_click(t_gobj *z, t_glist *glist, 
@@ -5492,9 +5639,14 @@ static int curve_click(t_gobj *z, t_glist *glist,
     int bestn = -1;
     int besterror = 0x7fffffff;
     t_fielddesc *f;
-    if (!fielddesc_getfloat(&x->x_vis, template, data, 0))
-        return (0);
-    for (i = 0, f = x->x_vec; i < n; i++, f += 2)
+    int x1, y1, x2, y2;
+    curve_getrect(z, glist, data, template, basex, basey,
+        &x1, &y1, &x2, &y2);
+    if ((x->x_flags & NOMOUSERUN)  ||
+        !fielddesc_getfloat(&x->x_vis, template, data, 0))
+            return (0);
+    if (!(x->x_flags & NOVERTICES))
+        for (i = 0, f = x->x_vec; i < n; i++, f += 2)
     {
         int xval = fielddesc_getcoord(f, template, data, 0),
             xloc = glist_xtopixels(glist, basex + xval);
@@ -5511,33 +5663,49 @@ static int curve_click(t_gobj *z, t_glist *glist,
             xerr = yerr;
         if (xerr < besterror)
         {
-            TEMPLATE->curve_motion_xbase = xval;
-            TEMPLATE->curve_motion_ybase = yval;
+            THISTMPL->curve_motion_xbase = xval;
+            THISTMPL->curve_motion_ybase = yval;
             besterror = xerr;
             bestn = i;
         }
     }
-    if (besterror > 6)
-        return (0);
+    if (besterror > 6)  /* no hot points got hit */
+    {
+            /* if we're in the bounding rect and the draggable flag
+            is set we can drag the whole object; othrwise we don't
+            do anything.  But we still return -1 if we're in the rectangle
+            so that the struct object can notify the patch of the click.
+            The "-1" tells scalar_doclick() to call template_notifyforscalar()
+            but scalar_click() then returns 0 so that the search for a click
+            will continue.  This way, all polygons that got clicked on will
+            get notified up to and until someone gets bonked on a hot point,
+            at which point the search stops. */
+        if (xpix < x1 || xpix > x2 || ypix < y1 || ypix > y2)
+            return (0);
+        if (!(x->x_flags & DRAGGABLE))
+            return (-1);
+    }
     if (doit)
     {
-        TEMPLATE->curve_motion_xper = glist_pixelstox(glist, 1)
+        THISTMPL->curve_motion_xper = glist_pixelstox(glist, 1)
             - glist_pixelstox(glist, 0);
-        TEMPLATE->curve_motion_yper = glist_pixelstoy(glist, 1)
+        THISTMPL->curve_motion_yper = glist_pixelstoy(glist, 1)
             - glist_pixelstoy(glist, 0);
-        TEMPLATE->curve_motion_xcumulative = 0;
-        TEMPLATE->curve_motion_ycumulative = 0;
-        TEMPLATE->curve_motion_glist = glist;
-        TEMPLATE->curve_motion_scalar = sc;
-        TEMPLATE->curve_motion_array = ap;
-        TEMPLATE->curve_motion_wp = data;
-        TEMPLATE->curve_motion_field = 2*bestn;
-        TEMPLATE->curve_motion_template = template;
-        if (TEMPLATE->curve_motion_scalar)
-            gpointer_setglist(&TEMPLATE->curve_motion_gpointer, TEMPLATE->curve_motion_glist,
-                &TEMPLATE->curve_motion_scalar->sc_gobj);
-        else gpointer_setarray(&TEMPLATE->curve_motion_gpointer,
-                TEMPLATE->curve_motion_array, TEMPLATE->curve_motion_wp);
+        THISTMPL->curve_motion_xcumulative = 0;
+        THISTMPL->curve_motion_ycumulative = 0;
+        THISTMPL->curve_motion_glist = glist;
+        THISTMPL->curve_motion_scalar = sc;
+        THISTMPL->curve_motion_array = ap;
+        THISTMPL->curve_motion_wp = data;
+            /* if we missed all hot points we're dragging the whole thing;
+            otherwise note the vertex to drag on. */
+        THISTMPL->curve_motion_vertex = (besterror <= 6 ? 2*bestn : -1);
+        THISTMPL->curve_motion_template = template;
+        if (THISTMPL->curve_motion_scalar)
+            gpointer_setglist(&THISTMPL->curve_motion_gpointer,
+                THISTMPL->curve_motion_glist, THISTMPL->curve_motion_scalar);
+        else gpointer_setarray(&THISTMPL->curve_motion_gpointer,
+                THISTMPL->curve_motion_array, THISTMPL->curve_motion_wp);
         glist_grab(glist, z, curve_motion, 0, 0, xpix, ypix, 0);
     }
     return (1);
@@ -7523,28 +7691,28 @@ static void drawsymbol_motion(void *z, t_floatarg dx, t_floatarg dy)
     if (x->x_typerror) return;
 
     t_atom at;
-    if (!gpointer_check(&TEMPLATE->drawsymbol_motion_gpointer, 0))
+    if (!gpointer_check(&THISTMPL->drawsymbol_motion_gpointer, 0))
     {
         post("drawsymbol_motion: scalar disappeared");
         return;
     }
-    if (TEMPLATE->drawsymbol_motion_type != DT_FLOAT)
+    if (THISTMPL->drawsymbol_motion_type != DT_FLOAT)
         return;
-    TEMPLATE->drawsymbol_motion_ycumulative -= dy;
-    template_setfloat(TEMPLATE->drawsymbol_motion_template,
+    THISTMPL->drawsymbol_motion_ycumulative -= dy;
+    template_setfloat(THISTMPL->drawsymbol_motion_template,
         x->x_fieldname,
-            TEMPLATE->drawsymbol_motion_wp, 
-            TEMPLATE->drawsymbol_motion_ycumulative,
+            THISTMPL->drawsymbol_motion_wp, 
+            THISTMPL->drawsymbol_motion_ycumulative,
                 1);
-    if (TEMPLATE->drawsymbol_motion_scalar)
-        template_notifyforscalar(TEMPLATE->drawsymbol_motion_template,
-            TEMPLATE->drawsymbol_motion_glist, TEMPLATE->drawsymbol_motion_scalar,
+    if (THISTMPL->drawsymbol_motion_scalar)
+        template_notifyforscalar(THISTMPL->drawsymbol_motion_template,
+            THISTMPL->drawsymbol_motion_glist, THISTMPL->drawsymbol_motion_scalar,
                 gensym("change"), 1, &at);
 
-    if (TEMPLATE->drawsymbol_motion_scalar)
-        scalar_redraw(TEMPLATE->drawsymbol_motion_scalar, TEMPLATE->drawsymbol_motion_glist);
-    if (TEMPLATE->drawsymbol_motion_array)
-        array_redraw(TEMPLATE->drawsymbol_motion_array, TEMPLATE->drawsymbol_motion_glist);
+    if (THISTMPL->drawsymbol_motion_scalar)
+        scalar_redraw(THISTMPL->drawsymbol_motion_scalar, THISTMPL->drawsymbol_motion_glist);
+    if (THISTMPL->drawsymbol_motion_array)
+        array_redraw(THISTMPL->drawsymbol_motion_array, THISTMPL->drawsymbol_motion_glist);
 }
 
 static void drawsymbol_key(void *z, t_floatarg fkey)
@@ -7556,54 +7724,54 @@ static void drawsymbol_key(void *z, t_floatarg fkey)
     int key = fkey;
     char sbuf[MAXPDSTRING];
     t_atom at;
-    if (!gpointer_check(&TEMPLATE->drawsymbol_motion_gpointer, 0))
+    if (!gpointer_check(&THISTMPL->drawsymbol_motion_gpointer, 0))
     {
         post("drawsymbol_motion: scalar disappeared");
         return;
     }
     if (key == 0)
         return;
-    if (TEMPLATE->drawsymbol_motion_type == DT_SYMBOL)
+    if (THISTMPL->drawsymbol_motion_type == DT_SYMBOL)
     {
             /* key entry for a symbol field */
-        if (TEMPLATE->drawsymbol_motion_firstkey)
+        if (THISTMPL->drawsymbol_motion_firstkey)
             sbuf[0] = 0;
-        else strncpy(sbuf, template_getsymbol(TEMPLATE->drawsymbol_motion_template,
-            x->x_fieldname, TEMPLATE->drawsymbol_motion_wp, 1)->s_name,
+        else strncpy(sbuf, template_getsymbol(THISTMPL->drawsymbol_motion_template,
+            x->x_fieldname, THISTMPL->drawsymbol_motion_wp, 1)->s_name,
                 MAXPDSTRING - 1);
         sbuf[MAXPDSTRING - 1] = 0;
-        TEMPLATE->drawsymbol_motion_firstkey = (key == '\n');
+        THISTMPL->drawsymbol_motion_firstkey = (key == '\n');
         if (key == '\b')
         {
             if (*sbuf)
                 sbuf[strlen(sbuf)-1] = 0;
         }
-        else if (!TEMPLATE->drawsymbol_motion_firstkey)
+        else if (!THISTMPL->drawsymbol_motion_firstkey)
         {
             sbuf[strlen(sbuf)+1] = 0;
             sbuf[strlen(sbuf)] = key;
         }
-        template_setsymbol(TEMPLATE->drawsymbol_motion_template,
-            x->x_fieldname, TEMPLATE->drawsymbol_motion_wp, gensym(sbuf), 1);
-        if (TEMPLATE->drawsymbol_motion_scalar)
-            template_notifyforscalar(TEMPLATE->drawsymbol_motion_template,
-                TEMPLATE->drawsymbol_motion_glist, TEMPLATE->drawsymbol_motion_scalar,
+        template_setsymbol(THISTMPL->drawsymbol_motion_template,
+            x->x_fieldname, THISTMPL->drawsymbol_motion_wp, gensym(sbuf), 1);
+        if (THISTMPL->drawsymbol_motion_scalar)
+            template_notifyforscalar(THISTMPL->drawsymbol_motion_template,
+                THISTMPL->drawsymbol_motion_glist, THISTMPL->drawsymbol_motion_scalar,
                     gensym("change"), 1, &at);
-        if (TEMPLATE->drawsymbol_motion_scalar)
-            scalar_redraw(TEMPLATE->drawsymbol_motion_scalar, TEMPLATE->drawsymbol_motion_glist);
-        if (TEMPLATE->drawsymbol_motion_array)
-            array_redraw(TEMPLATE->drawsymbol_motion_array, TEMPLATE->drawsymbol_motion_glist);
+        if (THISTMPL->drawsymbol_motion_scalar)
+            scalar_redraw(THISTMPL->drawsymbol_motion_scalar, THISTMPL->drawsymbol_motion_glist);
+        if (THISTMPL->drawsymbol_motion_array)
+            array_redraw(THISTMPL->drawsymbol_motion_array, THISTMPL->drawsymbol_motion_glist);
 
     }
-    else if (TEMPLATE->drawsymbol_motion_type == DT_FLOAT)
+    else if (THISTMPL->drawsymbol_motion_type == DT_FLOAT)
     {
             /* key entry for a numeric field.  This is just a stopgap. */
         double newf;
-        if (TEMPLATE->drawsymbol_motion_firstkey)
+        if (THISTMPL->drawsymbol_motion_firstkey)
             sbuf[0] = 0;
-        else sprintf(sbuf, "%g", template_getfloat(TEMPLATE->drawsymbol_motion_template,
-            x->x_fieldname, TEMPLATE->drawsymbol_motion_wp, 1));
-        TEMPLATE->drawsymbol_motion_firstkey = (key == '\n');
+        else sprintf(sbuf, "%g", template_getfloat(THISTMPL->drawsymbol_motion_template,
+            x->x_fieldname, THISTMPL->drawsymbol_motion_wp, 1));
+        THISTMPL->drawsymbol_motion_firstkey = (key == '\n');
         if (key == '\b')
         {
             if (*sbuf)
@@ -7616,16 +7784,16 @@ static void drawsymbol_key(void *z, t_floatarg fkey)
         }
         if (sscanf(sbuf, "%lg", &newf) < 1)
             newf = 0;
-        template_setfloat(TEMPLATE->drawsymbol_motion_template,
-            x->x_fieldname, TEMPLATE->drawsymbol_motion_wp, (t_float)newf, 1);
-        if (TEMPLATE->drawsymbol_motion_scalar)
-            template_notifyforscalar(TEMPLATE->drawsymbol_motion_template,
-                TEMPLATE->drawsymbol_motion_glist, TEMPLATE->drawsymbol_motion_scalar,
+        template_setfloat(THISTMPL->drawsymbol_motion_template,
+            x->x_fieldname, THISTMPL->drawsymbol_motion_wp, (t_float)newf, 1);
+        if (THISTMPL->drawsymbol_motion_scalar)
+            template_notifyforscalar(THISTMPL->drawsymbol_motion_template,
+                THISTMPL->drawsymbol_motion_glist, THISTMPL->drawsymbol_motion_scalar,
                     gensym("change"), 1, &at);
-        if (TEMPLATE->drawsymbol_motion_scalar)
-            scalar_redraw(TEMPLATE->drawsymbol_motion_scalar, TEMPLATE->drawsymbol_motion_glist);
-        if (TEMPLATE->drawsymbol_motion_array)
-            array_redraw(TEMPLATE->drawsymbol_motion_array, TEMPLATE->drawsymbol_motion_glist);
+        if (THISTMPL->drawsymbol_motion_scalar)
+            scalar_redraw(THISTMPL->drawsymbol_motion_scalar, THISTMPL->drawsymbol_motion_glist);
+        if (THISTMPL->drawsymbol_motion_array)
+            array_redraw(THISTMPL->drawsymbol_motion_array, THISTMPL->drawsymbol_motion_glist);
     }
 }
 
@@ -7649,20 +7817,20 @@ static int drawsymbol_click(t_gobj *z, t_glist *glist,
             return 0;
         if (doit)
         {
-            TEMPLATE->drawsymbol_motion_glist = glist;
-            TEMPLATE->drawsymbol_motion_wp = data;
-            TEMPLATE->drawsymbol_motion_template = template;
-            TEMPLATE->drawsymbol_motion_scalar = sc;
-            TEMPLATE->drawsymbol_motion_array = ap;
-            TEMPLATE->drawsymbol_motion_firstkey = 1;
-            TEMPLATE->drawsymbol_motion_ycumulative =
+            THISTMPL->drawsymbol_motion_glist = glist;
+            THISTMPL->drawsymbol_motion_wp = data;
+            THISTMPL->drawsymbol_motion_template = template;
+            THISTMPL->drawsymbol_motion_scalar = sc;
+            THISTMPL->drawsymbol_motion_array = ap;
+            THISTMPL->drawsymbol_motion_firstkey = 1;
+            THISTMPL->drawsymbol_motion_ycumulative =
                 template_getfloat(template, x->x_fieldname, data, 0);
-            TEMPLATE->drawsymbol_motion_type = type;
-            if (TEMPLATE->drawsymbol_motion_scalar)
-                gpointer_setglist(&TEMPLATE->drawsymbol_motion_gpointer, 
-                    TEMPLATE->drawsymbol_motion_glist, &TEMPLATE->drawsymbol_motion_scalar->sc_gobj);
-            else gpointer_setarray(&TEMPLATE->drawsymbol_motion_gpointer,
-                    TEMPLATE->drawsymbol_motion_array, TEMPLATE->drawsymbol_motion_wp);
+            THISTMPL->drawsymbol_motion_type = type;
+            if (THISTMPL->drawsymbol_motion_scalar)
+                gpointer_setglist(&THISTMPL->drawsymbol_motion_gpointer, 
+                    THISTMPL->drawsymbol_motion_glist, &THISTMPL->drawsymbol_motion_scalar->sc_gobj);
+            else gpointer_setarray(&THISTMPL->drawsymbol_motion_gpointer,
+                    THISTMPL->drawsymbol_motion_array, THISTMPL->drawsymbol_motion_wp);
             /* ico@bukvic.net 20200920: LATER consider also using keyname (currently 0) */
             glist_grab(glist, z, drawsymbol_motion, drawsymbol_key,
                 0, xpix, ypix, 0);
@@ -8157,7 +8325,7 @@ t_template *canvas_findtemplate(t_canvas *c)
     for (g = c->gl_list; g; g = g->g_next)
     {
         if (pd_class(&g->g_pd) == gtemplate_class)
-            return ((t_gtemplate *)g)->x_template;
+            return ((t_pdstruct *)g)->x_template;
     }
     return 0;
 }
@@ -8288,10 +8456,10 @@ void g_template_setup(void)
 
 void g_template_newpdinstance( void)
 {
-    TEMPLATE = getbytes(sizeof(*TEMPLATE));
+    THISTMPL = getbytes(sizeof(*THISTMPL));
 }
 
 void g_template_freepdinstance( void)
 {
-    freebytes(TEMPLATE, sizeof(*TEMPLATE));
+    freebytes(THISTMPL, sizeof(*THISTMPL));
 }
