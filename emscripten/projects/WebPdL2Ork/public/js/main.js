@@ -3715,15 +3715,8 @@ function gui_nbx_onmousedown(data, e, id) {
             clearTimeout(data.focusTimeout);
         }
 
-        // Snapshot the exact focused element right at this millisecond
-        const originalActiveElement = document.activeElement;
-
-        // Fire the updated safety execution loop
-        data.focusTimeout = setTimeout(function() {
-            // Only proceed if the user HAS NOT selected a new item during the 3000ms delay
-            if (document.activeElement === originalActiveElement && originalActiveElement) {
-                
-                // Re-route back through your updated focus engine safely
+        data.focusTimeout = setTimeout(() => {
+            if (keyboardFocus.data == data)
                 setKeyboardFocus(null);
         }, 3000);
 
@@ -3972,38 +3965,23 @@ window.onblur = () => {
         keyDown[key] = false;
 };
 
-function setKeyboardFocus(data, exclusive) {
-    // --- ORIGINAL CORE KEY DEFLATION ENGINE ---
-    for(let key in keyDown) {
-        if(exclusive)
-            if(keyDown[key])
-                onKeyUp({key});
-        if(keyboardFocus?.data?.onKeyUp)
-            keyboardFocus.data.onKeyUp(keyboardFocus.data, {key});
-    }
-    
-    if(keyboardFocus?.data?.onLoseFocus)
-        keyboardFocus.data.onLoseFocus(keyboardFocus.data);
-
-    // --- SAFELY PRESERVE BROWSER FOCUS SEAMLESSLY ---
-    const trigger = document.getElementById('keyboardTrigger');
-    if (trigger) {
-        // Force the element to retain focus, keeping the browser bridge active
-        trigger.focus(); 
-    }
-
-    // --- STATE ENGINE UPDATE ---
-    keyboardFocus.data = data;
-    keyboardFocus.exclusive = exclusive;
-    
-    // If data is exactly null, we flag current as false. 
-    // This instructs your main.js onKeyDown loop to instantly process 
-    // global canvas hotkeys without attempting to read sub-properties.
-    if (data === null) {
-        keyboardFocus.current = false;
-    } else {
-        keyboardFocus.current = true;
-    }
+function setKeyboardFocus(data, exclusive = false) {
+   for(let key in keyDown) {
+       if(exclusive)
+           if(keyDown[key])
+               onKeyUp({key});
+       if(keyboardFocus?.data?.onKeyUp)
+           keyboardFocus.data.onKeyUp(keyboardFocus.data, {key});
+   }
+   if(keyboardFocus?.data?.onLoseFocus)
+       keyboardFocus.data.onLoseFocus(keyboardFocus.data);
+   if(data !== null)
+       document.getElementById('keyboardTrigger').focus();
+   else
+       document.getElementById('keyboardTrigger').blur();
+   keyboardFocus.data = data;
+   keyboardFocus.exclusive = exclusive;
+   keyboardFocus.current = true;
 }
 function onMouseDown(e) {
     e.preventDefault?.();
