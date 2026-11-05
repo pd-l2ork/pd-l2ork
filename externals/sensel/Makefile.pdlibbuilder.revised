@@ -409,7 +409,7 @@ endif
 
 ifeq ($(system), Darwin)
   ifeq ($(macos_target),)
-  macos_target = 10.9
+  macos_target = 10.12
   endif
   pkglibdir = $(HOME)/Library/Pd
   pdincludepath := $(firstword $(wildcard \

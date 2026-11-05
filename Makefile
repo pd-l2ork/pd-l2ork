@@ -81,7 +81,7 @@
 # to be at least 10.9, which is the default now. With older Xcode versions you
 # can try earlier versions (>= 10.4) if you need to compile for legacy OSX
 # versions.
-export macos_target = 10.9
+export macos_target = 10.12
 
 # Installation prefix under which Pd-l2ork is installed (Linux only). If this
 # isn't set, a default location will be used (usually /usr/local). NOTE: We

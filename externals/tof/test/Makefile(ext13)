@@ -30,7 +30,7 @@ LIBS =
 UNAME := $(shell uname -s)
 ifeq ($(UNAME),Darwin)
   ifeq ($(macos_target),)
-  macos_target = 10.9
+  macos_target = 10.12
   endif
   SOURCES += $(SOURCES_Darwin)
   EXTENSION = pd_darwin

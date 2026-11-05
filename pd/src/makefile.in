@@ -3,7 +3,7 @@
 # Apple's gcc.  <hans@at.or.at>
 ifeq ($(shell uname -s),Darwin)
 ifeq ($(macos_target),)
-macos_target = 10.9
+macos_target = 10.12
 endif
 export MACOSX_DEPLOYMENT_TARGET = $(macos_target)
 endif

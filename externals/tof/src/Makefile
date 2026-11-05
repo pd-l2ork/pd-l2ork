@@ -59,7 +59,7 @@ CWD := $(shell pwd)
 
 
 ifeq ($(macos_target),)
-macos_target = 10.9
+macos_target = 10.12
 endif
 
 # turn on weak linking and dlopen support

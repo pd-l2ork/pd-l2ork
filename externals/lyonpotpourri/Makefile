@@ -50,7 +50,7 @@ ALL_LIBS =
 #------------------------------------------------------------------------------#
 
 ifeq ($(macos_target),)
-macos_target = 10.9
+macos_target = 10.12
 endif
 
 # these can be set from outside without (usually) breaking the build

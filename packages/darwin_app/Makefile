@@ -4,7 +4,7 @@ current: darwin_app
 # 10.9, which is the default now. With older Xcode versions you can try
 # earlier versions (>= 10.4) if you need to compile for legacy OSX versions.
 ifeq ($(macos_target),)
-macos_target = 10.9
+macos_target = 10.12
 endif
 
 # turn on weak linking and dlopen support
