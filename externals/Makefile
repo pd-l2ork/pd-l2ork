@@ -596,6 +596,8 @@ else
 	$(CMAKE) -B$(PD_ELSE_PATH)/build -Wno-dev -DPD_PATH="$(pd_src)" $(PD_ELSE_PATH) -DCMAKE_C_FLAGS="$(PD_ELSE_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_FLAGS)" -DFORCE_FIND_LIBRARY=ON
 	$(CMAKE) -B$(PD_ELSE_PATH)/Source/Audio/sfz~/sfizz/library/build $(PD_ELSE_PATH)/Source/Audio/sfz~/sfizz/library -DCMAKE_C_FLAGS="$(PD_ELSE_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_FLAGS)"
 endif
+	sed -i 's|--disable-programs --disable-iconv|--disable-programs --disable-doc --disable-iconv|' \
+		"$(PD_ELSE_PATH)/Source/Shared/ffmpeg/build_ffmpeg.sh"
 	make -C $(PD_ELSE_PATH)/build
 	touch $(PD_ELSE_PATH)/build/.built
 endif
