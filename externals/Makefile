@@ -577,7 +577,7 @@ $(PD_ELSE_PATH)/build/.built: $(OGG_LIB) $(VORBIS_LIB) $(OPENSSL_LIB)
 		-DCMAKE_C_FLAGS="$(PD_ELSE_EM_FLAGS)" -DCMAKE_CXX_FLAGS="$(PD_ELSE_EM_FLAGS)"
 	env -i PATH=$(PATH) bash -c ' \
 		cd $(PD_ELSE_PATH)/build/Source/Shared/ffmpeg/ffmpeg-7.0.1 && \
-		emconfigure ./configure --target-os=none --arch=x86_32 --enable-cross-compile --disable-debug --disable-x86asm --disable-programs && \
+		emconfigure ./configure --target-os=none --arch=x86_32 --enable-cross-compile --disable-debug --disable-x86asm --disable-programs --disable-doc && \
 		emmake make -j \
 	'
 	$(CMAKE) -B$(PD_ELSE_PATH)/Source/Audio/sfz~/sfizz/library/build $(PD_ELSE_PATH)/Source/Audio/sfz~/sfizz/library \
